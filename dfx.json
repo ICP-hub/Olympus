@@ -5,10 +5,12 @@
       "package": "IcpAccelerator_backend",
       "type": "rust"
     },
+    
     "internet_identity" : {
       "type": "pull",
       "id": "rdmx6-jaaaa-aaaaa-aaadq-cai"
     },
+
     "IcpAccelerator_frontend": {
       "dependencies": [
         "IcpAccelerator_backend"
@@ -21,8 +23,30 @@
         "dist/IcpAccelerator_frontend/"
       ],
       "type": "assets"
+    },
+
+    "admin_backend": {
+      "candid": "src/admin_backend/admin_backend.did",
+      "package": "admin_backend",
+      "type": "rust"
+    },
+
+    "admin_frontend": {
+      "dependencies": [
+        "admin_backend"
+      ],
+      "frontend": {
+        "entrypoint": "src/admin_frontend/src/index.html"
+      },
+      "source": [
+        "src/admin_frontend/assets",
+        "dist/admin_frontend/"
+      ],
+      "type": "assets"
     }
-  },
+
+  }
+  ,
   "defaults": {
     "build": {
       "args": "",

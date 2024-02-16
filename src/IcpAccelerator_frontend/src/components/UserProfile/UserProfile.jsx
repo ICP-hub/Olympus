@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import FounderInfo from "../Registration/FounderRegistration/FounderInfo";
-import CompanyInfo from "../Registration/CompanyInfo";
-import CompanyMetrics from "../Registration/CompanyMetrics";
-import AdditionalInfo from "../Registration/AdditionalInfo";
-import TeamDetails from "../Registration/TeamDetails";
+import CompanyInfo from "../Registration/FounderRegistration/CompanyInfo";
+import CompanyMetrics from "../Registration/FounderRegistration/CompanyMetrics";
+import AdditionalInfo from "../Registration/FounderRegistration/AdditionalInfo";
+import TeamDetails from "../Registration/FounderRegistration/TeamDetails";
 import Header from "../Layout/Header/Header";
 import { headerData } from "../Utils/Data/AllDetailFormData";
 import Footer from "../Footer/Footer";
@@ -176,7 +176,7 @@ const UserProfile = () => {
             {activeTab === "founder" && <FounderInfo />}
             {activeTab === "company" && <CompanyInfo />}
             {activeTab === "metrics" && <CompanyMetrics />}
-            {activeTab === "team" && <TeamDetails />}
+            {activeTab === "team" && <TeamDetails/>}
             {activeTab === "additional" && <AdditionalInfo />}
           </div>
         </div>

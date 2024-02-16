@@ -1,31 +1,37 @@
-import React, { useState, useMemo,useEffect } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import astro1 from "../../../assets/images/astro1.png";
 import Footer from "../Footer/Footer";
 import { useDispatch, useSelector } from "react-redux";
-// import { rolesHandlerRequest } from "../Redux/Reducers/RoleReducer";
+import { rolesHandlerRequest } from "../Redux/Reducers/RoleReducer";
+import { useNavigate } from "react-router-dom";
 
 const RoleSelector = React.memo(() => {
-  // const rolesArr = useSelector((state) => state.role.roles);
+  const rolesArr = useSelector((state) => state.role.roles);
+  console.log(rolesArr);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  useEffect(() => {
+    dispatch(rolesHandlerRequest());
+  }, [dispatch]);
 
-  // useEffect(() => {
-  //   dispatch(rolesHandlerRequest());
-  // }, [dispatch]);
+  const [selectedRole, setSelectedRole] = useState({
+    id: rolesArr.length > 0 ? rolesArr[0].id : 0,
+    name: rolesArr.length > 0 ? rolesArr[0].name : "",
+  });
+  useEffect(() => {
+    if (rolesArr.length > 0) {
+      setSelectedRole({ id: rolesArr[0].id, name: rolesArr[0].name });
+    }
+  }, [rolesArr]);
 
-  // const [selectedPlan, setSelectedPlan] = useState(() => {
-  //   return rolesArr.length > 0 ? rolesArr[0].id : 0;
-  // });
-
-  // useEffect(() => {
-  //   if (rolesArr.length > 0) {
-  //     setSelectedPlan(rolesArr[0].id);
-  //   }
-  // }, [rolesArr]);
-
-  const handlePlanChange = (planId) => {
-    setSelectedPlan(planId);
+  const handlePlanChange = (roleId, roleName) => {
+    setSelectedRole({ id: roleId, name: roleName });
+    if (roleName === 'Project') {
+      navigate('/details'); 
+    }
   };
 
+  console.log(selectedRole);
   return (
     <div>
       <section className="body-font bg-violet-800 font-fontUse">
@@ -42,11 +48,11 @@ const RoleSelector = React.memo(() => {
                   Transparent and Non-Competitive Incubator cum Accelerator
                 </h2>
                 <div className="flex justify-between flex-wrap">
-                  {/* {rolesArr.roles?.map((plan) => (
+                  {rolesArr.roles?.map((plan) => (
                     <label
                       key={plan.id}
                       className={`relative flex bg-of p-4 rounded-lg shadow- cursor-pointer my-2 w-auto ${
-                        selectedPlan === plan.id
+                        selectedRole.id === plan.id
                           ? "border-2 border-blue-500 bg-gradient-to-r from-slate-300 to-violet-300 bg-opacity-20 rounded-lg"
                           : ""
                       }`}
@@ -55,7 +61,7 @@ const RoleSelector = React.memo(() => {
                         <span className="font-semibold text-textColor leading-tight uppercase">
                           {plan.name}
                         </span>
-                        {selectedPlan === plan.id && (
+                        {selectedRole.id === plan.id && (
                           <span
                             aria-hidden="true"
                             className="flex items-center justify-center border-2 border-blue-500 bg-gradient-to-r from-slate-300 to-violet-300 bg-opacity-20 rounded-full ml-4"
@@ -81,12 +87,12 @@ const RoleSelector = React.memo(() => {
                         id={`plan-${plan.id}`}
                         value={plan.id}
                         className="absolute h-0 w-0 appearance-none"
-                        checked={selectedPlan === plan.id}
-                        onChange={() => handlePlanChange(plan.id)}
+                        checked={selectedRole.id === plan.id}
+                        onChange={() => handlePlanChange(plan.id, plan.name)}
                         readOnly
                       />
                     </label>
-                  ))} */}
+                  ))}
                 </div>
               </div>
               <div className="w-1/4">

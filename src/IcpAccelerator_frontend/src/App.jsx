@@ -15,28 +15,24 @@ import AllDetailsForm from "./components/Registration/AllDetailsForm";
 import { useDispatch } from "react-redux";
 import { setActor } from "./components/Redux/Reducers/actorBindReducer";
 import { initActor } from "./components/Redux/ActorManager";
+import AppRoutes from "./AppRoutes";
 
 const App = () => {
 
   const identity =useSelector((currState)=> currState.internet.identity)
-  const actor =  useSelector((currState)=> currState.actors.actor)
-
   const [isModalOpen, setModalOpen] = useState(false);
 
   const dispatch =useDispatch()
 
-  console.log('identity in app.jsx =>', identity)
-  console.log('actor in app.jsx =>', actor)
-
-// useEffect(() => {
-//   const initializeActor = async () => {
-//     if (identity) { 
-//       const actor = await initActor(identity);
-//       dispatch(setActor(actor));
-//     }
-//   };
-//   initializeActor();
-// }, [dispatch, identity]);
+useEffect(() => {
+  const initializeActor = async () => {
+    if (identity) { 
+      const actor = await initActor(identity);
+      dispatch(setActor(actor));
+    }
+  };
+  initializeActor();
+}, [dispatch, identity]);
 
 
   return (
@@ -51,11 +47,12 @@ const App = () => {
       />
       {/* <DashBoard/> */}
       {/* <ProgressCard/> */}
-      <AllDetailsForm/>
+      {/* <AllDetailsForm/> */}
       {/* <ProjectDetails/> */}
       {/* <Home/> */}
       {/* <UserProfile/> */}
       {/* <RoleSelector /> */}
+      <AppRoutes/>
     </>
   );
 };
