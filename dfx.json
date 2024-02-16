@@ -1,0 +1,30 @@
+{
+  "canisters": {
+    "IcpAccelerator_backend": {
+      "candid": "src/IcpAccelerator_backend/IcpAccelerator_backend.did",
+      "package": "IcpAccelerator_backend",
+      "type": "rust"
+    },
+    "IcpAccelerator_frontend": {
+      "dependencies": [
+        "IcpAccelerator_backend"
+      ],
+      "frontend": {
+        "entrypoint": "src/IcpAccelerator_frontend/src/index.html"
+      },
+      "source": [
+        "src/IcpAccelerator_frontend/assets",
+        "dist/IcpAccelerator_frontend/"
+      ],
+      "type": "assets"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
