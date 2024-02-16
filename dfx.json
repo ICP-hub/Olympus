@@ -5,6 +5,10 @@
       "package": "IcpAccelerator_backend",
       "type": "rust"
     },
+    "internet_identity" : {
+      "type": "pull",
+      "id": "rdmx6-jaaaa-aaaaa-aaadq-cai"
+    },
     "IcpAccelerator_frontend": {
       "dependencies": [
         "IcpAccelerator_backend"
