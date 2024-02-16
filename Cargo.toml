@@ -1,4 +1,5 @@
 [workspace]
 members = [
-    "src/IcpAccelerator_backend",
+    "src/IcpAccelerator_backend", "src/admin_backend",
 ]
+resolver = "2"
