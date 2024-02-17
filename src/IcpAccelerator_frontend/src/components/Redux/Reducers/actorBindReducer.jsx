@@ -1,19 +1,26 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialActorState = {
-  actor: null, 
+  actor: null,
+  error: null,
 };
 
-export const actorSlice = createSlice({
+const actorSlice = createSlice({
   name: 'actors',
   initialState: initialActorState,
   reducers: {
     setActor: (state, action) => {
-      console.log("actor inside reducer", action)
-      state.actor = action.payload; 
+      console.log('setActor action:', action.payload);
+      state.actor = action.payload;
+      state.error = null;
+    },
+    actorError: (state, action) => {
+      state.error = action.payload;
+    },
+    handleActorRequest: (state, action) => {
     },
   },
 });
 
-export const { setActor } = actorSlice.actions;
+export const { setActor, actorError, handleActorRequest } = actorSlice.actions;
 export default actorSlice.reducer;

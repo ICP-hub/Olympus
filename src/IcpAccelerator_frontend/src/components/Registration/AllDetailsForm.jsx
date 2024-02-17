@@ -25,11 +25,15 @@ const AllDetailsForm = () => {
     } rounded-t-lg`;
   };
  
-  const checkActorWorking = async() =>{
-      const fetchAllHubs = await actor.get_icp_hubs_candid()
-
-      console.log("dusra component mai data aaya hub ka=>", fetchAllHubs)
-  }
+  const checkActorWorking = async () => {
+    if (!actor) {
+      console.log("Actor is not initialized yet.");
+      return;
+    }
+    const fetchAllHubs = await actor.get_icp_hubs_candid();
+    console.log("dusra component mai data aaya hub ka=>", fetchAllHubs);
+  };
+  
 
 
   return (

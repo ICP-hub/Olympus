@@ -1,27 +1,28 @@
 import { takeLatest, call, put, select } from "redux-saga/effects";
-import { setActor } from "../Reducers/actorBindReducer";
-import { createActor } from "../../../../../declarations/internet_identity/index";
+import { setActor, handleActorRequest, actorError } from '../Reducers/actorBindReducer';
+import { createActor } from "../../../../../declarations/IcpAccelerator_backend/index";
 
-const selectedIdentity = (currState) => currState.internet.identity;
+const selectedIdentity = (state) => state.internet.identity;
 
-function* initActor() {
+function* initActorSaga() {
   try {
     const identity = yield select(selectedIdentity);
-    const canisterId =
-      process.env.CANISTER_ID_ICPACCELERATOR_BACKEND ||
-      process.env.ICPACCELERATOR_BACKEND_CANISTER_ID;
+    console.log('Identity in initActorSaga:', identity);
+    
+    const canisterId = process.env.CANISTER_ID_ICPACCELERATOR_BACKEND || process.env.ICPACCELERATOR_BACKEND_CANISTER_ID;
 
-    console.log("canister id + identity =>", canisterId, identity);
+    const actor = yield call(createActor, canisterId, { agentOptions: { identity } });
+    
+    console.log('Actor initialized in initActorSaga:', actor);
 
-    const actor = yield call(
-      createActor(canisterId, { agentOptions: { identity } })
-    );
     yield put(setActor(actor));
-  } catch (err) {
-    console.log("actor error =>", err);
+  } catch (error) {
+    console.error('Error in initActorSaga:', error);
+    yield put(actorError(error.toString()));
   }
 }
 
+
 export function* actorSaga() {
-  yield takeLatest(setActor().type, initActor);
+  yield takeLatest(handleActorRequest().type, initActorSaga);
 }

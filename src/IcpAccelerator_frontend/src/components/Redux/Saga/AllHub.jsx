@@ -5,14 +5,16 @@ import {
   allHubHandlerFailure,
 } from "../Reducers/All_IcpHubReducer";
 
-const actor = (state) => state.actors.actor;
-
+const selectActor = (currState) => currState.actors.actor;
+ 
 function* fetchAllHubsHandler() {
   try {
-    // const actor = yield select(selectActor);
-    const Allhubs = yield call(actor.call_get_icp_hubs);
+    const actor = yield select(selectActor);
+    // console.log("selectActor run hua allhub.jsx mai ",actor)
 
-    console.log('allhubs data mc =>', Allhubs)
+    const Allhubs = yield call([actor, actor.get_icp_hubs_candid]);
+
+    // console.log('allhubs data mc =>', Allhubs)
     yield put(allHubHandlerSuccess(Allhubs));
   } catch (error) {
     yield put(allHubHandlerFailure(error.toString()));
