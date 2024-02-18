@@ -18,6 +18,8 @@ import { checkLoginOnStart, logoutStart } from "./components/Redux/Reducers/Inte
 
 const App = () => {
 
+// checking multiple working
+
   const identity =useSelector((currState)=> currState.internet.identity)
   const isAuthenticated =useSelector((currState)=> currState.internet.isAuthenticated)
   // const actor =  useSelector((currState)=> currState.actors.actor)
