@@ -19,6 +19,7 @@ import AppRoutes from "./AppRoutes";
 
 const App = () => {
 
+  // checking git flow
 
   const identity =useSelector((currState)=> currState.internet.identity)
   const isAuthenticated =useSelector((currState)=> currState.internet.isAuthenticated)
