@@ -43,17 +43,6 @@ const FounderInfo = () => {
   }, [actor,dispatch]);
   
 
-  // useEffect(() => {
-  //   const check = async () => {
-  //     if (actor) {
-  //       console.log("actor data =>", actor);
-  //       let principalGya = await actor.greet();
-  //       console.log("role ayaaaaaaaaaaaaaaaaaaaaaaaa =>", principalGya);
-  //     }
-  //   };
-  //   check();
-  // }, [actor]);
-
   const {
     register,
     handleSubmit,

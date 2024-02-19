@@ -1,57 +1,42 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import internetIdentity from "../../assets/WalletLogo/IcpWallet.png";
-import plug from "../../assets/WalletLogo/PlugWallet.png";
-import bitfinity from "../../assets/WalletLogo/BitfinityWallet.png";
-import astroxMe from "../../assets/WalletLogo/MeWallet.png";
+// import plug from "../../assets/WalletLogo/PlugWallet.png";
+// import bitfinity from "../../assets/WalletLogo/BitfinityWallet.png";
+// import astroxMe from "../../assets/WalletLogo/MeWallet.png";
 import { useDispatch } from "react-redux";
-import { WalletSignOut } from "../components/Redux/Reducers/WalletAuth";
+// import { WalletSignOut } from "../components/Redux/Reducers/WalletAuth";
 import { useSelector } from "react-redux";
+import { logoutStart } from "../components/Redux/Reducers/InternetIdentityReducer";
 
 const LogoutModal = () => {
-  const walletActive = useSelector((curr) => curr.auth.walletConnected);
+  const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
+  const principal = useSelector((currState) => currState.internet.principal);
   const dispatch = useDispatch();
 
   const [isDropdownOpen, setDropdownOpen] = useState(false);
-  const [walletType, setWalletType] = useState(null);
+
+  // console.log("isAuthenticated in logoutmodal =>", isAuthenticated);
+  // console.log("principal in logoutmodal =>", principal);
 
   const toggleDropdown = () => {
     setDropdownOpen(!isDropdownOpen);
   };
 
-  useEffect(() => {
-    switch (walletActive) {
-      case "internetIdentity":
-        setWalletType(internetIdentity);
-        break;
-      case "astroxMe":
-        setWalletType(astroxMe);
-        break;
-      case "bitfinity":
-        setWalletType(bitfinity);
-        break;
-      case "plug":
-        setWalletType(plug);
-        break;
-      default:
-        if (walletActive) {
-          alert(`The wallet type '${walletActive}' is not supported yet.`);
-        }
-        break;
-    }
-  }, [walletActive]);
-  
+
   return (
-    <div className="relative justify-end flex ss:px-[0.95rem] sxs3:px-[0.93rem] sxs2:px-[0.9rem] sxs1:px-[0.8rem] sxs:px-[0.75rem] sxxs:px-[0.7rem]">
-      <img
-        id="avatarButton"
-        type="button"
-        onClick={() => {
-          toggleDropdown();
-        }}
-        className="w-10 h-10  rounded-full cursor-pointer"
-        src={walletType}
-        alt="User dropdown"
-      />
+    <div className="relative z-50 justify-end flex ss:px-[0.95rem] sxs3:px-[0.93rem] sxs2:px-[0.9rem] sxs1:px-[0.8rem] sxs:px-[0.75rem] sxxs:px-[0.7rem]">
+      {isAuthenticated && (
+        <img
+          id="avatarButton"
+          type="button"
+          onClick={() => {
+            toggleDropdown();
+          }}
+          className="w-10 h-10  rounded-full cursor-pointer"
+          src={internetIdentity}
+          alt="User dropdown"
+        />
+      )}
 
       {isDropdownOpen && (
         <div
@@ -80,38 +65,50 @@ const LogoutModal = () => {
               </button>
               <img
                 className="w-10 h-10  rounded-full "
-                src={walletType}
-                alt={walletType}
+                src={internetIdentity}
+                alt={internetIdentity}
               />
             </div>
-
-            <div>Bonnie Green</div>
-            <div className="font-medium truncate">name@flowbite.com</div>
+            <div className="group">
+              {" "}
+              <div className="truncate w-32 overflow-hidden text-ellipsis group-hover:w-auto group-hover:whitespace-normal group-hover:text-left">
+                Principal :{principal}
+              </div>
+            </div>
           </div>
           <ul
             className="py-2 text-sm text-gray-70 text-gray-200"
             aria-labelledby="avatarButton"
           >
             <li>
-              <a href="#" className="block px-4 py-2 hover:bg-gray-100">
+              <a
+                href="#"
+                className="block px-4 py-2 hover:bg-gray-200 hover:text-black"
+              >
                 Dashboard
               </a>
             </li>
             <li>
-              <a href="#" className="block px-4 py-2 hover:bg-gray-100">
+              <a
+                href="#"
+                className="block px-4 py-2 hover:bg-gray-200 hover:text-black"
+              >
                 Settings
               </a>
             </li>
             <li>
-              <a href="#" className="block px-4 py-2 hover:bg-gray-100">
+              <a
+                href="#"
+                className="block px-4 py-2 hover:bg-gray-200 hover:text-black"
+              >
                 Earnings
               </a>
             </li>
           </ul>
           <div className="py-1">
             <a
-              className="block px-4 py-2 text-sm text-white hover:bg-gray-100 "
-              onClick={() => dispatch(WalletSignOut())}
+              className="block px-4 py-2 text-sm text-white hover:bg-gray-200 hover:text-black "
+              onClick={() => dispatch(logoutStart())}
             >
               Sign out
             </a>
