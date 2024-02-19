@@ -73,7 +73,7 @@ pub fn get_roles() -> RolesResponse {
             Role { id: 2, name: "Project" },
             Role { id: 3, name: "Venture Capital" },
             Role { id: 4, name: "Hub Organizer" },
-            Role { id: 5, name: "Admin" },
+            // Role { id: 5, name: "Admin" },
         ],
     }
 }

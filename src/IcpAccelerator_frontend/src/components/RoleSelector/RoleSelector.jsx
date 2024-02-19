@@ -6,23 +6,33 @@ import { rolesHandlerRequest } from "../Redux/Reducers/RoleReducer";
 import { useNavigate } from "react-router-dom";
 
 const RoleSelector = React.memo(() => {
+
+  const actor = useSelector((currState) => currState.actors.actor);
   const rolesArr = useSelector((state) => state.role.roles);
-  console.log(rolesArr);
+
+  // console.log("rolesArr in roleselector =>", rolesArr);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   useEffect(() => {
     dispatch(rolesHandlerRequest());
-  }, [dispatch]);
+  }, [actor,dispatch]);
+
 
   const [selectedRole, setSelectedRole] = useState({
     id: rolesArr.length > 0 ? rolesArr[0].id : 0,
     name: rolesArr.length > 0 ? rolesArr[0].name : "",
   });
+
+
   useEffect(() => {
     if (rolesArr.length > 0) {
       setSelectedRole({ id: rolesArr[0].id, name: rolesArr[0].name });
     }
   }, [rolesArr]);
+
+
 
   const handlePlanChange = (roleId, roleName) => {
     setSelectedRole({ id: roleId, name: roleName });
@@ -31,7 +41,9 @@ const RoleSelector = React.memo(() => {
     }
   };
 
-  console.log(selectedRole);
+
+  // console.log(selectedRole);
+  
   return (
     <div>
       <section className="body-font bg-violet-800 font-fontUse">

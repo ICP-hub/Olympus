@@ -17,6 +17,8 @@ const AllDetailsForm = () => {
     setActiveTab(tab);
   };
 
+
+  console.log("AllDetailsForm called =>", AllDetailsForm)
   const getTabClassName = (tab) => {
     return `inline-block p-4 ${
       activeTab === tab

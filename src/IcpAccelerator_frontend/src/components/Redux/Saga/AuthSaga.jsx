@@ -1,15 +1,15 @@
 import { takeLatest, call, put } from "redux-saga/effects";
 import {
   // triggerInternetIdentity,
-  walletHandler,
+  // walletHandler,
   triggerPlugWallet,
   triggeBitfinityWallet,
   // triggerAstroxMeWallet,
 } from "../Reducers/WalletAuth";
-import { AuthClient } from "@dfinity/auth-client";
+// import { AuthClient } from "@dfinity/auth-client";
 // import { toHex } from "@dfinity/agent";
-import { initActor } from "../ActorManager";
-import { setActor } from "../Reducers/actorBindReducer";
+// import { initActor } from "../ActorManager";
+// import { setActor } from "../Reducers/actorBindReducer";
 
 
 
