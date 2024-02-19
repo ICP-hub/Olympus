@@ -16,6 +16,7 @@ import { useDispatch } from "react-redux";
 import { handleActorRequest } from "./components/Redux/Reducers/actorBindReducer";
 import { checkLoginOnStart, logoutStart } from "./components/Redux/Reducers/InternetIdentityReducer";
 
+
 const App = () => {
 
 // checking
@@ -68,11 +69,12 @@ const App = () => {
       />
       {/* <DashBoard/> */}
       {/* <ProgressCard/> */}
-      <AllDetailsForm/>
+      {/* <AllDetailsForm/> */}
       {/* <ProjectDetails/> */}
       {/* <Home/> */}
       {/* <UserProfile/> */}
       {/* <RoleSelector /> */}
+      <AppRoutes/>
     </>
   );
 };
