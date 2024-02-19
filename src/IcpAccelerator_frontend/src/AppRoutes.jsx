@@ -11,7 +11,7 @@ const AppRoutes = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const userRoles = useSelector((state) => state.role.roles)
 
-   console.log(userRoles)
+  //  console.log(userRoles)
   const dispatch = useDispatch();
 
   useEffect(() => {
