@@ -18,7 +18,7 @@ const AllDetailsForm = () => {
   };
 
 
-  console.log("AllDetailsForm called =>", AllDetailsForm)
+  // console.log("AllDetailsForm called =>", AllDetailsForm)
   const getTabClassName = (tab) => {
     return `inline-block p-4 ${
       activeTab === tab
@@ -27,23 +27,10 @@ const AllDetailsForm = () => {
     } rounded-t-lg`;
   };
  
-  const checkActorWorking = async () => {
-    if (!actor) {
-      console.log("Actor is not initialized yet.");
-      return;
-    }
-    const fetchAllHubs = await actor.get_icp_hubs_candid();
-    console.log("dusra component mai data aaya hub ka=>", fetchAllHubs);
-  };
-  
-
-
   return (
     <>
       {/* <Header  gradient={'bg-violet-800'}/> */}
       <DetailHeroSection />
-      <button onClick={checkActorWorking} className="bg-red-400 justify-center flex w-full z-1000">hub</button>
-
       <section className="relative overflow-hidden">
         <div className="w-full h-fit px-[6%] lg1:px-[4%] py-[6%] lg1:py-[4%]">
           <div className="w-full h-[2200px] flex-shrink-0 bg-gradient-to-b from-[#F1EEF5] via-[#F1EEF5] to-transparent absolute"></div>

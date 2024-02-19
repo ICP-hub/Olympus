@@ -5,43 +5,36 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { allHubHandlerRequest } from "../../Redux/Reducers/All_IcpHubReducer";
-import { AuthClient } from "@dfinity/auth-client";
+// import { AuthClient } from "@dfinity/auth-client";
+
+
+const today = new Date();
+const startDate = new Date('1900-01-01');
 
 const schema = yup.object({
-  full_name: yup
-    .string()
-    .required()
-    .test("is-non-empty", null, (value) => value && value.trim().length > 0),
-  date_of_birth: yup
-    .string()
-    .required()
-    .test("is-valid-date", null, (value) => !isNaN(Date.parse(value))),
+  full_name: yup.string().required().test("is-non-empty", null, (value) => value && value.trim().length > 0),
+  date_of_birth: yup.date().required().min(startDate, 'Date of birth cannot be before January 1, 1900').max(today, 'Date of birth cannot be in the future').typeError('Invalid date format, please use YYYY-MM-DD'),
   email: yup.string().email().required(),
-  phone_number: yup
-    .string()
-    .required()
-    .matches(/^(\+\d{1,3}[- ]?)?\d{10}$/, null),
+  phone_number: yup.string().required().matches(/^(\+\d{1,3}[- ]?)?\d{10}$/, null),
   linked_in_profile: yup.string().required().url(),
-  telegram_id: yup.string().optional().url(),
-  twitter_id: yup.string().optional().url(),
-  hub: yup.string().optional("Selecting a hub is required."),
+  telegram_id: yup.string().required().url(),
+  twitter_id: yup.string().required().url(),
+  hub: yup.string().required("Selecting a hub is required."),
 });
 
 const FounderInfo = () => {
-  
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
   const actor = useSelector((currState) => currState.actors.actor);
   const [inputType, setInputType] = useState("date");
 
   const dispatch = useDispatch();
 
-  console.log("actor aa ja =>", actor);
-  console.log("getAllIcpHubs", getAllIcpHubs);
+  // console.log("actor aa ja =>", actor);
+  // console.log("getAllIcpHubs", getAllIcpHubs);
 
   useEffect(() => {
     dispatch(allHubHandlerRequest());
-  }, [actor,dispatch]);
-  
+  }, [actor, dispatch]);
 
   const {
     register,
@@ -51,32 +44,30 @@ const FounderInfo = () => {
     resolver: yupResolver(schema),
   });
 
-
-
   const onSubmitHandler = async (data) => {
     console.log("data aaya data aaya ", data);
 
-    // const founderData = {
-    //   full_name: full_name,
-    //   date_of_birth: date_of_birth,
-    //   email: email,
-    //   phone_number: phone_number,
-    //   linked_in_profile: linked_in_profile,
-    //   telegram_id: telegram_id,
-    //   twitter_id: twitter_id,
-    //   preferred_icp_hub: hub,
-    //   profile_complete: 30,
-    //   is_profile_complete: false,
-    // };
-    // try {
-    //   await actor.register_founder_caller(founderData);
-    //   console.log("data passed to backend");
-    // } catch (error) {
-    //   console.error("Error sending data to the backend:", error);
-    // }
+    const founderData = {
+      full_name: [data.full_name],
+      date_of_birth: [data.date_of_birth.toISOString().split('T')[0]],
+      email: [data.email],
+      phone_number: [data.phone_number],
+      linked_in_profile: [data.linked_in_profile.toString()],
+      telegram_id: [data.telegram_id.toString()],
+      twitter_id: [data.twitter_id.toString()],
+      preferred_icp_hub:[ data.hub],
+    };
+
+
+    console.log('founderdata => ', founderData)
+
+    try {
+      await actor.register_founder_caller(founderData);
+      console.log("data passed to backend");
+    } catch (error) {
+      console.error("Error sending data to the backend:", error);
+    }
   };
-
-
 
   const handleFocus = (field) => {
     if (field.onFocus) {

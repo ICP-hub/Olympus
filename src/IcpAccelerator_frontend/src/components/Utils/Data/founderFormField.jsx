@@ -26,7 +26,7 @@ export const formFields = [
   },
   {
     id: "phone_number",
-    type: "tel",
+    type: "text",
     name: "phone_number",
     label: "Can we also have a phone number, please?",
     onFocus: null,

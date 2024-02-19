@@ -11,7 +11,7 @@ import RoleSelector from "./components/RoleSelector/RoleSelector";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import Header from "./components/Layout/Header/Header";
-// import AllDetailsForm from "./components/Registration/AllDetailsForm";
+import AllDetailsForm from "./components/Registration/AllDetailsForm";
 import { useDispatch } from "react-redux";
 import { handleActorRequest } from "./components/Redux/Reducers/actorBindReducer";
 import { checkLoginOnStart, logoutStart } from "./components/Redux/Reducers/InternetIdentityReducer";
@@ -19,7 +19,7 @@ import AppRoutes from "./AppRoutes";
 
 const App = () => {
 
-// checking
+  // checking git flow
 
   const identity =useSelector((currState)=> currState.internet.identity)
   const isAuthenticated =useSelector((currState)=> currState.internet.isAuthenticated)
@@ -69,12 +69,12 @@ const App = () => {
       />
       {/* <DashBoard/> */}
       {/* <ProgressCard/> */}
-      {/* <AllDetailsForm/> */}
+      <AllDetailsForm/>
       {/* <ProjectDetails/> */}
       {/* <Home/> */}
       {/* <UserProfile/> */}
       {/* <RoleSelector /> */}
-      <AppRoutes/>
+      {/* <AppRoutes/> */}
     </>
   );
 };
