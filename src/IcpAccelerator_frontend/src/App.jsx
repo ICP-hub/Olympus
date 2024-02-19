@@ -73,7 +73,7 @@ const App = () => {
       {/* <ProjectDetails/> */}
       {/* <Home/> */}
       {/* <UserProfile/> */}
-      <RoleSelector />
+      {/* <RoleSelector /> */}
       <AppRoutes/>
     </>
   );
