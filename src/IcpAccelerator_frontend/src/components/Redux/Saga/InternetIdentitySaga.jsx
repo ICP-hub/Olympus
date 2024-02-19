@@ -2,7 +2,7 @@ import { call, put, takeLatest } from "redux-saga/effects";
 import { AuthClient } from "@dfinity/auth-client";
 import {
   loginStart,
-  loginFailure,
+  // loginFailure,
   loginSuccess,
   logoutFailure,
   logoutStart,
@@ -13,13 +13,13 @@ import {
 
 function* clientInfo(authClient) {
 
-  console.log("clientinfo run")
+  // console.log("clientinfo run")
   const identity = yield call([authClient, authClient.getIdentity]);
   
   const principal = identity.getPrincipal().toText();
 
-  console.log("Identity check:", identity);
-  console.log("Principal check:", principal);
+  // console.log("Identity check:", identity);
+  // console.log("Principal check:", principal);
 
   yield put(loginSuccess({
     isAuthenticated: true,
@@ -42,7 +42,7 @@ function* performLogin(authClient) {
 
 function* checkLogin() {
 
-  console.log('handlogin run check ')
+  // console.log('handlogin run check ')
     
   // try {
         const authClient = yield AuthClient.create();
@@ -61,7 +61,7 @@ function* checkLogin() {
 
 function* handleLogin() {
 
-  console.log('handlogin run check ')
+  // console.log('handlogin run check ')
     
   // try {
         const authClient = yield AuthClient.create();

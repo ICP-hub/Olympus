@@ -8,7 +8,7 @@ import internetIdentityReducer from './InternetIdentityReducer';
 
 const rootReducer = combineReducers({
   auth: WalletReducer,
-   role: RoleReducer,
+  role: RoleReducer,
   hubs: AllHubReducer,
   actors:actorReducer,
   internet: internetIdentityReducer,

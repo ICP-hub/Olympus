@@ -8,7 +8,7 @@ import { actorSaga } from './actorBindSaga';
 export default function* rootSaga() {
     yield all([
         walletSagas(),
-         roleSaga(),
+        roleSaga(),
         allHubsSaga(),
         internetIdentitySaga(),
         actorSaga()

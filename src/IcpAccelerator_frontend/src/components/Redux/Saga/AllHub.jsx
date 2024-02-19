@@ -10,7 +10,7 @@ const selectActor = (currState) => currState.actors.actor;
 function* fetchAllHubsHandler() {
   try {
     const actor = yield select(selectActor);
-    // console.log("selectActor run hua allhub.jsx mai ",actor)
+    // console.log("actor run => => => ",actor)
 
     const Allhubs = yield call([actor, actor.get_icp_hubs_candid]);
 

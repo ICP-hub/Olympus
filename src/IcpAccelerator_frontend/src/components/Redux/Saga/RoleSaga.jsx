@@ -1,14 +1,20 @@
-import { takeLatest, call, put } from "redux-saga/effects";
-import { IcpAccelerator_backend } from "../../../../../declarations/IcpAccelerator_backend/index";
-import {
-  rolesHandlerFailure,
-  rolesHandlerRequest,
-  rolesHandlerSuccess,
-} from "../Reducers/RoleReducer";
+import { takeLatest, call, put, select } from "redux-saga/effects";
+import { rolesHandlerFailure,rolesHandlerRequest, rolesHandlerSuccess } from "../Reducers/RoleReducer";
+
+
+const selectActor = (currState) => currState.actors.actor;
+
 
 function* fetchRoleHandler() {
   try {
-    const roles = yield call(IcpAccelerator_backend.get_all_roles);
+
+    const actor = yield select(selectActor);
+    // console.log('actor => => => ', actor)
+
+    const roles = yield call([actor, actor.get_all_roles]);
+
+    // console.log('roles in rolesaga => ', roles)
+
     yield put(rolesHandlerSuccess(roles));
   } catch (error) {
     yield put(rolesHandlerFailure(error.toString()));
