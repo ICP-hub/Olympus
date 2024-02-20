@@ -10,13 +10,14 @@ use sha2::{Digest, Sha256};
 use std::io::Read;
 
 
+
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType)]
 pub struct ProjectInfo {
     id: Option<String>, // Assuming 'id' field is generated here
     project_name: Option<String>,
     project_logo: Option<String>,
     project_cover: Option<Vec<u8>>,
-    project_area_of_focus: Option<String>,
+    project_area_of_focus: Option<AreaOfFocus>,
     project_description: Option<String>,
     project_url: Option<String>,
     social_links: Option<SocialLinksInfo>,
@@ -55,6 +56,20 @@ pub struct TeamMember {
     social_links: Option<SocialLinksInfo>,
     member_username: Option<String>,
 }
+
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq, Eq, Hash)]
+pub enum AreaOfFocus {
+    DeFi,
+    Tooling,
+    NFTs,
+    Infrastructure,
+    DAO,
+    Social,
+    Games,
+    Other,
+    MetaVerse,
+}
+
 pub type ApplicationDetails = HashMap<Principal, Vec<ProjectInfo>>;
 
 thread_local! {
@@ -101,7 +116,7 @@ pub async fn create_project(params: ProjectInfo)->std::string::String {
         project_name: params.project_name,
         project_logo: params.project_logo,
         project_cover: params.project_cover,
-        project_area_of_focus: params.project_area_of_focus,
+        project_area_of_focus: params.project_area_of_focus.clone(),
         project_description: params.project_description,
         project_url: params.project_url,
         social_links: params.social_links,
@@ -172,6 +187,7 @@ pub fn update_team_member(project_id: String, team_member: TeamMember) {
                     },
                     None => project.team = Some(vec![team_member]),
                 }
+
             }
         }
     });
@@ -189,6 +205,7 @@ pub fn update_project(project_id: String, updated_project: ProjectInfo) {
                 project.technology_stack = updated_project.technology_stack;
                 project.video_link = updated_project.video_link;
                 project.development_stage = updated_project.development_stage;
+                project.project_area_of_focus = updated_project.project_area_of_focus;
             }
         }
     });
@@ -215,3 +232,6 @@ pub fn delete_project(id: String)->std::string::String {
     });
     format!("Project Status Set To InActive")
 }
+
+
+

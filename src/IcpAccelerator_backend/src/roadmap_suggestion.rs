@@ -129,7 +129,6 @@ pub fn reply_to_suggestion(parent_id: u64, reply_content: String) -> (u64, Statu
             .unwrap_or(0)
             + 1;
 
-        // Assuming all replies are initially Planned. Adjust as needed.
         suggestions
             .entry(cloned_reply_status.clone())
             .or_insert_with(Vec::new)
@@ -151,11 +150,11 @@ pub fn get_suggestions_by_parent_id(parent_id: u64) -> Vec<Suggestion> {
     SUGGESTIONS_BY_STATUS.with(|s| {
         let suggestions = s.borrow();
         suggestions
-            .values() // Iterate over all vectors of suggestions by status
-            .flat_map(|vec| vec.iter()) // Flatten the vectors into a single iterator
-            .filter(|suggestion| suggestion.parent_id == Some(parent_id)) // Filter by parent_id
-            .cloned() // Clone the suggestions
-            .collect() // Collect the filtered suggestions into a Vec
+            .values() 
+            .flat_map(|vec| vec.iter()) 
+            .filter(|suggestion| suggestion.parent_id == Some(parent_id)) 
+            .cloned() 
+            .collect() 
     })
 }
 
@@ -173,5 +172,15 @@ pub fn get_suggestions_grouped_by_status() -> ApplicationDetails {
         }
 
         grouped_suggestions
+    })
+}
+
+#[query]
+pub fn get_total_suggestions_count() -> u64 {
+    SUGGESTIONS_BY_STATUS.with(|s| {
+        s.borrow()
+         .values() 
+         .map(|vec| vec.len() as u64) 
+         .sum() 
     })
 }
