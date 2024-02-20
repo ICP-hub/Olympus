@@ -13,6 +13,7 @@ use ic_kit::candid::{candid_method, export_service};
 use roles::{get_roles, RolesResponse};
 
 use manage_hubs::{get_icp_hubs, IcpHub};
+
 use mentor::MentorProfile;
 use upvotes::UpvoteRecord;
 
@@ -30,6 +31,10 @@ use register_user::FounderInfo;
 use roadmap_suggestion::{Status, Suggestion};
 use upvotes::UpvoteStorage;
 use vc_registration::VentureCapitalist;
+
+use std::collections::HashSet;
+
+// use std::hash
 
 use crate::notification::Notification;
 
@@ -49,6 +54,20 @@ fn pre_upgrade() {
 // fn post_upgrade() {
 //     mentor::mentor_specific_post_upgrade_actions();
 // }
+
+
+#[query]
+#[candid_method(query)]
+pub fn get_role_from_p_id()-> Option<HashSet<UserRole>> {
+    rbac::get_role_from_principal()
+}
+
+#[query]
+#[candid_method(query)]
+pub fn get_sample_text() -> std::string::String{
+    format!("malak tera shukar hai__")
+}
+
 
 #[update]
 #[candid_method(update)]
@@ -336,7 +355,7 @@ mod tests {
 
         let dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
         let dir = dir.parent().unwrap().parent().unwrap().join("candid");
-        write(dir.join("/home/harshpreet-singh/Documents/quadb/axxelerator/icp-accelerator/src/IcpAccelerator_backend/IcpAccelerator_backend.did"), export_candid()).expect("Write failed.");
+        write(dir.join("/home/harshpreet-singh/Documents/quadb/axxxelerator-new/ICPAccelerator/src/IcpAccelerator_backend/IcpAccelerator_backend.did"), export_candid()).expect("Write failed.");
     }
 }
 
