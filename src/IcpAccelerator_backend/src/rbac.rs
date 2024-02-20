@@ -23,6 +23,14 @@ thread_local! {
     pub static ROLES: RefCell<RoleRegistry> = RefCell::new(RoleRegistry::new());
 }
 
+#[query]
+pub fn get_role_from_principal() -> Option<HashSet<UserRole>> {
+    let p_id = caller();
+    ROLES.with(|roles| {
+        let user_roles = roles.borrow();
+        user_roles.get(&p_id).cloned()
+    })
+}
 
 #[update]
 pub fn assign_roles_to_principal(roles_to_assign: Vec<UserRole>) -> String {
