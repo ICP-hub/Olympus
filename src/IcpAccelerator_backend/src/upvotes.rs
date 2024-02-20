@@ -20,7 +20,7 @@ pub struct UpvoterInfo {
 
 #[derive(CandidType, Deserialize, Serialize, Default, Clone, Debug)]
 pub struct UpvoteRecord {
-    count: Nat, // Total upvotes for the project
+    pub count: Nat, // Total upvotes for the project
     upvoters: Vec<UpvoterInfo>, // Maps Principal to UpvoterInfo
 }
 
