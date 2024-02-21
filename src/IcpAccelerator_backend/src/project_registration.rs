@@ -103,7 +103,7 @@ pub fn pre_upgrade() {
 //     });
 // }
 
-pub async fn create_project(params: ProjectInfo)->std::string::String {
+pub async fn create_project(params: ProjectInfo)-> String {
 
     // Generate a unique ID for the project
     let uuids = raw_rand().await.unwrap().0; // Note: In production, handle errors properly
@@ -111,7 +111,7 @@ pub async fn create_project(params: ProjectInfo)->std::string::String {
     let new_id = uid.clone().to_string();
 
     let caller = caller();
-    let mut new_project = ProjectInfo{
+    let new_project = ProjectInfo{
         id: Some(new_id),
         project_name: params.project_name,
         project_logo: params.project_logo,

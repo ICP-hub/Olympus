@@ -1,19 +1,19 @@
+mod hub_organizer;
+mod leaderboard;
 mod manage_hubs;
 mod mentor;
 mod notification;
-mod roles;
-mod hub_organizer;
 mod project_like;
+mod roles;
 mod upvotes;
 mod vc_registration;
-mod leaderboard;
 
-use hub_organizer::{UniqueHubs, HubOrganizerRegistration};
+use hub_organizer::{HubOrganizerRegistration, UniqueHubs};
 use ic_cdk::api::caller;
 use ic_kit::candid::{candid_method, export_service};
+use leaderboard::{LeaderboardEntryForLikes, LeaderboardEntryForUpvote};
 use project_like::LikeRecord;
 use roles::{get_roles, RolesResponse};
-use leaderboard::{LeaderboardEntryForUpvote, LeaderboardEntryForLikes};
 
 use manage_hubs::{get_icp_hubs, IcpHub};
 use mentor::MentorProfile;
@@ -28,7 +28,7 @@ use rbac::{assign_roles_to_principal, has_required_role, UserRole};
 
 use candid::Principal;
 use ic_cdk_macros::{pre_upgrade, query, update};
-use project_registration::{ProjectInfo,TeamMember, DocsInfo, AreaOfFocus};
+use project_registration::{AreaOfFocus, DocsInfo, ProjectInfo, TeamMember};
 use register_user::FounderInfo;
 use roadmap_suggestion::{Status, Suggestion};
 use upvotes::UpvoteStorage;
@@ -55,8 +55,10 @@ fn pre_upgrade() {
 
 #[update]
 #[candid_method(update)]
-async fn register_founder_caller(profile: FounderInfo)->std::string::String{
-    register_user::register_founder(profile).await
+async fn register_founder_caller(profile: FounderInfo) -> String {
+    let role = vec![UserRole::Founder, UserRole::Project];
+    register_user::register_founder(profile).await;
+    assign_roles_to_principal(role)
 }
 
 #[query]
@@ -73,20 +75,29 @@ fn list_all_founders_caller() -> Vec<register_user::FounderInfo> {
 
 #[update]
 #[candid_method(update)]
-fn delete_founder_caller()->std::string::String {
+fn delete_founder_caller() -> std::string::String {
     register_user::delete_founder()
 }
 
 #[update]
 #[candid_method(update)]
-fn update_founder_caller(updated_profile: FounderInfo) {
-    register_user::update_founder(updated_profile)
+fn update_founder_caller(updated_profile: FounderInfo) -> String {
+    if has_required_role(&vec![UserRole::Founder, UserRole::Project]) {
+        register_user::update_founder(updated_profile)
+    } else {
+        "you are not supposed to change someone profile".to_string()
+    }
 }
 
 #[update]
 #[candid_method(update)]
-async fn create_project(params: ProjectInfo)->std::string::String{
-    project_registration::create_project(params).await
+async fn create_project(params: ProjectInfo) -> String {
+    if has_required_role(&vec![UserRole::Founder, UserRole::Project]) {
+        project_registration::create_project(params).await
+    } else {
+        "you hv n't registered as a user yet".to_string()
+    }
+    // assign_roles_to_principal(roles)
 }
 
 #[query]
@@ -103,39 +114,52 @@ fn list_all_projects() -> Vec<ProjectInfo> {
 
 #[update]
 #[candid_method(update)]
-fn update_project(project_id: String, updated_project : ProjectInfo){
-    project_registration::update_project(project_id, updated_project)
+fn update_project(project_id: String, updated_project: ProjectInfo) -> String{
+    if has_required_role(&vec![UserRole::Founder, UserRole::Project]) {
+        project_registration::update_project(project_id, updated_project);
+        "updation success".to_string()
+    } else {
+        "you are not supposed to change someone profile".to_string()
+    }
 }
 
 #[update]
 #[candid_method(update)]
-fn update_project_docs(project_id: String, docs: DocsInfo){
-    project_registration::update_project_docs(project_id, docs)
+fn update_project_docs(project_id: String, docs: DocsInfo) -> String {
+    if has_required_role(&vec![UserRole::Project, UserRole::Founder]) {
+        project_registration::update_project_docs(project_id, docs);
+        format!("project docs got updated")
+    } else {
+        format!("you arn't have permissions to update someone's belongings")
+    }
 }
 
 #[update]
 #[candid_method(update)]
-fn update_team_member(project_id: String, team_member: TeamMember){
-    project_registration::update_team_member(project_id, team_member)
+fn update_team_member(project_id: String, team_member: TeamMember) -> String {
+    if has_required_role(&vec![UserRole::Founder, UserRole::Project]) {
+        project_registration::update_team_member(project_id, team_member);
+        "team members updated sucessfully".to_string()
+    } else {
+        "you hv n't registered as a user yet".to_string()
+    }
 }
-
 
 #[update]
 #[candid_method(update)]
-fn delete_project(id: String)->std::string::String {
+fn delete_project(id: String) -> std::string::String {
     project_registration::delete_project(id)
 }
 
-
 #[update]
 #[candid_method(update)]
-fn like_project(project_id: String)->std::string::String{
+fn like_project(project_id: String) -> std::string::String {
     project_like::like_project(project_id)
 }
 
 #[query]
 #[candid_method(query)]
-fn get_user_likes(project_id: String) -> Option<LikeRecord>{
+fn get_user_likes(project_id: String) -> Option<LikeRecord> {
     project_like::get_user_likes(project_id)
 }
 
@@ -171,7 +195,7 @@ fn get_suggestions_by_parent_id_caller(parent_id: u64) -> Vec<Suggestion> {
 
 #[query]
 #[candid_method(query)]
-fn get_total_suggestions() -> u64{
+fn get_total_suggestions() -> u64 {
     roadmap_suggestion::get_total_suggestions_count()
 }
 
@@ -221,43 +245,54 @@ pub fn get_all_mentors_candid() -> Vec<MentorProfile> {
 
 #[update]
 #[candid_method(update)]
-pub fn upvote_project(project_id: String)->std::string::String {
+pub fn upvote_project(project_id: String) -> std::string::String {
     upvotes::upvote(project_id)
 }
 
 #[query]
 #[candid_method(query)]
-pub fn get_project_upvotes(project_id: String)-> Option<UpvoteRecord>{
+pub fn get_project_upvotes(project_id: String) -> Option<UpvoteRecord> {
     upvotes::get_upvote_record(project_id)
 }
 
 #[update]
 #[candid_method(update)]
-pub async fn register_venture_capitalist_caller(params: VentureCapitalist)->std::string::String{
-    vc_registration::register_venture_capitalist(params).await
+pub async fn register_venture_capitalist_caller(params: VentureCapitalist) -> String {
+    let roles_to_assign = vec![UserRole::VC];
+    vc_registration::register_venture_capitalist(params).await;
+    assign_roles_to_principal(roles_to_assign)
 }
 
 #[query]
 #[candid_method(query)]
-pub fn get_venture_capitalist_info() -> Option<VentureCapitalist>{
+pub fn get_venture_capitalist_info() -> Option<VentureCapitalist> {
     vc_registration::get_vc_info()
 }
 
 #[query]
 #[candid_method(query)]
-pub fn list_all_venture_capitalist() -> Vec<VentureCapitalist>{
+pub fn list_all_venture_capitalist() -> Vec<VentureCapitalist> {
     vc_registration::list_all_vcs()
 }
 
 #[update]
 #[candid_method(update)]
-pub fn update_venture_capitalist_caller(params: VentureCapitalist){
-    vc_registration::update_venture_capitalist(params);
+pub fn update_venture_capitalist_caller(params: VentureCapitalist) ->String{
+    let required_roles = [UserRole::VC];
+
+    if has_required_role(&required_roles) {
+        vc_registration::update_venture_capitalist(params);
+        "updation done".to_string()
+    } else {
+        "I am sorry, you don't hv access to this function!".to_string()
+    }
+
+    
 }
 
 #[update]
 #[candid_method(update)]
-pub fn delete_venture_capitalist_caller() ->std::string::String{
+pub fn delete_venture_capitalist_caller() -> std::string::String {
     vc_registration::delete_venture_capitalist()
 }
 
@@ -288,41 +323,54 @@ pub fn view_notifications_candid(mentor_id: Principal) -> Vec<Notification> {
 
 #[update]
 #[candid_method(update)]
-pub fn respond_to_connection_request_candid(mentor_id: Principal, startup_id: Principal, accept: bool) {
+pub fn respond_to_connection_request_candid(
+    mentor_id: Principal,
+    startup_id: Principal,
+    accept: bool,
+) {
     notification::respond_to_connection_request(mentor_id, startup_id, accept);
 }
 
 //Hub Organizers
 #[update]
 #[candid_method(update)]
-pub async fn register_hub_organizer_candid(form : hub_organizer::HubOrganizerRegistration)-> String{
-    hub_organizer::register_hub_organizer(form).await
+pub async fn register_hub_organizer_candid(
+    form: hub_organizer::HubOrganizerRegistration,
+) -> String {
+    hub_organizer::register_hub_organizer(form).await;
+    let roles_to_assign = vec![UserRole::HubOrganizer];
+    assign_roles_to_principal(roles_to_assign)
 }
 
 #[query]
 #[candid_method(query)]
-pub fn get_hub_organizer_candid()-> Option<UniqueHubs>{
-hub_organizer::get_hub_organizer()
+pub fn get_hub_organizer_candid() -> Option<UniqueHubs> {
+    hub_organizer::get_hub_organizer()
 }
 
 #[update]
 #[candid_method(update)]
-pub fn update_hub_organizer_candid(params : HubOrganizerRegistration) -> String{
-    hub_organizer::update_hub_organizer(params)
+pub fn update_hub_organizer_candid(params: HubOrganizerRegistration) -> String {
+    let required_role = vec![UserRole::HubOrganizer];
+
+    if has_required_role(&required_role) {
+        hub_organizer::update_hub_organizer(params)
+    } else {
+        "you don't have access to this function".to_string()
+    }
 }
 
 #[query]
 #[candid_method(query)]
-pub fn get_leaderboard_using_upvotes()->Vec<LeaderboardEntryForUpvote>{
+pub fn get_leaderboard_using_upvotes() -> Vec<LeaderboardEntryForUpvote> {
     leaderboard::get_leaderboard_by_upvotes()
 }
 
 #[query]
 #[candid_method(query)]
-pub fn get_leaderboard_using_likes()->Vec<LeaderboardEntryForLikes>{
+pub fn get_leaderboard_using_likes() -> Vec<LeaderboardEntryForLikes> {
     leaderboard::get_leaderboard_by_likes()
 }
-
 
 //made for admin side.....
 // #[query]
@@ -358,9 +406,6 @@ mod tests {
 
         let dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
         let dir = dir.parent().unwrap().parent().unwrap().join("candid");
-        write(dir.join("/home/harshpreet-singh/Documents/quadb/axxelerator/icp-accelerator/src/IcpAccelerator_backend/IcpAccelerator_backend.did"), export_candid()).expect("Write failed.");
+        write(dir.join("/home/harshpreet-singh/Documents/quadb/axxxelerator-new/ICPAccelerator/src/IcpAccelerator_backend/IcpAccelerator_backend.did"), export_candid()).expect("Write failed.");
     }
 }
-
-
-
