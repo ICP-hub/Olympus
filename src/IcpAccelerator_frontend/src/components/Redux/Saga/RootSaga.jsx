@@ -4,6 +4,8 @@ import { walletSagas } from './AuthSaga';
 import { allHubsSaga } from './AllHub';
 import { internetIdentitySaga } from './InternetIdentitySaga';
 import { actorSaga } from './actorBindSaga';
+import { userRoleSaga } from './userRoleSaga';
+
 
 export default function* rootSaga() {
     yield all([
@@ -11,6 +13,7 @@ export default function* rootSaga() {
         roleSaga(),
         allHubsSaga(),
         internetIdentitySaga(),
-        actorSaga()
+        actorSaga(),
+        userRoleSaga()
     ]);
 }

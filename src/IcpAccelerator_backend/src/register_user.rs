@@ -225,12 +225,17 @@ pub async fn register_founder(profile: FounderInfo)->std::string::String{
     FOUNDER_STORAGE.with(|storage| {
 
         let mut storage = storage.borrow_mut();
-        if storage.contains_key(&caller) {
-            panic!("User with this Principal ID already exists");
-        } else {
+        // if storage.contains_key(&caller) {
+        //     panic!("User with this Principal ID already exists");
+        // } else {
+        //     storage.insert(caller, new_founder);
+        //     println!("Founder Registered {:?}", caller);
+        // }
+
+     
             storage.insert(caller, new_founder);
             println!("Founder Registered {:?}", caller);
-        }
+        
     });
     format!("User registered successfully with ID: {}", new_id)
 }
