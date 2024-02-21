@@ -3,7 +3,7 @@ import Home from "./components/Home/Home";
 // import AllDetailsForm from "./components/ProjectForm/AllDetailsForm";
 // import ProgressCard from "./components/Common/ProgressCard";
 // import Sidebar from "./components/Layout/SidePanel/Sidebar";
-// import DashBoard from "./components/Dashboard/DashBoard";
+import DashBoard from "./components/Dashboard/DashBoard";
 // import ProjectDetails from "./components/Project/ProjectDetails";
 // import UserProfile from "./components/UserProfile/UserProfile";
 import ConnectWallet from "./models/ConnectWallet";

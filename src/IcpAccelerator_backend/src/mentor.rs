@@ -57,13 +57,13 @@ pub async fn register_mentor(profile: MentorProfile) ->std::string::String{
 
     let uid = format!("{:x}", Sha256::digest(&random_bytes));
     
-    let already_registered =
-        MENTOR_REGISTRY.with(|registry| registry.borrow().contains_key(&caller));
+    // let already_registered =
+    //     MENTOR_REGISTRY.with(|registry| registry.borrow().contains_key(&caller));
 
-    if already_registered {
-        //return "This Principal is already registered.".to_string();
-        ic_cdk::println!("This Principal is already registered")
-    }
+    // if already_registered {
+    //     //return "This Principal is already registered.".to_string();
+    //     ic_cdk::println!("This Principal is already registered")
+    // }
 
     let mentor_internal = MentorInternal {
         profile,

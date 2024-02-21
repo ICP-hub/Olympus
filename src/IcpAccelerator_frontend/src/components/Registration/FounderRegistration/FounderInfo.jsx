@@ -6,7 +6,7 @@ import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { allHubHandlerRequest } from "../../Redux/Reducers/All_IcpHubReducer";
 // import { AuthClient } from "@dfinity/auth-client";
-
+import { useNavigate } from "react-router-dom";
 
 const today = new Date();
 const startDate = new Date('1900-01-01');
@@ -23,12 +23,14 @@ const schema = yup.object({
 });
 
 const FounderInfo = () => {
+
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
   const actor = useSelector((currState) => currState.actors.actor);
+  
   const [inputType, setInputType] = useState("date");
 
   const dispatch = useDispatch();
-
+  const navigate =useNavigate()
   // console.log("actor aa ja =>", actor);
   // console.log("getAllIcpHubs", getAllIcpHubs);
 
@@ -64,6 +66,7 @@ const FounderInfo = () => {
     try {
       await actor.register_founder_caller(founderData);
       console.log("data passed to backend");
+      navigate('/dashboard')
     } catch (error) {
       console.error("Error sending data to the backend:", error);
     }
