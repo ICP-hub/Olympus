@@ -63,6 +63,12 @@ pub async fn register_mentor(profile: MentorProfile) -> String{
         
     //     ic_cdk::println!("This Principal is already registered");
     //     return "This Principal is already registered.".to_string()
+    // let already_registered =
+    //     MENTOR_REGISTRY.with(|registry| registry.borrow().contains_key(&caller));
+
+    // if already_registered {
+    //     //return "This Principal is already registered.".to_string();
+    //     ic_cdk::println!("This Principal is already registered")
     // }
 
     let mentor_internal = MentorInternal {

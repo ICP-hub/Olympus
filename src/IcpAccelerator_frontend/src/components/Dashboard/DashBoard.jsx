@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Header from "../Layout/Header/Header";
 import Sidebar from "../Layout/SidePanel/Sidebar";
 import { ProjectSection } from "./ProjectSection";
@@ -8,8 +8,26 @@ import Founder from "./Founder";
 import Partners from "./Partners";
 import Footer from "../Footer/Footer";
 import Bottombar from "../Layout/BottomBar/Bottombar";
+import { useSelector } from "react-redux";
 
 const DashBoard = () => {
+  const actor = useSelector((currState) => currState.actors.actor);
+
+
+  console.log('actor in dashboard =>', actor)
+  
+  useEffect(() => {
+    const founderDataFetchHandler = async () => {
+      const founderDataFetch = await actor.get_founder_info_caller();
+
+      console.log("dekho dekho founder data aaya => ", founderDataFetch)
+    };
+
+    founderDataFetchHandler()
+  }, [actor]);
+
+
+
   return (
     <section className="overflow-hidden relative">
       {/* <Header gradient="bg-gradient-to-r from-purple-800 from-10% via-purple-700 via-60%   to-purple-600 to-90%" /> */}

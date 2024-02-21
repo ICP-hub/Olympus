@@ -1,6 +1,6 @@
 import React from 'react';
 
-const MentorAdditionalInformation = ({ onSubmit, register, errors, fields, goToPrevious }) => {
+const InvestorAdditionalInformation = ({ onSubmit, register, errors, fields, goToPrevious }) => {
   return (
     <div>
       <form onSubmit={onSubmit} className="w-full px-4">
@@ -45,4 +45,4 @@ const MentorAdditionalInformation = ({ onSubmit, register, errors, fields, goToP
   );
 };
 
-export default MentorAdditionalInformation;
+export default InvestorAdditionalInformation;
