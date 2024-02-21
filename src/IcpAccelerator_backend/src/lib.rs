@@ -6,11 +6,14 @@ mod hub_organizer;
 mod project_like;
 mod upvotes;
 mod vc_registration;
+mod leaderboard;
 
 use hub_organizer::{UniqueHubs, HubOrganizerRegistration};
 use ic_cdk::api::caller;
 use ic_kit::candid::{candid_method, export_service};
+use project_like::LikeRecord;
 use roles::{get_roles, RolesResponse};
+use leaderboard::{LeaderboardEntryForUpvote, LeaderboardEntryForLikes};
 
 use manage_hubs::{get_icp_hubs, IcpHub};
 use mentor::MentorProfile;
@@ -25,7 +28,7 @@ use rbac::{assign_roles_to_principal, has_required_role, UserRole};
 
 use candid::Principal;
 use ic_cdk_macros::{pre_upgrade, query, update};
-use project_registration::{ProjectInfo,TeamMember, DocsInfo};
+use project_registration::{ProjectInfo,TeamMember, DocsInfo, AreaOfFocus};
 use register_user::FounderInfo;
 use roadmap_suggestion::{Status, Suggestion};
 use upvotes::UpvoteStorage;
@@ -123,6 +126,7 @@ fn delete_project(id: String)->std::string::String {
     project_registration::delete_project(id)
 }
 
+
 #[update]
 #[candid_method(update)]
 fn like_project(project_id: String)->std::string::String{
@@ -131,8 +135,8 @@ fn like_project(project_id: String)->std::string::String{
 
 #[query]
 #[candid_method(query)]
-fn get_user_likes() -> Vec<String>{
-    project_like::get_user_likes()
+fn get_user_likes(project_id: String) -> Option<LikeRecord>{
+    project_like::get_user_likes(project_id)
 }
 
 #[update]
@@ -163,6 +167,12 @@ fn reply_to_suggestion_caller(parent_id: u64, reply_content: String) -> (u64, St
 #[candid_method(query)]
 fn get_suggestions_by_parent_id_caller(parent_id: u64) -> Vec<Suggestion> {
     roadmap_suggestion::get_suggestions_by_parent_id(parent_id)
+}
+
+#[query]
+#[candid_method(query)]
+fn get_total_suggestions() -> u64{
+    roadmap_suggestion::get_total_suggestions_count()
 }
 
 #[query]
@@ -301,6 +311,18 @@ pub fn update_hub_organizer_candid(params : HubOrganizerRegistration) -> String{
     hub_organizer::update_hub_organizer(params)
 }
 
+#[query]
+#[candid_method(query)]
+pub fn get_leaderboard_using_upvotes()->Vec<LeaderboardEntryForUpvote>{
+    leaderboard::get_leaderboard_by_upvotes()
+}
+
+#[query]
+#[candid_method(query)]
+pub fn get_leaderboard_using_likes()->Vec<LeaderboardEntryForLikes>{
+    leaderboard::get_leaderboard_by_likes()
+}
+
 
 //made for admin side.....
 // #[query]
@@ -341,8 +363,4 @@ mod tests {
 }
 
 
-
-//identity
-// b5pqo-yef5a-lut3t-kmrpc-h7dnp-v3d2t-ls6di-y33wa-clrtb-xdhl4-dae
-// 2vxsx-fae
 

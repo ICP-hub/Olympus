@@ -14,6 +14,19 @@ type FounderInfo = record {
   twitter_id: opt text;
 };
 
+type Notification = record {
+  read : bool;
+  notification_type : NotificationType;
+};
+type NotificationType = variant {
+  ConnectionAcknowledgement : record {
+    social_handles : opt text;
+    accepted : bool;
+    mentor_id : principal;
+  };
+  ConnectionRequest : ConnectionRequest;
+};
+
 type IcpHub = record { id : int32; region : text; name : text };
 type MentorProfile = record {
   email_address : opt text;
@@ -42,9 +55,24 @@ type MentorProfile = record {
   preferred_communication_tools : opt text;
   volunteer_experience : opt text;
 };
+type HubOrganizerRegistration = record {
+  website_url : opt text;
+  profile_picture : opt vec nat8;
+  hub_location : opt text;
+  hub_name : opt text;
+  email : opt text;
+  contact_number : opt text;
+  privacy_policy_consent : opt bool;
+  communication_consent : opt bool;
+  full_name : opt text;
+  id_professional_document_upload : opt vec nat8;
+  hub_description : opt text;
+};
 
 type Role = record { id : int32; name : text };
 type RolesResponse = record { roles : vec Role };
+type UserRole = variant { VC; Mentor; HubOrganizer; Project };
+type UniqueHubs = record { hubs : HubOrganizerRegistration; uuid : text };
 
 
 type UpdateFounderInfo = record {
@@ -190,6 +218,18 @@ type Status = variant {
   InProgress;
 };
 
+type AreaOfFocus = variant{
+  DeFi;
+  Tooling;
+  NFTs;
+  Infrastructure;
+  DAO;
+  Social;
+  Games;
+  Other;
+  MetaVerse;
+};
+
 type Suggestion = record {
   id: nat64;
   content: text;
@@ -223,13 +263,14 @@ type ProjectUpdate = record {
   technology_stack: opt text;
   video_link: opt text;
   development_stage: opt text;
+  project_area_of_focus: opt AreaOfFocus;
 };
 
 type ProjectCreationInfo = record {
     project_name: opt text;
     project_logo: opt text;
     project_cover: opt vec nat8;
-    project_area_of_focus: opt text;
+    project_area_of_focus: opt AreaOfFocus;
     project_description: opt text;
     project_url: opt text;
     social_links: opt SocialLinksInfo;
@@ -241,7 +282,7 @@ type ProjectInfoGet = record {
     project_name: opt text;
     project_logo: opt text;
     project_cover: opt vec nat8;
-    project_area_of_focus: opt text;
+    project_area_of_focus: opt AreaOfFocus;
     project_description: opt text;
     project_url: opt text;
     social_links: opt SocialLinksInfo;
@@ -264,6 +305,16 @@ type UpvoterInfo = record {
 type UpvoteRecord = record {
   count: nat;
   upvoters: vec UpvoterInfo; // Using a vector to represent the collection of upvoter information
+};
+
+type LikeInfo = record {
+  principal_id: opt text;
+  name: opt text;
+  image: opt blob; // Representing binary data for the image as a blob
+};
+type LikeRecord = record {
+  count: nat;
+  upvoters: vec LikeInfo; // Using a vector to represent the collection of upvoter information
 };
 
 type VentureCapitalistGet = record {
@@ -314,6 +365,16 @@ type VentureCapitalist = record {
   preferred_icp_hub: opt text;
 };
 
+type LeaderboardEntryForUpvote = record {
+  project_id : opt text;
+  upvote_count: opt nat;
+};
+
+type LeaderboardEntryForlikes = record {
+  project_id : opt text;
+  like_count: opt nat;
+};
+
 
 
 
@@ -333,6 +394,9 @@ service : {
   get_suggestions_by_parent_id_caller : (nat64) -> (vec Suggestion) query;
   get_suggestions_by_status_caller : (Status) -> (vec Suggestion) query;
   get_venture_capitalist_info: () -> (opt VentureCapitalistGet) query;
+  get_total_suggestions: () -> (nat64) query;
+  get_role_from_p_id : () -> (opt vec UserRole) query;
+  get_sample_text : () -> (text) query;
   greet : () -> (text) query;
   list_all_founders_caller : () -> (vec GetFounderInfo) query;
   list_all_projects : () -> (vec ProjectInfoGet) query;
@@ -349,7 +413,12 @@ service : {
   update_venture_capitalist_caller: (VentureCapitalist) -> ();
   get_project_upvotes: (text) -> (opt UpvoteRecord) query;
   like_project : (text) -> (text);
-  get_user_likes : () -> (vec text) query;
+  get_user_likes : (text) -> (opt LikeRecord) query;
   update_project_docs : (text, DocsInfo) -> ();
   update_team_member : (text, TeamMember) -> ();
+  get_leaderboard_using_upvotes: () -> (vec LeaderboardEntryForUpvote) query;
+  get_leaderboard_using_likes: () -> (vec LeaderboardEntryForlikes) query;
+  view_notifications_candid : (principal) -> (vec Notification) query;
+  respond_to_connection_request_candid : (principal, principal, bool) -> ();
+  send_connection_request : (principal, text) -> ();
 }

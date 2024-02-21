@@ -236,6 +236,7 @@ pub async fn register_founder(profile: FounderInfo)->std::string::String{
             storage.insert(caller, new_founder);
             println!("Founder Registered {:?}", caller);
         
+
     });
     format!("User registered successfully with ID: {}", new_id)
 }
