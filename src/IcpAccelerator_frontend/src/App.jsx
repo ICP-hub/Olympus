@@ -69,9 +69,9 @@ const App = () => {
       />
       {/* <DashBoard/> */}
       {/* <ProgressCard/> */}
-      <AllDetailsForm/>
+      {/* <AllDetailsForm/> */}
       {/* <ProjectDetails/> */}
-      {/* <Home/> */}
+      <Home/>
       {/* <UserProfile/> */}
       {/* <RoleSelector /> */}
       {/* <AppRoutes/> */}
