@@ -236,14 +236,14 @@ service : {
   reply_to_suggestion_caller : (nat64, text) -> (nat64, Status);
   respond_to_connection_request_candid : (principal, principal, bool) -> ();
   send_connection_request : (principal, text) -> ();
-  update_founder_caller : (FounderInfo) -> ();
+  update_founder_caller : (FounderInfo) -> (text);
   update_hub_organizer_candid : (HubOrganizerRegistration) -> (text);
   update_mentor_profile : (MentorProfile) -> (text);
-  update_project : (text, ProjectInfo) -> ();
-  update_project_docs : (text, DocsInfo) -> ();
+  update_project : (text, ProjectInfo) -> (text);
+  update_project_docs : (text, DocsInfo) -> (text);
   update_suggestion_status_caller : (nat64, Status) -> ();
-  update_team_member : (text, TeamMember) -> ();
-  update_venture_capitalist_caller : (VentureCapitalist) -> ();
+  update_team_member : (text, TeamMember) -> (text);
+  update_venture_capitalist_caller : (VentureCapitalist) -> (text);
   upvote_project : (text) -> (text);
   view_notifications_candid : (principal) -> (vec Notification) query;
 }
