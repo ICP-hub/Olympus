@@ -8,6 +8,7 @@ mod roles;
 mod upvotes;
 mod vc_registration;
 
+use std::collections::HashSet;
 use hub_organizer::{HubOrganizerRegistration, UniqueHubs};
 use ic_cdk::api::caller;
 use ic_kit::candid::{candid_method, export_service};
@@ -52,6 +53,12 @@ fn pre_upgrade() {
 // fn post_upgrade() {
 //     mentor::mentor_specific_post_upgrade_actions();
 // }
+
+#[query]
+#[candid_method(query)]
+pub fn get_role_from_p_id()-> Option<HashSet<UserRole>> {
+    rbac::get_role_from_principal()
+}
 
 #[update]
 #[candid_method(update)]
