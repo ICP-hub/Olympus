@@ -1,33 +1,98 @@
+type AreaOfFocus = variant {
+  DAO;
+  Games;
+  DeFi;
+  NFTs;
+  Infrastructure;
+  Tooling;
+  Social;
+  MetaVerse;
+  Other;
+};
 type ConnectionRequest = record {
   startup_id : principal;
   message : text;
   mentor_id : principal;
 };
+type DocsInfo = record {
+  tokenomics : opt text;
+  pitch_deck : opt text;
+  white_paper : opt text;
+  technical_docs : opt text;
+};
 type FounderInfo = record {
-  full_name: opt text;
-  date_of_birth: opt text;
-  email: opt text;
-  preferred_icp_hub: opt text;
-  phone_number: opt text;
-  linked_in_profile: opt text;
-  telegram_id: opt text;
-  twitter_id: opt text;
+  id : opt text;
+  founder_image : opt vec nat8;
+  linked_in_profile : opt text;
+  equity_owner_of_company : opt text;
+  future_goals : opt text;
+  co_founder_linkedin_profile : opt text;
+  break_even_analysis : opt text;
+  how_long_know_each_other : opt text;
+  is_team_full_time_working_on_project : opt text;
+  telegram_id : opt text;
+  average_monthly_revenue : opt text;
+  regulatory_approvals : opt text;
+  potential_risks : opt text;
+  twitter_id : opt text;
+  company_debt : opt text;
+  market_size : opt text;
+  registration_details : opt text;
+  preferred_icp_hub : opt text;
+  currently_users : opt text;
+  share_about_venture : opt text;
+  email : opt text;
+  key_achieved_milestones : opt text;
+  why_are_you_apply_for_acceleration_program : opt text;
+  customer_demographics : opt text;
+  committed_to_work_on_the_program_during_acceleration : opt bool;
+  how_many_co_founder : opt text;
+  target_market : opt text;
+  user_feedback : opt text;
+  competitors : opt text;
+  is_profile_complete : opt bool;
+  long_term_goals : opt text;
+  profile_complete : opt nat8;
+  projected_revenues : opt text;
+  is_active : opt bool;
+  stage_of_company : opt text;
+  date_of_birth : opt text;
+  testimonials : opt text;
+  phone_number : opt text;
+  company_vision : opt text;
+  mitigation_strategies : opt text;
+  role_within_company : opt text;
+  previous_part_in_incubator : opt bool;
+  average_monthly_spending : opt text;
+  funding_requirements : opt text;
+  raised_any_capital : opt bool;
+  location : opt text;
+  full_name : opt text;
+  refer : opt text;
+  employee_count : opt text;
 };
-
-type Notification = record {
-  read : bool;
-  notification_type : NotificationType;
+type HubOrganizerRegistration = record {
+  website_url : opt text;
+  profile_picture : opt vec nat8;
+  hub_location : opt text;
+  hub_name : opt text;
+  email : opt text;
+  contact_number : opt text;
+  privacy_policy_consent : opt bool;
+  communication_consent : opt bool;
+  full_name : opt text;
+  id_professional_document_upload : opt vec nat8;
+  hub_description : opt text;
 };
-type NotificationType = variant {
-  ConnectionAcknowledgement : record {
-    social_handles : opt text;
-    accepted : bool;
-    mentor_id : principal;
-  };
-  ConnectionRequest : ConnectionRequest;
-};
-
 type IcpHub = record { id : int32; region : text; name : text };
+type LeaderboardEntryForLikes = record {
+  like_count : opt nat;
+  project_id : opt text;
+};
+type LeaderboardEntryForUpvote = record {
+  upvote_count : opt nat;
+  project_id : opt text;
+};
 type MentorProfile = record {
   email_address : opt text;
   mentor_image : opt vec nat8;
@@ -55,370 +120,130 @@ type MentorProfile = record {
   preferred_communication_tools : opt text;
   volunteer_experience : opt text;
 };
-type HubOrganizerRegistration = record {
-  website_url : opt text;
-  profile_picture : opt vec nat8;
-  hub_location : opt text;
-  hub_name : opt text;
-  email : opt text;
-  contact_number : opt text;
-  privacy_policy_consent : opt bool;
-  communication_consent : opt bool;
-  full_name : opt text;
-  id_professional_document_upload : opt vec nat8;
-  hub_description : opt text;
+type Notification = record {
+  read : bool;
+  notification_type : NotificationType;
 };
-
+type NotificationType = variant {
+  ConnectionAcknowledgement : record {
+    social_handles : opt text;
+    accepted : bool;
+    mentor_id : principal;
+  };
+  ConnectionRequest : ConnectionRequest;
+};
+type ProjectInfo = record {
+  id : opt text;
+  project_description : opt text;
+  project_url : opt text;
+  docs : opt DocsInfo;
+  video_link : opt text;
+  tags : opt text;
+  team : opt vec TeamMember;
+  technology_stack : opt text;
+  project_creation_date : opt text;
+  development_stage : opt text;
+  project_area_of_focus : opt AreaOfFocus;
+  is_active : opt bool;
+  project_cover : opt vec nat8;
+  project_logo : opt text;
+  project_name : opt text;
+  social_links : opt SocialLinksInfo;
+};
 type Role = record { id : int32; name : text };
 type RolesResponse = record { roles : vec Role };
-type UserRole = variant { VC; Mentor; HubOrganizer; Project };
-type UniqueHubs = record { hubs : HubOrganizerRegistration; uuid : text };
-
-
-type UpdateFounderInfo = record {
-    // Company Information fields 
-    location: opt text;
-    role_within_company: opt text;
-    employee_count: opt text;
-    stage_of_company: opt text;
-    founder_image: opt vec nat8;
-
-    // Company Metrics fields 
-    currently_users: opt text;
-    average_monthly_spending: opt text;
-    average_monthly_revenue: opt text;
-    company_debt: opt text;
-    raised_any_capital: opt bool;
-    previous_part_in_incubator: opt bool;
-
-    // Team Details fields 
-    how_many_co_founder: opt text;
-    co_founder_linkedin_profile: opt text;
-    how_long_know_each_other: opt text;
-    is_team_full_time_working_on_project: opt text;
-    equity_owner_of_company: opt text;
-    share_about_venture: opt text;
-
-    // Additional Information fields 
-    why_are_you_apply_for_acceleration_program: opt text;
-    committed_to_work_on_the_program_during_acceleration: opt bool;
-    refer: opt text;
-
-
-    // Market Analysis fields 
-    target_market: opt text;
-    market_size: opt text;
-    customer_demographics: opt text;
-    competitors: opt text;
-
-    // Financial Projections fields 
-    projected_revenues: opt text;
-    break_even_analysis: opt text;
-    funding_requirements: opt text;
-
-    // Legal And Compliance fields 
-    registration_details: opt text;
-    regulatory_approvals: opt text;
-
-    // Milestones And Goals 
-    key_achieved_milestones: opt text;
-    future_goals: opt text;
-
-    // Feedback And Testimonials 
-    user_feedback: opt text;
-    testimonials: opt text;
-
-    // Risk Analysis fields 
-    potential_risks: opt text;
-    mitigation_strategies: opt text;
-
-    // Vision And Long Term Goals fields 
-    company_vision: opt text;
-    long_term_goals: opt text;
-};
-
-type GetFounderInfo = record {
-    id: opt text;
-    full_name: opt text;
-    date_of_birth: opt text;
-    email: opt text;
-    preferred_icp_hub: opt text;
-    phone_number: opt text;
-    linked_in_profile: opt text;
-    telegram_id: opt text;
-    twitter_id: opt text;
-    profile_complete: opt nat8;
-    is_active: opt bool;
-    // Company Information fields 
-    location: opt text;
-    role_within_company: opt text;
-    employee_count: opt text;
-    stage_of_company: opt text;
-    founder_image: opt vec nat8;
-
-    // Company Metrics fields 
-    currently_users: opt text;
-    average_monthly_spending: opt text;
-    average_monthly_revenue: opt text;
-    company_debt: opt text;
-    raised_any_capital: opt bool;
-    previous_part_in_incubator: opt bool;
-
-    // Team Details fields 
-    how_many_co_founder: opt text;
-    co_founder_linkedin_profile: opt text;
-    how_long_know_each_other: opt text;
-    is_team_full_time_working_on_project: opt text;
-    equity_owner_of_company: opt text;
-    share_about_venture: opt text;
-
-    // Additional Information fields 
-    why_are_you_apply_for_acceleration_program: opt text;
-    committed_to_work_on_the_program_during_acceleration: opt bool;
-    refer: opt text;
-
-
-    // Market Analysis fields 
-    target_market: opt text;
-    market_size: opt text;
-    customer_demographics: opt text;
-    competitors: opt text;
-
-    // Financial Projections fields 
-    projected_revenues: opt text;
-    break_even_analysis: opt text;
-    funding_requirements: opt text;
-
-    // Legal And Compliance fields 
-    registration_details: opt text;
-    regulatory_approvals: opt text;
-
-    // Milestones And Goals 
-    key_achieved_milestones: opt text;
-    future_goals: opt text;
-
-    // Feedback And Testimonials 
-    user_feedback: opt text;
-    testimonials: opt text;
-
-    // Risk Analysis fields 
-    potential_risks: opt text;
-    mitigation_strategies: opt text;
-
-    // Vision And Long Term Goals fields 
-    company_vision: opt text;
-    long_term_goals: opt text;
-};
-
-
-type Status = variant {
-  Planned;
-  NotRequired;
-  Completed;
-  InProgress;
-};
-
-type AreaOfFocus = variant{
-  DeFi;
-  Tooling;
-  NFTs;
-  Infrastructure;
-  DAO;
-  Social;
-  Games;
-  Other;
-  MetaVerse;
-};
-
-type Suggestion = record {
-  id: nat64;
-  content: text;
-  status: Status;
-};
-
 type SocialLinksInfo = record {
-    twitter: opt text;
-    linkedin: opt text;
-    facebook: opt text;
+  linkedin : opt text;
+  twitter : opt text;
+  facebook : opt text;
 };
-
-type DocsInfo = record {
-    pitch_deck: opt text;
-    white_paper: opt text;
-    technical_docs: opt text;
-    tokenomics: opt text;
+type Status = variant { Planned; NotRequired; InProgress; Completed };
+type Suggestion = record {
+  id : nat64;
+  status : Status;
+  content : text;
+  parent_id : opt nat64;
 };
-
 type TeamMember = record {
-    member_image: opt vec nat8;
-    member_name: opt text;
-    member_role: opt text;
-    social_links: opt SocialLinksInfo;
-    member_username: opt text;
+  member_image : opt vec nat8;
+  member_name : opt text;
+  member_role : opt text;
+  social_links : opt SocialLinksInfo;
+  member_username : opt text;
 };
-
-type ProjectUpdate = record {
-  tags: opt text;
-  project_creation_date: opt text;
-  technology_stack: opt text;
-  video_link: opt text;
-  development_stage: opt text;
-  project_area_of_focus: opt AreaOfFocus;
-};
-
-type ProjectCreationInfo = record {
-    project_name: opt text;
-    project_logo: opt text;
-    project_cover: opt vec nat8;
-    project_area_of_focus: opt AreaOfFocus;
-    project_description: opt text;
-    project_url: opt text;
-    social_links: opt SocialLinksInfo;
-};
-
-
-type ProjectInfoGet = record {
-    id: opt text;
-    project_name: opt text;
-    project_logo: opt text;
-    project_cover: opt vec nat8;
-    project_area_of_focus: opt AreaOfFocus;
-    project_description: opt text;
-    project_url: opt text;
-    social_links: opt SocialLinksInfo;
-    tags: opt text;
-    project_creation_date: opt text;
-    technology_stack: opt text;
-    video_link: opt text;
-    development_stage: opt text;
-    docs: opt DocsInfo;
-    team: opt vec TeamMember;
-    is_active: opt bool;
-};
-
-
+type UniqueHubs = record { hubs : HubOrganizerRegistration; uuid : text };
+type UpvoteRecord = record { count : nat; upvoters : vec UpvoterInfo };
 type UpvoterInfo = record {
-  principal_id: opt text;
-  name: opt text;
-  image: opt blob; // Representing binary data for the image as a blob
+  name : opt text;
+  image : opt vec nat8;
+  principal_id : opt text;
 };
-type UpvoteRecord = record {
-  count: nat;
-  upvoters: vec UpvoterInfo; // Using a vector to represent the collection of upvoter information
-};
-
-type LikeInfo = record {
-  principal_id: opt text;
-  name: opt text;
-  image: opt blob; // Representing binary data for the image as a blob
-};
-type LikeRecord = record {
-  count: nat;
-  upvoters: vec LikeInfo; // Using a vector to represent the collection of upvoter information
-};
-
-type VentureCapitalistGet = record {
-  id: opt text;
-  name_of_fund: opt text;
-  email_address: opt text;
-  telegram_id: opt text;
-  location: opt text;
-  accredited_investor_status: opt bool;
-  website_link: opt text;
-  number_of_portfolio_companies: opt nat32;
-  portfolio_link: opt text;
-  investment_stage_preference: opt text;
-  average_investment_ticket: opt nat32;
-  assets_for_investment: opt text;
-  preferred_investment_sectors: opt text;
-  revenue_range_preference: opt text;
-  technological_focus: opt text;
-  interest_in_board_positions: opt bool;
-  size_of_managed_fund: opt text;
-  typical_decision_making_timeline_for_investments: opt text;
-  referrer: opt text;
-  investor_type: opt text;
-  is_active: opt bool;
-  preferred_icp_hub: opt text;
-};
-
 type VentureCapitalist = record {
-  name_of_fund: opt text;
-  email_address: opt text;
-  telegram_id: opt text;
-  location: opt text;
-  accredited_investor_status: opt bool;
-  website_link: opt text;
-  number_of_portfolio_companies: opt nat32;
-  portfolio_link: opt text;
-  investment_stage_preference: opt text;
-  average_investment_ticket: opt nat32;
-  assets_for_investment: opt text;
-  preferred_investment_sectors: opt text;
-  revenue_range_preference: opt text;
-  technological_focus: opt text;
-  interest_in_board_positions: opt bool;
-  size_of_managed_fund: opt text;
-  typical_decision_making_timeline_for_investments: opt text;
-  referrer: opt text;
-  investor_type: opt text;
-  preferred_icp_hub: opt text;
+  id : opt text;
+  email_address : opt text;
+  referrer : opt text;
+  typical_decision_making_timeline_for_investments : opt text;
+  interest_in_board_positions : opt bool;
+  name_of_fund : opt text;
+  size_of_managed_fund : opt text;
+  accredited_investor_status : opt bool;
+  telegram_id : opt text;
+  preferred_investment_sectors : opt text;
+  average_investment_ticket : opt nat64;
+  preferred_icp_hub : opt text;
+  investor_type : opt text;
+  website_link : opt text;
+  investment_stage_preference : opt text;
+  number_of_portfolio_companies : opt nat32;
+  revenue_range_preference : opt text;
+  assets_for_investment : opt text;
+  portfolio_link : opt text;
+  is_active : opt bool;
+  location : opt text;
+  technological_focus : opt text;
 };
-
-type LeaderboardEntryForUpvote = record {
-  project_id : opt text;
-  upvote_count: opt nat;
-};
-
-type LeaderboardEntryForlikes = record {
-  project_id : opt text;
-  like_count: opt nat;
-};
-
-
-
-
 service : {
   add_suggestion_caller : (text) -> (nat64, Status);
-  create_project : (ProjectCreationInfo) -> (text);
+  create_project : (ProjectInfo) -> (text);
   delete_founder_caller : () -> (text);
   delete_mentor_candid : () -> (text);
   delete_project : (text) -> (text);
-  delete_venture_capitalist_caller: () -> (text);
+  delete_venture_capitalist_caller : () -> (text);
   get_all_mentors_candid : () -> (vec MentorProfile) query;
   get_all_roles : () -> (RolesResponse) query;
-  get_founder_info_caller : () -> (opt GetFounderInfo) query;
+  get_founder_info_caller : () -> (opt FounderInfo) query;
+  get_hub_organizer_candid : () -> (opt UniqueHubs) query;
   get_icp_hubs_candid : () -> (vec IcpHub) query;
+  get_leaderboard_using_likes : () -> (vec LeaderboardEntryForLikes) query;
+  get_leaderboard_using_upvotes : () -> (vec LeaderboardEntryForUpvote) query;
   get_mentor_candid : () -> (opt MentorProfile) query;
-  get_projects_for_caller : () -> (vec ProjectInfoGet) query;
+  get_project_upvotes : (text) -> (opt UpvoteRecord) query;
+  get_projects_for_caller : () -> (vec ProjectInfo) query;
   get_suggestions_by_parent_id_caller : (nat64) -> (vec Suggestion) query;
   get_suggestions_by_status_caller : (Status) -> (vec Suggestion) query;
-  get_venture_capitalist_info: () -> (opt VentureCapitalistGet) query;
-  get_total_suggestions: () -> (nat64) query;
-  get_role_from_p_id : () -> (opt vec UserRole) query;
-  get_sample_text : () -> (text) query;
+  get_total_suggestions : () -> (nat64) query;
+  get_user_likes : (text) -> (opt UpvoteRecord) query;
+  get_venture_capitalist_info : () -> (opt VentureCapitalist) query;
   greet : () -> (text) query;
-  list_all_founders_caller : () -> (vec GetFounderInfo) query;
-  list_all_projects : () -> (vec ProjectInfoGet) query;
-  list_all_venture_capitalist: () -> (vec VentureCapitalistGet) query;
-  register_founder_caller : (FounderInfo) -> (text);
-  register_mentor_candid : (MentorProfile) -> (text);
-  register_venture_capitalist_caller: (VentureCapitalist) -> (text);
-  reply_to_suggestion_caller : (nat64, text) -> (nat64, Status);
-  update_founder_caller : (UpdateFounderInfo) -> ();
-  update_mentor_profile : (MentorProfile) -> (text);
-  update_suggestion_status_caller : (nat64, Status) -> ();
-  upvote_project: (text) -> (text);
-  update_project: (text, ProjectUpdate) -> ();
-  update_venture_capitalist_caller: (VentureCapitalist) -> ();
-  get_project_upvotes: (text) -> (opt UpvoteRecord) query;
   like_project : (text) -> (text);
-  get_user_likes : (text) -> (opt LikeRecord) query;
-  update_project_docs : (text, DocsInfo) -> ();
-  update_team_member : (text, TeamMember) -> ();
-  get_leaderboard_using_upvotes: () -> (vec LeaderboardEntryForUpvote) query;
-  get_leaderboard_using_likes: () -> (vec LeaderboardEntryForlikes) query;
-  view_notifications_candid : (principal) -> (vec Notification) query;
+  list_all_founders_caller : () -> (vec FounderInfo) query;
+  list_all_projects : () -> (vec ProjectInfo) query;
+  list_all_venture_capitalist : () -> (vec VentureCapitalist) query;
+  register_founder_caller : (FounderInfo) -> (text);
+  register_hub_organizer_candid : (HubOrganizerRegistration) -> (text);
+  register_mentor_candid : (MentorProfile) -> (text);
+  register_venture_capitalist_caller : (VentureCapitalist) -> (text);
+  reply_to_suggestion_caller : (nat64, text) -> (nat64, Status);
   respond_to_connection_request_candid : (principal, principal, bool) -> ();
   send_connection_request : (principal, text) -> ();
+  update_founder_caller : (FounderInfo) -> ();
+  update_hub_organizer_candid : (HubOrganizerRegistration) -> (text);
+  update_mentor_profile : (MentorProfile) -> (text);
+  update_project : (text, ProjectInfo) -> ();
+  update_project_docs : (text, DocsInfo) -> ();
+  update_suggestion_status_caller : (nat64, Status) -> ();
+  update_team_member : (text, TeamMember) -> ();
+  update_venture_capitalist_caller : (VentureCapitalist) -> ();
+  upvote_project : (text) -> (text);
+  view_notifications_candid : (principal) -> (vec Notification) query;
 }

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import internetIdentity from "../../assets/WalletLogo/IcpWallet.png";
+import internetIdentity from "../../assets/WalletLogo/IcpWallet1.png";
 // import plug from "../../assets/WalletLogo/PlugWallet.png";
 // import bitfinity from "../../assets/WalletLogo/BitfinityWallet.png";
 // import astroxMe from "../../assets/WalletLogo/MeWallet.png";
@@ -24,7 +24,7 @@ const LogoutModal = () => {
 
 
   return (
-    <div className="relative z-50 justify-end flex ss:px-[0.95rem] sxs3:px-[0.93rem] sxs2:px-[0.9rem] sxs1:px-[0.8rem] sxs:px-[0.75rem] sxxs:px-[0.7rem]">
+    <div className="relative z-50 justify-end flex rounded-full">
       {isAuthenticated && (
         <img
           id="avatarButton"
@@ -41,9 +41,9 @@ const LogoutModal = () => {
       {isDropdownOpen && (
         <div
           id="userDropdown"
-          className="absolute  divide-y divide-gray-100 rounded-lg shadow w-44 bg-gradient-to-r from-[#8D3494] to-[#4B0FAC] z-10"
+          className="absolute  divide-y divide-gray-100 rounded-lg shadow w-48 bg-gray-100 z-10 -top-3 -right-4"
         >
-          <div className="px-4 py-3 text-sm text-gray-90 text-white">
+          <div className="px-4 py-3 text-sm text-gray-90 text-black">
             <div className="flex flex-row justify-between w-full">
               <button
                 onClick={toggleDropdown}
@@ -77,42 +77,17 @@ const LogoutModal = () => {
             </div>
           </div>
           <ul
-            className="py-2 text-sm text-gray-70 text-gray-200"
-            aria-labelledby="avatarButton"
-          >
-            <li>
-              <a
-                href="#"
-                className="block px-4 py-2 hover:bg-gray-200 hover:text-black"
-              >
-                Dashboard
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="block px-4 py-2 hover:bg-gray-200 hover:text-black"
-              >
-                Settings
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="block px-4 py-2 hover:bg-gray-200 hover:text-black"
-              >
-                Earnings
-              </a>
-            </li>
+            className="text-sm text-gray-70 text-black font-bold"
+            aria-labelledby="avatarButton">
+            <li className="block px-4 py-2 hover:bg-gray-200 hover:text-black"> Dashboard</li>
+            <li className="block px-4 py-2 hover:bg-gray-200 hover:text-black">Settings</li>
           </ul>
-          <div className="py-1">
             <a
-              className="block px-4 py-2 text-sm text-white hover:bg-gray-200 hover:text-black "
+              className="block px-4 py-2 text-sm text-black hover:bg-gray-200 hover:text-black font-bold mb-4"
               onClick={() => dispatch(logoutStart())}
             >
               Sign out
             </a>
-          </div>
         </div>
       )}
     </div>
