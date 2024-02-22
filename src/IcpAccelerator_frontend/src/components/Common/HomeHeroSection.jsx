@@ -13,10 +13,10 @@ const HomeHeroSection = () => {
     return () => clearInterval(intervalId);
   }, []);
   return (
-    <section className="text-black body-font bg-gray-100">
+    <section className="text-black bg-gray-100">
       <div className="w-full px-[4%] lg1:px-[5%]">
         <div className="flex dxl:justify-end">
-          <div className="w-full h-[400px] relative">
+          <div className="w-full h-fit relative">
             {/* <div className="w-[500px] xl2:w-[900px] xl:w-[700px] dxl:w-[630px] lgx:w-[600px] lg1:w-[550px] dlg:w-[525px] lg:w-[500px] md3:w-[470px] md2:w-[460px] md1:w-[450px]  md:w-[440px] sm:w-[430px] sm3:w-[400px] sm2:w-[390px] sm4:w-[380px] sm1:w-[360px] xxs1:w-[340px] xxs:w-[310px] dxs:w-[290px] ss4:w-[280px] ss3:w-[270px] ss2:w-[260px] ss1:w-[250px] ss:w-[240px] sxs3:w-[230px] sxs2:w-[220px] sxs1:w-[210px] sxs:w-[200px] sxxs:w-[190px]  h-[380px] left-[400px] top-[100px] absolute bg-fuchsia-800 rounded-full blur-[169px] xl2:left-[260px] xl:left-[280px] dxl:left-[230px] lgx:left-[200px] lg1:left-[180px] dlg:left-[170px] lg:left-[160px] md3:left-[150px] md2:left-[140px] md1:left-[130px] md:left-[120px] sm:left-[110px] sm3:left-[70px] sm2:left-[60px] sm4:left-[50px] sm1:left-[50px] xxs1:left-[45px] xxs:left-[40px] dxs:left-[35px] ss4:left-[30px] ss3:left-[25px] ss2:left-[20px] ss1:left-[15px] ss:left-[15px] sxs3:left-[15px] sxs2:left-[10px] sxs1:left-[10px] sxs:left-[5px] sxxs:left-[5px]"></div> */}
             <h1 className="left-[19px] top-[60px] absolute bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-[90px] xl2:text-[88px] xl:text-[85px] dxl:text-[82px] lgx:text-[80px] lg1:text-[78px] dlg:text-[75px] lg:text-[72px] md3:text-[70px] md2:text-[68px] md1:text-[65px] md:text-[63px] sm:text-[60px] sm3:text-[58px] sm2:text-[55px] sm4:text-[53px] sm1:text-[50px] xxs1:text-[48px] xxs:text-[45px] dxs:text-[43px] ss4:text-[40px] ss3:text-[37px] ss2:text-[35px] ss1:text-[33px] ss:text-[30px] sxs3:text-[25px] sxs2:text-[25px] sxs1:text-[25px] sxs:text-[25px] sxxs:text-[25px] font-fontUse font-bold">
               ACCELERATE

@@ -18,7 +18,7 @@ const DashBoard = () => {
   
   useEffect(() => {
     const founderDataFetchHandler = async () => {
-      const founderDataFetch = await actor.get_founder_info_caller();
+      const founderDataFetch = await actor.get_mentor_candid();
 
       console.log("dekho dekho founder data aaya => ", founderDataFetch)
     };
@@ -26,7 +26,17 @@ const DashBoard = () => {
     founderDataFetchHandler()
   }, [actor]);
 
+  console.log('actor in dashboard =>', actor)
+  
+  useEffect(() => {
+    const fetchUserPrincipalRole = async () => {
+      const RoleFetch = await actor.get_role_from_p_id();
 
+      console.log("dekho dekho role  aaya => ", RoleFetch)
+    };
+
+    fetchUserPrincipalRole()
+  }, [actor]);
 
   return (
     <section className="overflow-hidden relative">

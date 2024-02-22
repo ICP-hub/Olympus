@@ -2,7 +2,7 @@ import React, { useState } from "react";
 // import Header from "../Layout/Header/Header";
 import DetailHeroSection from "../Common/DetailHeroSection";
 import DetailsCard from "../Common/DetailsCard";
-import FooterWithSubmitSection from "../Footer/FooterWithSubmitSection";
+// import FooterWithSubmitSection from "../Footer/FooterWithSubmitSection";
 import { mentorRegistration } from "../Utils/Data/AllDetailFormData";
 import FounderRegistration from "./FounderRegistration/FounderRegistration";
 import { useSelector } from "react-redux";
@@ -57,7 +57,7 @@ const AllDetailsForm = () => {
         </div>
       </section>
 
-      <FooterWithSubmitSection />
+      {/* <FooterWithSubmitSection /> */}
     </>
   );
 };

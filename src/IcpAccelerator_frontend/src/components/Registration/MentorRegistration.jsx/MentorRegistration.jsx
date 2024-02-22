@@ -325,7 +325,7 @@ const MentorRegistration = () => {
           ))}
         </ul>
 
-        {step == 0 && (
+        {step === 0 && (
           <div className="flex flex-col">
             <div className="flex-row w-full flex justify-start gap-4 items-end">
               <div

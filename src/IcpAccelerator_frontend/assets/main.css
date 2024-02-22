@@ -10,4 +10,12 @@
       display: none;
     }
   }
+  .ellipse-quarter-left {
+    clip-path: ellipse(60% 54% at 15% 100%);
+   
+  }
+  .ellipse-quarter-right {
+    clip-path: ellipse(60% 54% at 87% 11%);
+   
+  }
 }
