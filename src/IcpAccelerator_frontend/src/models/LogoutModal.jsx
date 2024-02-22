@@ -11,17 +11,13 @@ import { logoutStart } from "../components/Redux/Reducers/InternetIdentityReduce
 const LogoutModal = () => {
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
   const principal = useSelector((currState) => currState.internet.principal);
+
   const dispatch = useDispatch();
-
   const [isDropdownOpen, setDropdownOpen] = useState(false);
-
-  // console.log("isAuthenticated in logoutmodal =>", isAuthenticated);
-  // console.log("principal in logoutmodal =>", principal);
 
   const toggleDropdown = () => {
     setDropdownOpen(!isDropdownOpen);
   };
-
 
   return (
     <div className="relative z-50 justify-end flex rounded-full">
@@ -78,16 +74,22 @@ const LogoutModal = () => {
           </div>
           <ul
             className="text-sm text-gray-70 text-black font-bold"
-            aria-labelledby="avatarButton">
-            <li className="block px-4 py-2 hover:bg-gray-200 hover:text-black"> Dashboard</li>
-            <li className="block px-4 py-2 hover:bg-gray-200 hover:text-black">Settings</li>
+            aria-labelledby="avatarButton"
+          >
+            <li className="block px-4 py-2 hover:bg-gray-200 hover:text-black">
+              {" "}
+              Dashboard
+            </li>
+            <li className="block px-4 py-2 hover:bg-gray-200 hover:text-black">
+              Settings
+            </li>
           </ul>
-            <a
-              className="block px-4 py-2 text-sm text-black hover:bg-gray-200 hover:text-black font-bold mb-4"
-              onClick={() => dispatch(logoutStart())}
-            >
-              Sign out
-            </a>
+          <a
+            className="block px-4 py-2 text-sm text-black hover:bg-gray-200 hover:text-black font-bold mb-4"
+            onClick={() => dispatch(logoutStart())}
+          >
+            Sign out
+          </a>
         </div>
       )}
     </div>

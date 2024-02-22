@@ -16,7 +16,6 @@ import { useSelector } from "react-redux";
 import { allHubHandlerRequest } from "../../Redux/Reducers/All_IcpHubReducer";
 import { useDispatch } from "react-redux";
 
-// Validation schema adjusted to step-wise validation
 const validationSchema = {
   personalDetails: yup.object().shape({
     email_address: yup
@@ -172,7 +171,6 @@ const InvestorRegistration = () => {
     }
   };
 
-  console.log(errors);
 
   const stepFields = steps[step].fields;
   let StepComponent;

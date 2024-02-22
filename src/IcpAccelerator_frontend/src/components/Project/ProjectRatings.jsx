@@ -64,16 +64,18 @@ const ProjectRatings = () => {
     "Scale",
     "Exit",
   ];
-  console.log(sliderValues)
 
   const handleSliderChange = (index, value) => {
     const key = sliderKeys[index];
     const newSliderValues = { ...sliderValues, [key]: value };
     setSliderValues(newSliderValues);
-    const newSliderValuesProgress = { ...sliderValuesProgress, [key]: value === 9 ? 100 : Math.floor(value * 11) };
-    setSliderValuesProgress(newSliderValuesProgress)
+    const newSliderValuesProgress = {
+      ...sliderValuesProgress,
+      [key]: value === 9 ? 100 : Math.floor(value * 11),
+    }     
+    ;
+    setSliderValuesProgress(newSliderValuesProgress);
   };
-  // console.log(sliderValues)
   const toggleOpen = (index) => {
     setRating(
       rating.map((value, i) => {
@@ -102,7 +104,7 @@ const ProjectRatings = () => {
 `;
   return (
     <section className="mt-8">
-      {/* <div class="w-full h-[194.75px] mix-blend-darken bg-violet-900 rounded-[20px]"> */}
+      {/* <div className="w-full h-[194.75px] mix-blend-darken bg-violet-900 rounded-[20px]"> */}
       <div className="p-4">
         {rating.map((value, index) => (
           <div
@@ -119,12 +121,12 @@ const ProjectRatings = () => {
               <div className="mx-4 flex items-center w-full">
                 <Line
                   strokeWidth={0.2}
-                   percent={sliderValuesProgress[sliderKeys[index]]}
+                  percent={sliderValuesProgress[sliderKeys[index]]}
                   strokeColor="bg-black"
                   className="line-horizontal"
                 />
-                <div class="text-white text-[15px] font-normal font-fontUse ml-2">
-                {sliderValuesProgress[sliderKeys[index]]}%
+                <div className="text-white text-[15px] font-normal font-fontUse ml-2">
+                  {sliderValuesProgress[sliderKeys[index]]}%
                 </div>
                 <svg
                   width="16"

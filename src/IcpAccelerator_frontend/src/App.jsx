@@ -68,14 +68,14 @@ const App = () => {
         isModalOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
       />
-      <DashBoard/>
+      {/* <DashBoard/> */}
       {/* <ProgressCard/> */}
-      <AllDetailsForm/>
+      {/* <AllDetailsForm/> */}
       {/* <ProjectDetails/> */}
       {/* <Home/> */}
       {/* <UserProfile/> */}
       {/* <RoleSelector /> */}
-      {/* <AppRoutes/> */}
+      <AppRoutes/>
       <Footer/>
     </>
   );

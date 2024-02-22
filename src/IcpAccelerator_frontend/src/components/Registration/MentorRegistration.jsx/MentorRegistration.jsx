@@ -14,6 +14,8 @@ import {
 } from "../../Utils/Data/mentorFormData";
 import { useSelector } from "react-redux";
 import CompressedImage from "../../ImageCompressed/CompressedImage";
+import { useDispatch } from "react-redux";
+import { allHubHandlerRequest } from "../../Redux/Reducers/All_IcpHubReducer";
 
 const validationSchema = {
   personalDetails: yup.object().shape({
@@ -109,8 +111,10 @@ const validationSchema = {
 };
 
 const MentorRegistration = () => {
-  const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
   const actor = useSelector((currState) => currState.actors.actor);
+  const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
+
+  const dispatch = useDispatch();
 
   const [activeTab, setActiveTab] = useState(mentorRegistration[0].id);
   const [formData, setFormData] = useState({});
@@ -119,6 +123,8 @@ const MentorRegistration = () => {
   const [userHasInteracted, setUserHasInteracted] = useState(false);
   const [image, setImage] = useState(null);
   const [imageData, setImageData] = useState(null);
+
+  console.log("getAllIcpHubs + actor =>", getAllIcpHubs, actor);
 
   const getTabClassName = (tab) => {
     return `inline-block p-4 ${
@@ -172,6 +178,10 @@ const MentorRegistration = () => {
     validateStep();
   }, [step, trigger, userHasInteracted]);
 
+  useEffect(() => {
+    dispatch(allHubHandlerRequest());
+  }, [actor, dispatch]);
+
   const handleNext = async () => {
     const fieldsToValidate = steps[step].fields.map((field) => field.name);
     const result = await trigger(fieldsToValidate);
@@ -222,7 +232,6 @@ const MentorRegistration = () => {
     if (step < steps.length - 1) {
       handleNext();
     } else {
-      // console.log("Final Form Data:", updatedFormData);
 
       const mentorDataObject = {
         areas_of_expertise: [updatedFormData.areasOfExpertise],
