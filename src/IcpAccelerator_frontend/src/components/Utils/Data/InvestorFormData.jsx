@@ -47,15 +47,6 @@ export const investorRegistrationPersonalDetails = [
       label: "What is your technological focus?",
       placeholder: "Enter your technological focus",
     },
-    {
-      id: "preferred_icp_hub",
-      type: "select",
-      name: "preferred_icp_hub",
-      required: true,
-      label: "Can you please share your preferred ICP Hub *",
-      placeholder: "Select your ICP Hub",
-      options: [/* Assuming there are predefined options for ICP Hub */],
-    },
   ];
   export const investorRegistrationDetails = [
     {
@@ -73,18 +64,7 @@ export const investorRegistrationPersonalDetails = [
       required: true,
       label: "What is your typical decision-making timeline for investments?",
       placeholder: "Enter your decision-making timeline",
-    },
-    {
-        id: "interest_in_board_positions",
-        type: "select",
-        name: "interest_in_board_positions",
-        required: true,
-        label: "Do you have an interest in board positions?",
-        options: [
-          { value: "yes", label: "Yes" },
-          { value: "no", label: "No" }
-        ],
-      },     
+    }, 
     {
       id: "name_of_fund",
       type: "text",
@@ -100,14 +80,6 @@ export const investorRegistrationPersonalDetails = [
       required: true,
       label: "What is the size of the managed fund?",
       placeholder: "Enter the size of managed fund",
-    },
-    {
-      id: "accredited_investor_status",
-      type: "checkbox",
-      name: "accredited_investor_status",
-      required: true,
-      label: "Are you an accredited investor?",
-      options: [/* Yes/No options */],
     },
     {
       id: "preferred_investment_sectors",

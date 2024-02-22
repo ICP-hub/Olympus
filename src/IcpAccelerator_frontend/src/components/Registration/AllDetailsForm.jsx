@@ -7,18 +7,16 @@ import { mentorRegistration } from "../Utils/Data/AllDetailFormData";
 import FounderRegistration from "./FounderRegistration/FounderRegistration";
 import { useSelector } from "react-redux";
 import MentorRegistration from "./MentorRegistration.jsx/MentorRegistration";
-
+import InvestorRegistration from "./InvestorRegistration/InvestorRegistration";
 
 const AllDetailsForm = () => {
-
-  const actor =useSelector((currState)=> currState.actors.actor)
+  const actor = useSelector((currState) => currState.actors.actor);
 
   const [activeTab, setActiveTab] = useState(mentorRegistration[0].id);
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
-
 
   // console.log("AllDetailsForm called =>", AllDetailsForm)
   const getTabClassName = (tab) => {
@@ -28,7 +26,7 @@ const AllDetailsForm = () => {
         : "text-gray-400  border-transparent hover:text-white"
     } rounded-t-lg`;
   };
- 
+
   return (
     <>
       {/* <Header  gradient={'bg-violet-800'}/> */}
@@ -46,7 +44,8 @@ const AllDetailsForm = () => {
             style={{ transform: "rotate(0.034deg)" }}
           ></div>
           {/* <FounderRegistration/> */}
-          <MentorRegistration/>
+          {/* <MentorRegistration/> */}
+          <InvestorRegistration />
           <div className="flex justify-center my-8">
             <div className="text-violet-900  text-sxxs:text-[11.5px] sxs:text-[12px] sxs1:text-[12.5px sxs2:text-[13px] sxs3:text-[13.5px] ss:text-[14px] ss1:text-[14.5px] ss2:text-[15px] ss3:text-[15.5px] ss4:text-[16px] dxs:text-[16.5px] xxs:text-[17px] xxs1:text-[17.5px] sm1:text-[18px] sm4:text-[18.5px] sm2:text-[19px] sm3:text-[19.5px] sm:text-[20px] md:text-[20.8px] md1:text-[21.5px] md2:text-[22px] md3:text-[22.5px] lg:text-[23px] dlg:text-[23.5px] lg1:text-[24px] lgx:text-[24.5px] dxl:text-[28px] xl:text-[25.5px] xl2:text-[26px] font-normal font-fontUse dxl:justify-center dxl:items-center dxl:flex   ss3:left-0 left-[14px] relative">
               Understand the Accelerate program
