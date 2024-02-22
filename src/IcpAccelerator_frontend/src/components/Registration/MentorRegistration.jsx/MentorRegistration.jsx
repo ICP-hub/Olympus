@@ -109,7 +109,6 @@ const validationSchema = {
 };
 
 const MentorRegistration = () => {
-
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
   const actor = useSelector((currState) => currState.actors.actor);
 
@@ -121,7 +120,6 @@ const MentorRegistration = () => {
   const [image, setImage] = useState(null);
   const [imageData, setImageData] = useState(null);
 
-
   const getTabClassName = (tab) => {
     return `inline-block p-4 ${
       activeTab === tab
@@ -130,13 +128,11 @@ const MentorRegistration = () => {
     } rounded-t-lg`;
   };
 
-
   const steps = [
     { id: "personalDetails", fields: mentorRegistrationPersonalDetails },
     { id: "mentorDetails", fields: mentorRegistrationDetails },
     { id: "additionalInfo", fields: mentorRegistrationAdditionalInfo },
   ];
-
 
   const currentValidationSchema = validationSchema[steps[step].id];
 
@@ -148,7 +144,6 @@ const MentorRegistration = () => {
   } = useForm({
     resolver: yupResolver(currentValidationSchema),
   });
-
 
   const handleTabClick = async (tab) => {
     const targetStep = mentorRegistration.findIndex(
@@ -166,7 +161,6 @@ const MentorRegistration = () => {
     }
   };
 
-
   useEffect(() => {
     if (!userHasInteracted) return;
     const validateStep = async () => {
@@ -177,7 +171,6 @@ const MentorRegistration = () => {
 
     validateStep();
   }, [step, trigger, userHasInteracted]);
-
 
   const handleNext = async () => {
     const fieldsToValidate = steps[step].fields.map((field) => field.name);
@@ -191,14 +184,12 @@ const MentorRegistration = () => {
     }
   };
 
-
   const handlePrevious = () => {
     if (step > 0) {
       setStep((prevStep) => prevStep - 1);
     }
   };
 
-  
   const addImageHandler = async (e) => {
     const selectedImages = e.target.files[0];
     if (selectedImages) {
@@ -223,8 +214,6 @@ const MentorRegistration = () => {
     }
   };
 
- 
-
   const onSubmit = async (data) => {
     console.log("data >>>>", data);
     const updatedFormData = { ...formData, ...data };
@@ -234,7 +223,7 @@ const MentorRegistration = () => {
       handleNext();
     } else {
       // console.log("Final Form Data:", updatedFormData);
-   
+
       const mentorDataObject = {
         areas_of_expertise: [updatedFormData.areasOfExpertise],
         availability_and_time_commitment: [
@@ -366,11 +355,17 @@ const MentorRegistration = () => {
             </div>
 
             <div className="px-4 z-0 w-full mb-5 group">
+              <label
+                htmlFor="icp_Hub"
+                className="block mb-2 text-sm font-medium text-gray-700 hover:whitespace-normal truncate overflow-hidden hover:text-left"
+              >
+                Can you please share your preferred ICP Hub
+              </label>
               <select
                 {...register("icp_Hub")}
                 className="block pb-2 pt-6 text-lg font-normal  w-full text-black bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-gray-300 peer "
               >
-                <option value="">Select Hub ⌄</option>
+                <option value="">Select your ICP Hub⌄</option>
                 {getAllIcpHubs?.map((hub) => (
                   <option key={hub.id} value={`${hub.name} ,${hub.region}`}>
                     {hub.name} , {hub.region}
