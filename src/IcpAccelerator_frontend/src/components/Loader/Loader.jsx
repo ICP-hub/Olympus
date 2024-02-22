@@ -83,8 +83,8 @@ const Loader = () => {
               y2="10.786"
               gradientUnits="userSpaceOnUse"
             >
-              <stop offset=".21" stop-color="#ED1E79" />
-              <stop offset=".893" stop-color="#522785" />
+              <stop offset=".21" stopColor="#ED1E79" />
+              <stop offset=".893" stopColor="#522785" />
             </linearGradient>
             <linearGradient
               id="b"
@@ -94,8 +94,8 @@ const Loader = () => {
               y2="36.143"
               gradientUnits="userSpaceOnUse"
             >
-              <stop offset=".21" stop-color="#F15A24" />
-              <stop offset=".684" stop-color="#FBB03B" />
+              <stop offset=".21" stopColor="#F15A24" />
+              <stop offset=".684" stopColor="#FBB03B" />
             </linearGradient>
           </defs>
         </svg>

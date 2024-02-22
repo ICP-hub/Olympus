@@ -6,11 +6,8 @@ import { rolesHandlerRequest } from "../Redux/Reducers/RoleReducer";
 import { useNavigate } from "react-router-dom";
 
 const RoleSelector = React.memo(() => {
-
   const actor = useSelector((currState) => currState.actors.actor);
   const rolesArr = useSelector((state) => state.role.roles);
-
-  // console.log("rolesArr in roleselector =>", rolesArr);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -20,11 +17,11 @@ const RoleSelector = React.memo(() => {
   }, [actor, dispatch]);
 
 
+
   const [selectedRole, setSelectedRole] = useState({
     id: rolesArr.length > 0 ? rolesArr[0].id : 0,
     name: rolesArr.length > 0 ? rolesArr[0].name : "",
   });
-
 
   useEffect(() => {
     if (rolesArr.length > 0) {
@@ -32,19 +29,11 @@ const RoleSelector = React.memo(() => {
     }
   }, [rolesArr]);
 
-
-
   const handlePlanChange = (roleId, roleName) => {
     setSelectedRole({ id: roleId, name: roleName });
-    if (roleName === 'Project') {
-      navigate('/details');
-    }
+
+    navigate("/details", { state: { roleId: roleId, roleName: roleName } });
   };
-
-
-
-
-  // console.log(selectedRole);
 
   return (
     <div>
