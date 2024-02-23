@@ -10,12 +10,43 @@
       display: none;
     }
   }
-  .ellipse-quarter-left {
-    clip-path: ellipse(60% 54% at 15% 100%);
-   
+  @media only screen and (max-width: 1024px) {
+    .ellipse-quarter-left {
+      clip-path: ellipse(50% 25% at 20% 100%);
+    }
+    
+    .ellipse-quarter-right {
+      clip-path: ellipse(60% 54% at 87% 11%);
+    }
   }
-  .ellipse-quarter-right {
-    clip-path: ellipse(60% 54% at 87% 11%);
-   
+  
+  @media only screen and (max-width: 768px) {
+    .ellipse-quarter-left {
+      clip-path: ellipse(50% 45% at 15% 100%);
+    }
+    
+    .ellipse-quarter-right {
+      clip-path: ellipse(50% 45% at 87% 11%);
+    }
+  }
+  
+  @media only screen and (max-width: 480px) {
+    .ellipse-quarter-left {
+      clip-path: ellipse(38% 33% at 8% 100%);
+    }
+    
+    .ellipse-quarter-right {
+      clip-path: ellipse(40% 35% at 87% 11%);
+    }
+  }
+  
+}
+@media (min-width: 768px) {
+  .submit-section {
+    /* Styles to move internet computer and big logo to top center position */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 }

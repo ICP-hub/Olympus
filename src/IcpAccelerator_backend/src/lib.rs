@@ -413,6 +413,7 @@ mod tests {
 
         let dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
         let dir = dir.parent().unwrap().parent().unwrap().join("candid");
+
         write(dir.join("/home/harshpreet-singh/Documents/quadb/axxxelerator-new/ICPAccelerator/src/IcpAccelerator_backend/IcpAccelerator_backend.did"), export_candid()).expect("Write failed.");
     }
 }

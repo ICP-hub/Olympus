@@ -33,3 +33,4 @@ fn greet() -> String {
 //         write(dir.join("/home/mohit/Documents/Projects/IcpAccelerator/src/IcpAccelerator_backend/IcpAccelerator_backend.did"), export_candid()).expect("Write failed.");
 //     }
 // }
+
