@@ -164,55 +164,55 @@ const ProjectGallery = () => {
           onScroll={checkScrollPosition}
         >
           <li className="mr-4">
-                <div class="relative flex justify-center items-center h-[300px] w-[500px]">
-                  <iframe
-                    class="absolute top-0 left-0 h-full w-full transition-all duration-300 rounded-lg hover:blur-none z-0"
-                    src="https://www.youtube.com/embed/Nfh4hpjJReE"
-                    frameborder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowfullscreen
-                    title="YouTube Video"
-                  ></iframe>
-                  <div class="absolute z-10 flex justify-center items-center h-full w-full">
-                    <svg
-                      width="71"
-                      height="71"
-                      viewBox="0 0 71 71"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <g id="Group">
-                        <g id="Group_2">
-                          <path
-                            id="Vector"
-                            d="M35.5338 0.981702C16.4624 0.970234 0.992657 16.4214 0.981189 35.4928C0.969721 54.5641 16.4209 70.0339 35.4923 70.0454C54.5636 70.0569 70.0334 54.6057 70.0449 35.5343C70.0563 16.463 54.6052 0.99317 35.5338 0.981702ZM47.6685 37.0482L30.845 48.4861C30.2789 48.871 29.5462 48.9113 28.9413 48.5909C28.3363 48.2704 27.9581 47.6417 27.9585 46.957L27.9723 24.061C27.9727 23.3764 28.3516 22.7481 28.957 22.4283C29.5624 22.1086 30.295 22.1497 30.8606 22.5353L47.6704 33.9935C48.1756 34.3379 48.4778 34.9099 48.4774 35.5213C48.4771 36.1328 48.1743 36.7044 47.6685 37.0482Z"
-                            fill="white"
-                          />
-                        </g>
-                      </g>
-                    </svg>
-                  </div>
-                </div>
-              </li>
-          {Array.from({ length: 20 }, (_, n) => (
-              <li
-                className="w-fit h-full flex-shrink-0 rounded-lg overflow-hidden "
-                key={n}
-              >
-                <a
-                  href="#"
-                  className="flex flex-col items-center justify-start relative select-none mr-4"
+            <div className="relative flex justify-center items-center h-[300px] w-[500px]">
+              <iframe
+                className="absolute top-0 left-0 h-full w-full transition-all duration-300 rounded-lg hover:blur-none z-0"
+                src="https://www.youtube.com/embed/Nfh4hpjJReE"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+                title="YouTube Video"
+              ></iframe>
+              <div className="absolute z-10 flex justify-center items-center h-full w-full">
+                <svg
+                  width="71"
+                  height="71"
+                  viewBox="0 0 71 71"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  <div className="w-full h-full rounded-lg">
-                    <img
-                      className="w-full h-full object-cover rounded-lg"
-                      src={`https://picsum.photos/id/${n}/300/300`}
-                      alt=""
-                      style={{ aspectRatio: "1 / 1", userDrag: "none" }}
-                    />
-                  </div>
-                </a>
-              </li>
+                  <g id="Group">
+                    <g id="Group_2">
+                      <path
+                        id="Vector"
+                        d="M35.5338 0.981702C16.4624 0.970234 0.992657 16.4214 0.981189 35.4928C0.969721 54.5641 16.4209 70.0339 35.4923 70.0454C54.5636 70.0569 70.0334 54.6057 70.0449 35.5343C70.0563 16.463 54.6052 0.99317 35.5338 0.981702ZM47.6685 37.0482L30.845 48.4861C30.2789 48.871 29.5462 48.9113 28.9413 48.5909C28.3363 48.2704 27.9581 47.6417 27.9585 46.957L27.9723 24.061C27.9727 23.3764 28.3516 22.7481 28.957 22.4283C29.5624 22.1086 30.295 22.1497 30.8606 22.5353L47.6704 33.9935C48.1756 34.3379 48.4778 34.9099 48.4774 35.5213C48.4771 36.1328 48.1743 36.7044 47.6685 37.0482Z"
+                        fill="white"
+                      />
+                    </g>
+                  </g>
+                </svg>
+              </div>
+            </div>
+          </li>
+          {Array.from({ length: 20 }, (_, n) => (
+            <li
+              className="w-fit h-full flex-shrink-0 rounded-lg overflow-hidden "
+              key={n}
+            >
+              <a
+                href="#"
+                className="flex flex-col items-center justify-start relative select-none mr-4"
+              >
+                <div className="w-full h-full rounded-lg">
+                  <img
+                    className="w-full h-full object-cover rounded-lg"
+                    src={`https://picsum.photos/id/${n}/300/300`}
+                    alt=""
+                    style={{ aspectRatio: "1 / 1", userDrag: "none" }}
+                  />
+                </div>
+              </a>
+            </li>
           ))}
         </ul>
       </div>

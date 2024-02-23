@@ -1,24 +1,24 @@
 import React from "react";
-import logo from "../../../assets/Logo/icpLogo2.png";
+import logo from "../../../assets/Logo/icpLogo.png";
 
 const Footer = () => {
   return (
-    <footer className="text-blue-800 bg-white py-8 z-10">
+    <footer className="text-white bg-blue-800 py-8 z-10">
       <div className="container mx-auto px-4 lg:px-10">
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-20">
           <div className="mb-4">
             <h4 className="text-xl font-bold mb-3">
-              <img src={logo} alt="logo" />
+              <img src={logo} alt="logo" className="text-white"/>
             </h4>
             <ul className="list-none text-sm p-0 m-0 flex items-center space-x-4">
-              <li className="text-black">
+              <li className="text-white">
                 <a href="#">© ICP. All Rights Reserved.</a>
               </li>
             </ul>
           </div>
           <div className="mb-4">
-            <h4 className="text-xl font-bold mb-2 text-footerText">Services</h4>
-            <ul className="list-none text-sm p-0 m-0 text-btnColor underline">
+            <h4 className="text-xl font-bold mb-2 text-white">Services</h4>
+            <ul className="list-none text-sm p-0 m-0 text-white underline">
               <li className="mb-2">
                 <a href="#">Base Camp</a>
               </li>
@@ -37,8 +37,8 @@ const Footer = () => {
             </ul>
           </div>
           <div className="mb-4">
-            <h4 className="text-xl font-bold mb-2 text-footerText">Company</h4>
-            <ul className="list-none text-sm p-0 m-0 text-btnColor underline">
+            <h4 className="text-xl font-bold mb-2 text-white">Company</h4>
+            <ul className="list-none text-sm p-0 m-0 text-white underline">
               <li className="mb-2">
                 <a href="#">About us </a>
               </li>
@@ -57,8 +57,8 @@ const Footer = () => {
             </ul>
           </div>
           <div className="mb-4">
-            <h4 className="text-xl font-bold mb-2 text-footerText">Legal</h4>
-            <ul className="list-none text-sm p-0 m-0 text-btnColor underline">
+            <h4 className="text-xl font-bold mb-2 text-white">Legal</h4>
+            <ul className="list-none text-sm p-0 m-0 text-white underline">
               <li className="mb-2">
                 <a href="#">Privacy Policy</a>
               </li>

@@ -2,7 +2,7 @@ import React from 'react'
 
 const StatisticCard = () => {
   return (
-    <div className="w-5/6 dxl:h-[17.5rem] h-fit bg-neutral-50 rounded-[20px] shadow z-10 absolute top-[370px] dxl:top-[450px]">
+    <div className="w-11/12 dxl:h-[17.5rem] h-fit bg-neutral-50 rounded-[20px] shadow z-10 relative -top-[80px]">
             <div className="flex justify-center">
               <div className="w-4/6  dxl:justify-between dxl:items-center dxl:flex  dxl:left-[-60px] dxl:top-[60px]  dxl:relative block p-6">
                 <div className="relative mb-4">
