@@ -51,24 +51,31 @@ thread_local! {
 }
 
 #[update]
-pub async fn register_mentor(profile: MentorProfile) ->std::string::String{
+pub async fn register_mentor(profile: MentorProfile) -> String{
     let caller = caller();
     let random_bytes = raw_rand().await.expect("Failed to generate random bytes").0;
 
     let uid = format!("{:x}", Sha256::digest(&random_bytes));
     
-    let already_registered =
-        MENTOR_REGISTRY.with(|registry| registry.borrow().contains_key(&caller));
+    // let already_registered = MENTOR_REGISTRY.with(|registry| registry.borrow().contains_key(&caller));
 
-    if already_registered {
-        //return "This Principal is already registered.".to_string();
-        ic_cdk::println!("This Principal is already registered")
-    }
+    // if already_registered {
+        
+    //     ic_cdk::println!("This Principal is already registered");
+    //     return "This Principal is already registered.".to_string()
+    // let already_registered =
+    //     MENTOR_REGISTRY.with(|registry| registry.borrow().contains_key(&caller));
+
+    // if already_registered {
+    //     //return "This Principal is already registered.".to_string();
+    //     ic_cdk::println!("This Principal is already registered")
+    // }
 
     let mentor_internal = MentorInternal {
         profile,
         uid: uid.clone(),
     };
+    
     MENTOR_REGISTRY.with(|registry| {
         registry.borrow_mut().insert(caller, mentor_internal);
     });

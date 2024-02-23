@@ -6,16 +6,28 @@ import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { allHubHandlerRequest } from "../../Redux/Reducers/All_IcpHubReducer";
 // import { AuthClient } from "@dfinity/auth-client";
-
+import { ThreeDots } from "react-loader-spinner";
+import { useNavigate } from "react-router-dom";
 
 const today = new Date();
-const startDate = new Date('1900-01-01');
+const startDate = new Date("1900-01-01");
 
 const schema = yup.object({
-  full_name: yup.string().required().test("is-non-empty", null, (value) => value && value.trim().length > 0),
-  date_of_birth: yup.date().required().min(startDate, 'Date of birth cannot be before January 1, 1900').max(today, 'Date of birth cannot be in the future').typeError('Invalid date format, please use YYYY-MM-DD'),
+  full_name: yup
+    .string()
+    .required()
+    .test("is-non-empty", null, (value) => value && value.trim().length > 0),
+  date_of_birth: yup
+    .date()
+    .required()
+    .min(startDate, "Date of birth cannot be before January 1, 1900")
+    .max(today, "Date of birth cannot be in the future")
+    .typeError("Invalid date format, please use YYYY-MM-DD"),
   email: yup.string().email().required(),
-  phone_number: yup.string().required().matches(/^(\+\d{1,3}[- ]?)?\d{10}$/, null),
+  phone_number: yup
+    .string()
+    .required()
+    .matches(/^(\+\d{1,3}[- ]?)?\d{10}$/, null),
   linked_in_profile: yup.string().required().url(),
   telegram_id: yup.string().required().url(),
   twitter_id: yup.string().required().url(),
@@ -28,7 +40,7 @@ const FounderInfo = () => {
   const [inputType, setInputType] = useState("date");
 
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   // console.log("actor aa ja =>", actor);
   // console.log("getAllIcpHubs", getAllIcpHubs);
 
@@ -49,21 +61,21 @@ const FounderInfo = () => {
 
     const founderData = {
       full_name: [data.full_name],
-      date_of_birth: [data.date_of_birth.toISOString().split('T')[0]],
+      date_of_birth: [data.date_of_birth.toISOString().split("T")[0]],
       email: [data.email],
       phone_number: [data.phone_number],
       linked_in_profile: [data.linked_in_profile.toString()],
       telegram_id: [data.telegram_id.toString()],
       twitter_id: [data.twitter_id.toString()],
-      preferred_icp_hub:[ data.hub],
+      preferred_icp_hub: [data.hub],
     };
 
-
-    console.log('founderdata => ', founderData)
+    console.log("founderdata => ", founderData);
 
     try {
       await actor.register_founder_caller(founderData);
       console.log("data passed to backend");
+      navigate("/dashboard");
     } catch (error) {
       console.error("Error sending data to the backend:", error);
     }
@@ -84,56 +96,87 @@ const FounderInfo = () => {
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmitHandler)} className="w-full px-4">
-        {formFields?.map((field) => (
-          <div key={field.id} className="relative z-0 w-full mb-5 group">
-            <input
-              {...register(field.name)}
-              type={field.id === "date_of_birth" ? inputType : field.type}
-              name={field.name}
-              id={field.id}
-              className="block pb-2.5 pt-6 font-bold px-0 w-full text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-gray-300 peer"
-              placeholder=" "
-              onFocus={() => handleFocus(field)}
-              onBlur={() => handleBlur(field)}
-            />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {formFields?.map((field) => (
+            <div key={field.id} className="relative z-0 group">
+              <label
+                htmlFor={field.id}
+                className="block mb-2 text-sm font-medium text-gray-700 hover:whitespace-normal truncate overflow-hidden hover:text-left"
+              >
+                {field.label}
+              </label>
+              <input
+                type={field.id === "date_of_birth" ? inputType : field.type}
+                name={field.name}
+                id={field.id}
+                {...register(field.name)}
+                className={`bg-gray-50 border-2 ${
+                  errors[field.name]
+                    ? "border-red-500 placeholder:text-red-500"
+                    : "border-[#737373]"
+                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                placeholder={field.placeholder}
+                onFocus={() => handleFocus(field)}
+                onBlur={() => handleBlur(field)}
+              />
+              {errors[field.name] && (
+                <span className="mt-1 text-sm text-red-500 font-bold">
+                  {errors[field.name].message}
+                </span>
+              )}
+            </div>
+          ))}
+
+          <div className="relative z-0 group">
             <label
-              htmlFor={field.id}
-              className="peer-focus:font-medium absolute text-white duration-300 transform -translate-y-6 scale-80 top-6 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-gray-300 peer-focus:dark:text-gray-200 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+              htmlFor="hub"
+              className="block mb-2 text-sm font-medium text-gray-700 hover:whitespace-normal truncate overflow-hidden hover:text-left"
             >
-              {field.label}
+              Can you please share your preferred ICP Hub
             </label>
-            {errors[field.name] && (
-              <p className="text-red-500 text-xs italic">
-                {errors[field.name].message}
-              </p>
+            <select
+              {...register("hub")}
+              id="hub"
+              className={`bg-gray-50 border-2 ${
+                errors.hub
+                  ? "border-red-500 placeholder:text-red-500"
+                  : "border-[#737373]"
+              } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+            >
+              <option value="">Select your ICP Hub</option>
+              {getAllIcpHubs?.map((hub) => (
+                <option key={hub.id} value={`${hub.name} ,${hub.region}`}>
+                  {hub.name} , {hub.region}
+                </option>
+              ))}
+            </select>
+            {errors.hub && (
+              <span className="mt-1 text-sm text-red-500 font-bold">
+                {errors.hub.message}
+              </span>
             )}
           </div>
-        ))}
-
-        <div className="relative z-0 w-full mb-5 group">
-          <select
-            {...register("hub")}
-            className="block pb-2.5 pt-6 font-bold px-0 w-full text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-gray-300 peer mb-4"
-          >
-            <option value="">Select Hub</option>
-            {getAllIcpHubs?.map((hub) => (
-              <option key={hub.id} value={`${hub.name} ,${hub.region}`}>
-                {hub.name} , {hub.region}
-              </option>
-            ))}
-          </select>
-          {errors.hub && (
-            <p className="text-red-500 text-xs italic">{errors.hub.message}</p>
-          )}
         </div>
-
-        <div className="flex flex-row-reverse ">
+        <div className="flex justify-end mt-4">
           <button
             disabled={isSubmitting}
             type="submit"
-            className="text-black font-bold hover:text-white bg-white hover:bg-black focus:ring-4 focus:outline-none focus:ring-blue-300 fon rounded-md w-auto sm:w-auto px-5 py-2 text-center mb-4"
+            className="text-white font-bold bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md w-auto sm:w-auto px-5 py-2 text-center mb-4"
           >
-            {isSubmitting ? "Loading..." : "Next"}
+            {isSubmitting ? (
+              <ThreeDots
+                visible={true}
+                height="35"
+                width="35"
+                color="#FFFEFF"
+                radius="9"
+                ariaLabel="three-dots-loading"
+                wrapperStyle={{}}
+                wrapperClass=""
+              />
+            ) : (
+              "Next"
+            )}
           </button>
         </div>
       </form>

@@ -1,5 +1,4 @@
-import React from "react";
-import Header from "../Layout/Header/Header";
+import React, { useEffect } from "react";
 import Sidebar from "../Layout/SidePanel/Sidebar";
 import { ProjectSection } from "./ProjectSection";
 import SearchForm from "./SearchForm";
@@ -8,11 +7,37 @@ import Founder from "./Founder";
 import Partners from "./Partners";
 import Footer from "../Footer/Footer";
 import Bottombar from "../Layout/BottomBar/Bottombar";
+import { useSelector } from "react-redux";
 
 const DashBoard = () => {
+  const actor = useSelector((currState) => currState.actors.actor);
+
+  console.log("actor in dashboard =>", actor);
+
+  useEffect(() => {
+    const founderDataFetchHandler = async () => {
+      const founderDataFetch = await actor.get_mentor_candid();
+
+      console.log("dekho dekho founder data aaya => ", founderDataFetch);
+    };
+
+    founderDataFetchHandler();
+  }, [actor]);
+
+  console.log("actor in dashboard =>", actor);
+
+  // useEffect(() => {
+  //   const fetchUserPrincipalRole = async () => {
+  //     const RoleFetch = await actor.get_role_from_p_id();
+
+  //     console.log("dekho dekho role  aaya => ", RoleFetch)
+  //   };
+
+  //   fetchUserPrincipalRole()
+  // }, [actor]);
+
   return (
     <section className="overflow-hidden relative">
-      {/* <Header gradient="bg-gradient-to-r from-purple-800 from-10% via-purple-700 via-60%   to-purple-600 to-90%" /> */}
       <div className="w-[1279.64px] h-[1279.64px] opacity-70 bg-fuchsia-800 rounded-full blur-[169px] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
       <div className="font-fontUse flex flex-row w-full h-fit px-[5%] lg1:px-[4%] py-[6%] lg1:py-[4%] bg-gradient-to-br from-purple-800 from-10% via-purple-600 via-60%   to-violet-900 to-95%">
         <div className="w-full z-1">

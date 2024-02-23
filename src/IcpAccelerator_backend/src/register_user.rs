@@ -231,10 +231,12 @@ pub async fn register_founder(profile: FounderInfo)->std::string::String{
         //     storage.insert(caller, new_founder);
         //     println!("Founder Registered {:?}", caller);
         // }
-        
+
+     
             storage.insert(caller, new_founder);
             println!("Founder Registered {:?}", caller);
-      
+        
+
     });
     format!("User registered successfully with ID: {}", new_id)
 }
@@ -270,7 +272,7 @@ pub fn delete_founder()->std::string::String {
 }
 
 #[update]
-pub fn update_founder(mut updated_profile: FounderInfo) {
+pub fn update_founder(updated_profile: FounderInfo) -> String {
     let caller = caller();
 
     FOUNDER_STORAGE.with(|storage| {
@@ -337,10 +339,12 @@ pub fn update_founder(mut updated_profile: FounderInfo) {
 
             founder.calculate_profile_completion();
             println!("Founder profile updated for caller: {:?}", caller);
+            format!("Profile got updated for caller: {:?}", caller)
         } else {
             // Optionally handle the case where a founder does not exist
-            println!("Founder profile not found for caller: {:?}", caller);
+            format!("Founder profile not found for caller: {:?}", caller)
+
         }
-    });
+    })
 }
 

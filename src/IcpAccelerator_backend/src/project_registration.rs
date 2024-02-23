@@ -107,16 +107,18 @@ pub fn pre_upgrade() {
 //     });
 // }
 
-pub async fn create_project(params: ProjectInfo)->std::string::String {
+pub async fn create_project(params: ProjectInfo)-> String {
 
     let uuids = raw_rand().await.unwrap().0; 
     let uid = format!("{:x}", Sha256::digest(&uuids));
     let new_id = uid.clone().to_string();
 
     let caller = caller();
+
     let mut new_project = ProjectInfoInternal{
         params,
         uid: new_id,
+
     };
     APPLICATION_FORM.with(|storage| {
         let mut applications = storage.borrow_mut();

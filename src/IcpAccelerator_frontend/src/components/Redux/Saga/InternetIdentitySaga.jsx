@@ -7,32 +7,32 @@ import {
   logoutFailure,
   logoutStart,
   logoutSuccess,
-  checkLoginOnStart
+  checkLoginOnStart,
 } from "../Reducers/InternetIdentityReducer";
 
-
 function* clientInfo(authClient) {
+    const identity = yield call([authClient, authClient.getIdentity]);
 
-  // console.log("clientinfo run")
-  const identity = yield call([authClient, authClient.getIdentity]);
-  
   const principal = identity.getPrincipal().toText();
 
-  // console.log("Identity check:", identity);
-  // console.log("Principal check:", principal);
 
-  yield put(loginSuccess({
-    isAuthenticated: true,
-    identity,
-    principal,
-  }));
-} 
-
+  yield put(
+    loginSuccess({
+      isAuthenticated: true,
+      identity,
+      principal,
+      navi: "roleSelect",
+    })
+  );
+}
 
 function* performLogin(authClient) {
   yield new Promise((resolve, reject) => {
     authClient.login({
-      identityProvider: process.env.DFX_NETWORK === "ic" ? "https://identity.ic0.app" : `http://rdmx6-jaaaa-aaaaa-aaadq-cai.localhost:4943`,
+      identityProvider:
+        process.env.DFX_NETWORK === "ic"
+          ? "https://identity.ic0.app"
+          : `http://rdmx6-jaaaa-aaaaa-aaadq-cai.localhost:4943`,
       maxTimeToLive: BigInt(7 * 24 * 60 * 60 * 1000 * 1000 * 1000),
       onSuccess: () => resolve(),
       onError: (error) => reject(error),
@@ -42,42 +42,29 @@ function* performLogin(authClient) {
 
 function* checkLogin() {
 
-  // console.log('handlogin run check ')
-    
-  // try {
-        const authClient = yield AuthClient.create();
-        const isAuthenticated = yield call([authClient, authClient.isAuthenticated]);
+  const authClient = yield AuthClient.create();
+  const isAuthenticated = yield call([authClient, authClient.isAuthenticated]);
 
-        if (isAuthenticated) {
-          yield call(clientInfo, authClient);
-        } 
-    
-  //   } 
-  // catch (error) {
-  //   yield put(loginFailure(error.message));
-  // }
+  if (isAuthenticated) {
+    yield call(clientInfo, authClient);
+  }
+
+ 
 }
-
 
 function* handleLogin() {
 
-  // console.log('handlogin run check ')
-    
-  // try {
-        const authClient = yield AuthClient.create();
-        const isAuthenticated = yield call([authClient, authClient.isAuthenticated]);
+  const authClient = yield AuthClient.create();
+  const isAuthenticated = yield call([authClient, authClient.isAuthenticated]);
 
-        if (isAuthenticated) {
-          yield call(clientInfo, authClient);
-        } else {
-          yield call(performLogin, authClient);
-          yield call(clientInfo, authClient);
-        }
-    
-  //   } 
-  // catch (error) {
-  //   yield put(loginFailure(error.message));
-  // }
+  if (isAuthenticated) {
+    yield call(clientInfo, authClient);
+  } else {
+    yield call(performLogin, authClient);
+    yield call(clientInfo, authClient);
+  }
+
+ 
 }
 
 function* handleLogout() {
@@ -89,7 +76,6 @@ function* handleLogout() {
     yield put(logoutFailure(error.toString()));
   }
 }
-
 
 export function* internetIdentitySaga() {
   yield takeLatest(checkLoginOnStart().type, checkLogin);
