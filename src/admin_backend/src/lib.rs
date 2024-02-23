@@ -27,6 +27,6 @@ mod tests {
 
         let dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
         let dir = dir.parent().unwrap().parent().unwrap().join("candid");
-        write(dir.join("/home/harshpreet-singh/Documents/quadb/axxelerator/icp-accelerator/src/admin_backend/admin_backend.did"), export_candid()).expect("Write failed.");
+        write(dir.join("C:/Users/user/OneDrive/Desktop/Company/ICPAccelerator/src/admin_backend/admin_backend.did"), export_candid()).expect("Write failed.");
     }
 }
