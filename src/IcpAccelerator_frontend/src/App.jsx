@@ -3,7 +3,7 @@ import Home from "./components/Home/Home";
 // import AllDetailsForm from "./components/ProjectForm/AllDetailsForm";
 // import ProgressCard from "./components/Common/ProgressCard";
 // import Sidebar from "./components/Layout/SidePanel/Sidebar";
-// import DashBoard from "./components/Dashboard/DashBoard";
+import DashBoard from "./components/Dashboard/DashBoard";
 // import ProjectDetails from "./components/Project/ProjectDetails";
 // import UserProfile from "./components/UserProfile/UserProfile";
 import ConnectWallet from "./models/ConnectWallet";
@@ -16,6 +16,7 @@ import { useDispatch } from "react-redux";
 import { handleActorRequest } from "./components/Redux/Reducers/actorBindReducer";
 import { checkLoginOnStart, logoutStart } from "./components/Redux/Reducers/InternetIdentityReducer";
 import AppRoutes from "./AppRoutes";
+import Footer from "./components/Footer/Footer";
 
 const App = () => {
 
@@ -59,7 +60,7 @@ const App = () => {
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-50"></div>
       )}
-      <Header setModalOpen={setModalOpen} gradient={"bg-violet-800"} />
+      <Header setModalOpen={setModalOpen} gradient={"bg-gray-100"} />
       {/* <button onClick={checkActorWorking} className="bg-red-400 justify-center flex w-full z-1000">check actor</button>
       <button onClick={logoutHandler} className="bg-red-400 justify-center flex w-full z-1000">logout</button> */}
 
@@ -69,12 +70,13 @@ const App = () => {
       />
       {/* <DashBoard/> */}
       {/* <ProgressCard/> */}
-      <AllDetailsForm/>
+      {/* <AllDetailsForm/> */}
       {/* <ProjectDetails/> */}
       {/* <Home/> */}
       {/* <UserProfile/> */}
       {/* <RoleSelector /> */}
-      {/* <AppRoutes/> */}
+      <AppRoutes/>
+      <Footer/>
     </>
   );
 };

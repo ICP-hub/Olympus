@@ -5,7 +5,6 @@ import CompanyInfo from "../Registration/FounderRegistration/CompanyInfo";
 import CompanyMetrics from "../Registration/FounderRegistration/CompanyMetrics";
 import AdditionalInfo from "../Registration/FounderRegistration/AdditionalInfo";
 import TeamDetails from "../Registration/FounderRegistration/TeamDetails";
-import Header from "../Layout/Header/Header";
 import { headerData } from "../Utils/Data/AllDetailFormData";
 import Footer from "../Footer/Footer";
 import p5 from "../../../assets/Founders/p5.png";
@@ -37,7 +36,6 @@ const UserProfile = () => {
 
   return (
     <div className="font-fontUse">
-      <Header gradient={"bg-violet-800"} />
       <div className="  bg-violet-800  text-white pt-4 md:px-[4%] px-[6%]">
         <div className="flex flex-row items-end">
           <h1 className="text-4xl font-bold">My Profile</h1>
@@ -116,11 +114,11 @@ const UserProfile = () => {
 
               <div
                 className="absolute sm3:bottom-1 bottom-2 bg-gradient-to-r from-slate-300 to-blue-600 rounded-full z-10 lgx:w-[40px] lgx:h-[40px] md:w-[35px] md:h-[35px]  sm3:w-[30px] sm3:h-[30px] w-[20px] h-[20px] flex items-center justify-center"
-                style={{boxShadow: '5px 5px 15px rgba(0, 0, 0, 0.6)'}}
+                style={{ boxShadow: "5px 5px 15px rgba(0, 0, 0, 0.6)" }}
               >
                 <div
                   className="p-3 md:text-[10px] sm3:text-[8px] text-[6px] font-bold"
-                  style={{textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)'}}
+                  style={{ textShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)" }}
                 >
                   {`${percentage}%`}
                 </div>
@@ -176,7 +174,7 @@ const UserProfile = () => {
             {activeTab === "founder" && <FounderInfo />}
             {activeTab === "company" && <CompanyInfo />}
             {activeTab === "metrics" && <CompanyMetrics />}
-            {activeTab === "team" && <TeamDetails/>}
+            {activeTab === "team" && <TeamDetails />}
             {activeTab === "additional" && <AdditionalInfo />}
           </div>
         </div>

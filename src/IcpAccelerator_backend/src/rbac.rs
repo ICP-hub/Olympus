@@ -14,6 +14,7 @@ pub enum UserRole {
     Project,
     VC,
     HubOrganizer,
+    Founder
 }
 
 

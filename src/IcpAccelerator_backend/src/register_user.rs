@@ -12,7 +12,6 @@ use ic_cdk_macros::{query, update};
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct FounderInfo {
-    //id: Option<String>,
     pub full_name: Option<String>,
     date_of_birth: Option<String>,
     email: Option<String>,
@@ -238,10 +237,12 @@ pub async fn register_founder(profile: FounderInfo)->std::string::String{
         //     storage.insert(caller, new_founder);
         //     println!("Founder Registered {:?}", caller);
         // }
-        
+
+     
             storage.insert(caller, new_founder);
             println!("Founder Registered {:?}", caller);
-      
+        
+
     });
     format!("User registered successfully with ID: {}", new_id)
 }
@@ -288,7 +289,7 @@ pub fn delete_founder()->std::string::String {
 }
 
 #[update]
-pub fn update_founder(updated_profile: FounderInfo) {
+pub fn update_founder(mut updated_profile: FounderInfo) {
     let caller = caller();
 
     FOUNDER_STORAGE.with(|storage| {
@@ -429,9 +430,9 @@ pub fn update_founder(updated_profile: FounderInfo) {
             }
 
             founder.calculate_profile_completion();
-            println!("Founder profile updated for caller: {:?}", caller);
-        } else {
-            println!("Founder profile not found for caller: {:?}", caller);
+            format!("Profile got updated for caller: {:?}", caller)
+        }else{
+            format!("Founder Can Not Be Updated")
         }
     });
 }

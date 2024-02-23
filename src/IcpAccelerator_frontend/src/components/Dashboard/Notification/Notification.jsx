@@ -1,5 +1,4 @@
 import React from "react";
-import Header from "../../Layout/Header/Header";
 import Sidebar from "../../Layout/SidePanel/Sidebar";
 import project from "../../../../assets/images/project.png";
 import Bottombar from "../../Layout/BottomBar/Bottombar";
@@ -8,7 +7,6 @@ import p5 from "../../../../assets/Founders/p5.png";
 const Notification = () => {
   return (
     <section className="overflow-hidden relative">
-      {/* <Header gradient="bg-gradient-to-r from-purple-800 from-10% via-purple-700 via-60%   to-purple-600 to-90%" /> */}
       <div className="w-[1279.64px] h-[1279.64px] opacity-70 bg-fuchsia-800 rounded-full blur-[169px] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
       <div className="font-fontUse flex flex-row w-full h-fit px-[5%] lg1:px-[4%] py-[6%] lg1:py-[4%] bg-gradient-to-br from-purple-800 from-10% via-purple-600 via-60%   to-violet-900 to-95%">
         <div className="w-2/8 hidden md:block z-1 relative">

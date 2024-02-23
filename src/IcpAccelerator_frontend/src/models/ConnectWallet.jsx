@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { closeModalSvg } from "../components/Utils/Data/SvgData";
 import { walletModalSvg } from "../components/Utils/Data/SvgData";
 import { useDispatch } from "react-redux";
@@ -6,19 +6,36 @@ import {
   // triggerInternetIdentity,
   triggerPlugWallet,
   triggeBitfinityWallet,
-  // triggerAstroxMeWallet,
 } from "../components/Redux/Reducers/WalletAuth";
-
 import { loginStart } from "../components/Redux/Reducers/InternetIdentityReducer";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const ConnectWallet = ({ isModalOpen, onClose }) => {
-  const dispatch = useDispatch();
+  const roleNavigate = useSelector((currState) => currState.internet.navi);
+  const isAuthenticated = useSelector(
+    (currState) => currState.internet.isAuthenticated
+  );
 
-  
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  console.log("roleNavigate => ", roleNavigate);
+  console.log(roleNavigate, isAuthenticated);
+
+  useEffect(() => {
+    if (roleNavigate === "roleSelect" && isAuthenticated) {
+      onClose();
+      navigate(`/${roleNavigate}`);
+    } else {
+      navigate("/");
+    }
+  }, [isAuthenticated, roleNavigate]);
+
   const handleClick = (walletType) => {
     if (!walletType) {
       console.log("No wallet type specified.");
-      return; 
+      return;
     }
     switch (walletType) {
       case "internetIdentity":
@@ -39,7 +56,6 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
     }
   };
 
-  
   return (
     <>
       {isModalOpen && (
@@ -65,14 +81,12 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
                 </p>
                 <ul className="my-4 space-y-3 cursor-pointer">
                   {walletModalSvg.map((wallet, index) => (
-                   
                     <div key={index} onClick={() => handleClick(wallet.id)}>
                       {wallet.content}
                     </div>
                   ))}
                 </ul>
-                <div>
-                </div>
+                <div></div>
               </div>
             </div>
           </div>
