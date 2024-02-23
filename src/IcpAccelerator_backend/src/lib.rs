@@ -8,13 +8,13 @@ mod roles;
 mod upvotes;
 mod vc_registration;
 
-use std::collections::HashSet;
 use hub_organizer::{HubOrganizerRegistration, UniqueHubs};
 use ic_cdk::api::caller;
 use ic_kit::candid::{candid_method, export_service};
 use leaderboard::{LeaderboardEntryForLikes, LeaderboardEntryForUpvote};
 use project_like::LikeRecord;
 use roles::{get_roles, RolesResponse};
+use std::collections::HashSet;
 
 use manage_hubs::{get_icp_hubs, IcpHub};
 use mentor::MentorProfile;
@@ -56,7 +56,7 @@ fn pre_upgrade() {
 
 #[query]
 #[candid_method(query)]
-pub fn get_role_from_p_id()-> Option<HashSet<UserRole>> {
+pub fn get_role_from_p_id() -> Option<HashSet<UserRole>> {
     rbac::get_role_from_principal()
 }
 
@@ -121,7 +121,7 @@ fn list_all_projects() -> Vec<ProjectInfo> {
 
 #[update]
 #[candid_method(update)]
-fn update_project(project_id: String, updated_project: ProjectInfo) -> String{
+fn update_project(project_id: String, updated_project: ProjectInfo) -> String {
     if has_required_role(&vec![UserRole::Founder, UserRole::Project]) {
         project_registration::update_project(project_id, updated_project);
         "updation success".to_string()
@@ -215,9 +215,15 @@ fn get_all_roles() -> RolesResponse {
 #[update]
 #[candid_method(update)]
 async fn register_mentor_candid(profile: MentorProfile) -> std::string::String {
+    //let start = ic_cdk::api::instruction_counter();
     mentor::register_mentor(profile).await;
+
     let roles_to_assign = vec![UserRole::Mentor];
-    assign_roles_to_principal(roles_to_assign)
+
+    assign_roles_to_principal(roles_to_assign);
+    //let end = ic_cdk::api::instruction_counter();
+    //record_measurement(end - start);
+    "mentor got registered".to_string()
 }
 
 #[query]
@@ -242,6 +248,12 @@ pub fn update_mentor_profile(updated_profile: MentorProfile) -> String {
     } else {
         "I am sorry, you don't hv access to this function!".to_string()
     }
+}
+
+#[update]
+#[candid_method(update)]
+pub fn make_active_inactive_mentor(id : Principal) -> String{
+    mentor::make_active_inactive(id)
 }
 
 #[query]
@@ -284,7 +296,7 @@ pub fn list_all_venture_capitalist() -> Vec<VentureCapitalist> {
 
 #[update]
 #[candid_method(update)]
-pub fn update_venture_capitalist_caller(params: VentureCapitalist) ->String{
+pub fn update_venture_capitalist_caller(params: VentureCapitalist) -> String {
     let required_roles = [UserRole::VC];
 
     if has_required_role(&required_roles) {
@@ -293,8 +305,6 @@ pub fn update_venture_capitalist_caller(params: VentureCapitalist) ->String{
     } else {
         "I am sorry, you don't hv access to this function!".to_string()
     }
-
-    
 }
 
 #[update]
@@ -309,11 +319,16 @@ fn get_icp_hubs_candid() -> Vec<IcpHub> {
     get_icp_hubs()
 }
 
+// #[query]
+// #[candid_method(query)]
+// fn greet() -> String {
+//     let principal_id = caller().to_string();
+//     format!("principal id - : {:?}", principal_id)
+// }
+
 #[query]
-#[candid_method(query)]
-fn greet() -> String {
-    let principal_id = caller().to_string();
-    format!("principal id - : {:?}", principal_id)
+fn greet(name: String) -> String {
+    format!("Hello! {}", name)
 }
 
 #[update]
@@ -388,6 +403,12 @@ pub fn get_leaderboard_using_likes() -> Vec<LeaderboardEntryForLikes> {
 #[query]
 pub fn get_role() -> RolesResponse {
     roles::get_roles()
+}
+
+#[query]
+#[candid_method(query)]
+pub fn get_my_id() -> Principal{
+    caller()
 }
 
 // #[update]
