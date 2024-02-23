@@ -12,7 +12,7 @@ use ic_cdk_macros::{query, update};
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct FounderInfo {
-    id: Option<String>,
+    //id: Option<String>,
     pub full_name: Option<String>,
     date_of_birth: Option<String>,
     email: Option<String>,
@@ -85,15 +85,20 @@ pub struct FounderInfo {
     long_term_goals: Option<String>,
 }
 
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+pub struct FounderInfoInternal{
+    pub params: FounderInfo,
+    pub uid: String,
+}
+
 
 impl FounderInfo {
     // Calculate the completion percentage of the profile
     pub fn calculate_profile_completion(&mut self) {
-        let total_fields = 20; // Total fields to consider for completion
+        let total_fields = 44; // Total fields to consider for completion
         let mut filled_fields = 0;
 
         // Increment filled_fields for each non-empty field
-        if self.id.is_some() { filled_fields += 1; }
         if !self.full_name.is_some() { filled_fields += 1; }
         if !self.date_of_birth.is_some() { filled_fields += 1; }
         if !self.email.is_some() { filled_fields += 1; }
@@ -171,7 +176,7 @@ impl FounderInfo {
 }
 
 
-pub type FounderInfoStorage = HashMap<Principal, FounderInfo>;
+pub type FounderInfoStorage = HashMap<Principal, FounderInfoInternal>;
 
 
 thread_local! {
@@ -216,10 +221,12 @@ pub async fn register_founder(profile: FounderInfo)->std::string::String{
     let uuids = raw_rand().await.unwrap().0;
     let uid = format!("{:x}", Sha256::digest(&uuids));
     let new_id = uid.clone().to_string();
-    let mut new_founder = FounderInfo {id:Some(new_id.clone()),full_name:profile.full_name,date_of_birth:profile.date_of_birth,email:profile.email,preferred_icp_hub:profile.preferred_icp_hub,phone_number:profile.phone_number,linked_in_profile:profile.linked_in_profile,telegram_id:profile.telegram_id,twitter_id:profile.twitter_id,profile_complete:None,is_profile_complete:Some(false),location:None,role_within_company:None,employee_count:None,stage_of_company:None,currently_users:None,average_monthly_spending:None,average_monthly_revenue:None,company_debt:None,raised_any_capital:None,previous_part_in_incubator:None,how_many_co_founder:None,co_founder_linkedin_profile:None,how_long_know_each_other:None,is_team_full_time_working_on_project:None,equity_owner_of_company:None,share_about_venture:None,why_are_you_apply_for_acceleration_program:None,committed_to_work_on_the_program_during_acceleration:None,refer:None,target_market:None,market_size:None,customer_demographics:None,competitors:None,projected_revenues:None,break_even_analysis:None,funding_requirements:None,registration_details:None,regulatory_approvals:None,key_achieved_milestones:None,future_goals:None,user_feedback:None,testimonials:None,potential_risks:None,mitigation_strategies:None,company_vision:None,long_term_goals:None,founder_image:None, is_active: Some(true) };
+    let mut new_founder = FounderInfoInternal{
+        params: profile,
+        uid: new_id.clone(),
+    };
 
-    // Optionally calculate profile completion or perform other initialization tasks
-    new_founder.calculate_profile_completion();
+    new_founder.params.calculate_profile_completion();
 
     println!("Registering founder for caller: {:?}", caller);
     FOUNDER_STORAGE.with(|storage| {
@@ -243,13 +250,24 @@ pub async fn register_founder(profile: FounderInfo)->std::string::String{
 pub fn get_founder_info() -> Option<FounderInfo> {
     let caller = caller();
     println!("Fetching founder info for caller: {:?}", caller);
-    FOUNDER_STORAGE.with(|registry| registry.borrow().get(&caller).cloned())
+    FOUNDER_STORAGE.with(|registry| {
+        registry
+            .borrow()
+            .get(&caller)
+            .map(|mentor_internal| mentor_internal.params.clone())
+    })
 }
 
 
 #[query]
 pub fn list_all_founders() -> Vec<FounderInfo> {
-    FOUNDER_STORAGE.with(|storage| storage.borrow().values().cloned().collect())
+    FOUNDER_STORAGE.with(|storage| 
+        storage
+            .borrow()
+            .values()
+            .map(|vc_internal| vc_internal.params.clone()) 
+            .collect() 
+    )
 }
 
 #[update]
@@ -260,7 +278,7 @@ pub fn delete_founder()->std::string::String {
     FOUNDER_STORAGE.with(|storage| {
         let mut storage = storage.borrow_mut();
         if let Some(founder) = storage.get_mut(&caller) {
-            founder.is_active = Some(false); // Mark the founder as inactive instead of deleting
+            founder.params.is_active = Some(false); // Mark the founder as inactive 
             println!("Founder deactivated for caller: {:?}", caller);
         } else {
             println!("Founder not found for caller: {:?}", caller);
@@ -270,75 +288,149 @@ pub fn delete_founder()->std::string::String {
 }
 
 #[update]
-pub fn update_founder(mut updated_profile: FounderInfo) {
+pub fn update_founder(updated_profile: FounderInfo) {
     let caller = caller();
 
     FOUNDER_STORAGE.with(|storage| {
         let mut storage = storage.borrow_mut();
-        if let Some(founder) = storage.get_mut(&caller) {
+        if let Some(founder_internal) = storage.get_mut(&caller) {
+            let founder = &mut founder_internal.params;
+            // Personal and Company Information
+            if let Some(new_value) = updated_profile.location {
+                founder.location = Some(new_value);
+            }
+            if let Some(new_value) = updated_profile.role_within_company {
+                founder.role_within_company = Some(new_value);
+            }
+            if let Some(new_value) = updated_profile.employee_count {
+                founder.employee_count = Some(new_value);
+            }
+            if let Some(new_value) = updated_profile.stage_of_company {
+                founder.stage_of_company = Some(new_value);
+            }
+            if let Some(new_value) = updated_profile.founder_image {
+                founder.founder_image = Some(new_value);
+            }
 
-            founder.location = updated_profile.location;
-            founder.role_within_company = updated_profile.role_within_company;
-            founder.employee_count = updated_profile.employee_count;
-            founder.stage_of_company = updated_profile.stage_of_company;
-            founder.founder_image = updated_profile.founder_image;
+            // Company Metrics
+            if let Some(new_value) = updated_profile.currently_users {
+                founder.currently_users = Some(new_value);
+            }
+            if let Some(new_value) = updated_profile.average_monthly_spending {
+                founder.average_monthly_spending = Some(new_value);
+            }
+            if let Some(new_value) = updated_profile.average_monthly_revenue {
+                founder.average_monthly_revenue = Some(new_value);
+            }
+            if let Some(new_value) = updated_profile.company_debt {
+                founder.company_debt = Some(new_value);
+            }
+            if let Some(new_value) = updated_profile.raised_any_capital {
+                founder.raised_any_capital = Some(new_value);
+            }
+            if let Some(new_value) = updated_profile.previous_part_in_incubator {
+                founder.previous_part_in_incubator = Some(new_value);
+            }
 
-            // Company Metrics fields 
-            founder.currently_users = updated_profile.currently_users;
-            founder.average_monthly_spending = updated_profile.average_monthly_spending;
-            founder.average_monthly_revenue = updated_profile.average_monthly_revenue;
-            founder.company_debt = updated_profile.company_debt;
-            founder.raised_any_capital = updated_profile.raised_any_capital;
-            founder.previous_part_in_incubator = updated_profile.previous_part_in_incubator;
+            // Team Details
+            if let Some(new_value) = updated_profile.how_many_co_founder {
+                founder.how_many_co_founder = Some(new_value);
+            }
+            if let Some(new_value) = updated_profile.co_founder_linkedin_profile {
+                founder.co_founder_linkedin_profile = Some(new_value);
+            }
+            if let Some(new_value) = updated_profile.how_long_know_each_other {
+                founder.how_long_know_each_other = Some(new_value);
+            }
+            if let Some(new_value) = updated_profile.is_team_full_time_working_on_project {
+                founder.is_team_full_time_working_on_project = Some(new_value);
+            }
+            if let Some(new_value) = updated_profile.equity_owner_of_company {
+                founder.equity_owner_of_company = Some(new_value);
+            }
+            if let Some(new_value) = updated_profile.share_about_venture {
+                founder.share_about_venture = Some(new_value);
+            }
 
-            // Team Details fields 
-            founder.how_many_co_founder = updated_profile.how_many_co_founder;
-            founder.co_founder_linkedin_profile = updated_profile.co_founder_linkedin_profile;
-            founder.how_long_know_each_other = updated_profile.how_long_know_each_other;
-            founder.is_team_full_time_working_on_project = updated_profile.is_team_full_time_working_on_project;
-            founder.equity_owner_of_company = updated_profile.equity_owner_of_company;
-            founder.share_about_venture = updated_profile.share_about_venture;
+            // Additional Information
+            if let Some(new_value) = updated_profile.why_are_you_apply_for_acceleration_program {
+                founder.why_are_you_apply_for_acceleration_program = Some(new_value);
+            }
+            if let Some(new_value) = updated_profile.committed_to_work_on_the_program_during_acceleration {
+                founder.committed_to_work_on_the_program_during_acceleration = Some(new_value);
+            }
+            if let Some(new_value) = updated_profile.refer {
+                founder.refer = Some(new_value);
+            }
 
-            // Additional Information fields 
-            founder.why_are_you_apply_for_acceleration_program = updated_profile.why_are_you_apply_for_acceleration_program;
-            founder.committed_to_work_on_the_program_during_acceleration = updated_profile.committed_to_work_on_the_program_during_acceleration;
-            founder.refer = updated_profile.refer;
+            // Market Analysis
+            if let Some(new_value) = updated_profile.target_market {
+                founder.target_market = Some(new_value);
+            }
+            if let Some(new_value) = updated_profile.market_size {
+                founder.market_size = Some(new_value);
+            }
+            if let Some(new_value) = updated_profile.customer_demographics {
+                founder.customer_demographics = Some(new_value);
+            }
+            if let Some(new_value) = updated_profile.competitors {
+                founder.competitors = Some(new_value);
+            }
 
-            // Market Analysis fields 
-            founder.target_market = updated_profile.target_market;
-            founder.market_size = updated_profile.market_size;
-            founder.customer_demographics = updated_profile.customer_demographics;
-            founder.competitors = updated_profile.competitors;
+            // Financial Projections
+            if let Some(new_value) = updated_profile.projected_revenues {
+                founder.projected_revenues = Some(new_value);
+            }
+            if let Some(new_value) = updated_profile.break_even_analysis {
+                founder.break_even_analysis = Some(new_value);
+            }
+            if let Some(new_value) = updated_profile.funding_requirements {
+                founder.funding_requirements = Some(new_value);
+            }
 
-            // Financial Projections fields 
-            founder.projected_revenues = updated_profile.projected_revenues;
-            founder.break_even_analysis = updated_profile.break_even_analysis;
-            founder.funding_requirements = updated_profile.funding_requirements;
+            // Legal And Compliance
+            if let Some(new_value) = updated_profile.registration_details {
+                founder.registration_details = Some(new_value);
+            }
+            if let Some(new_value) = updated_profile.regulatory_approvals {
+                founder.regulatory_approvals = Some(new_value);
+            }
 
-            // Legal And Compliance fields 
-            founder.registration_details = updated_profile.registration_details;
-            founder.regulatory_approvals = updated_profile.regulatory_approvals;
+            // Milestones And Goals
+            if let Some(new_value) = updated_profile.key_achieved_milestones {
+                founder.key_achieved_milestones = Some(new_value);
+            }
+            if let Some(new_value) = updated_profile.future_goals {
+                founder.future_goals = Some(new_value);
+            }
 
-            // Milestones And Goals 
-            founder.key_achieved_milestones = updated_profile.key_achieved_milestones;
-            founder.future_goals = updated_profile.future_goals;
+            // Feedback And Testimonials
+            if let Some(new_value) = updated_profile.user_feedback {
+                founder.user_feedback = Some(new_value);
+            }
+            if let Some(new_value) = updated_profile.testimonials {
+                founder.testimonials = Some(new_value);
+            }
 
-            // Feedback And Testimonials 
-            founder.user_feedback = updated_profile.user_feedback;
-            founder.testimonials = updated_profile.testimonials;
+            // Risk Analysis
+            if let Some(new_value) = updated_profile.potential_risks {
+                founder.potential_risks = Some(new_value);
+            }
+            if let Some(new_value) = updated_profile.mitigation_strategies {
+                founder.mitigation_strategies = Some(new_value);
+            }
 
-            // Risk Analysis fields 
-            founder.potential_risks = updated_profile.potential_risks;
-            founder.mitigation_strategies = updated_profile.mitigation_strategies;
-
-            // Vision And Long Term Goals fields 
-            founder.company_vision = updated_profile.company_vision;
-            founder.long_term_goals = updated_profile.long_term_goals;
+            // Vision And Long Term Goals
+            if let Some(new_value) = updated_profile.company_vision {
+                founder.company_vision = Some(new_value);
+            }
+            if let Some(new_value) = updated_profile.long_term_goals {
+                founder.long_term_goals = Some(new_value);
+            }
 
             founder.calculate_profile_completion();
             println!("Founder profile updated for caller: {:?}", caller);
         } else {
-            // Optionally handle the case where a founder does not exist
             println!("Founder profile not found for caller: {:?}", caller);
         }
     });
