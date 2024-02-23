@@ -15,6 +15,7 @@ import InvestorPersonalInformation from "./InvestorPersonalInformation";
 import { useSelector } from "react-redux";
 import { allHubHandlerRequest } from "../../Redux/Reducers/All_IcpHubReducer";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const validationSchema = {
   personalDetails: yup.object().shape({
@@ -95,6 +96,7 @@ const InvestorRegistration = () => {
   const actor = useSelector((currState) => currState.actors.actor);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState(investorRegistration[0].id);
   const [formData, setFormData] = useState({});
@@ -171,7 +173,6 @@ const InvestorRegistration = () => {
     }
   };
 
-
   const stepFields = steps[step].fields;
   let StepComponent;
 
@@ -236,6 +237,7 @@ const InvestorRegistration = () => {
         try {
           await actor.register_venture_capitalist_caller(investorDataObject);
           console.log("investor data registered in backend");
+          navigate("/dashboard");
         } catch (error) {
           console.log(error.message);
         }

@@ -13,6 +13,8 @@ import { useNavigate } from "react-router-dom";
 
 const ConnectWallet = ({ isModalOpen, onClose }) => {
   const roleNavigate = useSelector((currState) => currState.internet.navi);
+  const userRole = useSelector((currState) => currState.current.specificRole);
+
   const isAuthenticated = useSelector(
     (currState) => currState.internet.isAuthenticated
   );
@@ -20,17 +22,23 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  console.log("roleNavigate => ", roleNavigate);
-  console.log(roleNavigate, isAuthenticated);
+  console.log("bande ka role ", userRole);
 
   useEffect(() => {
-    if (roleNavigate === "roleSelect" && isAuthenticated) {
+    if (userRole && isAuthenticated) {
+      onClose();
+      navigate("/dashboard");
+    } else if (
+      userRole === null &&
+      roleNavigate === "roleSelect" &&
+      isAuthenticated
+    ) {
       onClose();
       navigate(`/${roleNavigate}`);
     } else {
       navigate("/");
     }
-  }, [isAuthenticated, roleNavigate]);
+  }, [isAuthenticated, roleNavigate, userRole, navigate]);
 
   const handleClick = (walletType) => {
     if (!walletType) {

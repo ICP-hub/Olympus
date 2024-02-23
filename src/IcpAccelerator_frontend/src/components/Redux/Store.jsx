@@ -21,7 +21,7 @@ const sagaMiddleware = createSagaMiddleware();
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["auth", "role",'hubs',],
+  whitelist: ["role", "hubs", "current"],
   // transforms: [encryptor], // encrypt k lie kia
 };
 
@@ -35,12 +35,18 @@ const store = configureStore({
     getDefaultMiddleware({
       serializableCheck: {
         // Ignore krne k lie these action types in serializability check
-        ignoredActions: ["persist/PERSIST", "persist/REHYDRATE","actors/setActor" ,'internet/loginSuccess', 'internet/loginFailure'],
-        ignoredPaths: ['actors.actor','internet.identity'],
-        
+        ignoredActions: [
+          "persist/PERSIST",
+          "persist/REHYDRATE",
+          "actors/setActor",
+          "internet/loginSuccess",
+          "internet/loginFailure",
+        ],
+        ignoredPaths: ["actors.actor", "internet.identity"],
+
         // // Ignore these field paths in all actions
-         ignoredActionPaths: ['payload.identity','payload.actor'],
-        // // Ignore these paths in the state    
+        ignoredActionPaths: ["payload.identity", "payload.actor"],
+        // // Ignore these paths in the state
       },
     }).concat(sagaMiddleware),
   // yae ek bouncer ki trah hai action k lie but , allow krega defaultMiddleWare(eg: dj) ko or dj friend ko i.e sagaMiddleware (dj friend)
