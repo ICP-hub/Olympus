@@ -1,4 +1,5 @@
 use crate::upvotes::{UPVOTES, UpvoteRecord}; 
+use crate::ratings::{Rating,RATING_SYSTEM, calculate_average};
 use crate::project_like::STATE;
 use std::fmt::Display;
 use candid::{CandidType, Principal, Nat};
@@ -15,6 +16,12 @@ pub struct LeaderboardEntryForUpvote {
 pub struct LeaderboardEntryForLikes {
     pub project_id: Option<String>,
     pub like_count: Option<Nat>,
+}
+
+#[derive(Debug, Clone, PartialEq, CandidType)]
+pub struct LeaderboardEntryForRatings{
+    pub project_id: Option<String>,
+    pub average_rating: Option<f64>,
 }
 
 fn compare_nat(a: &Option<Nat>, b: &Option<Nat>) -> Ordering {
@@ -54,3 +61,26 @@ pub fn get_leaderboard_by_likes() -> Vec<LeaderboardEntryForLikes> {
     projects
 }
 
+pub fn get_leaderboard_by_ratings() -> Vec<LeaderboardEntryForRatings> {
+    let mut leaderboard: Vec<LeaderboardEntryForRatings> = Vec::new();
+
+    RATING_SYSTEM.with(|system| {
+        let system = system.borrow();
+
+        // Iterate over all projects to calculate their average ratings.
+        for (project_id, _) in system.iter() {
+            // Calculate the average rating for each project, considering only projects with ratings.
+            if let Some(average_rating) = calculate_average(project_id) {
+                leaderboard.push(LeaderboardEntryForRatings {
+                    project_id: Some(project_id.clone()),
+                    average_rating: Some(average_rating),
+                });
+            }
+        }
+    });
+
+    // Sort the leaderboard by average ratings in descending order.
+    leaderboard.sort_by(|a, b| b.average_rating.partial_cmp(&a.average_rating).unwrap_or(std::cmp::Ordering::Equal));
+
+    leaderboard
+}

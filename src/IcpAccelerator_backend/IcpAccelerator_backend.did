@@ -93,6 +93,10 @@ type LeaderboardEntryForUpvote = record {
   upvote_count : opt nat;
   project_id : opt text;
 };
+type LeaderboardEntryForRatings = record {
+  project_id : opt text;
+  average_rating : opt float64;
+};
 type MentorProfile = record {
   email_address : opt text;
   mentor_image : opt vec nat8;
@@ -203,6 +207,24 @@ type VentureCapitalist = record {
   location : opt text;
   technological_focus : opt text;
 };
+
+type MainLevel = variant {
+    Level1; Level2; Level3; Level4; Level5;
+    Level6; Level7; Level8; Level9;
+};
+type SubLevel = variant {
+    SubLevel0; SubLevel1; SubLevel2; SubLevel3; SubLevel4;
+    SubLevel5; SubLevel6; SubLevel7; SubLevel8; SubLevel9; All;
+};
+type RatingType = variant { Peer; Own; Mentor };
+type Rating = record {
+    project_id: text;
+    level_name: MainLevel;
+    sub_level: SubLevel;
+    rating_type: RatingType;
+    rating: float64;
+};
+
 service : {
   add_suggestion_caller : (text) -> (nat64, Status);
   create_project : (ProjectInfo) -> (text);
@@ -217,6 +239,7 @@ service : {
   get_icp_hubs_candid : () -> (vec IcpHub) query;
   get_leaderboard_using_likes : () -> (vec LeaderboardEntryForLikes) query;
   get_leaderboard_using_upvotes : () -> (vec LeaderboardEntryForUpvote) query;
+  get_leaderboard_using_ratings : () -> (vec LeaderboardEntryForRatings) query;
   get_mentor_candid : () -> (opt MentorProfile) query;
   get_project_upvotes : (text) -> (opt UpvoteRecord) query;
   get_projects_for_caller : () -> (vec ProjectInfo) query;
@@ -248,4 +271,6 @@ service : {
   update_venture_capitalist_caller : (VentureCapitalist) -> (text);
   upvote_project : (text) -> (text);
   view_notifications_candid : (principal) -> (vec Notification) query;
+  update_rating_api: (Rating) -> ();
+  calculate_average_api: (text) -> (opt float64) query;
 }
