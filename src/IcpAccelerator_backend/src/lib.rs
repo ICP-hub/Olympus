@@ -215,13 +215,19 @@ fn get_all_roles() -> RolesResponse {
 #[update]
 #[candid_method(update)]
 async fn register_mentor_candid(profile: MentorProfile) -> std::string::String {
-    //let start = ic_cdk::api::instruction_counter();
+    let start = ic_cdk::api::instruction_counter();
+    ic_cdk::println!("instructions start {}",start);
+    
     mentor::register_mentor(profile).await;
 
     let roles_to_assign = vec![UserRole::Mentor];
 
     assign_roles_to_principal(roles_to_assign);
-    //let end = ic_cdk::api::instruction_counter();
+    let end = ic_cdk::api::instruction_counter();
+
+   
+    ic_cdk::println!("instructions end {}", end);
+    ic_cdk::println!("instructions {}", end - start);
     //record_measurement(end - start);
     "mentor got registered".to_string()
 }

@@ -3,7 +3,8 @@
     "IcpAccelerator_backend": {
       "candid": "src/IcpAccelerator_backend/IcpAccelerator_backend.did",
       "package": "IcpAccelerator_backend",
-      "type": "rust"
+      "type": "rust",
+      "optimize": "cycles"
     },
     
     "internet_identity" : {
