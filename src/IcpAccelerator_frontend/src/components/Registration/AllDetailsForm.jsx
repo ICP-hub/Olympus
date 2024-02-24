@@ -19,8 +19,6 @@ const AllDetailsForm = () => {
   const location = useLocation();
   const { roleId, roleName } = location.state;
 
-  console.log("roleName <><><><><><>", roleName);
-
   const renderComponent = (roleName) => {
     switch (roleName) {
       case "Project":
@@ -42,19 +40,6 @@ const AllDetailsForm = () => {
     setActiveTab(tab);
   };
 
-  console.log("actorrr => ", actor);
-
-  useEffect(() => {
-    const fetchUserPrincipalRole = async () => {
-      const RoleFetch = await actor.get_role_from_p_id();
-
-      console.log("dekho dekho RoleFetch  aaya => ", RoleFetch);
-    };
-
-    fetchUserPrincipalRole();
-  }, [actor]);
-
-  // console.log("AllDetailsForm called =>", AllDetailsForm)
   const getTabClassName = (tab) => {
     return `inline-block p-4 ${
       activeTab === tab

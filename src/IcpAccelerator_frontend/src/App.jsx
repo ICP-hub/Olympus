@@ -14,46 +14,43 @@ import Header from "./components/Layout/Header/Header";
 import AllDetailsForm from "./components/Registration/AllDetailsForm";
 import { useDispatch } from "react-redux";
 import { handleActorRequest } from "./components/Redux/Reducers/actorBindReducer";
-import { checkLoginOnStart, logoutStart } from "./components/Redux/Reducers/InternetIdentityReducer";
+import {
+  checkLoginOnStart,
+  logoutStart,
+} from "./components/Redux/Reducers/InternetIdentityReducer";
 import AppRoutes from "./AppRoutes";
 import Footer from "./components/Footer/Footer";
+import { userRoleHandler } from "./components/Redux/Reducers/userRoleReducer";
 
 const App = () => {
-
-  // checking git flow
-
-  const identity =useSelector((currState)=> currState.internet.identity)
-  const isAuthenticated =useSelector((currState)=> currState.internet.isAuthenticated)
-  // const actor =  useSelector((currState)=> currState.actors.actor)
+  const identity = useSelector((currState) => currState.internet.identity);
+  const isAuthenticated = useSelector(
+    (currState) => currState.internet.isAuthenticated
+  );
+  // const actor = useSelector((currState) => currState.actors.actor);
+  const userRole = useSelector((currState) => currState.current.specificRole);
 
   const [isModalOpen, setModalOpen] = useState(false);
 
-  const dispatch =useDispatch()
+  const dispatch = useDispatch();
 
   // console.log('identity in app.jsx =>', identity)
-  // console.log('actor in app.jsx =>', actor)
+  // console.log('isAuthenticated & other =>', isAuthenticated, identity,)
+  console.log("user specific role after registration", userRole);
 
-
-  useEffect(()=>{
-    dispatch(checkLoginOnStart())
-  },[])
+  useEffect(() => {
+    dispatch(checkLoginOnStart());
+  }, []);
 
   useEffect(() => {
     if (isAuthenticated && identity) {
       dispatch(handleActorRequest());
     }
   }, [isAuthenticated, identity, dispatch]);
-  
 
-// const checkActorWorking = async() =>{
-//   const fetchAllHubs = await actor.get_icp_hubs_candid()
-//   console.log("app.jsx mai actor working check =>", fetchAllHubs)
-// }
-
-// const logoutHandler =()=>{
-//   console.log('logout done')
-//   dispatch(logoutStart())
-// }
+  useEffect(() => {
+    dispatch(userRoleHandler());
+  }, [isAuthenticated, identity, dispatch]);
 
   return (
     <>
@@ -61,9 +58,6 @@ const App = () => {
         <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-50"></div>
       )}
       <Header setModalOpen={setModalOpen} gradient={"bg-gray-100"} />
-      {/* <button onClick={checkActorWorking} className="bg-red-400 justify-center flex w-full z-1000">check actor</button>
-      <button onClick={logoutHandler} className="bg-red-400 justify-center flex w-full z-1000">logout</button> */}
-
       <ConnectWallet
         isModalOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
@@ -75,8 +69,8 @@ const App = () => {
       {/* <Home/> */}
       {/* <UserProfile/> */}
       {/* <RoleSelector /> */}
-      <AppRoutes/>
-      <Footer/>
+      <AppRoutes />
+      <Footer />
     </>
   );
 };

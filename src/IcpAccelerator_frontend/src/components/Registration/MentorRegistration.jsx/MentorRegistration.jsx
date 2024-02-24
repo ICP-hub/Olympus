@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 import CompressedImage from "../../ImageCompressed/CompressedImage";
 import { useDispatch } from "react-redux";
 import { allHubHandlerRequest } from "../../Redux/Reducers/All_IcpHubReducer";
+import { useNavigate } from "react-router-dom";
 
 const validationSchema = {
   personalDetails: yup.object().shape({
@@ -115,6 +116,7 @@ const MentorRegistration = () => {
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState(mentorRegistration[0].id);
   const [formData, setFormData] = useState({});
@@ -232,7 +234,6 @@ const MentorRegistration = () => {
     if (step < steps.length - 1) {
       handleNext();
     } else {
-
       const mentorDataObject = {
         areas_of_expertise: [updatedFormData.areasOfExpertise],
         availability_and_time_commitment: [
@@ -283,6 +284,7 @@ const MentorRegistration = () => {
         try {
           await actor.register_mentor_candid(mentorDataObject);
           console.log("mentor data registered in backend");
+          navigate("/dashboard");
         } catch (error) {
           console.log(error.message);
         }
