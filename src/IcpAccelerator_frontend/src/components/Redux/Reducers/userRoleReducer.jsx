@@ -15,6 +15,7 @@ const userRoleSlice = createSlice({
       state.error = null;
     },
     userRoleSuccessHandler: (state, action) => {
+      // console.log('specificRole in reducer =>',action.payload)
       state.loading = false;
       state.specificRole = action.payload;
     },
