@@ -289,7 +289,7 @@ pub fn delete_founder()->std::string::String {
 }
 
 #[update]
-pub fn update_founder(mut updated_profile: FounderInfo) {
+pub fn update_founder(mut updated_profile: FounderInfo) -> String {
     let caller = caller();
 
     FOUNDER_STORAGE.with(|storage| {
@@ -434,6 +434,6 @@ pub fn update_founder(mut updated_profile: FounderInfo) {
         }else{
             format!("Founder Can Not Be Updated")
         }
-    });
+    })
 }
 
