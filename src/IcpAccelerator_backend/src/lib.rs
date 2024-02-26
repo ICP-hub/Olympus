@@ -90,11 +90,11 @@ fn delete_founder_caller() -> std::string::String {
 
 #[update]
 #[candid_method(update)]
-fn update_founder_caller(updated_profile: FounderInfo) {
+fn update_founder_caller(updated_profile: FounderInfo) -> String{
     if has_required_role(&vec![UserRole::Founder, UserRole::Project]) {
         register_user::update_founder(updated_profile)
     } else {
-        "you are not supposed to change someone profile".to_string();
+        "you are not supposed to change someone profile".to_string()
     }
 }
 
