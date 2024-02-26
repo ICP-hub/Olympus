@@ -1,12 +1,9 @@
 import React, { useState } from "react";
 import internetIdentity from "../../assets/WalletLogo/IcpWallet1.png";
-// import plug from "../../assets/WalletLogo/PlugWallet.png";
-// import bitfinity from "../../assets/WalletLogo/BitfinityWallet.png";
-// import astroxMe from "../../assets/WalletLogo/MeWallet.png";
 import { useDispatch } from "react-redux";
-// import { WalletSignOut } from "../components/Redux/Reducers/WalletAuth";
 import { useSelector } from "react-redux";
 import { logoutStart } from "../components/Redux/Reducers/InternetIdentityReducer";
+import { changeHasSelectedRoleHandler } from "../components/Redux/Reducers/userRoleReducer";
 
 const LogoutModal = () => {
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
@@ -18,6 +15,12 @@ const LogoutModal = () => {
   const toggleDropdown = () => {
     setDropdownOpen(!isDropdownOpen);
   };
+
+  const logoutHandler =()=>{
+    dispatch(changeHasSelectedRoleHandler(false))
+    dispatch(logoutStart())
+  
+  }
 
   return (
     <div className="relative z-50 justify-end flex rounded-full">
@@ -72,21 +75,28 @@ const LogoutModal = () => {
               </div>
             </div>
           </div>
-          <ul
-            className="text-sm text-gray-70 text-black font-bold"
-            aria-labelledby="avatarButton"
-          >
-            <li className="block px-4 py-2 hover:bg-gray-200 hover:text-black">
-              {" "}
-              Dashboard
-            </li>
-            <li className="block px-4 py-2 hover:bg-gray-200 hover:text-black">
-              Settings
-            </li>
-          </ul>
+          {isAuthenticated && (
+            <ul
+              className="text-sm text-gray-70 text-black font-bold md:hidden "
+              aria-labelledby="avatarButton"
+            >
+              <li className="block px-4 py-2 hover:bg-gray-200 hover:text-black">
+                Home
+              </li>
+              <li className="block px-4 py-2 hover:bg-gray-200 hover:text-black">
+                Event
+              </li>
+              <li className="block px-4 py-2 hover:bg-gray-200 hover:text-black">
+                Mentor
+              </li>
+              <li className="block px-4 py-2 hover:bg-gray-200 hover:text-black">
+                Projects
+              </li>
+            </ul>
+          )}
           <a
             className="block px-4 py-2 text-sm text-black hover:bg-gray-200 hover:text-black font-bold mb-4"
-            onClick={() => dispatch(logoutStart())}
+            onClick={logoutHandler}
           >
             Sign out
           </a>

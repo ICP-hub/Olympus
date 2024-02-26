@@ -104,6 +104,8 @@ const InvestorRegistration = () => {
   const [isCurrentStepValid, setIsCurrentStepValid] = useState(false);
   const [userHasInteracted, setUserHasInteracted] = useState(false);
 
+
+  console.log( "InvestorRegistration => ")
   useEffect(() => {
     dispatch(allHubHandlerRequest());
   }, [actor, dispatch]);
@@ -229,8 +231,6 @@ const InvestorRegistration = () => {
           updatedFormData.typical_decision_making_timeline_for_investments,
         ],
         website_link: [updatedFormData.website_link],
-        id: [],
-        is_active: [],
       };
 
       const sendingInvestorData = async () => {
