@@ -168,14 +168,13 @@ impl FounderInfoInternal {
 }
 
 
-
 pub type FounderInfoStorage = HashMap<Principal, FounderInfoInternal>;
+
 
 
 thread_local! {
     pub static FOUNDER_STORAGE: RefCell<FounderInfoStorage> = RefCell::new(FounderInfoStorage::new());
 }
-
 
 
 pub fn pre_upgrade() {
@@ -209,20 +208,25 @@ pub fn pre_upgrade() {
 // }
 
 #[update]
-pub async fn register_founder(profile: FounderInfo)->std::string::String{
+pub async fn register_founder(thirty_info: ThirtyInfoFounder)->std::string::String{
     let caller = caller();
     let uuids = raw_rand().await.unwrap().0;
     let uid = format!("{:x}", Sha256::digest(&uuids));
     let new_id = uid.clone().to_string();
-    let mut new_founder = FounderInfoInternal{
-        params: profile,
+    let new_founder_info = FounderInfo {
+        thirty_info: Some(thirty_info),
+        seventy_info: None, 
+    };
+    
+    let mut founder_info_internal = FounderInfoInternal {
+        params: new_founder_info,
         uid: new_id.clone(),
-        is_active: true,
-        is_profile_complete: false,
         profile_complete: 0,
+        is_profile_complete: false, 
+        is_active: true,
     };
 
-    new_founder.calculate_profile_completion();
+    founder_info_internal.calculate_profile_completion();
 
     println!("Registering founder for caller: {:?}", caller);
     FOUNDER_STORAGE.with(|storage| {
@@ -236,7 +240,7 @@ pub async fn register_founder(profile: FounderInfo)->std::string::String{
         // }
 
      
-            storage.insert(caller, new_founder);
+            storage.insert(caller, founder_info_internal);
             println!("Founder Registered {:?}", caller);
         
 

@@ -93,6 +93,11 @@ type ProjectInfo = record {
   seventy_info : opt SeventyInfoProject;
   thirty_info : opt ThirtyInfoProject;
 };
+type ProjectInfoInternal = record {
+  uid : text;
+  is_active : bool;
+  params : ProjectInfo;
+};
 type Role = record { id : int32; name : text };
 type RolesResponse = record { roles : vec Role };
 type SeventyInfoFounder = record {
@@ -213,7 +218,7 @@ type VentureCapitalist = record {
 };
 service : {
   add_suggestion_caller : (text) -> (nat64, Status);
-  create_project : (ProjectInfo) -> (text);
+  create_project : (ThirtyInfoProject) -> (text);
   delete_founder_caller : () -> (text);
   delete_mentor_candid : () -> (text);
   delete_project : (text) -> (text);
@@ -223,12 +228,17 @@ service : {
   get_founder_info_caller : () -> (opt FounderInfo) query;
   get_hub_organizer_candid : () -> (opt UniqueHubs) query;
   get_icp_hubs_candid : () -> (vec IcpHub) query;
+  get_latest_listed_project : () -> (vec ProjectInfoInternal) query;
+  get_latest_live_proposal : () -> (vec ProjectInfoInternal) query;
   get_leaderboard_using_likes : () -> (vec LeaderboardEntryForLikes) query;
   get_leaderboard_using_ratings : () -> (vec LeaderboardEntryForRatings) query;
   get_leaderboard_using_upvotes : () -> (vec LeaderboardEntryForUpvote) query;
   get_mentor_candid : () -> (opt MentorProfile) query;
   get_my_id : () -> (principal) query;
+  get_popular_listed_project : () -> (vec ProjectInfoInternal) query;
+  get_popular_live_proposal : () -> (vec ProjectInfoInternal) query;
   get_project_upvotes : (text) -> (opt UpvoteRecord) query;
+  get_project_using_id : (text) -> (opt ProjectInfoInternal) query;
   get_projects_for_caller : () -> (vec ProjectInfo) query;
   get_role_from_p_id : () -> (opt vec UserRole) query;
   get_suggestions_by_parent_id_caller : (nat64) -> (vec Suggestion) query;
@@ -241,14 +251,14 @@ service : {
   list_all_projects : () -> (vec ProjectInfo) query;
   list_all_venture_capitalist : () -> (vec VentureCapitalist) query;
   make_active_inactive_mentor : (principal) -> (text);
-  register_founder_caller : (FounderInfo) -> (text);
+  register_founder_caller : (ThirtyInfoFounder) -> (text);
   register_hub_organizer_candid : (HubOrganizerRegistration) -> (text);
   register_mentor_candid : (MentorProfile) -> (text);
   register_venture_capitalist_caller : (VentureCapitalist) -> (text);
   reply_to_suggestion_caller : (nat64, text) -> (nat64, Status);
   respond_to_connection_request_candid : (principal, principal, bool) -> ();
   send_connection_request : (principal, text) -> ();
-  update_founder_caller : (FounderInfo) -> ();
+  update_founder_caller : (FounderInfo) -> (text);
   update_hub_organizer_candid : (HubOrganizerRegistration) -> (text);
   update_mentor_profile : (MentorProfile) -> (text);
   update_project : (text, ProjectInfo) -> (text);
