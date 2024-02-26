@@ -27,8 +27,14 @@ const App = () => {
   const isAuthenticated = useSelector(
     (currState) => currState.internet.isAuthenticated
   );
+  const specificRole = useSelector(
+    (currState) => currState.current.specificRole
+  );
+
   // const actor = useSelector((currState) => currState.actors.actor);
-  const userRole = useSelector((currState) => currState.current.specificRole);
+  // const userRole = useSelector((currState) => currState.current.specificRole);
+
+  console.log("specificRole", specificRole);
 
   const [isModalOpen, setModalOpen] = useState(false);
 
@@ -36,7 +42,6 @@ const App = () => {
 
   // console.log('identity in app.jsx =>', identity)
   // console.log('isAuthenticated & other =>', isAuthenticated, identity,)
-  console.log("user specific role after registration", userRole);
 
   useEffect(() => {
     dispatch(checkLoginOnStart());
@@ -50,7 +55,7 @@ const App = () => {
 
   useEffect(() => {
     dispatch(userRoleHandler());
-  }, [isAuthenticated, identity, dispatch]);
+  }, [isAuthenticated, identity, specificRole, dispatch]);
 
   return (
     <>

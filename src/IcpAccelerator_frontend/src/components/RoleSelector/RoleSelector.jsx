@@ -4,6 +4,7 @@ import Footer from "../Footer/Footer";
 import { useDispatch, useSelector } from "react-redux";
 import { rolesHandlerRequest } from "../Redux/Reducers/RoleReducer";
 import { useNavigate } from "react-router-dom";
+import { changeHasSelectedRoleHandler } from "../Redux/Reducers/userRoleReducer";
 
 const RoleSelector = React.memo(() => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -31,8 +32,11 @@ const RoleSelector = React.memo(() => {
 
   const handlePlanChange = (roleId, roleName) => {
     setSelectedRole({ id: roleId, name: roleName });
-
+     console.log('before roleName+id send',roleId, roleName)
+     dispatch(changeHasSelectedRoleHandler(true))
     navigate("/details", { state: { roleId: roleId, roleName: roleName } });
+    console.log('after roleName send',roleId, roleName)
+
   };
 
   return (
@@ -50,21 +54,6 @@ const RoleSelector = React.memo(() => {
                   World’s 1st fully On-chain, Decentralised,<br /> Permissionless,
                   Transparent and Non-Competitive <br /> Incubator cum Accelerator
                 </h2>
-                {/* <div class="flex-wrap font-bold text-blue-800">
-                  <button class="mr-4 hover:bg-blue-500 rounded-md py-2 px-4  hover:text-white">
-                    MENTORS
-                  </button>
-                  <button class="mr-4 hover:bg-blue-00 rounded-md py-2 px-4  hover:text-white">
-                    PROJECTS
-                  </button>
-                  <button class="mr-4 hover:bg-blue-400 rounded-md py-2 px-4  hover:text-white">
-                    VC
-                  </button>
-                  <button class="hover:bg-blue-400 rounded-md py-2 px-4  hover:text-white">
-                    ICP HUB ORGANIZER
-                  </button>
-                </div> */}
-
                 <div className="flex justify-between flex-wrap">
                   {rolesArr.roles?.map((plan) => (
                     <label
