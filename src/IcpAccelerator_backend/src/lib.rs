@@ -90,6 +90,7 @@ fn delete_founder_caller() -> std::string::String {
 
 #[update]
 #[candid_method(update)]
+
 fn update_founder_caller(updated_profile: FounderInfo)->String {
     if has_required_role(&vec![UserRole::Founder, UserRole::Project]) 
     {
@@ -369,7 +370,7 @@ pub async fn register_hub_organizer_candid(
     form: hub_organizer::HubOrganizerRegistration,
 ) -> String {
     hub_organizer::register_hub_organizer(form).await;
-    let roles_to_assign = vec![UserRole::HubOrganizer];
+    let roles_to_assign = vec![UserRole::ICPHubOrganizer];
     assign_roles_to_principal(roles_to_assign)
 }
 
@@ -382,7 +383,7 @@ pub fn get_hub_organizer_candid() -> Option<UniqueHubs> {
 #[update]
 #[candid_method(update)]
 pub fn update_hub_organizer_candid(params: HubOrganizerRegistration) -> String {
-    let required_role = vec![UserRole::HubOrganizer];
+    let required_role = vec![UserRole::ICPHubOrganizer];
 
     if has_required_role(&required_role) {
         hub_organizer::update_hub_organizer(params)

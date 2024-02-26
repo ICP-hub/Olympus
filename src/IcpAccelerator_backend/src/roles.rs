@@ -69,15 +69,13 @@ pub struct RolesResponse {
 pub fn get_roles() -> RolesResponse {
     RolesResponse {
         roles: vec![
-            Role { id: 1, name: "Mentor/Expert" },
+            Role { id: 1, name: "Mentor" },
             Role { id: 2, name: "Project" },
-            Role { id: 3, name: "Venture Capital" },
-            Role { id: 4, name: "Hub Organizer" },
-            // Role { id: 5, name: "Admin" },
+            Role { id: 3, name: "VC" },
+            Role { id: 4, name: "ICPHubOrganizer" },
         ],
     }
 }
-
 
 //purana
 // use ic_cdk_macros::query;
