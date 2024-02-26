@@ -11,7 +11,6 @@ use ic_cdk_macros::{query, update};
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct VentureCapitalist {
-    //id: Option<String>,
     name_of_fund: Option<String>,
     email_address: Option<String>,
     telegram_id: Option<String>,
@@ -31,7 +30,6 @@ pub struct VentureCapitalist {
     typical_decision_making_timeline_for_investments: Option<String>,
     referrer: Option<String>,
     investor_type: Option<String>,
-    is_active: Option<bool>,
     preferred_icp_hub: Option<String>,
 }
 
@@ -39,6 +37,7 @@ pub struct VentureCapitalist {
 pub struct VentureCapitalistInternal{
     pub params: VentureCapitalist,
     pub uid: String,
+    pub is_active: bool,
 }
 
 pub type VentureCapitalistStorage = HashMap<Principal, VentureCapitalistInternal>;
@@ -64,10 +63,7 @@ pub async fn register_venture_capitalist(params: VentureCapitalist)->std::string
     let uuids = raw_rand().await.unwrap().0;
     let uid = format!("{:x}", Sha256::digest(&uuids));
     let new_id = uid.clone().to_string();
-    let new_vc = VentureCapitalistInternal{
-        params,
-        uid: new_id.clone(),
-    };
+    let new_vc = VentureCapitalistInternal{params,uid:new_id.clone(), is_active: true };
 
     println!("Registering VC for caller: {:?}", caller);
     VENTURECAPITALIST_STORAGE.with(|storage| {
@@ -112,7 +108,7 @@ pub fn delete_venture_capitalist()->std::string::String {
     VENTURECAPITALIST_STORAGE.with(|storage| {
         let mut storage = storage.borrow_mut();
         if let Some(vc) = storage.get_mut(&caller) {
-            vc.params.is_active = Some(false); 
+            vc.is_active = false; 
             println!("Founder deactivated for caller: {:?}", caller);
         } else {
             println!("Founder not found for caller: {:?}", caller);
