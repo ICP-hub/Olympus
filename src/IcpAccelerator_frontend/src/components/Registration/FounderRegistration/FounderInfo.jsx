@@ -41,7 +41,8 @@ const FounderInfo = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  // console.log("actor aa ja =>", actor);
+
+  console.log("FounderInfo run =>");
   // console.log("getAllIcpHubs", getAllIcpHubs);
 
   useEffect(() => {

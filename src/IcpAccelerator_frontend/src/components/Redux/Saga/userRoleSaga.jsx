@@ -10,7 +10,7 @@ const selectActor = (currState) => currState.actors.actor;
 function* fetchUserRoleHandler() {
   try {
     const actor = yield select(selectActor);
-    // console.log('actor in userrole => => => ', actor)
+    console.log('actor in userrole => => => ', actor)
 
     const userCurrentRole = yield call([actor, actor.get_role_from_p_id]);
 

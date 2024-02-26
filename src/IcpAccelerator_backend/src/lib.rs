@@ -31,7 +31,7 @@ use rbac::{assign_roles_to_principal, has_required_role, UserRole};
 use candid::Principal;
 use ic_cdk_macros::{pre_upgrade, query, update};
 use project_registration::{AreaOfFocus, DocsInfo, ProjectInfo, TeamMember};
-use register_user::FounderInfo;
+use register_user::{FounderInfo, FounderInfoInternal};
 use roadmap_suggestion::{Status, Suggestion};
 use upvotes::UpvoteStorage;
 use vc_registration::VentureCapitalist;
@@ -90,8 +90,10 @@ fn delete_founder_caller() -> std::string::String {
 
 #[update]
 #[candid_method(update)]
-fn update_founder_caller(updated_profile: FounderInfo) -> String{
-    if has_required_role(&vec![UserRole::Founder, UserRole::Project]) {
+
+fn update_founder_caller(updated_profile: FounderInfo)->String {
+    if has_required_role(&vec![UserRole::Founder, UserRole::Project]) 
+    {
         register_user::update_founder(updated_profile)
     } else {
         "you are not supposed to change someone profile".to_string()
@@ -457,8 +459,9 @@ mod tests {
         use std::path::PathBuf;
 
         let dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
-        let dir = dir.parent().unwrap().parent().unwrap().join("candid");
 
-        write(dir.join("/home/harshpreet-singh/Documents/quadb/axxxelerator-new/ICPAccelerator/src/IcpAccelerator_backend/IcpAccelerator_backend.did"), export_candid()).expect("Write failed.");
+        // Directly use dir for the current directory
+        let file_path = dir.join("IcpAccelerator_backend.did");
+        write(file_path, export_candid()).expect("Write failed.");
     }
 }

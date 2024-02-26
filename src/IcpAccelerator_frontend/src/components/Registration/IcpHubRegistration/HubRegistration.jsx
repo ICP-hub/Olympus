@@ -12,29 +12,8 @@ import {
 import InvestorDetails from "../InvestorRegistration/InvestorDetails";
 import InvestorAdditionalInformation from "../InvestorRegistration/InvestorAdditionalInformation";
 import InvestorPersonalInformation from "../InvestorRegistration/InvestorPersonalInformation";
-
-const HubRegistration = () => {
-  const [activeTab, setActiveTab] = useState(investorRegistration[0].id);
-  const [formData, setFormData] = useState({});
-  const [step, setStep] = useState(0);
-  const [isCurrentStepValid, setIsCurrentStepValid] = useState(false);
-  const [userHasInteracted, setUserHasInteracted] = useState(false);
-
-  const getTabClassName = (tab) => {
-    return `inline-block p-4 ${
-      activeTab === tab
-        ? "text-white border-b-2 "
-        : "text-gray-400  border-transparent hover:text-white"
-    } rounded-t-lg`;
-  };
-  const steps = [
-    { id: "personalDetails", fields: investorRegistrationPersonalDetails },
-    { id: "investorDetails", fields: investorRegistrationDetails },
-    { id: "additionalInfo", fields: investorRegistrationAdditionalInfo },
-  ];
-
-  // Validation schema adjusted to step-wise validation
-  const validationSchema = {
+ 
+const validationSchema = {
     personalDetails: yup.object().shape({
       email_address: yup
         .string()
@@ -107,6 +86,32 @@ const HubRegistration = () => {
         .test("is-non-empty", "Required", (value) => /\S/.test(value)),
     }),
   };
+
+const HubRegistration = () => {
+  const [activeTab, setActiveTab] = useState(investorRegistration[0].id);
+  const [formData, setFormData] = useState({});
+  const [step, setStep] = useState(0);
+  const [isCurrentStepValid, setIsCurrentStepValid] = useState(false);
+  const [userHasInteracted, setUserHasInteracted] = useState(false);
+
+  console.log( "HubRegistration run => ")
+
+
+  const getTabClassName = (tab) => {
+    return `inline-block p-4 ${
+      activeTab === tab
+        ? "text-white border-b-2 "
+        : "text-gray-400  border-transparent hover:text-white"
+    } rounded-t-lg`;
+  };
+  const steps = [
+    { id: "personalDetails", fields: investorRegistrationPersonalDetails },
+    { id: "investorDetails", fields: investorRegistrationDetails },
+    { id: "additionalInfo", fields: investorRegistrationAdditionalInfo },
+  ];
+
+  // Validation schema adjusted to step-wise validation
+ 
 
   const currentValidationSchema = validationSchema[steps[step].id];
 
