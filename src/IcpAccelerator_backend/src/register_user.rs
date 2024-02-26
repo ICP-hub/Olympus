@@ -347,12 +347,15 @@ pub fn update_founder(mut updated_profile: FounderInfo) -> String {
                 seventy_info.company_vision = updated_seventy_info.company_vision.or(seventy_info.company_vision.clone());
                 seventy_info.long_term_goals = updated_seventy_info.long_term_goals.or(seventy_info.long_term_goals.clone());
 
-                println!("Founder profile updated successfully.");
+                //println!("Founder profile updated successfully.");
+                "Founder profile updated successfully".to_string()
             } else {
-                println!("Founder profile not found for caller: {}", caller);
+               // println!("Founder profile not found for caller: {}", caller);
+                format!("Founder profile not found for caller: {}", caller)
             }
         } else {
-            println!("Error accessing FOUNDER_STORAGE");
+            // println!("Error accessing FOUNDER_STORAGE");
+            format!("Error accessing FOUNDER_STORAGE")
         }
     })
 }
