@@ -1,49 +1,75 @@
 use candid::{CandidType, Principal};
-use once_cell::sync::Lazy;
+use serde::{Deserialize, Serialize};
+use std::cell::RefCell;
 use std::collections::HashMap;
-use serde::{Serialize, Deserialize};
-use std::sync::{Mutex, Arc};
+use ic_cdk::api::caller;
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
-struct RatingSystem {
-    users_ratings: HashMap<Principal, HashMap<String, Level>>,
-}
-
-#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
-struct Level {
+pub struct Level {
     name: String,
-    sub_levels: HashMap<String, f64>, // Using HashMap for sub-levels
+    sub_levels: HashMap<String, RatingTypes>,
 }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
-struct Rating {
-    principal_id: Principal,
-    level_name: String,
-    sub_level_name: String,
+pub struct RatingTypes {
+    peer: Vec<f64>,
+    own: Vec<f64>,
+    mentor: Vec<f64>,
+}
+
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq)]
+pub enum RatingType {
+    Peer,
+    Own,
+    Mentor,
+}
+
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq)]
+pub enum MainLevel {
+    Level1,
+    Level2,
+    Level3,
+    Level4,
+    Level5,
+    Level6,
+    Level7,
+    Level8,
+    Level9,
+}
+
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq)]
+pub enum SubLevel {
+    SubLevel0,
+    SubLevel1,
+    SubLevel2,
+    SubLevel3,
+    SubLevel4,
+    SubLevel5,
+    SubLevel6,
+    SubLevel7,
+    SubLevel8,
+    SubLevel9,
+    All,
+}
+
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+pub struct Rating {
+    project_id: String,
+    level_name: MainLevel,
+    sub_level: SubLevel,
+    rating_type: RatingType,
     rating: f64,
 }
 
-impl RatingSystem {
-    // Initialize the rating system with default values
-    fn new() -> Self {
-        RatingSystem {
-            users_ratings: HashMap::new(),
-        }
-    }
+pub type ProjectRatings = HashMap<Principal, HashMap<String, Level>>;
 
-    // Calculate the average rating for a specific level and user
-    fn calculate_average(&self, principal_id: &Principal, level_name: &str) -> Option<f64> {
-        self.users_ratings.get(principal_id)
-            .and_then(|user_ratings| user_ratings.get(level_name))
-            .map(|level| {
-                let sum: f64 = level.sub_levels.values().sum();
-                sum / level.sub_levels.len() as f64
-            })
-    }
+pub type RatingSystem = HashMap<String, ProjectRatings>;
+
+thread_local! {
+    pub static RATING_SYSTEM: RefCell<RatingSystem> = RefCell::new(RatingSystem::new());
 }
 
 impl Level {
-    // Initialize a level with default values
     fn new(name: &str) -> Self {
         Level {
             name: name.to_string(),
@@ -52,33 +78,87 @@ impl Level {
     }
 }
 
-// Static variable to mimic global state (for simulation purposes)
-static RATING_SYSTEM: Lazy<Arc<Mutex<RatingSystem>>> = Lazy::new(|| {
-    Arc::new(Mutex::new(RatingSystem::new()))
-});
-
-#[ic_cdk::query]
-fn get_average_rating(principal_id: Principal, level_name: String) -> Option<f64> {
-    let rating_system = RATING_SYSTEM.lock().expect("Failed to lock mutex");
-    rating_system.calculate_average(&principal_id, &level_name)
+impl RatingTypes {
+    fn new() -> Self {
+        RatingTypes {
+            peer: Vec::new(),
+            own: Vec::new(),
+            mentor: Vec::new(),
+        }
+    }
 }
 
-#[ic_cdk::update]
-fn update_rating(rating: Rating) -> Result<(), String> {
-    let mut rating_system = RATING_SYSTEM.lock().map_err(|_| "Failed to lock mutex for update")?;
+// Function to update rating
+pub fn update_rating(rating: Rating) {
+    let principal_id = caller(); // Still using Principal for individual raters.
 
-    let user_ratings = rating_system
-        .users_ratings
-        .entry(rating.principal_id.clone())
-        .or_default();
+    RATING_SYSTEM.with(|system| {
+        let mut system = system.borrow_mut();
 
-    let level = user_ratings
-        .entry(rating.level_name.clone())
-        .or_insert_with(|| Level::new(&rating.level_name));
+        // Access or create the ratings for the given project ID.
+        let project_ratings = system.entry(rating.project_id.clone()).or_insert_with(HashMap::new);
+        
+        // Then, within this project, access or create the ratings for the current principal.
+        let user_ratings = project_ratings.entry(principal_id).or_insert_with(HashMap::new);
 
-    level.sub_levels.insert(rating.sub_level_name.clone(), rating.rating);
+        let level_name = format!("{:?}", rating.level_name);
+        let level = user_ratings
+            .entry(level_name.clone())
+            .or_insert_with(|| Level::new(&level_name));
+        
+        let sub_level_name = format!("{:?}", rating.sub_level);
+        let rating_types = level.sub_levels
+            .entry(sub_level_name)
+            .or_insert_with(RatingTypes::new);
 
-    Ok(())
+        // Update the rating based on the rating type.
+        match rating.rating_type {
+            RatingType::Peer => rating_types.peer.push(rating.rating),
+            RatingType::Own => rating_types.own.push(rating.rating),
+            RatingType::Mentor => rating_types.mentor.push(rating.rating),
+        };
+    });
 }
 
 
+
+// Function to calculate average rating
+
+pub fn calculate_average(project_id: &str) -> Option<f64> {
+    RATING_SYSTEM.with(|system| {
+        let system = system.borrow();
+
+        // Attempt to retrieve the ratings for the specified project ID.
+        if let Some(project_ratings) = system.get(project_id) {
+            let mut total_rating = 0.0;
+            let mut rating_count = 0;
+
+            // Iterate over all principals and their ratings for this project.
+            for user_ratings in project_ratings.values() {
+                for level in user_ratings.values() {
+                    for rating_types in level.sub_levels.values() {
+                        // Aggregate ratings from all three types: Peer, Own, Mentor.
+                        let sum_ratings = rating_types.peer.iter().sum::<f64>()
+                                         + rating_types.own.iter().sum::<f64>()
+                                         + rating_types.mentor.iter().sum::<f64>();
+                        let count_ratings = rating_types.peer.len() + rating_types.own.len() + rating_types.mentor.len();
+
+                        total_rating += sum_ratings;
+                        rating_count += count_ratings;
+                    }
+                }
+            }
+
+            // Calculate and return the average rating for this project, if there are ratings.
+            if rating_count > 0 {
+                Some(total_rating / rating_count as f64)
+            } else {
+                // Return None if there are no ratings to calculate an average from.
+                None
+            }
+        } else {
+            // If the project ID does not exist in the ratings system, return None.
+            None
+        }
+    })
+}

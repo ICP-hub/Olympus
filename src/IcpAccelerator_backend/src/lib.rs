@@ -11,7 +11,7 @@ mod vc_registration;
 use hub_organizer::{HubOrganizerRegistration, UniqueHubs};
 use ic_cdk::api::caller;
 use ic_kit::candid::{candid_method, export_service};
-use leaderboard::{LeaderboardEntryForLikes, LeaderboardEntryForUpvote};
+use leaderboard::{LeaderboardEntryForLikes, LeaderboardEntryForUpvote, LeaderboardEntryForRatings};
 use project_like::LikeRecord;
 use roles::{get_roles, RolesResponse};
 use std::collections::HashSet;
@@ -24,6 +24,7 @@ mod project_registration;
 mod rbac;
 mod register_user;
 mod roadmap_suggestion;
+mod ratings;
 
 use rbac::{assign_roles_to_principal, has_required_role, UserRole};
 
@@ -34,6 +35,7 @@ use register_user::FounderInfo;
 use roadmap_suggestion::{Status, Suggestion};
 use upvotes::UpvoteStorage;
 use vc_registration::VentureCapitalist;
+use ratings::{Rating};
 
 use crate::notification::Notification;
 
@@ -88,11 +90,11 @@ fn delete_founder_caller() -> std::string::String {
 
 #[update]
 #[candid_method(update)]
-fn update_founder_caller(updated_profile: FounderInfo) -> String {
+fn update_founder_caller(updated_profile: FounderInfo) {
     if has_required_role(&vec![UserRole::Founder, UserRole::Project]) {
         register_user::update_founder(updated_profile)
     } else {
-        "you are not supposed to change someone profile".to_string()
+        "you are not supposed to change someone profile".to_string();
     }
 }
 
@@ -398,6 +400,22 @@ pub fn get_leaderboard_using_upvotes() -> Vec<LeaderboardEntryForUpvote> {
 #[candid_method(query)]
 pub fn get_leaderboard_using_likes() -> Vec<LeaderboardEntryForLikes> {
     leaderboard::get_leaderboard_by_likes()
+}
+
+#[query]
+#[candid_method(query)]
+pub fn get_leaderboard_using_ratings() -> Vec<LeaderboardEntryForRatings>{
+    leaderboard::get_leaderboard_by_ratings()
+}
+
+#[update]
+pub fn update_rating_api(rating: Rating){
+    ratings::update_rating(rating);
+}
+
+#[query]
+pub fn calculate_average_api(project_id: String) -> Option<f64> {
+    ratings::calculate_average(&project_id)
 }
 
 //made for admin side.....
