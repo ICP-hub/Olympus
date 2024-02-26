@@ -5,28 +5,27 @@ import { Line } from "rc-progress";
 import Profile from "../../../assets/images/Ellipse 1382.svg";
 import ReactSlider from "react-slider";
 import Astro from "../../../assets/images/AstroLeft.png";
+
 const Mentors = () => {
   const [sliderValuesProgress, setSliderValuesProgress] = useState({});
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState('pending');
+  const [selectedOption, setSelectedOption] = useState('Pending');
   const sliderKeys = ['key1'];
-
 
   const handleOptionClick = (option) => {
     setSelectedOption(option);
     setIsPopupOpen(false);
   };
+
   const handleSliderChange = (index, value) => {
     const key = sliderKeys[index];
     const newSliderValuesProgress = { ...sliderValuesProgress, [key]: value === 9 ? 100 : Math.floor(value * 11) };
-    setSliderValuesProgress(newSliderValuesProgress)
+    setSliderValuesProgress(newSliderValuesProgress);
   };
 
-
-
   return (
-    <div className='p-8'>
-      <div>
+    <div className='px-[4%] py-[4%] w-full'>
+      <div className=''>
         <div className='flex justify-end mr-11 '>
           <img
             src={filter}
@@ -65,78 +64,41 @@ const Mentors = () => {
           </div>
         )}
       </div>
-      <div className='px-8'>
-        <div className="flex flex-col xl:flex-row items-center bg-gray-200  rounded-lg mt-8   text-lg p-4 hover:bg-blue-300">
-          <img src={ment} alt="Mentor" className="w-6 h-6 lg:w-12 lg:h-12 object-cover rounded-md mb-4 lg:mb-0" />
-          <div className="flex flex-col lg:flex-row justify-evenly w-full items-center lg:items-start ">
-            <p className="font-bold mr-0 lg:mr-[18px] mb-2 lg:mb-0">builder.fi</p>
-            <p className="truncate mr-0 lg:mr-[18px] mb-2 lg:mb-0">q&a market place built on </p>
-            <p className="truncate mr-0 lg:mr-[18px] mb-2 lg:mb-0"> DAO.infrastructure +1 more</p>
-            {sliderKeys.map((key, index) => (
-              <div key={key} className="mx-4 flex items-center w-36   ">
-                <Line
-                  strokeWidth={0.2}
-                  percent={sliderValuesProgress[key]}
-                  strokeColor="bg-black"
-                  className="line-horizontal"
-                />
-                <div className="text-black font-bold text-[15px]  font-fontUse ml-2">
-                  {sliderValuesProgress[key]}%
-                </div>
-                <svg
-                  width="16"
-                  height="15"
-                  viewBox="0 0 16 15"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="ml-1"
-                >
-                  <path
-                    id="Star 1"
-                    d="M7.04894 0.92705C7.3483 0.00573921 8.6517 0.00573969 8.95106 0.92705L10.0206 4.21885C10.1545 4.63087 10.5385 4.90983 10.9717 4.90983H14.4329C15.4016 4.90983 15.8044 6.14945 15.0207 6.71885L12.2205 8.75329C11.87 9.00793 11.7234 9.4593 11.8572 9.87132L12.9268 13.1631C13.2261 14.0844 12.1717 14.8506 11.388 14.2812L8.58778 12.2467C8.2373 11.9921 7.7627 11.9921 7.41221 12.2467L4.61204 14.2812C3.82833 14.8506 2.77385 14.0844 3.0732 13.1631L4.14277 9.87132C4.27665 9.4593 4.12999 9.00793 3.7795 8.75329L0.979333 6.71885C0.195619 6.14945 0.598395 4.90983 1.56712 4.90983H5.02832C5.46154 4.90983 5.8455 4.63087 5.97937 4.21885L7.04894 0.92705Z"
-                    fill="black"
-                  />
-                </svg>
-              </div>
-            ))}
-            <p className=" text-gray-600 ml-0 lg:ml-[18px] mb-2 lg:mb-0 text-lg">Level 8</p>
-            <button className='border text-[#737373] p-[5px] px-3 rounded-md border-[#C7C7C7] mb-2 lg:mb-0'>▲ 50</button>
-            <button className=" px-2 py-1 bg-[#3505B2] text-white rounded">View</button>
-          </div>
-        </div>
-      </div>
-      <div className='px-8'>
-        <div className="flex flex-col xl:flex-row items-center bg-gray-200  rounded-lg mt-8   text-lg p-4 hover:bg-blue-300">
-          <img src={ment} alt="Mentor" className="w-6 h-6 lg:w-12 lg:h-12 object-cover rounded-md mb-4 lg:mb-0" />
-          <div className="flex flex-col lg:flex-row justify-evenly w-full items-center lg:items-start ">
-            <p className="font-bold mr-0 lg:mr-[18px] mb-2 lg:mb-0">builder.fi</p>
-            <p className="truncate mr-0 lg:mr-[18px] mb-2 lg:mb-0">q&a market place built on </p>
-            <p className="truncate mr-0 lg:mr-[18px] mb-2 lg:mb-0"> DAO.infrastructure +1 more</p>
-            <div className="bg-black h-1 w-36 rounded-[18px] mb-2 lg:mb-0 mt-3"></div>
-            <p className=" text-gray-600 ml-0 lg:ml-[18px] mb-2 lg:mb-0 text-lg">Level 8</p>
 
-            <button className='border text-[#737373] p-[5px] px-3 rounded-md border-[#C7C7C7] mb-2 lg:mb-0'>▲ 50</button>
-            <button className=" px-2 py-1 bg-[#3505B2] text-white rounded">View</button>
-          </div>
-        </div>
-      </div>
-      <div className='px-8'>
-        <div className="flex flex-col xl:flex-row items-center bg-gray-200  rounded-lg mt-8   text-lg p-4 hover:bg-blue-300">
+      <div className=''>
+        <div className="flex w-auto items-center flex-wrap justify-between bg-gray-200 rounded-lg mt-8 text-lg p-4 gap-6 hover:bg-blue-300">
           <img src={ment} alt="Mentor" className="w-6 h-6 lg:w-12 lg:h-12 object-cover rounded-md mb-4 lg:mb-0" />
-          <div className="flex flex-col lg:flex-row justify-evenly w-full items-center lg:items-start ">
-            <p className="font-bold mr-0 lg:mr-[18px] mb-2 lg:mb-0">builder.fi</p>
-            <p className="truncate mr-0 lg:mr-[18px] mb-2 lg:mb-0">q&a market place built on </p>
-            <p className="truncate mr-0 lg:mr-[18px] mb-2 lg:mb-0"> DAO.infrastructure +1 more</p>
-            <div className="bg-black h-1 w-36 rounded-[18px] mb-2 lg:mb-0 mt-3"></div>
-            <p className=" text-gray-600 ml-0 lg:ml-[18px] mb-2 lg:mb-0 text-lg">Level 8</p>
+          {/* <div className="flex flex-col lg:flex-row justify-between w-full items-start lg:items-center space-y-2 lg:space-y-0 lg:space-x-4"> */}
+          <p className="font-bold">builder.fi</p>
 
-            <button className='border text-[#737373] p-[5px] px-3 rounded-md border-[#C7C7C7] mb-2 lg:mb-0'>▲ 50</button>
-
-            <button className=" px-2 py-1 bg-[#3505B2] text-white rounded">View</button>
+          <p className="truncate">q&a market place built on </p>
+          <p className="truncate"> DAO.infrastructure +1 more</p>
+          <div className="flex items-center">
+            <div className="bg-gradient-to-r from-gray-300 to-gray-900 h-1 w-44 rounded-[18px] mb-2 lg:mb-0 mt-3"></div>
+            <div className="text-gray-600 text-xs ml-2">Level 9</div>
           </div>
 
+
+          <div className='flex space-x-4 flex-wrap md:flex-nowrap'>
+            <button className='border text-[#737373] p-[5px] px-3 rounded-md border-[#C7C7C7] text-nowrap'>▲ 50</button>
+            {selectedOption === 'Accepted' && (
+              <button className="px-2 bg-[#3505B2] text-white font-bold rounded-lg">View</button>
+            )}
+            {selectedOption === 'Pending' && (
+              <>
+                <button className="px-2 bg-white text-blue-800 font-bold rounded-lg border-2 border-blue-800">Reject</button>
+                <button className="px-2 bg-[#3505B2] text-white font-bold rounded-lg">Accept</button>
+              </>
+            )}
+            {selectedOption === 'Declined' && (
+              <button></button>
+            )}
+          </div>
+          {/* </div> */}
         </div>
       </div>
+
+
     </div>
   );
 }
