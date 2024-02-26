@@ -126,7 +126,7 @@ const MentorRegistration = () => {
   const [image, setImage] = useState(null);
   const [imageData, setImageData] = useState(null);
 
-  console.log("getAllIcpHubs + actor =>", getAllIcpHubs, actor);
+  console.log("MentorRegistration  run =>");
 
   const getTabClassName = (tab) => {
     return `inline-block p-4 ${

@@ -21,7 +21,6 @@ type DocsInfo = record {
   technical_docs : opt text;
 };
 type FounderInfo = record {
-  id : opt text;
   founder_image : opt vec nat8;
   linked_in_profile : opt text;
   equity_owner_of_company : opt text;
@@ -133,7 +132,6 @@ type NotificationType = variant {
   ConnectionRequest : ConnectionRequest;
 };
 type ProjectInfo = record {
-  id : opt text;
   project_description : opt text;
   project_url : opt text;
   docs : opt DocsInfo;
@@ -180,7 +178,6 @@ type UpvoterInfo = record {
 };
 type UserRole = variant { VC; Mentor; Founder; HubOrganizer; Project };
 type VentureCapitalist = record {
-  id : opt text;
   email_address : opt text;
   referrer : opt text;
   typical_decision_making_timeline_for_investments : opt text;
