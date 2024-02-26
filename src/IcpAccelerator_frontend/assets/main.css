@@ -10,15 +10,26 @@
       display: none;
     }
   }
+  .ellipse-quarter-role{
+    clip-path: ellipse(100% 70% at 0% 100%);
+  }
+  .ellipse-quarter-left {
+    clip-path: ellipse(60% 54% at 15% 100%);
+   
+  }
+  .ellipse-quarter-right {
+    clip-path: ellipse(60% 54% at 87% 11%);
+   
+  }
   @media only screen and (max-width: 1024px) {
     .ellipse-quarter-left {
-      clip-path: ellipse(50% 25% at 20% 100%);
+      clip-path: ellipse(50% 50% at 20% 100%);
     }
-    
+  } 
     .ellipse-quarter-right {
       clip-path: ellipse(60% 54% at 87% 11%);
     }
-  }
+  
   
   @media only screen and (max-width: 768px) {
     .ellipse-quarter-left {

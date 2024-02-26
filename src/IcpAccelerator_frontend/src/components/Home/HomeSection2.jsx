@@ -7,7 +7,7 @@ const HomeSection2 = () => {
     <section className="text-gray-700 bg-gray-100">
       <div className="w-full px-[4%] lg1:px-[5%] h-fit">
         <div className="flex-col">
-        <div className="flex">
+        <div className="flex mb-4">
           <StatisticCard/>
           </div>
           <div className="flex justify-center">

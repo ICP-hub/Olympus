@@ -7,7 +7,7 @@ const DetailStatisticCard = () => {
 
   return (
 
-<div className="w-full md:h-[14.5rem]  bg-neutral-50 rounded-[20px] shadow z-10 absolute  md:top-[230px] top-[200px]">
+<div className="w-11/12 md:h-[14.5rem]  bg-neutral-50 rounded-[20px] shadow z-10  md:top-[230px] top-[200px]">
             <div className="flex  md:justify-center ">
               <div className="w-5/6 px-4 md:justify-between md:items-center md:flex md:left-[-60px] md:top-[60px]  md:relative  ">
                 <div className="relative mb-4 mt-4 md:mt-0">
