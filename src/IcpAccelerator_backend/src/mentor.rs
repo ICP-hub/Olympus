@@ -42,8 +42,10 @@ pub type MentorRegistry = HashMap<Principal, MentorInternal>;
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType)]
 pub struct MentorInternal {
+
     pub profile: MentorProfile,
     pub uid: String,
+    pub active: bool
 }
 
 thread_local! {
@@ -62,18 +64,13 @@ pub async fn register_mentor(profile: MentorProfile) -> String{
     // if already_registered {
         
     //     ic_cdk::println!("This Principal is already registered");
-    //     return "This Principal is already registered.".to_string()
-    // let already_registered =
-    //     MENTOR_REGISTRY.with(|registry| registry.borrow().contains_key(&caller));
-
-    // if already_registered {
-    //     //return "This Principal is already registered.".to_string();
-    //     ic_cdk::println!("This Principal is already registered")
-    // }
+    //     return "This Principal is already registered.".to_string()}
+    
 
     let mentor_internal = MentorInternal {
         profile,
         uid: uid.clone(),
+        active : true
     };
     
     MENTOR_REGISTRY.with(|registry| {
@@ -236,5 +233,34 @@ pub fn get_all_mentors() -> Vec<MentorProfile> {
             .values()
             .map(|mentor_internal| mentor_internal.profile.clone())
             .collect()
+    })
+}
+
+#[update]
+pub fn make_active_inactive(p_id : Principal)-> String{
+    
+    MENTOR_REGISTRY.with(|m_container|{
+        let mut tutor_hashmap = m_container.borrow_mut();
+        if let Some(mentor_internal) = tutor_hashmap.get_mut(&p_id){
+
+            if mentor_internal.active {
+                let active = false;
+                mentor_internal.active = active;
+
+                //ic_cdk::println!("mentor profile check status {:?}", mentor_internal);
+                return "made inactive".to_string()
+
+            }else{
+                let active = true;
+                mentor_internal.active = active;
+                //ic_cdk::println!("mentor profile check status {:?}", mentor_internal);
+                return "made active".to_string()
+            }
+            
+        }else{
+            "profile seems not to be existed".to_string()
+        }
+
+
     })
 }
