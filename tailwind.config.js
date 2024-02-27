@@ -30,6 +30,8 @@ module.exports = {
         footerText: "#3811B2",
         shadeBlue: "#3C03BA",
         shadeSkyBlue: "#408FBF",
+        custumPurple: "rgba(50, 0, 153, 1)",
+        custumSky: "rgba(114, 131, 234, 1)",
       },
       translate: {
         full: "100%",

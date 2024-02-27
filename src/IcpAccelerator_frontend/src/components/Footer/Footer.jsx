@@ -3,12 +3,12 @@ import logo from "../../../assets/Logo/icpLogo.png";
 
 const Footer = () => {
   return (
-    <footer className="text-white bg-blue-800 py-8 z-10">
+    <footer className="text-white bg-custumPurple py-8 z-10">
       <div className="container mx-auto px-4 lg:px-10">
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-20">
           <div className="mb-4">
             <h4 className="text-xl font-bold mb-3">
-              <img src={logo} alt="logo" className="text-white"/>
+              <img src={logo} alt="logo" className="text-white" />
             </h4>
             <ul className="list-none text-sm p-0 m-0 flex items-center space-x-4">
               <li className="text-white">
