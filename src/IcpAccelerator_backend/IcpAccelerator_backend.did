@@ -50,6 +50,22 @@ type LeaderboardEntryForUpvote = record {
   upvote_count : opt nat;
   project_id : opt text;
 };
+type MainLevel = variant {
+  Level1;
+  Level2;
+  Level3;
+  Level4;
+  Level5;
+  Level6;
+  Level7;
+  Level8;
+  Level9;
+};
+type MentorInternal = record {
+  uid : text;
+  active : bool;
+  profile : MentorProfile;
+};
 type MentorProfile = record {
   email_address : opt text;
   mentor_image : opt vec nat8;
@@ -98,6 +114,15 @@ type ProjectInfoInternal = record {
   is_active : bool;
   params : ProjectInfo;
 };
+type Rating = record {
+  sub_level : SubLevel;
+  level_name : MainLevel;
+  rating_type : RatingType;
+  rating : float64;
+  project_id : text;
+};
+type RatingType = variant { Own; Peer; Mentor };
+type Request = record { mentor : opt MentorInternal; "text" : text };
 type Role = record { id : int32; name : text };
 type RolesResponse = record { roles : vec Role };
 type SeventyInfoFounder = record {
@@ -154,6 +179,19 @@ type SocialLinksInfo = record {
   facebook : opt text;
 };
 type Status = variant { Planned; NotRequired; InProgress; Completed };
+type SubLevel = variant {
+  All;
+  SubLevel0;
+  SubLevel1;
+  SubLevel2;
+  SubLevel3;
+  SubLevel4;
+  SubLevel5;
+  SubLevel6;
+  SubLevel7;
+  SubLevel8;
+  SubLevel9;
+};
 type Suggestion = record {
   id : nat64;
   status : Status;
@@ -218,6 +256,7 @@ type VentureCapitalist = record {
 };
 service : {
   add_suggestion_caller : (text) -> (nat64, Status);
+  calculate_average_api : (text) -> (opt float64) query;
   create_project : (ThirtyInfoProject) -> (text);
   delete_founder_caller : () -> (text);
   delete_mentor_candid : () -> (text);
@@ -237,6 +276,7 @@ service : {
   get_my_id : () -> (principal) query;
   get_popular_listed_project : () -> (vec ProjectInfoInternal) query;
   get_popular_live_proposal : () -> (vec ProjectInfoInternal) query;
+  get_project_requests : (text) -> (vec Request) query;
   get_project_upvotes : (text) -> (opt UpvoteRecord) query;
   get_project_using_id : (text) -> (opt ProjectInfoInternal) query;
   get_projects_for_caller : () -> (vec ProjectInfo) query;
@@ -258,11 +298,13 @@ service : {
   reply_to_suggestion_caller : (nat64, text) -> (nat64, Status);
   respond_to_connection_request_candid : (principal, principal, bool) -> ();
   send_connection_request : (principal, text) -> ();
+  send_request_as_mentor : (text, text) -> (text);
   update_founder_caller : (FounderInfo) -> (text);
   update_hub_organizer_candid : (HubOrganizerRegistration) -> (text);
   update_mentor_profile : (MentorProfile) -> (text);
   update_project : (text, ProjectInfo) -> (text);
   update_project_docs : (text, DocsInfo) -> (text);
+  update_rating_api : (Rating) -> ();
   update_suggestion_status_caller : (nat64, Status) -> ();
   update_team_member : (text, TeamMember) -> (text);
   update_venture_capitalist_caller : (VentureCapitalist) -> (text);

@@ -9,7 +9,7 @@ extern crate serde_cbor;
 use std::cell::RefCell;
 
 
-#[derive(Serialize, Deserialize, Clone, Debug, CandidType)]
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, Default)]
 pub struct MentorProfile {
     pub full_name: Option<String>,
     pub email_address: Option<String>,
@@ -40,7 +40,7 @@ pub struct MentorProfile {
 
 pub type MentorRegistry = HashMap<Principal, MentorInternal>;
 
-#[derive(Serialize, Deserialize, Clone, Debug, CandidType)]
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, Default)]
 pub struct MentorInternal {
 
     pub profile: MentorProfile,

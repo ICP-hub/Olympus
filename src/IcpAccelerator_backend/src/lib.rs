@@ -8,12 +8,14 @@ mod roles;
 mod upvotes;
 mod vc_registration;
 mod latest_popular_projects;
+mod requests;
 
 use hub_organizer::{HubOrganizerRegistration, UniqueHubs};
 use ic_cdk::api::caller;
 use ic_kit::candid::{candid_method, export_service};
 use leaderboard::{LeaderboardEntryForLikes, LeaderboardEntryForUpvote, LeaderboardEntryForRatings};
 use project_like::LikeRecord;
+use requests::Request;
 use roles::{get_roles, RolesResponse};
 use std::collections::HashSet;
 
@@ -441,13 +443,27 @@ pub fn get_leaderboard_using_ratings() -> Vec<LeaderboardEntryForRatings>{
 }
 
 #[update]
+#[candid_method(update)]
 pub fn update_rating_api(rating: Rating){
     ratings::update_rating(rating);
 }
 
 #[query]
+#[candid_method(query)]
 pub fn calculate_average_api(project_id: String) -> Option<f64> {
     ratings::calculate_average(&project_id)
+}
+
+#[update]
+#[candid_method(update)]
+pub fn send_request_as_mentor(project_id: String, request_text: String)->String{
+    requests::send_request_to_project(project_id, request_text)
+}
+
+#[query]
+#[candid_method(query)]
+pub fn get_project_requests(project_id: String)->Vec<Request>{
+    requests::get_requests(project_id)
 }
 
 //made for admin side.....
