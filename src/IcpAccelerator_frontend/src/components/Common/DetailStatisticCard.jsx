@@ -7,38 +7,38 @@ const DetailStatisticCard = () => {
 
   return (
 
-<div className="w-11/12 md:h-[14.5rem]  bg-neutral-50 rounded-[20px] shadow z-10  md:top-[230px] top-[200px]">
-            <div className="flex  md:justify-center ">
+<div className="w-11/12 md:h-[14.5rem]  bg-neutral-50 rounded-[20px] shadow z-10">
+            <div className="flex  justify-center ">
               <div className="w-5/6 px-4 md:justify-between md:items-center md:flex md:left-[-60px] md:top-[60px]  md:relative  ">
                 <div className="relative mb-4 mt-4 md:mt-0">
-                  <div className="top-0 md:absolute text-center text-violet-800 md:text-5xl text-4xl font-extrabold font-fontUse">
+                  <div className="top-0 md:absolute text-center text-violet-800 md:text-4xl xl:text-5xl text-4xl font-extrabold font-fontUse">
                     50+
                   </div>
-                  <div className={`${responsiveText} left-0 top-[50px] md:absolute text-center text-neutral-500 md:text-xl font-normal font-fontUse`}>
+                  <div className={`${responsiveText} left-0 top-[50px] md:absolute text-center text-neutral-500 md:text-lg font-normal font-fontUse`}>
                     Project Launched
                   </div>
                 </div>
                 <div className="relative mb-4 ">
-                  <div className="top-0 md:absolute text-center text-violet-800 md:text-5xl text-4xl font-extrabold font-fontUse">
+                  <div className="top-0 md:absolute text-center text-violet-800 md:text-4xl xl:text-5xl text-4xl font-extrabold font-fontUse">
                     $250M+
                   </div>
-                  <div className={`${responsiveText} left-[53px] top-[50px] md:absolute text-center text-neutral-500 md:text-xl font-normal font-fontUse`}>
+                  <div className={`${responsiveText} left-[53px] top-[50px] md:absolute text-center text-neutral-500 md:text-lg font-normal font-fontUse`}>
                     Access to Capital
                   </div>
                 </div>
                 <div className="relative mb-4">
-                  <div className="top-0 md:absolute text-center text-violet-800 md:text-5xl text-4xl font-extrabold font-fontUse">
+                  <div className="top-0 md:absolute text-center text-violet-800 md:text-4xl xl:text-5xl text-4xl font-extrabold font-fontUse">
                     450+
                   </div>
-                  <div className={`${responsiveText} left-[22px] top-[50px] md:absolute text-center text-neutral-500 md:text-xl font-normal font-fontUse`}>
+                  <div className={`${responsiveText} left-[22px] top-[50px] md:absolute text-center text-neutral-500 md:text-lg font-normal font-fontUse`}>
                     Partners
                   </div>
                 </div>
                 <div className="relative mb-4">
-                  <div className="top-0 md:absolute text-center text-violet-800 md:text-5xl text-4xl font-extrabold font-fontUse">
+                  <div className="top-0 md:absolute text-center text-violet-800 md:text-4xl xl:text-5xl text-4xl font-extrabold font-fontUse">
                     110K+
                   </div>
-                  <div className={`${responsiveText} left-[14px] top-[50px] md:absolute text-center text-neutral-500 md:text-xl font-normal font-fontUse`}>
+                  <div className={`${responsiveText} left-[14px] top-[50px] md:absolute text-center text-neutral-500 md:text-lg font-normal font-fontUse`}>
                     Global Community
                   </div>
                 </div>

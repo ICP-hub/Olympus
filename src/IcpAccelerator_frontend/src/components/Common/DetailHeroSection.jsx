@@ -56,24 +56,20 @@ const DetailHeroSection = ({HeroImage}) => {
                 Supercharging Web3 startups for breakthrough success
               </div>
 
-              <button className="rounded-md my-2 bg-indigo-600 absolute w-[210px] left-[19px] top-[210px] xl2:top-[209.5px] xl:top-[225px] dxl:top-[225px] lgx:top-[220px] lg1:top-[215px] dlg:top-[215px] lg:top-[210px] md3:top-[210px] md2:top-[205px] md1:top-[205px] md:top-[204.5px] sm:top-[204px] sm3:top-[195px] sm2:top-[190px] sm4:top-[185px] sm1:top-[185px] xxs1:top-[191px] xxs:top-[191px] dxs:top-[191px] ss4:top-[151px] ss3:top-[150px] ss2:top-[145px] ss1:top-[205px] ss:top-[155px] sxs3:top-[140px] sxs2:top-[140px] sxs1:top-[190px] sxs:top-[135px] sxxs:top-[135px]">
-                <div className="text-wrap text-[13px] xl2:text-[12.8px] xl:text-[12.5px] dxl:text-[12.3px] lgx:text-[12px] lg1:text-[11.8px] dlg:text-[11.5px] lg:text-[11.3px] md3:text-[11px] md2:text-[10.8.5px] md1:text-[10.5px] md:text-[10.3px] sm:text-[10px] sm3:text-[9.8px] sm2:text-[9.5px] sm4:text-[9.5px] sm1:text-[9.5px] xxs1:text-[9.5px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px] text-center text-white border-b font-fontUse uppercase px-4 font-bold py-2 break-normal">
+              <button className="rounded-md my-2 bg-indigo-600 absolute w-[210px] left-[19px] top-[210px] xl2:top-[209.5px] xl:top-[225px] dxl:top-[225px] lgx:top-[220px] lg1:top-[215px] dlg:top-[215px] lg:top-[210px] md3:top-[210px] md2:top-[205px] md1:top-[205px] md:top-[204.5px] sm:top-[204px] sm3:top-[195px] sm2:top-[190px] sm4:top-[185px] sm1:top-[185px] xxs1:top-[191px] xxs:top-[191px] dxs:top-[191px] ss4:top-[151px] ss3:top-[150px] ss2:top-[145px] ss1:top-[160px] ss:top-[155px] sxs3:top-[140px] sxs2:top-[140px] sxs1:top-[190px] sxs:top-[135px] sxxs:top-[135px]">
+                <div className=" text-[13px] xl2:text-[12.8px] xl:text-[12.5px] dxl:text-[12.3px] lgx:text-[12px] lg1:text-[11.8px] dlg:text-[11.5px] lg:text-[11.3px] md3:text-[11px] md2:text-[10.8.5px] md1:text-[10.5px] md:text-[10.3px] sm:text-[10px] sm3:text-[9.8px] sm2:text-[9.5px] sm4:text-[9.5px] sm1:text-[9.5px] xxs1:text-[9.5px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px] text-center text-white border-b font-fontUse uppercase px-4 font-bold py-2 break-normal">
                   apply for the program
                 </div>
               </button>
             </div>
             <div className="relative flex justify-center items-center">
-              <img
-                src={HeroImage}
-                alt="Astronaut"
-                className={`z-20 w-[500px] md:w-[400px] sm:w-[300px] sxs:w-[295px] relative top-4 sxs:right-0 right-16 md:right-8 sm:right-4 transition-transform duration-1000 ease-in-out transform ${translate}`}
-              />
+             {HeroImage}
               <div className="absolute top-[20px] -left-[10%] sm:-left-[18%] md:-left-[14%] sxs:left-[6%] w-[320px] h-[320px] md:w-[280px] md:h-[280px] sm:w-[230px] sm:h-[230px] sxs:w-[160px] sxs:h-[160px] rounded-full bg-gradient-to-r from-purple-300/40 to-purple-600"></div>
               <div className="absolute top-[200px]  sxs:top-[150px] left-[65%] sxs:left-[61%] w-[164px] h-[164px] md:w-[124px] md:h-[124px] sm:w-[94px] sm:h-[94px] sxs:w-[80px] sxs:h-[80px] rounded-full bg-gradient-to-r from-purple-900 to-blue-500 opacity-30"></div>
               <div className="absolute top-[120px] left-[45%] sxs:left-[53%] w-[190px] h-[200px] md:w-[140px] md:h-[150px] sm:w-[100px] sm:h-[110px] sxs:w-[80px] sxs:h-[80px] bg-gradient-to-b from-white/30 to-transparent rounded-lg backdrop-blur-sm"></div>
             </div>
           </div>
-          <div className="relative dxl:-top-[30px] md:-top-[44px] sm:top-[10px] xxs:top-[10px]">
+          <div className="relative dxl:top-[35px] md:top-[35px] sm:top-[60px] xxs:top-[65px] sxs:top-[65px]">
             <DetailStatisticCard />
           </div>
         </div>

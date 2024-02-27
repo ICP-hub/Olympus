@@ -121,8 +121,8 @@ const ProjectRatings = () => {
               <div className="mx-4 flex items-center w-full">
                 <Line
                   strokeWidth={0.2}
-                  percent={sliderValuesProgress[sliderKeys[index]]}
-                  strokeColor="bg-black"
+                  percent={30}
+                  strokeColor="black"
                   className="line-horizontal"
                 />
                 <div className="text-white text-[15px] font-normal font-fontUse ml-2">
