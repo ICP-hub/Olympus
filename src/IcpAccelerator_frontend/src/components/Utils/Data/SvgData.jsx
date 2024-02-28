@@ -374,15 +374,15 @@ export const closeModalSvg = (
   </svg>
 );
 
-export const projectFilterSvg=(
+export const projectFilterSvg = (
   <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M3 7H6" stroke="#737373" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-<path d="M3 17H9" stroke="#737373" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-<path d="M18 17L21 17" stroke="#737373" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-<path d="M15 7L21 7" stroke="#737373" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-<path d="M6 7C6 6.06812 6 5.60218 6.15224 5.23463C6.35523 4.74458 6.74458 4.35523 7.23463 4.15224C7.60218 4 8.06812 4 9 4C9.93188 4 10.3978 4 10.7654 4.15224C11.2554 4.35523 11.6448 4.74458 11.8478 5.23463C12 5.60218 12 6.06812 12 7C12 7.93188 12 8.39782 11.8478 8.76537C11.6448 9.25542 11.2554 9.64477 10.7654 9.84776C10.3978 10 9.93188 10 9 10C8.06812 10 7.60218 10 7.23463 9.84776C6.74458 9.64477 6.35523 9.25542 6.15224 8.76537C6 8.39782 6 7.93188 6 7Z" stroke="#737373" strokeWidth="1.5"/>
-<path d="M12 17C12 16.0681 12 15.6022 12.1522 15.2346C12.3552 14.7446 12.7446 14.3552 13.2346 14.1522C13.6022 14 14.0681 14 15 14C15.9319 14 16.3978 14 16.7654 14.1522C17.2554 14.3552 17.6448 14.7446 17.8478 15.2346C18 15.6022 18 16.0681 18 17C18 17.9319 18 18.3978 17.8478 18.7654C17.6448 19.2554 17.2554 19.6448 16.7654 19.8478C16.3978 20 15.9319 20 15 20C14.0681 20 13.6022 20 13.2346 19.8478C12.7446 19.6448 12.3552 19.2554 12.1522 18.7654C12 18.3978 12 17.9319 12 17Z" stroke="#737373" strokeWidth="1.5"/>
-</svg>
+    <path d="M3 7H6" stroke="#737373" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M3 17H9" stroke="#737373" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M18 17L21 17" stroke="#737373" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M15 7L21 7" stroke="#737373" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M6 7C6 6.06812 6 5.60218 6.15224 5.23463C6.35523 4.74458 6.74458 4.35523 7.23463 4.15224C7.60218 4 8.06812 4 9 4C9.93188 4 10.3978 4 10.7654 4.15224C11.2554 4.35523 11.6448 4.74458 11.8478 5.23463C12 5.60218 12 6.06812 12 7C12 7.93188 12 8.39782 11.8478 8.76537C11.6448 9.25542 11.2554 9.64477 10.7654 9.84776C10.3978 10 9.93188 10 9 10C8.06812 10 7.60218 10 7.23463 9.84776C6.74458 9.64477 6.35523 9.25542 6.15224 8.76537C6 8.39782 6 7.93188 6 7Z" stroke="#737373" strokeWidth="1.5" />
+    <path d="M12 17C12 16.0681 12 15.6022 12.1522 15.2346C12.3552 14.7446 12.7446 14.3552 13.2346 14.1522C13.6022 14 14.0681 14 15 14C15.9319 14 16.3978 14 16.7654 14.1522C17.2554 14.3552 17.6448 14.7446 17.8478 15.2346C18 15.6022 18 16.0681 18 17C18 17.9319 18 18.3978 17.8478 18.7654C17.6448 19.2554 17.2554 19.6448 16.7654 19.8478C16.3978 20 15.9319 20 15 20C14.0681 20 13.6022 20 13.2346 19.8478C12.7446 19.6448 12.3552 19.2554 12.1522 18.7654C12 18.3978 12 17.9319 12 17Z" stroke="#737373" strokeWidth="1.5" />
+  </svg>
 );
 export const Memberssvg = (
   <svg
@@ -418,4 +418,34 @@ export const Socialmedia = (
   >
     <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z" />
   </svg>
-)
+);
+export const task = (
+  <svg className="h-8 w-8 text-blue-800" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z" />  <path d="M15 21h-9a3 3 0 0 1 -3 -3v-1h10v2a2 2 0 0 0 4 0v-14a2 2 0 1 1 2 2h-2m2 -4h-11a3 3 0 0 0 -3 3v11" />  <line x1="9" y1="7" x2="13" y2="7" />  <line x1="9" y1="11" x2="13" y2="11" /></svg>
+);
+export const messagesvg = (
+  <svg   className="text-gray-400 w-6 h-6 lg:w-8 lg:h-8 ml-auto mt-" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M8.5 14.5H15.5M8.5 9.5H12" stroke="#2A353D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M14.1706 20.8905C18.3536 20.6125 21.6856 17.2332 21.9598 12.9909C22.0134 12.1607 22.0134 11.3009 21.9598 10.4707C21.6856 6.22838 18.3536 2.84913 14.1706 2.57107C12.7435 2.47621 11.2536 2.47641 9.8294 2.57107C5.64639 2.84913 2.31441 6.22838 2.04024 10.4707C1.98659 11.3009 1.98659 12.1607 2.04024 12.9909C2.1401 14.536 2.82343 15.9666 3.62791 17.1746C4.09501 18.0203 3.78674 19.0758 3.30021 19.9978C2.94941 20.6626 2.77401 20.995 2.91484 21.2351C3.05568 21.4752 3.37026 21.4829 3.99943 21.4982C5.24367 21.5285 6.08268 21.1757 6.74868 20.6846C7.1264 20.4061 7.31527 20.2668 7.44544 20.2508C7.5756 20.2348 7.83177 20.3403 8.34401 20.5513C8.8044 20.7409 9.33896 20.8579 9.8294 20.8905C11.2536 20.9852 12.7435 20.9854 14.1706 20.8905Z" stroke="#2A353D" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>
+
+);
+export const sharesvg = (
+<svg className=" text-blue-900" width="24" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M21.0477 3.05293C18.8697 0.707363 2.48648 6.4532 2.50001 8.551C2.51535 10.9299 8.89809 11.6617 10.6672 12.1581C11.7311 12.4565 12.016 12.7625 12.2613 13.8781C13.3723 18.9305 13.9301 21.4435 15.2014 21.4996C17.2278 21.5892 23.1733 5.342 21.0477 3.05293Z" stroke="white" stroke-width="1.5"/>
+<path d="M11.5 12.5L15 9" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+
+);
+export const  twitter = (
+  <svg className="text-gray-400 w-8 h-8 ml-auto lg:md:mt-6 mt-[75px]" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
+  <rect x="-0.000488281" width="16" height="16" rx="8" fill="url(#pattern0)"/>
+  <defs>
+  <pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
+  <use xlinkHref="#image0_453_4564" transform="scale(0.0625)"/>
+  </pattern>
+  <image id="image0_453_4564" width="16" height="16" xlinkHref="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAA4ElEQVQ4Ed2RvQ5EQBzERcMD6DWioFDpeAMSWoWotErxUYhGI2rRaHkCjzeXv1ywuXXJ5aq7YoudzPwyOysIgoAvz18BZFnGuq5omgZRFDHbJEkCXdcZ7bkdu0EYhojjGGVZwjCMPRAEATzP44VJYwF07/sepmlimib4vg8C8HzcBiRKkoRlWaCqKrZtgyiKnwEIQpXHcYTruvsmHzXQNA1VVcG2baRpijzP4TjOXQt2Awp3XXeYsyyDZVmY5xmKohz6pdEJoG+s6/rlzW3bYhgGFEXxHnCh8ox32tngNwEPg14sOh2USIwAAAAASUVORK5CYII="/>
+  </defs>
+  </svg>
+  
+
+);
