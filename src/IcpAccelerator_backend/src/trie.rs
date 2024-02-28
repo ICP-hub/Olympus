@@ -1,77 +1,82 @@
-use candid::{CandidType, Deserialize};
-use ic_cdk_macros::{query, update};
-use serde::Serialize;
-use std::collections::HashMap;
-use std::fmt::Display;
+pub(crate) use std::{collections::HashMap, cell::RefCell, rc::Rc};
 
-use crate::project_registration::AreaOfFocus;
-
-
-#[derive(Clone, Serialize, Deserialize, CandidType)]
+#[derive(Debug, Default)]
 pub struct TrieNode {
-    children: HashMap<String, TrieNode>, 
+    children: HashMap<char, Rc<RefCell<TrieNode>>>,
     is_end_of_word: bool,
-    ids: Vec<String>,
+    mentor_ids: Vec<String>,
 }
 
-impl Default for TrieNode {
-    fn default() -> Self {
-        TrieNode {
-            children: HashMap::new(),
-            is_end_of_word: false,
-            ids: Vec::new(),
-        }
+impl TrieNode {
+    fn new() -> Self {
+        TrieNode::default()
     }
 }
 
-#[derive(Clone, Serialize, Deserialize, CandidType, Default)]
+#[derive(Debug, Default)]
 pub struct Trie {
-    root: TrieNode,
+    root: Rc<RefCell<TrieNode>>,
+}
+
+thread_local! {
+    pub static EXPERTISE_TRIE: RefCell<Trie> = RefCell::new(Trie::new());
 }
 
 impl Trie {
     pub fn new() -> Self {
-        Trie {
-            root: TrieNode::default(),
-        }
+        Trie::default()
     }
 
-    pub fn insert(&mut self, word: &str, id: String) {
-        let mut current_node = &mut self.root;
-        for c in word.chars() {
-            let c_str = c.to_string(); // Convert char to String
-            current_node = current_node.children.entry(c_str).or_insert_with(TrieNode::default);
+    pub fn insert_with_id(&self, word: &str, mentor_id: String) {
+        let mut current_node = Rc::clone(&self.root);
+        for character in word.chars() {
+            let next_node_opt = {
+                let borrowed_node = current_node.borrow();
+                borrowed_node.children.get(&character).map(Rc::clone)
+            };
+
+            let next_node = if let Some(node) = next_node_opt {
+                node
+            } else {
+                let new_node = Rc::new(RefCell::new(TrieNode::new()));
+                current_node.borrow_mut().children.insert(character, Rc::clone(&new_node));
+                new_node
+            };
+
+            current_node = next_node;
         }
-        current_node.is_end_of_word = true;
-        current_node.ids.push(id);
+
+        let mut node = current_node.borrow_mut();
+        node.is_end_of_word = true;
+        node.mentor_ids.push(mentor_id);
     }
 
-    pub fn search(&self, word: AreaOfFocus) -> Vec<String> {
-        let mut current_node = &self.root;
-        for c in word {
-            let c_str = c.to_string(); // Convert char to String
-            if let Some(node) = current_node.children.get(&c_str) {
-                current_node = node;
+    pub fn search(&self, prefix: &str) -> Vec<String> {
+        let mut current_node = Rc::clone(&self.root);
+        for character in prefix.chars() {
+            let temp_node; 
+            if let Some(node) = current_node.borrow().children.get(&character) {
+                temp_node = Rc::clone(node);
             } else {
                 return Vec::new();
             }
+            current_node = temp_node; 
         }
-        current_node.ids.clone()
+        self.collect_mentor_ids(&current_node)
     }
-}
 
-#[update]
-fn insert(word: String, id: String) {
-     ic_kit::ic::with_mut::<Trie, _, _>(|trie: &mut Trie| {
-        trie.insert(&word, id);
-    });
-}
+    pub fn collect_mentor_ids(&self, node: &Rc<RefCell<TrieNode>>) -> Vec<String> {
+        let node = node.borrow();
+        let mut ids = Vec::new();
 
-#[query]
-fn search(word: AreaOfFocus) -> Vec<String> {
-    let mut result = Vec::new();
-    ic_kit::ic::with::<Trie, _, _>(|trie| {
-        result = trie.search(&word);
-    });
-    result
+        if node.is_end_of_word {
+            ids.extend(node.mentor_ids.clone());
+        }
+
+        for child_node in node.children.values() {
+            ids.extend(self.collect_mentor_ids(child_node));
+        }
+
+        ids
+    }
 }

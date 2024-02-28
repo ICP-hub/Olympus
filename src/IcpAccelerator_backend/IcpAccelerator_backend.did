@@ -272,6 +272,7 @@ service : {
   get_leaderboard_using_likes : () -> (vec LeaderboardEntryForLikes) query;
   get_leaderboard_using_ratings : () -> (vec LeaderboardEntryForRatings) query;
   get_leaderboard_using_upvotes : () -> (vec LeaderboardEntryForUpvote) query;
+  get_mentor_by_expertise : (text) -> (vec MentorProfile) query;
   get_mentor_candid : () -> (opt MentorProfile) query;
   get_my_id : () -> (principal) query;
   get_popular_listed_project : () -> (vec ProjectInfoInternal) query;
