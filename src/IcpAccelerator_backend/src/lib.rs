@@ -28,6 +28,7 @@ mod rbac;
 mod register_user;
 mod roadmap_suggestion;
 mod ratings;
+mod trie;
 
 use rbac::{assign_roles_to_principal, has_required_role, UserRole};
 
@@ -280,6 +281,13 @@ pub fn make_active_inactive_mentor(id : Principal) -> String{
 pub fn get_all_mentors_candid() -> Vec<MentorProfile> {
     mentor::get_all_mentors()
 }
+
+#[query]
+#[candid_method(query)]
+pub fn get_mentor_by_expertise(area_of_expertise: String)->Vec<MentorProfile>{
+    mentor::find_mentors_by_expertise(&area_of_expertise)
+}
+
 
 #[update]
 #[candid_method(update)]
