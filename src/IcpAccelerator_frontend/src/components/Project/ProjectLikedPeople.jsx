@@ -5,7 +5,7 @@ const ProjectLikedPeople = () => {
   const likedPeople = Array(18).fill(null);
   return (
     <section className="">
-      <div className="w-full h-[50px] relative origin-top-left flex items-center flex-wrap  px-3 my-4" style={{ left: 0 }}>
+      <div className="w-full md:h-[50px] h-[40px] relative origin-top-left flex items-center flex-wrap truncate md:overflow-visible px-3 my-4" style={{ left: 0 }}>
                 {likedPeople.map((_, index) => (
                   <div className="relative mr-3 mt-2" key={index}>
                     <img

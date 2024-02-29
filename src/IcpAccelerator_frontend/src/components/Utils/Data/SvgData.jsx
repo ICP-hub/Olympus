@@ -420,8 +420,12 @@ export const Socialmedia = (
   </svg>
 );
 export const task = (
-  <svg className="h-8 w-8 text-blue-800" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z" />  <path d="M15 21h-9a3 3 0 0 1 -3 -3v-1h10v2a2 2 0 0 0 4 0v-14a2 2 0 1 1 2 2h-2m2 -4h-11a3 3 0 0 0 -3 3v11" />  <line x1="9" y1="7" x2="13" y2="7" />  <line x1="9" y1="11" x2="13" y2="11" /></svg>
-);
+  <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M7.02148 14.0476H10.5334M7.02148 9.65771H14.0453" stroke="#4E5999" stroke-linecap="round"/>
+  <path d="M6.58467 3.07275C5.21871 3.11373 4.40432 3.26577 3.8408 3.82981C3.06934 4.60199 3.06934 5.84479 3.06934 8.33039L3.06934 14.0426C3.06934 16.5282 3.06934 17.771 3.8408 18.5431C4.61226 19.3153 5.8539 19.3153 8.33719 19.3153L12.7271 19.3153C15.2104 19.3153 16.452 19.3153 17.2235 18.5431C17.9949 17.771 17.9949 16.5282 17.9949 14.0426V8.33039C17.9949 5.84479 17.9949 4.60199 17.2235 3.82981C16.6599 3.26577 15.8456 3.11373 14.4796 3.07275" stroke="#4E5999"/>
+  <path d="M6.58105 3.29232C6.58105 2.44376 7.26895 1.75586 8.11751 1.75586H12.9464C13.7949 1.75586 14.4828 2.44376 14.4828 3.29232C14.4828 4.14088 13.7949 4.82878 12.9464 4.82878H8.11751C7.26895 4.82878 6.58105 4.14088 6.58105 3.29232Z" stroke="#4E5999" stroke-linejoin="round"/>
+  </svg>
+  );
 export const messagesvg = (
   <svg   className="text-gray-400 w-6 h-6 lg:w-8 lg:h-8 ml-auto mt-" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M8.5 14.5H15.5M8.5 9.5H12" stroke="#2A353D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -438,7 +442,7 @@ export const sharesvg = (
 );
 export const  twitter = (
   <svg className="text-gray-400 w-8 h-8 ml-auto lg:md:mt-6 mt-[75px]" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
-  <rect x="-0.000488281" width="16" height="16" rx="8" fill="url(#pattern0)"/>
+  <rect x="-0.000488281" width="12" height="12" rx="8" fill="url(#pattern0)"/>
   <defs>
   <pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
   <use xlinkHref="#image0_453_4564" transform="scale(0.0625)"/>

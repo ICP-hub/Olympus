@@ -1,13 +1,20 @@
 import React from "react";
 import ProjectLikedPeople from "./ProjectLikedPeople";
 import project from "../../../assets/images/project.jpg";
+import { Pagination, Autoplay } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
 
+import "swiper/css/pagination";
+import "swiper/css/autoplay";
 function ProjectDescription() {
+  const numberOfSlides = 4; // For example, if you want 4 slides with the same image
+  const imageSrc = project;
   return (
     <div>
-      <div className="w-full flex justify-between items-center mb-10">
-        <div className="my-8 w-[50%]">
-          <p>
+      <div className="w-full lg:flex justify-between items-center mb-10">
+        <div className="my-8 lg:w-[50%]">
+          <p className="line-clamp-2">
             An experience on #ICP The first digital vending machine for random
             art distribution. Art Donation Wallet: Id
           </p>
@@ -15,17 +22,32 @@ function ProjectDescription() {
             <ProjectLikedPeople />
           </div>
         </div>
-        <div className="w-[50%]">
-          <div className="relative w-[50%] float-right">
-            <img
-              src={project}
-              alt="project"
-              className="w-full h-auto z-10 rounded-lg relative"
-            />
+        <div className="lg:w-[50%]">
+          <div className="relative lg:float-right w-[calc(100%/2-10px)] mx-auto self-center">
+            <Swiper
+              modules={[Pagination, Autoplay]}
+              spaceBetween={10}
+              slidesPerView={"auto"}
+              centeredSlides={true}
+              onSlideChange={() => console.log("slide change")}
+              onSwiper={(swiper) => console.log(swiper)}
+              loop={true}
+              autoplay
+              pagination={{ clickable: true }}
+            >
+              {[...Array(numberOfSlides)].map((_, index) => (
+                <SwiperSlide key={index}>
+                  <img
+                    src={imageSrc}
+                    alt={`slide-${index}`}
+                    className="w-full h-auto z-10 rounded-lg shadow-lg relative"
+                  />
+                </SwiperSlide>
+              ))}
+            </Swiper>
             <div className="absolute rounded-full -bottom-2 -left-2">
               <svg
-                width="146"
-                height="143"
+              className="w-[calc(100%/2-10px)]"
                 viewBox="0 0 146 143"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
