@@ -6,8 +6,8 @@ const InvestorDetails = ({ onSubmit, register, errors, fields, goToPrevious, goT
       <form onSubmit={onSubmit} className="w-full px-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {fields.map((field) => (
-            <div key={field.id} className="relative z-0 group">
-              <label htmlFor={field.id} className="block mb-2 text-sm font-medium text-gray-700 hover:whitespace-normal truncate overflow-hidden hover:text-left">{field.label}</label>
+            <div key={field.id} className="relative z-0 group mb-6">
+              <label htmlFor={field.id} className="block mb-2 text-lg font-medium text-gray-500 hover:text-black truncate overflow-hidden text-start">{field.label}</label>
               <input
                 type={field.type}
                 name={field.name}
@@ -26,14 +26,14 @@ const InvestorDetails = ({ onSubmit, register, errors, fields, goToPrevious, goT
         <div className="flex justify-end">
           <button
             type="button"
-            className=" font-bold text-white bg-blue-500 hover:bg-blue-600  focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md w-auto sm:w-auto px-5 py-2 text-center mb-4"
+            className=" font-bold text-white bg-blue-800 hover:bg-blue-600  focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md w-auto sm:w-auto px-5 py-2 text-center mb-4"
             onClick={goToPrevious}
           >
             Previous
           </button>
           <button
             type="button"
-            className="text-white font-bold bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md w-auto sm:w-auto px-5 py-2 text-center mb-4 ml-4"
+            className="text-white font-bold bg-blue-800 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md w-auto sm:w-auto px-5 py-2 text-center mb-4 ml-4"
             onClick={goToNext}
           >
             Next

@@ -38,79 +38,84 @@ const RoleSelector = React.memo(() => {
     console.log('after roleName send',roleId, roleName)
 
   };
+  const [translate, setTranslate] = useState("translate-y-0");
 
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setTranslate((prevTranslate) =>
+        prevTranslate === "translate-y-2" ? "translate-y-5" : "translate-y-2"
+      );
+    }, 1000);
+    return () => clearInterval(intervalId);
+  }, []);
   return (
     <div>
-      <section className="body-font bg-white font-fontUse">
-        <div className="w-full h-[500px]">
-          <div className="flex justify-center">
-            <div className=" bg-indigo-300 rounded-xl z-4 absolute flex flex-row p-4 m-16 border-8 border-blue-100">
-              <div className="w-3/4 p-4">
-                <h1 className="text-white  font-bold pt-6 text-sxxs:text-[11.5px] sxs:text-[12px] sxs1:text-[12.5px sxs2:text-[13px] sxs3:text-[13.5px] ss:text-[14px] ss1:text-[14.5px] ss2:text-[15px] ss3:text-[15.5px] ss4:text-[16px] dxs:text-[16.5px] xxs:text-[17px] xxs1:text-[17.5px] sm1:text-[18px] sm4:text-[18.5px] sm2:text-[19px] sm3:text-[19.5px] sm:text-[20px] md:text-[20.8px] md1:text-[21.5px] md2:text-[22px] md3:text-[22.5px] lg:text-[23px] dlg:text-[23.5px] lg1:text-[24px] lgx:text-[24.5px] dxl:text-[25px] xl:text-[25.5px] xl2:text-[26px]">
-                  Select your role
-                </h1>
+     <section className="bg-gray-100 font-fontUse">
+      <div className="flex justify-center py-16">
+        <div className=" bg-indigo-300 rounded-xl flex flex-row border-8 border-blue-100 w-2/3 h-fit">
+          <div className="flex-col flex relative">
+            <div className="p-12 z-20 relative">
+              <h1 className="text-white font-bold pt-6 text-[14.5px] sm:text-[18px] md:text-[20.8px] lg:text-[23px] xl:text-[25.5px] 2xl:text-[26px]">
+                Select your role
+              </h1>
 
-                <h2 className="mt-4 text-white mb-6 text-sxxs:text-[7px] sxs:text-[7.5px] sxs1:text-[8px] sxs2:text-[8.5px] sxs3:text-[9px] ss:text-[9.5px] ss1:text-[10px] ss2:text-[10.5px] ss3:text-[11px] ss4:text-[11.5px] dxs:text-[12px] xxs:text-[12.5px] xxs1:text-[13px] sm1:text-[13.5px] sm4:text-[14px] sm2:text-[14.5px] sm3:text-[15px] sm:text-[15.5px] md:text-[16px.3] md1:text-[17px] md2:text-[17.5px] md3:text-[18px] lg:text-[18.5px] dlg:text-[19px] lg1:text-[15.5px] lgx:text-[20px] dxl:text-[20.5px] xl:text-[21px] xl2:text-[21.5px] overflow-hidden line-clamp-3">
-                  World’s 1st fully On-chain, Decentralised,<br /> Permissionless,
-                  Transparent and Non-Competitive <br /> Incubator cum Accelerator
-                </h2>
-                <div className="flex justify-between flex-wrap">
-                  {rolesArr.roles?.map((plan) => (
-                    <label
-                      key={plan.id}
-                      className={`relative flex bg-of p-4 rounded-lg shadow- cursor-pointer my-2 w-auto ${selectedRole.id === plan.id
-                        ? "  bg-blue-500 bg-opacity-20 rounded-lg"
-                        : ""
-                        }`}
-                    >
-                      <div className="flex justify-between w-full">
-                        <span className="font-semibold text-textColor leading-tight uppercase">
-                          {plan.name}
-                        </span>
-                        {selectedRole.id === plan.id && (
-                          <span
-                            aria-hidden="true"
-                            className="flex items-center justify-center  border-blue-500  bg-opacity-20 rounded-full ml-4"
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                              className="h-5 w-5 text-blue-700"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          </span>
-                        )}
-                      </div>
-                      <input
-                        type="radio"
-                        name="plan"
-                        id={`plan-${plan.id}`}
-                        value={plan.id}
-                        className="absolute h-0 w-0 appearance-none"
-                        checked={selectedRole.id === plan.id}
-                        onChange={() => handlePlanChange(plan.id, plan.name)}
-                        readOnly
-                      />
-                    </label>
-                  ))}
-                </div>
-              </div>
-              <div className="w-1/4">
-                <div className="flex justify-center">
-                  <img src={astro1} alt="astro1" />
-                </div>
+              <h2 className="mt-4 text-white mb-6 text-[13px] sm:text-[13.5px] md:text-[16.3px] lg:text-[18.5px] xl:text-[21px] 2xl:text-[21.5px] overflow-hidden line-clamp-3">
+                World’s 1st fully On-chain, Decentralised, Permissionless,
+                Transparent and Non-Competitive Incubator cum Accelerator
+              </h2>
+
+              <div className="flex justify-between flex-wrap items-center">
+                {rolesArr.roles?.map((plan) => (
+                  <label
+                    key={plan.id}
+                    className="relative flex bg-of p-4 shadow- cursor-pointer my-2 w-auto hover:bg-indigo-500 hover:bg-opacity-20 hover:rounded-lg"
+                    onClick={() => handlePlanChange(plan.id, plan.name)}
+                  >
+                    <div className="group flex justify-between w-full items-center">
+                      <span className="font-bold text-white leading-tight uppercase">
+                        {plan.name}
+                      </span>
+                      <span
+                        aria-hidden="true"
+                        className="hidden group-hover:flex items-center justify-center border-2 border-white bg-transparent rounded-full ml-4"
+                      >
+                        <svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 8 7"
+                          fill="currentColor"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="m-1"
+                        >
+                          <path
+                            d="M1.33337 4.50016C1.33337 4.50016 2.40004 5.10851 2.93337 6.00016C2.93337 6.00016 4.53337 2.50016 6.66671 1.3335"
+                            stroke="white"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </span>
+                    </div>
+                  </label>
+                ))}
               </div>
             </div>
+            <div className="absolute bottom-0 left-0 bg-gradient-to-r from-purple-400/40 to-purple-600/40 ellipse-quarter-role rounded-md lg:w-64 lg:h-80 md:w-56 md:h-72 sm:w-48 sm:h-64 w-40 h-56"></div>
           </div>
+          <div className="relative flex justify-center items-center lg:-top-20 md:-top-16 sm:-top-12 -top-10 left-0">
+            <img
+              src={astro1}
+              alt="Astronaut"
+              className={`z-20 lg:w-[500px] md:w-[450px] sm:w-[350px] xxs:w-[300px] xxs:-top-[170px] w-[250px] relative top-4 lg:top-16 md:-top-16  sm:-top-36 sm:left-12 left-8 md:h-[300px] transition-transform duration-1000 ease-in-out transform ${translate}`}
+            />
+            <div className="absolute top-1 left-[15%] w-[150px] h-[150px] sm:top-2 sm:left-[15%] md:top-3 md:left-[10%] lg:top-4 lg:left-[15%] sm:w-[200px] sm:h-[200px] md:w-[250px] md:h-[250px] lg:w-[300px] lg:h-[300px] xxs:w-[150px] xxs:h-[150px] xxs:-left-0 rounded-full bg-gradient-to-r from-purple-300/40 to-purple-600"></div>
+            <div className="absolute top-[80px] left-[55%] w-[60px] h-[60px] sm:top-[170px] sm:left-[110%] md:top-[180px] md:left-[65%] lg:top-[220px] lg:left-[90%] sm:w-[100px] sm:h-[100px] md:w-[120px] md:h-[120px] lg:w-[150px] lg:h-[150px] rounded-full bg-gradient-to-r from-purple-900 to-blue-500 opacity-30"></div>
+            <div className="absolute top-[50px] left-[40%] w-[100px] h-[110px] sm:top-[120px] sm:left-[80%] md:top-[130px] md:left-[80%] lg:top-[160px] lg:left-[70%] sm:w-[100px] sm:h-[120px] md:w-[130px] md:h-[150px] lg:w-[160px] lg:h-[180px] bg-gradient-to-b from-white/30 to-transparent rounded-lg backdrop-blur-sm"></div>
+          </div>
+
         </div>
-      </section>
-      <Footer />
+      </div>
+    </section>
     </div>
   );
 });

@@ -7,12 +7,15 @@ mod project_like;
 mod roles;
 mod upvotes;
 mod vc_registration;
+mod latest_popular_projects;
+mod requests;
 
 use hub_organizer::{HubOrganizerRegistration, UniqueHubs};
 use ic_cdk::api::caller;
 use ic_kit::candid::{candid_method, export_service};
 use leaderboard::{LeaderboardEntryForLikes, LeaderboardEntryForUpvote, LeaderboardEntryForRatings};
 use project_like::LikeRecord;
+use requests::Request;
 use roles::{get_roles, RolesResponse};
 use std::collections::HashSet;
 
@@ -25,13 +28,14 @@ mod rbac;
 mod register_user;
 mod roadmap_suggestion;
 mod ratings;
+mod trie;
 
 use rbac::{assign_roles_to_principal, has_required_role, UserRole};
 
 use candid::Principal;
 use ic_cdk_macros::{pre_upgrade, query, update};
-use project_registration::{AreaOfFocus, DocsInfo, ProjectInfo, TeamMember};
-use register_user::{FounderInfo, FounderInfoInternal};
+use project_registration::{AreaOfFocus, DocsInfo, ProjectInfo, TeamMember, ProjectInfoInternal, ThirtyInfoProject};
+use register_user::{FounderInfo, FounderInfoInternal, ThirtyInfoFounder};
 use roadmap_suggestion::{Status, Suggestion};
 use upvotes::UpvoteStorage;
 use vc_registration::VentureCapitalist;
@@ -64,7 +68,7 @@ pub fn get_role_from_p_id() -> Option<HashSet<UserRole>> {
 
 #[update]
 #[candid_method(update)]
-async fn register_founder_caller(profile: FounderInfo) -> String {
+async fn register_founder_caller(profile: ThirtyInfoFounder) -> String {
     let role = vec![UserRole::Founder, UserRole::Project];
     register_user::register_founder(profile).await;
     assign_roles_to_principal(role)
@@ -102,7 +106,7 @@ fn update_founder_caller(updated_profile: FounderInfo)->String {
 
 #[update]
 #[candid_method(update)]
-async fn create_project(params: ProjectInfo) -> String {
+async fn create_project(params: ThirtyInfoProject) -> String {
     if has_required_role(&vec![UserRole::Founder, UserRole::Project]) {
         project_registration::create_project(params).await
     } else {
@@ -115,6 +119,12 @@ async fn create_project(params: ProjectInfo) -> String {
 #[candid_method(query)]
 fn get_projects_for_caller() -> Vec<ProjectInfo> {
     project_registration::get_projects_for_caller()
+}
+
+#[query]
+#[candid_method(query)]
+fn get_project_using_id(project_id: String) -> Option<ProjectInfoInternal>{
+    project_registration::find_project_by_id(&project_id)
 }
 
 #[query]
@@ -272,6 +282,13 @@ pub fn get_all_mentors_candid() -> Vec<MentorProfile> {
     mentor::get_all_mentors()
 }
 
+#[query]
+#[candid_method(query)]
+pub fn get_mentor_by_expertise(area_of_expertise: String)->Vec<MentorProfile>{
+    mentor::find_mentors_by_expertise(&area_of_expertise)
+}
+
+
 #[update]
 #[candid_method(update)]
 pub fn upvote_project(project_id: String) -> std::string::String {
@@ -282,6 +299,30 @@ pub fn upvote_project(project_id: String) -> std::string::String {
 #[candid_method(query)]
 pub fn get_project_upvotes(project_id: String) -> Option<UpvoteRecord> {
     upvotes::get_upvote_record(project_id)
+}
+
+#[query]
+#[candid_method(query)]
+pub fn get_latest_live_proposal()->Vec<ProjectInfoInternal>{
+    latest_popular_projects::get_live_proposals_latest()
+}
+
+#[query]
+#[candid_method(query)]
+pub fn get_latest_listed_project()->Vec<ProjectInfoInternal>{
+    latest_popular_projects::get_listed_projects_latest()
+}
+
+#[query]
+#[candid_method(query)]
+pub fn get_popular_live_proposal()->Vec<ProjectInfoInternal>{
+    latest_popular_projects::get_live_proposals_popular()
+}
+
+#[query]
+#[candid_method(query)]
+pub fn get_popular_listed_project()->Vec<ProjectInfoInternal>{
+    latest_popular_projects::get_listed_projects_popular()
 }
 
 #[update]
@@ -411,13 +452,27 @@ pub fn get_leaderboard_using_ratings() -> Vec<LeaderboardEntryForRatings>{
 }
 
 #[update]
+#[candid_method(update)]
 pub fn update_rating_api(rating: Rating){
     ratings::update_rating(rating);
 }
 
 #[query]
+#[candid_method(query)]
 pub fn calculate_average_api(project_id: String) -> Option<f64> {
     ratings::calculate_average(&project_id)
+}
+
+#[update]
+#[candid_method(update)]
+pub fn send_request_as_mentor(project_id: String, request_text: String)->String{
+    requests::send_request_to_project(project_id, request_text)
+}
+
+#[query]
+#[candid_method(query)]
+pub fn get_project_requests(project_id: String)->Vec<Request>{
+    requests::get_requests(project_id)
 }
 
 //made for admin side.....

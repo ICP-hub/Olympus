@@ -118,16 +118,20 @@ pub fn pre_upgrade() {
 //     });
 // }
 
-pub async fn create_project(params: ProjectInfo)-> String {
+pub async fn create_project(thirty_info: ThirtyInfoProject)-> String {
 
     let uuids = raw_rand().await.unwrap().0; 
     let uid = format!("{:x}", Sha256::digest(&uuids));
     let new_id = uid.clone().to_string();
 
     let caller = caller();
+    let project = ProjectInfo{
+        thirty_info: Some(thirty_info),
+        seventy_info: None,
+    };
 
     let new_project = ProjectInfoInternal{
-        params,
+        params:project,
         uid: new_id,
         is_active: true,
     };
@@ -151,6 +155,17 @@ pub fn get_projects_for_caller() -> Vec<ProjectInfo> {
     })
 }
 
+
+pub fn find_project_by_id(project_id: &str) -> Option<ProjectInfoInternal> {
+    APPLICATION_FORM.with(|storage| {
+        for projects in storage.borrow().values() {
+            if let Some(project) = projects.iter().find(|p| p.uid == project_id) {
+                return Some(project.clone());
+            }
+        }
+        None 
+    })
+}
 
 
 pub fn list_all_projects() -> Vec<ProjectInfo> {

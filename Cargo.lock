@@ -13,6 +13,7 @@ dependencies = [
  "ic-cdk-macros 0.8.4",
  "ic-cdk-timers",
  "ic-kit",
+ "num-traits",
  "serde",
  "serde_cbor",
  "sha2 0.9.9",

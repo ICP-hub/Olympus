@@ -5,8 +5,10 @@ import { allHubsSaga } from './AllHub';
 import { internetIdentitySaga } from './InternetIdentitySaga';
 import { actorSaga } from './actorBindSaga';
 import { userRoleSaga } from './userRoleSaga';
-
-
+import { fetchFounderSaga } from './founderSaga';
+import { fetchHubSaga } from './hubSaga';
+import { fetchInvestorSaga } from './investorSaga';
+import { fetchMentorSaga } from './mentorSaga';
 export default function* rootSaga() {
     yield all([
         walletSagas(),
@@ -14,6 +16,10 @@ export default function* rootSaga() {
         allHubsSaga(),
         internetIdentitySaga(),
         actorSaga(),
-        userRoleSaga()
+        userRoleSaga(),
+        fetchFounderSaga(),
+        fetchHubSaga(),
+        fetchInvestorSaga(),
+        fetchMentorSaga()
     ]);
 }

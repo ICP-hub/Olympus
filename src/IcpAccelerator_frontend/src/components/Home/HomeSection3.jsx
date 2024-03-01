@@ -11,7 +11,7 @@ import SubmitSection from "../Footer/SubmitSection";
 
 const HomeSection3 = () => {
   return (
-    <section className="text-gray-700 body-font relative bg-gray-100 ">
+    <section className="text-gray-700 body-font relative bg-gray-100 pb-12">
       <div className="w-full h-full px-[4%] lg1:px-[5%] pt-12">
         {/* <div className="w-[1051.41px] h-[1051.41px] left-[-396.97px] top-[706px] absolute opacity-60 bg-fuchsia-800 rounded-full blur-[411.40px]"></div> */}
         {/* <div className="absolute -mt-[526px] -ml-[526px] w-[1051px] h-[1051px] rotate-[0.034deg] flex-shrink-0 rounded-full opacity-60 bg-gradient-to-r from-[#8D3494] to-[#4B0FAC] blur-[205.7px] z-10"></div> */}
@@ -142,7 +142,7 @@ const HomeSection3 = () => {
                   </div>
                 </div>
                 <div className="w-full h-fit rounded-lg shadow-custom p-8 bg-transparent  drop-shadow-2xl sticky z-10 backdrop-blur-sm">
-                  <div className="bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-2xl font-extrabold uppercase w-fit  mb-3 truncate text-wrap font-fontUse text-start">
+                  <div className="bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-2xl font-extrabold uppercase w-fit  mb-3 truncate text-wrap font-fontUse text-start sxs:line-clamp-1">
                     Incorporation and Legal
                   </div>
                   <div className="text-gray-600 text-sm font-bold truncate text-wrap text-start">
@@ -188,72 +188,66 @@ const HomeSection3 = () => {
                 className="h-[900px] w-[850px] md:object-contain"
               />
             </div>
-            <div className="flex justify-center">
-              <div
-                className="md:hidden bg-no-repeat bg-contain w-full h-full absolute -top-[200px] ss4:-top-[1100px] dxs:-top-[1000px] xxs:-top-[950px] xxs1:-top-[800px] sm1:-top-[200px] sm4:-top-[650px] sm2:-top-[600px] sm3:-top-[215px] sm:-top-[25px] -z-10 blur-0"
-                style={{
-                  backgroundImage: `url(${Rocket})`,
-                  backgroundPosition: "center",
-                }}
-              ></div>
-            </div>
           </div>
         </div>
+      
 
-        <div className="mb-16">
-          <div className="w-fit mb-9 bg-clip-text text-transparent bg-gradient-to-r from-violet-900 to-sky-600  text-[42px] font-fontUse font-extrabold ">
-            Ready To Get Accelerated ?<br /> Join Our Ecosystem Today !
+      <div className="mb-16">
+        
+        <div className="w-full mb-9 bg-clip-text text-transparent bg-gradient-to-r from-violet-900 to-sky-600  text-[42px] font-fontUse font-extrabold md:text-center dxl:text-start">
+          Ready To Get Accelerated ?<br /> Join Our Ecosystem Today !
+        </div>
+        <div className="text-gray-600 text-[36px] font-fontUse font-normal mb-6 w-full md:text-center dxl:text-start">
+          Support | Be a part of the Symbiote Ecosystem
+        </div>
+
+        <div className="flex flex-wrap dxl:gap-32 items-center w-full z-20 justify-center md:gap-16 gap-12">
+          <div className="relative">
+            <div className="flex flex-col justify-between w-60 h-fit bg-white rounded-2xl shadow overflow-hidden md:w-60 md:h-fit">
+              <div className="flex justify-center flex-grow">
+                <img className="p-8 mb-2" src={b1} alt="Rocket Image" />
+              </div>
+              <div className=" text-center  w-auto text-2xl font-bold text-white bg-indigo-300 p-4">
+                Take your project ahead
+              </div>
+            </div>
           </div>
-          <div className="text-gray-600 text-[36px] font-fontUse font-normal mb-6 w-fit">
-            Support | Be a part of the Symbiote Ecosystem
+
+          <div className="relative">
+            <div className="w-60 h-fit flex-col justify-between md:w-60 md:h-fit bg-white rounded-2xl shadow overflow-hidden  flex">
+              <div className="flex justify-center flex-grow">
+                <img className="p-8 mb-2" src={b2} />
+              </div>
+              <div className="w-auto text-center text-white bg-indigo-300 p-4 text-2xl font-fontUse font-bold">
+                Become a Partner
+              </div>
+            </div>
           </div>
-
-          <div className="flex flex-wrap justify-between items-center w-full sm:space-y-8 z-20">
-            <div className="relative">
-              <div className="flex flex-col justify-between w-60 h-fit bg-white rounded-2xl shadow overflow-hidden md:w-60 md:h-fit">
-                <div className="flex justify-center flex-grow">
-                  <img className="p-8 mb-2" src={b1} alt="Rocket Image" />
-                </div>
-                <div className=" text-center  w-auto text-2xl font-bold text-white bg-indigo-300 p-4">
-                  Take your project ahead
-                </div>
+          <div className="relative">
+            <div className="flex flex-col justify-between w-60 h-fit bg-white rounded-2xl shadow overflow-hidden md:w-60 md:h-fit">
+              <div className="flex justify-center flex-grow">
+                <img className="p-8 mb-2" src={b3} alt="Rocket Image" />
+              </div>
+              <div className=" text-center  w-auto text-2xl font-bold text-white bg-indigo-300 p-4">
+                Invest <br></br>with us
               </div>
             </div>
-
-            <div className="relative">
-              <div className="w-60 h-fit flex-col justify-between md:w-60 md:h-fit bg-white rounded-2xl shadow overflow-hidden  flex">
-                <div className="flex justify-center flex-grow">
-                  <img className="p-8 mb-2" src={b2} />
-                </div>
-                <div className="w-auto text-center text-white bg-indigo-300 p-4 text-2xl font-fontUse font-bold">
-                  Become a Partner
-                </div>
+          </div>
+          <div className="relative">
+            <div className="flex flex-col justify-between w-60 h-fit bg-white rounded-2xl shadow overflow-hidden md:w-60 md:h-fit">
+              <div className="flex justify-center flex-grow">
+                <img className="p-8 mb-2" src={b4} alt="Rocket Image" />
               </div>
-            </div>
-            <div className="relative">
-              <div className="flex flex-col justify-between w-60 h-fit bg-white rounded-2xl shadow overflow-hidden md:w-60 md:h-fit">
-                <div className="flex justify-center flex-grow">
-                  <img className="p-8 mb-2" src={b3} alt="Rocket Image" />
-                </div>
-                <div className=" text-center  w-auto text-2xl font-bold text-white bg-indigo-300 p-4">
-                  Invest <br></br>with us
-                </div>
-              </div>
-            </div>
-            <div className="relative">
-              <div className="flex flex-col justify-between w-60 h-fit bg-white rounded-2xl shadow overflow-hidden md:w-60 md:h-fit">
-                <div className="flex justify-center flex-grow">
-                  <img className="p-8 mb-2" src={b4} alt="Rocket Image" />
-                </div>
-                <div className=" text-center  w-auto text-2xl font-bold text-white bg-indigo-300 p-4">
-                  Mentor our Projects
-                </div>
+              <div className=" text-center  w-auto text-2xl font-bold text-white bg-indigo-300 p-4">
+                Mentor our Projects
               </div>
             </div>
           </div>
         </div>
-        <SubmitSection />
       </div>
+      <SubmitSection />
+      </div>
+      
     </section>
   );
 };

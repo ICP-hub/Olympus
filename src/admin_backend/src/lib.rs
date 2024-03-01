@@ -30,7 +30,9 @@ mod tests {
         use std::path::PathBuf;
 
         let dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
-        let dir = dir.parent().unwrap().parent().unwrap().join("candid");
-        write(dir.join("/home/harshpreet-singh/Documents/quadb/axxxelerator-new/ICPAccelerator/src/admin_backend/admin_backend.did"), export_candid()).expect("Write failed.");
+
+        // Directly use dir for the current directory
+        let file_path = dir.join("admin_backend.did");
+        write(file_path, export_candid()).expect("Write failed.");
     }
 }

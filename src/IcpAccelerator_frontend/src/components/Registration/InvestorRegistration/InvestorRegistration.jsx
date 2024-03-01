@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 import { allHubHandlerRequest } from "../../Redux/Reducers/All_IcpHubReducer";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
 
 const validationSchema = {
   personalDetails: yup.object().shape({
@@ -23,70 +24,95 @@ const validationSchema = {
       .string()
       .email("Invalid email format")
       .required("Email address is required")
-      .test("is-non-empty", "Required", (value) => /\S/.test(value)),
+      .test("is-non-empty", "Email address is required", (value) => /\S/.test(value)),
     telegram_id: yup
       .string()
-      .test("is-non-empty", "Required", (value) => /\S/.test(value))
+      .test("is-non-empty", "Telegram ID is required", (value) => /\S/.test(value))
       .required("Telegram ID is required"),
     portfolio_link: yup
       .string()
       .url("Must be a valid URL")
-      .test("is-non-empty", "Required", (value) => /\S/.test(value)),
-    location: yup.string().required("Location is required"),
+      .test("is-non-empty", "Must be a valid URL", (value) => /\S/.test(value)),
+    location: yup.string().required("Location is required")
+    .test("is-non-empty", "Location is required", (value) => /\S/.test(value)),
     website_link: yup
       .string()
       .url("Must be a valid URL")
-      .required("Website link is required"),
+      .required("Website link is required")
+    .test("is-non-empty", "Website link is required", (value) => /\S/.test(value)),
+    
     technological_focus: yup
       .string()
-      .required("Technological focus is required"),
+      .required("Technological focus is required")
+    .test("is-non-empty", "Technological focus is required", (value) => /\S/.test(value)),
+
     preferred_icp_hub: yup
       .string()
-      .test("is-non-empty", "Required", (value) => /\S/.test(value))
+      .test("is-non-empty", "ICP Hub selection is required", (value) => /\S/.test(value))
       .required("ICP Hub selection is required"),
   }),
   investorDetails: yup.object().shape({
-    investor_type: yup.string().required("Investor type is required"),
+    investor_type: yup.string().required("Investor type is required")
+    .test("is-non-empty", "Investor type required", (value) => /\S/.test(value)),
     typical_decision_making_timeline_for_investments: yup
       .string()
-      .required("Decision making timeline is required"),
+      .required("Decision making timeline is required")
+      .test("is-non-empty", "Decision making timeline is required", (value) => /\S/.test(value)),
     interest_in_board_positions: yup
       .boolean()
-      .required("Interest in board positions is required"),
-    name_of_fund: yup.string().required("Name of fund is required"),
+      .required("Interest in board positions is required")
+    .test("is-non-empty", "Interest in board positions is required", (value) => /\S/.test(value)),
+    name_of_fund: yup.string().required("Name of fund is required")
+    .test("is-non-empty", "Name of fund is required", (value) => /\S/.test(value)),
     size_of_managed_fund: yup
       .number()
       .positive("Must be a positive number")
-      .required("Size of managed fund is required"),
+      .required("Size of managed fund is required")
+    .test("is-non-empty", "Size of managed fund is required", (value) => /\S/.test(value)),
     accredited_investor_status: yup
       .boolean()
-      .required("Accredited investor status is required"),
+      .required("Accredited investor status is required")    
+      .test("is-non-empty", "Accredited investor status is required", (value) => /\S/.test(value)),
+
     preferred_investment_sectors: yup
       .string()
-      .required("Preferred investment sectors are required"),
+      .required("Preferred investment sectors are required")
+      .test("is-non-empty", "Preferred investment sectors are required", (value) => /\S/.test(value)),
+
   }),
   additionalInfo: yup.object().shape({
     average_investment_ticket: yup
       .number()
       .positive("Must be a positive number")
-      .required("Average investment ticket is required"),
+      .required("Average investment ticket is required")
+      .test("is-non-empty", "Average investment ticket is required", (value) => /\S/.test(value)),
+
     investment_stage_preference: yup
       .string()
-      .required("Investment stage preference is required"),
+      .required("Investment stage preference is required")
+      .test("is-non-empty", "Investment stage preference is required", (value) => /\S/.test(value)),
+
     number_of_portfolio_companies: yup
       .number()
       .positive("Must be a positive number")
       .integer("Must be an integer")
-      .required("Number of portfolio companies is required"),
+      .required("Number of portfolio companies is required")
+      .test("is-non-empty", "Number of portfolio companies is required", (value) => /\S/.test(value)),
+
     revenue_range_preference: yup
       .string()
-      .required("Revenue range preference is required"),
+      .required("Revenue range preference is required")
+      .test("is-non-empty", "Revenue range preference is required", (value) => /\S/.test(value)),
+
     assets_for_investment: yup
       .number()
       .positive("Must be a positive number")
-      .required("Assets for investment is required"),
+      .required("Assets for investment is required")
+      .test("is-non-empty", "Assets for investment is required", (value) => /\S/.test(value)),
+
     referrer: yup
       .string()
+      .optional()
       .test("is-non-empty", "Required", (value) => /\S/.test(value)),
   }),
 };
@@ -104,17 +130,16 @@ const InvestorRegistration = () => {
   const [isCurrentStepValid, setIsCurrentStepValid] = useState(false);
   const [userHasInteracted, setUserHasInteracted] = useState(false);
 
-
-  console.log( "InvestorRegistration => ")
+  console.log("InvestorRegistration => ");
   useEffect(() => {
     dispatch(allHubHandlerRequest());
   }, [actor, dispatch]);
 
   const getTabClassName = (tab) => {
-    return `inline-block p-4 ${
+    return `inline-block p-2 font-bold ${
       activeTab === tab
-        ? "text-white border-b-2 "
-        : "text-gray-400  border-transparent hover:text-white"
+        ? "text-black border-b-2 border-black"
+        : "text-gray-400  border-transparent hover:text-black"
     } rounded-t-lg`;
   };
   const steps = [
@@ -128,7 +153,7 @@ const InvestorRegistration = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     trigger,
   } = useForm({
     resolver: yupResolver(currentValidationSchema),
@@ -183,7 +208,9 @@ const InvestorRegistration = () => {
   } else if (step === 1) {
     StepComponent = <InvestorDetails />;
   } else if (step === 2) {
-    StepComponent = <InvestorAdditionalInformation />;
+    StepComponent = (
+      <InvestorAdditionalInformation isSubmitting={isSubmitting} />
+    );
   }
 
   const onSubmit = async (data) => {
@@ -204,7 +231,7 @@ const InvestorRegistration = () => {
 
       const investorDataObject = {
         accredited_investor_status: [accreditedInvestorStatus],
-        assets_for_investment: [updatedFormData.assets_for_investment],
+        assets_for_investment: [String(updatedFormData.assets_for_investment)],
         average_investment_ticket: [updatedFormData.average_investment_ticket],
         email_address: [updatedFormData.email_address],
         interest_in_board_positions: [interestInBoardPosition],
@@ -235,10 +262,12 @@ const InvestorRegistration = () => {
 
       const sendingInvestorData = async () => {
         try {
-          await actor.register_venture_capitalist_caller(investorDataObject);
+          const result = await actor.register_venture_capitalist_caller(investorDataObject);
+          toast.success(result);
           console.log("investor data registered in backend");
           navigate("/dashboard");
         } catch (error) {
+          toast.error(error);
           console.log(error.message);
         }
       };
@@ -247,7 +276,10 @@ const InvestorRegistration = () => {
   };
 
   return (
-    <div className="w-full h-full bg-gradient-to-r from-shadeBlue from-0% to-shadeSkyBlue to-100% shadow-custom rounded-md z-10 relative">
+    <div className="w-full h-full bg-gray-100 pt-8">
+      <div className="bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-[30px]  sm:text-[25px] md1:text-[30px] md2:text-[35px] font-black font-fontUse dxl:text-[40px] p-8">
+        VC's Information
+      </div>
       <div className="text-sm font-medium text-center text-gray-200 ">
         <ul className="flex flex-wrap mb-4 text-sxxs:text-[7px] sxs:text-[7.5px] sxs1:text-[8px] sxs2:text-[8.5px] sxs3:text-[9px] ss:text-[9.5px] ss1:text-[10px] ss2:text-[10.5px] ss3:text-[11px] ss4:text-[11.5px] dxs:text-[12px] xxs:text-[12.5px] xxs1:text-[13px] sm1:text-[13.5px] sm4:text-[14px] sm2:text-[14.5px] sm3:text-[13px] sm:text-[11.5px] md:text-[14px.3] md1:text-[13px] md2:text-[13px] md3:text-[13px] lg:text-[14.5px] dlg:text-[15px] lg1:text-[16.5px] lgx:text-[16px] dxl:text-[16.5px] xl:text-[19px] xl2:text-[19.5px] cursor-pointer justify-around">
           {investorRegistration.map((header, index) => (
@@ -280,10 +312,10 @@ const InvestorRegistration = () => {
         </ul>
 
         {step == 0 && (
-          <div className="relative z-0 group">
+          <div className="relative z-0 group mb-6 px-4">
             <label
               htmlFor="preferred_icp_hub"
-              className="block mb-2 text-sm font-medium text-gray-700 hover:whitespace-normal truncate overflow-hidden hover:text-left"
+              className="block mb-2 text-lg font-medium  text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
             >
               Can you please share your preferred ICP Hub
             </label>
@@ -296,9 +328,15 @@ const InvestorRegistration = () => {
                   : "border-[#737373]"
               } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
             >
-              <option value="">Select your ICP Hub</option>
+              <option className="text-lg font-bold" value="">
+                Select your ICP Hub
+              </option>
               {getAllIcpHubs?.map((hub) => (
-                <option key={hub.id} value={`${hub.name} ,${hub.region}`}>
+                <option
+                  key={hub.id}
+                  value={`${hub.name} ,${hub.region}`}
+                  className="text-lg font-bold"
+                >
                   {hub.name} , {hub.region}
                 </option>
               ))}
@@ -313,10 +351,10 @@ const InvestorRegistration = () => {
 
         {step == 1 && (
           <div className="flex flex-col">
-            <div className="relative z-0 group">
+            <div className="relative z-0 group mb-6 px-4">
               <label
                 htmlFor="interest_in_board_positions"
-                className="block mb-2 text-sm font-medium text-gray-700 hover:whitespace-normal truncate overflow-hidden hover:text-left"
+                className="block mb-2 text-lg font-medium text-gray-500 hover:text-black  truncate overflow-hidden text-start"
               >
                 Do you have an interest in board positions?
               </label>
@@ -329,9 +367,15 @@ const InvestorRegistration = () => {
                     : "border-[#737373]"
                 } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
               >
-                <option value="">interest in board positions</option>
-                <option value="true">Yes</option>
-                <option value="false">No</option>
+                <option className="text-lg font-bold" value="">
+                  Interest in Board Positions
+                </option>
+                <option className="text-lg font-bold" value="true">
+                  Yes
+                </option>
+                <option className="text-lg font-bold" value="false">
+                  No
+                </option>
               </select>
 
               {errors.interest_in_board_positions && (
@@ -341,10 +385,10 @@ const InvestorRegistration = () => {
               )}
             </div>
 
-            <div className="relative z-0 group">
+            <div className="relative z-0 group mb-6 px-4">
               <label
                 htmlFor="accredited_investor_status"
-                className="block mb-2 text-sm font-medium text-gray-700 hover:whitespace-normal truncate overflow-hidden hover:text-left"
+                className="block mb-2 text-lg font-medium text-gray-500 hover:text-black truncate overflow-hidden text-start"
               >
                 Are you an accredited investor?
               </label>
@@ -357,9 +401,15 @@ const InvestorRegistration = () => {
                     : "border-[#737373]"
                 } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
               >
-                <option value="">accredited-investor?</option>
-                <option value="true">Yes</option>
-                <option value="false">No</option>
+                <option className="text-lg font-bold" value="">
+                  Accredited Investor?
+                </option>
+                <option className="text-lg font-bold" value="true">
+                  Yes
+                </option>
+                <option className="text-lg font-bold" value="false">
+                  No
+                </option>
               </select>
               {errors.accredited_investor_status && (
                 <span className="mt-1 text-sm text-red-500 font-bold">
@@ -379,6 +429,7 @@ const InvestorRegistration = () => {
           goToPrevious: handlePrevious,
           goToNext: handleNext,
         })}
+        <Toaster/>
     </div>
   );
 };

@@ -3,25 +3,8 @@ import Profile from "../../../assets/images/Ellipse 1382.svg";
 
 const ProjectDiscussion = () => {
   return (
-    <section className="mt-8">
-      <div className="my-8">
-        <div className="text-white text-2xl font-fontUse font-extrabold">
-          Support is great. Feedback is even better.
-        </div>
-        <div className="w-fit text-white text-sm font-normal font-fontUse">
-          "Give it a try! We're curious to know: How fast it took you to create
-          a Beep ⚡What you used Beep for, Any ways we can improve The first 10
-          amazing people who give us feedback & reviews get a special prize from
-          us "
-        </div>
-        <div className="flex items-center my-4">
-          <img className="w-10 h-10 rounded-full" src={Profile} />
-          <div className="text-white text-sm font-extrabold font-fontUse ml-4">
-            The makers of Beep! 2.0
-          </div>
-        </div>
-      </div>
-      <div className="w-full h-[190px] mix-blend-color-dodge bg-gradient-to-r from-violet-800 to-blue-500 rounded-md border border-white my-8 relative z-10">
+    <section className="bg-gray-100 px-8">
+    <div className="w-full h-[190px]  bg-[#B9C0F3] rounded-md border border-white my-8 relative z-10 px-8">
         <div className="p-8 z-10 relative">
           <div className="flex items-center">
             <img className="w-10 h-10 rounded-full" src={Profile} />
@@ -44,7 +27,7 @@ const ProjectDiscussion = () => {
           </button>
         </div>
       </div>
-      <div className="antialiased mx-auto border-s border-gray-200" >
+      <div className="antialiased mx-auto border-s border-black">
         <div className="space-y-4">
           <div className="flex relative -left-5 -top-2">
             <div className="flex-shrink-0 mr-3">
@@ -55,9 +38,9 @@ const ProjectDiscussion = () => {
               />
             </div>
             <div className="flex-1 rounded-lg px-4 py-2 sm:px-6 sm:py-4 leading-relaxed">
-              <span className="text-white font-extrabold text-lg">Sarah</span>
-              <span className="text-xs text-white ml-4">3:34 PM</span>
-              <p className="text-sm text-white">
+              <span className="text-black font-extrabold text-lg">Sarah</span>
+              <span className="text-xs text-black ml-4">3:34 PM</span>
+              <p className="text-sm text-black">
                 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed
                 diam nonumy eirmod tempor invidunt ut labore et dolore magna
                 aliquyam erat, sed diam voluptua.
@@ -65,17 +48,19 @@ const ProjectDiscussion = () => {
               <div className="mt-4 flex items-center">
                 <div className="flex -space-x-2 mr-2">
                   <img
-                    className="rounded-full w-6 h-6 border border-white"
+                    className="rounded-full w-6 h-6 border border-black"
                     src="https://images.unsplash.com/photo-1554151228-14d9def656e4?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80"
                     alt=""
                   />
                   <img
-                    className="rounded-full w-6 h-6 border border-white"
+                    className="rounded-full w-6 h-6 border border-black"
                     src="https://images.unsplash.com/photo-1513956589380-bad6acb9b9d4?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80"
                     alt=""
                   />
                 </div>
-                <div className="text-sm text-white font-semibold">5 Replies</div>
+                <div className="text-sm text-black font-semibold">
+                  5 Replies
+                </div>
               </div>
             </div>
           </div>
@@ -89,14 +74,14 @@ const ProjectDiscussion = () => {
               />
             </div>
             <div className="flex-1 rounded-lg px-4 py-2 sm:px-6 sm:py-4 leading-relaxed">
-            <span className="text-white font-extrabold text-lg">Sarah</span>
-              <span className="text-xs text-white ml-4">3:34 PM</span>
-              <p className="text-sm text-white">
+              <span className="text-black font-extrabold text-lg">Sarah</span>
+              <span className="text-xs text-black ml-4">3:34 PM</span>
+              <p className="text-sm text-black">
                 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed
                 diam nonumy eirmod tempor invidunt ut labore et dolore magna
                 aliquyam erat, sed diam voluptua.
               </p>
-              <h4 className="my-5 uppercase tracking-wide text-white  font-bold text-xs">
+              <h4 className="my-5 uppercase tracking-wide text-black  font-bold text-xs">
                 Replies
               </h4>
               <div className="space-y-4 ">
@@ -109,9 +94,11 @@ const ProjectDiscussion = () => {
                     />
                   </div>
                   <div className="flex-1 px-4 py-2 sm:px-6 sm:py-4 leading-relaxed">
-                  <span className="text-white font-extrabold text-lg">Sarah</span>
-                    <span className="text-xs text-white ml-4">3:34 PM</span>
-                    <p className="text-xs sm:text-sm text-white">
+                    <span className="text-black font-extrabold text-lg">
+                      Sarah
+                    </span>
+                    <span className="text-xs text-black ml-4">3:34 PM</span>
+                    <p className="text-xs sm:text-sm text-black">
                       Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
                       sed diam nonumy eirmod tempor invidunt ut labore et dolore
                       magna aliquyam erat, sed diam voluptua.
@@ -127,9 +114,11 @@ const ProjectDiscussion = () => {
                     />
                   </div>
                   <div className="flex-1 px-4 py-2 sm:px-6 sm:py-4 leading-relaxed">
-                  <span className="text-white font-extrabold text-lg">Sarah</span>
-                    <span className="text-xs text-white ml-4">3:34 PM</span>
-                    <p className="text-xs sm:text-sm text-white">
+                    <span className="text-black font-extrabold text-lg">
+                      Sarah
+                    </span>
+                    <span className="text-xs text-black ml-4">3:34 PM</span>
+                    <p className="text-xs sm:text-sm text-black">
                       Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
                       sed diam nonumy eirmod tempor invidunt ut labore et dolore
                       magna aliquyam erat, sed diam voluptua.
@@ -140,7 +129,7 @@ const ProjectDiscussion = () => {
             </div>
           </div>
         </div>
-      </div>
+    </div>
     </section>
   );
 };

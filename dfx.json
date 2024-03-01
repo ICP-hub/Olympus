@@ -25,16 +25,10 @@
       ],
       "type": "assets"
     },
-
-    "admin_backend": {
-      "candid": "src/admin_backend/admin_backend.did",
-      "package": "admin_backend",
-      "type": "rust"
-    },
-
+    
     "admin_frontend": {
       "dependencies": [
-        "admin_backend"
+        "IcpAccelerator_backend"
       ],
       "frontend": {
         "entrypoint": "src/admin_frontend/src/index.html"

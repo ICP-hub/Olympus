@@ -7,9 +7,10 @@ use sha2::{Digest, Sha256};
 use std::collections::HashMap;
 extern crate serde_cbor;
 use std::cell::RefCell;
+use crate::trie::EXPERTISE_TRIE;
 
 
-#[derive(Serialize, Deserialize, Clone, Debug, CandidType)]
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, Default)]
 pub struct MentorProfile {
     pub full_name: Option<String>,
     pub email_address: Option<String>,
@@ -40,7 +41,7 @@ pub struct MentorProfile {
 
 pub type MentorRegistry = HashMap<Principal, MentorInternal>;
 
-#[derive(Serialize, Deserialize, Clone, Debug, CandidType)]
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, Default)]
 pub struct MentorInternal {
 
     pub profile: MentorProfile,
@@ -65,7 +66,7 @@ pub async fn register_mentor(profile: MentorProfile) -> String{
         
     //     ic_cdk::println!("This Principal is already registered");
     //     return "This Principal is already registered.".to_string()}
-    
+    let profile_for_trie = profile.clone();
 
     let mentor_internal = MentorInternal {
         profile,
@@ -76,6 +77,16 @@ pub async fn register_mentor(profile: MentorProfile) -> String{
     MENTOR_REGISTRY.with(|registry| {
         registry.borrow_mut().insert(caller, mentor_internal);
     });
+
+    if let Some(expertise) = profile_for_trie.areas_of_expertise {
+        let expertise_keywords = expertise.split(',').map(|s| s.trim());
+        for keyword in expertise_keywords {
+            EXPERTISE_TRIE.with(|trie| {
+                trie.borrow().insert_with_id(keyword, uid.clone());
+            });
+        }
+        println!("Expertise are {}", expertise)
+    }
 
     format!("Mentor registered successfully with ID: {}", uid)
 }
@@ -264,3 +275,27 @@ pub fn make_active_inactive(p_id : Principal)-> String{
 
     })
 }
+
+pub fn find_mentors_by_expertise(keyword: &str) -> Vec<MentorProfile> {
+    let mut results = Vec::new();
+
+    EXPERTISE_TRIE.with(|trie| {
+        let ids = trie.borrow().search(keyword);
+
+        MENTOR_REGISTRY.with(|registry| {
+            let registry_borrow = registry.borrow();
+
+            for uid_str in ids {
+                if let Ok(principal) = uid_str.parse::<Principal>() {
+                    if let Some(mentor_internal) = registry_borrow.get(&principal) {
+                        results.push(mentor_internal.profile.clone());
+                    }
+                }
+            }
+        });
+    });
+
+    results
+}
+
+

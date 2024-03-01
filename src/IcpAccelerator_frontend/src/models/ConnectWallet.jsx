@@ -28,27 +28,27 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
 
 
 
-  useEffect(() => {
-    console.log("isAuthenticated=> ", isAuthenticated,"roleNavigate =>", roleNavigate,"userRole=>", userRole , 'hasSelectedRole =>', hasSelectedRole)
-    if (userRole  && isAuthenticated) {
-      console.log("1");
-      onClose();
-      navigate("/dashboard");
-    } else if (
-      userRole === null &&
-      roleNavigate === "roleSelect" &&
-      isAuthenticated && hasSelectedRole === false
-    ) {
-      console.log("2");
-      onClose();
-      navigate(`/${roleNavigate}`);
-    }else if(hasSelectedRole ===true && isAuthenticated && userRole!== null){
-      navigate('/details')
-    } else if(!isAuthenticated) {
-      console.log("3");
-      navigate("/");
-    }
-  }, [isAuthenticated, roleNavigate, userRole]);
+  // useEffect(() => {
+  //   console.log("isAuthenticated=> ", isAuthenticated,"roleNavigate =>", roleNavigate,"userRole=>", userRole , 'hasSelectedRole =>', hasSelectedRole)
+  //   if (userRole  && isAuthenticated) {
+  //     console.log("1");
+  //     onClose();
+  //     navigate("/dashboard");
+  //   } else if (
+  //     userRole === null &&
+  //     roleNavigate === "roleSelect" &&
+  //     isAuthenticated && hasSelectedRole === false
+  //   ) {
+  //     console.log("2");
+  //     onClose();
+  //     navigate(`/${roleNavigate}`);
+  //   }else if(hasSelectedRole ===true && isAuthenticated && userRole!== null){
+  //     navigate('/details')
+  //   } else if(!isAuthenticated) {
+  //     console.log("3");
+  //     navigate("/");
+  //   }
+  // }, [isAuthenticated, roleNavigate, userRole]);
 
 
   
