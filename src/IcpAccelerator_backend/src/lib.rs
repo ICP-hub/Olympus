@@ -369,6 +369,12 @@ fn get_icp_hubs_candid() -> Vec<IcpHub> {
     get_icp_hubs()
 }
 
+#[query]
+#[candid_method(query)]
+fn get_hubs_principal_using_region(region: String)->Vec<String>{
+    hub_organizer::get_hub_organizer_principals_by_region(region)
+}
+
 // #[query]
 // #[candid_method(query)]
 // fn greet() -> String {

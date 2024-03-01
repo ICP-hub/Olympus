@@ -1,3 +1,14 @@
+type AreaOfExpertise = variant {
+  DAO;
+  Games;
+  DeFi;
+  NFTs;
+  Infrastructure;
+  Tooling;
+  Social;
+  MetaVerse;
+  Other : text;
+};
 type AreaOfFocus = variant {
   DAO;
   Games;
@@ -50,6 +61,13 @@ type LeaderboardEntryForUpvote = record {
   upvote_count : opt nat;
   project_id : opt text;
 };
+type LikeRecord = record { count : nat; upvoters : vec LikesInfo };
+type LikesInfo = record {
+  name : opt text;
+  time : nat64;
+  image : opt vec nat8;
+  principal_id : opt text;
+};
 type MainLevel = variant {
   Level1;
   Level2;
@@ -79,7 +97,7 @@ type MentorProfile = record {
   preferred_icp_hub : opt text;
   specific_skills_or_technologies_expertise : opt text;
   specific_goals_objectives_as_a_mentor : opt text;
-  areas_of_expertise : opt text;
+  areas_of_expertise : opt AreaOfExpertise;
   preferred_startup_stage : opt text;
   languages_spoken : opt text;
   industry_achievements : opt text;
@@ -111,6 +129,7 @@ type ProjectInfo = record {
 };
 type ProjectInfoInternal = record {
   uid : text;
+  is_verified : bool;
   is_active : bool;
   params : ProjectInfo;
 };
@@ -218,7 +237,7 @@ type ThirtyInfoFounder = record {
 type ThirtyInfoProject = record {
   project_description : opt text;
   project_url : opt text;
-  project_area_of_focus : opt AreaOfFocus;
+  project_area_of_focus : opt AreaOfExpertise;
   project_cover : opt vec nat8;
   project_logo : opt vec nat8;
   project_name : opt text;
@@ -228,6 +247,7 @@ type UniqueHubs = record { hubs : HubOrganizerRegistration; uuid : text };
 type UpvoteRecord = record { count : nat; upvoters : vec UpvoterInfo };
 type UpvoterInfo = record {
   name : opt text;
+  timestamp : nat64;
   image : opt vec nat8;
   principal_id : opt text;
 };
@@ -266,6 +286,7 @@ service : {
   get_all_roles : () -> (RolesResponse) query;
   get_founder_info_caller : () -> (opt FounderInfo) query;
   get_hub_organizer_candid : () -> (opt UniqueHubs) query;
+  get_hubs_principal_using_region : (text) -> (vec text) query;
   get_icp_hubs_candid : () -> (vec IcpHub) query;
   get_latest_listed_project : () -> (vec ProjectInfoInternal) query;
   get_latest_live_proposal : () -> (vec ProjectInfoInternal) query;
@@ -285,7 +306,7 @@ service : {
   get_suggestions_by_parent_id_caller : (nat64) -> (vec Suggestion) query;
   get_suggestions_by_status_caller : (Status) -> (vec Suggestion) query;
   get_total_suggestions : () -> (nat64) query;
-  get_user_likes : (text) -> (opt UpvoteRecord) query;
+  get_user_likes : (text) -> (opt LikeRecord) query;
   get_venture_capitalist_info : () -> (opt VentureCapitalist) query;
   like_project : (text) -> (text);
   list_all_founders_caller : () -> (vec FounderInfo) query;
