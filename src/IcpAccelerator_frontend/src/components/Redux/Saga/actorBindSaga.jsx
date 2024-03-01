@@ -13,7 +13,7 @@ function* initActorSaga() {
 
     const actor = yield call(createActor, canisterId, { agentOptions: { identity } });
     
-    // console.log('Actor initialized in initActorSaga:', actor);
+    console.log('Actor initialized in initActorSaga:', actor);
 
     yield put(setActor(actor));
   } catch (error) {

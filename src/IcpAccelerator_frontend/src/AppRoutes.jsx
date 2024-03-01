@@ -35,8 +35,8 @@ const AppRoutes = () => {
   { path: "/details",  component: AllDetailsForm, allowedRoles: [ "Admin", "Project", "Mentor/Expert", "Hub Organizer","Venture",],},
   { path: "/project-details", component: ProjectDetails, allowedRoles: ["Admin", "Project"], },
   {  path: "/",  component: Home,  allowedRoles: [ "Admin", "Project", "Mentor/Expert", "Hub Organizer", "Venture",],},
-  {  path: "/user-profile",  component: UserProfile, allowedRoles: ["Admin", "Project"],},
-  {  path: "/roleSelect", component: RoleSelector, allowedRoles: ["Admin", "Project"], },
+  {  path: "/profile",  component: UserProfile, allowedRoles: ["Admin", "Project","Mentor/Expert", "Hub Organizer", "Venture"],},
+  {  path: "/roleSelect", component: RoleSelector, allowedRoles: ["Admin", "Project",], },
   { path: "/Error404", component: Error404, allowedRoles: [""] },
 ];
 

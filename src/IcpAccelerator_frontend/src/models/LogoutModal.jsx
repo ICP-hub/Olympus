@@ -4,23 +4,33 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { logoutStart } from "../components/Redux/Reducers/InternetIdentityReducer";
 import { changeHasSelectedRoleHandler } from "../components/Redux/Reducers/userRoleReducer";
+import { useNavigate } from "react-router-dom";
+import { mentorRegisteredHandlerRequest } from "../components/Redux/Reducers/mentorRegisteredData";
 
 const LogoutModal = () => {
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
   const principal = useSelector((currState) => currState.internet.principal);
+  const actor = useSelector((currState) => currState.actors.actor);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [isDropdownOpen, setDropdownOpen] = useState(false);
 
   const toggleDropdown = () => {
     setDropdownOpen(!isDropdownOpen);
   };
 
-  const logoutHandler =()=>{
-    dispatch(changeHasSelectedRoleHandler(false))
-    dispatch(logoutStart())
-  
+  const logoutHandler = () => {
+    dispatch(changeHasSelectedRoleHandler(false));
+    dispatch(logoutStart());
+  };
+
+  const profileHandler =()=>{
+      dispatch(mentorRegisteredHandlerRequest())
+      navigate('/profile')
   }
+
+
 
   return (
     <div className="relative z-50 justify-end flex rounded-full">
@@ -77,7 +87,7 @@ const LogoutModal = () => {
           </div>
           {isAuthenticated && (
             <ul
-              className="text-sm text-gray-70 text-black font-bold md:hidden "
+              className="text-sm text-black font-bold md:hidden "
               aria-labelledby="avatarButton"
             >
               <li className="block px-4 py-2 hover:bg-gray-200 hover:text-black">
@@ -94,12 +104,21 @@ const LogoutModal = () => {
               </li>
             </ul>
           )}
-          <a
-            className="block px-4 py-2 text-sm text-black hover:bg-gray-200 hover:text-black font-bold mb-4"
+          <div className="text-sm text-black font-bold">
+              <p
+            onClick={profileHandler}
+            className="py-2 px-4 hover:bg-gray-200"
+          >
+            My Profile
+          </p>
+          <p
+            className="py-2 px-4 hover:bg-gray-200"
             onClick={logoutHandler}
           >
             Sign out
-          </a>
+          </p>
+            </div>
+        
         </div>
       )}
     </div>

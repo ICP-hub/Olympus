@@ -4,7 +4,13 @@ import RoleReducer from './RoleReducer';
 import AllHubReducer from './All_IcpHubReducer';
 import actorReducer from './actorBindReducer';
 import internetIdentityReducer from './InternetIdentityReducer';
-import userRoleReducer from './userRoleReducer';
+import userReducer from './userRoleReducer';
+import mentorReducer from './mentorRegisteredData';
+import hubReducer from './hubRegisteredData';
+import investorReducer from './investorRegisteredData';
+import projectReducer from './founderRegisteredData';
+
+
 
 const rootReducer = combineReducers({
   auth: WalletReducer,
@@ -12,7 +18,11 @@ const rootReducer = combineReducers({
   hubs: AllHubReducer,
   actors:actorReducer,
   internet: internetIdentityReducer,
-  current :userRoleReducer
+  current :userReducer,
+  mentorData: mentorReducer,
+  projectData:projectReducer,
+  hubData :hubReducer,
+  investorData :investorReducer
 });
 
 export default rootReducer;
