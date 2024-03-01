@@ -21,57 +21,8 @@ type DocsInfo = record {
   technical_docs : opt text;
 };
 type FounderInfo = record {
-  founder_image : opt vec nat8;
-  linked_in_profile : opt text;
-  equity_owner_of_company : opt text;
-  future_goals : opt text;
-  co_founder_linkedin_profile : opt text;
-  break_even_analysis : opt text;
-  how_long_know_each_other : opt text;
-  is_team_full_time_working_on_project : opt text;
-  telegram_id : opt text;
-  average_monthly_revenue : opt text;
-  regulatory_approvals : opt text;
-  potential_risks : opt text;
-  twitter_id : opt text;
-  company_debt : opt text;
-  market_size : opt text;
-  registration_details : opt text;
-  preferred_icp_hub : opt text;
-  currently_users : opt text;
-  share_about_venture : opt text;
-  email : opt text;
-  key_achieved_milestones : opt text;
-  why_are_you_apply_for_acceleration_program : opt text;
-  customer_demographics : opt text;
-  committed_to_work_on_the_program_during_acceleration : opt bool;
-  how_many_co_founder : opt text;
-  target_market : opt text;
-  user_feedback : opt text;
-  competitors : opt text;
-  is_profile_complete : opt bool;
-  long_term_goals : opt text;
-  profile_complete : opt nat8;
-  projected_revenues : opt text;
-  is_active : opt bool;
-  stage_of_company : opt text;
-  date_of_birth : opt text;
-  testimonials : opt text;
-  phone_number : opt text;
-  company_vision : opt text;
-  mitigation_strategies : opt text;
-  role_within_company : opt text;
-  previous_part_in_incubator : opt bool;
-  average_monthly_spending : opt text;
-  funding_requirements : opt text;
-  raised_any_capital : opt bool;
-  location : opt text;
-  full_name : opt text;
-  refer : opt text;
-  employee_count : opt text;
-
-  
-
+  seventy_info : opt SeventyInfoFounder;
+  thirty_info : opt ThirtyInfoFounder;
 };
 type HubOrganizerRegistration = record {
   website_url : opt text;
@@ -155,10 +106,6 @@ type NotificationType = variant {
   ConnectionRequest : ConnectionRequest;
 };
 type ProjectInfo = record {
-
-  project_description : opt text;
-  project_url : opt text;
-
   seventy_info : opt SeventyInfoProject;
   thirty_info : opt ThirtyInfoProject;
 };
@@ -218,7 +165,6 @@ type SeventyInfoFounder = record {
   employee_count : opt text;
 };
 type SeventyInfoProject = record {
-
   docs : opt DocsInfo;
   video_link : opt text;
   tags : opt text;
@@ -285,7 +231,7 @@ type UpvoterInfo = record {
   image : opt vec nat8;
   principal_id : opt text;
 };
-type UserRole = variant { VC; Mentor; Founder; HubOrganizer; Project };
+type UserRole = variant { VC; Mentor; Founder; Project; ICPHubOrganizer };
 type VentureCapitalist = record {
   email_address : opt text;
   referrer : opt text;
