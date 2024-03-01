@@ -1,9 +1,25 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import { projectFilterSvg, remove, star } from "../Utils/Data/SvgData";
 
 const Leaderboard = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState("Leaderboard");
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isPopupOpen) {
+     
+        if (!event.target.closest('.popup')) {
+          setIsPopupOpen(false);
+        }
+      }
+    };
+    window.addEventListener('click', handleClickOutside);
+    return () => {
+      window.removeEventListener('click', handleClickOutside);
+    };
+  }, [isPopupOpen]);
+
   return (
     <div className="px-[4%]  w-full flex flex-col bg-gray-100 h-screen overflow-y-scroll justify-center ">
 
