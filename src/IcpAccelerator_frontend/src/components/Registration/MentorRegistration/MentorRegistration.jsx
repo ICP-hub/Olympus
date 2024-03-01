@@ -21,11 +21,13 @@ import toast, { Toaster } from "react-hot-toast";
 
 const validationSchema = {
   personalDetails: yup.object().shape({
-    fullName: yup
+    full_name: yup
       .string()
-      .test("is-non-empty", "Full Name is required", (value) => /\S/.test(value))
+      .test("is-non-empty", "Full Name is required", (value) =>
+        /\S/.test(value)
+      )
       .required("Full Name is required"),
-    emailAddress: yup
+    email_address: yup
       .string()
       .email("Invalid email")
       .test("is-non-empty", "Email is required", (value) => /\S/.test(value))
@@ -34,93 +36,158 @@ const validationSchema = {
       .string()
       .test("is-non-empty", "Location is required", (value) => /\S/.test(value))
       .required("Location is required"),
-    linkedIn: yup
+    linkedin_profile_link: yup
       .string()
       .url("Invalid LinkedIn URL")
-      .test("is-non-empty", "LinkedIn URL is required", (value) => /\S/.test(value))
+      .test("is-non-empty", "LinkedIn URL is required", (value) =>
+        /\S/.test(value)
+      )
       .required("LinkedIn URL is required"),
-    telegram: yup
+    telegram_id: yup
       .string()
-      .url("Invalid Telegram URL")
-      .test("is-non-empty", "Telegram URL is required", (value) => /\S/.test(value))
-      .required("Telegram URL is required"),
-    language: yup
+      .url("Invalid telegram_id URL")
+      .test("is-non-empty", "telegram_id URL is required", (value) =>
+        /\S/.test(value)
+      )
+      .required("telegram_id URL is required"),
+    languages_spoken: yup
       .string()
       .test("is-non-empty", "Language is required", (value) => /\S/.test(value))
       .required("Language is required"),
-    icp_Hub: yup
+    preferred_icp_hub: yup
       .string()
-      .test("is-non-empty", "ICP Hub selection is required", (value) => /\S/.test(value))
+      .test("is-non-empty", "ICP Hub selection is required", (value) =>
+        /\S/.test(value)
+      )
       .required("ICP Hub selection is required"),
   }),
 
   mentorDetails: yup.object().shape({
-    motivationForBecomingAMentor: yup
+    motivation_for_becoming_a_mentor: yup
       .string()
-      .test("is-non-empty", "Motivation for becoming a mentor is required", (value) => /\S/.test(value))
+      .test(
+        "is-non-empty",
+        "Motivation for becoming a mentor is required",
+        (value) => /\S/.test(value)
+      )
       .required("Motivation for becoming a mentor is required"),
-    yearsOfExperienceMentoringStartups: yup
+    years_of_experience_mentoring_startups: yup
       .number()
       .typeError("You must enter a number")
       .positive("Must be a positive number")
       .required("Years of experience mentoring startups is required"),
-    professionalAffiliations: yup.string().test("is-non-empty", "Professional Affiliations is required", (value) => /\S/.test(value))
-    .required("Professional Affiliations is required"),
-    timeZone: yup
+    professional_affiliations: yup
       .string()
-      .test("is-non-empty", "Time zone is required", (value) => /\S/.test(value))
+      .test("is-non-empty", "Professional Affiliations is required", (value) =>
+        /\S/.test(value)
+      )
+      .required("Professional Affiliations is required"),
+    time_zone: yup
+      .string()
+      .test("is-non-empty", "Time zone is required", (value) =>
+        /\S/.test(value)
+      )
       .required("Time zone is required"),
-    uniqueContributionToStartups: yup
+    unique_contribution_to_startups: yup
       .string()
-      .test("is-non-empty", "Unique contribution to startups is required", (value) => /\S/.test(value))
+      .test(
+        "is-non-empty",
+        "Unique contribution to startups is required",
+        (value) => /\S/.test(value)
+      )
       .required("Unique contribution to startups is required"),
-    referrerContact: yup.string().nullable(),
-    specificSkillsOrTechnologiesExpertise: yup
+    referrer_contact: yup.string().nullable(),
+    specific_skills_or_technologies_expertise: yup
       .string()
-      .test("is-non-empty", "Specific skills or technologies expertise is required", (value) => /\S/.test(value))
+      .test(
+        "is-non-empty",
+        "Specific skills or technologies expertise is required",
+        (value) => /\S/.test(value)
+      )
       .required("Specific skills or technologies expertise is required"),
-    specificGoalsObjectivesAsAMentor: yup
+    specific_goals_objectives_as_a_mentor: yup
       .string()
-      .test("is-non-empty", "Specific goals and objectives as a mentor are required", (value) => /\S/.test(value))
+      .test(
+        "is-non-empty",
+        "Specific goals and objectives as a mentor are required",
+        (value) => /\S/.test(value)
+      )
       .required("Specific goals and objectives as a mentor are required"),
-    areasOfExpertise: yup
+    areas_of_expertise: yup
       .string()
-      .test("is-non-empty", "Areas of expertise are required", (value) => /\S/.test(value))
+      .test("is-non-empty", "Areas of expertise are required", (value) =>
+        /\S/.test(value)
+      )
       .required("Areas of expertise are required"),
   }),
 
   additionalInfo: yup.object().shape({
-    preferredStartupStage: yup
+    preferred_startup_stage: yup
       .string()
-      .test("is-non-empty", "Preferred Startup Stage is required", (value) => /\S/.test(value))
+      .test("is-non-empty", "Preferred Startup Stage is required", (value) =>
+        /\S/.test(value)
+      )
       .required("Preferred startup stage is required"),
-    industryAchievements: yup
+    industry_achievements: yup
       .string()
-      .test("is-non-empty", "Industry achievements are required", (value) => /\S/.test(value))
+      .test("is-non-empty", "Industry achievements are required", (value) =>
+        /\S/.test(value)
+      )
       .required("Industry achievements are required"),
-    conflictOfInterestDisclosure: yup.string()
-    .test("is-non-empty", "Conflict Of Interest Disclosure are required", (value) => /\S/.test(value))
-    .required("Conflict Of Interest Disclosure are required"),
-    pastWorkRecordsLinks: yup.string().test("is-non-empty", "PastWork Records Links are required", (value) => /\S/.test(value))
-    .required("PastWork Records Links are required"),
-    availabilityAndTimeCommitment: yup
+    conflict_of_interest_disclosure: yup
       .string()
-      .test("is-non-empty", "Availability and time commitment are required", (value) => /\S/.test(value))
+      .test(
+        "is-non-empty",
+        "Conflict Of Interest Disclosure are required",
+        (value) => /\S/.test(value)
+      )
+      .required("Conflict Of Interest Disclosure are required"),
+    past_work_records_links: yup
+      .string()
+      .test("is-non-empty", "PastWork Records Links are required", (value) =>
+        /\S/.test(value)
+      )
+      .required("PastWork Records Links are required"),
+    availability_and_time_commitment: yup
+      .string()
+      .test(
+        "is-non-empty",
+        "Availability and time commitment are required",
+        (value) => /\S/.test(value)
+      )
       .required("Availability and time commitment are required"),
-    successStoriesTestimonials: yup.string().test("is-non-empty", "Success Stories Testimonials are required", (value) => /\S/.test(value))
-    .required("Success Stories Testimonials are required"),
-    preferredCommunicationTools: yup
+    success_stories_testimonials: yup
       .string()
-      .test("is-non-empty", "Preferred communication tools are required", (value) => /\S/.test(value))
+      .test(
+        "is-non-empty",
+        "Success Stories Testimonials are required",
+        (value) => /\S/.test(value)
+      )
+      .required("Success Stories Testimonials are required"),
+    preferred_communication_tools: yup
+      .string()
+      .test(
+        "is-non-empty",
+        "Preferred communication tools are required",
+        (value) => /\S/.test(value)
+      )
       .required("Preferred communication tools are required"),
-    volunteerExperience: yup.string().test("is-non-empty", "Volunteer Experience are required", (value) => /\S/.test(value))
-    .required("Volunteer Experience are required"),
+    volunteer_experience: yup
+      .string()
+      .test("is-non-empty", "Volunteer Experience are required", (value) =>
+        /\S/.test(value)
+      )
+      .required("Volunteer Experience are required"),
   }),
 };
 
 const MentorRegistration = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
+  const specificRole = useSelector(
+    (currState) => currState.current.specificRole
+  );
+  const mentorFullData = useSelector((currState) => currState.mentorData.data);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -131,9 +198,13 @@ const MentorRegistration = () => {
   const [isCurrentStepValid, setIsCurrentStepValid] = useState(false);
   const [userHasInteracted, setUserHasInteracted] = useState(false);
   const [image, setImage] = useState(null);
-  const [imageData, setImageData] = useState(null);
+  const [mentor_image, setmentor_image] = useState(null);
+  const [mentorDataObject, setMentorDataObject] = useState({});
 
-  console.log("MentorRegistration  run =>");
+  console.log("MentorRegistration  run  specificRole =>", specificRole);
+  console.log("mentorFullData in mentor-registratn comp =>", mentorFullData)
+
+
 
   const getTabClassName = (tab) => {
     return `inline-block p-2 font-bold ${
@@ -142,6 +213,29 @@ const MentorRegistration = () => {
         : "text-gray-400  border-transparent hover:text-black"
     } rounded-t-lg`;
   };
+
+  // useEffect(() => {a
+  //   if (mentorFullData) {
+  //     const formattedData = {};
+
+  //     // Object.keys(mentorFullData).forEach((key) => {
+  //     //   formattedData[key] = mentorFullData[key][0];
+  //     // });
+
+
+  //    mentorFullData.forEach((data) => {
+  //       for (let key in data) {
+  //       formattedData[key] = data[key];     
+  //         //  console.log(formattedData[key]);
+
+  //   }
+
+  //     });
+  //     console.log('mentordatafetch ------------------------------->', formattedData)
+  //     setFormData(formattedData);
+  //   }
+  // }, [mentorFullData]);
+  
 
   const steps = [
     { id: "personalDetails", fields: mentorRegistrationPersonalDetails },
@@ -155,12 +249,12 @@ const MentorRegistration = () => {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    trigger,
+    trigger,reset
   } = useForm({
     resolver: yupResolver(currentValidationSchema),
   });
-  console.log('errors',errors)
 
+  
   const handleTabClick = async (tab) => {
     const targetStep = mentorRegistration.findIndex(
       (header) => header.id === tab
@@ -184,7 +278,6 @@ const MentorRegistration = () => {
       const result = await trigger(fieldsToValidate);
       setIsCurrentStepValid(result);
     };
-
     validateStep();
   }, [step, trigger, userHasInteracted]);
 
@@ -195,7 +288,7 @@ const MentorRegistration = () => {
   const handleNext = async () => {
     const fieldsToValidate = steps[step].fields.map((field) => field.name);
     const result = await trigger(fieldsToValidate);
-    console.log('fieldsToValidate',fieldsToValidate)
+    console.log("fieldsToValidate", fieldsToValidate);
     if (result) {
       // if (steps[step].fields.some(field => field.name === 'icp_Hub') && !formData.icp_Hub) {
       //   setError('icp_Hub', {
@@ -235,10 +328,55 @@ const MentorRegistration = () => {
         // 3) image ko backend mai bhejne k lie
         const byteArray = await compressedFile.arrayBuffer(); // Convert krega Blob ko ArrayBuffer mai
         const imageBytes = Array.from(new Uint8Array(byteArray)); // Convert ArrayBuffer ko array of bytes mai
-        setImageData(imageBytes);
+        setmentor_image(imageBytes);
       } catch (error) {
         console.error("Error compressing the image:", error);
       }
+    }
+  };
+
+
+  useEffect(() => {
+    if (mentorFullData && mentorFullData.length > 0) {
+      const data = mentorFullData[0];
+      const formattedData = Object.keys(data).reduce((acc, key) => {
+        acc[key] = Array.isArray(data[key]) ? data[key][0] : data[key];
+        return acc;
+      }, {});
+  
+      console.log("Attempting to reset form with data:", formattedData);
+      reset(formattedData);
+    }
+  }, [mentorFullData, reset]);
+  
+  
+
+  const sendingMentorData = async (val) => {
+    console.log('run sendingMentorData =========')
+    console.log('mentorDataObject ==>> ', mentorDataObject)
+    
+    // try {
+    //   if(specificRole){
+    //     console.log(specificRole)
+    //   }
+    // } catch (error) {
+    //   toast.error(error);
+    //   console.log(error.message);
+    // }
+    let result;
+
+    try {
+      if (specificRole) {
+        result = await actor.update_mentor_profile(val);
+      } else if (specificRole === null || specificRole === undefined) {
+        result = await actor.register_mentor_candid(val);
+      }
+      toast.success(result);
+      console.log("mentor data registered in backend");
+      navigate("/dashboard");
+    } catch (error) {
+      toast.error(error);
+      console.log(error.message);
     }
   };
 
@@ -246,68 +384,106 @@ const MentorRegistration = () => {
     console.log("data >>>>", data);
     const updatedFormData = { ...formData, ...data };
     setFormData(updatedFormData);
-
     if (step < steps.length - 1) {
       handleNext();
-    } else {
-      const mentorDataObject = {
-        areas_of_expertise: [updatedFormData.areasOfExpertise],
+    }
+    
+    
+    
+    else if (specificRole && step > steps.length - 1) {
+      console.log("exisiting user visit ");
+    
+      let tempObj2 = {
+        areas_of_expertise: [updatedFormData.areas_of_expertise] || [],
+        availability_and_time_commitment:
+          [updatedFormData.availability_and_time_commitment] || [],
+        conflict_of_interest_disclosure:
+          [updatedFormData.conflict_of_interest_disclosure] || [],
+        email_address: [updatedFormData.email_address] | [],
+        full_name: [updatedFormData.full_name] || [],
+        preferred_icp_hub: [updatedFormData.preferred_icp_hub] || [],
+        industry_achievements: [updatedFormData.industry_achievements] || [],
+        languages_spoken: [updatedFormData.languages_spoken] || [],
+        linkedin_profile_link: [updatedFormData.linkedin_profile_link] || [],
+        location: [updatedFormData.location] || [],
+        motivation_for_becoming_a_mentor:
+          [updatedFormData.motivation_for_becoming_a_mentor] || [],
+        past_work_records_links: [updatedFormData.past_work_records_links] || [],
+        preferred_communication_tools:
+          [updatedFormData.preferred_communication_tools] || [],
+        preferred_startup_stage: [updatedFormData.preferred_startup_stage] || [],
+        professional_affiliations:
+          [updatedFormData.professional_affiliations] || [],
+        referrer_contact: [updatedFormData.referrer_contact] || [],
+        specific_goals_objectives_as_a_mentor:
+          [updatedFormData.specific_goals_objectives_as_a_mentor] || [],
+        specific_skills_or_technologies_expertise:
+          [updatedFormData.specific_skills_or_technologies_expertise] || [],
+        success_stories_testimonials:
+          [updatedFormData.success_stories_testimonials] || [],
+        telegram_id_id: [updatedFormData.telegram_id] || [],
+        time_zone: [updatedFormData.time_zone] || [],
+        unique_contribution_to_startups:
+          [updatedFormData.unique_contribution_to_startups] || [],
+        volunteer_experience: [updatedFormData.volunteer_experience] || [],
+        years_of_experience_mentoring_startups:
+          [parseInt(updatedFormData.years_of_experience_mentoring_startups)] || [],
+        mentor_image: [mentor_image] || [],
+      };
+      setMentorDataObject(tempObj2);
+      await sendingMentorData(tempObj2)
+    } else if (
+      specificRole === null ||
+      (specificRole === undefined && step > steps.length - 1)
+    ) {
+      console.log("first time visit ");
+      let tempObj = {
+        areas_of_expertise: [updatedFormData.areas_of_expertise],
         availability_and_time_commitment: [
-          updatedFormData.availabilityAndTimeCommitment,
+          updatedFormData.availability_and_time_commitment,
         ],
         conflict_of_interest_disclosure: [
-          updatedFormData.conflictOfInterestDisclosure,
+          updatedFormData.conflict_of_interest_disclosure,
         ],
-        email_address: [updatedFormData.emailAddress],
-        full_name: [updatedFormData.fullName],
-        preferred_icp_hub: [updatedFormData.icp_Hub],
-        industry_achievements: [updatedFormData.industryAchievements],
-        languages_spoken: [updatedFormData.language],
-        linkedin_profile_link: [updatedFormData.linkedIn],
+        email_address: [updatedFormData.email_address],
+        full_name: [updatedFormData.full_name],
+        preferred_icp_hub: [updatedFormData.preferred_icp_hub],
+        industry_achievements: [updatedFormData.industry_achievements],
+        languages_spoken: [updatedFormData.languages_spoken],
+        linkedin_profile_link: [updatedFormData.linkedin_profile_link],
         location: [updatedFormData.location],
         motivation_for_becoming_a_mentor: [
-          updatedFormData.motivationForBecomingAMentor,
+          updatedFormData.motivation_for_becoming_a_mentor,
         ],
-        past_work_records_links: [updatedFormData.pastWorkRecordsLinks],
+        past_work_records_links: [updatedFormData.past_work_records_links],
         preferred_communication_tools: [
-          updatedFormData.preferredCommunicationTools,
+          updatedFormData.preferred_communication_tools,
         ],
-        preferred_startup_stage: [updatedFormData.preferredStartupStage],
-        professional_affiliations: [updatedFormData.professionalAffiliations],
-        referrer_contact: [updatedFormData.referrerContact],
+        preferred_startup_stage: [updatedFormData.preferred_startup_stage],
+        professional_affiliations: [updatedFormData.professional_affiliations],
+        referrer_contact: [updatedFormData.referrer_contact],
         specific_goals_objectives_as_a_mentor: [
-          updatedFormData.specificGoalsObjectivesAsAMentor,
+          updatedFormData.specific_goals_objectives_as_a_mentor,
         ],
         specific_skills_or_technologies_expertise: [
-          updatedFormData.specificSkillsOrTechnologiesExpertise,
+          updatedFormData.specific_skills_or_technologies_expertise,
         ],
         success_stories_testimonials: [
-          updatedFormData.successStoriesTestimonials,
+          updatedFormData.success_stories_testimonials,
         ],
-        telegram_id: [updatedFormData.telegram],
-        time_zone: [updatedFormData.timeZone],
+        telegram_id: [updatedFormData.telegram_id],
+        time_zone: [updatedFormData.time_zone],
         unique_contribution_to_startups: [
-          updatedFormData.uniqueContributionToStartups,
+          updatedFormData.unique_contribution_to_startups,
         ],
-        volunteer_experience: [updatedFormData.volunteerExperience],
+        volunteer_experience: [updatedFormData.volunteer_experience],
         years_of_experience_mentoring_startups: [
-          parseInt(updatedFormData.yearsOfExperienceMentoringStartups),
+          parseInt(updatedFormData.years_of_experience_mentoring_startups),
         ],
-        mentor_image: [imageData],
-      };
-
-      const sendingMentorData = async () => {
-        try {
-          const result = await actor.register_mentor_candid(mentorDataObject);
-          toast.success(result);
-          console.log("mentor data registered in backend");
-          navigate("/dashboard");
-        } catch (error) {
-          toast.error(error);
-          console.log(error.message);
-        }
-      };
-      sendingMentorData();
+        mentor_image: [mentor_image],
+      }
+      setMentorDataObject(tempObj);
+      await sendingMentorData(tempObj);
     }
   };
 
@@ -401,15 +577,15 @@ const MentorRegistration = () => {
 
             <div className="px-4 z-0 w-full my-5 group">
               <label
-                htmlFor="icp_Hub"
+                htmlFor="preferred_icp_hub"
                 className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
               >
                 Can you please share your preferred ICP Hub
               </label>
               <select
-                {...register("icp_Hub")}
+                {...register("preferred_icp_hub")}
                 className={`bg-gray-50 border-2 ${
-                  errors.icp_Hub
+                  errors.preferred_icp_hub
                     ? "border-red-500 placeholder:text-red-500"
                     : "border-[#737373]"
                 } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
@@ -427,9 +603,9 @@ const MentorRegistration = () => {
                   </option>
                 ))}
               </select>
-              {errors.icp_Hub && (
+              {errors.preferred_icp_hub && (
                 <p className="text-red-500 text-xs italic">
-                  {errors.icp_Hub.message}
+                  {errors.preferred_icp_hub.message}
                 </p>
               )}
             </div>

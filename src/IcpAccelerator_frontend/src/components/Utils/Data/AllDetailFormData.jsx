@@ -101,6 +101,7 @@ export const headerData = [
       ),
     },
   ];
+  
   export const mentorRegistration = [
     {
       id: "personalDetails",

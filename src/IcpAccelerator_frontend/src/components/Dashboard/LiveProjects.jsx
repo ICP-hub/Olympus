@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { useState, useEffect } from "react";
 import project from "../../../assets/images/project.png";
 import ment from "../../../assets/images/ment.jpg";
-import btn from "../../../assets/Comprehensive/upote.png";
+// import btn from "../../../assets/Comprehensive/upote.png";
 import { Line } from "rc-progress";
 
 const dummyData = [

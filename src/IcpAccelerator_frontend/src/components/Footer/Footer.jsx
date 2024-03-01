@@ -3,7 +3,7 @@ import logo from "../../../assets/Logo/icpLogo.png";
 
 const Footer = () => {
   return (
-    <footer className="text-white bg-custumPurple py-8 z-10">
+    <footer className="text-white bg-custumPurple py-8 z-10 bottom">
       <div className="container mx-auto px-4 lg:px-10">
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-20">
           <div className="mb-4">
