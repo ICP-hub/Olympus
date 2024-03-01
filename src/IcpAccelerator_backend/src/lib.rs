@@ -410,9 +410,11 @@ pub fn respond_to_connection_request_candid(
 pub async fn register_hub_organizer_candid(
     form: hub_organizer::HubOrganizerRegistration,
 ) -> String {
-    hub_organizer::register_hub_organizer(form).await;
+    let reg_response = hub_organizer::register_hub_organizer(form).await;
     let roles_to_assign = vec![UserRole::ICPHubOrganizer];
-    assign_roles_to_principal(roles_to_assign)
+    let assigned = assign_roles_to_principal(roles_to_assign);
+    //if assigned { return format!("roles assigned")}
+    reg_response
 }
 
 #[query]
