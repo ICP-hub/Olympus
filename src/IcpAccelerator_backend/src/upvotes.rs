@@ -7,6 +7,8 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::fmt::Display;
+use ic_cdk::api::time;
+
 
 use crate::register_user;
 use crate::register_user::FOUNDER_STORAGE;
@@ -16,6 +18,7 @@ pub struct UpvoterInfo {
     principal_id: Option<String>,
     name: Option<String>,
     image: Option<Vec<u8>>, 
+    timestamp: u64,
 }
 
 #[derive(CandidType, Deserialize, Serialize, Default, Clone, Debug)]
@@ -35,11 +38,9 @@ thread_local! {
 }
 
 
-// Function to upvote a project by a user
 pub fn upvote(project_id: String) -> std::string::String {
     let caller = caller();
     if let Some(founder_info) = register_user::get_founder_info() {
-        // Use a match statement to simultaneously check for the presence of both fields
         match (founder_info.thirty_info.as_ref().and_then(|info| info.full_name.clone()),
                founder_info.seventy_info.as_ref().and_then(|info| info.founder_image.clone())) {
             (Some(name), Some(image)) => {
@@ -47,15 +48,15 @@ pub fn upvote(project_id: String) -> std::string::String {
                 let upvoter_info = UpvoterInfo {
                     name: Some(name),
                     image: Some(image),
-                    principal_id: Some(caller.to_string()), 
+                    principal_id: Some(caller.to_string()),
+                    timestamp: time(),
                 };
                 ic_cdk::println!("Upvoter Details are: {:?}", upvoter_info.clone());
                 UPVOTES.with(|upvotes| {
                     let mut upvotes = upvotes.borrow_mut();
                     let upvote_record = upvotes.projects.entry(project_id.clone()).or_insert_with(Default::default);
                     upvote_record.upvoters.push(upvoter_info.clone());
-                    // Assuming Nat::from works as expected, otherwise adjust accordingly
-                    upvote_record.count += 1; // Simplified for clarity; adjust as needed based on your Nat type
+                    upvote_record.count += 1; 
                     ic_cdk::println!("Upvote Record is {:?}", upvote_record);
                     ic_cdk::println!("Upvote Info is {:?}", upvoter_info);
                 });
@@ -69,7 +70,6 @@ pub fn upvote(project_id: String) -> std::string::String {
 }
 
 
-// Function to get the upvote count for a project
 #[query]
 pub fn get_upvote_record(project_id: String) -> Option<UpvoteRecord> {
     let record = UPVOTES.with(|upvotes| upvotes.borrow().projects.get(&project_id).cloned());

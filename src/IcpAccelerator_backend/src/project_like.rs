@@ -3,6 +3,7 @@ use ic_cdk::api::caller;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::cell::RefCell;
+use ic_cdk::api::time;
 
 use crate::register_user;
 
@@ -10,19 +11,20 @@ use crate::register_user;
 pub struct LikesInfo {
     principal_id: Option<String>,
     name: Option<String>,
-    image: Option<Vec<u8>>, // Assuming image is stored as a URL or similar string representation
+    image: Option<Vec<u8>>, 
+    time: u64,
 }
 
 #[derive(CandidType, Deserialize, Serialize, Default, Clone, Debug)]
 pub struct LikeRecord {
-    pub count: Nat, // Total upvotes for the project
-    upvoters: Vec<LikesInfo>, // Maps Principal to UpvoterInfo
+    pub count: Nat, 
+    upvoters: Vec<LikesInfo>, 
 }
 
 
 #[derive(CandidType, Deserialize, Serialize, Default, Clone)]
 pub struct likeStorage {
-    pub projects: HashMap<String, LikeRecord>, // Maps project ID to its upvote record
+    pub projects: HashMap<String, LikeRecord>, 
 }
 
 thread_local! {
@@ -43,6 +45,7 @@ pub fn like_project(project_id: String) -> std::string::String {
                 name: Some(full_name),
                 image: Some(founder_image),
                 principal_id: Some(caller.to_string()), 
+                time: time(), 
             };
             ic_cdk::println!("Upvoter Details are: {:?}", likes_info.clone());
             
@@ -69,7 +72,7 @@ pub fn like_project(project_id: String) -> std::string::String {
 pub fn get_user_likes(project_id: String) -> Option<LikeRecord> {
      STATE.with(|state| {
         let state = state.borrow();
-        state.projects.get(&project_id).cloned() // Return a cloned LikeRecord if found, None otherwise
+        state.projects.get(&project_id).cloned() 
     })
 }
 
