@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 // import Sidebar from "../Layout/SidePanel/Sidebar";
-// import LiveProjects from "./LiveProjects";
+import LiveProjects from "./LiveProjects";
 import SearchForm from "./SearchForm";
 // import VideoScroller from "./VideoScroller";
 // import Founder from "./Founder";
@@ -8,7 +8,7 @@ import SearchForm from "./SearchForm";
 // import Footer from "../Footer/Footer";
 // import Bottombar from "../Layout/BottomBar/Bottombar";
 import { useSelector } from "react-redux";
-// import ListedProjects from "./ListedProjects";
+import ListedProjects from "./ListedProjects";
 import guide from "../../../assets/getStarted/guide.png";
 import upvote from "../../../assets/getStarted/upvote.png";
 import SubmitSection from "../Footer/SubmitSection";

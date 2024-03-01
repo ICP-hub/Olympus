@@ -7,7 +7,11 @@ const selectActor = (currState) => currState.actors.actor;
 
 
 function uint8ArrayToBase64(uint8Arr) {
-  const decryptedBlob = new Blob([uint8Arr],{type:"application/octet-stream"});
+
+  console.log('image in mentor >>>>>',uint8Arr);
+  let buffer = Buffer.from(uint8Arr[0]);
+  console.log("buffer ==========>",buffer)
+  const decryptedBlob = new Blob([buffer]);
   const url = URL.createObjectURL(decryptedBlob)
   return url
 }
@@ -27,6 +31,7 @@ function* fetchMentorHandler() {
       ...mentor,
       mentor_image: uint8ArrayToBase64(mentor.mentor_image),
     }));
+
     yield put(mentorRegisteredHandlerSuccess(updatedMentorData));
   } catch (error) {
     yield put(mentorRegisteredHandlerFailure(error.toString()));
