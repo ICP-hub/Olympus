@@ -120,6 +120,9 @@ const validationSchema = {
 const InvestorRegistration = () => {
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
   const actor = useSelector((currState) => currState.actors.actor);
+  const specificRole = useSelector(
+    (currState) => currState.current.specificRole)
+    const investorFullData = useSelector((currState) => currState.investorData.data);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -129,11 +132,13 @@ const InvestorRegistration = () => {
   const [step, setStep] = useState(0);
   const [isCurrentStepValid, setIsCurrentStepValid] = useState(false);
   const [userHasInteracted, setUserHasInteracted] = useState(false);
+  const [investorDataObject, setInvestorDataObject] = useState({});
 
-  console.log("InvestorRegistration => ");
-  useEffect(() => {
-    dispatch(allHubHandlerRequest());
-  }, [actor, dispatch]);
+  // console.log("InvestorRegistration => ");
+  // useEffect(() => {
+  //   dispatch(allHubHandlerRequest());
+  // }, [actor, dispatch]);
+
 
   const getTabClassName = (tab) => {
     return `inline-block p-2 font-bold ${
@@ -155,6 +160,7 @@ const InvestorRegistration = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
     trigger,
+    reset,
   } = useForm({
     resolver: yupResolver(currentValidationSchema),
   });
@@ -186,6 +192,11 @@ const InvestorRegistration = () => {
     validateStep();
   }, [step, trigger, userHasInteracted]);
 
+  useEffect(() => {
+    dispatch(allHubHandlerRequest());
+  }, [actor, dispatch]);
+
+  
   const handleNext = async () => {
     const fieldsToValidate = steps[step].fields.map((field) => field.name);
     const result = await trigger(fieldsToValidate);
@@ -200,6 +211,32 @@ const InvestorRegistration = () => {
     }
   };
 
+
+  useEffect(() => {
+    if (investorFullData && investorFullData.length > 0) {
+      const data = investorFullData[0];
+      // console.log(
+      //   "formattedData============>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",
+      //   data
+      // );
+
+      const formattedData = Object.keys(data).reduce((acc, key) => {
+        acc[key] = Array.isArray(data[key]) ? data[key][0] : data[key];
+        return acc;
+      }, {});
+
+      // console.log(
+      //   "Attempting to reset form with data:",
+      //   formattedData?.mentor_image
+      // );
+      // Assuming formattedData.mentor_image contains the data URL string
+
+      reset(formattedData);
+      setFormData(formattedData);
+    }
+  }, [investorFullData, reset]);
+
+
   const stepFields = steps[step].fields;
   let StepComponent;
 
@@ -213,6 +250,27 @@ const InvestorRegistration = () => {
     );
   }
 
+
+  const sendingInvestorData = async (val) => {
+    let result;
+    try {
+      if (specificRole !== null || undefined) {
+
+       result = await actor.register_venture_capitalist_caller(val);
+      } else if (specificRole === null || specificRole === undefined) {
+        result =await actor.register_venture_capitalist_caller(val);
+      }
+
+      toast.success(result);
+      console.log("investor data registered in backend");
+      navigate("/dashboard");
+    } catch (error) {
+      toast.error(error);
+      console.log(error.message);
+    }
+  };
+
+
   const onSubmit = async (data) => {
     console.log("data of investor =>", data);
 
@@ -221,15 +279,66 @@ const InvestorRegistration = () => {
 
     if (step < steps.length - 1) {
       handleNext();
-    } else {
-      console.log("Final Form Data:", updatedFormData);
+      } else if (
+      specificRole !== null ||
+      (undefined && step > steps.length - 1)
+    ) 
+    {
 
+      // console.log("exisiting user visit ");
+        
+     
+
+      const interestInBoardPosition =
+      updatedFormData.interest_in_board_positions === "true" ? true : false;
+    const accreditedInvestorStatus =
+      updatedFormData.accredited_investor_status === "true" ? true : false;
+
+      let tempObj2= {
+      accredited_investor_status: [accreditedInvestorStatus]||[],
+      assets_for_investment: [String(updatedFormData.assets_for_investment)]||[],
+      average_investment_ticket: [updatedFormData.average_investment_ticket]||[],
+      email_address: [updatedFormData.email_address]||[],
+      interest_in_board_positions: [interestInBoardPosition]||[],
+      investment_stage_preference: [
+        updatedFormData.investment_stage_preference,
+      ]||[],
+      investor_type: [updatedFormData.investor_type]||[],
+      location: [updatedFormData.location]||[],
+      name_of_fund: [updatedFormData.name_of_fund]||[],
+      number_of_portfolio_companies: [
+        updatedFormData.number_of_portfolio_companies,
+      ]||[],
+      portfolio_link: [updatedFormData.portfolio_link]||[],
+      preferred_icp_hub: [updatedFormData.preferred_icp_hub]||[],
+      preferred_investment_sectors: [
+        updatedFormData.preferred_investment_sectors,
+      ]||[],
+      referrer: [updatedFormData.referrer]||[],
+      revenue_range_preference: [updatedFormData.revenue_range_preference]||[],
+      size_of_managed_fund: [updatedFormData.size_of_managed_fund]||[],
+      technological_focus: [updatedFormData.technological_focus]||[],
+      telegram_id: [updatedFormData.telegram_id]||[],
+      typical_decision_making_timeline_for_investments: [
+        updatedFormData.typical_decision_making_timeline_for_investments,
+      ]||[],
+      website_link: [updatedFormData.website_link]||[],
+    };
+
+    setInvestorDataObject(tempObj2);
+      await sendingInvestorData(tempObj2);
+    } else if (
+      specificRole === null ||
+      (specificRole === undefined && step > steps.length - 1)
+    ) {
+      // console.log("first time visit ");
+     
       const interestInBoardPosition =
         updatedFormData.interest_in_board_positions === "true" ? true : false;
       const accreditedInvestorStatus =
         updatedFormData.accredited_investor_status === "true" ? true : false;
 
-      const investorDataObject = {
+      let tempObj = {
         accredited_investor_status: [accreditedInvestorStatus],
         assets_for_investment: [String(updatedFormData.assets_for_investment)],
         average_investment_ticket: [updatedFormData.average_investment_ticket],
@@ -259,20 +368,8 @@ const InvestorRegistration = () => {
         ],
         website_link: [updatedFormData.website_link],
       };
-
-      const sendingInvestorData = async () => {
-        try {
-          const result = await actor.register_venture_capitalist_caller(investorDataObject);
-          toast.success(result);
-          console.log("investor data registered in backend");
-          navigate("/dashboard");
-        } catch (error) {
-          toast.error(error);
-          console.log(error.message);
-        }
-      };
-      sendingInvestorData();
-    }
+      setInvestorDataObject(tempObj);
+      await sendingInvestorData(tempObj);    }
   };
 
   return (

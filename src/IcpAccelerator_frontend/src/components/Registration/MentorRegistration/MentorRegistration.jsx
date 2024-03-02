@@ -311,6 +311,8 @@ const MentorRegistration = () => {
       //   "formattedData============>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",
       //   data
       // );
+
+      
       const formattedData = Object.keys(data).reduce((acc, key) => {
         acc[key] = Array.isArray(data[key]) ? data[key][0] : data[key];
         return acc;
@@ -342,13 +344,14 @@ const MentorRegistration = () => {
         result = await actor.register_mentor_candid(val);
       }
       toast.success(result);
-      // console.log("mentor data registered in backend");
+      console.log("mentor data registered in backend");
       navigate("/dashboard");
     } catch (error) {
       toast.error(error);
       console.log(error.message);
     }
   };
+
 
   const onSubmit = async (data) => {
     // console.log("data >>>>", data);

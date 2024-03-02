@@ -6,12 +6,20 @@ import { logoutStart } from "../components/Redux/Reducers/InternetIdentityReduce
 import { changeHasSelectedRoleHandler } from "../components/Redux/Reducers/userRoleReducer";
 import { useNavigate } from "react-router-dom";
 import { mentorRegisteredHandlerRequest } from "../components/Redux/Reducers/mentorRegisteredData";
+import { founderRegisteredHandlerRequest } from "../components/Redux/Reducers/founderRegisteredData";
+import { hubRegisteredHandlerRequest } from "../components/Redux/Reducers/hubRegisteredData";
+import { investorRegisteredHandlerRequest } from "../components/Redux/Reducers/investorRegisteredData";
 
 const LogoutModal = () => {
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
   const principal = useSelector((currState) => currState.internet.principal);
   const actor = useSelector((currState) => currState.actors.actor);
-
+  const specificRole = useSelector(
+    (currState) => currState.current.specificRole
+  );
+  
+  console.log('specific role in logout handler => ', specificRole )
+  
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isDropdownOpen, setDropdownOpen] = useState(false);
@@ -25,8 +33,26 @@ const LogoutModal = () => {
     dispatch(logoutStart());
   };
 
-  const profileHandler =()=>{
-      dispatch(mentorRegisteredHandlerRequest())
+  const profileHandler =(specificRole)=>{
+
+      console.log('specific role inside profilehandler logout component ',specificRole);
+
+      switch (specificRole) {
+        case "Project":
+          dispatch(founderRegisteredHandlerRequest())
+          break;
+        case "Mentor":
+          dispatch(mentorRegisteredHandlerRequest())
+          break;
+        case "ICPHubOrganizer":
+          dispatch(hubRegisteredHandlerRequest())
+          break;
+        case "VC":
+          dispatch(investorRegisteredHandlerRequest())
+          break;
+        default:
+          return null;
+      }
       navigate('/profile')
   }
 
@@ -106,7 +132,7 @@ const LogoutModal = () => {
           )}
           <div className="text-sm text-black font-bold">
               <p
-            onClick={profileHandler}
+            onClick={()=> profileHandler(specificRole)}
             className="py-2 px-4 hover:bg-gray-200"
           >
             My Profile
