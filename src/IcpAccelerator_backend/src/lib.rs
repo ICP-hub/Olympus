@@ -17,7 +17,7 @@ use leaderboard::{LeaderboardEntryForLikes, LeaderboardEntryForUpvote, Leaderboa
 use project_like::LikeRecord;
 use requests::Request;
 use roles::{get_roles, RolesResponse};
-use std::collections::HashSet;
+use std::collections::{HashSet, HashMap};
 
 use manage_hubs::{get_icp_hubs, IcpHub};
 use mentor::MentorProfile;
@@ -39,7 +39,7 @@ use register_user::{FounderInfo, FounderInfoInternal, ThirtyInfoFounder};
 use roadmap_suggestion::{Status, Suggestion};
 use upvotes::UpvoteStorage;
 use vc_registration::VentureCapitalist;
-use ratings::{Rating};
+use ratings::{Rating, MainLevel, MainLevelRatings};
 
 use crate::notification::Notification;
 
@@ -461,7 +461,7 @@ pub fn get_leaderboard_using_ratings() -> Vec<LeaderboardEntryForRatings>{
 
 #[update]
 #[candid_method(update)]
-pub fn update_rating_api(rating: Rating){
+pub fn update_rating_api(rating: Vec<Rating>){
     ratings::update_rating(rating);
 }
 
@@ -469,6 +469,12 @@ pub fn update_rating_api(rating: Rating){
 #[candid_method(query)]
 pub fn calculate_average_api(project_id: String) -> Option<f64> {
     ratings::calculate_average(&project_id)
+}
+
+#[query]
+#[candid_method(query)]
+pub fn get_main_level_ratings(project_id: String) -> HashMap<MainLevel, MainLevelRatings>{
+    ratings::get_ratings_by_project_id(&project_id)
 }
 
 #[update]
