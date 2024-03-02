@@ -183,11 +183,7 @@ pub fn update_rating(ratings: Vec<Rating>) {
                 &mut rating_types.mentor
             };
 
-            match rating.rating_type {
-                RatingType::Peer => rating_types.peer.push(rating.rating),
-                RatingType::Own => rating_types.own.push(rating.rating),
-                RatingType::Mentor => rating_types.mentor.push(rating.rating),
-            };
+            rating_category.push(rating.rating);
         }
     });
 }
