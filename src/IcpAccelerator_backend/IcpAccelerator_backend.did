@@ -79,6 +79,7 @@ type MainLevel = variant {
   Level8;
   Level9;
 };
+type MainLevelRatings = record { ratings : vec float64; level : MainLevel };
 type MentorInternal = record {
   uid : text;
   active : bool;
@@ -293,6 +294,9 @@ service : {
   get_leaderboard_using_likes : () -> (vec LeaderboardEntryForLikes) query;
   get_leaderboard_using_ratings : () -> (vec LeaderboardEntryForRatings) query;
   get_leaderboard_using_upvotes : () -> (vec LeaderboardEntryForUpvote) query;
+  get_main_level_ratings : (text) -> (
+      vec record { MainLevel; MainLevelRatings },
+    ) query;
   get_mentor_by_expertise : (text) -> (vec MentorProfile) query;
   get_mentor_candid : () -> (opt MentorProfile) query;
   get_my_id : () -> (principal) query;
@@ -326,7 +330,7 @@ service : {
   update_mentor_profile : (MentorProfile) -> (text);
   update_project : (text, ProjectInfo) -> (text);
   update_project_docs : (text, DocsInfo) -> (text);
-  update_rating_api : (Rating) -> ();
+  update_rating_api : (vec Rating) -> ();
   update_suggestion_status_caller : (nat64, Status) -> ();
   update_team_member : (text, TeamMember) -> (text);
   update_venture_capitalist_caller : (VentureCapitalist) -> (text);
