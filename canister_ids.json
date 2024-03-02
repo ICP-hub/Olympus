@@ -1,0 +1,11 @@
+{
+  "IcpAccelerator_backend": {
+    "ic": "huggh-2aaaa-aaaag-qdicq-cai"
+  },
+  "IcpAccelerator_frontend": {
+    "ic": "h5fn3-miaaa-aaaag-qdida-cai"
+  },
+  "admin_frontend": {
+    "ic": "h2elp-bqaaa-aaaag-qdidq-cai"
+  }
+}

@@ -5,7 +5,7 @@ import Home from "./components/Home/Home";
 // import Sidebar from "./components/Layout/SidePanel/Sidebar";
 import DashBoard from "./components/Dashboard/DashBoard";
 // import ProjectDetails from "./components/Project/ProjectDetails";
-// import UserProfile from "./components/UserProfile/UserProfile";
+import UserProfile from "./components/UserProfile/UserProfile";
 import ConnectWallet from "./models/ConnectWallet";
 import RoleSelector from "./components/RoleSelector/RoleSelector";
 import { useState } from "react";
@@ -21,6 +21,10 @@ import {
 import AppRoutes from "./AppRoutes";
 import Footer from "./components/Footer/Footer";
 import { userRoleHandler } from "./components/Redux/Reducers/userRoleReducer";
+import { mentorRegisteredHandlerRequest } from "./components/Redux/Reducers/mentorRegisteredData";
+import { investorRegisteredHandlerRequest } from "./components/Redux/Reducers/investorRegisteredData";
+import { hubRegisteredHandlerRequest } from "./components/Redux/Reducers/hubRegisteredData";
+import { founderRegisteredHandlerRequest } from "./components/Redux/Reducers/founderRegisteredData";
 
 const App = () => {
   const identity = useSelector((currState) => currState.internet.identity);
@@ -34,7 +38,7 @@ const App = () => {
   // const actor = useSelector((currState) => currState.actors.actor);
   // const userRole = useSelector((currState) => currState.current.specificRole);
 
-  console.log("specificRole", specificRole);
+  console.log("specificRole in app.jsx", specificRole);
 
   const [isModalOpen, setModalOpen] = useState(false);
 
@@ -47,15 +51,39 @@ const App = () => {
     dispatch(checkLoginOnStart());
   }, []);
 
+  
+
   useEffect(() => {
     if (isAuthenticated && identity) {
       dispatch(handleActorRequest());
     }
   }, [isAuthenticated, identity, dispatch]);
 
+
   useEffect(() => {
     dispatch(userRoleHandler());
   }, [isAuthenticated, identity, specificRole, dispatch]);
+
+
+useEffect(()=>{
+    console.log('specific role inside effect of app 1',specificRole);
+    switch (specificRole) {
+      case "Project":
+        dispatch(founderRegisteredHandlerRequest())
+        break;
+      case "Mentor":
+        dispatch(mentorRegisteredHandlerRequest())
+        break;
+      case "ICPHubOrganizer":
+        dispatch(hubRegisteredHandlerRequest())
+        break;
+      case "VC":
+        dispatch(investorRegisteredHandlerRequest())
+        break;
+      default:
+        return null;
+    }
+  },[specificRole, isAuthenticated, dispatch])
 
   return (
     <>

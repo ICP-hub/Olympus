@@ -1,82 +1,77 @@
-pub(crate) use std::{collections::HashMap, cell::RefCell, rc::Rc};
+pub(crate) use std::collections::HashMap;
+use ic_cdk::export::Principal;
+use std::cell::RefCell;
+use std::rc::Rc;
+
+use crate::mentor::AreaOfExpertise;
+
 
 #[derive(Debug, Default)]
 pub struct TrieNode {
-    children: HashMap<char, Rc<RefCell<TrieNode>>>,
-    is_end_of_word: bool,
-    mentor_ids: Vec<String>,
+    children: HashMap<char, TrieNode>,
+    mentor_principals: Vec<Principal>,
 }
 
 impl TrieNode {
     fn new() -> Self {
-        TrieNode::default()
+        TrieNode {
+            children: HashMap::new(),
+            mentor_principals: Vec::new(),
+        }
     }
 }
 
+
 #[derive(Debug, Default)]
 pub struct Trie {
-    root: Rc<RefCell<TrieNode>>,
+   pub root: TrieNode,
 }
+
+impl Trie {
+    fn new() -> Self {
+        Trie {
+            root: TrieNode::new(),
+        }
+    }
+
+    
+    pub fn insert(&mut self, keyword: &str, mentor_principal: Principal) {
+        let mut node = &mut self.root;
+        for c in keyword.chars() {
+            node = node.children.entry(c).or_insert_with(TrieNode::new);
+        }
+        node.mentor_principals.push(mentor_principal);
+    }
+
+    
+    pub fn search(&self, keyword: &str) -> Vec<Principal> {
+        let mut node = &self.root;
+        for c in keyword.chars() {
+            if let Some(n) = node.children.get(&c) {
+                node = n;
+            } else {
+                return Vec::new(); 
+            }
+        }
+        node.mentor_principals.clone()
+    }
+}
+
 
 thread_local! {
     pub static EXPERTISE_TRIE: RefCell<Trie> = RefCell::new(Trie::new());
 }
 
-impl Trie {
-    pub fn new() -> Self {
-        Trie::default()
-    }
-
-    pub fn insert_with_id(&self, word: &str, mentor_id: String) {
-        let mut current_node = Rc::clone(&self.root);
-        for character in word.chars() {
-            let next_node_opt = {
-                let borrowed_node = current_node.borrow();
-                borrowed_node.children.get(&character).map(Rc::clone)
-            };
-
-            let next_node = if let Some(node) = next_node_opt {
-                node
-            } else {
-                let new_node = Rc::new(RefCell::new(TrieNode::new()));
-                current_node.borrow_mut().children.insert(character, Rc::clone(&new_node));
-                new_node
-            };
-
-            current_node = next_node;
-        }
-
-        let mut node = current_node.borrow_mut();
-        node.is_end_of_word = true;
-        node.mentor_ids.push(mentor_id);
-    }
-
-    pub fn search(&self, prefix: &str) -> Vec<String> {
-        let mut current_node = Rc::clone(&self.root);
-        for character in prefix.chars() {
-            let temp_node; 
-            if let Some(node) = current_node.borrow().children.get(&character) {
-                temp_node = Rc::clone(node);
-            } else {
-                return Vec::new();
-            }
-            current_node = temp_node; 
-        }
-        self.collect_mentor_ids(&current_node)
-    }
-
-    pub fn collect_mentor_ids(&self, node: &Rc<RefCell<TrieNode>>) -> Vec<String> {
-        let node = node.borrow();
-        let mut ids = Vec::new();
-
-        if node.is_end_of_word {
-            ids.extend(node.mentor_ids.clone());
-        }
-
-        for child_node in node.children.values() {
-            ids.extend(self.collect_mentor_ids(child_node));
-        }
-
-        ids
+pub fn expertise_to_str(expertise: &AreaOfExpertise) -> String {
+    match expertise {
+        AreaOfExpertise::DeFi => "DeFi".to_string(),
+        AreaOfExpertise::Tooling => "Tooling".to_string(),
+        AreaOfExpertise::NFTs => "NFTs".to_string(),
+        AreaOfExpertise::Infrastructure => "Infrastructure".to_string(),
+        AreaOfExpertise::DAO => "DAO".to_string(),
+        AreaOfExpertise::Social => "Social".to_string(),
+        AreaOfExpertise::Games => "Games".to_string(),
+        AreaOfExpertise::Other(s) => s.clone(),
+        AreaOfExpertise::MetaVerse => "MetaVerse".to_string(),
     }
 }

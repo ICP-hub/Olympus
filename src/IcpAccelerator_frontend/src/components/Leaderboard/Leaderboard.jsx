@@ -1,123 +1,105 @@
+import React, { useState ,useEffect, useRef} from "react";
+import { projectFilterSvg, remove, badge } from "../Utils/Data/SvgData";
 import React, { useState,useEffect } from 'react'
 import { projectFilterSvg, remove, star } from "../Utils/Data/SvgData";
 
 const Leaderboard = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState("Leaderboard");
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (isPopupOpen) {
-     
-        if (!event.target.closest('.popup')) {
-          setIsPopupOpen(false);
-        }
-      }
-    };
-    window.addEventListener('click', handleClickOutside);
-    return () => {
-      window.removeEventListener('click', handleClickOutside);
-    };
-  }, [isPopupOpen]);
-
   return (
-    <div className="px-[4%]  w-full flex flex-col bg-gray-100 h-screen overflow-y-scroll justify-center ">
-
-
+    <div className="px-[4%]  w-full flex flex-col bg-gray-100  justify-center ">
       <div className="flex items-center justify-between">
         {selectedOption && (
-          <div className=" left-4 lg:left-auto bg-gradient-to-r from-purple-900 to-blue-500 text-transparent bg-clip-text text-2xl  font-extrabold">
+          <div className="left-4 lg:left-auto bg-gradient-to-r from-purple-900 to-blue-500 text-transparent bg-clip-text text-2xl font-extrabold">
             {selectedOption}
           </div>
         )}
-        <div className='flex justify-end gap-4'>
+
+        <div className="flex justify-end gap-4 relative " ref={dropdownRef}>
           <div
             className="cursor-pointer"
             onClick={() => setIsPopupOpen(!isPopupOpen)}
           >
             {projectFilterSvg}
+
+            {isPopupOpen && (
+              <div className="absolute w-[250px] top-full right-9 bg-white shadow-md rounded-lg border border-gray-200 p-3 z-10">
+                <ul className="flex flex-col">
+                  <li>
+                    <button className="border-[#9C9C9C] py-[18px] border-b-2 w-[230px] font-bold px-4 focus:outline-none text-xl flex justify-start">
+                      Projects
+                    </button>
+                  </li>
+                  <li>
+                    <button className="border-[#9C9C9C] py-[18px] w-[230px] border-b-2 px-4 font-bold focus:outline-none text-xl flex justify-start">
+                      Mentors
+                    </button>
+                  </li>
+                  <li>
+                    <button className="px-4 font-bold py-[18px] focus:outline-none text-xl flex justify-start">
+                      VCs
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            )}
           </div>
-          <div className='mt-1'>
-            {remove}
-          </div>
+          <div className="mt-1">{remove}</div>
         </div>
-
-        {isPopupOpen && (
-          <div className="absolute w-[250px] top-52 right-16 bg-white shadow-md rounded-lg border border-gray-200  p-3 z-10">
-            <ul className="flex flex-col">
-              <li>
-                <button
-                  // onClick={() => handleOptionClick("Projects")}
-                  className="border-[#9C9C9C] py-[18px] border-b-2 w-[230px] font-bold px-4 focus:outline-none text-xl flex justify-start"
-                >
-                  Projects
-                </button>
-              </li>
-              <li>
-                <button
-                  // onClick={() => handleOptionClick("Mentors")}
-                  className="border-[#9C9C9C] py-[18px] w-[230px] border-b-2 px-4 font-bold focus:outline-none text-xl flex justify-start"
-                >
-                  Mentors
-                </button>
-              </li>
-              <li>
-                <button
-                  // onClick={() => handleOptionClick("VCs")}
-                  className="px-4 font-bold py-[18px] focus:outline-none text-xl flex justify-start"
-                >
-                  VCs
-                </button>
-              </li>
-            </ul>
-          </div>
-        )}
-
-
       </div>
 
-
-      <div className="w-full flex flex-row justify-around items-center  bg-[#B9C0F2] rounded-lg py-4 mt-6   text-lg px-6  rounded-b-none">
-        <div className='w-full flex flex-row justify-around mt-4  font-bold text-white lg:text-2xl md:text-lg sm:text-s text-xms
-        '>
-          <div className="item">#</div>
-          <div className="item">Project Name</div>
-          <div className="item">URL</div>
-          <div className="item">PDF</div>
-          <div className="item">Upvotes</div>
-          <div className="item"></div>
+      <div>
+        <div className="bg-[#B9C0F2] rounded-lg p-4  mt-16 text-lg rounded-b-none">
+          <table className="w-full text-white font-bold lg:text-xl md:text-lg sm:text-s text-xms">
+            <thead>
+              <tr className="flex flex-row justify-around mt-4">
+                <th>#</th>
+                <th className=" md:table-cell">Project Name</th>
+                <th className="hidden md:table-cell">URL</th>
+                <th className="hidden md:table-cell">PDF</th>
+                <th className=" md:table-cell">Upvotes</th>
+                <th></th>
+              </tr>
+            </thead>
+          </table>
         </div>
 
+        <div className="text-[#737373] font-bold bg-white bg-opacity-30 border-l-[1px] border-r-[1px] border-b-[1px] border-[#737373] h-screen rounded-lg text-lg rounded-t-none overflow-y-auto mb-4">
+          <table className="w-full">
+            <tbody>
+              {projects.map((project, index) => (
+                <React.Fragment key={index}>
+                  <tr className="flex flex-row justify-around py-4">
+                    <td className="flex justify-center relative items-center">
+                    <div className="relative text-center">
+                      <div className="absolute flex justify-center items-center">{badge}</div>
+                      <div className="relative z-10 left-2">{project.number}</div>
+                    </div>
+                    </td>
+                    <td className="truncate">{project.name}</td>
+                    <td className="hidden md:table-cell truncate">{project.url}</td>
+                    <td className="hidden md:table-cell truncate">{project.pdf}</td>
+                    <td className="truncate">{project.upvotes}</td>
+                    <td>
+                      <button onClick={() => toggleAccordion(project.number)}>
+                        ...
+                      </button>
+                    </td>
+                  </tr>
+                  {visibleProject === project.number && (
+                    <tr className="flex flex-col md:hidden p-4">
+                      <td>URL: {project.url}</td>
+                      <td>PDF: {project.pdf}</td>
+                    </tr>
+                  )}
+                </React.Fragment>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div className='text-[#737373] font-bold bg-white bg-opacity-30 border-l-[1px] border-r-[1px] border-[#737373] h-[600px] rounded-lg text-lg rounded-t-none overflow-y-auto'>
-        <div className='w-full flex flex-row justify-around mt-4 py-4'>
-          <div className='flex justify-center relative items-center'>
-            <div className="item">{star}</div>
-            <div className="item absolute">1</div>
-          </div>
-          <div className="item">Project Name</div>
-          <div className="item">URL</div>
-          <div className="item">PDF</div>
-          <div className="item">Upvotes</div>
-          <div className="item">...</div>
-        </div>
-        <div className='w-full flex flex-row justify-around mt-4 py-4'>
-        <div className='flex justify-center relative items-center'>
-            <div className="item">{star}</div>
-            <div className="item absolute">2</div>
-          </div>
-          <div className="item">Project Name</div>
-          <div className="item">URL</div>
-          <div className="item">PDF</div>
-          <div className="item">Upvotes</div>
-          <div className="item">...</div>
-        </div>
-        
-      </div>
-
-
     </div>
-  )
-}
+  );
+};
 
-export default Leaderboard
+export default Leaderboard;

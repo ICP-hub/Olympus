@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 // import Sidebar from "../Layout/SidePanel/Sidebar";
-// import LiveProjects from "./LiveProjects";
+import LiveProjects from "./LiveProjects";
 import SearchForm from "./SearchForm";
 // import VideoScroller from "./VideoScroller";
 // import Founder from "./Founder";
@@ -8,7 +8,7 @@ import SearchForm from "./SearchForm";
 // import Footer from "../Footer/Footer";
 // import Bottombar from "../Layout/BottomBar/Bottombar";
 import { useSelector } from "react-redux";
-// import ListedProjects from "./ListedProjects";
+import ListedProjects from "./ListedProjects";
 import guide from "../../../assets/getStarted/guide.png";
 import upvote from "../../../assets/getStarted/upvote.png";
 import SubmitSection from "../Footer/SubmitSection";
@@ -74,11 +74,13 @@ const DashBoard = () => {
 
           <div className="flex flex-row  gap-10 flex-wrap md:justify-start md:ml-6 justify-center items-center">
             <div className="mt-8 bg-white w-[280px] h-[345px] rounded-xl border border-gray-200 shadow-md">
+            <div className="overflow-hidden">
               <img
-                className="rounded-t-xl object-fill w-full h-[200px]"
+                className="rounded-t-xl object-fill w-full h-[200px] hover:scale-125 transition-transform duration-300 ease-in-out"
                 src={guide}
                 alt="guide"
               />
+              </div>
               <div className="p-5 bg-custumSky h-[145px] justify-between flex flex-col rounded-b-xl">
                 <p className="font-normal text-xs  text-gray-700 text-start">
                   Here is a step-by-step guide to help you understanding how to
@@ -107,11 +109,13 @@ const DashBoard = () => {
             </div>
 
             <div className="mt-8 bg-white w-[280px] h-[345px] rounded-xl border border-gray-200 shadow-md">
+            <div className="overflow-hidden">
               <img
-                className="rounded-t-xl object-fill w-full h-[200px]"
+                className="rounded-t-xl object-fill w-full h-[200px] hover:scale-125 transition-transform duration-300 ease-in-out"
                 src={upvote}
-                alt="upvote"
+                alt="guide"
               />
+              </div>
               <div className="p-5 bg-custumSky h-[145px] justify-between flex flex-col rounded-b-xl">
                 <h5>How to Vote a Project</h5>
                 <p className="font-normal text-xs  text-gray-700 text-start">

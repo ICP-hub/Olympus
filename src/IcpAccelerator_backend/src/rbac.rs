@@ -43,6 +43,7 @@ pub fn assign_roles_to_principal(roles_to_assign: Vec<UserRole>) -> String {
         for role in roles_to_assign {
             user_roles.insert(role);
         }
+        ic_cdk::println!("Roles assigned successfully");
         "Roles assigned successfully".to_string()
     })
 }

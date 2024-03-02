@@ -118,3 +118,23 @@
             }
         })
     }
+
+    pub fn get_hub_organizer_principals_by_region(region: String) -> Vec<String> {
+        HUB_ORGANIZER_REGISTRATIONS.with(|registry| {
+            registry.borrow()
+                .iter()
+                .filter_map(|(principal, unique_hub)| {
+                    if let Some(hub_region) = &unique_hub.hubs.hub_location {
+                        if hub_region.to_lowercase() == region.to_lowercase() {
+                            Some(principal.to_text())
+                        } else {
+                            None
+                        }
+                    } else {
+                        None
+                    }
+                })
+                .collect()
+        })
+    }
+
