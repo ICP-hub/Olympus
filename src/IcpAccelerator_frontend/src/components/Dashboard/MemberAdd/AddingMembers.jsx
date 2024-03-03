@@ -3,7 +3,7 @@ import Sidebar from "../../Layout/SidePanel/Sidebar";
 import project from "../../../../assets/images/project.png";
 import Bottombar from "../../Layout/BottomBar/Bottombar";
 import Footer from "../../Footer/Footer";
-import CompressedImage from "../../Redux/ImageCompressed/CompressedImage";
+import CompressedImage from "../../StateManagement/Redux/ImageCompressed/CompressedImage";
 
 const AddingMembers = () => {
   const [imageArr, setImageArr] = useState([]);

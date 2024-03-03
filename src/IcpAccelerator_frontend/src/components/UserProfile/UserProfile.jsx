@@ -11,24 +11,24 @@ import p5 from "../../../assets/Founders/p5.png";
 import astro1 from "../../../assets/images/astro1.png";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import g1 from '../../../assets/ProfIleEdit/g1.png'
-import g2 from '../../../assets/ProfIleEdit/g2.png'
-import g3 from '../../../assets/ProfIleEdit/g3.png'
-import g4 from '../../../assets/ProfIleEdit/g4.png'
+import g1 from "../../../assets/ProfIleEdit/g1.png";
+import g2 from "../../../assets/ProfIleEdit/g2.png";
+import g3 from "../../../assets/ProfIleEdit/g3.png";
+import g4 from "../../../assets/ProfIleEdit/g4.png";
 import { useSelector } from "react-redux";
 import MentorRegistration from "../Registration/MentorRegistration/MentorRegistration";
 import HubRegistration from "../Registration/IcpHubRegistration/HubRegistration";
 import InvestorRegistration from "../Registration/InvestorRegistration/InvestorRegistration";
 
 const UserProfile = () => {
-
-  const specificRole = useSelector((currState) => currState.current.specificRole)
+  const specificRole = useSelector(
+    (currState) => currState.current.specificRole
+  );
 
   const [activeTab, setActiveTab] = useState(headerData[0].id);
   const [percentage, setPercentage] = useState(80);
- 
- 
-  console.log('specificRole in userprofile !!!!!!!  ', specificRole)
+
+  // console.log('specificRole in userprofile !!!!!!!  ', specificRole)
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -50,7 +50,6 @@ const UserProfile = () => {
 
   return (
     <div className="font-fontUse bg-gray-100 w-full">
-
       <div className="  bg-white  shadow-md shadow-gray-300 pb-6 text-black pt-4 rounded-lg md:mx-[6%] mx-[6%]">
         <div className="flex flex-row items-end px-10">
           <h1 className="md:text-4xl text-[20px] font-bold bg-gradient-to-r from-violet-900 to-sky-500 text-transparent bg-clip-text">
@@ -145,19 +144,19 @@ const UserProfile = () => {
             </div>
           </div>
           <div className="flex-col ml-4 flex-wrap mt-2 w-auto">
-  <h1 className="md:text-3xl text-xl md:font-extrabold font-bold pb-2 bg-gradient-to-r from-blue-900 to-sky-400 text-transparent bg-clip-text">
-    Selena Gomez
-  </h1>
-  <p className="font-extralight text-xs text-black md:z-40 absolute">
-    PANONY was established in March 2018 with operations in Greater China, South Korea.
-  </p>
-</div>
-
+            <h1 className="md:text-3xl text-xl md:font-extrabold font-bold pb-2 bg-gradient-to-r from-blue-900 to-sky-400 text-transparent bg-clip-text">
+              Selena Gomez
+            </h1>
+            <p className="font-extralight text-xs text-black md:z-40 absolute">
+              PANONY was established in March 2018 with operations in Greater
+              China, South Korea.
+            </p>
+          </div>
 
           <div className="hidden md:block z-20 absolute right-40 top-20">
             <div className="relative flex justify-center items-center">
               <div className="z-50 top-[40%] left-[45%]">
-                      <img src={g1} alt="g1" className="w-40 h-60" />
+                <img src={g1} alt="g1" className="w-40 h-60" />
               </div>
               <div className="absolute  -left-[10%] sm:-left-[18%] md:-left-[41%] sxs:left-[6%] w-[300px] h-[300px] md:w-[295px] md:h-[295px] sm:w-[230px] sm:h-[230px] sxs:w-[160px] sxs:h-[160px] rounded-full bg-gradient-to-r from-purple-300/40 to-purple-600"></div>
               <div className="absolute md:z-30 top-[61%]  left-[95%] sxs:left-[96%%] w-[164px] h-[164px] md:w-[145px] md:h-[145px] sm:w-[94px] sm:h-[94px] sxs:w-[80px] sxs:h-[80px] rounded-full bg-gradient-to-r from-purple-900 to-blue-500 opacity-30"></div>
@@ -166,8 +165,6 @@ const UserProfile = () => {
           </div>
         </div>
       </div>
-
-
 
       <section className="relative overflow-hidden mt-6 md:mx-[6%] mx-[6%]">
         <div className="w-full h-fit">
@@ -200,7 +197,7 @@ const UserProfile = () => {
             </div> */}
             {specificRole === "Mentor" && <MentorRegistration />}
             {specificRole === "Project" && <FounderInfo />}
-            {specificRole === "VC" && < InvestorRegistration/>}
+            {specificRole === "VC" && <InvestorRegistration />}
             {specificRole === "ICPHubOrganizer" && <HubRegistration />}
           </div>
         </div>

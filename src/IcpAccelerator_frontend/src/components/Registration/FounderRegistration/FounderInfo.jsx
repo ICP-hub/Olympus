@@ -4,12 +4,11 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
-import { allHubHandlerRequest } from "../../Redux/Reducers/All_IcpHubReducer";
+import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_IcpHubReducer";
 // import { AuthClient } from "@dfinity/auth-client";
 import { ThreeDots } from "react-loader-spinner";
 import { useNavigate } from "react-router-dom";
-import toast, { Toaster } from 'react-hot-toast';
-
+import toast, { Toaster } from "react-hot-toast";
 
 const today = new Date();
 const startDate = new Date("1900-01-01");
@@ -60,7 +59,7 @@ const FounderInfo = () => {
   });
 
   const onSubmitHandler = async (data) => {
-    console.log("data aaya data aaya ", data);
+    // console.log("data aaya data aaya ", data);
 
     const founderData = {
       full_name: [data.full_name],
@@ -73,15 +72,15 @@ const FounderInfo = () => {
       preferred_icp_hub: [data.hub],
     };
 
-    console.log("founderdata => ", founderData);
+    // console.log("founderdata => ", founderData);
 
     try {
-    const result=  await actor.register_founder_caller(founderData);
-    toast.success(result)
+      const result = await actor.register_founder_caller(founderData);
+      toast.success(result);
       console.log("data passed to backend");
       navigate("/dashboard");
     } catch (error) {
-      toast.error(error)
+      toast.error(error);
       console.error("Error sending data to the backend:", error);
     }
   };
@@ -148,9 +147,15 @@ const FounderInfo = () => {
                   : "border-[#737373]"
               } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
             >
-              <option className="text-lg font-bold" value="">Select your ICP Hub</option>
+              <option className="text-lg font-bold" value="">
+                Select your ICP Hub
+              </option>
               {getAllIcpHubs?.map((hub) => (
-                <option key={hub.id} value={`${hub.name} ,${hub.region}`} className="text-lg font-bold">
+                <option
+                  key={hub.id}
+                  value={`${hub.name} ,${hub.region}`}
+                  className="text-lg font-bold"
+                >
                   {hub.name} , {hub.region}
                 </option>
               ))}
@@ -185,7 +190,7 @@ const FounderInfo = () => {
           </button>
         </div>
       </form>
-      <Toaster/>
+      <Toaster />
     </div>
   );
 };

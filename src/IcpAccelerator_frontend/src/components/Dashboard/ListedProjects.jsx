@@ -57,14 +57,14 @@ const ListedProjects = () => {
 
   useEffect(() => {
     if (role) {
-      console.log(role);
+      // console.log(role);
       if (
         role === "Mentor" ||
         role === "VC" ||
         role === "ICPHubOrganizer" ||
         role === "Founder"
       ) {
-        console.log("role", role);
+        // console.log("role", role);
         setShow(true);
       } else {
         setShow(false);

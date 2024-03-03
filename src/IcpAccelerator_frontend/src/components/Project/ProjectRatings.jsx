@@ -269,8 +269,8 @@ const ProjectRatings = () => {
   ];
 
   const handleSliderChange = (index, value) => {
-    console.log('index',index)
-    console.log('index',value)
+    // console.log('index',index)
+    // console.log('index',value)
 
     const key = sliderKeys[index];
     const newSliderValues = { ...sliderValues, [key]: value };
