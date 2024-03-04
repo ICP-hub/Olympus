@@ -68,3 +68,16 @@
     transform: translate(-50%, -50%);
   }
 }
+
+@keyframes translateYAnimation {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-translate-y {
+  animation: translateYAnimation 1s ease-in-out infinite;
+}

@@ -82,6 +82,7 @@ pub struct ProjectInfoInternal {
     pub params: ProjectInfo,
     pub uid: String,
     pub is_active: bool,
+    pub is_verified: bool,
 }
 
 
@@ -134,6 +135,7 @@ pub async fn create_project(thirty_info: ThirtyInfoProject)-> String {
         params:project,
         uid: new_id,
         is_active: true,
+        is_verified: false,
     };
     APPLICATION_FORM.with(|storage| {
         let mut applications = storage.borrow_mut();

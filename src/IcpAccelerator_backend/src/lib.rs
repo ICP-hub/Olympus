@@ -17,7 +17,7 @@ use leaderboard::{LeaderboardEntryForLikes, LeaderboardEntryForUpvote, Leaderboa
 use project_like::LikeRecord;
 use requests::Request;
 use roles::{get_roles, RolesResponse};
-use std::collections::HashSet;
+use std::collections::{HashSet, HashMap};
 
 use manage_hubs::{get_icp_hubs, IcpHub};
 use mentor::MentorProfile;
@@ -39,7 +39,7 @@ use register_user::{FounderInfo, FounderInfoInternal, ThirtyInfoFounder};
 use roadmap_suggestion::{Status, Suggestion};
 use upvotes::UpvoteStorage;
 use vc_registration::VentureCapitalist;
-use ratings::{Rating};
+use ratings::{Rating, MainLevel, MainLevelRatings};
 
 use crate::notification::Notification;
 
@@ -370,6 +370,12 @@ fn get_icp_hubs_candid() -> Vec<IcpHub> {
     get_icp_hubs()
 }
 
+#[query]
+#[candid_method(query)]
+fn get_hubs_principal_using_region(region: String)->Vec<String>{
+    hub_organizer::get_hub_organizer_principals_by_region(region)
+}
+
 // #[query]
 // #[candid_method(query)]
 // fn greet() -> String {
@@ -410,9 +416,11 @@ pub fn respond_to_connection_request_candid(
 pub async fn register_hub_organizer_candid(
     form: hub_organizer::HubOrganizerRegistration,
 ) -> String {
-    hub_organizer::register_hub_organizer(form).await;
+    let reg_response = hub_organizer::register_hub_organizer(form).await;
     let roles_to_assign = vec![UserRole::ICPHubOrganizer];
-    assign_roles_to_principal(roles_to_assign)
+    let assigned = assign_roles_to_principal(roles_to_assign);
+    //if assigned { return format!("roles assigned")}
+    reg_response
 }
 
 #[query]
@@ -453,7 +461,7 @@ pub fn get_leaderboard_using_ratings() -> Vec<LeaderboardEntryForRatings>{
 
 #[update]
 #[candid_method(update)]
-pub fn update_rating_api(rating: Rating){
+pub fn update_rating_api(rating: Vec<Rating>){
     ratings::update_rating(rating);
 }
 
@@ -461,6 +469,12 @@ pub fn update_rating_api(rating: Rating){
 #[candid_method(query)]
 pub fn calculate_average_api(project_id: String) -> Option<f64> {
     ratings::calculate_average(&project_id)
+}
+
+#[query]
+#[candid_method(query)]
+pub fn get_main_level_ratings(project_id: String) -> HashMap<MainLevel, MainLevelRatings>{
+    ratings::get_ratings_by_project_id(&project_id)
 }
 
 #[update]
