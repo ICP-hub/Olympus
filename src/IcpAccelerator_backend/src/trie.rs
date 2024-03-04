@@ -3,8 +3,6 @@ use ic_cdk::export::Principal;
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use crate::mentor::AreaOfExpertise;
-
 
 #[derive(Debug, Default)]
 pub struct TrieNode {
@@ -62,16 +60,16 @@ thread_local! {
     pub static EXPERTISE_TRIE: RefCell<Trie> = RefCell::new(Trie::new());
 }
 
-pub fn expertise_to_str(expertise: &AreaOfExpertise) -> String {
+pub fn expertise_to_str(expertise: &str) -> String {
     match expertise {
-        AreaOfExpertise::DeFi => "DeFi".to_string(),
-        AreaOfExpertise::Tooling => "Tooling".to_string(),
-        AreaOfExpertise::NFTs => "NFTs".to_string(),
-        AreaOfExpertise::Infrastructure => "Infrastructure".to_string(),
-        AreaOfExpertise::DAO => "DAO".to_string(),
-        AreaOfExpertise::Social => "Social".to_string(),
-        AreaOfExpertise::Games => "Games".to_string(),
-        AreaOfExpertise::Other(s) => s.clone(),
-        AreaOfExpertise::MetaVerse => "MetaVerse".to_string(),
+        DeFi => "DeFi".to_string(),
+        Tooling => "Tooling".to_string(),
+        NFTs => "NFTs".to_string(),
+        Infrastructure => "Infrastructure".to_string(),
+        DAO => "DAO".to_string(),
+        Social => "Social".to_string(),
+        Games => "Games".to_string(),
+        Other => "Other".to_string(),
+        MetaVerse => "MetaVerse".to_string(),
     }
 }

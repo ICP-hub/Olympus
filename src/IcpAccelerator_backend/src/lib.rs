@@ -9,6 +9,7 @@ mod upvotes;
 mod vc_registration;
 mod latest_popular_projects;
 mod requests;
+mod manage_focus_expertise;
 
 use hub_organizer::{HubOrganizerRegistration, UniqueHubs};
 use ic_cdk::api::caller;
@@ -20,6 +21,7 @@ use roles::{get_roles, RolesResponse};
 use std::collections::{HashSet, HashMap};
 
 use manage_hubs::{get_icp_hubs, IcpHub};
+use manage_focus_expertise::{get_areas, Areas};
 use mentor::MentorProfile;
 use upvotes::UpvoteRecord;
 
@@ -34,7 +36,7 @@ use rbac::{assign_roles_to_principal, has_required_role, UserRole};
 
 use candid::Principal;
 use ic_cdk_macros::{pre_upgrade, query, update};
-use project_registration::{AreaOfFocus, DocsInfo, ProjectInfo, TeamMember, ProjectInfoInternal, ThirtyInfoProject};
+use project_registration::{DocsInfo, ProjectInfo, TeamMember, ProjectInfoInternal, ThirtyInfoProject};
 use register_user::{FounderInfo, FounderInfoInternal, ThirtyInfoFounder};
 use roadmap_suggestion::{Status, Suggestion};
 use upvotes::UpvoteStorage;
@@ -368,6 +370,12 @@ pub fn delete_venture_capitalist_caller() -> std::string::String {
 #[candid_method(query)]
 fn get_icp_hubs_candid() -> Vec<IcpHub> {
     get_icp_hubs()
+}
+
+#[query]
+#[candid_method(query)]
+fn get_area_focus_expertise() -> Vec<Areas>{
+    get_areas()
 }
 
 #[query]

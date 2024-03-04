@@ -35,26 +35,13 @@ pub struct TeamMember {
     member_username: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq, Eq, Hash)]
-pub enum AreaOfFocus {
-    DeFi,
-    Tooling,
-    NFTs,
-    Infrastructure,
-    DAO,
-    Social,
-    Games,
-    Other(String),
-    MetaVerse,
-}
-
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct ThirtyInfoProject{
     project_name: Option<String>,
     project_logo: Option<Vec<u8>>,
     project_cover: Option<Vec<u8>>,
-    project_area_of_focus: Option<AreaOfFocus>,
+    project_area_of_focus: Option<String>,
     project_description: Option<String>,
     project_url: Option<String>,
     social_links: Option<SocialLinksInfo>,
