@@ -1,25 +1,3 @@
-type AreaOfExpertise = variant {
-  DAO;
-  Games;
-  DeFi;
-  NFTs;
-  Infrastructure;
-  Tooling;
-  Social;
-  MetaVerse;
-  Other : text;
-};
-type AreaOfFocus = variant {
-  DAO;
-  Games;
-  DeFi;
-  NFTs;
-  Infrastructure;
-  Tooling;
-  Social;
-  MetaVerse;
-  Other : text;
-};
 type ConnectionRequest = record {
   startup_id : principal;
   message : text;
@@ -98,7 +76,7 @@ type MentorProfile = record {
   preferred_icp_hub : opt text;
   specific_skills_or_technologies_expertise : opt text;
   specific_goals_objectives_as_a_mentor : opt text;
-  areas_of_expertise : opt AreaOfExpertise;
+  areas_of_expertise : opt text;
   preferred_startup_stage : opt text;
   languages_spoken : opt text;
   industry_achievements : opt text;
@@ -238,7 +216,7 @@ type ThirtyInfoFounder = record {
 type ThirtyInfoProject = record {
   project_description : opt text;
   project_url : opt text;
-  project_area_of_focus : opt AreaOfExpertise;
+  project_area_of_focus : opt text;
   project_cover : opt vec nat8;
   project_logo : opt vec nat8;
   project_name : opt text;
@@ -285,6 +263,7 @@ service : {
   delete_venture_capitalist_caller : () -> (text);
   get_all_mentors_candid : () -> (vec MentorProfile) query;
   get_all_roles : () -> (RolesResponse) query;
+  get_area_focus_expertise : () -> (vec Role) query;
   get_founder_info_caller : () -> (opt FounderInfo) query;
   get_hub_organizer_candid : () -> (opt UniqueHubs) query;
   get_hubs_principal_using_region : (text) -> (vec text) query;
