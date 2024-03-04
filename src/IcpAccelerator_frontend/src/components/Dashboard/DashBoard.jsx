@@ -16,7 +16,7 @@ import SubmitSection from "../Footer/SubmitSection";
 const DashBoard = () => {
   const actor = useSelector((currState) => currState.actors.actor);
 
-  console.log("actor in dashboard =>", actor);
+  // console.log("actor in dashboard =>", actor);
 
   useEffect(() => {
     const founderDataFetchHandler = async () => {
@@ -25,8 +25,6 @@ const DashBoard = () => {
     };
     founderDataFetchHandler();
   }, [actor]);
-
-  console.log("actor in dashboard =>", actor);
 
   const underline =
     "relative focus:after:content-[''] focus:after:block focus:after:w-full focus:after:h-[2px] focus:after:bg-blue-800 focus:after:absolute focus:after:left-0 focus:after:bottom-[-4px]";

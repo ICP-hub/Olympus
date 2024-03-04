@@ -15,7 +15,7 @@ import {
 import { useSelector } from "react-redux";
 import CompressedImage from "../../ImageCompressed/CompressedImage";
 import { useDispatch } from "react-redux";
-import { allHubHandlerRequest } from "../../Redux/Reducers/All_IcpHubReducer";
+import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_IcpHubReducer";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -312,7 +312,6 @@ const MentorRegistration = () => {
       //   data
       // );
 
-      
       const formattedData = Object.keys(data).reduce((acc, key) => {
         acc[key] = Array.isArray(data[key]) ? data[key][0] : data[key];
         return acc;
@@ -351,7 +350,6 @@ const MentorRegistration = () => {
       console.log(error.message);
     }
   };
-
 
   const onSubmit = async (data) => {
     // console.log("data >>>>", data);

@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import internetIdentity from "../../assets/WalletLogo/IcpWallet1.png";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { logoutStart } from "../components/Redux/Reducers/InternetIdentityReducer";
-import { changeHasSelectedRoleHandler } from "../components/Redux/Reducers/userRoleReducer";
+import { logoutStart } from "../components/StateManagement/Redux/Reducers/InternetIdentityReducer";
+import { changeHasSelectedRoleHandler } from "../components/StateManagement/Redux/Reducers/userRoleReducer";
 import { useNavigate } from "react-router-dom";
-import { mentorRegisteredHandlerRequest } from "../components/Redux/Reducers/mentorRegisteredData";
-import { founderRegisteredHandlerRequest } from "../components/Redux/Reducers/founderRegisteredData";
-import { hubRegisteredHandlerRequest } from "../components/Redux/Reducers/hubRegisteredData";
-import { investorRegisteredHandlerRequest } from "../components/Redux/Reducers/investorRegisteredData";
+import { mentorRegisteredHandlerRequest } from "../components/StateManagement/Redux/Reducers/mentorRegisteredData";
+import { founderRegisteredHandlerRequest } from "../components/StateManagement/Redux/Reducers/founderRegisteredData";
+import { hubRegisteredHandlerRequest } from "../components/StateManagement/Redux/Reducers/hubRegisteredData";
+import { investorRegisteredHandlerRequest } from "../components/StateManagement/Redux/Reducers/investorRegisteredData";
+import { useAuth } from "../components/StateManagement/useContext/useAuth";
 
 const LogoutModal = () => {
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
@@ -17,9 +18,11 @@ const LogoutModal = () => {
   const specificRole = useSelector(
     (currState) => currState.current.specificRole
   );
-  
-  console.log('specific role in logout handler => ', specificRole )
-  
+
+  const { logout } = useAuth();
+
+  // console.log('specific role in logout handler => ', specificRole )
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isDropdownOpen, setDropdownOpen] = useState(false);
@@ -28,35 +31,39 @@ const LogoutModal = () => {
     setDropdownOpen(!isDropdownOpen);
   };
 
-  const logoutHandler = () => {
+  const logoutHandler = async () => {
     dispatch(changeHasSelectedRoleHandler(false));
+    await logout();
     dispatch(logoutStart());
+    // navigate('/')
+    // setDropdownOpen(false)
   };
 
-  const profileHandler =(specificRole)=>{
+  const profileHandler = (specificRole) => {
+    // console.log('specific role inside profilehandler logout component ',specificRole);
 
-      console.log('specific role inside profilehandler logout component ',specificRole);
-
-      switch (specificRole) {
-        case "Project":
-          dispatch(founderRegisteredHandlerRequest())
-          break;
-        case "Mentor":
-          dispatch(mentorRegisteredHandlerRequest())
-          break;
-        case "ICPHubOrganizer":
-          dispatch(hubRegisteredHandlerRequest())
-          break;
-        case "VC":
-          dispatch(investorRegisteredHandlerRequest())
-          break;
-        default:
-          return null;
-      }
-      navigate('/profile')
-  }
-
-
+    switch (specificRole) {
+      case "Project":
+        dispatch(founderRegisteredHandlerRequest());
+        setDropdownOpen(false);
+        break;
+      case "Mentor":
+        dispatch(mentorRegisteredHandlerRequest());
+        setDropdownOpen(false);
+        break;
+      case "ICPHubOrganizer":
+        dispatch(hubRegisteredHandlerRequest());
+        setDropdownOpen(false);
+        break;
+      case "VC":
+        dispatch(investorRegisteredHandlerRequest());
+        setDropdownOpen(false);
+        break;
+      default:
+        return null;
+    }
+    navigate("/profile");
+  };
 
   return (
     <div className="relative z-50 justify-end flex rounded-full">
@@ -131,20 +138,16 @@ const LogoutModal = () => {
             </ul>
           )}
           <div className="text-sm text-black font-bold">
-              <p
-            onClick={()=> profileHandler(specificRole)}
-            className="py-2 px-4 hover:bg-gray-200"
-          >
-            My Profile
-          </p>
-          <p
-            className="py-2 px-4 hover:bg-gray-200"
-            onClick={logoutHandler}
-          >
-            Sign out
-          </p>
-            </div>
-        
+            <p
+              onClick={() => profileHandler(specificRole)}
+              className="py-2 px-4 hover:bg-gray-200"
+            >
+              My Profile
+            </p>
+            <p className="py-2 px-4 hover:bg-gray-200" onClick={logoutHandler}>
+              Sign out
+            </p>
+          </div>
         </div>
       )}
     </div>
