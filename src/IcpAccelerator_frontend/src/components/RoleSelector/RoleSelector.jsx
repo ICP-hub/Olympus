@@ -60,14 +60,6 @@ const RoleSelector = React.memo(() => {
                 <h1 className="text-white font-bold pt-6 text-[14.5px] sm:text-[18px] md:text-[20.8px] lg:text-[23px] xl:text-[25.5px] 2xl:text-[26px]">
                   Select your role
                 </h1>
-      <section className="bg-gray-100 font-fontUse">
-        <div className="flex justify-center py-16">
-          <div className=" bg-indigo-300 rounded-xl flex flex-row border-8 border-blue-100 w-2/3 h-fit">
-            <div className="flex-col flex relative">
-              <div className="p-12 z-20 relative">
-                <h1 className="text-white font-bold pt-6 text-[14.5px] sm:text-[18px] md:text-[20.8px] lg:text-[23px] xl:text-[25.5px] 2xl:text-[26px]">
-                  Select your role
-                </h1>
 
                 <h2 className="mt-4 text-white mb-6 text-[13px] sm:text-[13.5px] md:text-[16.3px] lg:text-[18.5px] xl:text-[21px] 2xl:text-[21.5px] overflow-hidden line-clamp-3">
                   World’s 1st fully On-chain, Decentralised, Permissionless,
