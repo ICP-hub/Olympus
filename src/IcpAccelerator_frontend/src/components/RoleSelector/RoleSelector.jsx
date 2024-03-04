@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import astro1 from "../../../assets/images/astro1.png";
 import Footer from "../Footer/Footer";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector,shallowEqual} from "react-redux";
 import { rolesHandlerRequest } from "../StateManagement/Redux/Reducers/RoleReducer";
 import { useNavigate } from "react-router-dom";
 import { changeHasSelectedRoleHandler } from "../StateManagement/Redux/Reducers/userRoleReducer";

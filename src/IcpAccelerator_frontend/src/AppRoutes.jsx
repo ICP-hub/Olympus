@@ -21,7 +21,7 @@ const Error404 = lazy(() => import("./components/Error404/Error404"));
 
 const AppRoutes = () => {
   const actor = useSelector((currState) => currState.actors.actor);
-  // const allRoles = useSelector((currState)=> currState.role.roles)
+   const allRoles = useSelector((currState)=> currState.role.roles)
   const  specificRole = useSelector((state) => state.current.specificRole);
    const isAuthenticated = useSelector((currState)=> currState.internet.isAuthenticated)
 
@@ -59,7 +59,7 @@ const AppRoutes = () => {
           <Route key={index} path={route.path} element={route.element} />
         ))}
         {protectedRoutes.map((route, index) => {
-         const isAuthorized = route.allowedRoles.includes(specificRole);
+         const isAuthorized = route?.allowedRoles?.includes(specificRole);
           return (
             <Route
               key={index}
