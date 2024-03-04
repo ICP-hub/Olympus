@@ -42,10 +42,10 @@ const HomeSection3 = () => {
           <div className="bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-[30px]  sm:text-[34px] md1:text-[45px] md2:text-[50px] font-black font-fontUse dxl:text-[64px] text-center">
             Our comprehensive offerings
           </div>
-          <div className="flex justify-center mt-8 w-full">
+          <div className="flex justify-center dxl1:mt-8 my-8 w-full">
             <img className="absolute h-[1300px] w-fit" src={Rocket} />
             <div className="w-full">
-              <div className="w-full float-left">
+              <div className="dxl1:w-full float-left">
                 <div className="w-fit h-fit top-[1102px] left-[310px] rounded-lg shadow-custom p-8 bg-transparent  drop-shadow-2xl sticky z-10 backdrop-blur-sm">
                   <div className="bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-4xl px] font-extrabold uppercase w-[255px] mb-3 truncate text-wrap font-fontUse text-start">
                     Token Economy
@@ -56,7 +56,7 @@ const HomeSection3 = () => {
                   </div>
                 </div>
               </div>
-              <div className="w-full float-right right-text relative -left-[80px] -top-[100px]">
+              <div className="w-full float-right right-text relative dxl1:-left-[80px] dxl1:-top-[100px]">
                 <div className="w-fit h-fit rounded-lg shadow-custom p-8 bg-transparent  drop-shadow-2xl sticky z-10 backdrop-blur-sm">
                   <div className=" bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-4xl px] font-extrabold uppercase w-[455px] mb-3 truncate text-wrap font-fontUse text-start">
                     Smart Contract and Security
@@ -67,7 +67,7 @@ const HomeSection3 = () => {
                   </div>
                 </div>
               </div>
-              <div className="w-full float-left -top-[130px] relative">
+              <div className="dxl1:w-full float-left dxl1:-top-[130px] relative">
                 <div className="w-fit h-fit left-[180px] rounded-lg shadow-custom p-8 bg-transparent  drop-shadow-2xl sticky z-10 backdrop-blur-sm">
                   <div className="bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-4xl px] font-extrabold uppercase w-[355px] mb-3 truncate text-wrap font-fontUse text-start">
                     Incorporation and Legal
@@ -79,7 +79,7 @@ const HomeSection3 = () => {
                   </div>
                 </div>
               </div>
-              <div className="w-full float-right right-text relative -left-[80px] -top-[200px]">
+              <div className="w-full float-right right-text relative dxl1:-left-[80px] dxl1:-top-[200px]">
                 <div className="w-fit h-fit rounded-lg shadow-custom p-8 bg-transparent  drop-shadow-2xl sticky z-10 backdrop-blur-sm">
                   <div className=" bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-4xl px] font-extrabold uppercase w-[455px] mb-3 truncate text-wrap font-fontUse text-start">
                     Fundraising
@@ -90,7 +90,7 @@ const HomeSection3 = () => {
                   </div>
                 </div>
               </div>
-              <div className="w-full float-left -top-[250px] relative">
+              <div className="dxl1:w-full float-left dxl1:-top-[250px] relative">
                 <div className="w-fit h-fit  left-[185px] rounded-lg shadow-custom p-8 bg-transparent  drop-shadow-2xl sticky z-10 backdrop-blur-sm">
                   <div className="bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-4xl px] font-extrabold uppercase w-[255px] mb-3 truncate text-wrap font-fontUse text-start">
                     Marketing and Community
@@ -101,7 +101,7 @@ const HomeSection3 = () => {
                   </div>
                 </div>
               </div>
-              <div className="w-full float-right right-text relative -left-[100px] -top-[350px]">
+              <div className="w-full float-right right-text relative dxl1:-left-[100px] dxl1:-top-[350px]">
                 <div className="w-fit h-fit rounded-lg shadow-custom p-8 bg-transparent  drop-shadow-2xl sticky z-10 backdrop-blur-sm">
                   <div className=" bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-4xl px] font-extrabold uppercase w-[455px] mb-3 truncate text-wrap font-fontUse text-start">
                     Launching Your Token
@@ -120,10 +120,10 @@ const HomeSection3 = () => {
           <div className="bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-[30px]  sm:text-[34px] md1:text-[45px] md2:text-[50px] font-black font-fontUse dxl:text-[64px]">
             Our comprehensive offerings
           </div>
-          <div className="md:flex flex-row justify-between items-start p-8">
+          <div className="md:flex flex-row justify-between items-start p-4 dxs:p-8">
             <div className="md:w-1/2 space-y-12 z-10 w-full">
               <div className="flex flex-col space-y-8">
-                <div className="w-full h-fit rounded-lg shadow-custom p-8 bg-transparent  drop-shadow-2xl sticky z-10 backdrop-blur-sm">
+                <div className="w-full h-fit rounded-lg shadow-custom p-4 dxs:p-8 bg-transparent  drop-shadow-2xl sticky z-10 backdrop-blur-sm">
                   <div className="bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-2xl font-extrabold uppercase w-fit mb-3 truncate text-wrap font-fontUse text-start">
                     Token Economy
                   </div>
@@ -132,7 +132,7 @@ const HomeSection3 = () => {
                     and modelling.
                   </div>
                 </div>
-                <div className="w-full h-fit rounded-lg shadow-custom p-8 bg-transparent  drop-shadow-2xl sticky z-10 backdrop-blur-sm">
+                <div className="w-full h-fit rounded-lg shadow-custom p-4 dxs:p-8 bg-transparent  drop-shadow-2xl sticky z-10 backdrop-blur-sm">
                   <div className=" bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-2xl font-extrabold uppercase w-fit  mb-3 truncate text-wrap font-fontUse text-start">
                     Smart Contract and Security
                   </div>
@@ -141,7 +141,7 @@ const HomeSection3 = () => {
                     single hack can destroy your venture.
                   </div>
                 </div>
-                <div className="w-full h-fit rounded-lg shadow-custom p-8 bg-transparent  drop-shadow-2xl sticky z-10 backdrop-blur-sm">
+                <div className="w-full h-fit rounded-lg shadow-custom p-4 dxs:p-8 bg-transparent  drop-shadow-2xl sticky z-10 backdrop-blur-sm">
                   <div className="bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-2xl font-extrabold uppercase w-fit  mb-3 truncate text-wrap font-fontUse text-start sxs:line-clamp-1">
                     Incorporation and Legal
                   </div>
@@ -151,7 +151,7 @@ const HomeSection3 = () => {
                     you need clarity.
                   </div>
                 </div>
-                <div className="w-full h-fit rounded-lg shadow-custom p-8 bg-transparent  drop-shadow-2xl sticky z-10 backdrop-blur-sm">
+                <div className="w-full h-fit rounded-lg shadow-custom p-4 dxs:p-8 bg-transparent  drop-shadow-2xl sticky z-10 backdrop-blur-sm">
                   <div className=" bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-2xl  font-extrabold uppercase w-fit  mb-3 truncate text-wrap font-fontUse text-start">
                     Fundraising
                   </div>
@@ -160,7 +160,7 @@ const HomeSection3 = () => {
                     to demo day.
                   </div>
                 </div>
-                <div className="w-full h-fit rounded-lg shadow-custom p-8 bg-transparent  drop-shadow-2xl sticky z-10 backdrop-blur-sm">
+                <div className="w-full h-fit rounded-lg shadow-custom p-4 dxs:p-8 bg-transparent  drop-shadow-2xl sticky z-10 backdrop-blur-sm">
                   <div className="bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-2xl font-extrabold uppercase w-fit  mb-3 truncate text-wrap font-fontUse text-start">
                     Marketing and Community
                   </div>
@@ -169,7 +169,7 @@ const HomeSection3 = () => {
                     community, no party.
                   </div>
                 </div>
-                <div className="w-full h-fit rounded-lg shadow-custom p-8 bg-transparent  drop-shadow-2xl sticky z-10 backdrop-blur-sm">
+                <div className="w-full h-fit rounded-lg shadow-custom p-4 dxs:p-8 bg-transparent  drop-shadow-2xl sticky z-10 backdrop-blur-sm">
                   <div className=" bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-2xl font-extrabold uppercase w-fit  mb-3 truncate text-wrap font-fontUse text-start">
                     Launching Your Token
                   </div>
@@ -194,10 +194,10 @@ const HomeSection3 = () => {
 
       <div className="mb-16">
         
-        <div className="w-full mb-9 bg-clip-text text-transparent bg-gradient-to-r from-violet-900 to-sky-600  text-[42px] font-fontUse font-extrabold md:text-center dxl:text-start">
+        <div className="w-full mb-9 px-4 bg-clip-text text-transparent bg-gradient-to-r from-violet-900 to-sky-600 text-2xl dxs:text-4xl font-fontUse font-extrabold md:text-center dxl:text-start">
           Ready To Get Accelerated ?<br /> Join Our Ecosystem Today !
         </div>
-        <div className="text-gray-600 text-[36px] font-fontUse font-normal mb-6 w-full md:text-center dxl:text-start">
+        <div className="text-gray-600 px-4 text-2xl dxs:text-4xl font-fontUse font-normal mb-6 w-full md:text-center dxl:text-start">
           Support | Be a part of the Symbiote Ecosystem
         </div>
 

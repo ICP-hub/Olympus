@@ -12,8 +12,17 @@ const AllDetailsForm = lazy(() =>
 const ProjectDetails = lazy(() =>
   import("./components/Project/ProjectDetails")
 );
+const AllDetailsForm = lazy(() =>
+  import("./components/Registration/AllDetailsForm")
+);
+const ProjectDetails = lazy(() =>
+  import("./components/Project/ProjectDetails")
+);
 const Home = lazy(() => import("./components/Home/Home"));
 const UserProfile = lazy(() => import("./components/UserProfile/UserProfile"));
+const RoleSelector = lazy(() =>
+  import("./components/RoleSelector/RoleSelector")
+);
 const RoleSelector = lazy(() =>
   import("./components/RoleSelector/RoleSelector")
 );
@@ -85,9 +94,14 @@ const AppRoutes = () => {
   ];
 
   const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(userRoleHandler());
+  }, [actor, dispatch]);
+  useEffect(() => {
     dispatch(rolesHandlerRequest());
+  }, [actor, dispatch]);
   }, [actor, dispatch]);
 
   return (
@@ -109,4 +123,6 @@ const AppRoutes = () => {
     </Suspense>
   );
 };
+export default AppRoutes;
+
 export default AppRoutes;

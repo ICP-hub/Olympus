@@ -9,6 +9,18 @@ extern crate serde_cbor;
 use std::cell::RefCell;
 use crate::trie::EXPERTISE_TRIE;
 
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq, Eq, Hash)]
+pub enum AreaOfExpertise {
+    DeFi,
+    Tooling,
+    NFTs,
+    Infrastructure,
+    DAO,
+    Social,
+    Games,
+    Other(String),
+    MetaVerse,
+}
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, Default)]
 pub struct MentorProfile {
@@ -21,7 +33,7 @@ pub struct MentorProfile {
     pub years_of_experience_mentoring_startups: Option<i32>,
     pub past_work_records_links: Option<String>,
     pub motivation_for_becoming_a_mentor: Option<String>,
-    pub areas_of_expertise: Option<String>,
+    pub areas_of_expertise: Option<AreaOfExpertise>,
     pub preferred_icp_hub: Option<String>,
     pub availability_and_time_commitment: Option<String>,
     pub preferred_startup_stage: Option<String>,
@@ -66,10 +78,10 @@ pub async fn register_mentor(profile: MentorProfile) -> String{
         
     //     ic_cdk::println!("This Principal is already registered");
     //     return "This Principal is already registered.".to_string()}
-    let profile_for_trie = profile.clone();
+    let profile_for_pushing = profile.clone();
 
     let mentor_internal = MentorInternal {
-        profile,
+        profile: profile_for_pushing,
         uid: uid.clone(),
         active : true
     };
@@ -78,14 +90,11 @@ pub async fn register_mentor(profile: MentorProfile) -> String{
         registry.borrow_mut().insert(caller, mentor_internal);
     });
 
-    if let Some(expertise) = profile_for_trie.areas_of_expertise {
-        let expertise_keywords = expertise.split(',').map(|s| s.trim());
-        for keyword in expertise_keywords {
-            EXPERTISE_TRIE.with(|trie| {
-                trie.borrow().insert_with_id(keyword, uid.clone());
-            });
-        }
-        println!("Expertise are {}", expertise)
+    if let Some(expertise) = profile.areas_of_expertise {
+        let keyword = crate::trie::expertise_to_str(&expertise);
+        EXPERTISE_TRIE.with(|trie| {
+            trie.borrow_mut().insert(&keyword, caller);
+        });
     }
 
     format!("Mentor registered successfully with ID: {}", uid)
@@ -276,26 +285,22 @@ pub fn make_active_inactive(p_id : Principal)-> String{
     })
 }
 
-pub fn find_mentors_by_expertise(keyword: &str) -> Vec<MentorProfile> {
-    let mut results = Vec::new();
+pub fn find_mentors_by_expertise(expertise_keyword: &str) -> Vec<MentorProfile> {
+    let keyword = expertise_keyword; 
+    let mentor_principals = EXPERTISE_TRIE.with(|trie| trie.borrow().search(keyword));
 
-    EXPERTISE_TRIE.with(|trie| {
-        let ids = trie.borrow().search(keyword);
-
-        MENTOR_REGISTRY.with(|registry| {
-            let registry_borrow = registry.borrow();
-
-            for uid_str in ids {
-                if let Ok(principal) = uid_str.parse::<Principal>() {
-                    if let Some(mentor_internal) = registry_borrow.get(&principal) {
-                        results.push(mentor_internal.profile.clone());
-                    }
-                }
+    let mut mentor_profiles = Vec::new();
+    MENTOR_REGISTRY.with(|registry| {
+        let registry = registry.borrow();
+        for principal in mentor_principals {
+            if let Some(mentor_internal) = registry.get(&principal) {
+                mentor_profiles.push(mentor_internal.profile.clone());
             }
-        });
+        }
     });
 
-    results
+    mentor_profiles
 }
+
 
 
