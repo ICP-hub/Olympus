@@ -94,6 +94,7 @@ type Notification = record {
   read : bool;
   notification_type : NotificationType;
 };
+type NotificationProject = record { message : text; project_id : text };
 type NotificationType = variant {
   ConnectionAcknowledgement : record {
     social_handles : opt text;
@@ -216,6 +217,7 @@ type ThirtyInfoFounder = record {
 type ThirtyInfoProject = record {
   project_description : opt text;
   project_url : opt text;
+  preferred_icp_hub : opt text;
   project_area_of_focus : opt text;
   project_cover : opt vec nat8;
   project_logo : opt vec nat8;
@@ -279,6 +281,7 @@ service : {
   get_mentor_by_expertise : (text) -> (vec MentorProfile) query;
   get_mentor_candid : () -> (opt MentorProfile) query;
   get_my_id : () -> (principal) query;
+  get_notifications_for_hubs : () -> (vec NotificationProject) query;
   get_popular_listed_project : () -> (vec ProjectInfoInternal) query;
   get_popular_live_proposal : () -> (vec ProjectInfoInternal) query;
   get_project_requests : (text) -> (vec Request) query;
@@ -314,5 +317,6 @@ service : {
   update_team_member : (text, TeamMember) -> (text);
   update_venture_capitalist_caller : (VentureCapitalist) -> (text);
   upvote_project : (text) -> (text);
+  verify_project_under_your_hub : (text) -> (text);
   view_notifications_candid : (principal) -> (vec Notification) query;
 }

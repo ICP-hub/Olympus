@@ -36,7 +36,7 @@ use rbac::{assign_roles_to_principal, has_required_role, UserRole};
 
 use candid::Principal;
 use ic_cdk_macros::{pre_upgrade, query, update};
-use project_registration::{DocsInfo, ProjectInfo, TeamMember, ProjectInfoInternal, ThirtyInfoProject};
+use project_registration::{DocsInfo, ProjectInfo, TeamMember, ProjectInfoInternal, ThirtyInfoProject, NotificationProject};
 use register_user::{FounderInfo, FounderInfoInternal, ThirtyInfoFounder};
 use roadmap_suggestion::{Status, Suggestion};
 use upvotes::UpvoteStorage;
@@ -172,6 +172,19 @@ fn update_team_member(project_id: String, team_member: TeamMember) -> String {
 #[candid_method(update)]
 fn delete_project(id: String) -> std::string::String {
     project_registration::delete_project(id)
+}
+
+#[update]
+#[candid_method(update)]
+fn verify_project_under_your_hub(project_id: String)->String{
+    let hub_principal = caller();
+    project_registration::verify_project(hub_principal, &project_id)
+}
+
+#[query]
+#[candid_method(query)]
+fn get_notifications_for_hubs()->Vec<NotificationProject>{
+    project_registration::get_notifications_for_caller()
 }
 
 #[update]
