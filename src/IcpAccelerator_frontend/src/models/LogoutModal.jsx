@@ -138,12 +138,14 @@ const LogoutModal = () => {
             </ul>
           )}
           <div className="text-sm text-black font-bold">
-            <p
-              onClick={() => profileHandler(specificRole)}
-              className="py-2 px-4 hover:bg-gray-200"
-            >
-              My Profile
-            </p>
+            {specificRole && (
+              <p
+                onClick={() => profileHandler(specificRole)}
+                className="py-2 px-4 hover:bg-gray-200"
+              >
+                My Profile
+              </p>
+            )}
             <p className="py-2 px-4 hover:bg-gray-200" onClick={logoutHandler}>
               Sign out
             </p>
