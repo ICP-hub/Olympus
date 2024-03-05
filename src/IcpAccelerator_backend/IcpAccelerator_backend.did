@@ -116,11 +116,9 @@ type ProjectInfoInternal = record {
 type Rating = record {
   sub_level : SubLevel;
   level_name : MainLevel;
-  rating_type : RatingType;
   rating : float64;
   project_id : text;
 };
-type RatingType = variant { Own; Peer; Mentor };
 type Request = record { mentor : opt MentorInternal; "text" : text };
 type Role = record { id : int32; name : text };
 type RolesResponse = record { roles : vec Role };
@@ -177,7 +175,6 @@ type SocialLinksInfo = record {
   twitter : opt text;
   facebook : opt text;
 };
-type Status = variant { Planned; NotRequired; InProgress; Completed };
 type SubLevel = variant {
   All;
   SubLevel0;
@@ -193,9 +190,10 @@ type SubLevel = variant {
 };
 type Suggestion = record {
   id : nat64;
-  status : Status;
+  status : text;
   content : text;
   parent_id : opt nat64;
+  project_id : text;
 };
 type TeamMember = record {
   member_image : opt vec nat8;
@@ -256,7 +254,7 @@ type VentureCapitalist = record {
   technological_focus : opt text;
 };
 service : {
-  add_suggestion_caller : (text) -> (nat64, Status);
+  add_suggestion_caller : (text, text) -> (nat64, text);
   calculate_average_api : (text) -> (opt float64) query;
   create_project : (ThirtyInfoProject) -> (text);
   delete_founder_caller : () -> (text);
@@ -289,9 +287,9 @@ service : {
   get_project_using_id : (text) -> (opt ProjectInfoInternal) query;
   get_projects_for_caller : () -> (vec ProjectInfo) query;
   get_role_from_p_id : () -> (opt vec UserRole) query;
-  get_suggestions_by_parent_id_caller : (nat64) -> (vec Suggestion) query;
-  get_suggestions_by_status_caller : (Status) -> (vec Suggestion) query;
-  get_total_suggestions : () -> (nat64) query;
+  get_suggestions_by_parent_id_caller : (text, nat64) -> (vec Suggestion) query;
+  get_suggestions_by_status_caller : (text, text) -> (vec Suggestion) query;
+  get_total_suggestions : (text) -> (nat64) query;
   get_user_likes : (text) -> (opt LikeRecord) query;
   get_venture_capitalist_info : () -> (opt VentureCapitalist) query;
   like_project : (text) -> (text);
@@ -303,7 +301,7 @@ service : {
   register_hub_organizer_candid : (HubOrganizerRegistration) -> (text);
   register_mentor_candid : (MentorProfile) -> (text);
   register_venture_capitalist_caller : (VentureCapitalist) -> (text);
-  reply_to_suggestion_caller : (nat64, text) -> (nat64, Status);
+  reply_to_suggestion_caller : (nat64, text, text) -> (nat64, text);
   respond_to_connection_request_candid : (principal, principal, bool) -> ();
   send_connection_request : (principal, text) -> ();
   send_request_as_mentor : (text, text) -> (text);
@@ -313,7 +311,7 @@ service : {
   update_project : (text, ProjectInfo) -> (text);
   update_project_docs : (text, DocsInfo) -> (text);
   update_rating_api : (vec Rating) -> ();
-  update_suggestion_status_caller : (nat64, Status) -> ();
+  update_suggestion_status_caller : (nat64, text, text) -> ();
   update_team_member : (text, TeamMember) -> (text);
   update_venture_capitalist_caller : (VentureCapitalist) -> (text);
   upvote_project : (text) -> (text);
