@@ -5,27 +5,22 @@ use candid::CandidType;
 use serde_cbor::{to_vec, from_slice};
 use ic_cdk::api::stable::{StableWriter, StableReader};
 
-
-#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq, Eq, Hash)]
-pub enum Status {
-    Planned,
-    NotRequired,
-    Completed,
-    InProgress,
-}
+const PLANNED: &str = "Planned";
+const NOT_REQUIRED: &str = "NotRequired";
+const COMPLETED: &str = "Completed";
+const IN_PROGRESS: &str = "InProgress";
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq, Eq, Hash)]
 pub struct Suggestion {
     id: u64,
     content: String,
-    status: Status,
+    status: String,
+    project_id: String,
     parent_id: Option<u64>,
 }
 
-pub type ApplicationDetails = HashMap<Status, Vec<Suggestion>>;
-
 thread_local! {
-    pub static SUGGESTIONS_BY_STATUS: RefCell<ApplicationDetails> = RefCell::new(ApplicationDetails::new());
+    static SUGGESTIONS_BY_STATUS: RefCell<HashMap<String, HashMap<String, Vec<Suggestion>>>> = RefCell::new(HashMap::new());
 }
 
 static mut NEXT_ID: u64 = 1;
@@ -42,31 +37,26 @@ pub fn pre_upgrade() {
 
 
 #[update]
-pub fn add_suggestion(content: String) -> (u64, Status) {
-    let status = Status::Planned; 
-    let cloned_status = status.clone(); 
+pub fn add_suggestion(content: String, project_id: String) -> (u64, String) {
+    let status = "Planned".to_string(); 
 
-    let (id, status) = SUGGESTIONS_BY_STATUS.with(|s| {
-        let mut suggestions = s.borrow_mut();
-        let id = suggestions
-            .values()
-            .flat_map(|v| v.iter())
-            .map(|s| s.id)
-            .max()
-            .unwrap_or(0)
-            + 1;
+    let id = unsafe {
+        NEXT_ID += 1;
+        NEXT_ID
+    };
 
-        suggestions
-            .entry(cloned_status.clone())
-            .or_insert_with(Vec::new)
-            .push(Suggestion {
-                id,
-                content: content.clone(), 
-                status: cloned_status.clone(),
-                parent_id: None,
-            });
+    SUGGESTIONS_BY_STATUS.with(|s| {
+        let mut app_details = s.borrow_mut();
+        let project_suggestions = app_details.entry(project_id.clone()).or_insert_with(HashMap::new);
+        let status_suggestions = project_suggestions.entry(status.clone()).or_insert_with(Vec::new);
 
-        (id, cloned_status)
+        status_suggestions.push(Suggestion {
+            id,
+            content,
+            status: status.clone(),
+            project_id,
+            parent_id: None,
+        });
     });
 
     (id, status)
@@ -75,31 +65,39 @@ pub fn add_suggestion(content: String) -> (u64, Status) {
 
 
 #[update]
-pub fn update_suggestion_status(id: u64, new_status: Status) {
+pub fn update_suggestion_status(id: u64, new_status: String, project_id: String) {
     SUGGESTIONS_BY_STATUS.with(|s| {
-        let mut suggestions = s.borrow_mut();
+        let mut app_details = s.borrow_mut();
+        let project_suggestions = app_details.get_mut(&project_id);
 
-        let (current_status, suggestion_index) = suggestions.iter()
-            .find_map(|(status, vec)| {
-                vec.iter().position(|s| s.id == id).map(|index| (status.clone(), index))
-            })
-            .unwrap(); 
+        if let Some(project_suggestions) = project_suggestions {
+            let mut found = false;
+            let mut old_status = String::new();
+            let mut suggestion_index = 0;
 
-        if &current_status == &new_status {
-            if let Some(vec) = suggestions.get_mut(&current_status) {
-                if let Some(suggestion) = vec.get_mut(suggestion_index) {
-                    suggestion.status = new_status; 
+            for (status, suggestions) in project_suggestions.iter() {
+                if let Some(index) = suggestions.iter().position(|s| s.id == id) {
+                    found = true;
+                    old_status = status.clone();
+                    suggestion_index = index;
+                    break;
                 }
             }
-            return;
-        }
 
-        if let Some(suggestion) = suggestions.get_mut(&current_status).and_then(|vec| vec.get_mut(suggestion_index)) {
-            if &suggestion.status != &new_status {
-                let updated_suggestion = suggestion.clone();
-                suggestions.entry(new_status).or_insert_with(Vec::new).push(updated_suggestion);
-                suggestions.get_mut(&current_status).unwrap().remove(suggestion_index);
+            if found {
+                let suggestion = project_suggestions.get_mut(&old_status).unwrap().remove(suggestion_index);
+
+                let mut updated_suggestion = suggestion.clone();
+                updated_suggestion.status = new_status.clone();
+
+                project_suggestions.entry(new_status)
+                    .or_insert_with(Vec::new)
+                    .push(updated_suggestion);
+            } else {
+                eprintln!("Suggestion with id {} not found in project {}", id, project_id);
             }
+        } else {
+            eprintln!("Project with id {} not found", project_id);
         }
     });
 }
@@ -107,80 +105,72 @@ pub fn update_suggestion_status(id: u64, new_status: Status) {
 
 
 #[query]
-pub fn get_suggestions_by_status(status: Status) -> Vec<Suggestion> {
+pub fn get_suggestions_by_status(project_id: String, status: String) -> Vec<Suggestion> {
     SUGGESTIONS_BY_STATUS.with(|s| {
-        let suggestions = s.borrow();
-        suggestions.get(&status).cloned().unwrap_or_default()
+        let app_details = s.borrow();
+        app_details.get(&project_id) 
+            .and_then(|project_suggestions| project_suggestions.get(&status)) 
+            .cloned() 
+            .unwrap_or_default() 
     })
 }
 
 #[update]
-pub fn reply_to_suggestion(parent_id: u64, reply_content: String) -> (u64, Status) {
-    let reply_status = Status::Planned;
-    let cloned_reply_status = reply_status.clone();
+pub fn reply_to_suggestion(parent_id: u64, reply_content: String, project_id: String) -> (u64, String) {
+    let reply_status = PLANNED.to_string();
 
-    let (id, status) = SUGGESTIONS_BY_STATUS.with(|s| {
-        let mut suggestions = s.borrow_mut();
-        let id = suggestions
-            .values()
-            .flat_map(|v| v.iter())
-            .map(|s| s.id)
-            .max()
-            .unwrap_or(0)
-            + 1;
+    let id = SUGGESTIONS_BY_STATUS.with(|s| {
+        let mut app_details = s.borrow_mut();
 
-        suggestions
-            .entry(cloned_reply_status.clone())
+        let next_id = unsafe {
+            NEXT_ID += 1;
+            NEXT_ID
+        };
+
+        let project_suggestions = app_details.entry(project_id.clone()).or_insert_with(HashMap::new);
+
+        project_suggestions.entry(reply_status.clone())
             .or_insert_with(Vec::new)
             .push(Suggestion {
-                id,
-                content: reply_content.clone(),
-                status: cloned_reply_status.clone(),
-                parent_id: Some(parent_id), // Set the parent ID
+                id: next_id,
+                content: reply_content,
+                status: reply_status.clone(),
+                project_id: project_id,
+                parent_id: Some(parent_id), 
             });
 
-        (id, cloned_reply_status)
+        next_id
     });
 
-    (id, status)
+    (id, reply_status)
 }
 
 #[query]
-pub fn get_suggestions_by_parent_id(parent_id: u64) -> Vec<Suggestion> {
+pub fn get_suggestions_by_parent_id(project_id: String, parent_id: u64) -> Vec<Suggestion> {
     SUGGESTIONS_BY_STATUS.with(|s| {
-        let suggestions = s.borrow();
-        suggestions
-            .values() 
-            .flat_map(|vec| vec.iter()) 
-            .filter(|suggestion| suggestion.parent_id == Some(parent_id)) 
-            .cloned() 
-            .collect() 
-    })
-}
-
-#[query]
-pub fn get_suggestions_grouped_by_status() -> ApplicationDetails {
-    SUGGESTIONS_BY_STATUS.with(|s| {
-        let suggestions = s.borrow();
-
-        let mut grouped_suggestions: ApplicationDetails = HashMap::new();
-
-        for (status, vec) in suggestions.iter() {
-            let cloned_status = status.clone();
-            let filtered_vec: Vec<Suggestion> = vec.iter().cloned().filter(|suggestion| suggestion.status == cloned_status).collect();
-            grouped_suggestions.insert(cloned_status, filtered_vec);
+        let app_details = s.borrow();
+        if let Some(project_suggestions) = app_details.get(&project_id) {
+            project_suggestions.values()
+                .flat_map(|suggestions| suggestions.iter())
+                .filter(|suggestion| suggestion.parent_id == Some(parent_id))
+                .cloned()
+                .collect()
+        } else {
+            Vec::new() 
         }
-
-        grouped_suggestions
     })
 }
 
 #[query]
-pub fn get_total_suggestions_count() -> u64 {
+pub fn get_total_suggestions_count(project_id: String) -> u64 {
     SUGGESTIONS_BY_STATUS.with(|s| {
-        s.borrow()
-         .values() 
-         .map(|vec| vec.len() as u64) 
-         .sum() 
+        let app_details = s.borrow();
+        app_details.get(&project_id)
+            .map(|project_suggestions| {
+                project_suggestions.values()
+                    .map(|suggestions| suggestions.len() as u64)
+                    .sum()
+            })
+            .unwrap_or(0)
     })
 }
