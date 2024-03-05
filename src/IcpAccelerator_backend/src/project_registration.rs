@@ -391,14 +391,11 @@ pub fn get_notifications_for_caller() -> Vec<NotificationProject> {
 fn find_project_owner_principal(project_id: &str) -> Option<Principal> {
     APPLICATION_FORM.with(|app_details| {
         let app_details = app_details.borrow();
-        // Iterate over the HashMap to find the project by ID
         for (owner_principal, projects) in app_details.iter() {
             if projects.iter().any(|p| p.uid == project_id) {
-                // Return the owner's Principal if the project is found
                 return Some(owner_principal.clone());
             }
         }
-        // Return None if the project cannot be found
         None
     })
 }
@@ -406,9 +403,8 @@ fn find_project_owner_principal(project_id: &str) -> Option<Principal> {
 
 pub fn send_connection_request_to_owner(project_id: &str, team_member_username: &str) -> String {
     let caller_principal = caller();
-    
-    // Simulate fetching the sender's information. Replace this with actual logic to get the sender's name and image.
-    let sender_info = register_user::get_founder_info(); // This is a placeholder function.
+
+    let sender_info = register_user::get_founder_info(); 
     if sender_info.is_none() {
         return "Sender information could not be retrieved.".to_string();
     }
@@ -421,14 +417,12 @@ pub fn send_connection_request_to_owner(project_id: &str, team_member_username: 
         None => (None, None),
     };
     
-    // Construct the message to be sent to the project owner.
     let message = format!(
         "{} is interested in connecting with team member {} in your project.",
         name.clone().unwrap_or_else(|| "Unknown Sender".to_string()),
         team_member_username
     );
 
-    // Assume logic to find the project owner's Principal here. Replace `project_owner_principal` with actual logic.
     let project_owner_principal = find_project_owner_principal(project_id);
 
     let notification = NotificationForOwner {
@@ -451,13 +445,12 @@ pub fn send_connection_request_to_owner(project_id: &str, team_member_username: 
 }
 
 pub fn get_notifications_for_owner() -> Vec<NotificationForOwner> {
-    let owner_principal = caller(); // Identify the caller as the project owner
+    let owner_principal = caller(); 
     
-    // Fetch and return the notifications for the owner
     OWNER_NOTIFICATIONS.with(|notifications| {
         notifications.borrow()
             .get(&owner_principal)
             .cloned()
-            .unwrap_or_else(Vec::new) // Return an empty vector if no notifications are found
+            .unwrap_or_else(Vec::new) 
     })
 }
