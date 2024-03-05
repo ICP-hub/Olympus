@@ -25,7 +25,10 @@ const founderSlice = createSlice({
   },
 });
 
-export const { founderRegisteredHandlerFailure, founderRegisteredHandlerRequest, founderRegisteredHandlerSuccess } =
-founderSlice.actions;
+export const {
+  founderRegisteredHandlerFailure,
+  founderRegisteredHandlerRequest,
+  founderRegisteredHandlerSuccess,
+} = founderSlice.actions;
 
 export default founderSlice.reducer;

@@ -1,6 +1,7 @@
 use crate::mentor::{MentorInternal, MENTOR_REGISTRY};
 use ic_cdk::api::caller;
-use ic_cdk::export::candid::{CandidType, Deserialize};
+// use ic_cdk::export::candid::{CandidType, Deserialize};
+use candid::{CandidType, Deserialize};
 use serde::Serialize;
 use std::cell::RefCell;
 use std::collections::HashMap;

@@ -13,7 +13,6 @@ mod manage_focus_expertise;
 
 use hub_organizer::{HubOrganizerRegistration, UniqueHubs};
 use ic_cdk::api::caller;
-use ic_kit::candid::{candid_method, export_service};
 use leaderboard::{LeaderboardEntryForLikes, LeaderboardEntryForUpvote, LeaderboardEntryForRatings};
 use project_like::LikeRecord;
 use requests::Request;
@@ -24,6 +23,7 @@ use manage_hubs::{get_icp_hubs, IcpHub};
 use manage_focus_expertise::{get_areas, Areas};
 use mentor::MentorProfile;
 use upvotes::UpvoteRecord;
+use ic_cdk::export_candid;
 
 mod project_registration;
 mod rbac;
@@ -63,13 +63,13 @@ fn pre_upgrade() {
 // }
 
 #[query]
-#[candid_method(query)]
+
 pub fn get_role_from_p_id() -> Option<HashSet<UserRole>> {
     rbac::get_role_from_principal()
 }
 
 #[update]
-#[candid_method(update)]
+
 async fn register_founder_caller(profile: ThirtyInfoFounder) -> String {
     let role = vec![UserRole::Founder, UserRole::Project];
     register_user::register_founder(profile).await;
@@ -77,25 +77,25 @@ async fn register_founder_caller(profile: ThirtyInfoFounder) -> String {
 }
 
 #[query]
-#[candid_method(query)]
+
 fn get_founder_info_caller() -> Option<FounderInfo> {
     register_user::get_founder_info()
 }
 
 #[query]
-#[candid_method(query)]
+
 fn list_all_founders_caller() -> Vec<register_user::FounderInfo> {
     register_user::list_all_founders()
 }
 
 #[update]
-#[candid_method(update)]
+
 fn delete_founder_caller() -> std::string::String {
     register_user::delete_founder()
 }
 
 #[update]
-#[candid_method(update)]
+
 
 fn update_founder_caller(updated_profile: FounderInfo)->String {
     if has_required_role(&vec![UserRole::Founder, UserRole::Project]) 
@@ -107,7 +107,7 @@ fn update_founder_caller(updated_profile: FounderInfo)->String {
 }
 
 #[update]
-#[candid_method(update)]
+
 async fn create_project(params: ThirtyInfoProject) -> String {
     if has_required_role(&vec![UserRole::Founder, UserRole::Project]) {
         project_registration::create_project(params).await
@@ -118,25 +118,25 @@ async fn create_project(params: ThirtyInfoProject) -> String {
 }
 
 #[query]
-#[candid_method(query)]
+
 fn get_projects_for_caller() -> Vec<ProjectInfo> {
     project_registration::get_projects_for_caller()
 }
 
 #[query]
-#[candid_method(query)]
+
 fn get_project_using_id(project_id: String) -> Option<ProjectInfoInternal>{
     project_registration::find_project_by_id(&project_id)
 }
 
 #[query]
-#[candid_method(query)]
+
 fn list_all_projects() -> Vec<ProjectInfo> {
     project_registration::list_all_projects()
 }
 
 #[update]
-#[candid_method(update)]
+
 fn update_project(project_id: String, updated_project: ProjectInfo) -> String {
     if has_required_role(&vec![UserRole::Founder, UserRole::Project]) {
         project_registration::update_project(project_id, updated_project);
@@ -147,7 +147,7 @@ fn update_project(project_id: String, updated_project: ProjectInfo) -> String {
 }
 
 #[update]
-#[candid_method(update)]
+
 fn update_project_docs(project_id: String, docs: DocsInfo) -> String {
     if has_required_role(&vec![UserRole::Project, UserRole::Founder]) {
         project_registration::update_project_docs(project_id, docs);
@@ -158,7 +158,7 @@ fn update_project_docs(project_id: String, docs: DocsInfo) -> String {
 }
 
 #[update]
-#[candid_method(update)]
+
 fn update_team_member(project_id: String, team_member: TeamMember) -> String {
     if has_required_role(&vec![UserRole::Founder, UserRole::Project]) {
         project_registration::update_team_member(project_id, team_member);
@@ -169,13 +169,13 @@ fn update_team_member(project_id: String, team_member: TeamMember) -> String {
 }
 
 #[update]
-#[candid_method(update)]
+
 fn delete_project(id: String) -> std::string::String {
     project_registration::delete_project(id)
 }
 
 #[update]
-#[candid_method(update)]
+
 fn verify_project_under_your_hub(project_id: String)->String{
     project_registration::verify_project(&project_id)
 }
@@ -193,24 +193,25 @@ fn get_your_project_notifications()->Vec<NotificationForOwner>{
 }
 
 #[query]
-#[candid_method(query)]
+
 fn get_notifications_for_hubs()->Vec<NotificationProject>{
     project_registration::get_notifications_for_caller()
 }
 
 #[update]
-#[candid_method(update)]
+
 fn like_project(project_id: String) -> std::string::String {
     project_like::like_project(project_id)
 }
 
 #[query]
-#[candid_method(query)]
+
 fn get_user_likes(project_id: String) -> Option<LikeRecord> {
     project_like::get_user_likes(project_id)
 }
 
 #[update]
+
 #[candid_method(update)]
 fn add_suggestion_caller(content: String, project_id: String) -> (u64, String) {
     roadmap_suggestion::add_suggestion(content, project_id)
@@ -244,16 +245,16 @@ fn get_suggestions_by_parent_id_caller(project_id: String, parent_id: u64) -> Ve
 #[candid_method(query)]
 fn get_total_suggestions(project_id: String) -> u64 {
     roadmap_suggestion::get_total_suggestions_count(project_id)
-}
+
 
 #[query]
-#[candid_method(query)]
+
 fn get_all_roles() -> RolesResponse {
     get_roles() // Call the get_roles function from the roles module
 }
 
 #[update]
-#[candid_method(update)]
+
 async fn register_mentor_candid(profile: MentorProfile) -> std::string::String {
     let start = ic_cdk::api::instruction_counter();
     ic_cdk::println!("instructions start {}",start);
@@ -273,19 +274,19 @@ async fn register_mentor_candid(profile: MentorProfile) -> std::string::String {
 }
 
 #[query]
-#[candid_method(query)]
+
 pub fn get_mentor_candid() -> Option<MentorProfile> {
     mentor::get_mentor()
 }
 
 #[update]
-#[candid_method(update)]
+
 pub fn delete_mentor_candid() -> String {
     mentor::delete_mentor()
 }
 
 #[update]
-#[candid_method(update)]
+
 pub fn update_mentor_profile(updated_profile: MentorProfile) -> String {
     let required_roles = [UserRole::Mentor];
 
@@ -297,62 +298,62 @@ pub fn update_mentor_profile(updated_profile: MentorProfile) -> String {
 }
 
 #[update]
-#[candid_method(update)]
+
 pub fn make_active_inactive_mentor(id : Principal) -> String{
     mentor::make_active_inactive(id)
 }
 
 #[query]
-#[candid_method(query)]
+
 pub fn get_all_mentors_candid() -> Vec<MentorProfile> {
     mentor::get_all_mentors()
 }
 
 #[query]
-#[candid_method(query)]
+
 pub fn get_mentor_by_expertise(area_of_expertise: String)->Vec<MentorProfile>{
     mentor::find_mentors_by_expertise(&area_of_expertise)
 }
 
 
 #[update]
-#[candid_method(update)]
+
 pub fn upvote_project(project_id: String) -> std::string::String {
     upvotes::upvote(project_id)
 }
 
 #[query]
-#[candid_method(query)]
+
 pub fn get_project_upvotes(project_id: String) -> Option<UpvoteRecord> {
     upvotes::get_upvote_record(project_id)
 }
 
 #[query]
-#[candid_method(query)]
+
 pub fn get_latest_live_proposal()->Vec<ProjectInfoInternal>{
     latest_popular_projects::get_live_proposals_latest()
 }
 
 #[query]
-#[candid_method(query)]
+
 pub fn get_latest_listed_project()->Vec<ProjectInfoInternal>{
     latest_popular_projects::get_listed_projects_latest()
 }
 
 #[query]
-#[candid_method(query)]
+
 pub fn get_popular_live_proposal()->Vec<ProjectInfoInternal>{
     latest_popular_projects::get_live_proposals_popular()
 }
 
 #[query]
-#[candid_method(query)]
+
 pub fn get_popular_listed_project()->Vec<ProjectInfoInternal>{
     latest_popular_projects::get_listed_projects_popular()
 }
 
 #[update]
-#[candid_method(update)]
+
 pub async fn register_venture_capitalist_caller(params: VentureCapitalist) -> String {
     let roles_to_assign = vec![UserRole::VC];
     vc_registration::register_venture_capitalist(params).await;
@@ -360,19 +361,19 @@ pub async fn register_venture_capitalist_caller(params: VentureCapitalist) -> St
 }
 
 #[query]
-#[candid_method(query)]
+
 pub fn get_venture_capitalist_info() -> Option<VentureCapitalist> {
     vc_registration::get_vc_info()
 }
 
 #[query]
-#[candid_method(query)]
+
 pub fn list_all_venture_capitalist() -> Vec<VentureCapitalist> {
     vc_registration::list_all_vcs()
 }
 
 #[update]
-#[candid_method(update)]
+
 pub fn update_venture_capitalist_caller(params: VentureCapitalist) -> String {
     let required_roles = [UserRole::VC];
 
@@ -385,31 +386,31 @@ pub fn update_venture_capitalist_caller(params: VentureCapitalist) -> String {
 }
 
 #[update]
-#[candid_method(update)]
+
 pub fn delete_venture_capitalist_caller() -> std::string::String {
     vc_registration::delete_venture_capitalist()
 }
 
 #[query]
-#[candid_method(query)]
+
 fn get_icp_hubs_candid() -> Vec<IcpHub> {
     get_icp_hubs()
 }
 
 #[query]
-#[candid_method(query)]
+
 fn get_area_focus_expertise() -> Vec<Areas>{
     get_areas()
 }
 
 #[query]
-#[candid_method(query)]
+
 fn get_hubs_principal_using_region(region: String)->Vec<String>{
     hub_organizer::get_hub_organizer_principals_by_region(region)
 }
 
 // #[query]
-// #[candid_method(query)]
+// 
 // fn greet() -> String {
 //     let principal_id = caller().to_string();
 //     format!("principal id - : {:?}", principal_id)
@@ -421,19 +422,19 @@ fn greet(name: String) -> String {
 }
 
 #[update]
-#[candid_method(update)]
+
 fn send_connection_request(mentor_id: Principal, msg: String) {
     notification::send_connection_request(mentor_id, msg)
 }
 
 #[query]
-#[candid_method(query)]
+
 pub fn view_notifications_candid(mentor_id: Principal) -> Vec<Notification> {
     notification::view_notifications(mentor_id)
 }
 
 #[update]
-#[candid_method(update)]
+
 pub fn respond_to_connection_request_candid(
     mentor_id: Principal,
     startup_id: Principal,
@@ -444,7 +445,7 @@ pub fn respond_to_connection_request_candid(
 
 //Hub Organizers
 #[update]
-#[candid_method(update)]
+
 pub async fn register_hub_organizer_candid(
     form: hub_organizer::HubOrganizerRegistration,
 ) -> String {
@@ -456,13 +457,13 @@ pub async fn register_hub_organizer_candid(
 }
 
 #[query]
-#[candid_method(query)]
+
 pub fn get_hub_organizer_candid() -> Option<UniqueHubs> {
     hub_organizer::get_hub_organizer()
 }
 
 #[update]
-#[candid_method(update)]
+
 pub fn update_hub_organizer_candid(params: HubOrganizerRegistration) -> String {
     let required_role = vec![UserRole::ICPHubOrganizer];
 
@@ -474,49 +475,49 @@ pub fn update_hub_organizer_candid(params: HubOrganizerRegistration) -> String {
 }
 
 #[query]
-#[candid_method(query)]
+
 pub fn get_leaderboard_using_upvotes() -> Vec<LeaderboardEntryForUpvote> {
     leaderboard::get_leaderboard_by_upvotes()
 }
 
 #[query]
-#[candid_method(query)]
+
 pub fn get_leaderboard_using_likes() -> Vec<LeaderboardEntryForLikes> {
     leaderboard::get_leaderboard_by_likes()
 }
 
 #[query]
-#[candid_method(query)]
+
 pub fn get_leaderboard_using_ratings() -> Vec<LeaderboardEntryForRatings>{
     leaderboard::get_leaderboard_by_ratings()
 }
 
 #[update]
-#[candid_method(update)]
+
 pub fn update_rating_api(rating: Vec<Rating>){
     ratings::update_rating(rating);
 }
 
 #[query]
-#[candid_method(query)]
+
 pub fn calculate_average_api(project_id: String) -> Option<f64> {
     ratings::calculate_average(&project_id)
 }
 
 #[query]
-#[candid_method(query)]
+
 pub fn get_main_level_ratings(project_id: String) -> HashMap<MainLevel, MainLevelRatings>{
     ratings::get_ratings_by_project_id(&project_id)
 }
 
 #[update]
-#[candid_method(update)]
+
 pub fn send_request_as_mentor(project_id: String, request_text: String)->String{
     requests::send_request_to_project(project_id, request_text)
 }
 
 #[query]
-#[candid_method(query)]
+
 pub fn get_project_requests(project_id: String)->Vec<Request>{
     requests::get_requests(project_id)
 }
@@ -533,7 +534,7 @@ pub fn get_role() -> RolesResponse {
 }
 
 #[query]
-#[candid_method(query)]
+
 pub fn get_my_id() -> Principal{
     caller()
 }
@@ -543,26 +544,28 @@ pub fn get_my_id() -> Principal{
 //     roles::add_role(name)
 // }
 
-#[query(name = "__get_candid_interface_tmp_hack")]
-fn export_candid() -> String {
-    export_service!();
-    __export_service()
-}
+// #[query(name = "__get_candid_interface_tmp_hack")]
+// fn export_candid() -> String {
+//     export_service!();
+//     __export_service()
+// }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+// #[cfg(test)]
+// mod tests {
+//     use super::*;
 
-    #[test]
-    fn save_candid() {
-        use std::env;
-        use std::fs::write;
-        use std::path::PathBuf;
+//     #[test]
+//     fn save_candid() {
+//         use std::env;
+//         use std::fs::write;
+//         use std::path::PathBuf;
 
-        let dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
+//         let dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
 
-        // Directly use dir for the current directory
-        let file_path = dir.join("IcpAccelerator_backend.did");
-        write(file_path, export_candid()).expect("Write failed.");
-    }
-}
+//         // Directly use dir for the current directory
+//         let file_path = dir.join("IcpAccelerator_backend.did");
+//         write(file_path, export_candid()).expect("Write failed.");
+//     }
+// }
+use crate::roadmap_suggestion::ApplicationDetails;
+export_candid!();

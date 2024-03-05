@@ -13,7 +13,7 @@ import InvestorDetails from "./InvestorDetails";
 import InvestorAdditionalInformation from "./InvestorAdditionalInformation";
 import InvestorPersonalInformation from "./InvestorPersonalInformation";
 import { useSelector } from "react-redux";
-import { allHubHandlerRequest } from "../../Redux/Reducers/All_IcpHubReducer";
+import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_IcpHubReducer";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
@@ -24,91 +24,140 @@ const validationSchema = {
       .string()
       .email("Invalid email format")
       .required("Email address is required")
-      .test("is-non-empty", "Email address is required", (value) => /\S/.test(value)),
+      .test("is-non-empty", "Email address is required", (value) =>
+        /\S/.test(value)
+      ),
     telegram_id: yup
       .string()
-      .test("is-non-empty", "Telegram ID is required", (value) => /\S/.test(value))
+      .test("is-non-empty", "Telegram ID is required", (value) =>
+        /\S/.test(value)
+      )
       .required("Telegram ID is required"),
     portfolio_link: yup
       .string()
       .url("Must be a valid URL")
       .test("is-non-empty", "Must be a valid URL", (value) => /\S/.test(value)),
-    location: yup.string().required("Location is required")
-    .test("is-non-empty", "Location is required", (value) => /\S/.test(value)),
+    location: yup
+      .string()
+      .required("Location is required")
+      .test("is-non-empty", "Location is required", (value) =>
+        /\S/.test(value)
+      ),
     website_link: yup
       .string()
       .url("Must be a valid URL")
       .required("Website link is required")
-    .test("is-non-empty", "Website link is required", (value) => /\S/.test(value)),
-    
+      .test("is-non-empty", "Website link is required", (value) =>
+        /\S/.test(value)
+      ),
+
     technological_focus: yup
       .string()
       .required("Technological focus is required")
-    .test("is-non-empty", "Technological focus is required", (value) => /\S/.test(value)),
+      .test("is-non-empty", "Technological focus is required", (value) =>
+        /\S/.test(value)
+      ),
 
     preferred_icp_hub: yup
       .string()
-      .test("is-non-empty", "ICP Hub selection is required", (value) => /\S/.test(value))
+      .test("is-non-empty", "ICP Hub selection is required", (value) =>
+        /\S/.test(value)
+      )
       .required("ICP Hub selection is required"),
   }),
   investorDetails: yup.object().shape({
-    investor_type: yup.string().required("Investor type is required")
-    .test("is-non-empty", "Investor type required", (value) => /\S/.test(value)),
+    investor_type: yup
+      .string()
+      .required("Investor type is required")
+      .test("is-non-empty", "Investor type required", (value) =>
+        /\S/.test(value)
+      ),
     typical_decision_making_timeline_for_investments: yup
       .string()
       .required("Decision making timeline is required")
-      .test("is-non-empty", "Decision making timeline is required", (value) => /\S/.test(value)),
+      .test("is-non-empty", "Decision making timeline is required", (value) =>
+        /\S/.test(value)
+      ),
     interest_in_board_positions: yup
       .boolean()
       .required("Interest in board positions is required")
-    .test("is-non-empty", "Interest in board positions is required", (value) => /\S/.test(value)),
-    name_of_fund: yup.string().required("Name of fund is required")
-    .test("is-non-empty", "Name of fund is required", (value) => /\S/.test(value)),
+      .test(
+        "is-non-empty",
+        "Interest in board positions is required",
+        (value) => /\S/.test(value)
+      ),
+    name_of_fund: yup
+      .string()
+      .required("Name of fund is required")
+      .test("is-non-empty", "Name of fund is required", (value) =>
+        /\S/.test(value)
+      ),
     size_of_managed_fund: yup
       .number()
       .positive("Must be a positive number")
       .required("Size of managed fund is required")
-    .test("is-non-empty", "Size of managed fund is required", (value) => /\S/.test(value)),
+      .test("is-non-empty", "Size of managed fund is required", (value) =>
+        /\S/.test(value)
+      ),
     accredited_investor_status: yup
       .boolean()
-      .required("Accredited investor status is required")    
-      .test("is-non-empty", "Accredited investor status is required", (value) => /\S/.test(value)),
+      .required("Accredited investor status is required")
+      .test("is-non-empty", "Accredited investor status is required", (value) =>
+        /\S/.test(value)
+      ),
 
     preferred_investment_sectors: yup
       .string()
       .required("Preferred investment sectors are required")
-      .test("is-non-empty", "Preferred investment sectors are required", (value) => /\S/.test(value)),
-
+      .test(
+        "is-non-empty",
+        "Preferred investment sectors are required",
+        (value) => /\S/.test(value)
+      ),
   }),
   additionalInfo: yup.object().shape({
     average_investment_ticket: yup
       .number()
       .positive("Must be a positive number")
       .required("Average investment ticket is required")
-      .test("is-non-empty", "Average investment ticket is required", (value) => /\S/.test(value)),
+      .test("is-non-empty", "Average investment ticket is required", (value) =>
+        /\S/.test(value)
+      ),
 
     investment_stage_preference: yup
       .string()
       .required("Investment stage preference is required")
-      .test("is-non-empty", "Investment stage preference is required", (value) => /\S/.test(value)),
+      .test(
+        "is-non-empty",
+        "Investment stage preference is required",
+        (value) => /\S/.test(value)
+      ),
 
     number_of_portfolio_companies: yup
       .number()
       .positive("Must be a positive number")
       .integer("Must be an integer")
       .required("Number of portfolio companies is required")
-      .test("is-non-empty", "Number of portfolio companies is required", (value) => /\S/.test(value)),
+      .test(
+        "is-non-empty",
+        "Number of portfolio companies is required",
+        (value) => /\S/.test(value)
+      ),
 
     revenue_range_preference: yup
       .string()
       .required("Revenue range preference is required")
-      .test("is-non-empty", "Revenue range preference is required", (value) => /\S/.test(value)),
+      .test("is-non-empty", "Revenue range preference is required", (value) =>
+        /\S/.test(value)
+      ),
 
     assets_for_investment: yup
       .number()
       .positive("Must be a positive number")
       .required("Assets for investment is required")
-      .test("is-non-empty", "Assets for investment is required", (value) => /\S/.test(value)),
+      .test("is-non-empty", "Assets for investment is required", (value) =>
+        /\S/.test(value)
+      ),
 
     referrer: yup
       .string()
@@ -120,6 +169,12 @@ const validationSchema = {
 const InvestorRegistration = () => {
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
   const actor = useSelector((currState) => currState.actors.actor);
+  const specificRole = useSelector(
+    (currState) => currState.current.specificRole
+  );
+  const investorFullData = useSelector(
+    (currState) => currState.investorData.data
+  );
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -129,11 +184,12 @@ const InvestorRegistration = () => {
   const [step, setStep] = useState(0);
   const [isCurrentStepValid, setIsCurrentStepValid] = useState(false);
   const [userHasInteracted, setUserHasInteracted] = useState(false);
+  const [investorDataObject, setInvestorDataObject] = useState({});
 
-  console.log("InvestorRegistration => ");
-  useEffect(() => {
-    dispatch(allHubHandlerRequest());
-  }, [actor, dispatch]);
+  // console.log("InvestorRegistration => ");
+  // useEffect(() => {
+  //   dispatch(allHubHandlerRequest());
+  // }, [actor, dispatch]);
 
   const getTabClassName = (tab) => {
     return `inline-block p-2 font-bold ${
@@ -155,8 +211,9 @@ const InvestorRegistration = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
     trigger,
+    reset,
   } = useForm({
-    resolver: yupResolver(currentValidationSchema),
+    resolver: yupResolver(currentValidationSchema), mode :'all'
   });
 
   const handleTabClick = async (tab) => {
@@ -186,19 +243,39 @@ const InvestorRegistration = () => {
     validateStep();
   }, [step, trigger, userHasInteracted]);
 
+  useEffect(() => {
+    dispatch(allHubHandlerRequest());
+  }, [actor, dispatch]);
+
   const handleNext = async () => {
     const fieldsToValidate = steps[step].fields.map((field) => field.name);
     const result = await trigger(fieldsToValidate);
     if (result) {
       setStep((prevStep) => prevStep + 1);
+      setActiveTab(investorRegistration[step + 1]?.id);
+
     }
   };
 
   const handlePrevious = () => {
     if (step > 0) {
       setStep((prevStep) => prevStep - 1);
+      setActiveTab(investorRegistration[step - 1]?.id);
+
     }
   };
+
+  useEffect(() => {
+    if (investorFullData && investorFullData.length > 0) {
+      const data = investorFullData[0];
+      const formattedData = Object.keys(data).reduce((acc, key) => {
+        acc[key] = Array.isArray(data[key]) ? data[key][0] : data[key];
+        return acc;
+      }, {});
+      reset(formattedData);
+      setFormData(formattedData);
+    }
+  }, [investorFullData, reset]);
 
   const stepFields = steps[step].fields;
   let StepComponent;
@@ -213,6 +290,24 @@ const InvestorRegistration = () => {
     );
   }
 
+  const sendingInvestorData = async (val) => {
+    let result;
+    try {
+      if (specificRole !== null || undefined) {
+        result = await actor.update_venture_capitalist_caller(val);
+      } else if (specificRole === null || specificRole === undefined) {
+        result = await actor.register_venture_capitalist_caller(val);
+      }
+
+      toast.success(result);
+      console.log("investor data registered in backend");
+      await navigate("/dashboard");
+    } catch (error) {
+      toast.error(error);
+      console.log(error.message);
+    }
+  };
+
   const onSubmit = async (data) => {
     console.log("data of investor =>", data);
 
@@ -221,15 +316,62 @@ const InvestorRegistration = () => {
 
     if (step < steps.length - 1) {
       handleNext();
-    } else {
-      console.log("Final Form Data:", updatedFormData);
+    } else if (
+      specificRole !== null ||
+      (undefined && step > steps.length - 1)
+    ) {
+      // console.log("exisiting user visit ");
 
       const interestInBoardPosition =
         updatedFormData.interest_in_board_positions === "true" ? true : false;
       const accreditedInvestorStatus =
         updatedFormData.accredited_investor_status === "true" ? true : false;
 
-      const investorDataObject = {
+      let tempObj2 = {
+        accredited_investor_status: [accreditedInvestorStatus] || [],
+        assets_for_investment:
+          [String(updatedFormData.assets_for_investment)] || [],
+        average_investment_ticket:
+          [updatedFormData.average_investment_ticket] || [],
+        email_address: [updatedFormData.email_address] || [],
+        interest_in_board_positions: [interestInBoardPosition] || [],
+        investment_stage_preference:
+          [updatedFormData.investment_stage_preference] || [],
+        investor_type: [updatedFormData.investor_type] || [],
+        location: [updatedFormData.location] || [],
+        name_of_fund: [updatedFormData.name_of_fund] || [],
+        number_of_portfolio_companies:
+          [updatedFormData.number_of_portfolio_companies] || [],
+        portfolio_link: [updatedFormData.portfolio_link] || [],
+        preferred_icp_hub: [updatedFormData.preferred_icp_hub] || [],
+        preferred_investment_sectors:
+          [updatedFormData.preferred_investment_sectors] || [],
+        referrer: [updatedFormData.referrer] || [],
+        revenue_range_preference:
+          [updatedFormData.revenue_range_preference] || [],
+        size_of_managed_fund: [updatedFormData.size_of_managed_fund] || [],
+        technological_focus: [updatedFormData.technological_focus] || [],
+        telegram_id: [updatedFormData.telegram_id] || [],
+        typical_decision_making_timeline_for_investments:
+          [updatedFormData.typical_decision_making_timeline_for_investments] ||
+          [],
+        website_link: [updatedFormData.website_link] || [],
+      };
+
+      setInvestorDataObject(tempObj2);
+      await sendingInvestorData(tempObj2);
+    } else if (
+      specificRole === null ||
+      (specificRole === undefined && step > steps.length - 1)
+    ) {
+      // console.log("first time visit ");
+
+      const interestInBoardPosition =
+        updatedFormData.interest_in_board_positions === "true" ? true : false;
+      const accreditedInvestorStatus =
+        updatedFormData.accredited_investor_status === "true" ? true : false;
+
+      let tempObj = {
         accredited_investor_status: [accreditedInvestorStatus],
         assets_for_investment: [String(updatedFormData.assets_for_investment)],
         average_investment_ticket: [updatedFormData.average_investment_ticket],
@@ -259,19 +401,8 @@ const InvestorRegistration = () => {
         ],
         website_link: [updatedFormData.website_link],
       };
-
-      const sendingInvestorData = async () => {
-        try {
-          const result = await actor.register_venture_capitalist_caller(investorDataObject);
-          toast.success(result);
-          console.log("investor data registered in backend");
-          navigate("/dashboard");
-        } catch (error) {
-          toast.error(error);
-          console.log(error.message);
-        }
-      };
-      sendingInvestorData();
+      setInvestorDataObject(tempObj);
+      await sendingInvestorData(tempObj);
     }
   };
 
@@ -429,7 +560,7 @@ const InvestorRegistration = () => {
           goToPrevious: handlePrevious,
           goToNext: handleNext,
         })}
-        <Toaster/>
+      <Toaster />
     </div>
   );
 };

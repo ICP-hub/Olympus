@@ -2,7 +2,7 @@ import React from "react";
 
 const DetailsCard = ({width,top}) => {
   return (
-    <div className={`bg-gradient-to-r from-purple-300/40 to-purple-600 rounded-[20px] shadow-lg z-20 w-11/12`}>
+    <div className={`bg-gradient-to-r from-[#7283EA66] to-[#BD78EA] rounded-[20px] shadow-lg z-20 w-full lg:w-11/12`}>
     <div className="container mx-auto px-4 py-4 md:py-4">
       <div className="flex flex-col md:flex-row md:items-center">
         <div className="text-white md:w-1/4 p-4">

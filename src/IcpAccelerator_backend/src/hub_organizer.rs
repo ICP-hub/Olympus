@@ -1,7 +1,8 @@
     use candid::{CandidType, Deserialize};
     use ic_cdk::api::caller;
     use ic_cdk::api::management_canister::main::raw_rand;
-    use ic_cdk::export::Principal;
+    // use ic_cdk::export::Principal;
+    use candid::Principal;
     use ic_cdk_macros::{query, update};
     use serde::Serialize;
     use sha2::{Digest, Sha256};

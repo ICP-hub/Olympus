@@ -1,4 +1,4 @@
-import React, { useState, useEffect ,useCallback} from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { hubRegistration } from "../../Utils/Data/AllDetailFormData";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import { useForm, Controller } from "react-hook-form";
@@ -11,22 +11,25 @@ import {
 import { useSelector } from "react-redux";
 import CompressedImage from "../../ImageCompressed/CompressedImage";
 import { useDispatch } from "react-redux";
-import { allHubHandlerRequest } from "../../Redux/Reducers/All_IcpHubReducer";
+import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_IcpHubReducer";
 import HubPersonalInformation from "./HubPersonalInformation";
 import HubDetails from "./HubDetails";
 import toast, { Toaster } from "react-hot-toast";
 // import { DocumentPreview } from "../../ImageCompressed/DocumentPreview";
 
-
 const validationSchema = {
   personalDetails: yup.object().shape({
     fullName: yup
       .string()
-      .test("is-non-empty", "Full Name is required", (value) => /\S/.test(value))
+      .test("is-non-empty", "Full Name is required", (value) =>
+        /\S/.test(value)
+      )
       .required("Full Name is required"),
     hubName: yup
       .string()
-      .test("is-non-empty", "ICP Hub name is required", (value) => /\S/.test(value))
+      .test("is-non-empty", "ICP Hub name is required", (value) =>
+        /\S/.test(value)
+      )
       .required("ICP Hub name is required"),
     email: yup
       .string()
@@ -40,12 +43,16 @@ const validationSchema = {
     hubDescription: yup
       .string()
       .required("ICP Hub description is required")
-      .test("is-non-empty", "ICP Hub description is required", (value) => /\S/.test(value)),
+      .test("is-non-empty", "ICP Hub description is required", (value) =>
+        /\S/.test(value)
+      ),
     websiteUrl: yup
       .string()
       .url("Must be a valid URL")
       .required("Website URL is required")
-      .test("is-non-empty", "Website URL is required", (value) => /\S/.test(value)),
+      .test("is-non-empty", "Website URL is required", (value) =>
+        /\S/.test(value)
+      ),
     imageData: yup.mixed().required("An image is required"),
   }),
 
@@ -54,40 +61,55 @@ const validationSchema = {
       .string()
       .matches(/^[0-9]+$/, "Must be only digits")
       .required("Contact number is required")
-      .test("is-non-empty", "Contact number is required", (value) => /\S/.test(value)),
+      .test("is-non-empty", "Contact number is required", (value) =>
+        /\S/.test(value)
+      ),
     privacyPolicyConsent: yup
       .boolean()
       .required("Privacy policy consent is required")
-      .test("is-non-empty", "Privacy policy consent is required", (value) => /\S/.test(value)),
+      .test("is-non-empty", "Privacy policy consent is required", (value) =>
+        /\S/.test(value)
+      ),
     communicationConsent: yup
       .boolean()
       .required("Communication consent is required")
-      .test("is-non-empty", "Communication consent is required", (value) => /\S/.test(value)),
-      documentData: yup.mixed()
+      .test("is-non-empty", "Communication consent is required", (value) =>
+        /\S/.test(value)
+      ),
+    documentData: yup
+      .mixed()
       .required("A document is required")
       .test(
         "fileSize",
         "The file is too large",
-        value => value && value[0] && value[0].size <= 1024 * 1024 // 1MB
+        (value) => value && value[0] && value[0].size <= 1024 * 1024 // 1MB
       )
       .test(
         "fileType",
         "Unsupported file format",
-        value => value && value[0] && [
-          "application/pdf",
-          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        ].includes(value[0].type)
+        (value) =>
+          value &&
+          value[0] &&
+          [
+            "application/pdf",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          ].includes(value[0].type)
       ),
   }),
 };
 const Modal = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full" onClick={onClose}>
+    <div
+      className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full"
+      onClick={onClose}
+    >
       <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
         <div>{children}</div>
-        <button onClick={onClose} className="absolute top-0 right-0 p-2">Close</button>
+        <button onClick={onClose} className="absolute top-0 right-0 p-2">
+          Close
+        </button>
       </div>
     </div>
   );
@@ -151,7 +173,6 @@ const HubRegistration = () => {
     } else {
     }
   };
- 
 
   useEffect(() => {
     if (!userHasInteracted) return;
@@ -168,79 +189,83 @@ const HubRegistration = () => {
     dispatch(allHubHandlerRequest());
   }, [actor, dispatch]);
 
- 
-
-  const addImageHandler = useCallback(async (file) => {
-    clearErrors("imageData");
-    if (!file)
-      return setError("imageData", {
-        type: "manual",
-        message: "An image is required",
-      });
-    if (!["image/jpeg", "image/png", "image/gif"].includes(file.type))
-      return setError("imageData", {
-        type: "manual",
-        message: "Unsupported file format",
-      });
-    if (file.size > 1024 * 1024) // 1MB
-      return setError("imageData", {
-        type: "manual",
-        message: "The file is too large",
-      });
-  
-    setIsLoading(true);
-    try {
-      const compressedFile = await CompressedImage(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-        setIsLoading(false); 
-      };
-      reader.readAsDataURL(compressedFile);
-  
-      const byteArray = await compressedFile.arrayBuffer();
-      setImageData(Array.from(new Uint8Array(byteArray)));
+  const addImageHandler = useCallback(
+    async (file) => {
       clearErrors("imageData");
-    } catch (error) {
-      console.error("Error processing the image:", error);
-      setError("imageData", {
-        type: "manual",
-        message: "Could not process image, please try another.",
-      });
-      setIsLoading(false);
-    }
-  }, [setError, clearErrors, setIsLoading, setImagePreview, setImageData]);
+      if (!file)
+        return setError("imageData", {
+          type: "manual",
+          message: "An image is required",
+        });
+      if (!["image/jpeg", "image/png", "image/gif"].includes(file.type))
+        return setError("imageData", {
+          type: "manual",
+          message: "Unsupported file format",
+        });
+      if (file.size > 1024 * 1024)
+        // 1MB
+        return setError("imageData", {
+          type: "manual",
+          message: "The file is too large",
+        });
 
+      setIsLoading(true);
+      try {
+        const compressedFile = await CompressedImage(file);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImagePreview(reader.result);
+          setIsLoading(false);
+        };
+        reader.readAsDataURL(compressedFile);
 
-  const addDocumentHandler = useCallback(async (file) => {
-    clearErrors("documentData");
-    if (!file) {
-      return setError("documentData", {
-        type: "manual",
-        message: "A document is required",
-      });
-    }
-  
-    try {
-      const fileUrl = URL.createObjectURL(file);
-      setDocumentPreview(fileUrl);
-      setIsModalOpen(true); // Open modal to view the document
-  
-      // Read the file as an ArrayBuffer for backend submission
-      const arrayBuffer = await readFileAsArrayBuffer(file);
-      console.log(arrayBuffer); // Placeholder for actual usage
-  
-      // Example: Here you would typically send the ArrayBuffer to the backend
-      // sendArrayBufferToBackend(arrayBuffer);
-    } catch (error) {
-      console.error("Error processing the document:", error);
-      setError("documentData", {
-        type: "manual",
-        message: "Could not process document, please try another.",
-      });
-    }
-  }, [setError, clearErrors, setDocumentPreview, setIsModalOpen]);
-  
+        const byteArray = await compressedFile.arrayBuffer();
+        setImageData(Array.from(new Uint8Array(byteArray)));
+        clearErrors("imageData");
+      } catch (error) {
+        console.error("Error processing the image:", error);
+        setError("imageData", {
+          type: "manual",
+          message: "Could not process image, please try another.",
+        });
+        setIsLoading(false);
+      }
+    },
+    [setError, clearErrors, setIsLoading, setImagePreview, setImageData]
+  );
+
+  const addDocumentHandler = useCallback(
+    async (file) => {
+      clearErrors("documentData");
+      if (!file) {
+        return setError("documentData", {
+          type: "manual",
+          message: "A document is required",
+        });
+      }
+
+      try {
+        const fileUrl = URL.createObjectURL(file);
+        setDocumentPreview(fileUrl);
+        setIsModalOpen(true); // Open modal to view the document
+
+        // Read the file as an ArrayBuffer for backend submission
+        const arrayBuffer = await readFileAsArrayBuffer(file);
+        console.log(arrayBuffer); // Placeholder for actual usage
+
+        // Example: Here you would typically send the ArrayBuffer to the backend
+        // sendArrayBufferToBackend(arrayBuffer);
+      } catch (error) {
+        console.error("Error processing the document:", error);
+        setError("documentData", {
+          type: "manual",
+          message: "Could not process document, please try another.",
+        });
+      }
+    },
+    [setError, clearErrors, setDocumentPreview, setIsModalOpen]
+  );
+
   const readFileAsArrayBuffer = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -251,8 +276,8 @@ const HubRegistration = () => {
       reader.readAsArrayBuffer(file);
     });
   };
-  
-  console.log('documentPreview',documentPreview)
+
+  console.log("documentPreview", documentPreview);
 
   const handleNext = async () => {
     const fieldsToValidate = steps[step].fields.map((field) => field.name);
@@ -260,20 +285,19 @@ const HubRegistration = () => {
     const isImageUploaded = imageData && imageData.length > 0;
 
     if (!isImageUploaded) {
-        setError("imageData", {
-            type: "manual",
-            message: "Please upload a ICP Hub profile."
-        });
-        return;
+      setError("imageData", {
+        type: "manual",
+        message: "Please upload a ICP Hub profile.",
+      });
+      return;
     }
     if (result && isImageUploaded) {
-        clearErrors("imageData");
-        if (step < steps.length - 1) {
-            setStep((prevStep) => prevStep + 1);
-        }
+      clearErrors("imageData");
+      if (step < steps.length - 1) {
+        setStep((prevStep) => prevStep + 1);
+      }
     }
-};
-
+  };
 
   const handlePrevious = () => {
     if (step > 0) {
@@ -494,42 +518,48 @@ const HubRegistration = () => {
               )}
             </div>
             <div className="flex flex-col">
-      <div className="flex-row w-full flex justify-start gap-4 items-center">
-        <div className="mb-3 ml-6 flex items-center justify-center">
-          <button onClick={() => setIsModalOpen(true)} className="p-2 border-2 border-gray-300 rounded-md">
-            View Document
-          </button>
-        </div>
+              <div className="flex-row w-full flex justify-start gap-4 items-center">
+                <div className="mb-3 ml-6 flex items-center justify-center">
+                  <button
+                    onClick={() => setIsModalOpen(true)}
+                    className="p-2 border-2 border-gray-300 rounded-md"
+                  >
+                    View Document
+                  </button>
+                </div>
 
-        <Controller
-          name="documentData"
-          control={control}
-          render={({ field }) => (
-            <>
-              <input
-                id="documents"
-                type="file"
-                name="documents"
-                className="hidden"
-                onChange={(e) => {
-                  const file = e.target.files[0];
-                  addDocumentHandler(file);
-                  field.onChange(e.target.files); // Important for validation to work
-                }}
-              />
-              <label htmlFor="documents" className="p-2 border-2 border-blue-800 rounded-md text-md bg-transparent text-blue-800 cursor-pointer font-extrabold">
-                Upload Document
-              </label>
-            </>
-          )}
-        />
-      </div>
-      {errors.documentData && (
-        <span className="mt-1 text-sm text-red-500 font-bold text-start px-4">
-          {errors.documentData.message}
-        </span>
-      )}
-      </div>
+                <Controller
+                  name="documentData"
+                  control={control}
+                  render={({ field }) => (
+                    <>
+                      <input
+                        id="documents"
+                        type="file"
+                        name="documents"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          addDocumentHandler(file);
+                          field.onChange(e.target.files); // Important for validation to work
+                        }}
+                      />
+                      <label
+                        htmlFor="documents"
+                        className="p-2 border-2 border-blue-800 rounded-md text-md bg-transparent text-blue-800 cursor-pointer font-extrabold"
+                      >
+                        Upload Document
+                      </label>
+                    </>
+                  )}
+                />
+              </div>
+              {errors.documentData && (
+                <span className="mt-1 text-sm text-red-500 font-bold text-start px-4">
+                  {errors.documentData.message}
+                </span>
+              )}
+            </div>
           </div>
         )}
       </div>

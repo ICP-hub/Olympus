@@ -1,11 +1,11 @@
-import { takeLatest, call, put } from "redux-saga/effects";
-import {
+// import { takeLatest, call, put } from "redux-saga/effects";
+// import {
   // triggerInternetIdentity,
   // walletHandler,
-  triggerPlugWallet,
-  triggeBitfinityWallet,
+  // triggerPlugWallet,
+  // triggeBitfinityWallet,
   // triggerAstroxMeWallet,
-} from "../Reducers/WalletAuth";
+// } from "../Reducers/WalletAuth";
 // import { AuthClient } from "@dfinity/auth-client";
 // import { toHex } from "@dfinity/agent";
 // import { initActor } from "../ActorManager";
@@ -48,7 +48,7 @@ import {
 
 
 
-function* plugWalletHandler() {
+// function* plugWalletHandler() {
   // if (window?.ic?.plug) {
   //   try {
   //     yield window.ic.plug.requestConnect();
@@ -81,7 +81,7 @@ function* plugWalletHandler() {
   // } else {
   //   alert("Plug Wallet extension is not installed!");
   // }
-}
+// }
 
 // function* astroxMeWalletHandler() {
 //   if (window?.ic?.astroxme) {
@@ -100,7 +100,7 @@ function* plugWalletHandler() {
 //   }
 // }
 
-function* bitfinityWalletHandler() {
+// function* bitfinityWalletHandler() {
   // if (window?.ic?.infinityWallet) {
   //   try {
   //     const isConnected = yield window.ic.infinityWallet.requestConnect();
@@ -124,11 +124,11 @@ function* bitfinityWalletHandler() {
   // } else {
   //   alert("Bitfinity Wallet extension is not installed!");
   // }
-}
+// }
 
-export function* walletSagas() {
-  // yield takeLatest(triggerInternetIdentity().type, internetIdentityHandler),
-    yield takeLatest(triggerPlugWallet().type, plugWalletHandler);
-  // yield takeLatest(triggerAstroxMeWallet().type, astroxMeWalletHandler);
-  yield takeLatest(triggeBitfinityWallet().type, bitfinityWalletHandler);
-}
+// export function* walletSagas() {
+//   // yield takeLatest(triggerInternetIdentity().type, internetIdentityHandler),
+//     yield takeLatest(triggerPlugWallet().type, plugWalletHandler);
+//   // yield takeLatest(triggerAstroxMeWallet().type, astroxMeWalletHandler);
+//   yield takeLatest(triggeBitfinityWallet().type, bitfinityWalletHandler);
+// }

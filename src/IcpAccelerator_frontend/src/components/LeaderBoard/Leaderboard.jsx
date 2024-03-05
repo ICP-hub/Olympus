@@ -1,10 +1,13 @@
 import React, { useState ,useEffect, useRef} from "react";
 import { projectFilterSvg, remove, badge } from "../Utils/Data/SvgData";
+import {OutSideClickHandler} from "../hooks/OutSideClickHandler"
 
 const Leaderboard = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState("Leaderboard");
   const dropdownRef = useRef(null);
+  OutSideClickHandler(dropdownRef, () => setIsPopupOpen(false))
+
   const projects = [
     {
       number: 1,
@@ -30,18 +33,6 @@ const Leaderboard = () => {
     setVisibleProject(visibleProject === number ? null : number);
   };
 
-  useEffect(() => { // Step 2: Setup the click event listener
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsPopupOpen(false); // Close the dropdown if the click is outside
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
   return (
     <div className="px-[4%]  w-full flex flex-col bg-gray-100  justify-center ">
       <div className="flex items-center justify-between">
@@ -54,7 +45,7 @@ const Leaderboard = () => {
         <div className="flex justify-end gap-4 relative " ref={dropdownRef}>
           <div
             className="cursor-pointer"
-            onClick={() => setIsPopupOpen(!isPopupOpen)}
+            onClick={() => setIsPopupOpen(true)}
           >
             {projectFilterSvg}
 

@@ -1,6 +1,6 @@
 import { takeLatest, call, put, select } from "redux-saga/effects";
 import { setActor, handleActorRequest, actorError } from '../Reducers/actorBindReducer';
-import { createActor } from "../../../../../declarations/IcpAccelerator_backend/index";
+import { createActor } from "../../../../../../declarations/IcpAccelerator_backend/index";
 
 const selectedIdentity = (state) => state.internet.identity;
 
@@ -13,7 +13,7 @@ function* initActorSaga() {
 
     const actor = yield call(createActor, canisterId, { agentOptions: { identity } });
     
-    console.log('Actor initialized in initActorSaga:', actor);
+    // console.log('Actor initialized in initActorSaga:', actor);
 
     yield put(setActor(actor));
   } catch (error) {
