@@ -2,15 +2,15 @@ import { AuthClient } from "@dfinity/auth-client";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import {
   createActor,
-  //   IcpAccelerator_backend,
-  idlFactory,
 } from "../../../../../declarations/IcpAccelerator_backend/index";
-// import { AccountIdentifier } from "@dfinity/ledger-icp";
 import { Actor, HttpAgent } from "@dfinity/agent";
-// import appConstants from "../../Constants/appConstants";
 import { useDispatch } from "react-redux";
 import { setActor } from "../Redux/Reducers/actorBindReducer";
-import { loginSuccess } from "../Redux/Reducers/InternetIdentityReducer";
+import {
+  loginSuccess,
+  logoutSuccess,
+  logoutFailure
+} from "../Redux/Reducers/InternetIdentityReducer";
 
 const AuthContext = createContext();
 
@@ -54,22 +54,11 @@ export const useAuthClient = (options = defaultOptions) => {
   const [backendActor, setBackendActor] = useState(null);
 
   const dispatch = useDispatch();
-  //   const [accountIdString, setAccountIdString] = useState("");
-  //   const [userType, setUserType] = useState(appConstants.UNKNOWN);
-  //   const [accountId, setAccountId] = useState(null);
-
   useEffect(() => {
-    // Initialize AuthClient
     AuthClient.create(options.createOptions).then((client) => {
       setAuthClient(client);
     });
   }, []);
-
-  //   function toHexString(byteArray) {
-  //     return Array.from(byteArray, function (byte) {
-  //       return ("0" + (byte & 0xff).toString(16)).slice(-2);
-  //     }).join("");
-  //   }
 
   const login = () => {
     return new Promise(async (resolve, reject) => {
@@ -117,6 +106,7 @@ export const useAuthClient = (options = defaultOptions) => {
   async function updateClient(client) {
     const isAuthenticated = await client.isAuthenticated();
     setIsAuthenticated(isAuthenticated);
+   
     const identity = client.getIdentity();
     setIdentity(identity);
     const principal = identity.getPrincipal().toText();
@@ -126,45 +116,31 @@ export const useAuthClient = (options = defaultOptions) => {
     const actor = createActor(process.env.CANISTER_ID_ICPACCELERATOR_BACKEND, {
       agent,
     });
-    dispatch(
-      loginSuccess({
-        isAuthenticated: true,
-        identity,
-        principal,
-        navi: "roleSelect",
-      })
-    );
-    dispatch(setActor(actor));
+
+    if (isAuthenticated === true) {
+      dispatch(
+        loginSuccess({
+          isAuthenticated: true,
+          identity,
+          principal,
+          navi: "roleSelect",
+        })
+      );
+      dispatch(setActor(actor));
+    }
     setBackendActor(actor);
-
-    // const accountId = AccountIdentifier.fromPrincipal({ principal });
-    // setAccountId(toHexString(accountId.bytes));
-    // let accountIdString = toHexString(accountId.bytes);
-    // setAccountIdString(accountIdString);
-
-    // let userType = await actor.check_user_type();
-    // setUserType(userType);
   }
-
-  //   const createLedgerActor = (canisterId) => {
-  //     let identity = window.identity;
-  //     const agent = new HttpAgent({ identity });
-  //     // Creates an actor with using the candid interface and the HttpAgent
-  //     return Actor.createActor(idlFactory, {
-  //       agent,
-  //       canisterId,
-  //     });
-  //   };
 
   async function logout() {
-    await authClient?.logout();
-    await updateClient(authClient);
-    setIsAuthenticated(false);
+    try {
+      await authClient?.logout();
+      await updateClient(authClient);
+      setIsAuthenticated(false);
+      await dispatch(logoutSuccess());
+    } catch (error) {
+      dispatch(logoutFailure(error.toString()));
+    }
   }
-
-  //   const canisterId =
-  //     process.env.CANISTER_ID_MANIPUR_EDU_BACKEND ||
-  //     process.env.MANIPUR_EDU_BACKEND_CANISTER_ID;
 
   const canisterId =
     process.env.CANISTER_ID_ICPACCELERATOR_BACKEND ||
@@ -180,13 +156,8 @@ export const useAuthClient = (options = defaultOptions) => {
     authClient,
     identity,
     principal,
-    // backendActor,
-    // accountId,
-    // createLedgerActor,
     actor,
     reloadLogin,
-    // accountIdString,
-    // userType
   };
 };
 
@@ -198,8 +169,7 @@ export const AuthProvider = ({ children }) => {
   if (auth.authClient && auth.actor) {
     return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
   } else {
-    // Return null or a loading component when authClient or actor is not yet initialized
-    return null; // or <LoadingIndicator /> if you prefer to show a loading state
+    return null; 
   }
 };
 

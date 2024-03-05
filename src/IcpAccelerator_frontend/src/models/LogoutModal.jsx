@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import internetIdentity from "../../assets/WalletLogo/IcpWallet1.png";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { logoutStart } from "../components/StateManagement/Redux/Reducers/InternetIdentityReducer";
+// import { logoutStart } from "../components/StateManagement/Redux/Reducers/InternetIdentityReducer";
 import { changeHasSelectedRoleHandler } from "../components/StateManagement/Redux/Reducers/userRoleReducer";
 import { useNavigate } from "react-router-dom";
 import { mentorRegisteredHandlerRequest } from "../components/StateManagement/Redux/Reducers/mentorRegisteredData";
@@ -33,9 +33,11 @@ const LogoutModal = () => {
 
   const logoutHandler = async () => {
     dispatch(changeHasSelectedRoleHandler(false));
+     console.log('11111111111111111111');
     await logout();
-    dispatch(logoutStart());
-    // navigate('/')
+    console.log('55555555555555555555');
+    // dispatch(logoutStart());
+    navigate('/')
     // setDropdownOpen(false)
   };
 

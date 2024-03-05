@@ -16,7 +16,6 @@ import { useDispatch } from "react-redux";
 import { handleActorRequest } from "./components/StateManagement/Redux/Reducers/actorBindReducer";
 import {
   checkLoginOnStart,
-  logoutStart,
 } from "./components/StateManagement/Redux/Reducers/InternetIdentityReducer";
 import AppRoutes from "./AppRoutes";
 import Footer from "./components/Footer/Footer";
@@ -26,7 +25,7 @@ import { investorRegisteredHandlerRequest } from "./components/StateManagement/R
 import { hubRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/hubRegisteredData";
 import { founderRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/founderRegisteredData";
 import { useAuth } from "./components/StateManagement/useContext/useAuth";
-
+import { areaOfExpertiseHandlerRequest } from "./components/StateManagement/Redux/Reducers/getAreaOfExpertise";
 const App = () => {
   const identity = useSelector((currState) => currState.internet.identity);
   const isAuthenticated = useSelector(
@@ -83,6 +82,10 @@ const App = () => {
         return null;
     }
   }, [specificRole, isAuthenticated, dispatch]);
+
+  useEffect(()=>{
+    dispatch(areaOfExpertiseHandlerRequest())
+  },[isAuthenticated, identity, dispatch])
 
   return (
     <>
