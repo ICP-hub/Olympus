@@ -50,7 +50,7 @@ pub fn like_project(project_id: String) -> std::string::String {
                 let mut likes = likes.borrow_mut();
                 let like_record = likes.projects.entry(project_id.clone()).or_insert_with(Default::default);
                 like_record.upvoters.push(likes_info.clone());
-                like_record.count += Nat::from(1); 
+                like_record.count += Nat::from(1_u32); 
                 ic_cdk::println!("Upvote Record is {:?}", like_record);
                 ic_cdk::println!("Upvote Info is {:?}", likes_info);
             });

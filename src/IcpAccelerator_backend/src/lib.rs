@@ -12,7 +12,7 @@ mod requests;
 
 use hub_organizer::{HubOrganizerRegistration, UniqueHubs};
 use ic_cdk::api::caller;
-use ic_kit::candid::{candid_method, export_service};
+use ic_kit::candid::{candid_method};
 use leaderboard::{LeaderboardEntryForLikes, LeaderboardEntryForUpvote, LeaderboardEntryForRatings};
 use project_like::LikeRecord;
 use requests::Request;
@@ -499,26 +499,26 @@ pub fn get_my_id() -> Principal{
 //     roles::add_role(name)
 // }
 
-#[query(name = "__get_candid_interface_tmp_hack")]
-fn export_candid() -> String {
-    export_service!();
-    __export_service()
-}
+// #[query(name = "__get_candid_interface_tmp_hack")]
+// fn export_candid() -> String {
+//     export_service!();
+//     __export_service()
+// }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+// #[cfg(test)]
+// mod tests {
+//     use super::*;
 
-    #[test]
-    fn save_candid() {
-        use std::env;
-        use std::fs::write;
-        use std::path::PathBuf;
+//     #[test]
+//     fn save_candid() {
+//         use std::env;
+//         use std::fs::write;
+//         use std::path::PathBuf;
 
-        let dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
+//         let dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
 
-        // Directly use dir for the current directory
-        let file_path = dir.join("IcpAccelerator_backend.did");
-        write(file_path, export_candid()).expect("Write failed.");
-    }
-}
+//         // Directly use dir for the current directory
+//         let file_path = dir.join("IcpAccelerator_backend.did");
+//         write(file_path, export_candid()).expect("Write failed.");
+//     }
+// }

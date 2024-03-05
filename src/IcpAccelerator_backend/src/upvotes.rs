@@ -55,7 +55,7 @@ pub fn upvote(project_id: String) -> std::string::String {
                     let upvote_record = upvotes.projects.entry(project_id.clone()).or_insert_with(Default::default);
                     upvote_record.upvoters.push(upvoter_info.clone());
                     // Assuming Nat::from works as expected, otherwise adjust accordingly
-                    upvote_record.count += 1; // Simplified for clarity; adjust as needed based on your Nat type
+                    upvote_record.count += Nat::from(1_u32); // Simplified for clarity; adjust as needed based on your Nat type
                     ic_cdk::println!("Upvote Record is {:?}", upvote_record);
                     ic_cdk::println!("Upvote Info is {:?}", upvoter_info);
                 });
