@@ -25,7 +25,10 @@ const allHubSlice = createSlice({
   },
 });
 
-export const { allHubHandlerRequest, allHubHandlerSuccess, allHubHandlerFailure } =
-allHubSlice.actions;
+export const {
+  allHubHandlerRequest,
+  allHubHandlerSuccess,
+  allHubHandlerFailure,
+} = allHubSlice.actions;
 
 export default allHubSlice.reducer;

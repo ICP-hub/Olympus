@@ -9,6 +9,7 @@ mod upvotes;
 mod vc_registration;
 mod latest_popular_projects;
 mod requests;
+mod manage_focus_expertise;
 
 use hub_organizer::{HubOrganizerRegistration, UniqueHubs};
 use ic_cdk::api::caller;
@@ -17,9 +18,10 @@ use leaderboard::{LeaderboardEntryForLikes, LeaderboardEntryForUpvote, Leaderboa
 use project_like::LikeRecord;
 use requests::Request;
 use roles::{get_roles, RolesResponse};
-use std::collections::HashSet;
+use std::collections::{HashSet, HashMap};
 
 use manage_hubs::{get_icp_hubs, IcpHub};
+use manage_focus_expertise::{get_areas, Areas};
 use mentor::MentorProfile;
 use upvotes::UpvoteRecord;
 
@@ -34,12 +36,12 @@ use rbac::{assign_roles_to_principal, has_required_role, UserRole};
 
 use candid::Principal;
 use ic_cdk_macros::{pre_upgrade, query, update};
-use project_registration::{AreaOfFocus, DocsInfo, ProjectInfo, TeamMember, ProjectInfoInternal, ThirtyInfoProject};
+use project_registration::{DocsInfo, ProjectInfo, TeamMember, ProjectInfoInternal, ThirtyInfoProject, NotificationProject};
 use register_user::{FounderInfo, FounderInfoInternal, ThirtyInfoFounder};
 use roadmap_suggestion::{Status, Suggestion};
 use upvotes::UpvoteStorage;
 use vc_registration::VentureCapitalist;
-use ratings::{Rating};
+use ratings::{Rating, MainLevel, MainLevelRatings};
 
 use crate::notification::Notification;
 
@@ -170,6 +172,19 @@ fn update_team_member(project_id: String, team_member: TeamMember) -> String {
 #[candid_method(update)]
 fn delete_project(id: String) -> std::string::String {
     project_registration::delete_project(id)
+}
+
+#[update]
+#[candid_method(update)]
+fn verify_project_under_your_hub(project_id: String)->String{
+    let hub_principal = caller();
+    project_registration::verify_project(hub_principal, &project_id)
+}
+
+#[query]
+#[candid_method(query)]
+fn get_notifications_for_hubs()->Vec<NotificationProject>{
+    project_registration::get_notifications_for_caller()
 }
 
 #[update]
@@ -370,6 +385,18 @@ fn get_icp_hubs_candid() -> Vec<IcpHub> {
     get_icp_hubs()
 }
 
+#[query]
+#[candid_method(query)]
+fn get_area_focus_expertise() -> Vec<Areas>{
+    get_areas()
+}
+
+#[query]
+#[candid_method(query)]
+fn get_hubs_principal_using_region(region: String)->Vec<String>{
+    hub_organizer::get_hub_organizer_principals_by_region(region)
+}
+
 // #[query]
 // #[candid_method(query)]
 // fn greet() -> String {
@@ -455,7 +482,7 @@ pub fn get_leaderboard_using_ratings() -> Vec<LeaderboardEntryForRatings>{
 
 #[update]
 #[candid_method(update)]
-pub fn update_rating_api(rating: Rating){
+pub fn update_rating_api(rating: Vec<Rating>){
     ratings::update_rating(rating);
 }
 
@@ -463,6 +490,12 @@ pub fn update_rating_api(rating: Rating){
 #[candid_method(query)]
 pub fn calculate_average_api(project_id: String) -> Option<f64> {
     ratings::calculate_average(&project_id)
+}
+
+#[query]
+#[candid_method(query)]
+pub fn get_main_level_ratings(project_id: String) -> HashMap<MainLevel, MainLevelRatings>{
+    ratings::get_ratings_by_project_id(&project_id)
 }
 
 #[update]

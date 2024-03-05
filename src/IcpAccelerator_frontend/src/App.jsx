@@ -13,18 +13,19 @@ import { useSelector } from "react-redux";
 import Header from "./components/Layout/Header/Header";
 import AllDetailsForm from "./components/Registration/AllDetailsForm";
 import { useDispatch } from "react-redux";
-import { handleActorRequest } from "./components/Redux/Reducers/actorBindReducer";
+import { handleActorRequest } from "./components/StateManagement/Redux/Reducers/actorBindReducer";
 import {
   checkLoginOnStart,
   logoutStart,
-} from "./components/Redux/Reducers/InternetIdentityReducer";
+} from "./components/StateManagement/Redux/Reducers/InternetIdentityReducer";
 import AppRoutes from "./AppRoutes";
 import Footer from "./components/Footer/Footer";
-import { userRoleHandler } from "./components/Redux/Reducers/userRoleReducer";
-import { mentorRegisteredHandlerRequest } from "./components/Redux/Reducers/mentorRegisteredData";
-import { investorRegisteredHandlerRequest } from "./components/Redux/Reducers/investorRegisteredData";
-import { hubRegisteredHandlerRequest } from "./components/Redux/Reducers/hubRegisteredData";
-import { founderRegisteredHandlerRequest } from "./components/Redux/Reducers/founderRegisteredData";
+import { userRoleHandler } from "./components/StateManagement/Redux/Reducers/userRoleReducer";
+import { mentorRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/mentorRegisteredData";
+import { investorRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/investorRegisteredData";
+import { hubRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/hubRegisteredData";
+import { founderRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/founderRegisteredData";
+import { useAuth } from "./components/StateManagement/useContext/useAuth";
 
 const App = () => {
   const identity = useSelector((currState) => currState.internet.identity);
@@ -35,6 +36,7 @@ const App = () => {
     (currState) => currState.current.specificRole
   );
 
+  const { reloadLogin } = useAuth();
   // const actor = useSelector((currState) => currState.actors.actor);
   // const userRole = useSelector((currState) => currState.current.specificRole);
 
@@ -48,10 +50,9 @@ const App = () => {
   // console.log('isAuthenticated & other =>', isAuthenticated, identity,)
 
   useEffect(() => {
-    dispatch(checkLoginOnStart());
+    // dispatch(checkLoginOnStart());
+    reloadLogin();
   }, []);
-
-  
 
   useEffect(() => {
     if (isAuthenticated && identity) {
@@ -59,31 +60,29 @@ const App = () => {
     }
   }, [isAuthenticated, identity, dispatch]);
 
-
   useEffect(() => {
     dispatch(userRoleHandler());
   }, [isAuthenticated, identity, specificRole, dispatch]);
 
-
-useEffect(()=>{
-    console.log('specific role inside effect of app 1',specificRole);
+  useEffect(() => {
+    console.log("specific role inside effect of app 1", specificRole);
     switch (specificRole) {
       case "Project":
-        dispatch(founderRegisteredHandlerRequest())
+        dispatch(founderRegisteredHandlerRequest());
         break;
       case "Mentor":
-        dispatch(mentorRegisteredHandlerRequest())
+        dispatch(mentorRegisteredHandlerRequest());
         break;
       case "ICPHubOrganizer":
-        dispatch(hubRegisteredHandlerRequest())
+        dispatch(hubRegisteredHandlerRequest());
         break;
       case "VC":
-        dispatch(investorRegisteredHandlerRequest())
+        dispatch(investorRegisteredHandlerRequest());
         break;
       default:
         return null;
     }
-  },[specificRole, isAuthenticated, dispatch])
+  }, [specificRole, isAuthenticated, dispatch]);
 
   return (
     <>

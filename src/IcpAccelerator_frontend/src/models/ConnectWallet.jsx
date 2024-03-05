@@ -7,73 +7,87 @@ import { useDispatch } from "react-redux";
 //   triggerPlugWallet,
 //   triggeBitfinityWallet,
 // } from "../components/Redux/Reducers/WalletAuth";
-import { loginStart } from "../components/Redux/Reducers/InternetIdentityReducer";
+import { loginStart } from "../components/StateManagement/Redux/Reducers/InternetIdentityReducer";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 // import Loader from "../components/Loader/Loader";
-
+import { useAuth } from "../components/StateManagement/useContext/useAuth";
 
 const ConnectWallet = ({ isModalOpen, onClose }) => {
   const roleNavigate = useSelector((currState) => currState.internet.navi);
   const userRole = useSelector((currState) => currState.current.specificRole);
-  const hasSelectedRole  = useSelector((currState)=> currState.current.hasSelectedRole)
+  const hasSelectedRole = useSelector(
+    (currState) => currState.current.hasSelectedRole
+  );
   const isAuthenticated = useSelector(
     (currState) => currState.internet.isAuthenticated
   );
-
+  const { login } = useAuth();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   // console.log("bande ka role ", userRole);
 
-
-
-  // useEffect(() => {
-  //   console.log("isAuthenticated=> ", isAuthenticated,"roleNavigate =>", roleNavigate,"userRole=>", userRole , 'hasSelectedRole =>', hasSelectedRole)
-  //   if (userRole  && isAuthenticated) {
-  //     console.log("1");
-  //     onClose();
-  //     navigate("/dashboard");
-  //   } else if (
-  //     userRole === null &&
-  //     roleNavigate === "roleSelect" &&
-  //     isAuthenticated && hasSelectedRole === false
-  //   ) {
-  //     console.log("2");
-  //     onClose();
-  //     navigate(`/${roleNavigate}`);
-  //   }else if(hasSelectedRole ===true && isAuthenticated && userRole!== null){
-  //     navigate('/details')
-  //   } else if(!isAuthenticated) {
-  //     console.log("3");
-  //     navigate("/");
-  //   }
-  // }, [isAuthenticated, roleNavigate, userRole]);
-
-
-  
-  const handleClick = (walletType) => {
-    if (!walletType) {
-      console.log("No wallet type specified.");
-      return;
+  useEffect(() => {
+    console.log(
+      "isAuthenticated=> ",
+      isAuthenticated,
+      "roleNavigate =>",
+      roleNavigate,
+      "userRole=>",
+      userRole,
+      "hasSelectedRole =>",
+      hasSelectedRole
+    );
+    if (userRole && isAuthenticated) {
+      // console.log("1");
+      onClose();
+      navigate("/dashboard");
+    } else if (
+      userRole === null &&
+      roleNavigate === "roleSelect" &&
+      isAuthenticated &&
+      hasSelectedRole === false
+    ) {
+      // console.log("2");
+      onClose();
+      navigate(`/${roleNavigate}`);
+    } else if (
+      hasSelectedRole === true &&
+      isAuthenticated &&
+      userRole !== null
+    ) {
+      navigate("/details");
+    } else if (!isAuthenticated) {
+      // console.log("3");
+      navigate("/");
     }
-    switch (walletType) {
-      case "internetIdentity":
-        dispatch(loginStart());
-        break;
-      // case "bitfinity":
-      //   dispatch(triggeBitfinityWallet());
-      //   break;
-      // case "plug":
-      //   dispatch(triggerPlugWallet());
-      //   break;
-      default:
-        alert(`The wallet type '${walletType}' is not supported yet.`);
-        break;
-    }
+  }, [isAuthenticated, roleNavigate, userRole]);
+
+  const loginHandler = async () => {
+    await login();
   };
 
-
+  // const handleClick = (walletType) => {
+  // if (!walletType) {
+  //   console.log("No wallet type specified.");
+  //   return;
+  // }
+  // switch (walletType) {
+  //   case "internetIdentity":
+  // dispatch(loginStart());
+  //     break;
+  //   // case "bitfinity":
+  //   //   dispatch(triggeBitfinityWallet());
+  //   //   break;
+  //   // case "plug":
+  //   //   dispatch(triggerPlugWallet());
+  //   //   break;
+  //   default:
+  //     alert(`The wallet type '${walletType}' is not supported yet.`);
+  //     break;
+  // }
+  // };
 
   return (
     <>
@@ -100,7 +114,7 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
                 </p>
                 <ul className="my-4 space-y-3 cursor-pointer">
                   {walletModalSvg.map((wallet, index) => (
-                    <div key={index} onClick={() => handleClick(wallet.id)}>
+                    <div key={index} onClick={loginHandler}>
                       {wallet.content}
                     </div>
                   ))}

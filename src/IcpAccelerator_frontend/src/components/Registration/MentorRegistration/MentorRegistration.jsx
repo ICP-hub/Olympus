@@ -15,7 +15,7 @@ import {
 import { useSelector } from "react-redux";
 import CompressedImage from "../../ImageCompressed/CompressedImage";
 import { useDispatch } from "react-redux";
-import { allHubHandlerRequest } from "../../Redux/Reducers/All_IcpHubReducer";
+import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_IcpHubReducer";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -201,10 +201,8 @@ const MentorRegistration = () => {
   const [mentor_image, setmentor_image] = useState(null);
   const [mentorDataObject, setMentorDataObject] = useState({});
 
-  console.log("MentorRegistration  run  specificRole =>", specificRole);
-  console.log("mentorFullData in mentor-registratn comp =>", mentorFullData)
-
-
+  // console.log("MentorRegistration  run  specificRole =>", specificRole);
+  // console.log("mentorFullData in mentor-registratn comp =>", mentorFullData);
 
   const getTabClassName = (tab) => {
     return `inline-block p-2 font-bold ${
@@ -213,29 +211,6 @@ const MentorRegistration = () => {
         : "text-gray-400  border-transparent hover:text-black"
     } rounded-t-lg`;
   };
-
-  // useEffect(() => {a
-  //   if (mentorFullData) {
-  //     const formattedData = {};
-
-  //     // Object.keys(mentorFullData).forEach((key) => {
-  //     //   formattedData[key] = mentorFullData[key][0];
-  //     // });
-
-
-  //    mentorFullData.forEach((data) => {
-  //       for (let key in data) {
-  //       formattedData[key] = data[key];     
-  //         //  console.log(formattedData[key]);
-
-  //   }
-
-  //     });
-  //     console.log('mentordatafetch ------------------------------->', formattedData)
-  //     setFormData(formattedData);
-  //   }
-  // }, [mentorFullData]);
-  
 
   const steps = [
     { id: "personalDetails", fields: mentorRegistrationPersonalDetails },
@@ -249,12 +224,12 @@ const MentorRegistration = () => {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    trigger,reset
+    trigger,
+    reset,
   } = useForm({
     resolver: yupResolver(currentValidationSchema),
   });
 
-  
   const handleTabClick = async (tab) => {
     const targetStep = mentorRegistration.findIndex(
       (header) => header.id === tab
@@ -288,15 +263,8 @@ const MentorRegistration = () => {
   const handleNext = async () => {
     const fieldsToValidate = steps[step].fields.map((field) => field.name);
     const result = await trigger(fieldsToValidate);
-    console.log("fieldsToValidate", fieldsToValidate);
+    // console.log("fieldsToValidate", fieldsToValidate);
     if (result) {
-      // if (steps[step].fields.some(field => field.name === 'icp_Hub') && !formData.icp_Hub) {
-      //   setError('icp_Hub', {
-      //     type: 'manual',
-      //     message: 'ICP Hub is required',
-      //   });
-      //   return; // Stop the execution if there's an error with icp_Hub
-      // }
       if (!image) {
         alert("Please upload a profile image.");
         return;
@@ -329,46 +297,49 @@ const MentorRegistration = () => {
         const byteArray = await compressedFile.arrayBuffer(); // Convert krega Blob ko ArrayBuffer mai
         const imageBytes = Array.from(new Uint8Array(byteArray)); // Convert ArrayBuffer ko array of bytes mai
         setmentor_image(imageBytes);
+        // console.log("imageBytes", imageBytes);
       } catch (error) {
         console.error("Error compressing the image:", error);
       }
     }
   };
 
-
   useEffect(() => {
     if (mentorFullData && mentorFullData.length > 0) {
       const data = mentorFullData[0];
+      // console.log(
+      //   "formattedData============>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",
+      //   data
+      // );
+
       const formattedData = Object.keys(data).reduce((acc, key) => {
         acc[key] = Array.isArray(data[key]) ? data[key][0] : data[key];
         return acc;
       }, {});
-  
-      console.log("Attempting to reset form with data:", formattedData);
+
+      // console.log(
+      //   "Attempting to reset form with data:",
+      //   formattedData?.mentor_image
+      // );
+      // Assuming formattedData.mentor_image contains the data URL string
+
       reset(formattedData);
+      setFormData(formattedData);
     }
   }, [mentorFullData, reset]);
-  
-  
 
   const sendingMentorData = async (val) => {
-    console.log('run sendingMentorData =========')
-    console.log('mentorDataObject ==>> ', mentorDataObject)
-    
-    // try {
-    //   if(specificRole){
-    //     console.log(specificRole)
-    //   }
-    // } catch (error) {
-    //   toast.error(error);
-    //   console.log(error.message);
-    // }
+    // console.log("run sendingMentorData =========");
+    // console.log("mentorDataObject ==>> ", val);
+
     let result;
 
     try {
-      if (specificRole) {
+      if (specificRole !== null || undefined) {
+        // console.log("update mentor functn k pass reached");
         result = await actor.update_mentor_profile(val);
       } else if (specificRole === null || specificRole === undefined) {
+        // console.log("register mentor functn k pass reached");
         result = await actor.register_mentor_candid(val);
       }
       toast.success(result);
@@ -381,25 +352,26 @@ const MentorRegistration = () => {
   };
 
   const onSubmit = async (data) => {
-    console.log("data >>>>", data);
+    // console.log("data >>>>", data);
     const updatedFormData = { ...formData, ...data };
     setFormData(updatedFormData);
+
+    // console.log("updatedFormData inside onSUbmit ~~~~~~", updatedFormData);
     if (step < steps.length - 1) {
       handleNext();
-    }
-    
-    
-    
-    else if (specificRole && step > steps.length - 1) {
-      console.log("exisiting user visit ");
-    
+    } else if (
+      specificRole !== null ||
+      (undefined && step > steps.length - 1)
+    ) {
+      // console.log("exisiting user visit ");
+
       let tempObj2 = {
         areas_of_expertise: [updatedFormData.areas_of_expertise] || [],
         availability_and_time_commitment:
           [updatedFormData.availability_and_time_commitment] || [],
         conflict_of_interest_disclosure:
           [updatedFormData.conflict_of_interest_disclosure] || [],
-        email_address: [updatedFormData.email_address] | [],
+        email_address: [updatedFormData.email_address] || [],
         full_name: [updatedFormData.full_name] || [],
         preferred_icp_hub: [updatedFormData.preferred_icp_hub] || [],
         industry_achievements: [updatedFormData.industry_achievements] || [],
@@ -408,10 +380,12 @@ const MentorRegistration = () => {
         location: [updatedFormData.location] || [],
         motivation_for_becoming_a_mentor:
           [updatedFormData.motivation_for_becoming_a_mentor] || [],
-        past_work_records_links: [updatedFormData.past_work_records_links] || [],
+        past_work_records_links:
+          [updatedFormData.past_work_records_links] || [],
         preferred_communication_tools:
           [updatedFormData.preferred_communication_tools] || [],
-        preferred_startup_stage: [updatedFormData.preferred_startup_stage] || [],
+        preferred_startup_stage:
+          [updatedFormData.preferred_startup_stage] || [],
         professional_affiliations:
           [updatedFormData.professional_affiliations] || [],
         referrer_contact: [updatedFormData.referrer_contact] || [],
@@ -421,22 +395,25 @@ const MentorRegistration = () => {
           [updatedFormData.specific_skills_or_technologies_expertise] || [],
         success_stories_testimonials:
           [updatedFormData.success_stories_testimonials] || [],
-        telegram_id_id: [updatedFormData.telegram_id] || [],
+        telegram_id: [updatedFormData.telegram_id] || [],
         time_zone: [updatedFormData.time_zone] || [],
         unique_contribution_to_startups:
           [updatedFormData.unique_contribution_to_startups] || [],
         volunteer_experience: [updatedFormData.volunteer_experience] || [],
         years_of_experience_mentoring_startups:
-          [parseInt(updatedFormData.years_of_experience_mentoring_startups)] || [],
+          [parseInt(updatedFormData.years_of_experience_mentoring_startups)] ||
+          [],
         mentor_image: [mentor_image] || [],
       };
+
+      // console.log("tempObj2 kaam kia ????? ", tempObj2); // work kia
       setMentorDataObject(tempObj2);
-      await sendingMentorData(tempObj2)
+      await sendingMentorData(tempObj2);
     } else if (
       specificRole === null ||
       (specificRole === undefined && step > steps.length - 1)
     ) {
-      console.log("first time visit ");
+      // console.log("first time visit ");
       let tempObj = {
         areas_of_expertise: [updatedFormData.areas_of_expertise],
         availability_and_time_commitment: [
@@ -481,7 +458,10 @@ const MentorRegistration = () => {
           parseInt(updatedFormData.years_of_experience_mentoring_startups),
         ],
         mentor_image: [mentor_image],
-      }
+      };
+
+      // console.log("tempObj kaam kia ????? ", tempObj); // work kia
+
       setMentorDataObject(tempObj);
       await sendingMentorData(tempObj);
     }
@@ -540,6 +520,12 @@ const MentorRegistration = () => {
                 {image ? (
                   <img
                     src={image}
+                    alt="New profile"
+                    className="h-full w-full object-cover"
+                  />
+                ) : formData.mentor_image ? (
+                  <img
+                    src={formData?.mentor_image}
                     alt="User"
                     className="h-full w-full object-cover"
                   />

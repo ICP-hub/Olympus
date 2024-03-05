@@ -25,7 +25,10 @@ const hubSlice = createSlice({
   },
 });
 
-export const { hubRegisteredHandlerFailure, hubRegisteredHandlerRequest, hubRegisteredHandlerSuccess } =
-hubSlice.actions;
+export const {
+  hubRegisteredHandlerFailure,
+  hubRegisteredHandlerRequest,
+  hubRegisteredHandlerSuccess,
+} = hubSlice.actions;
 
 export default hubSlice.reducer;

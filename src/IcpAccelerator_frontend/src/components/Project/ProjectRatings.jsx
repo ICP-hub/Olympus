@@ -268,9 +268,28 @@ const ProjectRatings = () => {
     "Exit",
   ];
 
+  // const [rating, setRating] = useState([
+  //   {
+  //     title: "Team",
+  //     description: "Asia 30 under 30 honorees. PANY was established PANONY was established in March 2018 with operations in Greater China, South Korea and the U.S. Both founders are Forbes Asia 30 under 30 honorees. PANY was establishedPANONY was established in March 2018 with operations in Greater China, South Korea and the U.S. Both founders are Forbes Asia 30 under 30 honorees. PANY was established",
+  //     levels: {
+  //       1: "Starting out: The team is formed but lacks experience.",
+  //       2: "Growing: Gaining some industry experience.",
+  //       3: "Developing: Has a clear vision and starting to implement it.",
+  //       4: "Expanding: Broadening scope and capabilities.",
+  //       5: "Scaling: Significant achievements and industry recognition.",
+  //       6: "Leading: Influential in the industry with major accomplishments.",
+  //       7: "Innovating: Breaking new ground and setting trends.",
+  //       8: "Dominating: A benchmark for success in the industry.",
+  //       9: "Legendary: Transformed the industry with exceptional leadership and innovation.",
+  //     },
+  //   },
+  //   // Add similar structure for other steps...
+  // ]);
+  
   const handleSliderChange = (index, value) => {
-    console.log('index',index)
-    console.log('index',value)
+    // console.log('index',index)
+    // console.log('index',value)
 
     const key = sliderKeys[index];
     const newSliderValues = { ...sliderValues, [key]: value };

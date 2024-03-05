@@ -35,29 +35,17 @@ pub struct TeamMember {
     member_username: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq, Eq, Hash)]
-pub enum AreaOfFocus {
-    DeFi,
-    Tooling,
-    NFTs,
-    Infrastructure,
-    DAO,
-    Social,
-    Games,
-    Other(String),
-    MetaVerse,
-}
-
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct ThirtyInfoProject{
     project_name: Option<String>,
     project_logo: Option<Vec<u8>>,
     project_cover: Option<Vec<u8>>,
-    project_area_of_focus: Option<AreaOfFocus>,
+    project_area_of_focus: Option<String>,
     project_description: Option<String>,
     project_url: Option<String>,
     social_links: Option<SocialLinksInfo>,
+    preferred_icp_hub: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
@@ -82,13 +70,23 @@ pub struct ProjectInfoInternal {
     pub params: ProjectInfo,
     pub uid: String,
     pub is_active: bool,
+    pub is_verified: bool,
 }
+
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
+pub struct NotificationProject {
+    pub project_id: String,
+    pub message: String,
+}
+
+pub type Notifications = HashMap<Principal, Vec<NotificationProject>>;
 
 
 pub type ApplicationDetails = HashMap<Principal, Vec<ProjectInfoInternal>>;
 
 thread_local! {
     pub static APPLICATION_FORM: RefCell<ApplicationDetails> = RefCell::new(ApplicationDetails::new());
+    pub static NOTIFICATIONS: RefCell<Notifications> = RefCell::new(Notifications::new());
 }
 
 
@@ -124,6 +122,7 @@ pub async fn create_project(thirty_info: ThirtyInfoProject)-> String {
     let uid = format!("{:x}", Sha256::digest(&uuids));
     let new_id = uid.clone().to_string();
 
+    let thirty_info_clone = thirty_info.clone();
     let caller = caller();
     let project = ProjectInfo{
         thirty_info: Some(thirty_info),
@@ -134,11 +133,35 @@ pub async fn create_project(thirty_info: ThirtyInfoProject)-> String {
         params:project,
         uid: new_id,
         is_active: true,
+        is_verified: false,
     };
     APPLICATION_FORM.with(|storage| {
         let mut applications = storage.borrow_mut();
         applications.entry(caller).or_insert_with(Vec::new).push(new_project);
     });
+
+    if let Some(region) = &thirty_info_clone.preferred_icp_hub {
+        let hub_principals = crate::hub_organizer::get_hub_organizer_principals_by_region(region.clone());
+        for hub_principal_str in hub_principals {
+            match Principal::from_text(&hub_principal_str) {
+                Ok(hub_principal) => {
+                    let notification = NotificationProject {
+                        project_id: uid.clone(),
+                        message: "SomeOne Created Project Under your Hub".to_string(),
+                    };
+
+                    NOTIFICATIONS.with(|notifications| {
+                        let mut notifs = notifications.borrow_mut();
+                        notifs.entry(hub_principal).or_insert_with(Vec::new).push(notification);
+                    });
+                },
+                Err(_) => {
+                    "Recieved an Invalid Princicpal".to_string();
+                }
+            }
+        }
+    }
+    
     format!("Project Created successfully with ID: {}", uid)
 }
 
@@ -265,4 +288,33 @@ pub fn delete_project(id: String)->std::string::String {
 }
 
 
+pub fn verify_project(hub_principal: Principal, project_id: &str) -> String {
+    let mut project_found = false;
+    APPLICATION_FORM.with(|applications| {
+        if let Some(projects) = applications.borrow_mut().get_mut(&hub_principal) {
+            for project in projects {
+                if project.uid == project_id {
+                    project.is_verified = true;
+                    project_found = true;
+                    break;
+                }
+            }
+        }
+    });
 
+    if project_found {
+        "Project verified successfully.".to_string()
+    } else {
+        "Project not found or you don't have permission to verify this project.".to_string()
+    }
+}
+
+pub fn get_notifications_for_caller() -> Vec<NotificationProject> {
+    let caller_principal = caller();
+    NOTIFICATIONS.with(|notifications| {
+        notifications.borrow()
+            .get(&caller_principal)
+            .cloned()
+            .unwrap_or_else(Vec::new)
+    })
+}
