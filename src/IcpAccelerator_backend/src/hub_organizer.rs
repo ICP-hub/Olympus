@@ -10,10 +10,10 @@
 
     #[derive(Serialize, Deserialize, Clone, Debug, CandidType)]
     pub struct HubOrganizerRegistration {
-        full_name: Option<String>,
+        pub full_name: Option<String>,
         email: Option<String>,
         contact_number: Option<String>,
-        profile_picture: Option<Vec<u8>>,
+        pub profile_picture: Option<Vec<u8>>,
         hub_name: Option<String>,
         hub_location: Option<String>,
         hub_description: Option<String>,
@@ -25,7 +25,7 @@
 
     #[derive(Clone, CandidType)]
     pub struct UniqueHubs {
-        hubs: HubOrganizerRegistration,
+        pub hubs: HubOrganizerRegistration,
         uuid: String,
     }
 

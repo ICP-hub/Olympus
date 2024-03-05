@@ -177,8 +177,7 @@ fn delete_project(id: String) -> std::string::String {
 #[update]
 #[candid_method(update)]
 fn verify_project_under_your_hub(project_id: String)->String{
-    let hub_principal = caller();
-    project_registration::verify_project(hub_principal, &project_id)
+    project_registration::verify_project(&project_id)
 }
 
 #[query]

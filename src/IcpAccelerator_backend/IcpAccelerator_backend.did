@@ -94,7 +94,15 @@ type Notification = record {
   read : bool;
   notification_type : NotificationType;
 };
-type NotificationProject = record { message : text; project_id : text };
+type NotificationProject = record {
+  notification_verifier : NotificationSender;
+  notifiation_id : text;
+  notification_sender : NotificationSender;
+  message : text;
+  timestamp : nat64;
+  project_id : text;
+};
+type NotificationSender = record { name : text; image : vec nat8 };
 type NotificationType = variant {
   ConnectionAcknowledgement : record {
     social_handles : opt text;
