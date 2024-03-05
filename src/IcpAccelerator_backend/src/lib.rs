@@ -36,7 +36,7 @@ use rbac::{assign_roles_to_principal, has_required_role, UserRole};
 
 use candid::Principal;
 use ic_cdk_macros::{pre_upgrade, query, update};
-use project_registration::{DocsInfo, ProjectInfo, TeamMember, ProjectInfoInternal, ThirtyInfoProject, NotificationProject};
+use project_registration::{DocsInfo, ProjectInfo, TeamMember, ProjectInfoInternal, ThirtyInfoProject, NotificationProject, NotificationForOwner};
 use register_user::{FounderInfo, FounderInfoInternal, ThirtyInfoFounder};
 use roadmap_suggestion::{Suggestion};
 use upvotes::UpvoteStorage;
@@ -178,6 +178,18 @@ fn delete_project(id: String) -> std::string::String {
 #[candid_method(update)]
 fn verify_project_under_your_hub(project_id: String)->String{
     project_registration::verify_project(&project_id)
+}
+
+#[update]
+#[candid_method(update)]
+fn connect_to_team_member(project_id: String, team_user_name: String)->String{
+    project_registration::send_connection_request_to_owner(&project_id, &team_user_name)
+}
+
+#[query]
+#[candid_method(query)]
+fn get_your_project_notifications()->Vec<NotificationForOwner>{
+    project_registration::get_notifications_for_owner()
 }
 
 #[query]

@@ -94,6 +94,13 @@ type Notification = record {
   read : bool;
   notification_type : NotificationType;
 };
+type NotificationForOwner = record {
+  sender_image : vec nat8;
+  message : text;
+  timestamp : nat64;
+  sender_name : text;
+  project_id : text;
+};
 type NotificationProject = record {
   notification_verifier : NotificationSender;
   notifiation_id : text;
@@ -264,6 +271,7 @@ type VentureCapitalist = record {
 service : {
   add_suggestion_caller : (text, text) -> (nat64, text);
   calculate_average_api : (text) -> (opt float64) query;
+  connect_to_team_member : (text, text) -> (text);
   create_project : (ThirtyInfoProject) -> (text);
   delete_founder_caller : () -> (text);
   delete_mentor_candid : () -> (text);
@@ -300,6 +308,7 @@ service : {
   get_total_suggestions : (text) -> (nat64) query;
   get_user_likes : (text) -> (opt LikeRecord) query;
   get_venture_capitalist_info : () -> (opt VentureCapitalist) query;
+  get_your_project_notifications : () -> (vec NotificationForOwner) query;
   like_project : (text) -> (text);
   list_all_founders_caller : () -> (vec FounderInfo) query;
   list_all_projects : () -> (vec ProjectInfo) query;
