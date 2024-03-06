@@ -181,7 +181,7 @@ const validationSchema = {
   }),
 };
 
-const MentorRegistration = () => {
+  const MentorRegistration = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
   const specificRole = useSelector(
