@@ -18,6 +18,7 @@ import { useDispatch } from "react-redux";
 import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_IcpHubReducer";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
+import { userRoleHandler } from "../../StateManagement/Redux/Reducers/userRoleReducer";
 
 const validationSchema = {
   personalDetails: yup.object().shape({
@@ -181,7 +182,7 @@ const validationSchema = {
   }),
 };
 
-  const MentorRegistration = () => {
+const MentorRegistration = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
   const specificRole = useSelector(
@@ -227,7 +228,8 @@ const validationSchema = {
     trigger,
     reset,
   } = useForm({
-    resolver: yupResolver(currentValidationSchema), mode :'all'
+    resolver: yupResolver(currentValidationSchema),
+    mode: "all",
   });
 
   const handleTabClick = async (tab) => {
@@ -265,14 +267,12 @@ const validationSchema = {
     const result = await trigger(fieldsToValidate);
     // console.log("fieldsToValidate", fieldsToValidate);
     if (result) {
-
       if (!image && !formData.mentor_image) {
         alert("Please upload a profile image.");
-        return; 
+        return;
       }
       setStep((prevStep) => prevStep + 1);
       setActiveTab(mentorRegistration[step + 1]?.id);
-
     }
   };
 
@@ -335,9 +335,8 @@ const validationSchema = {
         result = await actor.register_mentor_candid(val);
       }
       toast.success(result);
-      await actor.get_role_from_p_id()
+      await dispatch(userRoleHandler());
       await navigate("/dashboard");
-
     } catch (error) {
       toast.error(error);
       console.log(error.message);
