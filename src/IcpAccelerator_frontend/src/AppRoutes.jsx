@@ -2,8 +2,15 @@ import React, { lazy, Suspense, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { rolesHandlerRequest } from "./components/StateManagement/Redux/Reducers/RoleReducer";
+
+import Hubdashboardlive from "./components/Hubdashboardlive/Hubdashboardlive";
+
 import { userRoleHandler } from "./components/StateManagement/Redux/Reducers/userRoleReducer";
 import Loader from "./components/Loader/Loader";
+
+
+const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
+
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
 const AllDetailsForm = lazy(() => import("./components/Registration/AllDetailsForm"));
@@ -21,6 +28,14 @@ const AppRoutes = () => {
 
   const roleNames = isAuthenticated ? allRoles.roles?.map((role) => role.name) : [];
 
+
+
+  const publicRoutes=[
+      { path: "/", element: <Home /> },
+      // {path:"/" , element: <Hubdashboardlive /> },
+      { path: "/details", element: <AllDetailsForm /> },
+      { path: "/roleSelect", element: <RoleSelector /> },
+  ]
 
   
   const publicRoutes = [

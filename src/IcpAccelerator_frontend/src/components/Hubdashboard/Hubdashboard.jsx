@@ -1,8 +1,12 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; 
+import Hubdashboardlive from "../Hubdashboardlive/Hubdashboardlive";
+
 import ApexChart from "react-apexcharts";
 import { paper1, paper2, paper3, paper4, rectangle, Vector } from "../Utils/Data/SvgData";
 
 const Board = () => {
+  const navigate = useNavigate();
   const [selectedOption, setSelectedOption] = useState("DASHBOARD");
   const [donutOptions, setDonutOptions] = useState({});
   const [donutSeries, setDonutSeries] = useState([44, 55, 41, 17, 15,20]);
@@ -38,7 +42,11 @@ const Board = () => {
       },
     }]
   };
-
+  
+  const handleLiveProjectsClick = () => {
+    navigate('/');
+  };
+  
   return (
     <div className='flex flex-col p-4'>
       <div className="left-4 lg:left-auto bg-gradient-to-r from-purple-900 to-blue-500 text-transparent bg-clip-text text-2xl font-extrabold ml-8">
@@ -71,9 +79,9 @@ const Board = () => {
           </div>
         </div>
 
-        <div className="md:w-1/2 w-full flex  justify-center drop-shadow-xl items-center  rounded-lg  text-[#737373]  h-[300px] md:lg:mt:0 mt-8 md:lg:mb:0 mb-8 ">
+        <div  className="md:w-1/2 w-full flex  justify-center drop-shadow-xl items-center  rounded-lg  text-[#737373]  h-[300px] md:lg:mt:0 mt-52 lg:mt-8 md:lg:mb:0 mb-8 ">
           <div className="p-4 flex-row space-y-8">
-            <div className="rounded-lg flex justify-center items-center  flex-col lg-ml-0 ml-4 h-36  w-52 bg-[#FFFFFF] drop-shadow-xl border-2  ">
+            <div onClick={handleLiveProjectsClick} className="rounded-lg flex justify-center items-center  flex-col lg-ml-0 ml-4 h-36  w-52 bg-[#FFFFFF] drop-shadow-xl border-2  ">
               <div className="bg-[#A995E6] h-11 w-14 rounded-md flex justify-center items-center mr-36">
                 {paper1}
               </div>
@@ -82,7 +90,7 @@ const Board = () => {
               </div>
               <p className="font-extrabold  w-[59px] h-[62px] text-[#000000] flex justify-center text-5xl">20</p>
             </div>
-            <div className="rounded-lg flex justify-center items-center  flex-col lg-ml-0 ml-4  h-36  w-52 bg-[#FFFFFF] drop-shadow-xl border-2  ">
+            <div onClick={handleLiveProjectsClick} className="rounded-lg flex justify-center items-center  flex-col lg-ml-0 ml-4  h-36  w-52 bg-[#FFFFFF] drop-shadow-xl border-2  ">
               <div className="bg-[#E1B18F] h-11 w-14 rounded-md flex justify-center items-center mr-36 ">
                 {paper2}
               </div>
@@ -93,7 +101,7 @@ const Board = () => {
             </div>
           </div>
           <div className="p-4 flex-row space-y-8 ">
-            <div className="rounded-lg flex justify-center items-center flex-col h-36  w-52 bg-[#FFFFFF] drop-shadow-xl border-2  ">
+            <div onClick={handleLiveProjectsClick} className="rounded-lg flex justify-center items-center flex-col h-36  w-52 bg-[#FFFFFF] drop-shadow-xl border-2  ">
               <div className=" h-11 w-14 rounded-md flex justify-center items-center  bg-[#BCFFCF] mr-36">
                 {paper3}
               </div>
@@ -103,7 +111,7 @@ const Board = () => {
               </div>
             </div>
 
-            <div className="rounded-lg flex justify-center items-center flex-col h-36  w-52 bg-[#FFFFFF] drop-shadow-xl border-2  ">
+            <div  onClick={handleLiveProjectsClick} className="rounded-lg flex justify-center items-center flex-col h-36  w-52 bg-[#FFFFFF] drop-shadow-xl border-2  ">
               <div className=" h-11 w-14 rounded-md flex justify-center items-center  bg-[#FEA0A0] mr-36">
                 {paper4}
               </div>

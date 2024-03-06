@@ -269,7 +269,7 @@ type VentureCapitalist = record {
   technological_focus : opt text;
 };
 service : {
-
+  add_suggestion : (text, text) -> (nat64, text);
   add_suggestion_caller : (text, text) -> (nat64, text);
   assign_roles_to_principal : (vec UserRole) -> (text);
   calculate_average_api : (text) -> (opt float64) query;
@@ -313,32 +313,20 @@ service : {
   get_projects_for_caller : () -> (vec ProjectInfo) query;
   get_role : () -> (RolesResponse) query;
   get_role_from_p_id : () -> (opt vec UserRole) query;
-
-  get_suggestions_by_parent_id_caller : (text, nat64) -> (vec Suggestion) query;
-  get_suggestions_by_status_caller : (text, text) -> (vec Suggestion) query;
-  get_total_suggestions : (text) -> (nat64) query;
-
   get_role_from_principal : () -> (opt vec UserRole) query;
   get_roles : () -> (RolesResponse) query;
-  get_suggestions_by_parent_id : (nat64) -> (vec Suggestion) query;
-  
-  get_suggestions_by_status : (Status) -> (vec Suggestion) query;
-
-  get_suggestions_grouped_by_status : () -> (
-      vec record { Status; vec Suggestion },
-    ) query;
- 
-  get_total_suggestions_count : () -> (nat64) query;
+  get_suggestions_by_parent_id : (text, nat64) -> (vec Suggestion) query;
+  get_suggestions_by_parent_id_caller : (text, nat64) -> (vec Suggestion) query;
+  get_suggestions_by_status : (text, text) -> (vec Suggestion) query;
+  get_suggestions_by_status_caller : (text, text) -> (vec Suggestion) query;
+  get_total_suggestions : (text) -> (nat64) query;
+  get_total_suggestions_count : (text) -> (nat64) query;
   get_upvote_record : (text) -> (opt UpvoteRecord) query;
-
   get_user_likes : (text) -> (opt LikeRecord) query;
   get_vc_info : () -> (opt VentureCapitalist) query;
   get_venture_capitalist_info : () -> (opt VentureCapitalist) query;
-
   get_your_project_notifications : () -> (vec NotificationForOwner) query;
-
   greet : (text) -> (text) query;
-
   like_project : (text) -> (text);
   list_all_founders : () -> (vec FounderInfo) query;
   list_all_founders_caller : () -> (vec FounderInfo) query;
@@ -355,13 +343,9 @@ service : {
   register_mentor_candid : (MentorProfile) -> (text);
   register_venture_capitalist : (VentureCapitalist) -> (text);
   register_venture_capitalist_caller : (VentureCapitalist) -> (text);
-
+  reply_to_suggestion : (nat64, text, text) -> (nat64, text);
   reply_to_suggestion_caller : (nat64, text, text) -> (nat64, text);
-
-  reply_to_suggestion : (nat64, text) -> (nat64, Status);
-  
   respond_to_connection_request : (principal, principal, bool) -> ();
-
   respond_to_connection_request_candid : (principal, principal, bool) -> ();
   send_connection_request : (principal, text) -> ();
   send_request_as_mentor : (text, text) -> (text);
@@ -374,9 +358,8 @@ service : {
   update_project : (text, ProjectInfo) -> (text);
   update_project_docs : (text, DocsInfo) -> (text);
   update_rating_api : (vec Rating) -> ();
-
+  update_suggestion_status : (nat64, text, text) -> ();
   update_suggestion_status_caller : (nat64, text, text) -> ();
-
   update_team_member : (text, TeamMember) -> (text);
   update_venture_capitalist : (VentureCapitalist) -> ();
   update_venture_capitalist_caller : (VentureCapitalist) -> (text);
