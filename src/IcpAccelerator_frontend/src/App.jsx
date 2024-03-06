@@ -14,10 +14,7 @@ import Header from "./components/Layout/Header/Header";
 import AllDetailsForm from "./components/Registration/AllDetailsForm";
 import { useDispatch } from "react-redux";
 import { handleActorRequest } from "./components/StateManagement/Redux/Reducers/actorBindReducer";
-import {
-  checkLoginOnStart,
-  logoutStart,
-} from "./components/StateManagement/Redux/Reducers/InternetIdentityReducer";
+import { checkLoginOnStart } from "./components/StateManagement/Redux/Reducers/InternetIdentityReducer";
 import AppRoutes from "./AppRoutes";
 import Footer from "./components/Footer/Footer";
 import { userRoleHandler } from "./components/StateManagement/Redux/Reducers/userRoleReducer";
@@ -26,6 +23,17 @@ import { investorRegisteredHandlerRequest } from "./components/StateManagement/R
 import { hubRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/hubRegisteredData";
 import { founderRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/founderRegisteredData";
 import { useAuth } from "./components/StateManagement/useContext/useAuth";
+
+import Hubdashboardlive from "./components/Hubdashboardlive/Hubdashboardlive";
+import Hubcards from "./components/Hubcards/Hubcards";
+import ListedProjects from "./components/Dashboard/ListedProjects";
+import Hublisten from "./components/Hublisten/Hublisten";
+import Hubapproved from "./components/Hubapproved/Hubapproved";
+import Hubdashboard from "./components/Hubdashboard/Hubdashboard";
+import Mentors from "./components/Mentors/Mentors";
+import HubDeclined from "./components/HubDeclined/HubDeclined";
+
+import { areaOfExpertiseHandlerRequest } from "./components/StateManagement/Redux/Reducers/getAreaOfExpertise";
 
 const App = () => {
   const identity = useSelector((currState) => currState.internet.identity);
@@ -62,12 +70,12 @@ const App = () => {
 
   useEffect(() => {
     dispatch(userRoleHandler());
-  }, [isAuthenticated, identity, specificRole, dispatch]);
+  }, [isAuthenticated, identity, dispatch]);
 
   useEffect(() => {
-    console.log("specific role inside effect of app 1", specificRole);
+    // console.log("specific role inside effect of app 1", specificRole);
     switch (specificRole) {
-      case "Project":
+      case "Founder":
         dispatch(founderRegisteredHandlerRequest());
         break;
       case "Mentor":
@@ -84,6 +92,10 @@ const App = () => {
     }
   }, [specificRole, isAuthenticated, dispatch]);
 
+  useEffect(() => {
+    dispatch(areaOfExpertiseHandlerRequest());
+  }, [isAuthenticated, identity, dispatch]);
+
   return (
     <>
       {isModalOpen && (
@@ -99,6 +111,16 @@ const App = () => {
       {/* <AllDetailsForm/> */}
       {/* <ProjectDetails/> */}
       {/* <Home/> */}
+      {/* <Hubcards /> */}
+      {/* <Hubdashboard /> */}
+      {/* <Hubdashboard /> */}
+      {/* <Hubapproved /> */}
+      {/* <HubDeclined /> */}
+      {/* <Mentors /> */}
+      {/* <Hublisten /> */}
+      {/* <ListedProjects /> */}
+      {/* <Hubdashboardlive /> */}
+      {/* <DashBoard /> */}
       {/* <UserProfile/> */}
       {/* <RoleSelector /> */}
       <AppRoutes />

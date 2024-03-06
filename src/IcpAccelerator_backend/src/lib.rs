@@ -36,20 +36,18 @@ mod roadmap_suggestion;
 mod trie;
 
 use rbac::{assign_roles_to_principal, has_required_role, UserRole};
-
+use ic_kit::candid::{candid_method, export_service};
 use candid::Principal;
 use ic_cdk_macros::{pre_upgrade, query, update};
-use project_registration::{
-    DocsInfo, NotificationProject, ProjectInfo, ProjectInfoInternal, TeamMember, ThirtyInfoProject,
-};
-use ratings::{MainLevel, MainLevelRatings, Rating};
+use project_registration::{DocsInfo, ProjectInfo, TeamMember, ProjectInfoInternal, ThirtyInfoProject, NotificationProject, NotificationForOwner};
 use register_user::{FounderInfo, FounderInfoInternal, ThirtyInfoFounder};
-use roadmap_suggestion::{Status, Suggestion};
+use roadmap_suggestion::{Suggestion};
 use upvotes::UpvoteStorage;
 use vc_registration::VentureCapitalist;
-
+use crate::ratings::Rating;
 use crate::notification::Notification;
-
+use crate::ratings::MainLevel;
+use crate::ratings::MainLevelRatings;
 // #[pre_upgrade]
 // fn pre_upgrade() {
 //     mentor::mentor_specific_pre_upgrade_actions();
@@ -179,9 +177,20 @@ fn delete_project(id: String) -> std::string::String {
 
 #[update]
 
-fn verify_project_under_your_hub(project_id: String) -> String {
-    let hub_principal = caller();
-    project_registration::verify_project(hub_principal, &project_id)
+fn verify_project_under_your_hub(project_id: String)->String{
+    project_registration::verify_project(&project_id)
+}
+
+#[update]
+#[candid_method(update)]
+fn connect_to_team_member(project_id: String, team_user_name: String)->String{
+    project_registration::send_connection_request_to_owner(&project_id, &team_user_name)
+}
+
+#[query]
+#[candid_method(query)]
+fn get_your_project_notifications()->Vec<NotificationForOwner>{
+    project_registration::get_notifications_for_owner()
 }
 
 #[query]
@@ -204,37 +213,39 @@ fn get_user_likes(project_id: String) -> Option<LikeRecord> {
 
 #[update]
 
-fn add_suggestion_caller(content: String) -> (u64, Status) {
-    roadmap_suggestion::add_suggestion(content)
+#[candid_method(update)]
+fn add_suggestion_caller(content: String, project_id: String) -> (u64, String) {
+    roadmap_suggestion::add_suggestion(content, project_id)
 }
 
 #[update]
-
-fn update_suggestion_status_caller(id: u64, status: Status) {
-    roadmap_suggestion::update_suggestion_status(id, status);
+#[candid_method(update)]
+fn update_suggestion_status_caller(id: u64, status: String, project_id: String) {
+    roadmap_suggestion::update_suggestion_status(id, status, project_id);
 }
 
 #[query]
-
-fn get_suggestions_by_status_caller(status: Status) -> Vec<Suggestion> {
-    roadmap_suggestion::get_suggestions_by_status(status)
+#[candid_method(query)]
+fn get_suggestions_by_status_caller(project_id: String, status: String, ) -> Vec<Suggestion> {
+    roadmap_suggestion::get_suggestions_by_status(project_id, status)
 }
 
 #[update]
-
-fn reply_to_suggestion_caller(parent_id: u64, reply_content: String) -> (u64, Status) {
-    roadmap_suggestion::reply_to_suggestion(parent_id, reply_content)
+#[candid_method(update)]
+fn reply_to_suggestion_caller(parent_id: u64, reply_content: String, project_id: String) -> (u64, String) {
+    roadmap_suggestion::reply_to_suggestion(parent_id, reply_content, project_id)
 }
 
 #[query]
-
-fn get_suggestions_by_parent_id_caller(parent_id: u64) -> Vec<Suggestion> {
-    roadmap_suggestion::get_suggestions_by_parent_id(parent_id)
+#[candid_method(query)]
+fn get_suggestions_by_parent_id_caller(project_id: String, parent_id: u64) -> Vec<Suggestion> {
+    roadmap_suggestion::get_suggestions_by_parent_id(project_id, parent_id)
 }
 
 #[query]
-fn get_total_suggestions() -> u64 {
-    roadmap_suggestion::get_total_suggestions_count()
+#[candid_method(query)]
+fn get_total_suggestions(project_id: String) -> u64 {
+    roadmap_suggestion::get_total_suggestions_count(project_id)
 }
 
 #[query]
@@ -555,5 +566,5 @@ pub fn get_admin_notifications(caller : Principal) -> Vec<admin::Notification>
 //         write(file_path, export_candid()).expect("Write failed.");
 //     }
 // }
-use crate::roadmap_suggestion::ApplicationDetails;
+
 export_candid!();

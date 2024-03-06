@@ -17,6 +17,7 @@ import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_I
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
+import { userRoleHandler } from "../../StateManagement/Redux/Reducers/userRoleReducer";
 
 const validationSchema = {
   personalDetails: yup.object().shape({
@@ -176,6 +177,8 @@ const InvestorRegistration = () => {
     (currState) => currState.investorData.data
   );
 
+  console.log("investorFullData in vc reg ", investorFullData);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -185,11 +188,6 @@ const InvestorRegistration = () => {
   const [isCurrentStepValid, setIsCurrentStepValid] = useState(false);
   const [userHasInteracted, setUserHasInteracted] = useState(false);
   const [investorDataObject, setInvestorDataObject] = useState({});
-
-  // console.log("InvestorRegistration => ");
-  // useEffect(() => {
-  //   dispatch(allHubHandlerRequest());
-  // }, [actor, dispatch]);
 
   const getTabClassName = (tab) => {
     return `inline-block p-2 font-bold ${
@@ -214,6 +212,7 @@ const InvestorRegistration = () => {
     reset,
   } = useForm({
     resolver: yupResolver(currentValidationSchema),
+    mode: "all",
   });
 
   const handleTabClick = async (tab) => {
@@ -252,34 +251,25 @@ const InvestorRegistration = () => {
     const result = await trigger(fieldsToValidate);
     if (result) {
       setStep((prevStep) => prevStep + 1);
+      setActiveTab(investorRegistration[step + 1]?.id);
     }
   };
 
   const handlePrevious = () => {
     if (step > 0) {
       setStep((prevStep) => prevStep - 1);
+      setActiveTab(investorRegistration[step - 1]?.id);
     }
   };
 
   useEffect(() => {
     if (investorFullData && investorFullData.length > 0) {
       const data = investorFullData[0];
-      // console.log(
-      //   "formattedData============>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",
-      //   data
-      // );
-
       const formattedData = Object.keys(data).reduce((acc, key) => {
         acc[key] = Array.isArray(data[key]) ? data[key][0] : data[key];
         return acc;
       }, {});
-
-      // console.log(
-      //   "Attempting to reset form with data:",
-      //   formattedData?.mentor_image
-      // );
-      // Assuming formattedData.mentor_image contains the data URL string
-
+      console.log("data jo aaya reset mai ", formattedData);
       reset(formattedData);
       setFormData(formattedData);
     }
@@ -288,28 +278,20 @@ const InvestorRegistration = () => {
   const stepFields = steps[step].fields;
   let StepComponent;
 
-  if (step === 0) {
-    StepComponent = <InvestorPersonalInformation />;
-  } else if (step === 1) {
-    StepComponent = <InvestorDetails />;
-  } else if (step === 2) {
-    StepComponent = (
-      <InvestorAdditionalInformation isSubmitting={isSubmitting} />
-    );
-  }
-
   const sendingInvestorData = async (val) => {
+    console.log("data jo jaega backend mai =>", val);
     let result;
     try {
       if (specificRole !== null || undefined) {
-        result = await actor.register_venture_capitalist_caller(val);
+        result = await actor.update_venture_capitalist_caller(val);
       } else if (specificRole === null || specificRole === undefined) {
         result = await actor.register_venture_capitalist_caller(val);
       }
 
       toast.success(result);
       console.log("investor data registered in backend");
-      navigate("/dashboard");
+      await dispatch(userRoleHandler());
+      await navigate("/dashboard");
     } catch (error) {
       toast.error(error);
       console.log(error.message);
@@ -337,8 +319,7 @@ const InvestorRegistration = () => {
 
       let tempObj2 = {
         accredited_investor_status: [accreditedInvestorStatus] || [],
-        assets_for_investment:
-          [String(updatedFormData.assets_for_investment)] || [],
+        assets_for_investment: [updatedFormData.assets_for_investment] || [],
         average_investment_ticket:
           [updatedFormData.average_investment_ticket] || [],
         email_address: [updatedFormData.email_address] || [],
@@ -357,7 +338,8 @@ const InvestorRegistration = () => {
         referrer: [updatedFormData.referrer] || [],
         revenue_range_preference:
           [updatedFormData.revenue_range_preference] || [],
-        size_of_managed_fund: [updatedFormData.size_of_managed_fund] || [],
+        size_of_managed_fund:
+          [Number(updatedFormData.size_of_managed_fund)] || [],
         technological_focus: [updatedFormData.technological_focus] || [],
         telegram_id: [updatedFormData.telegram_id] || [],
         typical_decision_making_timeline_for_investments:
@@ -381,7 +363,7 @@ const InvestorRegistration = () => {
 
       let tempObj = {
         accredited_investor_status: [accreditedInvestorStatus],
-        assets_for_investment: [String(updatedFormData.assets_for_investment)],
+        assets_for_investment: [updatedFormData.assets_for_investment],
         average_investment_ticket: [updatedFormData.average_investment_ticket],
         email_address: [updatedFormData.email_address],
         interest_in_board_positions: [interestInBoardPosition],
@@ -401,7 +383,7 @@ const InvestorRegistration = () => {
         ],
         referrer: [updatedFormData.referrer],
         revenue_range_preference: [updatedFormData.revenue_range_preference],
-        size_of_managed_fund: [updatedFormData.size_of_managed_fund],
+        size_of_managed_fund: [Number(updatedFormData.size_of_managed_fund)],
         technological_focus: [updatedFormData.technological_focus],
         telegram_id: [updatedFormData.telegram_id],
         typical_decision_making_timeline_for_investments: [
@@ -414,6 +396,15 @@ const InvestorRegistration = () => {
     }
   };
 
+  if (step === 0) {
+    StepComponent = <InvestorPersonalInformation />;
+  } else if (step === 1) {
+    StepComponent = <InvestorDetails />;
+  } else if (step === 2) {
+    StepComponent = (
+      <InvestorAdditionalInformation isSubmitting={isSubmitting} />
+    );
+  }
   return (
     <div className="w-full h-full bg-gray-100 pt-8">
       <div className="bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-[30px]  sm:text-[25px] md1:text-[30px] md2:text-[35px] font-black font-fontUse dxl:text-[40px] p-8">
@@ -460,7 +451,7 @@ const InvestorRegistration = () => {
             </label>
             <select
               {...register("preferred_icp_hub")}
-              id="preferred_icp_hub"
+              // id="preferred_icp_hub"
               className={`bg-gray-50 border-2 ${
                 errors.preferred_icp_hub
                   ? "border-red-500 placeholder:text-red-500"

@@ -93,10 +93,27 @@ type MentorProfile = record {
   preferred_communication_tools : opt text;
   volunteer_experience : opt text;
 };
-type Notification = record { notification_type : NotificationType };
-type NotificationProject = record { message : text; project_id : text };
-type NotificationType = variant { ApprovalRequest : ApprovalRequest };
-type NotificationType_1 = variant {
+type Notification = record {
+  read : bool;
+  notification_type : NotificationType;
+};
+type NotificationForOwner = record {
+  sender_image : vec nat8;
+  message : text;
+  timestamp : nat64;
+  sender_name : text;
+  project_id : text;
+};
+type NotificationProject = record {
+  notification_verifier : NotificationSender;
+  notifiation_id : text;
+  notification_sender : NotificationSender;
+  message : text;
+  timestamp : nat64;
+  project_id : text;
+};
+type NotificationSender = record { name : text; image : vec nat8 };
+type NotificationType = variant {
   ConnectionAcknowledgement : record {
     social_handles : opt text;
     accepted : bool;
@@ -121,11 +138,9 @@ type ProjectInfoInternal = record {
 type Rating = record {
   sub_level : SubLevel;
   level_name : MainLevel;
-  rating_type : RatingType;
   rating : float64;
   project_id : text;
 };
-type RatingType = variant { Own; Peer; Mentor };
 type Request = record { mentor : opt MentorInternal; "text" : text };
 type Role = record { id : int32; name : text };
 type RolesResponse = record { roles : vec Role };
@@ -182,7 +197,6 @@ type SocialLinksInfo = record {
   twitter : opt text;
   facebook : opt text;
 };
-type Status = variant { Planned; NotRequired; InProgress; Completed };
 type SubLevel = variant {
   All;
   SubLevel0;
@@ -198,9 +212,10 @@ type SubLevel = variant {
 };
 type Suggestion = record {
   id : nat64;
-  status : Status;
+  status : text;
   content : text;
   parent_id : opt nat64;
+  project_id : text;
 };
 type TeamMember = record {
   member_image : opt vec nat8;
@@ -244,27 +259,28 @@ type VentureCapitalist = record {
   typical_decision_making_timeline_for_investments : opt text;
   interest_in_board_positions : opt bool;
   name_of_fund : opt text;
-  size_of_managed_fund : opt text;
+  size_of_managed_fund : opt int32;
   accredited_investor_status : opt bool;
   telegram_id : opt text;
   preferred_investment_sectors : opt text;
-  average_investment_ticket : opt nat64;
+  average_investment_ticket : opt int32;
   preferred_icp_hub : opt text;
   investor_type : opt text;
   website_link : opt text;
   investment_stage_preference : opt text;
-  number_of_portfolio_companies : opt nat32;
+  number_of_portfolio_companies : opt int32;
   revenue_range_preference : opt text;
-  assets_for_investment : opt text;
+  assets_for_investment : opt int32;
   portfolio_link : opt text;
   location : opt text;
   technological_focus : opt text;
 };
 service : {
-  add_suggestion : (text) -> (nat64, Status);
-  add_suggestion_caller : (text) -> (nat64, Status);
+  add_suggestion : (text, text) -> (nat64, text);
+  add_suggestion_caller : (text, text) -> (nat64, text);
   assign_roles_to_principal : (vec UserRole) -> (text);
   calculate_average_api : (text) -> (opt float64) query;
+  connect_to_team_member : (text, text) -> (text);
   create_project : (ThirtyInfoProject) -> (text);
   delete_founder : () -> (text);
   delete_founder_caller : () -> (text);
@@ -307,19 +323,17 @@ service : {
   get_role_from_p_id : () -> (opt vec UserRole) query;
   get_role_from_principal : () -> (opt vec UserRole) query;
   get_roles : () -> (RolesResponse) query;
-  get_suggestions_by_parent_id : (nat64) -> (vec Suggestion) query;
-  get_suggestions_by_parent_id_caller : (nat64) -> (vec Suggestion) query;
-  get_suggestions_by_status : (Status) -> (vec Suggestion) query;
-  get_suggestions_by_status_caller : (Status) -> (vec Suggestion) query;
-  get_suggestions_grouped_by_status : () -> (
-      vec record { Status; vec Suggestion },
-    ) query;
-  get_total_suggestions : () -> (nat64) query;
-  get_total_suggestions_count : () -> (nat64) query;
+  get_suggestions_by_parent_id : (text, nat64) -> (vec Suggestion) query;
+  get_suggestions_by_parent_id_caller : (text, nat64) -> (vec Suggestion) query;
+  get_suggestions_by_status : (text, text) -> (vec Suggestion) query;
+  get_suggestions_by_status_caller : (text, text) -> (vec Suggestion) query;
+  get_total_suggestions : (text) -> (nat64) query;
+  get_total_suggestions_count : (text) -> (nat64) query;
   get_upvote_record : (text) -> (opt UpvoteRecord) query;
   get_user_likes : (text) -> (opt LikeRecord) query;
   get_vc_info : () -> (opt VentureCapitalist) query;
   get_venture_capitalist_info : () -> (opt VentureCapitalist) query;
+  get_your_project_notifications : () -> (vec NotificationForOwner) query;
   greet : (text) -> (text) query;
   like_project : (text) -> (text);
   list_all_founders : () -> (vec FounderInfo) query;
@@ -337,8 +351,8 @@ service : {
   register_mentor_candid : (MentorProfile) -> (text);
   register_venture_capitalist : (VentureCapitalist) -> (text);
   register_venture_capitalist_caller : (VentureCapitalist) -> (text);
-  reply_to_suggestion : (nat64, text) -> (nat64, Status);
-  reply_to_suggestion_caller : (nat64, text) -> (nat64, Status);
+  reply_to_suggestion : (nat64, text, text) -> (nat64, text);
+  reply_to_suggestion_caller : (nat64, text, text) -> (nat64, text);
   respond_to_connection_request : (principal, principal, bool) -> ();
   respond_to_connection_request_candid : (principal, principal, bool) -> ();
   send_approval_request : () -> (text);
@@ -353,8 +367,8 @@ service : {
   update_project : (text, ProjectInfo) -> (text);
   update_project_docs : (text, DocsInfo) -> (text);
   update_rating_api : (vec Rating) -> ();
-  update_suggestion_status : (nat64, Status) -> ();
-  update_suggestion_status_caller : (nat64, Status) -> ();
+  update_suggestion_status : (nat64, text, text) -> ();
+  update_suggestion_status_caller : (nat64, text, text) -> ();
   update_team_member : (text, TeamMember) -> (text);
   update_venture_capitalist : (VentureCapitalist) -> ();
   update_venture_capitalist_caller : (VentureCapitalist) -> (text);

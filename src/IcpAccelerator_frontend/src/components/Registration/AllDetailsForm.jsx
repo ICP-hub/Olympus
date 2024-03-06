@@ -19,7 +19,7 @@ const AllDetailsForm = () => {
   const renderComponent = (roleName) => {
     // console.log(roleName , "<== roleName inside renderComponent")
     switch (roleName) {
-      case "Project":
+      case "Founder":
         return <FounderRegistration />;
       case "Mentor":
         return <MentorRegistration />;
@@ -34,7 +34,7 @@ const AllDetailsForm = () => {
 
   const renderImage = (roleName) => {
     switch (roleName) {
-      case "Project":
+      case "Founder":
         return (
           <img
             src={Founder}

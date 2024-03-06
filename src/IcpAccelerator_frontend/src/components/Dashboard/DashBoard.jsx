@@ -14,8 +14,8 @@ import upvote from "../../../assets/getStarted/upvote.png";
 import SubmitSection from "../Footer/SubmitSection";
 
 const DashBoard = () => {
+  
   const actor = useSelector((currState) => currState.actors.actor);
-
   // console.log("actor in dashboard =>", actor);
 
   useEffect(() => {

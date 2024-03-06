@@ -1,16 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { closeModalSvg } from "../components/Utils/Data/SvgData";
 import { walletModalSvg } from "../components/Utils/Data/SvgData";
 import { useDispatch } from "react-redux";
-// import {
-//   // triggerInternetIdentity,
-//   triggerPlugWallet,
-//   triggeBitfinityWallet,
-// } from "../components/Redux/Reducers/WalletAuth";
-import { loginStart } from "../components/StateManagement/Redux/Reducers/InternetIdentityReducer";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-// import Loader from "../components/Loader/Loader";
 import { useAuth } from "../components/StateManagement/useContext/useAuth";
 
 const ConnectWallet = ({ isModalOpen, onClose }) => {
@@ -68,26 +61,6 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
     await login();
   };
 
-  // const handleClick = (walletType) => {
-  // if (!walletType) {
-  //   console.log("No wallet type specified.");
-  //   return;
-  // }
-  // switch (walletType) {
-  //   case "internetIdentity":
-  // dispatch(loginStart());
-  //     break;
-  //   // case "bitfinity":
-  //   //   dispatch(triggeBitfinityWallet());
-  //   //   break;
-  //   // case "plug":
-  //   //   dispatch(triggerPlugWallet());
-  //   //   break;
-  //   default:
-  //     alert(`The wallet type '${walletType}' is not supported yet.`);
-  //     break;
-  // }
-  // };
 
   return (
     <>

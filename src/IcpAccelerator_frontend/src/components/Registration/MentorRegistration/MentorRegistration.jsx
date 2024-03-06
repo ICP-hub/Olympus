@@ -18,6 +18,7 @@ import { useDispatch } from "react-redux";
 import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_IcpHubReducer";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
+import { userRoleHandler } from "../../StateManagement/Redux/Reducers/userRoleReducer";
 
 const validationSchema = {
   personalDetails: yup.object().shape({
@@ -228,6 +229,7 @@ const MentorRegistration = () => {
     reset,
   } = useForm({
     resolver: yupResolver(currentValidationSchema),
+    mode: "all",
   });
 
   const handleTabClick = async (tab) => {
@@ -265,17 +267,19 @@ const MentorRegistration = () => {
     const result = await trigger(fieldsToValidate);
     // console.log("fieldsToValidate", fieldsToValidate);
     if (result) {
-      if (!image) {
+      if (!image && !formData.mentor_image) {
         alert("Please upload a profile image.");
         return;
       }
       setStep((prevStep) => prevStep + 1);
+      setActiveTab(mentorRegistration[step + 1]?.id);
     }
   };
 
   const handlePrevious = () => {
     if (step > 0) {
       setStep((prevStep) => prevStep - 1);
+      setActiveTab(mentorRegistration[step - 1]?.id);
     }
   };
 
@@ -307,22 +311,10 @@ const MentorRegistration = () => {
   useEffect(() => {
     if (mentorFullData && mentorFullData.length > 0) {
       const data = mentorFullData[0];
-      // console.log(
-      //   "formattedData============>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",
-      //   data
-      // );
-
       const formattedData = Object.keys(data).reduce((acc, key) => {
         acc[key] = Array.isArray(data[key]) ? data[key][0] : data[key];
         return acc;
       }, {});
-
-      // console.log(
-      //   "Attempting to reset form with data:",
-      //   formattedData?.mentor_image
-      // );
-      // Assuming formattedData.mentor_image contains the data URL string
-
       reset(formattedData);
       setFormData(formattedData);
     }
@@ -343,8 +335,8 @@ const MentorRegistration = () => {
         result = await actor.register_mentor_candid(val);
       }
       toast.success(result);
-      console.log("mentor data registered in backend");
-      navigate("/dashboard");
+      await dispatch(userRoleHandler());
+      await navigate("/dashboard");
     } catch (error) {
       toast.error(error);
       console.log(error.message);

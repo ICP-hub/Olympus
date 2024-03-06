@@ -196,7 +196,7 @@ const UserProfile = () => {
               </ul>
             </div> */}
             {specificRole === "Mentor" && <MentorRegistration />}
-            {specificRole === "Project" && <FounderInfo />}
+            {specificRole === "Founder" && <FounderInfo />}
             {specificRole === "VC" && <InvestorRegistration />}
             {specificRole === "ICPHubOrganizer" && <HubRegistration />}
           </div>
