@@ -33,7 +33,7 @@ mod ratings;
 mod trie;
 
 use rbac::{assign_roles_to_principal, has_required_role, UserRole};
-
+use ic_kit::candid::{candid_method, export_service};
 use candid::Principal;
 use ic_cdk_macros::{pre_upgrade, query, update};
 use project_registration::{DocsInfo, ProjectInfo, TeamMember, ProjectInfoInternal, ThirtyInfoProject, NotificationProject, NotificationForOwner};
@@ -245,7 +245,7 @@ fn get_suggestions_by_parent_id_caller(project_id: String, parent_id: u64) -> Ve
 #[candid_method(query)]
 fn get_total_suggestions(project_id: String) -> u64 {
     roadmap_suggestion::get_total_suggestions_count(project_id)
-
+}
 
 #[query]
 
@@ -567,5 +567,5 @@ pub fn get_my_id() -> Principal{
 //         write(file_path, export_candid()).expect("Write failed.");
 //     }
 // }
-use crate::roadmap_suggestion::ApplicationDetails;
+
 export_candid!();
