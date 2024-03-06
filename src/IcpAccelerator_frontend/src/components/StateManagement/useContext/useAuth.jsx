@@ -1,8 +1,6 @@
 import { AuthClient } from "@dfinity/auth-client";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import {
-  createActor,
-} from "../../../../../declarations/IcpAccelerator_backend/index";
+import { createActor } from "../../../../../declarations/IcpAccelerator_backend/index";
 import { Actor, HttpAgent } from "@dfinity/agent";
 import { useDispatch } from "react-redux";
 import { setActor } from "../Redux/Reducers/actorBindReducer";
@@ -117,6 +115,7 @@ export const useAuthClient = (options = defaultOptions) => {
       agent,
     });
 
+    console.log("actor in useauth -<<<<", actor);
     if (isAuthenticated === true) {
       dispatch(
         loginSuccess({

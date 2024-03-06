@@ -14,9 +14,7 @@ import Header from "./components/Layout/Header/Header";
 import AllDetailsForm from "./components/Registration/AllDetailsForm";
 import { useDispatch } from "react-redux";
 import { handleActorRequest } from "./components/StateManagement/Redux/Reducers/actorBindReducer";
-import {
-  checkLoginOnStart,
-} from "./components/StateManagement/Redux/Reducers/InternetIdentityReducer";
+import { checkLoginOnStart } from "./components/StateManagement/Redux/Reducers/InternetIdentityReducer";
 import AppRoutes from "./AppRoutes";
 import Footer from "./components/Footer/Footer";
 import { userRoleHandler } from "./components/StateManagement/Redux/Reducers/userRoleReducer";
@@ -72,7 +70,7 @@ const App = () => {
 
   useEffect(() => {
     dispatch(userRoleHandler());
-  }, [isAuthenticated, identity, specificRole, dispatch]);
+  }, [isAuthenticated, identity, dispatch]);
 
   useEffect(() => {
     // console.log("specific role inside effect of app 1", specificRole);
@@ -94,9 +92,9 @@ const App = () => {
     }
   }, [specificRole, isAuthenticated, dispatch]);
 
-  useEffect(()=>{
-    dispatch(areaOfExpertiseHandlerRequest())
-  },[isAuthenticated, identity, dispatch])
+  useEffect(() => {
+    dispatch(areaOfExpertiseHandlerRequest());
+  }, [isAuthenticated, identity, dispatch]);
 
   return (
     <>
@@ -114,8 +112,8 @@ const App = () => {
       {/* <ProjectDetails/> */}
       {/* <Home/> */}
       {/* <Hubcards /> */}
-      <Hubdashboard />
-{/* <Hubdashboard /> */}
+      {/* <Hubdashboard /> */}
+      {/* <Hubdashboard /> */}
       {/* <Hubapproved /> */}
       {/* <HubDeclined /> */}
       {/* <Mentors /> */}
@@ -125,8 +123,8 @@ const App = () => {
       {/* <DashBoard /> */}
       {/* <UserProfile/> */}
       {/* <RoleSelector /> */}
-      {/* <AppRoutes />
-      <Footer /> */}
+      <AppRoutes />
+      <Footer />
     </>
   );
 };
