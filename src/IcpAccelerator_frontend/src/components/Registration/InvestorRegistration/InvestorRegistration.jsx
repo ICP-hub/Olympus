@@ -213,7 +213,7 @@ const InvestorRegistration = () => {
     trigger,
     reset,
   } = useForm({
-    resolver: yupResolver(currentValidationSchema),
+    resolver: yupResolver(currentValidationSchema), mode :'all'
   });
 
   const handleTabClick = async (tab) => {
@@ -252,34 +252,26 @@ const InvestorRegistration = () => {
     const result = await trigger(fieldsToValidate);
     if (result) {
       setStep((prevStep) => prevStep + 1);
+      setActiveTab(investorRegistration[step + 1]?.id);
+
     }
   };
 
   const handlePrevious = () => {
     if (step > 0) {
       setStep((prevStep) => prevStep - 1);
+      setActiveTab(investorRegistration[step - 1]?.id);
+
     }
   };
 
   useEffect(() => {
     if (investorFullData && investorFullData.length > 0) {
       const data = investorFullData[0];
-      // console.log(
-      //   "formattedData============>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",
-      //   data
-      // );
-
       const formattedData = Object.keys(data).reduce((acc, key) => {
         acc[key] = Array.isArray(data[key]) ? data[key][0] : data[key];
         return acc;
       }, {});
-
-      // console.log(
-      //   "Attempting to reset form with data:",
-      //   formattedData?.mentor_image
-      // );
-      // Assuming formattedData.mentor_image contains the data URL string
-
       reset(formattedData);
       setFormData(formattedData);
     }
@@ -302,14 +294,14 @@ const InvestorRegistration = () => {
     let result;
     try {
       if (specificRole !== null || undefined) {
-        result = await actor.register_venture_capitalist_caller(val);
+        result = await actor.update_venture_capitalist_caller(val);
       } else if (specificRole === null || specificRole === undefined) {
         result = await actor.register_venture_capitalist_caller(val);
       }
 
       toast.success(result);
       console.log("investor data registered in backend");
-      navigate("/dashboard");
+      await navigate("/dashboard");
     } catch (error) {
       toast.error(error);
       console.log(error.message);

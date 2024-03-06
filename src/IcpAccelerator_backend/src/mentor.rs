@@ -1,6 +1,5 @@
-use candid::CandidType;
+use candid::{CandidType, Principal};
 use ic_cdk::api::{caller, management_canister::main::raw_rand};
-use ic_cdk::export::Principal;
 use ic_cdk_macros::{query, update};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
@@ -8,19 +7,6 @@ use std::collections::HashMap;
 extern crate serde_cbor;
 use std::cell::RefCell;
 use crate::trie::EXPERTISE_TRIE;
-
-#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq, Eq, Hash)]
-pub enum AreaOfExpertise {
-    DeFi,
-    Tooling,
-    NFTs,
-    Infrastructure,
-    DAO,
-    Social,
-    Games,
-    Other(String),
-    MetaVerse,
-}
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, Default)]
 pub struct MentorProfile {
@@ -33,7 +19,7 @@ pub struct MentorProfile {
     pub years_of_experience_mentoring_startups: Option<i32>,
     pub past_work_records_links: Option<String>,
     pub motivation_for_becoming_a_mentor: Option<String>,
-    pub areas_of_expertise: Option<AreaOfExpertise>,
+    pub areas_of_expertise: Option<String>,
     pub preferred_icp_hub: Option<String>,
     pub availability_and_time_commitment: Option<String>,
     pub preferred_startup_stage: Option<String>,

@@ -16,7 +16,6 @@ import { useDispatch } from "react-redux";
 import { handleActorRequest } from "./components/StateManagement/Redux/Reducers/actorBindReducer";
 import {
   checkLoginOnStart,
-  logoutStart,
 } from "./components/StateManagement/Redux/Reducers/InternetIdentityReducer";
 import AppRoutes from "./AppRoutes";
 import Footer from "./components/Footer/Footer";
@@ -26,6 +25,7 @@ import { investorRegisteredHandlerRequest } from "./components/StateManagement/R
 import { hubRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/hubRegisteredData";
 import { founderRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/founderRegisteredData";
 import { useAuth } from "./components/StateManagement/useContext/useAuth";
+
 import Hubdashboardlive from "./components/Hubdashboardlive/Hubdashboardlive";
 import Hubcards from "./components/Hubcards/Hubcards";
 import ListedProjects from "./components/Dashboard/ListedProjects";
@@ -34,6 +34,8 @@ import Hubapproved from "./components/Hubapproved/Hubapproved";
 import Hubdashboard from "./components/Hubdashboard/Hubdashboard";
 import Mentors from "./components/Mentors/Mentors";
 import HubDeclined from "./components/HubDeclined/HubDeclined";
+
+import { areaOfExpertiseHandlerRequest } from "./components/StateManagement/Redux/Reducers/getAreaOfExpertise";
 
 const App = () => {
   const identity = useSelector((currState) => currState.internet.identity);
@@ -91,6 +93,10 @@ const App = () => {
         return null;
     }
   }, [specificRole, isAuthenticated, dispatch]);
+
+  useEffect(()=>{
+    dispatch(areaOfExpertiseHandlerRequest())
+  },[isAuthenticated, identity, dispatch])
 
   return (
     <>

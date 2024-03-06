@@ -227,7 +227,7 @@ const validationSchema = {
     trigger,
     reset,
   } = useForm({
-    resolver: yupResolver(currentValidationSchema),
+    resolver: yupResolver(currentValidationSchema), mode :'all'
   });
 
   const handleTabClick = async (tab) => {
@@ -265,17 +265,20 @@ const validationSchema = {
     const result = await trigger(fieldsToValidate);
     // console.log("fieldsToValidate", fieldsToValidate);
     if (result) {
-      if (!image) {
+      if (!formData.mentor_image) {
         alert("Please upload a profile image.");
         return;
       }
       setStep((prevStep) => prevStep + 1);
+      setActiveTab(mentorRegistration[step + 1]?.id);
+
     }
   };
 
   const handlePrevious = () => {
     if (step > 0) {
       setStep((prevStep) => prevStep - 1);
+      setActiveTab(mentorRegistration[step - 1]?.id);
     }
   };
 
@@ -307,22 +310,10 @@ const validationSchema = {
   useEffect(() => {
     if (mentorFullData && mentorFullData.length > 0) {
       const data = mentorFullData[0];
-      // console.log(
-      //   "formattedData============>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",
-      //   data
-      // );
-
       const formattedData = Object.keys(data).reduce((acc, key) => {
         acc[key] = Array.isArray(data[key]) ? data[key][0] : data[key];
         return acc;
       }, {});
-
-      // console.log(
-      //   "Attempting to reset form with data:",
-      //   formattedData?.mentor_image
-      // );
-      // Assuming formattedData.mentor_image contains the data URL string
-
       reset(formattedData);
       setFormData(formattedData);
     }
@@ -344,7 +335,7 @@ const validationSchema = {
       }
       toast.success(result);
       console.log("mentor data registered in backend");
-      navigate("/dashboard");
+      await navigate("/dashboard");
     } catch (error) {
       toast.error(error);
       console.log(error.message);

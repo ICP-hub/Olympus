@@ -2,7 +2,7 @@ import React from "react";
 
 const Loader = () => {
   return (
-    <div className="fixed inset-0 flex justify-center items-center">
+    <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-md flex justify-center items-center">
       <div className="animate-wiggle">
         <svg
           xmlns="http://www.w3.org/2000/svg"
