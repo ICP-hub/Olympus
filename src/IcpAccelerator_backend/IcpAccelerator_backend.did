@@ -93,10 +93,7 @@ type MentorProfile = record {
   preferred_communication_tools : opt text;
   volunteer_experience : opt text;
 };
-type Notification = record {
-  read : bool;
-  notification_type : NotificationType;
-};
+type Notification = record { notification_type : NotificationType };
 type NotificationForOwner = record {
   sender_image : vec nat8;
   message : text;
@@ -113,7 +110,8 @@ type NotificationProject = record {
   project_id : text;
 };
 type NotificationSender = record { name : text; image : vec nat8 };
-type NotificationType = variant {
+type NotificationType = variant { ApprovalRequest : ApprovalRequest };
+type NotificationType_1 = variant {
   ConnectionAcknowledgement : record {
     social_handles : opt text;
     accepted : bool;
