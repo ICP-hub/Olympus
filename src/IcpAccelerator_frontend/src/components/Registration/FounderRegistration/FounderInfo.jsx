@@ -38,12 +38,14 @@ const schema = yup.object({
 const FounderInfo = () => {
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
   const actor = useSelector((currState) => currState.actors.actor);
+  const founderFullData = useSelector((currState) => currState.projectData.data);
+
   const [inputType, setInputType] = useState("date");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  console.log("FounderInfo run =>");
+  // console.log("FounderInfo run =>");
   // console.log("getAllIcpHubs", getAllIcpHubs);
 
   useEffect(() => {
@@ -54,8 +56,9 @@ const FounderInfo = () => {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    trigger, reset
   } = useForm({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(schema), mode :'all'
   });
 
   const onSubmitHandler = async (data) => {

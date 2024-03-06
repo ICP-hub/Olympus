@@ -251,7 +251,7 @@ const HubRegistration = () => {
 
         // Read the file as an ArrayBuffer for backend submission
         const arrayBuffer = await readFileAsArrayBuffer(file);
-        console.log(arrayBuffer); // Placeholder for actual usage
+        // console.log(arrayBuffer); // Placeholder for actual usage
 
         // Example: Here you would typically send the ArrayBuffer to the backend
         // sendArrayBufferToBackend(arrayBuffer);

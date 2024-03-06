@@ -265,9 +265,10 @@ const MentorRegistration = () => {
     const result = await trigger(fieldsToValidate);
     // console.log("fieldsToValidate", fieldsToValidate);
     if (result) {
-      if (!formData.mentor_image) {
+
+      if (!image && !formData.mentor_image) {
         alert("Please upload a profile image.");
-        return;
+        return; 
       }
       setStep((prevStep) => prevStep + 1);
       setActiveTab(mentorRegistration[step + 1]?.id);
@@ -334,8 +335,9 @@ const MentorRegistration = () => {
         result = await actor.register_mentor_candid(val);
       }
       toast.success(result);
-      console.log("mentor data registered in backend");
+      await actor.get_role_from_p_id()
       await navigate("/dashboard");
+
     } catch (error) {
       toast.error(error);
       console.log(error.message);

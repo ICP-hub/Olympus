@@ -13,11 +13,11 @@ function* fetchUserRoleHandler() {
     // console.log('actor in userrole => => => ', actor)
 
     const userCurrentRole = yield call([actor, actor.get_role_from_p_id]);
-console.log(userCurrentRole)
-    console.log(
-      "userCurrentRole => => => ",
-      Object.keys(userCurrentRole[0][0])[0]
-    );
+// console.log(userCurrentRole)
+    // console.log(
+    //   "userCurrentRole => => => ",
+    //   Object.keys(userCurrentRole[0][0])[0]
+    // );
 
     yield put(userRoleSuccessHandler(Object.keys(userCurrentRole[0][0])[0]));
   } catch (error) {

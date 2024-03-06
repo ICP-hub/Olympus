@@ -33,7 +33,7 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
       hasSelectedRole
     );
     if (userRole && isAuthenticated) {
-      console.log("1");
+      // console.log("1");
       onClose();
       navigate("/dashboard");
     } else if (
@@ -42,7 +42,7 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
       isAuthenticated &&
       hasSelectedRole === false
     ) {
-      console.log("2");
+      // console.log("2");
       onClose();
       navigate(`/${roleNavigate}`);
     } else if (
@@ -52,7 +52,7 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
     ) {
       navigate("/details");
     } else if (!isAuthenticated) {
-      console.log("3");
+      // console.log("3");
       navigate("/");
     }
   }, [isAuthenticated, roleNavigate, userRole]);

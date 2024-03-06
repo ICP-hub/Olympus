@@ -1,21 +1,11 @@
-// const lazyWithDelay = (importFunction, delay = 2000) => {
-//   return React.lazy(() =>
-//     Promise.all([
-//       importFunction(),
-//       new Promise(resolve => setTimeout(resolve, delay))
-//     ]).then(([moduleExports]) => moduleExports)
-//   );
-// };
-
-
 import React, { lazy, Suspense, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { rolesHandlerRequest } from "./components/StateManagement/Redux/Reducers/RoleReducer";
 import { userRoleHandler } from "./components/StateManagement/Redux/Reducers/userRoleReducer";
 import Loader from "./components/Loader/Loader";
-const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
 
+const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
 const AllDetailsForm = lazy(() => import("./components/Registration/AllDetailsForm"));
 const ProjectDetails = lazy(() => import("./components/Project/ProjectDetails"));
 const Home = lazy(() => import("./components/Home/Home"));
@@ -37,10 +27,12 @@ const AppRoutes = () => {
     { path: "/", element: <Home /> },
     { path: "/details", element: <AllDetailsForm /> },
     { path: "/roleSelect", element: <RoleSelector /> },
+    { path: "/dashboard", element: <DashBoard/> },
+
   ];
 
   const protectedRoutes = [
-    { path: "/dashboard", component: DashBoard, allowedRoles: roleNames },
+    // { path: "/dashboard", component: DashBoard, allowedRoles: roleNames },
     { path: "/project-details", component: ProjectDetails, allowedRoles: roleNames },
     { path: "/profile", component: UserProfile, allowedRoles: roleNames },
   ];
