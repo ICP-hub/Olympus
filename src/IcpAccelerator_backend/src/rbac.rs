@@ -13,8 +13,8 @@ pub enum UserRole {
     Mentor,
     Project,
     VC,
-    ICPHubOrganizer,
-    Founder
+    ICPHubOrganizer
+    //Founder
 }
 
 

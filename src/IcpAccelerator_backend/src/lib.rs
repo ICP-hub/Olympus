@@ -1,47 +1,52 @@
 mod hub_organizer;
+mod latest_popular_projects;
 mod leaderboard;
+mod manage_focus_expertise;
 mod manage_hubs;
 mod mentor;
 mod notification;
 mod project_like;
+mod requests;
 mod roles;
 mod upvotes;
 mod vc_registration;
-mod latest_popular_projects;
-mod requests;
-mod manage_focus_expertise;
+mod admin;
 
 use hub_organizer::{HubOrganizerRegistration, UniqueHubs};
 use ic_cdk::api::caller;
-use leaderboard::{LeaderboardEntryForLikes, LeaderboardEntryForUpvote, LeaderboardEntryForRatings};
+use leaderboard::{
+    LeaderboardEntryForLikes, LeaderboardEntryForRatings, LeaderboardEntryForUpvote,
+};
 use project_like::LikeRecord;
 use requests::Request;
 use roles::{get_roles, RolesResponse};
-use std::collections::{HashSet, HashMap};
+use std::collections::{HashMap, HashSet};
 
-use manage_hubs::{get_icp_hubs, IcpHub};
+use ic_cdk::export_candid;
 use manage_focus_expertise::{get_areas, Areas};
+use manage_hubs::{get_icp_hubs, IcpHub};
 use mentor::MentorProfile;
 use upvotes::UpvoteRecord;
-use ic_cdk::export_candid;
 
 mod project_registration;
+mod ratings;
 mod rbac;
 mod register_user;
 mod roadmap_suggestion;
-mod ratings;
 mod trie;
 
 use rbac::{assign_roles_to_principal, has_required_role, UserRole};
 
 use candid::Principal;
 use ic_cdk_macros::{pre_upgrade, query, update};
-use project_registration::{DocsInfo, ProjectInfo, TeamMember, ProjectInfoInternal, ThirtyInfoProject, NotificationProject};
+use project_registration::{
+    DocsInfo, NotificationProject, ProjectInfo, ProjectInfoInternal, TeamMember, ThirtyInfoProject,
+};
+use ratings::{MainLevel, MainLevelRatings, Rating};
 use register_user::{FounderInfo, FounderInfoInternal, ThirtyInfoFounder};
 use roadmap_suggestion::{Status, Suggestion};
 use upvotes::UpvoteStorage;
 use vc_registration::VentureCapitalist;
-use ratings::{Rating, MainLevel, MainLevelRatings};
 
 use crate::notification::Notification;
 
@@ -71,7 +76,7 @@ pub fn get_role_from_p_id() -> Option<HashSet<UserRole>> {
 #[update]
 
 async fn register_founder_caller(profile: ThirtyInfoFounder) -> String {
-    let role = vec![UserRole::Founder, UserRole::Project];
+    let role = vec![UserRole::Project];
     register_user::register_founder(profile).await;
     assign_roles_to_principal(role)
 }
@@ -96,10 +101,8 @@ fn delete_founder_caller() -> std::string::String {
 
 #[update]
 
-
-fn update_founder_caller(updated_profile: FounderInfo)->String {
-    if has_required_role(&vec![UserRole::Founder, UserRole::Project]) 
-    {
+fn update_founder_caller(updated_profile: FounderInfo) -> String {
+    if has_required_role(&vec![ UserRole::Project]) {
         register_user::update_founder(updated_profile)
     } else {
         "you are not supposed to change someone profile".to_string()
@@ -109,7 +112,7 @@ fn update_founder_caller(updated_profile: FounderInfo)->String {
 #[update]
 
 async fn create_project(params: ThirtyInfoProject) -> String {
-    if has_required_role(&vec![UserRole::Founder, UserRole::Project]) {
+    if has_required_role(&vec![UserRole::Project]) {
         project_registration::create_project(params).await
     } else {
         "you hv n't registered as a user yet".to_string()
@@ -125,7 +128,7 @@ fn get_projects_for_caller() -> Vec<ProjectInfo> {
 
 #[query]
 
-fn get_project_using_id(project_id: String) -> Option<ProjectInfoInternal>{
+fn get_project_using_id(project_id: String) -> Option<ProjectInfoInternal> {
     project_registration::find_project_by_id(&project_id)
 }
 
@@ -138,7 +141,7 @@ fn list_all_projects() -> Vec<ProjectInfo> {
 #[update]
 
 fn update_project(project_id: String, updated_project: ProjectInfo) -> String {
-    if has_required_role(&vec![UserRole::Founder, UserRole::Project]) {
+    if has_required_role(&vec![UserRole::Project]) {
         project_registration::update_project(project_id, updated_project);
         "updation success".to_string()
     } else {
@@ -149,7 +152,7 @@ fn update_project(project_id: String, updated_project: ProjectInfo) -> String {
 #[update]
 
 fn update_project_docs(project_id: String, docs: DocsInfo) -> String {
-    if has_required_role(&vec![UserRole::Project, UserRole::Founder]) {
+    if has_required_role(&vec![UserRole::Project]) {
         project_registration::update_project_docs(project_id, docs);
         format!("project docs got updated")
     } else {
@@ -160,7 +163,7 @@ fn update_project_docs(project_id: String, docs: DocsInfo) -> String {
 #[update]
 
 fn update_team_member(project_id: String, team_member: TeamMember) -> String {
-    if has_required_role(&vec![UserRole::Founder, UserRole::Project]) {
+    if has_required_role(&vec![UserRole::Project]) {
         project_registration::update_team_member(project_id, team_member);
         "team members updated sucessfully".to_string()
     } else {
@@ -176,14 +179,14 @@ fn delete_project(id: String) -> std::string::String {
 
 #[update]
 
-fn verify_project_under_your_hub(project_id: String)->String{
+fn verify_project_under_your_hub(project_id: String) -> String {
     let hub_principal = caller();
     project_registration::verify_project(hub_principal, &project_id)
 }
 
 #[query]
 
-fn get_notifications_for_hubs()->Vec<NotificationProject>{
+fn get_notifications_for_hubs() -> Vec<NotificationProject> {
     project_registration::get_notifications_for_caller()
 }
 
@@ -230,34 +233,26 @@ fn get_suggestions_by_parent_id_caller(parent_id: u64) -> Vec<Suggestion> {
 }
 
 #[query]
-
 fn get_total_suggestions() -> u64 {
     roadmap_suggestion::get_total_suggestions_count()
 }
 
 #[query]
-
 fn get_all_roles() -> RolesResponse {
     get_roles() // Call the get_roles function from the roles module
 }
 
 #[update]
-
 async fn register_mentor_candid(profile: MentorProfile) -> std::string::String {
-    let start = ic_cdk::api::instruction_counter();
-    ic_cdk::println!("instructions start {}",start);
     
+
     mentor::register_mentor(profile).await;
 
     let roles_to_assign = vec![UserRole::Mentor];
 
     assign_roles_to_principal(roles_to_assign);
-    let end = ic_cdk::api::instruction_counter();
 
-   
-    ic_cdk::println!("instructions end {}", end);
-    ic_cdk::println!("instructions {}", end - start);
-    //record_measurement(end - start);
+
     "mentor got registered".to_string()
 }
 
@@ -287,7 +282,7 @@ pub fn update_mentor_profile(updated_profile: MentorProfile) -> String {
 
 #[update]
 
-pub fn make_active_inactive_mentor(id : Principal) -> String{
+pub fn make_active_inactive_mentor(id: Principal) -> String {
     mentor::make_active_inactive(id)
 }
 
@@ -299,10 +294,9 @@ pub fn get_all_mentors_candid() -> Vec<MentorProfile> {
 
 #[query]
 
-pub fn get_mentor_by_expertise(area_of_expertise: String)->Vec<MentorProfile>{
+pub fn get_mentor_by_expertise(area_of_expertise: String) -> Vec<MentorProfile> {
     mentor::find_mentors_by_expertise(&area_of_expertise)
 }
-
 
 #[update]
 
@@ -318,25 +312,25 @@ pub fn get_project_upvotes(project_id: String) -> Option<UpvoteRecord> {
 
 #[query]
 
-pub fn get_latest_live_proposal()->Vec<ProjectInfoInternal>{
+pub fn get_latest_live_proposal() -> Vec<ProjectInfoInternal> {
     latest_popular_projects::get_live_proposals_latest()
 }
 
 #[query]
 
-pub fn get_latest_listed_project()->Vec<ProjectInfoInternal>{
+pub fn get_latest_listed_project() -> Vec<ProjectInfoInternal> {
     latest_popular_projects::get_listed_projects_latest()
 }
 
 #[query]
 
-pub fn get_popular_live_proposal()->Vec<ProjectInfoInternal>{
+pub fn get_popular_live_proposal() -> Vec<ProjectInfoInternal> {
     latest_popular_projects::get_live_proposals_popular()
 }
 
 #[query]
 
-pub fn get_popular_listed_project()->Vec<ProjectInfoInternal>{
+pub fn get_popular_listed_project() -> Vec<ProjectInfoInternal> {
     latest_popular_projects::get_listed_projects_popular()
 }
 
@@ -387,18 +381,18 @@ fn get_icp_hubs_candid() -> Vec<IcpHub> {
 
 #[query]
 
-fn get_area_focus_expertise() -> Vec<Areas>{
+fn get_area_focus_expertise() -> Vec<Areas> {
     get_areas()
 }
 
 #[query]
 
-fn get_hubs_principal_using_region(region: String)->Vec<String>{
+fn get_hubs_principal_using_region(region: String) -> Vec<String> {
     hub_organizer::get_hub_organizer_principals_by_region(region)
 }
 
 // #[query]
-// 
+//
 // fn greet() -> String {
 //     let principal_id = caller().to_string();
 //     format!("principal id - : {:?}", principal_id)
@@ -476,13 +470,13 @@ pub fn get_leaderboard_using_likes() -> Vec<LeaderboardEntryForLikes> {
 
 #[query]
 
-pub fn get_leaderboard_using_ratings() -> Vec<LeaderboardEntryForRatings>{
+pub fn get_leaderboard_using_ratings() -> Vec<LeaderboardEntryForRatings> {
     leaderboard::get_leaderboard_by_ratings()
 }
 
 #[update]
 
-pub fn update_rating_api(rating: Vec<Rating>){
+pub fn update_rating_api(rating: Vec<Rating>) {
     ratings::update_rating(rating);
 }
 
@@ -494,19 +488,19 @@ pub fn calculate_average_api(project_id: String) -> Option<f64> {
 
 #[query]
 
-pub fn get_main_level_ratings(project_id: String) -> HashMap<MainLevel, MainLevelRatings>{
+pub fn get_main_level_ratings(project_id: String) -> HashMap<MainLevel, MainLevelRatings> {
     ratings::get_ratings_by_project_id(&project_id)
 }
 
 #[update]
 
-pub fn send_request_as_mentor(project_id: String, request_text: String)->String{
+pub fn send_request_as_mentor(project_id: String, request_text: String) -> String {
     requests::send_request_to_project(project_id, request_text)
 }
 
 #[query]
 
-pub fn get_project_requests(project_id: String)->Vec<Request>{
+pub fn get_project_requests(project_id: String) -> Vec<Request> {
     requests::get_requests(project_id)
 }
 
@@ -523,8 +517,14 @@ pub fn get_role() -> RolesResponse {
 
 #[query]
 
-pub fn get_my_id() -> Principal{
+pub fn get_my_id() -> Principal {
     caller()
+}
+
+#[query]
+pub fn get_admin_notifications(caller : Principal) -> Vec<admin::Notification>
+{
+    admin::get_admin_notifications(caller)
 }
 
 // #[update]
