@@ -24,12 +24,12 @@ pub struct RatingTypes {
     mentor: Vec<f64>,
 }
 
-#[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq)]
-pub enum RatingType {
-    Peer,
-    Own,
-    Mentor,
-}
+// #[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq)]
+// pub enum RatingType {
+//     Peer,
+//     Own,
+//     Mentor,
+// }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub enum MainLevel {
@@ -64,9 +64,7 @@ pub struct Rating {
     project_id: String,
     level_name: MainLevel,
     sub_level: SubLevel,
-    rating_type: RatingType,
     rating: f64,
-    //timestamp: u64,
 }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]

@@ -1,6 +1,5 @@
-use candid::CandidType;
+use candid::{CandidType, Principal};
 use ic_cdk::api::{caller, management_canister::main::raw_rand};
-use ic_cdk::export::Principal;
 use ic_cdk_macros::{query, update};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
