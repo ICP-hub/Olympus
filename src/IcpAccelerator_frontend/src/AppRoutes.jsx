@@ -5,6 +5,7 @@ import { Routes, Route,Navigate } from "react-router-dom";
 // import routes from "./components/Utils/Data/Route";
 import { rolesHandlerRequest } from "./components/StateManagement/Redux/Reducers/RoleReducer";
 import { userRoleHandler } from "./components/StateManagement/Redux/Reducers/userRoleReducer"
+import Hubdashboardlive from "./components/Hubdashboardlive/Hubdashboardlive";
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
 const AllDetailsForm = lazy(() =>
   import("./components/Registration/AllDetailsForm")
@@ -30,7 +31,8 @@ const AppRoutes = () => {
   const roleNames =isAuthenticated === true ? allRoles.roles?.map(role => role.name):[]
 
   const publicRoutes=[
-    { path: "/", element: <Home /> },
+      { path: "/", element: <Home /> },
+      // {path:"/" , element: <Hubdashboardlive /> },
       { path: "/details", element: <AllDetailsForm /> },
       { path: "/roleSelect", element: <RoleSelector /> },
   ]

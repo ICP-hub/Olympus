@@ -26,6 +26,14 @@ import { investorRegisteredHandlerRequest } from "./components/StateManagement/R
 import { hubRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/hubRegisteredData";
 import { founderRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/founderRegisteredData";
 import { useAuth } from "./components/StateManagement/useContext/useAuth";
+import Hubdashboardlive from "./components/Hubdashboardlive/Hubdashboardlive";
+import Hubcards from "./components/Hubcards/Hubcards";
+import ListedProjects from "./components/Dashboard/ListedProjects";
+import Hublisten from "./components/Hublisten/Hublisten";
+import Hubapproved from "./components/Hubapproved/Hubapproved";
+import Hubdashboard from "./components/Hubdashboard/Hubdashboard";
+import Mentors from "./components/Mentors/Mentors";
+import HubDeclined from "./components/HubDeclined/HubDeclined";
 
 const App = () => {
   const identity = useSelector((currState) => currState.internet.identity);
@@ -99,10 +107,20 @@ const App = () => {
       {/* <AllDetailsForm/> */}
       {/* <ProjectDetails/> */}
       {/* <Home/> */}
+      {/* <Hubcards /> */}
+      <Hubdashboard />
+{/* <Hubdashboard /> */}
+      {/* <Hubapproved /> */}
+      {/* <HubDeclined /> */}
+      {/* <Mentors /> */}
+      {/* <Hublisten /> */}
+      {/* <ListedProjects /> */}
+      {/* <Hubdashboardlive /> */}
+      {/* <DashBoard /> */}
       {/* <UserProfile/> */}
       {/* <RoleSelector /> */}
-      <AppRoutes />
-      <Footer />
+      {/* <AppRoutes />
+      <Footer /> */}
     </>
   );
 };
