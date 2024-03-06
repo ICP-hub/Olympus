@@ -1,5 +1,5 @@
 pub(crate) use std::collections::HashMap;
-use ic_cdk::export::Principal;
+use candid::Principal;
 use std::cell::RefCell;
 use std::rc::Rc;
 

@@ -11,10 +11,10 @@ crate-type = ["cdylib"]
 [dependencies]
 
 
-candid = "0.8"
+candid = "0.10.4"
 candid_derive = "0.6.5"
 
-ic-cdk = "0.7"
+ic-cdk = "0.12.1"
 ic-cdk-timers = "0.1" # Feel free to remove this dependency if you don't need timers
 
 serde_cbor = "0.11"
