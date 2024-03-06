@@ -9,6 +9,7 @@ import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_I
 import { ThreeDots } from "react-loader-spinner";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
+import { userRoleHandler } from "../../StateManagement/Redux/Reducers/userRoleReducer";
 
 const today = new Date();
 const startDate = new Date("1900-01-01");
@@ -36,6 +37,7 @@ const schema = yup.object({
 });
 
 const FounderInfo = () => {
+  
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
   const actor = useSelector((currState) => currState.actors.actor);
   const founderFullData = useSelector((currState) => currState.projectData.data);
@@ -81,7 +83,8 @@ const FounderInfo = () => {
       const result = await actor.register_founder_caller(founderData);
       toast.success(result);
       console.log("data passed to backend");
-      navigate("/dashboard");
+      await dispatch(userRoleHandler());
+      await navigate("/dashboard");
     } catch (error) {
       toast.error(error);
       console.error("Error sending data to the backend:", error);

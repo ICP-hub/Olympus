@@ -61,7 +61,7 @@ const ProjectSection = () => {
         role === "Mentor" ||
         role === "VC" ||
         role === "ICPHubOrganizer" ||
-        role === "Founder"
+        role === "Project"
       ) {
         setShow(true);
       } else {
