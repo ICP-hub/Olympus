@@ -33,10 +33,7 @@ const LogoutModal = () => {
 
   const logoutHandler = async () => {
     dispatch(changeHasSelectedRoleHandler(false));
-     console.log('11111111111111111111');
     await logout();
-    console.log('55555555555555555555');
-    // dispatch(logoutStart());
     navigate('/')
     // setDropdownOpen(false)
   };
@@ -45,7 +42,7 @@ const LogoutModal = () => {
     // console.log('specific role inside profilehandler logout component ',specificRole);
 
     switch (specificRole) {
-      case "Project":
+      case "Founder":
         dispatch(founderRegisteredHandlerRequest());
         setDropdownOpen(false);
         break;

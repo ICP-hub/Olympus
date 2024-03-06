@@ -75,9 +75,9 @@ const App = () => {
   }, [isAuthenticated, identity, specificRole, dispatch]);
 
   useEffect(() => {
-    console.log("specific role inside effect of app 1", specificRole);
+    // console.log("specific role inside effect of app 1", specificRole);
     switch (specificRole) {
-      case "Project":
+      case "Founder":
         dispatch(founderRegisteredHandlerRequest());
         break;
       case "Mentor":

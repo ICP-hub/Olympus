@@ -12,7 +12,7 @@ function* fetchAreaExpertiseInHandler() {
 
     const expertiseIn = yield call([actor, actor.get_area_focus_expertise]);
 
-    console.log('expertiseIn in areaOfExpertiseSaga => ', expertiseIn)
+    // console.log('expertiseIn in areaOfExpertiseSaga => ', expertiseIn)
 
     yield put(areaOfExpertiseHandlerSuccess(expertiseIn));
   } catch (error) {
