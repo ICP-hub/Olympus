@@ -1,12 +1,14 @@
+use crate::mentor::{MentorInternal, MENTOR_REGISTRY};
+use crate::rbac::{self, has_required_role, has_required_role_by_principal};
 use candid::Principal;
 use candid::{CandidType, Deserialize};
 use ic_cdk::api::caller;
+use ic_cdk::api::stable::{StableReader, StableWriter};
 use ic_cdk_macros::{query, update};
 use serde::Serialize;
 use std::cell::RefCell;
 use std::collections::HashMap;
-use crate::mentor::{MENTOR_REGISTRY, MentorInternal};
-use ic_cdk::api::stable::{StableReader, StableWriter};
+use std::fmt::format;
 use std::io::Read;
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType)]
@@ -19,11 +21,11 @@ struct ConnectionRequest {
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType)]
 enum NotificationType {
     ConnectionRequest(ConnectionRequest),
-    
+
     ConnectionAcknowledgement {
         mentor_id: Principal,
         accepted: bool,
-        social_handles: Option<String>,  // Include this only if accepted
+        social_handles: Option<String>, // Include this only if accepted
     },
 }
 
@@ -57,24 +59,34 @@ thread_local! {
 //     });
 // }
 
-
-pub fn send_connection_request(mentor_id: Principal, msg: String) {
+pub fn send_connection_request(mentor_id: Principal, msg: String) -> String {
     let my_id = caller();
-    let connection_request = ConnectionRequest {
-        startup_id: my_id,
-        mentor_id: mentor_id,
-        message: msg,
-    };
 
-    let notification = Notification {
-        notification_type: NotificationType::ConnectionRequest(connection_request),
-        read: false,
-    };
+    let required_role = [crate::UserRole::Project];
 
-    ic_cdk::println!("request is sent");
-    add_notification(mentor_id, notification)
+    if has_required_role(&required_role) {
+        if has_required_role_by_principal(mentor_id, &[crate::UserRole::Mentor]) {
+            let connection_request = ConnectionRequest {
+                startup_id: my_id,
+                mentor_id: mentor_id,
+                message: msg,
+            };
 
+            let notification = Notification {
+                notification_type: NotificationType::ConnectionRequest(connection_request),
+                read: false,
+            };
+
+            add_notification(mentor_id, notification);
+            format!("Request is sent to mentor with id : {}", mentor_id)
+        } else {
+            format!("Mentor with id : {} doesn't exist", mentor_id)
+        }
+    } else {
+        format!("Project with id : {} doesn't exist", my_id)
+    }
 }
+
 
 pub fn add_notification(mentor_id: Principal, notification: Notification) {
     NOTIFICATIONS.with(|notifications| {
@@ -100,29 +112,46 @@ pub fn view_notifications(mentor_id: Principal) -> Vec<Notification> {
 }
 
 #[update]
-pub fn respond_to_connection_request(mentor_id: Principal, startup_id: Principal, accept: bool) {
+pub fn respond_to_connection_request(startup_id: Principal, accept: bool) -> String {
+    let mentor_id = caller();
 
-    let mentor_internal: Option<MentorInternal> = MENTOR_REGISTRY.with(|registry| {
-        registry.borrow().get(&mentor_id).cloned()
-    });
+    let required_roles = [rbac::UserRole::Mentor];
 
-    if let Some(profile_internal) = mentor_internal {
-        let social_handles = if accept { profile_internal.profile.linkedin_profile_link.clone() } else { None };
+    if has_required_role(&required_roles) {
+        if has_required_role_by_principal(startup_id, &[rbac::UserRole::Project]) {
+            let mentor_internal: Option<MentorInternal> =
+                MENTOR_REGISTRY.with(|registry| registry.borrow().get(&mentor_id).cloned());
 
-        let ack_notification = Notification {
-            notification_type: NotificationType::ConnectionAcknowledgement {
-                mentor_id,
-                accepted: accept,
-                social_handles,
-            },
-            read: false,
-        };
+            if let Some(profile_internal) = mentor_internal {
+                let social_handles = if accept {
+                    profile_internal.profile.linkedin_profile_link.clone()
+                } else {
+                    None
+                };
 
-        // Send acknowledgement notification to the startup
-        add_notification(startup_id, ack_notification);
+                let ack_notification = Notification {
+                    notification_type: NotificationType::ConnectionAcknowledgement {
+                        mentor_id,
+                        accepted: accept,
+                        social_handles,
+                    },
+                    read: false,
+                };
 
-        ic_cdk::println!("Acknowledgement sent to startup with ID: {}", startup_id);
+                // Send acknowledgement notification to the startup
+                add_notification(startup_id, ack_notification);
+
+                format!("Acknowledgement sent to startup with ID: {}", startup_id)
+            } else {
+                format!("Mentor profile not found for ID: {}", mentor_id)
+            }
+        } else {
+            format!(
+                "the principal you are responding has not created any project {}",
+                startup_id
+            )
+        }
     } else {
-        ic_cdk::println!("Mentor profile not found for ID: {}", mentor_id);
+        format!("Mentor profile not found for ID: {}", mentor_id)
     }
 }
