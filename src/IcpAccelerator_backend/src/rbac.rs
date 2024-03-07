@@ -66,6 +66,17 @@ pub fn has_required_role( required_roles: &[UserRole]) -> bool {
     })
 }
 
+pub fn has_required_role_by_principal( principal : Principal, required_roles: &[UserRole]) -> bool {
+    //let principal = caller();
+    ROLES.with(|roles| {
+        let roles = roles.borrow();
+        if let Some(user_roles) = roles.get(&principal) {
+            required_roles.iter().any(|role| user_roles.contains(role))
+        } else {
+            false
+        }
+    })
+}
 
 
 

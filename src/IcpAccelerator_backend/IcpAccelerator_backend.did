@@ -351,10 +351,10 @@ service : {
   register_venture_capitalist_caller : (VentureCapitalist) -> (text);
   reply_to_suggestion : (nat64, text, text) -> (nat64, text);
   reply_to_suggestion_caller : (nat64, text, text) -> (nat64, text);
-  respond_to_connection_request : (principal, principal, bool) -> ();
-  respond_to_connection_request_candid : (principal, principal, bool) -> ();
+  respond_to_connection_request : (principal, bool) -> (text);
+  respond_to_connection_request_candid : (principal, bool) -> (text);
   send_approval_request : () -> (text);
-  send_connection_request : (principal, text) -> ();
+  send_connection_request : (principal, text) -> (text);
   send_request_as_mentor : (text, text) -> (text);
   update_founder : (FounderInfo) -> (text);
   update_founder_caller : (FounderInfo) -> (text);
