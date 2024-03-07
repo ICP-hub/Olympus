@@ -16,6 +16,7 @@ import HubPersonalInformation from "./HubPersonalInformation";
 import HubDetails from "./HubDetails";
 import toast, { Toaster } from "react-hot-toast";
 // import { DocumentPreview } from "../../ImageCompressed/DocumentPreview";
+import { useNavigate } from "react-router-dom";
 
 const validationSchema = {
   personalDetails: yup.object().shape({
@@ -118,8 +119,13 @@ const Modal = ({ isOpen, onClose, children }) => {
 const HubRegistration = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   // const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
+  const specificRole = useSelector(
+    (currState) => currState.current.specificRole
+  );
+  const hubFullData = useSelector((currState) => currState.hubData.data);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState(hubRegistration[0].id);
   const [formData, setFormData] = useState({});
@@ -131,7 +137,11 @@ const HubRegistration = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [documentPreview, setDocumentPreview] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [hubDataObject, setHubDataObject] = useState({});
   // console.log("getAllIcpHubs + actor =>", getAllIcpHubs, actor);
+
+  console.log("MentorRegistration  run  specificRole =>", specificRole);
+  console.log("hubFullData in hub-registratn comp =>", hubFullData);
 
   const getTabClassName = (tab) => {
     return `inline-block p-2 font-bold ${
@@ -156,8 +166,9 @@ const HubRegistration = () => {
     setError,
     clearErrors,
     control,
+    reset,
   } = useForm({
-    resolver: yupResolver(currentValidationSchema),
+    resolver: yupResolver(currentValidationSchema),mode :'all'
   });
 
   const handleTabClick = async (tab) => {
@@ -295,6 +306,7 @@ const HubRegistration = () => {
       clearErrors("imageData");
       if (step < steps.length - 1) {
         setStep((prevStep) => prevStep + 1);
+        setActiveTab(hubRegistration[step + 1]?.id);
       }
     }
   };
@@ -302,9 +314,21 @@ const HubRegistration = () => {
   const handlePrevious = () => {
     if (step > 0) {
       setStep((prevStep) => prevStep - 1);
+      setActiveTab(hubRegistration[step - 1]?.id);
     }
   };
 
+  useEffect(() => {
+    if (hubFullData && hubFullData.length > 0) {
+      const data = hubFullData[0];
+      const formattedData = Object.keys(data).reduce((acc, key) => {
+        acc[key] = Array.isArray(data[key]) ? data[key][0] : data[key];
+        return acc;
+      }, {});
+      reset(formattedData);
+      setFormData(formattedData);
+    }
+  }, [hubFullData, reset]);
   const onSubmit = async (data) => {
     console.log("data >>>>", data);
     const updatedFormData = { ...formData, ...data };
@@ -313,8 +337,30 @@ const HubRegistration = () => {
 
     if (step < steps.length - 1) {
       handleNext();
-    } else {
-      const hubDataObject = {
+    }  else if (
+      specificRole !== null ||
+      (undefined && step > steps.length - 1)
+    ) {
+      const tempObj2 = {
+        email: [updatedFormData.email] || [],
+        hub_name: [updatedFormData.hubName] || [],
+        hub_location: [updatedFormData.hubLocation] || [],
+        full_name: [updatedFormData.fullName] || [],
+        hub_description: [updatedFormData.hubDescription] || [],
+        website_url: [updatedFormData.websiteUrl] || [],
+        contact_number: [updatedFormData.contactNumber] || [],
+        privacy_policy_consent: [updatedFormData.privacyPolicyConsent] || [],
+        communication_consent: [updatedFormData.communicationConsent] || [],
+        id_professional_document_upload: [] || [],
+        profile_picture: [imageData] || [],
+      };
+      setHubDataObject(tempObj2);
+      await sendingHubData(tempObj2);
+    } else if (
+      specificRole === null ||
+      (specificRole === undefined && step > steps.length - 1)
+    ) {
+      const tempObj = {
         email: [updatedFormData.email],
         hub_name: [updatedFormData.hubName],
         hub_location: [updatedFormData.hubLocation],
@@ -327,22 +373,32 @@ const HubRegistration = () => {
         id_professional_document_upload: [],
         profile_picture: [imageData],
       };
+      setHubDataObject(tempObj);
+      await sendingHubData(tempObj);
+    }
+  };
+      const sendingHubData = async (val) => {
+        console.log("mentorDataObject ==>> ", val);
+        let result;
 
-      const sendingHubData = async () => {
         try {
-          const result = await actor.register_hub_organizer_candid(
-            hubDataObject
-          );
+          if (specificRole !== null || undefined) {
+            // console.log("update mentor functn k pass reached");
+            result = await actor.update_hub_organizer_candid(val);
+          } else if (specificRole === null || specificRole === undefined) {
+            // console.log("register mentor functn k pass reached");
+            result = await actor.register_hub_organizer_candid(val);
+          }
           toast.success(result);
           console.log("hub data registered in backend");
+          await actor.get_role_from_p_id()
+          await navigate("/dashboard");
+    
         } catch (error) {
           toast.error(error);
           console.log(error.message);
         }
       };
-      sendingHubData();
-    }
-  };
 
   const stepFields = steps[step].fields;
   let StepComponent;
@@ -351,9 +407,6 @@ const HubRegistration = () => {
   } else if (step === 1) {
     StepComponent = <HubDetails isSubmitting={isSubmitting} />;
   }
-  // else if (step === 2) {
-  //   StepComponent = <MentorAdditionalInformation />;
-  // }
 
   return (
     <div className="w-full h-full bg-gray-100">
@@ -400,6 +453,12 @@ const HubRegistration = () => {
                     alt="Profile"
                     className="h-full w-full object-cover"
                   />
+                  ) : formData.imageData ? (
+                    <img
+                      src={formData?.imageData}
+                      alt="User"
+                      className="h-full w-full object-cover"
+                    />
                 ) : (
                   <svg
                     width="35"
@@ -436,7 +495,7 @@ const HubRegistration = () => {
                       htmlFor="images"
                       className="p-2 border-2 border-blue-800 items-center rounded-md text-md bg-transparent text-blue-800 cursor-pointer font-extrabold"
                     >
-                      Upload Profile
+                      Upload Image
                     </label>
                   </>
                 )}

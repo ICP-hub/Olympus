@@ -54,9 +54,9 @@ const RoleSelector = React.memo(() => {
     <div>
       <section className="bg-gray-100 font-fontUse">
         <div className="flex justify-center py-16">
-          <div className=" bg-indigo-300 rounded-xl flex flex-row border-8 border-blue-100 w-2/3 h-fit">
+          <div className=" bg-indigo-300 rounded-xl flex flex-row border-8 border-blue-100 w-11/12 md:w-2/3 h-fit">
             <div className="flex-col flex relative">
-              <div className="p-12 z-20 relative">
+              <div className="sm:p-12 p-6 z-20 relative">
                 <h1 className="text-white font-bold pt-6 text-[14.5px] sm:text-[18px] md:text-[20.8px] lg:text-[23px] xl:text-[25.5px] 2xl:text-[26px]">
                   Select your role
                 </h1>
@@ -70,11 +70,11 @@ const RoleSelector = React.memo(() => {
                   Transparent and Non-Competitive Incubator cum Accelerator
                 </h2>
 
-                <div className="flex justify-between flex-wrap items-center">
+                <div className="flex flex-wrap items-center">
                   {rolesArr.roles?.map((plan) => (
                     <label
                       key={plan.id}
-                      className="relative flex bg-of p-4 shadow- cursor-pointer my-2 w-auto hover:bg-indigo-500 hover:bg-opacity-20 hover:rounded-lg"
+                      className="relative md:flex block bg-of p-2 shadow- cursor-pointer my-2 md:w-1/4 w-full hover:rounded-lg"
                       onClick={() => handlePlanChange(plan.id, plan.name)}
                     >
                       <div className="group flex justify-between w-full items-center">
@@ -91,7 +91,7 @@ const RoleSelector = React.memo(() => {
                             viewBox="0 0 8 7"
                             fill="currentColor"
                             xmlns="http://www.w3.org/2000/svg"
-                            className="m-1"
+                            className="m-[2px]"
                           >
                             <path
                               d="M1.33337 4.50016C1.33337 4.50016 2.40004 5.10851 2.93337 6.00016C2.93337 6.00016 4.53337 2.50016 6.66671 1.3335"
@@ -108,7 +108,7 @@ const RoleSelector = React.memo(() => {
               </div>
               <div className="absolute bottom-0 left-0 bg-gradient-to-r from-purple-400/40 to-purple-600/40 ellipse-quarter-role rounded-md lg:w-64 lg:h-80 md:w-56 md:h-72 sm:w-48 sm:h-64 w-40 h-56"></div>
             </div>
-            <div className="relative flex justify-center items-center lg:-top-20 md:-top-16 sm:-top-12 -top-10 left-0">
+            <div className="relative hidden md:flex justify-center items-center lg:-top-20 md:-top-16 sm:-top-12 -top-10 left-0">
               <img
                 src={astro1}
                 alt="Astronaut"

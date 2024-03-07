@@ -8,10 +8,6 @@ import Hubdashboardlive from "./components/Hubdashboardlive/Hubdashboardlive";
 import { userRoleHandler } from "./components/StateManagement/Redux/Reducers/userRoleReducer";
 import Loader from "./components/Loader/Loader";
 
-
-const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
-
-
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
 const AllDetailsForm = lazy(() => import("./components/Registration/AllDetailsForm"));
 const ProjectDetails = lazy(() => import("./components/Project/ProjectDetails"));
@@ -28,16 +24,6 @@ const AppRoutes = () => {
 
   const roleNames = isAuthenticated ? allRoles.roles?.map((role) => role.name) : [];
 
-
-
-  const publicRoutes=[
-      { path: "/", element: <Home /> },
-      // {path:"/" , element: <Hubdashboardlive /> },
-      { path: "/details", element: <AllDetailsForm /> },
-      { path: "/roleSelect", element: <RoleSelector /> },
-  ]
-
-  
   const publicRoutes = [
     { path: "/", element: <Home /> },
     { path: "/details", element: <AllDetailsForm /> },
