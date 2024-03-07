@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import internetIdentity from "../../assets/WalletLogo/IcpWallet1.png";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
@@ -10,6 +10,7 @@ import { founderRegisteredHandlerRequest } from "../components/StateManagement/R
 import { hubRegisteredHandlerRequest } from "../components/StateManagement/Redux/Reducers/hubRegisteredData";
 import { investorRegisteredHandlerRequest } from "../components/StateManagement/Redux/Reducers/investorRegisteredData";
 import { useAuth } from "../components/StateManagement/useContext/useAuth";
+import { userRoleHandler } from "../components/StateManagement/Redux/Reducers/userRoleReducer";
 
 const LogoutModal = () => {
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
@@ -31,6 +32,10 @@ const LogoutModal = () => {
     setDropdownOpen(!isDropdownOpen);
   };
 
+  useEffect(()=>{
+   dispatch(userRoleHandler())
+  },[isAuthenticated , dispatch, actor])
+
   const logoutHandler = async () => {
     dispatch(changeHasSelectedRoleHandler(false));
     await logout();
@@ -38,9 +43,8 @@ const LogoutModal = () => {
     // setDropdownOpen(false)
   };
 
-  const profileHandler = (specificRole) => {
-    // console.log('specific role inside profilehandler logout component ',specificRole);
-
+  const profileHandler = async(specificRole) => {
+    // console.log('specific role inside profilehandler logout component ',specificRole);    
     switch (specificRole) {
       case "Founder":
         dispatch(founderRegisteredHandlerRequest());
@@ -55,6 +59,7 @@ const LogoutModal = () => {
         setDropdownOpen(false);
         break;
       case "VC":
+        console.log('vc =>', specificRole)
         dispatch(investorRegisteredHandlerRequest());
         setDropdownOpen(false);
         break;
