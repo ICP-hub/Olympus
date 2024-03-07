@@ -49,22 +49,31 @@ pub fn like_project(project_id: String) -> std::string::String {
             };
             ic_cdk::println!("Upvoter Details are: {:?}", likes_info.clone());
             
+            let mut project_found_and_liked = false;
+
             STATE.with(|likes| {
                 let mut likes = likes.borrow_mut();
-                let like_record = likes.projects.entry(project_id.clone()).or_insert_with(Default::default);
-                like_record.upvoters.push(likes_info.clone());
-                like_record.count += Nat::from(1_u32); 
-                ic_cdk::println!("Upvote Record is {:?}", like_record);
-                ic_cdk::println!("Upvote Info is {:?}", likes_info);
+                if likes.projects.contains_key(&project_id) {
+                    let like_record = likes.projects.entry(project_id.clone()).or_insert_with(Default::default);
+                    like_record.upvoters.push(likes_info.clone());
+                    like_record.count += Nat::from(1_u32); 
+                    ic_cdk::println!("Upvote Record is {:?}", like_record);
+                    ic_cdk::println!("Upvote Info is {:?}", likes_info);
+                    project_found_and_liked = true;
+                }
             });
+
+            if project_found_and_liked {
+                "Project Liked Successfully".to_string()
+            } else {
+                "No Project Found".to_string()
+            }
         } else {
-            ic_cdk::println!("Founder info missing necessary details for liking a project.");
+            "Incomplete Founder Info".to_string()
         }
     } else {
-        ic_cdk::println!("No founder info available.");
+        "Founder Info Not Found".to_string()
     }
-
-    "Project Liked Successfully".to_string()
 }
 
 

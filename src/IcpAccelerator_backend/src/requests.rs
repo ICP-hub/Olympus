@@ -24,6 +24,7 @@ thread_local! {
 
 pub fn send_request_to_project(project_id: String, request_text: String)->String {
     let caller_principal = caller();
+    let mut is_found = false;
     let mentor_data = MENTOR_REGISTRY.with(|registry| {
         registry.borrow().get(&caller_principal).cloned()
     });
@@ -36,8 +37,13 @@ pub fn send_request_to_project(project_id: String, request_text: String)->String
     PROJECT_REQUESTS.with(|requests| {
         let mut requests_mut = requests.borrow_mut();
         requests_mut.notifications.entry(project_id.to_owned()).or_default().push(request);
+        is_found = true;
     });
-    "Request Successfully Sent To Project Owner".to_string()
+    if is_found{
+        "Request Successfully Sent To Project Owner".to_string()
+    }else{
+        "Please provide Valid Project Id".to_string()
+    }
 }
 
 pub fn get_requests(project_id: String) -> Vec<Request> {

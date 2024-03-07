@@ -139,8 +139,7 @@ fn list_all_projects() -> Vec<ProjectInfo> {
 
 fn update_project(project_id: String, updated_project: ProjectInfo) -> String {
     if has_required_role(&vec![UserRole::Founder, UserRole::Project]) {
-        project_registration::update_project(project_id, updated_project);
-        "updation success".to_string()
+        project_registration::update_project(project_id, updated_project)
     } else {
         "you are not supposed to change someone profile".to_string()
     }
@@ -150,8 +149,7 @@ fn update_project(project_id: String, updated_project: ProjectInfo) -> String {
 
 fn update_project_docs(project_id: String, docs: DocsInfo) -> String {
     if has_required_role(&vec![UserRole::Project, UserRole::Founder]) {
-        project_registration::update_project_docs(project_id, docs);
-        format!("project docs got updated")
+        project_registration::update_project_docs(project_id, docs)
     } else {
         format!("you arn't have permissions to update someone's belongings")
     }
@@ -161,8 +159,7 @@ fn update_project_docs(project_id: String, docs: DocsInfo) -> String {
 
 fn update_team_member(project_id: String, team_member: TeamMember) -> String {
     if has_required_role(&vec![UserRole::Founder, UserRole::Project]) {
-        project_registration::update_team_member(project_id, team_member);
-        "team members updated sucessfully".to_string()
+        project_registration::update_team_member(project_id, team_member)
     } else {
         "you hv n't registered as a user yet".to_string()
     }
