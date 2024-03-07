@@ -130,15 +130,15 @@ export const mentorRegistrationPersonalDetails = [
       onFocus: null,
       onBlur: null,
     },
-    {
-      id: "areas_of_expertise",
-      type: "text",
-      name: "areas_of_expertise",
-      required: true,
-      label: "What are your areas of expertise?",
-      onFocus: null,
-      onBlur: null,
-    },
+    // {
+    //   id: "areas_of_expertise",
+    //   type: "text",
+    //   name: "areas_of_expertise",
+    //   required: true,
+    //   label: "What are your areas of expertise?",
+    //   onFocus: null,
+    //   onBlur: null,
+    // },
     
   ];
 

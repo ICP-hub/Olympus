@@ -62,7 +62,7 @@ const ListedProjects = () => {
         role === "Mentor" ||
         role === "VC" ||
         role === "ICPHubOrganizer" ||
-        role === "Founder"
+        role === "Project"
       ) {
         // console.log("role", role);
         setShow(true);

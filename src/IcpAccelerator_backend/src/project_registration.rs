@@ -255,21 +255,29 @@ pub fn list_all_projects() -> Vec<ProjectInfo> {
     projects
 }
 
-pub fn update_project_docs(project_id: String, docs: DocsInfo) {
+pub fn update_project_docs(project_id: String, docs: DocsInfo)->String {
     let caller = caller();
+    let mut is_updated = false;
     APPLICATION_FORM.with(|storage| {
         if let Some(projects) = storage.borrow_mut().get_mut(&caller) {
             if let Some(project_internal) = projects.iter_mut().find(|p| p.uid == project_id) {
                 if let Some(seventy_info) = &mut project_internal.params.seventy_info {
                     seventy_info.docs = Some(docs);
                 }
+                is_updated = true;
             }
         }
     });
+    if is_updated{
+        "Document Details are Updated Successfully".to_string()
+    }else{
+        "Please Provide valid Input".to_string()
+    }
 }
 
-pub fn update_team_member(project_id: String, team_member: TeamMember) {
+pub fn update_team_member(project_id: String, team_member: TeamMember) ->String {
     let caller = caller();
+    let mut is_updated = false;
     APPLICATION_FORM.with(|storage| {
         if let Some(projects) = storage.borrow_mut().get_mut(&caller) {
             if let Some(project_internal) = projects.iter_mut().find(|p| p.uid == project_id) {
@@ -282,18 +290,25 @@ pub fn update_team_member(project_id: String, team_member: TeamMember) {
                         Some(existing_member) => *existing_member = team_member,
                         None => team.push(team_member),
                     }
+                    is_updated = true;
                 }
             }
         }
     });
+    if is_updated{
+            "Team Member Details are Updated Successfully".to_string()
+        }else{
+            "Please Provide valid Input".to_string()
+        }
 }
 
 
 
 
 
-pub fn update_project(project_id: String, updated_project: ProjectInfo) {
+pub fn update_project(project_id: String, updated_project: ProjectInfo)->String {
     let caller = caller();
+    let mut is_updated = true;
     APPLICATION_FORM.with(|storage| {
         if let Some(projects) = storage.borrow_mut().get_mut(&caller) {
             if let Some(project_internal) = projects.iter_mut().find(|p| p.uid == project_id) {
@@ -316,15 +331,22 @@ pub fn update_project(project_id: String, updated_project: ProjectInfo) {
                         seventy_info.development_stage = updated_seventy_info.development_stage.clone().or(seventy_info.development_stage.clone());
                     }
                 }
+                is_updated = true;
             }
         }
     });
+    if is_updated{
+        "Project Details are Updated Successfully".to_string()
+    }else{
+        "Please Provide valid Input".to_string()
+    }
 }
 
 
 
 pub fn delete_project(id: String)->std::string::String {
     let caller = caller();
+    let mut is_found = false;
 
     APPLICATION_FORM.with(|storage| {
         let mut storage = storage.borrow_mut();
@@ -336,8 +358,13 @@ pub fn delete_project(id: String)->std::string::String {
                 }
             }
         }
+        is_found = true;
     });
-    format!("Project Status Set To InActive")
+    if is_found{
+        "Project Status Set To Inactive".to_string()
+    }else{
+        "Please Provide a Valid Project Id".to_string()
+    }
 }
 
 
