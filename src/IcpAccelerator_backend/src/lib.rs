@@ -1,4 +1,4 @@
-mod admin;
+//mod admin;
 mod hub_organizer;
 mod latest_popular_projects;
 mod leaderboard;
@@ -11,8 +11,10 @@ mod requests;
 mod roles;
 mod upvotes;
 mod vc_registration;
+mod user_module;
 
 use hub_organizer::{HubOrganizerRegistration, UniqueHubs};
+use user_module::UserInformation;
 use ic_cdk::api::caller;
 use leaderboard::{
     LeaderboardEntryForLikes, LeaderboardEntryForRatings, LeaderboardEntryForUpvote,
@@ -73,6 +75,31 @@ fn pre_upgrade() {
 pub fn get_role_from_p_id() -> Option<HashSet<UserRole>> {
     rbac::get_role_from_principal()
 }
+
+#[update]
+
+pub async fn register_user(profile: UserInformation)->String{
+    user_module::register_user_role(profile).await
+}
+
+#[query]
+
+pub fn get_user_information()->Result<UserInformation, &'static str>{
+    user_module::get_user_info()
+}
+
+#[query]
+
+pub fn get_all_users_information()->Vec<UserInformation>{
+    user_module::list_all_users()
+}
+
+#[update]
+
+pub fn make_user_inactive()->String{
+    user_module::delete_user()
+}
+
 
 #[update]
 
@@ -525,10 +552,10 @@ pub fn get_my_id() -> Principal {
     caller()
 }
 
-#[query]
-pub fn get_admin_notifications(caller: Principal) -> Vec<admin::Notification> {
-    admin::get_admin_notifications(caller)
-}
+// #[query]
+// pub fn get_admin_notifications(caller: Principal) -> Vec<admin::Notification> {
+//     admin::get_admin_notifications(caller)
+// }
 
 // #[update]
 // pub fn add_roles(name: String) -> Role {
