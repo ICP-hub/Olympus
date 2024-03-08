@@ -152,7 +152,7 @@ fn update_project(project_id: String, updated_project: ProjectInfo) -> String {
 #[update]
 
 fn update_project_docs(project_id: String, docs: DocsInfo) -> String {
-    if has_required_role(&vec![UserRole::Project]) {
+    if has_required_role(&vec![UserRole::Project, ]) {
         project_registration::update_project_docs(project_id, docs)
     } else {
         format!("you arn't have permissions to update someone's belongings")
