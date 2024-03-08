@@ -1,4 +1,4 @@
-//mod admin;
+mod admin;
 mod hub_organizer;
 mod latest_popular_projects;
 mod leaderboard;
@@ -528,10 +528,10 @@ pub fn get_my_id() -> Principal {
     caller()
 }
 
-// #[query]
-// pub fn get_admin_notifications(caller: Principal) -> Vec<admin::Notification> {
-//     admin::get_admin_notifications(caller)
-// }
+#[query]
+pub fn get_admin_notifications(caller: Principal) -> Vec<admin::Notification> {
+    admin::get_admin_notifications(caller)
+}
 
 // #[update]
 // pub fn add_roles(name: String) -> Role {
