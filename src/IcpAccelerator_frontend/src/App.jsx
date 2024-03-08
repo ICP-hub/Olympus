@@ -73,9 +73,13 @@ const App = () => {
   }, [isAuthenticated, identity, dispatch]);
 
   useEffect(() => {
+    dispatch(areaOfExpertiseHandlerRequest());
+  }, [isAuthenticated, identity, dispatch]);
+ 
+  useEffect(() => {
     // console.log("specific role inside effect of app 1", specificRole);
     switch (specificRole) {
-      case "Founder":
+      case "Project":
         dispatch(founderRegisteredHandlerRequest());
         break;
       case "Mentor":

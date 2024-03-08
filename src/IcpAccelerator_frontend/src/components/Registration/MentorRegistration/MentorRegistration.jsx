@@ -114,6 +114,7 @@ const validationSchema = {
         (value) => /\S/.test(value)
       )
       .required("Specific goals and objectives as a mentor are required"),
+
     areas_of_expertise: yup
       .string()
       .test("is-non-empty", "Areas of expertise are required", (value) =>
@@ -189,6 +190,8 @@ const MentorRegistration = () => {
     (currState) => currState.current.specificRole
   );
   const mentorFullData = useSelector((currState) => currState.mentorData.data);
+  const areaOfExpertise =  useSelector((currState)=> currState.expertiseIn.expertise)
+
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -203,7 +206,7 @@ const MentorRegistration = () => {
   const [mentorDataObject, setMentorDataObject] = useState({});
 
   // console.log("MentorRegistration  run  specificRole =>", specificRole);
-  // console.log("mentorFullData in mentor-registratn comp =>", mentorFullData);
+  console.log("expertiseIn in mentor-registratn comp =>", areaOfExpertise);
 
   const getTabClassName = (tab) => {
     return `inline-block p-2 font-bold ${
@@ -247,6 +250,7 @@ const MentorRegistration = () => {
     } else {
     }
   };
+
 
   useEffect(() => {
     if (!userHasInteracted) return;
@@ -308,6 +312,15 @@ const MentorRegistration = () => {
     }
   };
 
+
+  const imageUrlToByteArray = async (imageUrl) => {
+    const response = await fetch(imageUrl);
+    const blob = await response.blob();
+    const arrayBuffer = await blob.arrayBuffer();
+    return Array.from(new Uint8Array(arrayBuffer));
+  };
+
+  
   useEffect(() => {
     if (mentorFullData && mentorFullData.length > 0) {
       const data = mentorFullData[0];
@@ -317,12 +330,23 @@ const MentorRegistration = () => {
       }, {});
       reset(formattedData);
       setFormData(formattedData);
+
+
+
+      if (formattedData.mentor_image) {
+        imageUrlToByteArray(formattedData.mentor_image)
+          .then((imageBytes) => {
+            setmentor_image(imageBytes);
+          })
+          .catch((error) => console.error('Error converting image:', error));
+      }
+    
     }
   }, [mentorFullData, reset]);
 
   const sendingMentorData = async (val) => {
     // console.log("run sendingMentorData =========");
-    // console.log("mentorDataObject ==>> ", val);
+    console.log("sendingMentorData ==>> ", val);
 
     let result;
 
@@ -507,6 +531,8 @@ const MentorRegistration = () => {
 
         {step === 0 && (
           <div className="flex flex-col">
+           
+           
             <div className="flex-row w-full flex justify-start gap-4 items-center">
               <div className="mb-3 ml-6 h-24 w-24 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
                 {image ? (
@@ -588,6 +614,43 @@ const MentorRegistration = () => {
               )}
             </div>
           </div>
+        )}
+
+        {step === 1 && (
+          <div className="px-4 z-0 w-full my-5 group">
+          <label
+            htmlFor="areas_of_expertise"
+            className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+          >
+             What are your areas of expertise?
+          </label>
+          <select
+            {...register("areas_of_expertise")}
+            className={`bg-gray-50 border-2 ${
+              errors.areas_of_expertise
+                ? "border-red-500 placeholder:text-red-500"
+                : "border-[#737373]"
+            } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+          >
+            <option className="text-lg font-bold" value="">
+               Areas_of_expertise ⌄
+            </option>
+            {areaOfExpertise?.map((expert) => (
+              <option
+                key={expert.id}
+                value={`${expert.name}`}
+                className="text-lg font-bold"
+              >
+                {expert.name} 
+              </option>
+            ))}
+          </select>
+          {errors.areas_of_expertise && (
+            <p className="text-red-500 text-xs italic">
+              {errors.areas_of_expertise.message}
+            </p>
+          )}
+        </div>
         )}
       </div>
 

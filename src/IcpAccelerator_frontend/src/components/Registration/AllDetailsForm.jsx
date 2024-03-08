@@ -17,9 +17,9 @@ const AllDetailsForm = () => {
   // console.log('rolename and roleid in alldetailform =============>', roleId,roleName)
 
   const renderComponent = (roleName) => {
-    // console.log(roleName , "<== roleName inside renderComponent")
-    switch (roleName) {
-      case "Founder":
+    console.log(roleName , "<== roleName inside renderComponent")
+    switch (roleName) {   
+      case "Project":
         return <FounderRegistration />;
       case "Mentor":
         return <MentorRegistration />;
