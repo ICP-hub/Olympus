@@ -1,4 +1,4 @@
-mod admin;
+//mod admin;
 mod hub_organizer;
 mod latest_popular_projects;
 mod leaderboard;
@@ -142,7 +142,7 @@ fn list_all_projects() -> Vec<ProjectInfo> {
 #[update]
 
 fn update_project(project_id: String, updated_project: ProjectInfo) -> String {
-    if has_required_role(&vec![UserRole::Founder, UserRole::Project]) {
+    if has_required_role(&vec![ UserRole::Project]) {
         project_registration::update_project(project_id, updated_project)
     } else {
         "you are not supposed to change someone profile".to_string()
@@ -152,7 +152,7 @@ fn update_project(project_id: String, updated_project: ProjectInfo) -> String {
 #[update]
 
 fn update_project_docs(project_id: String, docs: DocsInfo) -> String {
-    if has_required_role(&vec![UserRole::Project, UserRole::Founder]) {
+    if has_required_role(&vec![UserRole::Project]) {
         project_registration::update_project_docs(project_id, docs)
     } else {
         format!("you arn't have permissions to update someone's belongings")
@@ -162,7 +162,7 @@ fn update_project_docs(project_id: String, docs: DocsInfo) -> String {
 #[update]
 
 fn update_team_member(project_id: String, team_member: TeamMember) -> String {
-    if has_required_role(&vec![UserRole::Founder, UserRole::Project]) {
+    if has_required_role(&vec![ UserRole::Project]) {
         project_registration::update_team_member(project_id, team_member)
     } else {
         "you hv n't registered as a user yet".to_string()
@@ -525,10 +525,10 @@ pub fn get_my_id() -> Principal {
     caller()
 }
 
-#[query]
-pub fn get_admin_notifications(caller: Principal) -> Vec<admin::Notification> {
-    admin::get_admin_notifications(caller)
-}
+// #[query]
+// pub fn get_admin_notifications(caller: Principal) -> Vec<admin::Notification> {
+//     admin::get_admin_notifications(caller)
+// }
 
 // #[update]
 // pub fn add_roles(name: String) -> Role {
