@@ -143,11 +143,11 @@ const UserProfile = () => {
               </div>
             </div>
           </div>
-          <div className="flex-col ml-4 flex-wrap mt-2 w-auto">
+          <div className="flex flex-col ml-4 flex-wrap mt-2 w-auto">
             <h1 className="md:text-3xl text-xl md:font-extrabold font-bold pb-2 bg-gradient-to-r from-blue-900 to-sky-400 text-transparent bg-clip-text">
               Selena Gomez
             </h1>
-            <p className="font-extralight text-xs text-black md:z-40 absolute">
+            <p className="font-extralight text-xs text-black md:z-40 ">
               PANONY was established in March 2018 with operations in Greater
               China, South Korea.
             </p>
