@@ -271,7 +271,7 @@ pub fn update_project_docs(project_id: String, docs: DocsInfo)->String {
     if is_updated{
         "Document Details are Updated Successfully".to_string()
     }else{
-        "Please Provide valid Input".to_string()
+        "Please Provide valid Project Id".to_string()
     }
 }
 
@@ -298,7 +298,7 @@ pub fn update_team_member(project_id: String, team_member: TeamMember) ->String 
     if is_updated{
             "Team Member Details are Updated Successfully".to_string()
         }else{
-            "Please Provide valid Input".to_string()
+            "Please Provide valid Project Id".to_string()
         }
 }
 
