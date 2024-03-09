@@ -5,10 +5,10 @@ import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 import "../assets/main.css";
 import { Provider } from "react-redux";
-import store,{persistor} from "./components/StateManagement/Redux/Store";
+import store,{persistor} from "./components/AdminStateManagement/Redux/Store";
 import { PersistGate } from "redux-persist/integration/react";
 // import { persistStore } from "redux-persist";
-import { AuthProvider } from "./components/StateManagement/useContext/useAuth";
+import { AuthProvider } from "./components/AdminStateManagement/useContext/useAuth";
 // let persistor = persistStore(store);
 
 ReactDOM.render(

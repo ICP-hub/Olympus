@@ -4,7 +4,7 @@ import { walletModalSvg } from "../Utils/AdminData/SvgData";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../StateManagement/useContext/useAuth";
+import { useAuth } from "../AdminStateManagement/useContext/useAuth";
 
 const ConnectWallet = ({ isModalOpen, onClose }) => {
   // const roleNavigate = useSelector((currState) => currState.internet.navi);
