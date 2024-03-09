@@ -19,73 +19,82 @@ const schema = yup.object({
     .string()
     .required()
     .test("is-non-empty", null, (value) => value && value.trim().length > 0),
-    user_name: yup.string()
-    .min(6, 'Username must be at least 6 characters')
-    .max(20, 'Username must be at most 20 characters')
-    .matches(/^(?=.*[A-Z0-9_])[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores')
-    .required('Username is required'),
-bio: yup.string().required().test("is-non-empty", null, value => value && value.trim().length > 0),
- email: yup.string().email().required(),
+  user_name: yup
+    .string()
+    .min(6, "Username must be at least 6 characters")
+    .max(20, "Username must be at most 20 characters")
+    .matches(
+      /^(?=.*[A-Z0-9_])[a-zA-Z0-9_]+$/,
+      "Username can only contain letters, numbers, and underscores"
+    )
+    .required("Username is required"),
+  bio: yup.string().required("is-non-empty"),
+  email: yup.string().email().required(),
   telegram_id: yup.string().required().url(),
   twitter_id: yup.string().required().url(),
   hub: yup.string().required("Selecting a hub is required."),
-  areas_of_expertise: yup.string().required("Selecting a interest is required."),
+  areas_of_expertise: yup
+    .string()
+    .required("Selecting a interest is required."),
 });
 
 const NormalUser = () => {
-  
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
-  const areaOfExpertise =  useSelector((currState)=> currState.expertiseIn.expertise)
+  const areaOfExpertise = useSelector(
+    (currState) => currState.expertiseIn.expertise
+  );
   const actor = useSelector((currState) => currState.actors.actor);
-  const userFullData = useSelector((currState) => currState);
+  const userFullData = useSelector((currState) => currState.userData);
 
   const [inputType, setInputType] = useState("date");
 
   const dispatch = useDispatch();
-//   const navigate = useNavigate();
+  //   const navigate = useNavigate();
 
-  console.log("userInfo run =>",userFullData);
-//   console.log("getAllIcpHubs", getAllIcpHubs);
+  console.log("userInfo run =>", userFullData);
+  //   console.log("getAllIcpHubs", getAllIcpHubs);
 
-//   useEffect(() => {
-//     dispatch(allHubHandlerRequest());
-//   }, [actor, dispatch]);
+  //   useEffect(() => {
+  //     dispatch(allHubHandlerRequest());
+  //   }, [actor, dispatch]);
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    trigger, reset
+    trigger,
+    reset,
   } = useForm({
-    resolver: yupResolver(schema), mode :'all'
+    resolver: yupResolver(schema),
+    mode: "all",
   });
 
   const onSubmitHandler = async (data) => {
     // console.log("data aaya data aaya ", data);
 
-    const founderData = {
+    const userData = {
       full_name: [data.full_name],
-      date_of_birth: [data.date_of_birth.toISOString().split("T")[0]],
+      user_name: [data.user_name],
+      bio: [data.bio],
       email: [data.email],
-      phone_number: [data.phone_number],
-      linked_in_profile: [data.linked_in_profile.toString()],
       telegram_id: [data.telegram_id.toString()],
       twitter_id: [data.twitter_id.toString()],
-      preferred_icp_hub: [data.hub],
+      country: [data.hub],
+      area_of_intrest: [data.areas_of_expertise],
     };
 
-    // console.log("founderdata => ", founderData);
+    console.log("userData => ", userData);
 
-//     try {
-//       const result = await actor.register_founder_caller(founderData);
-//       toast.success(result);
-//       console.log("data passed to backend");
-//       await dispatch(userRoleHandler());
-//       await navigate("/dashboard");
-//     } catch (error) {
-//       toast.error(error);
-//       console.error("Error sending data to the backend:", error);
-//     }
+    try {
+      const result = await actor.register_user_role(userData);
+      toast.success(result);
+      console.log("data passed to backend");
+      await dispatch(userRoleHandler());
+      await navigate("/dashboard");
+    } catch (error) {
+      toast.error(error);
+      console.error("Error sending data to the backend:", error);
+    }
   };
 
   const handleFocus = (field) => {
@@ -169,40 +178,40 @@ const NormalUser = () => {
               </span>
             )}
           </div>
-          <div className="px-4 z-0 w-full group">
-          <label
-            htmlFor="areas_of_expertise"
-            className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-          >
-             What are your interests?
-          </label>
-          <select
-            {...register("areas_of_expertise")}
-            className={`bg-gray-50 border-2 ${
-              errors.areas_of_expertise
-                ? "border-red-500 placeholder:text-red-500"
-                : "border-[#737373]"
-            } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-          >
-            <option className="text-lg font-bold" value="">
-            interests ⌄
-            </option>
-            {areaOfExpertise?.map((expert) => (
-              <option
-                key={expert.id}
-                value={`${expert.name}`}
-                className="text-lg font-bold"
-              >
-                {expert.name} 
+          <div className="z-0 w-full group">
+            <label
+              htmlFor="areas_of_expertise"
+              className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+            >
+              What are your interests?
+            </label>
+            <select
+              {...register("areas_of_expertise")}
+              className={`bg-gray-50 border-2 ${
+                errors.areas_of_expertise
+                  ? "border-red-500 placeholder:text-red-500"
+                  : "border-[#737373]"
+              } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+            >
+              <option className="text-lg font-bold" value="">
+                interests ⌄
               </option>
-            ))}
-          </select>
-          {errors.areas_of_expertise && (
+              {areaOfExpertise?.map((expert) => (
+                <option
+                  key={expert.id}
+                  value={`${expert.name}`}
+                  className="text-lg font-bold"
+                >
+                  {expert.name}
+                </option>
+              ))}
+            </select>
+            {errors.areas_of_expertise && (
               <span className="mt-1 text-sm text-red-500 font-bold">
-              {errors.areas_of_expertise.message}
-            </span>
-          )}
-        </div>
+                {errors.areas_of_expertise.message}
+              </span>
+            )}
+          </div>
         </div>
         <div className="flex justify-end mt-4">
           <button
