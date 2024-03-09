@@ -35,6 +35,9 @@ thread_local! {
 
 
 pub async fn register_user_role(info: UserInformation)->std::string::String{
+     if info.full_name.trim().is_empty() || info.email.as_ref().map_or(true, |email| email.trim().is_empty()) {
+        return "Please provide input for required fields: full_name and email.".to_string();
+    }
     let caller = caller();
     let uuids = raw_rand().await.unwrap().0;
     let uid = format!("{:x}", Sha256::digest(&uuids));
