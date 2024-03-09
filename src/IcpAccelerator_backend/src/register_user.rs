@@ -207,7 +207,7 @@ pub fn pre_upgrade() {
 //     });
 // }
 
-#[update]
+
 pub async fn register_founder(thirty_info: ThirtyInfoFounder)->std::string::String{
     let caller = caller();
     let uuids = raw_rand().await.unwrap().0;
@@ -248,7 +248,7 @@ pub async fn register_founder(thirty_info: ThirtyInfoFounder)->std::string::Stri
     format!("User registered successfully with ID: {}", new_id)
 }
 
-#[query]
+
 pub fn get_founder_info() -> Option<FounderInfo> {
     let caller = caller();
     println!("Fetching founder info for caller: {:?}", caller);
@@ -262,7 +262,7 @@ pub fn get_founder_info() -> Option<FounderInfo> {
 
 
 
-#[query]
+
 pub fn list_all_founders() -> Vec<FounderInfo> {
     FOUNDER_STORAGE.with(|storage| 
         storage
@@ -273,7 +273,7 @@ pub fn list_all_founders() -> Vec<FounderInfo> {
     )
 }
 
-#[update]
+
 pub fn delete_founder()->std::string::String {
     let caller = caller();
     println!("Attempting to deactivate founder for caller: {:?}", caller);
@@ -290,7 +290,7 @@ pub fn delete_founder()->std::string::String {
     format!("Founder Has Been DeActivated")
 }
 
-#[update]
+
 pub fn update_founder(mut updated_profile: FounderInfo) -> String {
     let caller = caller();
 

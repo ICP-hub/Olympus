@@ -36,7 +36,7 @@ pub fn pre_upgrade() {
 
 
 
-#[update]
+
 pub fn add_suggestion(content: String, project_id: String) -> (u64, String) {
     let status = "Planned".to_string(); 
 
@@ -64,7 +64,7 @@ pub fn add_suggestion(content: String, project_id: String) -> (u64, String) {
 
 
 
-#[update]
+
 pub fn update_suggestion_status(id: u64, new_status: String, project_id: String) {
     SUGGESTIONS_BY_STATUS.with(|s| {
         let mut app_details = s.borrow_mut();
@@ -104,7 +104,7 @@ pub fn update_suggestion_status(id: u64, new_status: String, project_id: String)
 
 
 
-#[query]
+
 pub fn get_suggestions_by_status(project_id: String, status: String) -> Vec<Suggestion> {
     SUGGESTIONS_BY_STATUS.with(|s| {
         let app_details = s.borrow();
@@ -115,7 +115,7 @@ pub fn get_suggestions_by_status(project_id: String, status: String) -> Vec<Sugg
     })
 }
 
-#[update]
+
 pub fn reply_to_suggestion(parent_id: u64, reply_content: String, project_id: String) -> (u64, String) {
     let reply_status = PLANNED.to_string();
 
@@ -145,7 +145,7 @@ pub fn reply_to_suggestion(parent_id: u64, reply_content: String, project_id: St
     (id, reply_status)
 }
 
-#[query]
+
 pub fn get_suggestions_by_parent_id(project_id: String, parent_id: u64) -> Vec<Suggestion> {
     SUGGESTIONS_BY_STATUS.with(|s| {
         let app_details = s.borrow();
@@ -161,7 +161,7 @@ pub fn get_suggestions_by_parent_id(project_id: String, parent_id: u64) -> Vec<S
     })
 }
 
-#[query]
+
 pub fn get_total_suggestions_count(project_id: String) -> u64 {
     SUGGESTIONS_BY_STATUS.with(|s| {
         let app_details = s.borrow();

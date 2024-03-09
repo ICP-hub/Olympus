@@ -71,10 +71,9 @@ pub fn upvote(project_id: String) -> std::string::String {
 }
 
 
-#[query]
+
 pub fn get_upvote_record(project_id: String) -> Option<UpvoteRecord> {
     let record = UPVOTES.with(|upvotes| upvotes.borrow().projects.get(&project_id).cloned());
-
     record
 }
 

@@ -34,7 +34,7 @@
         static HUB_ORGANIZER_REGISTRATIONS: RefCell<HashMap<Principal, UniqueHubs>> = RefCell::new(HashMap::new());
     }
 
-    #[update]
+    
     pub async fn register_hub_organizer(form: HubOrganizerRegistration) -> String {
         let caller = caller();
 
@@ -66,7 +66,7 @@
         }
     }
 
-    #[query]
+    
     pub fn get_hub_organizer() -> Option<UniqueHubs> {
         let caller = caller();
         HUB_ORGANIZER_REGISTRATIONS.with(|registry| {
@@ -75,7 +75,7 @@
         })
     }
 
-    #[update]
+    
     pub fn update_hub_organizer(params: HubOrganizerRegistration) -> String {
         let caller = caller();
 
