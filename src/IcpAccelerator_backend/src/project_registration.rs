@@ -1,10 +1,14 @@
-use bincode::{self, DefaultOptions, Options};
 use candid::{CandidType, Principal};
 use ic_cdk::api::caller;
-use ic_cdk::api::management_canister::main::raw_rand;
-use ic_cdk::api::stable::{StableReader, StableWriter};
-use ic_cdk::api::time;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+use ic_cdk::api::stable::{StableReader, StableWriter};
+use std::cell::RefCell;
+use bincode::{self, DefaultOptions, Options};
+use ic_cdk::api::management_canister::main::raw_rand;
+use sha2::{Digest, Sha256};
+use std::io::Read;
+use ic_cdk::api::time;
 use serde_cbor::Value::Null;
 
 use crate::{register_user::{get_founder_info, self}, hub_organizer};
@@ -103,13 +107,13 @@ pub struct NotificationProject {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
-pub struct NotificationSender {
+pub struct NotificationSender{
     name: String,
     image: Vec<u8>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
-pub struct NotificationVerifier {
+pub struct NotificationVerifier{
     name: String,
     image: Vec<u8>,
 }
@@ -120,23 +124,9 @@ pub struct NotificationForOwner {
     sender_image: Vec<u8>,
     message: String,
     project_id: String,
-    timestamp: u64,
+    timestamp: u64, 
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
-pub struct Announcements {
-    project_name: String,
-    announcement_message: String,
-    timestamp: u64,
-}
-
-
-#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
-pub struct Blog {
-    blog_url:String,
-    timestamp:u64
-}
-pub type ProjectAnnouncements = HashMap<Principal, Vec<Announcements>>;
 pub type Notifications = HashMap<Principal, Vec<NotificationProject>>;
 
 
@@ -146,9 +136,8 @@ thread_local! {
     pub static APPLICATION_FORM: RefCell<ApplicationDetails> = RefCell::new(ApplicationDetails::new());
     pub static NOTIFICATIONS: RefCell<Notifications> = RefCell::new(Notifications::new());
     static OWNER_NOTIFICATIONS: RefCell<HashMap<Principal, Vec<NotificationForOwner>>> = RefCell::new(HashMap::new());
-    pub static PROJECT_ANNOUNCEMENTS:RefCell<ProjectAnnouncements> = RefCell::new(ProjectAnnouncements::new());
-    pub static BLOG_POST:RefCell<BlogPost> = RefCell::new(BlogPost::new());
 }
+
 
 pub fn pre_upgrade() {
     // Serialize and write data to stable storage
@@ -160,6 +149,7 @@ pub fn pre_upgrade() {
             .expect("Failed to write to stable storage");
     });
 }
+
 
 // pub fn post_upgrade() {
 //     // Read and deserialize data from stable storage
@@ -182,25 +172,19 @@ pub async fn create_project(thirty_info: ThirtyInfoProject)-> String {
 
     let (name, image) = match founder_info {
         Some(info) => {
-            let name = info
-                .thirty_info
-                .as_ref()
-                .and_then(|thirty_info| thirty_info.full_name.clone());
-            let image = info
-                .seventy_info
-                .as_ref()
-                .and_then(|seventy_info| seventy_info.founder_image.clone());
+            let name = info.thirty_info.as_ref().and_then(|thirty_info| thirty_info.full_name.clone());
+            let image = info.seventy_info.as_ref().and_then(|seventy_info| seventy_info.founder_image.clone());
             (name, image)
-        }
+        },
         None => (None, None),
     };
 
     let noti_sender = NotificationSender {
-        name: name.unwrap_or_else(|| "Unknown Founder".to_string()),
-        image: image.unwrap_or_else(|| vec![]),
+        name: name.unwrap_or_else(|| "Unknown Founder".to_string()), 
+        image: image.unwrap_or_else(|| vec![]), 
     };
 
-    let uuids = raw_rand().await.unwrap().0;
+    let uuids = raw_rand().await.unwrap().0; 
     let uid = format!("{:x}", Sha256::digest(&uuids));
     let new_id = uid.clone().to_string();
 
@@ -219,10 +203,7 @@ pub async fn create_project(thirty_info: ThirtyInfoProject)-> String {
     };
     APPLICATION_FORM.with(|storage| {
         let mut applications = storage.borrow_mut();
-        applications
-            .entry(caller)
-            .or_insert_with(Vec::new)
-            .push(new_project);
+        applications.entry(caller).or_insert_with(Vec::new).push(new_project);
     });
 
     if let Some(region) = &thirty_info_clone.preferred_icp_hub {
@@ -239,44 +220,37 @@ pub async fn create_project(thirty_info: ThirtyInfoProject)-> String {
                         message: "SomeOne Created Project Under your Hub".to_string(),
                         timestamp: time(),
                         notification_sender: noti_sender.clone(),
-                        notification_verifier: NotificationVerifier {
-                            name: "".to_string(),
-                            image: vec![],
-                        },
+                        notification_verifier: NotificationVerifier { name: "".to_string(), image: vec![] },
                     };
 
                     NOTIFICATIONS.with(|notifications| {
                         let mut notifs = notifications.borrow_mut();
-                        notifs
-                            .entry(hub_principal)
-                            .or_insert_with(Vec::new)
-                            .push(notification);
+                        notifs.entry(hub_principal).or_insert_with(Vec::new).push(notification);
                     });
-                }
+                },
                 Err(_) => {
                     "Recieved an Invalid Princicpal".to_string();
                 }
             }
         }
     }
-
+    
     format!("Project Created successfully with ID: {}", uid)
 }
+
 
 pub fn get_projects_for_caller() -> Vec<ProjectInfo> {
     let caller = caller();
     APPLICATION_FORM.with(|storage| {
         let projects = storage.borrow();
         if let Some(founder_projects) = projects.get(&caller) {
-            founder_projects
-                .iter()
-                .map(|project_internal| project_internal.params.clone())
-                .collect()
+            founder_projects.iter().map(|project_internal| project_internal.params.clone()).collect()
         } else {
-            Vec::new()
+            Vec::new() 
         }
     })
 }
+
 
 pub fn find_project_by_id(project_id: &str) -> Option<ProjectInfoInternal> {
     APPLICATION_FORM.with(|storage| {
@@ -285,20 +259,15 @@ pub fn find_project_by_id(project_id: &str) -> Option<ProjectInfoInternal> {
                 return Some(project.clone());
             }
         }
-        None
+        None 
     })
 }
 
+
 pub fn list_all_projects() -> Vec<ProjectInfo> {
     let projects = APPLICATION_FORM.with(|storage| {
-        storage
-            .borrow()
-            .values()
-            .flat_map(|project_internals| {
-                project_internals
-                    .iter()
-                    .map(|project_internal| project_internal.params.clone())
-            })
+        storage.borrow().values()
+            .flat_map(|project_internals| project_internals.iter().map(|project_internal| project_internal.params.clone()))
             .collect::<Vec<ProjectInfo>>()
     });
 
@@ -393,7 +362,9 @@ pub fn update_project(project_id: String, updated_project: ProjectInfo)->String 
     }
 }
 
-pub fn delete_project(id: String) -> std::string::String {
+
+
+pub fn delete_project(id: String)->std::string::String {
     let caller = caller();
     let mut is_found = false;
 
@@ -409,27 +380,28 @@ pub fn delete_project(id: String) -> std::string::String {
         }
         is_found = true;
     });
-    if is_found {
+    if is_found{
         "Project Status Set To Inactive".to_string()
-    } else {
+    }else{
         "Please Provide a Valid Project Id".to_string()
     }
 }
 
+
 pub fn verify_project(project_id: &str) -> String {
-    let verifier_info = hub_organizer::get_hub_organizer();
+    let verifier_info = hub_organizer::get_hub_organizer(); 
 
     match verifier_info {
         Some(info) => {
             let mut project_found = false;
-
+            
             APPLICATION_FORM.with(|projects| {
                 let mut projects = projects.borrow_mut();
                 for project_internal in projects.values_mut().flat_map(|v| v.iter_mut()) {
                     if project_internal.uid == project_id {
-                        project_internal.is_verified = true;
+                        project_internal.is_verified = true; 
                         project_found = true;
-                        break;
+                        break; 
                     }
                 }
             });
@@ -437,38 +409,29 @@ pub fn verify_project(project_id: &str) -> String {
             if project_found {
                 NOTIFICATIONS.with(|notifications| {
                     let mut notifications = notifications.borrow_mut();
-                    if let Some(notification) = notifications
-                        .values_mut()
-                        .flat_map(|n| n.iter_mut())
-                        .find(|n| n.project_id == project_id)
-                    {
+                    if let Some(notification) = notifications.values_mut().flat_map(|n| n.iter_mut()).find(|n| n.project_id == project_id) {
                         notification.notification_verifier = NotificationVerifier {
-                            name: info
-                                .hubs
-                                .full_name
-                                .clone()
-                                .unwrap_or_else(|| "Default Name".to_string()),
+                            name: info.hubs.full_name.clone().unwrap_or_else(|| "Default Name".to_string()),
                             image: info.hubs.profile_picture.clone().unwrap_or_else(|| vec![]),
                         };
                     }
                 });
             }
-
+            
             "Project verified successfully.".to_string()
-        }
+        },
         None => "Verifier information could not be retrieved.".to_string(),
     }
 }
 
 pub fn get_notifications_for_caller() -> Vec<NotificationProject> {
-    let hub_principal = caller();
+    let hub_principal = caller(); 
 
     NOTIFICATIONS.with(|notifications| {
-        notifications
-            .borrow()
+        notifications.borrow()
             .get(&hub_principal)
             .cloned()
-            .unwrap_or_else(Vec::new)
+            .unwrap_or_else(Vec::new) 
     })
 }
 
@@ -484,28 +447,23 @@ fn find_project_owner_principal(project_id: &str) -> Option<Principal> {
     })
 }
 
+
 pub fn send_connection_request_to_owner(project_id: &str, team_member_username: &str) -> String {
     let caller_principal = caller();
 
-    let sender_info = register_user::get_founder_info();
+    let sender_info = register_user::get_founder_info(); 
     if sender_info.is_none() {
         return "Sender information could not be retrieved.".to_string();
     }
     let (name, image) = match sender_info {
         Some(info) => {
-            let name = info
-                .thirty_info
-                .as_ref()
-                .and_then(|thirty_info| thirty_info.full_name.clone());
-            let image = info
-                .seventy_info
-                .as_ref()
-                .and_then(|seventy_info| seventy_info.founder_image.clone());
+            let name = info.thirty_info.as_ref().and_then(|thirty_info| thirty_info.full_name.clone());
+            let image = info.seventy_info.as_ref().and_then(|seventy_info| seventy_info.founder_image.clone());
             (name, image)
-        }
+        },
         None => (None, None),
     };
-
+    
     let message = format!(
         "{} is interested in connecting with team member {} in your project.",
         name.clone().unwrap_or_else(|| "Unknown Sender".to_string()),
@@ -515,8 +473,8 @@ pub fn send_connection_request_to_owner(project_id: &str, team_member_username: 
     let project_owner_principal = find_project_owner_principal(project_id);
 
     let notification = NotificationForOwner {
-        sender_name: name.unwrap_or_else(|| "Unknown Founder".to_string()),
-        sender_image: image.unwrap_or_else(|| vec![]),
+        sender_name: name.unwrap_or_else(|| "Unknown Founder".to_string()), 
+        sender_image: image.unwrap_or_else(|| vec![]), 
         message,
         project_id: project_id.to_string(),
         timestamp: ic_cdk::api::time(),
@@ -525,11 +483,7 @@ pub fn send_connection_request_to_owner(project_id: &str, team_member_username: 
     // Store the notification
     if let Some(project_owner_principal) = find_project_owner_principal(project_id) {
         OWNER_NOTIFICATIONS.with(|notifications| {
-            notifications
-                .borrow_mut()
-                .entry(project_owner_principal)
-                .or_insert_with(Vec::new)
-                .push(notification);
+            notifications.borrow_mut().entry(project_owner_principal).or_insert_with(Vec::new).push(notification);
         });
         "Notification sent successfully.".to_string()
     } else {
@@ -538,13 +492,12 @@ pub fn send_connection_request_to_owner(project_id: &str, team_member_username: 
 }
 
 pub fn get_notifications_for_owner() -> Vec<NotificationForOwner> {
-    let owner_principal = caller();
-
+    let owner_principal = caller(); 
+    
     OWNER_NOTIFICATIONS.with(|notifications| {
-        notifications
-            .borrow()
+        notifications.borrow()
             .get(&owner_principal)
             .cloned()
-            .unwrap_or_else(Vec::new)
+            .unwrap_or_else(Vec::new) 
     })
 }

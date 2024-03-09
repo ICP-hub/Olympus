@@ -74,8 +74,7 @@ fn decline_mentor_creation_request_candid(requester : Principal, decline : bool)
 // fn pre_upgrade() {
 //     mentor::mentor_specific_pre_upgrade_actions();
 // }
-use crate::project_registration::Announcements;
-use crate::project_registration::Blog;
+
 #[pre_upgrade]
 fn pre_upgrade() {
     register_user::pre_upgrade();
