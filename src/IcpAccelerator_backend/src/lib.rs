@@ -43,10 +43,7 @@ use crate::ratings::MainLevelRatings;
 use crate::ratings::Rating;
 use candid::Principal;
 use ic_cdk_macros::{query, update};
-use project_registration::{
-    DocsInfo, NotificationForOwner, NotificationProject, ProjectInfo, ProjectInfoInternal,
-    TeamMember, ThirtyInfoProject,
-};
+use project_registration::{ NotificationForOwner, NotificationProject, ProjectInfo, ProjectInfoInternal,TeamMember};
 use rbac::{assign_roles_to_principal, has_required_role, UserRole};
 use register_user::{FounderInfo, FounderInfoInternal, ThirtyInfoFounder};
 use roadmap_suggestion::Suggestion;
@@ -89,6 +86,12 @@ pub async fn register_user(profile: UserInformation)->String{
 
 pub fn get_user_information()->Result<UserInformation, &'static str>{
     user_module::get_user_info()
+}
+
+#[query]
+
+pub async fn get_user_information_using_uid(uid: String) ->  Result<UserInformation, &'static str>{
+    user_module::get_user_info_by_id(uid).await
 }
 
 #[query]
@@ -138,7 +141,7 @@ fn update_founder_caller(updated_profile: FounderInfo) -> String {
 
 #[update]
 
-async fn create_project(params: ThirtyInfoProject) -> String {
+async fn create_project(params: ProjectInfo) -> String {
     if has_required_role(&vec![UserRole::Project]) {
         project_registration::create_project(params).await
     } else {
@@ -171,19 +174,11 @@ fn update_project(project_id: String, updated_project: ProjectInfo) -> String {
     }
 }
 
-#[update]
-fn update_project_docs(project_id: String, docs: DocsInfo) -> String {
-    if has_required_role(&vec![UserRole::Project, ]) {
-        project_registration::update_project_docs(project_id, docs)
-    } else {
-        format!("you arn't have permissions to update someone's belongings")
-    }
-}
 
 #[update]
-fn update_team_member(project_id: String, team_member: TeamMember) -> String {
+async fn update_team_member(project_id: String, member_uid: String) -> String {
     if has_required_role(&vec![ UserRole::Project]) {
-        project_registration::update_team_member(project_id, team_member)
+        project_registration::update_team_member(&project_id, member_uid).await
     } else {
         "you hv n't registered as a user yet".to_string()
     }
