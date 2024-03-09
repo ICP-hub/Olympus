@@ -75,12 +75,12 @@ fn decline_mentor_creation_request_candid(requester : Principal, decline : bool)
 //     mentor::mentor_specific_pre_upgrade_actions();
 // }
 
-#[pre_upgrade]
-fn pre_upgrade() {
-    register_user::pre_upgrade();
-    project_registration::pre_upgrade();
-    roadmap_suggestion::pre_upgrade();
-}
+// #[pre_upgrade]
+// fn pre_upgrade() {
+//     register_user::pre_upgrade();
+//     project_registration::pre_upgrade();
+//     roadmap_suggestion::pre_upgrade();
+// }
 
 // #[post_upgrade]
 // fn post_upgrade() {
@@ -90,6 +90,11 @@ fn pre_upgrade() {
 #[query]
 fn get_role_from_p_id() -> Option<HashSet<UserRole>> {
     rbac::get_role_from_principal()
+}
+
+#[query]
+pub async fn get_user_information_using_uid(uid: String) ->  Result<UserInformation, &'static str>{
+    user_module::get_user_info_by_id(uid).await
 }
 
 #[update]
@@ -104,11 +109,6 @@ pub fn get_user_information()->Result<UserInformation, &'static str>{
     user_module::get_user_info()
 }
 
-#[query]
-
-pub async fn get_user_information_using_uid(uid: String) ->  Result<UserInformation, &'static str>{
-    user_module::get_user_info_by_id(uid).await
-}
 
 #[query]
 
