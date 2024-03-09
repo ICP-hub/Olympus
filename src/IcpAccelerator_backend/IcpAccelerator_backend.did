@@ -247,15 +247,14 @@ type UpvoterInfo = record {
   principal_id : opt text;
 };
 type UserInformation = record {
-  bio : text;
+  bio : opt text;
   country : text;
   area_of_intrest : text;
-  profile_picture : vec nat8;
-  telegram_id : text;
+  profile_picture : opt vec nat8;
+  telegram_id : opt text;
   role : text;
-  twitter_id : text;
-  email : text;
-  is_active : bool;
+  twitter_id : opt text;
+  email : opt text;
   full_name : text;
 };
 type UserRole = variant { VC; Mentor; Founder; Project; ICPHubOrganizer };
