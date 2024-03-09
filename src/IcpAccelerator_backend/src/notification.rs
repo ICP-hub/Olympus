@@ -98,7 +98,7 @@ pub fn add_notification(mentor_id: Principal, notification: Notification) {
     })
 }
 
-#[query]
+
 pub fn view_notifications(mentor_id: Principal) -> Vec<Notification> {
     // let mentor_id = caller();
 
@@ -111,7 +111,7 @@ pub fn view_notifications(mentor_id: Principal) -> Vec<Notification> {
     })
 }
 
-#[update]
+
 pub fn respond_to_connection_request(startup_id: Principal, accept: bool) -> String {
     let mentor_id = caller();
 

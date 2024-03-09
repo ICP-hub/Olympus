@@ -23,7 +23,7 @@ import { investorRegisteredHandlerRequest } from "./components/StateManagement/R
 import { hubRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/hubRegisteredData";
 import { founderRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/founderRegisteredData";
 import { useAuth } from "./components/StateManagement/useContext/useAuth";
-
+import ProjectDetails from "./components/Project/ProjectDetails";
 import Hubdashboardlive from "./components/Hubdashboardlive/Hubdashboardlive";
 import Hubcards from "./components/Hubcards/Hubcards";
 import ListedProjects from "./components/Dashboard/ListedProjects";

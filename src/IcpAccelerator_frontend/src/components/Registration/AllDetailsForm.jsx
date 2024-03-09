@@ -34,7 +34,7 @@ const AllDetailsForm = () => {
 
   const renderImage = (roleName) => {
     switch (roleName) {
-      case "Founder":
+      case "Project":
         return (
           <img
             src={Founder}
