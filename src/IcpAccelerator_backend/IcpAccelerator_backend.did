@@ -1,4 +1,3 @@
-type ApprovalRequest = record { sender : principal; receiver : principal };
 type ConnectionRequest = record {
   startup_id : principal;
   message : text;
@@ -62,8 +61,6 @@ type MainLevelRatings = record { ratings : vec float64; level : MainLevel };
 type MentorInternal = record {
   uid : text;
   active : bool;
-  approve : bool;
-  decline : bool;
   profile : MentorProfile;
 };
 type MentorProfile = record {
@@ -93,7 +90,10 @@ type MentorProfile = record {
   preferred_communication_tools : opt text;
   volunteer_experience : opt text;
 };
-type Notification = record { notification_type : NotificationType };
+type Notification = record {
+  read : bool;
+  notification_type : NotificationType;
+};
 type NotificationForOwner = record {
   sender_image : vec nat8;
   message : text;
@@ -110,18 +110,13 @@ type NotificationProject = record {
   project_id : text;
 };
 type NotificationSender = record { name : text; image : vec nat8 };
-type NotificationType = variant { ApprovalRequest : ApprovalRequest };
-type NotificationType_1 = variant {
+type NotificationType = variant {
   ConnectionAcknowledgement : record {
     social_handles : opt text;
     accepted : bool;
     mentor_id : principal;
   };
   ConnectionRequest : ConnectionRequest;
-};
-type Notification_1 = record {
-  read : bool;
-  notification_type : NotificationType_1;
 };
 type ProjectInfo = record {
   seventy_info : opt SeventyInfoProject;
@@ -140,6 +135,7 @@ type Rating = record {
   project_id : text;
 };
 type Request = record { mentor : opt MentorInternal; "text" : text };
+type Result = variant { Ok : UserInformation; Err : text };
 type Role = record { id : int32; name : text };
 type RolesResponse = record { roles : vec Role };
 type SeventyInfoFounder = record {
@@ -250,7 +246,19 @@ type UpvoterInfo = record {
   image : opt vec nat8;
   principal_id : opt text;
 };
-type UserRole = variant { VC; Mentor; Project; ICPHubOrganizer };
+type UserInformation = record {
+  bio : text;
+  country : text;
+  area_of_intrest : text;
+  profile_picture : vec nat8;
+  telegram_id : text;
+  role : text;
+  twitter_id : text;
+  email : text;
+  is_active : bool;
+  full_name : text;
+};
+type UserRole = variant { VC; Mentor; Founder; Project; ICPHubOrganizer };
 type VentureCapitalist = record {
   email_address : opt text;
   referrer : opt text;
@@ -285,8 +293,13 @@ service : {
   delete_project : (text) -> (text);
   delete_venture_capitalist_caller : () -> (text);
   get_admin_notifications : (principal) -> (vec Notification) query;
+  delete_user : () -> (text);
+  delete_venture_capitalist : () -> (text);
+  delete_venture_capitalist_caller : () -> (text);
+  get_all_mentors : () -> (vec MentorProfile) query;
   get_all_mentors_candid : () -> (vec MentorProfile) query;
   get_all_roles : () -> (RolesResponse) query;
+  get_all_users_information : () -> (vec UserInformation) query;
   get_area_focus_expertise : () -> (vec Role) query;
   get_founder_info_caller : () -> (opt FounderInfo) query;
   get_hub_organizer_candid : () -> (opt UniqueHubs) query;
@@ -315,6 +328,10 @@ service : {
   get_suggestions_by_parent_id_caller : (text, nat64) -> (vec Suggestion) query;
   get_suggestions_by_status_caller : (text, text) -> (vec Suggestion) query;
   get_total_suggestions : (text) -> (nat64) query;
+  get_total_suggestions_count : (text) -> (nat64) query;
+  get_upvote_record : (text) -> (opt UpvoteRecord) query;
+  get_user_info : () -> (Result) query;
+  get_user_information : () -> (Result) query;
   get_user_likes : (text) -> (opt LikeRecord) query;
   get_venture_capitalist_info : () -> (opt VentureCapitalist) query;
   get_your_project_notifications : () -> (vec NotificationForOwner) query;
@@ -322,12 +339,19 @@ service : {
   like_project : (text) -> (text);
   list_all_founders : () -> (vec FounderInfo) query;
   list_all_projects : () -> (vec ProjectInfo) query;
+  list_all_users : () -> (vec UserInformation) query;
+  list_all_vcs : () -> (vec VentureCapitalist) query;
   list_all_venture_capitalist : () -> (vec VentureCapitalist) query;
   make_active_inactive_mentor : (principal) -> (text);
   mentors_awaiting_approval : () -> (vec MentorInternal) query;
+  make_user_inactive : () -> (text);
+  register_founder : (ThirtyInfoFounder) -> (text);
   register_founder_caller : (ThirtyInfoFounder) -> (text);
   register_hub_organizer_candid : (HubOrganizerRegistration) -> (text);
   register_mentor_candid : (MentorProfile) -> (text);
+  register_user : (UserInformation) -> (text);
+  register_user_role : (UserInformation) -> (text);
+  register_venture_capitalist : (VentureCapitalist) -> (text);
   register_venture_capitalist_caller : (VentureCapitalist) -> (text);
   reply_to_suggestion_caller : (nat64, text, text) -> (nat64, text);
   respond_to_connection_request_candid : (principal, bool) -> (text);
@@ -345,4 +369,6 @@ service : {
   upvote_project : (text) -> (text);
   verify_project_under_your_hub : (text) -> (text);
   view_notifications_candid : (principal) -> (vec Notification_1) query;
+  view_notifications : (principal) -> (vec Notification) query;
+  view_notifications_candid : (principal) -> (vec Notification) query;
 }

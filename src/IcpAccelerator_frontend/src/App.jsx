@@ -23,7 +23,7 @@ import { investorRegisteredHandlerRequest } from "./components/StateManagement/R
 import { hubRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/hubRegisteredData";
 import { founderRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/founderRegisteredData";
 import { useAuth } from "./components/StateManagement/useContext/useAuth";
-
+import ProjectDetails from "./components/Project/ProjectDetails";
 import Hubdashboardlive from "./components/Hubdashboardlive/Hubdashboardlive";
 import Hubcards from "./components/Hubcards/Hubcards";
 import ListedProjects from "./components/Dashboard/ListedProjects";
@@ -34,6 +34,7 @@ import Mentors from "./components/Mentors/Mentors";
 import HubDeclined from "./components/HubDeclined/HubDeclined";
 
 import { areaOfExpertiseHandlerRequest } from "./components/StateManagement/Redux/Reducers/getAreaOfExpertise";
+import NormalUser from "./components/RoleSelector/NormalUser";
 
 const App = () => {
   const identity = useSelector((currState) => currState.internet.identity);
@@ -127,7 +128,8 @@ const App = () => {
       {/* <DashBoard /> */}
       {/* <UserProfile/> */}
       {/* <RoleSelector /> */}
-      <AppRoutes />
+      <NormalUser />
+      {/* <AppRoutes /> */}
       <Footer />
     </>
   );
