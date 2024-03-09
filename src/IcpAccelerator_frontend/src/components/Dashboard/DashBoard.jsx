@@ -7,24 +7,43 @@ import SearchForm from "./SearchForm";
 // import Partners from "./Partners";
 // import Footer from "../Footer/Footer";
 // import Bottombar from "../Layout/BottomBar/Bottombar";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from 'react-router-dom';
 import ListedProjects from "./ListedProjects";
 import guide from "../../../assets/getStarted/guide.png";
 import upvote from "../../../assets/getStarted/upvote.png";
 import SubmitSection from "../Footer/SubmitSection";
+import { getCurrentRoleStatusRequestHandler } from "../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 
 const DashBoard = () => {
-  
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const actor = useSelector((currState) => currState.actors.actor);
   // console.log("actor in dashboard =>", actor);
 
+  const userCurrentRoleStatus = useSelector(
+    (currState) => currState.currentRoleStatus.rolesStatusArray
+  );
+
+  const userCurrentRoleStatusActiveRole = useSelector(
+    (currState) => currState.currentRoleStatus.activeRole
+  );
+
   useEffect(() => {
     const founderDataFetchHandler = async () => {
-      const founderDataFetch = await actor.get_mentor_candid();
+      // const founderDataFetch = await actor.get_mentor_candid();
       // console.log("dekho dekho founder data aaya => ", founderDataFetch);
     };
     founderDataFetchHandler();
   }, [actor]);
+
+  useEffect(() => {
+    if (!userCurrentRoleStatus.length) {
+      dispatch(getCurrentRoleStatusRequestHandler());
+    } else if (userCurrentRoleStatus.length && !userCurrentRoleStatusActiveRole) {
+      navigate('/create-user');
+    } else { }
+  }, [dispatch, userCurrentRoleStatus, userCurrentRoleStatusActiveRole])
 
   const underline =
     "relative focus:after:content-[''] focus:after:block focus:after:w-full focus:after:h-[2px] focus:after:bg-blue-800 focus:after:absolute focus:after:left-0 focus:after:bottom-[-4px]";
@@ -72,12 +91,12 @@ const DashBoard = () => {
 
           <div className="flex flex-row  gap-10 flex-wrap md:justify-start md:ml-6 justify-center items-center">
             <div className="mt-8 bg-white w-[280px] h-[345px] rounded-xl border border-gray-200 shadow-md">
-            <div className="overflow-hidden">
-              <img
-                className="rounded-t-xl object-fill w-full h-[200px] hover:scale-125 transition-transform duration-300 ease-in-out"
-                src={guide}
-                alt="guide"
-              />
+              <div className="overflow-hidden">
+                <img
+                  className="rounded-t-xl object-fill w-full h-[200px] hover:scale-125 transition-transform duration-300 ease-in-out"
+                  src={guide}
+                  alt="guide"
+                />
               </div>
               <div className="p-5 bg-custumSky h-[145px] justify-between flex flex-col rounded-b-xl">
                 <p className="font-normal text-xs  text-gray-700 text-start">
@@ -107,12 +126,12 @@ const DashBoard = () => {
             </div>
 
             <div className="mt-8 bg-white w-[280px] h-[345px] rounded-xl border border-gray-200 shadow-md">
-            <div className="overflow-hidden">
-              <img
-                className="rounded-t-xl object-fill w-full h-[200px] hover:scale-125 transition-transform duration-300 ease-in-out"
-                src={upvote}
-                alt="guide"
-              />
+              <div className="overflow-hidden">
+                <img
+                  className="rounded-t-xl object-fill w-full h-[200px] hover:scale-125 transition-transform duration-300 ease-in-out"
+                  src={upvote}
+                  alt="guide"
+                />
               </div>
               <div className="p-5 bg-custumSky h-[145px] justify-between flex flex-col rounded-b-xl">
                 <h5>How to Vote a Project</h5>

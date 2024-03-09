@@ -1,6 +1,6 @@
 import { all } from 'redux-saga/effects';
 // import { walletSagas } from './AuthSaga';
- import { roleSaga } from './RoleSaga';
+import { roleSaga } from './RoleSaga';
 import { allHubsSaga } from './AllHub';
 import { internetIdentitySaga } from './InternetIdentitySaga';
 import { actorSaga } from './actorBindSaga';
@@ -14,7 +14,11 @@ import { latestLiveProjectSaga } from './latestLiveSaga';
 import { latestListedProjectSaga } from './latestListedSaga';
 import { popularListedProjectSaga } from './popularListedSaga';
 import { popularLiveProjectSaga } from './popularLive';
+
+import { userCurrentRoleSaga } from './userCurrentRoleStatusSaga';
+
 import { fetchUserSaga } from './userSaga';
+
 
 
 export default function* rootSaga() {
@@ -34,6 +38,7 @@ export default function* rootSaga() {
         latestListedProjectSaga(),
         latestLiveProjectSaga(),
         popularListedProjectSaga(),
-        popularLiveProjectSaga()
+        popularLiveProjectSaga(),
+        userCurrentRoleSaga()
     ]);
 }
