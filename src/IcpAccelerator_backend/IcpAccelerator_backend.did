@@ -129,6 +129,7 @@ type ProjectInfo = record {
   project_area_of_focus : text;
   live_on_icp_mainnet : opt text;
   technical_docs : text;
+  github_link : text;
   project_cover : vec nat8;
   promotional_video : text;
   money_raised_till_now : opt text;
@@ -136,14 +137,13 @@ type ProjectInfo = record {
   project_logo : vec nat8;
   project_name : text;
   project_team : opt TeamMember;
-  social_links : SocialLinksInfo;
-  creation_date : text;
 };
 type ProjectInfoInternal = record {
   uid : text;
   is_verified : bool;
   is_active : bool;
   params : ProjectInfo;
+  creation_date : nat64;
 };
 type Rating = record {
   sub_level : SubLevel;
@@ -193,11 +193,6 @@ type SeventyInfoFounder = record {
   location : opt text;
   refer : opt text;
   employee_count : opt text;
-};
-type SocialLinksInfo = record {
-  linkedin : opt text;
-  twitter : opt text;
-  facebook : opt text;
 };
 type SubLevel = variant {
   All;
@@ -277,7 +272,6 @@ service : {
   approve_mentor_creation_request_candid : (principal, bool) -> (text);
   calculate_average_api : (text) -> (opt float64) query;
   connect_to_team_member : (text, text) -> (text);
-  create_project : (ProjectInfo) -> (text);
   decline_mentor_creation_request_candid : (principal, bool) -> (text);
   delete_founder_caller : () -> (text);
   delete_mentor_candid : () -> (text);
@@ -331,6 +325,7 @@ service : {
   register_founder_caller : (ThirtyInfoFounder) -> (text);
   register_hub_organizer_candid : (HubOrganizerRegistration) -> (text);
   register_mentor_candid : (MentorProfile) -> (text);
+  register_project : (ProjectInfo) -> (text);
   register_user : (UserInformation) -> (text);
   register_venture_capitalist_caller : (VentureCapitalist) -> (text);
   reply_to_suggestion_caller : (nat64, text, text) -> (nat64, text);
