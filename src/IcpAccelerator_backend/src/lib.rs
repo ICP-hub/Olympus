@@ -141,7 +141,7 @@ fn update_founder_caller(updated_profile: FounderInfo) -> String {
 
 #[update]
 
-async fn create_project(params: ProjectInfo) -> String {
+async fn register_project(params: ProjectInfo) -> String {
     if has_required_role(&vec![UserRole::Project]) {
         project_registration::create_project(params).await
     } else {
