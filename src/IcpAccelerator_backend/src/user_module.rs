@@ -7,7 +7,7 @@ use ic_cdk::api::management_canister::main::raw_rand;
 use sha2::{Digest, Sha256};
 use ic_cdk_macros::{query, update};
 
-#[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default)]
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
 pub struct UserInformation{
     pub full_name: String,
     pub profile_picture: Option<Vec<u8>>,
@@ -33,7 +33,7 @@ thread_local! {
     pub static USER_STORAGE: RefCell<UserInfoStorage> = RefCell::new(UserInfoStorage::new());
 }
 
-#[update]
+
 pub async fn register_user_role(info: UserInformation)->std::string::String{
     let caller = caller();
     let uuids = raw_rand().await.unwrap().0;
@@ -56,7 +56,7 @@ pub async fn register_user_role(info: UserInformation)->std::string::String{
     format!("User registered successfully with ID: {}", new_id)
 }
 
-#[query]
+
 pub fn get_user_info() -> Result<UserInformation, &'static str>  {
     let caller = caller();
     USER_STORAGE.with(|registry| {
@@ -68,7 +68,7 @@ pub fn get_user_info() -> Result<UserInformation, &'static str>  {
     })
 }
 
-#[query]
+
 pub fn list_all_users() -> Vec<UserInformation> {
     USER_STORAGE.with(|storage| 
         storage
@@ -79,7 +79,7 @@ pub fn list_all_users() -> Vec<UserInformation> {
     )
 }
 
-#[update]
+
 pub fn delete_user()->std::string::String {
     let caller = caller();
     USER_STORAGE.with(|storage| {
@@ -90,6 +90,17 @@ pub fn delete_user()->std::string::String {
         } else {
             format!("User is not Registered For This Principal: {:?}", caller.to_string())
         }
+    })
+}
+
+pub async fn get_user_info_by_id(uid: String) -> Result<UserInformation, &'static str> {
+    USER_STORAGE.with(|storage| {
+        for user_info_internal in storage.borrow().values() {
+            if user_info_internal.uid == uid {
+                return Ok(user_info_internal.params.clone());
+            }
+        }
+        Err("No user found with the given ID.")
     })
 }
 
