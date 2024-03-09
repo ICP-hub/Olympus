@@ -1,0 +1,28 @@
+.line-vertical {
+    height: 100px; 
+    width: 2px; 
+    /* background-color: #yourColor; Example color */
+}
+
+.md\:line-horizontal {
+    width: 100%;
+    height: 2px; 
+    /* background-color: #yourColor; Example color */
+}
+
+
+::-webkit-scrollbar {
+    width: 0px; /* Adjust the width of the scrollbar */
+  }
+  
+  /* Customize the scrollbar thumb */
+  ::-webkit-scrollbar-thumb {
+    background: transparent; /* Color of the scrollbar thumb */
+    border-radius: 5px; /* Roundness of the scrollbar thumb */
+  }
+  
+  /* Change the scrollbar thumb color when hovered over */
+  ::-webkit-scrollbar-thumb:hover {
+    background: transparent;
+    /* Darker color on hover */
+  }

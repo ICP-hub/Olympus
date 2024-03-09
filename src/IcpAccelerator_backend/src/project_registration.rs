@@ -4,26 +4,20 @@ use ic_cdk::api::caller;
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::api::stable::{StableReader, StableWriter};
 use ic_cdk::api::time;
-use ic_cdk_macros::*;
 use serde::{Deserialize, Serialize};
 use serde_cbor::Value::Null;
-use sha2::{Digest, Sha256};
-use std::cell::RefCell;
-use std::collections::HashMap;
-use std::io::Read;
 
-use crate::{
-    hub_organizer,
-    register_user::{self, get_founder_info},
-};
+use crate::{register_user::{get_founder_info, self}, hub_organizer};
 
-#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
+
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType,PartialEq)]
 pub struct DocsInfo {
     pitch_deck: Option<String>,
     white_paper: Option<String>,
     technical_docs: Option<String>,
     tokenomics: Option<String>,
 }
+
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct SocialLinksInfo {
@@ -41,8 +35,9 @@ pub struct TeamMember {
     member_username: Option<String>,
 }
 
+
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
-pub struct ThirtyInfoProject {
+pub struct ThirtyInfoProject{
     project_name: Option<String>,
     project_logo: Option<Vec<u8>>,
     project_cover: Option<Vec<u8>>,
@@ -54,7 +49,7 @@ pub struct ThirtyInfoProject {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
-pub struct SeventyInfoProject {
+pub struct SeventyInfoProject{
     tags: Option<String>,
     project_creation_date: Option<String>,
     technology_stack: Option<String>,
@@ -66,9 +61,27 @@ pub struct SeventyInfoProject {
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct ProjectInfo {
-    thirty_info: Option<ThirtyInfoProject>,
-    seventy_info: Option<SeventyInfoProject>,
+    project_name: String,
+    project_logo: Vec<u8>,
+    preferred_icp_hub: Option<String>,
+    live_on_icp_mainnet: Option<String>,
+    money_raised_till_now: Option<String>,
+    supports_multichain: Option<String>,
+    project_elevator_pitch: Vec<u8>,
+    project_area_of_focus: String,
+    promotional_video: String,
+    github_link: String,
+    reason_to_join_incubator: String,
+    project_description: String,
+    project_cover: Vec<u8>,
+    project_team: Option<TeamMember>,
+    token_economics: String,
+    technical_docs: String,
+    long_term_goals: String,
+    target_market: String,
+    self_rating_of_project: f64,
 }
+
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct ProjectInfoInternal {
@@ -76,6 +89,7 @@ pub struct ProjectInfoInternal {
     pub uid: String,
     pub is_active: bool,
     pub is_verified: bool,
+    creation_date: u64,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
@@ -124,7 +138,7 @@ pub struct Blog {
 }
 pub type ProjectAnnouncements = HashMap<Principal, Vec<Announcements>>;
 pub type Notifications = HashMap<Principal, Vec<NotificationProject>>;
-pub type BlogPost = HashMap<Principal, Vec<Blog>>;
+
 
 pub type ApplicationDetails = HashMap<Principal, Vec<ProjectInfoInternal>>;
 
@@ -161,7 +175,8 @@ pub fn pre_upgrade() {
 //     });
 // }
 
-pub async fn create_project(thirty_info: ThirtyInfoProject) -> String {
+pub async fn create_project(thirty_info: ThirtyInfoProject)-> String {
+
     let caller = caller();
     let founder_info = get_founder_info();
 
@@ -190,16 +205,17 @@ pub async fn create_project(thirty_info: ThirtyInfoProject) -> String {
     let new_id = uid.clone().to_string();
 
     let thirty_info_clone = thirty_info.clone();
-    let project = ProjectInfo {
+    let project = ProjectInfo{
         thirty_info: Some(thirty_info),
         seventy_info: None,
     };
 
-    let new_project = ProjectInfoInternal {
-        params: project,
+    let new_project = ProjectInfoInternal{
+        params:project,
         uid: new_id,
         is_active: true,
         is_verified: false,
+        creation_date: time()
     };
     APPLICATION_FORM.with(|storage| {
         let mut applications = storage.borrow_mut();
@@ -210,9 +226,8 @@ pub async fn create_project(thirty_info: ThirtyInfoProject) -> String {
     });
 
     if let Some(region) = &thirty_info_clone.preferred_icp_hub {
-        let hub_principals =
-            crate::hub_organizer::get_hub_organizer_principals_by_region(region.clone());
-        let noti_uuids = raw_rand().await.unwrap().0;
+        let hub_principals = crate::hub_organizer::get_hub_organizer_principals_by_region(region.clone());
+        let noti_uuids = raw_rand().await.unwrap().0; 
         let noti_uid = format!("{:x}", Sha256::digest(&noti_uuids));
         let noti_id = noti_uid.clone().to_string();
         for hub_principal_str in hub_principals {
@@ -291,7 +306,7 @@ pub fn list_all_projects() -> Vec<ProjectInfo> {
     projects
 }
 
-pub fn update_project_docs(project_id: String, docs: DocsInfo) -> String {
+pub fn update_project_docs(project_id: String, docs: DocsInfo)->String {
     let caller = caller();
     let mut is_updated = false;
     APPLICATION_FORM.with(|storage| {
@@ -304,14 +319,14 @@ pub fn update_project_docs(project_id: String, docs: DocsInfo) -> String {
             }
         }
     });
-    if is_updated {
+    if is_updated{
         "Document Details are Updated Successfully".to_string()
-    } else {
+    }else{
         "Please Provide valid Project Id".to_string()
     }
 }
 
-pub fn update_team_member(project_id: String, team_member: TeamMember) -> String {
+pub fn update_team_member(project_id: String, team_member: TeamMember) ->String {
     let caller = caller();
     let mut is_updated = false;
     APPLICATION_FORM.with(|storage| {
@@ -322,10 +337,7 @@ pub fn update_team_member(project_id: String, team_member: TeamMember) -> String
                         seventy_info.team = Some(Vec::new());
                     }
                     let team = seventy_info.team.as_mut().unwrap();
-                    match team
-                        .iter_mut()
-                        .find(|m| m.member_username == team_member.member_username)
-                    {
+                    match team.iter_mut().find(|m| m.member_username == team_member.member_username) {
                         Some(existing_member) => *existing_member = team_member,
                         None => team.push(team_member),
                     }
@@ -334,14 +346,18 @@ pub fn update_team_member(project_id: String, team_member: TeamMember) -> String
             }
         }
     });
-    if is_updated {
-        "Team Member Details are Updated Successfully".to_string()
-    } else {
-        "Please Provide valid Project Id".to_string()
-    }
+    if is_updated{
+            "Team Member Details are Updated Successfully".to_string()
+        }else{
+            "Please Provide valid Project Id".to_string()
+        }
 }
 
-pub fn update_project(project_id: String, updated_project: ProjectInfo) -> String {
+
+
+
+
+pub fn update_project(project_id: String, updated_project: ProjectInfo)->String {
     let caller = caller();
     let mut is_updated = true;
     APPLICATION_FORM.with(|storage| {
@@ -349,63 +365,30 @@ pub fn update_project(project_id: String, updated_project: ProjectInfo) -> Strin
             if let Some(project_internal) = projects.iter_mut().find(|p| p.uid == project_id) {
                 if let Some(ref mut thirty_info) = project_internal.params.thirty_info {
                     if let Some(updated_thirty_info) = &updated_project.thirty_info {
-                        thirty_info.project_name = updated_thirty_info
-                            .project_name
-                            .clone()
-                            .or(thirty_info.project_name.clone());
-                        thirty_info.project_logo = updated_thirty_info
-                            .project_logo
-                            .clone()
-                            .or(thirty_info.project_logo.clone());
-                        thirty_info.project_cover = updated_thirty_info
-                            .project_cover
-                            .clone()
-                            .or(thirty_info.project_cover.clone());
-                        thirty_info.project_area_of_focus = updated_thirty_info
-                            .project_area_of_focus
-                            .clone()
-                            .or(thirty_info.project_area_of_focus.clone());
-                        thirty_info.project_description = updated_thirty_info
-                            .project_description
-                            .clone()
-                            .or(thirty_info.project_description.clone());
-                        thirty_info.project_url = updated_thirty_info
-                            .project_url
-                            .clone()
-                            .or(thirty_info.project_url.clone());
+                        thirty_info.project_name = updated_thirty_info.project_name.clone().or(thirty_info.project_name.clone());
+                        thirty_info.project_logo = updated_thirty_info.project_logo.clone().or(thirty_info.project_logo.clone());
+                        thirty_info.project_cover = updated_thirty_info.project_cover.clone().or(thirty_info.project_cover.clone());
+                        thirty_info.project_area_of_focus = updated_thirty_info.project_area_of_focus.clone().or(thirty_info.project_area_of_focus.clone());
+                        thirty_info.project_description = updated_thirty_info.project_description.clone().or(thirty_info.project_description.clone());
+                        thirty_info.project_url = updated_thirty_info.project_url.clone().or(thirty_info.project_url.clone());
                     }
                 }
                 if let Some(ref mut seventy_info) = project_internal.params.seventy_info {
                     if let Some(updated_seventy_info) = &updated_project.seventy_info {
-                        seventy_info.tags = updated_seventy_info
-                            .tags
-                            .clone()
-                            .or(seventy_info.tags.clone());
-                        seventy_info.project_creation_date = updated_seventy_info
-                            .project_creation_date
-                            .clone()
-                            .or(seventy_info.project_creation_date.clone());
-                        seventy_info.technology_stack = updated_seventy_info
-                            .technology_stack
-                            .clone()
-                            .or(seventy_info.technology_stack.clone());
-                        seventy_info.video_link = updated_seventy_info
-                            .video_link
-                            .clone()
-                            .or(seventy_info.video_link.clone());
-                        seventy_info.development_stage = updated_seventy_info
-                            .development_stage
-                            .clone()
-                            .or(seventy_info.development_stage.clone());
+                        seventy_info.tags = updated_seventy_info.tags.clone().or(seventy_info.tags.clone());
+                        seventy_info.project_creation_date = updated_seventy_info.project_creation_date.clone().or(seventy_info.project_creation_date.clone());
+                        seventy_info.technology_stack = updated_seventy_info.technology_stack.clone().or(seventy_info.technology_stack.clone());
+                        seventy_info.video_link = updated_seventy_info.video_link.clone().or(seventy_info.video_link.clone());
+                        seventy_info.development_stage = updated_seventy_info.development_stage.clone().or(seventy_info.development_stage.clone());
                     }
                 }
                 is_updated = true;
             }
         }
     });
-    if is_updated {
+    if is_updated{
         "Project Details are Updated Successfully".to_string()
-    } else {
+    }else{
         "Please Provide valid Input".to_string()
     }
 }
@@ -563,63 +546,5 @@ pub fn get_notifications_for_owner() -> Vec<NotificationForOwner> {
             .get(&owner_principal)
             .cloned()
             .unwrap_or_else(Vec::new)
-    })
-}
-
-#[update]
-pub fn add_announcement(mut announcement_details: Announcements) -> String {
-    let caller_id = caller();
-
-    let current_time = time();
-
-    PROJECT_ANNOUNCEMENTS.with(|state| {
-        let mut state = state.borrow_mut();
-        announcement_details.timestamp = current_time;
-        state
-            .entry(caller_id)
-            .or_insert_with(Vec::new)
-            .push(announcement_details);
-        format!("Announcement added successfully at {}", current_time)
-    })
-}
-
-//for testing purpose
-#[query]
-pub fn get_announcements() -> HashMap<Principal, Vec<Announcements>> {
-    PROJECT_ANNOUNCEMENTS.with(|state| {
-        let state = state.borrow();
-        state.clone()
-    })
-}
-
-
-#[update]
-pub fn add_BlogPost(url:String) -> String {
-    let caller_id = caller();
-
-    let current_time = time();
-
-    BLOG_POST.with(|state| {
-        let mut state = state.borrow_mut();
-        let new_blog = Blog {
-            blog_url:url,
-            timestamp:current_time
-
-        };
-        state
-            .entry(caller_id)
-            .or_insert_with(Vec::new)
-            .push(new_blog);
-        format!("Blog Post added successfully at {}", current_time)
-    })
-}
-
-
-//for testing purpose 
-#[query]
-pub fn get_blog_post() -> HashMap<Principal, Vec<Blog>> {
-    BLOG_POST.with(|state| {
-        let state = state.borrow();
-        state.clone()
     })
 }

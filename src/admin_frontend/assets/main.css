@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+@layer utilities{
+  @variants responsive {
+    .right-text{
+      text-align: -webkit-right;
+    }
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+  }
+  .swiper-pagination-bullet {
+    background: white !important;
+  }
+  
+  .swiper-pagination-bullet-active {
+    background: white !important; /* Or any other color you want for the active bullet */
+  }
+  .ellipse-quarter-role{
+    clip-path: ellipse(100% 70% at 0% 100%);
+  }
+  .ellipse-quarter-left {
+    clip-path: ellipse(60% 54% at 15% 100%);
+   
+  }
+  .ellipse-quarter-right {
+    clip-path: ellipse(60% 54% at 87% 11%);
+   
+  }
+  @media only screen and (max-width: 1024px) {
+    .ellipse-quarter-left {
+      clip-path: ellipse(50% 50% at 20% 100%);
+    }
+  } 
+    .ellipse-quarter-right {
+      clip-path: ellipse(60% 54% at 87% 11%);
+    }
+  
+  
+  @media only screen and (max-width: 768px) {
+    .ellipse-quarter-left {
+      clip-path: ellipse(50% 45% at 15% 100%);
+    }
+    
+    .ellipse-quarter-right {
+      clip-path: ellipse(50% 45% at 87% 11%);
+    }
+  }
+  
+  @media only screen and (max-width: 480px) {
+    .ellipse-quarter-left {
+      clip-path: ellipse(38% 33% at 8% 100%);
+    }
+    
+    .ellipse-quarter-right {
+      clip-path: ellipse(40% 35% at 87% 11%);
+    }
+  }
+  
+}
+@media (min-width: 768px) {
+  .submit-section {
+    /* Styles to move internet computer and big logo to top center position */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+@keyframes translateYAnimation {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-translate-y {
+  animation: translateYAnimation 1s ease-in-out infinite;
+}

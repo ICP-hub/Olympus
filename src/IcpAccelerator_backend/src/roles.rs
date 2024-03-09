@@ -22,7 +22,7 @@
 
 //they will be used by admin side 
 
-// #[query]
+// 
 // pub fn get_roles() -> RolesResponse {
 //     // Retrieve the roles from the global state
 //     ROLES.with(|roles| RolesResponse {
@@ -65,7 +65,7 @@ pub struct RolesResponse {
     roles: Vec<Role>,
 }
 
-#[query]
+
 pub fn get_roles() -> RolesResponse {
     RolesResponse {
         roles: vec![
@@ -86,7 +86,7 @@ pub fn get_roles() -> RolesResponse {
 //     roles: Vec<&'static str>,
 // }
 
-// #[query]
+// 
 // pub fn get_roles() -> RolesResponse {
 //     RolesResponse {
 //         roles: vec!["Mentor/Expert", "Project", "Venture Capital", "Hub Organizer", "Admin"],

@@ -1,4 +1,5 @@
 use candid::{CandidType, Principal};
+use ic_cdk::api::call;
 use ic_cdk::api::{caller, management_canister::main::raw_rand};
 use ic_cdk_macros::{query, update};
 use serde::{Deserialize, Serialize};
@@ -7,6 +8,7 @@ use std::collections::HashMap;
 extern crate serde_cbor;
 use std::cell::RefCell;
 use crate::trie::EXPERTISE_TRIE;
+use crate::admin::send_approval_request;
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, Default)]
 pub struct MentorProfile {
@@ -44,16 +46,29 @@ pub struct MentorInternal {
 
     pub profile: MentorProfile,
     pub uid: String,
-    pub active: bool
+    pub active: bool,
+    pub approve : bool,
+    pub decline : bool
 }
 
 thread_local! {
     pub static MENTOR_REGISTRY: RefCell<MentorRegistry> = RefCell::new(MentorRegistry::new());
+    pub static MENTOR_AWAITS_RESPONSE: RefCell<MentorRegistry> = RefCell::new(MentorRegistry::new());
+    pub static DECLINED_MENTOR_REQUESTS: RefCell<MentorRegistry> = RefCell::new(MentorRegistry::new());
 }
 
-#[update]
+
+
 pub async fn register_mentor(profile: MentorProfile) -> String{
     let caller = caller();
+
+    DECLINED_MENTOR_REQUESTS.with(|d_mentors|{
+        let exits = d_mentors.borrow().contains_key(&caller);
+        if exits{
+            panic!("You had got your request declined earlier");
+        }
+    });
+
     let random_bytes = raw_rand().await.expect("Failed to generate random bytes").0;
 
     let uid = format!("{:x}", Sha256::digest(&random_bytes));
@@ -64,29 +79,42 @@ pub async fn register_mentor(profile: MentorProfile) -> String{
         
     //     ic_cdk::println!("This Principal is already registered");
     //     return "This Principal is already registered.".to_string()}
+
+
     let profile_for_pushing = profile.clone();
+
+
 
     let mentor_internal = MentorInternal {
         profile: profile_for_pushing,
         uid: uid.clone(),
-        active : true
+        active : true,
+        approve : false,
+        decline : false
     };
-    
-    MENTOR_REGISTRY.with(|registry| {
-        registry.borrow_mut().insert(caller, mentor_internal);
+
+    MENTOR_AWAITS_RESPONSE.with(|awaiters: &RefCell<HashMap<Principal, MentorInternal>>|{
+        let mut await_ers: std::cell::RefMut<'_, HashMap<Principal, MentorInternal>> = awaiters.borrow_mut();
+        await_ers.insert(caller, mentor_internal);
     });
 
-    if let Some(expertise) = profile.areas_of_expertise {
-        let keyword = crate::trie::expertise_to_str(&expertise);
-        EXPERTISE_TRIE.with(|trie| {
-            trie.borrow_mut().insert(&keyword, caller);
-        });
-    }
+    let res = send_approval_request().await;
 
-    format!("Mentor registered successfully with ID: {}", uid)
+    format!("{}", res)
+
+    // MENTOR_REGISTRY.with(|registry| {
+    //     registry.borrow_mut().insert(caller, mentor_internal);
+    // });
+
+    // if let Some(expertise) = profile.areas_of_expertise {
+    //     let keyword = crate::trie::expertise_to_str(&expertise);
+    //     EXPERTISE_TRIE.with(|trie| {
+    //         trie.borrow_mut().insert(&keyword, caller);
+    //     });
+    // }
 }
 
-#[query]
+
 pub fn get_mentor() -> Option<MentorProfile> {
     let caller = caller();
     MENTOR_REGISTRY.with(|registry| {
@@ -97,7 +125,7 @@ pub fn get_mentor() -> Option<MentorProfile> {
     })
 }
 
-#[update]
+
 pub fn update_mentor(updated_profile: MentorProfile) -> String {
     let caller = caller();
     let result = MENTOR_REGISTRY.with(|registry| {
@@ -219,7 +247,7 @@ pub fn update_mentor(updated_profile: MentorProfile) -> String {
     result
 }
 
-#[update]
+
 pub fn delete_mentor() -> String {
     let caller = caller();
     let removed = MENTOR_REGISTRY.with(|registry| registry.borrow_mut().remove(&caller).is_some());
@@ -231,7 +259,7 @@ pub fn delete_mentor() -> String {
     }
 }
 
-#[query]
+
 pub fn get_all_mentors() -> Vec<MentorProfile> {
     MENTOR_REGISTRY.with(|registry| {
         registry
@@ -242,7 +270,7 @@ pub fn get_all_mentors() -> Vec<MentorProfile> {
     })
 }
 
-#[update]
+
 pub fn make_active_inactive(p_id : Principal)-> String{
     
     MENTOR_REGISTRY.with(|m_container|{
