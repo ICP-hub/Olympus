@@ -1,6 +1,6 @@
 import React from "react";
-import StatisticCard from "../Common/StatisticCard";
-import DetailsCard from "../Common/DetailsCard";
+import StatisticCard from "../../../../IcpAccelerator_frontend/src/components/Common/StatisticCard";
+import DetailsCard from "../../../../IcpAccelerator_frontend/src/components/Common/DetailsCard";
 
 const HomeSection2 = () => {
   return (
