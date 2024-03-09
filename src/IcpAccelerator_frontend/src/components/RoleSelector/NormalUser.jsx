@@ -27,11 +27,11 @@ const schema = yup.object({
       /^(?=.*[A-Z0-9_])[a-zA-Z0-9_]+$/,
       "Username can only contain letters, numbers, and underscores"
     )
-    .required("Username is required"),
-  bio: yup.string().required("is-non-empty"),
-  email: yup.string().email().required(),
-  telegram_id: yup.string().required().url(),
-  twitter_id: yup.string().required().url(),
+    .optional(),
+  bio: yup.string().optional(),
+  email: yup.string().email().optional(),
+  telegram_id: yup.string().optional().url(),
+  twitter_id: yup.string().optional().url(),
   hub: yup.string().required("Selecting a hub is required."),
   areas_of_expertise: yup
     .string()
@@ -86,7 +86,7 @@ const NormalUser = () => {
     console.log("userData => ", userData);
 
     try {
-      const result = await actor.register_user_role(userData);
+      const result = await actor.register_user(userData);
       toast.success(result);
       console.log("data passed to backend");
       await dispatch(userRoleHandler());
