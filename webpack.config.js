@@ -11,6 +11,8 @@ const frontendDirectory = "IcpAccelerator_frontend";
 
 const frontend_entry = path.join("src", frontendDirectory, "src", "index.html");
 
+
+
 module.exports = {
   target: "web",
   mode: isDevelopment ? "development" : "production",
