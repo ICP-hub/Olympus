@@ -71,7 +71,7 @@ pub fn pre_upgrade() {
     });
 }
 
-#[update]
+
 pub async fn register_venture_capitalist(mut params: VentureCapitalist)->std::string::String{
     let caller = caller();
     let uuids = raw_rand().await.unwrap().0;
@@ -103,7 +103,6 @@ pub async fn register_venture_capitalist(mut params: VentureCapitalist)->std::st
 }
 
 
-#[query]
 pub fn get_vc_info() -> Option<VentureCapitalist> {
     let caller = caller();
     println!("Fetching founder info for caller: {:?}", caller);
@@ -112,7 +111,7 @@ pub fn get_vc_info() -> Option<VentureCapitalist> {
     )
 }
 
-#[query]
+
 pub fn list_all_vcs() -> Vec<VentureCapitalist> {
     VENTURECAPITALIST_STORAGE.with(|storage| 
         storage
@@ -123,7 +122,7 @@ pub fn list_all_vcs() -> Vec<VentureCapitalist> {
     )
 }
 
-#[update]
+
 pub fn delete_venture_capitalist()->std::string::String {
     let caller = caller();
     println!("Attempting to deactivate founder for caller: {:?}", caller);
@@ -140,7 +139,7 @@ pub fn delete_venture_capitalist()->std::string::String {
     format!("Venture Capitalist Account Has Been DeActivated")
 }
 
-#[update]
+
 pub fn update_venture_capitalist(params: VentureCapitalist) {
     let caller = caller();
 
