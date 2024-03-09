@@ -177,7 +177,7 @@ const LogoutModal = () => {
                 </p>
               )}
               <p
-                className="py-2 px-4 hover:bg-gray-200"
+                className="py-2 px-4 hover:bg-gray-200 cursor-pointer"
                 onClick={logoutHandler}
               >
                 Sign out
