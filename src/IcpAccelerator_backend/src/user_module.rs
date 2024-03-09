@@ -10,21 +10,21 @@ use ic_cdk_macros::{query, update};
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default)]
 pub struct UserInformation{
     pub full_name: String,
-    pub profile_picture: Vec<u8>,
-    pub email: String,
+    pub profile_picture: Option<Vec<u8>>,
+    pub email: Option<String>,
     pub country: String,
-    pub telegram_id: String,
-    pub bio: String,
+    pub telegram_id: Option<String>,
+    pub bio: Option<String>,
     pub area_of_intrest: String, 
-    pub twitter_id: String,
+    pub twitter_id: Option<String>,
     pub role: String,
-    pub is_active: bool,
 }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default)]
 pub struct UserInfoInternal{
     pub uid : String,
     pub params: UserInformation,
+    pub is_active: bool,
 }
 
 pub type UserInfoStorage = HashMap<Principal, UserInfoInternal>;
@@ -43,6 +43,7 @@ pub async fn register_user_role(info: UserInformation)->std::string::String{
     let user_info_internal = UserInfoInternal {
         uid: new_id.clone(),
         params: info,
+        is_active: true,
     };
     USER_STORAGE.with(|storage| {
         let mut storage = storage.borrow_mut();
@@ -84,7 +85,7 @@ pub fn delete_user()->std::string::String {
     USER_STORAGE.with(|storage| {
         let mut storage = storage.borrow_mut();
         if let Some(founder) = storage.get_mut(&caller) {
-            founder.params.is_active = false; 
+            founder.is_active = false; 
             format!("User deactivated for caller: {:?}", caller.to_string())
         } else {
             format!("User is not Registered For This Principal: {:?}", caller.to_string())
