@@ -11,7 +11,7 @@ function* fetchUserHandler() {
     const actor = yield select(selectActor);
     console.log('actor => => => ', actor)
 
-    const userData = yield call([actor, actor.get_user_info_caller]);
+    const userData = yield call([actor, actor.get_user_information]);
 
     // console.log('roles in rolesaga => ', roles)
 
