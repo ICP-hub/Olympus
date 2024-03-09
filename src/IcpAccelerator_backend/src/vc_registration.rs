@@ -57,7 +57,7 @@ pub fn pre_upgrade() {
     });
 }
 
-
+#[update]
 pub async fn register_venture_capitalist(params: VentureCapitalist)->std::string::String{
     let caller = caller();
     let uuids = raw_rand().await.unwrap().0;
@@ -117,7 +117,7 @@ pub fn delete_venture_capitalist()->std::string::String {
     format!("Venture Capitalist Account Has Been DeActivated")
 }
 
-
+#[update]
 pub fn update_venture_capitalist(params: VentureCapitalist){
     let caller = caller();
 

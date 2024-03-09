@@ -1,3 +1,9 @@
+type Announcements = record {
+  announcement_message : text;
+  timestamp : nat64;
+  project_name : text;
+};
+type Blog = record { blog_url : text; timestamp : nat64 };
 type ApprovalRequest = record { sender : principal; receiver : principal };
 type ConnectionRequest = record {
   startup_id : principal;
@@ -87,6 +93,7 @@ type MentorProfile = record {
   preferred_communication_tools : opt text;
   volunteer_experience : opt text;
 };
+type MultiChainProjects = variant { None; Multiple : vec text; Single : text };
 type Notification = record { notification_type : NotificationType };
 type NotificationForOwner = record {
   sender_image : vec nat8;
@@ -268,6 +275,8 @@ type VentureCapitalist = record {
   technological_focus : opt text;
 };
 service : {
+  add_BlogPost : (text) -> (text);
+  add_announcement : (Announcements) -> (text);
   add_suggestion_caller : (text, text) -> (nat64, text);
   approve_mentor_creation_request_candid : (principal, bool) -> (text);
   calculate_average_api : (text) -> (opt float64) query;
@@ -282,6 +291,7 @@ service : {
   get_all_roles : () -> (RolesResponse) query;
   get_all_users_information : () -> (vec UserInformation) query;
   get_area_focus_expertise : () -> (vec Role) query;
+  get_blog_post : () -> (vec record { principal; vec Blog }) query;
   get_founder_info_caller : () -> (opt FounderInfo) query;
   get_hub_organizer_candid : () -> (opt UniqueHubs) query;
   get_hubs_principal_using_region : (text) -> (vec text) query;
