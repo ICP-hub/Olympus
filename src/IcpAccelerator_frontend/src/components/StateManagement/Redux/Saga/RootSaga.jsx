@@ -14,7 +14,11 @@ import { latestLiveProjectSaga } from './latestLiveSaga';
 import { latestListedProjectSaga } from './latestListedSaga';
 import { popularListedProjectSaga } from './popularListedSaga';
 import { popularLiveProjectSaga } from './popularLive';
+
 import { userCurrentRoleSaga } from './userCurrentRoleStatusSaga';
+
+import { fetchUserSaga } from './userSaga';
+
 
 
 export default function* rootSaga() {
@@ -25,6 +29,7 @@ export default function* rootSaga() {
         internetIdentitySaga(),
         actorSaga(),
         userRoleSaga(),
+        fetchUserSaga(),
         fetchFounderSaga(),
         fetchHubSaga(),
         fetchInvestorSaga(),

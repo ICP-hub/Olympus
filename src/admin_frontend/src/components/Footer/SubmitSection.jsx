@@ -1,6 +1,6 @@
 import React from "react";
-import logo from "../../../assets/Logo/icpLogo2.png";
-import BigLogo from "../../../assets/Logo/bigLogo.png";
+import logo from "../../../../IcpAccelerator_frontend/assets/Logo/icpLogo2.png";
+import BigLogo from "../../../../IcpAccelerator_frontend/assets/Logo/bigLogo.png";
 
 const SubmitSection = () => {
   return (

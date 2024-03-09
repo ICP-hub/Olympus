@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./Home.css";
-import Rocket from "../../../assets/images/Rocket1.png";
-import RocketSmall from "../../../assets/images/RocketSmall.png";
-import ProgressCard from "../Common/ProgressCard";
-import b1 from "../../../assets/Comprehensive/b1.png";
-import b2 from "../../../assets/Comprehensive/b2.png";
-import b3 from "../../../assets/Comprehensive/b3.png";
-import b4 from "../../../assets/Comprehensive/b4.png";
+import Rocket from "../../../../IcpAccelerator_frontend/assets/images/Rocket1.png";
+import RocketSmall from "../../../../IcpAccelerator_frontend/assets/images/RocketSmall.png";
+// import ProgressCard from "../Common/ProgressCard";
+import b1 from "../../../../IcpAccelerator_frontend/assets/Comprehensive/b1.png";
+import b2 from "../../../../IcpAccelerator_frontend/assets/Comprehensive/b2.png";
+import b3 from "../../../../IcpAccelerator_frontend/assets/Comprehensive/b3.png";
+import b4 from "../../../../IcpAccelerator_frontend/assets/Comprehensive/b4.png";
 import SubmitSection from "../Footer/SubmitSection";
 
 const HomeSection3 = () => {

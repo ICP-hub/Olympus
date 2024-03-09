@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import logoWithText from "../../../../assets/Logo/topLogo.png";
-import LogoutModal from "../../../models/LogoutModal";
+import logoWithText from "../../../../../IcpAccelerator_frontend/assets/Logo/topLogo.png"
+import LogoutModal from "../../models/LogoutModal";
 
 const Header = ({ setModalOpen, gradient }) => {
   const principal = useSelector((currState) => currState.internet.principal);

@@ -1,6 +1,6 @@
 import { AuthClient } from "@dfinity/auth-client";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { createActor } from "../../../../../declarations/admin_backend/index";
+import { createActor } from "../../../../../declarations/IcpAccelerator_backend/index";
 import { Actor, HttpAgent } from "@dfinity/agent";
 import { useDispatch } from "react-redux";
 import { setActor } from "../Redux/Reducers/adminActor";
@@ -137,10 +137,9 @@ export const useAuthClient = (options = defaultOptions) => {
     }
   }
 
- const canisterId =
-  process.env.CANISTER_ID_ADMIN_BACKEND ||
-  process.env.ADMIN_BACKEND_CANISTER_ID;
-
+  const canisterId =
+  process.env.CANISTER_ID_ICPACCELERATOR_BACKEND ||
+  process.env.ICPACCELERATOR_BACKEND_CANISTER_ID;
 
   const actor = createActor(canisterId, { agentOptions: { identity } });
 

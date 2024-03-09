@@ -2,7 +2,7 @@ import { all } from 'redux-saga/effects';
 // import { walletSagas } from './AuthSaga';
 //  import { roleSaga } from './RoleSaga';
 // import { allHubsSaga } from './AllHub';
-import { internetIdentitySaga } from './InternetIdentitySaga';
+// import { internetIdentitySaga } from './InternetIdentitySaga';
 import { actorSaga } from './actorBindSaga';
 // import { userRoleSaga } from './userRoleSaga';
 // import { fetchFounderSaga } from './founderSaga';
@@ -21,7 +21,7 @@ export default function* rootSaga() {
         // walletSagas(),
         // roleSaga(),
         // allHubsSaga(),
-        internetIdentitySaga(),
+        // internetIdentitySaga(),
         actorSaga(),
         // userRoleSaga(),
         // fetchFounderSaga(),

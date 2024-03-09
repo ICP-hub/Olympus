@@ -3,7 +3,7 @@ import RoleReducer from "./RoleReducer";
 import AllHubReducer from "./All_IcpHubReducer";
 import actorReducer from "./actorBindReducer";
 import internetIdentityReducer from "./InternetIdentityReducer";
-import userReducer from "./userRoleReducer";
+import userReducer from "./userRegisteredData";
 import mentorReducer from "./mentorRegisteredData";
 import hubReducer from "./hubRegisteredData";
 import investorReducer from "./investorRegisteredData";
@@ -14,7 +14,6 @@ import latestLiveReducer from "./latestLive";
 import popularListedReducer from "./popularListed";
 import userCurrentRoleStatusReducer from "./userCurrentRoleStatusReducer";
 
-
 const rootReducer = combineReducers({
   role: RoleReducer,
   hubs: AllHubReducer,
@@ -23,6 +22,7 @@ const rootReducer = combineReducers({
   current: userReducer,
   mentorData: mentorReducer,
   projectData: projectReducer,
+  userData: userReducer,
   hubData: hubReducer,
   investorData: investorReducer,
   expertiseIn: areaOfExpertiseReducer,

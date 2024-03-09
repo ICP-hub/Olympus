@@ -12,7 +12,8 @@ import Footer from "./components/Footer/Footer";
 // import { investorRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/investorRegisteredData";
 // import { hubRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/hubRegisteredData";
 // import { founderRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/founderRegisteredData";
-import { useAuth } from "./components/StateManagement/useContext/useAuth";
+import { useAuth } from "./components/AdminStateManagement/useContext/useAuth";
+import HomeSection3 from "../../IcpAccelerator_frontend/src/components/Home/HomeSection3";
 // import { areaOfExpertiseHandlerRequest } from "./components/StateManagement/Redux/Reducers/getAreaOfExpertise";
 
 const App = () => {
@@ -27,7 +28,7 @@ const App = () => {
 
   const { reloadLogin } = useAuth();
 
-  console.log("specificRole in app.jsx", specificRole);
+  // console.log("specificRole in app.jsx", specificRole);
 
   const [isModalOpen, setModalOpen] = useState(false);
 
@@ -91,7 +92,8 @@ const App = () => {
       {/* <ProgressCard/> */}
       {/* <AllDetailsForm/> */}
       {/* <ProjectDetails/> */}
-      <Home/>
+      {/* <Home/> */}
+      <HomeSection3/>
       {/* <Hubcards /> */}
       {/* <Hubdashboard /> */}
       {/* <Hubdashboard /> */}
