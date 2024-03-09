@@ -1,3 +1,9 @@
+type Announcements = record {
+  announcement_message : text;
+  timestamp : nat64;
+  project_name : text;
+};
+type Blog = record { blog_url : text; timestamp : nat64 };
 type ConnectionRequest = record {
   startup_id : principal;
   message : text;
@@ -90,6 +96,7 @@ type MentorProfile = record {
   preferred_communication_tools : opt text;
   volunteer_experience : opt text;
 };
+type MultiChainProjects = variant { None; Multiple : vec text; Single : text };
 type Notification = record {
   read : bool;
   notification_type : NotificationType;
@@ -134,6 +141,7 @@ type Rating = record {
   rating : float64;
   project_id : text;
 };
+type RegisteredUnderAnyHub = variant { No; Yes : text };
 type Request = record { mentor : opt MentorInternal; "text" : text };
 type Result = variant { Ok : UserInformation; Err : text };
 type Role = record { id : int32; name : text };
@@ -260,28 +268,28 @@ type UserInformation = record {
 };
 type UserRole = variant { VC; Mentor; Founder; Project; ICPHubOrganizer };
 type VentureCapitalist = record {
-  email_address : opt text;
-  referrer : opt text;
-  typical_decision_making_timeline_for_investments : opt text;
-  interest_in_board_positions : opt bool;
-  name_of_fund : opt text;
-  size_of_managed_fund : opt int32;
-  accredited_investor_status : opt bool;
-  telegram_id : opt text;
-  preferred_investment_sectors : opt text;
-  average_investment_ticket : opt int32;
-  preferred_icp_hub : opt text;
-  investor_type : opt text;
-  website_link : opt text;
-  investment_stage_preference : opt text;
-  number_of_portfolio_companies : opt int32;
-  revenue_range_preference : opt text;
-  assets_for_investment : opt int32;
-  portfolio_link : opt text;
-  location : opt text;
-  technological_focus : opt text;
+  fund_size : float64;
+  existing_icp_portfolio : text;
+  registered_under_any_hub : RegisteredUnderAnyHub;
+  name_of_fund : text;
+  reason_for_joining : text;
+  logo : vec nat8;
+  average_check_size : float64;
+  money_invested : float64;
+  existing_icp_investor : bool;
+  preferred_icp_hub : text;
+  project_on_multichain : MultiChainProjects;
+  investor_type : text;
+  announcement_details : text;
+  number_of_portfolio_companies : nat16;
+  assets_under_management : text;
+  portfolio_link : text;
+  category_of_investment : text;
+  type_of_investment : text;
 };
 service : {
+  add_BlogPost : (text) -> (text);
+  add_announcement : (Announcements) -> (text);
   add_suggestion : (text, text) -> (nat64, text);
   add_suggestion_caller : (text, text) -> (nat64, text);
   assign_roles_to_principal : (vec UserRole) -> (text);
@@ -300,7 +308,9 @@ service : {
   get_all_mentors_candid : () -> (vec MentorProfile) query;
   get_all_roles : () -> (RolesResponse) query;
   get_all_users_information : () -> (vec UserInformation) query;
+  get_announcements : () -> (vec record { principal; vec Announcements }) query;
   get_area_focus_expertise : () -> (vec Role) query;
+  get_blog_post : () -> (vec record { principal; vec Blog }) query;
   get_founder_info : () -> (opt FounderInfo) query;
   get_founder_info_caller : () -> (opt FounderInfo) query;
   get_hub_organizer : () -> (opt UniqueHubs) query;

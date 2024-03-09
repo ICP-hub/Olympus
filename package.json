@@ -14,7 +14,7 @@
     "start": "webpack serve --mode development --env development",
     "deploy:local": "dfx deploy --network=local",
     "deploy:ic": "dfx deploy --network=ic",
-    "generate": "dfx generate IcpAccelerator_backend"
+    "generate": "scripts/generate_did.sh && dfx generate IcpAccelerator_backend"
   },
   "dependencies": {
     "@dfinity/agent": "^0.20.2",
