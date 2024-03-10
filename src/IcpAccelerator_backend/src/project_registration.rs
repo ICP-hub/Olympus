@@ -17,15 +17,6 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::io::Read;
 
-
-use crate::user_module::UserInformation;
-use crate::{
-    hub_organizer,
-    register_user::{self, get_founder_info},
-};
-
-
-
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct TeamMember {
     member_uid: String,
@@ -47,14 +38,14 @@ pub struct ProjectInfo {
     reason_to_join_incubator: String,
     project_description: String,
     project_cover: Vec<u8>,
-    creation_date: String,
+
     project_team: Option<TeamMember>,
     token_economics: String,
     technical_docs: String,
     long_term_goals: String,
     target_market: String,
     self_rating_of_project: f64,
-    user_data: UserInformation
+    user_data: UserInformation,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
@@ -63,6 +54,7 @@ pub struct ProjectInfoInternal {
     pub uid: String,
     pub is_active: bool,
     pub is_verified: bool,
+    creation_date: u64,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
@@ -181,6 +173,7 @@ pub async fn create_project(info: ProjectInfo) -> String {
         uid: new_id,
         is_active: true,
         is_verified: false,
+        creation_date: time(),
     };
     APPLICATION_FORM.with(|storage| {
         let mut applications = storage.borrow_mut();
@@ -294,11 +287,12 @@ pub fn update_project(project_id: String, updated_project: ProjectInfo) -> Strin
                 project_internal.params.promotional_video = updated_project.promotional_video;
 
                 project_internal.params.github_link = updated_project.github_link;
-                project_internal.params.reason_to_join_incubator = updated_project.reason_to_join_incubator;
+                project_internal.params.reason_to_join_incubator =
+                    updated_project.reason_to_join_incubator;
 
                 project_internal.params.project_description = updated_project.project_description;
                 project_internal.params.project_cover = updated_project.project_cover;
-                project_internal.params.creation_date = updated_project.creation_date;
+
                 project_internal.params.project_team = updated_project.project_team;
                 project_internal.params.token_economics = updated_project.token_economics;
                 project_internal.params.technical_docs = updated_project.technical_docs;
