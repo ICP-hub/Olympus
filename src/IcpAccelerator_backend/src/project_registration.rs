@@ -1,21 +1,21 @@
+use crate::user_module::UserInformation;
+use crate::{
+    hub_organizer,
+    register_user::{self, get_founder_info},
+};
 use bincode::{self, DefaultOptions, Options};
 use candid::{CandidType, Principal};
 use ic_cdk::api::caller;
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::api::stable::{StableReader, StableWriter};
 use ic_cdk::api::time;
+use ic_cdk_macros::*;
 use serde::{Deserialize, Serialize};
 use serde_cbor::Value::Null;
 use sha2::{Digest, Sha256};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::io::Read;
-
-use crate::user_module::UserInformation;
-use crate::{
-    hub_organizer,
-    register_user::{self, get_founder_info},
-};
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct SocialLinksInfo {
@@ -27,7 +27,7 @@ pub struct SocialLinksInfo {
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct TeamMember {
     member_uid: String,
-    member_data: UserInformation
+    member_data: UserInformation,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
@@ -53,7 +53,6 @@ pub struct ProjectInfo {
     target_market: String,
     self_rating_of_project: f64,
 }
-
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct ProjectInfoInternal {
@@ -94,7 +93,21 @@ pub struct NotificationForOwner {
     timestamp: u64,
 }
 
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
+pub struct Announcements {
+    project_name: String,
+    announcement_message: String,
+    timestamp: u64,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
+pub struct Blog {
+    blog_url: String,
+    timestamp: u64,
+}
+pub type ProjectAnnouncements = HashMap<Principal, Vec<Announcements>>;
 pub type Notifications = HashMap<Principal, Vec<NotificationProject>>;
+pub type BlogPost = HashMap<Principal, Vec<Blog>>;
 
 pub type ApplicationDetails = HashMap<Principal, Vec<ProjectInfoInternal>>;
 
@@ -102,6 +115,8 @@ thread_local! {
     pub static APPLICATION_FORM: RefCell<ApplicationDetails> = RefCell::new(ApplicationDetails::new());
     pub static NOTIFICATIONS: RefCell<Notifications> = RefCell::new(Notifications::new());
     static OWNER_NOTIFICATIONS: RefCell<HashMap<Principal, Vec<NotificationForOwner>>> = RefCell::new(HashMap::new());
+    pub static PROJECT_ANNOUNCEMENTS:RefCell<ProjectAnnouncements> = RefCell::new(ProjectAnnouncements::new());
+    pub static BLOG_POST:RefCell<BlogPost> = RefCell::new(BlogPost::new());
 }
 
 pub fn pre_upgrade() {
@@ -253,7 +268,6 @@ pub fn list_all_projects() -> Vec<ProjectInfo> {
     projects
 }
 
-
 pub fn update_project(project_id: String, updated_project: ProjectInfo) -> String {
     let caller = caller();
     let mut is_updated = false;
@@ -266,13 +280,17 @@ pub fn update_project(project_id: String, updated_project: ProjectInfo) -> Strin
                 project_internal.params.project_logo = updated_project.project_logo;
                 project_internal.params.preferred_icp_hub = updated_project.preferred_icp_hub;
                 project_internal.params.live_on_icp_mainnet = updated_project.live_on_icp_mainnet;
-                project_internal.params.money_raised_till_now = updated_project.money_raised_till_now;
+                project_internal.params.money_raised_till_now =
+                    updated_project.money_raised_till_now;
                 project_internal.params.supports_multichain = updated_project.supports_multichain;
-                project_internal.params.project_elevator_pitch = updated_project.project_elevator_pitch;
-                project_internal.params.project_area_of_focus = updated_project.project_area_of_focus;
+                project_internal.params.project_elevator_pitch =
+                    updated_project.project_elevator_pitch;
+                project_internal.params.project_area_of_focus =
+                    updated_project.project_area_of_focus;
                 project_internal.params.promotional_video = updated_project.promotional_video;
                 project_internal.params.social_links = updated_project.social_links;
-                project_internal.params.reason_to_join_incubator = updated_project.reason_to_join_incubator;
+                project_internal.params.reason_to_join_incubator =
+                    updated_project.reason_to_join_incubator;
                 project_internal.params.project_description = updated_project.project_description;
                 project_internal.params.project_cover = updated_project.project_cover;
                 project_internal.params.creation_date = updated_project.creation_date;
@@ -281,7 +299,8 @@ pub fn update_project(project_id: String, updated_project: ProjectInfo) -> Strin
                 project_internal.params.technical_docs = updated_project.technical_docs;
                 project_internal.params.long_term_goals = updated_project.long_term_goals;
                 project_internal.params.target_market = updated_project.target_market;
-                project_internal.params.self_rating_of_project = updated_project.self_rating_of_project;
+                project_internal.params.self_rating_of_project =
+                    updated_project.self_rating_of_project;
 
                 is_updated = true;
             }
@@ -451,10 +470,9 @@ pub fn get_notifications_for_owner() -> Vec<NotificationForOwner> {
     })
 }
 
-
 pub async fn update_team_member(project_id: &str, member_uid: String) -> String {
     let user_info_result = crate::user_module::get_user_info_by_id(member_uid.clone()).await;
-    
+
     let user_info = match user_info_result {
         Ok(info) => info,
         Err(err) => return format!("Failed to retrieve user info: {}", err),
@@ -464,7 +482,11 @@ pub async fn update_team_member(project_id: &str, member_uid: String) -> String 
     let mut member_updated = false;
     APPLICATION_FORM.with(|storage| {
         let mut storage = storage.borrow_mut();
-        if let Some(project_internal) = storage.values_mut().flat_map(|v| v.iter_mut()).find(|p| p.uid == project_id) {
+        if let Some(project_internal) = storage
+            .values_mut()
+            .flat_map(|v| v.iter_mut())
+            .find(|p| p.uid == project_id)
+        {
             project_found = true;
             project_internal.params.project_team = Some(TeamMember {
                 member_uid: member_uid.clone(),
@@ -478,4 +500,59 @@ pub async fn update_team_member(project_id: &str, member_uid: String) -> String 
         (true, false) => "Failed to update the team member in the specified project.".to_string(),
         _ => "Project not found.".to_string(),
     }
+}
+
+#[update]
+pub fn add_announcement(mut announcement_details: Announcements) -> String {
+    let caller_id = caller();
+
+    let current_time = time();
+
+    PROJECT_ANNOUNCEMENTS.with(|state| {
+        let mut state = state.borrow_mut();
+        announcement_details.timestamp = current_time;
+        state
+            .entry(caller_id)
+            .or_insert_with(Vec::new)
+            .push(announcement_details);
+        format!("Announcement added successfully at {}", current_time)
+    })
+}
+
+//for testing purpose
+#[query]
+pub fn get_announcements() -> HashMap<Principal, Vec<Announcements>> {
+    PROJECT_ANNOUNCEMENTS.with(|state| {
+        let state = state.borrow();
+        state.clone()
+    })
+}
+
+#[update]
+pub fn add_BlogPost(url: String) -> String {
+    let caller_id = caller();
+
+    let current_time = time();
+
+    BLOG_POST.with(|state| {
+        let mut state = state.borrow_mut();
+        let new_blog = Blog {
+            blog_url: url,
+            timestamp: current_time,
+        };
+        state
+            .entry(caller_id)
+            .or_insert_with(Vec::new)
+            .push(new_blog);
+        format!("Blog Post added successfully at {}", current_time)
+    })
+}
+
+//for testing purpose
+#[query]
+pub fn get_blog_post() -> HashMap<Principal, Vec<Blog>> {
+    BLOG_POST.with(|state| {
+        let state = state.borrow();
+        state.clone()
+    })
 }

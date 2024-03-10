@@ -1,4 +1,10 @@
+type Announcements = record {
+  announcement_message : text;
+  timestamp : nat64;
+  project_name : text;
+};
 type ApprovalRequest = record { sender : principal; receiver : principal };
+type Blog = record { blog_url : text; timestamp : nat64 };
 type ConnectionRequest = record {
   startup_id : principal;
   message : text;
@@ -270,12 +276,23 @@ type VentureCapitalist = record {
   category_of_investment : text;
   type_of_investment : text;
 };
+type VentureCapitalistInternal = record {
+  uid : text;
+  approve : bool;
+  is_active : bool;
+  decline : bool;
+  params : VentureCapitalist;
+};
 service : {
+  add_BlogPost : (text) -> (text);
+  add_announcement : (Announcements) -> (text);
   add_suggestion_caller : (text, text) -> (nat64, text);
   approve_mentor_creation_request_candid : (principal, bool) -> (text);
+  approve_vc_creation_request : (principal, bool) -> (text);
   calculate_average_api : (text) -> (opt float64) query;
   connect_to_team_member : (text, text) -> (text);
   decline_mentor_creation_request_candid : (principal, bool) -> (text);
+  decline_vc_creation_request : (principal, bool) -> (text);
   delete_founder_caller : () -> (text);
   delete_mentor_candid : () -> (text);
   delete_project : (text) -> (text);
@@ -285,7 +302,9 @@ service : {
   get_all_mentors_candid : () -> (vec MentorProfile) query;
   get_all_roles : () -> (RolesResponse) query;
   get_all_users_information : () -> (vec UserInformation) query;
+  get_announcements : () -> (vec record { principal; vec Announcements }) query;
   get_area_focus_expertise : () -> (vec Role) query;
+  get_blog_post : () -> (vec record { principal; vec Blog }) query;
   get_founder_info_caller : () -> (opt FounderInfo) query;
   get_hub_organizer_candid : () -> (opt UniqueHubs) query;
   get_hubs_principal_using_region : (text) -> (vec text) query;
@@ -346,9 +365,10 @@ service : {
   update_rating_api : (vec Rating) -> ();
   update_suggestion_status_caller : (nat64, text, text) -> ();
   update_team_member : (text, text) -> (text);
-  update_venture_capitalist : (VentureCapitalist) -> ();
+  update_venture_capitalist : (VentureCapitalist) -> (text);
   update_venture_capitalist_caller : (VentureCapitalist) -> (text);
   upvote_project : (text) -> (text);
+  vc_awaiting_approval : () -> (vec VentureCapitalistInternal) query;
   verify_project_under_your_hub : (text) -> (text);
   view_notifications_candid : (principal) -> (vec Notification_1) query;
 }

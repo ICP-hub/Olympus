@@ -10,11 +10,10 @@ mod project_like;
 mod requests;
 mod roles;
 mod upvotes;
-mod vc_registration;
 mod user_module;
+mod vc_registration;
 
 use hub_organizer::{HubOrganizerRegistration, UniqueHubs};
-use user_module::UserInformation;
 use ic_cdk::api::caller;
 use leaderboard::{
     LeaderboardEntryForLikes, LeaderboardEntryForRatings, LeaderboardEntryForUpvote,
@@ -23,6 +22,7 @@ use project_like::LikeRecord;
 use requests::Request;
 use roles::{get_roles, RolesResponse};
 use std::collections::{HashMap, HashSet};
+use user_module::UserInformation;
 
 use ic_cdk::export_candid;
 use manage_focus_expertise::{get_areas, Areas};
@@ -38,35 +38,40 @@ mod roadmap_suggestion;
 mod trie;
 
 use crate::notification::Notification;
+use crate::project_registration::Announcements;
+use crate::project_registration::Blog;
 use crate::ratings::MainLevel;
 use crate::ratings::MainLevelRatings;
 use crate::ratings::Rating;
+use admin::*;
 use candid::Principal;
 use ic_cdk_macros::{query, update};
-use project_registration::{ NotificationForOwner, NotificationProject, ProjectInfo, ProjectInfoInternal,TeamMember};
+use mentor::*;
+use project_registration::{
+    NotificationForOwner, NotificationProject, ProjectInfo, ProjectInfoInternal, TeamMember,
+};
 use rbac::{assign_roles_to_principal, has_required_role, UserRole};
 use register_user::{FounderInfo, FounderInfoInternal, ThirtyInfoFounder};
 use roadmap_suggestion::Suggestion;
 use upvotes::UpvoteStorage;
 use vc_registration::VentureCapitalist;
-use admin::*;
-use mentor::*;
+use vc_registration::*;
 
 // private function to check if the caller is one of the controllers of the canister
 fn check_admin() {
-    if !ic_cdk::api::is_controller(&caller()){
+    if !ic_cdk::api::is_controller(&caller()) {
         ic_cdk::api::trap("This user is unauthorised to use this function");
     }
 }
 
 #[update]
-fn approve_mentor_creation_request_candid(requester : Principal, approve : bool) -> String{
+fn approve_mentor_creation_request_candid(requester: Principal, approve: bool) -> String {
     check_admin();
     approve_mentor_creation_request(requester, approve)
 }
 
 #[update]
-fn decline_mentor_creation_request_candid(requester : Principal, decline : bool) -> String{
+fn decline_mentor_creation_request_candid(requester: Principal, decline: bool) -> String {
     check_admin();
     decline_mentor_creation_request(requester, decline)
 }
@@ -93,35 +98,33 @@ fn get_role_from_p_id() -> Option<HashSet<UserRole>> {
 }
 
 #[query]
-pub async fn get_user_information_using_uid(uid: String) ->  Result<UserInformation, &'static str>{
+pub async fn get_user_information_using_uid(uid: String) -> Result<UserInformation, &'static str> {
     user_module::get_user_info_by_id(uid).await
 }
 
 #[update]
 
-pub async fn register_user(profile: UserInformation)->String{
+pub async fn register_user(profile: UserInformation) -> String {
     user_module::register_user_role(profile).await
 }
 
 #[query]
 
-pub fn get_user_information()->Result<UserInformation, &'static str>{
+pub fn get_user_information() -> Result<UserInformation, &'static str> {
     user_module::get_user_info()
 }
 
-
 #[query]
 
-pub fn get_all_users_information()->Vec<UserInformation>{
+pub fn get_all_users_information() -> Vec<UserInformation> {
     user_module::list_all_users()
 }
 
 #[update]
 
-pub fn make_user_inactive()->String{
+pub fn make_user_inactive() -> String {
     user_module::delete_user()
 }
-
 
 #[update]
 
@@ -183,17 +186,16 @@ fn list_all_projects() -> Vec<ProjectInfo> {
 
 #[update]
 fn update_project(project_id: String, updated_project: ProjectInfo) -> String {
-    if has_required_role(&vec![ UserRole::Project]) {
+    if has_required_role(&vec![UserRole::Project]) {
         project_registration::update_project(project_id, updated_project)
     } else {
         "you are not supposed to change someone profile".to_string()
     }
 }
 
-
 #[update]
 async fn update_team_member(project_id: String, member_uid: String) -> String {
-    if has_required_role(&vec![ UserRole::Project]) {
+    if has_required_role(&vec![UserRole::Project]) {
         project_registration::update_team_member(&project_id, member_uid).await
     } else {
         "you hv n't registered as a user yet".to_string()
@@ -287,7 +289,7 @@ async fn register_mentor_candid(profile: MentorProfile) -> String {
 
 #[query]
 
- fn get_mentor_candid() -> Option<MentorProfile> {
+fn get_mentor_candid() -> Option<MentorProfile> {
     mentor::get_mentor()
 }
 
@@ -298,7 +300,7 @@ fn delete_mentor_candid() -> String {
 
 #[update]
 
- fn update_mentor_profile(updated_profile: MentorProfile) -> String {
+fn update_mentor_profile(updated_profile: MentorProfile) -> String {
     let required_roles = [UserRole::Mentor];
 
     if has_required_role(&required_roles) {
@@ -310,61 +312,61 @@ fn delete_mentor_candid() -> String {
 
 #[update]
 
- fn make_active_inactive_mentor(id: Principal) -> String {
+fn make_active_inactive_mentor(id: Principal) -> String {
     mentor::make_active_inactive(id)
 }
 
 #[query]
 
- fn get_all_mentors_candid() -> Vec<MentorProfile> {
+fn get_all_mentors_candid() -> Vec<MentorProfile> {
     mentor::get_all_mentors()
 }
 
 #[query]
 
- fn get_mentor_by_expertise(area_of_expertise: String) -> Vec<MentorProfile> {
+fn get_mentor_by_expertise(area_of_expertise: String) -> Vec<MentorProfile> {
     mentor::find_mentors_by_expertise(&area_of_expertise)
 }
 
 #[update]
 
- fn upvote_project(project_id: String) -> std::string::String {
+fn upvote_project(project_id: String) -> std::string::String {
     upvotes::upvote(project_id)
 }
 
 #[query]
 
- fn get_project_upvotes(project_id: String) -> Option<UpvoteRecord> {
+fn get_project_upvotes(project_id: String) -> Option<UpvoteRecord> {
     upvotes::get_upvote_record(project_id)
 }
 
 #[query]
 
- fn get_latest_live_proposal() -> Vec<ProjectInfoInternal> {
+fn get_latest_live_proposal() -> Vec<ProjectInfoInternal> {
     latest_popular_projects::get_live_proposals_latest()
 }
 
 #[query]
 
- fn get_latest_listed_project() -> Vec<ProjectInfoInternal> {
+fn get_latest_listed_project() -> Vec<ProjectInfoInternal> {
     latest_popular_projects::get_listed_projects_latest()
 }
 
 #[query]
 
- fn get_popular_live_proposal() -> Vec<ProjectInfoInternal> {
+fn get_popular_live_proposal() -> Vec<ProjectInfoInternal> {
     latest_popular_projects::get_live_proposals_popular()
 }
 
 #[query]
 
- fn get_popular_listed_project() -> Vec<ProjectInfoInternal> {
+fn get_popular_listed_project() -> Vec<ProjectInfoInternal> {
     latest_popular_projects::get_listed_projects_popular()
 }
 
 #[update]
 
- async fn register_venture_capitalist_caller(params: VentureCapitalist) -> String {
+async fn register_venture_capitalist_caller(params: VentureCapitalist) -> String {
     let roles_to_assign = vec![UserRole::VC];
     vc_registration::register_venture_capitalist(params).await;
     assign_roles_to_principal(roles_to_assign)
@@ -372,19 +374,19 @@ fn delete_mentor_candid() -> String {
 
 #[query]
 
- fn get_venture_capitalist_info() -> Option<VentureCapitalist> {
+fn get_venture_capitalist_info() -> Option<VentureCapitalist> {
     vc_registration::get_vc_info()
 }
 
 #[query]
 
- fn list_all_venture_capitalist() -> Vec<VentureCapitalist> {
+fn list_all_venture_capitalist() -> Vec<VentureCapitalist> {
     vc_registration::list_all_vcs()
 }
 
 #[update]
 
- fn update_venture_capitalist_caller(params: VentureCapitalist) -> String {
+fn update_venture_capitalist_caller(params: VentureCapitalist) -> String {
     let required_roles = [UserRole::VC];
 
     if has_required_role(&required_roles) {
@@ -397,7 +399,7 @@ fn delete_mentor_candid() -> String {
 
 #[update]
 
- fn delete_venture_capitalist_caller() -> std::string::String {
+fn delete_venture_capitalist_caller() -> std::string::String {
     vc_registration::delete_venture_capitalist()
 }
 
@@ -422,26 +424,24 @@ fn greet(name: String) -> String {
 }
 
 #[update]
-fn send_connection_request(mentor_id: Principal, msg: String) -> String{
+fn send_connection_request(mentor_id: Principal, msg: String) -> String {
     notification::send_connection_request(mentor_id, msg)
 }
 
 #[query]
- fn view_notifications_candid(mentor_id: Principal) -> Vec<Notification> {
+fn view_notifications_candid(mentor_id: Principal) -> Vec<Notification> {
     notification::view_notifications(mentor_id)
 }
 
 #[update]
- fn respond_to_connection_request_candid(startup_id: Principal, accept: bool) -> String {
+fn respond_to_connection_request_candid(startup_id: Principal, accept: bool) -> String {
     notification::respond_to_connection_request(startup_id, accept)
 }
 
 //Hub Organizers
 #[update]
 
- async fn register_hub_organizer_candid(
-    form: hub_organizer::HubOrganizerRegistration,
-) -> String {
+async fn register_hub_organizer_candid(form: hub_organizer::HubOrganizerRegistration) -> String {
     let reg_response = hub_organizer::register_hub_organizer(form).await;
     let roles_to_assign = vec![UserRole::ICPHubOrganizer];
     let assigned = assign_roles_to_principal(roles_to_assign);
@@ -451,13 +451,13 @@ fn send_connection_request(mentor_id: Principal, msg: String) -> String{
 
 #[query]
 
- fn get_hub_organizer_candid() -> Option<UniqueHubs> {
+fn get_hub_organizer_candid() -> Option<UniqueHubs> {
     hub_organizer::get_hub_organizer()
 }
 
 #[update]
 
- fn update_hub_organizer_candid(params: HubOrganizerRegistration) -> String {
+fn update_hub_organizer_candid(params: HubOrganizerRegistration) -> String {
     let required_role = vec![UserRole::ICPHubOrganizer];
 
     if has_required_role(&required_role) {
@@ -468,49 +468,49 @@ fn send_connection_request(mentor_id: Principal, msg: String) -> String{
 }
 
 #[query]
- fn get_leaderboard_using_upvotes() -> Vec<LeaderboardEntryForUpvote> {
+fn get_leaderboard_using_upvotes() -> Vec<LeaderboardEntryForUpvote> {
     leaderboard::get_leaderboard_by_upvotes()
 }
 
 #[query]
 
- fn get_leaderboard_using_likes() -> Vec<LeaderboardEntryForLikes> {
+fn get_leaderboard_using_likes() -> Vec<LeaderboardEntryForLikes> {
     leaderboard::get_leaderboard_by_likes()
 }
 
 #[query]
 
- fn get_leaderboard_using_ratings() -> Vec<LeaderboardEntryForRatings> {
+fn get_leaderboard_using_ratings() -> Vec<LeaderboardEntryForRatings> {
     leaderboard::get_leaderboard_by_ratings()
 }
 
 #[update]
 
- fn update_rating_api(rating: Vec<Rating>) {
+fn update_rating_api(rating: Vec<Rating>) {
     ratings::update_rating(rating);
 }
 
 #[query]
 
- fn calculate_average_api(project_id: String) -> Option<f64> {
+fn calculate_average_api(project_id: String) -> Option<f64> {
     ratings::calculate_average(&project_id)
 }
 
 #[query]
 
- fn get_main_level_ratings(project_id: String) -> HashMap<MainLevel, MainLevelRatings> {
+fn get_main_level_ratings(project_id: String) -> HashMap<MainLevel, MainLevelRatings> {
     ratings::get_ratings_by_project_id(&project_id)
 }
 
 #[update]
 
- fn send_request_as_mentor(project_id: String, request_text: String) -> String {
+fn send_request_as_mentor(project_id: String, request_text: String) -> String {
     requests::send_request_to_project(project_id, request_text)
 }
 
 #[query]
 
- fn get_project_requests(project_id: String) -> Vec<Request> {
+fn get_project_requests(project_id: String) -> Vec<Request> {
     requests::get_requests(project_id)
 }
 
@@ -521,18 +521,18 @@ fn send_connection_request(mentor_id: Principal, msg: String) -> String{
 // }
 // made for admin side.....
 #[query]
- fn get_role() -> RolesResponse {
+fn get_role() -> RolesResponse {
     roles::get_roles()
 }
 
 #[query]
 
- fn get_my_id() -> Principal {
+fn get_my_id() -> Principal {
     caller()
 }
 
 #[query]
- fn get_admin_notifications(caller: Principal) -> Vec<admin::Notification> {
+fn get_admin_notifications(caller: Principal) -> Vec<admin::Notification> {
     admin::get_admin_notifications(caller)
 }
 
