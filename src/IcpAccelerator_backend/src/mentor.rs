@@ -25,6 +25,28 @@ pub struct MentorProfile {
     pub area_of_expertise: String,
     pub reason_for_joining: String,
 }
+impl MentorProfile {
+    pub fn validate(&self) -> Result<(), String> {
+        if let Some(ref preferred_icp_hub) = self.preferred_icp_hub {
+            if preferred_icp_hub.trim().is_empty() {
+                return Err("Field cannot be empty".into());
+            }
+        }
+
+        if let Some(ref exisitng_icp_project_porfolio) = self.exisitng_icp_project_porfolio {
+            if exisitng_icp_project_porfolio.trim().is_empty() {
+                return Err("Field cannot be empty".into());
+            }
+        }
+        if let Some(ref multichain) = self.multichain {
+            if multichain.trim().is_empty() {
+                return Err("Field cannot be empty".into());
+            }
+        }
+
+        Ok(())
+    }
+}
 
 pub type MentorRegistry = HashMap<Principal, MentorInternal>;
 
@@ -53,10 +75,6 @@ pub async fn register_mentor(profile: MentorProfile) -> String {
         }
     });
 
-    let random_bytes = raw_rand().await.expect("Failed to generate random bytes").0;
-
-    let uid = format!("{:x}", Sha256::digest(&random_bytes));
-
     // let already_registered = MENTOR_REGISTRY.with(|registry| registry.borrow().contains_key(&caller));
 
     // if already_registered {
@@ -64,25 +82,38 @@ pub async fn register_mentor(profile: MentorProfile) -> String {
     //     ic_cdk::println!("This Principal is already registered");
     //     return "This Principal is already registered.".to_string()}
 
-    let profile_for_pushing = profile.clone();
+    match profile.validate() {
+        Ok(_) => {
+            let random_bytes = raw_rand().await.expect("Failed to generate random bytes").0;
 
-    let mentor_internal = MentorInternal {
-        profile: profile_for_pushing,
-        uid: uid.clone(),
-        active: true,
-        approve: false,
-        decline: false,
-    };
+            let uid = format!("{:x}", Sha256::digest(&random_bytes));
 
-    MENTOR_AWAITS_RESPONSE.with(|awaiters: &RefCell<HashMap<Principal, MentorInternal>>| {
-        let mut await_ers: std::cell::RefMut<'_, HashMap<Principal, MentorInternal>> =
-            awaiters.borrow_mut();
-        await_ers.insert(caller, mentor_internal);
-    });
+            let profile_for_pushing = profile.clone();
 
-    let res = send_approval_request().await;
+            let mentor_internal = MentorInternal {
+                profile: profile_for_pushing,
+                uid: uid.clone(),
+                active: true,
+                approve: false,
+                decline: false,
+            };
 
-    format!("{}", res)
+            MENTOR_AWAITS_RESPONSE.with(
+                |awaiters: &RefCell<HashMap<Principal, MentorInternal>>| {
+                    let mut await_ers: std::cell::RefMut<'_, HashMap<Principal, MentorInternal>> =
+                        awaiters.borrow_mut();
+                    await_ers.insert(caller, mentor_internal);
+                },
+            );
+
+            let res = send_approval_request().await;
+
+            format!("{}", res)
+        }
+        Err(e) => {
+            format!("Validation error: {}", e)
+        }
+    }
 
     // MENTOR_REGISTRY.with(|registry| {
     //     registry.borrow_mut().insert(caller, mentor_internal);

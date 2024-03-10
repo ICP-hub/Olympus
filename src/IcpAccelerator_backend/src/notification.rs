@@ -87,7 +87,6 @@ pub fn send_connection_request(mentor_id: Principal, msg: String) -> String {
     }
 }
 
-
 pub fn add_notification(mentor_id: Principal, notification: Notification) {
     NOTIFICATIONS.with(|notifications| {
         let mut notifications = notifications.borrow_mut();
@@ -97,7 +96,6 @@ pub fn add_notification(mentor_id: Principal, notification: Notification) {
             .push(notification)
     })
 }
-
 
 pub fn view_notifications(mentor_id: Principal) -> Vec<Notification> {
     // let mentor_id = caller();
@@ -111,10 +109,8 @@ pub fn view_notifications(mentor_id: Principal) -> Vec<Notification> {
     })
 }
 
-
 pub fn respond_to_connection_request(startup_id: Principal, accept: bool) -> String {
     let mentor_id = caller();
-
     let required_roles = [rbac::UserRole::Mentor];
 
     if has_required_role(&required_roles) {
@@ -124,16 +120,16 @@ pub fn respond_to_connection_request(startup_id: Principal, accept: bool) -> Str
 
             if let Some(profile_internal) = mentor_internal {
                 let social_handles = if accept {
-                    profile_internal.profile.linkedin_profile_link.clone()
+                    Some(profile_internal.profile.social_link) // As String, wrap in Some for consistency
                 } else {
-                    None
+                    None // When not accepted, there's no social link to share
                 };
 
                 let ack_notification = Notification {
                     notification_type: NotificationType::ConnectionAcknowledgement {
                         mentor_id,
                         accepted: accept,
-                        social_handles,
+                        social_handles: social_handles.map(|handles| handles), // Convert to Option<String>
                     },
                     read: false,
                 };
@@ -141,17 +137,14 @@ pub fn respond_to_connection_request(startup_id: Principal, accept: bool) -> Str
                 // Send acknowledgement notification to the startup
                 add_notification(startup_id, ack_notification);
 
-                format!("Acknowledgement sent to startup with ID: {}", startup_id)
+                "Acknowledgement sent to startup".to_string()
             } else {
-                format!("Mentor profile not found for ID: {}", mentor_id)
+                "Mentor profile not found".to_string()
             }
         } else {
-            format!(
-                "the principal you are responding has not created any project {}",
-                startup_id
-            )
+            "The principal you are responding to has not created any project".to_string()
         }
     } else {
-        format!("Mentor profile not found for ID: {}", mentor_id)
+        "Mentor profile not found".to_string()
     }
 }
