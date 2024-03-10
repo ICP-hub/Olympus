@@ -207,7 +207,7 @@ pub fn pre_upgrade() {
 //     });
 // }
 
-#[update]
+
 pub async fn register_founder(thirty_info: ThirtyInfoFounder)->std::string::String{
     let caller = caller();
     let uuids = raw_rand().await.unwrap().0;
@@ -232,37 +232,35 @@ pub async fn register_founder(thirty_info: ThirtyInfoFounder)->std::string::Stri
     FOUNDER_STORAGE.with(|storage| {
 
         let mut storage = storage.borrow_mut();
-        // if storage.contains_key(&caller) {
-        //     panic!("User with this Principal ID already exists");
-        // } else {
-        //     storage.insert(caller, new_founder);
-        //     println!("Founder Registered {:?}", caller);
-        // }
-
-     
+        if storage.contains_key(&caller) {
+            panic!("User with this Principal ID already exists");
+        } else {
             storage.insert(caller, founder_info_internal);
-            println!("Founder Registered {:?}", caller);
-        
-
+        }
     });
     format!("User registered successfully with ID: {}", new_id)
 }
 
-#[query]
+
 pub fn get_founder_info() -> Option<FounderInfo> {
     let caller = caller();
     println!("Fetching founder info for caller: {:?}", caller);
-    FOUNDER_STORAGE.with(|registry| {
-        registry
-            .borrow()
-            .get(&caller)
-            .map(|founder_internal| founder_internal.params.clone())
-    })
+    let result = FOUNDER_STORAGE.with(|registry| {
+        registry.borrow().get(&caller).map(|founder_internal| founder_internal.params.clone())
+    });
+
+    match result {
+        Some(founder_info) => Some(founder_info),
+        None => {
+            format!("Caller {:?} is not registered as a founder.", caller);
+            None
+        }
+    }
 }
 
 
 
-#[query]
+
 pub fn list_all_founders() -> Vec<FounderInfo> {
     FOUNDER_STORAGE.with(|storage| 
         storage
@@ -273,7 +271,7 @@ pub fn list_all_founders() -> Vec<FounderInfo> {
     )
 }
 
-#[update]
+
 pub fn delete_founder()->std::string::String {
     let caller = caller();
     println!("Attempting to deactivate founder for caller: {:?}", caller);
@@ -282,15 +280,14 @@ pub fn delete_founder()->std::string::String {
         let mut storage = storage.borrow_mut();
         if let Some(founder) = storage.get_mut(&caller) {
             founder.is_active = false; // Mark the founder as inactive 
-            println!("Founder deactivated for caller: {:?}", caller);
+            format!("Founder deactivated for caller: {:?}", caller)
         } else {
-            println!("Founder not found for caller: {:?}", caller);
+            format!("Founder not found for caller: {:?}", caller)
         }
-    });
-    format!("Founder Has Been DeActivated")
+    })
 }
 
-#[update]
+
 pub fn update_founder(mut updated_profile: FounderInfo) -> String {
     let caller = caller();
 

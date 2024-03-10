@@ -13,8 +13,8 @@ pub enum UserRole {
     Mentor,
     Project,
     VC,
-    ICPHubOrganizer
-    //Founder
+    ICPHubOrganizer,
+    Founder
 }
 
 
@@ -24,7 +24,7 @@ thread_local! {
     pub static ROLES: RefCell<RoleRegistry> = RefCell::new(RoleRegistry::new());
 }
 
-#[query]
+
 pub fn get_role_from_principal() -> Option<HashSet<UserRole>> {
     let p_id = caller();
     ROLES.with(|roles| {
@@ -33,7 +33,7 @@ pub fn get_role_from_principal() -> Option<HashSet<UserRole>> {
     })
 }
 
-#[update]
+
 pub fn assign_roles_to_principal(roles_to_assign: Vec<UserRole>) -> String {
     let principal = caller();
 

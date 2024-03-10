@@ -9,28 +9,42 @@ use ic_cdk::api::management_canister::main::raw_rand;
 use sha2::{Digest, Sha256};
 use ic_cdk_macros::{query, update};
 
+// #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+// pub enum RegisteredUnderAnyHub{
+//     Yes(String),
+//     No,
+// }
+
+// #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+// enum MultiChainProjects {
+//     None,
+//     Single(String),
+//     Multiple(Vec<String>),
+// }
+
+
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct VentureCapitalist {
-    name_of_fund: Option<String>,
-    email_address: Option<String>,
-    telegram_id: Option<String>,
-    location: Option<String>, 
-    accredited_investor_status: Option<bool>,
-    website_link: Option<String>,
-    number_of_portfolio_companies: Option<i32>, 
-    portfolio_link: Option<String>,
-    investment_stage_preference: Option<String>,
-    average_investment_ticket: Option<i32>, 
-    assets_for_investment: Option<i32>,
-    preferred_investment_sectors: Option<String>,
-    revenue_range_preference: Option<String>,
-    technological_focus: Option<String>,
-    interest_in_board_positions: Option<bool>,
-    size_of_managed_fund: Option<i32>,
-    typical_decision_making_timeline_for_investments: Option<String>,
-    referrer: Option<String>,
-    investor_type: Option<String>,
-    preferred_icp_hub: Option<String>,
+    name_of_fund:String,
+    fund_size: f64,
+    assets_under_management:String, 
+    logo:Vec<u8>,
+    registered_under_any_hub:Option<String>,
+    average_check_size:f64,
+    existing_icp_investor:bool,
+    money_invested:f64,
+    existing_icp_portfolio:String,
+    type_of_investment:String,
+    project_on_multichain:Option<String>,
+    category_of_investment:String,
+    reason_for_joining:String,
+    preferred_icp_hub:String,
+    investor_type:String,
+    number_of_portfolio_companies:u16,
+    portfolio_link:String,
+    announcement_details:String
+
+
 }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
@@ -57,12 +71,21 @@ pub fn pre_upgrade() {
     });
 }
 
-#[update]
-pub async fn register_venture_capitalist(params: VentureCapitalist)->std::string::String{
+
+pub async fn register_venture_capitalist(mut params: VentureCapitalist)->std::string::String{
     let caller = caller();
     let uuids = raw_rand().await.unwrap().0;
     let uid = format!("{:x}", Sha256::digest(&uuids));
     let new_id = uid.clone().to_string();
+    let fund_size = (params.fund_size * 100.0).round() / 100.0;
+    params.fund_size = fund_size;
+    let average_check_size = (params.average_check_size * 100.0).round() / 100.0;
+    params.average_check_size = average_check_size;
+    let money_invested = (params.money_invested * 100.0).round() / 100.0;
+    params.money_invested = money_invested;
+
+
+
     let new_vc = VentureCapitalistInternal{params,uid:new_id.clone(), is_active: true };
 
     println!("Registering VC for caller: {:?}", caller);
@@ -80,7 +103,6 @@ pub async fn register_venture_capitalist(params: VentureCapitalist)->std::string
 }
 
 
-#[query]
 pub fn get_vc_info() -> Option<VentureCapitalist> {
     let caller = caller();
     println!("Fetching founder info for caller: {:?}", caller);
@@ -89,7 +111,7 @@ pub fn get_vc_info() -> Option<VentureCapitalist> {
     )
 }
 
-#[query]
+
 pub fn list_all_vcs() -> Vec<VentureCapitalist> {
     VENTURECAPITALIST_STORAGE.with(|storage| 
         storage
@@ -100,7 +122,7 @@ pub fn list_all_vcs() -> Vec<VentureCapitalist> {
     )
 }
 
-#[update]
+
 pub fn delete_venture_capitalist()->std::string::String {
     let caller = caller();
     println!("Attempting to deactivate founder for caller: {:?}", caller);
@@ -117,33 +139,16 @@ pub fn delete_venture_capitalist()->std::string::String {
     format!("Venture Capitalist Account Has Been DeActivated")
 }
 
-#[update]
-pub fn update_venture_capitalist(params: VentureCapitalist){
+
+pub fn update_venture_capitalist(params: VentureCapitalist) {
     let caller = caller();
 
     let result = VENTURECAPITALIST_STORAGE.with(|storage| {
         let mut storage = storage.borrow_mut();
+        // Attempt to get a mutable reference to the VentureCapitalistInternal object for the caller
         if let Some(vc_internal) = storage.get_mut(&caller) {
-            vc_internal.params.name_of_fund = params.name_of_fund.or(vc_internal.params.name_of_fund.clone());
-            vc_internal.params.email_address = params.email_address.or(vc_internal.params.email_address.clone());
-            vc_internal.params.telegram_id = params.telegram_id.or(vc_internal.params.telegram_id.clone());
-            vc_internal.params.location = params.location.or(vc_internal.params.location.clone());
-            vc_internal.params.accredited_investor_status = params.accredited_investor_status.or(vc_internal.params.accredited_investor_status);
-            vc_internal.params.website_link = params.website_link.or(vc_internal.params.website_link.clone());
-            vc_internal.params.number_of_portfolio_companies = params.number_of_portfolio_companies.or(vc_internal.params.number_of_portfolio_companies);
-            vc_internal.params.portfolio_link = params.portfolio_link.or(vc_internal.params.portfolio_link.clone());
-            vc_internal.params.investment_stage_preference = params.investment_stage_preference.or(vc_internal.params.investment_stage_preference.clone());
-            vc_internal.params.average_investment_ticket = params.average_investment_ticket.or(vc_internal.params.average_investment_ticket);
-            vc_internal.params.assets_for_investment = params.assets_for_investment.or(vc_internal.params.assets_for_investment.clone());
-            vc_internal.params.preferred_investment_sectors = params.preferred_investment_sectors.or(vc_internal.params.preferred_investment_sectors.clone());
-            vc_internal.params.revenue_range_preference = params.revenue_range_preference.or(vc_internal.params.revenue_range_preference.clone());
-            vc_internal.params.technological_focus = params.technological_focus.or(vc_internal.params.technological_focus.clone());
-            vc_internal.params.interest_in_board_positions = params.interest_in_board_positions.or(vc_internal.params.interest_in_board_positions);
-            vc_internal.params.size_of_managed_fund = params.size_of_managed_fund.or(vc_internal.params.size_of_managed_fund.clone());
-            vc_internal.params.typical_decision_making_timeline_for_investments = params.typical_decision_making_timeline_for_investments.or(vc_internal.params.typical_decision_making_timeline_for_investments.clone());
-            vc_internal.params.referrer = params.referrer.or(vc_internal.params.referrer.clone());
-            vc_internal.params.investor_type = params.investor_type.or(vc_internal.params.investor_type.clone());
-            vc_internal.params.preferred_icp_hub = params.preferred_icp_hub.or(vc_internal.params.preferred_icp_hub.clone());
+            // Update only the params field of the VentureCapitalistInternal object
+            vc_internal.params = params;
 
             "Venture Capitalist profile updated successfully.".to_string()
         } else {
