@@ -42,11 +42,8 @@ use crate::ratings::MainLevel;
 use crate::ratings::MainLevelRatings;
 use crate::ratings::Rating;
 use candid::Principal;
-use ic_cdk_macros::{query, update, init};
-use project_registration::{
-    DocsInfo, NotificationForOwner, NotificationProject, ProjectInfo, ProjectInfoInternal,
-    TeamMember, ThirtyInfoProject,
-};
+use ic_cdk_macros::{query, update};
+use project_registration::{ NotificationForOwner, NotificationProject, ProjectInfo, ProjectInfoInternal,TeamMember};
 use rbac::{assign_roles_to_principal, has_required_role, UserRole};
 use register_user::{FounderInfo, FounderInfoInternal, ThirtyInfoFounder};
 use roadmap_suggestion::Suggestion;
@@ -79,10 +76,31 @@ fn decline_mentor_creation_request_candid(requester : Principal, decline : bool)
     check_admin();
     decline_mentor_creation_request(requester, decline)
 }
+// #[pre_upgrade]
+// fn pre_upgrade() {
+//     mentor::mentor_specific_pre_upgrade_actions();
+// }
+
+// #[pre_upgrade]
+// fn pre_upgrade() {
+//     register_user::pre_upgrade();
+//     project_registration::pre_upgrade();
+//     roadmap_suggestion::pre_upgrade();
+// }
+
+// #[post_upgrade]
+// fn post_upgrade() {
+//     mentor::mentor_specific_post_upgrade_actions();
+// }
 
 #[query]
 fn get_role_from_p_id() -> Option<HashSet<UserRole>> {
     rbac::get_role_from_principal()
+}
+
+#[query]
+pub async fn get_user_information_using_uid(uid: String) ->  Result<UserInformation, &'static str>{
+    user_module::get_user_info_by_id(uid).await
 }
 
 #[update]
@@ -95,6 +113,7 @@ pub async fn register_user(profile: UserInformation)->String{
 pub fn get_user_information()->Result<UserInformation, &'static str>{
     user_module::get_user_info()
 }
+
 
 #[query]
 
@@ -143,7 +162,7 @@ fn update_founder_caller(updated_profile: FounderInfo) -> String {
 
 #[update]
 
-async fn create_project(params: ThirtyInfoProject) -> String {
+async fn register_project(params: ProjectInfo) -> String {
     if has_required_role(&vec![UserRole::Project]) {
         project_registration::create_project(params).await
     } else {
@@ -176,19 +195,11 @@ fn update_project(project_id: String, updated_project: ProjectInfo) -> String {
     }
 }
 
-#[update]
-fn update_project_docs(project_id: String, docs: DocsInfo) -> String {
-    if has_required_role(&vec![UserRole::Project, ]) {
-        project_registration::update_project_docs(project_id, docs)
-    } else {
-        format!("you arn't have permissions to update someone's belongings")
-    }
-}
 
 #[update]
-fn update_team_member(project_id: String, team_member: TeamMember) -> String {
+async fn update_team_member(project_id: String, member_uid: String) -> String {
     if has_required_role(&vec![ UserRole::Project]) {
-        project_registration::update_team_member(project_id, team_member)
+        project_registration::update_team_member(&project_id, member_uid).await
     } else {
         "you hv n't registered as a user yet".to_string()
     }

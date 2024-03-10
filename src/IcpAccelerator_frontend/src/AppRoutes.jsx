@@ -7,6 +7,8 @@ import Hubdashboardlive from "./components/Hubdashboardlive/Hubdashboardlive";
 
 import { userRoleHandler } from "./components/StateManagement/Redux/Reducers/userRoleReducer";
 import Loader from "./components/Loader/Loader";
+import NormalUser from "./components/RoleSelector/NormalUser";
+import CreateProject from "./components/Project/CreateProject/CreateProject";
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
 const AllDetailsForm = lazy(() =>
@@ -43,6 +45,8 @@ const AppRoutes = () => {
 
   const publicRoutes = [
     { path: "/", element: <Home /> },
+    { path: "/create-user", element: <NormalUser /> },
+    { path: "/create-project", element: <CreateProject /> },
     { path: "/details", element: <AllDetailsForm /> },
     { path: "/roleSelect", element: <RoleSelector /> },
     { path: "/dashboard", element: <DashBoard /> },

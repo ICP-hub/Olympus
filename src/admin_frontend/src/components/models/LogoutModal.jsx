@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
-import internetIdentity from "../../assets/WalletLogo/IcpWallet1.png";
+import internetIdentity from "../../../../IcpAccelerator_frontend/assets/WalletLogo/IcpWallet1.png";
+
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 // import { logoutStart } from "../components/StateManagement/Redux/Reducers/InternetIdentityReducer";
-import { changeHasSelectedRoleHandler } from "../StateManagement/Redux/Reducers/userRoleReducer";
+import { changeHasSelectedRoleHandler } from "../AdminStateManagement/Redux/Reducers/userRoleReducer";
 import { useNavigate } from "react-router-dom";
 // import { mentorRegisteredHandlerRequest } from "../components/StateManagement/Redux/Reducers/mentorRegisteredData";
 // import { founderRegisteredHandlerRequest } from "../components/StateManagement/Redux/Reducers/founderRegisteredData";
 // import { hubRegisteredHandlerRequest } from "../components/StateManagement/Redux/Reducers/hubRegisteredData";
 // import { investorRegisteredHandlerRequest } from "../components/StateManagement/Redux/Reducers/investorRegisteredData";
-import { useAuth } from "../StateManagement/useContext/useAuth";
+import { useAuth } from "../AdminStateManagement/useContext/useAuth";
 // import { userRoleHandler } from "../components/StateManagement/Redux/Reducers/userRoleReducer";
 import { useCallback } from "react";
 import toast, { Toaster } from "react-hot-toast";
@@ -23,9 +24,9 @@ const LogoutModal = () => {
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
   const principal = useSelector((currState) => currState.internet.principal);
   const actor = useSelector((currState) => currState.actors.actor);
-  const specificRole = useSelector(
-    (currState) => currState.current.specificRole
-  );
+  // const specificRole = useSelector(
+  //   (currState) => currState.current.specificRole
+  // );
 
   const { logout } = useAuth();
   const [customSvg, setCustomSvg] = useState(beforeCopySvg);
@@ -51,34 +52,34 @@ const LogoutModal = () => {
     // setDropdownOpen(false)
   };
 
-  const profileHandler = async (specificRole) => {
-    console.log(
-      "specific role inside profilehandler logout component ",
-      specificRole
-    );
-    switch (specificRole) {
-      case "Project":
-        dispatch(founderRegisteredHandlerRequest());
-        setDropdownOpen(false);
-        break;
-      case "Mentor":
-        dispatch(mentorRegisteredHandlerRequest());
-        setDropdownOpen(false);
-        break;
-      case "ICPHubOrganizer":
-        dispatch(hubRegisteredHandlerRequest());
-        setDropdownOpen(false);
-        break;
-      case "VC":
-        console.log("vc =>", specificRole);
-        dispatch(investorRegisteredHandlerRequest());
-        setDropdownOpen(false);
-        break;
-      default:
-        return null;
-    }
-    navigate("/profile");
-  };
+  // const profileHandler = async (specificRole) => {
+  //   console.log(
+  //     "specific role inside profilehandler logout component ",
+  //     specificRole
+  //   );
+  //   switch (specificRole) {
+  //     case "Project":
+  //       dispatch(founderRegisteredHandlerRequest());
+  //       setDropdownOpen(false);
+  //       break;
+  //     case "Mentor":
+  //       dispatch(mentorRegisteredHandlerRequest());
+  //       setDropdownOpen(false);
+  //       break;
+  //     case "ICPHubOrganizer":
+  //       dispatch(hubRegisteredHandlerRequest());
+  //       setDropdownOpen(false);
+  //       break;
+  //     case "VC":
+  //       // console.log("vc =>", specificRole);
+  //       dispatch(investorRegisteredHandlerRequest());
+  //       setDropdownOpen(false);
+  //       break;
+  //     default:
+  //       return null;
+  //   }
+  //   navigate("/profile");
+  // };
 
   const copyToClipboard = useCallback(() => {
     navigator.clipboard.writeText(principal).then(
@@ -171,7 +172,7 @@ const LogoutModal = () => {
                 </li>
               </ul>
             )}
-            <div className="text-sm text-black font-bold">
+            {/* <div className="text-sm text-black font-bold">
               {specificRole && (
                 <p
                   onClick={() => profileHandler(specificRole)}
@@ -186,7 +187,7 @@ const LogoutModal = () => {
               >
                 Sign out
               </p>
-            </div>
+            </div> */}
           </div>
         )}
       </div>

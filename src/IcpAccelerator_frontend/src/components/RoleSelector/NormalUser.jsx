@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { formFields } from "../../components/Utils/Data/userFormData";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import CompressedImage from "../ImageCompressed/CompressedImage";
 import { useDispatch, useSelector } from "react-redux";
 // import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_IcpHubReducer";
 // import { AuthClient } from "@dfinity/auth-client";
@@ -19,73 +20,132 @@ const schema = yup.object({
     .string()
     .required()
     .test("is-non-empty", null, (value) => value && value.trim().length > 0),
-    user_name: yup.string()
-    .min(6, 'Username must be at least 6 characters')
-    .max(20, 'Username must be at most 20 characters')
-    .matches(/^(?=.*[A-Z0-9_])[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores')
-    .required('Username is required'),
-bio: yup.string().required().test("is-non-empty", null, value => value && value.trim().length > 0),
- email: yup.string().email().required(),
-  telegram_id: yup.string().required().url(),
-  twitter_id: yup.string().required().url(),
+  user_name: yup
+    .string()
+    .min(6, "Username must be at least 6 characters")
+    .max(20, "Username must be at most 20 characters")
+    .matches(
+      /^(?=.*[A-Z0-9_])[a-zA-Z0-9_]+$/,
+      "Username can only contain letters, numbers, and underscores"
+    )
+    .optional(),
+  bio: yup.string().optional(),
+  email: yup.string().email().optional(),
+  telegram_id: yup.string().optional().url(),
+  twitter_id: yup.string().optional().url(),
   hub: yup.string().required("Selecting a hub is required."),
-  areas_of_expertise: yup.string().required("Selecting a interest is required."),
+  areas_of_expertise: yup
+    .string()
+    .required("Selecting a interest is required."),
 });
 
 const NormalUser = () => {
-  
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
-  const areaOfExpertise =  useSelector((currState)=> currState.expertiseIn.expertise)
+  const areaOfExpertise = useSelector(
+    (currState) => currState.expertiseIn.expertise
+  );
   const actor = useSelector((currState) => currState.actors.actor);
-  const userFullData = useSelector((currState) => currState);
+  const userFullData = useSelector((currState) => currState.userData);
 
   const [inputType, setInputType] = useState("date");
+  const [imageData, setImageData] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const dispatch = useDispatch();
-//   const navigate = useNavigate();
+  //   const navigate = useNavigate();
 
-  console.log("userInfo run =>",userFullData);
-//   console.log("getAllIcpHubs", getAllIcpHubs);
+  console.log("userInfo run =>", userFullData);
+  //   console.log("getAllIcpHubs", getAllIcpHubs);
 
-//   useEffect(() => {
-//     dispatch(allHubHandlerRequest());
-//   }, [actor, dispatch]);
+  //   useEffect(() => {
+  //     dispatch(allHubHandlerRequest());
+  //   }, [actor, dispatch]);
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    trigger, reset
+    trigger,
+    setError,
+    clearErrors,
+    control,
+    reset,
   } = useForm({
-    resolver: yupResolver(schema), mode :'all'
+    resolver: yupResolver(schema),
+    mode: "all",
   });
+  const addImageHandler = useCallback(
+    async (file) => {
+      clearErrors("imageData");
+      if (!file)
+        return setError("imageData", {
+          type: "manual",
+          message: "An image is required",
+        });
+      if (!["image/jpeg", "image/png", "image/gif"].includes(file.type))
+        return setError("imageData", {
+          type: "manual",
+          message: "Unsupported file format",
+        });
+      if (file.size > 1024 * 1024)
+        // 1MB
+        return setError("imageData", {
+          type: "manual",
+          message: "The file is too large",
+        });
 
+      setIsLoading(true);
+      try {
+        const compressedFile = await CompressedImage(file);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImagePreview(reader.result);
+          setIsLoading(false);
+        };
+        reader.readAsDataURL(compressedFile);
+
+        const byteArray = await compressedFile.arrayBuffer();
+        setImageData(Array.from(new Uint8Array(byteArray)));
+        clearErrors("imageData");
+      } catch (error) {
+        console.error("Error processing the image:", error);
+        setError("imageData", {
+          type: "manual",
+          message: "Could not process image, please try another.",
+        });
+        setIsLoading(false);
+      }
+    },
+    [setError, clearErrors, setIsLoading, setImagePreview, setImageData]
+  );
   const onSubmitHandler = async (data) => {
     // console.log("data aaya data aaya ", data);
 
-    const founderData = {
+    const userData = {
       full_name: [data.full_name],
-      date_of_birth: [data.date_of_birth.toISOString().split("T")[0]],
+      user_name: [data.user_name],
+      bio: [data.bio],
       email: [data.email],
-      phone_number: [data.phone_number],
-      linked_in_profile: [data.linked_in_profile.toString()],
       telegram_id: [data.telegram_id.toString()],
       twitter_id: [data.twitter_id.toString()],
-      preferred_icp_hub: [data.hub],
+      country: [data.hub],
+      area_of_intrest: [data.areas_of_expertise],
+      profile_picture: [imageData],
     };
 
-    // console.log("founderdata => ", founderData);
+    console.log("userData => ", userData);
 
-//     try {
-//       const result = await actor.register_founder_caller(founderData);
-//       toast.success(result);
-//       console.log("data passed to backend");
-//       await dispatch(userRoleHandler());
-//       await navigate("/dashboard");
-//     } catch (error) {
-//       toast.error(error);
-//       console.error("Error sending data to the backend:", error);
-//     }
+    try {
+      const result = await actor.register_user(userData);
+      toast.success(result);
+      console.log("data passed to backend");
+      await dispatch(userRoleHandler());
+      await navigate("/dashboard");
+    } catch (error) {
+      toast.error(error);
+      console.error("Error sending data to the backend:", error);
+    }
   };
 
   const handleFocus = (field) => {
@@ -103,6 +163,71 @@ const NormalUser = () => {
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmitHandler)} className="w-full px-4">
+        <div className="flex flex-col">
+          <div className="flex-row w-full flex justify-start gap-4 items-center">
+            <div className="mb-3 ml-6 h-24 w-24 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
+              {isLoading ? (
+                <div>Loading...</div>
+              ) : imagePreview ? (
+                <img
+                  src={imagePreview}
+                  alt="Profile"
+                  className="h-full w-full object-cover"
+                />
+              ) : formFields.imageData ? (
+                <img
+                  src={formFields?.imageData}
+                  alt="User"
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <svg
+                  width="35"
+                  height="37"
+                  viewBox="0 0 35 37"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="bg-no-repeat"
+                >
+                  <path
+                    d="M8.53049 8.62583C8.5304 13.3783 12.3575 17.2449 17.0605 17.2438C21.7634 17.2428 25.5907 13.3744 25.5908 8.62196C25.5909 3.8695 21.7638 0.00287764 17.0608 0.00394405C12.3579 0.00501045 8.53058 3.87336 8.53049 8.62583ZM32.2249 36.3959L34.1204 36.3954L34.1205 34.4799C34.1206 27.0878 28.1667 21.0724 20.8516 21.0741L13.2692 21.0758C5.95224 21.0775 -3.41468e-05 27.0955 -0.000176714 34.4876L-0.000213659 36.4032L32.2249 36.3959Z"
+                    fill="#BBBBBB"
+                  />
+                </svg>
+              )}
+            </div>
+
+            <Controller
+              name="imageData"
+              control={control}
+              render={({ field }) => (
+                <>
+                  <input
+                    id="images"
+                    type="file"
+                    name="images"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      addImageHandler(file);
+                    }}
+                  />
+                  <label
+                    htmlFor="images"
+                    className="p-2 border-2 border-blue-800 items-center rounded-md text-md bg-transparent text-blue-800 cursor-pointer font-extrabold"
+                  >
+                    Upload Image
+                  </label>
+                </>
+              )}
+            />
+          </div>
+          {errors.imageData && (
+            <span className="mt-1 text-sm text-red-500 font-bold text-start px-4">
+              {errors.imageData.message}
+            </span>
+          )}
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {formFields?.map((field) => (
             <div key={field.id} className="relative z-0 group mb-6">
@@ -169,40 +294,40 @@ const NormalUser = () => {
               </span>
             )}
           </div>
-          <div className="px-4 z-0 w-full group">
-          <label
-            htmlFor="areas_of_expertise"
-            className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-          >
-             What are your interests?
-          </label>
-          <select
-            {...register("areas_of_expertise")}
-            className={`bg-gray-50 border-2 ${
-              errors.areas_of_expertise
-                ? "border-red-500 placeholder:text-red-500"
-                : "border-[#737373]"
-            } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-          >
-            <option className="text-lg font-bold" value="">
-            interests ⌄
-            </option>
-            {areaOfExpertise?.map((expert) => (
-              <option
-                key={expert.id}
-                value={`${expert.name}`}
-                className="text-lg font-bold"
-              >
-                {expert.name} 
+          <div className="z-0 w-full group">
+            <label
+              htmlFor="areas_of_expertise"
+              className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+            >
+              What are your interests?
+            </label>
+            <select
+              {...register("areas_of_expertise")}
+              className={`bg-gray-50 border-2 ${
+                errors.areas_of_expertise
+                  ? "border-red-500 placeholder:text-red-500"
+                  : "border-[#737373]"
+              } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+            >
+              <option className="text-lg font-bold" value="">
+                interests ⌄
               </option>
-            ))}
-          </select>
-          {errors.areas_of_expertise && (
+              {areaOfExpertise?.map((expert) => (
+                <option
+                  key={expert.id}
+                  value={`${expert.name}`}
+                  className="text-lg font-bold"
+                >
+                  {expert.name}
+                </option>
+              ))}
+            </select>
+            {errors.areas_of_expertise && (
               <span className="mt-1 text-sm text-red-500 font-bold">
-              {errors.areas_of_expertise.message}
-            </span>
-          )}
-        </div>
+                {errors.areas_of_expertise.message}
+              </span>
+            )}
+          </div>
         </div>
         <div className="flex justify-end mt-4">
           <button

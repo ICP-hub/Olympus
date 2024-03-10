@@ -35,6 +35,7 @@ import HubDeclined from "./components/HubDeclined/HubDeclined";
 
 import { areaOfExpertiseHandlerRequest } from "./components/StateManagement/Redux/Reducers/getAreaOfExpertise";
 import NormalUser from "./components/RoleSelector/NormalUser";
+import MentorRegistration from "./components/Registration/MentorRegistration/MentorRegistration";
 
 const App = () => {
   const identity = useSelector((currState) => currState.internet.identity);
@@ -49,7 +50,7 @@ const App = () => {
   // const actor = useSelector((currState) => currState.actors.actor);
   // const userRole = useSelector((currState) => currState.current.specificRole);
 
-  console.log("specificRole in app.jsx", specificRole);
+  // console.log("specificRole in app.jsx", specificRole);
 
   const [isModalOpen, setModalOpen] = useState(false);
 
@@ -103,9 +104,9 @@ const App = () => {
 
   return (
     <>
-      {isModalOpen && (
+      {/* {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-50"></div>
-      )}
+      )} */}
       <Header setModalOpen={setModalOpen} gradient={"bg-gray-100"} />
       <ConnectWallet
         isModalOpen={isModalOpen}
@@ -130,6 +131,7 @@ const App = () => {
       {/* <RoleSelector /> */}
       <NormalUser />
       {/* <AppRoutes /> */}
+      {/* <MentorRegistration /> */}
       <Footer />
     </>
   );

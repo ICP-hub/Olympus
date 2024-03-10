@@ -11,63 +11,44 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::io::Read;
 
+use crate::user_module::UserInformation;
 use crate::{
     hub_organizer,
     register_user::{self, get_founder_info},
 };
 
-#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
-pub struct DocsInfo {
-    pitch_deck: Option<String>,
-    white_paper: Option<String>,
-    technical_docs: Option<String>,
-    tokenomics: Option<String>,
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
-pub struct SocialLinksInfo {
-    twitter: Option<String>,
-    linkedin: Option<String>,
-    facebook: Option<String>,
-}
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct TeamMember {
-    member_image: Option<Vec<u8>>,
-    member_name: Option<String>,
-    member_role: Option<String>,
-    social_links: Option<SocialLinksInfo>,
-    member_username: Option<String>,
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
-pub struct ThirtyInfoProject {
-    project_name: Option<String>,
-    project_logo: Option<Vec<u8>>,
-    project_cover: Option<Vec<u8>>,
-    project_area_of_focus: Option<String>,
-    project_description: Option<String>,
-    project_url: Option<String>,
-    social_links: Option<SocialLinksInfo>,
-    preferred_icp_hub: Option<String>,
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
-pub struct SeventyInfoProject {
-    tags: Option<String>,
-    project_creation_date: Option<String>,
-    technology_stack: Option<String>,
-    video_link: Option<String>,
-    development_stage: Option<String>,
-    docs: Option<DocsInfo>,
-    team: Option<Vec<TeamMember>>,
+    member_uid: String,
+    member_data: UserInformation
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct ProjectInfo {
-    thirty_info: Option<ThirtyInfoProject>,
-    seventy_info: Option<SeventyInfoProject>,
+    project_name: String,
+    project_logo: Vec<u8>,
+    preferred_icp_hub: Option<String>,
+    live_on_icp_mainnet: Option<String>,
+    money_raised_till_now: Option<String>,
+    supports_multichain: Option<String>,
+    project_elevator_pitch: Vec<u8>,
+    project_area_of_focus: String,
+    promotional_video: String,
+    github_link: String,
+    reason_to_join_incubator: String,
+    project_description: String,
+    project_cover: Vec<u8>,
+    creation_date: String,
+    project_team: Option<TeamMember>,
+    token_economics: String,
+    technical_docs: String,
+    long_term_goals: String,
+    target_market: String,
+    self_rating_of_project: f64,
+    user_data: UserInformation
 }
+
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct ProjectInfoInternal {
@@ -143,7 +124,7 @@ pub fn pre_upgrade() {
 //     });
 // }
 
-pub async fn create_project(thirty_info: ThirtyInfoProject) -> String {
+pub async fn create_project(info: ProjectInfo) -> String {
     let caller = caller();
     let founder_info = get_founder_info();
 
@@ -166,19 +147,14 @@ pub async fn create_project(thirty_info: ThirtyInfoProject) -> String {
         name: name.unwrap_or_else(|| "Unknown Founder".to_string()),
         image: image.unwrap_or_else(|| vec![]),
     };
-
+    let info_clone = info.clone();
+    let user_uid = crate::user_module::update_user(info_clone.user_data).await;
     let uuids = raw_rand().await.unwrap().0;
     let uid = format!("{:x}", Sha256::digest(&uuids));
     let new_id = uid.clone().to_string();
 
-    let thirty_info_clone = thirty_info.clone();
-    let project = ProjectInfo {
-        thirty_info: Some(thirty_info),
-        seventy_info: None,
-    };
-
     let new_project = ProjectInfoInternal {
-        params: project,
+        params: info.clone(),
         uid: new_id,
         is_active: true,
         is_verified: false,
@@ -191,7 +167,7 @@ pub async fn create_project(thirty_info: ThirtyInfoProject) -> String {
             .push(new_project);
     });
 
-    if let Some(region) = &thirty_info_clone.preferred_icp_hub {
+    if let Some(region) = &info.preferred_icp_hub {
         let hub_principals =
             crate::hub_organizer::get_hub_organizer_principals_by_region(region.clone());
         let noti_uuids = raw_rand().await.unwrap().0;
@@ -273,122 +249,45 @@ pub fn list_all_projects() -> Vec<ProjectInfo> {
     projects
 }
 
-pub fn update_project_docs(project_id: String, docs: DocsInfo) -> String {
-    let caller = caller();
-    let mut is_updated = false;
-    APPLICATION_FORM.with(|storage| {
-        if let Some(projects) = storage.borrow_mut().get_mut(&caller) {
-            if let Some(project_internal) = projects.iter_mut().find(|p| p.uid == project_id) {
-                if let Some(seventy_info) = &mut project_internal.params.seventy_info {
-                    seventy_info.docs = Some(docs);
-                }
-                is_updated = true;
-            }
-        }
-    });
-    if is_updated {
-        "Document Details are Updated Successfully".to_string()
-    }else{
-        "Please Provide valid Project Id".to_string()
-    }
-}
-
-pub fn update_team_member(project_id: String, team_member: TeamMember) -> String {
-    let caller = caller();
-    let mut is_updated = false;
-    APPLICATION_FORM.with(|storage| {
-        if let Some(projects) = storage.borrow_mut().get_mut(&caller) {
-            if let Some(project_internal) = projects.iter_mut().find(|p| p.uid == project_id) {
-                if let Some(seventy_info) = &mut project_internal.params.seventy_info {
-                    if seventy_info.team.is_none() {
-                        seventy_info.team = Some(Vec::new());
-                    }
-                    let team = seventy_info.team.as_mut().unwrap();
-                    match team
-                        .iter_mut()
-                        .find(|m| m.member_username == team_member.member_username)
-                    {
-                        Some(existing_member) => *existing_member = team_member,
-                        None => team.push(team_member),
-                    }
-                    is_updated = true;
-                }
-            }
-        }
-    });
-    if is_updated{
-            "Team Member Details are Updated Successfully".to_string()
-        }else{
-            "Please Provide valid Project Id".to_string()
-        }
-}
 
 pub fn update_project(project_id: String, updated_project: ProjectInfo) -> String {
     let caller = caller();
-    let mut is_updated = true;
+    let mut is_updated = false;
+
     APPLICATION_FORM.with(|storage| {
         if let Some(projects) = storage.borrow_mut().get_mut(&caller) {
             if let Some(project_internal) = projects.iter_mut().find(|p| p.uid == project_id) {
-                if let Some(ref mut thirty_info) = project_internal.params.thirty_info {
-                    if let Some(updated_thirty_info) = &updated_project.thirty_info {
-                        thirty_info.project_name = updated_thirty_info
-                            .project_name
-                            .clone()
-                            .or(thirty_info.project_name.clone());
-                        thirty_info.project_logo = updated_thirty_info
-                            .project_logo
-                            .clone()
-                            .or(thirty_info.project_logo.clone());
-                        thirty_info.project_cover = updated_thirty_info
-                            .project_cover
-                            .clone()
-                            .or(thirty_info.project_cover.clone());
-                        thirty_info.project_area_of_focus = updated_thirty_info
-                            .project_area_of_focus
-                            .clone()
-                            .or(thirty_info.project_area_of_focus.clone());
-                        thirty_info.project_description = updated_thirty_info
-                            .project_description
-                            .clone()
-                            .or(thirty_info.project_description.clone());
-                        thirty_info.project_url = updated_thirty_info
-                            .project_url
-                            .clone()
-                            .or(thirty_info.project_url.clone());
-                    }
-                }
-                if let Some(ref mut seventy_info) = project_internal.params.seventy_info {
-                    if let Some(updated_seventy_info) = &updated_project.seventy_info {
-                        seventy_info.tags = updated_seventy_info
-                            .tags
-                            .clone()
-                            .or(seventy_info.tags.clone());
-                        seventy_info.project_creation_date = updated_seventy_info
-                            .project_creation_date
-                            .clone()
-                            .or(seventy_info.project_creation_date.clone());
-                        seventy_info.technology_stack = updated_seventy_info
-                            .technology_stack
-                            .clone()
-                            .or(seventy_info.technology_stack.clone());
-                        seventy_info.video_link = updated_seventy_info
-                            .video_link
-                            .clone()
-                            .or(seventy_info.video_link.clone());
-                        seventy_info.development_stage = updated_seventy_info
-                            .development_stage
-                            .clone()
-                            .or(seventy_info.development_stage.clone());
-                    }
-                }
+                // Update fields directly
+                project_internal.params.project_name = updated_project.project_name;
+                project_internal.params.project_logo = updated_project.project_logo;
+                project_internal.params.preferred_icp_hub = updated_project.preferred_icp_hub;
+                project_internal.params.live_on_icp_mainnet = updated_project.live_on_icp_mainnet;
+                project_internal.params.money_raised_till_now = updated_project.money_raised_till_now;
+                project_internal.params.supports_multichain = updated_project.supports_multichain;
+                project_internal.params.project_elevator_pitch = updated_project.project_elevator_pitch;
+                project_internal.params.project_area_of_focus = updated_project.project_area_of_focus;
+                project_internal.params.promotional_video = updated_project.promotional_video;
+                project_internal.params.github_link = updated_project.github_link;
+                project_internal.params.reason_to_join_incubator = updated_project.reason_to_join_incubator;
+                project_internal.params.project_description = updated_project.project_description;
+                project_internal.params.project_cover = updated_project.project_cover;
+                project_internal.params.creation_date = updated_project.creation_date;
+                project_internal.params.project_team = updated_project.project_team;
+                project_internal.params.token_economics = updated_project.token_economics;
+                project_internal.params.technical_docs = updated_project.technical_docs;
+                project_internal.params.long_term_goals = updated_project.long_term_goals;
+                project_internal.params.target_market = updated_project.target_market;
+                project_internal.params.self_rating_of_project = updated_project.self_rating_of_project;
+
                 is_updated = true;
             }
         }
     });
+
     if is_updated {
         "Project Details are Updated Successfully".to_string()
     } else {
-        "Please Provide valid Input".to_string()
+        "Failed to update project. Please provide a valid project ID.".to_string()
     }
 }
 
@@ -546,4 +445,33 @@ pub fn get_notifications_for_owner() -> Vec<NotificationForOwner> {
             .cloned()
             .unwrap_or_else(Vec::new)
     })
+}
+
+
+pub async fn update_team_member(project_id: &str, member_uid: String) -> String {
+    let user_info_result = crate::user_module::get_user_info_by_id(member_uid.clone()).await;
+    
+    let user_info = match user_info_result {
+        Ok(info) => info,
+        Err(err) => return format!("Failed to retrieve user info: {}", err),
+    };
+
+    let mut project_found = false;
+    let mut member_updated = false;
+    APPLICATION_FORM.with(|storage| {
+        let mut storage = storage.borrow_mut();
+        if let Some(project_internal) = storage.values_mut().flat_map(|v| v.iter_mut()).find(|p| p.uid == project_id) {
+            project_found = true;
+            project_internal.params.project_team = Some(TeamMember {
+                member_uid: member_uid.clone(),
+                member_data: user_info,
+            });
+            member_updated = true;
+        }
+    });
+    match (project_found, member_updated) {
+        (true, true) => "Team member updated successfully.".to_string(),
+        (true, false) => "Failed to update the team member in the specified project.".to_string(),
+        _ => "Project not found.".to_string(),
+    }
 }

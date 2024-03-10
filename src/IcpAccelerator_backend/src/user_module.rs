@@ -8,7 +8,7 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default)]
-pub struct UserInformation {
+pub struct UserInformation{
     pub full_name: String,
     pub profile_picture: Option<Vec<u8>>,
     pub email: Option<String>,
@@ -43,41 +43,10 @@ pub type UserInfoStorage = HashMap<Principal, UserInfoInternal>;
 
 thread_local! {
     pub static USER_STORAGE: RefCell<UserInfoStorage> = RefCell::new(UserInfoStorage::new());
-    pub static ROLE_STATUS_ARRAY : RefCell<Vec<Role>> = RefCell::new(vec![]);
 }
 
-
-
-pub fn initialize_roles() {
-    ic_cdk::println!("inside initialize func ");
-    let initial_roles = vec![
-        Role {
-            name: "user".to_string(),
-            status: "default".to_string(),
-        },
-        Role {
-            name: "project".to_string(),
-            status: "default".to_string(),
-        },
-        Role {
-            name: "mentor".to_string(),
-            status: "default".to_string(),
-        },
-        Role {
-            name: "vc".to_string(),
-            status: "default".to_string(),
-        },
-    ];
-
-    ROLE_STATUS_ARRAY.with(|roles_arr| {
-        let mut arr = roles_arr.borrow_mut();
-        *arr = initial_roles;
-    })
-}
-
-pub async fn register_user_role(info: UserInformation) -> String {
-    initialize_roles();
-
+#[update]
+pub async fn register_user_role(info: UserInformation)->std::string::String{
     let caller = caller();
     let uuids = raw_rand().await.unwrap().0;
     let uid = format!("{:x}", Sha256::digest(&uuids));
@@ -118,37 +87,7 @@ pub async fn register_user_role(info: UserInformation) -> String {
 }
 
 #[query]
-pub fn get_role_status() -> Vec<Role> {
-    ROLE_STATUS_ARRAY.with(|r| r.borrow().clone())
-}
-
-// #[update]
-// pub fn switch_role(role : String, status: String){
-
-//     ROLE_STATUS_ARRAY.with(|status_arr|{
-//         let mut status_arr = status_arr.borrow_mut();
-//         let mut made_active = false;
-//         for r in status_arr.iter_mut(){
-//                 if r.name == role{
-//                     if r.status == "approved" {
-//                         r.status = "active".to_string();
-//                         made_active = true;
-//                     }else{
-//                         "you are not approved".to_string();
-//                     }
-//                 }
-
-//                 if r.status == "active"{
-//                     if r.status 
-//                 }
-                
-//         }
-//     });
-
-    
-// }
-
-pub fn get_user_info() -> Result<UserInformation, &'static str> {
+pub fn get_user_info() -> Result<UserInformation, &'static str>  {
     let caller = caller();
 
     USER_STORAGE.with(|registry| {
@@ -160,6 +99,7 @@ pub fn get_user_info() -> Result<UserInformation, &'static str> {
     })
 }
 
+#[query]
 pub fn list_all_users() -> Vec<UserInformation> {
     USER_STORAGE.with(|storage| {
         storage
@@ -170,7 +110,8 @@ pub fn list_all_users() -> Vec<UserInformation> {
     })
 }
 
-pub fn delete_user() -> std::string::String {
+#[update]
+pub fn delete_user()->std::string::String {
     let caller = caller();
     USER_STORAGE.with(|storage| {
         let mut storage = storage.borrow_mut();
@@ -185,3 +126,4 @@ pub fn delete_user() -> std::string::String {
         }
     })
 }
+
