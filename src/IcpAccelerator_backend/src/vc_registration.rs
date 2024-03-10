@@ -255,3 +255,46 @@ pub fn update_venture_capitalist(params: VentureCapitalist) -> String {
     });
     result
 }
+
+#[query]
+pub fn get_multichain_list() -> Vec<String> {
+    let chains = vec![
+        "Ethereum".to_string(),
+        "Polygon".to_string(),
+        "Arbitrum".to_string(),
+        "Optimism".to_string(),
+        "Base".to_string(),
+        "zkSync".to_string(),
+        "Avalanche".to_string(),
+        "Gnosis".to_string(),
+        "BNB".to_string(),
+        "Scroll".to_string(),
+        "Moonbeam".to_string(),
+        "Aurora".to_string(),
+        "Linea".to_string(),
+        "Fantom".to_string(),
+        "Mantle".to_string(),
+        "Axelar".to_string(),
+        "Zora Network".to_string(),
+        "Solana".to_string(),
+        "Celo".to_string(),
+        "Boba".to_string(),
+        "Metis".to_string(),
+        "Harmony".to_string(),
+        "Kava".to_string(),
+        "Klaytn".to_string(),
+        "Polkadot".to_string(),
+        "Skale".to_string(),
+        "Shardeum Sphinx".to_string(),
+        "Filecoin".to_string(),
+        "Cronos".to_string(),
+        "Telos".to_string(),
+        "Reef".to_string(),
+        "Celestia".to_string(),
+        "Zeta".to_string(),
+        "Evmos".to_string(),
+        "Osmosis".to_string(),
+        "Nordek".to_string(),
+    ];
+    chains
+}

@@ -307,6 +307,7 @@ service : {
     ) query;
   get_mentor_by_expertise : (text) -> (vec MentorProfile) query;
   get_mentor_candid : () -> (opt MentorProfile) query;
+  get_multichain_list : () -> (vec text) query;
   get_my_id : () -> (principal) query;
   get_notifications_for_hubs : () -> (vec NotificationProject) query;
   get_popular_listed_project : () -> (vec ProjectInfoInternal) query;
