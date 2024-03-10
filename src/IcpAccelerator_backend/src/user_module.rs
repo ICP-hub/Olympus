@@ -1,45 +1,88 @@
 use candid::{CandidType, Principal};
 use ic_cdk::api::caller;
-use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
-use std::cell::RefCell;
 use ic_cdk::api::management_canister::main::raw_rand;
+use ic_cdk_macros::{init, query, update};
+use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
-use ic_cdk_macros::{query, update};
+use std::cell::RefCell;
+use std::collections::HashMap;
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default)]
-pub struct UserInformation{
+pub struct UserInformation {
     pub full_name: String,
     pub profile_picture: Option<Vec<u8>>,
     pub email: Option<String>,
     pub country: String,
     pub telegram_id: Option<String>,
     pub bio: Option<String>,
-    pub area_of_intrest: String, 
+    pub area_of_intrest: String,
     pub twitter_id: Option<String>,
     pub role: String,
 }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default)]
-pub struct UserInfoInternal{
-    pub uid : String,
+pub struct UserInfoInternal {
+    pub uid: String,
     pub params: UserInformation,
     pub is_active: bool,
+}
+
+#[derive(CandidType, Clone)]
+pub struct Role {
+    pub name: String,
+    pub status: String,
+}
+
+#[derive(CandidType, Clone)]
+pub struct RegisterResponse {
+    id: String,
+    roles_array_status: Vec<Role>,
 }
 
 pub type UserInfoStorage = HashMap<Principal, UserInfoInternal>;
 
 thread_local! {
     pub static USER_STORAGE: RefCell<UserInfoStorage> = RefCell::new(UserInfoStorage::new());
+    pub static ROLE_STATUS_ARRAY : RefCell<Vec<Role>> = RefCell::new(vec![]);
 }
 
-#[update]
-pub async fn register_user_role(info: UserInformation)->std::string::String{
+
+
+pub fn initialize_roles() {
+    ic_cdk::println!("inside initialize func ");
+    let initial_roles = vec![
+        Role {
+            name: "user".to_string(),
+            status: "default".to_string(),
+        },
+        Role {
+            name: "project".to_string(),
+            status: "default".to_string(),
+        },
+        Role {
+            name: "mentor".to_string(),
+            status: "default".to_string(),
+        },
+        Role {
+            name: "vc".to_string(),
+            status: "default".to_string(),
+        },
+    ];
+
+    ROLE_STATUS_ARRAY.with(|roles_arr| {
+        let mut arr = roles_arr.borrow_mut();
+        *arr = initial_roles;
+    })
+}
+
+pub async fn register_user_role(info: UserInformation) -> String {
+    initialize_roles();
+
     let caller = caller();
     let uuids = raw_rand().await.unwrap().0;
     let uid = format!("{:x}", Sha256::digest(&uuids));
     let new_id = uid.clone().to_string();
-    
+
     let user_info_internal = UserInfoInternal {
         uid: new_id.clone(),
         params: info,
@@ -53,12 +96,61 @@ pub async fn register_user_role(info: UserInformation)->std::string::String{
             storage.insert(caller, user_info_internal);
         }
     });
+
+    ROLE_STATUS_ARRAY.with(|role_status| {
+        let mut role_status = role_status.borrow_mut();
+
+        for role in role_status.iter_mut() {
+            if role.name == "user" {
+                role.status = "active".to_string();
+                break;
+            }
+        }
+    });
+
+    //let roles_array_status = ROLE_STATUS_ARRAY.with(|r| r.borrow().clone());
+
     format!("User registered successfully with ID: {}", new_id)
+    // RegisterResponse {
+    //     id: new_id,
+    //     roles_array_status,
+    // }
 }
 
 #[query]
-pub fn get_user_info() -> Result<UserInformation, &'static str>  {
+pub fn get_role_status() -> Vec<Role> {
+    ROLE_STATUS_ARRAY.with(|r| r.borrow().clone())
+}
+
+// #[update]
+// pub fn switch_role(role : String, status: String){
+
+//     ROLE_STATUS_ARRAY.with(|status_arr|{
+//         let mut status_arr = status_arr.borrow_mut();
+//         let mut made_active = false;
+//         for r in status_arr.iter_mut(){
+//                 if r.name == role{
+//                     if r.status == "approved" {
+//                         r.status = "active".to_string();
+//                         made_active = true;
+//                     }else{
+//                         "you are not approved".to_string();
+//                     }
+//                 }
+
+//                 if r.status == "active"{
+//                     if r.status 
+//                 }
+                
+//         }
+//     });
+
+    
+// }
+
+pub fn get_user_info() -> Result<UserInformation, &'static str> {
     let caller = caller();
+
     USER_STORAGE.with(|registry| {
         registry
             .borrow()
@@ -68,28 +160,28 @@ pub fn get_user_info() -> Result<UserInformation, &'static str>  {
     })
 }
 
-#[query]
 pub fn list_all_users() -> Vec<UserInformation> {
-    USER_STORAGE.with(|storage| 
+    USER_STORAGE.with(|storage| {
         storage
             .borrow()
             .values()
-            .map(|user_internal| user_internal.params.clone()) 
-            .collect() 
-    )
+            .map(|user_internal| user_internal.params.clone())
+            .collect()
+    })
 }
 
-#[update]
-pub fn delete_user()->std::string::String {
+pub fn delete_user() -> std::string::String {
     let caller = caller();
     USER_STORAGE.with(|storage| {
         let mut storage = storage.borrow_mut();
         if let Some(founder) = storage.get_mut(&caller) {
-            founder.is_active = false; 
+            founder.is_active = false;
             format!("User deactivated for caller: {:?}", caller.to_string())
         } else {
-            format!("User is not Registered For This Principal: {:?}", caller.to_string())
+            format!(
+                "User is not Registered For This Principal: {:?}",
+                caller.to_string()
+            )
         }
     })
 }
-

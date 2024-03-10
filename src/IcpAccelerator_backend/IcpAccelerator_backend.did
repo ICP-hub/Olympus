@@ -142,6 +142,7 @@ type Rating = record {
 type Request = record { mentor : opt MentorInternal; "text" : text };
 type Result = variant { Ok : UserInformation; Err : text };
 type Role = record { id : int32; name : text };
+type Role_1 = record { status : text; name : text };
 type RolesResponse = record { roles : vec Role };
 type SeventyInfoFounder = record {
   founder_image : opt vec nat8;
@@ -285,7 +286,7 @@ type VentureCapitalist = record {
   location : opt text;
   technological_focus : opt text;
 };
-service : {
+service : () -> {
   add_suggestion_caller : (text, text) -> (nat64, text);
   approve_mentor_creation_request_candid : (principal, bool) -> (text);
   calculate_average_api : (text) -> (opt float64) query;
@@ -295,7 +296,6 @@ service : {
   delete_founder_caller : () -> (text);
   delete_mentor_candid : () -> (text);
   delete_project : (text) -> (text);
-  delete_user : () -> (text);
   delete_venture_capitalist_caller : () -> (text);
   get_admin_notifications : (principal) -> (vec Notification) query;
   get_all_mentors_candid : () -> (vec MentorProfile) query;
@@ -326,10 +326,10 @@ service : {
   get_projects_for_caller : () -> (vec ProjectInfo) query;
   get_role : () -> (RolesResponse) query;
   get_role_from_p_id : () -> (opt vec UserRole) query;
+  get_role_status : () -> (vec Role_1) query;
   get_suggestions_by_parent_id_caller : (text, nat64) -> (vec Suggestion) query;
   get_suggestions_by_status_caller : (text, text) -> (vec Suggestion) query;
   get_total_suggestions : (text) -> (nat64) query;
-  get_user_info : () -> (Result) query;
   get_user_information : () -> (Result) query;
   get_user_likes : (text) -> (opt LikeRecord) query;
   get_venture_capitalist_info : () -> (opt VentureCapitalist) query;
@@ -338,7 +338,6 @@ service : {
   like_project : (text) -> (text);
   list_all_founders : () -> (vec FounderInfo) query;
   list_all_projects : () -> (vec ProjectInfo) query;
-  list_all_users : () -> (vec UserInformation) query;
   list_all_venture_capitalist : () -> (vec VentureCapitalist) query;
   make_active_inactive_mentor : (principal) -> (text);
   make_user_inactive : () -> (text);
@@ -347,7 +346,6 @@ service : {
   register_hub_organizer_candid : (HubOrganizerRegistration) -> (text);
   register_mentor_candid : (MentorProfile) -> (text);
   register_user : (UserInformation) -> (text);
-  register_user_role : (UserInformation) -> (text);
   register_venture_capitalist_caller : (VentureCapitalist) -> (text);
   reply_to_suggestion_caller : (nat64, text, text) -> (nat64, text);
   respond_to_connection_request_candid : (principal, bool) -> (text);

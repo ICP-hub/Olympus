@@ -6,9 +6,10 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::collections::HashMap;
 extern crate serde_cbor;
-use std::cell::RefCell;
-use crate::trie::EXPERTISE_TRIE;
 use crate::admin::send_approval_request;
+use crate::trie::EXPERTISE_TRIE;
+use crate::user_module::ROLE_STATUS_ARRAY;
+use std::cell::RefCell;
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, Default)]
 pub struct MentorProfile {
@@ -43,12 +44,11 @@ pub type MentorRegistry = HashMap<Principal, MentorInternal>;
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, Default)]
 pub struct MentorInternal {
-
     pub profile: MentorProfile,
     pub uid: String,
     pub active: bool,
-    pub approve : bool,
-    pub decline : bool
+    pub approve: bool,
+    pub decline: bool,
 }
 
 thread_local! {
@@ -57,14 +57,12 @@ thread_local! {
     pub static DECLINED_MENTOR_REQUESTS: RefCell<MentorRegistry> = RefCell::new(MentorRegistry::new());
 }
 
-
-
-pub async fn register_mentor(profile: MentorProfile) -> String{
+pub async fn register_mentor(profile: MentorProfile) -> String {
     let caller = caller();
 
-    DECLINED_MENTOR_REQUESTS.with(|d_mentors|{
+    DECLINED_MENTOR_REQUESTS.with(|d_mentors| {
         let exits = d_mentors.borrow().contains_key(&caller);
-        if exits{
+        if exits {
             panic!("You had got your request declined earlier");
         }
     });
@@ -72,33 +70,40 @@ pub async fn register_mentor(profile: MentorProfile) -> String{
     let random_bytes = raw_rand().await.expect("Failed to generate random bytes").0;
 
     let uid = format!("{:x}", Sha256::digest(&random_bytes));
-    
+
     // let already_registered = MENTOR_REGISTRY.with(|registry| registry.borrow().contains_key(&caller));
 
     // if already_registered {
-        
+
     //     ic_cdk::println!("This Principal is already registered");
     //     return "This Principal is already registered.".to_string()}
 
-
     let profile_for_pushing = profile.clone();
-
-
 
     let mentor_internal = MentorInternal {
         profile: profile_for_pushing,
         uid: uid.clone(),
-        active : true,
-        approve : false,
-        decline : false
+        active: true,
+        approve: false,
+        decline: false,
     };
 
-    MENTOR_AWAITS_RESPONSE.with(|awaiters: &RefCell<HashMap<Principal, MentorInternal>>|{
-        let mut await_ers: std::cell::RefMut<'_, HashMap<Principal, MentorInternal>> = awaiters.borrow_mut();
+    MENTOR_AWAITS_RESPONSE.with(|awaiters: &RefCell<HashMap<Principal, MentorInternal>>| {
+        let mut await_ers: std::cell::RefMut<'_, HashMap<Principal, MentorInternal>> =
+            awaiters.borrow_mut();
         await_ers.insert(caller, mentor_internal);
     });
 
     let res = send_approval_request().await;
+
+    ROLE_STATUS_ARRAY.with(|role_status| {
+        let mut role_status = role_status.borrow_mut();
+        for role in role_status.iter_mut(){
+            if role.name == "mentor"{
+                role.status = "requested".to_string();
+            }
+        }
+    });
 
     format!("{}", res)
 
@@ -114,7 +119,6 @@ pub async fn register_mentor(profile: MentorProfile) -> String{
     // }
 }
 
-
 pub fn get_mentor() -> Option<MentorProfile> {
     let caller = caller();
     MENTOR_REGISTRY.with(|registry| {
@@ -125,13 +129,11 @@ pub fn get_mentor() -> Option<MentorProfile> {
     })
 }
 
-
 pub fn update_mentor(updated_profile: MentorProfile) -> String {
     let caller = caller();
     let result = MENTOR_REGISTRY.with(|registry| {
         let mut registry = registry.borrow_mut();
         if let Some(mentor_internal) = registry.get_mut(&caller) {
-
             mentor_internal.profile.full_name = updated_profile
                 .full_name
                 .or(mentor_internal.profile.full_name.clone());
@@ -247,7 +249,6 @@ pub fn update_mentor(updated_profile: MentorProfile) -> String {
     result
 }
 
-
 pub fn delete_mentor() -> String {
     let caller = caller();
     let removed = MENTOR_REGISTRY.with(|registry| registry.borrow_mut().remove(&caller).is_some());
@@ -259,7 +260,6 @@ pub fn delete_mentor() -> String {
     }
 }
 
-
 pub fn get_all_mentors() -> Vec<MentorProfile> {
     MENTOR_REGISTRY.with(|registry| {
         registry
@@ -270,37 +270,30 @@ pub fn get_all_mentors() -> Vec<MentorProfile> {
     })
 }
 
-
-pub fn make_active_inactive(p_id : Principal)-> String{
-    
-    MENTOR_REGISTRY.with(|m_container|{
+pub fn make_active_inactive(p_id: Principal) -> String {
+    MENTOR_REGISTRY.with(|m_container| {
         let mut tutor_hashmap = m_container.borrow_mut();
-        if let Some(mentor_internal) = tutor_hashmap.get_mut(&p_id){
-
+        if let Some(mentor_internal) = tutor_hashmap.get_mut(&p_id) {
             if mentor_internal.active {
                 let active = false;
                 mentor_internal.active = active;
 
                 //ic_cdk::println!("mentor profile check status {:?}", mentor_internal);
-                return "made inactive".to_string()
-
-            }else{
+                return "made inactive".to_string();
+            } else {
                 let active = true;
                 mentor_internal.active = active;
                 //ic_cdk::println!("mentor profile check status {:?}", mentor_internal);
-                return "made active".to_string()
+                return "made active".to_string();
             }
-            
-        }else{
+        } else {
             "profile seems not to be existed".to_string()
         }
-
-
     })
 }
 
 pub fn find_mentors_by_expertise(expertise_keyword: &str) -> Vec<MentorProfile> {
-    let keyword = expertise_keyword; 
+    let keyword = expertise_keyword;
     let mentor_principals = EXPERTISE_TRIE.with(|trie| trie.borrow().search(keyword));
 
     let mut mentor_profiles = Vec::new();
@@ -315,6 +308,3 @@ pub fn find_mentors_by_expertise(expertise_keyword: &str) -> Vec<MentorProfile> 
 
     mentor_profiles
 }
-
-
-

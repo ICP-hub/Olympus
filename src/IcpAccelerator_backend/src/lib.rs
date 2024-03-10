@@ -14,7 +14,7 @@ mod vc_registration;
 mod user_module;
 
 use hub_organizer::{HubOrganizerRegistration, UniqueHubs};
-use user_module::UserInformation;
+use user_module::{UserInformation, Role};
 use ic_cdk::api::caller;
 use leaderboard::{
     LeaderboardEntryForLikes, LeaderboardEntryForRatings, LeaderboardEntryForUpvote,
@@ -42,7 +42,7 @@ use crate::ratings::MainLevel;
 use crate::ratings::MainLevelRatings;
 use crate::ratings::Rating;
 use candid::Principal;
-use ic_cdk_macros::{query, update};
+use ic_cdk_macros::{query, update, init};
 use project_registration::{
     DocsInfo, NotificationForOwner, NotificationProject, ProjectInfo, ProjectInfoInternal,
     TeamMember, ThirtyInfoProject,
@@ -60,6 +60,12 @@ fn check_admin() {
     if !ic_cdk::api::is_controller(&caller()){
         ic_cdk::api::trap("This user is unauthorised to use this function");
     }
+}
+
+#[init]
+fn init(){
+    user_module::initialize_roles();
+    ic_cdk::println!("initialization done");
 }
 
 #[update]
@@ -80,7 +86,6 @@ fn get_role_from_p_id() -> Option<HashSet<UserRole>> {
 }
 
 #[update]
-
 pub async fn register_user(profile: UserInformation)->String{
     user_module::register_user_role(profile).await
 }
@@ -271,7 +276,7 @@ async fn register_mentor_candid(profile: MentorProfile) -> String {
 
     assign_roles_to_principal(roles_to_assign);
 
-    "mentor got registered".to_string()
+    "request has been made to mentor".to_string()
 }
 
 #[query]
