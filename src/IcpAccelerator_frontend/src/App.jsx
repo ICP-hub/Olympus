@@ -35,6 +35,7 @@ import HubDeclined from "./components/HubDeclined/HubDeclined";
 
 import { areaOfExpertiseHandlerRequest } from "./components/StateManagement/Redux/Reducers/getAreaOfExpertise";
 import NormalUser from "./components/RoleSelector/NormalUser";
+import MentorRegistration from "./components/Registration/MentorRegistration/MentorRegistration";
 
 const App = () => {
   const identity = useSelector((currState) => currState.internet.identity);
@@ -128,8 +129,9 @@ const App = () => {
       {/* <DashBoard /> */}
       {/* <UserProfile/> */}
       {/* <RoleSelector /> */}
-      {/* <NormalUser /> */}
-      <AppRoutes />
+      <NormalUser />
+      {/* <AppRoutes /> */}
+      {/* <MentorRegistration /> */}
       <Footer />
     </>
   );

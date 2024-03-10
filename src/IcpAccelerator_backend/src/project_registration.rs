@@ -17,12 +17,14 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::io::Read;
 
-#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
-pub struct SocialLinksInfo {
-    twitter: Option<String>,
-    linkedin: Option<String>,
-    facebook: Option<String>,
-}
+
+use crate::user_module::UserInformation;
+use crate::{
+    hub_organizer,
+    register_user::{self, get_founder_info},
+};
+
+
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct TeamMember {
@@ -41,7 +43,7 @@ pub struct ProjectInfo {
     project_elevator_pitch: Vec<u8>,
     project_area_of_focus: String,
     promotional_video: String,
-    social_links: SocialLinksInfo,
+    github_link: String,
     reason_to_join_incubator: String,
     project_description: String,
     project_cover: Vec<u8>,
@@ -52,6 +54,7 @@ pub struct ProjectInfo {
     long_term_goals: String,
     target_market: String,
     self_rating_of_project: f64,
+    user_data: UserInformation
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
@@ -167,7 +170,8 @@ pub async fn create_project(info: ProjectInfo) -> String {
         name: name.unwrap_or_else(|| "Unknown Founder".to_string()),
         image: image.unwrap_or_else(|| vec![]),
     };
-
+    let info_clone = info.clone();
+    let user_uid = crate::user_module::update_user(info_clone.user_data).await;
     let uuids = raw_rand().await.unwrap().0;
     let uid = format!("{:x}", Sha256::digest(&uuids));
     let new_id = uid.clone().to_string();
@@ -288,9 +292,10 @@ pub fn update_project(project_id: String, updated_project: ProjectInfo) -> Strin
                 project_internal.params.project_area_of_focus =
                     updated_project.project_area_of_focus;
                 project_internal.params.promotional_video = updated_project.promotional_video;
-                project_internal.params.social_links = updated_project.social_links;
-                project_internal.params.reason_to_join_incubator =
-                    updated_project.reason_to_join_incubator;
+
+                project_internal.params.github_link = updated_project.github_link;
+                project_internal.params.reason_to_join_incubator = updated_project.reason_to_join_incubator;
+
                 project_internal.params.project_description = updated_project.project_description;
                 project_internal.params.project_cover = updated_project.project_cover;
                 project_internal.params.creation_date = updated_project.creation_date;
