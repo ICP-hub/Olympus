@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { formFields } from "../../components/Utils/Data/userFormData";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import CompressedImage from "../ImageCompressed/CompressedImage";
 import { useDispatch, useSelector } from "react-redux";
 // import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_IcpHubReducer";
 // import { AuthClient } from "@dfinity/auth-client";
@@ -47,6 +48,9 @@ const NormalUser = () => {
   const userFullData = useSelector((currState) => currState.userData);
 
   const [inputType, setInputType] = useState("date");
+  const [imageData, setImageData] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const dispatch = useDispatch();
   //   const navigate = useNavigate();
@@ -63,12 +67,58 @@ const NormalUser = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
     trigger,
+    setError,
+    clearErrors,
+    control,
     reset,
   } = useForm({
     resolver: yupResolver(schema),
     mode: "all",
   });
+  const addImageHandler = useCallback(
+    async (file) => {
+      clearErrors("imageData");
+      if (!file)
+        return setError("imageData", {
+          type: "manual",
+          message: "An image is required",
+        });
+      if (!["image/jpeg", "image/png", "image/gif"].includes(file.type))
+        return setError("imageData", {
+          type: "manual",
+          message: "Unsupported file format",
+        });
+      if (file.size > 1024 * 1024)
+        // 1MB
+        return setError("imageData", {
+          type: "manual",
+          message: "The file is too large",
+        });
 
+      setIsLoading(true);
+      try {
+        const compressedFile = await CompressedImage(file);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImagePreview(reader.result);
+          setIsLoading(false);
+        };
+        reader.readAsDataURL(compressedFile);
+
+        const byteArray = await compressedFile.arrayBuffer();
+        setImageData(Array.from(new Uint8Array(byteArray)));
+        clearErrors("imageData");
+      } catch (error) {
+        console.error("Error processing the image:", error);
+        setError("imageData", {
+          type: "manual",
+          message: "Could not process image, please try another.",
+        });
+        setIsLoading(false);
+      }
+    },
+    [setError, clearErrors, setIsLoading, setImagePreview, setImageData]
+  );
   const onSubmitHandler = async (data) => {
     // console.log("data aaya data aaya ", data);
 
@@ -81,6 +131,7 @@ const NormalUser = () => {
       twitter_id: [data.twitter_id.toString()],
       country: [data.hub],
       area_of_intrest: [data.areas_of_expertise],
+      profile_picture: [imageData],
     };
 
     console.log("userData => ", userData);
@@ -112,6 +163,71 @@ const NormalUser = () => {
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmitHandler)} className="w-full px-4">
+        <div className="flex flex-col">
+          <div className="flex-row w-full flex justify-start gap-4 items-center">
+            <div className="mb-3 ml-6 h-24 w-24 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
+              {isLoading ? (
+                <div>Loading...</div>
+              ) : imagePreview ? (
+                <img
+                  src={imagePreview}
+                  alt="Profile"
+                  className="h-full w-full object-cover"
+                />
+              ) : formFields.imageData ? (
+                <img
+                  src={formFields?.imageData}
+                  alt="User"
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <svg
+                  width="35"
+                  height="37"
+                  viewBox="0 0 35 37"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="bg-no-repeat"
+                >
+                  <path
+                    d="M8.53049 8.62583C8.5304 13.3783 12.3575 17.2449 17.0605 17.2438C21.7634 17.2428 25.5907 13.3744 25.5908 8.62196C25.5909 3.8695 21.7638 0.00287764 17.0608 0.00394405C12.3579 0.00501045 8.53058 3.87336 8.53049 8.62583ZM32.2249 36.3959L34.1204 36.3954L34.1205 34.4799C34.1206 27.0878 28.1667 21.0724 20.8516 21.0741L13.2692 21.0758C5.95224 21.0775 -3.41468e-05 27.0955 -0.000176714 34.4876L-0.000213659 36.4032L32.2249 36.3959Z"
+                    fill="#BBBBBB"
+                  />
+                </svg>
+              )}
+            </div>
+
+            <Controller
+              name="imageData"
+              control={control}
+              render={({ field }) => (
+                <>
+                  <input
+                    id="images"
+                    type="file"
+                    name="images"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      addImageHandler(file);
+                    }}
+                  />
+                  <label
+                    htmlFor="images"
+                    className="p-2 border-2 border-blue-800 items-center rounded-md text-md bg-transparent text-blue-800 cursor-pointer font-extrabold"
+                  >
+                    Upload Image
+                  </label>
+                </>
+              )}
+            />
+          </div>
+          {errors.imageData && (
+            <span className="mt-1 text-sm text-red-500 font-bold text-start px-4">
+              {errors.imageData.message}
+            </span>
+          )}
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {formFields?.map((field) => (
             <div key={field.id} className="relative z-0 group mb-6">

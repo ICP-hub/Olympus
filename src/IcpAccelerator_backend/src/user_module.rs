@@ -110,3 +110,22 @@ pub async fn get_user_info_by_id(uid: String) -> Result<UserInformation, &'stati
         Err("No user found with the given ID.")
     })
 }
+
+pub async fn update_user(info: UserInformation) -> std::string::String {
+    let caller = caller();
+    
+    if info.full_name.trim().is_empty() || info.email.as_ref().map_or(true, |email| email.trim().is_empty()) {
+        return "Please provide input for required fields: full_name and email.".to_string();
+    }
+
+    USER_STORAGE.with(|storage| {
+        let mut storage = storage.borrow_mut();
+        
+        if let Some(user_info_internal) = storage.get_mut(&caller) {
+            user_info_internal.params = info;
+            "User information updated successfully.".to_string()
+        } else {
+            "User not found. Please register before updating.".to_string()
+        }
+    })
+}
