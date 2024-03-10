@@ -1,4 +1,5 @@
 use crate::admin::send_approval_request;
+use crate::user_module::UserInformation;
 use bincode;
 use candid::{CandidType, Principal};
 use ic_cdk::api::caller;
@@ -29,6 +30,7 @@ pub struct VentureCapitalist {
     number_of_portfolio_companies: u16,
     portfolio_link: String,
     announcement_details: String,
+    user_data: UserInformation,
 }
 
 impl VentureCapitalist {
@@ -244,6 +246,7 @@ pub fn update_venture_capitalist(params: VentureCapitalist) -> String {
             vc_internal.params.money_invested = params.money_invested;
             vc_internal.params.preferred_icp_hub = params.preferred_icp_hub;
             vc_internal.params.type_of_investment = params.type_of_investment;
+            vc_internal.params.user_data = params.user_data;
 
             "Venture Capitalist profile updated successfully.".to_string()
         } else {

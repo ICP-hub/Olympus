@@ -258,6 +258,7 @@ type UserInformation = record {
 type UserRole = variant { VC; Mentor; Founder; Project; ICPHubOrganizer };
 type VentureCapitalist = record {
   fund_size : float64;
+  user_data : UserInformation;
   existing_icp_portfolio : text;
   registered_under_any_hub : opt text;
   name_of_fund : text;
