@@ -98,7 +98,8 @@ pub async fn register_mentor(profile: MentorProfile) -> String {
 
     ROLE_STATUS_ARRAY.with(|role_status| {
         let mut role_status = role_status.borrow_mut();
-        for role in role_status.iter_mut(){
+
+        for role in role_status.get_mut(&caller).expect("couldn't get role status for this principal").iter_mut(){
             if role.name == "mentor"{
                 role.status = "requested".to_string();
             }

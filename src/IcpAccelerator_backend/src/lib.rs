@@ -42,7 +42,7 @@ use crate::ratings::MainLevel;
 use crate::ratings::MainLevelRatings;
 use crate::ratings::Rating;
 use candid::Principal;
-use ic_cdk_macros::{query, update};
+use ic_cdk_macros::{query, update, init};
 use project_registration::{ NotificationForOwner, NotificationProject, ProjectInfo, ProjectInfoInternal,TeamMember};
 use rbac::{assign_roles_to_principal, has_required_role, UserRole};
 use register_user::{FounderInfo, FounderInfoInternal, ThirtyInfoFounder};
@@ -76,22 +76,6 @@ fn decline_mentor_creation_request_candid(requester : Principal, decline : bool)
     check_admin();
     decline_mentor_creation_request(requester, decline)
 }
-// #[pre_upgrade]
-// fn pre_upgrade() {
-//     mentor::mentor_specific_pre_upgrade_actions();
-// }
-
-// #[pre_upgrade]
-// fn pre_upgrade() {
-//     register_user::pre_upgrade();
-//     project_registration::pre_upgrade();
-//     roadmap_suggestion::pre_upgrade();
-// }
-
-// #[post_upgrade]
-// fn post_upgrade() {
-//     mentor::mentor_specific_post_upgrade_actions();
-// }
 
 #[query]
 fn get_role_from_p_id() -> Option<HashSet<UserRole>> {
@@ -525,6 +509,7 @@ fn send_connection_request(mentor_id: Principal, msg: String) -> String{
 //     roles::get_roles()
 // }
 // made for admin side.....
+
 #[query]
  fn get_role() -> RolesResponse {
     roles::get_roles()

@@ -72,7 +72,7 @@ pub fn pre_upgrade() {
 }
 
 
-pub async fn register_venture_capitalist(mut params: VentureCapitalist)->std::string::String{
+pub async fn register_venture_capitalist(mut params: VentureCapitalist)-> String{
     let caller = caller();
     let uuids = raw_rand().await.unwrap().0;
     let uid = format!("{:x}", Sha256::digest(&uuids));

@@ -101,7 +101,8 @@ pub fn approve_mentor_creation_request(requester: Principal, approve: bool) -> S
 
                         //approve_mentor
                         ROLE_STATUS_ARRAY.with(|role_status|{
-                            if let Some(user_role) = role_status.borrow_mut().iter_mut().find(|r| r.name == "mentor"){
+
+                            if let Some(user_role) = role_status.borrow_mut().get_mut(&requester).expect("couldn't get requester's id").iter_mut().find(|r| r.name == "mentor"){
                                 user_role.status = "approved".to_string();
                             }
                         });
