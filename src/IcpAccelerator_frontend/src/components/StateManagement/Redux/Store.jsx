@@ -18,7 +18,7 @@ import storage from "redux-persist/lib/storage";
 
 const sagaMiddleware = createSagaMiddleware();
 
-export const persistConfig = {
+const persistConfig = {
   key: "root",
   storage,
   whitelist: ["role", "hubs", "current"],

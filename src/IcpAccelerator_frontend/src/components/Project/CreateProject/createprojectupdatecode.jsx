@@ -3,6 +3,7 @@ import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useDropzone } from "react-dropzone";
+import ment from "../../../../assets/images/ment.jpg";
 import { useDispatch, useSelector } from "react-redux";
 import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_IcpHubReducer";
 import CompressedImage from "../../ImageCompressed/CompressedImage";
@@ -20,7 +21,7 @@ const validationSchema = yup.object().shape({
   project_logo: yup.mixed().required("Logo is required"),
   social_links: yup.array().of(yup.string().url("Must be a valid URL")),
 });
-const CreateProjectRegistration = () => {
+const CreateProjectupdatecode = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
   const areaOfExpertise = useSelector(
@@ -130,28 +131,28 @@ const CreateProjectRegistration = () => {
         }
         return true;
       });
-  
+
       // Check if the number of validated files is greater than 5
       if (validatedFiles.length > 5) {
         setIsMultipleLoading(false);
         return; // Stop further processing
       }
-  
+
       const multipleImagesPreviewTemp = [];
       const imagesDataTemp = [];
-  
+
       for (const file of validatedFiles) {
         try {
           const compressedFile = await CompressedImage(file);
           const reader = new FileReader();
-  
+
           reader.onloadend = () => {
             multipleImagesPreviewTemp.push(reader.result);
             setMultipleImagesPreview([...multipleImagesPreviewTemp]);
             setIsMultipleLoading(false);
           };
           reader.readAsDataURL(compressedFile);
-  
+
           const byteArray = await compressedFile.arrayBuffer();
           imagesDataTemp.push(Array.from(new Uint8Array(byteArray)));
           setMultipleImageData([...imagesDataTemp]);
@@ -201,22 +202,22 @@ const CreateProjectRegistration = () => {
         <div className="text-sm font-medium text-center text-gray-200">
           <form className="w-full px-4" onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col mb-6">
-              <div className="flex">
+              <div className="flex flex-row flex-wrap-reverse">
                 <div className="flex flex-col w-1/2">
                   <div className="flex-row w-full flex justify-start gap-4 items-center">
-                    <div className="mb-3 ml-6 h-24 w-24 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
+                    <div className="mb-3  h-24 lg:md:w-24 px-12 w-52 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
                       {isLoading ? (
                         <div>Loading...</div>
                       ) : imagePreview ? (
                         <img
                           src={imagePreview}
                           alt="Profile"
-                          className="h-full w-full object-cover"
+                          className="h-full w-full  object-cover "
                         />
                       ) : (
                         <svg
-                          width="35"
-                          height="37"
+                          width="30"
+                          height="30"
                           viewBox="0 0 35 37"
                           fill="none"
                           xmlns="http://www.w3.org/2000/svg"
@@ -247,7 +248,7 @@ const CreateProjectRegistration = () => {
                           />
                           <label
                             htmlFor="images"
-                            className="p-2 border-2 border-blue-800 items-center rounded-md text-md bg-transparent text-blue-800 cursor-pointer font-extrabold"
+                            className="p-2 border-2 border-blue-800 items-center rounded-md px-14 text-md bg-transparent text-blue-800 cursor-pointer font-extrabold "
                           >
                             Project Logo
                           </label>
@@ -273,15 +274,14 @@ const CreateProjectRegistration = () => {
                       name="project_name"
                       id="project_name"
                       {...register("project_name")}
-                      className={`bg-gray-50 border-2 ${
-                        errors["project_name"]
+                      className={`bg-gray-50 border-2 ${errors["project_name"]
                           ? "border-red-500 placeholder:text-red-500"
                           : "border-[#737373]"
-                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                      placeholder="Enter the project name"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block lg:md:w-full  p-2.5 `}
+                      placeholder="Enter the project name    "
                     />
                     {errors["project_name"] && (
-                      <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                      <span className="mt-1 text-sm text-red-500 font-bold flex justify-start ">
                         {errors["project_name"].message}
                       </span>
                     )}
@@ -298,11 +298,10 @@ const CreateProjectRegistration = () => {
                       name="project_url"
                       id="project_url"
                       {...register("project_url")}
-                      className={`bg-gray-50 border-2 ${
-                        errors["project_url"]
+                      className={`bg-gray-50 border-2 ${errors["project_url"]
                           ? "border-red-500 placeholder:text-red-500"
                           : "border-[#737373]"
-                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 `}
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block lg:md:w-full p-2.5 `}
                       placeholder="Enter the project URL"
                     />
                     {errors["project_url"] && (
@@ -312,8 +311,8 @@ const CreateProjectRegistration = () => {
                     )}
                   </div>
                 </div>
-                <div className="w-1/2 flex justify-center">
-                  <div className="md:w-[300px] w-full mb-8 flex flex-col">
+                <div className="w-full md:w-1/2  flex justify-center ">
+                  <div className="md:w-[300px] w-full mb-8 flex flex-col ">
                     <div className="flex flex-col justify-between border border-gray-300 rounded-xl pt-3">
                       <div className="flex justify-between items-center">
                         <div className="flex items-center">
@@ -324,13 +323,13 @@ const CreateProjectRegistration = () => {
                           />
                           <div className="ml-2">
                             <p className="text-[16px] font-extrabold text-black">
-                              dd
+                              project
                             </p>
                             <p
                               className="truncate overflow-hidden whitespace-nowrap text-[10px] text-gray-400"
                               style={{ maxHeight: "4.5rem" }}
                             >
-                              {/* {truncateWithEllipsis(item.description)} */}
+                             
                             </p>
                           </div>
                         </div>
@@ -346,12 +345,12 @@ const CreateProjectRegistration = () => {
                         jgdhgdg
                       </p>
 
-                      {/* {show && ( */}
+                      
                       <div className="flex items-center w-full mt-4 px-2">
                         <div className="relative flex-grow  h-2  rounded-lg bg-gradient-to-r from-gray-100 to-black"></div>
-                        <p className="text-xs ml-2">level 9</p>
+                        <p className="text-xs ml-2 text-black">level 9</p>
                       </div>
-                      {/* )} */}
+                     
                       <div className="w-full px-8 my-5 border-t-2 border-gray-300"></div>
 
                       <div className="flex flex-row justify-between items-center px-4 pb-4 ">
@@ -395,11 +394,10 @@ const CreateProjectRegistration = () => {
                   </label>
                   <select
                     {...register("preferred_icp_hub")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.preferred_icp_hub
+                    className={`bg-gray-50 border-2 ${errors.preferred_icp_hub
                         ? "border-red-500 placeholder:text-red-500"
                         : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="">
                       Select your ICP Hub
@@ -429,11 +427,10 @@ const CreateProjectRegistration = () => {
                   </label>
                   <select
                     {...register("areas_of_focus")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.areas_of_focus
+                    className={`bg-gray-50 border-2 ${errors.areas_of_focus
                         ? "border-red-500 placeholder:text-red-500"
                         : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="">
                       Areas of Focus
@@ -466,11 +463,10 @@ const CreateProjectRegistration = () => {
                     name="project_description"
                     id="project_description"
                     {...register("project_description")}
-                    className={`bg-gray-50 border-2 ${
-                      errors["project_description"]
+                    className={`bg-gray-50 border-2 ${errors["project_description"]
                         ? "border-red-500 placeholder:text-red-500"
                         : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     placeholder="Enter the project description"
                     rows="4" // Adjust the number of rows as needed
                   ></textarea>
@@ -480,72 +476,72 @@ const CreateProjectRegistration = () => {
                     </span>
                   )}
                 </div>
-                 <div className="flex flex-col w-full justify-start">
-                 <label
+                <div className="flex flex-col w-full justify-start">
+                  <label
                     htmlFor="project_description"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
                     Project Cover
                   </label>
-      <div
-        {...getRootProps()}
-        className=" h-24 w-full rounded border-2 border-black border-dashed flex justify-center items-center overflow-hidden cursor-pointer"
-      >
-        <input {...getInputProps()} />
-        {isLoadingMultiple ? (
-          <div>Loading...</div>
-        ) : (
-          <div className="flex flex-wrap">
-            {multipleImagesPreview.length > 0 ? (
-              multipleImagesPreview.map((src, index) => (
-                <div key={index} className="relative">
-                  <img
-                    src={src}
-                    alt={`Preview ${index}`}
-                    className="h-16 w-16 object-cover"
-                  />
-                  <button
-                    onClick={() => removeImage(index)}
-                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full "
+                  <div
+                    {...getRootProps()}
+                    className=" h-24 w-full rounded border-2 border-black border-dashed flex justify-center items-center overflow-hidden cursor-pointer"
                   >
-                    X
-                  </button>
+                    <input {...getInputProps()} />
+                    {isLoadingMultiple ? (
+                      <div>Loading...</div>
+                    ) : (
+                      <div className="flex flex-wrap">
+                        {multipleImagesPreview.length > 0 ? (
+                          multipleImagesPreview.map((src, index) => (
+                            <div key={index} className="relative">
+                              <img
+                                src={src}
+                                alt={`Preview ${index}`}
+                                className="h-16 w-16 object-cover"
+                              />
+                              <button
+                                onClick={() => removeImage(index)}
+                                className="absolute top-0 right-0 bg-red-500 text-white rounded-full "
+                              >
+                                X
+                              </button>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-black">Drag 'n' drop some files here, or click to select files</p>
+                        )}
+                        {control && (
+                          <Controller
+                            name="project_cover"
+                            control={control}
+                            render={({ field }) => <></>} // As the input is being managed by Dropzone, this remains empty.
+                          />
+                        )}
+
+                        {setError && (
+                          <div>
+                            {multipleImageData.length > 0 && (
+                              <p className="text-sm text-green-500">
+                                Images are ready for upload.
+                              </p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+
+
+                  </div>
                 </div>
-              ))
-            ) : (
-              <p className="text-black">Drag 'n' drop some files here, or click to select files</p>
-            )}
-            {control && (
-                    <Controller
-                      name="project_cover"
-                      control={control}
-                      render={({ field }) => <></>} // As the input is being managed by Dropzone, this remains empty.
-                    />
-                  )}
-
-                  {setError && (
-                    <div>
-                      {multipleImageData.length > 0 && (
-                        <p className="text-sm text-green-500">
-                          Images are ready for upload.
-                        </p>
-                      )}
-                    </div>
-                  )}
-          </div>
-        )}
-                
-
-                  
-      </div>
-    </div>
               </div>
             </div>
             <div className="flex justify-end">
               <button
                 type="submit"
                 className="text-white font-bold bg-blue-800 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md w-auto sm:w-auto px-5 py-2 text-center mb-4"
-                // onClick={goToNext}
+              // onClick={goToNext}
               >
                 Next
               </button>
@@ -557,4 +553,4 @@ const CreateProjectRegistration = () => {
   );
 };
 
-export default CreateProjectRegistration;
+export default CreateProjectupdatecode;

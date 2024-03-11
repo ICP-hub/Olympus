@@ -10,11 +10,10 @@ import FooterWithSubmitSection from "../Footer/SubmitSection";
 const Home = () => {
   return (
     <>
-    
-          <HomeHeroSection />
-          <HomeSection2 />
-          <HomeSection3 />
-       
+      <HomeHeroSection />
+      <HomeSection2 />
+      <HomeSection3 />
+      {/* < ConnectWallet isModalOpen={isModalOpen} onClose={() => setModalOpen(false)}/> */}
     </>
   );
 };

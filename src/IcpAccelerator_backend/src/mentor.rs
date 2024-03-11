@@ -12,7 +12,8 @@ use crate::trie::EXPERTISE_TRIE;
 use crate::user_module::{ROLE_STATUS_ARRAY, UserInformation};
 use std::cell::RefCell;
 
-#[derive(Serialize, Deserialize, Clone, Debug, CandidType, Default)]
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, Default, PartialEq)]
+
 pub struct MentorProfile {
     pub preferred_icp_hub: Option<String>,
     pub user_data: UserInformation,

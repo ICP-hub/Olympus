@@ -10,6 +10,14 @@ type ConnectionRequest = record {
   message : text;
   mentor_id : principal;
 };
+type FilterCriteria = record {
+  area_of_focus : opt text;
+  country : opt text;
+  money_raised_range : opt record { float64; float64 };
+  vc_name : opt text;
+  mentor_name : opt text;
+  rating_range : opt record { float64; float64 };
+};
 type FounderInfo = record {
   seventy_info : opt SeventyInfoFounder;
   thirty_info : opt ThirtyInfoFounder;
@@ -115,9 +123,11 @@ type ProjectInfo = record {
   reason_to_join_incubator : text;
   user_data : UserInformation;
   project_description : text;
+  vc_assigned : opt vec VentureCapitalist;
   token_economics : text;
   self_rating_of_project : float64;
   preferred_icp_hub : opt text;
+  mentors_assigned : opt vec MentorProfile;
   target_market : text;
   long_term_goals : text;
   project_area_of_focus : text;
@@ -283,6 +293,7 @@ service : () -> {
   delete_project : (text) -> (text);
   delete_venture_capitalist : () -> (text);
   delete_venture_capitalist_caller : () -> (text);
+  filter_out_projects : (FilterCriteria) -> (vec ProjectInfo) query;
   get_admin_notifications : (principal) -> (vec Notification) query;
   get_all_mentors_candid : () -> (vec MentorProfile) query;
   get_all_roles : () -> (RolesResponse) query;
