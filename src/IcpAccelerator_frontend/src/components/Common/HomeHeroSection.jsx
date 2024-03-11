@@ -5,7 +5,7 @@ import FullAstro from "../../../assets/images/astro1.png";
 const HomeHeroSection = () => {
   return (
     <section className="text-black bg-gray-100">
-      <div className="w-full px-[4%] lg1:px-[5%]">
+      <div className="w-full px-[4%] lg1:px-[5%] xl:px-[1%]">
         <div className="flex dxl:justify-end">
           <div className="w-full h-fit relative">
             <h1 className=" xl:-top-2 lg:top-2 md:top-2 sm:top-6 sm4:top-6 xxs1:top-10 dxs:top-10 ss2:top-6 top-6 z-10 absolute bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text xl2:text-[5.5rem] xl:text-[5rem] lg:text-[4.5rem] md:text-[4rem] sm:text-[3.5rem] sm4:text-[3rem] xxs1:text-[2.25rem] dxs:text-[2rem] ss2:text-[2rem] text-[1.5rem] font-fontUse font-bold">

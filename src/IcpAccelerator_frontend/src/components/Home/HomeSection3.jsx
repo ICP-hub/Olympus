@@ -12,7 +12,7 @@ import SubmitSection from "../Footer/SubmitSection";
 const HomeSection3 = () => {
   return (
     <section className="text-gray-700 body-font relative bg-gray-100 pb-12">
-      <div className="w-full h-full px-[4%] lg1:px-[5%] pt-12">
+      <div className="w-full h-full px-[4%] lg1:px-[5%] xl:px-[1%] pt-12">
         {/* <div className="w-[1051.41px] h-[1051.41px] left-[-396.97px] top-[706px] absolute opacity-60 bg-fuchsia-800 rounded-full blur-[411.40px]"></div> */}
         {/* <div className="absolute -mt-[526px] -ml-[526px] w-[1051px] h-[1051px] rotate-[0.034deg] flex-shrink-0 rounded-full opacity-60 bg-gradient-to-r from-[#8D3494] to-[#4B0FAC] blur-[205.7px] z-10"></div> */}
         {/* <div className="w-[424.57px] h-[424.57px] left-[-211.74px] top-0 absolute opacity-60 bg-fuchsia-800 rounded-full blur-[326px]"></div> */}

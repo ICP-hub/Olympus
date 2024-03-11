@@ -36,6 +36,8 @@ import HubDeclined from "./components/HubDeclined/HubDeclined";
 import { areaOfExpertiseHandlerRequest } from "./components/StateManagement/Redux/Reducers/getAreaOfExpertise";
 import NormalUser from "./components/RoleSelector/NormalUser";
 import MentorRegistration from "./components/Registration/MentorRegistration/MentorRegistration";
+import Adminoption from "../../admin_frontend/src/components/Admindashboard/Adminoption";
+import CreateProjectRegistration from "./components/Project/CreateProject/CreateProjectRegistration";
 
 const App = () => {
   const identity = useSelector((currState) => currState.internet.identity);
@@ -77,7 +79,7 @@ const App = () => {
   useEffect(() => {
     dispatch(areaOfExpertiseHandlerRequest());
   }, [isAuthenticated, identity, dispatch]);
- 
+
   useEffect(() => {
     // console.log("specific role inside effect of app 1", specificRole);
     switch (specificRole) {
@@ -104,35 +106,43 @@ const App = () => {
 
   return (
     <>
-      {/* {isModalOpen && (
+      <div className="bg-gray-100">
+        <div className="container mx-auto">
+          {/* {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-50"></div>
       )} */}
-      <Header setModalOpen={setModalOpen} gradient={"bg-gray-100"} />
-      <ConnectWallet
-        isModalOpen={isModalOpen}
-        onClose={() => setModalOpen(false)}
-      />
-      {/* <DashBoard/> */}
-      {/* <ProgressCard/> */}
-      {/* <AllDetailsForm/> */}
-      {/* <ProjectDetails/> */}
-      {/* <Home/> */}
-      {/* <Hubcards /> */}
-      {/* <Hubdashboard /> */}
-      {/* <Hubdashboard /> */}
-      {/* <Hubapproved /> */}
-      {/* <HubDeclined /> */}
-      {/* <Mentors /> */}
-      {/* <Hublisten /> */}
-      {/* <ListedProjects /> */}
-      {/* <Hubdashboardlive /> */}
-      {/* <DashBoard /> */}
-      {/* <UserProfile/> */}
-      {/* <RoleSelector /> */}
-      <NormalUser />
-      {/* <AppRoutes /> */}
-      {/* <MentorRegistration /> */}
-      <Footer />
+          <Header setModalOpen={setModalOpen} gradient={"bg-gray-100"} />
+          <ConnectWallet
+            isModalOpen={isModalOpen}
+            onClose={() => setModalOpen(false)}
+          />
+          {/* <DashBoard/> */}
+          {/* <ProgressCard/> */}
+          {/* <AllDetailsForm/> */}
+          {/* <ProjectDetails/> */}
+          {/* <Home/> */}
+          {/* <Adminoption /> */}
+          {/* <Hubcards /> */}
+          {/* <Hubdashboard /> */}
+          {/* <Hubdashboard /> */}
+          {/* <Hubapproved /> */}
+          {/* <HubDeclined /> */}
+          {/* <Mentors /> */}
+          {/* <Hublisten /> */}
+          {/* <ListedProjects /> */}
+          {/* <Hubdashboardlive /> */}
+          {/* <DashBoard /> */}
+          {/* <UserProfile/> */}
+          {/* <RoleSelector /> */}
+          {/* <NormalUser /> */}
+          <AppRoutes />
+          {/* <MentorRegistration /> */}
+          {/* <CreateProjectRegistration/> */}
+        </div>
+      </div>
+      <div className="-mx-12">
+        <Footer />
+      </div>
     </>
   );
 };

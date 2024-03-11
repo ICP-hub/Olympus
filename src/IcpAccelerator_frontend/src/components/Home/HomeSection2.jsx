@@ -5,7 +5,7 @@ import DetailsCard from "../Common/DetailsCard";
 const HomeSection2 = () => {
   return (
     <section className="text-gray-700 bg-gray-100">
-      <div className="w-full px-[4%] lg1:px-[5%] h-fit">
+      <div className="w-full px-[4%] lg1:px-[5%] xl:px-[1%] h-fit">
         <div className="flex-col">
         <div className="flex mb-4">
           <StatisticCard/>

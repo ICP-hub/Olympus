@@ -1,4 +1,10 @@
+type Announcements = record {
+  announcement_message : text;
+  timestamp : nat64;
+  project_name : text;
+};
 type ApprovalRequest = record { sender : principal; receiver : principal };
+type Blog = record { blog_url : text; timestamp : nat64 };
 type ConnectionRequest = record {
   startup_id : principal;
   message : text;
@@ -61,31 +67,18 @@ type MentorInternal = record {
   profile : MentorProfile;
 };
 type MentorProfile = record {
-  email_address : opt text;
-  mentor_image : opt vec nat8;
-  motivation_for_becoming_a_mentor : opt text;
-  years_of_experience_mentoring_startups : opt int32;
-  professional_affiliations : opt text;
-  time_zone : opt text;
-  telegram_id : opt text;
-  unique_contribution_to_startups : opt text;
-  referrer_contact : opt text;
+  user_data : UserInformation;
+  social_link : text;
+  reason_for_joining : text;
+  existing_icp_mentor : bool;
   preferred_icp_hub : opt text;
-  specific_skills_or_technologies_expertise : opt text;
-  specific_goals_objectives_as_a_mentor : opt text;
-  areas_of_expertise : opt text;
-  preferred_startup_stage : opt text;
-  languages_spoken : opt text;
-  industry_achievements : opt text;
-  conflict_of_interest_disclosure : opt text;
-  past_work_records_links : opt text;
-  availability_and_time_commitment : opt text;
-  success_stories_testimonials : opt text;
-  linkedin_profile_link : opt text;
-  location : opt text;
-  full_name : opt text;
-  preferred_communication_tools : opt text;
-  volunteer_experience : opt text;
+  website : text;
+  multichain : opt text;
+  area_of_expertise : text;
+  category_of_mentoring_service : text;
+  years_of_mentoring : text;
+  exisitng_icp_project_porfolio : opt text;
+  icop_hub_or_spoke : bool;
 };
 type Notification = record { notification_type : NotificationType };
 type NotificationForOwner = record {
@@ -137,13 +130,13 @@ type ProjectInfo = record {
   project_name : text;
   project_team : opt TeamMember;
   social_links : SocialLinksInfo;
-  creation_date : text;
 };
 type ProjectInfoInternal = record {
   uid : text;
   is_verified : bool;
   is_active : bool;
   params : ProjectInfo;
+  creation_date : nat64;
 };
 type Rating = record {
   sub_level : SubLevel;
@@ -245,14 +238,15 @@ type UserInformation = record {
   area_of_intrest : text;
   profile_picture : opt vec nat8;
   telegram_id : opt text;
-  role : text;
   twitter_id : opt text;
+  openchat_username : opt text;
   email : opt text;
   full_name : text;
 };
 type UserRole = variant { VC; Mentor; Founder; Project; ICPHubOrganizer };
 type VentureCapitalist = record {
   fund_size : float64;
+  user_data : UserInformation;
   existing_icp_portfolio : text;
   registered_under_any_hub : opt text;
   name_of_fund : text;
@@ -271,12 +265,14 @@ type VentureCapitalist = record {
   category_of_investment : text;
   type_of_investment : text;
 };
-service : () -> {
+service : {
   add_suggestion_caller : (text, text) -> (nat64, text);
   approve_mentor_creation_request_candid : (principal, bool) -> (text);
+  approve_vc_creation_request : (principal, bool) -> (text);
   calculate_average_api : (text) -> (opt float64) query;
   connect_to_team_member : (text, text) -> (text);
   decline_mentor_creation_request_candid : (principal, bool) -> (text);
+  decline_vc_creation_request : (principal, bool) -> (text);
   delete_founder_caller : () -> (text);
   delete_mentor_candid : () -> (text);
   delete_project : (text) -> (text);
@@ -286,7 +282,9 @@ service : () -> {
   get_all_mentors_candid : () -> (vec MentorProfile) query;
   get_all_roles : () -> (RolesResponse) query;
   get_all_users_information : () -> (vec UserInformation) query;
+  get_announcements : () -> (vec record { principal; vec Announcements }) query;
   get_area_focus_expertise : () -> (vec Role) query;
+  get_blog_post : () -> (vec record { principal; vec Blog }) query;
   get_founder_info_caller : () -> (opt FounderInfo) query;
   get_hub_organizer_candid : () -> (opt UniqueHubs) query;
   get_hubs_principal_using_region : (text) -> (vec text) query;
@@ -301,6 +299,7 @@ service : () -> {
     ) query;
   get_mentor_by_expertise : (text) -> (vec MentorProfile) query;
   get_mentor_candid : () -> (opt MentorProfile) query;
+  get_multichain_list : () -> (vec text) query;
   get_my_id : () -> (principal) query;
   get_notifications_for_hubs : () -> (vec NotificationProject) query;
   get_popular_listed_project : () -> (vec ProjectInfoInternal) query;
@@ -348,9 +347,10 @@ service : () -> {
   update_rating_api : (vec Rating) -> ();
   update_suggestion_status_caller : (nat64, text, text) -> ();
   update_team_member : (text, text) -> (text);
-  update_venture_capitalist : (VentureCapitalist) -> ();
+  update_venture_capitalist : (VentureCapitalist) -> (text);
   update_venture_capitalist_caller : (VentureCapitalist) -> (text);
   upvote_project : (text) -> (text);
+  vc_awaiting_approval : () -> (vec VentureCapitalistInternal) query;
   verify_project_under_your_hub : (text) -> (text);
   view_notifications_candid : (principal) -> (vec Notification_1) query;
 }

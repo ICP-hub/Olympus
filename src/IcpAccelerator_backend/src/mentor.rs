@@ -8,36 +8,46 @@ use std::collections::HashMap;
 extern crate serde_cbor;
 use crate::admin::send_approval_request;
 use crate::trie::EXPERTISE_TRIE;
-use crate::user_module::ROLE_STATUS_ARRAY;
+
+use crate::user_module::{ROLE_STATUS_ARRAY, UserInformation};
 use std::cell::RefCell;
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, Default)]
 pub struct MentorProfile {
-    pub full_name: Option<String>,
-    pub email_address: Option<String>,
-    pub telegram_id: Option<String>,
-    pub location: Option<String>,
-    pub linkedin_profile_link: Option<String>,
-    pub unique_contribution_to_startups: Option<String>,
-    pub years_of_experience_mentoring_startups: Option<i32>,
-    pub past_work_records_links: Option<String>,
-    pub motivation_for_becoming_a_mentor: Option<String>,
-    pub areas_of_expertise: Option<String>,
     pub preferred_icp_hub: Option<String>,
-    pub availability_and_time_commitment: Option<String>,
-    pub preferred_startup_stage: Option<String>,
-    pub success_stories_testimonials: Option<String>,
-    pub languages_spoken: Option<String>,
-    pub conflict_of_interest_disclosure: Option<String>,
-    pub specific_goals_objectives_as_a_mentor: Option<String>,
-    pub industry_achievements: Option<String>,
-    pub specific_skills_or_technologies_expertise: Option<String>,
-    pub professional_affiliations: Option<String>,
-    pub volunteer_experience: Option<String>,
-    pub preferred_communication_tools: Option<String>,
-    pub time_zone: Option<String>,
-    pub referrer_contact: Option<String>,
-    pub mentor_image: Option<Vec<u8>>,
+    pub user_data: UserInformation,
+    pub existing_icp_mentor: bool,
+    pub exisitng_icp_project_porfolio: Option<String>,
+    pub icop_hub_or_spoke: bool,
+    pub category_of_mentoring_service: String,
+    pub social_link: String,
+    pub multichain: Option<String>,
+    pub years_of_mentoring: String,
+    pub website: String,
+    pub area_of_expertise: String,
+    pub reason_for_joining: String,
+}
+impl MentorProfile {
+    pub fn validate(&self) -> Result<(), String> {
+        if let Some(ref preferred_icp_hub) = self.preferred_icp_hub {
+            if preferred_icp_hub.trim().is_empty() {
+                return Err("Field cannot be empty".into());
+            }
+        }
+
+        if let Some(ref exisitng_icp_project_porfolio) = self.exisitng_icp_project_porfolio {
+            if exisitng_icp_project_porfolio.trim().is_empty() {
+                return Err("Field cannot be empty".into());
+            }
+        }
+        if let Some(ref multichain) = self.multichain {
+            if multichain.trim().is_empty() {
+                return Err("Field cannot be empty".into());
+            }
+        }
+
+        Ok(())
+    }
 }
 
 pub type MentorRegistry = HashMap<Principal, MentorInternal>;
@@ -67,46 +77,49 @@ pub async fn register_mentor(profile: MentorProfile) -> String {
         }
     });
 
-    let random_bytes = raw_rand().await.expect("Failed to generate random bytes").0;
 
-    let uid = format!("{:x}", Sha256::digest(&random_bytes));
+    match profile.validate() {
+        Ok(_) => {
+            let random_bytes = raw_rand().await.expect("Failed to generate random bytes").0;
 
-    // let already_registered = MENTOR_REGISTRY.with(|registry| registry.borrow().contains_key(&caller));
+            let uid = format!("{:x}", Sha256::digest(&random_bytes));
 
-    // if already_registered {
+            let profile_for_pushing = profile.clone();
 
-    //     ic_cdk::println!("This Principal is already registered");
-    //     return "This Principal is already registered.".to_string()}
+            let mentor_internal = MentorInternal {
+                profile: profile_for_pushing,
+                uid: uid.clone(),
+                active: true,
+                approve: false,
+                decline: false,
+            };
 
-    let profile_for_pushing = profile.clone();
+            MENTOR_AWAITS_RESPONSE.with(
+                |awaiters: &RefCell<HashMap<Principal, MentorInternal>>| {
+                    let mut await_ers: std::cell::RefMut<'_, HashMap<Principal, MentorInternal>> =
+                        awaiters.borrow_mut();
+                    await_ers.insert(caller, mentor_internal);
+                },
+            );
 
-    let mentor_internal = MentorInternal {
-        profile: profile_for_pushing,
-        uid: uid.clone(),
-        active: true,
-        approve: false,
-        decline: false,
-    };
+            let res = send_approval_request().await;
 
-    MENTOR_AWAITS_RESPONSE.with(|awaiters: &RefCell<HashMap<Principal, MentorInternal>>| {
-        let mut await_ers: std::cell::RefMut<'_, HashMap<Principal, MentorInternal>> =
-            awaiters.borrow_mut();
-        await_ers.insert(caller, mentor_internal);
-    });
+            ROLE_STATUS_ARRAY.with(|role_status| {
+                let mut role_status = role_status.borrow_mut();
+        
+                for role in role_status.get_mut(&caller).expect("couldn't get role status for this principal").iter_mut(){
+                    if role.name == "mentor"{
+                        role.status = "requested".to_string();
+                    }
+                }
+            });
 
-    let res = send_approval_request().await;
-
-    ROLE_STATUS_ARRAY.with(|role_status| {
-        let mut role_status = role_status.borrow_mut();
-
-        for role in role_status.get_mut(&caller).expect("couldn't get role status for this principal").iter_mut(){
-            if role.name == "mentor"{
-                role.status = "requested".to_string();
-            }
+            format!("{}", res)
         }
-    });
-
-    format!("{}", res)
+        Err(e) => {
+            format!("Validation error: {}", e)
+        }
+    }
 
     // MENTOR_REGISTRY.with(|registry| {
     //     registry.borrow_mut().insert(caller, mentor_internal);
@@ -135,112 +148,31 @@ pub fn update_mentor(updated_profile: MentorProfile) -> String {
     let result = MENTOR_REGISTRY.with(|registry| {
         let mut registry = registry.borrow_mut();
         if let Some(mentor_internal) = registry.get_mut(&caller) {
-            mentor_internal.profile.full_name = updated_profile
-                .full_name
-                .or(mentor_internal.profile.full_name.clone());
-
-            mentor_internal.profile.email_address = updated_profile
-                .email_address
-                .or(mentor_internal.profile.email_address.clone());
-            mentor_internal.profile.telegram_id = updated_profile
-                .telegram_id
-                .or(mentor_internal.profile.telegram_id.clone());
-            mentor_internal.profile.location = updated_profile
-                .location
-                .or(mentor_internal.profile.location.clone());
-            mentor_internal.profile.linkedin_profile_link = updated_profile
-                .linkedin_profile_link
-                .or(mentor_internal.profile.linkedin_profile_link.clone());
-            mentor_internal.profile.unique_contribution_to_startups = updated_profile
-                .unique_contribution_to_startups
-                .or(mentor_internal
-                    .profile
-                    .unique_contribution_to_startups
-                    .clone());
-            mentor_internal
-                .profile
-                .years_of_experience_mentoring_startups = updated_profile
-                .years_of_experience_mentoring_startups
-                .or(mentor_internal
-                    .profile
-                    .years_of_experience_mentoring_startups);
-            mentor_internal.profile.past_work_records_links = updated_profile
-                .past_work_records_links
-                .or(mentor_internal.profile.past_work_records_links.clone());
-            mentor_internal.profile.motivation_for_becoming_a_mentor = updated_profile
-                .motivation_for_becoming_a_mentor
-                .or(mentor_internal
-                    .profile
-                    .motivation_for_becoming_a_mentor
-                    .clone());
-            mentor_internal.profile.areas_of_expertise = updated_profile
-                .areas_of_expertise
-                .or(mentor_internal.profile.areas_of_expertise.clone());
             mentor_internal.profile.preferred_icp_hub = updated_profile
                 .preferred_icp_hub
                 .or(mentor_internal.profile.preferred_icp_hub.clone());
-            mentor_internal.profile.availability_and_time_commitment = updated_profile
-                .availability_and_time_commitment
-                .or(mentor_internal
-                    .profile
-                    .availability_and_time_commitment
-                    .clone());
-            mentor_internal.profile.preferred_startup_stage = updated_profile
-                .preferred_startup_stage
-                .or(mentor_internal.profile.preferred_startup_stage.clone());
-            mentor_internal.profile.success_stories_testimonials = updated_profile
-                .success_stories_testimonials
-                .or(mentor_internal.profile.success_stories_testimonials.clone());
-            mentor_internal.profile.languages_spoken = updated_profile
-                .languages_spoken
-                .or(mentor_internal.profile.languages_spoken.clone());
-            mentor_internal.profile.conflict_of_interest_disclosure = updated_profile
-                .conflict_of_interest_disclosure
-                .or(mentor_internal
-                    .profile
-                    .conflict_of_interest_disclosure
-                    .clone());
-            mentor_internal
-                .profile
-                .specific_goals_objectives_as_a_mentor = updated_profile
-                .specific_goals_objectives_as_a_mentor
-                .or(mentor_internal
-                    .profile
-                    .specific_goals_objectives_as_a_mentor
-                    .clone());
-            mentor_internal.profile.industry_achievements = updated_profile
-                .industry_achievements
-                .or(mentor_internal.profile.industry_achievements.clone());
-            mentor_internal
-                .profile
-                .specific_skills_or_technologies_expertise = updated_profile
-                .specific_skills_or_technologies_expertise
-                .or(mentor_internal
-                    .profile
-                    .specific_skills_or_technologies_expertise
-                    .clone());
-            mentor_internal.profile.professional_affiliations = updated_profile
-                .professional_affiliations
-                .or(mentor_internal.profile.professional_affiliations.clone());
-            mentor_internal.profile.volunteer_experience = updated_profile
-                .volunteer_experience
-                .or(mentor_internal.profile.volunteer_experience.clone());
-            mentor_internal.profile.preferred_communication_tools = updated_profile
-                .preferred_communication_tools
-                .or(mentor_internal
-                    .profile
-                    .preferred_communication_tools
-                    .clone());
-            mentor_internal.profile.time_zone = updated_profile
-                .time_zone
-                .or(mentor_internal.profile.time_zone.clone());
-            mentor_internal.profile.referrer_contact = updated_profile
-                .referrer_contact
-                .or(mentor_internal.profile.referrer_contact.clone());
 
-            mentor_internal.profile.mentor_image = updated_profile
-                .mentor_image
-                .or(mentor_internal.profile.mentor_image.clone());
+            mentor_internal.profile.multichain = updated_profile
+                .multichain
+                .or(mentor_internal.profile.multichain.clone());
+            mentor_internal.profile.exisitng_icp_project_porfolio = updated_profile
+                .exisitng_icp_project_porfolio
+                .or(mentor_internal
+                    .profile
+                    .exisitng_icp_project_porfolio
+                    .clone());
+
+            mentor_internal.profile.area_of_expertise = updated_profile.area_of_expertise;
+            mentor_internal.profile.category_of_mentoring_service =
+                updated_profile.category_of_mentoring_service;
+
+            mentor_internal.profile.existing_icp_mentor = updated_profile.existing_icp_mentor;
+            mentor_internal.profile.icop_hub_or_spoke = updated_profile.icop_hub_or_spoke;
+            mentor_internal.profile.social_link = updated_profile.social_link;
+            mentor_internal.profile.website = updated_profile.website;
+            mentor_internal.profile.years_of_mentoring = updated_profile.years_of_mentoring;
+            mentor_internal.profile.reason_for_joining = updated_profile.reason_for_joining;
+            mentor_internal.profile.user_data = updated_profile.user_data;
 
             "Mentor profile updated successfully.".to_string()
         } else {

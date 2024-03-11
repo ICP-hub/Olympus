@@ -1,9 +1,11 @@
 use crate::mentor::*;
 use crate::user_module::ROLE_STATUS_ARRAY;
+use crate::vc_registration::*;
 use candid::{CandidType, Principal};
 use ic_cdk::api::management_canister::main::{canister_info, CanisterInfoRequest};
 use ic_cdk::api::{caller, id};
-use ic_cdk::{query, update};
+
+use ic_cdk_macros::*;
 use std::borrow::Borrow;
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -32,7 +34,6 @@ enum MyError {
 thread_local! {
     static ADMIN_NOTIFICATIONS : RefCell<HashMap<Principal, Vec<Notification>>> = RefCell::new(HashMap::new())
 }
-
 
 pub async fn send_approval_request() -> String {
     //sender
@@ -75,7 +76,7 @@ pub async fn send_approval_request() -> String {
     }
 }
 
-// 
+//
 pub fn approve_mentor_creation_request(requester: Principal, approve: bool) -> String {
     // let caller = caller();
 
@@ -132,7 +133,6 @@ pub fn approve_mentor_creation_request(requester: Principal, approve: bool) -> S
         }
     })
 }
-
 
 pub fn decline_mentor_creation_request(requester: Principal, decline: bool) -> String {
     MENTOR_AWAITS_RESPONSE.with(|awaiters| {
@@ -212,4 +212,100 @@ async fn get_info() -> Result<Vec<Principal>, MyError> {
 #[query]
 fn mentors_awaiting_approval() -> Vec<MentorInternal> {
     MENTOR_AWAITS_RESPONSE.with(|awaiters| awaiters.borrow().values().cloned().collect())
+}
+
+#[query]
+fn vc_awaiting_approval() -> Vec<VentureCapitalistInternal> {
+    VC_AWAITS_RESPONSE.with(|awaiters| awaiters.borrow().values().cloned().collect())
+}
+
+#[update]
+pub fn decline_vc_creation_request(requester: Principal, decline: bool) -> String {
+    VC_AWAITS_RESPONSE.with(|awaiters| {
+        let mut awaiters = awaiters.borrow_mut();
+
+        if let Some(vc_internal) = awaiters.get_mut(&requester) {
+            if decline {
+                vc_internal.decline = decline;
+                vc_internal.approve = false;
+
+                match awaiters.get(&requester) {
+                    Some(res) => {
+                        DECLINED_VC_REQUESTS.with(|d_vc_registry| {
+                            let mut d_vc = d_vc_registry.borrow_mut();
+                            d_vc.insert(requester, res.clone())
+                        });
+
+                        awaiters.remove(&requester);
+                    }
+                    None => {
+                        return format!(
+                            "Requester with principal id {} has not registered",
+                            requester
+                        );
+                    }
+                }
+
+                format!("Requester with principal id {} is declined", requester)
+            } else {
+                format!(
+                    "Requester with principal id {} could not be declined",
+                    requester
+                )
+            }
+        } else {
+            format!(
+                "Requester with principal id {} has not registered",
+                requester
+            )
+        }
+    })
+}
+
+#[update]
+pub fn approve_vc_creation_request(requester: Principal, approve: bool) -> String {
+    // let caller = caller();
+
+    // let controllers = get_info().await.unwrap();
+    // if is_controller(principal)
+
+    VC_AWAITS_RESPONSE.with(|awaiters| {
+        let mut awaiters = awaiters.borrow_mut();
+        // let mentor_internal = awaiters.get_mut(&requester);
+        if let Some(vc_internal) = awaiters.get_mut(&requester) {
+            if approve || vc_internal.approve {
+                vc_internal.decline = false;
+                vc_internal.approve = approve;
+
+                match awaiters.get(&requester) {
+                    Some(res) => {
+                        VENTURECAPITALIST_STORAGE.with(|vc_registry| {
+                            let mut vc = vc_registry.borrow_mut();
+                            vc.insert(requester, res.clone())
+                        });
+
+                        awaiters.remove(&requester);
+                    }
+                    None => {
+                        return format!(
+                            "Requester with principal id {} has not registered",
+                            requester
+                        );
+                    }
+                }
+
+                format!("Requester with principal id {} is approved", requester)
+            } else {
+                format!(
+                    "Requester with principal id {} could not be approved",
+                    requester
+                )
+            }
+        } else {
+            format!(
+                "Requester with principal id {} has not registered",
+                requester
+            )
+        }
+    })
 }

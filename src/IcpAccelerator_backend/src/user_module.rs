@@ -8,7 +8,7 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
-pub struct UserInformation{
+pub struct UserInformation {
     pub full_name: String,
     pub profile_picture: Option<Vec<u8>>,
     pub email: Option<String>,
@@ -17,7 +17,7 @@ pub struct UserInformation{
     pub bio: Option<String>,
     pub area_of_intrest: String,
     pub twitter_id: Option<String>,
-    pub role: String,
+    pub openchat_username: Option<String>,
 }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default)]
@@ -86,10 +86,21 @@ pub fn initialize_roles(){
 }
 
 
-pub async fn register_user_role(info: UserInformation) -> String {
+
+
+pub async fn register_user_role(info: UserInformation) -> std::string::String {
 
     initialize_roles();
 
+    if info.full_name.trim().is_empty()
+        || info
+            .email
+            .as_ref()
+            .map_or(true, |email| email.trim().is_empty())
+    {
+        return "Please provide input for required fields: full_name and email.".to_string();
+    }
+    
     let caller = caller();
     let uuids = raw_rand().await.unwrap().0;
     let uid = format!("{:x}", Sha256::digest(&uuids));
