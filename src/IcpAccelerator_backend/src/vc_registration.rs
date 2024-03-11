@@ -13,24 +13,24 @@ use std::{collections::HashMap, io::Write};
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct VentureCapitalist {
     pub name_of_fund: String,
-    fund_size: f64,
-    assets_under_management: String,
-    logo: Vec<u8>,
-    registered_under_any_hub: Option<String>,
-    average_check_size: f64,
-    existing_icp_investor: bool,
-    money_invested: f64,
-    existing_icp_portfolio: String,
-    type_of_investment: String,
-    project_on_multichain: Option<String>,
-    category_of_investment: String,
-    reason_for_joining: String,
-    preferred_icp_hub: String,
-    investor_type: String,
-    number_of_portfolio_companies: u16,
-    portfolio_link: String,
-    announcement_details: String,
-    user_data: UserInformation,
+    pub fund_size: f64,
+    pub assets_under_management: String,
+    pub logo: Vec<u8>,
+    pub registered_under_any_hub: Option<String>,
+    pub average_check_size: f64,
+    pub existing_icp_investor: bool,
+    pub money_invested: f64,
+    pub existing_icp_portfolio: String,
+    pub type_of_investment: String,
+    pub project_on_multichain: Option<String>,
+    pub category_of_investment: String,
+    pub reason_for_joining: String,
+    pub preferred_icp_hub: String,
+    pub investor_type: String,
+    pub number_of_portfolio_companies: u16,
+    pub portfolio_link: String,
+    pub announcement_details: String,
+    pub user_data: UserInformation,
 }
 
 impl VentureCapitalist {
@@ -84,11 +84,15 @@ pub struct VentureCapitalistInternal {
 }
 
 pub type VentureCapitalistStorage = HashMap<Principal, VentureCapitalistInternal>;
+pub type VentureCapitalistParams = HashMap<Principal, VentureCapitalist>;
 
 thread_local! {
     pub static VENTURECAPITALIST_STORAGE: RefCell<VentureCapitalistStorage> = RefCell::new(VentureCapitalistStorage::new());
     pub static VC_AWAITS_RESPONSE: RefCell<VentureCapitalistStorage> = RefCell::new(VentureCapitalistStorage::new());
     pub static DECLINED_VC_REQUESTS: RefCell<VentureCapitalistStorage> = RefCell::new(VentureCapitalistStorage::new());
+    pub static VC_PROFILE_EDIT_AWAITS :RefCell<VentureCapitalistParams> = RefCell::new(VentureCapitalistParams::new());
+    pub static DECLINED_VC_PROFILE_EDIT_REQUEST :RefCell<VentureCapitalistParams> = RefCell::new(VentureCapitalistParams::new());
+
 }
 
 pub fn pre_upgrade() {
@@ -213,47 +217,40 @@ pub fn delete_venture_capitalist() -> std::string::String {
 }
 
 #[update]
-pub fn update_venture_capitalist(params: VentureCapitalist) -> String {
+pub async fn update_venture_capitalist(params: VentureCapitalist) -> String {
     let caller = caller();
 
-    let result = VENTURECAPITALIST_STORAGE.with(|storage| {
-        let mut storage = storage.borrow_mut();
-        // Attempt to get a mutable reference to the VentureCapitalistInternal object for the caller
-        if let Some(vc_internal) = storage.get_mut(&caller) {
-            // Update only the params field of the VentureCapitalistInternal object
-            vc_internal.params.registered_under_any_hub = params
-                .registered_under_any_hub
-                .or(vc_internal.params.registered_under_any_hub.clone());
-
-            vc_internal.params.project_on_multichain = params
-                .project_on_multichain
-                .or(vc_internal.params.project_on_multichain.clone());
-
-            vc_internal.params.fund_size = (params.fund_size * 100.0).round() / 100.0;
-            vc_internal.params.assets_under_management = params.assets_under_management;
-            vc_internal.params.announcement_details = params.announcement_details;
-            vc_internal.params.category_of_investment = params.category_of_investment;
-            vc_internal.params.existing_icp_portfolio = params.existing_icp_portfolio;
-            vc_internal.params.logo = params.logo;
-            vc_internal.params.average_check_size =
-                (params.average_check_size * 100.0).round() / 100.0;
-            vc_internal.params.existing_icp_investor = params.existing_icp_investor;
-            vc_internal.params.investor_type = params.investor_type;
-            vc_internal.params.number_of_portfolio_companies = params.number_of_portfolio_companies;
-            vc_internal.params.portfolio_link = params.portfolio_link;
-            vc_internal.params.reason_for_joining = params.reason_for_joining;
-            vc_internal.params.name_of_fund = params.name_of_fund;
-            vc_internal.params.money_invested = params.money_invested;
-            vc_internal.params.preferred_icp_hub = params.preferred_icp_hub;
-            vc_internal.params.type_of_investment = params.type_of_investment;
-            vc_internal.params.user_data = params.user_data;
-
-            "Venture Capitalist profile updated successfully.".to_string()
-        } else {
-            "Venture Capitalist profile not found.".to_string()
+    DECLINED_VC_PROFILE_EDIT_REQUEST.with(|d_vc| {
+        let exits = d_vc.borrow().contains_key(&caller);
+        if exits {
+            panic!("You had got your request declined earlier");
         }
     });
-    result
+    let already_registered =
+        VENTURECAPITALIST_STORAGE.with(|registry| registry.borrow().contains_key(&caller));
+
+    if !already_registered {
+        ic_cdk::println!("This Principal is not registered");
+        return "This Principal is not registered.".to_string();
+    }
+
+    let profile_edit_request_already_sent =
+        VC_PROFILE_EDIT_AWAITS.with(|registry| registry.borrow().contains_key(&caller));
+    if profile_edit_request_already_sent {
+        ic_cdk::println!("Wait for your previous request to get approved");
+        return "Wait for your previous request to get approved. ".to_string();
+    }
+    VC_PROFILE_EDIT_AWAITS.with(
+        |awaiters: &RefCell<HashMap<Principal, VentureCapitalist>>| {
+            let mut await_ers: std::cell::RefMut<'_, HashMap<Principal, VentureCapitalist>> =
+                awaiters.borrow_mut();
+            await_ers.insert(caller, params);
+        },
+    );
+
+    let res = send_approval_request().await;
+
+    format!("{}", res)
 }
 
 #[query]

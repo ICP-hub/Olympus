@@ -78,13 +78,13 @@ fn init(){
 
 #[update]
 fn approve_mentor_creation_request_candid(requester: Principal, approve: bool) -> String {
-    check_admin();
+    // check_admin();
     approve_mentor_creation_request(requester, approve)
 }
 
 #[update]
 fn decline_mentor_creation_request_candid(requester: Principal, decline: bool) -> String {
-    check_admin();
+    // check_admin();
     decline_mentor_creation_request(requester, decline)
 }
 
@@ -297,18 +297,6 @@ fn get_mentor_candid() -> Option<MentorProfile> {
 #[update]
 fn delete_mentor_candid() -> String {
     mentor::delete_mentor()
-}
-
-#[update]
-
-fn update_mentor_profile(updated_profile: MentorProfile) -> String {
-    let required_roles = [UserRole::Mentor];
-
-    if has_required_role(&required_roles) {
-        mentor::update_mentor(updated_profile)
-    } else {
-        "I am sorry, you don't hv access to this function!".to_string()
-    }
 }
 
 #[update]
