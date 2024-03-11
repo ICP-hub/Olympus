@@ -271,7 +271,16 @@ type VentureCapitalist = record {
   category_of_investment : text;
   type_of_investment : text;
 };
-service : {
+type VentureCapitalistInternal = record {
+  uid : text;
+  approve : bool;
+  is_active : bool;
+  decline : bool;
+  params : VentureCapitalist;
+};
+service : () -> {
+  add_BlogPost : (text) -> (text);
+  add_announcement : (Announcements) -> (text);
   add_suggestion_caller : (text, text) -> (nat64, text);
   approve_mentor_creation_request_candid : (principal, bool) -> (text);
   approve_vc_creation_request : (principal, bool) -> (text);
@@ -347,6 +356,7 @@ service : {
   respond_to_connection_request_candid : (principal, bool) -> (text);
   send_connection_request : (principal, text) -> (text);
   send_request_as_mentor : (text, text) -> (text);
+  switch_role : (text, text) -> ();
   update_founder_caller : (FounderInfo) -> (text);
   update_hub_organizer_candid : (HubOrganizerRegistration) -> (text);
   update_mentor_profile : (MentorProfile) -> (text);

@@ -138,9 +138,43 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
     format!("User registered successfully with ID: {}", new_id)
 }
 
+// #[query]
+// pub fn get_role_status() -> Vec<Role> {
+//     ROLE_STATUS_ARRAY.with(|r| r.borrow().get(&caller()).expect("couldn't get role status array").clone())
+// }
+
+// #[query]
+// pub fn get_role_status() -> Vec<Role> {
+//     ROLE_STATUS_ARRAY.with(|r|{
+
+//         if !r.contains_key(&caller()){
+//             return vec![Role]
+//         }else{
+//             r.borrow().get(&caller()).expect("couldn't get role status array").clone();
+//         }
+        
+//     }
+        
+//  )
+// }
+
 #[query]
 pub fn get_role_status() -> Vec<Role> {
-    ROLE_STATUS_ARRAY.with(|r| r.borrow().get(&caller()).expect("couldn't get role status array").clone())
+    ROLE_STATUS_ARRAY.with(|r| {
+        let role_status_map = r.borrow();
+        
+        
+        if let Some(role_status) = role_status_map.get(&caller()) {
+            role_status.clone()
+        } else {
+            vec![
+                Role { name: "user".to_string(), status: "default".to_string() },
+                Role { name: "project".to_string(), status: "default".to_string() },
+                Role { name: "mentor".to_string(), status: "default".to_string() },
+                Role { name: "vc".to_string(), status: "default".to_string() },
+            ]
+        }
+    })
 }
 
 // #[update]
