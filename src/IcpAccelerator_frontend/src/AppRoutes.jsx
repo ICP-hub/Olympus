@@ -9,6 +9,7 @@ import { userRoleHandler } from "./components/StateManagement/Redux/Reducers/use
 import Loader from "./components/Loader/Loader";
 import NormalUser from "./components/RoleSelector/NormalUser";
 import CreateProject from "./components/Project/CreateProject/CreateProject";
+import InvestorRegistration from "./components/Registration/InvestorRegistration/InvestorRegistration";
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
 const AllDetailsForm = lazy(() =>
@@ -46,6 +47,7 @@ const AppRoutes = () => {
   const publicRoutes = [
     { path: "/", element: <Home /> },
     { path: "/create-user", element: <NormalUser /> },
+    {path:"/create-vc", element : <InvestorRegistration/>},
     { path: "/create-project", element: <CreateProject /> },
     { path: "/details", element: <AllDetailsForm /> },
     { path: "/roleSelect", element: <RoleSelector /> },
