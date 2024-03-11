@@ -14,15 +14,17 @@ mod user_module;
 mod vc_registration;
 
 use hub_organizer::{HubOrganizerRegistration, UniqueHubs};
+use user_module::{UserInformation, Role};
 use ic_cdk::api::caller;
 use leaderboard::{
     LeaderboardEntryForLikes, LeaderboardEntryForRatings, LeaderboardEntryForUpvote,
 };
 use project_like::LikeRecord;
+use project_registration::FilterCriteria;
 use requests::Request;
 use roles::{get_roles, RolesResponse};
 use std::collections::{HashMap, HashSet};
-use user_module::UserInformation;
+//use user_module::UserInformation;
 
 use ic_cdk::export_candid;
 use manage_focus_expertise::{get_areas, Areas};
@@ -45,11 +47,15 @@ use crate::ratings::MainLevelRatings;
 use crate::ratings::Rating;
 use admin::*;
 use candid::Principal;
-use ic_cdk_macros::{query, update};
+
+
+use ic_cdk_macros::{query, update, init};
+use project_registration::{ NotificationForOwner, NotificationProject, ProjectInfo, ProjectInfoInternal,TeamMember};
 use mentor::*;
-use project_registration::{
-    NotificationForOwner, NotificationProject, ProjectInfo, ProjectInfoInternal, TeamMember,
-};
+
+
+
+
 use rbac::{assign_roles_to_principal, has_required_role, UserRole};
 use register_user::{FounderInfo, FounderInfoInternal, ThirtyInfoFounder};
 use roadmap_suggestion::Suggestion;
@@ -64,33 +70,23 @@ fn check_admin() {
     }
 }
 
+#[init]
+fn init(){
+    user_module::initialize_roles();
+    ic_cdk::println!("initialization done");
+}
+
 #[update]
 fn approve_mentor_creation_request_candid(requester: Principal, approve: bool) -> String {
-    check_admin();
+    // check_admin();
     approve_mentor_creation_request(requester, approve)
 }
 
 #[update]
 fn decline_mentor_creation_request_candid(requester: Principal, decline: bool) -> String {
-    check_admin();
+    // check_admin();
     decline_mentor_creation_request(requester, decline)
 }
-// #[pre_upgrade]
-// fn pre_upgrade() {
-//     mentor::mentor_specific_pre_upgrade_actions();
-// }
-
-// #[pre_upgrade]
-// fn pre_upgrade() {
-//     register_user::pre_upgrade();
-//     project_registration::pre_upgrade();
-//     roadmap_suggestion::pre_upgrade();
-// }
-
-// #[post_upgrade]
-// fn post_upgrade() {
-//     mentor::mentor_specific_post_upgrade_actions();
-// }
 
 #[query]
 fn get_role_from_p_id() -> Option<HashSet<UserRole>> {
@@ -167,6 +163,11 @@ async fn register_project(params: ProjectInfo) -> String {
         "you hv n't registered as a user yet".to_string()
     }
     // assign_roles_to_principal(roles)
+}
+
+#[query]
+fn filter_out_projects(criteria: FilterCriteria)->Vec<ProjectInfo>{
+    project_registration::filter_projects(criteria)
 }
 
 #[query]
@@ -284,7 +285,7 @@ async fn register_mentor_candid(profile: MentorProfile) -> String {
 
     assign_roles_to_principal(roles_to_assign);
 
-    "mentor got registered".to_string()
+    "request has been made to mentor".to_string()
 }
 
 #[query]
@@ -296,18 +297,6 @@ fn get_mentor_candid() -> Option<MentorProfile> {
 #[update]
 fn delete_mentor_candid() -> String {
     mentor::delete_mentor()
-}
-
-#[update]
-
-fn update_mentor_profile(updated_profile: MentorProfile) -> String {
-    let required_roles = [UserRole::Mentor];
-
-    if has_required_role(&required_roles) {
-        mentor::update_mentor(updated_profile)
-    } else {
-        "I am sorry, you don't hv access to this function!".to_string()
-    }
 }
 
 #[update]
@@ -520,6 +509,7 @@ fn get_project_requests(project_id: String) -> Vec<Request> {
 //     roles::get_roles()
 // }
 // made for admin side.....
+
 #[query]
 fn get_role() -> RolesResponse {
     roles::get_roles()

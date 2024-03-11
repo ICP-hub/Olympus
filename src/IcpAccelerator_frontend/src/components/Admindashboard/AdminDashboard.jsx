@@ -190,7 +190,7 @@ function AdminDashboard() {
         <SubmitSection />
       </div>
       </div>
-      <Footer />
+      {/* <Footer /> */}
     </section>
   );
 }
