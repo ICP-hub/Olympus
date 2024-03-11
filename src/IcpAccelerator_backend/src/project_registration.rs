@@ -1,4 +1,6 @@
+use crate::mentor::MentorProfile;
 use crate::user_module::UserInformation;
+use crate::vc_registration::VentureCapitalist;
 use crate::{
     hub_organizer,
     register_user::{self, get_founder_info},
@@ -38,7 +40,6 @@ pub struct ProjectInfo {
     reason_to_join_incubator: String,
     project_description: String,
     project_cover: Vec<u8>,
-
     project_team: Option<TeamMember>,
     token_economics: String,
     technical_docs: String,
@@ -46,6 +47,8 @@ pub struct ProjectInfo {
     target_market: String,
     self_rating_of_project: f64,
     user_data: UserInformation,
+    mentors_assigned: Option<Vec<MentorProfile>>,
+    vc_assigned: Option<Vec<VentureCapitalist>>
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
@@ -100,6 +103,18 @@ pub struct Blog {
     blog_url: String,
     timestamp: u64,
 }
+
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
+pub struct FilterCriteria {
+    pub country: Option<String>,
+    pub rating_range: Option<(f64, f64)>, 
+    pub area_of_focus: Option<String>,
+    pub money_raised_range: Option<(f64, f64)>,
+    pub mentor_name: Option<String>,
+    pub vc_name: Option<String>,
+}
+
+
 pub type ProjectAnnouncements = HashMap<Principal, Vec<Announcements>>;
 pub type Notifications = HashMap<Principal, Vec<NotificationProject>>;
 pub type BlogPost = HashMap<Principal, Vec<Blog>>;
@@ -553,5 +568,54 @@ pub fn get_blog_post() -> HashMap<Principal, Vec<Blog>> {
     BLOG_POST.with(|state| {
         let state = state.borrow();
         state.clone()
+    })
+}
+
+
+pub fn filter_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
+    APPLICATION_FORM.with(|projects| {
+        let projects = projects.borrow();
+        
+        projects.iter()
+            .flat_map(|(_, project_list)| project_list.iter())
+            .filter(|project_internal| {
+                
+                let country_match = criteria.country.as_ref().map_or(true, |c| {
+                    &project_internal.params.user_data.country == c
+                });
+
+                let rating_match = criteria.rating_range.map_or(true, |(min, max)| {
+                    project_internal.params.self_rating_of_project >= min && project_internal.params.self_rating_of_project <= max
+                });
+
+                let focus_match = criteria.area_of_focus.as_ref().map_or(true, |focus| {
+                    &project_internal.params.project_area_of_focus == focus
+                });
+
+                let money_raised_match = criteria.money_raised_range.map_or(true, |(min, max)| {
+                    if let Some(money_raised_str) = &project_internal.params.money_raised_till_now {
+                        if let Ok(money_raised) = money_raised_str.parse::<f64>() {
+                            return money_raised >= min && money_raised <= max;
+                        }
+                    }
+                    false 
+                });
+
+                let mentor_match = criteria.mentor_name.as_ref().map_or(true, |mentor_name| {
+                    project_internal.params.mentors_assigned.as_ref().map_or(false, |mentors| {
+                        mentors.iter().any(|mentor| mentor.user_data.full_name.contains(mentor_name))
+                    })
+                });
+
+                let vc_match = criteria.vc_name.as_ref().map_or(true, |vc_name| {
+                    project_internal.params.vc_assigned.as_ref().map_or(false, |vcs| {
+                        vcs.iter().any(|vc| vc.name_of_fund.contains(vc_name))
+                    })
+                });
+
+                country_match && rating_match && focus_match && money_raised_match && mentor_match && vc_match
+            })
+            .map(|project_internal| project_internal.params.clone()) 
+            .collect() 
     })
 }

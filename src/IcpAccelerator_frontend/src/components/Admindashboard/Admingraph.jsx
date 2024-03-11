@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Hubdashboardlive from "../../../../IcpAccelerator_frontend/src/components/Hubdashboardlive/Hubdashboardlive";
-import { Memberssvg } from "../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
+import Hubdashboardlive from "../Hubdashboardlive/Hubdashboardlive";
+import { Memberssvg } from "../Utils/Data/SvgData";
 import founder from "../../../assets/images/founder.png";
 import hub from "../../../assets/images/hub.png";
 import vc from "../../../assets/images/vc.png";
@@ -12,7 +12,7 @@ import mentor from "../../../assets/images/mentor.png";
 import ApexChart from "react-apexcharts";
 import ReactApexChart from 'react-apexcharts';
 
-import { rectangle } from "../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
+import { rectangle } from "../Utils/Data/SvgData";
 
 const Admingraph = () => {
   const navigate = useNavigate();
@@ -103,7 +103,7 @@ const Admingraph = () => {
       type: 'bar',
     },
     stroke: {
-      width: [0] 
+      width: [0]
     },
     title: {
       text: 'Total Users '
@@ -170,42 +170,18 @@ const Admingraph = () => {
 
 
       </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       <div className="flex flex-row w-full flex-wrap md:flex-nowrap px-[4%] py-[5%] h-[100px]  lg:mt-[-130px] gap-8  ">
         <div className="flex flex-col gap-4 ">
-          <div className="rounded-lg flex justify-center items-center h-[80px] w-[236px] bg-[#B9C0F2]  drop-shadow-xl border-2   ">
+          <div className="rounded-lg flex justify-center items-center h-[80px] lg:md:w-[236px] w-[340px] bg-[#B9C0F2]  drop-shadow-xl border-2   ">
 
-            <div className="flex  flex-row items-center justify-start font-bold text-lg text-black gap-8">
+            <div className="flex  flex-row items-center lg:justify-start justify-center font-bold text-lg text-black gap-8  object-cover">
               <img src={founder} alt="founder" />
               <p className="flex justify-start">vipul</p>
               <p className="font-extrabold w-[59px] h-[62px] flex  text-2xl justify-center items-center">125</p>
             </div>
           </div>
 
-          <div className="rounded-lg flex justify-center items-center flex-col h-[80px] w-[236px] bg-[#B9C0F2]  drop-shadow-xl border-2  ">
+          <div className="rounded-lg flex justify-center items-center flex-col h-[80px] lg:md:w-[236px] w-[340px] bg-[#B9C0F2]  drop-shadow-xl border-2  ">
             <div className="flex  flex-row items-center justify-start font-bold text-lg text-black gap-8">
               <img src={hub} alt="founder" />
               <p className="flex justify-start">taneja</p>
@@ -217,7 +193,7 @@ const Admingraph = () => {
 
 
         <div className="flex flex-col gap-4">
-          <div className="rounded-lg flex justify-center items-center h-[80px] w-[236px] bg-[#B9C0F2]  drop-shadow-xl border-2   ">
+          <div className="rounded-lg flex justify-center items-center h-[80px] lg:md:w-[236px] w-[340px] bg-[#B9C0F2]  drop-shadow-xl border-2   ">
 
             <div className="flex  flex-row items-center justify-start font-bold text-lg text-black gap-8">
               <img src={mentor} alt="founder" />
@@ -226,7 +202,7 @@ const Admingraph = () => {
             </div>
           </div>
 
-          <div className="rounded-lg flex justify-center items-center flex-col h-[80px] w-[236px] bg-[#B9C0F2]  drop-shadow-xl border-2  ">
+          <div className="rounded-lg flex justify-center items-center flex-col h-[80px] lg:md:w-[236px] w-[340px]bg-[#B9C0F2]  drop-shadow-xl border-2  ">
             <div className="flex  flex-row items-center justify-start font-bold text-md text-black gap-4 ">
               <img src={vc} alt="founder" />
               <p className="flex justify-start">Hub Organizer</p>
@@ -234,32 +210,12 @@ const Admingraph = () => {
             </div>
           </div>
         </div>
-
-
-
-
-
-
-
-
-
-        <div className="rounded-lg flex justify-center items-center flex-col h-[140px] w-[303px] bg-[#B9C0F2]  drop-shadow-xl border-2  ">
+        <div className="rounded-lg flex justify-center items-center flex-col h-[140px] w-[333px] lg:md:w-[236px]  bg-[#B9C0F2]  drop-shadow-xl border-2  ">
           <div className="mt-6">
             <ReactApexChart options={icp} series={seriesData} type="line" height={150} />
           </div>
         </div>
       </div>
-
-
-
-
-
-
-
-
-
-
-
       <div className="flex lg:flex-row flex-col gap-2  w-full flex-wrap lg:flex-nowrap space-x-[-70px] px-[4%] py-[8%] justify-start item-start  ">
 
         <div className="rounded-lg flex justify-center items-center mr-32 flex-col h-[300px] lg:w-[860px] w-[350px] mt-[480px] lg:mt-2 md:mt-4 bg-[#B9C0F2]  drop-shadow-xl border-2 overflow-x-auto  ">
@@ -282,14 +238,7 @@ const Admingraph = () => {
 
           </div>
         </div>
-
-
       </div>
-
-
-
-
-
     </div>
   );
 };
