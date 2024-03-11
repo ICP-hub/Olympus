@@ -8,9 +8,13 @@ export default function ButtonDiv({ role, onClose }) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const redirectPath =
-        role?.name === 'project'
+            role?.name === 'project'
             ? '/create-project'
-            : '/';
+            : role?.name === 'mentor'
+                ? '/create-mentor'
+                : role?.name === 'vc'
+                    ? '/create-vc'
+                    : '/';
 
     if (role?.status === 'active') {
         return (
