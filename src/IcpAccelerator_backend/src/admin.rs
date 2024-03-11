@@ -409,3 +409,102 @@ pub fn decline_vc_profile_update_request(requester: Principal, decline: bool) ->
         }
     })
 }
+
+#[update]
+
+pub fn approve_mentor_profile_update(requester: Principal, approve: bool) -> String {
+    MENTOR_PROFILE_EDIT_AWAITS.with(|awaiters| {
+        let mut awaiters = awaiters.borrow_mut();
+        if let Some(updated_profile) = awaiters.get(&requester) {
+            if approve {
+                MENTOR_REGISTRY.with(|vc_registry| {
+                    let mut mentor = vc_registry.borrow_mut();
+                    if let Some(mentor_internal) = mentor.get_mut(&requester) {
+                        // existing_vc_internal.params = vc_internal.clone();
+                        mentor_internal.profile.preferred_icp_hub = updated_profile
+                            .preferred_icp_hub
+                            .clone()
+                            .or(mentor_internal.profile.preferred_icp_hub.clone());
+
+                        mentor_internal.profile.multichain = updated_profile
+                            .multichain
+                            .clone()
+                            .or(mentor_internal.profile.multichain.clone());
+                        mentor_internal.profile.exisitng_icp_project_porfolio = updated_profile
+                            .exisitng_icp_project_porfolio
+                            .clone()
+                            .or(mentor_internal
+                                .profile
+                                .exisitng_icp_project_porfolio
+                                .clone());
+
+                        mentor_internal.profile.area_of_expertise =
+                            updated_profile.area_of_expertise.clone();
+                        mentor_internal.profile.category_of_mentoring_service =
+                            updated_profile.category_of_mentoring_service.clone();
+
+                        mentor_internal.profile.existing_icp_mentor =
+                            updated_profile.existing_icp_mentor.clone();
+                        mentor_internal.profile.icop_hub_or_spoke =
+                            updated_profile.icop_hub_or_spoke;
+                        mentor_internal.profile.social_link = updated_profile.social_link.clone();
+                        mentor_internal.profile.website = updated_profile.website.clone();
+                        mentor_internal.profile.years_of_mentoring =
+                            updated_profile.years_of_mentoring.clone();
+                        mentor_internal.profile.reason_for_joining =
+                            updated_profile.reason_for_joining.clone();
+                        mentor_internal.profile.user_data = updated_profile.user_data.clone();
+                    }
+                });
+
+                awaiters.remove(&requester);
+                format!("Requester with principal id {} is approved", requester)
+            } else {
+                format!(
+                    "Requester with principal id {} could not be approved",
+                    requester
+                )
+            }
+        } else {
+            format!(
+                "Requester with principal id {} has not registered",
+                requester
+            )
+        }
+    })
+}
+
+#[update]
+pub fn decline_mentor_profile_update_request(requester: Principal, decline: bool) -> String {
+    MENTOR_PROFILE_EDIT_AWAITS.with(|awaiters| {
+        let mut awaiters = awaiters.borrow_mut();
+
+        if let Some(vc_internal) = awaiters.get(&requester) {
+            if decline {
+                DECLINED_MENTOR_PROFILE_EDIT_REQUEST.with(|d_vc_registry| {
+                    let mut d_vc = d_vc_registry.borrow_mut();
+                    // Clone and insert the vc_internal into the declined registry
+                    d_vc.insert(requester, vc_internal.clone());
+                });
+
+                // Remove the requester from the awaiters
+                awaiters.remove(&requester);
+
+                // Return a success message for declining the request
+                format!("Requester with principal id {} is declined", requester)
+            } else {
+                // Return a message indicating the request could not be declined (because decline is false)
+                format!(
+                    "Requester with principal id {} could not be declined",
+                    requester
+                )
+            }
+        } else {
+            // Return a message indicating the requester has not registered
+            format!(
+                "Requester with principal id {} has not registered",
+                requester
+            )
+        }
+    })
+}

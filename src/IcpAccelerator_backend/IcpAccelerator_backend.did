@@ -272,11 +272,13 @@ service : {
   add_announcement : (Announcements) -> (text);
   add_suggestion_caller : (text, text) -> (nat64, text);
   approve_mentor_creation_request_candid : (principal, bool) -> (text);
+  approve_mentor_profile_update : (principal, bool) -> (text);
   approve_vc_creation_request : (principal, bool) -> (text);
   approve_vc_profile_update : (principal, bool) -> (text);
   calculate_average_api : (text) -> (opt float64) query;
   connect_to_team_member : (text, text) -> (text);
   decline_mentor_creation_request_candid : (principal, bool) -> (text);
+  decline_mentor_profile_update_request : (principal, bool) -> (text);
   decline_vc_creation_request : (principal, bool) -> (text);
   decline_vc_profile_update_request : (principal, bool) -> (text);
   delete_founder_caller : () -> (text);
@@ -347,7 +349,7 @@ service : {
   send_request_as_mentor : (text, text) -> (text);
   update_founder_caller : (FounderInfo) -> (text);
   update_hub_organizer_candid : (HubOrganizerRegistration) -> (text);
-  update_mentor_profile : (MentorProfile) -> (text);
+  update_mentor : (MentorProfile) -> (text);
   update_project : (text, ProjectInfo) -> (text);
   update_rating_api : (vec Rating) -> ();
   update_suggestion_status_caller : (nat64, text, text) -> ();
