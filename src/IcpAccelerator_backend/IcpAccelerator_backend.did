@@ -271,6 +271,7 @@ service : {
   add_BlogPost : (text) -> (text);
   add_announcement : (Announcements) -> (text);
   add_suggestion_caller : (text, text) -> (nat64, text);
+  add_vc_announcement : (text, text) -> (text);
   approve_mentor_creation_request_candid : (principal, bool) -> (text);
   approve_mentor_profile_update : (principal, bool) -> (text);
   approve_vc_creation_request : (principal, bool) -> (text);
@@ -324,6 +325,9 @@ service : {
   get_user_information : () -> (Result) query;
   get_user_information_using_uid : (text) -> (Result) query;
   get_user_likes : (text) -> (opt LikeRecord) query;
+  get_vc_announcements : () -> (
+      vec record { principal; vec Announcements },
+    ) query;
   get_vc_info : () -> (opt VentureCapitalist) query;
   get_venture_capitalist_info : () -> (opt VentureCapitalist) query;
   get_your_project_notifications : () -> (vec NotificationForOwner) query;

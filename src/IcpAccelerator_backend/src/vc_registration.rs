@@ -9,6 +9,7 @@ use ic_cdk_macros::{query, update};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::cell::RefCell;
+use ic_cdk::api::time;
 use std::{collections::HashMap, io::Write};
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct VentureCapitalist {
@@ -82,6 +83,15 @@ pub struct VentureCapitalistInternal {
     pub approve: bool,
     pub decline: bool,
 }
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+pub struct Announcements {
+    project_name: String,
+    announcement_message: String,
+    timestamp: u64,
+}
+
+
+pub type VcAnnouncements = HashMap<Principal, Vec<Announcements>>;
 
 pub type VentureCapitalistStorage = HashMap<Principal, VentureCapitalistInternal>;
 pub type VentureCapitalistParams = HashMap<Principal, VentureCapitalist>;
@@ -92,7 +102,7 @@ thread_local! {
     pub static DECLINED_VC_REQUESTS: RefCell<VentureCapitalistStorage> = RefCell::new(VentureCapitalistStorage::new());
     pub static VC_PROFILE_EDIT_AWAITS :RefCell<VentureCapitalistParams> = RefCell::new(VentureCapitalistParams::new());
     pub static DECLINED_VC_PROFILE_EDIT_REQUEST :RefCell<VentureCapitalistParams> = RefCell::new(VentureCapitalistParams::new());
-
+    pub static VC_ANNOUNCEMENTS:RefCell<VcAnnouncements> = RefCell::new(VcAnnouncements::new());
 }
 
 pub fn pre_upgrade() {
@@ -294,4 +304,38 @@ pub fn get_multichain_list() -> Vec<String> {
         "Nordek".to_string(),
     ];
     chains
+}
+
+
+#[update]
+pub fn add_vc_announcement(name:String, announcement_message:String) -> String {
+    let caller_id = caller();
+
+    let current_time = time();
+
+    VC_ANNOUNCEMENTS.with(|state| {
+        let mut state = state.borrow_mut();
+        let new_vc = Announcements{
+            project_name :name,
+            announcement_message:announcement_message,
+            timestamp:current_time,
+
+
+        };
+        
+        state
+            .entry(caller_id)
+            .or_insert_with(Vec::new)
+            .push(new_vc);
+        format!("Announcement added successfully at {}", current_time)
+    })
+}
+
+//for testing purpose
+#[query]
+pub fn get_vc_announcements() -> HashMap<Principal, Vec<Announcements>> {
+    VC_ANNOUNCEMENTS.with(|state| {
+        let state = state.borrow();
+        state.clone()
+    })
 }
