@@ -138,10 +138,10 @@ const App = () => {
           <AppRoutes />
           {/* <MentorRegistration /> */}
           {/* <CreateProjectRegistration/> */}
-          <div className="-mx-12">
-          <Footer />
-          </div>
         </div>
+      </div>
+      <div className="-mx-12">
+        <Footer />
       </div>
     </>
   );
