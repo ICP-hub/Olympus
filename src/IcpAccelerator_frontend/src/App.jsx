@@ -37,6 +37,8 @@ import { areaOfExpertiseHandlerRequest } from "./components/StateManagement/Redu
 import NormalUser from "./components/RoleSelector/NormalUser";
 import MentorRegistration from "./components/Registration/MentorRegistration/MentorRegistration";
 import Adminoption from "./components/Admindashboard/Adminoption";
+import Admingraph from "./components/Admindashboard/Admingraph";
+import AdminDashboard from "./components/Admindashboard/AdminDashboard";
 
 const App = () => {
   const identity = useSelector((currState) => currState.internet.identity);
@@ -118,7 +120,9 @@ const App = () => {
       {/* <AllDetailsForm/> */}
       {/* <ProjectDetails/> */}
       {/* <Home/> */}
-      <Adminoption />
+      {/* <Adminoption /> */}
+      {/* <Admingraph /> */}
+      <AdminDashboard />
       {/* <Hubcards /> */}
       {/* <Hubdashboard /> */}
       {/* <Hubdashboard /> */}
