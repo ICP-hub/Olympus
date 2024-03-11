@@ -6,9 +6,10 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import {
   investorRegistrationAdditionalInfo,
-  investorRegistrationPersonalDetails,
+  investorRegistrationUserDetailsDetails,
   investorRegistrationDetails,
 } from "../../Utils/Data/InvestorFormData";
+import { useCountries } from "react-countries";
 import InvestorDetails from "./InvestorDetails";
 import InvestorAdditionalInformation from "./InvestorAdditionalInformation";
 import InvestorPersonalInformation from "./InvestorPersonalInformation";
@@ -18,93 +19,127 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import { userRoleHandler } from "../../StateManagement/Redux/Reducers/userRoleReducer";
+import CompressedImage from "../../ImageCompressed/CompressedImage";
 
 const validationSchema = {
-  personalDetails: yup.object().shape({
-    email_address: yup
+  userDetails: yup.object().shape({
+    full_name: yup
       .string()
-      .email("Invalid email format")
-      .required("Email address is required")
-      .test("is-non-empty", "Email address is required", (value) =>
-        /\S/.test(value)
-      ),
-    telegram_id: yup
-      .string()
-      .test("is-non-empty", "Telegram ID is required", (value) =>
+      .test("is-non-empty", "Full Name is required", (value) =>
         /\S/.test(value)
       )
-      .required("Telegram ID is required"),
-    portfolio_link: yup
+      .required("Full Name is required"),
+    openchat_username: yup
       .string()
-      .url("Must be a valid URL")
-      .test("is-non-empty", "Must be a valid URL", (value) => /\S/.test(value)),
-    location: yup
-      .string()
-      .required("Location is required")
-      .test("is-non-empty", "Location is required", (value) =>
+      .test("is-non-empty", "0penchat username is required", (value) =>
         /\S/.test(value)
-      ),
-    website_link: yup
+      )
+      .required("Openchat username is required"),
+    bio: yup
       .string()
-      .url("Must be a valid URL")
-      .required("Website link is required")
-      .test("is-non-empty", "Website link is required", (value) =>
-        /\S/.test(value)
-      ),
-
-    technological_focus: yup
+      .test("is-non-empty", "Bio is required", (value) => /\S/.test(value))
+      .required("Bio is required"),
+    email: yup
       .string()
-      .required("Technological focus is required")
-      .test("is-non-empty", "Technological focus is required", (value) =>
+      .email("Invalid email")
+      .test("is-non-empty", "Email is required", (value) => /\S/.test(value))
+      .required("Email is required"),
+    telegram_id: yup
+      .string()
+      .url("Invalid telegram_id URL")
+      .test("is-non-empty", "telegram_id URL is required", (value) =>
         /\S/.test(value)
-      ),
-
+      )
+      .required("telegram_id URL is required"),
+    twitter_id: yup.string().optional().url(),
+    country: yup
+      .string()
+      .required()
+      .test("is-non-empty", null, (value) => /\S/.test(value)),
+    area_of_intrest: yup
+      .string()
+      .test("is-non-empty", "Area of interest is required", (value) =>
+        /\S/.test(value)
+      )
+      .required("Area of interest required"),
+  }),
+  investorDetails: yup.object().shape({
     preferred_icp_hub: yup
       .string()
       .test("is-non-empty", "ICP Hub selection is required", (value) =>
         /\S/.test(value)
       )
       .required("ICP Hub selection is required"),
-  }),
-  investorDetails: yup.object().shape({
-    investor_type: yup
-      .string()
-      .required("Investor type is required")
-      .test("is-non-empty", "Investor type required", (value) =>
-        /\S/.test(value)
-      ),
-    typical_decision_making_timeline_for_investments: yup
-      .string()
-      .required("Decision making timeline is required")
-      .test("is-non-empty", "Decision making timeline is required", (value) =>
-        /\S/.test(value)
-      ),
-    interest_in_board_positions: yup
-      .boolean()
-      .required("Interest in board positions is required")
-      .test(
-        "is-non-empty",
-        "Interest in board positions is required",
-        (value) => /\S/.test(value)
-      ),
     name_of_fund: yup
       .string()
       .required("Name of fund is required")
-      .test("is-non-empty", "Name of fund is required", (value) =>
+      .test("is-non-empty", "Name of fund required", (value) =>
         /\S/.test(value)
       ),
-    size_of_managed_fund: yup
+    existing_icp_portfolio: yup
+      .string()
+      .required("exisitng icp portfolio required")
+      .test("is-non-empty", "icp protfolio required", (value) =>
+        /\S/.test(value)
+      ),
+    assets_under_management: yup
+      .string()
+      .required("Assets under management required")
+      .test("is-non-empty", "assets_under_management is required", (value) =>
+        /\S/.test(value)
+      ),
+    portfolio_link: yup
+      .string()
+      .required("Portfolio required")
+      .test("is-non-empty", "portfolio is required", (value) =>
+        /\S/.test(value)
+      ),
+    existing_icp_investor: yup
+      .boolean()
+      .required("Are you an existing ICP investor")
+      .test(
+        "is-non-empty",
+        "Data is required",
+        (value) => /\S/.test(value)
+      ),
+    registered_under_any_hub: yup
+      .boolean()
+      .required("registered under any hub required")
+      .test("is-non-empty", "registered under any hub required", (value) =>
+        /\S/.test(value)
+      ),
+
+    money_invested: yup
       .number()
       .positive("Must be a positive number")
-      .required("Size of managed fund is required")
-      .test("is-non-empty", "Size of managed fund is required", (value) =>
+      .required("Size of fund is required")
+      .test("is-non-empty", "Money invested is required", (value) =>
         /\S/.test(value)
       ),
-    accredited_investor_status: yup
-      .boolean()
-      .required("Accredited investor status is required")
-      .test("is-non-empty", "Accredited investor status is required", (value) =>
+    project_on_multichain: yup
+    .string()
+    .required("Are your project is on Multichain")
+    .test(
+        "is-non-empty",
+        "Confirmation is required",
+        (value) => /\S/.test(value)
+      ),
+
+    fund_size: yup
+      .number()
+      .positive("Must be a positive number")
+      .required("Size of fund is required")
+      .test("is-non-empty", "Size of fund is required", (value) =>
         /\S/.test(value)
+      ),
+    average_check_size: yup
+      .number()
+      .required("Size of managed fund is required")
+      .positive("Must be a positive number")
+      .test(
+        "is-float",
+        "Size of managed fund must be a positive number with at most two decimal places",
+        (value) => value && /^\d+(\.\d{1,2})?$/.test(value)
       ),
 
     preferred_investment_sectors: yup
@@ -117,15 +152,32 @@ const validationSchema = {
       ),
   }),
   additionalInfo: yup.object().shape({
-    average_investment_ticket: yup
-      .number()
-      .positive("Must be a positive number")
-      .required("Average investment ticket is required")
-      .test("is-non-empty", "Average investment ticket is required", (value) =>
-        /\S/.test(value)
+    type_of_investment: yup
+      .string()
+      .required("type of icp investment required")
+      .test(
+        "is-non-empty",
+        "Preferred investment sectors are required",
+        (value) => /\S/.test(value)
+      ),
+    category_of_investment: yup
+      .string()
+      .required("Category of investment is required")
+      .test(
+        "is-non-empty",
+        "Category of investment required",
+        (value) => /\S/.test(value)
+      ),
+    reason_for_joining: yup
+      .string()
+      .required("Reason for joining is required")
+      .test(
+        "is-non-empty",
+        "Reason for joining is required",
+        (value) => /\S/.test(value)
       ),
 
-    investment_stage_preference: yup
+    announcement_details: yup
       .string()
       .required("Investment stage preference is required")
       .test(
@@ -145,25 +197,12 @@ const validationSchema = {
         (value) => /\S/.test(value)
       ),
 
-    revenue_range_preference: yup
+    investor_type: yup
       .string()
-      .required("Revenue range preference is required")
-      .test("is-non-empty", "Revenue range preference is required", (value) =>
+      .required("Investor type is required")
+      .test("is-non-empty", "Investor type is required", (value) =>
         /\S/.test(value)
       ),
-
-    assets_for_investment: yup
-      .number()
-      .positive("Must be a positive number")
-      .required("Assets for investment is required")
-      .test("is-non-empty", "Assets for investment is required", (value) =>
-        /\S/.test(value)
-      ),
-
-    referrer: yup
-      .string()
-      .optional()
-      .test("is-non-empty", "Required", (value) => /\S/.test(value)),
   }),
 };
 
@@ -173,14 +212,23 @@ const InvestorRegistration = () => {
   const specificRole = useSelector(
     (currState) => currState.current.specificRole
   );
+  const areaOfExpertise = useSelector(
+    (currState) => currState.expertiseIn.expertise
+  );
+  const activeRole = useSelector(
+    (currState) => currState.currentRoleStatus.activeRole
+  );
+
   const investorFullData = useSelector(
     (currState) => currState.investorData.data
   );
 
+  console.log("activeRole in vc reg ", activeRole);
   console.log("investorFullData in vc reg ", investorFullData);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { countries } = useCountries();
 
   const [activeTab, setActiveTab] = useState(investorRegistration[0].id);
   const [formData, setFormData] = useState({});
@@ -188,6 +236,12 @@ const InvestorRegistration = () => {
   const [isCurrentStepValid, setIsCurrentStepValid] = useState(false);
   const [userHasInteracted, setUserHasInteracted] = useState(false);
   const [investorDataObject, setInvestorDataObject] = useState({});
+  const [image, setImage] = useState(null);
+  const [logo, setlogo] = useState(null);
+  const [isMultiChain, setIsMultiChain] = useState(false);
+
+  const [profileImage, setProfileImage] = useState(null);
+  const [venture_image, setVenture_image] = useState(null);
 
   const getTabClassName = (tab) => {
     return `inline-block p-2 font-bold ${
@@ -197,7 +251,7 @@ const InvestorRegistration = () => {
     } rounded-t-lg`;
   };
   const steps = [
-    { id: "personalDetails", fields: investorRegistrationPersonalDetails },
+    { id: "userDetails", fields: investorRegistrationUserDetailsDetails },
     { id: "investorDetails", fields: investorRegistrationDetails },
     { id: "additionalInfo", fields: investorRegistrationAdditionalInfo },
   ];
@@ -250,9 +304,45 @@ const InvestorRegistration = () => {
     const fieldsToValidate = steps[step].fields.map((field) => field.name);
     const result = await trigger(fieldsToValidate);
     if (result) {
+      if (!image && !formData.logo) {
+        alert("Please upload a profile image.");
+        return;
+      }
       setStep((prevStep) => prevStep + 1);
       setActiveTab(investorRegistration[step + 1]?.id);
     }
+  };
+
+  const addImageHandler = async (e) => {
+    const selectedImages = e.target.files[0];
+    if (selectedImages) {
+      try {
+        // 1) image ko phle compress kia
+        const compressedFile = await CompressedImage(selectedImages);
+
+        // 2) frontend pr display k lie
+        const reader = new FileReader();
+        reader.readAsDataURL(compressedFile); // Convert the compressed blob to a Data URL for display
+        reader.onloadend = () => {
+          setImage(reader.result);
+        };
+
+        // 3) image ko backend mai bhejne k lie
+        const byteArray = await compressedFile.arrayBuffer(); // Convert krega Blob ko ArrayBuffer mai
+        const imageBytes = Array.from(new Uint8Array(byteArray)); // Convert ArrayBuffer ko array of bytes mai
+        setlogo(imageBytes);
+        // console.log("imageBytes", imageBytes);
+      } catch (error) {
+        console.error("Error compressing the image:", error);
+      }
+    }
+  };
+
+  const imageUrlToByteArray = async (imageUrl) => {
+    const response = await fetch(imageUrl);
+    const blob = await response.blob();
+    const arrayBuffer = await blob.arrayBuffer();
+    return Array.from(new Uint8Array(arrayBuffer));
   };
 
   const handlePrevious = () => {
@@ -272,6 +362,14 @@ const InvestorRegistration = () => {
       console.log("data jo aaya reset mai ", formattedData);
       reset(formattedData);
       setFormData(formattedData);
+
+      if (formattedData.logo) {
+        imageUrlToByteArray(formattedData.logo)
+          .then((imageBytes) => {
+            setlogo(imageBytes);
+          })
+          .catch((error) => console.error("Error converting image:", error));
+      }
     }
   }, [investorFullData, reset]);
 
@@ -282,15 +380,15 @@ const InvestorRegistration = () => {
     console.log("data jo jaega backend mai =>", val);
     let result;
     try {
-      if (specificRole !== null || undefined) {
-        result = await actor.update_venture_capitalist_caller(val);
-      } else if (specificRole === null || specificRole === undefined) {
-        result = await actor.register_venture_capitalist_caller(val);
-      }
+      // if (specificRole !== null || undefined) {
+      // result = await actor.update_venture_capitalist(val);
+      // } else if (specificRole === null || specificRole === undefined) {
+      result = await actor.register_venture_capitalist(val);
+      // }
 
       toast.success(result);
       console.log("investor data registered in backend");
-      await dispatch(userRoleHandler());
+      // await dispatch(userRoleHandler());
       await navigate("/dashboard");
     } catch (error) {
       toast.error(error);
@@ -313,39 +411,46 @@ const InvestorRegistration = () => {
       // console.log("exisiting user visit ");
 
       const interestInBoardPosition =
-        updatedFormData.interest_in_board_positions === "true" ? true : false;
-      const accreditedInvestorStatus =
-        updatedFormData.accredited_investor_status === "true" ? true : false;
+        updatedFormData.existing_icp_investor === "true" ? true : false;
+      const updatedregisteredUnderAnyHub =
+        updatedFormData.registered_under_any_hub === "true" ? true : false;
+
+      // const updatedMultiChain =
+      //   updatedFormData.project_on_multichain === "true" ? true : false;
 
       let tempObj2 = {
-        accredited_investor_status: [accreditedInvestorStatus] || [],
-        assets_for_investment: [updatedFormData.assets_for_investment] || [],
-        average_investment_ticket:
-          [updatedFormData.average_investment_ticket] || [],
-        email_address: [updatedFormData.email_address] || [],
-        interest_in_board_positions: [interestInBoardPosition] || [],
-        investment_stage_preference:
-          [updatedFormData.investment_stage_preference] || [],
-        investor_type: [updatedFormData.investor_type] || [],
-        location: [updatedFormData.location] || [],
-        name_of_fund: [updatedFormData.name_of_fund] || [],
+        average_check_size: Number(updatedFormData.average_check_size),
+        email: [updatedFormData.email] || [],
+        full_name: updatedFormData.full_name || "",
+        openchat_username: [updatedFormData.openchat_username] || [],
+
+        existing_icp_investor: interestInBoardPosition,
+        money_invested: Number(updatedFormData.money_invested),
+        project_on_multichain: [updatedFormData.project_on_multichain] || [],
+
+        reason_for_joining: updatedFormData.reason_for_joining || "",
+        country: updatedFormData.country || "",
+        announcement_details: updatedFormData.announcement_details || "",
+        name_of_fund: updatedFormData.name_of_fund || "",
+        bio: [updatedFormData.bio] || [],
+        existing_icp_portfolio: updatedFormData.existing_icp_portfolio || "",
+        registered_under_any_hub: [updatedregisteredUnderAnyHub] || [],
         number_of_portfolio_companies:
-          [updatedFormData.number_of_portfolio_companies] || [],
-        portfolio_link: [updatedFormData.portfolio_link] || [],
-        preferred_icp_hub: [updatedFormData.preferred_icp_hub] || [],
+          updatedFormData.number_of_portfolio_companies || 0,
+        area_of_intrest: updatedFormData.area_of_intrest || [],
+
+        portfolio_link: updatedFormData.portfolio_link || "",
+        preferred_icp_hub: updatedFormData.preferred_icp_hub,
+        type_of_investment: updatedFormData.type_of_investment || "",
+        category_of_investment: updatedFormData.category_of_investment || "",
+
         preferred_investment_sectors:
           [updatedFormData.preferred_investment_sectors] || [],
-        referrer: [updatedFormData.referrer] || [],
-        revenue_range_preference:
-          [updatedFormData.revenue_range_preference] || [],
-        size_of_managed_fund:
-          [Number(updatedFormData.size_of_managed_fund)] || [],
-        technological_focus: [updatedFormData.technological_focus] || [],
+        investor_type: updatedFormData.investor_type ||"",
+        fund_size: Number(updatedFormData.fund_size) || "",
         telegram_id: [updatedFormData.telegram_id] || [],
-        typical_decision_making_timeline_for_investments:
-          [updatedFormData.typical_decision_making_timeline_for_investments] ||
-          [],
-        website_link: [updatedFormData.website_link] || [],
+        assets_under_management: updatedFormData.assets_under_management || "",
+        logo: [logo] || [],
       };
 
       setInvestorDataObject(tempObj2);
@@ -357,39 +462,50 @@ const InvestorRegistration = () => {
       // console.log("first time visit ");
 
       const interestInBoardPosition =
-        updatedFormData.interest_in_board_positions === "true" ? true : false;
-      const accreditedInvestorStatus =
-        updatedFormData.accredited_investor_status === "true" ? true : false;
+        updatedFormData.existing_icp_investor === "true" ? true : false;
+      const updatedregisteredUnderAnyHub =
+        updatedFormData.registered_under_any_hub === "true" ? true : false;
+      // const updatedMultiChain =
+      //   updatedFormData.project_on_multichain === "true" ? true : false;
 
       let tempObj = {
-        accredited_investor_status: [accreditedInvestorStatus],
-        assets_for_investment: [updatedFormData.assets_for_investment],
-        average_investment_ticket: [updatedFormData.average_investment_ticket],
-        email_address: [updatedFormData.email_address],
-        interest_in_board_positions: [interestInBoardPosition],
-        investment_stage_preference: [
-          updatedFormData.investment_stage_preference,
-        ],
-        investor_type: [updatedFormData.investor_type],
-        location: [updatedFormData.location],
-        name_of_fund: [updatedFormData.name_of_fund],
-        number_of_portfolio_companies: [
+        user_data: {
+          bio: [updatedFormData.bio],
+          country: updatedFormData.country,
+          area_of_intrest: updatedFormData.area_of_intrest,
+          telegram_id: [updatedFormData.telegram_id],
+          twitter_id: [updatedFormData.twitter_id],
+          openchat_username: [updatedFormData.openchat_username],
+          email: [updatedFormData.email],
+          full_name: updatedFormData.full_name,
+          profile_picture: [logo],
+        },
+        average_check_size: Number(updatedFormData.average_check_size) || 0,
+        existing_icp_investor: interestInBoardPosition,
+        registered_under_any_hub: [updatedregisteredUnderAnyHub],
+
+        money_invested: Number(updatedFormData.money_invested),
+        project_on_multichain: [updatedFormData.project_on_multichain],
+
+        reason_for_joining: updatedFormData.reason_for_joining,
+        announcement_details: updatedFormData.announcement_details,
+        name_of_fund: updatedFormData.name_of_fund,
+        existing_icp_portfolio: updatedFormData.existing_icp_portfolio,
+        number_of_portfolio_companies:
           updatedFormData.number_of_portfolio_companies,
-        ],
-        portfolio_link: [updatedFormData.portfolio_link],
-        preferred_icp_hub: [updatedFormData.preferred_icp_hub],
+
+        portfolio_link: updatedFormData.portfolio_link,
+        preferred_icp_hub: updatedFormData.preferred_icp_hub,
+        type_of_investment: updatedFormData.type_of_investment,
+        category_of_investment: updatedFormData.category_of_investment,
+
         preferred_investment_sectors: [
           updatedFormData.preferred_investment_sectors,
         ],
-        referrer: [updatedFormData.referrer],
-        revenue_range_preference: [updatedFormData.revenue_range_preference],
-        size_of_managed_fund: [Number(updatedFormData.size_of_managed_fund)],
-        technological_focus: [updatedFormData.technological_focus],
-        telegram_id: [updatedFormData.telegram_id],
-        typical_decision_making_timeline_for_investments: [
-          updatedFormData.typical_decision_making_timeline_for_investments,
-        ],
-        website_link: [updatedFormData.website_link],
+        investor_type: updatedFormData.investor_type,
+        fund_size: Number(updatedFormData.fund_size),
+        assets_under_management: updatedFormData.assets_under_management,
+        logo: [logo],
       };
       setInvestorDataObject(tempObj);
       await sendingInvestorData(tempObj);
@@ -442,63 +558,233 @@ const InvestorRegistration = () => {
         </ul>
 
         {step == 0 && (
-          <div className="relative z-0 group mb-6 px-4">
-            <label
-              htmlFor="preferred_icp_hub"
-              className="block mb-2 text-lg font-medium  text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-            >
-              Can you please share your preferred ICP Hub
-            </label>
-            <select
-              {...register("preferred_icp_hub")}
-              // id="preferred_icp_hub"
-              className={`bg-gray-50 border-2 ${
-                errors.preferred_icp_hub
-                  ? "border-red-500 placeholder:text-red-500"
-                  : "border-[#737373]"
-              } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-            >
-              <option className="text-lg font-bold" value="">
-                Select your ICP Hub
-              </option>
-              {getAllIcpHubs?.map((hub) => (
-                <option
-                  key={hub.id}
-                  value={`${hub.name} ,${hub.region}`}
-                  className="text-lg font-bold"
-                >
-                  {hub.name} , {hub.region}
+          <div className="flex flex-col">
+            <div className="flex-row w-full flex justify-start gap-4 items-center">
+              <div className="mb-3 ml-6 h-24 w-24 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
+                {profileImage ? (
+                  <img
+                    src={profileImage}
+                    alt="New profile"
+                    className="h-full w-full object-cover"
+                  />
+                ) : formData.venture_image ? (
+                  <img
+                    src={formData?.venture_image}
+                    alt="User"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <svg
+                    width="35"
+                    height="37"
+                    viewBox="0 0 35 37"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="bg-no-repeat"
+                  >
+                    <path
+                      d="M8.53049 8.62583C8.5304 13.3783 12.3575 17.2449 17.0605 17.2438C21.7634 17.2428 25.5907 13.3744 25.5908 8.62196C25.5909 3.8695 21.7638 0.00287764 17.0608 0.00394405C12.3579 0.00501045 8.53058 3.87336 8.53049 8.62583ZM32.2249 36.3959L34.1204 36.3954L34.1205 34.4799C34.1206 27.0878 28.1667 21.0724 20.8516 21.0741L13.2692 21.0758C5.95224 21.0775 -3.41468e-05 27.0955 -0.000176714 34.4876L-0.000213659 36.4032L32.2249 36.3959Z"
+                      fill="#BBBBBB"
+                    />
+                  </svg>
+                )}
+                <input
+                  id="imagess"
+                  type="file"
+                  name="imagess"
+                  onChange={(e) => addImageHandler(e)}
+                  className="hidden"
+                />
+              </div>
+
+              <label
+                htmlFor="imagess"
+                className="p-2 border-2 border-blue-800 items-center rounded-md text-md bg-transparent text-blue-800 cursor-pointer font-extrabold"
+              >
+                Upload Profile
+              </label>
+            </div>
+
+            <div className="z-0 w-full my-3 group">
+              <label
+                htmlFor="country"
+                className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+              >
+                Please select your Country.
+              </label>
+              <select
+                {...register("country")}
+                className={`bg-gray-50 border-2 ${
+                  errors.country
+                    ? "border-red-500 placeholder:text-red-500"
+                    : "border-[#737373]"
+                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+              >
+                <option className="text-lg font-bold" value="">
+                  select your Country ⌄
                 </option>
-              ))}
-            </select>
-            {errors.preferred_icp_hub && (
-              <span className="mt-1 text-sm text-red-500 font-bold">
-                {errors.preferred_icp_hub.message}
-              </span>
-            )}
+                {countries?.map((expert) => (
+                  <option
+                    key={expert.name}
+                    value={`${expert.name}`}
+                    className="text-lg font-bold"
+                  >
+                    {expert.name}
+                  </option>
+                ))}
+              </select>
+
+              {errors.country && (
+                <p className="text-red-500 text-xs italic">
+                  {errors.country.message}
+                </p>
+              )}
+            </div>
+
+            <div className="relative z-0 group mb-6 px-4">   // correct
+              <label
+                htmlFor="area_of_intrest"
+                className="block mb-2 text-lg font-medium  text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+              >
+                What is your area of interest ?
+              </label>
+              <select
+                {...register("area_of_intrest")}
+                // id="area_of_intrest"
+                className={`bg-gray-50 border-2 ${
+                  errors.area_of_intrest
+                    ? "border-red-500 placeholder:text-red-500"
+                    : "border-[#737373]"
+                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+              >
+                <option className="text-lg font-bold" value="">
+                  Select your area of interest
+                </option>
+                {areaOfExpertise?.map((hub) => (
+                  <option
+                    key={hub.id}
+                    value={`${hub.name} ,${hub.region}`}
+                    className="text-lg font-bold"
+                  >
+                    {hub.name} , {hub.region}
+                  </option>
+                ))}
+              </select>
+              {errors.area_of_intrest && (
+                <span className="mt-1 text-sm text-red-500 font-bold">
+                  {errors.area_of_intrest.message}
+                </span>
+              )}
+            </div>
+
+           
           </div>
         )}
 
         {step == 1 && (
           <div className="flex flex-col">
+
+<div className="flex-row w-full flex justify-start gap-4 items-center">
+              <div className="mb-3 ml-6 h-24 w-24 rounded-md border-2 border-gray-300 flex items-center justify-center overflow-hidden">
+                {image ? (
+                  <img
+                    src={image}
+                    alt="New profile"
+                    className="h-full w-full object-cover"
+                  />
+                ) : formData.logo ? (
+                  <img
+                    src={formData?.logo}
+                    alt="User"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <svg
+                    width="35"
+                    height="37"
+                    viewBox="0 0 35 37"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="bg-no-repeat"
+                  >
+                    <path
+                      d="M8.53049 8.62583C8.5304 13.3783 12.3575 17.2449 17.0605 17.2438C21.7634 17.2428 25.5907 13.3744 25.5908 8.62196C25.5909 3.8695 21.7638 0.00287764 17.0608 0.00394405C12.3579 0.00501045 8.53058 3.87336 8.53049 8.62583ZM32.2249 36.3959L34.1204 36.3954L34.1205 34.4799C34.1206 27.0878 28.1667 21.0724 20.8516 21.0741L13.2692 21.0758C5.95224 21.0775 -3.41468e-05 27.0955 -0.000176714 34.4876L-0.000213659 36.4032L32.2249 36.3959Z"
+                      fill="#BBBBBB"
+                    />
+                  </svg>
+                )}
+                <input
+                  id="images"
+                  type="file"
+                  name="images"
+                  onChange={(e) => addImageHandler(e)}
+                  className="hidden"
+                />
+              </div>
+
+              <label
+                htmlFor="images"
+                className="p-2 border-2 border-blue-800 items-center rounded-md text-md bg-transparent text-blue-800 cursor-pointer font-extrabold"
+              >
+                Upload Profile
+              </label>
+            </div>
+
+<div className="relative z-0 group mb-6 px-4">
+              <label
+                htmlFor="preferred_icp_hub"
+                className="block mb-2 text-lg font-medium  text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+              >
+                Can you please share your preferred ICP Hub
+              </label>
+              <select
+                {...register("preferred_icp_hub")}
+                // id="preferred_icp_hub"
+                className={`bg-gray-50 border-2 ${
+                  errors.preferred_icp_hub
+                    ? "border-red-500 placeholder:text-red-500"
+                    : "border-[#737373]"
+                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+              >
+                <option className="text-lg font-bold" value="">
+                  Select your ICP Hub
+                </option>
+                {getAllIcpHubs?.map((hub) => (
+                  <option
+                    key={hub.id}
+                    value={`${hub.name} ,${hub.region}`}
+                    className="text-lg font-bold"
+                  >
+                    {hub.name} , {hub.region}
+                  </option>
+                ))}
+              </select>
+              {errors.preferred_icp_hub && (
+                <span className="mt-1 text-sm text-red-500 font-bold">
+                  {errors.preferred_icp_hub.message}
+                </span>
+              )}
+            </div>
+
+
             <div className="relative z-0 group mb-6 px-4">
               <label
-                htmlFor="interest_in_board_positions"
+                htmlFor="existing_icp_investor"
                 className="block mb-2 text-lg font-medium text-gray-500 hover:text-black  truncate overflow-hidden text-start"
               >
-                Do you have an interest in board positions?
+                Are you an exisitng ICP investor ?
               </label>
               <select
-                {...register("interest_in_board_positions")}
-                id="interest_in_board_positions"
+                {...register("existing_icp_investor")}
+                id="existing_icp_investor"
                 className={`bg-gray-50 border-2 ${
-                  errors.interest_in_board_positions
+                  errors.existing_icp_investor
                     ? "border-red-500 placeholder:text-red-500"
                     : "border-[#737373]"
                 } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
               >
                 <option className="text-lg font-bold" value="">
-                  Interest in Board Positions
+                  Exisitng investor
                 </option>
                 <option className="text-lg font-bold" value="true">
                   Yes
@@ -508,31 +794,30 @@ const InvestorRegistration = () => {
                 </option>
               </select>
 
-              {errors.interest_in_board_positions && (
+              {errors.existing_icp_investor && (
                 <span className="mt-1 text-sm text-red-500 font-bold">
-                  {errors.interest_in_board_positions.message}
+                  {errors.existing_icp_investor.message}
                 </span>
               )}
             </div>
 
             <div className="relative z-0 group mb-6 px-4">
               <label
-                htmlFor="accredited_investor_status"
-                className="block mb-2 text-lg font-medium text-gray-500 hover:text-black truncate overflow-hidden text-start"
+                htmlFor="registered_under_any_hub"
+                className="block mb-2 text-lg font-medium text-gray-500 hover:text-black  truncate overflow-hidden text-start"
               >
-                Are you an accredited investor?
+                Are you an under any hub ?
               </label>
               <select
-                {...register("accredited_investor_status")}
-                id="accredited_investor_status"
+                {...register("registered_under_any_hub")}
                 className={`bg-gray-50 border-2 ${
-                  errors.accredited_investor_status
+                  errors.registered_under_any_hub
                     ? "border-red-500 placeholder:text-red-500"
                     : "border-[#737373]"
                 } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
               >
                 <option className="text-lg font-bold" value="">
-                  Accredited Investor?
+                  Registered under any hub
                 </option>
                 <option className="text-lg font-bold" value="true">
                   Yes
@@ -541,12 +826,160 @@ const InvestorRegistration = () => {
                   No
                 </option>
               </select>
-              {errors.accredited_investor_status && (
+
+              {errors.registered_under_any_hub && (
                 <span className="mt-1 text-sm text-red-500 font-bold">
-                  {errors.accredited_investor_status.message}
+                  {errors.registered_under_any_hub.message}
                 </span>
               )}
             </div>
+          </div>
+        )}
+
+        {step == 2 && (
+          <div className="flex flex-col">
+
+
+            <div className="relative z-0 group mb-6 px-4">
+              <label
+                htmlFor="type_of_investment"
+                className="block mb-2 text-lg font-medium  text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+              >
+                Type of ICP investment ?
+              </label>
+              <select
+                {...register("type_of_investment")}
+                // id="type_of_investment"
+                className={`bg-gray-50 border-2 ${
+                  errors.type_of_investment
+                    ? "border-red-500 placeholder:text-red-500"
+                    : "border-[#737373]"
+                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+              >
+                <option className="text-lg font-bold" value="">
+                  Select your ICP investment
+                </option>
+                {getAllIcpHubs?.map((hub) => (
+                  <option
+                    key={hub.id}
+                    value={`${hub.name} ,${hub.region}`}
+                    className="text-lg font-bold"
+                  >
+                    {hub.name} , {hub.region}
+                  </option>
+                ))}
+              </select>
+              {errors.type_of_investment && (
+                <span className="mt-1 text-sm text-red-500 font-bold">
+                  {errors.type_of_investment.message}
+                </span>
+              )}
+            </div>
+
+            <div className="relative z-0 group mb-6 px-4">
+              <label
+                htmlFor="type_of_investment"
+                className="block mb-2 text-lg font-medium  text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+              >
+                type of investment ?
+              </label>
+              <select
+                {...register("category_of_investment")}
+                // id="category_of_investment"
+                className={`bg-gray-50 border-2 ${
+                  errors.category_of_investment
+                    ? "border-red-500 placeholder:text-red-500"
+                    : "border-[#737373]"
+                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+              >
+                <option className="text-lg font-bold" value="">
+                  Investment category
+                </option>
+                {getAllIcpHubs?.map((hub) => (
+                  <option
+                    key={hub.id}
+                    value={`${hub.name} ,${hub.region}`}
+                    className="text-lg font-bold"
+                  >
+                    {hub.name} , {hub.region}
+                  </option>
+                ))}
+              </select>
+              {errors.category_of_investment && (
+                <span className="mt-1 text-sm text-red-500 font-bold">
+                  {errors.category_of_investment.message}
+                </span>
+              )}
+            </div>
+
+            <div className="z-0 w-full my-3 group">
+              <label
+                htmlFor="multi_chain"
+                className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+              >
+                Are you on multi-chain
+              </label>
+              <select
+                onChange={(e) => setIsMultiChain(e.target.value === "Yes")}
+                className={`bg-gray-50 border-2 ${
+                  errors.multi_chain
+                    ? "border-red-500 placeholder:text-red-500"
+                    : "border-[#737373]"
+                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+              >
+                <option className="text-lg font-bold" value="">
+                  Select your option⌄
+                </option>
+                <option className="text-lg font-bold">Yes</option>
+                <option className="text-lg font-bold">No</option>
+              </select>
+              {errors.multi_chain && (
+                <p className="text-red-500 text-xs italic">
+                  {errors.multi_chain.message}
+                </p>
+              )}
+            </div>
+            {isMultiChain && (
+              <div className="z-0 w-full my-3 group">
+                <div className="">
+                  <label
+                    htmlFor="project_on_multichain"
+                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    Multi-chain options
+                  </label>
+                  <select
+                    {...register("project_on_multichain")}
+                    className={`bg-gray-50 border-2 ${
+                      errors.project_on_multichain
+                        ? "border-red-500 placeholder:text-red-500"
+                        : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  >
+                    <option className="text-lg font-bold" value="">
+                      Select your option⌄
+                    </option>
+                    <option className="text-lg font-bold" value="ethereum">
+                      Ethereum
+                    </option>
+                    <option className="text-lg font-bold" value="bitcoin">
+                      Bitcoin
+                    </option>
+                    <option className="text-lg font-bold" value="binance">
+                      Binance Smart Chain
+                    </option>
+                  </select>
+                  {errors.project_on_multichain && (
+                    <p className="text-red-500 text-xs italic">
+                      {errors.project_on_multichain.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+
+
+
           </div>
         )}
       </div>
