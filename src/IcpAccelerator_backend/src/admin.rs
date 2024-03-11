@@ -1,4 +1,5 @@
 use crate::mentor::*;
+use crate::user_module::ROLE_STATUS_ARRAY;
 use crate::vc_registration::*;
 use candid::{CandidType, Principal};
 use ic_cdk::api::management_canister::main::{canister_info, CanisterInfoRequest};
@@ -92,9 +93,19 @@ pub fn approve_mentor_creation_request(requester: Principal, approve: bool) -> S
 
                 match awaiters.get(&requester) {
                     Some(res) => {
+
+                        //register_mentor
                         MENTOR_REGISTRY.with(|m_registry| {
                             let mut mentor = m_registry.borrow_mut();
                             mentor.insert(requester, res.clone())
+                        });
+
+                        //approve_mentor
+                        ROLE_STATUS_ARRAY.with(|role_status|{
+
+                            if let Some(user_role) = role_status.borrow_mut().get_mut(&requester).expect("couldn't get requester's id").iter_mut().find(|r| r.name == "mentor"){
+                                user_role.status = "approved".to_string();
+                            }
                         });
 
                         awaiters.remove(&requester);

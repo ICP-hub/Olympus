@@ -1,6 +1,6 @@
 import React, { useState,useRef } from 'react';
 import ment from "../../../assets/images/ment.jpg";
-import {linkedin} from "../Utils/Data/SvgData";
+import {linkedIn} from "../Utils/Data/SvgData";
 
 const Admindeatils = () => {
   const [selectedOption, setSelectedOption] = useState("Project Ratings");
@@ -65,78 +65,84 @@ const Admindeatils = () => {
 
         </div>
       </div>
-      <div className='flex justify-center '>
+      <div className='flex justify-center  '>
       <div className="relative w-full md:w-[950px] ">
-  <div className="absolute bottom-0 left-0 top-0 w-64 h-64 bg-blue-100 ellipse-quarter-left rounded-md rotate-90 z-0"></div>
-  <div className="absolute top-0 right-0 bg-blue-100 w-36 h-36  ellipse-quarter-right rounded-md "></div>
-  <div className="absolute lg:md:top-80 top-[600px] right-0 bg-blue-100 w-36 h-36  ellipse-quarter-right rounded-md rotate-90"></div>
+  <div className="absolute bottom-0 left-0 top-[-25px] w-[400.31px] h-[450px] bg-blue-100 ellipse-quarter-left rounded-md rotate-90 z-0"></div>
+  <div className="absolute top-0 right-0 bg-blue-100 w-[209.63px] h-[210px]  ellipse-quarter-right rounded-md "></div>
+  <div className="absolute lg:md:top-[356px] top-[700px] right-0 bg-blue-100 w-[209.63px] h-[210px]  ellipse-quarter-right rounded-md rotate-90"></div>
 
   <div className="p-8 flex flex-col items-center h-full relative z-10 w-full">
     <div className="flex flex-col w-full">
-      <div className="w-fit text-black  text-2xl font-bold font-fontUse leading-none md:ml-4 mt-0">
+      <div className="w-fit text-black  text-2xl font-bold font-fontUse leading-none md:ml-4 mt-8">
         Details
       </div>
       <div className='flex-row justify-center '>
         <div className='w-full flex flex-col md:flex-row'>
-          <div className="w-full md:w-1/2 p-4 text-[#737373] text-lg font-light font-fontUse mb-4 text-wrap mt-2 md:ml-4">
+          <div className="w-full md:w-1/2 p-4 text-[#737373] text-lg font-light font-fontUse mb-4 text-wrap mt-2 md:ml-4 ">
             <div className='flex flex-row justify-between'>
-              <p className='font-bold'>Builder.fi</p>
-              <p>ICP Hub</p>
+             
+             
             </div>
+            <div className='mb-[-22px]'>
+            <p className='flex justify-end ' >ICP Hub</p>
             <p className='flex justify-end'>Oct,2023</p>
+            </div>
+            <p className='font-bold  '>Builder.fi</p>
             <div class="border border-gray-400 w-full"></div>
             <div className='flex flex-row justify-between mt-2'>
               <p className='font-bold'>Jammy Anderson</p>
-              {linkedin}
+              {linkedIn}
             </div>
             <p>abc@123</p>
             <div class="border border-gray-400 w-full"></div>
-            <div className='flex flex-row justify-between'>
+            <div className='flex flex-row justify-between mt-2'>
               <p className='font-bold'>Country</p>
             </div>
-            <div class="border border-gray-400 w-full"></div>
+            <div class="border border-gray-400 w-full mt-2"></div>
             <div className='flex flex-row justify-between'>
               <div className='flex flex-row font-bold gap-2'>
                 <p className=''>.Stage</p>
                 <p> .Energify</p>
               </div>
             </div>
-            <div class="border border-gray-400 w-full mt-4"></div>
+            <div class="border border-gray-400 w-full mt-2"></div>
             <button className='bg-[#B9C0F2] text-white px-4 mt-2 rounded-md font-bold'>
               Inprogress
             </button>
           </div>
-          <div className='flex flex-col bg-[#E0E4FF] w-full md:w-1/2 gap-2 rounded-md p-2 text-[#737373]'>
-            <div className='flex flex-row justify-between'>
+          <div className='flex flex-col bg-[#B9C0F2] w-full md:w-1/2 gap-4 rounded-md p-2 text-[#737373] h-[230px] mt-8'>
+            <div className='ml-4 mr-20 mt-4'>
+            <div className='flex flex-row justify-between '>
               <p>Team Size</p>
-              <p>5</p>
+              <p className='font-extrabold'>5</p>
             </div>
-            <div className='flex flex-row justify-between'>
+            <div className='flex flex-row justify-between mt-2'>
               <p>No. of Co-Founders</p>
-              <p>5</p>
+              <p className='font-extrabold'>5</p>
             </div>
-            <div className='flex flex-row justify-between'>
+            <div className='flex flex-row justify-between mt-2'>
               <p>Referral</p>
-              <p>Events</p>
+              <p className='font-extrabold'>Events</p>
             </div>
-            <div className=' flex flex-row justify-between'>
+            <div className=' flex flex-row justify-between mt-2'>
               <p>Average Experience</p>
-              <p>3 Year and above</p>
+              <p className='font-extrabold'>3 Year </p>
             </div>
-            <div className='flex flex-row justify-between'>
+            <div className='flex flex-row justify-between mt-2'>
               <p>Target Group</p>
-              <p>XYZ</p>
+              <p className='font-extrabold'>XYZ</p>
             </div>
-            <div className='flex flex-row justify-between'>
+            <div className='flex flex-row justify-between mt-2'>
               <p>Reason of Particifation</p>
-              <p>Funding</p>
+              <p className='font-extrabold'>Funding</p>
             </div>
+          </div>
           </div>
         </div>
       </div>
-      <div class="border border-gray-400 w-full mt-2"></div>
-      <div className='mt-4'>
-        <p>Terms & Conditions</p>
+      <div class="border border-gray-400 w-full mt-2 "></div>
+      <div className='mt-4 ml-8 text-[#737373] text-xl'>
+        <p className='font-extrabold'>Terms & Conditions</p>
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore </p>
       </div>
     </div>

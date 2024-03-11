@@ -1,0 +1,556 @@
+import React, { useEffect, useCallback, useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { useDropzone } from "react-dropzone";
+import ment from "../../../../assets/images/ment.jpg";
+import { useDispatch, useSelector } from "react-redux";
+import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_IcpHubReducer";
+import CompressedImage from "../../ImageCompressed/CompressedImage";
+
+const validationSchema = yup.object().shape({
+  project_name: yup.string().required("Project name is required"),
+  project_url: yup
+    .string()
+    .url("Must be a valid URL")
+    .required("URL is required"),
+  project_description: yup.string().required("Description is required"),
+  preferred_icp_hub: yup.string().required("ICP hub is required"),
+  project_area_of_focus: yup.string().required("Area of focus is required"),
+  project_cover: yup.mixed().required("Project Cover is required"),
+  project_logo: yup.mixed().required("Logo is required"),
+  social_links: yup.array().of(yup.string().url("Must be a valid URL")),
+});
+const CreateProjectupdatecode = () => {
+  const actor = useSelector((currState) => currState.actors.actor);
+  const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
+  const areaOfExpertise = useSelector(
+    (currState) => currState.expertiseIn.expertise
+  );
+
+  const dispatch = useDispatch();
+  const [imageData, setImageData] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    trigger,
+    setError,
+    clearErrors,
+    control,
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+    mode: "all",
+  });
+
+  useEffect(() => {
+    dispatch(allHubHandlerRequest());
+  }, [actor, dispatch]);
+
+  const addImageHandler = useCallback(
+    async (file) => {
+      clearErrors("project_logo");
+      if (!file)
+        return setError("project_logo", {
+          type: "manual",
+          message: "An image is required",
+        });
+      if (!["image/jpeg", "image/png", "image/gif"].includes(file.type))
+        return setError("project_logo", {
+          type: "manual",
+          message: "Unsupported file format",
+        });
+      if (file.size > 1024 * 1024)
+        // 1MB
+        return setError("project_logo", {
+          type: "manual",
+          message: "The file is too large",
+        });
+
+      setIsLoading(true);
+      try {
+        const compressedFile = await CompressedImage(file);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImagePreview(reader.result);
+          setIsLoading(false);
+        };
+        reader.readAsDataURL(compressedFile);
+
+        const byteArray = await compressedFile.arrayBuffer();
+        setImageData(Array.from(new Uint8Array(byteArray)));
+        clearErrors("project_logo");
+      } catch (error) {
+        console.error("Error processing the image:", error);
+        setError("project_logo", {
+          type: "manual",
+          message: "Could not process image, please try another.",
+        });
+        setIsLoading(false);
+      }
+    },
+    [setError, clearErrors, setIsLoading, setImagePreview, setImageData]
+  );
+
+  const [isLoadingMultiple, setIsMultipleLoading] = useState(false);
+  const [multipleImagesPreview, setMultipleImagesPreview] =
+    useState([]);
+  const [multipleImageData, setMultipleImageData] = useState(
+    []
+  );
+
+  const addMultipleImageHandler = useCallback(
+    async (acceptedFiles) => {
+      clearErrors("project_cover");
+      setIsMultipleLoading(true);
+      const validatedFiles = acceptedFiles.filter((file, index) => {
+        if (index >= 5) {
+          setError("project_cover", {
+            type: "manual",
+            message: "You can only upload up to 5 images",
+          });
+          return false;
+        }
+        if (!["image/jpeg", "image/png", "image/gif"].includes(file.type)) {
+          setError("project_cover", {
+            type: "manual",
+            message: "Unsupported file format",
+          });
+          return false;
+        }
+        if (file.size > 1024 * 1024) {
+          // 1MB
+          setError("project_cover", {
+            type: "manual",
+            message: "The file is too large",
+          });
+          return false;
+        }
+        return true;
+      });
+
+      // Check if the number of validated files is greater than 5
+      if (validatedFiles.length > 5) {
+        setIsMultipleLoading(false);
+        return; // Stop further processing
+      }
+
+      const multipleImagesPreviewTemp = [];
+      const imagesDataTemp = [];
+
+      for (const file of validatedFiles) {
+        try {
+          const compressedFile = await CompressedImage(file);
+          const reader = new FileReader();
+
+          reader.onloadend = () => {
+            multipleImagesPreviewTemp.push(reader.result);
+            setMultipleImagesPreview([...multipleImagesPreviewTemp]);
+            setIsMultipleLoading(false);
+          };
+          reader.readAsDataURL(compressedFile);
+
+          const byteArray = await compressedFile.arrayBuffer();
+          imagesDataTemp.push(Array.from(new Uint8Array(byteArray)));
+          setMultipleImageData([...imagesDataTemp]);
+        } catch (error) {
+          console.error("Error processing the image:", error);
+          setError("project_cover", {
+            type: "manual",
+            message: "Could not process image, please try another.",
+          });
+          setIsMultipleLoading(false);
+        }
+      }
+    },
+    [
+      setError,
+      clearErrors,
+      setIsMultipleLoading,
+      setMultipleImagesPreview,
+      setMultipleImageData,
+    ]
+  );
+  const removeImage = (index) => {
+    const newPreviewImages = [...multipleImagesPreview];
+    newPreviewImages.splice(index, 1);
+    setMultipleImagesPreview(newPreviewImages);
+
+    const newData = [...multipleImageData];
+    newData.splice(index, 1);
+    setMultipleImageData(newData);
+  };
+
+  const { getRootProps, getInputProps } = useDropzone({
+    accept: "image/jpeg, image/png, image/gif",
+    onDrop: addMultipleImageHandler,
+    multiple: true,
+  });
+  const onSubmit = (data) => {
+    console.log(data);
+    // Process form data
+  };
+  return (
+    <section className="w-full h-fit px-[6%] lg1:px-[4%] py-[6%] lg1:py-[4%] bg-gray-100">
+      <div className="w-full h-full bg-gray-100 pt-8">
+        <div className="bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-[30px]  sm:text-[25px] md1:text-[30px] md2:text-[35px] font-black font-fontUse dxl:text-[40px] p-8">
+          Project Information
+        </div>
+        <div className="text-sm font-medium text-center text-gray-200">
+          <form className="w-full px-4" onSubmit={handleSubmit(onSubmit)}>
+            <div className="flex flex-col mb-6">
+              <div className="flex flex-row flex-wrap-reverse">
+                <div className="flex flex-col w-1/2">
+                  <div className="flex-row w-full flex justify-start gap-4 items-center">
+                    <div className="mb-3  h-24 lg:md:w-24 px-12 w-52 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
+                      {isLoading ? (
+                        <div>Loading...</div>
+                      ) : imagePreview ? (
+                        <img
+                          src={imagePreview}
+                          alt="Profile"
+                          className="h-full w-full  object-cover "
+                        />
+                      ) : (
+                        <svg
+                          width="30"
+                          height="30"
+                          viewBox="0 0 35 37"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="bg-no-repeat"
+                        >
+                          <path
+                            d="M8.53049 8.62583C8.5304 13.3783 12.3575 17.2449 17.0605 17.2438C21.7634 17.2428 25.5907 13.3744 25.5908 8.62196C25.5909 3.8695 21.7638 0.00287764 17.0608 0.00394405C12.3579 0.00501045 8.53058 3.87336 8.53049 8.62583ZM32.2249 36.3959L34.1204 36.3954L34.1205 34.4799C34.1206 27.0878 28.1667 21.0724 20.8516 21.0741L13.2692 21.0758C5.95224 21.0775 -3.41468e-05 27.0955 -0.000176714 34.4876L-0.000213659 36.4032L32.2249 36.3959Z"
+                            fill="#BBBBBB"
+                          />
+                        </svg>
+                      )}
+                    </div>
+
+                    <Controller
+                      name="project_logo"
+                      control={control}
+                      render={({ field }) => (
+                        <>
+                          <input
+                            id="images"
+                            type="file"
+                            name="images"
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files[0];
+                              addImageHandler(file);
+                            }}
+                          />
+                          <label
+                            htmlFor="images"
+                            className="p-2 border-2 border-blue-800 items-center rounded-md px-14 text-md bg-transparent text-blue-800 cursor-pointer font-extrabold "
+                          >
+                            Project Logo
+                          </label>
+                        </>
+                      )}
+                    />
+
+                    {errors.project_logo && (
+                      <span className="mt-1 text-sm text-red-500 font-bold text-start px-4">
+                        {errors.project_logo.message}
+                      </span>
+                    )}
+                  </div>
+                  <div className="mb-6">
+                    <label
+                      htmlFor="project_name"
+                      className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                    >
+                      Project Name
+                    </label>
+                    <input
+                      type="text" // Assuming project_name is of type text
+                      name="project_name"
+                      id="project_name"
+                      {...register("project_name")}
+                      className={`bg-gray-50 border-2 ${errors["project_name"]
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block lg:md:w-full  p-2.5 `}
+                      placeholder="Enter the project name    "
+                    />
+                    {errors["project_name"] && (
+                      <span className="mt-1 text-sm text-red-500 font-bold flex justify-start ">
+                        {errors["project_name"].message}
+                      </span>
+                    )}
+                  </div>
+                  <div className="mb-6">
+                    <label
+                      htmlFor="project_url"
+                      className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                    >
+                      Project URL
+                    </label>
+                    <input
+                      type="text" // Assuming project_name is of type text
+                      name="project_url"
+                      id="project_url"
+                      {...register("project_url")}
+                      className={`bg-gray-50 border-2 ${errors["project_url"]
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block lg:md:w-full p-2.5 `}
+                      placeholder="Enter the project URL"
+                    />
+                    {errors["project_url"] && (
+                      <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                        {errors["project_url"].message}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="w-full md:w-1/2  flex justify-center ">
+                  <div className="md:w-[300px] w-full mb-8 flex flex-col ">
+                    <div className="flex flex-col justify-between border border-gray-300 rounded-xl pt-3">
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center">
+                          <img
+                            className="object-fill rounded-full h-12 w-12 ml-4"
+                            src={imagePreview}
+                            alt="Project logo"
+                          />
+                          <div className="ml-2">
+                            <p className="text-[16px] font-extrabold text-black">
+                              project
+                            </p>
+                            <p
+                              className="truncate overflow-hidden whitespace-nowrap text-[10px] text-gray-400"
+                              style={{ maxHeight: "4.5rem" }}
+                            >
+                             
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <p
+                        className="text-[10px] px-4 pt-3 text-gray-400 overflow-hidden"
+                        style={{
+                          display: "-webkit-box",
+                          WebkitLineClamp: "2",
+                          WebkitBoxOrient: "vertical",
+                        }}
+                      >
+                        jgdhgdg
+                      </p>
+
+                      
+                      <div className="flex items-center w-full mt-4 px-2">
+                        <div className="relative flex-grow  h-2  rounded-lg bg-gradient-to-r from-gray-100 to-black"></div>
+                        <p className="text-xs ml-2 text-black">level 9</p>
+                      </div>
+                     
+                      <div className="w-full px-8 my-5 border-t-2 border-gray-300"></div>
+
+                      <div className="flex flex-row justify-between items-center px-4 pb-4 ">
+                        <img
+                          className="object-fill h-5 w-5 rounded-full"
+                          src={imagePreview}
+                          alt="Project logo"
+                        />
+                        <button className="rounded-sm h-8 w-16 mr-4 border border-gray-300 flex justify-center items-center">
+                          <div className="flex flex-row gap-2 justify-center items-center">
+                            <svg
+                              width="15"
+                              height="15"
+                              viewBox="0 0 8 6"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="transition-transform transform hover:scale-150"
+                            >
+                              <path
+                                d="M3.04007 0.934606C3.44005 0.449652 4.18299 0.449652 4.58298 0.934606L6.79207 3.61298C7.33002 4.26522 6.86608 5.24927 6.02061 5.24927H1.60244C0.756969 5.24927 0.293022 4.26522 0.830981 3.61298L3.04007 0.934606Z"
+                                fill="#737373"
+                              />
+                            </svg>
+                            <span className="text-black text-[10px] font-bold">
+                              UpVote
+                            </span>
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="relative z-0 group">
+                  <label
+                    htmlFor="preferred_icp_hub"
+                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    Can you please share your preferred ICP Hub
+                  </label>
+                  <select
+                    {...register("preferred_icp_hub")}
+                    className={`bg-gray-50 border-2 ${errors.preferred_icp_hub
+                        ? "border-red-500 placeholder:text-red-500"
+                        : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  >
+                    <option className="text-lg font-bold" value="">
+                      Select your ICP Hub
+                    </option>
+                    {getAllIcpHubs?.map((hub) => (
+                      <option
+                        key={hub.id}
+                        value={`${hub.name} ,${hub.region}`}
+                        className="text-lg font-bold"
+                      >
+                        {hub.name} , {hub.region}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.preferred_icp_hub && (
+                    <p className="text-red-500 text-xs italic">
+                      {errors.preferred_icp_hub.message}
+                    </p>
+                  )}
+                </div>
+                <div className="relative z-0 group">
+                  <label
+                    htmlFor="areas_of_focus"
+                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    What are your areas of expertise?
+                  </label>
+                  <select
+                    {...register("areas_of_focus")}
+                    className={`bg-gray-50 border-2 ${errors.areas_of_focus
+                        ? "border-red-500 placeholder:text-red-500"
+                        : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  >
+                    <option className="text-lg font-bold" value="">
+                      Areas of Focus
+                    </option>
+                    {areaOfExpertise?.map((expert) => (
+                      <option
+                        key={expert.id}
+                        value={`${expert.name}`}
+                        className="text-lg font-bold"
+                      >
+                        {expert.name}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.areas_of_focus && (
+                    <p className="text-red-500 text-xs italic">
+                      {errors.areas_of_focus.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="relative z-0 group">
+                  <label
+                    htmlFor="project_description"
+                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    Project Description
+                  </label>
+                  <textarea
+                    name="project_description"
+                    id="project_description"
+                    {...register("project_description")}
+                    className={`bg-gray-50 border-2 ${errors["project_description"]
+                        ? "border-red-500 placeholder:text-red-500"
+                        : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    placeholder="Enter the project description"
+                    rows="4" // Adjust the number of rows as needed
+                  ></textarea>
+                  {errors["project_description"] && (
+                    <span className="mt-1 text-sm text-red-500 font-bold">
+                      {errors["project_description"].message}
+                    </span>
+                  )}
+                </div>
+                <div className="flex flex-col w-full justify-start">
+                  <label
+                    htmlFor="project_description"
+                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    Project Cover
+                  </label>
+                  <div
+                    {...getRootProps()}
+                    className=" h-24 w-full rounded border-2 border-black border-dashed flex justify-center items-center overflow-hidden cursor-pointer"
+                  >
+                    <input {...getInputProps()} />
+                    {isLoadingMultiple ? (
+                      <div>Loading...</div>
+                    ) : (
+                      <div className="flex flex-wrap">
+                        {multipleImagesPreview.length > 0 ? (
+                          multipleImagesPreview.map((src, index) => (
+                            <div key={index} className="relative">
+                              <img
+                                src={src}
+                                alt={`Preview ${index}`}
+                                className="h-16 w-16 object-cover"
+                              />
+                              <button
+                                onClick={() => removeImage(index)}
+                                className="absolute top-0 right-0 bg-red-500 text-white rounded-full "
+                              >
+                                X
+                              </button>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-black">Drag 'n' drop some files here, or click to select files</p>
+                        )}
+                        {control && (
+                          <Controller
+                            name="project_cover"
+                            control={control}
+                            render={({ field }) => <></>} // As the input is being managed by Dropzone, this remains empty.
+                          />
+                        )}
+
+                        {setError && (
+                          <div>
+                            {multipleImageData.length > 0 && (
+                              <p className="text-sm text-green-500">
+                                Images are ready for upload.
+                              </p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                className="text-white font-bold bg-blue-800 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md w-auto sm:w-auto px-5 py-2 text-center mb-4"
+              // onClick={goToNext}
+              >
+                Next
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default CreateProjectupdatecode;
