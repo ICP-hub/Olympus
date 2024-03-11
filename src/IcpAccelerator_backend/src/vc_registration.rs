@@ -10,9 +10,9 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::cell::RefCell;
 use std::{collections::HashMap, io::Write};
-#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct VentureCapitalist {
-    name_of_fund: String,
+    pub name_of_fund: String,
     fund_size: f64,
     assets_under_management: String,
     logo: Vec<u8>,

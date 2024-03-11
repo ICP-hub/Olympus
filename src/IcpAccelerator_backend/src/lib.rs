@@ -19,6 +19,7 @@ use leaderboard::{
     LeaderboardEntryForLikes, LeaderboardEntryForRatings, LeaderboardEntryForUpvote,
 };
 use project_like::LikeRecord;
+use project_registration::FilterCriteria;
 use requests::Request;
 use roles::{get_roles, RolesResponse};
 use std::collections::{HashMap, HashSet};
@@ -167,6 +168,11 @@ async fn register_project(params: ProjectInfo) -> String {
         "you hv n't registered as a user yet".to_string()
     }
     // assign_roles_to_principal(roles)
+}
+
+#[query]
+fn filter_out_projects(criteria: FilterCriteria)->Vec<ProjectInfo>{
+    project_registration::filter_projects(criteria)
 }
 
 #[query]
