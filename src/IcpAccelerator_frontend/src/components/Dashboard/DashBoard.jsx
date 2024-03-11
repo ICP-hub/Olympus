@@ -29,13 +29,13 @@ const DashBoard = () => {
     (currState) => currState.currentRoleStatus.activeRole
   );
 
-  useEffect(() => {
-    const founderDataFetchHandler = async () => {
-      // const founderDataFetch = await actor.get_mentor_candid();
-      // console.log("dekho dekho founder data aaya => ", founderDataFetch);
-    };
-    founderDataFetchHandler();
-  }, [actor]);
+  // useEffect(() => {
+  //   const founderDataFetchHandler = async () => {
+  //     // const founderDataFetch = await actor.get_mentor_candid();
+  //     // console.log("dekho dekho founder data aaya => ", founderDataFetch);
+  //   };
+  //   founderDataFetchHandler();
+  // }, [actor]);
 
   useEffect(() => {
     if (!userCurrentRoleStatus.length) {

@@ -6,6 +6,8 @@ import { useDropzone } from "react-dropzone";
 import { useDispatch, useSelector } from "react-redux";
 import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_IcpHubReducer";
 import CompressedImage from "../../ImageCompressed/CompressedImage";
+import { projectRegistration } from "../../Utils/Data/AllDetailFormData";
+import {formFields}from "../../Utils/Data/userFormData"
 
 const validationSchema = yup.object().shape({
   project_name: yup.string().required("Project name is required"),
@@ -26,12 +28,34 @@ const CreateProjectRegistration = () => {
   const areaOfExpertise = useSelector(
     (currState) => currState.expertiseIn.expertise
   );
-
   const dispatch = useDispatch();
+
+  const [activeTab, setActiveTab] = useState(projectRegistration[0].id);
+  const [formData, setFormData] = useState({});
+  const [step, setStep] = useState(0);
+  const [isCurrentStepValid, setIsCurrentStepValid] = useState(false);
+  const [userHasInteracted, setUserHasInteracted] = useState(false);
   const [imageData, setImageData] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingMultiple, setIsMultipleLoading] = useState(false);
+  const [multipleImagesPreview, setMultipleImagesPreview] = useState([]);
+  const [multipleImageData, setMultipleImageData] = useState([]);
+ 
+  const getTabClassName = (tab) => {
+    return `inline-block p-2 font-bold ${
+      activeTab === tab
+        ? "text-black border-b-2 border-black"
+        : "text-gray-400  border-transparent hover:text-black"
+    } rounded-t-lg`;
+  };
 
+  const steps = [
+    { id: "personalDetails", fields: formFields },
+    { id: "projectDetails", fields: '' },
+  ];
+
+  const currentValidationSchema = validationSchema[steps[step].id];
   const {
     register,
     handleSubmit,
@@ -44,11 +68,30 @@ const CreateProjectRegistration = () => {
     resolver: yupResolver(validationSchema),
     mode: "all",
   });
+  const handleTabClick = async (tab) => {
+    const targetStep = projectRegistration.findIndex((header) => header.id === tab);
+    setUserHasInteracted(true);
+
+    if (step === targetStep) {
+      return;
+    }
+    if (targetStep < step || isCurrentStepValid) {
+      setActiveTab(tab);
+      setStep(targetStep);
+    } else {
+    }
+  };
 
   useEffect(() => {
-    dispatch(allHubHandlerRequest());
-  }, [actor, dispatch]);
+    if (!userHasInteracted) return;
+    const validateStep = async () => {
+      const fieldsToValidate = steps[step].fields.map((field) => field.name);
+      const result = await trigger(fieldsToValidate);
+      setIsCurrentStepValid(result);
+    };
 
+    validateStep();
+  }, [step, trigger, userHasInteracted]);
   const addImageHandler = useCallback(
     async (file) => {
       clearErrors("project_logo");
@@ -94,13 +137,6 @@ const CreateProjectRegistration = () => {
     [setError, clearErrors, setIsLoading, setImagePreview, setImageData]
   );
 
-  const [isLoadingMultiple, setIsMultipleLoading] = useState(false);
-  const [multipleImagesPreview, setMultipleImagesPreview] =
-    useState([]);
-  const [multipleImageData, setMultipleImageData] = useState(
-    []
-  );
-
   const addMultipleImageHandler = useCallback(
     async (acceptedFiles) => {
       clearErrors("project_cover");
@@ -130,28 +166,28 @@ const CreateProjectRegistration = () => {
         }
         return true;
       });
-  
+
       // Check if the number of validated files is greater than 5
       if (validatedFiles.length > 5) {
         setIsMultipleLoading(false);
         return; // Stop further processing
       }
-  
+
       const multipleImagesPreviewTemp = [];
       const imagesDataTemp = [];
-  
+
       for (const file of validatedFiles) {
         try {
           const compressedFile = await CompressedImage(file);
           const reader = new FileReader();
-  
+
           reader.onloadend = () => {
             multipleImagesPreviewTemp.push(reader.result);
             setMultipleImagesPreview([...multipleImagesPreviewTemp]);
             setIsMultipleLoading(false);
           };
           reader.readAsDataURL(compressedFile);
-  
+
           const byteArray = await compressedFile.arrayBuffer();
           imagesDataTemp.push(Array.from(new Uint8Array(byteArray)));
           setMultipleImageData([...imagesDataTemp]);
@@ -183,22 +219,101 @@ const CreateProjectRegistration = () => {
     setMultipleImageData(newData);
   };
 
+  const handleNext = async () => {
+    const fieldsToValidate = steps[step].fields.map((field) => field.name);
+    const result = await trigger(fieldsToValidate);
+    const isImageUploaded = imageData && imageData.length > 0;
+
+    if (!isImageUploaded) {
+      setError("imageData", {
+        type: "manual",
+        message: "Please upload a ICP Hub profile.",
+      });
+      return;
+    }
+    if (result && isImageUploaded) {
+      clearErrors("imageData");
+      if (step < steps.length - 1) {
+        setStep((prevStep) => prevStep + 1);
+        setActiveTab(projectRegistration[step + 1]?.id);
+      }
+    }
+  };
+
+  const handlePrevious = () => {
+    if (step > 0) {
+      setStep((prevStep) => prevStep - 1);
+      setActiveTab(projectRegistration[step - 1]?.id);
+    }
+  };
+  const onSubmit = (data) => {
+    console.log(data);
+    // Process form data
+  };
   const { getRootProps, getInputProps } = useDropzone({
     accept: "image/jpeg, image/png, image/gif",
     onDrop: addMultipleImageHandler,
     multiple: true,
   });
-  const onSubmit = (data) => {
-    console.log(data);
-    // Process form data
-  };
+  const stepFields = steps[step].fields;
+  let StepComponent;
+  // if (step === 0) {
+  //   StepComponent = <HubPersonalInformation />;
+  // } else if (step === 1) {
+  //   StepComponent = <HubDetails isSubmitting={isSubmitting} />;
+  // }
+
+  useEffect(() => {
+    dispatch(allHubHandlerRequest());
+  }, [actor, dispatch]);
   return (
     <section className="w-full h-fit px-[6%] lg1:px-[4%] py-[6%] lg1:py-[4%] bg-gray-100">
       <div className="w-full h-full bg-gray-100 pt-8">
         <div className="bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-[30px]  sm:text-[25px] md1:text-[30px] md2:text-[35px] font-black font-fontUse dxl:text-[40px] p-8">
           Project Information
         </div>
-        <div className="text-sm font-medium text-center text-gray-200">
+        <div className="text-sm font-medium text-center text-gray-200 ">
+          <ul className="flex flex-wrap mb-4 text-sxxs:text-[7px] sxs:text-[7.5px] sxs1:text-[8px] sxs2:text-[8.5px] sxs3:text-[9px] ss:text-[9.5px] ss1:text-[10px] ss2:text-[10.5px] ss3:text-[11px] ss4:text-[11.5px] dxs:text-[12px] xxs:text-[12.5px] xxs1:text-[13px] sm1:text-[13.5px] sm4:text-[14px] sm2:text-[14.5px] sm3:text-[13px] sm:text-[11.5px] md:text-[14px.3] md1:text-[13px] md2:text-[13px] md3:text-[13px] lg:text-[14.5px] dlg:text-[15px] lg1:text-[16.5px] lgx:text-[16px] dxl:text-[16.5px] xl:text-[19px] xl2:text-[19.5px] cursor-pointer justify-around">
+            {projectRegistration?.map((header, index) => (
+              <li key={header.id} className="me-2 relative group">
+                <button
+                  className={`${getTabClassName(header.id)} ${
+                    index > step && !isCurrentStepValid
+                      ? "cursor-not-allowed opacity-50"
+                      : "cursor-pointer"
+                  }`}
+                  onClick={() => handleTabClick(header.id)}
+                  disabled={index > step && !isCurrentStepValid}
+                >
+                  <div className="hidden md:block">{header.label}</div>
+
+                  <div className="flex md:hidden items-center">
+                    {header.icon}
+                  </div>
+                </button>
+                <div className="md:hidden">
+                  {index > step && !isCurrentStepValid && (
+                    <ReactTooltip
+                      id={header.id}
+                      place="bottom"
+                      content="Complete current step to proceed"
+                      className="z-10"
+                    />
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
+          {StepComponent &&
+            React.cloneElement(StepComponent, {
+              onSubmit: handleSubmit(onSubmit),
+              register,
+              errors,
+              fields: stepFields,
+              goToPrevious: handlePrevious,
+              goToNext: handleNext,
+            })}
+          <Toaster />
           <form className="w-full px-4" onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col mb-6">
               <div className="flex">
@@ -480,65 +595,65 @@ const CreateProjectRegistration = () => {
                     </span>
                   )}
                 </div>
-                 <div className="flex flex-col w-full justify-start">
-                 <label
+                <div className="flex flex-col w-full justify-start">
+                  <label
                     htmlFor="project_description"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
                     Project Cover
                   </label>
-      <div
-        {...getRootProps()}
-        className=" h-24 w-full rounded border-2 border-black border-dashed flex justify-center items-center overflow-hidden cursor-pointer"
-      >
-        <input {...getInputProps()} />
-        {isLoadingMultiple ? (
-          <div>Loading...</div>
-        ) : (
-          <div className="flex flex-wrap">
-            {multipleImagesPreview.length > 0 ? (
-              multipleImagesPreview.map((src, index) => (
-                <div key={index} className="relative">
-                  <img
-                    src={src}
-                    alt={`Preview ${index}`}
-                    className="h-16 w-16 object-cover"
-                  />
-                  <button
-                    onClick={() => removeImage(index)}
-                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full "
+                  <div
+                    {...getRootProps()}
+                    className=" h-24 w-full rounded border-2 border-black border-dashed flex justify-center items-center overflow-hidden cursor-pointer"
                   >
-                    X
-                  </button>
+                    <input {...getInputProps()} />
+                    {isLoadingMultiple ? (
+                      <div>Loading...</div>
+                    ) : (
+                      <div className="flex flex-wrap">
+                        {multipleImagesPreview.length > 0 ? (
+                          multipleImagesPreview.map((src, index) => (
+                            <div key={index} className="relative">
+                              <img
+                                src={src}
+                                alt={`Preview ${index}`}
+                                className="h-16 w-16 object-cover"
+                              />
+                              <button
+                                onClick={() => removeImage(index)}
+                                className="absolute top-0 right-0 bg-red-500 text-white rounded-full "
+                              >
+                                X
+                              </button>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-black">
+                            Drag 'n' drop some files here, or click to select
+                            files
+                          </p>
+                        )}
+                        {control && (
+                          <Controller
+                            name="project_cover"
+                            control={control}
+                            render={({ field }) => <></>} // As the input is being managed by Dropzone, this remains empty.
+                          />
+                        )}
+
+                        {setError && (
+                          <div>
+                            {multipleImageData.length > 0 && (
+                              <p className="text-sm text-green-500">
+                                Images are ready for upload.
+                              </p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              ))
-            ) : (
-              <p className="text-black">Drag 'n' drop some files here, or click to select files</p>
-            )}
-            {control && (
-                    <Controller
-                      name="project_cover"
-                      control={control}
-                      render={({ field }) => <></>} // As the input is being managed by Dropzone, this remains empty.
-                    />
-                  )}
-
-                  {setError && (
-                    <div>
-                      {multipleImageData.length > 0 && (
-                        <p className="text-sm text-green-500">
-                          Images are ready for upload.
-                        </p>
-                      )}
-                    </div>
-                  )}
-          </div>
-        )}
-                
-
-                  
-      </div>
-    </div>
               </div>
             </div>
             <div className="flex justify-end">

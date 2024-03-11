@@ -1,6 +1,6 @@
 import React, { useState,useRef } from 'react';
 import ment from "../../../assets/images/ment.jpg";
-import {linkedIn} from "../Utils/Data/SvgData";
+import {linkedIn} from "../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
 
 const Admindeatils = () => {
   const [selectedOption, setSelectedOption] = useState("Project Ratings");

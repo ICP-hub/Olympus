@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
-import { projectFilterSvg } from "../Utils/Data/SvgData";
-import ment from "../../../assets/images/ment.jpg";
-import img1 from "../../../assets/images/img1.png";
+import { projectFilterSvg } from "../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
+import ment from "../../../../IcpAccelerator_frontend/assets/images/ment.jpg"
+import img1 from "../../../../IcpAccelerator_frontend/assets/images/img1.png";
 import { Line } from "rc-progress";
-import Profile from "../../../assets/images/Ellipse 1382.svg";
+import Profile from "../../../../IcpAccelerator_frontend/assets/images/Ellipse 1382.svg";
 import ReactSlider from "react-slider";
-import Astro from "../../../assets/images/AstroLeft.png";
+import Astro from "../../../../IcpAccelerator_frontend/assets/images/AstroLeft.png";
 
 const Adminoption = () => {
   const [sliderValuesProgress, setSliderValuesProgress] = useState({});

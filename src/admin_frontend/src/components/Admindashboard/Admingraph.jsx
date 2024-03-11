@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Hubdashboardlive from "../Hubdashboardlive/Hubdashboardlive";
-import { Memberssvg } from "../Utils/Data/SvgData";
+import Hubdashboardlive from "../../../../IcpAccelerator_frontend/src/components/Hubdashboardlive/Hubdashboardlive";
+import { Memberssvg } from "../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
 import founder from "../../../assets/images/founder.png";
 import hub from "../../../assets/images/hub.png";
 import vc from "../../../assets/images/vc.png";
@@ -12,7 +12,7 @@ import mentor from "../../../assets/images/mentor.png";
 import ApexChart from "react-apexcharts";
 import ReactApexChart from 'react-apexcharts';
 
-import { rectangle } from "../Utils/Data/SvgData";
+import { rectangle } from "../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
 
 const Admingraph = () => {
   const navigate = useNavigate();
