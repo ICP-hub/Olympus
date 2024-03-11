@@ -113,6 +113,7 @@ type Notification_1 = record {
 type ProjectInfo = record {
   project_elevator_pitch : vec nat8;
   reason_to_join_incubator : text;
+  user_data : UserInformation;
   project_description : text;
   token_economics : text;
   self_rating_of_project : float64;
@@ -122,6 +123,7 @@ type ProjectInfo = record {
   project_area_of_focus : text;
   live_on_icp_mainnet : opt text;
   technical_docs : text;
+  github_link : text;
   project_cover : vec nat8;
   promotional_video : text;
   money_raised_till_now : opt text;
@@ -129,7 +131,6 @@ type ProjectInfo = record {
   project_logo : vec nat8;
   project_name : text;
   project_team : opt TeamMember;
-  social_links : SocialLinksInfo;
 };
 type ProjectInfoInternal = record {
   uid : text;
@@ -186,11 +187,6 @@ type SeventyInfoFounder = record {
   location : opt text;
   refer : opt text;
   employee_count : opt text;
-};
-type SocialLinksInfo = record {
-  linkedin : opt text;
-  twitter : opt text;
-  facebook : opt text;
 };
 type SubLevel = variant {
   All;
@@ -277,10 +273,12 @@ service : {
   add_suggestion_caller : (text, text) -> (nat64, text);
   approve_mentor_creation_request_candid : (principal, bool) -> (text);
   approve_vc_creation_request : (principal, bool) -> (text);
+  approve_vc_profile_update : (principal, bool) -> (text);
   calculate_average_api : (text) -> (opt float64) query;
   connect_to_team_member : (text, text) -> (text);
   decline_mentor_creation_request_candid : (principal, bool) -> (text);
   decline_vc_creation_request : (principal, bool) -> (text);
+  decline_vc_profile_update_request : (principal, bool) -> (text);
   delete_founder_caller : () -> (text);
   delete_mentor_candid : () -> (text);
   delete_project : (text) -> (text);
@@ -358,6 +356,7 @@ service : {
   update_venture_capitalist_caller : (VentureCapitalist) -> (text);
   upvote_project : (text) -> (text);
   vc_awaiting_approval : () -> (vec VentureCapitalistInternal) query;
+  vc_profile_edit_awaiting_approval : () -> (vec VentureCapitalist) query;
   verify_project_under_your_hub : (text) -> (text);
   view_notifications_candid : (principal) -> (vec Notification_1) query;
 }
