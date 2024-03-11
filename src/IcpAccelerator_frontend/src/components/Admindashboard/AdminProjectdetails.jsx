@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { projectFilterSvg } from "../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
+import { projectFilterSvg } from "../Utils/Data/SvgData";
 import project from "../../../assets/images/project.png";
 
 import ment from "../../../assets/images/ment.jpg";

@@ -44,12 +44,12 @@ const AppRoutes = () => {
   // ]
 
   const publicRoutes = [
-    // { path: "/", element: <Home /> },
-    { path: "/createUser", element: <NormalUser /> },
+    { path: "/", element: <Home /> },
+    { path: "/create-user", element: <NormalUser /> },
     { path: "/create-project", element: <CreateProject /> },
     { path: "/details", element: <AllDetailsForm /> },
     { path: "/roleSelect", element: <RoleSelector /> },
-    { path: "/", element: <DashBoard /> },
+    { path: "/dashboard", element: <DashBoard /> },
   ];
 
   const protectedRoutes = [

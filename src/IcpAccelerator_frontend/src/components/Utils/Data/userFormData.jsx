@@ -3,7 +3,7 @@ export const formFields = [
       id: "full_name",
       type: "text",
       name: "full_name",
-      label: "Hello there! Can we get your full name ?",
+      label: "Hello there! Can we get your full name *?",
       onFocus: null,
       onBlur: null,
     },
@@ -40,9 +40,9 @@ export const formFields = [
       onBlur: null,
     },
     {
-      id: "openchat_username",
+      id: "user_name",
       type: "text",
-      name: "openchat_username",
+      name: "user_name",
       label: "Please provide your Open Chat Username",
     }
   ];
