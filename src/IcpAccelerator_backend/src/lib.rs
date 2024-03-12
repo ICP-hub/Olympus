@@ -522,8 +522,9 @@ fn get_my_id() -> Principal {
 }
 
 #[query]
-fn get_admin_notifications(caller: Principal) -> Vec<admin::Notification> {
-    admin::get_admin_notifications(caller)
+fn get_admin_notifications() -> Vec<admin::Notification> {
+    check_admin()
+    admin::get_admin_notifications()
 }
 
 // #[update]
