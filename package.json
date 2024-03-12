@@ -15,7 +15,7 @@
     "deploy:local": "dfx deploy --network=local",
     "deploy:ic": "dfx deploy --network=ic",
     "generate": "dfx generate IcpAccelerator_backend",
-    "did" : "./scripts/generate_did.sh"
+    "did": "./scripts/generate_did.sh"
   },
   "dependencies": {
     "@dfinity/agent": "^0.20.2",
@@ -39,6 +39,7 @@
     "react": "^17.0.2",
     "react-apexcharts": "^1.4.1",
     "react-circular-progressbar": "^2.1.0",
+    "react-countries": "^1.1.1",
     "react-dom": "^17.0.2",
     "react-dropzone": "^14.2.3",
     "react-hook-form": "^7.50.0",

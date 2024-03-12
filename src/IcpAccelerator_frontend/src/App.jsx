@@ -122,7 +122,7 @@ const App = () => {
       {/* <Home/> */}
       {/* <Adminoption /> */}
       {/* <Admingraph /> */}
-      <AdminDashboard />
+      {/* <AdminDashboard /> */}
       {/* <Hubcards /> */}
       {/* <Hubdashboard /> */}
       {/* <Hubdashboard /> */}
@@ -136,7 +136,7 @@ const App = () => {
       {/* <UserProfile/> */}
       {/* <RoleSelector /> */}
       {/* <NormalUser /> */}
-      {/* <AppRoutes /> */}
+      <AppRoutes />
       {/* <MentorRegistration /> */}
       <Footer />
     </>

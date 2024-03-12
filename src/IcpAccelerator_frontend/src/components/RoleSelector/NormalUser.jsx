@@ -8,9 +8,12 @@ import { useDispatch, useSelector } from "react-redux";
 // import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_IcpHubReducer";
 // import { AuthClient } from "@dfinity/auth-client";
 import { ThreeDots } from "react-loader-spinner";
-// import { useNavigate } from "react-router-dom";
+ import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
+import DetailHeroSection from "../Common/DetailHeroSection";
 // import { userRoleHandler } from "../../StateManagement/Redux/Reducers/userRoleReducer";
+import Founder from "../../../assets/images/founderRegistration.png";
+import { useCountries } from "react-countries";
 
 const today = new Date();
 const startDate = new Date("1900-01-01");
@@ -33,7 +36,7 @@ const schema = yup.object({
   email: yup.string().email().optional(),
   telegram_id: yup.string().optional().url(),
   twitter_id: yup.string().optional().url(),
-  hub: yup.string().required("Selecting a hub is required."),
+  country: yup.string().required("Country is required."),
   areas_of_expertise: yup
     .string()
     .required("Selecting a interest is required."),
@@ -51,9 +54,10 @@ const NormalUser = () => {
   const [imageData, setImageData] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const { countries } = useCountries();
 
   const dispatch = useDispatch();
-  //   const navigate = useNavigate();
+  const navigate = useNavigate();
 
   console.log("userInfo run =>", userFullData);
   //   console.log("getAllIcpHubs", getAllIcpHubs);
@@ -123,14 +127,14 @@ const NormalUser = () => {
     // console.log("data aaya data aaya ", data);
 
     const userData = {
-      full_name: [data.full_name],
-      user_name: [data.user_name],
+      full_name: data.full_name,
+      openchat_username: [data.user_name],
       bio: [data.bio],
       email: [data.email],
       telegram_id: [data.telegram_id.toString()],
       twitter_id: [data.twitter_id.toString()],
-      country: [data.hub],
-      area_of_intrest: [data.areas_of_expertise],
+      country: data.country,
+      area_of_intrest: data.areas_of_expertise,
       profile_picture: [imageData],
     };
 
@@ -140,8 +144,8 @@ const NormalUser = () => {
       const result = await actor.register_user(userData);
       toast.success(result);
       console.log("data passed to backend");
-      await dispatch(userRoleHandler());
-      await navigate("/dashboard");
+      // await dispatch(userRoleHandler());
+      await navigate("/");
     } catch (error) {
       toast.error(error);
       console.error("Error sending data to the backend:", error);
@@ -160,8 +164,21 @@ const NormalUser = () => {
     }
   };
 
-  return (
-    <div>
+  const HeroImage =(
+    <img
+      src={Founder}
+      alt="Astronaut"
+      className={`z-20 w-[500px] md:w-[300px] sm:w-[250px] sxs:w-[260px] md:h-56 relative  sxs:-right-3 right-16 md:right-0 sm:right-0 top-10`}
+    />
+  )
+  return (<>
+    <DetailHeroSection HeroImage={HeroImage} />
+    <section className="w-full h-fit px-[6%] lg1:px-[4%] py-[6%] lg1:py-[4%] bg-gray-100">
+      <div className="w-full h-full bg-gray-100 pt-8">
+        <div className="bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-[30px]  sm:text-[25px] md1:text-[30px] md2:text-[35px] font-black font-fontUse dxl:text-[40px] p-8">
+          User Information
+        </div>
+        <div className="text-sm font-medium text-center text-gray-200 ">
       <form onSubmit={handleSubmit(onSubmitHandler)} className="w-full px-4">
         <div className="flex flex-col">
           <div className="flex-row w-full flex justify-start gap-4 items-center">
@@ -233,7 +250,7 @@ const NormalUser = () => {
             <div key={field.id} className="relative z-0 group mb-6">
               <label
                 htmlFor={field.id}
-                className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden hover:text-left"
+                className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
               >
                 {field.label}
               </label>
@@ -252,48 +269,48 @@ const NormalUser = () => {
                 onBlur={() => handleBlur(field)}
               />
               {errors[field.name] && (
-                <span className="mt-1 text-sm text-red-500 font-bold">
+                <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
                   {errors[field.name].message}
                 </span>
               )}
             </div>
           ))}
 
-          <div className="relative z-0 group">
-            <label
-              htmlFor="hub"
-              className="block mb-2 text-lg font-medium text-gray-700 hover:whitespace-normal truncate overflow-hidden hover:text-left"
-            >
-              Can you please share your preferred ICP Hub
-            </label>
-            <select
-              {...register("hub")}
-              id="hub"
-              className={`bg-gray-50 border-2 ${
-                errors.hub
-                  ? "border-red-500 placeholder:text-red-500"
-                  : "border-[#737373]"
-              } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-            >
-              <option className="text-lg font-bold" value="">
-                Select your ICP Hub
-              </option>
-              {getAllIcpHubs?.map((hub) => (
-                <option
-                  key={hub.id}
-                  value={`${hub.name} ,${hub.region}`}
-                  className="text-lg font-bold"
+<div className="z-0 w-full group">
+                <label
+                  htmlFor="country"
+                  className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                 >
-                  {hub.name} , {hub.region}
-                </option>
-              ))}
-            </select>
-            {errors.hub && (
-              <span className="mt-1 text-sm text-red-500 font-bold">
-                {errors.hub.message}
-              </span>
-            )}
-          </div>
+                  Please select your Country.
+                </label>
+                <select
+                  {...register("country")}
+                  className={`bg-gray-50 border-2 ${
+                    errors.country
+                      ? "border-red-500 placeholder:text-red-500"
+                      : "border-[#737373]"
+                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                >
+                  <option className="text-lg font-bold" value="">
+                    select your Country ⌄
+                  </option>
+                  {countries?.map((expert) => (
+                    <option
+                      key={expert.name}
+                      value={`${expert.name}`}
+                      className="text-lg font-bold"
+                    >
+                      {expert.name}
+                    </option>
+                  ))}
+                </select>
+
+                {errors.country && (
+                  <p className="text-red-500 text-xs italic">
+                    {errors.country.message}
+                  </p>
+                )}
+              </div>
           <div className="z-0 w-full group">
             <label
               htmlFor="areas_of_expertise"
@@ -323,7 +340,7 @@ const NormalUser = () => {
               ))}
             </select>
             {errors.areas_of_expertise && (
-              <span className="mt-1 text-sm text-red-500 font-bold">
+              <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
                 {errors.areas_of_expertise.message}
               </span>
             )}
@@ -352,8 +369,11 @@ const NormalUser = () => {
           </button>
         </div>
       </form>
-      <Toaster />
     </div>
+    </div>
+    </section>
+    <Toaster />
+    </>
   );
 };
 
