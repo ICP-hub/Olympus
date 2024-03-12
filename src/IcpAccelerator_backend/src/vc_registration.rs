@@ -10,13 +10,14 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::cell::RefCell;
 use std::{collections::HashMap, io::Write};
+
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct VentureCapitalist {
     pub name_of_fund: String,
     pub fund_size: f64,
     pub assets_under_management: String,
-    pub logo: Vec<u8>,
-    pub registered_under_any_hub: Option<String>,
+    pub logo: Option<Vec<u8>>,
+    pub registered_under_any_hub: Option<bool>,
     pub average_check_size: f64,
     pub existing_icp_investor: bool,
     pub money_invested: f64,
@@ -36,27 +37,27 @@ pub struct VentureCapitalist {
 impl VentureCapitalist {
     //validation functions for Vc
     pub fn validate(&self) -> Result<(), String> {
-        if self.fund_size == 0.0 || self.fund_size.is_nan() {
-            return Err("Invalid input for funds size".into());
-        }
+        // if self.fund_size == 0.0 || self.fund_size.is_nan() {
+        //     return Err("Invalid input for funds size".into());
+        // }
 
-        if self.money_invested == 0.0 || self.money_invested.is_nan() {
-            return Err("Invalid input for funds size".into());
-        }
+        // if self.money_invested == 0.0 || self.money_invested.is_nan() {
+        //     return Err("Invalid input for funds size".into());
+        // }
 
-        if self.average_check_size == 0.0 || self.average_check_size.is_nan() {
-            return Err("Invalid input for funds size".into());
-        }
+        // if self.average_check_size == 0.0 || self.average_check_size.is_nan() {
+        //     return Err("Invalid input for funds size".into());
+        // }
 
-        if self.logo.is_empty() {
-            return Err("Add a logo".into());
-        }
+        // if self.logo.is_empty() {
+        //     return Err("Add a logo".into());
+        // }
 
-        if let Some(ref registered_under_any_hub) = self.registered_under_any_hub {
-            if registered_under_any_hub.trim().is_empty() {
-                return Err("Field cannot be empty".into());
-            }
-        }
+        // if let Some(ref registered_under_any_hub) = self.registered_under_any_hub {
+        //     if registered_under_any_hub.trim().is_empty() {
+        //         return Err("Field cannot be empty".into());
+        //     }
+        // }
 
         if let Some(ref project_on_multichain) = self.project_on_multichain {
             if project_on_multichain.trim().is_empty() {
@@ -73,6 +74,7 @@ impl VentureCapitalist {
         Ok(())
     }
 }
+
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct VentureCapitalistInternal {
