@@ -36,7 +36,7 @@ thread_local! {
 
 pub async fn send_approval_request() -> String {
     //sender
-    let caller = caller();
+    let caller: Principal = caller();
 
     //access whom you wanna send the notification; receiver
     match get_info().await {
@@ -64,7 +64,7 @@ pub async fn send_approval_request() -> String {
                     notifications
                         .entry(c)
                         .or_default()
-                        .push(notification_to_send);
+                        .push(notification_to_send)
                 });
             }
             format!("approval request is sent")

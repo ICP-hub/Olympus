@@ -9,6 +9,7 @@ extern crate serde_cbor;
 use crate::admin::send_approval_request;
 use crate::trie::EXPERTISE_TRIE;
 use crate::user_module::UserInformation;
+use ic_cdk::api::time;
 use std::cell::RefCell;
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, Default)]
 pub struct MentorProfile {
@@ -60,12 +61,23 @@ pub struct MentorInternal {
     pub decline: bool,
 }
 
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+pub struct MAnnouncements {
+    project_name: String,
+    announcement_message: String,
+    timestamp: u64,
+}
+
+pub type MentorAnnouncements = HashMap<Principal, Vec<MAnnouncements>>;
+
 thread_local! {
     pub static MENTOR_REGISTRY: RefCell<MentorRegistry> = RefCell::new(MentorRegistry::new());
     pub static MENTOR_AWAITS_RESPONSE: RefCell<MentorRegistry> = RefCell::new(MentorRegistry::new());
     pub static DECLINED_MENTOR_REQUESTS: RefCell<MentorRegistry> = RefCell::new(MentorRegistry::new());
     pub static MENTOR_PROFILE_EDIT_AWAITS :RefCell<MentorParams> = RefCell::new(MentorParams::new());
     pub static DECLINED_MENTOR_PROFILE_EDIT_REQUEST :RefCell<MentorParams> = RefCell::new(MentorParams::new());
+    pub static MENTOR_ANNOUNCEMENTS:RefCell<MentorAnnouncements> = RefCell::new(MentorAnnouncements::new());
+
 }
 
 pub async fn register_mentor(profile: MentorProfile) -> String {
@@ -268,4 +280,32 @@ pub fn find_mentors_by_expertise(expertise_keyword: &str) -> Vec<MentorProfile> 
     });
 
     mentor_profiles
+}
+
+#[update]
+pub fn add_mentor_announcement(name: String, announcement_message: String) -> String {
+    let caller_id = caller();
+
+    let current_time = time();
+
+    MENTOR_ANNOUNCEMENTS.with(|state| {
+        let mut state = state.borrow_mut();
+        let new_vc = MAnnouncements {
+            project_name: name,
+            announcement_message: announcement_message,
+            timestamp: current_time,
+        };
+
+        state.entry(caller_id).or_insert_with(Vec::new).push(new_vc);
+        format!("Announcement added successfully at {}", current_time)
+    })
+}
+
+//for testing purpose
+#[query]
+pub fn get_mentor_announcements() -> HashMap<Principal, Vec<MAnnouncements>> {
+    MENTOR_ANNOUNCEMENTS.with(|state| {
+        let state = state.borrow();
+        state.clone()
+    })
 }
