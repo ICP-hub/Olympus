@@ -376,10 +376,14 @@ const InvestorRegistration = () => {
       // if (specificRole !== null || undefined) {
       // result = await actor.update_venture_capitalist(val);
       // } else if (specificRole === null || specificRole === undefined) {
-      result = await actor.register_venture_capitalist(val);
+      await actor.register_venture_capitalist(val).then((result) => {
+        toast.success(result);
+        // console.log('result', result)
+        // navigate('/');
+        window.location.href = "/";
+      })
       // }
 
-      toast.success(result);
       console.log("investor data registered in backend");
       // await dispatch(userRoleHandler());
       await navigate("/dashboard");

@@ -21,10 +21,12 @@ const DashBoard = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   // console.log("actor in dashboard =>", actor);
 
+  const principal = useSelector(
+    (currState) => currState.internet.principal
+  );
   const userCurrentRoleStatus = useSelector(
     (currState) => currState.currentRoleStatus.rolesStatusArray
   );
-
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
@@ -34,13 +36,13 @@ const DashBoard = () => {
       // const founderDataFetch = await actor.get_mentor_candid();
       // console.log("dekho dekho founder data aaya => ", founderDataFetch);
     };
-    founderDataFetchHandler();
+    // founderDataFetchHandler();
   }, [actor]);
 
   useEffect(() => {
     if (!userCurrentRoleStatus.length) {
       dispatch(getCurrentRoleStatusRequestHandler());
-    } else if (userCurrentRoleStatus.length && !userCurrentRoleStatusActiveRole) {
+    } else if (userCurrentRoleStatus.length === 4 && userCurrentRoleStatus[0]?.status === 'default') {
       navigate('/create-user');
     } else { }
   }, [dispatch, userCurrentRoleStatus, userCurrentRoleStatusActiveRole])
@@ -48,6 +50,7 @@ const DashBoard = () => {
   const underline =
     "relative focus:after:content-[''] focus:after:block focus:after:w-full focus:after:h-[2px] focus:after:bg-blue-800 focus:after:absolute focus:after:left-0 focus:after:bottom-[-4px]";
 
+  console.log('principal', principal)
   return (
     <section className="overflow-hidden relative bg-gray-100">
       <div className="font-fontUse flex flex-col w-full h-fit px-[5%] lg1:px-[4%] py-[4%]">
