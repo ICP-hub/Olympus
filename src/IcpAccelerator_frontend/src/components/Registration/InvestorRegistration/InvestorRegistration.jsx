@@ -404,61 +404,65 @@ const InvestorRegistration = () => {
 
     if (step < steps.length - 1) {
       handleNext();
-    } else if (
-      specificRole !== null ||
-      (undefined && step > steps.length - 1)
-    ) {
+    } 
+    // else if (
+    //   specificRole !== null ||
+    //   (undefined && step > steps.length - 1)
+    // ) {
       // console.log("exisiting user visit ");
 
-      const interestInBoardPosition =
-        updatedFormData.existing_icp_investor === "true" ? true : false;
-      const updatedregisteredUnderAnyHub =
-        updatedFormData.registered_under_any_hub === "true" ? true : false;
+    //   const interestInBoardPosition =
+    //     updatedFormData.existing_icp_investor === "true" ? true : false;
+    //   const updatedregisteredUnderAnyHub =
+    //     updatedFormData.registered_under_any_hub === "true" ? true : false;
 
-      // const updatedMultiChain =
-      //   updatedFormData.project_on_multichain === "true" ? true : false;
+    //   // const updatedMultiChain =
+    //   //   updatedFormData.project_on_multichain === "true" ? true : false;
 
-      let tempObj2 = {
-        average_check_size: Number(updatedFormData.average_check_size),
-        email: [updatedFormData.email] || [],
-        full_name: updatedFormData.full_name || "",
-        openchat_username: [updatedFormData.openchat_username] || [],
+    //   let tempObj2 = {
+    //     average_check_size: Number(updatedFormData.average_check_size),
+    //     email: [updatedFormData.email] || [],
+    //     full_name: updatedFormData.full_name || "",
+    //     openchat_username: [updatedFormData.openchat_username] || [],
 
-        existing_icp_investor: interestInBoardPosition,
-        money_invested: Number(updatedFormData.money_invested),
-        project_on_multichain: [updatedFormData.project_on_multichain] || [],
+    //     existing_icp_investor: interestInBoardPosition,
+    //     money_invested: Number(updatedFormData.money_invested),
+    //     project_on_multichain: [updatedFormData.project_on_multichain] || [],
 
-        reason_for_joining: updatedFormData.reason_for_joining || "",
-        country: updatedFormData.country || "",
-        announcement_details: updatedFormData.announcement_details || "",
-        name_of_fund: updatedFormData.name_of_fund || "",
-        bio: [updatedFormData.bio] || [],
-        existing_icp_portfolio: updatedFormData.existing_icp_portfolio || "",
-        registered_under_any_hub: [updatedregisteredUnderAnyHub] || [],
-        number_of_portfolio_companies:
-          updatedFormData.number_of_portfolio_companies || 0,
-        area_of_intrest: updatedFormData.area_of_intrest || [],
+    //     reason_for_joining: updatedFormData.reason_for_joining || "",
+    //     country: updatedFormData.country || "",
+    //     announcement_details: updatedFormData.announcement_details || "",
+    //     name_of_fund: updatedFormData.name_of_fund || "",
+    //     bio: [updatedFormData.bio] || [],
+    //     existing_icp_portfolio: updatedFormData.existing_icp_portfolio || "",
+    //     registered_under_any_hub: [updatedregisteredUnderAnyHub] || [],
+    //     number_of_portfolio_companies:
+    //       updatedFormData.number_of_portfolio_companies || 0,
+    //     area_of_intrest: updatedFormData.area_of_intrest || [],
 
-        portfolio_link: updatedFormData.portfolio_link || "",
-        preferred_icp_hub: updatedFormData.preferred_icp_hub,
-        type_of_investment: updatedFormData.type_of_investment || "",
-        category_of_investment: updatedFormData.category_of_investment || "",
+    //     portfolio_link: updatedFormData.portfolio_link || "",
+    //     preferred_icp_hub: updatedFormData.preferred_icp_hub,
+    //     type_of_investment: updatedFormData.type_of_investment || "",
+    //     category_of_investment: updatedFormData.category_of_investment || "",
 
-        preferred_investment_sectors:
-          [updatedFormData.preferred_investment_sectors] || [],
-        investor_type: updatedFormData.investor_type ||"",
-        fund_size: Number(updatedFormData.fund_size) || "",
-        telegram_id: [updatedFormData.telegram_id] || [],
-        assets_under_management: updatedFormData.assets_under_management || "",
-        logo: [logo] || [],
-      };
+    //     preferred_investment_sectors:
+    //       [updatedFormData.preferred_investment_sectors] || [],
+    //     investor_type: updatedFormData.investor_type ||"",
+    //     fund_size: Number(updatedFormData.fund_size) || "",
+    //     telegram_id: [updatedFormData.telegram_id] || [],
+    //     assets_under_management: updatedFormData.assets_under_management || "",
+    //     logo: [logo] || [],
+    //   };
 
-      setInvestorDataObject(tempObj2);
-      await sendingInvestorData(tempObj2);
-    } else if (
-      specificRole === null ||
-      (specificRole === undefined && step > steps.length - 1)
-    ) {
+    //   setInvestorDataObject(tempObj2);
+    //   await sendingInvestorData(tempObj2);
+    // }
+     else 
+    //  (
+      // specificRole === null ||
+      // (step > steps.length - 1)
+    // ) 
+    {
       // console.log("first time visit ");
 
       const interestInBoardPosition =
@@ -480,28 +484,21 @@ const InvestorRegistration = () => {
           full_name: updatedFormData.full_name,
           profile_picture: [logo],
         },
-        average_check_size: Number(updatedFormData.average_check_size) || 0,
+        average_check_size: Number(updatedFormData.average_check_size),
         existing_icp_investor: interestInBoardPosition,
         registered_under_any_hub: [updatedregisteredUnderAnyHub],
-
         money_invested: Number(updatedFormData.money_invested),
         project_on_multichain: [updatedFormData.project_on_multichain],
-
         reason_for_joining: updatedFormData.reason_for_joining,
         announcement_details: updatedFormData.announcement_details,
         name_of_fund: updatedFormData.name_of_fund,
         existing_icp_portfolio: updatedFormData.existing_icp_portfolio,
-        number_of_portfolio_companies:
-          updatedFormData.number_of_portfolio_companies,
-
+        number_of_portfolio_companies:updatedFormData.number_of_portfolio_companies,
         portfolio_link: updatedFormData.portfolio_link,
         preferred_icp_hub: updatedFormData.preferred_icp_hub,
         type_of_investment: updatedFormData.type_of_investment,
         category_of_investment: updatedFormData.category_of_investment,
-
-        preferred_investment_sectors: [
-          updatedFormData.preferred_investment_sectors,
-        ],
+        preferred_investment_sectors: [updatedFormData.preferred_investment_sectors],
         investor_type: updatedFormData.investor_type,
         fund_size: Number(updatedFormData.fund_size),
         assets_under_management: updatedFormData.assets_under_management,
