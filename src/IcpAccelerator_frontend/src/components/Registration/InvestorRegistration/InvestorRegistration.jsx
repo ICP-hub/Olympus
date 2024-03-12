@@ -20,6 +20,9 @@ import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import { userRoleHandler } from "../../StateManagement/Redux/Reducers/userRoleReducer";
 import CompressedImage from "../../ImageCompressed/CompressedImage";
+import DetailHeroSection from "../../Common/DetailHeroSection";
+import Mentor from "../../../../assets/images/mentorRegistration.png";
+
 
 const validationSchema = {
   userDetails: yup.object().shape({
@@ -97,11 +100,7 @@ const validationSchema = {
     existing_icp_investor: yup
       .boolean()
       .required("Are you an existing ICP investor")
-      .test(
-        "is-non-empty",
-        "Data is required",
-        (value) => /\S/.test(value)
-      ),
+      .test("is-non-empty", "Data is required", (value) => /\S/.test(value)),
     registered_under_any_hub: yup
       .boolean()
       .required("registered under any hub required")
@@ -117,12 +116,10 @@ const validationSchema = {
         /\S/.test(value)
       ),
     project_on_multichain: yup
-    .string()
-    .required("Are your project is on Multichain")
-    .test(
-        "is-non-empty",
-        "Confirmation is required",
-        (value) => /\S/.test(value)
+      .string()
+      .required("Are your project is on Multichain")
+      .test("is-non-empty", "Confirmation is required", (value) =>
+        /\S/.test(value)
       ),
 
     fund_size: yup
@@ -163,18 +160,14 @@ const validationSchema = {
     category_of_investment: yup
       .string()
       .required("Category of investment is required")
-      .test(
-        "is-non-empty",
-        "Category of investment required",
-        (value) => /\S/.test(value)
+      .test("is-non-empty", "Category of investment required", (value) =>
+        /\S/.test(value)
       ),
     reason_for_joining: yup
       .string()
       .required("Reason for joining is required")
-      .test(
-        "is-non-empty",
-        "Reason for joining is required",
-        (value) => /\S/.test(value)
+      .test("is-non-empty", "Reason for joining is required", (value) =>
+        /\S/.test(value)
       ),
 
     announcement_details: yup
@@ -446,7 +439,7 @@ const InvestorRegistration = () => {
 
         preferred_investment_sectors:
           [updatedFormData.preferred_investment_sectors] || [],
-        investor_type: updatedFormData.investor_type ||"",
+        investor_type: updatedFormData.investor_type || "",
         fund_size: Number(updatedFormData.fund_size) || "",
         telegram_id: [updatedFormData.telegram_id] || [],
         assets_under_management: updatedFormData.assets_under_management || "",
@@ -521,437 +514,416 @@ const InvestorRegistration = () => {
       <InvestorAdditionalInformation isSubmitting={isSubmitting} />
     );
   }
+  const HeroImage =(
+    <img
+      src={Mentor}
+      alt="Astronaut"
+      className={`z-20 w-[500px] md:w-[300px] sm:w-[250px] sxs:w-[260px] md:h-56 relative  sxs:-right-3 right-16 md:right-0 sm:right-0 top-10`}
+    />
+  )
   return (
-    <div className="w-full h-full bg-gray-100 pt-8">
-      <div className="bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-[30px]  sm:text-[25px] md1:text-[30px] md2:text-[35px] font-black font-fontUse dxl:text-[40px] p-8">
-        VC's Information
-      </div>
-      <div className="text-sm font-medium text-center text-gray-200 ">
-        <ul className="flex flex-wrap mb-4 text-sxxs:text-[7px] sxs:text-[7.5px] sxs1:text-[8px] sxs2:text-[8.5px] sxs3:text-[9px] ss:text-[9.5px] ss1:text-[10px] ss2:text-[10.5px] ss3:text-[11px] ss4:text-[11.5px] dxs:text-[12px] xxs:text-[12.5px] xxs1:text-[13px] sm1:text-[13.5px] sm4:text-[14px] sm2:text-[14.5px] sm3:text-[13px] sm:text-[11.5px] md:text-[14px.3] md1:text-[13px] md2:text-[13px] md3:text-[13px] lg:text-[14.5px] dlg:text-[15px] lg1:text-[16.5px] lgx:text-[16px] dxl:text-[16.5px] xl:text-[19px] xl2:text-[19.5px] cursor-pointer justify-around">
-          {investorRegistration.map((header, index) => (
-            <li key={header.id} className="me-2 relative group">
-              <button
-                className={`${getTabClassName(header.id)} ${
-                  index > step && !isCurrentStepValid
-                    ? "cursor-not-allowed opacity-50"
-                    : "cursor-pointer"
-                }`}
-                onClick={() => handleTabClick(header.id)}
-                disabled={index > step && !isCurrentStepValid}
-              >
-                <div className="hidden md:block">{header.label}</div>
-
-                <div className="flex md:hidden items-center">{header.icon}</div>
-              </button>
-              <div className="md:hidden">
-                {index > step && !isCurrentStepValid && (
-                  <ReactTooltip
-                    id={header.id}
-                    place="bottom"
-                    content="Complete current step to proceed"
-                    className="z-10"
-                  />
-                )}
-              </div>
-            </li>
-          ))}
-        </ul>
-
-        {step == 0 && (
-          <div className="flex flex-col">
-            <div className="flex-row w-full flex justify-start gap-4 items-center">
-              <div className="mb-3 ml-6 h-24 w-24 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
-                {profileImage ? (
-                  <img
-                    src={profileImage}
-                    alt="New profile"
-                    className="h-full w-full object-cover"
-                  />
-                ) : formData.venture_image ? (
-                  <img
-                    src={formData?.venture_image}
-                    alt="User"
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <svg
-                    width="35"
-                    height="37"
-                    viewBox="0 0 35 37"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="bg-no-repeat"
-                  >
-                    <path
-                      d="M8.53049 8.62583C8.5304 13.3783 12.3575 17.2449 17.0605 17.2438C21.7634 17.2428 25.5907 13.3744 25.5908 8.62196C25.5909 3.8695 21.7638 0.00287764 17.0608 0.00394405C12.3579 0.00501045 8.53058 3.87336 8.53049 8.62583ZM32.2249 36.3959L34.1204 36.3954L34.1205 34.4799C34.1206 27.0878 28.1667 21.0724 20.8516 21.0741L13.2692 21.0758C5.95224 21.0775 -3.41468e-05 27.0955 -0.000176714 34.4876L-0.000213659 36.4032L32.2249 36.3959Z"
-                      fill="#BBBBBB"
-                    />
-                  </svg>
-                )}
-                <input
-                  id="imagess"
-                  type="file"
-                  name="imagess"
-                  onChange={(e) => addImageHandler(e)}
-                  className="hidden"
-                />
-              </div>
-
-              <label
-                htmlFor="imagess"
-                className="p-2 border-2 border-blue-800 items-center rounded-md text-md bg-transparent text-blue-800 cursor-pointer font-extrabold"
-              >
-                Upload Profile
-              </label>
-            </div>
-
-            <div className="z-0 w-full my-3 group">
-              <label
-                htmlFor="country"
-                className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-              >
-                Please select your Country.
-              </label>
-              <select
-                {...register("country")}
-                className={`bg-gray-50 border-2 ${
-                  errors.country
-                    ? "border-red-500 placeholder:text-red-500"
-                    : "border-[#737373]"
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-              >
-                <option className="text-lg font-bold" value="">
-                  select your Country ⌄
-                </option>
-                {countries?.map((expert) => (
-                  <option
-                    key={expert.name}
-                    value={`${expert.name}`}
-                    className="text-lg font-bold"
-                  >
-                    {expert.name}
-                  </option>
-                ))}
-              </select>
-
-              {errors.country && (
-                <p className="text-red-500 text-xs italic">
-                  {errors.country.message}
-                </p>
-              )}
-            </div>
-
-            <div className="relative z-0 group mb-6 px-4">   // correct
-              <label
-                htmlFor="area_of_intrest"
-                className="block mb-2 text-lg font-medium  text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-              >
-                What is your area of interest ?
-              </label>
-              <select
-                {...register("area_of_intrest")}
-                // id="area_of_intrest"
-                className={`bg-gray-50 border-2 ${
-                  errors.area_of_intrest
-                    ? "border-red-500 placeholder:text-red-500"
-                    : "border-[#737373]"
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-              >
-                <option className="text-lg font-bold" value="">
-                  Select your area of interest
-                </option>
-                {areaOfExpertise?.map((hub) => (
-                  <option
-                    key={hub.id}
-                    value={`${hub.name} ,${hub.region}`}
-                    className="text-lg font-bold"
-                  >
-                    {hub.name} , {hub.region}
-                  </option>
-                ))}
-              </select>
-              {errors.area_of_intrest && (
-                <span className="mt-1 text-sm text-red-500 font-bold">
-                  {errors.area_of_intrest.message}
-                </span>
-              )}
-            </div>
-
-           
+    <>
+      <DetailHeroSection HeroImage={HeroImage} />
+      <section className="w-full h-fit px-[6%] lg1:px-[4%] py-[6%] lg1:py-[4%] bg-gray-100">
+        <div className="w-full h-full bg-gray-100 pt-8">
+          <div className="bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-[30px]  sm:text-[25px] md1:text-[30px] md2:text-[35px] font-black font-fontUse dxl:text-[40px] p-8">
+            VC's Information
           </div>
-        )}
-
-        {step == 1 && (
-          <div className="flex flex-col">
-
-<div className="flex-row w-full flex justify-start gap-4 items-center">
-              <div className="mb-3 ml-6 h-24 w-24 rounded-md border-2 border-gray-300 flex items-center justify-center overflow-hidden">
-                {image ? (
-                  <img
-                    src={image}
-                    alt="New profile"
-                    className="h-full w-full object-cover"
-                  />
-                ) : formData.logo ? (
-                  <img
-                    src={formData?.logo}
-                    alt="User"
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <svg
-                    width="35"
-                    height="37"
-                    viewBox="0 0 35 37"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="bg-no-repeat"
+          <div className="text-sm font-medium text-center text-gray-200 ">
+            <ul className="flex flex-wrap mb-4 text-sxxs:text-[7px] sxs:text-[7.5px] sxs1:text-[8px] sxs2:text-[8.5px] sxs3:text-[9px] ss:text-[9.5px] ss1:text-[10px] ss2:text-[10.5px] ss3:text-[11px] ss4:text-[11.5px] dxs:text-[12px] xxs:text-[12.5px] xxs1:text-[13px] sm1:text-[13.5px] sm4:text-[14px] sm2:text-[14.5px] sm3:text-[13px] sm:text-[11.5px] md:text-[14px.3] md1:text-[13px] md2:text-[13px] md3:text-[13px] lg:text-[14.5px] dlg:text-[15px] lg1:text-[16.5px] lgx:text-[16px] dxl:text-[16.5px] xl:text-[19px] xl2:text-[19.5px] cursor-pointer justify-around">
+              {investorRegistration.map((header, index) => (
+                <li key={header.id} className="me-2 relative group">
+                  <button
+                    className={`${getTabClassName(header.id)} ${
+                      index > step && !isCurrentStepValid
+                        ? "cursor-not-allowed opacity-50"
+                        : "cursor-pointer"
+                    }`}
+                    onClick={() => handleTabClick(header.id)}
+                    disabled={index > step && !isCurrentStepValid}
                   >
-                    <path
-                      d="M8.53049 8.62583C8.5304 13.3783 12.3575 17.2449 17.0605 17.2438C21.7634 17.2428 25.5907 13.3744 25.5908 8.62196C25.5909 3.8695 21.7638 0.00287764 17.0608 0.00394405C12.3579 0.00501045 8.53058 3.87336 8.53049 8.62583ZM32.2249 36.3959L34.1204 36.3954L34.1205 34.4799C34.1206 27.0878 28.1667 21.0724 20.8516 21.0741L13.2692 21.0758C5.95224 21.0775 -3.41468e-05 27.0955 -0.000176714 34.4876L-0.000213659 36.4032L32.2249 36.3959Z"
-                      fill="#BBBBBB"
+                    <div className="hidden md:block">{header.label}</div>
+
+                    <div className="flex md:hidden items-center">
+                      {header.icon}
+                    </div>
+                  </button>
+                  <div className="md:hidden">
+                    {index > step && !isCurrentStepValid && (
+                      <ReactTooltip
+                        id={header.id}
+                        place="bottom"
+                        content="Complete current step to proceed"
+                        className="z-10"
+                      />
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+
+            {step == 0 && (
+              <div className="flex flex-col">
+                <div className="flex-row w-full flex justify-start gap-4 items-center">
+                  <div className="mb-3 ml-6 h-24 w-24 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
+                    {profileImage ? (
+                      <img
+                        src={profileImage}
+                        alt="New profile"
+                        className="h-full w-full object-cover"
+                      />
+                    ) : formData.venture_image ? (
+                      <img
+                        src={formData?.venture_image}
+                        alt="User"
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <svg
+                        width="35"
+                        height="37"
+                        viewBox="0 0 35 37"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="bg-no-repeat"
+                      >
+                        <path
+                          d="M8.53049 8.62583C8.5304 13.3783 12.3575 17.2449 17.0605 17.2438C21.7634 17.2428 25.5907 13.3744 25.5908 8.62196C25.5909 3.8695 21.7638 0.00287764 17.0608 0.00394405C12.3579 0.00501045 8.53058 3.87336 8.53049 8.62583ZM32.2249 36.3959L34.1204 36.3954L34.1205 34.4799C34.1206 27.0878 28.1667 21.0724 20.8516 21.0741L13.2692 21.0758C5.95224 21.0775 -3.41468e-05 27.0955 -0.000176714 34.4876L-0.000213659 36.4032L32.2249 36.3959Z"
+                          fill="#BBBBBB"
+                        />
+                      </svg>
+                    )}
+                    <input
+                      id="imagess"
+                      type="file"
+                      name="imagess"
+                      onChange={(e) => addImageHandler(e)}
+                      className="hidden"
                     />
-                  </svg>
-                )}
-                <input
-                  id="images"
-                  type="file"
-                  name="images"
-                  onChange={(e) => addImageHandler(e)}
-                  className="hidden"
-                />
-              </div>
+                  </div>
 
-              <label
-                htmlFor="images"
-                className="p-2 border-2 border-blue-800 items-center rounded-md text-md bg-transparent text-blue-800 cursor-pointer font-extrabold"
-              >
-                Upload Profile
-              </label>
-            </div>
-
-<div className="relative z-0 group mb-6 px-4">
-              <label
-                htmlFor="preferred_icp_hub"
-                className="block mb-2 text-lg font-medium  text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-              >
-                Can you please share your preferred ICP Hub
-              </label>
-              <select
-                {...register("preferred_icp_hub")}
-                // id="preferred_icp_hub"
-                className={`bg-gray-50 border-2 ${
-                  errors.preferred_icp_hub
-                    ? "border-red-500 placeholder:text-red-500"
-                    : "border-[#737373]"
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-              >
-                <option className="text-lg font-bold" value="">
-                  Select your ICP Hub
-                </option>
-                {getAllIcpHubs?.map((hub) => (
-                  <option
-                    key={hub.id}
-                    value={`${hub.name} ,${hub.region}`}
-                    className="text-lg font-bold"
-                  >
-                    {hub.name} , {hub.region}
-                  </option>
-                ))}
-              </select>
-              {errors.preferred_icp_hub && (
-                <span className="mt-1 text-sm text-red-500 font-bold">
-                  {errors.preferred_icp_hub.message}
-                </span>
-              )}
-            </div>
-
-
-            <div className="relative z-0 group mb-6 px-4">
-              <label
-                htmlFor="existing_icp_investor"
-                className="block mb-2 text-lg font-medium text-gray-500 hover:text-black  truncate overflow-hidden text-start"
-              >
-                Are you an exisitng ICP investor ?
-              </label>
-              <select
-                {...register("existing_icp_investor")}
-                id="existing_icp_investor"
-                className={`bg-gray-50 border-2 ${
-                  errors.existing_icp_investor
-                    ? "border-red-500 placeholder:text-red-500"
-                    : "border-[#737373]"
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-              >
-                <option className="text-lg font-bold" value="">
-                  Exisitng investor
-                </option>
-                <option className="text-lg font-bold" value="true">
-                  Yes
-                </option>
-                <option className="text-lg font-bold" value="false">
-                  No
-                </option>
-              </select>
-
-              {errors.existing_icp_investor && (
-                <span className="mt-1 text-sm text-red-500 font-bold">
-                  {errors.existing_icp_investor.message}
-                </span>
-              )}
-            </div>
-
-            <div className="relative z-0 group mb-6 px-4">
-              <label
-                htmlFor="registered_under_any_hub"
-                className="block mb-2 text-lg font-medium text-gray-500 hover:text-black  truncate overflow-hidden text-start"
-              >
-                Are you an under any hub ?
-              </label>
-              <select
-                {...register("registered_under_any_hub")}
-                className={`bg-gray-50 border-2 ${
-                  errors.registered_under_any_hub
-                    ? "border-red-500 placeholder:text-red-500"
-                    : "border-[#737373]"
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-              >
-                <option className="text-lg font-bold" value="">
-                  Registered under any hub
-                </option>
-                <option className="text-lg font-bold" value="true">
-                  Yes
-                </option>
-                <option className="text-lg font-bold" value="false">
-                  No
-                </option>
-              </select>
-
-              {errors.registered_under_any_hub && (
-                <span className="mt-1 text-sm text-red-500 font-bold">
-                  {errors.registered_under_any_hub.message}
-                </span>
-              )}
-            </div>
-          </div>
-        )}
-
-        {step == 2 && (
-          <div className="flex flex-col">
-
-
-            <div className="relative z-0 group mb-6 px-4">
-              <label
-                htmlFor="type_of_investment"
-                className="block mb-2 text-lg font-medium  text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-              >
-                Type of ICP investment ?
-              </label>
-              <select
-                {...register("type_of_investment")}
-                // id="type_of_investment"
-                className={`bg-gray-50 border-2 ${
-                  errors.type_of_investment
-                    ? "border-red-500 placeholder:text-red-500"
-                    : "border-[#737373]"
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-              >
-                <option className="text-lg font-bold" value="">
-                  Select your ICP investment
-                </option>
-                {getAllIcpHubs?.map((hub) => (
-                  <option
-                    key={hub.id}
-                    value={`${hub.name} ,${hub.region}`}
-                    className="text-lg font-bold"
-                  >
-                    {hub.name} , {hub.region}
-                  </option>
-                ))}
-              </select>
-              {errors.type_of_investment && (
-                <span className="mt-1 text-sm text-red-500 font-bold">
-                  {errors.type_of_investment.message}
-                </span>
-              )}
-            </div>
-
-            <div className="relative z-0 group mb-6 px-4">
-              <label
-                htmlFor="type_of_investment"
-                className="block mb-2 text-lg font-medium  text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-              >
-                type of investment ?
-              </label>
-              <select
-                {...register("category_of_investment")}
-                // id="category_of_investment"
-                className={`bg-gray-50 border-2 ${
-                  errors.category_of_investment
-                    ? "border-red-500 placeholder:text-red-500"
-                    : "border-[#737373]"
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-              >
-                <option className="text-lg font-bold" value="">
-                  Investment category
-                </option>
-                {getAllIcpHubs?.map((hub) => (
-                  <option
-                    key={hub.id}
-                    value={`${hub.name} ,${hub.region}`}
-                    className="text-lg font-bold"
-                  >
-                    {hub.name} , {hub.region}
-                  </option>
-                ))}
-              </select>
-              {errors.category_of_investment && (
-                <span className="mt-1 text-sm text-red-500 font-bold">
-                  {errors.category_of_investment.message}
-                </span>
-              )}
-            </div>
-
-            <div className="z-0 w-full my-3 group">
-              <label
-                htmlFor="multi_chain"
-                className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-              >
-                Are you on multi-chain
-              </label>
-              <select
-                onChange={(e) => setIsMultiChain(e.target.value === "Yes")}
-                className={`bg-gray-50 border-2 ${
-                  errors.multi_chain
-                    ? "border-red-500 placeholder:text-red-500"
-                    : "border-[#737373]"
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-              >
-                <option className="text-lg font-bold" value="">
-                  Select your option⌄
-                </option>
-                <option className="text-lg font-bold">Yes</option>
-                <option className="text-lg font-bold">No</option>
-              </select>
-              {errors.multi_chain && (
-                <p className="text-red-500 text-xs italic">
-                  {errors.multi_chain.message}
-                </p>
-              )}
-            </div>
-            {isMultiChain && (
-              <div className="z-0 w-full my-3 group">
-                <div className="">
                   <label
-                    htmlFor="project_on_multichain"
+                    htmlFor="imagess"
+                    className="p-2 border-2 border-blue-800 items-center rounded-md text-md bg-transparent text-blue-800 cursor-pointer font-extrabold"
+                  >
+                    Upload Profile
+                  </label>
+                </div>
+
+                <div className="z-0 w-full my-3 group">
+                  <label
+                    htmlFor="country"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Multi-chain options
+                    Please select your Country.
                   </label>
                   <select
-                    {...register("project_on_multichain")}
+                    {...register("country")}
                     className={`bg-gray-50 border-2 ${
-                      errors.project_on_multichain
+                      errors.country
+                        ? "border-red-500 placeholder:text-red-500"
+                        : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  >
+                    <option className="text-lg font-bold" value="">
+                      select your Country ⌄
+                    </option>
+                    {countries?.map((expert) => (
+                      <option
+                        key={expert.name}
+                        value={`${expert.name}`}
+                        className="text-lg font-bold"
+                      >
+                        {expert.name}
+                      </option>
+                    ))}
+                  </select>
+
+                  {errors.country && (
+                    <p className="text-red-500 text-xs italic">
+                      {errors.country.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="relative z-0 group mb-6 px-4">
+                  {" "}
+                  // correct
+                  <label
+                    htmlFor="area_of_intrest"
+                    className="block mb-2 text-lg font-medium  text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    What is your area of interest ?
+                  </label>
+                  <select
+                    {...register("area_of_intrest")}
+                    // id="area_of_intrest"
+                    className={`bg-gray-50 border-2 ${
+                      errors.area_of_intrest
+                        ? "border-red-500 placeholder:text-red-500"
+                        : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  >
+                    <option className="text-lg font-bold" value="">
+                      Select your area of interest
+                    </option>
+                    {areaOfExpertise?.map((hub) => (
+                      <option
+                        key={hub.id}
+                        value={`${hub.name} ,${hub.region}`}
+                        className="text-lg font-bold"
+                      >
+                        {hub.name} , {hub.region}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.area_of_intrest && (
+                    <span className="mt-1 text-sm text-red-500 font-bold">
+                      {errors.area_of_intrest.message}
+                    </span>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {step == 1 && (
+              <div className="flex flex-col">
+                <div className="flex-row w-full flex justify-start gap-4 items-center">
+                  <div className="mb-3 ml-6 h-24 w-24 rounded-md border-2 border-gray-300 flex items-center justify-center overflow-hidden">
+                    {image ? (
+                      <img
+                        src={image}
+                        alt="New profile"
+                        className="h-full w-full object-cover"
+                      />
+                    ) : formData.logo ? (
+                      <img
+                        src={formData?.logo}
+                        alt="User"
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <svg
+                        width="35"
+                        height="37"
+                        viewBox="0 0 35 37"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="bg-no-repeat"
+                      >
+                        <path
+                          d="M8.53049 8.62583C8.5304 13.3783 12.3575 17.2449 17.0605 17.2438C21.7634 17.2428 25.5907 13.3744 25.5908 8.62196C25.5909 3.8695 21.7638 0.00287764 17.0608 0.00394405C12.3579 0.00501045 8.53058 3.87336 8.53049 8.62583ZM32.2249 36.3959L34.1204 36.3954L34.1205 34.4799C34.1206 27.0878 28.1667 21.0724 20.8516 21.0741L13.2692 21.0758C5.95224 21.0775 -3.41468e-05 27.0955 -0.000176714 34.4876L-0.000213659 36.4032L32.2249 36.3959Z"
+                          fill="#BBBBBB"
+                        />
+                      </svg>
+                    )}
+                    <input
+                      id="images"
+                      type="file"
+                      name="images"
+                      onChange={(e) => addImageHandler(e)}
+                      className="hidden"
+                    />
+                  </div>
+
+                  <label
+                    htmlFor="images"
+                    className="p-2 border-2 border-blue-800 items-center rounded-md text-md bg-transparent text-blue-800 cursor-pointer font-extrabold"
+                  >
+                    Upload Profile
+                  </label>
+                </div>
+
+                <div className="relative z-0 group mb-6 px-4">
+                  <label
+                    htmlFor="preferred_icp_hub"
+                    className="block mb-2 text-lg font-medium  text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    Can you please share your preferred ICP Hub
+                  </label>
+                  <select
+                    {...register("preferred_icp_hub")}
+                    // id="preferred_icp_hub"
+                    className={`bg-gray-50 border-2 ${
+                      errors.preferred_icp_hub
+                        ? "border-red-500 placeholder:text-red-500"
+                        : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  >
+                    <option className="text-lg font-bold" value="">
+                      Select your ICP Hub
+                    </option>
+                    {getAllIcpHubs?.map((hub) => (
+                      <option
+                        key={hub.id}
+                        value={`${hub.name} ,${hub.region}`}
+                        className="text-lg font-bold"
+                      >
+                        {hub.name} , {hub.region}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.preferred_icp_hub && (
+                    <span className="mt-1 text-sm text-red-500 font-bold">
+                      {errors.preferred_icp_hub.message}
+                    </span>
+                  )}
+                </div>
+
+                <div className="relative z-0 group mb-6 px-4">
+                  <label
+                    htmlFor="existing_icp_investor"
+                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black  truncate overflow-hidden text-start"
+                  >
+                    Are you an exisitng ICP investor ?
+                  </label>
+                  <select
+                    {...register("existing_icp_investor")}
+                    id="existing_icp_investor"
+                    className={`bg-gray-50 border-2 ${
+                      errors.existing_icp_investor
+                        ? "border-red-500 placeholder:text-red-500"
+                        : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  >
+                    <option className="text-lg font-bold" value="">
+                      Exisitng investor
+                    </option>
+                    <option className="text-lg font-bold" value="true">
+                      Yes
+                    </option>
+                    <option className="text-lg font-bold" value="false">
+                      No
+                    </option>
+                  </select>
+
+                  {errors.existing_icp_investor && (
+                    <span className="mt-1 text-sm text-red-500 font-bold">
+                      {errors.existing_icp_investor.message}
+                    </span>
+                  )}
+                </div>
+
+                <div className="relative z-0 group mb-6 px-4">
+                  <label
+                    htmlFor="registered_under_any_hub"
+                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black  truncate overflow-hidden text-start"
+                  >
+                    Are you an under any hub ?
+                  </label>
+                  <select
+                    {...register("registered_under_any_hub")}
+                    className={`bg-gray-50 border-2 ${
+                      errors.registered_under_any_hub
+                        ? "border-red-500 placeholder:text-red-500"
+                        : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  >
+                    <option className="text-lg font-bold" value="">
+                      Registered under any hub
+                    </option>
+                    <option className="text-lg font-bold" value="true">
+                      Yes
+                    </option>
+                    <option className="text-lg font-bold" value="false">
+                      No
+                    </option>
+                  </select>
+
+                  {errors.registered_under_any_hub && (
+                    <span className="mt-1 text-sm text-red-500 font-bold">
+                      {errors.registered_under_any_hub.message}
+                    </span>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {step == 2 && (
+              <div className="flex flex-col">
+                <div className="relative z-0 group mb-6 px-4">
+                  <label
+                    htmlFor="type_of_investment"
+                    className="block mb-2 text-lg font-medium  text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    Type of ICP investment ?
+                  </label>
+                  <select
+                    {...register("type_of_investment")}
+                    // id="type_of_investment"
+                    className={`bg-gray-50 border-2 ${
+                      errors.type_of_investment
+                        ? "border-red-500 placeholder:text-red-500"
+                        : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  >
+                    <option className="text-lg font-bold" value="">
+                      Select your ICP investment
+                    </option>
+                    {getAllIcpHubs?.map((hub) => (
+                      <option
+                        key={hub.id}
+                        value={`${hub.name} ,${hub.region}`}
+                        className="text-lg font-bold"
+                      >
+                        {hub.name} , {hub.region}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.type_of_investment && (
+                    <span className="mt-1 text-sm text-red-500 font-bold">
+                      {errors.type_of_investment.message}
+                    </span>
+                  )}
+                </div>
+
+                <div className="relative z-0 group mb-6 px-4">
+                  <label
+                    htmlFor="type_of_investment"
+                    className="block mb-2 text-lg font-medium  text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    type of investment ?
+                  </label>
+                  <select
+                    {...register("category_of_investment")}
+                    // id="category_of_investment"
+                    className={`bg-gray-50 border-2 ${
+                      errors.category_of_investment
+                        ? "border-red-500 placeholder:text-red-500"
+                        : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  >
+                    <option className="text-lg font-bold" value="">
+                      Investment category
+                    </option>
+                    {getAllIcpHubs?.map((hub) => (
+                      <option
+                        key={hub.id}
+                        value={`${hub.name} ,${hub.region}`}
+                        className="text-lg font-bold"
+                      >
+                        {hub.name} , {hub.region}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.category_of_investment && (
+                    <span className="mt-1 text-sm text-red-500 font-bold">
+                      {errors.category_of_investment.message}
+                    </span>
+                  )}
+                </div>
+
+                <div className="z-0 w-full my-3 group">
+                  <label
+                    htmlFor="multi_chain"
+                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    Are you on multi-chain
+                  </label>
+                  <select
+                    onChange={(e) => setIsMultiChain(e.target.value === "Yes")}
+                    className={`bg-gray-50 border-2 ${
+                      errors.multi_chain
                         ? "border-red-500 placeholder:text-red-500"
                         : "border-[#737373]"
                     } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
@@ -959,41 +931,69 @@ const InvestorRegistration = () => {
                     <option className="text-lg font-bold" value="">
                       Select your option⌄
                     </option>
-                    <option className="text-lg font-bold" value="ethereum">
-                      Ethereum
-                    </option>
-                    <option className="text-lg font-bold" value="bitcoin">
-                      Bitcoin
-                    </option>
-                    <option className="text-lg font-bold" value="binance">
-                      Binance Smart Chain
-                    </option>
+                    <option className="text-lg font-bold">Yes</option>
+                    <option className="text-lg font-bold">No</option>
                   </select>
-                  {errors.project_on_multichain && (
+                  {errors.multi_chain && (
                     <p className="text-red-500 text-xs italic">
-                      {errors.project_on_multichain.message}
+                      {errors.multi_chain.message}
                     </p>
                   )}
                 </div>
+                {isMultiChain && (
+                  <div className="z-0 w-full my-3 group">
+                    <div className="">
+                      <label
+                        htmlFor="project_on_multichain"
+                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                      >
+                        Multi-chain options
+                      </label>
+                      <select
+                        {...register("project_on_multichain")}
+                        className={`bg-gray-50 border-2 ${
+                          errors.project_on_multichain
+                            ? "border-red-500 placeholder:text-red-500"
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      >
+                        <option className="text-lg font-bold" value="">
+                          Select your option⌄
+                        </option>
+                        <option className="text-lg font-bold" value="ethereum">
+                          Ethereum
+                        </option>
+                        <option className="text-lg font-bold" value="bitcoin">
+                          Bitcoin
+                        </option>
+                        <option className="text-lg font-bold" value="binance">
+                          Binance Smart Chain
+                        </option>
+                      </select>
+                      {errors.project_on_multichain && (
+                        <p className="text-red-500 text-xs italic">
+                          {errors.project_on_multichain.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
-
-
-
           </div>
-        )}
-      </div>
-      {StepComponent &&
-        React.cloneElement(StepComponent, {
-          onSubmit: handleSubmit(onSubmit),
-          register,
-          errors,
-          fields: stepFields,
-          goToPrevious: handlePrevious,
-          goToNext: handleNext,
-        })}
-      <Toaster />
-    </div>
+          {StepComponent &&
+            React.cloneElement(StepComponent, {
+              onSubmit: handleSubmit(onSubmit),
+              register,
+              errors,
+              fields: stepFields,
+              goToPrevious: handlePrevious,
+              goToNext: handleNext,
+            })}
+          <Toaster />
+        </div>
+      </section>
+    </>
   );
 };
 

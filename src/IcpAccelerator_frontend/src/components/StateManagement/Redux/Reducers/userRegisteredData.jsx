@@ -7,7 +7,7 @@ const initialUserState = {
 };
 
 const userSlice = createSlice({
-  name: "usereData",
+  name: "userData",
   initialState: initialUserState,
   reducers: {
     userRegisteredHandlerRequest: (state) => {

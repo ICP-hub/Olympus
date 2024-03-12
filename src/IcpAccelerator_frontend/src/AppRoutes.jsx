@@ -10,6 +10,7 @@ import Loader from "./components/Loader/Loader";
 import NormalUser from "./components/RoleSelector/NormalUser";
 import CreateProject from "./components/Project/CreateProject/CreateProject";
 import InvestorRegistration from "./components/Registration/InvestorRegistration/InvestorRegistration";
+import MentorRegistration from "./components/Registration/MentorRegistration/MentorRegistration";
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
 const AllDetailsForm = lazy(() =>
@@ -45,13 +46,17 @@ const AppRoutes = () => {
   // ]
 
   const publicRoutes = [
-    { path: "/", element: <Home /> },
+    // { path: "/", element: <Home /> },
+    { path: "/", element: <DashBoard /> },
     { path: "/create-user", element: <NormalUser /> },
     {path:"/create-vc", element : <InvestorRegistration/>},
     { path: "/create-project", element: <CreateProject /> },
     { path: "/details", element: <AllDetailsForm /> },
-    { path: "/roleSelect", element: <RoleSelector /> },
-    { path: "/dashboard", element: <DashBoard /> },
+    // { path: "/roleSelect", element: <RoleSelector /> },
+    { path: "/project-details", element: <ProjectDetails /> },
+    { path: "/profile", element: <UserProfile /> },
+    {path:"/create-mentor",element: <MentorRegistration />}
+
   ];
 
   const protectedRoutes = [
@@ -77,7 +82,7 @@ const AppRoutes = () => {
   return (
     <Suspense fallback={<Loader />}>
       <Routes>
-        {protectedRoutes.map((route, index) => {
+        {/* {protectedRoutes.map((route, index) => {
           const isAuthorized = route?.allowedRoles?.includes(specificRole);
           return (
             <Route
@@ -86,7 +91,7 @@ const AppRoutes = () => {
               element={isAuthorized ? <route.component /> : <Navigate to="/" />}
             />
           );
-        })}
+        })} */}
         {publicRoutes.map((route, index) => (
           <Route key={index} path={route.path} element={route.element} />
         ))}
