@@ -49,7 +49,7 @@ const InvestorAdditionalInformation = ({ onSubmit, register, errors, fields, goT
                 radius="9"
                 ariaLabel="three-dots-loading"
                 wrapperStyle={{}}
-                wrapperClass=""
+                wrapperclassName=""
               />
             ) : (
               "Submit"

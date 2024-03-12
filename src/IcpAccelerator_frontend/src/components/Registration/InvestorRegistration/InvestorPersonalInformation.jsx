@@ -1,6 +1,6 @@
 import React from 'react';
 
-const InvestorPersonalInformation = ({ onSubmit, register, errors, fields, goToNext }) => {
+const InvestorUserInformation = ({ onSubmit, register, errors, fields, goToNext }) => {
   return (
     <div>
       <form onSubmit={onSubmit} className="w-full px-4">
@@ -38,4 +38,4 @@ const InvestorPersonalInformation = ({ onSubmit, register, errors, fields, goToN
   );
 };
 
-export default InvestorPersonalInformation;
+export default InvestorUserInformation;
