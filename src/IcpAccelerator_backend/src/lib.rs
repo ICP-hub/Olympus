@@ -13,6 +13,7 @@ mod upvotes;
 mod user_module;
 mod vc_registration;
 
+use crate::project_registration::ProjectUpdateRequest;
 use hub_organizer::{HubOrganizerRegistration, UniqueHubs};
 use user_module::{UserInformation, Role};
 use ic_cdk::api::caller;
@@ -86,6 +87,11 @@ fn approve_mentor_creation_request_candid(requester: Principal, approve: bool) -
 fn decline_mentor_creation_request_candid(requester: Principal, decline: bool) -> String {
     // check_admin();
     decline_mentor_creation_request(requester, decline)
+}
+
+#[update]
+fn approve_project_details_updation_request(requester: Principal,project_id: String, approve: bool)->String{
+    admin::approve_project_update(requester,project_id, approve)
 }
 
 #[query]
