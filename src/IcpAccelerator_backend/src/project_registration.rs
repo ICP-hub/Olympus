@@ -28,28 +28,28 @@ pub struct TeamMember {
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct ProjectInfo {
-    project_name: String,
-    project_logo: Vec<u8>,
-    preferred_icp_hub: Option<String>,
-    live_on_icp_mainnet: Option<String>,
-    money_raised_till_now: Option<String>,
-    supports_multichain: Option<String>,
-    project_elevator_pitch: Vec<u8>,
-    project_area_of_focus: String,
-    promotional_video: String,
-    github_link: String,
-    reason_to_join_incubator: String,
-    project_description: String,
-    project_cover: Vec<u8>,
-    project_team: Option<TeamMember>,
-    token_economics: String,
-    technical_docs: String,
-    long_term_goals: String,
-    target_market: String,
-    self_rating_of_project: f64,
-    user_data: UserInformation,
-    mentors_assigned: Option<Vec<MentorProfile>>,
-    vc_assigned: Option<Vec<VentureCapitalist>>
+    pub project_name: String,
+    pub project_logo: Vec<u8>,
+    pub preferred_icp_hub: Option<String>,
+    pub live_on_icp_mainnet: Option<String>,
+    pub money_raised_till_now: Option<String>,
+    pub supports_multichain: Option<String>,
+    pub project_elevator_pitch: Vec<u8>,
+    pub project_area_of_focus: String,
+    pub promotional_video: String,
+    pub github_link: String,
+    pub reason_to_join_incubator: String,
+    pub project_description: String,
+    pub project_cover: Vec<u8>,
+    pub project_team: Option<TeamMember>,
+    pub token_economics: String,
+    pub technical_docs: String,
+    pub long_term_goals: String,
+    pub target_market: String,
+    pub self_rating_of_project: f64,
+    pub user_data: UserInformation,
+    pub mentors_assigned: Option<Vec<MentorProfile>>,
+    pub vc_assigned: Option<Vec<VentureCapitalist>>
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
@@ -118,7 +118,7 @@ pub struct FilterCriteria {
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType)]
 pub struct ProjectUpdateRequest {
     project_id: String,
-    updated_info: ProjectInfo, 
+    pub updated_info: ProjectInfo, 
 }
 
 
