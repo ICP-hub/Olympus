@@ -178,11 +178,10 @@ const MentorRegistration = () => {
   console.log("userData in mentor-registratn comp =>", userData);
 
   const getTabClassName = (tab) => {
-    return `inline-block p-2 font-bold ${
-      activeTab === tab
+    return `inline-block p-2 font-bold ${activeTab === tab
         ? "text-black border-b-2 border-black"
         : "text-gray-400  border-transparent hover:text-black"
-    } rounded-t-lg`;
+      } rounded-t-lg`;
   };
 
   const steps = [
@@ -323,11 +322,14 @@ const MentorRegistration = () => {
       // result = await actor.update_mentor_profile(val);
       // } else if (specificRole === null || specificRole === undefined) {
       console.log("register mentor functn k pass reached");
-      result = await actor.register_mentor_candid(val);
+      await actor.register_mentor_candid(val).then((result) => {
+        toast.success(result);
+        // navigate("/")
+        window.location.href = "/";
+      })
       // }
-      toast.success(result);
       // await dispatch(userRoleHandler());
-      await navigate("/dashboard");
+      // await navigate("/");
     } catch (error) {
       toast.error(error);
       console.log(error.message);
@@ -440,11 +442,10 @@ const MentorRegistration = () => {
           {mentorRegistration?.map((header, index) => (
             <li key={header.id} className="me-2 relative group">
               <button
-                className={`${getTabClassName(header.id)} ${
-                  index > step && !isCurrentStepValid
+                className={`${getTabClassName(header.id)} ${index > step && !isCurrentStepValid
                     ? "cursor-not-allowed opacity-50"
                     : "cursor-pointer"
-                }`}
+                  }`}
                 onClick={() => handleTabClick(header.id)}
                 disabled={index > step && !isCurrentStepValid}
               >
@@ -523,11 +524,10 @@ const MentorRegistration = () => {
                 </label>
                 <select
                   {...register("area_of_intrest")}
-                  className={`bg-gray-50 border-2 ${
-                    errors.area_of_intrest
+                  className={`bg-gray-50 border-2 ${errors.area_of_intrest
                       ? "border-red-500 placeholder:text-red-500"
                       : "border-[#737373]"
-                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                 >
                   <option className="text-lg font-bold" value="">
                     Area of Intrest ⌄
@@ -557,11 +557,10 @@ const MentorRegistration = () => {
                 </label>
                 <select
                   {...register("country")}
-                  className={`bg-gray-50 border-2 ${
-                    errors.country
+                  className={`bg-gray-50 border-2 ${errors.country
                       ? "border-red-500 placeholder:text-red-500"
                       : "border-[#737373]"
-                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                 >
                   <option className="text-lg font-bold" value="">
                     select your Country ⌄
@@ -598,11 +597,10 @@ const MentorRegistration = () => {
               </label>
               <select
                 {...register("existing_icp_mentor")}
-                className={`bg-gray-50 border-2 ${
-                  errors.existing_icp_mentor
+                className={`bg-gray-50 border-2 ${errors.existing_icp_mentor
                     ? "border-red-500 placeholder:text-red-500"
                     : "border-[#737373]"
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
               >
                 <option className="text-lg font-bold" value="">
                   Select your option⌄
@@ -629,11 +627,10 @@ const MentorRegistration = () => {
               </label>
               <select
                 {...register("preferred_icp_hub")}
-                className={`bg-gray-50 border-2 ${
-                  errors.preferred_icp_hub
+                className={`bg-gray-50 border-2 ${errors.preferred_icp_hub
                     ? "border-red-500 placeholder:text-red-500"
                     : "border-[#737373]"
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
               >
                 <option className="text-lg font-bold" value="">
                   Select your ICP Hub⌄
@@ -663,11 +660,10 @@ const MentorRegistration = () => {
               </label>
               <select
                 onChange={(e) => setIsMulti_Chain(e.target.value === "Yes")}
-                className={`bg-gray-50 border-2 ${
-                  errors.multi_chain
+                className={`bg-gray-50 border-2 ${errors.multi_chain
                     ? "border-red-500 placeholder:text-red-500"
                     : "border-[#737373]"
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
               >
                 <option className="text-lg font-bold" value="">
                   Select your option⌄
@@ -692,11 +688,10 @@ const MentorRegistration = () => {
                   </label>
                   <select
                     {...register("multichain")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.multichain
+                    className={`bg-gray-50 border-2 ${errors.multichain
                         ? "border-red-500 placeholder:text-red-500"
                         : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="">
                       Select your option⌄
@@ -728,11 +723,10 @@ const MentorRegistration = () => {
               </label>
               <select
                 {...register("area_of_expertise")}
-                className={`bg-gray-50 border-2 ${
-                  errors.area_of_expertise
+                className={`bg-gray-50 border-2 ${errors.area_of_expertise
                     ? "border-red-500 placeholder:text-red-500"
                     : "border-[#737373]"
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
               >
                 <option className="text-lg font-bold" value="">
                   Area_of_expertise ⌄
@@ -762,11 +756,10 @@ const MentorRegistration = () => {
               </label>
               <select
                 {...register("category_of_mentoring_service")}
-                className={`bg-gray-50 border-2 ${
-                  errors.category_of_mentoring_service
+                className={`bg-gray-50 border-2 ${errors.category_of_mentoring_service
                     ? "border-red-500 placeholder:text-red-500"
                     : "border-[#737373]"
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
               >
                 <option className="text-lg font-bold" value="">
                   Select your option⌄
@@ -792,11 +785,10 @@ const MentorRegistration = () => {
               </label>
               <select
                 {...register("icop_hub_or_spoke")}
-                className={`bg-gray-50 border-2 ${
-                  errors.icop_hub_or_spoke
+                className={`bg-gray-50 border-2 ${errors.icop_hub_or_spoke
                     ? "border-red-500 placeholder:text-red-500"
                     : "border-[#737373]"
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
               >
                 <option className="text-lg font-bold" value="">
                   Select your option⌄

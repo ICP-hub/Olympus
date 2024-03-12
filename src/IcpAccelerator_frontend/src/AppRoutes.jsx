@@ -11,6 +11,7 @@ import NormalUser from "./components/RoleSelector/NormalUser";
 import CreateProject from "./components/Project/CreateProject/CreateProject";
 import InvestorRegistration from "./components/Registration/InvestorRegistration/InvestorRegistration";
 import MentorRegistration from "./components/Registration/MentorRegistration/MentorRegistration";
+import ProjectDetailsForUser from "./components/Project/ProjectDetails/ProjectDetailsForUser";
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
 const AllDetailsForm = lazy(() =>
@@ -55,7 +56,8 @@ const AppRoutes = () => {
     // { path: "/roleSelect", element: <RoleSelector /> },
     { path: "/project-details", element: <ProjectDetails /> },
     { path: "/profile", element: <UserProfile /> },
-    {path:"/create-mentor",element: <MentorRegistration />}
+    {path:"/create-mentor",element: <MentorRegistration />},
+    { path: "/individual-project-details", element: <ProjectDetailsForUser /> },
 
   ];
 
