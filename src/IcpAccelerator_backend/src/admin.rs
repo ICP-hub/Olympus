@@ -1,4 +1,5 @@
 use crate::mentor::*;
+use crate::project_registration::{ProjectInfo, PENDING_PROJECT_UPDATES, ProjectUpdateRequest, APPLICATION_FORM};
 use crate::user_module::ROLE_STATUS_ARRAY;
 use crate::vc_registration::*;
 use candid::{CandidType, Principal};
@@ -222,6 +223,17 @@ fn vc_awaiting_approval() -> Vec<VentureCapitalistInternal> {
 #[query]
 fn vc_profile_edit_awaiting_approval() -> Vec<VentureCapitalist> {
     VC_PROFILE_EDIT_AWAITS.with(|awaiters| awaiters.borrow().values().cloned().collect())
+}
+
+#[query]
+fn project_update_awaiting_approval() -> Vec<ProjectUpdateRequest>{
+    PENDING_PROJECT_UPDATES.with(|awaiters| {
+        awaiters
+            .borrow()
+            .values()
+            .cloned() 
+            .collect()
+    })
 }
 
 #[update]
@@ -519,3 +531,53 @@ pub fn decline_mentor_profile_update_request(requester: Principal, decline: bool
         }
     })
 }
+
+
+pub fn approve_project_update(requester: Principal, project_id: String, approve: bool) -> String {
+    if let Some(project_update_request) = PENDING_PROJECT_UPDATES.with(|awaiters| awaiters.borrow_mut().remove(&project_id)) {
+        if approve {
+            let updated = APPLICATION_FORM.with(|projects_registry| {
+                let mut projects = projects_registry.borrow_mut();
+                if let Some(project_list) = projects.get_mut(&requester) {
+                    if let Some(project) = project_list.iter_mut().find(|p| p.uid == project_id) {
+                        project.params.project_name = project_update_request.updated_info.project_name;
+                        project.params.project_logo = project_update_request.updated_info.project_logo;
+                        project.params.preferred_icp_hub = project_update_request.updated_info.preferred_icp_hub;
+                        project.params.live_on_icp_mainnet = project_update_request.updated_info.live_on_icp_mainnet;
+                        project.params.money_raised_till_now = project_update_request.updated_info.money_raised_till_now;
+                        project.params.supports_multichain = project_update_request.updated_info.supports_multichain;
+                        project.params.project_elevator_pitch = project_update_request.updated_info.project_elevator_pitch;
+                        project.params.project_area_of_focus = project_update_request.updated_info.project_area_of_focus;
+                        project.params.promotional_video = project_update_request.updated_info.promotional_video;
+                        project.params.github_link = project_update_request.updated_info.github_link;
+                        project.params.reason_to_join_incubator = project_update_request.updated_info.reason_to_join_incubator;
+                        project.params.project_description = project_update_request.updated_info.project_description;
+                        project.params.project_cover = project_update_request.updated_info.project_cover;
+                        project.params.project_team = project_update_request.updated_info.project_team;
+                        project.params.token_economics = project_update_request.updated_info.token_economics;
+                        project.params.technical_docs = project_update_request.updated_info.technical_docs;
+                        project.params.long_term_goals = project_update_request.updated_info.long_term_goals;
+                        project.params.target_market = project_update_request.updated_info.target_market;
+                        project.params.self_rating_of_project = project_update_request.updated_info.self_rating_of_project;
+                        project.params.user_data = project_update_request.updated_info.user_data;
+                        project.params.mentors_assigned = project_update_request.updated_info.mentors_assigned;
+                        project.params.vc_assigned = project_update_request.updated_info.vc_assigned;
+                        true
+                    } else { false }
+                } else { false }
+            });
+
+            if updated {
+                format!("Project update for ID {} has been approved and applied.", project_id)
+            } else {
+                format!("Failed to apply update: Project ID {} not found under requester.", project_id)
+            }
+        } else {
+            // Optionally handle declined updates, such as logging or notifying the requester.
+            format!("Project update for ID {} was declined.", project_id)
+        }
+    } else {
+        format!("No pending update found for project ID {}.", project_id)
+    }
+}
+

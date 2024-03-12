@@ -31,7 +31,6 @@ const Header = ({ setModalOpen, gradient }) => {
   const underline =
     "relative focus:after:content-[''] focus:after:block focus:after:w-full focus:after:h-[2px] focus:after:bg-blue-800 focus:after:absolute focus:after:left-0 focus:after:bottom-[-4px]";
 
-
   return (
     <header className={`text-gray-700 body-font ${gradient}`}>
 
@@ -66,7 +65,7 @@ const Header = ({ setModalOpen, gradient }) => {
           <>
             {userCurrentRoleStatus && userCurrentRoleStatusActiveRole
               ? <div className="flex items-center flex-row gap-2">
-                <button onClick={() => setShowSwitchRole(true)} className="border border-violet-800 p-1 font-bold rounded-md text-violet-800">
+                <button onClick={() => setShowSwitchRole(true)} className="border border-violet-800 p-1 font-bold rounded-md text-violet-800 px-2 uppercase">
                   {userCurrentRoleStatusActiveRole}
                 </button>
                 <SwitchRole isModalOpen={showSwitchRole} onClose={() => setShowSwitchRole(false)} />

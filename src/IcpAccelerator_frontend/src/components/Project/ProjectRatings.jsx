@@ -112,7 +112,7 @@
 //                 <div className="text-white text-[15px] font-normal font-fontUse ml-2">
 //                   {sliderValuesProgress[sliderKeys[index]]}%
 //                 </div>
-                
+
 //               </div>
 //             </div>
 //             <div
@@ -193,8 +193,8 @@
 //             </div>
 //           </div>
 //         ))}
-    
-      
+
+
 //     </section>
 //   );
 // };
@@ -206,7 +206,7 @@ import ReactSlider from "react-slider";
 import Astro from "../../../assets/images/AstroLeft.png";
 import { alertCircle } from "../Utils/Data/SvgData";
 import { Line } from "rc-progress";
-import {star} from "../Utils/Data/SvgData"
+import { star } from "../Utils/Data/SvgData"
 const ProjectRatings = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const totalSteps = 8;
@@ -286,7 +286,7 @@ const ProjectRatings = () => {
   //   },
   //   // Add similar structure for other steps...
   // ]);
-  
+
   const handleSliderChange = (index, value) => {
     // console.log('index',index)
     // console.log('index',value)
@@ -387,41 +387,41 @@ const ProjectRatings = () => {
                     )}
                     renderMark={({ key, style }) => (
                       <div
-                        key={key>0?key:''}
+                        key={key > 0 ? key : ''}
                         className="slider-mark bg-transparent rounded-md h-1 w-1"
                         style={{ ...style, top: "0px" }}
                       >
-                        {key>0?
-                        <div className="flex flex-row text-white items-center space-x-1 relative -top-8 justify-between">
-                          <span>Level</span>
-                          <span>{key}</span>
-                          <div className="relative group">
-                            <span className="cursor-pointer">
-                              {alertCircle}
-                            </span>
-                            <div className="absolute hidden group-hover:block bg-transparent text-white p-2 rounded-lg shadow-lg min-w-[250px] -left-14 -top-[6.95rem] z-20 h-32 drop-shadow-sm backdrop-blur-lg border-white border-2">
-                              <div className="relative z-10 p-2">
-                                <div className="font-bold text-black">
-                                  Level {key}
-                                </div>
-                                <div className="line-clamp-3">
-                                  Lorem ipsum dolor sit amet consectetur,
-                                  adipisicing elit. Dolore, tempora quibusdam
-                                  omnis asperiores esse veritatis iure eos? Ipsa
-                                  molestiae, expedita possimus quaerat,
-                                  aspernatur hic pariatur dicta sit voluptas
-                                  illo quidem. Lorem ipsum dolor sit amet
-                                  consectetur adipisicing elit. Quas dolorem
-                                  mollitia optio quis doloremque numquam
-                                  provident, doloribus aspernatur deleniti
-                                  necessitatibus expedita minima unde velit
-                                  facere debitis! Asperiores tenetur veniam a.
+                        {key > 0 ?
+                          <div className="flex flex-row text-white items-center space-x-1 relative -top-8 justify-between">
+                            <span>Level</span>
+                            <span>{key}</span>
+                            <div className="relative group">
+                              <span className="cursor-pointer">
+                                {alertCircle}
+                              </span>
+                              <div className="absolute hidden group-hover:block bg-transparent text-white p-2 rounded-lg shadow-lg min-w-[250px] -left-14 -top-[6.95rem] z-20 h-32 drop-shadow-sm backdrop-blur-lg border-white border-2">
+                                <div className="relative z-10 p-2">
+                                  <div className="font-bold text-black">
+                                    Level {key}
+                                  </div>
+                                  <div className="line-clamp-3">
+                                    Lorem ipsum dolor sit amet consectetur,
+                                    adipisicing elit. Dolore, tempora quibusdam
+                                    omnis asperiores esse veritatis iure eos? Ipsa
+                                    molestiae, expedita possimus quaerat,
+                                    aspernatur hic pariatur dicta sit voluptas
+                                    illo quidem. Lorem ipsum dolor sit amet
+                                    consectetur adipisicing elit. Quas dolorem
+                                    mollitia optio quis doloremque numquam
+                                    provident, doloribus aspernatur deleniti
+                                    necessitatibus expedita minima unde velit
+                                    facere debitis! Asperiores tenetur veniam a.
+                                  </div>
                                 </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                        :''}
+                          : ''}
                       </div>
                     )}
                   />
@@ -432,28 +432,28 @@ const ProjectRatings = () => {
         )}
         <div className="flex justify-end mt-4">
           {currentStep > 0 && (
-            <button onClick={handlePrevious}  
-            type="button"
-            className="font-bold text-white bg-blue-500 hover:bg-blue-600  focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md w-auto sm:w-auto px-5 py-2 text-center mb-4">
+            <button onClick={handlePrevious}
+              type="button"
+              className="font-bold text-white bg-blue-500 hover:bg-blue-600  focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md w-auto sm:w-auto px-5 py-2 text-center mb-4">
               Back
             </button>
           )}
           {currentStep < totalSteps - 1 && (
-            <button onClick={handleNext} 
-            type="button"
-            className="ml-3 font-bold text-white bg-blue-500 hover:bg-blue-600  focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md w-auto sm:w-auto px-5 py-2 text-center mb-4">
+            <button onClick={handleNext}
+              type="button"
+              className="ml-3 font-bold text-white bg-blue-500 hover:bg-blue-600  focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md w-auto sm:w-auto px-5 py-2 text-center mb-4">
               Next
             </button>
           )}
           {currentStep === totalSteps - 1 && (
-            <button onClick={handleSubmit} 
-            type="button"
-            className="ml-3  font-bold text-white bg-blue-500 hover:bg-blue-600  focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md w-auto sm:w-auto px-5 py-2 text-center mb-4">
+            <button onClick={handleSubmit}
+              type="button"
+              className="ml-3  font-bold text-white bg-blue-500 hover:bg-blue-600  focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md w-auto sm:w-auto px-5 py-2 text-center mb-4">
               Submit
             </button>
           )}
         </div>
-        
+
       </div>
     </section>
   );

@@ -39,6 +39,7 @@ import MentorRegistration from "./components/Registration/MentorRegistration/Men
 import Adminoption from "./components/Admindashboard/Adminoption";
 import Admingraph from "./components/Admindashboard/Admingraph";
 import AdminDashboard from "./components/Admindashboard/AdminDashboard";
+import { getCurrentRoleStatusRequestHandler } from "./components/StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 
 const App = () => {
   const identity = useSelector((currState) => currState.internet.identity);
@@ -80,7 +81,7 @@ const App = () => {
   useEffect(() => {
     dispatch(areaOfExpertiseHandlerRequest());
   }, [isAuthenticated, identity, dispatch]);
- 
+
   useEffect(() => {
     // console.log("specific role inside effect of app 1", specificRole);
     switch (specificRole) {
@@ -105,6 +106,11 @@ const App = () => {
     dispatch(areaOfExpertiseHandlerRequest());
   }, [isAuthenticated, identity, dispatch]);
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(getCurrentRoleStatusRequestHandler());
+    }
+  }, [dispatch, isAuthenticated])
   return (
     <>
       {/* {isModalOpen && (
@@ -122,7 +128,7 @@ const App = () => {
       {/* <Home/> */}
       {/* <Adminoption /> */}
       {/* <Admingraph /> */}
-      <AdminDashboard />
+      {/* <AdminDashboard /> */}
       {/* <Hubcards /> */}
       {/* <Hubdashboard /> */}
       {/* <Hubdashboard /> */}
@@ -136,7 +142,7 @@ const App = () => {
       {/* <UserProfile/> */}
       {/* <RoleSelector /> */}
       {/* <NormalUser /> */}
-      {/* <AppRoutes /> */}
+      <AppRoutes />
       {/* <MentorRegistration /> */}
       <Footer />
     </>

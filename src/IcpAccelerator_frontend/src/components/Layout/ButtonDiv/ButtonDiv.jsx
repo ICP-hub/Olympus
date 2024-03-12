@@ -2,7 +2,7 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { newRoleOrSwitchRoleRequestHandler } from '../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer';
+import { switchRoleRequestHandler } from '../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer';
 
 export default function ButtonDiv({ role, onClose }) {
     const dispatch = useDispatch();
@@ -28,7 +28,7 @@ export default function ButtonDiv({ role, onClose }) {
         return (
             <div className="font-semibold text-xl w-2/6">
                 <button className="text-white py-1 px-2 rounded-md w-full bg-blue-500 capitalize"
-                    onClick={() => dispatch(newRoleOrSwitchRoleRequestHandler({ calltype: 'switch', roleName: role?.name, newStatus: 'active' }))}>
+                    onClick={() => dispatch(switchRoleRequestHandler({ roleName: role?.name, newStatus: 'active' }))}>
                     switch
                 </button>
             </div>
@@ -45,7 +45,7 @@ export default function ButtonDiv({ role, onClose }) {
         return (
             <div className="font-semibold text-xl w-2/6">
                 <button className="text-black py-1 px-2 rounded-md w-full bg-blue-300 capitalize"
-                    // onClick={() => dispatch(newRoleOrSwitchRoleRequestHandler({ calltype: 'new_role', roleName: role?.name, newStatus: 'requested' }))}>
+                    // onClick={() => dispatch(switchRoleRequestHandler({ roleName: role?.name, newStatus: 'requested' }))}>
                     onClick={() => { navigate(redirectPath); onClose() }}>
                     request
                 </button>
