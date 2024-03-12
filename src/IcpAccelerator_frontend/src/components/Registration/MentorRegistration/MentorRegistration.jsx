@@ -8,7 +8,7 @@ import * as yup from "yup";
 import MentorDetails from "./MentorDetails";
 import MentorAdditionalInformation from "./MentorAdditionalInformation";
 import {
-  mentorRegistrationAdditionalInfo,
+  // mentorRegistrationAdditionalInfo,
   mentorRegistrationPersonalDetails,
   mentorRegistrationDetails,
 } from "../../Utils/Data/mentorFormData";
@@ -19,6 +19,8 @@ import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_I
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import { userRoleHandler } from "../../StateManagement/Redux/Reducers/userRoleReducer";
+import { useCountries } from "react-countries";
+import { userRegisteredHandlerRequest } from "../../StateManagement/Redux/Reducers/userRegisteredData";
 
 const validationSchema = {
   personalDetails: yup.object().shape({
@@ -28,158 +30,120 @@ const validationSchema = {
         /\S/.test(value)
       )
       .required("Full Name is required"),
-    email_address: yup
+    country: yup
+      .string()
+      .test("is-non-empty", "Country is required", (value) => /\S/.test(value))
+      .required("Country is required"),
+    email: yup
       .string()
       .email("Invalid email")
       .test("is-non-empty", "Email is required", (value) => /\S/.test(value))
       .required("Email is required"),
-    location: yup
-      .string()
-      .test("is-non-empty", "Location is required", (value) => /\S/.test(value))
-      .required("Location is required"),
-    linkedin_profile_link: yup
-      .string()
-      .url("Invalid LinkedIn URL")
-      .test("is-non-empty", "LinkedIn URL is required", (value) =>
-        /\S/.test(value)
-      )
-      .required("LinkedIn URL is required"),
     telegram_id: yup
       .string()
       .url("Invalid telegram_id URL")
       .test("is-non-empty", "telegram_id URL is required", (value) =>
         /\S/.test(value)
       )
-      .required("telegram_id URL is required"),
-    languages_spoken: yup
+      .optional(),
+    twitter_id: yup
       .string()
-      .test("is-non-empty", "Language is required", (value) => /\S/.test(value))
-      .required("Language is required"),
+      .url("Invalid twitter_id URL")
+      .test("is-non-empty", "twitter_id URL is required", (value) =>
+        /\S/.test(value)
+      )
+      .optional(),
+    openchat_username: yup
+      .string()
+      .min(6, "Username must be at least 6 characters")
+      .max(20, "Username must be at most 20 characters")
+      .matches(
+        /^(?=.*[A-Z0-9_])[a-zA-Z0-9_]+$/,
+        "Username can only contain letters, numbers, and underscores"
+      )
+      .test("is-non-empty", "user_name URL is required", (value) =>
+        /\S/.test(value)
+      )
+      .optional(),
+    bio: yup
+      .string()
+      .test("is-non-empty", "bio is required", (value) => /\S/.test(value))
+      .optional(),
+    area_of_intrest: yup
+      .string()
+      .test("is-non-empty", "Areas of Intrest are required", (value) =>
+        /\S/.test(value)
+      )
+      .required("Areas of Intrest are required"),
+  }),
+
+  mentorDetails: yup.object().shape({
+    existing_icp_mentor: yup
+      .string()
+      .test("is-non-empty", "Icp Mentor selection is required", (value) =>
+        /\S/.test(value)
+      )
+      .required("Icp Mentor selection is required"),
+    reason_for_joining: yup
+      .string()
+      .test("is-non-empty", "Reason For Joining is required", (value) =>
+        /\S/.test(value)
+      )
+      .required("Reason For Joining is required"),
+    website: yup
+      .string()
+      .url("Invalid website URL")
+      .test("is-non-empty", "website URL is required", (value) =>
+        /\S/.test(value)
+      )
+      .required("website URL is required"),
+    social_link: yup
+      .string()
+      .url("Invalid Social link")
+      .test("is-non-empty", "Social link is required", (value) =>
+        /\S/.test(value)
+      )
+      .required("Social link is required"),
+    multichain: yup.string().optional(),
     preferred_icp_hub: yup
       .string()
       .test("is-non-empty", "ICP Hub selection is required", (value) =>
         /\S/.test(value)
       )
       .required("ICP Hub selection is required"),
-  }),
-
-  mentorDetails: yup.object().shape({
-    motivation_for_becoming_a_mentor: yup
+    icop_hub_or_spoke: yup
       .string()
-      .test(
-        "is-non-empty",
-        "Motivation for becoming a mentor is required",
-        (value) => /\S/.test(value)
-      )
-      .required("Motivation for becoming a mentor is required"),
-    years_of_experience_mentoring_startups: yup
-      .number()
-      .typeError("You must enter a number")
-      .positive("Must be a positive number")
-      .required("Years of experience mentoring startups is required"),
-    professional_affiliations: yup
-      .string()
-      .test("is-non-empty", "Professional Affiliations is required", (value) =>
+      .test("is-non-empty", "ICP Hub selection is required", (value) =>
         /\S/.test(value)
       )
-      .required("Professional Affiliations is required"),
-    time_zone: yup
-      .string()
-      .test("is-non-empty", "Time zone is required", (value) =>
-        /\S/.test(value)
-      )
-      .required("Time zone is required"),
-    unique_contribution_to_startups: yup
-      .string()
-      .test(
-        "is-non-empty",
-        "Unique contribution to startups is required",
-        (value) => /\S/.test(value)
-      )
-      .required("Unique contribution to startups is required"),
-    referrer_contact: yup.string().nullable(),
-    specific_skills_or_technologies_expertise: yup
-      .string()
-      .test(
-        "is-non-empty",
-        "Specific skills or technologies expertise is required",
-        (value) => /\S/.test(value)
-      )
-      .required("Specific skills or technologies expertise is required"),
-    specific_goals_objectives_as_a_mentor: yup
-      .string()
-      .test(
-        "is-non-empty",
-        "Specific goals and objectives as a mentor are required",
-        (value) => /\S/.test(value)
-      )
-      .required("Specific goals and objectives as a mentor are required"),
-
-    areas_of_expertise: yup
+      .required("ICP Hub selection is required"),
+    area_of_expertise: yup
       .string()
       .test("is-non-empty", "Areas of expertise are required", (value) =>
         /\S/.test(value)
       )
       .required("Areas of expertise are required"),
-  }),
-
-  additionalInfo: yup.object().shape({
-    preferred_startup_stage: yup
-      .string()
-      .test("is-non-empty", "Preferred Startup Stage is required", (value) =>
-        /\S/.test(value)
-      )
-      .required("Preferred startup stage is required"),
-    industry_achievements: yup
-      .string()
-      .test("is-non-empty", "Industry achievements are required", (value) =>
-        /\S/.test(value)
-      )
-      .required("Industry achievements are required"),
-    conflict_of_interest_disclosure: yup
+    category_of_mentoring_service: yup
       .string()
       .test(
         "is-non-empty",
-        "Conflict Of Interest Disclosure are required",
+        "Category of mentoring service is required",
         (value) => /\S/.test(value)
       )
-      .required("Conflict Of Interest Disclosure are required"),
-    past_work_records_links: yup
-      .string()
-      .test("is-non-empty", "PastWork Records Links are required", (value) =>
-        /\S/.test(value)
-      )
-      .required("PastWork Records Links are required"),
-    availability_and_time_commitment: yup
+      .required("Category of mentoring service is required"),
+    exisitng_icp_project_porfolio: yup
       .string()
       .test(
         "is-non-empty",
-        "Availability and time commitment are required",
+        "Exisitng Icp project porfolio is required",
         (value) => /\S/.test(value)
       )
-      .required("Availability and time commitment are required"),
-    success_stories_testimonials: yup
-      .string()
-      .test(
-        "is-non-empty",
-        "Success Stories Testimonials are required",
-        (value) => /\S/.test(value)
-      )
-      .required("Success Stories Testimonials are required"),
-    preferred_communication_tools: yup
-      .string()
-      .test(
-        "is-non-empty",
-        "Preferred communication tools are required",
-        (value) => /\S/.test(value)
-      )
-      .required("Preferred communication tools are required"),
-    volunteer_experience: yup
-      .string()
-      .test("is-non-empty", "Volunteer Experience are required", (value) =>
-        /\S/.test(value)
-      )
-      .required("Volunteer Experience are required"),
+      .optional(),
+    years_of_mentoring: yup
+      .number()
+      .typeError("You must enter a number")
+      .positive("Must be a positive number")
+      .required("Years of experience mentoring startups is required"),
   }),
 };
 
@@ -190,11 +154,14 @@ const MentorRegistration = () => {
     (currState) => currState.current.specificRole
   );
   const mentorFullData = useSelector((currState) => currState.mentorData.data);
-  const areaOfExpertise =  useSelector((currState)=> currState.expertiseIn.expertise)
-
+  const areaOfExpertise = useSelector(
+    (currState) => currState.expertiseIn.expertise
+  );
+  const userData = useSelector((currState) => currState)
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { countries } = useCountries();
 
   const [activeTab, setActiveTab] = useState(mentorRegistration[0].id);
   const [formData, setFormData] = useState({});
@@ -203,10 +170,12 @@ const MentorRegistration = () => {
   const [userHasInteracted, setUserHasInteracted] = useState(false);
   const [image, setImage] = useState(null);
   const [mentor_image, setmentor_image] = useState(null);
+  const [isMulti_Chain, setIsMulti_Chain] = useState(false);
   const [mentorDataObject, setMentorDataObject] = useState({});
 
   // console.log("MentorRegistration  run  specificRole =>", specificRole);
-  console.log("expertiseIn in mentor-registratn comp =>", areaOfExpertise);
+  // console.log("expertiseIn in mentor-registratn comp =>", areaOfExpertise);
+  console.log("userData in mentor-registratn comp =>", userData);
 
   const getTabClassName = (tab) => {
     return `inline-block p-2 font-bold ${
@@ -219,7 +188,6 @@ const MentorRegistration = () => {
   const steps = [
     { id: "personalDetails", fields: mentorRegistrationPersonalDetails },
     { id: "mentorDetails", fields: mentorRegistrationDetails },
-    { id: "additionalInfo", fields: mentorRegistrationAdditionalInfo },
   ];
 
   const currentValidationSchema = validationSchema[steps[step].id];
@@ -229,11 +197,15 @@ const MentorRegistration = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
     trigger,
+    control,
     reset,
   } = useForm({
     resolver: yupResolver(currentValidationSchema),
     mode: "all",
   });
+  useEffect(() => {
+    dispatch(userRegisteredHandlerRequest());
+  }, [actor, dispatch]);
 
   const handleTabClick = async (tab) => {
     const targetStep = mentorRegistration.findIndex(
@@ -250,7 +222,6 @@ const MentorRegistration = () => {
     } else {
     }
   };
-
 
   useEffect(() => {
     if (!userHasInteracted) return;
@@ -312,7 +283,6 @@ const MentorRegistration = () => {
     }
   };
 
-
   const imageUrlToByteArray = async (imageUrl) => {
     const response = await fetch(imageUrl);
     const blob = await response.blob();
@@ -320,7 +290,6 @@ const MentorRegistration = () => {
     return Array.from(new Uint8Array(arrayBuffer));
   };
 
-  
   useEffect(() => {
     if (mentorFullData && mentorFullData.length > 0) {
       const data = mentorFullData[0];
@@ -330,17 +299,15 @@ const MentorRegistration = () => {
       }, {});
       reset(formattedData);
       setFormData(formattedData);
-
-
-
+      console.log("formattedData341", formattedData);
+      console.log("342 data", data);
       if (formattedData.mentor_image) {
         imageUrlToByteArray(formattedData.mentor_image)
           .then((imageBytes) => {
             setmentor_image(imageBytes);
           })
-          .catch((error) => console.error('Error converting image:', error));
+          .catch((error) => console.error("Error converting image:", error));
       }
-    
     }
   }, [mentorFullData, reset]);
 
@@ -351,15 +318,15 @@ const MentorRegistration = () => {
     let result;
 
     try {
-      if (specificRole !== null || undefined) {
-        // console.log("update mentor functn k pass reached");
-        result = await actor.update_mentor_profile(val);
-      } else if (specificRole === null || specificRole === undefined) {
-        // console.log("register mentor functn k pass reached");
-        result = await actor.register_mentor_candid(val);
-      }
+      // if (specificRole !== null || undefined) {
+      // console.log("update mentor functn k pass reached");
+      // result = await actor.update_mentor_profile(val);
+      // } else if (specificRole === null || specificRole === undefined) {
+      console.log("register mentor functn k pass reached");
+      result = await actor.register_mentor_candid(val);
+      // }
       toast.success(result);
-      await dispatch(userRoleHandler());
+      // await dispatch(userRoleHandler());
       await navigate("/dashboard");
     } catch (error) {
       toast.error(error);
@@ -367,12 +334,15 @@ const MentorRegistration = () => {
     }
   };
 
+  const errorFunc = (val) => {
+    console.log("val", val);
+  };
   const onSubmit = async (data) => {
-    // console.log("data >>>>", data);
+    console.log("data >>>>", data);
     const updatedFormData = { ...formData, ...data };
     setFormData(updatedFormData);
 
-    // console.log("updatedFormData inside onSUbmit ~~~~~~", updatedFormData);
+    console.log("updatedFormData inside onSUbmit ~~~~~~", updatedFormData);
     if (step < steps.length - 1) {
       handleNext();
     } else if (
@@ -380,103 +350,72 @@ const MentorRegistration = () => {
       (undefined && step > steps.length - 1)
     ) {
       // console.log("exisiting user visit ");
-
+      const existingIcpMentor =
+        updatedFormData.existing_icp_mentor === "true" ? true : false;
+      const IcopHubOrSpoke =
+        updatedFormData.icop_hub_or_spoke === "true" ? true : false;
       let tempObj2 = {
-        areas_of_expertise: [updatedFormData.areas_of_expertise] || [],
-        availability_and_time_commitment:
-          [updatedFormData.availability_and_time_commitment] || [],
-        conflict_of_interest_disclosure:
-          [updatedFormData.conflict_of_interest_disclosure] || [],
-        email_address: [updatedFormData.email_address] || [],
-        full_name: [updatedFormData.full_name] || [],
-        preferred_icp_hub: [updatedFormData.preferred_icp_hub] || [],
-        industry_achievements: [updatedFormData.industry_achievements] || [],
-        languages_spoken: [updatedFormData.languages_spoken] || [],
-        linkedin_profile_link: [updatedFormData.linkedin_profile_link] || [],
-        location: [updatedFormData.location] || [],
-        motivation_for_becoming_a_mentor:
-          [updatedFormData.motivation_for_becoming_a_mentor] || [],
-        past_work_records_links:
-          [updatedFormData.past_work_records_links] || [],
-        preferred_communication_tools:
-          [updatedFormData.preferred_communication_tools] || [],
-        preferred_startup_stage:
-          [updatedFormData.preferred_startup_stage] || [],
-        professional_affiliations:
-          [updatedFormData.professional_affiliations] || [],
-        referrer_contact: [updatedFormData.referrer_contact] || [],
-        specific_goals_objectives_as_a_mentor:
-          [updatedFormData.specific_goals_objectives_as_a_mentor] || [],
-        specific_skills_or_technologies_expertise:
-          [updatedFormData.specific_skills_or_technologies_expertise] || [],
-        success_stories_testimonials:
-          [updatedFormData.success_stories_testimonials] || [],
-        telegram_id: [updatedFormData.telegram_id] || [],
-        time_zone: [updatedFormData.time_zone] || [],
-        unique_contribution_to_startups:
-          [updatedFormData.unique_contribution_to_startups] || [],
-        volunteer_experience: [updatedFormData.volunteer_experience] || [],
-        years_of_experience_mentoring_startups:
-          [parseInt(updatedFormData.years_of_experience_mentoring_startups)] ||
-          [],
-        mentor_image: [mentor_image] || [],
+        user_data: {
+          profile_picture: [mentor_image],
+          full_name: updatedFormData.full_name || "",
+          country: updatedFormData.country || "",
+          email: [updatedFormData.email] || [],
+          telegram_id: [updatedFormData.telegram_id],
+          twitter_id: [updatedFormData.twitter_id],
+          openchat_username: [updatedFormData.openchat_username] || [],
+          bio: [updatedFormData.bio] || [],
+          area_of_intrest: updatedFormData.area_of_intrest || [],
+        },
+        existing_icp_mentor: existingIcpMentor,
+        reason_for_joining: updatedFormData.reason_for_joining || "",
+        website: updatedFormData.website,
+        multichain: [updatedFormData.multichain],
+        preferred_icp_hub: [updatedFormData.preferred_icp_hub],
+        area_of_expertise: updatedFormData.area_of_expertise,
+        category_of_mentoring_service:
+          updatedFormData.category_of_mentoring_service,
+        exisitng_icp_project_porfolio:
+          [updatedFormData.exisitng_icp_project_porfolio] || [],
+        years_of_mentoring: (updatedFormData.years_of_mentoring).toString(),
+        icop_hub_or_spoke: IcopHubOrSpoke,
+        social_link: updatedFormData.social_link || "",
       };
 
-      // console.log("tempObj2 kaam kia ????? ", tempObj2); // work kia
+      console.log("tempObj2 kaam kia ????? ", tempObj2); // work kia
       setMentorDataObject(tempObj2);
       await sendingMentorData(tempObj2);
     } else if (
       specificRole === null ||
       (specificRole === undefined && step > steps.length - 1)
     ) {
-      // console.log("first time visit ");
+      console.log("first time visit ");
       let tempObj = {
-        areas_of_expertise: [updatedFormData.areas_of_expertise],
-        availability_and_time_commitment: [
-          updatedFormData.availability_and_time_commitment,
-        ],
-        conflict_of_interest_disclosure: [
-          updatedFormData.conflict_of_interest_disclosure,
-        ],
-        email_address: [updatedFormData.email_address],
-        full_name: [updatedFormData.full_name],
+        user_data: {
+          profile_picture: [mentor_image],
+          full_name: updatedFormData.full_name,
+          country: updatedFormData.country,
+          email: [updatedFormData.email],
+          telegram_id: [updatedFormData.telegram_id],
+          twitter_id: [updatedFormData.twitter_id],
+          openchat_username: [updatedFormData.openchat_username],
+          bio: [updatedFormData.bio],
+          area_of_intrest: updatedFormData.area_of_intrest,
+        },
+        existing_icp_mentor: existingIcpMentor,
+        reason_for_joining: updatedFormData.reason_for_joining || "",
+        website: updatedFormData.website,
+        multichain: [updatedFormData.multichain],
         preferred_icp_hub: [updatedFormData.preferred_icp_hub],
-        industry_achievements: [updatedFormData.industry_achievements],
-        languages_spoken: [updatedFormData.languages_spoken],
-        linkedin_profile_link: [updatedFormData.linkedin_profile_link],
-        location: [updatedFormData.location],
-        motivation_for_becoming_a_mentor: [
-          updatedFormData.motivation_for_becoming_a_mentor,
-        ],
-        past_work_records_links: [updatedFormData.past_work_records_links],
-        preferred_communication_tools: [
-          updatedFormData.preferred_communication_tools,
-        ],
-        preferred_startup_stage: [updatedFormData.preferred_startup_stage],
-        professional_affiliations: [updatedFormData.professional_affiliations],
-        referrer_contact: [updatedFormData.referrer_contact],
-        specific_goals_objectives_as_a_mentor: [
-          updatedFormData.specific_goals_objectives_as_a_mentor,
-        ],
-        specific_skills_or_technologies_expertise: [
-          updatedFormData.specific_skills_or_technologies_expertise,
-        ],
-        success_stories_testimonials: [
-          updatedFormData.success_stories_testimonials,
-        ],
-        telegram_id: [updatedFormData.telegram_id],
-        time_zone: [updatedFormData.time_zone],
-        unique_contribution_to_startups: [
-          updatedFormData.unique_contribution_to_startups,
-        ],
-        volunteer_experience: [updatedFormData.volunteer_experience],
-        years_of_experience_mentoring_startups: [
-          parseInt(updatedFormData.years_of_experience_mentoring_startups),
-        ],
-        mentor_image: [mentor_image],
+        area_of_expertise: updatedFormData.area_of_expertise,
+        category_of_mentoring_service:
+          updatedFormData.category_of_mentoring_service,
+        exisitng_icp_project_porfolio:
+          [updatedFormData.exisitng_icp_project_porfolio] || [],
+        years_of_mentoring: (updatedFormData.years_of_mentoring).toString(),
+        icop_hub_or_spoke: IcopHubOrSpoke,
+        social_link: updatedFormData.social_link,
       };
-
-      // console.log("tempObj kaam kia ????? ", tempObj); // work kia
+      console.log("tempObj kaam kia ????? ", tempObj); // work kia
 
       setMentorDataObject(tempObj);
       await sendingMentorData(tempObj);
@@ -488,9 +427,7 @@ const MentorRegistration = () => {
   if (step === 0) {
     StepComponent = <MentorPersonalInformation />;
   } else if (step === 1) {
-    StepComponent = <MentorDetails />;
-  } else if (step === 2) {
-    StepComponent = <MentorAdditionalInformation isSubmitting={isSubmitting} />;
+    StepComponent = <MentorDetails isSubmitting={isSubmitting} />;
   }
 
   return (
@@ -531,8 +468,6 @@ const MentorRegistration = () => {
 
         {step === 0 && (
           <div className="flex flex-col">
-           
-           
             <div className="flex-row w-full flex justify-start gap-4 items-center">
               <div className="mb-3 ml-6 h-24 w-24 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
                 {image ? (
@@ -578,8 +513,114 @@ const MentorRegistration = () => {
                 Upload Profile
               </label>
             </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 px-4 gap-6">
+              <div className="z-0 w-full my-3 group">
+                <label
+                  htmlFor="area_of_intrest"
+                  className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                >
+                  What are your areas of Intrest?
+                </label>
+                <select
+                  {...register("area_of_intrest")}
+                  className={`bg-gray-50 border-2 ${
+                    errors.area_of_intrest
+                      ? "border-red-500 placeholder:text-red-500"
+                      : "border-[#737373]"
+                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                >
+                  <option className="text-lg font-bold" value="">
+                    Area of Intrest ⌄
+                  </option>
+                  {areaOfExpertise?.map((intrest) => (
+                    <option
+                      key={intrest.id}
+                      value={`${intrest.name}`}
+                      className="text-lg font-bold"
+                    >
+                      {intrest.name}
+                    </option>
+                  ))}
+                </select>
+                {errors.area_of_intrest && (
+                  <p className="text-red-500 text-xs italic">
+                    {errors.area_of_intrest.message}
+                  </p>
+                )}
+              </div>
+              <div className="z-0 w-full my-3 group">
+                <label
+                  htmlFor="country"
+                  className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                >
+                  Please select your Country.
+                </label>
+                <select
+                  {...register("country")}
+                  className={`bg-gray-50 border-2 ${
+                    errors.country
+                      ? "border-red-500 placeholder:text-red-500"
+                      : "border-[#737373]"
+                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                >
+                  <option className="text-lg font-bold" value="">
+                    select your Country ⌄
+                  </option>
+                  {countries?.map((expert) => (
+                    <option
+                      key={expert.name}
+                      value={`${expert.name}`}
+                      className="text-lg font-bold"
+                    >
+                      {expert.name}
+                    </option>
+                  ))}
+                </select>
 
-            <div className="px-4 z-0 w-full my-5 group">
+                {errors.country && (
+                  <p className="text-red-500 text-xs italic">
+                    {errors.country.message}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {step === 1 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 px-4 gap-6">
+            <div className="z-0 w-full my-3 group">
+              <label
+                htmlFor="existing_icp_mentor"
+                className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+              >
+                Are you exisiting icp mentor
+              </label>
+              <select
+                {...register("existing_icp_mentor")}
+                className={`bg-gray-50 border-2 ${
+                  errors.existing_icp_mentor
+                    ? "border-red-500 placeholder:text-red-500"
+                    : "border-[#737373]"
+                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+              >
+                <option className="text-lg font-bold" value="">
+                  Select your option⌄
+                </option>
+                <option className="text-lg font-bold" value="true">
+                  Yes
+                </option>
+                <option className="text-lg font-bold" value="false">
+                  No
+                </option>
+              </select>
+              {errors.existing_icp_mentor && (
+                <p className="text-red-500 text-xs italic">
+                  {errors.existing_icp_mentor.message}
+                </p>
+              )}
+            </div>
+            <div className="z-0 w-full my-3 group">
               <label
                 htmlFor="preferred_icp_hub"
                 className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
@@ -613,50 +654,173 @@ const MentorRegistration = () => {
                 </p>
               )}
             </div>
-          </div>
-        )}
-
-        {step === 1 && (
-          <div className="px-4 z-0 w-full my-5 group">
-          <label
-            htmlFor="areas_of_expertise"
-            className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-          >
-             What are your areas of expertise?
-          </label>
-          <select
-            {...register("areas_of_expertise")}
-            className={`bg-gray-50 border-2 ${
-              errors.areas_of_expertise
-                ? "border-red-500 placeholder:text-red-500"
-                : "border-[#737373]"
-            } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-          >
-            <option className="text-lg font-bold" value="">
-               Areas_of_expertise ⌄
-            </option>
-            {areaOfExpertise?.map((expert) => (
-              <option
-                key={expert.id}
-                value={`${expert.name}`}
-                className="text-lg font-bold"
+            <div className="z-0 w-full my-3 group">
+              <label
+                htmlFor="multi_chain"
+                className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
               >
-                {expert.name} 
-              </option>
-            ))}
-          </select>
-          {errors.areas_of_expertise && (
-            <p className="text-red-500 text-xs italic">
-              {errors.areas_of_expertise.message}
-            </p>
-          )}
-        </div>
+                Are you on multi-chain
+              </label>
+              <select
+                onChange={(e) => setIsMulti_Chain(e.target.value === "Yes")}
+                className={`bg-gray-50 border-2 ${
+                  errors.multi_chain
+                    ? "border-red-500 placeholder:text-red-500"
+                    : "border-[#737373]"
+                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+              >
+                <option className="text-lg font-bold" value="">
+                  Select your option⌄
+                </option>
+                <option className="text-lg font-bold">Yes</option>
+                <option className="text-lg font-bold">No</option>
+              </select>
+              {errors.multi_chain && (
+                <p className="text-red-500 text-xs italic">
+                  {errors.multi_chain.message}
+                </p>
+              )}
+            </div>
+            {isMulti_Chain && (
+              <div className="z-0 w-full my-3 group">
+                <div className="">
+                  <label
+                    htmlFor="multichain"
+                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    Multi-chain options
+                  </label>
+                  <select
+                    {...register("multichain")}
+                    className={`bg-gray-50 border-2 ${
+                      errors.multichain
+                        ? "border-red-500 placeholder:text-red-500"
+                        : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  >
+                    <option className="text-lg font-bold" value="">
+                      Select your option⌄
+                    </option>
+                    <option className="text-lg font-bold" value="ethereum">
+                      Ethereum
+                    </option>
+                    <option className="text-lg font-bold" value="bitcoin">
+                      Bitcoin
+                    </option>
+                    <option className="text-lg font-bold" value="binance">
+                      Binance Smart Chain
+                    </option>
+                  </select>
+                  {errors.multichain && (
+                    <p className="text-red-500 text-xs italic">
+                      {errors.multichain.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+            <div className="z-0 w-full my-3 group">
+              <label
+                htmlFor="area_of_expertise"
+                className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+              >
+                What are your areas of expertise?
+              </label>
+              <select
+                {...register("area_of_expertise")}
+                className={`bg-gray-50 border-2 ${
+                  errors.area_of_expertise
+                    ? "border-red-500 placeholder:text-red-500"
+                    : "border-[#737373]"
+                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+              >
+                <option className="text-lg font-bold" value="">
+                  Area_of_expertise ⌄
+                </option>
+                {areaOfExpertise?.map((expert) => (
+                  <option
+                    key={expert.id}
+                    value={`${expert.name}`}
+                    className="text-lg font-bold"
+                  >
+                    {expert.name}
+                  </option>
+                ))}
+              </select>
+              {errors.area_of_expertise && (
+                <p className="text-red-500 text-xs italic">
+                  {errors.area_of_expertise.message}
+                </p>
+              )}
+            </div>
+            <div className="z-0 w-full my-3 group">
+              <label
+                htmlFor="category_of_mentoring_service"
+                className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+              >
+                Categories of mentoring services
+              </label>
+              <select
+                {...register("category_of_mentoring_service")}
+                className={`bg-gray-50 border-2 ${
+                  errors.category_of_mentoring_service
+                    ? "border-red-500 placeholder:text-red-500"
+                    : "border-[#737373]"
+                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+              >
+                <option className="text-lg font-bold" value="">
+                  Select your option⌄
+                </option>
+                <option className="text-lg font-bold">Incubation</option>
+                <option className="text-lg font-bold">Tokenomics</option>
+                <option className="text-lg font-bold">Branding</option>
+                <option className="text-lg font-bold">Lisitng</option>
+                <option className="text-lg font-bold">Raise</option>
+              </select>
+              {errors.category_of_mentoring_service && (
+                <p className="text-red-500 text-xs italic">
+                  {errors.category_of_mentoring_service.message}
+                </p>
+              )}
+            </div>
+            <div className="z-0 w-full my-3 group">
+              <label
+                htmlFor="icop_hub_or_spoke"
+                className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+              >
+                Are you icop hub/spoke
+              </label>
+              <select
+                {...register("icop_hub_or_spoke")}
+                className={`bg-gray-50 border-2 ${
+                  errors.icop_hub_or_spoke
+                    ? "border-red-500 placeholder:text-red-500"
+                    : "border-[#737373]"
+                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+              >
+                <option className="text-lg font-bold" value="">
+                  Select your option⌄
+                </option>
+                <option className="text-lg font-bold" value="true">
+                  Yes
+                </option>
+                <option className="text-lg font-bold" value="false">
+                  No
+                </option>
+              </select>
+              {errors.icop_hub_or_spoke && (
+                <p className="text-red-500 text-xs italic">
+                  {errors.icop_hub_or_spoke.message}
+                </p>
+              )}
+            </div>
+          </div>
         )}
       </div>
 
       {StepComponent &&
         React.cloneElement(StepComponent, {
-          onSubmit: handleSubmit(onSubmit),
+          onSubmit: handleSubmit(onSubmit, errorFunc),
           register,
           errors,
           fields: stepFields,
