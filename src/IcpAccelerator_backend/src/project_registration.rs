@@ -18,11 +18,12 @@ use sha2::{Digest, Sha256};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::io::Read;
+use crate::admin::send_approval_request;
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct TeamMember {
     member_uid: String,
-    member_data: UserInformation,
+    member_data: Vec<UserInformation>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
@@ -114,12 +115,20 @@ pub struct FilterCriteria {
     pub vc_name: Option<String>,
 }
 
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType)]
+pub struct ProjectUpdateRequest {
+    project_id: String,
+    updated_info: ProjectInfo, 
+}
+
 
 pub type ProjectAnnouncements = HashMap<Principal, Vec<Announcements>>;
 pub type Notifications = HashMap<Principal, Vec<NotificationProject>>;
 pub type BlogPost = HashMap<Principal, Vec<Blog>>;
 
 pub type ApplicationDetails = HashMap<Principal, Vec<ProjectInfoInternal>>;
+pub type PendingDetails = HashMap<String, ProjectUpdateRequest>;
+pub type DeclinedDetails = HashMap<String, ProjectUpdateRequest>;
 
 thread_local! {
     pub static APPLICATION_FORM: RefCell<ApplicationDetails> = RefCell::new(ApplicationDetails::new());
@@ -127,6 +136,8 @@ thread_local! {
     static OWNER_NOTIFICATIONS: RefCell<HashMap<Principal, Vec<NotificationForOwner>>> = RefCell::new(HashMap::new());
     pub static PROJECT_ANNOUNCEMENTS:RefCell<ProjectAnnouncements> = RefCell::new(ProjectAnnouncements::new());
     pub static BLOG_POST:RefCell<BlogPost> = RefCell::new(BlogPost::new());
+    pub static PENDING_PROJECT_UPDATES: RefCell<PendingDetails> = RefCell::new(PendingDetails::new());
+    pub static DECLINED_PROJECT_UPDATES: RefCell<DeclinedDetails> = RefCell::new(DeclinedDetails::new());
 }
 
 pub fn pre_upgrade() {
@@ -280,53 +291,57 @@ pub fn list_all_projects() -> Vec<ProjectInfo> {
     projects
 }
 
-pub fn update_project(project_id: String, updated_project: ProjectInfo) -> String {
+pub async fn update_project(project_id: String, updated_project: ProjectInfo) -> String {
     let caller = caller();
-    let mut is_updated = false;
 
-    APPLICATION_FORM.with(|storage| {
-        if let Some(projects) = storage.borrow_mut().get_mut(&caller) {
-            if let Some(project_internal) = projects.iter_mut().find(|p| p.uid == project_id) {
-                // Update fields directly
-                project_internal.params.project_name = updated_project.project_name;
-                project_internal.params.project_logo = updated_project.project_logo;
-                project_internal.params.preferred_icp_hub = updated_project.preferred_icp_hub;
-                project_internal.params.live_on_icp_mainnet = updated_project.live_on_icp_mainnet;
-                project_internal.params.money_raised_till_now =
-                    updated_project.money_raised_till_now;
-                project_internal.params.supports_multichain = updated_project.supports_multichain;
-                project_internal.params.project_elevator_pitch =
-                    updated_project.project_elevator_pitch;
-                project_internal.params.project_area_of_focus =
-                    updated_project.project_area_of_focus;
-                project_internal.params.promotional_video = updated_project.promotional_video;
+    let is_owner = APPLICATION_FORM.with(|projects| {
+        projects.borrow().iter().any(|(owner_principal, projects)| {
+            *owner_principal == caller && projects.iter().any(|p| p.uid == project_id)
+        })
+    });
 
-                project_internal.params.github_link = updated_project.github_link;
-                project_internal.params.reason_to_join_incubator =
-                    updated_project.reason_to_join_incubator;
+    if !is_owner {
+        return "Error: Only the project owner can request updates.".to_string();
+    }
 
-                project_internal.params.project_description = updated_project.project_description;
-                project_internal.params.project_cover = updated_project.project_cover;
-
-                project_internal.params.project_team = updated_project.project_team;
-                project_internal.params.token_economics = updated_project.token_economics;
-                project_internal.params.technical_docs = updated_project.technical_docs;
-                project_internal.params.long_term_goals = updated_project.long_term_goals;
-                project_internal.params.target_market = updated_project.target_market;
-                project_internal.params.self_rating_of_project =
-                    updated_project.self_rating_of_project;
-
-                is_updated = true;
-            }
+    DECLINED_PROJECT_UPDATES.with(|d_vc| {
+        let exits = d_vc.borrow().contains_key(&project_id);
+        if exits {
+            panic!("You had got your request declined earlier");
         }
     });
 
-    if is_updated {
-        "Project Details are Updated Successfully".to_string()
-    } else {
-        "Failed to update project. Please provide a valid project ID.".to_string()
+    let is_owner = APPLICATION_FORM.with(|projects| {
+        projects.borrow().iter().any(|(_, project_list)| {
+            project_list.iter().any(|p| p.uid == project_id)
+        })
+    });
+
+    if !is_owner {
+        return "Error: Only the project owner can request updates.".to_string();
     }
+
+    let update_request = ProjectUpdateRequest {
+        updated_info: updated_project,
+        project_id: project_id.clone(),
+    };
+
+    PENDING_PROJECT_UPDATES.with(
+        |awaiters: &RefCell<HashMap<String, ProjectUpdateRequest>>| {
+            let mut await_ers: std::cell::RefMut<'_, HashMap<String, ProjectUpdateRequest>> =
+                awaiters.borrow_mut();
+            await_ers.insert(project_id, update_request);
+        },
+    );
+
+    let res = send_approval_request().await;
+
+    format!("{}", res)
+
 }
+
+
+
 
 pub fn delete_project(id: String) -> std::string::String {
     let caller = caller();
@@ -493,23 +508,27 @@ pub async fn update_team_member(project_id: &str, member_uid: String) -> String 
     };
 
     let mut project_found = false;
-    let mut member_updated = false;
+    let mut member_added_or_updated = false;
     APPLICATION_FORM.with(|storage| {
         let mut storage = storage.borrow_mut();
-        if let Some(project_internal) = storage
-            .values_mut()
-            .flat_map(|v| v.iter_mut())
-            .find(|p| p.uid == project_id)
-        {
+
+        if let Some(project_internal) = storage.values_mut().flat_map(|v| v.iter_mut()).find(|p| p.uid == project_id) {
             project_found = true;
-            project_internal.params.project_team = Some(TeamMember {
-                member_uid: member_uid.clone(),
-                member_data: user_info,
-            });
-            member_updated = true;
+
+            if let Some(team) = &mut project_internal.params.project_team {
+                team.member_data.push(user_info);
+                member_added_or_updated = true;
+            } else {
+                let new_team_member = TeamMember {
+                    member_uid: member_uid.clone(),
+                    member_data: vec![user_info], 
+                };
+                project_internal.params.project_team = Some(new_team_member);
+                member_added_or_updated = true;
+            }
         }
     });
-    match (project_found, member_updated) {
+    match (project_found, member_added_or_updated) {
         (true, true) => "Team member updated successfully.".to_string(),
         (true, false) => "Failed to update the team member in the specified project.".to_string(),
         _ => "Project not found.".to_string(),
