@@ -191,9 +191,9 @@ fn list_all_projects() -> Vec<ProjectInfo> {
 }
 
 #[update]
-fn update_project(project_id: String, updated_project: ProjectInfo) -> String {
+async fn update_project(project_id: String, updated_project: ProjectInfo) -> String {
     if has_required_role(&vec![UserRole::Project]) {
-        project_registration::update_project(project_id, updated_project)
+        project_registration::update_project(project_id, updated_project).await
     } else {
         "you are not supposed to change someone profile".to_string()
     }
