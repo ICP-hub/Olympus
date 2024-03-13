@@ -149,6 +149,10 @@ type ProjectInfoInternal = record {
   params : ProjectInfo;
   creation_date : nat64;
 };
+type ProjectUpdateRequest = record {
+  updated_info : ProjectInfo;
+  project_id : text;
+};
 type Rating = record {
   sub_level : SubLevel;
   level_name : MainLevel;
@@ -219,7 +223,10 @@ type Suggestion = record {
   parent_id : opt nat64;
   project_id : text;
 };
-type TeamMember = record { member_data : UserInformation; member_uid : text };
+type TeamMember = record {
+  member_data : vec UserInformation;
+  member_uid : text;
+};
 type ThirtyInfoFounder = record {
   linked_in_profile : opt text;
   telegram_id : opt text;
@@ -284,6 +291,7 @@ service : () -> {
   add_suggestion_caller : (text, text) -> (nat64, text);
   approve_mentor_creation_request_candid : (principal, bool) -> (text);
   approve_mentor_profile_update : (principal, bool) -> (text);
+  approve_project_details_updation_request : (principal, text, bool) -> (text);
   approve_vc_creation_request : (principal, bool) -> (text);
   approve_vc_profile_update : (principal, bool) -> (text);
   calculate_average_api : (text) -> (opt float64) query;
@@ -349,6 +357,7 @@ service : () -> {
   make_active_inactive_mentor : (principal) -> (text);
   make_user_inactive : () -> (text);
   mentors_awaiting_approval : () -> (vec MentorInternal) query;
+  project_update_awaiting_approval : () -> (vec ProjectUpdateRequest) query;
   register_founder_caller : (ThirtyInfoFounder) -> (text);
   register_hub_organizer_candid : (HubOrganizerRegistration) -> (text);
   register_mentor_candid : (MentorProfile) -> (text);

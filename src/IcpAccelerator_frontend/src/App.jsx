@@ -113,6 +113,8 @@ const App = () => {
   }, [dispatch, isAuthenticated])
   return (
     <>
+    <div className="bg-gray-100">
+    <div className="container mx-auto">
       {/* {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-50"></div>
       )} */}
@@ -143,6 +145,8 @@ const App = () => {
       {/* <RoleSelector /> */}
       {/* <NormalUser /> */}
       <AppRoutes />
+      </div>
+      </div>
       {/* <MentorRegistration /> */}
       <Footer />
     </>
