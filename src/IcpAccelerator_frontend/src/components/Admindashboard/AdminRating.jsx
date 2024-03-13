@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ment from "../../../assets/images/ment.jpg";
-
+import project from "../../../assets/images/project.jpg";
 
 const AdminRating = () => {
   const [selectedOption, setSelectedOption] = useState('Project Ratings')
@@ -22,31 +22,27 @@ const AdminRating = () => {
     });
   };
 
-  // Automatically start the increase function when the component mounts or percent changes, but not exceed 100%
+ 
   useEffect(() => {
     if (percent < 100) {
       tm.current = setTimeout(increase, 10);
     }
-
-    // Cleanup function to clear the timeout when the component unmounts or before re-running the effect
     return () => clearTimeout(tm.current);
   }, [percent]);
-
-  // Automatically start the increase function when the component mounts or percent changes, but not exceed 100%
   useEffect(() => {
     if (percent < 100) {
       tm.current = setTimeout(increase, 10);
     }
-
-    // Cleanup function to clear the timeout when the component unmounts or before re-running the effect
     return () => clearTimeout(tm.current);
   }, [percent]);
+ 
+
   return (
     <div>
       <div className="left-4 lg:left-auto bg-gradient-to-r from-purple-900 to-blue-500 text-transparent bg-clip-text text-2xl font-extrabold ml-8">
         {selectedOption}
       </div>
-      <div className="p-3 flex items-center bg-[#FFFFFF4D] border-[#E9E9E9] border-1 drop-shadow-[#0000000D] rounded-[10px]">
+      <div className="p-3 flex items-center bg-[#FFFFFF4D] border-[#E9E9E9] border-1 drop-shadow-[#0000000D] rounded-[10px] ml-12">
 
         <div className="md:p-4">
           <img
@@ -102,25 +98,25 @@ const AdminRating = () => {
 
         </div>
       </div>
-      <div className='flex justify-center '>
-        <div className="relative w-full md:w-[750px] h-[300px] ">
-          <div className="absolute bottom-0 left-0 top-0 w-64 h-64 bg-blue-100 ellipse-quarter-left rounded-md rotate-90 z-0"></div>
-          <div className="absolute top-0 right-0 bg-blue-100 w-36 h-36 ellipse-quarter-right rounded-md"></div>
-          <div className="absolute top-40 right-0 bg-blue-100 w-36 h-36 ellipse-quarter-right rounded-md rotate-90"></div>
-          <div className="flex flex-col w-full relative">
-            <div className="w-fit  text-2xl font-bold md:ml-4 mt-0 absolute top-0 left-0 right-0 text-center text-black">
+      <div className='flex justify-center p-8  '>
+        <div className="relative w-full md:w-[750px] h-[542.8px] border-4 border-[#E9E9E9] ">
+          <div className="absolute bottom-0 left-0 top-0 w-[389.31px] h-[390px] bg-blue-100 ellipse-quarter-left rounded-md rotate-90 z-0"></div>
+          <div className="absolute top-0 right-0 bg-blue-100 w-[209.63px] h-[210px] ellipse-quarter-right rounded-md"></div>
+          <div className="absolute top-[327px] right-0 bg-blue-100 w-[209.63px] h-[210px] ellipse-quarter-right rounded-md rotate-90"></div>
+          <div className="flex flex-col w-full relative ">
+            <div className="w-fit  p-4 text-2xl font-bold md:ml-4 mt-4 absolute top-0 left-0 right-0 text-center text-black">
               Ratings
             </div>
 
 
 
-            <div className=' overflow-y-auto'>
+            <div className=' overflow-y-auto '>
 
-              <div className='w-full flex flex-row mt-8 absolute top-0 left-0 right-0 text-center justify-center'>
-
-                <div className="flex flex-row items-center lg:gap-48 gap-2">
-                  <p className='text-[#737373] font-bold'>Team</p>
-                  <div className="flex justify-between items-center">
+              <div className='w-full flex flex-row mt-8 absolute top-0 left-0 right-0 text-center  '>
+<div className='flex flex-col '>
+                <div className="flex flex-row    mt-8 lg:gap-14 md:gap-8 gap-2 items-center p-4 ">
+                  <p className='text-[#737373] font-bold md:ml-4'>Team</p>
+                  <div className="flex items-center lg:w-[600px] md:w-[500px] w-[210px]">
                     <svg
                       width="100%"
                       height="7"
@@ -153,114 +149,81 @@ const AdminRating = () => {
                     </div>
                   </div>
                 </div>
+                <div className="flex flex-row     lg:gap-14 md:gap-8 gap-2 items-center p-4 ">
+                  <p className='text-[#737373] font-bold md:ml-4 '>Value </p>
+                  <div className="flex items-center lg:w-[600px] md:w-[500px] w-[210px]">
+                    <svg
+                      width="100%"
+                      height="7"
+                      className="rounded-lg"
+                      onMouseEnter={() => setIsHovered(true)}
+                      onMouseLeave={() => setIsHovered(false)}
+                    >
+                      <defs>
+                        <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+                          <stop
+                            offset="0%"
+                            style={{ stopColor: isHovered ? gradientStops.stop1 : '#7283EA', stopOpacity: 1 }}
+                          />
+                          <stop
+                            offset="100%"
+                            style={{ stopColor: isHovered ? gradientStops.stop2 : '#7283EA', stopOpacity: 1 }}
+                          />
+                        </linearGradient>
+                      </defs>
+                      <rect
+                        x="0"
+                        y="0"
+                        width={`${percent}%`}
+                        height="10"
+                        fill="url(#gradient1)"
+                      />
+                    </svg>
+                    <div className="text-gray-600 text-sm ml-2 font-fontUse text-nowrap">
+                      7
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-row    lg:gap-14 md:gap-8 gap-2 items-center p-4 ">
+                  <p className='text-[#737373] font-bold md:ml-4'>product</p>
+                  <div className="flex items-center lg:w-[600px] md:w-[500px] w-[210px]">
+                    <svg
+                      width="100%"
+                      height="7"
+                      className="rounded-lg"
+                      onMouseEnter={() => setIsHovered(true)}
+                      onMouseLeave={() => setIsHovered(false)}
+                    >
+                      <defs>
+                        <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+                          <stop
+                            offset="0%"
+                            style={{ stopColor: isHovered ? gradientStops.stop1 : '#7283EA', stopOpacity: 1 }}
+                          />
+                          <stop
+                            offset="100%"
+                            style={{ stopColor: isHovered ? gradientStops.stop2 : '#7283EA', stopOpacity: 1 }}
+                          />
+                        </linearGradient>
+                      </defs>
+                      <rect
+                        x="0"
+                        y="0"
+                        width={`${percent}%`}
+                        height="10"
+                        fill="url(#gradient1)"
+                      />
+                    </svg>
+                    <div className="text-gray-600 text-sm ml-2 font-fontUse text-nowrap">
+                      7
+                    </div>
+                  </div>
+                </div>
+                </div>
               </div>
 
 
-              <div className="flex flex-row items-center text-center justify-center mt-8 lg:gap-48 gap-2">
-                <p className='text-[#737373] font-bold'>Team</p>
-                <div className="flex justify-between items-center">
-                  <svg
-                    width="100%"
-                    height="7"
-                    className="rounded-lg"
-                    onMouseEnter={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}
-                  >
-                    <defs>
-                      <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop
-                          offset="0%"
-                          style={{ stopColor: isHovered ? gradientStops.stop1 : '#7283EA', stopOpacity: 1 }}
-                        />
-                        <stop
-                          offset="100%"
-                          style={{ stopColor: isHovered ? gradientStops.stop2 : '#7283EA', stopOpacity: 1 }}
-                        />
-                      </linearGradient>
-                    </defs>
-                    <rect
-                      x="0"
-                      y="0"
-                      width={`${percent}%`}
-                      height="10"
-                      fill="url(#gradient1)"
-                    />
-                  </svg>
-                  <div className="text-gray-600 text-sm ml-2 font-fontUse text-nowrap">
-                    7
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-row items-center text-center justify-center mt-8  lg:gap-48 gap-2">
-                <p className='text-[#737373] font-bold'>Team</p>
-                <div className="flex justify-between items-center">
-                  <svg
-                    width="100%"
-                    height="7"
-                    className="rounded-lg"
-                    onMouseEnter={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}
-                  >
-                    <defs>
-                      <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop
-                          offset="0%"
-                          style={{ stopColor: isHovered ? gradientStops.stop1 : '#7283EA', stopOpacity: 1 }}
-                        />
-                        <stop
-                          offset="100%"
-                          style={{ stopColor: isHovered ? gradientStops.stop2 : '#7283EA', stopOpacity: 1 }}
-                        />
-                      </linearGradient>
-                    </defs>
-                    <rect
-                      x="0"
-                      y="0"
-                      width={`${percent}%`}
-                      height="10"
-                      fill="url(#gradient1)"
-                    />
-                  </svg>
-                  <div className="text-gray-600 text-sm ml-2 font-fontUse text-nowrap">
-                    7
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-row items-center text-center justify-center mt-8 lg:gap-48 gap-2">
-                <p className='text-[#737373] font-bold'>Team</p>
-                <div className="flex justify-between items-center">
-                  <svg
-                    width="100%"
-                    height="7"
-                    className="rounded-lg"
-                    onMouseEnter={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}
-                  >
-                    <defs>
-                      <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop
-                          offset="0%"
-                          style={{ stopColor: isHovered ? gradientStops.stop1 : '#7283EA', stopOpacity: 1 }}
-                        />
-                        <stop
-                          offset="100%"
-                          style={{ stopColor: isHovered ? gradientStops.stop2 : '#7283EA', stopOpacity: 1 }}
-                        />
-                      </linearGradient>
-                    </defs>
-                    <rect
-                      x="0"
-                      y="0"
-                      width={`${percent}%`}
-                      height="10"
-                      fill="url(#gradient1)"
-                    />
-                  </svg>
-                  <div className="text-gray-600 text-sm ml-2 font-fontUse text-nowrap">
-                    7
-                  </div>
-                </div>
-              </div>
+            
             </div>
 
 

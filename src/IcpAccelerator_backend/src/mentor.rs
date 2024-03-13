@@ -8,10 +8,13 @@ use std::collections::HashMap;
 extern crate serde_cbor;
 use crate::admin::send_approval_request;
 use crate::trie::EXPERTISE_TRIE;
-use crate::user_module::UserInformation;
+
+use crate::user_module::{ROLE_STATUS_ARRAY, UserInformation};
 use ic_cdk::api::time;
 use std::cell::RefCell;
-#[derive(Serialize, Deserialize, Clone, Debug, CandidType, Default)]
+
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, Default, PartialEq)]
+
 pub struct MentorProfile {
     pub preferred_icp_hub: Option<String>,
     pub user_data: UserInformation,
@@ -90,12 +93,6 @@ pub async fn register_mentor(profile: MentorProfile) -> String {
         }
     });
 
-    // let already_registered = MENTOR_REGISTRY.with(|registry| registry.borrow().contains_key(&caller));
-
-    // if already_registered {
-
-    //     ic_cdk::println!("This Principal is already registered");
-    //     return "This Principal is already registered.".to_string()}
 
     match profile.validate() {
         Ok(_) => {
@@ -122,6 +119,16 @@ pub async fn register_mentor(profile: MentorProfile) -> String {
             );
 
             let res = send_approval_request().await;
+
+            ROLE_STATUS_ARRAY.with(|role_status| {
+                let mut role_status = role_status.borrow_mut();
+        
+                for role in role_status.get_mut(&caller).expect("couldn't get role status for this principal").iter_mut(){
+                    if role.name == "mentor"{
+                        role.status = "requested".to_string();
+                    }
+                }
+            });
 
             format!("{}", res)
         }

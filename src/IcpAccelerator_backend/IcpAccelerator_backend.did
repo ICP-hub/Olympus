@@ -10,6 +10,14 @@ type ConnectionRequest = record {
   message : text;
   mentor_id : principal;
 };
+type FilterCriteria = record {
+  area_of_focus : opt text;
+  country : opt text;
+  money_raised_range : opt record { float64; float64 };
+  vc_name : opt text;
+  mentor_name : opt text;
+  rating_range : opt record { float64; float64 };
+};
 type FounderInfo = record {
   seventy_info : opt SeventyInfoFounder;
   thirty_info : opt ThirtyInfoFounder;
@@ -120,9 +128,11 @@ type ProjectInfo = record {
   reason_to_join_incubator : text;
   user_data : UserInformation;
   project_description : text;
+  vc_assigned : opt vec VentureCapitalist;
   token_economics : text;
   self_rating_of_project : float64;
   preferred_icp_hub : opt text;
+  mentors_assigned : opt vec MentorProfile;
   target_market : text;
   long_term_goals : text;
   project_area_of_focus : text;
@@ -153,6 +163,7 @@ type Rating = record {
 type Request = record { mentor : opt MentorInternal; "text" : text };
 type Result = variant { Ok : UserInformation; Err : text };
 type Role = record { id : int32; name : text };
+type Role_1 = record { status : text; name : text };
 type RolesResponse = record { roles : vec Role };
 type SeventyInfoFounder = record {
   founder_image : opt vec nat8;
@@ -272,7 +283,7 @@ type VentureCapitalistInternal = record {
   decline : bool;
   params : VentureCapitalist;
 };
-service : {
+service : () -> {
   add_BlogPost : (text) -> (text);
   add_announcement : (Announcements) -> (text);
   add_mentor_announcement : (text, text) -> (text);
@@ -293,6 +304,7 @@ service : {
   delete_project : (text) -> (text);
   delete_venture_capitalist : () -> (text);
   delete_venture_capitalist_caller : () -> (text);
+  filter_out_projects : (FilterCriteria) -> (vec ProjectInfo) query;
   get_admin_notifications : (principal) -> (vec Notification) query;
   get_all_mentors_candid : () -> (vec MentorProfile) query;
   get_all_roles : () -> (RolesResponse) query;
@@ -328,6 +340,7 @@ service : {
   get_projects_for_caller : () -> (vec ProjectInfo) query;
   get_role : () -> (RolesResponse) query;
   get_role_from_p_id : () -> (opt vec UserRole) query;
+  get_role_status : () -> (vec Role_1) query;
   get_suggestions_by_parent_id_caller : (text, nat64) -> (vec Suggestion) query;
   get_suggestions_by_status_caller : (text, text) -> (vec Suggestion) query;
   get_total_suggestions : (text) -> (nat64) query;
@@ -361,6 +374,7 @@ service : {
   respond_to_connection_request_candid : (principal, bool) -> (text);
   send_connection_request : (principal, text) -> (text);
   send_request_as_mentor : (text, text) -> (text);
+  switch_role : (text, text) -> ();
   update_founder_caller : (FounderInfo) -> (text);
   update_hub_organizer_candid : (HubOrganizerRegistration) -> (text);
   update_mentor : (MentorProfile) -> (text);
