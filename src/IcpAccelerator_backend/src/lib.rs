@@ -13,6 +13,7 @@ mod upvotes;
 mod user_module;
 mod vc_registration;
 
+use crate::project_registration::ProjectUpdateRequest;
 use hub_organizer::{HubOrganizerRegistration, UniqueHubs};
 use ic_cdk::api::caller;
 use leaderboard::{
@@ -84,6 +85,11 @@ fn approve_mentor_creation_request_candid(requester: Principal, approve: bool) -
 fn decline_mentor_creation_request_candid(requester: Principal, decline: bool) -> String {
     // check_admin();
     decline_mentor_creation_request(requester, decline)
+}
+
+#[update]
+fn approve_project_details_updation_request(requester: Principal,project_id: String, approve: bool)->String{
+    admin::approve_project_update(requester,project_id, approve)
 }
 
 #[query]
@@ -184,9 +190,9 @@ fn list_all_projects() -> Vec<ProjectInfo> {
 }
 
 #[update]
-fn update_project(project_id: String, updated_project: ProjectInfo) -> String {
+async fn update_project(project_id: String, updated_project: ProjectInfo) -> String {
     if has_required_role(&vec![UserRole::Project]) {
-        project_registration::update_project(project_id, updated_project)
+        project_registration::update_project(project_id, updated_project).await
     } else {
         "you are not supposed to change someone profile".to_string()
     }

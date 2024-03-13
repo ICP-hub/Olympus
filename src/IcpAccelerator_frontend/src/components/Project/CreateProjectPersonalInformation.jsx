@@ -1,13 +1,11 @@
 import React from "react";
-import { ThreeDots } from "react-loader-spinner";
 
-const MentorDetails = ({
+const CreateProjectPersonalInformation = ({
   onSubmit,
   register,
   errors,
   fields,
-  goToPrevious,
-  isSubmitting,
+  goToNext,
 }) => {
   return (
     <div>
@@ -17,7 +15,7 @@ const MentorDetails = ({
             <div key={field.id} className="relative z-0 group mb-6">
               <label
                 htmlFor={field.id}
-                className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden hover:text-left"
+                className="block mb-2 text-lg font-medium text-gray-500 hover:text-black  hover:whitespace-normal truncate overflow-hidden text-start"
               >
                 {field.label}
               </label>
@@ -42,33 +40,13 @@ const MentorDetails = ({
           ))}
         </div>
 
-        <div className="flex justify-end space-x-4">
+        <div className="flex justify-end">
           <button
             type="button"
             className="text-white font-bold bg-blue-800 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md w-auto sm:w-auto px-5 py-2 text-center mb-4"
-            onClick={goToPrevious}
+            onClick={goToNext}
           >
-            Previous
-          </button>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="text-white font-bold bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md w-auto sm:w-auto px-5 py-2 text-center mb-4"
-          >
-            {isSubmitting ? (
-              <ThreeDots
-                visible={true}
-                height="35"
-                width="35"
-                color="#FFFEFF"
-                radius="9"
-                ariaLabel="three-dots-loading"
-                wrapperStyle={{}}
-                wrapperClass=""
-              />
-            ) : (
-              "Submit"
-            )}
+            Next
           </button>
         </div>
       </form>
@@ -76,4 +54,4 @@ const MentorDetails = ({
   );
 };
 
-export default MentorDetails;
+export default CreateProjectPersonalInformation;

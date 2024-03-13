@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useNavigate } from 'react-router-dom';
 import { useSelector } from "react-redux";
 import { useState, useEffect } from "react";
 import project from "../../../assets/images/project.png";
@@ -52,6 +53,7 @@ const dummyData = [
 ];
 
 const ProjectSection = () => {
+  const navigate = useNavigate();
   const role = useSelector((currState) => currState.current.specificRole);
   const [show, setShow] = useState(false);
 
@@ -83,7 +85,7 @@ const ProjectSection = () => {
     <div className="w-full flex flex-row md:flex-nowrap flex-wrap rounded-md text-sxxs:text-[7px] sxs:text-[7.5px] sxs1:text-[8px] sxs2:text-[8.5px] sxs3:text-[9px] ss:text-[9.5px] ss1:text-[10px] ss2:text-[10.5px] ss3:text-[11px] ss4:text-[11.5px] dxs:text-[12px] xxs:text-[12.5px] xxs1:text-[13px] sm1:text-[13.5px] sm4:text-[14px] sm2:text-[14.5px] sm3:text-[13px] sm:text-[13.5px] md:text-[14px.3] md1:text-[14px] md2:text-[14px] md3:text-[14px] lg:text-[16.5px] dlg:text-[17px] lg1:text-[15.5px] lgx:text-[16px] dxl:text-[16.5px] xl:text-[19px] xl2:text-[19.5px]  my-2 box-shadow-blur bg-gradient-black-transparent">
       <div className="flex flex-wrap -mx-4 gap-3 px-4">
         {dummyData?.map((item) => (
-          <div key={item.id} className="md:w-[300px] w-full mb-8 flex flex-col">
+          <div key={item.id} className="md:w-[300px] w-full mb-8 flex flex-col" onClick={() => navigate('/individual-project-details')}>
             <div className="flex flex-col justify-between border border-gray-200 rounded-xl pt-3">
               <div className="flex justify-between items-center">
                 <div className="flex items-center">

@@ -4,6 +4,127 @@ import BitfinityWallet from "../../../../assets/WalletLogo/BitfinityWallet.png";
 import IcpWallet from "../../../../assets/WalletLogo/IcpWallet.png";
 import PlugWallet from "../../../../assets/WalletLogo/PlugWallet.png";
 
+export const globesvg = (
+  <svg xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth="1.5"
+    stroke="currentColor"
+    className="w-4 h-4"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418"
+    />
+  </svg>
+)
+
+export const twitterSvg = (
+  <svg
+  xmlns="http://www.w3.org/2000/svg"
+  xmlnsXlink="http://www.w3.org/1999/xlink"
+  version="1.1"
+  width="24"
+  height="24"
+  viewBox="0 0 256 256"
+  xmlSpace="preserve"
+>
+  <defs></defs>
+  <g
+    style={{
+      stroke: 'none',
+      strokeWidth: 0,
+      strokeDasharray: 'none',
+      strokeLinecap: 'butt',
+      strokeLinejoin: 'miter',
+      strokeMiterlimit: 10,
+      fill: 'none',
+      fillRule: 'nonzero',
+      opacity: 1,
+    }}
+    transform="translate(1.4065934065934016 1.4065934065934016) scale(2.81 2.81)"
+  >
+    <polygon
+      points="24.89,23.01 57.79,66.99 65.24,66.99 32.34,23.01"
+      transform="matrix(1 0 0 1 0 0)"
+      style={{
+        stroke: 'none',
+        strokeWidth: 1,
+        strokeDasharray: 'none',
+        strokeLinecap: 'butt',
+        strokeLinejoin: 'miter',
+        strokeMiterlimit: 10,
+        fill: 'rgb(0,0,0)',
+        fillRule: 'nonzero',
+        opacity: 1,
+      }}
+    />
+    <path
+      d="M 45 0 L 45 0 C 20.147 0 0 20.147 0 45 v 0 c 0 24.853 20.147 45 45 45 h 0 c 24.853 0 45 -20.147 45 -45 v 0 C 90 20.147 69.853 0 45 0 z M 56.032 70.504 L 41.054 50.477 L 22.516 70.504 h -4.765 L 38.925 47.63 L 17.884 19.496 h 16.217 L 47.895 37.94 l 17.072 -18.444 h 4.765 L 50.024 40.788 l 22.225 29.716 H 56.032 z"
+      style={{
+        stroke: 'none',
+        strokeWidth: 1,
+        strokeDasharray: 'none',
+        strokeLinecap: 'butt',
+        strokeLinejoin: 'miter',
+        strokeMiterlimit: 10,
+        fill: 'rgb(0,0,0)',
+        fillRule: 'nonzero',
+        opacity: 1,
+      }}
+      transform="matrix(1 0 0 1 0 0)"
+      strokeLinecap="round"
+    />
+  </g>
+</svg>
+)
+export const linkedInSvg = (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    xmlnsXlink="http://www.w3.org/1999/xlink"
+    version="1.1"
+    width="24"
+    height="24"
+    viewBox="0 0 256 256"
+    xmlSpace="preserve"
+  >
+    <defs></defs>
+    <g
+      style={{
+        stroke: 'none',
+        strokeWidth: 0,
+        strokeDasharray: 'none',
+        strokeLinecap: 'butt',
+        strokeLinejoin: 'miter',
+        strokeMiterlimit: 10,
+        fill: 'none',
+        fillRule: 'nonzero',
+        opacity: 1,
+      }}
+      transform="translate(1.4065934065934016 1.4065934065934016) scale(2.81 2.81)"
+    >
+      <path
+        d="M 45 0 C 20.147 0 0 20.147 0 45 c 0 24.853 20.147 45 45 45 c 24.853 0 45 -20.147 45 -45 C 90 20.147 69.853 0 45 0 z M 31.187 69.956 H 20.822 V 36.617 h 10.365 V 69.956 z M 26.005 32.062 c -3.32 0 -6.005 -2.692 -6.005 -6.007 c 0 -3.318 2.685 -6.011 6.005 -6.011 c 3.313 0 6.005 2.692 6.005 6.011 C 32.01 29.37 29.317 32.062 26.005 32.062 z M 70 69.956 H 59.643 V 53.743 c 0 -3.867 -0.067 -8.84 -5.385 -8.84 c -5.392 0 -6.215 4.215 -6.215 8.562 v 16.491 H 37.686 V 36.617 h 9.939 v 4.559 h 0.141 c 1.383 -2.622 4.764 -5.385 9.804 -5.385 C 68.063 35.791 70 42.694 70 51.671 V 69.956 z"
+        style={{
+          stroke: 'none',
+          strokeWidth: 1,
+          strokeDasharray: 'none',
+          strokeLinecap: 'butt',
+          strokeLinejoin: 'miter',
+          strokeMiterlimit: 10,
+          fill: 'rgb(0,0,0)',
+          fillRule: 'nonzero',
+          opacity: 1,
+        }}
+        transform="matrix(1 0 0 1 0 0)"
+        strokeLinecap="round"
+      />
+    </g>
+  </svg>
+
+)
+
 export const afterCopySvg = (
   <svg
     xmlns="http://www.w3.org/2000/svg"
