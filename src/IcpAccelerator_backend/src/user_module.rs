@@ -30,7 +30,7 @@ pub struct UserInfoInternal {
 #[derive(CandidType, Clone)]
 pub struct Role {
     pub name: String,
-    pub status: String,
+    pub status: String,  
 }
 
 #[derive(CandidType, Clone)]
