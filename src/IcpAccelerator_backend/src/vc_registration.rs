@@ -1,15 +1,16 @@
 use crate::admin::send_approval_request;
-use crate::user_module::UserInformation;
+use crate::user_module::*;
+
 use bincode;
 use candid::{CandidType, Principal};
 use ic_cdk::api::caller;
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::api::stable::{StableReader, StableWriter};
+use ic_cdk::api::time;
 use ic_cdk_macros::{query, update};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::cell::RefCell;
-use ic_cdk::api::time;
 use std::{collections::HashMap, io::Write};
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct VentureCapitalist {
@@ -90,7 +91,6 @@ pub struct Announcements {
     timestamp: u64,
 }
 
-
 pub type VcAnnouncements = HashMap<Principal, Vec<Announcements>>;
 
 pub type VentureCapitalistStorage = HashMap<Principal, VentureCapitalistInternal>;
@@ -166,6 +166,20 @@ pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::
             );
 
             let res = send_approval_request().await;
+
+            ROLE_STATUS_ARRAY.with(|role_status| {
+                let mut role_status = role_status.borrow_mut();
+
+                for role in role_status
+                    .get_mut(&caller)
+                    .expect("couldn't get role status for this principal")
+                    .iter_mut()
+                {
+                    if role.name == "vc" {
+                        role.status = "requested".to_string();
+                    }
+                }
+            });
 
             format!("{}", res)
 
@@ -306,27 +320,21 @@ pub fn get_multichain_list() -> Vec<String> {
     chains
 }
 
-
 #[update]
-pub fn add_vc_announcement(name:String, announcement_message:String) -> String {
+pub fn add_vc_announcement(name: String, announcement_message: String) -> String {
     let caller_id = caller();
 
     let current_time = time();
 
     VC_ANNOUNCEMENTS.with(|state| {
         let mut state = state.borrow_mut();
-        let new_vc = Announcements{
-            project_name :name,
-            announcement_message:announcement_message,
-            timestamp:current_time,
-
-
+        let new_vc = Announcements {
+            project_name: name,
+            announcement_message: announcement_message,
+            timestamp: current_time,
         };
-        
-        state
-            .entry(caller_id)
-            .or_insert_with(Vec::new)
-            .push(new_vc);
+
+        state.entry(caller_id).or_insert_with(Vec::new).push(new_vc);
         format!("Announcement added successfully at {}", current_time)
     })
 }
@@ -337,5 +345,28 @@ pub fn get_vc_announcements() -> HashMap<Principal, Vec<Announcements>> {
     VC_ANNOUNCEMENTS.with(|state| {
         let state = state.borrow();
         state.clone()
+    })
+}
+
+#[update]
+pub fn make_vc_active_inactive(p_id: Principal) -> String {
+    VENTURECAPITALIST_STORAGE.with(|m_container| {
+        let mut tutor_hashmap = m_container.borrow_mut();
+        if let Some(vc_internal) = tutor_hashmap.get_mut(&p_id) {
+            if vc_internal.is_active {
+                let active = false;
+                vc_internal.is_active = active;
+
+                //ic_cdk::println!("mentor profile check status {:?}", vc_internal);
+                return "made inactive".to_string();
+            } else {
+                let active = true;
+                vc_internal.is_active = active;
+                //ic_cdk::println!("mentor profile check status {:?}", vc_internal);
+                return "made active".to_string();
+            }
+        } else {
+            "profile seems not to be existed".to_string()
+        }
     })
 }
