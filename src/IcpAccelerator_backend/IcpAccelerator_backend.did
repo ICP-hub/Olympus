@@ -55,6 +55,11 @@ type LikesInfo = record {
   image : opt vec nat8;
   principal_id : opt text;
 };
+type MAnnouncements = record {
+  announcement_message : text;
+  timestamp : nat64;
+  project_name : text;
+};
 type MainLevel = variant {
   Level1;
   Level2;
@@ -149,6 +154,10 @@ type ProjectInfoInternal = record {
   params : ProjectInfo;
   creation_date : nat64;
 };
+type ProjectUpdateRequest = record {
+  updated_info : ProjectInfo;
+  project_id : text;
+};
 type Rating = record {
   sub_level : SubLevel;
   level_name : MainLevel;
@@ -219,7 +228,10 @@ type Suggestion = record {
   parent_id : opt nat64;
   project_id : text;
 };
-type TeamMember = record { member_data : UserInformation; member_uid : text };
+type TeamMember = record {
+  member_data : vec UserInformation;
+  member_uid : text;
+};
 type ThirtyInfoFounder = record {
   linked_in_profile : opt text;
   telegram_id : opt text;
@@ -281,15 +293,20 @@ type VentureCapitalistInternal = record {
 service : () -> {
   add_BlogPost : (text) -> (text);
   add_announcement : (Announcements) -> (text);
+  add_mentor_announcement : (text, text) -> (text);
   add_suggestion_caller : (text, text) -> (nat64, text);
+  add_vc_announcement : (text, text) -> (text);
   approve_mentor_creation_request_candid : (principal, bool) -> (text);
   approve_mentor_profile_update : (principal, bool) -> (text);
+  approve_project_creation_request : (principal) -> (text);
+  approve_project_details_updation_request : (principal, text, bool) -> (text);
   approve_vc_creation_request : (principal, bool) -> (text);
   approve_vc_profile_update : (principal, bool) -> (text);
   calculate_average_api : (text) -> (opt float64) query;
   connect_to_team_member : (text, text) -> (text);
   decline_mentor_creation_request_candid : (principal, bool) -> (text);
   decline_mentor_profile_update_request : (principal, bool) -> (text);
+  decline_project_creation_request : (principal) -> (text);
   decline_vc_creation_request : (principal, bool) -> (text);
   decline_vc_profile_update_request : (principal, bool) -> (text);
   delete_founder_caller : () -> (text);
@@ -317,6 +334,9 @@ service : () -> {
   get_main_level_ratings : (text) -> (
       vec record { MainLevel; MainLevelRatings },
     ) query;
+  get_mentor_announcements : () -> (
+      vec record { principal; vec MAnnouncements },
+    ) query;
   get_mentor_by_expertise : (text) -> (vec MentorProfile) query;
   get_mentor_candid : () -> (opt MentorProfile) query;
   get_multichain_list : () -> (vec text) query;
@@ -334,9 +354,13 @@ service : () -> {
   get_suggestions_by_parent_id_caller : (text, nat64) -> (vec Suggestion) query;
   get_suggestions_by_status_caller : (text, text) -> (vec Suggestion) query;
   get_total_suggestions : (text) -> (nat64) query;
+  get_user_info_struct : () -> (opt UserInformation) query;
   get_user_information : () -> (Result) query;
   get_user_information_using_uid : (text) -> (Result) query;
   get_user_likes : (text) -> (opt LikeRecord) query;
+  get_vc_announcements : () -> (
+      vec record { principal; vec MAnnouncements },
+    ) query;
   get_vc_info : () -> (opt VentureCapitalist) query;
   get_venture_capitalist_info : () -> (opt VentureCapitalist) query;
   get_your_project_notifications : () -> (vec NotificationForOwner) query;
@@ -347,8 +371,11 @@ service : () -> {
   list_all_vcs : () -> (vec VentureCapitalist) query;
   list_all_venture_capitalist : () -> (vec VentureCapitalist) query;
   make_active_inactive_mentor : (principal) -> (text);
+  make_project_active_inactive : (principal, text) -> (text);
   make_user_inactive : () -> (text);
+  make_vc_active_inactive : (principal) -> (text);
   mentors_awaiting_approval : () -> (vec MentorInternal) query;
+  project_update_awaiting_approval : () -> (vec ProjectUpdateRequest) query;
   register_founder_caller : (ThirtyInfoFounder) -> (text);
   register_hub_organizer_candid : (HubOrganizerRegistration) -> (text);
   register_mentor_candid : (MentorProfile) -> (text);

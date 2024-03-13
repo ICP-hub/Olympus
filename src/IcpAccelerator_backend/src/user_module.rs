@@ -30,7 +30,7 @@ pub struct UserInfoInternal {
 #[derive(CandidType, Clone)]
 pub struct Role {
     pub name: String,
-    pub status: String,
+    pub status: String,  
 }
 
 #[derive(CandidType, Clone)]
@@ -276,6 +276,17 @@ pub fn get_user_info() -> Result<UserInformation, &'static str> {
     })
 }
 
+#[query]
+pub fn get_user_info_struct() -> Option<UserInformation> {
+    let caller = caller();
+    USER_STORAGE.with(|registry| {
+        registry
+            .borrow()
+            .get(&caller)
+            .map(|user_internal| user_internal.params.clone())
+    })
+}
+
 pub fn list_all_users() -> Vec<UserInformation> {
     USER_STORAGE.with(|storage| {
         storage
@@ -315,14 +326,19 @@ pub async fn get_user_info_by_id(uid: String) -> Result<UserInformation, &'stati
 
 pub async fn update_user(info: UserInformation) -> std::string::String {
     let caller = caller();
-    
-    if info.full_name.trim().is_empty() || info.email.as_ref().map_or(true, |email| email.trim().is_empty()) {
+
+    if info.full_name.trim().is_empty()
+        || info
+            .email
+            .as_ref()
+            .map_or(true, |email| email.trim().is_empty())
+    {
         return "Please provide input for required fields: full_name and email.".to_string();
     }
 
     USER_STORAGE.with(|storage| {
         let mut storage = storage.borrow_mut();
-        
+
         if let Some(user_info_internal) = storage.get_mut(&caller) {
             user_info_internal.params = info;
             "User information updated successfully.".to_string()
