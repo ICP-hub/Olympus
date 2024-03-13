@@ -157,7 +157,8 @@ const MentorRegistration = () => {
   const areaOfExpertise = useSelector(
     (currState) => currState.expertiseIn.expertise
   );
-  const userData = useSelector((currState) => currState)
+  const userData = useSelector((currState) => currState.userData.data.Ok)
+  console.log(userData)
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -307,8 +308,35 @@ const MentorRegistration = () => {
           })
           .catch((error) => console.error("Error converting image:", error));
       }
+    }else{
+      if (userData) {
+        // Create an object that matches the form fields structure
+        const formData = {
+          full_name: userData.full_name || "",
+          email: userData.email?.[0] || "",
+          telegram_id: userData.telegram_id?.[0] || "",
+          twitter_id: userData.twitter_id?.[0] || "",
+          openchat_username: userData.openchat_username?.[0] || "",
+          bio: userData.bio?.[0] || "",
+          country: userData.country || "",
+          area_of_intrest: userData.area_of_intrest || "",
+        };
+    
+        // If there is a mentor_image, handle its conversion and set it separately if needed
+        if (userData.profile_picture) {
+          imageUrlToByteArray(userData.profile_picture)
+            .then((imageBytes) => {
+              setmentor_image(imageBytes);
+              // You might also need to handle setting the image for display if required
+            })
+            .catch((error) => console.error("Error converting image:", error));
+        }
+    
+        // Use the reset function to populate the form
+        reset(formData);
+      }
     }
-  }, [mentorFullData, reset]);
+  }, [mentorFullData, reset,userData]);
 
   const sendingMentorData = async (val) => {
     // console.log("run sendingMentorData =========");
