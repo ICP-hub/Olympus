@@ -1,10 +1,10 @@
 use crate::mentor::*;
+use crate::project_registration::*;
 use crate::user_module::ROLE_STATUS_ARRAY;
 use crate::vc_registration::*;
 use candid::{CandidType, Principal};
 use ic_cdk::api::management_canister::main::{canister_info, CanisterInfoRequest};
 use ic_cdk::api::{caller, id};
-
 use ic_cdk_macros::*;
 use std::borrow::Borrow;
 use std::cell::RefCell;
@@ -93,7 +93,6 @@ pub fn approve_mentor_creation_request(requester: Principal, approve: bool) -> S
 
                 match awaiters.get(&requester) {
                     Some(res) => {
-
                         //register_mentor
                         MENTOR_REGISTRY.with(|m_registry| {
                             let mut mentor = m_registry.borrow_mut();
@@ -101,9 +100,14 @@ pub fn approve_mentor_creation_request(requester: Principal, approve: bool) -> S
                         });
 
                         //approve_mentor
-                        ROLE_STATUS_ARRAY.with(|role_status|{
-
-                            if let Some(user_role) = role_status.borrow_mut().get_mut(&requester).expect("couldn't get requester's id").iter_mut().find(|r| r.name == "mentor"){
+                        ROLE_STATUS_ARRAY.with(|role_status| {
+                            if let Some(user_role) = role_status
+                                .borrow_mut()
+                                .get_mut(&requester)
+                                .expect("couldn't get requester's id")
+                                .iter_mut()
+                                .find(|r| r.name == "mentor")
+                            {
                                 user_role.status = "approved".to_string();
                             }
                         });
@@ -148,6 +152,17 @@ pub fn decline_mentor_creation_request(requester: Principal, decline: bool) -> S
                         DECLINED_MENTOR_REQUESTS.with(|d_m_registry| {
                             let mut d_mentor = d_m_registry.borrow_mut();
                             d_mentor.insert(requester, res.clone())
+                        });
+                        ROLE_STATUS_ARRAY.with(|role_status| {
+                            if let Some(user_role) = role_status
+                                .borrow_mut()
+                                .get_mut(&requester)
+                                .expect("couldn't get requester's id")
+                                .iter_mut()
+                                .find(|r| r.name == "mentor")
+                            {
+                                user_role.status = "default".to_string();
+                            }
                         });
 
                         awaiters.remove(&requester);
@@ -240,6 +255,17 @@ pub fn decline_vc_creation_request(requester: Principal, decline: bool) -> Strin
                             let mut d_vc = d_vc_registry.borrow_mut();
                             d_vc.insert(requester, res.clone())
                         });
+                        ROLE_STATUS_ARRAY.with(|role_status| {
+                            if let Some(user_role) = role_status
+                                .borrow_mut()
+                                .get_mut(&requester)
+                                .expect("couldn't get requester's id")
+                                .iter_mut()
+                                .find(|r| r.name == "vc")
+                            {
+                                user_role.status = "default".to_string();
+                            }
+                        });
 
                         awaiters.remove(&requester);
                     }
@@ -287,6 +313,18 @@ pub fn approve_vc_creation_request(requester: Principal, approve: bool) -> Strin
                         VENTURECAPITALIST_STORAGE.with(|vc_registry| {
                             let mut vc = vc_registry.borrow_mut();
                             vc.insert(requester, res.clone())
+                        });
+
+                        ROLE_STATUS_ARRAY.with(|role_status| {
+                            if let Some(user_role) = role_status
+                                .borrow_mut()
+                                .get_mut(&requester)
+                                .expect("couldn't get requester's id")
+                                .iter_mut()
+                                .find(|r| r.name == "vc")
+                            {
+                                user_role.status = "approved".to_string();
+                            }
                         });
 
                         awaiters.remove(&requester);
@@ -514,6 +552,107 @@ pub fn decline_mentor_profile_update_request(requester: Principal, decline: bool
             // Return a message indicating the requester has not registered
             format!(
                 "Requester with principal id {} has not registered",
+                requester
+            )
+        }
+    })
+}
+
+#[update]
+pub fn approve_project_creation_request(requester: Principal) -> String {
+    // let caller = caller();
+
+    // let controllers = get_info().await.unwrap();
+    // if is_controller(principal)
+
+    PROJECT_AWAITS_RESPONSE.with(|awaiters| {
+        let mut awaiters = awaiters.borrow_mut();
+        // let mentor_internal = awaiters.get_mut(&requester);
+        if let Some(project_internal) = awaiters.get_mut(&requester) {
+            project_internal.is_verified = true;
+
+            match awaiters.get(&requester) {
+                Some(res) => {
+                    //register_mentor
+                    APPLICATION_FORM.with(|m_registry| {
+                        let mut project = m_registry.borrow_mut();
+                        project.insert(requester, vec![res.clone()]);
+                    });
+
+                    //approve_project
+                    ROLE_STATUS_ARRAY.with(|role_status| {
+                        if let Some(user_role) = role_status
+                            .borrow_mut()
+                            .get_mut(&requester)
+                            .expect("couldn't get requester's id")
+                            .iter_mut()
+                            .find(|r| r.name == "project")
+                        {
+                            user_role.status = "approved".to_string();
+                        }
+                    });
+
+                    awaiters.remove(&requester);
+                }
+                None => {
+                    return format!(
+                        "Requester with principal id {} has not registered",
+                        requester
+                    );
+                }
+            }
+
+            format!("Requester with principal id {} is approved", requester)
+        } else {
+            format!(
+                "Requester with principal id {} could not be approved",
+                requester
+            )
+        }
+    })
+}
+
+#[update]
+pub fn decline_project_creation_request(requester: Principal) -> String {
+    PROJECT_AWAITS_RESPONSE.with(|awaiters| {
+        let mut awaiters = awaiters.borrow_mut();
+        // let mentor_internal = awaiters.get_mut(&requester);
+        if let Some(project_internal) = awaiters.get_mut(&requester) {
+            project_internal.is_verified = false;
+
+            match awaiters.get(&requester) {
+                Some(res) => {
+                    DECLINED_PROJECT_REQUESTS.with(|d_m_registry| {
+                        let mut d_project = d_m_registry.borrow_mut();
+                        d_project.insert(requester, res.clone())
+                    });
+
+                    ROLE_STATUS_ARRAY.with(|role_status| {
+                        if let Some(user_role) = role_status
+                            .borrow_mut()
+                            .get_mut(&requester)
+                            .expect("couldn't get requester's id")
+                            .iter_mut()
+                            .find(|r| r.name == "project")
+                        {
+                            user_role.status = "default".to_string();
+                        }
+                    });
+
+                    awaiters.remove(&requester);
+                }
+                None => {
+                    return format!(
+                        "Requester with principal id {} has not registered",
+                        requester
+                    );
+                }
+            }
+
+            format!("Requester with principal id {} is declined", requester)
+        } else {
+            format!(
+                "Requester with principal id {} could not be declined",
                 requester
             )
         }

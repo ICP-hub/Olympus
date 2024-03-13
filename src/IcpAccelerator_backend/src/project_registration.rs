@@ -1,5 +1,6 @@
+use crate::admin::*;
 use crate::mentor::MentorProfile;
-use crate::user_module::UserInformation;
+use crate::user_module::*;
 use crate::vc_registration::VentureCapitalist;
 use crate::{
     hub_organizer,
@@ -48,7 +49,7 @@ pub struct ProjectInfo {
     self_rating_of_project: f64,
     user_data: UserInformation,
     mentors_assigned: Option<Vec<MentorProfile>>,
-    vc_assigned: Option<Vec<VentureCapitalist>>
+    vc_assigned: Option<Vec<VentureCapitalist>>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
@@ -107,13 +108,12 @@ pub struct Blog {
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct FilterCriteria {
     pub country: Option<String>,
-    pub rating_range: Option<(f64, f64)>, 
+    pub rating_range: Option<(f64, f64)>,
     pub area_of_focus: Option<String>,
     pub money_raised_range: Option<(f64, f64)>,
     pub mentor_name: Option<String>,
     pub vc_name: Option<String>,
 }
-
 
 pub type ProjectAnnouncements = HashMap<Principal, Vec<Announcements>>;
 pub type Notifications = HashMap<Principal, Vec<NotificationProject>>;
@@ -121,12 +121,17 @@ pub type BlogPost = HashMap<Principal, Vec<Blog>>;
 
 pub type ApplicationDetails = HashMap<Principal, Vec<ProjectInfoInternal>>;
 
+pub type ProjectDetails = HashMap<Principal, ProjectInfoInternal>;
+
 thread_local! {
     pub static APPLICATION_FORM: RefCell<ApplicationDetails> = RefCell::new(ApplicationDetails::new());
+    pub static PROJECT_DETAILS: RefCell<ProjectDetails> = RefCell::new(ProjectDetails::new());
     pub static NOTIFICATIONS: RefCell<Notifications> = RefCell::new(Notifications::new());
     static OWNER_NOTIFICATIONS: RefCell<HashMap<Principal, Vec<NotificationForOwner>>> = RefCell::new(HashMap::new());
     pub static PROJECT_ANNOUNCEMENTS:RefCell<ProjectAnnouncements> = RefCell::new(ProjectAnnouncements::new());
     pub static BLOG_POST:RefCell<BlogPost> = RefCell::new(BlogPost::new());
+    pub static PROJECT_AWAITS_RESPONSE: RefCell<ProjectDetails> = RefCell::new(ProjectDetails::new());
+    pub static DECLINED_PROJECT_REQUESTS: RefCell<ProjectDetails> = RefCell::new(ProjectDetails::new());
 }
 
 pub fn pre_upgrade() {
@@ -156,27 +161,37 @@ pub fn pre_upgrade() {
 
 pub async fn create_project(info: ProjectInfo) -> String {
     let caller = caller();
-    let founder_info = get_founder_info();
 
-    let (name, image) = match founder_info {
-        Some(info) => {
-            let name = info
-                .thirty_info
-                .as_ref()
-                .and_then(|thirty_info| thirty_info.full_name.clone());
-            let image = info
-                .seventy_info
-                .as_ref()
-                .and_then(|seventy_info| seventy_info.founder_image.clone());
-            (name, image)
+    DECLINED_PROJECT_REQUESTS.with(|d_vc| {
+        let exits = d_vc.borrow().contains_key(&caller);
+        if exits {
+            panic!("You had got your request declined earlier");
         }
-        None => (None, None),
-    };
+    });
 
-    let noti_sender = NotificationSender {
-        name: name.unwrap_or_else(|| "Unknown Founder".to_string()),
-        image: image.unwrap_or_else(|| vec![]),
-    };
+    let already_registered = APPLICATION_FORM
+        .with(|registry| registry.borrow().contains_key(&caller))
+        || PROJECT_AWAITS_RESPONSE.with(|registry| registry.borrow().contains_key(&caller));
+
+    if already_registered {
+        ic_cdk::println!("You cant create more than one project");
+        return "You cant create more than one project".to_string();
+    }
+
+    ROLE_STATUS_ARRAY.with(|role_status| {
+        let mut role_status = role_status.borrow_mut();
+
+        for role in role_status
+            .get_mut(&caller)
+            .expect("couldn't get role status for this principal")
+            .iter_mut()
+        {
+            if role.name == "project" {
+                role.status = "requested".to_string();
+            }
+        }
+    });
+
     let info_clone = info.clone();
     let user_uid = crate::user_module::update_user(info_clone.user_data).await;
     let uuids = raw_rand().await.unwrap().0;
@@ -190,51 +205,18 @@ pub async fn create_project(info: ProjectInfo) -> String {
         is_verified: false,
         creation_date: time(),
     };
-    APPLICATION_FORM.with(|storage| {
-        let mut applications = storage.borrow_mut();
-        applications
-            .entry(caller)
-            .or_insert_with(Vec::new)
-            .push(new_project);
-    });
 
-    if let Some(region) = &info.preferred_icp_hub {
-        let hub_principals =
-            crate::hub_organizer::get_hub_organizer_principals_by_region(region.clone());
-        let noti_uuids = raw_rand().await.unwrap().0;
-        let noti_uid = format!("{:x}", Sha256::digest(&noti_uuids));
-        let noti_id = noti_uid.clone().to_string();
-        for hub_principal_str in hub_principals {
-            match Principal::from_text(&hub_principal_str) {
-                Ok(hub_principal) => {
-                    let notification = NotificationProject {
-                        notifiation_id: noti_id.clone(),
-                        project_id: uid.clone(),
-                        message: "SomeOne Created Project Under your Hub".to_string(),
-                        timestamp: time(),
-                        notification_sender: noti_sender.clone(),
-                        notification_verifier: NotificationVerifier {
-                            name: "".to_string(),
-                            image: vec![],
-                        },
-                    };
+    PROJECT_AWAITS_RESPONSE.with(
+        |awaiters: &RefCell<HashMap<Principal, ProjectInfoInternal>>| {
+            let mut await_ers: std::cell::RefMut<'_, HashMap<Principal, ProjectInfoInternal>> =
+                awaiters.borrow_mut();
+            await_ers.insert(caller, new_project);
+        },
+    );
 
-                    NOTIFICATIONS.with(|notifications| {
-                        let mut notifs = notifications.borrow_mut();
-                        notifs
-                            .entry(hub_principal)
-                            .or_insert_with(Vec::new)
-                            .push(notification);
-                    });
-                }
-                Err(_) => {
-                    "Recieved an Invalid Princicpal".to_string();
-                }
-            }
-        }
-    }
+    let res = send_approval_request().await;
 
-    format!("Project Created successfully with ID: {}", uid)
+    format!("{}", res)
 }
 
 pub fn get_projects_for_caller() -> Vec<ProjectInfo> {
@@ -571,21 +553,22 @@ pub fn get_blog_post() -> HashMap<Principal, Vec<Blog>> {
     })
 }
 
-
 pub fn filter_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
     APPLICATION_FORM.with(|projects| {
         let projects = projects.borrow();
-        
-        projects.iter()
+
+        projects
+            .iter()
             .flat_map(|(_, project_list)| project_list.iter())
             .filter(|project_internal| {
-                
-                let country_match = criteria.country.as_ref().map_or(true, |c| {
-                    &project_internal.params.user_data.country == c
-                });
+                let country_match = criteria
+                    .country
+                    .as_ref()
+                    .map_or(true, |c| &project_internal.params.user_data.country == c);
 
                 let rating_match = criteria.rating_range.map_or(true, |(min, max)| {
-                    project_internal.params.self_rating_of_project >= min && project_internal.params.self_rating_of_project <= max
+                    project_internal.params.self_rating_of_project >= min
+                        && project_internal.params.self_rating_of_project <= max
                 });
 
                 let focus_match = criteria.area_of_focus.as_ref().map_or(true, |focus| {
@@ -598,24 +581,71 @@ pub fn filter_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
                             return money_raised >= min && money_raised <= max;
                         }
                     }
-                    false 
+                    false
                 });
 
                 let mentor_match = criteria.mentor_name.as_ref().map_or(true, |mentor_name| {
-                    project_internal.params.mentors_assigned.as_ref().map_or(false, |mentors| {
-                        mentors.iter().any(|mentor| mentor.user_data.full_name.contains(mentor_name))
-                    })
+                    project_internal
+                        .params
+                        .mentors_assigned
+                        .as_ref()
+                        .map_or(false, |mentors| {
+                            mentors
+                                .iter()
+                                .any(|mentor| mentor.user_data.full_name.contains(mentor_name))
+                        })
                 });
 
                 let vc_match = criteria.vc_name.as_ref().map_or(true, |vc_name| {
-                    project_internal.params.vc_assigned.as_ref().map_or(false, |vcs| {
-                        vcs.iter().any(|vc| vc.name_of_fund.contains(vc_name))
-                    })
+                    project_internal
+                        .params
+                        .vc_assigned
+                        .as_ref()
+                        .map_or(false, |vcs| {
+                            vcs.iter().any(|vc| vc.name_of_fund.contains(vc_name))
+                        })
                 });
 
-                country_match && rating_match && focus_match && money_raised_match && mentor_match && vc_match
+                country_match
+                    && rating_match
+                    && focus_match
+                    && money_raised_match
+                    && mentor_match
+                    && vc_match
             })
-            .map(|project_internal| project_internal.params.clone()) 
-            .collect() 
+            .map(|project_internal| project_internal.params.clone())
+            .collect()
     })
+}
+
+#[update]
+pub fn make_project_active_inactive(p_id: Principal, project_id: String) -> String {
+    let principal_id = caller();
+    if p_id == principal_id || ic_cdk::api::is_controller(&principal_id) {
+        APPLICATION_FORM.with(|storage| {
+            let mut storage = storage.borrow_mut();
+
+            // First, try to get the vector of ProjectDetail associated with p_id
+            if let Some(projects) = storage.get_mut(&p_id) {
+                // Find the project with the matching project_id
+                if let Some(project) = projects.iter_mut().find(|p| p.uid == project_id) {
+                    // Toggle the is_active flag and return a message accordingly
+                    project.is_active = !project.is_active;
+                    if project.is_active {
+                        "Project made active".to_string()
+                    } else {
+                        "Project made inactive".to_string()
+                    }
+                } else {
+                    // Project with the given id not found in the vector
+                    "Project not found".to_string()
+                }
+            } else {
+                // p_id not found in the storage
+                "Profile not found".to_string()
+            }
+        })
+    } else {
+        "you are not authorised to use this function".to_string()
+    }
 }

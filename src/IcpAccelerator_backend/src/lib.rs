@@ -14,7 +14,6 @@ mod user_module;
 mod vc_registration;
 
 use hub_organizer::{HubOrganizerRegistration, UniqueHubs};
-use user_module::{UserInformation, Role};
 use ic_cdk::api::caller;
 use leaderboard::{
     LeaderboardEntryForLikes, LeaderboardEntryForRatings, LeaderboardEntryForUpvote,
@@ -24,6 +23,7 @@ use project_registration::FilterCriteria;
 use requests::Request;
 use roles::{get_roles, RolesResponse};
 use std::collections::{HashMap, HashSet};
+use user_module::{Role, UserInformation};
 //use user_module::UserInformation;
 
 use ic_cdk::export_candid;
@@ -48,13 +48,11 @@ use crate::ratings::Rating;
 use admin::*;
 use candid::Principal;
 
-
-use ic_cdk_macros::{query, update, init};
-use project_registration::{ NotificationForOwner, NotificationProject, ProjectInfo, ProjectInfoInternal,TeamMember};
+use ic_cdk_macros::{init, query, update};
 use mentor::*;
-
-
-
+use project_registration::{
+    NotificationForOwner, NotificationProject, ProjectInfo, ProjectInfoInternal, TeamMember,
+};
 
 use rbac::{assign_roles_to_principal, has_required_role, UserRole};
 use register_user::{FounderInfo, FounderInfoInternal, ThirtyInfoFounder};
@@ -71,7 +69,7 @@ fn check_admin() {
 }
 
 #[init]
-fn init(){
+fn init() {
     user_module::initialize_roles();
     ic_cdk::println!("initialization done");
 }
@@ -157,16 +155,16 @@ fn update_founder_caller(updated_profile: FounderInfo) -> String {
 #[update]
 
 async fn register_project(params: ProjectInfo) -> String {
-    if has_required_role(&vec![UserRole::Project]) {
-        project_registration::create_project(params).await
-    } else {
-        "you hv n't registered as a user yet".to_string()
-    }
+    //if has_required_role(&vec![UserRole::Project]) {
+    project_registration::create_project(params).await
+    // } else {
+    //     "you hv n't registered as a user yet".to_string()
+    // }
     // assign_roles_to_principal(roles)
 }
 
 #[query]
-fn filter_out_projects(criteria: FilterCriteria)->Vec<ProjectInfo>{
+fn filter_out_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
     project_registration::filter_projects(criteria)
 }
 

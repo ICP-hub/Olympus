@@ -9,7 +9,7 @@ extern crate serde_cbor;
 use crate::admin::send_approval_request;
 use crate::trie::EXPERTISE_TRIE;
 
-use crate::user_module::{ROLE_STATUS_ARRAY, UserInformation};
+use crate::user_module::{UserInformation, ROLE_STATUS_ARRAY};
 use ic_cdk::api::time;
 use std::cell::RefCell;
 
@@ -93,6 +93,27 @@ pub async fn register_mentor(profile: MentorProfile) -> String {
         }
     });
 
+    let already_registered =
+        MENTOR_REGISTRY.with(|registry| registry.borrow().contains_key(&caller));
+
+    if already_registered {
+        ic_cdk::println!("This Principal is already registered");
+        return "This Principal is already registered.".to_string();
+    }
+
+    ROLE_STATUS_ARRAY.with(|role_status| {
+        let mut role_status = role_status.borrow_mut();
+
+        for role in role_status
+            .get_mut(&caller)
+            .expect("couldn't get role status for this principal")
+            .iter_mut()
+        {
+            if role.name == "mentor" {
+                role.status = "requested".to_string();
+            }
+        }
+    });
 
     match profile.validate() {
         Ok(_) => {
@@ -119,16 +140,6 @@ pub async fn register_mentor(profile: MentorProfile) -> String {
             );
 
             let res = send_approval_request().await;
-
-            ROLE_STATUS_ARRAY.with(|role_status| {
-                let mut role_status = role_status.borrow_mut();
-        
-                for role in role_status.get_mut(&caller).expect("couldn't get role status for this principal").iter_mut(){
-                    if role.name == "mentor"{
-                        role.status = "requested".to_string();
-                    }
-                }
-            });
 
             format!("{}", res)
         }
@@ -251,25 +262,30 @@ pub fn get_all_mentors() -> Vec<MentorProfile> {
 }
 
 pub fn make_active_inactive(p_id: Principal) -> String {
-    MENTOR_REGISTRY.with(|m_container| {
-        let mut tutor_hashmap = m_container.borrow_mut();
-        if let Some(mentor_internal) = tutor_hashmap.get_mut(&p_id) {
-            if mentor_internal.active {
-                let active = false;
-                mentor_internal.active = active;
+    let principal_id = caller();
+    if p_id == principal_id || ic_cdk::api::is_controller(&principal_id) {
+        MENTOR_REGISTRY.with(|m_container| {
+            let mut tutor_hashmap = m_container.borrow_mut();
+            if let Some(mentor_internal) = tutor_hashmap.get_mut(&p_id) {
+                if mentor_internal.active {
+                    let active = false;
+                    mentor_internal.active = active;
 
-                //ic_cdk::println!("mentor profile check status {:?}", mentor_internal);
-                return "made inactive".to_string();
+                    //ic_cdk::println!("mentor profile check status {:?}", mentor_internal);
+                    return "made inactive".to_string();
+                } else {
+                    let active = true;
+                    mentor_internal.active = active;
+                    //ic_cdk::println!("mentor profile check status {:?}", mentor_internal);
+                    return "made active".to_string();
+                }
             } else {
-                let active = true;
-                mentor_internal.active = active;
-                //ic_cdk::println!("mentor profile check status {:?}", mentor_internal);
-                return "made active".to_string();
+                "profile seems not to be existed".to_string()
             }
-        } else {
-            "profile seems not to be existed".to_string()
-        }
-    })
+        })
+    } else {
+        "you are not authorised to use this function".to_string()
+    }
 }
 
 pub fn find_mentors_by_expertise(expertise_keyword: &str) -> Vec<MentorProfile> {
