@@ -1,4 +1,6 @@
 use crate::mentor::MentorProfile;
+use crate::ratings::RatingSystem;
+use crate::roadmap_suggestion::Suggestion;
 use crate::user_module::UserInformation;
 use crate::vc_registration::VentureCapitalist;
 use crate::{
@@ -50,6 +52,22 @@ pub struct ProjectInfo {
     pub user_data: UserInformation,
     pub mentors_assigned: Option<Vec<MentorProfile>>,
     pub vc_assigned: Option<Vec<VentureCapitalist>>
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
+pub struct ProjectInfoForUser{
+    pub date_ofjoining: String,
+    pub mentor_associated: Option<Vec<MentorProfile>>,
+    pub vc_associated: Option<Vec<VentureCapitalist>>,
+    pub team_member_info: Option<Vec<TeamMember>>,
+    pub announcements: Option<Vec<Announcements>>,
+    pub reviews: Option<Suggestion>,
+    pub website_social_group: Option<String>,
+    pub live_link_of_project: Option<String>,
+    pub jobs_opportunity: Option<String>,
+    pub rank_of_project: Option<u64>,
+    pub area_of_focus: Option<String>,
+    pub country_of_project: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
