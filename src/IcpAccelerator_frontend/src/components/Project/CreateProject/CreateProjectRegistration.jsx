@@ -14,6 +14,7 @@ import CreateProjectPersonalInformation from "../CreateProjectPersonalInformatio
 import { useCountries } from "react-countries";
 import { userRegisteredHandlerRequest } from "../../StateManagement/Redux/Reducers/userRegisteredData";
 import CreateProjectsDetails from "./CreateProjectsDetails";
+import { bufferToImageBlob } from "../../Utils/formatter/bufferToImageBlob";
 const validationSchema = {
   personalDetails: yup.object().shape({
     full_name: yup
@@ -72,7 +73,7 @@ const CreateProjectRegistration = () => {
   const areaOfExpertise = useSelector(
     (currState) => currState.expertiseIn.expertise
   );
-  const userData = useSelector((currState) => currState.userData.data);
+  const userData = useSelector((currState) => currState.userData.data.Ok);
   const dispatch = useDispatch();
   const { countries } = useCountries();
 
@@ -92,6 +93,34 @@ const CreateProjectRegistration = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   console.log('userData',userData)
+
+  useEffect(() => {
+    if (userData) {
+      // Create an object that matches the form fields structure
+      const formData = {
+        full_name: userData.full_name || "",
+        email: userData.email?.[0] || "",
+        telegram_id: userData.telegram_id?.[0] || "",
+        twitter_id: userData.twitter_id?.[0] || "",
+        openchat_username: userData.openchat_username?.[0] || "",
+        bio: userData.bio?.[0] || "",
+        country: userData.country || "",
+        area_of_intrest: userData.area_of_intrest || "",
+      };
+
+      // If there is a mentor_image, handle its conversion and set it separately if needed
+      if (userData.profile_picture) {
+        bufferToImageBlob(userData?.profile_picture)
+          .then((imageUrl) => {
+            setImagePreview(imageUrl);
+            setFormData({ imageData: userData.profile_picture });
+            // You might also need to handle setting the image for display if required
+          })
+          .catch((error) => console.error("Error converting image:", error));
+      }
+      reset(formData);
+    }
+  }, [userData]);
 
   const getTabClassName = (tab) => {
     return `inline-block p-2 font-bold ${
@@ -122,6 +151,7 @@ const CreateProjectRegistration = () => {
     trigger,
     setError,
     clearErrors,
+    reset,
     control,
   } = useForm({
     resolver: yupResolver(currentValidationSchema),

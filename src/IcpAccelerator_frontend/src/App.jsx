@@ -40,6 +40,7 @@ import Adminoption from "./components/Admindashboard/Adminoption";
 import Admingraph from "./components/Admindashboard/Admingraph";
 import AdminDashboard from "./components/Admindashboard/AdminDashboard";
 import { getCurrentRoleStatusRequestHandler } from "./components/StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
+import { userRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/userRegisteredData";
 
 const App = () => {
   const identity = useSelector((currState) => currState.internet.identity);
@@ -81,6 +82,10 @@ const App = () => {
   useEffect(() => {
     dispatch(areaOfExpertiseHandlerRequest());
   }, [isAuthenticated, identity, dispatch]);
+
+  useEffect(() => {
+    dispatch(userRegisteredHandlerRequest());
+  }, [isAuthenticated, dispatch]);
 
   useEffect(() => {
     // console.log("specific role inside effect of app 1", specificRole);

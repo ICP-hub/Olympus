@@ -39,24 +39,27 @@ export const projectPersonalInformation = [
   }
 ];
 
-export  const projectDetails = [
+export const projectDetails = [
     {
       id: 'project_name',
       label: 'Project Name',
       type: 'text',
       placeholder: 'Enter the project name',
+      name: "project_name"
     },
     {
       id: 'project_url',
       label: 'Project URL',
       type: 'text',
       placeholder: 'Enter the project URL',
+      name: "project_url"
     },
     {
       id: 'project_description',
       label: 'Project Description',
       type: 'textarea',
       placeholder: 'Enter the project description',
+      name: "project_description"
     },
   ];
 
