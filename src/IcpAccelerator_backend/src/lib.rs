@@ -285,7 +285,7 @@ async fn register_mentor_candid(profile: MentorProfile) -> String {
 
     assign_roles_to_principal(roles_to_assign);
 
-    "request has been made to mentor".to_string()
+    "request has been made to admin".to_string()
 }
 
 #[query]
