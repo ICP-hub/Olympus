@@ -105,25 +105,21 @@ pub async fn get_user_information_using_uid(uid: String) -> Result<UserInformati
 }
 
 #[update]
-
 pub async fn register_user(profile: UserInformation) -> String {
     user_module::register_user_role(profile).await
 }
 
 #[query]
-
 pub fn get_user_information() -> Result<UserInformation, &'static str> {
     user_module::get_user_info()
 }
 
 #[query]
-
 pub fn get_all_users_information() -> Vec<UserInformation> {
     user_module::list_all_users()
 }
 
 #[update]
-
 pub fn make_user_inactive() -> String {
     user_module::delete_user()
 }
