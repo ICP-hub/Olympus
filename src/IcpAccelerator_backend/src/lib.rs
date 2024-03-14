@@ -21,6 +21,7 @@ use leaderboard::{
 };
 use project_like::LikeRecord;
 use project_registration::FilterCriteria;
+use ratings::RatingAverages;
 use requests::Request;
 use roles::{get_roles, RolesResponse};
 use std::collections::{HashMap, HashSet};
@@ -107,25 +108,21 @@ pub async fn get_user_information_using_uid(uid: String) -> Result<UserInformati
 }
 
 #[update]
-
 pub async fn register_user(profile: UserInformation) -> String {
     user_module::register_user_role(profile).await
 }
 
 #[query]
-
 pub fn get_user_information() -> Result<UserInformation, &'static str> {
     user_module::get_user_info()
 }
 
 #[query]
-
 pub fn get_all_users_information() -> Vec<UserInformation> {
     user_module::list_all_users()
 }
 
 #[update]
-
 pub fn make_user_inactive() -> String {
     user_module::delete_user()
 }
@@ -483,7 +480,7 @@ fn update_rating_api(rating: Vec<Rating>) {
 
 #[query]
 
-fn calculate_average_api(project_id: String) -> Option<f64> {
+fn calculate_average_api(project_id: String) -> RatingAverages {
     ratings::calculate_average(&project_id)
 }
 

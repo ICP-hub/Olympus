@@ -22,7 +22,7 @@ import { userRoleHandler } from "../../StateManagement/Redux/Reducers/userRoleRe
 import CompressedImage from "../../ImageCompressed/CompressedImage";
 import DetailHeroSection from "../../Common/DetailHeroSection";
 import Mentor from "../../../../assets/images/mentorRegistration.png";
-
+import { bufferToImageBlob } from "../../Utils/formatter/bufferToImageBlob";
 
 const validationSchema = {
   userDetails: yup.object().shape({
@@ -236,6 +236,38 @@ const InvestorRegistration = () => {
   const [profileImage, setProfileImage] = useState(null);
   const [venture_image, setVenture_image] = useState(null);
 
+  const userData = useSelector((currState) => currState.userData.data.Ok);
+
+  useEffect(() => {
+    if (userData) {
+      // Create an object that matches the form fields structure
+      const formData = {
+        full_name: userData.full_name || "",
+        email: userData.email?.[0] || "",
+        telegram_id: userData.telegram_id?.[0] || "",
+        twitter_id: userData.twitter_id?.[0] || "",
+        openchat_username: userData.openchat_username?.[0] || "",
+        bio: userData.bio?.[0] || "",
+        country: userData.country || "",
+        area_of_intrest: userData.area_of_intrest || "",
+      };
+
+      // If there is a mentor_image, handle its conversion and set it separately if needed
+      if (userData.profile_picture) {
+        bufferToImageBlob(userData?.profile_picture)
+          .then((imageUrl) => {
+            setProfileImage(imageUrl);
+            setFormData({ venture_image: userData.profile_picture[0] });
+            // You might also need to handle setting the image for display if required
+          })
+          .catch((error) => console.error("Error converting image:", error));
+      }
+
+      // Use the reset function to populate the form
+      reset(formData);
+    }
+  }, [userData]);
+
   const getTabClassName = (tab) => {
     return `inline-block p-2 font-bold ${
       activeTab === tab
@@ -297,7 +329,7 @@ const InvestorRegistration = () => {
     const fieldsToValidate = steps[step].fields.map((field) => field.name);
     const result = await trigger(fieldsToValidate);
     if (result) {
-      if (!image && !formData.logo) {
+      if (!image && !formData.venture_image) {
         alert("Please upload a profile image.");
         return;
       }
@@ -381,7 +413,7 @@ const InvestorRegistration = () => {
         // console.log('result', result)
         // navigate('/');
         window.location.href = "/";
-      })
+      });
       // }
 
       console.log("investor data registered in backend");
@@ -401,13 +433,12 @@ const InvestorRegistration = () => {
 
     if (step < steps.length - 1) {
       handleNext();
-    } 
+    }
     // else if (
     //   specificRole !== null ||
     //   (undefined && step > steps.length - 1)
     // ) {
-      // console.log("exisiting user visit ");
-
+    // console.log("exisiting user visit ");
 
     //   const interestInBoardPosition =
     //     updatedFormData.existing_icp_investor === "true" ? true : false;
@@ -455,13 +486,11 @@ const InvestorRegistration = () => {
     //   setInvestorDataObject(tempObj2);
     //   await sendingInvestorData(tempObj2);
     // }
-     else 
     //  (
-      // specificRole === null ||
-      // (step > steps.length - 1)
-    // ) 
-    {
-
+    // specificRole === null ||
+    // (step > steps.length - 1)
+    // )
+    else {
       // console.log("first time visit ");
 
       const interestInBoardPosition =
@@ -481,27 +510,30 @@ const InvestorRegistration = () => {
           openchat_username: [updatedFormData.openchat_username],
           email: [updatedFormData.email],
           full_name: updatedFormData.full_name,
-          profile_picture: [logo],
+          profile_picture: [updatedFormData.venture_image],
         },
         average_check_size: Number(updatedFormData.average_check_size),
         existing_icp_investor: interestInBoardPosition,
         registered_under_any_hub: [updatedregisteredUnderAnyHub],
         money_invested: Number(updatedFormData.money_invested),
-        project_on_multichain: [updatedFormData.project_on_multichain],
+        project_on_multichain: updatedFormData.project_on_multichain ? [updatedFormData.project_on_multichain] : [],
         reason_for_joining: updatedFormData.reason_for_joining,
         announcement_details: updatedFormData.announcement_details,
         name_of_fund: updatedFormData.name_of_fund,
         existing_icp_portfolio: updatedFormData.existing_icp_portfolio,
-        number_of_portfolio_companies:updatedFormData.number_of_portfolio_companies,
+        number_of_portfolio_companies:
+          updatedFormData.number_of_portfolio_companies,
         portfolio_link: updatedFormData.portfolio_link,
         preferred_icp_hub: updatedFormData.preferred_icp_hub,
         type_of_investment: updatedFormData.type_of_investment,
         category_of_investment: updatedFormData.category_of_investment,
-        preferred_investment_sectors: [updatedFormData.preferred_investment_sectors],
+        preferred_investment_sectors: [
+          updatedFormData.preferred_investment_sectors,
+        ],
         investor_type: updatedFormData.investor_type,
         fund_size: Number(updatedFormData.fund_size),
         assets_under_management: updatedFormData.assets_under_management,
-        logo: [logo],
+        logo: logo ? [logo] : [],
       };
       setInvestorDataObject(tempObj);
       await sendingInvestorData(tempObj);
@@ -517,13 +549,13 @@ const InvestorRegistration = () => {
       <InvestorAdditionalInformation isSubmitting={isSubmitting} />
     );
   }
-  const HeroImage =(
+  const HeroImage = (
     <img
       src={Mentor}
       alt="Astronaut"
       className={`z-20 w-[500px] md:w-[300px] sm:w-[250px] sxs:w-[260px] md:h-56 relative  sxs:-right-3 right-16 md:right-0 sm:right-0 top-10`}
     />
-  )
+  );
   return (
     <>
       <DetailHeroSection HeroImage={HeroImage} />
@@ -670,13 +702,13 @@ const InvestorRegistration = () => {
                     <option className="text-lg font-bold" value="">
                       Select your area of interest
                     </option>
-                    {areaOfExpertise?.map((hub) => (
+                    {areaOfExpertise?.map((intrest) => (
                       <option
-                        key={hub.id}
-                        value={`${hub.name} ,${hub.region}`}
+                        key={intrest.id}
+                        value={`${intrest.name}`}
                         className="text-lg font-bold"
                       >
-                        {hub.name} , {hub.region}
+                        {intrest.name}
                       </option>
                     ))}
                   </select>
