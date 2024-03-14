@@ -77,7 +77,6 @@ impl VentureCapitalist {
     }
 }
 
-
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct VentureCapitalistInternal {
     pub params: VentureCapitalist,
@@ -149,6 +148,7 @@ pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::
         {
             if role.name == "vc" {
                 role.status = "requested".to_string();
+                role.requested_on = Some(time());
             }
         }
     });
@@ -177,11 +177,21 @@ pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::
                         '_,
                         HashMap<Principal, VentureCapitalistInternal>,
                     > = awaiters.borrow_mut();
-                    await_ers.insert(caller, new_vc);
+                    await_ers.insert(caller, new_vc.clone());
                 },
             );
 
-            let res = send_approval_request().await;
+            let res = send_approval_request(
+                params
+                    .user_data
+                    .profile_picture
+                    .unwrap_or_else(|| Vec::new()),
+                params.user_data.full_name,
+                params.user_data.country,
+                params.category_of_investment,
+                "vc".to_string(),
+            )
+            .await;
 
             format!("{}", res)
 
@@ -215,14 +225,8 @@ pub fn get_vc_info() -> Option<VentureCapitalist> {
 }
 
 #[query]
-pub fn list_all_vcs() -> Vec<VentureCapitalist> {
-    VENTURECAPITALIST_STORAGE.with(|storage| {
-        storage
-            .borrow()
-            .values()
-            .map(|vc_internal| vc_internal.params.clone())
-            .collect()
-    })
+pub fn list_all_vcs() -> HashMap<Principal, VentureCapitalistInternal> {
+    VENTURECAPITALIST_STORAGE.with(|storage| storage.borrow().clone())
 }
 
 #[update]
@@ -270,11 +274,21 @@ pub async fn update_venture_capitalist(params: VentureCapitalist) -> String {
         |awaiters: &RefCell<HashMap<Principal, VentureCapitalist>>| {
             let mut await_ers: std::cell::RefMut<'_, HashMap<Principal, VentureCapitalist>> =
                 awaiters.borrow_mut();
-            await_ers.insert(caller, params);
+            await_ers.insert(caller, params.clone());
         },
     );
 
-    let res = send_approval_request().await;
+    let res = send_approval_request(
+        params
+            .user_data
+            .profile_picture
+            .unwrap_or_else(|| Vec::new()),
+        params.user_data.full_name,
+        params.user_data.country,
+        params.category_of_investment,
+        "vc".to_string(),
+    )
+    .await;
 
     format!("{}", res)
 }

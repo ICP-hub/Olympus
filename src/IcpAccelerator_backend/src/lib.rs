@@ -13,7 +13,7 @@ mod upvotes;
 mod user_module;
 mod vc_registration;
 
-use crate::project_registration::ProjectUpdateRequest;
+use crate::project_registration::*;
 use hub_organizer::{HubOrganizerRegistration, UniqueHubs};
 use ic_cdk::api::caller;
 use leaderboard::{
@@ -89,8 +89,12 @@ fn decline_mentor_creation_request_candid(requester: Principal, decline: bool) -
 }
 
 #[update]
-fn approve_project_details_updation_request(requester: Principal,project_id: String, approve: bool)->String{
-    admin::approve_project_update(requester,project_id, approve)
+fn approve_project_details_updation_request(
+    requester: Principal,
+    project_id: String,
+    approve: bool,
+) -> String {
+    admin::approve_project_update(requester, project_id, approve)
 }
 
 #[query]
@@ -370,12 +374,6 @@ async fn register_venture_capitalist_caller(params: VentureCapitalist) -> String
 
 fn get_venture_capitalist_info() -> Option<VentureCapitalist> {
     vc_registration::get_vc_info()
-}
-
-#[query]
-
-fn list_all_venture_capitalist() -> Vec<VentureCapitalist> {
-    vc_registration::list_all_vcs()
 }
 
 #[update]
