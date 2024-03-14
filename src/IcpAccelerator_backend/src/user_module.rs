@@ -1,12 +1,12 @@
 use candid::{CandidType, Principal};
 use ic_cdk::api::caller;
 use ic_cdk::api::management_canister::main::raw_rand;
-use ic_cdk_macros::{init, query, update};
+use ic_cdk::api::time;
+use ic_cdk_macros::*;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::cell::RefCell;
 use std::collections::HashMap;
-
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
 pub struct UserInformation {
     pub full_name: String,
@@ -30,7 +30,10 @@ pub struct UserInfoInternal {
 #[derive(CandidType, Clone)]
 pub struct Role {
     pub name: String,
-    pub status: String,  
+    pub status: String,
+    pub requested_on: Option<u64>,
+    pub approved_on: Option<u64>,
+    pub rejected_on: Option<u64>,
 }
 
 #[derive(CandidType, Clone)]
@@ -46,9 +49,7 @@ thread_local! {
     pub static ROLE_STATUS_ARRAY : RefCell<HashMap<Principal, Vec<Role>>> = RefCell::new(HashMap::new());
 }
 
-
-
-pub fn initialize_roles(){
+pub fn initialize_roles() {
     let caller = caller();
 
     ic_cdk::println!("inside initialize func ");
@@ -57,39 +58,45 @@ pub fn initialize_roles(){
         Role {
             name: "user".to_string(),
             status: "default".to_string(),
+            requested_on: None,
+            approved_on: Some(time()),
+            rejected_on: None,
         },
         Role {
             name: "project".to_string(),
             status: "default".to_string(),
+            requested_on: None,
+            approved_on: None,
+            rejected_on: None,
         },
         Role {
             name: "mentor".to_string(),
             status: "default".to_string(),
+            requested_on: None,
+            approved_on: None,
+            rejected_on: None,
         },
         Role {
             name: "vc".to_string(),
             status: "default".to_string(),
+            requested_on: None,
+            approved_on: None,
+            rejected_on: None,
         },
     ];
 
     ROLE_STATUS_ARRAY.with(|roles_arr| {
         let mut arr = roles_arr.borrow_mut();
-        if arr.contains_key(&caller){
+        if arr.contains_key(&caller) {
             ic_cdk::println!("role status is already assigned")
-        }else{
+        } else {
             arr.insert(caller, initial_roles);
             ic_cdk::println!("default role are assigned")
         }
-        
     })
-
 }
 
-
-
-
 pub async fn register_user_role(info: UserInformation) -> std::string::String {
-
     initialize_roles();
 
     if info.full_name.trim().is_empty()
@@ -100,7 +107,7 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
     {
         return "Please provide input for required fields: full_name and email.".to_string();
     }
-    
+
     let caller = caller();
     let uuids = raw_rand().await.unwrap().0;
     let uid = format!("{:x}", Sha256::digest(&uuids));
@@ -120,7 +127,7 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
             storage.insert(caller, user_info_internal);
         }
     });
-    
+
     ROLE_STATUS_ARRAY.with(|role_status| {
         let mut role_status = role_status.borrow_mut();
 
@@ -152,9 +159,9 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
 //         }else{
 //             r.borrow().get(&caller()).expect("couldn't get role status array").clone();
 //         }
-        
+
 //     }
-        
+
 //  )
 // }
 
@@ -162,16 +169,39 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
 pub fn get_role_status() -> Vec<Role> {
     ROLE_STATUS_ARRAY.with(|r| {
         let role_status_map = r.borrow();
-        
-        
+
         if let Some(role_status) = role_status_map.get(&caller()) {
             role_status.clone()
         } else {
             vec![
-                Role { name: "user".to_string(), status: "default".to_string() },
-                Role { name: "project".to_string(), status: "default".to_string() },
-                Role { name: "mentor".to_string(), status: "default".to_string() },
-                Role { name: "vc".to_string(), status: "default".to_string() },
+                Role {
+                    name: "user".to_string(),
+                    status: "default".to_string(),
+                    requested_on: None,
+                    approved_on: None,
+                    rejected_on: None,
+                },
+                Role {
+                    name: "project".to_string(),
+                    status: "default".to_string(),
+                    requested_on: None,
+                    approved_on: None,
+                    rejected_on: None,
+                },
+                Role {
+                    name: "mentor".to_string(),
+                    status: "default".to_string(),
+                    requested_on: None,
+                    approved_on: None,
+                    rejected_on: None,
+                },
+                Role {
+                    name: "vc".to_string(),
+                    status: "default".to_string(),
+                    requested_on: None,
+                    approved_on: None,
+                    rejected_on: None,
+                },
             ]
         }
     })
@@ -184,10 +214,10 @@ pub fn get_role_status() -> Vec<Role> {
 //         let status_vec = status_arr.get(&caller()).expect("unable to get a role status for this principal");
 
 //         if status == "active" {
-//             for 
-//         } 
+//             for
+//         }
 
-//     }); 
+//     });
 // }
 
 #[update]
@@ -228,7 +258,6 @@ pub fn switch_role(role_to_switch: String, new_status: String) {
     });
 }
 
-
 // pub fn switch_role(role: String, new_status: String) {
 //     ROLE_STATUS_ARRAY.with(|status_arr| {
 //         let mut status_arr = status_arr.borrow_mut();
@@ -262,7 +291,6 @@ pub fn switch_role(role_to_switch: String, new_status: String) {
 //         }
 //     });
 // }
-
 
 pub fn get_user_info() -> Result<UserInformation, &'static str> {
     let caller = caller();
