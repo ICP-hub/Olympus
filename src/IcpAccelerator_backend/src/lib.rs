@@ -13,8 +13,8 @@ mod upvotes;
 mod user_module;
 mod vc_registration;
 
+use crate::project_registration::ProjectUpdateRequest;
 use hub_organizer::{HubOrganizerRegistration, UniqueHubs};
-use user_module::{UserInformation, Role};
 use ic_cdk::api::caller;
 use leaderboard::{
     LeaderboardEntryForLikes, LeaderboardEntryForRatings, LeaderboardEntryForUpvote,
@@ -24,6 +24,7 @@ use project_registration::FilterCriteria;
 use requests::Request;
 use roles::{get_roles, RolesResponse};
 use std::collections::{HashMap, HashSet};
+use user_module::{Role, UserInformation};
 //use user_module::UserInformation;
 
 use ic_cdk::export_candid;
@@ -48,13 +49,11 @@ use crate::ratings::Rating;
 use admin::*;
 use candid::Principal;
 
-
-use ic_cdk_macros::{query, update, init};
-use project_registration::{ NotificationForOwner, NotificationProject, ProjectInfo, ProjectInfoInternal,TeamMember};
+use ic_cdk_macros::{init, query, update};
 use mentor::*;
-
-
-
+use project_registration::{
+    NotificationForOwner, NotificationProject, ProjectInfo, ProjectInfoInternal, TeamMember,
+};
 
 use rbac::{assign_roles_to_principal, has_required_role, UserRole};
 use register_user::{FounderInfo, FounderInfoInternal, ThirtyInfoFounder};
@@ -71,21 +70,26 @@ fn check_admin() {
 }
 
 #[init]
-fn init(){
+fn init() {
     user_module::initialize_roles();
     ic_cdk::println!("initialization done");
 }
 
 #[update]
 fn approve_mentor_creation_request_candid(requester: Principal, approve: bool) -> String {
-    check_admin();
+    // check_admin();
     approve_mentor_creation_request(requester, approve)
 }
 
 #[update]
 fn decline_mentor_creation_request_candid(requester: Principal, decline: bool) -> String {
-    check_admin();
+    // check_admin();
     decline_mentor_creation_request(requester, decline)
+}
+
+#[update]
+fn approve_project_details_updation_request(requester: Principal,project_id: String, approve: bool)->String{
+    admin::approve_project_update(requester,project_id, approve)
 }
 
 #[query]
@@ -157,16 +161,16 @@ fn update_founder_caller(updated_profile: FounderInfo) -> String {
 #[update]
 
 async fn register_project(params: ProjectInfo) -> String {
-    if has_required_role(&vec![UserRole::Project]) {
-        project_registration::create_project(params).await
-    } else {
-        "you hv n't registered as a user yet".to_string()
-    }
+    //if has_required_role(&vec![UserRole::Project]) {
+    project_registration::create_project(params).await
+    // } else {
+    //     "you hv n't registered as a user yet".to_string()
+    // }
     // assign_roles_to_principal(roles)
 }
 
 #[query]
-fn filter_out_projects(criteria: FilterCriteria)->Vec<ProjectInfo>{
+fn filter_out_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
     project_registration::filter_projects(criteria)
 }
 
@@ -186,9 +190,9 @@ fn list_all_projects() -> Vec<ProjectInfo> {
 }
 
 #[update]
-fn update_project(project_id: String, updated_project: ProjectInfo) -> String {
+async fn update_project(project_id: String, updated_project: ProjectInfo) -> String {
     if has_required_role(&vec![UserRole::Project]) {
-        project_registration::update_project(project_id, updated_project)
+        project_registration::update_project(project_id, updated_project).await
     } else {
         "you are not supposed to change someone profile".to_string()
     }
@@ -285,7 +289,7 @@ async fn register_mentor_candid(profile: MentorProfile) -> String {
 
     assign_roles_to_principal(roles_to_assign);
 
-    "request has been made to mentor".to_string()
+    "request has been made to admin".to_string()
 }
 
 #[query]
@@ -297,18 +301,6 @@ fn get_mentor_candid() -> Option<MentorProfile> {
 #[update]
 fn delete_mentor_candid() -> String {
     mentor::delete_mentor()
-}
-
-#[update]
-
-fn update_mentor_profile(updated_profile: MentorProfile) -> String {
-    let required_roles = [UserRole::Mentor];
-
-    if has_required_role(&required_roles) {
-        mentor::update_mentor(updated_profile)
-    } else {
-        "I am sorry, you don't hv access to this function!".to_string()
-    }
 }
 
 #[update]

@@ -9,7 +9,8 @@ extern crate serde_cbor;
 use crate::admin::send_approval_request;
 use crate::trie::EXPERTISE_TRIE;
 
-use crate::user_module::{ROLE_STATUS_ARRAY, UserInformation};
+use crate::user_module::{UserInformation, ROLE_STATUS_ARRAY};
+use ic_cdk::api::time;
 use std::cell::RefCell;
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, Default, PartialEq)]
@@ -52,6 +53,7 @@ impl MentorProfile {
 }
 
 pub type MentorRegistry = HashMap<Principal, MentorInternal>;
+pub type MentorParams = HashMap<Principal, MentorProfile>;
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, Default)]
 pub struct MentorInternal {
@@ -62,10 +64,23 @@ pub struct MentorInternal {
     pub decline: bool,
 }
 
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+pub struct MAnnouncements {
+    project_name: String,
+    announcement_message: String,
+    timestamp: u64,
+}
+
+pub type MentorAnnouncements = HashMap<Principal, Vec<MAnnouncements>>;
+
 thread_local! {
     pub static MENTOR_REGISTRY: RefCell<MentorRegistry> = RefCell::new(MentorRegistry::new());
     pub static MENTOR_AWAITS_RESPONSE: RefCell<MentorRegistry> = RefCell::new(MentorRegistry::new());
     pub static DECLINED_MENTOR_REQUESTS: RefCell<MentorRegistry> = RefCell::new(MentorRegistry::new());
+    pub static MENTOR_PROFILE_EDIT_AWAITS :RefCell<MentorParams> = RefCell::new(MentorParams::new());
+    pub static DECLINED_MENTOR_PROFILE_EDIT_REQUEST :RefCell<MentorParams> = RefCell::new(MentorParams::new());
+    pub static MENTOR_ANNOUNCEMENTS:RefCell<MentorAnnouncements> = RefCell::new(MentorAnnouncements::new());
+
 }
 
 pub async fn register_mentor(profile: MentorProfile) -> String {
@@ -78,6 +93,27 @@ pub async fn register_mentor(profile: MentorProfile) -> String {
         }
     });
 
+    let already_registered =
+        MENTOR_REGISTRY.with(|registry| registry.borrow().contains_key(&caller));
+
+    if already_registered {
+        ic_cdk::println!("This Principal is already registered");
+        return "This Principal is already registered.".to_string();
+    }
+
+    ROLE_STATUS_ARRAY.with(|role_status| {
+        let mut role_status = role_status.borrow_mut();
+
+        for role in role_status
+            .get_mut(&caller)
+            .expect("couldn't get role status for this principal")
+            .iter_mut()
+        {
+            if role.name == "mentor" {
+                role.status = "requested".to_string();
+            }
+        }
+    });
 
     match profile.validate() {
         Ok(_) => {
@@ -104,16 +140,6 @@ pub async fn register_mentor(profile: MentorProfile) -> String {
             );
 
             let res = send_approval_request().await;
-
-            ROLE_STATUS_ARRAY.with(|role_status| {
-                let mut role_status = role_status.borrow_mut();
-        
-                for role in role_status.get_mut(&caller).expect("couldn't get role status for this principal").iter_mut(){
-                    if role.name == "mentor"{
-                        role.status = "requested".to_string();
-                    }
-                }
-            });
 
             format!("{}", res)
         }
@@ -143,44 +169,75 @@ pub fn get_mentor() -> Option<MentorProfile> {
             .map(|mentor_internal| mentor_internal.profile.clone())
     })
 }
-
-pub fn update_mentor(updated_profile: MentorProfile) -> String {
+#[update]
+pub async fn update_mentor(updated_profile: MentorProfile) -> String {
     let caller = caller();
-    let result = MENTOR_REGISTRY.with(|registry| {
-        let mut registry = registry.borrow_mut();
-        if let Some(mentor_internal) = registry.get_mut(&caller) {
-            mentor_internal.profile.preferred_icp_hub = updated_profile
-                .preferred_icp_hub
-                .or(mentor_internal.profile.preferred_icp_hub.clone());
 
-            mentor_internal.profile.multichain = updated_profile
-                .multichain
-                .or(mentor_internal.profile.multichain.clone());
-            mentor_internal.profile.exisitng_icp_project_porfolio = updated_profile
-                .exisitng_icp_project_porfolio
-                .or(mentor_internal
-                    .profile
-                    .exisitng_icp_project_porfolio
-                    .clone());
-
-            mentor_internal.profile.area_of_expertise = updated_profile.area_of_expertise;
-            mentor_internal.profile.category_of_mentoring_service =
-                updated_profile.category_of_mentoring_service;
-
-            mentor_internal.profile.existing_icp_mentor = updated_profile.existing_icp_mentor;
-            mentor_internal.profile.icop_hub_or_spoke = updated_profile.icop_hub_or_spoke;
-            mentor_internal.profile.social_link = updated_profile.social_link;
-            mentor_internal.profile.website = updated_profile.website;
-            mentor_internal.profile.years_of_mentoring = updated_profile.years_of_mentoring;
-            mentor_internal.profile.reason_for_joining = updated_profile.reason_for_joining;
-            mentor_internal.profile.user_data = updated_profile.user_data;
-
-            "Mentor profile updated successfully.".to_string()
-        } else {
-            "Mentor profile not found.".to_string()
+    DECLINED_MENTOR_PROFILE_EDIT_REQUEST.with(|d_mentor| {
+        let exits = d_mentor.borrow().contains_key(&caller);
+        if exits {
+            panic!("You had got your request declined earlier");
         }
     });
-    result
+    let already_registered =
+        MENTOR_REGISTRY.with(|registry| registry.borrow().contains_key(&caller));
+
+    if !already_registered {
+        ic_cdk::println!("This Principal is not registered");
+        return "This Principal is not registered.".to_string();
+    }
+
+    let profile_edit_request_already_sent =
+        MENTOR_PROFILE_EDIT_AWAITS.with(|registry| registry.borrow().contains_key(&caller));
+    if profile_edit_request_already_sent {
+        ic_cdk::println!("Wait for your previous request to get approved");
+        return "Wait for your previous request to get approved. ".to_string();
+    }
+
+    MENTOR_PROFILE_EDIT_AWAITS.with(|awaiters: &RefCell<HashMap<Principal, MentorProfile>>| {
+        let mut await_ers: std::cell::RefMut<'_, HashMap<Principal, MentorProfile>> =
+            awaiters.borrow_mut();
+        await_ers.insert(caller, updated_profile);
+    });
+
+    let res = send_approval_request().await;
+
+    format!("{}", res)
+
+    // let result = MENTOR_REGISTRY.with(|registry| {
+    //     let mut registry = registry.borrow_mut();
+    //     if let Some(mentor_internal) = registry.get_mut(&caller) {
+    //         mentor_internal.profile.preferred_icp_hub = updated_profile
+    //             .preferred_icp_hub
+    //             .or(mentor_internal.profile.preferred_icp_hub.clone());
+
+    //         mentor_internal.profile.multichain = updated_profile
+    //             .multichain
+    //             .or(mentor_internal.profile.multichain.clone());
+    //         mentor_internal.profile.exisitng_icp_project_porfolio = updated_profile
+    //             .exisitng_icp_project_porfolio
+    //             .or(mentor_internal
+    //                 .profile
+    //                 .exisitng_icp_project_porfolio
+    //                 .clone());
+
+    //         mentor_internal.profile.area_of_expertise = updated_profile.area_of_expertise;
+    //         mentor_internal.profile.category_of_mentoring_service =
+    //             updated_profile.category_of_mentoring_service;
+
+    //         mentor_internal.profile.existing_icp_mentor = updated_profile.existing_icp_mentor;
+    //         mentor_internal.profile.icop_hub_or_spoke = updated_profile.icop_hub_or_spoke;
+    //         mentor_internal.profile.social_link = updated_profile.social_link;
+    //         mentor_internal.profile.website = updated_profile.website;
+    //         mentor_internal.profile.years_of_mentoring = updated_profile.years_of_mentoring;
+    //         mentor_internal.profile.reason_for_joining = updated_profile.reason_for_joining;
+    //         mentor_internal.profile.user_data = updated_profile.user_data;
+
+    //         "Mentor profile updated successfully.".to_string()
+    //     } else {
+    //         "Mentor profile not found.".to_string()
+    //     }
+    // });
 }
 
 pub fn delete_mentor() -> String {
@@ -205,25 +262,30 @@ pub fn get_all_mentors() -> Vec<MentorProfile> {
 }
 
 pub fn make_active_inactive(p_id: Principal) -> String {
-    MENTOR_REGISTRY.with(|m_container| {
-        let mut tutor_hashmap = m_container.borrow_mut();
-        if let Some(mentor_internal) = tutor_hashmap.get_mut(&p_id) {
-            if mentor_internal.active {
-                let active = false;
-                mentor_internal.active = active;
+    let principal_id = caller();
+    if p_id == principal_id || ic_cdk::api::is_controller(&principal_id) {
+        MENTOR_REGISTRY.with(|m_container| {
+            let mut tutor_hashmap = m_container.borrow_mut();
+            if let Some(mentor_internal) = tutor_hashmap.get_mut(&p_id) {
+                if mentor_internal.active {
+                    let active = false;
+                    mentor_internal.active = active;
 
-                //ic_cdk::println!("mentor profile check status {:?}", mentor_internal);
-                return "made inactive".to_string();
+                    //ic_cdk::println!("mentor profile check status {:?}", mentor_internal);
+                    return "made inactive".to_string();
+                } else {
+                    let active = true;
+                    mentor_internal.active = active;
+                    //ic_cdk::println!("mentor profile check status {:?}", mentor_internal);
+                    return "made active".to_string();
+                }
             } else {
-                let active = true;
-                mentor_internal.active = active;
-                //ic_cdk::println!("mentor profile check status {:?}", mentor_internal);
-                return "made active".to_string();
+                "profile seems not to be existed".to_string()
             }
-        } else {
-            "profile seems not to be existed".to_string()
-        }
-    })
+        })
+    } else {
+        "you are not authorised to use this function".to_string()
+    }
 }
 
 pub fn find_mentors_by_expertise(expertise_keyword: &str) -> Vec<MentorProfile> {
@@ -241,4 +303,32 @@ pub fn find_mentors_by_expertise(expertise_keyword: &str) -> Vec<MentorProfile> 
     });
 
     mentor_profiles
+}
+
+#[update]
+pub fn add_mentor_announcement(name: String, announcement_message: String) -> String {
+    let caller_id = caller();
+
+    let current_time = time();
+
+    MENTOR_ANNOUNCEMENTS.with(|state| {
+        let mut state = state.borrow_mut();
+        let new_vc = MAnnouncements {
+            project_name: name,
+            announcement_message: announcement_message,
+            timestamp: current_time,
+        };
+
+        state.entry(caller_id).or_insert_with(Vec::new).push(new_vc);
+        format!("Announcement added successfully at {}", current_time)
+    })
+}
+
+//for testing purpose
+#[query]
+pub fn get_mentor_announcements() -> HashMap<Principal, Vec<MAnnouncements>> {
+    MENTOR_ANNOUNCEMENTS.with(|state| {
+        let state = state.borrow();
+        state.clone()
+    })
 }
