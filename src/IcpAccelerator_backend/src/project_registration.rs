@@ -58,6 +58,41 @@ pub struct ProjectInfo {
     pub mentors_assigned: Option<Vec<MentorProfile>>,
     pub vc_assigned: Option<Vec<VentureCapitalist>>,
 }
+impl ProjectInfo {
+    fn validate(&self) -> Result<(), String> {
+        if self.project_name.is_empty() {
+            return Err("Project name is required".into());
+        }
+        if self.project_area_of_focus.is_empty() {
+            return Err("Project area of focus is required".into());
+        }
+        if self.promotional_video.is_empty() {
+            return Err("Promotional video URL is required".into());
+        }
+        if self.github_link.is_empty() {
+            return Err("GitHub link is required".into());
+        }
+        if self.reason_to_join_incubator.is_empty() {
+            return Err("Reason to join incubator is required".into());
+        }
+        if self.project_description.is_empty() {
+            return Err("Project description is required".into());
+        }
+        if self.token_economics.is_empty() {
+            return Err("Token economics is required".into());
+        }
+        if self.technical_docs.is_empty() {
+            return Err("Technical documentation URL is required".into());
+        }
+        if self.long_term_goals.is_empty() {
+            return Err("Long-term goals are required".into());
+        }
+        if self.target_market.is_empty() {
+            return Err("Target market is required".into());
+        }
+        Ok(())
+    }
+}
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct ProjectInfoForUser {
@@ -196,70 +231,83 @@ pub fn pre_upgrade() {
 // }
 
 pub async fn create_project(info: ProjectInfo) -> String {
-    let caller = caller();
+    // Validate the project info
+    match info.validate() {
+        Ok(()) => {
+            // Validation succeeded, continue with creating the project
+            let caller = caller();
 
-    DECLINED_PROJECT_REQUESTS.with(|d_vc| {
-        let exits = d_vc.borrow().contains_key(&caller);
-        if exits {
-            panic!("You had got your request declined earlier");
-        }
-    });
+            DECLINED_PROJECT_REQUESTS.with(|d_vc| {
+                let exits = d_vc.borrow().contains_key(&caller);
+                if exits {
+                    panic!("You had got your request declined earlier");
+                }
+            });
 
-    let already_registered = APPLICATION_FORM
-        .with(|registry| registry.borrow().contains_key(&caller))
-        || PROJECT_AWAITS_RESPONSE.with(|registry| registry.borrow().contains_key(&caller));
+            let already_registered = APPLICATION_FORM
+                .with(|registry| registry.borrow().contains_key(&caller))
+                || PROJECT_AWAITS_RESPONSE.with(|registry| registry.borrow().contains_key(&caller));
 
-    if already_registered {
-        ic_cdk::println!("You cant create more than one project");
-        return "You cant create more than one project".to_string();
-    }
-
-    ROLE_STATUS_ARRAY.with(|role_status| {
-        let mut role_status = role_status.borrow_mut();
-
-        for role in role_status
-            .get_mut(&caller)
-            .expect("couldn't get role status for this principal")
-            .iter_mut()
-        {
-            if role.name == "project" {
-                role.status = "requested".to_string();
-                role.requested_on = Some(time());
+            if already_registered {
+                ic_cdk::println!("You can't create more than one project");
+                return "You can't create more than one project".to_string();
             }
+
+            ROLE_STATUS_ARRAY.with(|role_status| {
+                let mut role_status = role_status.borrow_mut();
+
+                for role in role_status
+                    .get_mut(&caller)
+                    .expect("couldn't get role status for this principal")
+                    .iter_mut()
+                {
+                    if role.name == "project" {
+                        role.status = "requested".to_string();
+                        role.requested_on = Some(time());
+                    }
+                }
+            });
+
+            let info_clone = info.clone();
+            let user_uid = crate::user_module::update_user(info_clone.user_data).await;
+            let uuids = raw_rand().await.unwrap().0;
+            let uid = format!("{:x}", Sha256::digest(&uuids));
+            let new_id = uid.clone().to_string();
+
+            let new_project = ProjectInfoInternal {
+                params: info.clone(),
+                uid: new_id,
+                is_active: true,
+                is_verified: false,
+                creation_date: time(),
+            };
+
+            PROJECT_AWAITS_RESPONSE.with(
+                |awaiters: &RefCell<HashMap<Principal, ProjectInfoInternal>>| {
+                    let mut await_ers: std::cell::RefMut<
+                        '_,
+                        HashMap<Principal, ProjectInfoInternal>,
+                    > = awaiters.borrow_mut();
+                    await_ers.insert(caller, new_project.clone());
+                },
+            );
+
+            let res = send_approval_request(
+                info.user_data.profile_picture.unwrap_or_else(|| Vec::new()),
+                info.user_data.full_name,
+                info.user_data.country,
+                info.project_area_of_focus,
+                "project".to_string(),
+            )
+            .await;
+
+            format!("{}", res)
         }
-    });
-
-    let info_clone = info.clone();
-    let user_uid = crate::user_module::update_user(info_clone.user_data).await;
-    let uuids = raw_rand().await.unwrap().0;
-    let uid = format!("{:x}", Sha256::digest(&uuids));
-    let new_id = uid.clone().to_string();
-
-    let new_project = ProjectInfoInternal {
-        params: info.clone(),
-        uid: new_id,
-        is_active: true,
-        is_verified: false,
-        creation_date: time(),
-    };
-
-    PROJECT_AWAITS_RESPONSE.with(
-        |awaiters: &RefCell<HashMap<Principal, ProjectInfoInternal>>| {
-            let mut await_ers: std::cell::RefMut<'_, HashMap<Principal, ProjectInfoInternal>> =
-                awaiters.borrow_mut();
-            await_ers.insert(caller, new_project.clone());
-        },
-    );
-    let res = send_approval_request(
-        info.user_data.profile_picture.unwrap_or_else(|| Vec::new()),
-        info.user_data.full_name,
-        info.user_data.country,
-        info.project_area_of_focus,
-        "project".to_string(),
-    )
-    .await;
-
-    format!("{}", res)
+        Err(err) => {
+            // Validation failed, return the error message
+            format!("Validation failed: {}", err)
+        }
+    }
 }
 
 pub fn get_projects_for_caller() -> Vec<ProjectInfo> {
@@ -745,13 +793,14 @@ pub fn get_dummy_mentor_profile() -> MentorProfile {
         existing_icp_project_porfolio: Some("Example Portfolio".to_string()),
         icop_hub_or_spoke: false,
         category_of_mentoring_service: "Technology and Innovation".to_string(),
-        social_link: "https://example-social-link.com".to_string(),
+        linkedin_link: "https://example-social-link.com".to_string(),
         multichain: Some("Example Multichain".to_string()),
         years_of_mentoring: "5 years".to_string(),
         website: "https://example-mentor-website.com".to_string(),
         area_of_expertise: "Blockchain Technology".to_string(),
         reason_for_joining: "To share knowledge and experiences with budding entrepreneurs"
             .to_string(),
+        hub_owner: Some("icp india".to_string()),
     }
 }
 
@@ -764,8 +813,8 @@ pub fn get_dummy_venture_capitalist() -> VentureCapitalist {
         registered_under_any_hub: Some(true),
         average_check_size: 1_000_000.0, // Example check size in USD
         existing_icp_investor: true,
-        money_invested: 50_000_000.0, // Example money invested in USD
-        existing_icp_portfolio: "Example Portfolio".to_string(),
+        money_invested: Some(50_000_000.0), // Example money invested in USD
+        existing_icp_portfolio: Some("Example Portfolio".to_string()),
         type_of_investment: "Equity".to_string(),
         project_on_multichain: Some("Yes".to_string()),
         category_of_investment: "Technology".to_string(),
@@ -774,8 +823,10 @@ pub fn get_dummy_venture_capitalist() -> VentureCapitalist {
         investor_type: "Angel Investor".to_string(),
         number_of_portfolio_companies: 10,
         portfolio_link: "https://example-portfolio-link.com".to_string(),
-        announcement_details: "New funding round opened".to_string(),
-        user_data: get_dummy_user_information(), // Generate dummy user information
+        announcement_details: Some("New funding round opened".to_string()),
+        user_data: get_dummy_user_information(),
+        website_link: "hfdfdfdf".to_string(),
+        linkedin_link: "dfdfdfdf".to_string(), // Generate dummy user information
     }
 }
 
