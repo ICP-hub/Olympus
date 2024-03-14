@@ -549,7 +549,7 @@ const MentorRegistration = () => {
                   htmlFor="area_of_intrest"
                   className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                 >
-                  What are your areas of Intrest?
+                  Area of Intrest
                 </label>
                 <select
                   {...register("area_of_intrest")}
