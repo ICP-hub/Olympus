@@ -39,7 +39,7 @@ pub struct ProjectInfo {
     pub project_logo: Vec<u8>,
     pub preferred_icp_hub: Option<String>,
     pub live_on_icp_mainnet: Option<String>,
-    pub money_raised_till_now: Option<String>,
+    pub money_raised_till_now: Option<bool>,
     pub supports_multichain: Option<String>,
     pub project_elevator_pitch: Option<String>,
     pub project_area_of_focus: String,
@@ -57,12 +57,15 @@ pub struct ProjectInfo {
     pub user_data: UserInformation,
     pub mentors_assigned: Option<Vec<MentorProfile>>,
     pub vc_assigned: Option<Vec<VentureCapitalist>>,
-    pub project_twitter : Option<String>,
-    pub project_linkedin : Option<String>,
-    pub project_website : Option<String>,
-    pub project_discord : Option<String>
-}   
-
+    pub project_twitter: Option<String>,
+    pub project_linkedin: Option<String>,
+    pub project_website: Option<String>,
+    pub project_discord: Option<String>,
+    pub icp_grants: Option<String>,
+    pub investors: Option<String>,
+    pub sns: Option<String>,
+    pub raised_from_other_ecosystem: Option<String>,
+}
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct ProjectInfoForUser {
@@ -202,29 +205,28 @@ pub fn pre_upgrade() {
 
 pub async fn create_project(info: ProjectInfo) -> String {
     // Validate the project info
-    match info.validate() {
-        Ok(()) => {
-            // Validation succeeded, continue with creating the project
-            let caller = caller();
 
-            DECLINED_PROJECT_REQUESTS.with(|d_vc| {
-                let exits = d_vc.borrow().contains_key(&caller);
-                if exits {
-                    panic!("You had got your request declined earlier");
-                }
-            });
+    // Validation succeeded, continue with creating the project
+    let caller = caller();
 
-            let already_registered = APPLICATION_FORM
-                .with(|registry| registry.borrow().contains_key(&caller))
-                || PROJECT_AWAITS_RESPONSE.with(|registry| registry.borrow().contains_key(&caller));
+    DECLINED_PROJECT_REQUESTS.with(|d_vc| {
+        let exits = d_vc.borrow().contains_key(&caller);
+        if exits {
+            panic!("You had got your request declined earlier");
+        }
+    });
 
-            if already_registered {
-                ic_cdk::println!("You can't create more than one project");
-                return "You can't create more than one project".to_string();
-            }
+    let already_registered = APPLICATION_FORM
+        .with(|registry| registry.borrow().contains_key(&caller))
+        || PROJECT_AWAITS_RESPONSE.with(|registry| registry.borrow().contains_key(&caller));
 
-            ROLE_STATUS_ARRAY.with(|role_status| {
-                let mut role_status = role_status.borrow_mut();
+    if already_registered {
+        ic_cdk::println!("You can't create more than one project");
+        return "You can't create more than one project".to_string();
+    }
+
+    ROLE_STATUS_ARRAY.with(|role_status| {
+        let mut role_status = role_status.borrow_mut();
 
         for role in role_status
             .get_mut(&caller)
@@ -238,46 +240,38 @@ pub async fn create_project(info: ProjectInfo) -> String {
         }
     });
 
-            let info_clone = info.clone();
-            let user_uid = crate::user_module::update_user(info_clone.user_data).await;
-            let uuids = raw_rand().await.unwrap().0;
-            let uid = format!("{:x}", Sha256::digest(&uuids));
-            let new_id = uid.clone().to_string();
+    let info_clone = info.clone();
+    let user_uid = crate::user_module::update_user(info_clone.user_data).await;
+    let uuids = raw_rand().await.unwrap().0;
+    let uid = format!("{:x}", Sha256::digest(&uuids));
+    let new_id = uid.clone().to_string();
 
-            let new_project = ProjectInfoInternal {
-                params: info.clone(),
-                uid: new_id,
-                is_active: true,
-                is_verified: false,
-                creation_date: time(),
-            };
+    let new_project = ProjectInfoInternal {
+        params: info.clone(),
+        uid: new_id,
+        is_active: true,
+        is_verified: false,
+        creation_date: time(),
+    };
 
-            PROJECT_AWAITS_RESPONSE.with(
-                |awaiters: &RefCell<HashMap<Principal, ProjectInfoInternal>>| {
-                    let mut await_ers: std::cell::RefMut<
-                        '_,
-                        HashMap<Principal, ProjectInfoInternal>,
-                    > = awaiters.borrow_mut();
-                    await_ers.insert(caller, new_project.clone());
-                },
-            );
+    PROJECT_AWAITS_RESPONSE.with(
+        |awaiters: &RefCell<HashMap<Principal, ProjectInfoInternal>>| {
+            let mut await_ers: std::cell::RefMut<'_, HashMap<Principal, ProjectInfoInternal>> =
+                awaiters.borrow_mut();
+            await_ers.insert(caller, new_project.clone());
+        },
+    );
 
-            let res = send_approval_request(
-                info.user_data.profile_picture.unwrap_or_else(|| Vec::new()),
-                info.user_data.full_name,
-                info.user_data.country,
-                info.project_area_of_focus,
-                "project".to_string(),
-            )
-            .await;
+    let res = send_approval_request(
+        info.user_data.profile_picture.unwrap_or_else(|| Vec::new()),
+        info.user_data.full_name,
+        info.user_data.country,
+        info.project_area_of_focus,
+        "project".to_string(),
+    )
+    .await;
 
-            format!("{}", res)
-        }
-        Err(err) => {
-            // Validation failed, return the error message
-            format!("Validation failed: {}", err)
-        }
-    }
+    format!("{}", res)
 }
 
 pub fn get_projects_for_caller() -> Vec<ProjectInfo> {
@@ -655,14 +649,15 @@ pub fn filter_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
                     &project_internal.params.project_area_of_focus == focus
                 });
 
-                let money_raised_match = criteria.money_raised_range.map_or(true, |(min, max)| {
-                    if let Some(money_raised_str) = &project_internal.params.money_raised_till_now {
-                        if let Ok(money_raised) = money_raised_str.parse::<f64>() {
-                            return money_raised >= min && money_raised <= max;
-                        }
-                    }
-                    false
-                });
+                //todo:- what is use of this check and uncomment
+                // let money_raised_match = criteria.money_raised_range.map_or(true, |(min, max)| {
+                //     if let Some(money_raised_str) = &project_internal.params.money_raised_till_now {
+                //         if let Ok(money_raised) = money_raised_str.parse::<f64>() {
+                //             return money_raised >= min && money_raised <= max;
+                //         }
+                //     }
+                //     false
+                // });
 
                 let mentor_match = criteria.mentor_name.as_ref().map_or(true, |mentor_name| {
                     project_internal
@@ -689,7 +684,7 @@ pub fn filter_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
                 country_match
                     && rating_match
                     && focus_match
-                    && money_raised_match
+                    // && money_raised_match
                     && mentor_match
                     && vc_match
             })

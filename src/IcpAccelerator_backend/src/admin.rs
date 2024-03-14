@@ -729,7 +729,7 @@ pub fn decline_project_creation_request(requester: Principal) -> String {
         }
     })
 }
-
+//todo:- change the function according to new struct
 pub fn approve_project_update(requester: Principal, project_id: String, approve: bool) -> String {
     if let Some(project_update_request) =
         PENDING_PROJECT_UPDATES.with(|awaiters| awaiters.borrow_mut().remove(&project_id))
