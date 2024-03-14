@@ -86,9 +86,9 @@ export const mentorRegistrationPersonalDetails = [
       onBlur: null,
     },
     {
-      id: "exisitng_icp_project_porfolio",
+      id: "existing_icp_project_porfolio",
       type: "text",
-      name: "exisitng_icp_project_porfolio",
+      name: "existing_icp_project_porfolio",
       required: false,
       label: "Exisitng Icp project porfolio",
       onFocus: null,

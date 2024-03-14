@@ -132,7 +132,7 @@ const validationSchema = {
         (value) => /\S/.test(value)
       )
       .required("Category of mentoring service is required"),
-    exisitng_icp_project_porfolio: yup
+    existing_icp_project_porfolio: yup
       .string()
       .test(
         "is-non-empty",
@@ -404,8 +404,8 @@ const MentorRegistration = () => {
         area_of_expertise: updatedFormData.area_of_expertise,
         category_of_mentoring_service:
           updatedFormData.category_of_mentoring_service,
-        exisitng_icp_project_porfolio:
-          [updatedFormData.exisitng_icp_project_porfolio] || [],
+        existing_icp_project_porfolio:
+          [updatedFormData.existing_icp_project_porfolio] || [],
         years_of_mentoring: updatedFormData.years_of_mentoring.toString(),
         icop_hub_or_spoke: IcopHubOrSpoke,
         social_link: updatedFormData.social_link || "",
@@ -439,8 +439,8 @@ const MentorRegistration = () => {
         area_of_expertise: updatedFormData.area_of_expertise,
         category_of_mentoring_service:
           updatedFormData.category_of_mentoring_service,
-        exisitng_icp_project_porfolio:
-          [updatedFormData.exisitng_icp_project_porfolio] || [],
+          existing_icp_project_porfolio:
+          [updatedFormData.existing_icp_project_porfolio] || [],
         years_of_mentoring: updatedFormData.years_of_mentoring.toString(),
         icop_hub_or_spoke: IcopHubOrSpoke,
         social_link: updatedFormData.social_link,
