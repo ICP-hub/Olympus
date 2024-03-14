@@ -41,6 +41,7 @@ const Projectdashboard = () => {
     const handleClickPlusOne = () => {
         setShowLine(true);
     };
+    const responsiveText = ` text-gray-500 mb-6 text-sxxs:text-[7px] sxs:text-[7.5px] sxs1:text-[8px] sxs2:text-[8.5px] sxs3:text-[9px] ss:text-[9.5px] ss1:text-[10px] ss2:text-[10.5px] ss3:text-[11px] ss4:text-[11.5px] dxs:text-[12px] xxs:text-[12.5px] xxs1:text-[13px] sm1:text-[13.5px] sm4:text-[14px] sm2:text-[14.5px] sm3:text-[15px] sm:text-[15.5px] md:text-[16px.3] md1:text-[17px] md2:text-[17.5px] md3:text-[18px] lg:text-[18.5px] dlg:text-[19px] lg1:text-[15.5px] lgx:text-[20px] md:text-[20.5px] xl:text-[21px] xl2:text-[21.5px]`
 
     return (
         <div className='overflow-hidden px-[4%] py-[4%]'>
@@ -135,30 +136,30 @@ const Projectdashboard = () => {
 
                 {/* 
                 Event Announcement cards */}
-                <div class="flex flex-wrap justify-between rounded-lg">
+                <div className="flex flex-wrap justify-between rounded-lg">
                     <div className="w-full  md:w-1/3 lg:w-1/2 xl:w-1/2 p-4 relative">
-                        <div class="shadow-md rounded-lg overflow-hidden border-2 drop-shadow-2xl gap-2 bg-gray-100">
-                            <div class="">
-                                <img class='h-[183.78px] w-full object-cover rounded-b-none rounded-lg' src={hover} alt='not found' />
-                                <div class="relative">
-                                    {/* <div class="absolute h-12 w-12 rounded-full left-1/2 transform -translate-x-1/2  mt-[-2rem] md:top-[calc(-2rem + 20px)] bg-[#5040A1]">
-                                        <div class='w-full ml-4 mt-4 md:w-52'>
+                        <div className="shadow-md rounded-lg overflow-hidden border-2 drop-shadow-2xl gap-2 bg-gray-100">
+                            <div className="">
+                                <img className='h-[183.78px] w-full object-cover rounded-b-none rounded-lg' src={hover} alt='not found' />
+                                <div className="relative">
+                                    {/* <div className="absolute h-12 w-12 rounded-full left-1/2 transform -translate-x-1/2  mt-[-2rem] md:top-[calc(-2rem + 20px)] bg-[#5040A1]">
+                                        <div className='w-full ml-4 mt-4 md:w-52'>
                                             {winner}
                                         </div>
                                     </div> */}
 
                                 </div>
-                                <div class='ml-4 '>
-                                    <div class="lg:flex xl:lg:flex-row sm:flex-col xsm:flex-col md:flex-row justify-between items-center text-md">
-                                        <div class='w-1/2  flex-col text-[#737373] flex p-4'>
-                                            <h1 class='text-black font-bold'>RWA Projects. Part 2</h1>
+                                <div className='ml-4 '>
+                                    <div className="lg:flex xl:lg:flex-row sm:flex-col xsm:flex-col md:flex-row justify-between items-center text-md">
+                                        <div className='w-1/2  flex-col text-[#737373] flex p-4'>
+                                            <h1 className='text-black font-bold'>RWA Projects. Part 2</h1>
                                             <p>22 Apr 2024 17:30 -22 Apr 2024 19:30</p>
                                         </div>
-                                        <div class='w-1/2 flex flex-row  text-[#737373] justify-start items-start '>
-                                            <div class='flex flex-row items-center space-x-2'>
-                                                <img class="h-12 w-12 rounded-full" src={girl} alt='soul' />
+                                        <div className='w-1/2 flex flex-row  text-[#737373] justify-start items-start '>
+                                            <div className='flex flex-row items-center space-x-2'>
+                                                <img className="h-12 w-12 rounded-full" src={girl} alt='soul' />
                                                 <div className='flex flex-col'>
-                                                    <h1 class='font-bold'>SoulCurryArt</h1>
+                                                    <h1 className='font-bold'>SoulCurryArt</h1>
                                                     <p>posted 6 days ago</p>
                                                 </div>
                                                 {/* <p>posted 6 days ago</p> */}
@@ -167,61 +168,61 @@ const Projectdashboard = () => {
                                         </div>
                                     </div>
 
-                                    {/* <div class="lg:flex xl:lg:flex-row sm:flex-col xsm:flex-col md:flex-row justify-between items-center text-md p-4">
-    <div class='lg:w-60 xl:w-60 sm:w-full xsm:w-full md:w-60 flex-col text-[#737373] flex p-4'>
-        <h1 class='text-black font-bold'>RWA Projects. Part 2</h1>
+                                    {/* <div className="lg:flex xl:lg:flex-row sm:flex-col xsm:flex-col md:flex-row justify-between items-center text-md p-4">
+    <div className='lg:w-60 xl:w-60 sm:w-full xsm:w-full md:w-60 flex-col text-[#737373] flex p-4'>
+        <h1 className='text-black font-bold'>RWA Projects. Part 2</h1>
         <p>22 Apr 2024 17:30 - 22 Apr 2024 19:30</p>
     </div>
    
-        <div class='flex flex-row items-center space-x-2'>
-            <img class="h-12 w-12 rounded-full" src={girl} alt='soul' />
-            <div class='flex flex-col'>
-                <h1 class='font-bold'>SoulCurryArt</h1>
+        <div className='flex flex-row items-center space-x-2'>
+            <img className="h-12 w-12 rounded-full" src={girl} alt='soul' />
+            <div className='flex flex-col'>
+                <h1 className='font-bold'>SoulCurryArt</h1>
                 <p>posted 6 days ago</p>
             </div>
        
     </div> */}
-                                    
 
-                                    <div class='w-full'>
-                                        <p class="text-[#7283EA] text-xl">This event includes</p>
-                                        <div class='flex flex-row gap-2 text-lg'>
-                                            <div class="h-2 w-2 rounded-full bg-black item-center mt-2"></div>
-                                            <p class="">Direct interaction with the instructor</p>
+
+                                    <div className='w-full'>
+                                        <p className="text-[#7283EA] text-xl">This event includes</p>
+                                        <div className='flex flex-row gap-2 text-lg'>
+                                            <div className="h-2 w-2 rounded-full bg-black item-center mt-2"></div>
+                                            <p className="">Direct interaction with the instructor</p>
                                         </div>
-                                        <div class='flex flex-row gap-2 text-lg'>
-                                            <div class="h-2 w-2 rounded-full bg-black item-center mt-2"></div>
-                                            <p class="">Session recording after the workshop</p>
+                                        <div className='flex flex-row gap-2 text-lg'>
+                                            <div className="h-2 w-2 rounded-full bg-black item-center mt-2"></div>
+                                            <p className="">Session recording after the workshop</p>
                                         </div>
-                                        <div class='flex flex-row gap-2 text-lg'>
-                                            <div class="h-2 w-2 rounded-full bg-black item-center mt-2"></div>
-                                            <p class="">Access on mobile and web</p>
+                                        <div className='flex flex-row gap-2 text-lg'>
+                                            <div className="h-2 w-2 rounded-full bg-black item-center mt-2"></div>
+                                            <p className="">Access on mobile and web</p>
                                         </div>
-                                        <div class='flex flex-row gap-2 text-lg'>
-                                            <div class="h-2 w-2 rounded-full bg-black item-center mt-2"></div>
-                                            <p class="">1 hour live session</p>
+                                        <div className='flex flex-row gap-2 text-lg'>
+                                            <div className="h-2 w-2 rounded-full bg-black item-center mt-2"></div>
+                                            <p className="">1 hour live session</p>
                                         </div>
                                         <div className=' text-lg'>
                                             <p>Modern Cubist abstract artist, NFT artist, Art educator & bridging the Contemporary with the Digital art realms</p>
                                         </div>
-                                        <div class='w-[700px] border-2 border-[#D7D7D7] mt-4 overflow-hidden'></div>
-                                        <div class='flex flex-row flex-wrap lg:justify-between md:justify-center space-x-8'>
+                                        <div className='w-[700px] border-2 border-[#D7D7D7] mt-4 overflow-hidden'></div>
+                                        <div className='flex flex-row flex-wrap lg:justify-between md:justify-center space-x-8'>
                                             <div className='flex lg:justify-between md:justify-center xl:lg:gap-16 gap-4'>
-                                                <div class='flex flex-col font-bold'>
-                                                    <p class='text-[#7283EA]'>Date</p>
-                                                    <p class='text-black'>25 Oct 2021</p>
+                                                <div className='flex flex-col font-bold'>
+                                                    <p className='text-[#7283EA]'>Date</p>
+                                                    <p className='text-black'>25 Oct 2021</p>
                                                 </div>
-                                                <div class='flex flex-col font-bold'>
-                                                    <p class='text-[#7283EA]'>Time</p>
-                                                    <p class='text-black'>7:30 pm</p>
+                                                <div className='flex flex-col font-bold'>
+                                                    <p className='text-[#7283EA]'>Time</p>
+                                                    <p className='text-black'>7:30 pm</p>
                                                 </div>
-                                                <div class='flex flex-col font-bold'>
-                                                    <p class='text-[#7283EA]'>Duration</p>
-                                                    <p class='text-black'>60 min</p>
+                                                <div className='flex flex-col font-bold'>
+                                                    <p className='text-[#7283EA]'>Duration</p>
+                                                    <p className='text-black'>60 min</p>
                                                 </div>
                                             </div>
-                                            <div class='flex xl:lg:justify-end sm:md:justify-center mr-2 text-[10px]'>
-                                                <button class="mt-2 mb-2 mr-8 uppercase bg-[#7283EA]  text-white px-4 py-2 rounded-md justify-center items-center font-extrabold">Register Now</button>
+                                            <div className='flex xl:lg:justify-end sm:md:justify-center mr-2 text-[10px]'>
+                                                <button className="mt-2 mb-2 mr-8 uppercase bg-[#7283EA]  text-white px-4 py-2 rounded-md justify-center items-center font-extrabold">Register Now</button>
                                             </div>
                                         </div>
                                     </div>
@@ -234,55 +235,55 @@ const Projectdashboard = () => {
 
                 {/* Event Announcement part2 */}
                 <div>
-                    <div class='flex flex-row flex-wrap  gap-8 w-6/10 drop-shadow-2xl rounded-lg bg-gray-200 '>
-                        <div class=''>
-                            <img class='h-[330px] xl:w-[900px] lg:w-[700px] object-cover  rounded-lg ' src={hover} alt='not found' />
+                    <div className='flex flex-row flex-wrap  gap-8 w-6/10 drop-shadow-2xl rounded-lg bg-gray-200 '>
+                        <div className=''>
+                            <img className='h-[330px] xl:w-[900px] lg:w-[700px] object-cover  rounded-lg ' src={hover} alt='not found' />
                         </div>
-                        <div class='w-4/10'>
-                            <div class='w-full mt-4'>
-                                <div class="relative">
-                                    <div class="absolute h-12 w-12 rounded-full  transform -translate-x-1/2  left-[-32px] md:top-[calc(-2rem + 20px)] bg-[#5040A1]">
-                                        <div class='w-full ml-4 mt-4 md:w-52'>
+                        <div className='w-4/10'>
+                            <div className='w-full mt-4'>
+                                <div className="relative">
+                                    <div className="absolute h-12 w-12 rounded-full  transform -translate-x-1/2  left-[-32px] md:top-[calc(-2rem + 20px)] bg-[#5040A1]">
+                                        <div className='w-full ml-4 mt-4 md:w-52'>
                                             {winner}
                                         </div>
                                     </div>
 
                                 </div>
-                                <div class='w-1/2  flex-col text-[#737373] flex '>
-                                    <h1 class='text-black font-bold text-[15px]'>RWA Projects. Part 2</h1>
+                                <div className='w-1/2  flex-col text-[#737373] flex '>
+                                    <h1 className='text-black font-bold text-[15px]'>RWA Projects. Part 2</h1>
                                     <p>22 Apr 2024 17:30</p>
                                 </div>
-                                <p class="text-[#7283EA] text-xl">This event includes</p>
-                                <div class='flex flex-row gap-2'>
-                                    <div class="h-2 w-2 rounded-full bg-black item-center mt-2"></div>
-                                    <p class="">Direct interaction with the instructor</p>
+                                <p className="text-[#7283EA] text-xl">This event includes</p>
+                                <div className='flex flex-row gap-2'>
+                                    <div className="h-2 w-2 rounded-full bg-black item-center mt-2"></div>
+                                    <p className="">Direct interaction with the instructor</p>
                                 </div>
-                                <div class='flex flex-row gap-2'>
-                                    <div class="h-2 w-2 rounded-full bg-black item-center mt-2"></div>
-                                    <p class="">Session recording after the workshop</p>
+                                <div className='flex flex-row gap-2'>
+                                    <div className="h-2 w-2 rounded-full bg-black item-center mt-2"></div>
+                                    <p className="">Session recording after the workshop</p>
                                 </div>
-                                <div class='flex flex-row gap-2'>
-                                    <div class="h-2 w-2 rounded-full bg-black item-center mt-2"></div>
-                                    <p class="">Access on mobile and web</p>
+                                <div className='flex flex-row gap-2'>
+                                    <div className="h-2 w-2 rounded-full bg-black item-center mt-2"></div>
+                                    <p className="">Access on mobile and web</p>
                                 </div>
-                                <div class='flex flex-row gap-2'>
-                                    <div class="h-2 w-2 rounded-full bg-black item-center mt-2"></div>
-                                    <p class="">1 hour live session</p>
+                                <div className='flex flex-row gap-2'>
+                                    <div className="h-2 w-2 rounded-full bg-black item-center mt-2"></div>
+                                    <p className="">1 hour live session</p>
                                 </div>
-                               
-                                <div class='flex flex-row flex-wrap lg:justify-between md:justify-center space-x-8 mt-2'>
+
+                                <div className='flex flex-row flex-wrap lg:justify-between md:justify-center space-x-8 mt-2'>
                                     <div className='flex lg:justify-start gap-4 '>
-                                        <div class='flex flex-col font-bold'>
-                                            <p class='text-[#7283EA]'>Date</p>
-                                            <p class='text-black'>25 Oct 2021</p>
+                                        <div className='flex flex-col font-bold'>
+                                            <p className='text-[#7283EA]'>Date</p>
+                                            <p className='text-black'>25 Oct 2021</p>
                                         </div>
-                                        <div class='flex flex-col font-bold'>
-                                            <p class='text-[#7283EA]'>Time</p>
-                                            <p class='text-black'>7:30 pm</p>
+                                        <div className='flex flex-col font-bold'>
+                                            <p className='text-[#7283EA]'>Time</p>
+                                            <p className='text-black'>7:30 pm</p>
                                         </div>
-                                        <div class='flex flex-col font-bold'>
-                                            <p class='text-[#7283EA]'>Duration</p>
-                                            <p class='text-black'>60 min</p>
+                                        <div className='flex flex-col font-bold'>
+                                            <p className='text-[#7283EA]'>Duration</p>
+                                            <p className='text-black'>60 min</p>
                                         </div>
 
                                     </div>
@@ -306,12 +307,12 @@ const Projectdashboard = () => {
                 <div className="flex flex-wrap justify-between ">
                     <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/4 p-4">
                         <div className=" relative shadow-md rounded-lg  overflow-hidden border-2 drop-shadow-2xl gap-2 bg-white">
-                        <img className=' h-24 w-full  mx-auto rounded-lg rounded-b-none' src={coding1} alt='not found' />
-                           
-                        <div className='absolute mt-[-25px] flex flex-row justify-between items-center text-black p-2 space-x-36'>
-    <img className='h-10 w-12 z-10 rounded-lg' src={ment} alt='Data' />
-    <p className='mt-4 font-bold text-[#6B7280]'>Project 2</p>
-</div>
+                            <img className=' h-24 w-full  mx-auto rounded-lg rounded-b-none' src={coding1} alt='not found' />
+
+                            <div className='absolute mt-[-25px] flex flex-row justify-between items-center text-black p-2 space-x-36'>
+                                <img className='h-10 w-12 z-10 rounded-lg' src={ment} alt='Data' />
+                                <p className='mt-4 font-bold text-[#6B7280]'>Project 2</p>
+                            </div>
 
 
 
@@ -321,7 +322,7 @@ const Projectdashboard = () => {
                                     <h3 className=''>Dirac Finance</h3>
                                 </div>
                                 <div className='p-4'>
-                                <p className="text-[#6B7280] mt-2 ">Dirac Finance is an institutional-grade decentralized Options Vault (DOV) that...</p>
+                                    <p className="text-[#6B7280] mt-2 ">Dirac Finance is an institutional-grade decentralized Options Vault (DOV) that...</p>
                                 </div>
                                 <div className='flex justify-start items-start mt-4 mb-4 text-sm '>
                                     <button className=" uppercase bg-[#7283EA] text-black px-4 py-2 rounded-md font-bold ">Expand More</button>
@@ -414,6 +415,57 @@ const Projectdashboard = () => {
                 </div>
                 {/* End Testimonial cards */}
 
+
+                {/* impact of the tool */}
+                <div className="w-11/12 md:h-[11.5rem]  bg-gray-200 rounded-[20px]    z-10 mt-4 drop-shadow-2xl">
+                    <div className="flex  justify-center ">
+                        <div className="w-5/6 px-4 md:justify-between md:items-center md:flex md:left-[-60px] md:top-[60px]  md:relative  ">
+                            <div className="relative mb-4 mt-4 md:mt-0">
+                                <div className="top-0 md:absolute text-center text-violet-800 md:text-4xl xl:text-5xl text-4xl font-extrabold font-fontUse">
+                                    180+
+                                </div>
+                                <div className={`${responsiveText} left-0 top-[50px] md:absolute text-center text-neutral-500 md:text-lg font-normal font-fontUse`}>
+                                    vcs
+                                </div>
+                            </div>
+                            <div className="relative mb-4 ">
+                                <div className="top-0 md:absolute text-center text-violet-800 md:text-4xl xl:text-5xl text-4xl font-extrabold font-fontUse">
+                                    $250M+
+                                </div>
+                                <div className={`${responsiveText} left-[53px] top-[50px] md:absolute text-center text-neutral-500 md:text-lg font-normal font-fontUse flex justify-center`}>
+                                    Hub Organisers
+                                </div>
+                            </div>
+                            <div className="relative mb-4">
+                                <div className="top-0 md:absolute text-center text-violet-800 md:text-4xl xl:text-5xl text-4xl font-extrabold font-fontUse">
+                                    400+
+                                </div>
+                                <div className={`${responsiveText} left-[22px] top-[50px] md:absolute text-center text-neutral-500 md:text-lg font-normal font-fontUse`}>
+                                    Founders
+                                </div>
+                            </div>
+                            <div className="relative mb-4">
+                                <div className="top-0 md:absolute text-center text-violet-800 md:text-4xl xl:text-5xl text-4xl font-extrabold font-fontUse">
+                                    1200+
+                                </div>
+                                <div className={`${responsiveText} left-[14px] top-[50px] md:absolute text-center text-neutral-500 md:text-lg font-normal font-fontUse`}>
+                                    Mentors
+                                </div>
+
+                            </div>
+                            <div className="relative mb-4">
+                                <div className="top-0 md:absolute text-center text-violet-800 md:text-4xl xl:text-5xl text-4xl font-extrabold font-fontUse">
+                                    150+
+                                </div>
+                                <div className={`${responsiveText} left-[14px] top-[50px] md:absolute text-center text-neutral-500 md:text-lg font-normal font-fontUse`}>
+                                    Admins
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {/* end of the tool */}
 
 
 
