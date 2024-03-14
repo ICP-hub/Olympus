@@ -186,6 +186,13 @@ type Rating = record {
   rating : float64;
   project_id : text;
 };
+type RatingAverages = record {
+  peer_average : opt float64;
+  own_average : opt float64;
+  overall_average : opt float64;
+  vc_average : opt float64;
+  mentor_average : opt float64;
+};
 type Request = record { mentor : opt MentorInternal; "text" : text };
 type Result = variant { Ok : UserInformation; Err : text };
 type Role = record { id : int32; name : text };
@@ -330,7 +337,7 @@ service : () -> {
   approve_project_details_updation_request : (principal, text, bool) -> (text);
   approve_vc_creation_request : (principal, bool) -> (text);
   approve_vc_profile_update : (principal, bool) -> (text);
-  calculate_average_api : (text) -> (opt float64) query;
+  calculate_average_api : (text) -> (RatingAverages) query;
   connect_to_team_member : (text, text) -> (text);
   decline_mentor_creation_request_candid : (principal, bool) -> (text);
   decline_mentor_profile_update_request : (principal, bool) -> (text);

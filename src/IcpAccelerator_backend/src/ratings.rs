@@ -2,13 +2,13 @@ use candid::{CandidType, Principal};
 use ic_cdk::api::time;
 use serde::{Deserialize, Serialize};
 use std::cell::RefCell;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use ic_cdk::api::caller;
 use std::str::FromStr;
 use std::fmt;
 
 use crate::project_registration::APPLICATION_FORM;
-use crate::rbac::ROLES;
+use crate::rbac::{ROLES, UserRole};
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct Level {
@@ -22,6 +22,7 @@ pub struct RatingTypes {
     peer: Vec<f64>,
     own: Vec<f64>,
     mentor: Vec<f64>,
+    vc: Vec<f64>,
 }
 
 // #[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq)]
@@ -73,6 +74,15 @@ pub struct MainLevelRatings {
     ratings: Vec<f64>,
 }
 
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+pub struct RatingAverages {
+    pub mentor_average: Option<f64>,
+    pub vc_average: Option<f64>,
+    pub peer_average: Option<f64>,
+    pub own_average: Option<f64>,
+    pub overall_average: Option<f64>,
+}
+
 pub type ProjectRatings = HashMap<Principal, HashMap<String, Level>>;
 
 pub type RatingSystem = HashMap<String, ProjectRatings>;
@@ -97,6 +107,7 @@ impl RatingTypes {
             peer: Vec::new(),
             own: Vec::new(),
             mentor: Vec::new(),
+            vc: Vec::new(),
         }
     }
 }
@@ -157,8 +168,22 @@ fn is_peer(principal_id: &Principal, project_id_being_rated: &str) -> bool {
 }
 
 
+fn is_owner(principal_id: &Principal, project_id: &str) -> bool {
+    APPLICATION_FORM.with(|storage| {
+        storage.borrow().iter().any(|(owner_principal, projects)| {
+            owner_principal == principal_id && projects.iter().any(|project| project.uid == project_id)
+        })
+    })
+}
+
+// fn get_user_roles(principal_id: &Principal, project_id: &str) -> HashSet<UserRole> {
+//     crate::rbac::get_role_from_principal()
+// }
+
 
 pub fn update_rating(ratings: Vec<Rating>) {
+    let principal_id = caller();
+
     let principal_id = caller();
 
     RATING_SYSTEM.with(|system| {
@@ -173,12 +198,25 @@ pub fn update_rating(ratings: Vec<Rating>) {
             let rating_types = level.sub_levels.entry(format!("{:?}", rating.sub_level))
                 .or_insert_with(RatingTypes::new);
 
-            let rating_category = if is_peer(&principal_id, &rating.project_id) {
-                &mut rating_types.peer
-            } else if is_own_project(&principal_id, &rating.project_id) {
-                &mut rating_types.own
-            } else {
-                &mut rating_types.mentor
+            let roles = crate::rbac::get_role_from_principal();
+            
+            let rating_category = match roles {
+                Some(roles_set) => {
+                    let is_project_owner = is_owner(&principal_id, &rating.project_id);
+
+                    if roles_set.contains(&UserRole::VC) {
+                        &mut rating_types.vc
+                    } else if roles_set.contains(&UserRole::Mentor) {
+                        &mut rating_types.mentor
+                    } else if roles_set.contains(&UserRole::Project) && is_project_owner {
+                        &mut rating_types.own
+                    } else {
+                        &mut rating_types.peer
+                    }
+                },
+                None => {
+                    continue; 
+                }
             };
 
             rating_category.push(rating.rating);
@@ -190,38 +228,67 @@ pub fn update_rating(ratings: Vec<Rating>) {
 
 // Function to calculate average rating
 
-pub fn calculate_average(project_id: &str) -> Option<f64> {
+pub fn calculate_average(project_id: &str) -> RatingAverages {
     RATING_SYSTEM.with(|system| {
         let system = system.borrow();
 
         if let Some(project_ratings) = system.get(project_id) {
             let mut total_rating = 0.0;
-            let mut rating_count = 0;
+            let mut total_count = 0;
+
+            let mut mentor_sum = 0.0;
+            let mut mentor_count = 0;
+
+            let mut vc_sum = 0.0;
+            let mut vc_count = 0;
+
+            let mut peer_sum = 0.0;
+            let mut peer_count = 0;
+
+            let mut own_sum = 0.0;
+            let mut own_count = 0;
 
             for user_ratings in project_ratings.values() {
                 for level in user_ratings.values() {
                     for rating_types in level.sub_levels.values() {
-                        let sum_ratings = rating_types.peer.iter().sum::<f64>()
-                                         + rating_types.own.iter().sum::<f64>()
-                                         + rating_types.mentor.iter().sum::<f64>();
-                        let count_ratings = rating_types.peer.len() + rating_types.own.len() + rating_types.mentor.len();
+                        mentor_sum += rating_types.mentor.iter().sum::<f64>();
+                        mentor_count += rating_types.mentor.len();
 
-                        total_rating += sum_ratings;
-                        rating_count += count_ratings;
+                        vc_sum += rating_types.vc.iter().sum::<f64>();
+                        vc_count += rating_types.vc.len();
+
+                        peer_sum += rating_types.peer.iter().sum::<f64>();
+                        peer_count += rating_types.peer.len();
+
+                        own_sum += rating_types.own.iter().sum::<f64>();
+                        own_count += rating_types.own.len();
                     }
                 }
             }
 
-            if rating_count > 0 {
-                Some(total_rating / rating_count as f64)
-            } else {
-                None
+            total_rating = mentor_sum + vc_sum + peer_sum + own_sum;
+            total_count = mentor_count + vc_count + peer_count + own_count;
+
+            RatingAverages {
+                mentor_average: if mentor_count > 0 { Some(mentor_sum / mentor_count as f64) } else { None },
+                vc_average: if vc_count > 0 { Some(vc_sum / vc_count as f64) } else { None },
+                peer_average: if peer_count > 0 { Some(peer_sum / peer_count as f64) } else { None },
+                own_average: if own_count > 0 { Some(own_sum / own_count as f64) } else { None },
+                overall_average: if total_count > 0 { Some(total_rating / total_count as f64) } else { None },
             }
         } else {
-            None
+            // If there are no ratings for the project, return a RatingAverages instance with all fields set to None
+            RatingAverages {
+                mentor_average: None,
+                vc_average: None,
+                peer_average: None,
+                own_average: None,
+                overall_average: None,
+            }
         }
     })
 }
+
 
 pub fn get_ratings_by_project_id(project_id: &str) -> HashMap<MainLevel, MainLevelRatings> {
     let mut ratings_by_level: HashMap<MainLevel, MainLevelRatings> = HashMap::new();
