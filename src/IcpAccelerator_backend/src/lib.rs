@@ -21,6 +21,7 @@ use leaderboard::{
 };
 use project_like::LikeRecord;
 use project_registration::FilterCriteria;
+use ratings::RatingAverages;
 use requests::Request;
 use roles::{get_roles, RolesResponse};
 use std::collections::{HashMap, HashSet};
@@ -483,7 +484,7 @@ fn update_rating_api(rating: Vec<Rating>) {
 
 #[query]
 
-fn calculate_average_api(project_id: String) -> Option<f64> {
+fn calculate_average_api(project_id: String) -> RatingAverages {
     ratings::calculate_average(&project_id)
 }
 
