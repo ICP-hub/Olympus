@@ -12,10 +12,10 @@ mod roles;
 mod upvotes;
 mod user_module;
 mod vc_registration;
-mod mentor_notifications;
+// mod mentor_notifications;
 
-use mentor_notifications::*;
-use crate::project_registration::ProjectUpdateRequest;
+// use mentor_notifications::*;
+use crate::project_registration::*;
 use hub_organizer::{HubOrganizerRegistration, UniqueHubs};
 use ic_cdk::api::caller;
 use leaderboard::{
@@ -58,7 +58,7 @@ use project_registration::{
     NotificationForOwner, NotificationProject, ProjectInfo, ProjectInfoInternal, TeamMember,
 };
 
-use rbac::{assign_roles_to_principal, has_required_role, UserRole};
+use rbac::{has_required_role, UserRole};
 use register_user::{FounderInfo, FounderInfoInternal, ThirtyInfoFounder};
 use roadmap_suggestion::Suggestion;
 use upvotes::UpvoteStorage;
@@ -127,14 +127,6 @@ pub fn get_all_users_information() -> Vec<UserInformation> {
 #[update]
 pub fn make_user_inactive() -> String {
     user_module::delete_user()
-}
-
-#[update]
-
-async fn register_founder_caller(profile: ThirtyInfoFounder) -> String {
-    let role = vec![UserRole::Project];
-    register_user::register_founder(profile).await;
-    assign_roles_to_principal(role)
 }
 
 #[query]
@@ -246,7 +238,10 @@ fn get_user_likes(project_id: String) -> Option<LikeRecord> {
 }
 
 #[update]
-fn add_suggestion_caller(content: String, project_id: String) -> (u64, String) {
+fn add_suggestion_caller(
+    content: String,
+    project_id: String,
+) -> Result<(u64, String), &'static str> {
     roadmap_suggestion::add_suggestion(content, project_id)
 }
 
@@ -287,10 +282,6 @@ fn get_all_roles() -> RolesResponse {
 #[update]
 async fn register_mentor_candid(profile: MentorProfile) -> String {
     mentor::register_mentor(profile).await;
-
-    let roles_to_assign = vec![UserRole::Mentor];
-
-    assign_roles_to_principal(roles_to_assign);
 
     "request has been made to admin".to_string()
 }
@@ -360,14 +351,6 @@ fn get_popular_listed_project() -> Vec<ProjectInfoInternal> {
     latest_popular_projects::get_listed_projects_popular()
 }
 
-#[update]
-
-async fn register_venture_capitalist_caller(params: VentureCapitalist) -> String {
-    let roles_to_assign = vec![UserRole::VC];
-    vc_registration::register_venture_capitalist(params).await;
-    assign_roles_to_principal(roles_to_assign)
-}
-
 #[query]
 
 fn get_venture_capitalist_info() -> Option<VentureCapitalist> {
@@ -433,8 +416,7 @@ fn respond_to_connection_request_candid(startup_id: Principal, accept: bool) -> 
 
 async fn register_hub_organizer_candid(form: hub_organizer::HubOrganizerRegistration) -> String {
     let reg_response = hub_organizer::register_hub_organizer(form).await;
-    let roles_to_assign = vec![UserRole::ICPHubOrganizer];
-    let assigned = assign_roles_to_principal(roles_to_assign);
+
     //if assigned { return format!("roles assigned")}
     reg_response
 }

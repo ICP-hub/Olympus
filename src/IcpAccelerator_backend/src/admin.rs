@@ -423,16 +423,28 @@ pub fn approve_vc_profile_update(requester: Principal, approve: bool) -> String 
                             .clone()
                             .or(existing_vc_internal.params.project_on_multichain.clone());
 
+                        existing_vc_internal.params.money_invested = vc_internal
+                            .money_invested
+                            .clone()
+                            .or(existing_vc_internal.params.money_invested.clone());
+
+                        existing_vc_internal.params.existing_icp_portfolio = vc_internal
+                            .existing_icp_portfolio
+                            .clone()
+                            .or(existing_vc_internal.params.existing_icp_portfolio.clone());
+                        existing_vc_internal.params.announcement_details = vc_internal
+                            .announcement_details
+                            .clone()
+                            .or(existing_vc_internal.params.announcement_details.clone());
+
                         existing_vc_internal.params.fund_size =
                             (vc_internal.fund_size * 100.0).round() / 100.0;
                         existing_vc_internal.params.assets_under_management =
                             vc_internal.assets_under_management.clone();
-                        existing_vc_internal.params.announcement_details =
-                            vc_internal.announcement_details.clone();
+
                         existing_vc_internal.params.category_of_investment =
                             vc_internal.category_of_investment.clone();
-                        existing_vc_internal.params.existing_icp_portfolio =
-                            vc_internal.existing_icp_portfolio.clone();
+
                         existing_vc_internal.params.logo = vc_internal.logo.clone();
                         existing_vc_internal.params.average_check_size =
                             (vc_internal.average_check_size * 100.0).round() / 100.0;
@@ -447,12 +459,15 @@ pub fn approve_vc_profile_update(requester: Principal, approve: bool) -> String 
                         existing_vc_internal.params.reason_for_joining =
                             vc_internal.reason_for_joining.clone();
                         existing_vc_internal.params.name_of_fund = vc_internal.name_of_fund.clone();
-                        existing_vc_internal.params.money_invested = vc_internal.money_invested;
+
                         existing_vc_internal.params.preferred_icp_hub =
                             vc_internal.preferred_icp_hub.clone();
                         existing_vc_internal.params.type_of_investment =
                             vc_internal.type_of_investment.clone();
                         existing_vc_internal.params.user_data = vc_internal.user_data.clone();
+                        existing_vc_internal.params.linkedin_link =
+                            vc_internal.linkedin_link.clone();
+                        existing_vc_internal.params.website_link = vc_internal.website_link.clone();
                     }
                 });
 
@@ -545,13 +560,18 @@ pub fn approve_mentor_profile_update(requester: Principal, approve: bool) -> Str
                             updated_profile.existing_icp_mentor.clone();
                         mentor_internal.profile.icop_hub_or_spoke =
                             updated_profile.icop_hub_or_spoke;
-                        mentor_internal.profile.social_link = updated_profile.social_link.clone();
+                        mentor_internal.profile.linkedin_link =
+                            updated_profile.linkedin_link.clone();
                         mentor_internal.profile.website = updated_profile.website.clone();
                         mentor_internal.profile.years_of_mentoring =
                             updated_profile.years_of_mentoring.clone();
                         mentor_internal.profile.reason_for_joining =
                             updated_profile.reason_for_joining.clone();
                         mentor_internal.profile.user_data = updated_profile.user_data.clone();
+                        mentor_internal.profile.hub_owner = updated_profile
+                            .hub_owner
+                            .clone()
+                            .or(mentor_internal.profile.hub_owner.clone());
                     }
                 });
 
@@ -709,7 +729,7 @@ pub fn decline_project_creation_request(requester: Principal) -> String {
         }
     })
 }
-
+//todo:- change the function according to new struct
 pub fn approve_project_update(requester: Principal, project_id: String, approve: bool) -> String {
     if let Some(project_update_request) =
         PENDING_PROJECT_UPDATES.with(|awaiters| awaiters.borrow_mut().remove(&project_id))
