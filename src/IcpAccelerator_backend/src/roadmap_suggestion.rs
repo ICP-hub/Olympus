@@ -12,11 +12,11 @@ const IN_PROGRESS: &str = "InProgress";
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq, Eq, Hash)]
 pub struct Suggestion {
-    id: u64,
-    content: String,
-    status: String,
-    project_id: String,
-    parent_id: Option<u64>,
+    pub id: u64,
+    pub content: String,
+    pub status: String,
+    pub project_id: String,
+    pub parent_id: Option<u64>,
 }
 
 thread_local! {

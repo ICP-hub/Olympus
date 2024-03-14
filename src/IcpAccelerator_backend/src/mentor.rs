@@ -19,7 +19,7 @@ pub struct MentorProfile {
     pub preferred_icp_hub: Option<String>,
     pub user_data: UserInformation,
     pub existing_icp_mentor: bool,
-    pub exisitng_icp_project_porfolio: Option<String>,
+    pub existing_icp_project_porfolio: Option<String>,
     pub icop_hub_or_spoke: bool,
     pub category_of_mentoring_service: String,
     pub social_link: String,
@@ -37,7 +37,7 @@ impl MentorProfile {
             }
         }
 
-        if let Some(ref exisitng_icp_project_porfolio) = self.exisitng_icp_project_porfolio {
+        if let Some(ref exisitng_icp_project_porfolio) = self.existing_icp_project_porfolio {
             if exisitng_icp_project_porfolio.trim().is_empty() {
                 return Err("Field cannot be empty".into());
             }

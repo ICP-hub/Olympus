@@ -225,14 +225,8 @@ pub fn get_vc_info() -> Option<VentureCapitalist> {
 }
 
 #[query]
-pub fn list_all_vcs() -> Vec<VentureCapitalist> {
-    VENTURECAPITALIST_STORAGE.with(|storage| {
-        storage
-            .borrow()
-            .values()
-            .map(|vc_internal| vc_internal.params.clone())
-            .collect()
-    })
+pub fn list_all_vcs() -> HashMap<Principal, VentureCapitalistInternal> {
+    VENTURECAPITALIST_STORAGE.with(|storage| storage.borrow().clone())
 }
 
 #[update]

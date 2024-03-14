@@ -242,43 +242,48 @@ async fn get_info() -> Result<Vec<Principal>, MyError> {
 }
 
 #[query]
-fn mentors_awaiting_approval() -> Vec<MentorInternal> {
-    MENTOR_AWAITS_RESPONSE.with(|awaiters| awaiters.borrow().values().cloned().collect())
+fn mentors_awaiting_approval() -> HashMap<Principal, MentorInternal> {
+    MENTOR_AWAITS_RESPONSE.with(|awaiters| awaiters.borrow().clone())
 }
 
 #[query]
-fn vc_awaiting_approval() -> Vec<VentureCapitalistInternal> {
-    VC_AWAITS_RESPONSE.with(|awaiters| awaiters.borrow().values().cloned().collect())
+fn vc_awaiting_approval() -> HashMap<Principal, VentureCapitalistInternal> {
+    VC_AWAITS_RESPONSE.with(|awaiters| awaiters.borrow().clone())
 }
 
 #[query]
-fn project_awaiting_approval() -> Vec<ProjectInfoInternal> {
-    PROJECT_AWAITS_RESPONSE.with(|awaiters| awaiters.borrow().values().cloned().collect())
+fn project_awaiting_approval() -> HashMap<Principal, ProjectInfoInternal> {
+    PROJECT_AWAITS_RESPONSE.with(|awaiters| awaiters.borrow().clone())
 }
 
 #[query]
-fn vc_declined() -> Vec<VentureCapitalistInternal> {
-    DECLINED_VC_REQUESTS.with(|awaiters| awaiters.borrow().values().cloned().collect())
+fn vc_declined() -> HashMap<Principal, VentureCapitalistInternal> {
+    DECLINED_VC_REQUESTS.with(|awaiters| awaiters.borrow().clone())
 }
 
 #[query]
-fn project_declined() -> Vec<ProjectInfoInternal> {
-    DECLINED_PROJECT_REQUESTS.with(|awaiters| awaiters.borrow().values().cloned().collect())
+fn project_declined() -> HashMap<Principal, ProjectInfoInternal> {
+    DECLINED_PROJECT_REQUESTS.with(|awaiters| awaiters.borrow().clone())
 }
 
 #[query]
-fn mentor_declined() -> Vec<MentorInternal> {
-    DECLINED_MENTOR_REQUESTS.with(|awaiters| awaiters.borrow().values().cloned().collect())
+fn mentor_declined() -> HashMap<Principal, MentorInternal> {
+    DECLINED_MENTOR_REQUESTS.with(|awaiters| awaiters.borrow().clone())
 }
 
 #[query]
-fn vc_profile_edit_awaiting_approval() -> Vec<VentureCapitalist> {
-    VC_PROFILE_EDIT_AWAITS.with(|awaiters| awaiters.borrow().values().cloned().collect())
+fn mentor_profile_edit_awaiting_approval() -> HashMap<Principal, MentorProfile> {
+    MENTOR_PROFILE_EDIT_AWAITS.with(|awaiters| awaiters.borrow().clone())
 }
 
 #[query]
-fn project_update_awaiting_approval() -> Vec<ProjectUpdateRequest> {
-    PENDING_PROJECT_UPDATES.with(|awaiters| awaiters.borrow().values().cloned().collect())
+fn vc_profile_edit_awaiting_approval() -> HashMap<Principal, VentureCapitalist> {
+    VC_PROFILE_EDIT_AWAITS.with(|awaiters| awaiters.borrow().clone())
+}
+
+#[query]
+fn project_update_awaiting_approval() -> HashMap<String, ProjectUpdateRequest> {
+    PENDING_PROJECT_UPDATES.with(|awaiters| awaiters.borrow().clone())
 }
 
 #[update]
@@ -523,12 +528,12 @@ pub fn approve_mentor_profile_update(requester: Principal, approve: bool) -> Str
                             .multichain
                             .clone()
                             .or(mentor_internal.profile.multichain.clone());
-                        mentor_internal.profile.exisitng_icp_project_porfolio = updated_profile
-                            .exisitng_icp_project_porfolio
+                        mentor_internal.profile.existing_icp_project_porfolio = updated_profile
+                            .existing_icp_project_porfolio
                             .clone()
                             .or(mentor_internal
                                 .profile
-                                .exisitng_icp_project_porfolio
+                                .existing_icp_project_porfolio
                                 .clone());
 
                         mentor_internal.profile.area_of_expertise =

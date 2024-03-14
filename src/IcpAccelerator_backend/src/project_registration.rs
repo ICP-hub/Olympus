@@ -711,3 +711,106 @@ pub fn make_project_active_inactive(p_id: Principal, project_id: String) -> Stri
         "you are not authorised to use this function".to_string()
     }
 }
+
+pub fn get_dummy_team_member() -> TeamMember {
+    TeamMember {
+        member_uid: "TM123456".to_string(),
+        member_data: vec![
+            get_dummy_user_information(), // First dummy user information
+            get_dummy_user_information(), // Second dummy user information, you can customize as needed
+                                          // Add more UserInformation instances if necessary
+        ],
+    }
+}
+
+fn get_dummy_user_information() -> UserInformation {
+    UserInformation {
+        full_name: "Jane Doe".to_string(),
+        profile_picture: Some(vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9]), // Example binary data for an image
+        email: Some("janedoe@example.com".to_string()),
+        country: "Nowhereland".to_string(),
+        telegram_id: Some("janedoe_telegram".to_string()),
+        bio: Some("An enthusiastic explorer of new technologies.".to_string()),
+        area_of_intrest: "Artificial Intelligence".to_string(),
+        twitter_id: Some("@janedoeAI".to_string()),
+        openchat_username: Some("janedoeChat".to_string()),
+    }
+}
+
+pub fn get_dummy_mentor_profile() -> MentorProfile {
+    MentorProfile {
+        preferred_icp_hub: Some("Example Hub".to_string()),
+        user_data: get_dummy_user_information(), // This function should be defined as previously shown
+        existing_icp_mentor: true,
+        existing_icp_project_porfolio: Some("Example Portfolio".to_string()),
+        icop_hub_or_spoke: false,
+        category_of_mentoring_service: "Technology and Innovation".to_string(),
+        social_link: "https://example-social-link.com".to_string(),
+        multichain: Some("Example Multichain".to_string()),
+        years_of_mentoring: "5 years".to_string(),
+        website: "https://example-mentor-website.com".to_string(),
+        area_of_expertise: "Blockchain Technology".to_string(),
+        reason_for_joining: "To share knowledge and experiences with budding entrepreneurs"
+            .to_string(),
+    }
+}
+
+pub fn get_dummy_venture_capitalist() -> VentureCapitalist {
+    VentureCapitalist {
+        name_of_fund: "Example VC Fund".to_string(),
+        fund_size: 100_000_000.0, // Example fund size in USD
+        assets_under_management: "500_000_000 USD".to_string(),
+        logo: Some(vec![0, 1, 2, 3, 4, 5]), // Simulated binary data for a logo
+        registered_under_any_hub: Some(true),
+        average_check_size: 1_000_000.0, // Example check size in USD
+        existing_icp_investor: true,
+        money_invested: 50_000_000.0, // Example money invested in USD
+        existing_icp_portfolio: "Example Portfolio".to_string(),
+        type_of_investment: "Equity".to_string(),
+        project_on_multichain: Some("Yes".to_string()),
+        category_of_investment: "Technology".to_string(),
+        reason_for_joining: "To find promising startups".to_string(),
+        preferred_icp_hub: "Example Hub".to_string(),
+        investor_type: "Angel Investor".to_string(),
+        number_of_portfolio_companies: 10,
+        portfolio_link: "https://example-portfolio-link.com".to_string(),
+        announcement_details: "New funding round opened".to_string(),
+        user_data: get_dummy_user_information(), // Generate dummy user information
+    }
+}
+
+pub fn get_dummy_announcements() -> Announcements {
+    Announcements {
+        project_name: "Project X".to_string(),
+        announcement_message: "We are thrilled to announce the launch of Project X, set to revolutionize the industry!".to_string(),
+        timestamp: 1672522562, // Example timestamp in Unix time format
+    }
+}
+
+pub fn get_dummy_suggestion() -> Suggestion {
+    Suggestion {
+        id: 1, // Example ID
+        content: "This project could benefit from more robust testing strategies.".to_string(),
+        status: "Pending Review".to_string(),
+        project_id: "ProjectX123".to_string(),
+        parent_id: None, // or Some(id) if you want to simulate a response to another suggestion
+    }
+}
+
+#[query]
+pub fn get_dummy_data_for_project_details_for_users() -> ProjectInfoForUser {
+    ProjectInfoForUser {
+        date_ofjoining: "2024-01-01".to_string(),
+        mentor_associated: Some(vec![get_dummy_mentor_profile()]),
+        vc_associated: Some(vec![get_dummy_venture_capitalist()]),
+        team_member_info: Some(vec![get_dummy_team_member()]),
+        announcements: Some(vec![get_dummy_announcements()]),
+        reviews: Some(get_dummy_suggestion()),
+        website_social_group: Some("https://example.com".to_string()),
+        live_link_of_project: Some("https://projectlink.com".to_string()),
+        jobs_opportunity: Some("Looking for a developer".to_string()),
+        rank_of_project: Some(1),
+        area_of_focus: Some("Technology".to_string()),
+        country_of_project: Some("USA".to_string()),
+    }
+}
