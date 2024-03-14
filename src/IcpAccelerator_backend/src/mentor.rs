@@ -111,6 +111,7 @@ pub async fn register_mentor(profile: MentorProfile) -> String {
         {
             if role.name == "mentor" {
                 role.status = "requested".to_string();
+                role.requested_on = Some(time());
             }
         }
     });
@@ -124,7 +125,7 @@ pub async fn register_mentor(profile: MentorProfile) -> String {
             let profile_for_pushing = profile.clone();
 
             let mentor_internal = MentorInternal {
-                profile: profile_for_pushing,
+                profile: profile_for_pushing.clone(),
                 uid: uid.clone(),
                 active: true,
                 approve: false,
@@ -139,7 +140,17 @@ pub async fn register_mentor(profile: MentorProfile) -> String {
                 },
             );
 
-            let res = send_approval_request().await;
+            let res = send_approval_request(
+                profile_for_pushing
+                    .user_data
+                    .profile_picture
+                    .unwrap_or_else(|| Vec::new()),
+                profile_for_pushing.user_data.full_name,
+                profile_for_pushing.user_data.country,
+                profile_for_pushing.area_of_expertise,
+                "mentor".to_string(),
+            )
+            .await;
 
             format!("{}", res)
         }
@@ -197,10 +208,20 @@ pub async fn update_mentor(updated_profile: MentorProfile) -> String {
     MENTOR_PROFILE_EDIT_AWAITS.with(|awaiters: &RefCell<HashMap<Principal, MentorProfile>>| {
         let mut await_ers: std::cell::RefMut<'_, HashMap<Principal, MentorProfile>> =
             awaiters.borrow_mut();
-        await_ers.insert(caller, updated_profile);
+        await_ers.insert(caller, updated_profile.clone());
     });
 
-    let res = send_approval_request().await;
+    let res = send_approval_request(
+        updated_profile
+            .user_data
+            .profile_picture
+            .unwrap_or_else(|| Vec::new()),
+        updated_profile.user_data.full_name,
+        updated_profile.user_data.country,
+        updated_profile.area_of_expertise,
+        "mentor".to_string(),
+    )
+    .await;
 
     format!("{}", res)
 

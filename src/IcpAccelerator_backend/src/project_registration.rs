@@ -7,6 +7,7 @@ use crate::ratings::RatingSystem;
 use crate::roadmap_suggestion::Suggestion;
 use crate::user_module::UserInformation;
 
+use crate::admin::send_approval_request;
 use crate::vc_registration::VentureCapitalist;
 use crate::{
     hub_organizer,
@@ -25,7 +26,6 @@ use sha2::{Digest, Sha256};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::io::Read;
-use crate::admin::send_approval_request;
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct TeamMember {
@@ -35,7 +35,6 @@ pub struct TeamMember {
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct ProjectInfo {
-
     pub project_name: String,
     pub project_logo: Vec<u8>,
     pub preferred_icp_hub: Option<String>,
@@ -57,11 +56,11 @@ pub struct ProjectInfo {
     pub self_rating_of_project: f64,
     pub user_data: UserInformation,
     pub mentors_assigned: Option<Vec<MentorProfile>>,
-    pub vc_assigned: Option<Vec<VentureCapitalist>>
+    pub vc_assigned: Option<Vec<VentureCapitalist>>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
-pub struct ProjectInfoForUser{
+pub struct ProjectInfoForUser {
     pub date_ofjoining: String,
     pub mentor_associated: Option<Vec<MentorProfile>>,
     pub vc_associated: Option<Vec<VentureCapitalist>>,
@@ -74,7 +73,6 @@ pub struct ProjectInfoForUser{
     pub rank_of_project: Option<u64>,
     pub area_of_focus: Option<String>,
     pub country_of_project: Option<String>,
-
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
@@ -140,14 +138,11 @@ pub struct FilterCriteria {
     pub vc_name: Option<String>,
 }
 
-
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType)]
 pub struct ProjectUpdateRequest {
     project_id: String,
-    pub updated_info: ProjectInfo, 
+    pub updated_info: ProjectInfo,
 }
-
-
 
 pub type ProjectAnnouncements = HashMap<Principal, Vec<Announcements>>;
 pub type Notifications = HashMap<Principal, Vec<NotificationProject>>;
@@ -229,6 +224,7 @@ pub async fn create_project(info: ProjectInfo) -> String {
         {
             if role.name == "project" {
                 role.status = "requested".to_string();
+                role.requested_on = Some(time());
             }
         }
     });
@@ -251,11 +247,17 @@ pub async fn create_project(info: ProjectInfo) -> String {
         |awaiters: &RefCell<HashMap<Principal, ProjectInfoInternal>>| {
             let mut await_ers: std::cell::RefMut<'_, HashMap<Principal, ProjectInfoInternal>> =
                 awaiters.borrow_mut();
-            await_ers.insert(caller, new_project);
+            await_ers.insert(caller, new_project.clone());
         },
     );
-
-    let res = send_approval_request().await;
+    let res = send_approval_request(
+        info.user_data.profile_picture.unwrap_or_else(|| Vec::new()),
+        info.user_data.full_name,
+        info.user_data.country,
+        info.project_area_of_focus,
+        "project".to_string(),
+    )
+    .await;
 
     format!("{}", res)
 }
@@ -324,9 +326,10 @@ pub async fn update_project(project_id: String, updated_project: ProjectInfo) ->
     });
 
     let is_owner = APPLICATION_FORM.with(|projects| {
-        projects.borrow().iter().any(|(_, project_list)| {
-            project_list.iter().any(|p| p.uid == project_id)
-        })
+        projects
+            .borrow()
+            .iter()
+            .any(|(_, project_list)| project_list.iter().any(|p| p.uid == project_id))
     });
 
     if !is_owner {
@@ -334,7 +337,7 @@ pub async fn update_project(project_id: String, updated_project: ProjectInfo) ->
     }
 
     let update_request = ProjectUpdateRequest {
-        updated_info: updated_project,
+        updated_info: updated_project.clone(),
         project_id: project_id.clone(),
     };
 
@@ -342,18 +345,24 @@ pub async fn update_project(project_id: String, updated_project: ProjectInfo) ->
         |awaiters: &RefCell<HashMap<String, ProjectUpdateRequest>>| {
             let mut await_ers: std::cell::RefMut<'_, HashMap<String, ProjectUpdateRequest>> =
                 awaiters.borrow_mut();
-            await_ers.insert(project_id, update_request);
+            await_ers.insert(project_id, update_request.clone());
         },
     );
 
-    let res = send_approval_request().await;
+    let res = send_approval_request(
+        updated_project
+            .user_data
+            .profile_picture
+            .unwrap_or_else(|| Vec::new()),
+        updated_project.user_data.full_name,
+        updated_project.user_data.country,
+        updated_project.project_area_of_focus,
+        "project".to_string(),
+    )
+    .await;
 
     format!("{}", res)
-
 }
-
-
-
 
 pub fn delete_project(id: String) -> std::string::String {
     let caller = caller();
@@ -524,7 +533,11 @@ pub async fn update_team_member(project_id: &str, member_uid: String) -> String 
     APPLICATION_FORM.with(|storage| {
         let mut storage = storage.borrow_mut();
 
-        if let Some(project_internal) = storage.values_mut().flat_map(|v| v.iter_mut()).find(|p| p.uid == project_id) {
+        if let Some(project_internal) = storage
+            .values_mut()
+            .flat_map(|v| v.iter_mut())
+            .find(|p| p.uid == project_id)
+        {
             project_found = true;
 
             if let Some(team) = &mut project_internal.params.project_team {
@@ -533,7 +546,7 @@ pub async fn update_team_member(project_id: &str, member_uid: String) -> String 
             } else {
                 let new_team_member = TeamMember {
                     member_uid: member_uid.clone(),
-                    member_data: vec![user_info], 
+                    member_data: vec![user_info],
                 };
                 project_internal.params.project_team = Some(new_team_member);
                 member_added_or_updated = true;

@@ -3,7 +3,14 @@ type Announcements = record {
   timestamp : nat64;
   project_name : text;
 };
-type ApprovalRequest = record { sender : principal; receiver : principal };
+type ApprovalRequest = record {
+  country : text;
+  name : text;
+  sender : principal;
+  photo : vec nat8;
+  tag_used : text;
+  receiver : principal;
+};
 type Blog = record { blog_url : text; timestamp : nat64 };
 type ConnectionRequest = record {
   startup_id : principal;
@@ -167,7 +174,13 @@ type Rating = record {
 type Request = record { mentor : opt MentorInternal; "text" : text };
 type Result = variant { Ok : UserInformation; Err : text };
 type Role = record { id : int32; name : text };
-type Role_1 = record { status : text; name : text };
+type Role_1 = record {
+  status : text;
+  rejected_on : opt nat64;
+  name : text;
+  approved_on : opt nat64;
+  requested_on : opt nat64;
+};
 type RolesResponse = record { roles : vec Role };
 type SeventyInfoFounder = record {
   founder_image : opt vec nat8;
@@ -374,7 +387,10 @@ service : () -> {
   make_project_active_inactive : (principal, text) -> (text);
   make_user_inactive : () -> (text);
   make_vc_active_inactive : (principal) -> (text);
+  mentor_declined : () -> (vec MentorInternal) query;
   mentors_awaiting_approval : () -> (vec MentorInternal) query;
+  project_awaiting_approval : () -> (vec ProjectInfoInternal) query;
+  project_declined : () -> (vec ProjectInfoInternal) query;
   project_update_awaiting_approval : () -> (vec ProjectUpdateRequest) query;
   register_founder_caller : (ThirtyInfoFounder) -> (text);
   register_hub_organizer_candid : (HubOrganizerRegistration) -> (text);
@@ -399,6 +415,7 @@ service : () -> {
   update_venture_capitalist_caller : (VentureCapitalist) -> (text);
   upvote_project : (text) -> (text);
   vc_awaiting_approval : () -> (vec VentureCapitalistInternal) query;
+  vc_declined : () -> (vec VentureCapitalistInternal) query;
   vc_profile_edit_awaiting_approval : () -> (vec VentureCapitalist) query;
   verify_project_under_your_hub : (text) -> (text);
   view_notifications_candid : (principal) -> (vec Notification_1) query;
