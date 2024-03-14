@@ -7,13 +7,19 @@ import { useDispatch, useSelector } from "react-redux";
 import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_IcpHubReducer";
 import CompressedImage from "../../ImageCompressed/CompressedImage";
 import { projectRegistration } from "../../Utils/Data/AllDetailFormData";
-import { projectPersonalInformation ,projectDetails} from "../../Utils/Data/createFormData";
+import {
+  projectPersonalInformation,
+  projectDetails,
+  additionalDetails,
+} from "../../Utils/Data/createFormData";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import toast, { Toaster } from "react-hot-toast";
 import CreateProjectPersonalInformation from "../CreateProjectPersonalInformation";
 import { useCountries } from "react-countries";
 import { userRegisteredHandlerRequest } from "../../StateManagement/Redux/Reducers/userRegisteredData";
 import CreateProjectsDetails from "./CreateProjectsDetails";
+import { bufferToImageBlob } from "../../Utils/formatter/bufferToImageBlob";
+import CreateProjectsAdditionalDetails from "./CreateProjectsAdditionalDetails";
 const validationSchema = {
   personalDetails: yup.object().shape({
     full_name: yup
@@ -49,20 +55,34 @@ const validationSchema = {
       ),
     area_of_intrest: yup.string().required("Selecting a interest is required."),
     imageData: yup.mixed().required("An image is required"),
-
   }),
   projectDetails: yup.object().shape({
+    project_elevator_pitch: yup.string(),
+    reason_to_join_incubator: yup.string(),
     project_name: yup.string().required("Project name is required"),
+    project_description: yup.string().required("Description is required"),
+    token_economics: yup.string().required("Field is required"),
+    self_rating_of_project: yup.string().required("Self Rating is required"),
+    preferred_icp_hub: yup.string(),
+    supports_multichain: yup.string(),
+    promotional_video: yup
+      .string()
+      .url("Must be a valid URL")
+      .required("URL is required"),
+    logoData: yup.mixed().required("Logo is required"),
+  }),
+  additionalDetails: yup.object().shape({
     github_link: yup
       .string()
       .url("Must be a valid URL")
       .required("URL is required"),
-    project_description: yup.string().required("Description is required"),
-    preferred_icp_hub: yup.string().required("ICP hub is required"),
+    target_market: yup.string().required("Target Market is required"),
+    long_term_goals: yup.string().required("Long Term Goals is required"),
     project_area_of_focus: yup.string().required("Area of focus is required"),
-    project_cover: yup.mixed().required("Project Cover is required"),
-    project_logo: yup.mixed().required("Logo is required"),
-    social_links: yup.array().of(yup.string().url("Must be a valid URL")),
+    technical_docs: yup.string().required("Technical Docs is required"),
+    live_on_icp_mainnet: yup.string(),
+    money_raised_till_now: yup.string(),
+    coverData: yup.mixed().required("Project Cover is required"),
   }),
 };
 
@@ -72,7 +92,12 @@ const CreateProjectRegistration = () => {
   const areaOfExpertise = useSelector(
     (currState) => currState.expertiseIn.expertise
   );
-  const userData = useSelector((currState) => currState.userData.data);
+  const specificRole = useSelector(
+    (currState) => currState.current.specificRole
+  );
+  const userData = useSelector((currState) => currState.userData.data.Ok);
+  const projectFullData = useSelector((currState) => currState.projectData.data);
+  console.log("Checking projectFullData Over Here ===> ",projectFullData)
   const dispatch = useDispatch();
   const { countries } = useCountries();
 
@@ -89,9 +114,20 @@ const CreateProjectRegistration = () => {
   const [multipleImageData, setMultipleImageData] = useState([]);
   const [imageData, setImageData] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [logoData, setLogoData] = useState(null);
+  const [logoPreview, setLogoPreview] = useState(null);
+  const [coverData, setCoverData] = useState(null);
+  const [coverPreview, setCoverPreview] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [projectDataObject, setProjectDataObject] = useState({});
+// Used to convert strings to Uint8Array
+  function stringToUint8Array(str) {
+    const encoder = new TextEncoder(); 
+    return encoder.encode(str);
+}
+  console.log("userData", userData);
 
-  console.log('userData',userData)
+  
 
   const getTabClassName = (tab) => {
     return `inline-block p-2 font-bold ${
@@ -101,19 +137,19 @@ const CreateProjectRegistration = () => {
     } rounded-t-lg`;
   };
 
+  // useEffect(() => {
+  //   dispatch(userRegisteredHandlerRequest());
+  // }, [actor, dispatch]);
   useEffect(() => {
-    dispatch(userRegisteredHandlerRequest());
+    dispatch(allHubHandlerRequest());
   }, [actor, dispatch]);
-
-  
   const steps = [
     { id: "personalDetails", fields: projectPersonalInformation },
     { id: "projectDetails", fields: projectDetails },
+    { id: "additionalDetails", fields: additionalDetails },
   ];
 
   const currentValidationSchema = validationSchema[steps[step].id];
-
- 
 
   const {
     register,
@@ -122,12 +158,13 @@ const CreateProjectRegistration = () => {
     trigger,
     setError,
     clearErrors,
+    setValue,
+    reset,
     control,
   } = useForm({
     resolver: yupResolver(currentValidationSchema),
     mode: "all",
   });
-
 
   const handleTabClick = async (tab) => {
     const targetStep = projectRegistration.findIndex(
@@ -152,7 +189,6 @@ const CreateProjectRegistration = () => {
       const result = await trigger(fieldsToValidate);
       setIsCurrentStepValid(result);
     };
-
     validateStep();
   }, [step, trigger, userHasInteracted]);
   const addProjectLogoHandler = useCallback(
@@ -287,6 +323,7 @@ const CreateProjectRegistration = () => {
     newData.splice(index, 1);
     setMultipleImageData(newData);
   };
+  // Adding Project_image Here
   const addImageHandler = useCallback(
     async (file) => {
       clearErrors("imageData");
@@ -319,6 +356,7 @@ const CreateProjectRegistration = () => {
 
         const byteArray = await compressedFile.arrayBuffer();
         setImageData(Array.from(new Uint8Array(byteArray)));
+        setValue('imageData', Array.from(new Uint8Array(byteArray)), { shouldValidate: true });
         clearErrors("imageData");
       } catch (error) {
         console.error("Error processing the image:", error);
@@ -329,13 +367,108 @@ const CreateProjectRegistration = () => {
         setIsLoading(false);
       }
     },
-    [setError, clearErrors, setIsLoading, setImagePreview, setImageData]
+    [setError, clearErrors, setValue, setIsLoading, setImagePreview, setImageData]
   );
+  // Adding Project_Logo image Here
+  const addLogoHandler = useCallback(
+    async (file) => {
+      clearErrors("logoData");
+      if (!file)
+        return setError("logoData", {
+          type: "manual",
+          message: "An logo is required",
+        });
+      if (!["image/jpeg", "image/png", "image/gif"].includes(file.type))
+        return setError("logoData", {
+          type: "manual",
+          message: "Unsupported file format",
+        });
+      if (file.size > 1024 * 1024)
+        // 1MB
+        return setError("logoData", {
+          type: "manual",
+          message: "The file is too large",
+        });
+
+      setIsLoading(true);
+      try {
+        const compressedFile = await CompressedImage(file);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setLogoPreview(reader.result);
+          setIsLoading(false);
+        };
+        reader.readAsDataURL(compressedFile);
+
+        const byteArray = await compressedFile.arrayBuffer();
+        const logoDataArray = new Uint8Array(byteArray)
+        setLogoData(logoDataArray);
+        console.log("logoData",logoDataArray)
+        setValue('logoData', logoDataArray, { shouldValidate: true })
+      } catch (error) {
+        console.error("Error processing the logo:", error);
+        setError("logoData", {
+          type: "manual",
+          message: "Could not process logo, please try another.",
+        });
+        setIsLoading(false);
+      }
+    },
+    [setError, clearErrors, setValue, setIsLoading, setLogoPreview, setLogoData]
+  );
+  // Adding Project_cover image Here
+  const addImageCoverHandler = useCallback(
+    async (file) => {
+      clearErrors("coverData");
+      if (!file)
+        return setError("coverData", {
+          type: "manual",
+          message: "An cover image is required",
+        });
+      if (!["image/jpeg", "image/png", "image/gif"].includes(file.type))
+        return setError("coverData", {
+          type: "manual",
+          message: "Unsupported file format",
+        });
+      if (file.size > 1024 * 1024)
+        // 1MB
+        return setError("coverData", {
+          type: "manual",
+          message: "The file is too large",
+        });
+
+      setIsLoading(true);
+      try {
+        const compressedFile = await CompressedImage(file);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setCoverPreview(reader.result);
+          setIsLoading(false);
+        };
+        reader.readAsDataURL(compressedFile);
+
+        const byteArray = await compressedFile.arrayBuffer();
+        const coverDataArray = new Uint8Array(byteArray)
+        setCoverData(coverDataArray);
+        console.log("coverData",coverDataArray)
+        setValue('coverData', coverDataArray, { shouldValidate: true })
+        clearErrors("coverData");
+      } catch (error) {
+        console.error("Error processing the CoverImage:", error);
+        setError("coverData", {
+          type: "manual",
+          message: "Could not process Cover Image, please try another.",
+        });
+        setIsLoading(false);
+      }
+    },
+    [setError, setValue , clearErrors, setIsLoading, setCoverPreview, setCoverData]
+);
   const handleNext = async () => {
     const fieldsToValidate = steps[step].fields.map((field) => field.name);
-    console.log(fieldsToValidate)
+    console.log(fieldsToValidate);
     const result = await trigger(fieldsToValidate);
-    console.log(result)
+    console.log(result);
     // const isImageUploaded = imageData && imageData.length > 0;
 
     // if (!isImageUploaded) {
@@ -347,11 +480,10 @@ const CreateProjectRegistration = () => {
     // }
     // if (result && isImageUploaded) {
     //   clearErrors("imageData");
-      if (step < steps.length - 1) {
-        setStep((prevStep) => prevStep + 1);
-        setActiveTab([step + 1]?.id);
-      }
-    // }
+    if (result) {
+      setStep((prevStep) => prevStep + 1);
+      setActiveTab(projectRegistration[step + 1]?.id);
+    }
   };
 
   const handlePrevious = () => {
@@ -361,21 +493,183 @@ const CreateProjectRegistration = () => {
     }
   };
 
-const onError=(val)=>{
-  console.log('val',val)
-}
-  const onSubmit = (data) => {
-    console.log("dataaaaaaaaaaaaa", data);
-    
+  useEffect(() => {
+    if (projectFullData && projectFullData.length > 0) {
+      const data = projectFullData[0];
+      const formattedData = Object.keys(data).reduce((acc, key) => {
+        acc[key] = Array.isArray(data[key]) ? data[key][0] : data[key];
+        return acc;
+      }, {});
+      reset(formattedData);
+      setFormData(formattedData);
+      console.log("formattedData341", formattedData);
+      console.log("342 data", data);
+      if (formattedData.imageData) {
+        bufferToImageBlob(formattedData.imageData)
+          .then((imageUrl) => {
+            setImageData(imageUrl);
+          })
+          .catch((error) => console.error("Error converting image:", error));
+      }
+    } else {
+      if (userData) {
+        // Create an object that matches the form fields structure
+        const formData = {
+          full_name: userData.full_name || "",
+          email: userData.email?.[0] || "",
+          telegram_id: userData.telegram_id?.[0] || "",
+          twitter_id: userData.twitter_id?.[0] || "",
+          openchat_username: userData.openchat_username?.[0] || "",
+          bio: userData.bio?.[0] || "",
+          country: userData.country || "",
+          area_of_intrest: userData.area_of_intrest || "",
+        };
+
+        // If there is a mentor_image, handle its conversion and set it separately if needed
+        if (userData.profile_picture) {
+          bufferToImageBlob(userData?.profile_picture)
+            .then((imageUrl) => {
+              setImagePreview(imageUrl);
+              setFormData({ imageData: userData.profile_picture[0] });
+              setValue('imageData', userData.profile_picture[0], { shouldValidate: true });
+          // You might also need to handle setting the image for display if required
+          
+          console.log("kya scene hai profile_picture ka ===>",userData.profile_picture[0])
+            })
+            .catch((error) => console.error("Error converting image:", error));
+        }
+        reset(formData);
+      }
+    }
+  }, [projectFullData, reset, setValue, userData]);
+
+  
+  const errorFunc = (val) => {
+    console.log("val", val);
+  };
+  const sendingProjectData = async (val) => {
+    // console.log("run sendingProjectData =========");
+    val.project_cover = val.project_cover[0]
+    val.project_logo = val.project_logo[0]
+    console.log("sendingProjectData ==>> ", val);
+
+    let result;
+
+    try {
+      // if (specificRole !== null || undefined) {
+      // console.log("update project functn k pass reached");
+      // result = await actor.update_project_profile(val);
+      // } else if (specificRole === null || specificRole === undefined) {
+      console.log("register register_project functn k pass reached");
+      await actor.register_project(val).then((result) => {
+        console.log("register register_project functn ka result ",result)
+        toast.success(result);
+        // navigate("/")
+        window.location.href = "/";
+      });
+      // }
+      // await dispatch(userRoleHandler());
+      // await navigate("/");
+    } catch (error) {
+      toast.error(error);
+      console.log(error.message);
+    }
+  };
+  const onSubmit = async (data) => {
+    console.log("CreateProjectRegistration data after Submit ===>", data);
+
     const updatedFormData = { ...formData, ...data };
     setFormData(updatedFormData);
 
     if (step < steps.length - 1) {
       handleNext();
-    }else{
-      console.log("form submitted ...............");
+    } else if (
+      specificRole !== null ||
+      (undefined && step > steps.length - 1)
+    ) {
+      // console.log("exisiting user visit ");
+      let tempObj2 = {
+        user_data: {
+          profile_picture: [updatedFormData.imageData],
+          full_name: updatedFormData.full_name || "",
+          country: updatedFormData.country || "",
+          email: [updatedFormData.email] || [],
+          telegram_id: [updatedFormData.telegram_id],
+          twitter_id: [updatedFormData.twitter_id],
+          openchat_username: [updatedFormData.openchat_username] || [],
+          bio: [updatedFormData.bio] || [],
+          area_of_intrest: updatedFormData.area_of_intrest || [],
+        },
+        project_elevator_pitch: stringToUint8Array(updatedFormData.project_elevator_pitch),
+        reason_to_join_incubator: updatedFormData.reason_to_join_incubator || "",
+        project_description: updatedFormData.project_description || "",
+        vc_assigned: [],
+        mentors_assigned: [],
+        project_team: [],
+        token_economics: updatedFormData.token_economics || "",
+        self_rating_of_project: updatedFormData.self_rating_of_project ? parseFloat(updatedFormData.self_rating_of_project) : 0,
+        target_market: updatedFormData.target_market || "",
+        long_term_goals: updatedFormData.long_term_goals || "",
+        project_area_of_focus: updatedFormData.project_area_of_focus || "",
+        live_on_icp_mainnet: updatedFormData.live_on_icp_mainnet || [],
+        technical_docs: updatedFormData.technical_docs || "",
+        money_raised_till_now: updatedFormData.money_raised_till_now || [],
+        supports_multichain: updatedFormData.supports_multichain || [],
+        project_name: updatedFormData.project_name || "",
+        preferred_icp_hub: [updatedFormData.preferred_icp_hub],
+        github_link: updatedFormData.github_link,
+        project_cover: [updatedFormData.coverData],
+        project_logo: [updatedFormData.logoData],
+        promotional_video: updatedFormData.promotional_video,
+      };
+
+      console.log("tempObj2 kaam kia ????? ", tempObj2); // work kia
+      setProjectDataObject(tempObj2);
+      await sendingProjectData(tempObj2);
+    } else if (
+      specificRole === null ||
+      (specificRole === undefined && step > steps.length - 1)
+    ) {
+      console.log("first time visit ");
+      let tempObj = {
+        user_data: {
+          profile_picture: [updatedFormData.imageData],
+          full_name: updatedFormData.full_name || "",
+          country: updatedFormData.country || "",
+          email: [updatedFormData.email] || [],
+          telegram_id: [updatedFormData.telegram_id],
+          twitter_id: [updatedFormData.twitter_id],
+          openchat_username: [updatedFormData.openchat_username] || [],
+          bio: [updatedFormData.bio] || [],
+          area_of_intrest: updatedFormData.area_of_intrest || [],
+        },
+        project_elevator_pitch: stringToUint8Array(updatedFormData.project_elevator_pitch),
+        reason_to_join_incubator: updatedFormData.reason_to_join_incubator || "",
+        project_description: updatedFormData.project_description || "",
+        vc_assigned: [],
+        mentors_assigned: [],
+        project_team: [],
+        token_economics: updatedFormData.token_economics || "",
+        self_rating_of_project: updatedFormData.self_rating_of_project ? parseFloat(updatedFormData.self_rating_of_project) : 0,
+        target_market: updatedFormData.target_market || "",
+        long_term_goals: updatedFormData.long_term_goals || "",
+        project_area_of_focus: updatedFormData.project_area_of_focus || "",
+        live_on_icp_mainnet: updatedFormData.live_on_icp_mainnet || [],
+        technical_docs: updatedFormData.technical_docs || "",
+        money_raised_till_now: updatedFormData.money_raised_till_now || [],
+        supports_multichain: updatedFormData.supports_multichain || [],
+        project_name: updatedFormData.project_name || "",
+        preferred_icp_hub: [updatedFormData.preferred_icp_hub],
+        github_link: updatedFormData.github_link,
+        project_cover: [updatedFormData.coverData],
+        project_logo: [updatedFormData.logoData],
+        promotional_video: updatedFormData.promotional_video,
+      };
+      console.log("tempObj kaam kia ????? ", tempObj); // work kia
+
+      setProjectDataObject(tempObj);
+      await sendingProjectData(tempObj);
     }
-    // Process form data
   };
   const { getRootProps, getInputProps } = useDropzone({
     accept: "image/jpeg, image/png, image/gif",
@@ -387,12 +681,12 @@ const onError=(val)=>{
   if (step === 0) {
     StepComponent = <CreateProjectPersonalInformation />;
   } else if (step === 1) {
-     StepComponent = <CreateProjectsDetails/>
+    StepComponent = <CreateProjectsDetails />;
+  } else if (step === 2) {
+    StepComponent = (
+      <CreateProjectsAdditionalDetails isSubmitting={isSubmitting} />
+    );
   }
-
-  useEffect(() => {
-    dispatch(allHubHandlerRequest());
-  }, [actor, dispatch]);
   return (
     <section className="w-full h-fit px-[6%] lg1:px-[4%] py-[6%] lg1:py-[4%] bg-gray-100">
       <div className="w-full h-full bg-gray-100 pt-8">
@@ -545,11 +839,239 @@ const onError=(val)=>{
                   </p>
                 )}
               </div>
+              <div className="z-0 w-full my-3 group px-4">
+                <label
+                  htmlFor="area_of_intrest"
+                  className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                >
+                  Area of Intrest
+                </label>
+                <select
+                  {...register("area_of_intrest")}
+                  className={`bg-gray-50 border-2 ${
+                    errors.area_of_intrest
+                      ? "border-red-500 placeholder:text-red-500"
+                      : "border-[#737373]"
+                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                >
+                  <option className="text-lg font-bold" value="">
+                    Area of Intrest ⌄
+                  </option>
+                  {areaOfExpertise?.map((intrest) => (
+                    <option
+                      key={intrest.id}
+                      value={`${intrest.name}`}
+                      className="text-lg font-bold"
+                    >
+                      {intrest.name}
+                    </option>
+                  ))}
+                </select>
+                {errors.area_of_intrest && (
+                  <p className="text-red-500 text-xs italic">
+                    {errors.area_of_intrest.message}
+                  </p>
+                )}
+              </div>
             </>
+          )}
+          {step === 1 && (
+            <>
+              <div className="flex flex-col">
+                <div className="flex-row w-full flex justify-start gap-4 items-center">
+                  <div className="mb-3 ml-6 h-24 w-24 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
+                    {isLoading ? (
+                      <svg
+                        width="35"
+                        height="37"
+                        viewBox="0 0 35 37"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="bg-no-repeat animate-pulse"
+                      >
+                        <path
+                          d="M8.53049 8.62583C8.5304 13.3783 12.3575 17.2449 17.0605 17.2438C21.7634 17.2428 25.5907 13.3744 25.5908 8.62196C25.5909 3.8695 21.7638 0.00287764 17.0608 0.00394405C12.3579 0.00501045 8.53058 3.87336 8.53049 8.62583ZM32.2249 36.3959L34.1204 36.3954L34.1205 34.4799C34.1206 27.0878 28.1667 21.0724 20.8516 21.0741L13.2692 21.0758C5.95224 21.0775 -3.41468e-05 27.0955 -0.000176714 34.4876L-0.000213659 36.4032L32.2249 36.3959Z"
+                          fill="#BBBBBB"
+                        />
+                      </svg>
+                    ) : logoPreview ? (
+                      <img
+                        src={logoPreview}
+                        alt="Logo"
+                        className="h-full w-full object-cover"
+                      />
+                    ) : projectDetails.logoData ? (
+                      <img
+                        src={projectDetails?.logoData}
+                        alt="User"
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <svg
+                        width="35"
+                        height="37"
+                        viewBox="0 0 35 37"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="bg-no-repeat"
+                      >
+                        <path
+                          d="M8.53049 8.62583C8.5304 13.3783 12.3575 17.2449 17.0605 17.2438C21.7634 17.2428 25.5907 13.3744 25.5908 8.62196C25.5909 3.8695 21.7638 0.00287764 17.0608 0.00394405C12.3579 0.00501045 8.53058 3.87336 8.53049 8.62583ZM32.2249 36.3959L34.1204 36.3954L34.1205 34.4799C34.1206 27.0878 28.1667 21.0724 20.8516 21.0741L13.2692 21.0758C5.95224 21.0775 -3.41468e-05 27.0955 -0.000176714 34.4876L-0.000213659 36.4032L32.2249 36.3959Z"
+                          fill="#BBBBBB"
+                        />
+                      </svg>
+                    )}
+                  </div>
+
+                  <Controller
+                    name="logoData"
+                    control={control}
+                    render={({ field }) => (
+                      <>
+                        <input
+                          id="logo"
+                          type="file"
+                          name="logo"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            addLogoHandler(file);
+                          }}
+                        />
+                        <label
+                          htmlFor="logo"
+                          className="p-2 border-2 border-blue-800 items-center rounded-md text-md bg-transparent text-blue-800 cursor-pointer font-extrabold"
+                        >
+                          Upload Logo
+                        </label>
+                      </>
+                    )}
+                  />
+                </div>
+                {errors.logoData && (
+                  <span className="mt-1 text-sm text-red-500 font-bold text-start px-4">
+                    {errors.logoData.message}
+                  </span>
+                )}
+              </div>
+              <div className="z-0 w-full my-3 group px-4">
+                <label
+                  htmlFor="preferred_icp_hub"
+                  className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                >
+                  Can you please share your preferred ICP Hub
+                </label>
+                <select
+                  {...register("preferred_icp_hub")}
+                  className={`bg-gray-50 border-2 ${
+                    errors.preferred_icp_hub
+                      ? "border-red-500 placeholder:text-red-500"
+                      : "border-[#737373]"
+                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                >
+                  <option className="text-lg font-bold" value="">
+                    Select your ICP Hub⌄
+                  </option>
+                  {getAllIcpHubs?.map((hub) => (
+                    <option
+                      key={hub.id}
+                      value={`${hub.name} ,${hub.region}`}
+                      className="text-lg font-bold"
+                    >
+                      {hub.name} , {hub.region}
+                    </option>
+                  ))}
+                </select>
+                {errors.preferred_icp_hub && (
+                  <p className="text-red-500 text-xs italic">
+                    {errors.preferred_icp_hub.message}
+                  </p>
+                )}
+              </div>
+            </>
+          )}
+          {step === 2 && (
+            <div className="flex flex-col">
+              <div className="flex-row w-full flex justify-start gap-4 items-center">
+                <div className="mb-3 ml-6 h-24 w-24 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
+                  {isLoading ? (
+                    <svg
+                      width="35"
+                      height="37"
+                      viewBox="0 0 35 37"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="bg-no-repeat animate-pulse"
+                    >
+                      <path
+                        d="M8.53049 8.62583C8.5304 13.3783 12.3575 17.2449 17.0605 17.2438C21.7634 17.2428 25.5907 13.3744 25.5908 8.62196C25.5909 3.8695 21.7638 0.00287764 17.0608 0.00394405C12.3579 0.00501045 8.53058 3.87336 8.53049 8.62583ZM32.2249 36.3959L34.1204 36.3954L34.1205 34.4799C34.1206 27.0878 28.1667 21.0724 20.8516 21.0741L13.2692 21.0758C5.95224 21.0775 -3.41468e-05 27.0955 -0.000176714 34.4876L-0.000213659 36.4032L32.2249 36.3959Z"
+                        fill="#BBBBBB"
+                      />
+                    </svg>
+                  ) : coverPreview ? (
+                    <img
+                      src={coverPreview}
+                      alt="CoverImage"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : additionalDetails.coverData ? (
+                    <img
+                      src={additionalDetails?.coverData}
+                      alt="User"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <svg
+                      width="35"
+                      height="37"
+                      viewBox="0 0 35 37"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="bg-no-repeat"
+                    >
+                      <path
+                        d="M8.53049 8.62583C8.5304 13.3783 12.3575 17.2449 17.0605 17.2438C21.7634 17.2428 25.5907 13.3744 25.5908 8.62196C25.5909 3.8695 21.7638 0.00287764 17.0608 0.00394405C12.3579 0.00501045 8.53058 3.87336 8.53049 8.62583ZM32.2249 36.3959L34.1204 36.3954L34.1205 34.4799C34.1206 27.0878 28.1667 21.0724 20.8516 21.0741L13.2692 21.0758C5.95224 21.0775 -3.41468e-05 27.0955 -0.000176714 34.4876L-0.000213659 36.4032L32.2249 36.3959Z"
+                        fill="#BBBBBB"
+                      />
+                    </svg>
+                  )}
+                </div>
+
+                <Controller
+                  name="coverData"
+                  control={control}
+                  render={({ field }) => (
+                    <>
+                      <input
+                        id="cover"
+                        type="file"
+                        name="cover"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          addImageCoverHandler(file);
+                        }}
+                      />
+                      <label
+                        htmlFor="cover"
+                        className="p-2 border-2 border-blue-800 items-center rounded-md text-md bg-transparent text-blue-800 cursor-pointer font-extrabold"
+                      >
+                        Upload Cover
+                      </label>
+                    </>
+                  )}
+                />
+              </div>
+              {errors.coverData && (
+                <span className="mt-1 text-sm text-red-500 font-bold text-start px-4">
+                  {errors.coverData.message}
+                </span>
+              )}
+            </div>
           )}
           {StepComponent &&
             React.cloneElement(StepComponent, {
-              onSubmit: handleSubmit(onSubmit,onError),
+              onSubmit: handleSubmit(onSubmit, errorFunc),
               register,
               errors,
               fields: stepFields,

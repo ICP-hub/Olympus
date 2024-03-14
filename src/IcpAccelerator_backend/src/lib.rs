@@ -23,6 +23,7 @@ use leaderboard::{
 };
 use project_like::LikeRecord;
 use project_registration::FilterCriteria;
+use ratings::RatingAverages;
 use requests::Request;
 use roles::{get_roles, RolesResponse};
 use std::collections::{HashMap, HashSet};
@@ -90,8 +91,12 @@ fn decline_mentor_creation_request_candid(requester: Principal, decline: bool) -
 }
 
 #[update]
-fn approve_project_details_updation_request(requester: Principal,project_id: String, approve: bool)->String{
-    admin::approve_project_update(requester,project_id, approve)
+fn approve_project_details_updation_request(
+    requester: Principal,
+    project_id: String,
+    approve: bool,
+) -> String {
+    admin::approve_project_update(requester, project_id, approve)
 }
 
 #[query]
@@ -105,25 +110,21 @@ pub async fn get_user_information_using_uid(uid: String) -> Result<UserInformati
 }
 
 #[update]
-
 pub async fn register_user(profile: UserInformation) -> String {
     user_module::register_user_role(profile).await
 }
 
 #[query]
-
 pub fn get_user_information() -> Result<UserInformation, &'static str> {
     user_module::get_user_info()
 }
 
 #[query]
-
 pub fn get_all_users_information() -> Vec<UserInformation> {
     user_module::list_all_users()
 }
 
 #[update]
-
 pub fn make_user_inactive() -> String {
     user_module::delete_user()
 }
@@ -373,12 +374,6 @@ fn get_venture_capitalist_info() -> Option<VentureCapitalist> {
     vc_registration::get_vc_info()
 }
 
-#[query]
-
-fn list_all_venture_capitalist() -> Vec<VentureCapitalist> {
-    vc_registration::list_all_vcs()
-}
-
 #[update]
 
 fn update_venture_capitalist_caller(params: VentureCapitalist) -> String {
@@ -487,7 +482,7 @@ fn update_rating_api(rating: Vec<Rating>) {
 
 #[query]
 
-fn calculate_average_api(project_id: String) -> Option<f64> {
+fn calculate_average_api(project_id: String) -> RatingAverages {
     ratings::calculate_average(&project_id)
 }
 
