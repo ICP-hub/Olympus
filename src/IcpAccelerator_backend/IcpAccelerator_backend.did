@@ -3,7 +3,15 @@ type Announcements = record {
   timestamp : nat64;
   project_name : text;
 };
-type ApprovalRequest = record { sender : principal; receiver : principal };
+type ApprovalRequest = record {
+  country : text;
+  name : text;
+  sender : principal;
+  requested_for : text;
+  photo : vec nat8;
+  tag_used : text;
+  receiver : principal;
+};
 type Blog = record { blog_url : text; timestamp : nat64 };
 type ConnectionRequest = record {
   startup_id : principal;
@@ -90,7 +98,7 @@ type MentorProfile = record {
   area_of_expertise : text;
   category_of_mentoring_service : text;
   years_of_mentoring : text;
-  exisitng_icp_project_porfolio : opt text;
+  existing_icp_project_porfolio : opt text;
   icop_hub_or_spoke : bool;
 };
 type Notification = record { notification_type : NotificationType };
@@ -147,6 +155,20 @@ type ProjectInfo = record {
   project_name : text;
   project_team : opt TeamMember;
 };
+type ProjectInfoForUser = record {
+  vc_associated : opt vec VentureCapitalist;
+  area_of_focus : opt text;
+  date_ofjoining : text;
+  reviews : opt Suggestion;
+  team_member_info : opt vec TeamMember;
+  website_social_group : opt text;
+  mentor_associated : opt vec MentorProfile;
+  country_of_project : opt text;
+  announcements : opt vec Announcements;
+  live_link_of_project : opt text;
+  jobs_opportunity : opt text;
+  rank_of_project : opt nat64;
+};
 type ProjectInfoInternal = record {
   uid : text;
   is_verified : bool;
@@ -167,7 +189,13 @@ type Rating = record {
 type Request = record { mentor : opt MentorInternal; "text" : text };
 type Result = variant { Ok : UserInformation; Err : text };
 type Role = record { id : int32; name : text };
-type Role_1 = record { status : text; name : text };
+type Role_1 = record {
+  status : text;
+  rejected_on : opt nat64;
+  name : text;
+  approved_on : opt nat64;
+  requested_on : opt nat64;
+};
 type RolesResponse = record { roles : vec Role };
 type SeventyInfoFounder = record {
   founder_image : opt vec nat8;
@@ -322,6 +350,9 @@ service : () -> {
   get_announcements : () -> (vec record { principal; vec Announcements }) query;
   get_area_focus_expertise : () -> (vec Role) query;
   get_blog_post : () -> (vec record { principal; vec Blog }) query;
+  get_dummy_data_for_project_details_for_users : () -> (
+      ProjectInfoForUser,
+    ) query;
   get_founder_info_caller : () -> (opt FounderInfo) query;
   get_hub_organizer_candid : () -> (opt UniqueHubs) query;
   get_hubs_principal_using_region : (text) -> (vec text) query;
@@ -374,7 +405,12 @@ service : () -> {
   make_project_active_inactive : (principal, text) -> (text);
   make_user_inactive : () -> (text);
   make_vc_active_inactive : (principal) -> (text);
-  mentors_awaiting_approval : () -> (vec MentorInternal) query;
+  mentor_declined : () -> (vec MentorInternal) query;
+  mentors_awaiting_approval : () -> (
+      vec record { principal; MentorInternal },
+    ) query;
+  project_awaiting_approval : () -> (vec ProjectInfoInternal) query;
+  project_declined : () -> (vec ProjectInfoInternal) query;
   project_update_awaiting_approval : () -> (vec ProjectUpdateRequest) query;
   register_founder_caller : (ThirtyInfoFounder) -> (text);
   register_hub_organizer_candid : (HubOrganizerRegistration) -> (text);
@@ -399,6 +435,7 @@ service : () -> {
   update_venture_capitalist_caller : (VentureCapitalist) -> (text);
   upvote_project : (text) -> (text);
   vc_awaiting_approval : () -> (vec VentureCapitalistInternal) query;
+  vc_declined : () -> (vec VentureCapitalistInternal) query;
   vc_profile_edit_awaiting_approval : () -> (vec VentureCapitalist) query;
   verify_project_under_your_hub : (text) -> (text);
   view_notifications_candid : (principal) -> (vec Notification_1) query;
