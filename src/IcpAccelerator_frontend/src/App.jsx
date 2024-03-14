@@ -40,7 +40,6 @@ import Adminoption from "./components/Admindashboard/Adminoption";
 import Admingraph from "./components/Admindashboard/Admingraph";
 import AdminDashboard from "./components/Admindashboard/AdminDashboard";
 import { getCurrentRoleStatusRequestHandler } from "./components/StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
-import Projectdashboard from "./components/Project/ProjectDetails/Projectdashboard";
 
 const App = () => {
   const identity = useSelector((currState) => currState.internet.identity);
@@ -140,11 +139,10 @@ const App = () => {
       {/* <ListedProjects /> */}
       {/* <Hubdashboardlive /> */}
       {/* <DashBoard /> */}
-      <Projectdashboard />
       {/* <UserProfile/> */}
       {/* <RoleSelector /> */}
       {/* <NormalUser /> */}
-      {/* <AppRoutes /> */}
+      <AppRoutes />
       {/* <MentorRegistration /> */}
       <Footer />
     </>
