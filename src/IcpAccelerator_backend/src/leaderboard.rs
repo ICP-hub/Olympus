@@ -67,19 +67,17 @@ pub fn get_leaderboard_by_ratings() -> Vec<LeaderboardEntryForRatings> {
     RATING_SYSTEM.with(|system| {
         let system = system.borrow();
 
-        // Iterate over all projects to calculate their average ratings.
         for (project_id, _) in system.iter() {
-            // Calculate the average rating for each project, considering only projects with ratings.
-            if let Some(average_rating) = calculate_average(project_id) {
+            if let Some(average_ratings) = calculate_average(project_id).overall_average {
+                // Here, average_ratings is successfully unwrapped from the Option
                 leaderboard.push(LeaderboardEntryForRatings {
                     project_id: Some(project_id.clone()),
-                    average_rating: Some(average_rating),
+                    average_rating: Some(average_ratings), // Assuming .overall is a field on RatingAverages
                 });
             }
         }
     });
 
-    // Sort the leaderboard by average ratings in descending order.
     leaderboard.sort_by(|a, b| b.average_rating.partial_cmp(&a.average_rating).unwrap_or(std::cmp::Ordering::Equal));
 
     leaderboard

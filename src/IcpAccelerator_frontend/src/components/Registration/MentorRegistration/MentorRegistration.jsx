@@ -21,6 +21,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { userRoleHandler } from "../../StateManagement/Redux/Reducers/userRoleReducer";
 import { useCountries } from "react-countries";
 import { userRegisteredHandlerRequest } from "../../StateManagement/Redux/Reducers/userRegisteredData";
+import { bufferToImageBlob } from "../../Utils/formatter/bufferToImageBlob";
 
 const validationSchema = {
   personalDetails: yup.object().shape({
@@ -131,7 +132,7 @@ const validationSchema = {
         (value) => /\S/.test(value)
       )
       .required("Category of mentoring service is required"),
-    exisitng_icp_project_porfolio: yup
+    existing_icp_project_porfolio: yup
       .string()
       .test(
         "is-non-empty",
@@ -157,8 +158,8 @@ const MentorRegistration = () => {
   const areaOfExpertise = useSelector(
     (currState) => currState.expertiseIn.expertise
   );
-  const userData = useSelector((currState) => currState.userData.data.Ok)
-  console.log(userData)
+  const userData = useSelector((currState) => currState.userData.data.Ok);
+  console.log(userData);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -179,10 +180,11 @@ const MentorRegistration = () => {
   console.log("userData in mentor-registratn comp =>", userData);
 
   const getTabClassName = (tab) => {
-    return `inline-block p-2 font-bold ${activeTab === tab
+    return `inline-block p-2 font-bold ${
+      activeTab === tab
         ? "text-black border-b-2 border-black"
         : "text-gray-400  border-transparent hover:text-black"
-      } rounded-t-lg`;
+    } rounded-t-lg`;
   };
 
   const steps = [
@@ -203,9 +205,6 @@ const MentorRegistration = () => {
     resolver: yupResolver(currentValidationSchema),
     mode: "all",
   });
-  useEffect(() => {
-    dispatch(userRegisteredHandlerRequest());
-  }, [actor, dispatch]);
 
   const handleTabClick = async (tab) => {
     const targetStep = mentorRegistration.findIndex(
@@ -302,13 +301,13 @@ const MentorRegistration = () => {
       console.log("formattedData341", formattedData);
       console.log("342 data", data);
       if (formattedData.mentor_image) {
-        imageUrlToByteArray(formattedData.mentor_image)
-          .then((imageBytes) => {
-            setmentor_image(imageBytes);
+        bufferToImageBlob(formattedData.mentor_image)
+          .then((imageUrl) => {
+            setmentor_image(imageUrl);
           })
           .catch((error) => console.error("Error converting image:", error));
       }
-    }else{
+    } else {
       if (userData) {
         // Create an object that matches the form fields structure
         const formData = {
@@ -321,22 +320,23 @@ const MentorRegistration = () => {
           country: userData.country || "",
           area_of_intrest: userData.area_of_intrest || "",
         };
-    
+
         // If there is a mentor_image, handle its conversion and set it separately if needed
         if (userData.profile_picture) {
-          imageUrlToByteArray(userData.profile_picture)
-            .then((imageBytes) => {
-              setmentor_image(imageBytes);
+          bufferToImageBlob(userData?.profile_picture)
+            .then((imageUrl) => {
+              setmentor_image(imageUrl);
+              setFormData({mentor_image: userData.profile_picture[0]});
               // You might also need to handle setting the image for display if required
             })
             .catch((error) => console.error("Error converting image:", error));
         }
-    
+
         // Use the reset function to populate the form
         reset(formData);
       }
     }
-  }, [mentorFullData, reset,userData]);
+  }, [mentorFullData, reset, userData]);
 
   const sendingMentorData = async (val) => {
     // console.log("run sendingMentorData =========");
@@ -354,7 +354,7 @@ const MentorRegistration = () => {
         toast.success(result);
         // navigate("/")
         window.location.href = "/";
-      })
+      });
       // }
       // await dispatch(userRoleHandler());
       // await navigate("/");
@@ -386,7 +386,7 @@ const MentorRegistration = () => {
         updatedFormData.icop_hub_or_spoke === "true" ? true : false;
       let tempObj2 = {
         user_data: {
-          profile_picture: [mentor_image],
+          profile_picture: [updatedFormData.mentor_image],
           full_name: updatedFormData.full_name || "",
           country: updatedFormData.country || "",
           email: [updatedFormData.email] || [],
@@ -404,9 +404,9 @@ const MentorRegistration = () => {
         area_of_expertise: updatedFormData.area_of_expertise,
         category_of_mentoring_service:
           updatedFormData.category_of_mentoring_service,
-        exisitng_icp_project_porfolio:
-          [updatedFormData.exisitng_icp_project_porfolio] || [],
-        years_of_mentoring: (updatedFormData.years_of_mentoring).toString(),
+        existing_icp_project_porfolio:
+          [updatedFormData.existing_icp_project_porfolio] || [],
+        years_of_mentoring: updatedFormData.years_of_mentoring.toString(),
         icop_hub_or_spoke: IcopHubOrSpoke,
         social_link: updatedFormData.social_link || "",
       };
@@ -421,7 +421,7 @@ const MentorRegistration = () => {
       console.log("first time visit ");
       let tempObj = {
         user_data: {
-          profile_picture: [mentor_image],
+          profile_picture: [updatedFormData.mentor_image],
           full_name: updatedFormData.full_name,
           country: updatedFormData.country,
           email: [updatedFormData.email],
@@ -439,9 +439,9 @@ const MentorRegistration = () => {
         area_of_expertise: updatedFormData.area_of_expertise,
         category_of_mentoring_service:
           updatedFormData.category_of_mentoring_service,
-        exisitng_icp_project_porfolio:
-          [updatedFormData.exisitng_icp_project_porfolio] || [],
-        years_of_mentoring: (updatedFormData.years_of_mentoring).toString(),
+          existing_icp_project_porfolio:
+          [updatedFormData.existing_icp_project_porfolio] || [],
+        years_of_mentoring: updatedFormData.years_of_mentoring.toString(),
         icop_hub_or_spoke: IcopHubOrSpoke,
         social_link: updatedFormData.social_link,
       };
@@ -470,10 +470,11 @@ const MentorRegistration = () => {
           {mentorRegistration?.map((header, index) => (
             <li key={header.id} className="me-2 relative group">
               <button
-                className={`${getTabClassName(header.id)} ${index > step && !isCurrentStepValid
+                className={`${getTabClassName(header.id)} ${
+                  index > step && !isCurrentStepValid
                     ? "cursor-not-allowed opacity-50"
                     : "cursor-pointer"
-                  }`}
+                }`}
                 onClick={() => handleTabClick(header.id)}
                 disabled={index > step && !isCurrentStepValid}
               >
@@ -505,9 +506,9 @@ const MentorRegistration = () => {
                     alt="New profile"
                     className="h-full w-full object-cover"
                   />
-                ) : formData.mentor_image ? (
+                ) : mentor_image ? (
                   <img
-                    src={formData?.mentor_image}
+                    src={mentor_image}
                     alt="User"
                     className="h-full w-full object-cover"
                   />
@@ -548,14 +549,15 @@ const MentorRegistration = () => {
                   htmlFor="area_of_intrest"
                   className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                 >
-                  What are your areas of Intrest?
+                  Area of Intrest
                 </label>
                 <select
                   {...register("area_of_intrest")}
-                  className={`bg-gray-50 border-2 ${errors.area_of_intrest
+                  className={`bg-gray-50 border-2 ${
+                    errors.area_of_intrest
                       ? "border-red-500 placeholder:text-red-500"
                       : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                 >
                   <option className="text-lg font-bold" value="">
                     Area of Intrest ⌄
@@ -585,10 +587,11 @@ const MentorRegistration = () => {
                 </label>
                 <select
                   {...register("country")}
-                  className={`bg-gray-50 border-2 ${errors.country
+                  className={`bg-gray-50 border-2 ${
+                    errors.country
                       ? "border-red-500 placeholder:text-red-500"
                       : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                 >
                   <option className="text-lg font-bold" value="">
                     select your Country ⌄
@@ -625,10 +628,11 @@ const MentorRegistration = () => {
               </label>
               <select
                 {...register("existing_icp_mentor")}
-                className={`bg-gray-50 border-2 ${errors.existing_icp_mentor
+                className={`bg-gray-50 border-2 ${
+                  errors.existing_icp_mentor
                     ? "border-red-500 placeholder:text-red-500"
                     : "border-[#737373]"
-                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
               >
                 <option className="text-lg font-bold" value="">
                   Select your option⌄
@@ -655,10 +659,11 @@ const MentorRegistration = () => {
               </label>
               <select
                 {...register("preferred_icp_hub")}
-                className={`bg-gray-50 border-2 ${errors.preferred_icp_hub
+                className={`bg-gray-50 border-2 ${
+                  errors.preferred_icp_hub
                     ? "border-red-500 placeholder:text-red-500"
                     : "border-[#737373]"
-                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
               >
                 <option className="text-lg font-bold" value="">
                   Select your ICP Hub⌄
@@ -688,10 +693,11 @@ const MentorRegistration = () => {
               </label>
               <select
                 onChange={(e) => setIsMulti_Chain(e.target.value === "Yes")}
-                className={`bg-gray-50 border-2 ${errors.multi_chain
+                className={`bg-gray-50 border-2 ${
+                  errors.multi_chain
                     ? "border-red-500 placeholder:text-red-500"
                     : "border-[#737373]"
-                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
               >
                 <option className="text-lg font-bold" value="">
                   Select your option⌄
@@ -716,10 +722,11 @@ const MentorRegistration = () => {
                   </label>
                   <select
                     {...register("multichain")}
-                    className={`bg-gray-50 border-2 ${errors.multichain
+                    className={`bg-gray-50 border-2 ${
+                      errors.multichain
                         ? "border-red-500 placeholder:text-red-500"
                         : "border-[#737373]"
-                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="">
                       Select your option⌄
@@ -751,10 +758,11 @@ const MentorRegistration = () => {
               </label>
               <select
                 {...register("area_of_expertise")}
-                className={`bg-gray-50 border-2 ${errors.area_of_expertise
+                className={`bg-gray-50 border-2 ${
+                  errors.area_of_expertise
                     ? "border-red-500 placeholder:text-red-500"
                     : "border-[#737373]"
-                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
               >
                 <option className="text-lg font-bold" value="">
                   Area_of_expertise ⌄
@@ -784,10 +792,11 @@ const MentorRegistration = () => {
               </label>
               <select
                 {...register("category_of_mentoring_service")}
-                className={`bg-gray-50 border-2 ${errors.category_of_mentoring_service
+                className={`bg-gray-50 border-2 ${
+                  errors.category_of_mentoring_service
                     ? "border-red-500 placeholder:text-red-500"
                     : "border-[#737373]"
-                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
               >
                 <option className="text-lg font-bold" value="">
                   Select your option⌄
@@ -813,10 +822,11 @@ const MentorRegistration = () => {
               </label>
               <select
                 {...register("icop_hub_or_spoke")}
-                className={`bg-gray-50 border-2 ${errors.icop_hub_or_spoke
+                className={`bg-gray-50 border-2 ${
+                  errors.icop_hub_or_spoke
                     ? "border-red-500 placeholder:text-red-500"
                     : "border-[#737373]"
-                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
               >
                 <option className="text-lg font-bold" value="">
                   Select your option⌄

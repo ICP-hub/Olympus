@@ -25,7 +25,10 @@ const investorSlice = createSlice({
   },
 });
 
-export const { investorRegisteredHandlerFailure, investorRegisteredHandlerRequest, investorRegisteredHandlerSuccess } =
-investorSlice.actions;
+export const {
+  investorRegisteredHandlerFailure,
+  investorRegisteredHandlerRequest,
+  investorRegisteredHandlerSuccess,
+} = investorSlice.actions;
 
 export default investorSlice.reducer;

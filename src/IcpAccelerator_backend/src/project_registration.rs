@@ -41,58 +41,28 @@ pub struct ProjectInfo {
     pub live_on_icp_mainnet: Option<String>,
     pub money_raised_till_now: Option<String>,
     pub supports_multichain: Option<String>,
-    pub project_elevator_pitch: Vec<u8>,
+    pub project_elevator_pitch: Option<String>,
     pub project_area_of_focus: String,
-    pub promotional_video: String,
-    pub github_link: String,
+    pub promotional_video: Option<String>,
+    pub github_link: Option<String>,
     pub reason_to_join_incubator: String,
     pub project_description: String,
     pub project_cover: Vec<u8>,
     pub project_team: Option<TeamMember>,
-    pub token_economics: String,
-    pub technical_docs: String,
-    pub long_term_goals: String,
-    pub target_market: String,
+    pub token_economics: Option<String>,
+    pub technical_docs: Option<String>,
+    pub long_term_goals: Option<String>,
+    pub target_market: Option<String>,
     pub self_rating_of_project: f64,
     pub user_data: UserInformation,
     pub mentors_assigned: Option<Vec<MentorProfile>>,
     pub vc_assigned: Option<Vec<VentureCapitalist>>,
-}
-impl ProjectInfo {
-    fn validate(&self) -> Result<(), String> {
-        if self.project_name.is_empty() {
-            return Err("Project name is required".into());
-        }
-        if self.project_area_of_focus.is_empty() {
-            return Err("Project area of focus is required".into());
-        }
-        if self.promotional_video.is_empty() {
-            return Err("Promotional video URL is required".into());
-        }
-        if self.github_link.is_empty() {
-            return Err("GitHub link is required".into());
-        }
-        if self.reason_to_join_incubator.is_empty() {
-            return Err("Reason to join incubator is required".into());
-        }
-        if self.project_description.is_empty() {
-            return Err("Project description is required".into());
-        }
-        if self.token_economics.is_empty() {
-            return Err("Token economics is required".into());
-        }
-        if self.technical_docs.is_empty() {
-            return Err("Technical documentation URL is required".into());
-        }
-        if self.long_term_goals.is_empty() {
-            return Err("Long-term goals are required".into());
-        }
-        if self.target_market.is_empty() {
-            return Err("Target market is required".into());
-        }
-        Ok(())
-    }
-}
+    pub project_twitter : Option<String>,
+    pub project_linkedin : Option<String>,
+    pub project_website : Option<String>,
+    pub project_discord : Option<String>
+}   
+
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct ProjectInfoForUser {
@@ -256,17 +226,17 @@ pub async fn create_project(info: ProjectInfo) -> String {
             ROLE_STATUS_ARRAY.with(|role_status| {
                 let mut role_status = role_status.borrow_mut();
 
-                for role in role_status
-                    .get_mut(&caller)
-                    .expect("couldn't get role status for this principal")
-                    .iter_mut()
-                {
-                    if role.name == "project" {
-                        role.status = "requested".to_string();
-                        role.requested_on = Some(time());
-                    }
-                }
-            });
+        for role in role_status
+            .get_mut(&caller)
+            .expect("You have to register yourself as a user first!")
+            .iter_mut()
+        {
+            if role.name == "project" {
+                role.status = "requested".to_string();
+                role.requested_on = Some(time());
+            }
+        }
+    });
 
             let info_clone = info.clone();
             let user_uid = crate::user_module::update_user(info_clone.user_data).await;
