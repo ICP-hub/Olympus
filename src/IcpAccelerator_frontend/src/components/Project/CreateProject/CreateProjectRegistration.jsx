@@ -401,9 +401,10 @@ const CreateProjectRegistration = () => {
         reader.readAsDataURL(compressedFile);
 
         const byteArray = await compressedFile.arrayBuffer();
-        setLogoData(Array.from(new Uint8Array(byteArray)));
-        setValue('logoData', Array.from(new Uint8Array(byteArray)), { shouldValidate: true });
-        clearErrors("logoData");
+        const logoDataArray = new Uint8Array(byteArray)
+        setLogoData(logoDataArray);
+        console.log("logoData",logoDataArray)
+        setValue('logoData', logoDataArray, { shouldValidate: true })
       } catch (error) {
         console.error("Error processing the logo:", error);
         setError("logoData", {
@@ -447,8 +448,10 @@ const CreateProjectRegistration = () => {
         reader.readAsDataURL(compressedFile);
 
         const byteArray = await compressedFile.arrayBuffer();
-        setCoverData(Array.from(new Uint8Array(byteArray)));
-        setValue('coverData', Array.from(new Uint8Array(byteArray)), { shouldValidate: true })
+        const coverDataArray = new Uint8Array(byteArray)
+        setCoverData(coverDataArray);
+        console.log("coverData",coverDataArray)
+        setValue('coverData', coverDataArray, { shouldValidate: true })
         clearErrors("coverData");
       } catch (error) {
         console.error("Error processing the CoverImage:", error);
@@ -546,6 +549,8 @@ const CreateProjectRegistration = () => {
   };
   const sendingProjectData = async (val) => {
     // console.log("run sendingProjectData =========");
+    val.project_cover = val.project_cover[0]
+    val.project_logo = val.project_logo[0]
     console.log("sendingProjectData ==>> ", val);
 
     let result;
@@ -557,6 +562,7 @@ const CreateProjectRegistration = () => {
       // } else if (specificRole === null || specificRole === undefined) {
       console.log("register register_project functn k pass reached");
       await actor.register_project(val).then((result) => {
+        console.log("register register_project functn ka result ",result)
         toast.success(result);
         // navigate("/")
         window.location.href = "/";
@@ -605,10 +611,10 @@ const CreateProjectRegistration = () => {
         target_market: updatedFormData.target_market || "",
         long_term_goals: updatedFormData.long_term_goals || "",
         project_area_of_focus: updatedFormData.project_area_of_focus || "",
-        live_on_icp_mainnet: updatedFormData.live_on_icp_mainnet.toString(),
+        live_on_icp_mainnet: updatedFormData.live_on_icp_mainnet || [],
         technical_docs: updatedFormData.technical_docs || "",
-        money_raised_till_now: updatedFormData.money_raised_till_now || "",
-        supports_multichain: updatedFormData.supports_multichain || "",
+        money_raised_till_now: updatedFormData.money_raised_till_now || [],
+        supports_multichain: updatedFormData.supports_multichain || [],
         project_name: updatedFormData.project_name || "",
         preferred_icp_hub: [updatedFormData.preferred_icp_hub],
         github_link: updatedFormData.github_link,
@@ -648,10 +654,10 @@ const CreateProjectRegistration = () => {
         target_market: updatedFormData.target_market || "",
         long_term_goals: updatedFormData.long_term_goals || "",
         project_area_of_focus: updatedFormData.project_area_of_focus || "",
-        live_on_icp_mainnet: updatedFormData.live_on_icp_mainnet.toString(),
+        live_on_icp_mainnet: updatedFormData.live_on_icp_mainnet || [],
         technical_docs: updatedFormData.technical_docs || "",
-        money_raised_till_now: updatedFormData.money_raised_till_now || "",
-        supports_multichain: updatedFormData.supports_multichain || "",
+        money_raised_till_now: updatedFormData.money_raised_till_now || [],
+        supports_multichain: updatedFormData.supports_multichain || [],
         project_name: updatedFormData.project_name || "",
         preferred_icp_hub: [updatedFormData.preferred_icp_hub],
         github_link: updatedFormData.github_link,
