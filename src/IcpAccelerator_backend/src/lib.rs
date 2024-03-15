@@ -237,13 +237,13 @@ fn get_user_likes(project_id: String) -> Option<LikeRecord> {
     project_like::get_user_likes(project_id)
 }
 
-#[update]
-fn add_suggestion_caller(
-    content: String,
-    project_id: String,
-) -> Result<(u64, String), &'static str> {
-    roadmap_suggestion::add_suggestion(content, project_id)
-}
+// #[update]
+// fn add_suggestion_caller(
+//     content: String,
+//     project_id: String,
+// ) -> Result<(u64, String), &'static str> {
+//     roadmap_suggestion::add_suggestion(content, project_id)
+// }
 
 #[update]
 fn update_suggestion_status_caller(id: u64, status: String, project_id: String) {

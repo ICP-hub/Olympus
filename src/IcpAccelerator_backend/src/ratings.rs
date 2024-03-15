@@ -182,8 +182,7 @@ fn is_owner(principal_id: &Principal, project_id: &str) -> bool {
 
 
 pub fn update_rating(ratings: Vec<Rating>) {
-    let principal_id = caller();
-
+    
     let principal_id = caller();
 
     RATING_SYSTEM.with(|system| {
