@@ -20,6 +20,7 @@ import { userRegisteredHandlerRequest } from "../../StateManagement/Redux/Reduce
 import CreateProjectsDetails from "./CreateProjectsDetails";
 import { bufferToImageBlob } from "../../Utils/formatter/bufferToImageBlob";
 import CreateProjectsAdditionalDetails from "./CreateProjectsAdditionalDetails";
+import { defaultUserImage } from "../../RoleSelector/Image";
 const validationSchema = {
   personalDetails: yup.object().shape({
     full_name: yup
@@ -96,8 +97,10 @@ const CreateProjectRegistration = () => {
     (currState) => currState.current.specificRole
   );
   const userData = useSelector((currState) => currState.userData.data.Ok);
-  const projectFullData = useSelector((currState) => currState.projectData.data);
-  console.log("Checking projectFullData Over Here ===> ",projectFullData)
+  const projectFullData = useSelector(
+    (currState) => currState.projectData.data
+  );
+  console.log("Checking projectFullData Over Here ===> ", projectFullData);
   const dispatch = useDispatch();
   const { countries } = useCountries();
 
@@ -120,14 +123,12 @@ const CreateProjectRegistration = () => {
   const [coverPreview, setCoverPreview] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [projectDataObject, setProjectDataObject] = useState({});
-// Used to convert strings to Uint8Array
+  // Used to convert strings to Uint8Array
   function stringToUint8Array(str) {
-    const encoder = new TextEncoder(); 
+    const encoder = new TextEncoder();
     return encoder.encode(str);
-}
+  }
   console.log("userData", userData);
-
-  
 
   const getTabClassName = (tab) => {
     return `inline-block p-2 font-bold ${
@@ -327,11 +328,11 @@ const CreateProjectRegistration = () => {
   const addImageHandler = useCallback(
     async (file) => {
       clearErrors("imageData");
-      if (!file)
-        return setError("imageData", {
-          type: "manual",
-          message: "An image is required",
-        });
+      // if (!file)
+      //   return setError("imageData", {
+      //     type: "manual",
+      //     message: "An image is required",
+      //   });
       if (!["image/jpeg", "image/png", "image/gif"].includes(file.type))
         return setError("imageData", {
           type: "manual",
@@ -356,7 +357,9 @@ const CreateProjectRegistration = () => {
 
         const byteArray = await compressedFile.arrayBuffer();
         setImageData(Array.from(new Uint8Array(byteArray)));
-        setValue('imageData', Array.from(new Uint8Array(byteArray)), { shouldValidate: true });
+        setValue("imageData", Array.from(new Uint8Array(byteArray)), {
+          shouldValidate: true,
+        });
         clearErrors("imageData");
       } catch (error) {
         console.error("Error processing the image:", error);
@@ -367,17 +370,24 @@ const CreateProjectRegistration = () => {
         setIsLoading(false);
       }
     },
-    [setError, clearErrors, setValue, setIsLoading, setImagePreview, setImageData]
+    [
+      setError,
+      clearErrors,
+      setValue,
+      setIsLoading,
+      setImagePreview,
+      setImageData,
+    ]
   );
   // Adding Project_Logo image Here
   const addLogoHandler = useCallback(
     async (file) => {
       clearErrors("logoData");
-      if (!file)
-        return setError("logoData", {
-          type: "manual",
-          message: "An logo is required",
-        });
+      // if (!file)
+      //   return setError("logoData", {
+      //     type: "manual",
+      //     message: "An logo is required",
+      //   });
       if (!["image/jpeg", "image/png", "image/gif"].includes(file.type))
         return setError("logoData", {
           type: "manual",
@@ -401,10 +411,10 @@ const CreateProjectRegistration = () => {
         reader.readAsDataURL(compressedFile);
 
         const byteArray = await compressedFile.arrayBuffer();
-        const logoDataArray = new Uint8Array(byteArray)
+        const logoDataArray = new Uint8Array(byteArray);
         setLogoData(logoDataArray);
-        console.log("logoData",logoDataArray)
-        setValue('logoData', logoDataArray, { shouldValidate: true })
+        console.log("logoData", logoDataArray);
+        setValue("logoData", logoDataArray, { shouldValidate: true });
       } catch (error) {
         console.error("Error processing the logo:", error);
         setError("logoData", {
@@ -420,11 +430,11 @@ const CreateProjectRegistration = () => {
   const addImageCoverHandler = useCallback(
     async (file) => {
       clearErrors("coverData");
-      if (!file)
-        return setError("coverData", {
-          type: "manual",
-          message: "An cover image is required",
-        });
+      // if (!file)
+      //   return setError("coverData", {
+      //     type: "manual",
+      //     message: "An cover image is required",
+      //   });
       if (!["image/jpeg", "image/png", "image/gif"].includes(file.type))
         return setError("coverData", {
           type: "manual",
@@ -448,10 +458,10 @@ const CreateProjectRegistration = () => {
         reader.readAsDataURL(compressedFile);
 
         const byteArray = await compressedFile.arrayBuffer();
-        const coverDataArray = new Uint8Array(byteArray)
+        const coverDataArray = new Uint8Array(byteArray);
         setCoverData(coverDataArray);
-        console.log("coverData",coverDataArray)
-        setValue('coverData', coverDataArray, { shouldValidate: true })
+        console.log("coverData", coverDataArray);
+        setValue("coverData", coverDataArray, { shouldValidate: true });
         clearErrors("coverData");
       } catch (error) {
         console.error("Error processing the CoverImage:", error);
@@ -462,8 +472,15 @@ const CreateProjectRegistration = () => {
         setIsLoading(false);
       }
     },
-    [setError, setValue , clearErrors, setIsLoading, setCoverPreview, setCoverData]
-);
+    [
+      setError,
+      setValue,
+      clearErrors,
+      setIsLoading,
+      setCoverPreview,
+      setCoverData,
+    ]
+  );
   const handleNext = async () => {
     const fieldsToValidate = steps[step].fields.map((field) => field.name);
     console.log(fieldsToValidate);
@@ -531,10 +548,15 @@ const CreateProjectRegistration = () => {
             .then((imageUrl) => {
               setImagePreview(imageUrl);
               setFormData({ imageData: userData.profile_picture[0] });
-              setValue('imageData', userData.profile_picture[0], { shouldValidate: true });
-          // You might also need to handle setting the image for display if required
-          
-          console.log("kya scene hai profile_picture ka ===>",userData.profile_picture[0])
+              setValue("imageData", userData.profile_picture[0], {
+                shouldValidate: true,
+              });
+              // You might also need to handle setting the image for display if required
+
+              console.log(
+                "kya scene hai profile_picture ka ===>",
+                userData.profile_picture[0]
+              );
             })
             .catch((error) => console.error("Error converting image:", error));
         }
@@ -543,14 +565,13 @@ const CreateProjectRegistration = () => {
     }
   }, [projectFullData, reset, setValue, userData]);
 
-  
   const errorFunc = (val) => {
     console.log("val", val);
   };
   const sendingProjectData = async (val) => {
     // console.log("run sendingProjectData =========");
-    val.project_cover = val.project_cover[0]
-    val.project_logo = val.project_logo[0]
+    val.project_cover = val.project_cover[0] || defaultUserImage;
+    val.project_logo = val.project_logo[0] || defaultUserImage;
     console.log("sendingProjectData ==>> ", val);
 
     let result;
@@ -562,7 +583,7 @@ const CreateProjectRegistration = () => {
       // } else if (specificRole === null || specificRole === undefined) {
       console.log("register register_project functn k pass reached");
       await actor.register_project(val).then((result) => {
-        console.log("register register_project functn ka result ",result)
+        console.log("register register_project functn ka result ", result);
         toast.success(result);
         // navigate("/")
         window.location.href = "/";
@@ -600,14 +621,19 @@ const CreateProjectRegistration = () => {
           bio: [updatedFormData.bio] || [],
           area_of_intrest: updatedFormData.area_of_intrest || [],
         },
-        project_elevator_pitch: stringToUint8Array(updatedFormData.project_elevator_pitch),
-        reason_to_join_incubator: updatedFormData.reason_to_join_incubator || "",
+        project_elevator_pitch: stringToUint8Array(
+          updatedFormData.project_elevator_pitch
+        ),
+        reason_to_join_incubator:
+          updatedFormData.reason_to_join_incubator || "",
         project_description: updatedFormData.project_description || "",
         vc_assigned: [],
         mentors_assigned: [],
         project_team: [],
         token_economics: updatedFormData.token_economics || "",
-        self_rating_of_project: updatedFormData.self_rating_of_project ? parseFloat(updatedFormData.self_rating_of_project) : 0,
+        self_rating_of_project: updatedFormData.self_rating_of_project
+          ? parseFloat(updatedFormData.self_rating_of_project)
+          : 0,
         target_market: updatedFormData.target_market || "",
         long_term_goals: updatedFormData.long_term_goals || "",
         project_area_of_focus: updatedFormData.project_area_of_focus || "",
@@ -643,14 +669,19 @@ const CreateProjectRegistration = () => {
           bio: [updatedFormData.bio] || [],
           area_of_intrest: updatedFormData.area_of_intrest || [],
         },
-        project_elevator_pitch: stringToUint8Array(updatedFormData.project_elevator_pitch),
-        reason_to_join_incubator: updatedFormData.reason_to_join_incubator || "",
+        project_elevator_pitch: stringToUint8Array(
+          updatedFormData.project_elevator_pitch
+        ),
+        reason_to_join_incubator:
+          updatedFormData.reason_to_join_incubator || "",
         project_description: updatedFormData.project_description || "",
         vc_assigned: [],
         mentors_assigned: [],
         project_team: [],
         token_economics: updatedFormData.token_economics || "",
-        self_rating_of_project: updatedFormData.self_rating_of_project ? parseFloat(updatedFormData.self_rating_of_project) : 0,
+        self_rating_of_project: updatedFormData.self_rating_of_project
+          ? parseFloat(updatedFormData.self_rating_of_project)
+          : 0,
         target_market: updatedFormData.target_market || "",
         long_term_goals: updatedFormData.long_term_goals || "",
         project_area_of_focus: updatedFormData.project_area_of_focus || "",
@@ -804,74 +835,76 @@ const CreateProjectRegistration = () => {
                   </span>
                 )}
               </div>
-              <div className="z-0 w-full my-3 group px-4">
-                <label
-                  htmlFor="country"
-                  className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                >
-                  Please select your Country.
-                </label>
-                <select
-                  {...register("country")}
-                  className={`bg-gray-50 border-2 ${
-                    errors.country
-                      ? "border-red-500 placeholder:text-red-500"
-                      : "border-[#737373]"
-                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                >
-                  <option className="text-lg font-bold" value="">
-                    select your Country ⌄
-                  </option>
-                  {countries?.map((expert) => (
-                    <option
-                      key={expert.name}
-                      value={`${expert.name}`}
-                      className="text-lg font-bold"
-                    >
-                      {expert.name}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="z-0 w-full my-3 group px-4">
+                  <label
+                    htmlFor="country"
+                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    Please select your Country.
+                  </label>
+                  <select
+                    {...register("country")}
+                    className={`bg-gray-50 border-2 ${
+                      errors.country
+                        ? "border-red-500 placeholder:text-red-500"
+                        : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  >
+                    <option className="text-lg font-bold" value="">
+                      select your Country ⌄
                     </option>
-                  ))}
-                </select>
+                    {countries?.map((expert) => (
+                      <option
+                        key={expert.name}
+                        value={`${expert.name}`}
+                        className="text-lg font-bold"
+                      >
+                        {expert.name}
+                      </option>
+                    ))}
+                  </select>
 
-                {errors.country && (
-                  <p className="text-red-500 text-xs italic">
-                    {errors.country.message}
-                  </p>
-                )}
-              </div>
-              <div className="z-0 w-full my-3 group px-4">
-                <label
-                  htmlFor="area_of_intrest"
-                  className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                >
-                  Area of Intrest
-                </label>
-                <select
-                  {...register("area_of_intrest")}
-                  className={`bg-gray-50 border-2 ${
-                    errors.area_of_intrest
-                      ? "border-red-500 placeholder:text-red-500"
-                      : "border-[#737373]"
-                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                >
-                  <option className="text-lg font-bold" value="">
-                    Area of Intrest ⌄
-                  </option>
-                  {areaOfExpertise?.map((intrest) => (
-                    <option
-                      key={intrest.id}
-                      value={`${intrest.name}`}
-                      className="text-lg font-bold"
-                    >
-                      {intrest.name}
+                  {errors.country && (
+                    <p className="text-red-500 text-xs italic">
+                      {errors.country.message}
+                    </p>
+                  )}
+                </div>
+                <div className="z-0 w-full my-3 group px-4">
+                  <label
+                    htmlFor="area_of_intrest"
+                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    Area of Intrest
+                  </label>
+                  <select
+                    {...register("area_of_intrest")}
+                    className={`bg-gray-50 border-2 ${
+                      errors.area_of_intrest
+                        ? "border-red-500 placeholder:text-red-500"
+                        : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  >
+                    <option className="text-lg font-bold" value="">
+                      Area of Intrest ⌄
                     </option>
-                  ))}
-                </select>
-                {errors.area_of_intrest && (
-                  <p className="text-red-500 text-xs italic">
-                    {errors.area_of_intrest.message}
-                  </p>
-                )}
+                    {areaOfExpertise?.map((intrest) => (
+                      <option
+                        key={intrest.id}
+                        value={`${intrest.name}`}
+                        className="text-lg font-bold"
+                      >
+                        {intrest.name}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.area_of_intrest && (
+                    <p className="text-red-500 text-xs italic">
+                      {errors.area_of_intrest.message}
+                    </p>
+                  )}
+                </div>
               </div>
             </>
           )}

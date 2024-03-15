@@ -30,7 +30,7 @@ const DashBoard = () => {
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
-
+console.log("userCurrentRoleStatus", userCurrentRoleStatus)
   useEffect(() => {
     const founderDataFetchHandler = async () => {
       // const founderDataFetch = await actor.get_mentor_candid();

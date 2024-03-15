@@ -48,7 +48,7 @@ const AppRoutes = () => {
 
   const publicRoutes = [
     // { path: "/", element: <Home /> },
-    { path: "/", element: <DashBoard /> },
+    { path: "/", element: <CreateProject /> },
     { path: "/create-user", element: <NormalUser /> },
     {path:"/create-vc", element : <InvestorRegistration/>},
     { path: "/create-project", element: <CreateProject /> },

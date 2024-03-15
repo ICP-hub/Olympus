@@ -21,12 +21,13 @@ pub struct MentorProfile {
     pub existing_icp_project_porfolio: Option<String>,
     pub icop_hub_or_spoke: bool,
     pub category_of_mentoring_service: String,
-    pub social_link: String,
+    pub linkedin_link: String,
     pub multichain: Option<String>,
     pub years_of_mentoring: String,
     pub website: String,
     pub area_of_expertise: String,
     pub reason_for_joining: String,
+    pub hub_owner: Option<String>,
 }
 impl MentorProfile {
     pub fn validate(&self) -> Result<(), String> {
