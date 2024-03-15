@@ -101,14 +101,71 @@ const Projectdashboard = () => {
                                         <p onClick={handleClickPlusOne} className='cursor-pointer'>+1 more</p>
                                     </div>
                                     {showLine && <div className="border-t-2 border-gray-300 mt-4">QuadB Tech projects are here</div>}
-                                    <button className="mt-4 bg-white text-black px-4 py-1 rounded uppercase  w-full justify-center item-center drop-shadow-xl border-2 border-gray-300 font-bold">Register Now</button>
+                                    <button className="mt-4 bg-white text-black px-4 py-1 rounded uppercase w-full justify-center item-center drop-shadow-xl border-2 border-gray-300 font-bold hover:text-white hover:bg-[#3505B2]">Register Now</button>
+
                                 </div>
                             </div>
                         </div>
                     ))}
                 </div>
                 {/* End of  Live Project cards */}
+                {/* invest */}
+                <div className="flex flex-wrap justify-between ">
+                    {cards.map((card) => (
+                        <div key={card.id} className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/4 p-4 relative">
+                            <div className="bg-white shadow-md rounded-lg overflow-hidden  border-2  drop-shadow-2xl gap-2">
+                                <div className="p-4">
+                                    <div className='flex flex-row justify-between gap-2  text-black  h-12 w-12 '>
+                                        <img className='rounded-lg' src={ment} alt='profile' />
+                                        <h1 className='flex items-end font-bold'>builder.fi</h1>
+                                        <img className='h-6 w-6 rounded-full items-end flex mt-5' src={girl} alt='not found' />
+                                        <p className='items-end flex text-wrap text-[10px] truncate line-clamp-2'>0x2085...6B</p>
+                                    </div>
+                                    <div className="flex items-center xl:w-[250px]  lg:w-[150px] md:w-[50px] w-[120px] mt-4">
+                                        <svg
+                                            width="100%"
+                                            height="7"
+                                            className="rounded-lg"
+                                            onMouseEnter={() => setIsHovered(true)}
+                                            onMouseLeave={() => setIsHovered(false)}
+                                        >
+                                            <defs>
+                                                <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+                                                    <stop
+                                                        offset="0%"
+                                                        style={{ stopColor: gradientStops.stop1, stopOpacity: 1 }}
+                                                    />
+                                                    <stop
+                                                        offset="100%"
+                                                        style={{ stopColor: gradientStops.stop2, stopOpacity: 1 }}
+                                                    />
+                                                </linearGradient>
+                                            </defs>
+                                            <rect
+                                                x="0"
+                                                y="0"
+                                                width={`${percent}%`}
+                                                height="10"
+                                                fill="url(#gradient1)"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p className="text-gray-700 mt-4">Internet Identity 110,000+ users
+                                        Distrikt is a completely decentralized, community-owned Web3 social media platform. Users of the platform will soon be able to vote on upgrades, and no user data will ever be mined or sold. Create your account, secured by Internet Identity today.</p>
+                                    <div className='flex dlex-row gap-2 '>
+                                        <p>.DAO</p>
+                                        <p>.Infrastructure</p>
+                                        <p onClick={handleClickPlusOne} className='cursor-pointer'>+1 more</p>
+                                    </div>
+                                    {showLine && <div className="border-t-2 border-gray-300 mt-4">QuadB Tech projects are here</div>}
+                                    <button className="mt-4 bg-white text-black px-4 py-1 rounded uppercase w-full justify-center item-center drop-shadow-xl border-2 border-gray-300 font-bold hover:text-white hover:bg-[#3505B2] uppercase">Invest</button>
 
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+                {/* End invest */}
 
 
                 {/* Project register cards */}
@@ -162,7 +219,7 @@ const Projectdashboard = () => {
                                                     <h1 className='font-bold'>SoulCurryArt</h1>
                                                     <p>posted 6 days ago</p>
                                                 </div>
-                                                {/* <p>posted 6 days ago</p> */}
+
                                             </div>
 
                                         </div>
@@ -235,21 +292,22 @@ const Projectdashboard = () => {
 
                 {/* Event Announcement part2 */}
                 <div>
-                    <div className='flex flex-row flex-wrap  gap-8 w-6/10 drop-shadow-2xl rounded-lg bg-gray-200 '>
+                    <div className='flex flex-row flex-wrap  gap-8 w-6/8 drop-shadow-2xl rounded-lg bg-gray-200 '>
                         <div className=''>
                             <img className='h-[330px] xl:w-[900px] lg:w-[700px] object-cover  rounded-lg ' src={hover} alt='not found' />
                         </div>
                         <div className='w-4/10'>
                             <div className='w-full mt-4'>
                                 <div className="relative">
-                                    <div className="absolute h-12 w-12 rounded-full  transform -translate-x-1/2  left-[-32px] md:top-[calc(-2rem + 20px)] bg-[#5040A1]">
-                                        <div className='w-full ml-4 mt-4 md:w-52'>
-                                            {winner}
-                                        </div>
-                                    </div>
+                                <div className="absolute h-12 w-12 rounded-full transform -translate-x-1/2 left-[-32px] top-[calc(-2rem + 20px)] bg-[#5040A1] hidden sm:block">
+    <div className="w-full ml-4 mt-4 md:w-52 ">
+        {winner}
+    </div>
+</div>
+
 
                                 </div>
-                                <div className='w-1/2  flex-col text-[#737373] flex '>
+                                <div className='w-1/2  flex-col text-[#737373] flex  '>
                                     <h1 className='text-black font-bold text-[15px]'>RWA Projects. Part 2</h1>
                                     <p>22 Apr 2024 17:30</p>
                                 </div>
@@ -309,9 +367,9 @@ const Projectdashboard = () => {
                         <div className=" relative shadow-md rounded-lg  overflow-hidden border-2 drop-shadow-2xl gap-2 bg-white">
                             <img className=' h-24 w-full  mx-auto rounded-lg rounded-b-none' src={coding1} alt='not found' />
 
-                            <div className='absolute mt-[-25px] flex flex-row justify-between items-center text-black p-2 space-x-36'>
+                            <div className='absolute lg:mt-[-30px] xl:mt-[-25px] md:mt-[-40px] mt-[-29px] flex flex-row flex-wrap  justify-between items-center text-black p-2 space-x-36'>
                                 <img className='h-10 w-12 z-10 rounded-lg' src={ment} alt='Data' />
-                                <p className='mt-4 font-bold text-[#6B7280]'>Project 2</p>
+                                <p className=' lg:mt-[-1rem] md:mt-[0rem]  xl:mt-[8px] mt-[16px] md:mr-5 font-bold text-[#6B7280]'>Project 2</p>
                             </div>
 
 
@@ -466,6 +524,31 @@ const Projectdashboard = () => {
                     </div>
                 </div>
                 {/* end of the tool */}
+
+                {/* associated projects start */}'
+
+
+                <div className="flex flex-wrap justify-start">
+    <div className="w-full sm:w-1/2 md:w-1/2 lg:w-1/3 xl:w-1/3 p-4 flex flex-col gap-4">
+        <div className="relative shadow-md rounded-lg overflow-hidden drop-shadow-2xl gap-2 bg-white">
+            <div className="flex flex-col sm:flex-row gap-2">
+                <div className="w-full sm:w-2/3">
+                    <img className="w-full h-full rounded-md rounded-r-none" src={coding1} alt="hh" />
+                </div>
+                <div className="flex flex-col p-2">
+                    <img className="w-12 h-12 rounded-lg" src={ment} alt="popup" />
+                    <p>Dirac Finance</p>
+                    <p>Dirac Finance is an institutional-grade decentralized Options Vault (DOV) that...</p>
+                    <div className="flex justify-start mb-2 mt-2">
+                        <button className="w-full bg-[#3505B2] text-white font-bold rounded-md py-2">Mentorship</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+                {/* Associated projects End */}
 
 
 
