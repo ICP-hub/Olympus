@@ -39,6 +39,7 @@ import MentorRegistration from "./components/Registration/MentorRegistration/Men
 import { getCurrentRoleStatusRequestHandler } from "./components/StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 import { userRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/userRegisteredData";
 import InvestorRegistration from "./components/Registration/InvestorRegistration/InvestorRegistration";
+import CreateProjectRegistration from "./components/Project/CreateProject/CreateProjectRegistration";
 
 const App = () => {
   const identity = useSelector((currState) => currState.internet.identity);
@@ -147,8 +148,9 @@ const App = () => {
       {/* <UserProfile/> */}
       {/* <RoleSelector /> */}
       {/* <NormalUser /> */}
-      <InvestorRegistration/>
-      {/* <AppRoutes /> */}
+      {/* <InvestorRegistration/> */}
+      {/* <CreateProjectRegistration /> */}
+      <AppRoutes />
       </div>
       </div>
       {/* <MentorRegistration /> */}

@@ -98,13 +98,14 @@ const validationSchema = {
         /\S/.test(value)
       )
       .required("website URL is required"),
-    social_link: yup
+    linkedin_link: yup
       .string()
-      .url("Invalid Social link")
-      .test("is-non-empty", "Social link is required", (value) =>
+      .url("Invalid Linkedin link")
+      .test("is-non-empty", "linkedin link is required", (value) =>
         /\S/.test(value)
       )
-      .required("Social link is required"),
+      .required("linkedin link is required"),
+    hub_owner: yup.string().optional(),
     multichain: yup.string().optional(),
     preferred_icp_hub: yup
       .string()
@@ -326,7 +327,7 @@ const MentorRegistration = () => {
           bufferToImageBlob(userData?.profile_picture)
             .then((imageUrl) => {
               setmentor_image(imageUrl);
-              setFormData({mentor_image: userData.profile_picture[0]});
+              setFormData({ mentor_image: userData.profile_picture[0] });
               // You might also need to handle setting the image for display if required
             })
             .catch((error) => console.error("Error converting image:", error));
@@ -401,6 +402,7 @@ const MentorRegistration = () => {
         website: updatedFormData.website,
         multichain: [updatedFormData.multichain],
         preferred_icp_hub: [updatedFormData.preferred_icp_hub],
+        hub_owner: [updatedFormData.hub_owner],
         area_of_expertise: updatedFormData.area_of_expertise,
         category_of_mentoring_service:
           updatedFormData.category_of_mentoring_service,
@@ -408,7 +410,7 @@ const MentorRegistration = () => {
           [updatedFormData.existing_icp_project_porfolio] || [],
         years_of_mentoring: updatedFormData.years_of_mentoring.toString(),
         icop_hub_or_spoke: IcopHubOrSpoke,
-        social_link: updatedFormData.social_link || "",
+        linkedin_link: updatedFormData.linkedin_link || "",
       };
 
       console.log("tempObj2 kaam kia ????? ", tempObj2); // work kia
@@ -436,14 +438,15 @@ const MentorRegistration = () => {
         website: updatedFormData.website,
         multichain: [updatedFormData.multichain],
         preferred_icp_hub: [updatedFormData.preferred_icp_hub],
+        hub_owner: [updatedFormData.hub_owner],
         area_of_expertise: updatedFormData.area_of_expertise,
         category_of_mentoring_service:
           updatedFormData.category_of_mentoring_service,
-          existing_icp_project_porfolio:
+        existing_icp_project_porfolio:
           [updatedFormData.existing_icp_project_porfolio] || [],
         years_of_mentoring: updatedFormData.years_of_mentoring.toString(),
         icop_hub_or_spoke: IcopHubOrSpoke,
-        social_link: updatedFormData.social_link,
+        linkedin_link: updatedFormData.linkedin_link,
       };
       console.log("tempObj kaam kia ????? ", tempObj); // work kia
 
@@ -783,6 +786,7 @@ const MentorRegistration = () => {
                 </p>
               )}
             </div>
+
             <div className="z-0 w-full my-3 group">
               <label
                 htmlFor="category_of_mentoring_service"
@@ -828,19 +832,50 @@ const MentorRegistration = () => {
                     : "border-[#737373]"
                 } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
               >
-                <option className="text-lg font-bold" value="">
-                  Select your option⌄
+                <option className="text-lg font-bold" value="false">
+                  No
                 </option>
                 <option className="text-lg font-bold" value="true">
                   Yes
-                </option>
-                <option className="text-lg font-bold" value="false">
-                  No
                 </option>
               </select>
               {errors.icop_hub_or_spoke && (
                 <p className="text-red-500 text-xs italic">
                   {errors.icop_hub_or_spoke.message}
+                </p>
+              )}
+            </div>
+            <div className="z-0 w-full my-3 group">
+              <label
+                htmlFor="hub_owner"
+                className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+              >
+                Hub Owner
+              </label>
+              <select
+                {...register("hub_owner")}
+                className={`bg-gray-50 border-2 ${
+                  errors.hub_owner
+                    ? "border-red-500 placeholder:text-red-500"
+                    : "border-[#737373]"
+                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+              >
+                <option className="text-lg font-bold" value="">
+                  Select your ICP Hub⌄
+                </option>
+                {getAllIcpHubs?.map((hub) => (
+                  <option
+                    key={hub.id}
+                    value={`${hub.name} ,${hub.region}`}
+                    className="text-lg font-bold"
+                  >
+                    {hub.name} , {hub.region}
+                  </option>
+                ))}
+              </select>
+              {errors.hub_owner && (
+                <p className="text-red-500 text-xs italic">
+                  {errors.hub_owner.message}
                 </p>
               )}
             </div>
