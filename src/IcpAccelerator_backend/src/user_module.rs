@@ -166,6 +166,48 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
 // }
 
 #[query]
+pub fn get_roles_for_principal(principal_id: Principal) -> Vec<Role> {
+    ROLE_STATUS_ARRAY.with(|r| {
+        let role_status_map = r.borrow();
+
+        if let Some(role_status) = role_status_map.get(&principal_id) {
+            role_status.clone()
+        } else {
+            vec![
+                Role {
+                    name: "user".to_string(),
+                    status: "default".to_string(),
+                    requested_on: None,
+                    approved_on: None,
+                    rejected_on: None,
+                },
+                Role {
+                    name: "project".to_string(),
+                    status: "default".to_string(),
+                    requested_on: None,
+                    approved_on: None,
+                    rejected_on: None,
+                },
+                Role {
+                    name: "mentor".to_string(),
+                    status: "default".to_string(),
+                    requested_on: None,
+                    approved_on: None,
+                    rejected_on: None,
+                },
+                Role {
+                    name: "vc".to_string(),
+                    status: "default".to_string(),
+                    requested_on: None,
+                    approved_on: None,
+                    rejected_on: None,
+                },
+            ]
+        }
+    })
+}
+
+#[query]
 pub fn get_role_status() -> Vec<Role> {
     ROLE_STATUS_ARRAY.with(|r| {
         let role_status_map = r.borrow();

@@ -152,6 +152,12 @@ pub struct ProjectUpdateRequest {
     pub updated_info: ProjectInfo,
 }
 
+#[derive(Serialize, Deserialize, Clone, CandidType)]
+pub struct ProjectVecWithRoles {
+    pub project_profile: Vec<ProjectInfoInternal>,
+    pub roles: Vec<Role>,
+}
+
 pub type ProjectAnnouncements = HashMap<Principal, Vec<Announcements>>;
 pub type Notifications = HashMap<Principal, Vec<NotificationProject>>;
 pub type BlogPost = HashMap<Principal, Vec<Blog>>;
@@ -299,21 +305,23 @@ pub fn find_project_by_id(project_id: &str) -> Option<ProjectInfoInternal> {
     })
 }
 
-pub fn list_all_projects() -> Vec<ProjectInfo> {
-    let projects = APPLICATION_FORM.with(|storage| {
-        storage
-            .borrow()
-            .values()
-            .flat_map(|project_internals| {
-                project_internals
-                    .iter()
-                    .map(|project_internal| project_internal.params.clone())
-            })
-            .collect::<Vec<ProjectInfo>>()
-    });
 
-    ic_cdk::println!("Listing all projects: {:?}", projects);
-    projects
+pub fn list_all_projects() -> HashMap<Principal, ProjectVecWithRoles> {
+    let project_awaiters = APPLICATION_FORM.with(|awaiters| awaiters.borrow().clone());
+
+    let mut project_with_roles_map: HashMap<Principal, ProjectVecWithRoles> = HashMap::new();
+
+    for (principal, vc_internal) in project_awaiters.iter() {
+        let roles = get_roles_for_principal(*principal);
+        let project_with_roles = ProjectVecWithRoles {
+            project_profile: vc_internal.clone(),
+            roles,
+        };
+
+        project_with_roles_map.insert(*principal, project_with_roles);
+    }
+
+    project_with_roles_map
 }
 
 pub async fn update_project(project_id: String, updated_project: ProjectInfo) -> String {

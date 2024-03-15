@@ -89,7 +89,6 @@ type MentorInternal = record {
 };
 type MentorProfile = record {
   user_data : UserInformation;
-  social_link : text;
   reason_for_joining : text;
   existing_icp_mentor : bool;
   preferred_icp_hub : opt text;
@@ -100,6 +99,12 @@ type MentorProfile = record {
   years_of_mentoring : text;
   existing_icp_project_porfolio : opt text;
   icop_hub_or_spoke : bool;
+  linkedin_link : text;
+  hub_owner : opt text;
+};
+type MentorWithRoles = record {
+  mentor_profile : MentorInternal;
+  roles : vec Role;
 };
 type Notification = record { notification_type : NotificationType };
 type NotificationForOwner = record {
@@ -132,28 +137,36 @@ type Notification_1 = record {
   notification_type : NotificationType_1;
 };
 type ProjectInfo = record {
-  project_elevator_pitch : vec nat8;
+  sns : opt text;
+  project_linkedin : opt text;
+  project_elevator_pitch : opt text;
   reason_to_join_incubator : text;
   user_data : UserInformation;
+  project_discord : opt text;
   project_description : text;
   vc_assigned : opt vec VentureCapitalist;
-  token_economics : text;
+  investors : opt text;
+  token_economics : opt text;
   self_rating_of_project : float64;
   preferred_icp_hub : opt text;
+  raised_from_other_ecosystem : opt text;
   mentors_assigned : opt vec MentorProfile;
-  target_market : text;
-  long_term_goals : text;
+  project_twitter : opt text;
+  target_market : opt text;
+  long_term_goals : opt text;
   project_area_of_focus : text;
   live_on_icp_mainnet : opt text;
-  technical_docs : text;
-  github_link : text;
+  technical_docs : opt text;
+  github_link : opt text;
   project_cover : vec nat8;
-  promotional_video : text;
-  money_raised_till_now : opt text;
+  project_website : opt text;
+  promotional_video : opt text;
+  money_raised_till_now : opt bool;
   supports_multichain : opt text;
   project_logo : vec nat8;
   project_name : text;
   project_team : opt TeamMember;
+  icp_grants : opt text;
 };
 type ProjectInfoForUser = record {
   vc_associated : opt vec VentureCapitalist;
@@ -180,6 +193,14 @@ type ProjectUpdateRequest = record {
   updated_info : ProjectInfo;
   project_id : text;
 };
+type ProjectVecWithRoles = record {
+  project_profile : vec ProjectInfoInternal;
+  roles : vec Role;
+};
+type ProjectWithRoles = record {
+  project_profile : ProjectInfoInternal;
+  roles : vec Role;
+};
 type Rating = record {
   sub_level : SubLevel;
   level_name : MainLevel;
@@ -196,15 +217,15 @@ type RatingAverages = record {
 type Request = record { mentor : opt MentorInternal; "text" : text };
 type Result = variant { Ok : record { nat64; text }; Err : text };
 type Result_1 = variant { Ok : UserInformation; Err : text };
-type Role = record { id : int32; name : text };
-type Role_1 = record {
+type Role = record {
   status : text;
   rejected_on : opt nat64;
   name : text;
   approved_on : opt nat64;
   requested_on : opt nat64;
 };
-type RolesResponse = record { roles : vec Role };
+type Role_1 = record { id : int32; name : text };
+type RolesResponse = record { roles : vec Role_1 };
 type SeventyInfoFounder = record {
   founder_image : opt vec nat8;
   equity_owner_of_company : opt text;
@@ -298,24 +319,30 @@ type UserInformation = record {
   full_name : text;
 };
 type UserRole = variant { VC; Mentor; Founder; Project; ICPHubOrganizer };
+type VcWithRoles = record {
+  vc_profile : VentureCapitalistInternal;
+  roles : vec Role;
+};
 type VentureCapitalist = record {
   fund_size : float64;
   user_data : UserInformation;
-  existing_icp_portfolio : text;
+  existing_icp_portfolio : opt text;
   registered_under_any_hub : opt bool;
   name_of_fund : text;
   reason_for_joining : text;
   logo : opt vec nat8;
   average_check_size : float64;
-  money_invested : float64;
+  money_invested : opt float64;
   existing_icp_investor : bool;
   preferred_icp_hub : text;
   project_on_multichain : opt text;
   investor_type : text;
-  announcement_details : text;
+  website_link : text;
+  announcement_details : opt text;
   number_of_portfolio_companies : nat16;
   assets_under_management : text;
   portfolio_link : text;
+  linkedin_link : text;
   category_of_investment : text;
   type_of_investment : text;
 };
@@ -352,11 +379,14 @@ service : () -> {
   delete_venture_capitalist_caller : () -> (text);
   filter_out_projects : (FilterCriteria) -> (vec ProjectInfo) query;
   get_admin_notifications : (principal) -> (vec Notification) query;
-  get_all_mentors_candid : () -> (vec MentorProfile) query;
+  get_all_mentors : () -> (vec record { principal; MentorWithRoles }) query;
+  get_all_mentors_candid : () -> (
+      vec record { principal; MentorWithRoles },
+    ) query;
   get_all_roles : () -> (RolesResponse) query;
   get_all_users_information : () -> (vec UserInformation) query;
   get_announcements : () -> (vec record { principal; vec Announcements }) query;
-  get_area_focus_expertise : () -> (vec Role) query;
+  get_area_focus_expertise : () -> (vec Role_1) query;
   get_blog_post : () -> (vec record { principal; vec Blog }) query;
   get_dummy_data_for_project_details_for_users : () -> (
       ProjectInfoForUser,
@@ -389,7 +419,8 @@ service : () -> {
   get_projects_for_caller : () -> (vec ProjectInfo) query;
   get_role : () -> (RolesResponse) query;
   get_role_from_p_id : () -> (opt vec UserRole) query;
-  get_role_status : () -> (vec Role_1) query;
+  get_role_status : () -> (vec Role) query;
+  get_roles_for_principal : (principal) -> (vec Role) query;
   get_suggestions_by_parent_id_caller : (text, nat64) -> (vec Suggestion) query;
   get_suggestions_by_status_caller : (text, text) -> (vec Suggestion) query;
   get_total_suggestions : (text) -> (nat64) query;
@@ -406,37 +437,33 @@ service : () -> {
   greet : (text) -> (text) query;
   like_project : (text) -> (text);
   list_all_founders : () -> (vec FounderInfo) query;
-  list_all_projects : () -> (vec ProjectInfo) query;
-  list_all_vcs : () -> (
-      vec record { principal; VentureCapitalistInternal },
+  list_all_projects : () -> (
+      vec record { principal; ProjectVecWithRoles },
     ) query;
+  list_all_vcs : () -> (vec record { principal; VcWithRoles }) query;
   make_active_inactive_mentor : (principal) -> (text);
   make_project_active_inactive : (principal, text) -> (text);
   make_user_inactive : () -> (text);
   make_vc_active_inactive : (principal) -> (text);
-  mentor_declined : () -> (vec record { principal; MentorInternal }) query;
+  mentor_declined : () -> (vec record { principal; MentorWithRoles }) query;
   mentor_profile_edit_awaiting_approval : () -> (
       vec record { principal; MentorProfile },
     ) query;
   mentors_awaiting_approval : () -> (
-      vec record { principal; MentorInternal },
+      vec record { principal; MentorWithRoles },
     ) query;
   project_awaiting_approval : () -> (
-      vec record { principal; ProjectInfoInternal },
+      vec record { principal; ProjectWithRoles },
     ) query;
-  project_declined : () -> (
-      vec record { principal; ProjectInfoInternal },
-    ) query;
+  project_declined : () -> (vec record { principal; ProjectWithRoles }) query;
   project_update_awaiting_approval : () -> (
       vec record { text; ProjectUpdateRequest },
     ) query;
-  register_founder_caller : (ThirtyInfoFounder) -> (text);
   register_hub_organizer_candid : (HubOrganizerRegistration) -> (text);
   register_mentor_candid : (MentorProfile) -> (text);
   register_project : (ProjectInfo) -> (text);
   register_user : (UserInformation) -> (text);
   register_venture_capitalist : (VentureCapitalist) -> (text);
-  register_venture_capitalist_caller : (VentureCapitalist) -> (text);
   reply_to_suggestion_caller : (nat64, text, text) -> (nat64, text);
   respond_to_connection_request_candid : (principal, bool) -> (text);
   send_connection_request : (principal, text) -> (text);
@@ -452,12 +479,8 @@ service : () -> {
   update_venture_capitalist : (VentureCapitalist) -> (text);
   update_venture_capitalist_caller : (VentureCapitalist) -> (text);
   upvote_project : (text) -> (text);
-  vc_awaiting_approval : () -> (
-      vec record { principal; VentureCapitalistInternal },
-    ) query;
-  vc_declined : () -> (
-      vec record { principal; VentureCapitalistInternal },
-    ) query;
+  vc_awaiting_approval : () -> (vec record { principal; VcWithRoles }) query;
+  vc_declined : () -> (vec record { principal; VcWithRoles }) query;
   vc_profile_edit_awaiting_approval : () -> (
       vec record { principal; VentureCapitalist },
     ) query;

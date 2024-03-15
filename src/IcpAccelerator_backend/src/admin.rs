@@ -1,8 +1,8 @@
-use serde::{Serialize, Deserialize};
 use crate::mentor::*;
 use crate::project_registration::*;
 use crate::user_module::*;
 use crate::vc_registration::*;
+use serde::{Deserialize, Serialize};
 
 use candid::{CandidType, Principal};
 use ic_cdk::api::management_canister::main::{canister_info, CanisterInfoRequest};
@@ -248,60 +248,130 @@ pub struct MentorWithRoles {
     pub mentor_profile: MentorInternal,
     pub roles: Vec<Role>,
 }
+#[derive(Serialize, Deserialize, Clone, CandidType)]
+pub struct VcWithRoles {
+    pub vc_profile: VentureCapitalistInternal,
+    pub roles: Vec<Role>,
+}
 
-
-// #[query]
-// fn mentors_awaiting_approval() -> HashMap<Principal, MentorWithRoles> {
-//     let mentor_awaiters = MENTOR_AWAITS_RESPONSE.with(|awaiters| {
-//         awaiters.borrow().clone()
-//     });
-
-//     let mut mentor_with_roles_map: HashMap<Principal, MentorWithRoles> = HashMap::new();
-
-    
-//     for (principal, mentor_internal) in mentor_awaiters.iter() {
-//         let roles = get_roles_for_principal(*principal); 
-//         let mentor_with_roles = MentorWithRoles {
-//             mentor_profile: mentor_internal.clone(),
-//             roles,
-//         };
-
-//         mentor_with_roles_map.insert(*principal, mentor_with_roles);
-//     }
-
-//     mentor_with_roles_map   
-// }
-
-
-
-#[query]
-fn mentors_awaiting_approval() -> HashMap<Principal, MentorInternal> {
-    MENTOR_AWAITS_RESPONSE.with(|awaiters| awaiters.borrow().clone())
+#[derive(Serialize, Deserialize, Clone, CandidType)]
+pub struct ProjectWithRoles {
+    pub project_profile: ProjectInfoInternal,
+    pub roles: Vec<Role>,
 }
 
 #[query]
-fn vc_awaiting_approval() -> HashMap<Principal, VentureCapitalistInternal> {
-    VC_AWAITS_RESPONSE.with(|awaiters| awaiters.borrow().clone())
+pub fn mentors_awaiting_approval() -> HashMap<Principal, MentorWithRoles> {
+    let mentor_awaiters = MENTOR_AWAITS_RESPONSE.with(|awaiters| awaiters.borrow().clone());
+
+    let mut mentor_with_roles_map: HashMap<Principal, MentorWithRoles> = HashMap::new();
+
+    for (principal, mentor_internal) in mentor_awaiters.iter() {
+        let roles = get_roles_for_principal(*principal);
+        let mentor_with_roles = MentorWithRoles {
+            mentor_profile: mentor_internal.clone(),
+            roles,
+        };
+
+        mentor_with_roles_map.insert(*principal, mentor_with_roles);
+    }
+
+    mentor_with_roles_map
 }
 
 #[query]
-fn project_awaiting_approval() -> HashMap<Principal, ProjectInfoInternal> {
-    PROJECT_AWAITS_RESPONSE.with(|awaiters| awaiters.borrow().clone())
+pub fn vc_awaiting_approval() -> HashMap<Principal, VcWithRoles> {
+    let vc_awaiters = VC_AWAITS_RESPONSE.with(|awaiters| awaiters.borrow().clone());
+
+    let mut vc_with_roles_map: HashMap<Principal, VcWithRoles> = HashMap::new();
+
+    for (principal, vc_internal) in vc_awaiters.iter() {
+        let roles = get_roles_for_principal(*principal);
+        let vc_with_roles = VcWithRoles {
+            vc_profile: vc_internal.clone(),
+            roles,
+        };
+
+        vc_with_roles_map.insert(*principal, vc_with_roles);
+    }
+
+    vc_with_roles_map
 }
 
 #[query]
-fn vc_declined() -> HashMap<Principal, VentureCapitalistInternal> {
-    DECLINED_VC_REQUESTS.with(|awaiters| awaiters.borrow().clone())
+pub fn project_awaiting_approval() -> HashMap<Principal, ProjectWithRoles> {
+    let project_awaiters = PROJECT_AWAITS_RESPONSE.with(|awaiters| awaiters.borrow().clone());
+
+    let mut project_with_roles_map: HashMap<Principal, ProjectWithRoles> = HashMap::new();
+
+    for (principal, vc_internal) in project_awaiters.iter() {
+        let roles = get_roles_for_principal(*principal);
+        let project_with_roles = ProjectWithRoles {
+            project_profile: vc_internal.clone(),
+            roles,
+        };
+
+        project_with_roles_map.insert(*principal, project_with_roles);
+    }
+
+    project_with_roles_map
 }
 
 #[query]
-fn project_declined() -> HashMap<Principal, ProjectInfoInternal> {
-    DECLINED_PROJECT_REQUESTS.with(|awaiters| awaiters.borrow().clone())
+pub fn project_declined() -> HashMap<Principal, ProjectWithRoles> {
+    let project_declined = DECLINED_PROJECT_REQUESTS.with(|awaiters| awaiters.borrow().clone());
+
+    let mut project_with_roles_map: HashMap<Principal, ProjectWithRoles> = HashMap::new();
+
+    for (principal, vc_internal) in project_declined.iter() {
+        let roles = get_roles_for_principal(*principal);
+        let project_with_roles = ProjectWithRoles {
+            project_profile: vc_internal.clone(),
+            roles,
+        };
+
+        project_with_roles_map.insert(*principal, project_with_roles);
+    }
+
+    project_with_roles_map
 }
 
 #[query]
-fn mentor_declined() -> HashMap<Principal, MentorInternal> {
-    DECLINED_MENTOR_REQUESTS.with(|awaiters| awaiters.borrow().clone())
+pub fn vc_declined() -> HashMap<Principal, VcWithRoles> {
+    let vc_declined = DECLINED_VC_REQUESTS.with(|awaiters| awaiters.borrow().clone());
+
+    let mut vc_with_roles_map: HashMap<Principal, VcWithRoles> = HashMap::new();
+
+    for (principal, vc_internal) in vc_declined.iter() {
+        let roles = get_roles_for_principal(*principal);
+        let vc_with_roles = VcWithRoles {
+            vc_profile: vc_internal.clone(),
+            roles,
+        };
+
+        vc_with_roles_map.insert(*principal, vc_with_roles);
+    }
+
+    vc_with_roles_map
+}
+
+#[query]
+pub fn mentor_declined() -> HashMap<Principal, MentorWithRoles> {
+    let mentor_awaiters = DECLINED_MENTOR_REQUESTS.with(|awaiters| awaiters.borrow().clone());
+
+    let mut mentor_with_roles_map: HashMap<Principal, MentorWithRoles> = HashMap::new();
+
+    for (principal, mentor_internal) in mentor_awaiters.iter() {
+        let roles = get_roles_for_principal(*principal);
+        let mentor_with_roles = MentorWithRoles {
+            mentor_profile: mentor_internal.clone(),
+            roles,
+        };
+
+        mentor_with_roles_map.insert(*principal, mentor_with_roles);
+    }
+
+    mentor_with_roles_map
 }
 
 #[query]

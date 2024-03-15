@@ -180,7 +180,7 @@ fn get_project_using_id(project_id: String) -> Option<ProjectInfoInternal> {
 }
 
 #[query]
-fn list_all_projects() -> Vec<ProjectInfo> {
+fn list_all_projects() -> HashMap<Principal, ProjectVecWithRoles> {
     project_registration::list_all_projects()
 }
 
@@ -305,7 +305,7 @@ fn make_active_inactive_mentor(id: Principal) -> String {
 
 #[query]
 
-fn get_all_mentors_candid() -> Vec<MentorProfile> {
+fn get_all_mentors_candid() -> HashMap<Principal, MentorWithRoles> {
     mentor::get_all_mentors()
 }
 
