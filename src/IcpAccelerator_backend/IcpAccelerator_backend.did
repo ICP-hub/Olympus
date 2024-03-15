@@ -360,7 +360,7 @@ service : () -> {
   delete_venture_capitalist : () -> (text);
   delete_venture_capitalist_caller : () -> (text);
   filter_out_projects : (FilterCriteria) -> (vec ProjectInfo) query;
-  get_admin_notifications : (principal) -> (vec Notification) query;
+  get_admin_notifications : () -> (vec Notification) query;
   get_all_mentors_candid : () -> (vec MentorProfile) query;
   get_all_roles : () -> (RolesResponse) query;
   get_all_users_information : () -> (vec UserInformation) query;

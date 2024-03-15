@@ -1,8 +1,8 @@
 import React, { useState ,useEffect, useRef} from "react";
 // import {OutSideClickHandler} from "../hooks/OutSideClickHandler";
-import { OutSideClickHandler } from "../hooks/OutSideClickHandler";
+import { OutSideClickHandler } from "../../../../IcpAccelerator_frontend/src/components/hooks/OutSideClickHandler";
 import  img1 from "../../../assets/images/img1.png";
-import { linkedIn  } from "../Utils/Data/SvgData";
+import { linkedIn  } from "../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
 
 const Adminalluser  = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);

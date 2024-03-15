@@ -31,29 +31,29 @@ const validationSchema = {
       .test("is-non-empty", "Full Name is required", (value) =>
         /\S/.test(value)
       )
-      .required("Full Name is required"),
+      .required("Name is required"),
     openchat_username: yup
       .string()
       .test("is-non-empty", "0penchat username is required", (value) =>
         /\S/.test(value)
-      )
-      .required("Openchat username is required"),
+      ),
+      // .required("Openchat username is required"),
     bio: yup
       .string()
-      .test("is-non-empty", "Bio is required", (value) => /\S/.test(value))
-      .required("Bio is required"),
+      .test("is-non-empty", "Bio is required", (value) => /\S/.test(value)),
+      // .required("Bio is required"),
     email: yup
       .string()
       .email("Invalid email")
-      .test("is-non-empty", "Email is required", (value) => /\S/.test(value))
-      .required("Email is required"),
+      .test("is-non-empty", "Email is required", (value) => /\S/.test(value)),
+      // .required("Email is required"),
     telegram_id: yup
       .string()
       .url("Invalid telegram_id URL")
       .test("is-non-empty", "telegram_id URL is required", (value) =>
         /\S/.test(value)
-      )
-      .required("telegram_id URL is required"),
+      ),
+      // .required("telegram_id URL is required"),
     twitter_id: yup.string().optional().url(),
     country: yup
       .string()
@@ -64,11 +64,12 @@ const validationSchema = {
       .test("is-non-empty", "Area of interest is required", (value) =>
         /\S/.test(value)
       )
-      .required("Area of interest required"),
+      // .required("Area of interest required"),
   }),
   investorDetails: yup.object().shape({
     preferred_icp_hub: yup
       .string()
+      .required()
       .test("is-non-empty", "ICP Hub selection is required", (value) =>
         /\S/.test(value)
       )
@@ -641,16 +642,17 @@ const InvestorRegistration = () => {
                     htmlFor="imagess"
                     className="p-2 border-2 border-blue-800 items-center rounded-md text-md bg-transparent text-blue-800 cursor-pointer font-extrabold"
                   >
-                    Upload Profile
+                    Upload image
                   </label>
                 </div>
-
-                <div className="z-0 w-full my-3 group">
+           
+           <div className="w-full flex md:flex-row flex-col px-4 gap-5">
+              <div className="z-0 md:w-1/2 w-full my-3 group">
                   <label
                     htmlFor="country"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Please select your Country.
+                    Country*
                   </label>
                   <select
                     {...register("country")}
@@ -661,7 +663,7 @@ const InvestorRegistration = () => {
                     } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="">
-                      select your Country ⌄
+                      select your country  
                     </option>
                     {countries?.map((expert) => (
                       <option
@@ -681,14 +683,12 @@ const InvestorRegistration = () => {
                   )}
                 </div>
 
-                <div className="relative z-0 group mb-6 px-4">
-                  {" "}
-                  // correct
+                <div className=" md:w-1/2 w-full z-0 group my-3">
                   <label
                     htmlFor="area_of_intrest"
                     className="block mb-2 text-lg font-medium  text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    What is your area of interest ?
+                    interest*
                   </label>
                   <select
                     {...register("area_of_intrest")}
@@ -700,7 +700,7 @@ const InvestorRegistration = () => {
                     } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="">
-                      Select your area of interest
+                      select your interest  
                     </option>
                     {areaOfExpertise?.map((intrest) => (
                       <option
@@ -718,13 +718,15 @@ const InvestorRegistration = () => {
                     </span>
                   )}
                 </div>
+           </div>
+               
               </div>
             )}
 
             {step == 1 && (
               <div className="flex flex-col">
                 <div className="flex-row w-full flex justify-start gap-4 items-center">
-                  <div className="mb-3 ml-6 h-24 w-24 rounded-md border-2 border-gray-300 flex items-center justify-center overflow-hidden">
+                  <div className="mb-3 ml-6 h-24 w-24 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
                     {image ? (
                       <img
                         src={image}
@@ -765,7 +767,7 @@ const InvestorRegistration = () => {
                     htmlFor="images"
                     className="p-2 border-2 border-blue-800 items-center rounded-md text-md bg-transparent text-blue-800 cursor-pointer font-extrabold"
                   >
-                    Upload Profile
+                    Upload Logo
                   </label>
                 </div>
 
@@ -774,7 +776,7 @@ const InvestorRegistration = () => {
                     htmlFor="preferred_icp_hub"
                     className="block mb-2 text-lg font-medium  text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Can you please share your preferred ICP Hub
+                    Preferred ICP Hub*
                   </label>
                   <select
                     {...register("preferred_icp_hub")}
@@ -786,7 +788,7 @@ const InvestorRegistration = () => {
                     } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="">
-                      Select your ICP Hub
+                      Select
                     </option>
                     {getAllIcpHubs?.map((hub) => (
                       <option

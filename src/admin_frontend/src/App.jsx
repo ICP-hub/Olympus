@@ -4,37 +4,43 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import Header from "./components/Layout/Header/Header";
 import { useDispatch } from "react-redux";
-import Home from "./components/Home/Home";
-// import { handleActorRequest } from "./components/StateManagement/Redux/Reducers/actorBindReducer";
 import Footer from "./components/Footer/Footer";
-// import { userRoleHandler } from "./components/StateManagement/Redux/Reducers/userRoleReducer";
-// import { mentorRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/mentorRegisteredData";
-// import { investorRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/investorRegisteredData";
-// import { hubRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/hubRegisteredData";
-// import { founderRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/founderRegisteredData";
 import { useAuth } from "./components/AdminStateManagement/useContext/useAuth";
-import HomeSection3 from "../../IcpAccelerator_frontend/src/components/Home/HomeSection3";
-// import { areaOfExpertiseHandlerRequest } from "./components/StateManagement/Redux/Reducers/getAreaOfExpertise";
+// import AdminDashboard from "./components/Admindashboard/AdminDashboard";
+import Request from "./components/Request/Request";
+import RequestCheck from "./components/Request/RequestCheck";
+import AppRoutes from "./AdminRoute";
+import ConfirmationModal from "./components/models/ConfirmationModal";
+import { mentorApprovedRequest } from "./components/AdminStateManagement/Redux/Reducers/mentorApproved";
+import { mentorPendingRequest } from "./components/AdminStateManagement/Redux/Reducers/mentorPending";
+import { mentorDeclinedRequest } from "./components/AdminStateManagement/Redux/Reducers/mentorDeclined";
 
 const App = () => {
 
-  const identity = useSelector((currState) => currState.internet.identity);
+  // const identity = useSelector((currState) => currState.internet.identity);
   const isAuthenticated = useSelector(
     (currState) => currState.internet.isAuthenticated
   );
-//   const specificRole = useSelector(
-//     (currState) => currState.current.specificRole
-//   );
+
 
   const { reloadLogin } = useAuth();
-
-  // console.log("specificRole in app.jsx", specificRole);
-
   const [isModalOpen, setModalOpen] = useState(false);
 
   const dispatch = useDispatch();
+  
 
-  // console.log('identity in app.jsx =>', identity)
+  useEffect(()=>{
+    dispatch(mentorApprovedRequest())
+  },[isAuthenticated, dispatch])
+
+  useEffect(()=>{
+    dispatch(mentorPendingRequest())
+  },[isAuthenticated, dispatch])
+
+  useEffect(()=>{
+    dispatch(mentorDeclinedRequest())
+  },[isAuthenticated, dispatch])
+
 
   useEffect(() => {
     reloadLogin();
@@ -79,37 +85,35 @@ const App = () => {
 //   }, [isAuthenticated, identity, dispatch]);
 
   return (
-    <>
-      {isModalOpen && (
+    <>  
+    
+    <div className="bg-gray-100">
+        <div className="container mx-auto">
+      {/* {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-50"></div>
-      )}
+      )} */}
+
+      
+     
       <Header setModalOpen={setModalOpen} gradient={"bg-gray-100"} />
       <ConnectWallet
         isModalOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
       />
-      {/* <DashBoard/> */}
-      {/* <ProgressCard/> */}
-      {/* <AllDetailsForm/> */}
-      {/* <ProjectDetails/> */}
       {/* <Home/> */}
-      <HomeSection3/>
-      {/* <Hubcards /> */}
-      {/* <Hubdashboard /> */}
-      {/* <Hubdashboard /> */}
-      {/* <Hubapproved /> */}
-      {/* <HubDeclined /> */}
-      {/* <Mentors /> */}
-      {/* <Hublisten /> */}
-      {/* <ListedProjects /> */}
-      {/* <Hubdashboardlive /> */}
-      {/* <DashBoard /> */}
-      {/* <UserProfile/> */}
-      {/* <RoleSelector /> */}
+      {/* <HomeSection3/> */}
+      {/* <AdminDashboard/> */}
       {/* <AppRoutes /> */}
+      {/* <Request/> */}
+      <RequestCheck/>
+      {/* <ConfirmationModal/> */}
+      </div>
+      </div>
+      
       <Footer />
-    </>
+      </>
   );
 };
+
 
 export default App;
