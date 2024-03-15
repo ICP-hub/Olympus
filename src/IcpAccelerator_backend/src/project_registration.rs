@@ -39,24 +39,32 @@ pub struct ProjectInfo {
     pub project_logo: Vec<u8>,
     pub preferred_icp_hub: Option<String>,
     pub live_on_icp_mainnet: Option<String>,
-    pub money_raised_till_now: Option<String>,
+    pub money_raised_till_now: Option<bool>,
     pub supports_multichain: Option<String>,
-    pub project_elevator_pitch: Vec<u8>,
+    pub project_elevator_pitch: Option<String>,
     pub project_area_of_focus: String,
-    pub promotional_video: String,
-    pub github_link: String,
+    pub promotional_video: Option<String>,
+    pub github_link: Option<String>,
     pub reason_to_join_incubator: String,
     pub project_description: String,
     pub project_cover: Vec<u8>,
     pub project_team: Option<TeamMember>,
-    pub token_economics: String,
-    pub technical_docs: String,
-    pub long_term_goals: String,
-    pub target_market: String,
+    pub token_economics: Option<String>,
+    pub technical_docs: Option<String>,
+    pub long_term_goals: Option<String>,
+    pub target_market: Option<String>,
     pub self_rating_of_project: f64,
     pub user_data: UserInformation,
     pub mentors_assigned: Option<Vec<MentorProfile>>,
     pub vc_assigned: Option<Vec<VentureCapitalist>>,
+    pub project_twitter: Option<String>,
+    pub project_linkedin: Option<String>,
+    pub project_website: Option<String>,
+    pub project_discord: Option<String>,
+    pub icp_grants: Option<String>,
+    pub investors: Option<String>,
+    pub sns: Option<String>,
+    pub raised_from_other_ecosystem: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
@@ -196,6 +204,9 @@ pub fn pre_upgrade() {
 // }
 
 pub async fn create_project(info: ProjectInfo) -> String {
+    // Validate the project info
+
+    // Validation succeeded, continue with creating the project
     let caller = caller();
 
     DECLINED_PROJECT_REQUESTS.with(|d_vc| {
@@ -210,8 +221,8 @@ pub async fn create_project(info: ProjectInfo) -> String {
         || PROJECT_AWAITS_RESPONSE.with(|registry| registry.borrow().contains_key(&caller));
 
     if already_registered {
-        ic_cdk::println!("You cant create more than one project");
-        return "You cant create more than one project".to_string();
+        ic_cdk::println!("You can't create more than one project");
+        return "You can't create more than one project".to_string();
     }
 
     ROLE_STATUS_ARRAY.with(|role_status| {
@@ -219,7 +230,7 @@ pub async fn create_project(info: ProjectInfo) -> String {
 
         for role in role_status
             .get_mut(&caller)
-            .expect("couldn't get role status for this principal")
+            .expect("You have to register yourself as a user first!")
             .iter_mut()
         {
             if role.name == "project" {
@@ -250,6 +261,7 @@ pub async fn create_project(info: ProjectInfo) -> String {
             await_ers.insert(caller, new_project.clone());
         },
     );
+
     let res = send_approval_request(
         info.user_data.profile_picture.unwrap_or_else(|| Vec::new()),
         info.user_data.full_name,
@@ -637,14 +649,15 @@ pub fn filter_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
                     &project_internal.params.project_area_of_focus == focus
                 });
 
-                let money_raised_match = criteria.money_raised_range.map_or(true, |(min, max)| {
-                    if let Some(money_raised_str) = &project_internal.params.money_raised_till_now {
-                        if let Ok(money_raised) = money_raised_str.parse::<f64>() {
-                            return money_raised >= min && money_raised <= max;
-                        }
-                    }
-                    false
-                });
+                //todo:- what is use of this check and uncomment
+                // let money_raised_match = criteria.money_raised_range.map_or(true, |(min, max)| {
+                //     if let Some(money_raised_str) = &project_internal.params.money_raised_till_now {
+                //         if let Ok(money_raised) = money_raised_str.parse::<f64>() {
+                //             return money_raised >= min && money_raised <= max;
+                //         }
+                //     }
+                //     false
+                // });
 
                 let mentor_match = criteria.mentor_name.as_ref().map_or(true, |mentor_name| {
                     project_internal
@@ -671,7 +684,7 @@ pub fn filter_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
                 country_match
                     && rating_match
                     && focus_match
-                    && money_raised_match
+                    // && money_raised_match
                     && mentor_match
                     && vc_match
             })
@@ -745,13 +758,14 @@ pub fn get_dummy_mentor_profile() -> MentorProfile {
         existing_icp_project_porfolio: Some("Example Portfolio".to_string()),
         icop_hub_or_spoke: false,
         category_of_mentoring_service: "Technology and Innovation".to_string(),
-        social_link: "https://example-social-link.com".to_string(),
+        linkedin_link: "https://example-social-link.com".to_string(),
         multichain: Some("Example Multichain".to_string()),
         years_of_mentoring: "5 years".to_string(),
         website: "https://example-mentor-website.com".to_string(),
         area_of_expertise: "Blockchain Technology".to_string(),
         reason_for_joining: "To share knowledge and experiences with budding entrepreneurs"
             .to_string(),
+        hub_owner: Some("icp india".to_string()),
     }
 }
 
@@ -764,8 +778,8 @@ pub fn get_dummy_venture_capitalist() -> VentureCapitalist {
         registered_under_any_hub: Some(true),
         average_check_size: 1_000_000.0, // Example check size in USD
         existing_icp_investor: true,
-        money_invested: 50_000_000.0, // Example money invested in USD
-        existing_icp_portfolio: "Example Portfolio".to_string(),
+        money_invested: Some(50_000_000.0), // Example money invested in USD
+        existing_icp_portfolio: Some("Example Portfolio".to_string()),
         type_of_investment: "Equity".to_string(),
         project_on_multichain: Some("Yes".to_string()),
         category_of_investment: "Technology".to_string(),
@@ -774,8 +788,10 @@ pub fn get_dummy_venture_capitalist() -> VentureCapitalist {
         investor_type: "Angel Investor".to_string(),
         number_of_portfolio_companies: 10,
         portfolio_link: "https://example-portfolio-link.com".to_string(),
-        announcement_details: "New funding round opened".to_string(),
-        user_data: get_dummy_user_information(), // Generate dummy user information
+        announcement_details: Some("New funding round opened".to_string()),
+        user_data: get_dummy_user_information(),
+        website_link: "hfdfdfdf".to_string(),
+        linkedin_link: "dfdfdfdf".to_string(), // Generate dummy user information
     }
 }
 

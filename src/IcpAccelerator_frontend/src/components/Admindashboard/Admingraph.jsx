@@ -1,18 +1,19 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Hubdashboardlive from "../Hubdashboardlive/Hubdashboardlive";
-import { Memberssvg } from "../Utils/Data/SvgData";
-import founder from "../../../assets/images/founder.png";
-import hub from "../../../assets/images/hub.png";
-import vc from "../../../assets/images/vc.png";
-import mentor from "../../../assets/images/mentor.png";
+import Hubdashboardlive from "../../../../IcpAccelerator_frontend/src/components/Hubdashboardlive/Hubdashboardlive";
+import { Memberssvg } from "../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
+
+import founder from "../../../../IcpAccelerator_frontend/assets/images/founder.png"
+import hub from "../../../../IcpAccelerator_frontend/assets/images/hub.png";
+import vc from "../../../../IcpAccelerator_frontend/assets/images/vc.png";
+import mentor from "../../../../IcpAccelerator_frontend/assets/images/mentor.png";
 
 
 
 import ApexChart from "react-apexcharts";
 import ReactApexChart from 'react-apexcharts';
 
-import { rectangle } from "../Utils/Data/SvgData";
+import { rectangle } from "../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
 
 const Admingraph = () => {
   const navigate = useNavigate();
@@ -127,96 +128,123 @@ const Admingraph = () => {
   };
 
   return (
-    <div className='p-4 h-auto'>
+    <div className='p-[4%] sm:p-6 lg:p-8'>
       <div className="left-4 lg:left-auto bg-gradient-to-r from-purple-900 to-blue-500 text-transparent bg-clip-text text-lg font-extrabold ml-8">
         {selectedOption}
       </div>
 
-      <div className="flex lg:flex-row flex-col  w-full flex-wrap lg:flex-nowrap space-x-2 px-[4%] justify-start item-start gap-16  ">
+      <div className="flex lg:flex-row flex-col w-full flex-wrap lg:flex-nowrap px-[4%] justify-evenly items-center gap-2">
+
+  <div className="rounded-lg flex justify-between flex-col lg:h-[190px] lg:w-[45%] w-full bg-[#B9C0F2] drop-shadow-xl border-2">
+    <div className="absolute bottom-0 left-0 w-36 h-40 bg-gradient-to-r from-purple-300 via-purple-400 to-purple-600 ellipse-quarter-left rounded-md"></div>
+    <div className="absolute top-0 right-0 bg-gradient-to-br from-indigo-100 to-purple-600 w-28 h-28 ellipse-quarter-right rounded-md"></div>
+
+    <div className="flex flex-col items-center justify-start p-4 font-bold text-lg text-white z-10">
+      <p className="flex justify-start text-xl lg:text-lg xl:text-xl">Total Revenue</p>
+      <p className="font-extrabold text-3xl lg:text-5xl xl:text-6xl">$1005.095</p>
+    </div>
+  </div>
+
+  <div className="rounded-lg flex justify-between flex-col lg:h-[190px] lg:w-[45%] w-full bg-[#B9C0F2] drop-shadow-xl border-2">
+    <div className="absolute bottom-0 left-0 w-36 h-40 bg-gradient-to-r from-purple-300 via-purple-400 to-purple-600 ellipse-quarter-left rounded-md"></div>
+    <div className="absolute top-0 right-0 bg-gradient-to-br from-indigo-100 to-purple-600 w-28 h-28 ellipse-quarter-right rounded-md"></div>
+
+    <div className="flex flex-col items-center justify-start p-4 font-bold text-lg text-white z-10">
+      <p className="flex justify-start text-xl lg:text-lg xl:text-xl">Total Revenue</p>
+      <p className="font-extrabold text-3xl lg:text-5xl xl:text-6xl">$1005.095</p>
+    </div>
+  </div>
+
+  <div className="rounded-lg flex justify-start items-center p-2 flex-col lg:h-[285px] h-[200px] lg:w-[30%] w-full drop-shadow-xl bg-gray-200 border-2">
+    <div className="flex justify-center flex-col items-center font-bold text-lg">
+      <p>Top Countries</p>
+    </div>
+  </div>
+
+</div>
 
 
-        <div className="flex flex-col md:flex-row gap-12">
-          <div className="rounded-lg flex justify-center  flex-col h-[190px] w-[395px] bg-[#B9C0F2] drop-shadow-xl border-2  ">
-            <div className="absolute bottom-0 left-0 w-36 h-40 bg-gradient-to-r from-purple-300 via-purple-400 to-purple-600 ellipse-quarter-left rounded-md"></div>
-            <div className="absolute top-0 right-0 bg-gradient-to-br from-indigo-100 to-purple-600 w-28 h-28 ellipse-quarter-right rounded-md"></div>
-
-            <div className="flex  flex-col items-center justify-start font-bold text-lg text-white z-10">
-              <p className="flex justify-start">Total Revenue</p>
-              <p className="font-extrabold -[59px] h-[62px] text-white flex justify-center text-5xl">$1005.095</p>
-            </div>
-          </div>
-          <div className="rounded-lg flex justify-center items-center flex-col h-[190px] w-[395px]  bg-[#B9C0F2]  drop-shadow-xl border-2  ">
-            <div className="absolute bottom-0 left-0 w-36 h-40 bg-gradient-to-r from-purple-300 via-purple-400 to-purple-600 ellipse-quarter-left rounded-md"></div>
-            <div className="absolute top-0 right-0 bg-gradient-to-br from-indigo-100 to-purple-600 w-28 h-28 ellipse-quarter-right rounded-md"></div>
-
-            <div className="flex  flex-col items-start justify-start font-bold text-lg text-white z-10">
-              <p className="flex justify-start">Total Revenue</p>
-              <p className="font-extrabold -[59px] h-[62px] text-white flex justify-center text-5xl">$1005.095</p>
-            </div>
-          </div>
-        </div>
 
 
 
 
 
-        <div className="rounded-lg flex justify-start items-center flex-col h-[285px] lg:md:w-[279px] w-[370px] drop-shadow-xl bg-gray-200 drop- border-2  ">
-
-          <div className="flex justify-center flex-col items-center font-bold text-lg">
-            <p>Top Countries</p>
-
-          </div>
-        </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+<div className="flex flex-row w-full flex-wrap px-[4%] py-[10%] h-[100px] lg:mt-[-130px] justify-between md:space-y-14">
+  <div className="flex flex-row flex-wrap space-x-12">
+    <div className="rounded-lg flex justify-center items-center h-[80px] lg:md:w-[236px] w-[340px] bg-[#B9C0F2] drop-shadow-xl border-2">
+      <div className="flex flex-row items-center lg:justify-start justify-center font-bold text-lg text-black gap-8 object-cover">
+        <img src={founder} alt="founder" />
+        <p className="flex justify-start">vipul</p>
+        <p className="font-extrabold w-[59px] h-[62px] flex text-2xl justify-center items-center">125</p>
       </div>
-      <div className="flex flex-row w-full flex-wrap md:flex-nowrap px-[4%] py-[5%] h-[100px]  lg:mt-[-130px] gap-8  ">
-        <div className="flex flex-col gap-4 ">
-          <div className="rounded-lg flex justify-center items-center h-[80px] lg:md:w-[236px] w-[340px] bg-[#B9C0F2]  drop-shadow-xl border-2   ">
+    </div>
 
-            <div className="flex  flex-row items-center lg:justify-start justify-center font-bold text-lg text-black gap-8  object-cover">
-              <img src={founder} alt="founder" />
-              <p className="flex justify-start">vipul</p>
-              <p className="font-extrabold w-[59px] h-[62px] flex  text-2xl justify-center items-center">125</p>
-            </div>
-          </div>
+    <div className="rounded-lg flex justify-center  items-center flex-col h-[80px] lg:md:w-[236px] w-[340px] bg-[#B9C0F2] drop-shadow-xl border-2">
+      <div className="flex flex-row items-center font-bold text-lg text-black gap-8">
+        <img src={hub} alt="hub" />
+        <p className="flex justify-center items-center">taneja</p>
+        <p className="font-extrabold w-[59px] h-[62px] flex text-2xl justify-center items-center">125</p>
+      </div>
+    </div>
 
-          <div className="rounded-lg flex justify-center items-center flex-col h-[80px] lg:md:w-[236px] w-[340px] bg-[#B9C0F2]  drop-shadow-xl border-2  ">
-            <div className="flex  flex-row items-center justify-start font-bold text-lg text-black gap-8">
-              <img src={hub} alt="founder" />
-              <p className="flex justify-start">taneja</p>
-              <p className="font-extrabold -[59px] h-[62px] flex  text-2xl justify-center items-center">125</p>
-            </div>
-          </div>
-        </div>
+    <div className="rounded-lg flex justify-end items-end flex-col h-[120px] lg:w-[260px] w-[340px] bg-[#B9C0F2] drop-shadow-xl border-2">
+      {/* <div className="mt-6">
+        <ReactApexChart options={icp} series={seriesData} type="line" height={150} />
+      </div> */}
+    </div>
+  </div>
 
-
-
-        <div className="flex flex-col gap-4">
-          <div className="rounded-lg flex justify-center items-center h-[80px] lg:md:w-[236px] w-[340px] bg-[#B9C0F2]  drop-shadow-xl border-2   ">
-
-            <div className="flex  flex-row items-center justify-start font-bold text-lg text-black gap-8">
-              <img src={mentor} alt="founder" />
-              <p className="flex justify-start">vipul</p>
-              <p className="font-extrabold w-[59px] h-[62px] flex  text-2xl justify-center items-center">125</p>
-            </div>
-          </div>
-
-          <div className="rounded-lg flex justify-center items-center flex-col h-[80px] lg:md:w-[236px] w-[340px]bg-[#B9C0F2]  drop-shadow-xl border-2  ">
-            <div className="flex  flex-row items-center justify-start font-bold text-md text-black gap-4 ">
-              <img src={vc} alt="founder" />
-              <p className="flex justify-start">Hub Organizer</p>
-              <p className="font-extrabold w-[59px] h-[62px] flex  text-2xl justify-center items-center">125</p>
-            </div>
-          </div>
-        </div>
-        <div className="rounded-lg flex justify-center items-center flex-col h-[140px] w-[333px] lg:md:w-[236px]  bg-[#B9C0F2]  drop-shadow-xl border-2  ">
-          <div className="mt-6">
-            <ReactApexChart options={icp} series={seriesData} type="line" height={150} />
-          </div>
+  <div className="flex flex-col py-4 justify-center lg:ml-36">
+    <div className="flex flex-col space-x-8 px-[4%] mt-4">
+      <div className="rounded-lg flex justify-center items-center h-[80px] lg:w-[236px] w-[340px] bg-[#B9C0F2] drop-shadow-xl border-2">
+        <div className="flex flex-row items-center justify-start font-bold text-lg text-black gap-8">
+          <img src={mentor} alt="mentor" />
+          <p className="flex justify-start">QuadB</p>
+          <p className="font-extrabold w-[59px] h-[62px] flex text-2xl justify-center items-center">125</p>
         </div>
       </div>
-      <div className="flex lg:flex-row flex-col gap-2  w-full flex-wrap lg:flex-nowrap space-x-[-70px] px-[4%] py-[8%] justify-start item-start  ">
+    </div>
+  </div>
+</div>
+
+      
+       
+     
+
+
+
+
+
+
+
+
+
+
+      <div className="flex lg:flex-row flex-col gap-2 mt-52 w-full flex-wrap lg:flex-nowrap space-x-[-70px] px-[4%] py-[8%] justify-start item-start  ">
 
         <div className="rounded-lg flex justify-center items-center mr-32 flex-col h-[300px] lg:w-[860px] w-[350px] mt-[480px] lg:mt-2 md:mt-4 bg-[#B9C0F2]  drop-shadow-xl border-2 overflow-x-auto  ">
 
