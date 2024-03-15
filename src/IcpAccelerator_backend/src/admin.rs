@@ -210,8 +210,8 @@ pub fn decline_mentor_creation_request(requester: Principal, decline: bool) -> S
     })
 }
 
-pub fn get_admin_notifications(caller: Principal) -> Vec<Notification> {
-    //let caller = caller();
+pub fn get_admin_notifications() -> Vec<Notification> {
+    let caller = caller();
 
     ADMIN_NOTIFICATIONS.with(|alerts| {
         let alerts = alerts.borrow();
