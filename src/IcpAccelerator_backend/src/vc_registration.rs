@@ -22,8 +22,8 @@ pub struct VentureCapitalist {
     pub registered_under_any_hub: Option<bool>,
     pub average_check_size: f64,
     pub existing_icp_investor: bool,
-    pub money_invested: f64,
-    pub existing_icp_portfolio: String,
+    pub money_invested: Option<f64>,
+    pub existing_icp_portfolio: Option<String>,
     pub type_of_investment: String,
     pub project_on_multichain: Option<String>,
     pub category_of_investment: String,
@@ -32,8 +32,10 @@ pub struct VentureCapitalist {
     pub investor_type: String,
     pub number_of_portfolio_companies: u16,
     pub portfolio_link: String,
-    pub announcement_details: String,
+    pub announcement_details: Option<String>,
     pub user_data: UserInformation,
+    pub website_link: String,
+    pub linkedin_link: String,
 }
 
 impl VentureCapitalist {
@@ -43,9 +45,11 @@ impl VentureCapitalist {
         //     return Err("Invalid input for funds size".into());
         // }
 
-        // if self.money_invested == 0.0 || self.money_invested.is_nan() {
-        //     return Err("Invalid input for funds size".into());
-        // }
+        if let Some(money_invested) = self.money_invested {
+            if money_invested == 0.0 || money_invested.is_nan() {
+                return Err("Field cannot be empty".into());
+            }
+        }
 
         // if self.average_check_size == 0.0 || self.average_check_size.is_nan() {
         //     return Err("Invalid input for funds size".into());
@@ -76,7 +80,6 @@ impl VentureCapitalist {
         Ok(())
     }
 }
-
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct VentureCapitalistInternal {
@@ -149,6 +152,7 @@ pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::
         {
             if role.name == "vc" {
                 role.status = "requested".to_string();
+                role.requested_on = Some(time());
             }
         }
     });
@@ -160,7 +164,10 @@ pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::
             params.fund_size = fund_size;
             let average_check_size = (params.average_check_size * 100.0).round() / 100.0;
             params.average_check_size = average_check_size;
-            let money_invested = (params.money_invested * 100.0).round() / 100.0;
+            let money_invested = params
+                .money_invested
+                .map(|money| (money * 100.0).round() / 100.0);
+
             params.money_invested = money_invested;
             let profile_for_pushing = params.clone();
 
@@ -177,11 +184,21 @@ pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::
                         '_,
                         HashMap<Principal, VentureCapitalistInternal>,
                     > = awaiters.borrow_mut();
-                    await_ers.insert(caller, new_vc);
+                    await_ers.insert(caller, new_vc.clone());
                 },
             );
 
-            let res = send_approval_request().await;
+            let res = send_approval_request(
+                params
+                    .user_data
+                    .profile_picture
+                    .unwrap_or_else(|| Vec::new()),
+                params.user_data.full_name,
+                params.user_data.country,
+                params.category_of_investment,
+                "vc".to_string(),
+            )
+            .await;
 
             format!("{}", res)
 
@@ -215,14 +232,8 @@ pub fn get_vc_info() -> Option<VentureCapitalist> {
 }
 
 #[query]
-pub fn list_all_vcs() -> Vec<VentureCapitalist> {
-    VENTURECAPITALIST_STORAGE.with(|storage| {
-        storage
-            .borrow()
-            .values()
-            .map(|vc_internal| vc_internal.params.clone())
-            .collect()
-    })
+pub fn list_all_vcs() -> HashMap<Principal, VentureCapitalistInternal> {
+    VENTURECAPITALIST_STORAGE.with(|storage| storage.borrow().clone())
 }
 
 #[update]
@@ -270,11 +281,21 @@ pub async fn update_venture_capitalist(params: VentureCapitalist) -> String {
         |awaiters: &RefCell<HashMap<Principal, VentureCapitalist>>| {
             let mut await_ers: std::cell::RefMut<'_, HashMap<Principal, VentureCapitalist>> =
                 awaiters.borrow_mut();
-            await_ers.insert(caller, params);
+            await_ers.insert(caller, params.clone());
         },
     );
 
-    let res = send_approval_request().await;
+    let res = send_approval_request(
+        params
+            .user_data
+            .profile_picture
+            .unwrap_or_else(|| Vec::new()),
+        params.user_data.full_name,
+        params.user_data.country,
+        params.category_of_investment,
+        "vc".to_string(),
+    )
+    .await;
 
     format!("{}", res)
 }

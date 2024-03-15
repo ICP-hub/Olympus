@@ -7,6 +7,7 @@ use crate::ratings::RatingSystem;
 use crate::roadmap_suggestion::Suggestion;
 use crate::user_module::UserInformation;
 
+use crate::admin::send_approval_request;
 use crate::vc_registration::VentureCapitalist;
 use crate::{
     hub_organizer,
@@ -25,7 +26,6 @@ use sha2::{Digest, Sha256};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::io::Read;
-use crate::admin::send_approval_request;
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct TeamMember {
@@ -35,33 +35,40 @@ pub struct TeamMember {
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct ProjectInfo {
-
     pub project_name: String,
     pub project_logo: Vec<u8>,
     pub preferred_icp_hub: Option<String>,
     pub live_on_icp_mainnet: Option<String>,
-    pub money_raised_till_now: Option<String>,
+    pub money_raised_till_now: Option<bool>,
     pub supports_multichain: Option<String>,
-    pub project_elevator_pitch: Vec<u8>,
+    pub project_elevator_pitch: Option<String>,
     pub project_area_of_focus: String,
-    pub promotional_video: String,
-    pub github_link: String,
+    pub promotional_video: Option<String>,
+    pub github_link: Option<String>,
     pub reason_to_join_incubator: String,
     pub project_description: String,
     pub project_cover: Vec<u8>,
     pub project_team: Option<TeamMember>,
-    pub token_economics: String,
-    pub technical_docs: String,
-    pub long_term_goals: String,
-    pub target_market: String,
+    pub token_economics: Option<String>,
+    pub technical_docs: Option<String>,
+    pub long_term_goals: Option<String>,
+    pub target_market: Option<String>,
     pub self_rating_of_project: f64,
     pub user_data: UserInformation,
     pub mentors_assigned: Option<Vec<MentorProfile>>,
-    pub vc_assigned: Option<Vec<VentureCapitalist>>
+    pub vc_assigned: Option<Vec<VentureCapitalist>>,
+    pub project_twitter: Option<String>,
+    pub project_linkedin: Option<String>,
+    pub project_website: Option<String>,
+    pub project_discord: Option<String>,
+    pub icp_grants: Option<String>,
+    pub investors: Option<String>,
+    pub sns: Option<String>,
+    pub raised_from_other_ecosystem: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
-pub struct ProjectInfoForUser{
+pub struct ProjectInfoForUser {
     pub date_ofjoining: String,
     pub mentor_associated: Option<Vec<MentorProfile>>,
     pub vc_associated: Option<Vec<VentureCapitalist>>,
@@ -74,7 +81,6 @@ pub struct ProjectInfoForUser{
     pub rank_of_project: Option<u64>,
     pub area_of_focus: Option<String>,
     pub country_of_project: Option<String>,
-
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
@@ -140,14 +146,11 @@ pub struct FilterCriteria {
     pub vc_name: Option<String>,
 }
 
-
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType)]
 pub struct ProjectUpdateRequest {
     project_id: String,
-    pub updated_info: ProjectInfo, 
+    pub updated_info: ProjectInfo,
 }
-
-
 
 pub type ProjectAnnouncements = HashMap<Principal, Vec<Announcements>>;
 pub type Notifications = HashMap<Principal, Vec<NotificationProject>>;
@@ -201,6 +204,9 @@ pub fn pre_upgrade() {
 // }
 
 pub async fn create_project(info: ProjectInfo) -> String {
+    // Validate the project info
+
+    // Validation succeeded, continue with creating the project
     let caller = caller();
 
     DECLINED_PROJECT_REQUESTS.with(|d_vc| {
@@ -215,8 +221,8 @@ pub async fn create_project(info: ProjectInfo) -> String {
         || PROJECT_AWAITS_RESPONSE.with(|registry| registry.borrow().contains_key(&caller));
 
     if already_registered {
-        ic_cdk::println!("You cant create more than one project");
-        return "You cant create more than one project".to_string();
+        ic_cdk::println!("You can't create more than one project");
+        return "You can't create more than one project".to_string();
     }
 
     ROLE_STATUS_ARRAY.with(|role_status| {
@@ -224,11 +230,12 @@ pub async fn create_project(info: ProjectInfo) -> String {
 
         for role in role_status
             .get_mut(&caller)
-            .expect("couldn't get role status for this principal")
+            .expect("You have to register yourself as a user first!")
             .iter_mut()
         {
             if role.name == "project" {
                 role.status = "requested".to_string();
+                role.requested_on = Some(time());
             }
         }
     });
@@ -251,11 +258,18 @@ pub async fn create_project(info: ProjectInfo) -> String {
         |awaiters: &RefCell<HashMap<Principal, ProjectInfoInternal>>| {
             let mut await_ers: std::cell::RefMut<'_, HashMap<Principal, ProjectInfoInternal>> =
                 awaiters.borrow_mut();
-            await_ers.insert(caller, new_project);
+            await_ers.insert(caller, new_project.clone());
         },
     );
 
-    let res = send_approval_request().await;
+    let res = send_approval_request(
+        info.user_data.profile_picture.unwrap_or_else(|| Vec::new()),
+        info.user_data.full_name,
+        info.user_data.country,
+        info.project_area_of_focus,
+        "project".to_string(),
+    )
+    .await;
 
     format!("{}", res)
 }
@@ -324,9 +338,10 @@ pub async fn update_project(project_id: String, updated_project: ProjectInfo) ->
     });
 
     let is_owner = APPLICATION_FORM.with(|projects| {
-        projects.borrow().iter().any(|(_, project_list)| {
-            project_list.iter().any(|p| p.uid == project_id)
-        })
+        projects
+            .borrow()
+            .iter()
+            .any(|(_, project_list)| project_list.iter().any(|p| p.uid == project_id))
     });
 
     if !is_owner {
@@ -334,7 +349,7 @@ pub async fn update_project(project_id: String, updated_project: ProjectInfo) ->
     }
 
     let update_request = ProjectUpdateRequest {
-        updated_info: updated_project,
+        updated_info: updated_project.clone(),
         project_id: project_id.clone(),
     };
 
@@ -342,18 +357,24 @@ pub async fn update_project(project_id: String, updated_project: ProjectInfo) ->
         |awaiters: &RefCell<HashMap<String, ProjectUpdateRequest>>| {
             let mut await_ers: std::cell::RefMut<'_, HashMap<String, ProjectUpdateRequest>> =
                 awaiters.borrow_mut();
-            await_ers.insert(project_id, update_request);
+            await_ers.insert(project_id, update_request.clone());
         },
     );
 
-    let res = send_approval_request().await;
+    let res = send_approval_request(
+        updated_project
+            .user_data
+            .profile_picture
+            .unwrap_or_else(|| Vec::new()),
+        updated_project.user_data.full_name,
+        updated_project.user_data.country,
+        updated_project.project_area_of_focus,
+        "project".to_string(),
+    )
+    .await;
 
     format!("{}", res)
-
 }
-
-
-
 
 pub fn delete_project(id: String) -> std::string::String {
     let caller = caller();
@@ -524,7 +545,11 @@ pub async fn update_team_member(project_id: &str, member_uid: String) -> String 
     APPLICATION_FORM.with(|storage| {
         let mut storage = storage.borrow_mut();
 
-        if let Some(project_internal) = storage.values_mut().flat_map(|v| v.iter_mut()).find(|p| p.uid == project_id) {
+        if let Some(project_internal) = storage
+            .values_mut()
+            .flat_map(|v| v.iter_mut())
+            .find(|p| p.uid == project_id)
+        {
             project_found = true;
 
             if let Some(team) = &mut project_internal.params.project_team {
@@ -533,7 +558,7 @@ pub async fn update_team_member(project_id: &str, member_uid: String) -> String 
             } else {
                 let new_team_member = TeamMember {
                     member_uid: member_uid.clone(),
-                    member_data: vec![user_info], 
+                    member_data: vec![user_info],
                 };
                 project_internal.params.project_team = Some(new_team_member);
                 member_added_or_updated = true;
@@ -624,14 +649,15 @@ pub fn filter_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
                     &project_internal.params.project_area_of_focus == focus
                 });
 
-                let money_raised_match = criteria.money_raised_range.map_or(true, |(min, max)| {
-                    if let Some(money_raised_str) = &project_internal.params.money_raised_till_now {
-                        if let Ok(money_raised) = money_raised_str.parse::<f64>() {
-                            return money_raised >= min && money_raised <= max;
-                        }
-                    }
-                    false
-                });
+                //todo:- what is use of this check and uncomment
+                // let money_raised_match = criteria.money_raised_range.map_or(true, |(min, max)| {
+                //     if let Some(money_raised_str) = &project_internal.params.money_raised_till_now {
+                //         if let Ok(money_raised) = money_raised_str.parse::<f64>() {
+                //             return money_raised >= min && money_raised <= max;
+                //         }
+                //     }
+                //     false
+                // });
 
                 let mentor_match = criteria.mentor_name.as_ref().map_or(true, |mentor_name| {
                     project_internal
@@ -658,7 +684,7 @@ pub fn filter_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
                 country_match
                     && rating_match
                     && focus_match
-                    && money_raised_match
+                    // && money_raised_match
                     && mentor_match
                     && vc_match
             })
@@ -696,5 +722,111 @@ pub fn make_project_active_inactive(p_id: Principal, project_id: String) -> Stri
         })
     } else {
         "you are not authorised to use this function".to_string()
+    }
+}
+
+pub fn get_dummy_team_member() -> TeamMember {
+    TeamMember {
+        member_uid: "TM123456".to_string(),
+        member_data: vec![
+            get_dummy_user_information(), // First dummy user information
+            get_dummy_user_information(), // Second dummy user information, you can customize as needed
+                                          // Add more UserInformation instances if necessary
+        ],
+    }
+}
+
+fn get_dummy_user_information() -> UserInformation {
+    UserInformation {
+        full_name: "Jane Doe".to_string(),
+        profile_picture: Some(vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9]), // Example binary data for an image
+        email: Some("janedoe@example.com".to_string()),
+        country: "Nowhereland".to_string(),
+        telegram_id: Some("janedoe_telegram".to_string()),
+        bio: Some("An enthusiastic explorer of new technologies.".to_string()),
+        area_of_intrest: "Artificial Intelligence".to_string(),
+        twitter_id: Some("@janedoeAI".to_string()),
+        openchat_username: Some("janedoeChat".to_string()),
+    }
+}
+
+pub fn get_dummy_mentor_profile() -> MentorProfile {
+    MentorProfile {
+        preferred_icp_hub: Some("Example Hub".to_string()),
+        user_data: get_dummy_user_information(), // This function should be defined as previously shown
+        existing_icp_mentor: true,
+        existing_icp_project_porfolio: Some("Example Portfolio".to_string()),
+        icop_hub_or_spoke: false,
+        category_of_mentoring_service: "Technology and Innovation".to_string(),
+        linkedin_link: "https://example-social-link.com".to_string(),
+        multichain: Some("Example Multichain".to_string()),
+        years_of_mentoring: "5 years".to_string(),
+        website: "https://example-mentor-website.com".to_string(),
+        area_of_expertise: "Blockchain Technology".to_string(),
+        reason_for_joining: "To share knowledge and experiences with budding entrepreneurs"
+            .to_string(),
+        hub_owner: Some("icp india".to_string()),
+    }
+}
+
+pub fn get_dummy_venture_capitalist() -> VentureCapitalist {
+    VentureCapitalist {
+        name_of_fund: "Example VC Fund".to_string(),
+        fund_size: 100_000_000.0, // Example fund size in USD
+        assets_under_management: "500_000_000 USD".to_string(),
+        logo: Some(vec![0, 1, 2, 3, 4, 5]), // Simulated binary data for a logo
+        registered_under_any_hub: Some(true),
+        average_check_size: 1_000_000.0, // Example check size in USD
+        existing_icp_investor: true,
+        money_invested: Some(50_000_000.0), // Example money invested in USD
+        existing_icp_portfolio: Some("Example Portfolio".to_string()),
+        type_of_investment: "Equity".to_string(),
+        project_on_multichain: Some("Yes".to_string()),
+        category_of_investment: "Technology".to_string(),
+        reason_for_joining: "To find promising startups".to_string(),
+        preferred_icp_hub: "Example Hub".to_string(),
+        investor_type: "Angel Investor".to_string(),
+        number_of_portfolio_companies: 10,
+        portfolio_link: "https://example-portfolio-link.com".to_string(),
+        announcement_details: Some("New funding round opened".to_string()),
+        user_data: get_dummy_user_information(),
+        website_link: "hfdfdfdf".to_string(),
+        linkedin_link: "dfdfdfdf".to_string(), // Generate dummy user information
+    }
+}
+
+pub fn get_dummy_announcements() -> Announcements {
+    Announcements {
+        project_name: "Project X".to_string(),
+        announcement_message: "We are thrilled to announce the launch of Project X, set to revolutionize the industry!".to_string(),
+        timestamp: 1672522562, // Example timestamp in Unix time format
+    }
+}
+
+pub fn get_dummy_suggestion() -> Suggestion {
+    Suggestion {
+        id: 1, // Example ID
+        content: "This project could benefit from more robust testing strategies.".to_string(),
+        status: "Pending Review".to_string(),
+        project_id: "ProjectX123".to_string(),
+        parent_id: None, // or Some(id) if you want to simulate a response to another suggestion
+    }
+}
+
+#[query]
+pub fn get_dummy_data_for_project_details_for_users() -> ProjectInfoForUser {
+    ProjectInfoForUser {
+        date_ofjoining: "2024-01-01".to_string(),
+        mentor_associated: Some(vec![get_dummy_mentor_profile()]),
+        vc_associated: Some(vec![get_dummy_venture_capitalist()]),
+        team_member_info: Some(vec![get_dummy_team_member()]),
+        announcements: Some(vec![get_dummy_announcements()]),
+        reviews: Some(get_dummy_suggestion()),
+        website_social_group: Some("https://example.com".to_string()),
+        live_link_of_project: Some("https://projectlink.com".to_string()),
+        jobs_opportunity: Some("Looking for a developer".to_string()),
+        rank_of_project: Some(1),
+        area_of_focus: Some("Technology".to_string()),
+        country_of_project: Some("USA".to_string()),
     }
 }

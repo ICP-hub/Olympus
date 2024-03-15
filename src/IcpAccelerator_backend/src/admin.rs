@@ -4,16 +4,21 @@ use crate::user_module::ROLE_STATUS_ARRAY;
 use crate::vc_registration::*;
 use candid::{CandidType, Principal};
 use ic_cdk::api::management_canister::main::{canister_info, CanisterInfoRequest};
+use ic_cdk::api::time;
 use ic_cdk::api::{caller, id};
 use ic_cdk_macros::*;
 use std::borrow::Borrow;
 use std::cell::RefCell;
 use std::collections::HashMap;
-
 #[derive(Clone, CandidType)]
 struct ApprovalRequest {
     sender: Principal,
     receiver: Principal,
+    photo: Vec<u8>,
+    name: String,
+    country: String,
+    tag_used: String,
+    requested_for: String,
 }
 
 #[derive(Clone, CandidType)]
@@ -35,7 +40,13 @@ thread_local! {
     static ADMIN_NOTIFICATIONS : RefCell<HashMap<Principal, Vec<Notification>>> = RefCell::new(HashMap::new())
 }
 
-pub async fn send_approval_request() -> String {
+pub async fn send_approval_request(
+    photo: Vec<u8>,
+    name: String,
+    country: String,
+    tag_used: String,
+    requested_for: String,
+) -> String {
     //sender
     let caller: Principal = caller();
 
@@ -54,12 +65,16 @@ pub async fn send_approval_request() -> String {
                 let approval_request = ApprovalRequest {
                     sender: caller,
                     receiver: c,
+                    photo: photo.clone(),
+                    name: name.clone(),
+                    country: country.clone(),
+                    tag_used: tag_used.clone(),
+                    requested_for: requested_for.clone(),
                 };
 
                 let notification_to_send = Notification {
                     notification_type: NotificationType::ApprovalRequest(approval_request),
                 };
-
                 ADMIN_NOTIFICATIONS.with(|admin_notifications| {
                     let mut notifications = admin_notifications.borrow_mut();
                     notifications
@@ -109,6 +124,7 @@ pub fn approve_mentor_creation_request(requester: Principal, approve: bool) -> S
                                 .find(|r| r.name == "mentor")
                             {
                                 user_role.status = "approved".to_string();
+                                user_role.approved_on = Some(time());
                             }
                         });
 
@@ -162,6 +178,7 @@ pub fn decline_mentor_creation_request(requester: Principal, decline: bool) -> S
                                 .find(|r| r.name == "mentor")
                             {
                                 user_role.status = "default".to_string();
+                                user_role.rejected_on = Some(time());
                             }
                         });
 
@@ -225,43 +242,48 @@ async fn get_info() -> Result<Vec<Principal>, MyError> {
 }
 
 #[query]
-fn mentors_awaiting_approval() -> Vec<MentorInternal> {
-    MENTOR_AWAITS_RESPONSE.with(|awaiters| awaiters.borrow().values().cloned().collect())
+fn mentors_awaiting_approval() -> HashMap<Principal, MentorInternal> {
+    MENTOR_AWAITS_RESPONSE.with(|awaiters| awaiters.borrow().clone())
 }
 
 #[query]
-fn vc_awaiting_approval() -> Vec<VentureCapitalistInternal> {
-    VC_AWAITS_RESPONSE.with(|awaiters| awaiters.borrow().values().cloned().collect())
+fn vc_awaiting_approval() -> HashMap<Principal, VentureCapitalistInternal> {
+    VC_AWAITS_RESPONSE.with(|awaiters| awaiters.borrow().clone())
 }
 
 #[query]
-fn project_awaiting_approval() -> Vec<ProjectInfoInternal> {
-    PROJECT_AWAITS_RESPONSE.with(|awaiters| awaiters.borrow().values().cloned().collect())
+fn project_awaiting_approval() -> HashMap<Principal, ProjectInfoInternal> {
+    PROJECT_AWAITS_RESPONSE.with(|awaiters| awaiters.borrow().clone())
 }
 
 #[query]
-fn vc_declined() -> Vec<VentureCapitalistInternal> {
-    DECLINED_VC_REQUESTS.with(|awaiters| awaiters.borrow().values().cloned().collect())
+fn vc_declined() -> HashMap<Principal, VentureCapitalistInternal> {
+    DECLINED_VC_REQUESTS.with(|awaiters| awaiters.borrow().clone())
 }
 
 #[query]
-fn project_declined() -> Vec<ProjectInfoInternal> {
-    DECLINED_PROJECT_REQUESTS.with(|awaiters| awaiters.borrow().values().cloned().collect())
+fn project_declined() -> HashMap<Principal, ProjectInfoInternal> {
+    DECLINED_PROJECT_REQUESTS.with(|awaiters| awaiters.borrow().clone())
 }
 
 #[query]
-fn mentor_declined() -> Vec<MentorInternal> {
-    DECLINED_MENTOR_REQUESTS.with(|awaiters| awaiters.borrow().values().cloned().collect())
+fn mentor_declined() -> HashMap<Principal, MentorInternal> {
+    DECLINED_MENTOR_REQUESTS.with(|awaiters| awaiters.borrow().clone())
 }
 
 #[query]
-fn vc_profile_edit_awaiting_approval() -> Vec<VentureCapitalist> {
-    VC_PROFILE_EDIT_AWAITS.with(|awaiters| awaiters.borrow().values().cloned().collect())
+fn mentor_profile_edit_awaiting_approval() -> HashMap<Principal, MentorProfile> {
+    MENTOR_PROFILE_EDIT_AWAITS.with(|awaiters| awaiters.borrow().clone())
 }
 
 #[query]
-fn project_update_awaiting_approval() -> Vec<ProjectUpdateRequest> {
-    PENDING_PROJECT_UPDATES.with(|awaiters| awaiters.borrow().values().cloned().collect())
+fn vc_profile_edit_awaiting_approval() -> HashMap<Principal, VentureCapitalist> {
+    VC_PROFILE_EDIT_AWAITS.with(|awaiters| awaiters.borrow().clone())
+}
+
+#[query]
+fn project_update_awaiting_approval() -> HashMap<String, ProjectUpdateRequest> {
+    PENDING_PROJECT_UPDATES.with(|awaiters| awaiters.borrow().clone())
 }
 
 #[update]
@@ -289,6 +311,7 @@ pub fn decline_vc_creation_request(requester: Principal, decline: bool) -> Strin
                                 .find(|r| r.name == "vc")
                             {
                                 user_role.status = "default".to_string();
+                                user_role.rejected_on = Some(time());
                             }
                         });
 
@@ -349,6 +372,7 @@ pub fn approve_vc_creation_request(requester: Principal, approve: bool) -> Strin
                                 .find(|r| r.name == "vc")
                             {
                                 user_role.status = "approved".to_string();
+                                user_role.approved_on = Some(time());
                             }
                         });
 
@@ -399,16 +423,28 @@ pub fn approve_vc_profile_update(requester: Principal, approve: bool) -> String 
                             .clone()
                             .or(existing_vc_internal.params.project_on_multichain.clone());
 
+                        existing_vc_internal.params.money_invested = vc_internal
+                            .money_invested
+                            .clone()
+                            .or(existing_vc_internal.params.money_invested.clone());
+
+                        existing_vc_internal.params.existing_icp_portfolio = vc_internal
+                            .existing_icp_portfolio
+                            .clone()
+                            .or(existing_vc_internal.params.existing_icp_portfolio.clone());
+                        existing_vc_internal.params.announcement_details = vc_internal
+                            .announcement_details
+                            .clone()
+                            .or(existing_vc_internal.params.announcement_details.clone());
+
                         existing_vc_internal.params.fund_size =
                             (vc_internal.fund_size * 100.0).round() / 100.0;
                         existing_vc_internal.params.assets_under_management =
                             vc_internal.assets_under_management.clone();
-                        existing_vc_internal.params.announcement_details =
-                            vc_internal.announcement_details.clone();
+
                         existing_vc_internal.params.category_of_investment =
                             vc_internal.category_of_investment.clone();
-                        existing_vc_internal.params.existing_icp_portfolio =
-                            vc_internal.existing_icp_portfolio.clone();
+
                         existing_vc_internal.params.logo = vc_internal.logo.clone();
                         existing_vc_internal.params.average_check_size =
                             (vc_internal.average_check_size * 100.0).round() / 100.0;
@@ -423,12 +459,15 @@ pub fn approve_vc_profile_update(requester: Principal, approve: bool) -> String 
                         existing_vc_internal.params.reason_for_joining =
                             vc_internal.reason_for_joining.clone();
                         existing_vc_internal.params.name_of_fund = vc_internal.name_of_fund.clone();
-                        existing_vc_internal.params.money_invested = vc_internal.money_invested;
+
                         existing_vc_internal.params.preferred_icp_hub =
                             vc_internal.preferred_icp_hub.clone();
                         existing_vc_internal.params.type_of_investment =
                             vc_internal.type_of_investment.clone();
                         existing_vc_internal.params.user_data = vc_internal.user_data.clone();
+                        existing_vc_internal.params.linkedin_link =
+                            vc_internal.linkedin_link.clone();
+                        existing_vc_internal.params.website_link = vc_internal.website_link.clone();
                     }
                 });
 
@@ -504,12 +543,12 @@ pub fn approve_mentor_profile_update(requester: Principal, approve: bool) -> Str
                             .multichain
                             .clone()
                             .or(mentor_internal.profile.multichain.clone());
-                        mentor_internal.profile.exisitng_icp_project_porfolio = updated_profile
-                            .exisitng_icp_project_porfolio
+                        mentor_internal.profile.existing_icp_project_porfolio = updated_profile
+                            .existing_icp_project_porfolio
                             .clone()
                             .or(mentor_internal
                                 .profile
-                                .exisitng_icp_project_porfolio
+                                .existing_icp_project_porfolio
                                 .clone());
 
                         mentor_internal.profile.area_of_expertise =
@@ -521,13 +560,18 @@ pub fn approve_mentor_profile_update(requester: Principal, approve: bool) -> Str
                             updated_profile.existing_icp_mentor.clone();
                         mentor_internal.profile.icop_hub_or_spoke =
                             updated_profile.icop_hub_or_spoke;
-                        mentor_internal.profile.social_link = updated_profile.social_link.clone();
+                        mentor_internal.profile.linkedin_link =
+                            updated_profile.linkedin_link.clone();
                         mentor_internal.profile.website = updated_profile.website.clone();
                         mentor_internal.profile.years_of_mentoring =
                             updated_profile.years_of_mentoring.clone();
                         mentor_internal.profile.reason_for_joining =
                             updated_profile.reason_for_joining.clone();
                         mentor_internal.profile.user_data = updated_profile.user_data.clone();
+                        mentor_internal.profile.hub_owner = updated_profile
+                            .hub_owner
+                            .clone()
+                            .or(mentor_internal.profile.hub_owner.clone());
                     }
                 });
 
@@ -614,6 +658,7 @@ pub fn approve_project_creation_request(requester: Principal) -> String {
                             .find(|r| r.name == "project")
                         {
                             user_role.status = "approved".to_string();
+                            user_role.approved_on = Some(time());
                         }
                     });
 
@@ -661,6 +706,7 @@ pub fn decline_project_creation_request(requester: Principal) -> String {
                             .find(|r| r.name == "project")
                         {
                             user_role.status = "default".to_string();
+                            user_role.rejected_on = Some(time());
                         }
                     });
 
@@ -683,7 +729,7 @@ pub fn decline_project_creation_request(requester: Principal) -> String {
         }
     })
 }
-
+//todo:- change the function according to new struct
 pub fn approve_project_update(requester: Principal, project_id: String, approve: bool) -> String {
     if let Some(project_update_request) =
         PENDING_PROJECT_UPDATES.with(|awaiters| awaiters.borrow_mut().remove(&project_id))

@@ -34,19 +34,6 @@ pub fn get_role_from_principal() -> Option<HashSet<UserRole>> {
 }
 
 
-pub fn assign_roles_to_principal(roles_to_assign: Vec<UserRole>) -> String {
-    let principal = caller();
-
-    ROLES.with(|roles| {
-        let mut roles = roles.borrow_mut();
-        let user_roles = roles.entry(principal).or_insert_with(HashSet::new);
-        for role in roles_to_assign {
-            user_roles.insert(role);
-        }
-        ic_cdk::println!("Roles assigned successfully");
-        "Roles assigned successfully".to_string()
-    })
-}
 
 
 

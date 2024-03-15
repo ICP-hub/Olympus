@@ -46,12 +46,6 @@ export const investorRegistrationUserDetailsDetails = [
     label: "Please paste the link of your Twitter ID.",
     onFocus: null,
     onBlur: null,
-  },
-  {
-    id: "user_name",
-    type: "text",
-    name: "user_name",
-    label: "Please provide your Open Chat Username",
   }
   ];
 

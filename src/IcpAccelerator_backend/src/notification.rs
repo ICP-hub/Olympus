@@ -120,7 +120,7 @@ pub fn respond_to_connection_request(startup_id: Principal, accept: bool) -> Str
 
             if let Some(profile_internal) = mentor_internal {
                 let social_handles = if accept {
-                    Some(profile_internal.profile.social_link) // As String, wrap in Some for consistency
+                    Some(profile_internal.profile.linkedin_link) // As String, wrap in Some for consistency
                 } else {
                     None // When not accepted, there's no social link to share
                 };

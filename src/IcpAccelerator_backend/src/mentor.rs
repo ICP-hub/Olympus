@@ -19,15 +19,16 @@ pub struct MentorProfile {
     pub preferred_icp_hub: Option<String>,
     pub user_data: UserInformation,
     pub existing_icp_mentor: bool,
-    pub exisitng_icp_project_porfolio: Option<String>,
+    pub existing_icp_project_porfolio: Option<String>,
     pub icop_hub_or_spoke: bool,
     pub category_of_mentoring_service: String,
-    pub social_link: String,
+    pub linkedin_link: String,
     pub multichain: Option<String>,
     pub years_of_mentoring: String,
     pub website: String,
     pub area_of_expertise: String,
     pub reason_for_joining: String,
+    pub hub_owner: Option<String>,
 }
 impl MentorProfile {
     pub fn validate(&self) -> Result<(), String> {
@@ -37,7 +38,7 @@ impl MentorProfile {
             }
         }
 
-        if let Some(ref exisitng_icp_project_porfolio) = self.exisitng_icp_project_porfolio {
+        if let Some(ref exisitng_icp_project_porfolio) = self.existing_icp_project_porfolio {
             if exisitng_icp_project_porfolio.trim().is_empty() {
                 return Err("Field cannot be empty".into());
             }
@@ -111,6 +112,7 @@ pub async fn register_mentor(profile: MentorProfile) -> String {
         {
             if role.name == "mentor" {
                 role.status = "requested".to_string();
+                role.requested_on = Some(time());
             }
         }
     });
@@ -124,7 +126,7 @@ pub async fn register_mentor(profile: MentorProfile) -> String {
             let profile_for_pushing = profile.clone();
 
             let mentor_internal = MentorInternal {
-                profile: profile_for_pushing,
+                profile: profile_for_pushing.clone(),
                 uid: uid.clone(),
                 active: true,
                 approve: false,
@@ -139,7 +141,17 @@ pub async fn register_mentor(profile: MentorProfile) -> String {
                 },
             );
 
-            let res = send_approval_request().await;
+            let res = send_approval_request(
+                profile_for_pushing
+                    .user_data
+                    .profile_picture
+                    .unwrap_or_else(|| Vec::new()),
+                profile_for_pushing.user_data.full_name,
+                profile_for_pushing.user_data.country,
+                profile_for_pushing.area_of_expertise,
+                "mentor".to_string(),
+            )
+            .await;
 
             format!("{}", res)
         }
@@ -197,10 +209,20 @@ pub async fn update_mentor(updated_profile: MentorProfile) -> String {
     MENTOR_PROFILE_EDIT_AWAITS.with(|awaiters: &RefCell<HashMap<Principal, MentorProfile>>| {
         let mut await_ers: std::cell::RefMut<'_, HashMap<Principal, MentorProfile>> =
             awaiters.borrow_mut();
-        await_ers.insert(caller, updated_profile);
+        await_ers.insert(caller, updated_profile.clone());
     });
 
-    let res = send_approval_request().await;
+    let res = send_approval_request(
+        updated_profile
+            .user_data
+            .profile_picture
+            .unwrap_or_else(|| Vec::new()),
+        updated_profile.user_data.full_name,
+        updated_profile.user_data.country,
+        updated_profile.area_of_expertise,
+        "mentor".to_string(),
+    )
+    .await;
 
     format!("{}", res)
 

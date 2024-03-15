@@ -143,7 +143,7 @@ const NormalUser = () => {
 
     try {
       await actor.register_user(userData).then((result) => {
-        toast.success(result);
+        toast.success("Registered as a User");
         // navigate("/");
         window.location.href = "/";
       });
