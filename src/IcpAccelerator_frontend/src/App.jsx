@@ -40,6 +40,7 @@ import { getCurrentRoleStatusRequestHandler } from "./components/StateManagement
 import { userRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/userRegisteredData";
 import InvestorRegistration from "./components/Registration/InvestorRegistration/InvestorRegistration";
 import CreateProjectRegistration from "./components/Project/CreateProject/CreateProjectRegistration";
+import { multiChainHandlerRequest } from "./components/StateManagement/Redux/Reducers/getMultiChainList";
 
 const App = () => {
   const identity = useSelector((currState) => currState.internet.identity);
@@ -71,6 +72,11 @@ const App = () => {
   useEffect(() => {
     if (isAuthenticated && identity) {
       dispatch(handleActorRequest());
+    }
+  }, [isAuthenticated, identity, dispatch]);
+  useEffect(() => {
+    if (isAuthenticated && identity) {
+      dispatch(multiChainHandlerRequest());
     }
   }, [isAuthenticated, identity, dispatch]);
 

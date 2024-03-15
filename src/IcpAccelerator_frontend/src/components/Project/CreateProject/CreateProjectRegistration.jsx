@@ -63,7 +63,7 @@ const validationSchema = {
       .string()
       .url("Must be a valid URL")
       .required("Project elevator pitch is Required"),
-    reason_to_join_incubator: yup.string(),
+    reason_to_join_incubator: yup.string().required("Reason is required"),
     money_raised_till_now: yup.string(),
     icp_grants: yup
       .string()
@@ -104,26 +104,24 @@ const validationSchema = {
     project_name: yup.string().required("Project name is required"),
     live_on_icp_mainnet: yup.string(),
     project_area_of_focus: yup.string().required("Area of focus is required"),
-    self_rating_of_project: yup.string().required("Self Rating is required"),
-    preferred_icp_hub: yup.string(),
+    self_rating_of_project: yup.string().optional(),
+    preferred_icp_hub: yup.string().required("ICP hub is required"),
     supports_multichain: yup.string(),
-    promotional_video: yup
-      .string()
-      .url("Must be a valid URL")
-      .required("URL is required"),
-    logoData: yup.mixed().required("Logo is required"),
+    promotional_video: yup.string().url("Must be a valid URL").optional(),
+    project_website: yup.string().url("Must be a valid URL").optional(),
+    project_twitter: yup.string().url("Must be a valid URL").optional(),
+    project_discord: yup.string().url("Must be a valid URL").optional(),
+    project_linkedin: yup.string().url("Must be a valid URL").optional(),
+    logoData: yup.mixed().optional(),
   }),
   additionalDetails: yup.object().shape({
     project_description: yup.string().required("Description is required"),
-    token_economics: yup.string().required("Field is required"),
-    github_link: yup
-      .string()
-      .url("Must be a valid URL")
-      .required("URL is required"),
-    target_market: yup.string().required("Target Market is required"),
-    long_term_goals: yup.string().required("Long Term Goals is required"),
-    technical_docs: yup.string().required("Technical Docs is required"),
-    coverData: yup.mixed().required("Project Cover is required"),
+    token_economics: yup.string().optional(),
+    target_market: yup.string().optional(),
+    long_term_goals: yup.string().optional(),
+    technical_docs: yup.string().optional(),
+    github_link: yup.string().optional(),
+    coverData: yup.mixed().optional(),
   }),
 };
 
@@ -136,6 +134,8 @@ const CreateProjectRegistration = () => {
   const specificRole = useSelector(
     (currState) => currState.current.specificRole
   );
+  const multiChain = useSelector((currState) => currState.chains.chains);
+  console.log(multiChain);
   const userData = useSelector((currState) => currState.userData.data.Ok);
   const projectFullData = useSelector(
     (currState) => currState.projectData.data
@@ -231,15 +231,15 @@ const CreateProjectRegistration = () => {
   // Watch the value of live_on_icp_mainnet to update isLiveOnICP state
   const liveOnICPMainnetValue = watch("live_on_icp_mainnet");
   const MoneyRaisedTillNow = watch("money_raised_till_now");
-  const IsMultiChain = watch("supports_multichain");
+  const IsMultiChain = watch("multi_chain");
 
   useEffect(() => {
     // Update isLiveOnICP based on live_on_icp_mainnet field value
-    setIsLiveOnICP(liveOnICPMainnetValue === "true");
-    if (liveOnICPMainnetValue !== "true") {
-      setValue("money_raised_till_now", "false");
+    setIsLiveOnICP(liveOnICPMainnetValue === true);
+    if (liveOnICPMainnetValue !== true) {
+      setValue("money_raised_till_now", false);
     }
-    setIsMoneyRaised(MoneyRaisedTillNow === "true");
+    setIsMoneyRaised(MoneyRaisedTillNow === true);
     setIsMulti_Chain(IsMultiChain === "true");
   }, [liveOnICPMainnetValue, MoneyRaisedTillNow, IsMultiChain, setValue]);
 
@@ -681,32 +681,40 @@ const CreateProjectRegistration = () => {
           bio: [updatedFormData.bio] || [],
           area_of_intrest: updatedFormData.area_of_intrest || [],
         },
-        project_elevator_pitch: stringToUint8Array(
-          updatedFormData.project_elevator_pitch
-        ),
+        project_elevator_pitch: [updatedFormData.project_elevator_pitch],
         reason_to_join_incubator:
           updatedFormData.reason_to_join_incubator || "",
-        project_description: updatedFormData.project_description || "",
+        icp_grants: [updatedFormData.icp_grants || ""],
+        investors: [updatedFormData.investors || ""],
+        sns: [updatedFormData.sns || ""],
+        raised_from_other_ecosystem: [
+          updatedFormData.raised_from_other_ecosystem || "",
+        ],
+        promotional_video: [updatedFormData.promotional_video],
+        project_area_of_focus: updatedFormData.project_area_of_focus || "",
+        money_raised_till_now: [MoneyRaisedTillNow],
+        supports_multichain: updatedFormData.supports_multichain || [],
+        project_name: updatedFormData.project_name || "",
+        live_on_icp_mainnet: [liveOnICPMainnetValue],
+        preferred_icp_hub: [updatedFormData.preferred_icp_hub],
+        project_website: [updatedFormData.project_website],
+        project_twitter: [updatedFormData.project_twitter],
+        project_discord: [updatedFormData.project_discord],
+        project_linkedin: [updatedFormData.project_linkedin],
+        project_logo: [updatedFormData.logoData],
         vc_assigned: [],
         mentors_assigned: [],
         project_team: [],
-        token_economics: updatedFormData.token_economics || "",
+        project_description: updatedFormData.project_description || "",
+        token_economics: [updatedFormData.token_economics || ""],
         self_rating_of_project: updatedFormData.self_rating_of_project
           ? parseFloat(updatedFormData.self_rating_of_project)
           : 0,
-        target_market: updatedFormData.target_market || "",
-        long_term_goals: updatedFormData.long_term_goals || "",
-        project_area_of_focus: updatedFormData.project_area_of_focus || "",
-        live_on_icp_mainnet: updatedFormData.live_on_icp_mainnet || [],
-        technical_docs: updatedFormData.technical_docs || "",
-        money_raised_till_now: updatedFormData.money_raised_till_now || [],
-        supports_multichain: updatedFormData.supports_multichain || [],
-        project_name: updatedFormData.project_name || "",
-        preferred_icp_hub: [updatedFormData.preferred_icp_hub],
-        github_link: updatedFormData.github_link,
+        target_market: [updatedFormData.target_market || ""],
+        long_term_goals: [updatedFormData.long_term_goals || ""],
+        technical_docs: [updatedFormData.technical_docs || ""],
+        github_link: [updatedFormData.github_link],
         project_cover: [updatedFormData.coverData],
-        project_logo: [updatedFormData.logoData],
-        promotional_video: updatedFormData.promotional_video,
       };
 
       console.log("tempObj2 kaam kia ????? ", tempObj2); // work kia
@@ -729,32 +737,40 @@ const CreateProjectRegistration = () => {
           bio: [updatedFormData.bio] || [],
           area_of_intrest: updatedFormData.area_of_intrest || [],
         },
-        project_elevator_pitch: stringToUint8Array(
-          updatedFormData.project_elevator_pitch
-        ),
+        project_elevator_pitch: [updatedFormData.project_elevator_pitch],
         reason_to_join_incubator:
           updatedFormData.reason_to_join_incubator || "",
-        project_description: updatedFormData.project_description || "",
+        icp_grants: [updatedFormData.icp_grants || ""],
+        investors: [updatedFormData.investors || ""],
+        sns: [updatedFormData.sns || ""],
+        raised_from_other_ecosystem: [
+          updatedFormData.raised_from_other_ecosystem || "",
+        ],
+        promotional_video: [updatedFormData.promotional_video],
+        project_area_of_focus: updatedFormData.project_area_of_focus || "",
+        money_raised_till_now: [MoneyRaisedTillNow],
+        supports_multichain: updatedFormData.supports_multichain || [],
+        project_name: updatedFormData.project_name || "",
+        live_on_icp_mainnet: [liveOnICPMainnetValue],
+        preferred_icp_hub: [updatedFormData.preferred_icp_hub],
+        project_website: [updatedFormData.project_website],
+        project_twitter: [updatedFormData.project_twitter],
+        project_discord: [updatedFormData.project_discord],
+        project_linkedin: [updatedFormData.project_linkedin],
+        project_logo: [updatedFormData.logoData],
         vc_assigned: [],
         mentors_assigned: [],
         project_team: [],
-        token_economics: updatedFormData.token_economics || "",
+        project_description: updatedFormData.project_description || "",
+        token_economics: [updatedFormData.token_economics || ""],
         self_rating_of_project: updatedFormData.self_rating_of_project
           ? parseFloat(updatedFormData.self_rating_of_project)
           : 0,
-        target_market: updatedFormData.target_market || "",
-        long_term_goals: updatedFormData.long_term_goals || "",
-        project_area_of_focus: updatedFormData.project_area_of_focus || "",
-        live_on_icp_mainnet: updatedFormData.live_on_icp_mainnet || [],
-        technical_docs: updatedFormData.technical_docs || "",
-        money_raised_till_now: updatedFormData.money_raised_till_now || [],
-        supports_multichain: updatedFormData.supports_multichain || [],
-        project_name: updatedFormData.project_name || "",
-        preferred_icp_hub: [updatedFormData.preferred_icp_hub],
-        github_link: updatedFormData.github_link,
+        target_market: [updatedFormData.target_market || ""],
+        long_term_goals: [updatedFormData.long_term_goals || ""],
+        technical_docs: [updatedFormData.technical_docs || ""],
+        github_link: [updatedFormData.github_link],
         project_cover: [updatedFormData.coverData],
-        project_logo: [updatedFormData.logoData],
-        promotional_video: updatedFormData.promotional_video,
       };
       console.log("tempObj kaam kia ????? ", tempObj); // work kia
 
@@ -1047,6 +1063,52 @@ const CreateProjectRegistration = () => {
                   </span>
                 )}
               </div>
+              <div className="z-0 w-full mb-3 group px-4">
+                <label
+                  htmlFor="reason_to_join_incubator"
+                  className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                >
+                  Why you want to join ? *
+                </label>
+                <select
+                  {...register("reason_to_join_incubator")}
+                  className={`bg-gray-50 border-2 ${
+                    errors.reason_to_join_incubator
+                      ? "border-red-500 placeholder:text-red-500"
+                      : "border-[#737373]"
+                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                >
+                  <option className="text-lg font-bold" value="">
+                    Select reason ⌄
+                  </option>
+                  <option
+                    className="text-lg font-bold"
+                    value="listing_and_promotion"
+                  >
+                    Project listing and promotion
+                  </option>
+                  <option className="text-lg font-bold" value="Funding">
+                    Funding
+                  </option>
+                  <option className="text-lg font-bold" value="Mentoring">
+                    Mentoring
+                  </option>
+                  <option className="text-lg font-bold" value="Incubation">
+                    Incubation
+                  </option>
+                  <option
+                    className="text-lg font-bold"
+                    value="Engaging_and_building_community"
+                  >
+                    Engaging and building community
+                  </option>
+                </select>
+                {errors.reason_to_join_incubator && (
+                  <p className="text-red-500 text-xs italic">
+                    {errors.reason_to_join_incubator.message}
+                  </p>
+                )}
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-3 px-4">
                 <div className="z-0 w-full mb-3 group">
                   <label
@@ -1084,47 +1146,35 @@ const CreateProjectRegistration = () => {
                 </div>
                 <div className="z-0 w-full mb-3 group">
                   <label
-                    htmlFor="reason_to_join_incubator"
+                    htmlFor="project_area_of_focus"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Why you want to join ?
+                    Area of focus *
                   </label>
                   <select
-                    {...register("reason_to_join_incubator")}
+                    {...register("project_area_of_focus")}
                     className={`bg-gray-50 border-2 ${
-                      errors.reason_to_join_incubator
+                      errors.project_area_of_focus
                         ? "border-red-500 placeholder:text-red-500"
                         : "border-[#737373]"
                     } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="">
-                      Select reason ⌄
+                      Select ⌄
                     </option>
-                    <option
-                      className="text-lg font-bold"
-                      value="listing_and_promotion"
-                    >
-                      Project listing and promotion
-                    </option>
-                    <option className="text-lg font-bold" value="Funding">
-                      Funding
-                    </option>
-                    <option className="text-lg font-bold" value="Mentoring">
-                      Mentoring
-                    </option>
-                    <option className="text-lg font-bold" value="Incubation">
-                      Incubation
-                    </option>
-                    <option
-                      className="text-lg font-bold"
-                      value="Engaging_and_building_community"
-                    >
-                      Engaging and building community
-                    </option>
+                    {areaOfExpertise?.map((intrest) => (
+                      <option
+                        key={intrest.id}
+                        value={`${intrest.name}`}
+                        className="text-lg font-bold"
+                      >
+                        {intrest.name}
+                      </option>
+                    ))}
                   </select>
-                  {errors.reason_to_join_incubator && (
+                  {errors.project_area_of_focus && (
                     <p className="text-red-500 text-xs italic">
-                      {errors.reason_to_join_incubator.message}
+                      {errors.project_area_of_focus.message}
                     </p>
                   )}
                 </div>
@@ -1289,70 +1339,36 @@ const CreateProjectRegistration = () => {
                     </div>
                   </>
                 )}
-                <div className="z-0 w-full my-3 group">
+
+                <div className="z-0 w-full mb-3 group">
                   <label
-                    htmlFor="project_area_of_focus"
+                    htmlFor="multi_chain"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Area of focus *
+                    Are you on multi-chain
                   </label>
                   <select
-                    {...register("project_area_of_focus")}
+                    {...register("multi_chain")}
                     className={`bg-gray-50 border-2 ${
-                      errors.project_area_of_focus
+                      errors.multi_chain
                         ? "border-red-500 placeholder:text-red-500"
                         : "border-[#737373]"
                     } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
-                    <option className="text-lg font-bold" value="">
-                      Select ⌄
+                    <option className="text-lg font-bold" value="false">
+                      No
                     </option>
-                    {areaOfExpertise?.map((intrest) => (
-                      <option
-                        key={intrest.id}
-                        value={`${intrest.name}`}
-                        className="text-lg font-bold"
-                      >
-                        {intrest.name}
-                      </option>
-                    ))}
+                    <option className="text-lg font-bold" value="true">
+                      Yes
+                    </option>
                   </select>
-                  {errors.project_area_of_focus && (
+                  {errors.multi_chain && (
                     <p className="text-red-500 text-xs italic">
-                      {errors.project_area_of_focus.message}
+                      {errors.multi_chain.message}
                     </p>
                   )}
                 </div>
-              </div>
-              <div className="z-0 w-full my-3 group">
-                <label
-                  htmlFor="multi_chain"
-                  className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                >
-                  Are you on multi-chain
-                </label>
-                <select
-                  className={`bg-gray-50 border-2 ${
-                    errors.multi_chain
-                      ? "border-red-500 placeholder:text-red-500"
-                      : "border-[#737373]"
-                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                >
-                  <option className="text-lg font-bold" value="false">
-                    No
-                  </option>
-                  <option className="text-lg font-bold" value="true">
-                    Yes
-                  </option>
-                </select>
-                {errors.multi_chain && (
-                  <p className="text-red-500 text-xs italic">
-                    {errors.multi_chain.message}
-                  </p>
-                )}
-              </div>
-              <div className="z-0 w-full my-3 group">
-                <div className="">
+                <div className="z-0 w-full mb-3 group">
                   <label
                     htmlFor="supports_multichain"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
@@ -1371,15 +1387,15 @@ const CreateProjectRegistration = () => {
                     <option className="text-lg font-bold" value="">
                       Select ⌄
                     </option>
-                    <option className="text-lg font-bold" value="ethereum">
-                      Ethereum
-                    </option>
-                    <option className="text-lg font-bold" value="bitcoin">
-                      Bitcoin
-                    </option>
-                    <option className="text-lg font-bold" value="binance">
-                      Binance Smart Chain
-                    </option>
+                    {multiChain?.map((chain, i) => (
+                      <option
+                        key={i}
+                        value={`${chain}`}
+                        className="text-lg font-bold"
+                      >
+                        {chain}
+                      </option>
+                    ))}
                   </select>
                   {errors.supports_multichain && (
                     <p className="text-red-500 text-xs italic">
