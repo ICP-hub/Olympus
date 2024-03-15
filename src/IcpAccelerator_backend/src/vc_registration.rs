@@ -1,4 +1,4 @@
-use crate::admin::send_approval_request;
+use crate::admin::*;
 use crate::user_module::*;
 
 use bincode;
@@ -232,8 +232,22 @@ pub fn get_vc_info() -> Option<VentureCapitalist> {
 }
 
 #[query]
-pub fn list_all_vcs() -> HashMap<Principal, VentureCapitalistInternal> {
-    VENTURECAPITALIST_STORAGE.with(|storage| storage.borrow().clone())
+pub fn list_all_vcs() -> HashMap<Principal, VcWithRoles> {
+    let vc_awaiters = VENTURECAPITALIST_STORAGE.with(|awaiters| awaiters.borrow().clone());
+
+    let mut vc_with_roles_map: HashMap<Principal, VcWithRoles> = HashMap::new();
+
+    for (principal, vc_internal) in vc_awaiters.iter() {
+        let roles = get_roles_for_principal(*principal);
+        let vc_with_roles = VcWithRoles {
+            vc_profile: vc_internal.clone(),
+            roles,
+        };
+
+        vc_with_roles_map.insert(*principal, vc_with_roles);
+    }
+
+    vc_with_roles_map
 }
 
 #[update]

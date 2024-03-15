@@ -5,10 +5,10 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::collections::HashMap;
 extern crate serde_cbor;
-use crate::admin::send_approval_request;
+use crate::admin::*;
 use crate::trie::EXPERTISE_TRIE;
 
-use crate::user_module::{UserInformation, ROLE_STATUS_ARRAY};
+use crate::user_module::*;
 use ic_cdk::api::time;
 use std::cell::RefCell;
 
@@ -272,16 +272,24 @@ pub fn delete_mentor() -> String {
     }
 }
 
-pub fn get_all_mentors() -> Vec<MentorProfile> {
-    MENTOR_REGISTRY.with(|registry| {
-        registry
-            .borrow()
-            .values()
-            .map(|mentor_internal| mentor_internal.profile.clone())
-            .collect()
-    })
-}
+#[query]
+pub fn get_all_mentors() -> HashMap<Principal, MentorWithRoles> {
+    let mentor_awaiters = MENTOR_REGISTRY.with(|awaiters| awaiters.borrow().clone());
 
+    let mut mentor_with_roles_map: HashMap<Principal, MentorWithRoles> = HashMap::new();
+
+    for (principal, mentor_internal) in mentor_awaiters.iter() {
+        let roles = get_roles_for_principal(*principal);
+        let mentor_with_roles = MentorWithRoles {
+            mentor_profile: mentor_internal.clone(),
+            roles,
+        };
+
+        mentor_with_roles_map.insert(*principal, mentor_with_roles);
+    }
+
+    mentor_with_roles_map
+}
 pub fn make_active_inactive(p_id: Principal) -> String {
     let principal_id = caller();
     if p_id == principal_id || ic_cdk::api::is_controller(&principal_id) {
