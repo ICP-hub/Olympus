@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
-import { projectFilterSvg } from "../Utils/Data/SvgData";
-import ment from "../../../assets/images/ment.jpg";
-import img1 from "../../../assets/images/img1.png";
-import { Line } from "rc-progress";
-import Profile from "../../../assets/images/Ellipse 1382.svg";
-import ReactSlider from "react-slider";
-import Astro from "../../../assets/images/AstroLeft.png";
+import { projectFilterSvg } from "../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
+// import ment from "../../../../IcpAccelerator_frontend/assets/images/ment.jpg";
+import img1 from "../../../../IcpAccelerator_frontend/assets/images/img1.png";
+// import { Line } from "rc-progress";
+// import Profile from "../../../../IcpAccelerator_frontend/assets/images/Ellipse 1382.svg";
+// import ReactSlider from "react-slider";
+// import Astro from "../../../../IcpAccelerator_frontend/assets/images/AstroLeft.png";
 
 const Adminoption = () => {
-  const [sliderValuesProgress, setSliderValuesProgress] = useState({});
+  // const [sliderValuesProgress, setSliderValuesProgress] = useState({});
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState("Pending");
   const [isHovered, setIsHovered] = useState(false);
@@ -98,7 +98,7 @@ const Adminoption = () => {
        
 
         <div className="flex space-x-4 flex-wrap md:flex-nowrap">
-          {/* <button class="border text-[#737373] p-[5px] px-3 rounded-md border-[#C7C7C7] flex items-center">
+          {/* <button className="border text-[#737373] p-[5px] px-3 rounded-md border-[#C7C7C7] flex items-center">
             <svg
               width="15"
               height="15"
@@ -112,7 +112,7 @@ const Adminoption = () => {
                 fill="#737373"
               />
             </svg>
-            <span class="ml-1"> 50</span>
+            <span className="ml-1"> 50</span>
           </button> */}
 
           {selectedOption === "Accepted" && (
@@ -147,7 +147,7 @@ const Adminoption = () => {
        
 
         <div className="flex space-x-4 flex-wrap md:flex-nowrap">
-          {/* <button class="border text-[#737373] p-[5px] px-3 rounded-md border-[#C7C7C7] flex items-center">
+          {/* <button className="border text-[#737373] p-[5px] px-3 rounded-md border-[#C7C7C7] flex items-center">
             <svg
               width="15"
               height="15"
@@ -161,7 +161,7 @@ const Adminoption = () => {
                 fill="#737373"
               />
             </svg>
-            <span class="ml-1"> 50</span>
+            <span className="ml-1"> 50</span>
           </button> */}
 
           {selectedOption === "Accepted" && (

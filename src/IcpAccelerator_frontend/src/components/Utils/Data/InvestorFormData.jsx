@@ -3,50 +3,43 @@ export const investorRegistrationUserDetailsDetails = [
     id: "full_name",
     type: "text",
     name: "full_name",
-    label: "Hello there! Can we get your full name *?",
-    onFocus: null,
-    onBlur: null,
-  },
-  {
-    id: "openchat_username",
-    type: "text",
-    name: "openchat_username",
-    label: "Hello there! Can we get your openchat username *?",
-    onFocus: null,
-    onBlur: null,
-  },
+    label: "Name*",
+    required: true,
+  }, 
   {
     id: "email",
     type: "email",
     name: "email",
-    label: "What is the best email address to contact you on?",
-    onFocus: null,
-    onBlur: null,
+    label: "Email",
   },
-   {
+  {
     id: "telegram_id",
     type: "text",
     name: "telegram_id",
-    label: "Please paste the link of your Telegram ID.",
-    onFocus: null,
-    onBlur: null,
+    label: "Telegram ID.",  
   },
    {
     id: "bio",
     type: "text",
     name: "bio",
-    label: "Can you please give us your bio",
-    onFocus: null,
-    onBlur: null,
-  },
+    label: "Bio",
+  }, 
   {
     id: "twitter_id",
     type: "text",
     name: "twitter_id",
-    label: "Please paste the link of your Twitter ID.",
-    onFocus: null,
-    onBlur: null,
-  }
+    label: "Twitter ID.",   
+  },
+  {
+    id: "openchat_username",
+    type: "text",
+    name: "openchat_username",
+    label: "Open Chat Username",   
+  },
+ 
+   
+  
+ 
   ];
 
   export const investorRegistrationDetails = [

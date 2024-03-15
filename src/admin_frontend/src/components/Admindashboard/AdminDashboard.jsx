@@ -1,16 +1,14 @@
 import React,{useState} from "react";
-import adminGif from "../../../assets/images/adminGif.gif";
-import admin from "../../../assets/images/admin.gif";
-import adminPI from "../../../assets/images/adminPerformanceIndicator.png";
-import Footer from "../Footer/Footer";
+import adminGif from "../../../../IcpAccelerator_frontend/assets/images/adminGif.gif";
+import admin from "../../../../IcpAccelerator_frontend/assets/images/admin.gif";
+import adminPI from "../../../../IcpAccelerator_frontend/assets/images/adminPerformanceIndicator.png";
+import Footer from "../../../../IcpAccelerator_frontend/src/components/Footer/Footer";
 // import ProjectInterestedPop from "./ProjectInterestedPop";
-import SubmitSection from "../Footer/SubmitSection";
+import SubmitSection from "../../../../IcpAccelerator_frontend/src/components/Footer/SubmitSection";
 // import project from "../../../assets/images/project";
 
 
 function AdminDashboard() {
-
-
 
   const headerData = [
     {

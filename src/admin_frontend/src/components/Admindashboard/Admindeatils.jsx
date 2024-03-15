@@ -1,6 +1,6 @@
 import React, { useState,useRef } from 'react';
 import ment from "../../../assets/images/ment.jpg";
-import {linkedIn} from "../Utils/Data/SvgData";
+import {linkedIn} from "../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
 
 const Admindeatils = () => {
   const [selectedOption, setSelectedOption] = useState("Project Ratings");
@@ -88,24 +88,24 @@ const Admindeatils = () => {
             <p className='flex justify-end'>Oct,2023</p>
             </div>
             <p className='font-bold  '>Builder.fi</p>
-            <div class="border border-gray-400 w-full"></div>
+            <div className="border border-gray-400 w-full"></div>
             <div className='flex flex-row justify-between mt-2'>
               <p className='font-bold'>Jammy Anderson</p>
               {linkedIn}
             </div>
             <p>abc@123</p>
-            <div class="border border-gray-400 w-full"></div>
+            <div className="border border-gray-400 w-full"></div>
             <div className='flex flex-row justify-between mt-2'>
               <p className='font-bold'>Country</p>
             </div>
-            <div class="border border-gray-400 w-full mt-2"></div>
+            <div className="border border-gray-400 w-full mt-2"></div>
             <div className='flex flex-row justify-between'>
               <div className='flex flex-row font-bold gap-2'>
                 <p className=''>.Stage</p>
                 <p> .Energify</p>
               </div>
             </div>
-            <div class="border border-gray-400 w-full mt-2"></div>
+            <div className="border border-gray-400 w-full mt-2"></div>
             <button className='bg-[#B9C0F2] text-white px-4 mt-2 rounded-md font-bold'>
               Inprogress
             </button>
@@ -140,7 +140,7 @@ const Admindeatils = () => {
           </div>
         </div>
       </div>
-      <div class="border border-gray-400 w-full mt-2 "></div>
+      <div className="border border-gray-400 w-full mt-2 "></div>
       <div className='mt-4 ml-8 text-[#737373] text-xl'>
         <p className='font-extrabold'>Terms & Conditions</p>
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore </p>
