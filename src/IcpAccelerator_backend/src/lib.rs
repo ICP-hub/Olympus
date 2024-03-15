@@ -46,7 +46,6 @@ mod trie;
 use crate::notification::Notification;
 use crate::project_registration::Announcements;
 use crate::project_registration::Blog;
-use crate::ratings::MainLevel;
 use crate::ratings::MainLevelRatings;
 use crate::ratings::Rating;
 use admin::*;
@@ -470,7 +469,7 @@ fn calculate_average_api(project_id: String) -> RatingAverages {
 
 #[query]
 
-fn get_main_level_ratings(project_id: String) -> HashMap<MainLevel, MainLevelRatings> {
+fn get_main_level_ratings(project_id: String) -> HashMap<String, MainLevelRatings> {
     ratings::get_ratings_by_project_id(&project_id)
 }
 

@@ -32,45 +32,20 @@ pub struct RatingTypes {
 //     Mentor,
 // }
 
-#[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
-pub enum MainLevel {
-    Level1,
-    Level2,
-    Level3,
-    Level4,
-    Level5,
-    Level6,
-    Level7,
-    Level8,
-    Level9,
-}
-
-#[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq)]
-pub enum SubLevel {
-    SubLevel0,
-    SubLevel1,
-    SubLevel2,
-    SubLevel3,
-    SubLevel4,
-    SubLevel5,
-    SubLevel6,
-    SubLevel7,
-    SubLevel8,
-    SubLevel9,
-    All,
-}
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct Rating {
     project_id: String,
-    level_name: MainLevel,
-    sub_level: SubLevel,
+    level_name: String,
+    level_number: u32,
+    sub_level: String,
+    sub_level_number: u32,
     rating: f64,
 }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct MainLevelRatings {
-    level: MainLevel,
+    level: String,
     ratings: Vec<f64>,
 }
 
@@ -121,24 +96,24 @@ impl fmt::Display for ParseMainLevelError {
     }
 }
 
-impl FromStr for MainLevel {
-    type Err = ParseMainLevelError;
 
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "Level1" => Ok(MainLevel::Level1),
-            "Level2" => Ok(MainLevel::Level2),
-            "Level3" => Ok(MainLevel::Level3),
-            "Level4" => Ok(MainLevel::Level4),
-            "Level5" => Ok(MainLevel::Level5),
-            "Level6" => Ok(MainLevel::Level6),
-            "Level7" => Ok(MainLevel::Level7),
-            "Level8" => Ok(MainLevel::Level8),
-            "Level9" => Ok(MainLevel::Level9),
-            _ => Err(ParseMainLevelError {}),
-        }
-    }
-}
+// impl FromStr for MainLevel {
+//     type Err = ParseMainLevelError;
+
+//     fn from_str(s: &str) -> Result<Self, Self::Err> {
+//         match s {
+//             "Team" => Ok(MainLevel::Team),
+//             "ProblemAndVision" => Ok(MainLevel::ProblemAndVision),
+//             "ValueProp" => Ok(MainLevel::ValueProp),
+//             "Product" => Ok(MainLevel::Product),
+//             "Market" => Ok(MainLevel::Market),
+//             "BusinessModel" => Ok(MainLevel::BusinessModel),
+//             "Scale" => Ok(MainLevel::Scale),
+//             "Exit" => Ok(MainLevel::Exit),
+//             _ => Err(ParseMainLevelError {}),
+//         }
+//     }
+// }
 
 fn is_own_project(principal_id: &Principal, project_id: &str) -> bool {
     APPLICATION_FORM.with(|storage| {
@@ -290,8 +265,8 @@ pub fn calculate_average(project_id: &str) -> RatingAverages {
 }
 
 
-pub fn get_ratings_by_project_id(project_id: &str) -> HashMap<MainLevel, MainLevelRatings> {
-    let mut ratings_by_level: HashMap<MainLevel, MainLevelRatings> = HashMap::new();
+pub fn get_ratings_by_project_id(project_id: &str) -> HashMap<String, MainLevelRatings> {
+    let mut ratings_by_level: HashMap<String, MainLevelRatings> = HashMap::new();
 
     RATING_SYSTEM.with(|system| {
         let system = system.borrow();
@@ -299,7 +274,7 @@ pub fn get_ratings_by_project_id(project_id: &str) -> HashMap<MainLevel, MainLev
         if let Some(project_ratings) = system.get(project_id) {
             for (user_id, user_ratings) in project_ratings {
                 for (level_name, level) in user_ratings {
-                    let main_level = match level_name.parse::<MainLevel>() {
+                    let main_level = match level_name.parse::<String>() {
                         Ok(lvl) => lvl,
                         Err(_) => continue, // Skip if the level name does not match any MainLevel enum
                     };
@@ -320,4 +295,97 @@ pub fn get_ratings_by_project_id(project_id: &str) -> HashMap<MainLevel, MainLev
     });
 
     ratings_by_level
+}
+
+
+
+#[derive(Serialize, Deserialize, Debug, CandidType)]
+pub struct MainLevels {
+    id: i32,
+    name: String,
+}
+
+pub fn get_main_levels() -> Vec<MainLevels> {
+    vec![
+        MainLevels {
+            id: 1,
+            name: "Team".to_string(),
+        },
+        MainLevels {
+            id: 2,
+            name: "Problem And Vision".to_string(),
+        },
+        MainLevels {
+            id: 3,
+            name: "Value Prop".to_string(),
+        },
+        MainLevels {
+            id: 4,
+            name: "Product".to_string(),
+        },
+        MainLevels {
+            id: 5,
+            name: "Market".to_string(),
+        },
+        MainLevels {
+            id: 6,
+            name: "Business Model".to_string(),
+        },
+        MainLevels {
+            id: 7,
+            name: "Scale".to_string(),
+        },
+        MainLevels {
+            id: 8,
+            name: "Exit".to_string(),
+        },
+    ]
+}
+
+
+#[derive(Serialize, Deserialize, Debug, CandidType)]
+pub struct SubLevels {
+    id: i32,
+    name: String,
+}
+
+pub fn get_sub_levels() -> Vec<SubLevels> {
+    vec![
+        SubLevels {
+            id: 1,
+            name: "Establishing The Founding Team".to_string(),
+        },
+        SubLevels {
+            id: 2,
+            name: "Setting The Vision".to_string(),
+        },
+        SubLevels {
+            id: 3,
+            name: "Solidifying The Value Proposition".to_string(),
+        },
+        SubLevels {
+            id: 4,
+            name: "Validating An Investable Market".to_string(),
+        },
+        SubLevels {
+            id: 5,
+            name: "Proving A Profitable Business Model".to_string(),
+        },
+        SubLevels {
+            id: 6,
+            name: "Moving Beyond Early Adopters".to_string(),
+        },
+        SubLevels {
+            id: 7,
+            name: "Hitiing Product Market Fit".to_string(),
+        },
+        SubLevels {
+            id: 8,
+            name: "Scaling Up".to_string(),
+        },
+        SubLevels {
+            id: 8,
+            name: "Exit In Sight".to_string(),
+        },
+    ]
 }
