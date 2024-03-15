@@ -1,15 +1,17 @@
+use serde::{Serialize, Deserialize};
 use crate::mentor::*;
 use crate::project_registration::*;
-use crate::user_module::ROLE_STATUS_ARRAY;
+use crate::user_module::*;
 use crate::vc_registration::*;
+
 use candid::{CandidType, Principal};
 use ic_cdk::api::management_canister::main::{canister_info, CanisterInfoRequest};
 use ic_cdk::api::time;
 use ic_cdk::api::{caller, id};
 use ic_cdk_macros::*;
-use std::borrow::Borrow;
 use std::cell::RefCell;
 use std::collections::HashMap;
+
 #[derive(Clone, CandidType)]
 struct ApprovalRequest {
     sender: Principal,
@@ -240,6 +242,37 @@ async fn get_info() -> Result<Vec<Principal>, MyError> {
         ))),
     }
 }
+
+#[derive(Serialize, Deserialize, Clone, CandidType)]
+pub struct MentorWithRoles {
+    pub mentor_profile: MentorInternal,
+    pub roles: Vec<Role>,
+}
+
+
+// #[query]
+// fn mentors_awaiting_approval() -> HashMap<Principal, MentorWithRoles> {
+//     let mentor_awaiters = MENTOR_AWAITS_RESPONSE.with(|awaiters| {
+//         awaiters.borrow().clone()
+//     });
+
+//     let mut mentor_with_roles_map: HashMap<Principal, MentorWithRoles> = HashMap::new();
+
+    
+//     for (principal, mentor_internal) in mentor_awaiters.iter() {
+//         let roles = get_roles_for_principal(*principal); 
+//         let mentor_with_roles = MentorWithRoles {
+//             mentor_profile: mentor_internal.clone(),
+//             roles,
+//         };
+
+//         mentor_with_roles_map.insert(*principal, mentor_with_roles);
+//     }
+
+//     mentor_with_roles_map   
+// }
+
+
 
 #[query]
 fn mentors_awaiting_approval() -> HashMap<Principal, MentorInternal> {

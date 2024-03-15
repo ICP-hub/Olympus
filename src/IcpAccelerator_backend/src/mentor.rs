@@ -1,5 +1,4 @@
 use candid::{CandidType, Principal};
-use ic_cdk::api::call;
 use ic_cdk::api::{caller, management_canister::main::raw_rand};
 use ic_cdk_macros::{query, update};
 use serde::{Deserialize, Serialize};

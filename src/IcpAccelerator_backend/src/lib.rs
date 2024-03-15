@@ -14,8 +14,9 @@ mod user_module;
 mod vc_registration;
 mod mentor_notifications;
 
+
 use mentor_notifications::*;
-use crate::project_registration::ProjectUpdateRequest;
+use crate::project_registration::*;
 use hub_organizer::{HubOrganizerRegistration, UniqueHubs};
 use ic_cdk::api::caller;
 use leaderboard::{
