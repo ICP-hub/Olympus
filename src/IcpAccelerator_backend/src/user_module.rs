@@ -27,7 +27,7 @@ pub struct UserInfoInternal {
     pub is_active: bool,
 }
 
-#[derive(CandidType, Clone)]
+#[derive(CandidType, Clone, Serialize, Deserialize)]
 pub struct Role {
     pub name: String,
     pub status: String,

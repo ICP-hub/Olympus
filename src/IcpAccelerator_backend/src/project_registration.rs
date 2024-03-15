@@ -261,7 +261,6 @@ pub async fn create_project(info: ProjectInfo) -> String {
             await_ers.insert(caller, new_project.clone());
         },
     );
-
     let res = send_approval_request(
         info.user_data.profile_picture.unwrap_or_else(|| Vec::new()),
         info.user_data.full_name,
