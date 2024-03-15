@@ -9,8 +9,8 @@ const CopyPlugin = require("copy-webpack-plugin");
 const isDevelopment = process.env.NODE_ENV !== "production";
 
 // Define frontend directories
-// const frontendDirectories = ["IcpAccelerator_frontend", "admin_frontend"];
-const frontendDirectories = ["admin_frontend","IcpAccelerator_frontend", ];
+const frontendDirectories = ["IcpAccelerator_frontend", "admin_frontend"];
+// const frontendDirectories = ["admin_frontend","IcpAccelerator_frontend", ];
 module.exports = frontendDirectories.map(frontendDirectory => {
   const frontend_entry = path.join("src", frontendDirectory, "src", "index.html");
 

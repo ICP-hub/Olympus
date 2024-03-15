@@ -89,7 +89,6 @@ type MentorInternal = record {
 };
 type MentorProfile = record {
   user_data : UserInformation;
-  social_link : text;
   reason_for_joining : text;
   existing_icp_mentor : bool;
   preferred_icp_hub : opt text;
@@ -100,6 +99,8 @@ type MentorProfile = record {
   years_of_mentoring : text;
   existing_icp_project_porfolio : opt text;
   icop_hub_or_spoke : bool;
+  linkedin_link : text;
+  hub_owner : opt text;
 };
 type Notification = record { notification_type : NotificationType };
 type NotificationForOwner = record {
@@ -132,28 +133,36 @@ type Notification_1 = record {
   notification_type : NotificationType_1;
 };
 type ProjectInfo = record {
-  project_elevator_pitch : vec nat8;
+  sns : opt text;
+  project_linkedin : opt text;
+  project_elevator_pitch : opt text;
   reason_to_join_incubator : text;
   user_data : UserInformation;
+  project_discord : opt text;
   project_description : text;
   vc_assigned : opt vec VentureCapitalist;
-  token_economics : text;
+  investors : opt text;
+  token_economics : opt text;
   self_rating_of_project : float64;
   preferred_icp_hub : opt text;
+  raised_from_other_ecosystem : opt text;
   mentors_assigned : opt vec MentorProfile;
-  target_market : text;
-  long_term_goals : text;
+  project_twitter : opt text;
+  target_market : opt text;
+  long_term_goals : opt text;
   project_area_of_focus : text;
   live_on_icp_mainnet : opt text;
-  technical_docs : text;
-  github_link : text;
+  technical_docs : opt text;
+  github_link : opt text;
   project_cover : vec nat8;
-  promotional_video : text;
-  money_raised_till_now : opt text;
+  project_website : opt text;
+  promotional_video : opt text;
+  money_raised_till_now : opt bool;
   supports_multichain : opt text;
   project_logo : vec nat8;
   project_name : text;
   project_team : opt TeamMember;
+  icp_grants : opt text;
 };
 type ProjectInfoForUser = record {
   vc_associated : opt vec VentureCapitalist;
@@ -301,21 +310,23 @@ type UserRole = variant { VC; Mentor; Founder; Project; ICPHubOrganizer };
 type VentureCapitalist = record {
   fund_size : float64;
   user_data : UserInformation;
-  existing_icp_portfolio : text;
+  existing_icp_portfolio : opt text;
   registered_under_any_hub : opt bool;
   name_of_fund : text;
   reason_for_joining : text;
   logo : opt vec nat8;
   average_check_size : float64;
-  money_invested : float64;
+  money_invested : opt float64;
   existing_icp_investor : bool;
   preferred_icp_hub : text;
   project_on_multichain : opt text;
   investor_type : text;
-  announcement_details : text;
+  website_link : text;
+  announcement_details : opt text;
   number_of_portfolio_companies : nat16;
   assets_under_management : text;
   portfolio_link : text;
+  linkedin_link : text;
   category_of_investment : text;
   type_of_investment : text;
 };
@@ -430,13 +441,11 @@ service : () -> {
   project_update_awaiting_approval : () -> (
       vec record { text; ProjectUpdateRequest },
     ) query;
-  register_founder_caller : (ThirtyInfoFounder) -> (text);
   register_hub_organizer_candid : (HubOrganizerRegistration) -> (text);
   register_mentor_candid : (MentorProfile) -> (text);
   register_project : (ProjectInfo) -> (text);
   register_user : (UserInformation) -> (text);
   register_venture_capitalist : (VentureCapitalist) -> (text);
-  register_venture_capitalist_caller : (VentureCapitalist) -> (text);
   reply_to_suggestion_caller : (nat64, text, text) -> (nat64, text);
   respond_to_connection_request_candid : (principal, bool) -> (text);
   send_connection_request : (principal, text) -> (text);

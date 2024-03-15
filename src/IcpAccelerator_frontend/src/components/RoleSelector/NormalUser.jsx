@@ -151,7 +151,7 @@ const NormalUser = () => {
       await actor.register_user(userData).then((result) => {
         toast.success("Registered as a User");
         // navigate("/");
-        // window.location.href = "/";
+        window.location.href = "/";
       });
       console.log("data passed to backend");
       // await dispatch(getCurrentRoleStatusRequestHandler());
