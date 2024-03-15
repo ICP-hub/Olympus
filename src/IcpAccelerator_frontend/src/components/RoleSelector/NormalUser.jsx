@@ -132,7 +132,7 @@ const NormalUser = () => {
   );
   const onSubmitHandler = async (data) => {
     // console.log("data aaya data aaya ", data);
-   console.log(" setImageData(defaultUserImage)",defaultUserImage)
+    console.log(" setImageData(defaultUserImage)", defaultUserImage);
     const userData = {
       full_name: data.full_name,
       openchat_username: [data.user_name],
@@ -142,7 +142,7 @@ const NormalUser = () => {
       twitter_id: [data.twitter_id.toString()],
       country: data.country,
       area_of_intrest: data.areas_of_expertise,
-      profile_picture:  imageData ? [imageData] : [defaultUserImage],
+      profile_picture: imageData ? [imageData] : [defaultUserImage],
     };
 
     console.log("userData => ", userData);
