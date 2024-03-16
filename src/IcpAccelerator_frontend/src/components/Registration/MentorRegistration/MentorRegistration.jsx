@@ -735,7 +735,7 @@ const MentorRegistration = () => {
                   </p>
                 )}
               </div>
-              <div className="z-0 w-full my-3 group">
+              <div className="z-0 w-full mb-3 group">
                 <label
                   htmlFor="existing_icp_mentor"
                   className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
@@ -788,7 +788,7 @@ const MentorRegistration = () => {
                   </p>
                 )}
               </div>
-              <div className="z-0 w-full my-3 group">
+              <div className="z-0 w-full mb-3 group">
                 <label
                   htmlFor="area_of_expertise"
                   className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
@@ -823,7 +823,7 @@ const MentorRegistration = () => {
                 )}
               </div>
 
-              <div className="z-0 w-full my-3 group">
+              <div className="z-0 w-full mb-3 group">
                 <label
                   htmlFor="category_of_mentoring_service"
                   className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
@@ -853,7 +853,7 @@ const MentorRegistration = () => {
                   </p>
                 )}
               </div>
-              <div className="z-0 w-full my-3 group">
+              <div className="z-0 w-full mb-3 group">
                 <label
                   htmlFor="icop_hub_or_spoke"
                   className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
@@ -881,7 +881,7 @@ const MentorRegistration = () => {
                   </p>
                 )}
               </div>
-              <div className="z-0 w-full my-3 group">
+              <div className="z-0 w-full mb-3 group">
                 <label
                   htmlFor="hub_owner"
                   className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
