@@ -115,7 +115,11 @@ const validationSchema = {
     logoData: yup.mixed().optional(),
   }),
   additionalDetails: yup.object().shape({
-    project_description: yup.string().required("Description is required"),
+    project_description: yup
+      .string()
+      .trim()
+      .required("Textarea is required")
+      .matches(/^\S*$/, "Spaces are not allowed"),
     token_economics: yup.string().optional(),
     target_market: yup.string().optional(),
     long_term_goals: yup.string().optional(),
@@ -669,7 +673,7 @@ const CreateProjectRegistration = () => {
       (undefined && step > steps.length - 1)
     ) {
       // console.log("exisiting user visit ");
-      
+
       const updateMoneyRaisedTillNow =
         MoneyRaisedTillNow === "true" ? true : false;
       let tempObj2 = {
