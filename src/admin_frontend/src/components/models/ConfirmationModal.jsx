@@ -94,19 +94,19 @@ const ConfirmationModal = ({
               covertedPrincipal,
               boolean
             );
-            // await dispatch(mentorDeclinedRequest());
+            await dispatch(mentorDeclinedRequest());
           }
           break;
         case "Investor":
           if (state === "Pending") {
             await actor.decline_vc_creation_request(covertedPrincipal, boolean);
-            // await dispatch(investorDeclinedRequest());
+            await dispatch(investorDeclinedRequest());
           }
           break;
         case "Project":
           if (state === "Pending") {
             await actor.decline_project_creation_request(covertedPrincipal);
-            // await dispatch(projectDeclinedRequest());
+            await dispatch(projectDeclinedRequest());
           }
           break;
         default:
@@ -176,19 +176,19 @@ const ConfirmationModal = ({
               covertedPrincipal,
               boolean
             );
-            // await dispatch(mentorApprovedRequest());
+            await dispatch(mentorApprovedRequest());
           }
           break;
         case "Investor":
           if (state === "Pending") {
             await actor.approve_vc_creation_request(covertedPrincipal, boolean);
-            // await dispatch(investorApprovedRequest());
+            await dispatch(investorApprovedRequest());
           }
           break;
         case "Project":
           if (state === "Pending") {
             await actor.approve_project_creation_request(covertedPrincipal);
-            // await dispatch(projectApprovedRequest());
+            await dispatch(projectApprovedRequest());
           }
           break;
         default:
