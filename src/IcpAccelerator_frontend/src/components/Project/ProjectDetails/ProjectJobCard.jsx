@@ -2,8 +2,9 @@ import React from "react";
 
 function ProjectJobCard({ image, website, tags, country }) {
   return (
-    <div className="text-[#FFFFFF]">
-      <div className="bg-[#B9C0F2] border border-[#7283EA] rounded-2xl">
+
+    <div className="">
+      <div className="border-2 shadow-lg rounded-2xl">
         <div className="md:p-4 p-2">
           <h3 className="text-lg font-[950]">General Inquiry</h3>
           <div className="sm:flex">
@@ -21,7 +22,7 @@ function ProjectJobCard({ image, website, tags, country }) {
                   </p>
                 </div>
               </div>
-              <div className="mt-2">
+              <div className="mt-2 pr-4">
                 <p className="text-base font-[950] py-2">Responsibilities</p>
                 <ul className="text-xs md:pl-4 font-[450] list-disc list-outside">
                   <li>Submit a general inquiry for our recruitment support!</li>
@@ -38,9 +39,8 @@ function ProjectJobCard({ image, website, tags, country }) {
                   <p className="flex items-center flex-wrap py-2 gap-2">
                     {tags.map((val, index) => (
                       <span
-                        className="bg-transparent text-xs font-semibold px-3 py-1 rounded-2xl border-2 border-[#FFFFFF]"
-                        key={index}
-                      >
+                        className="bg-transparent text-xs font-semibold px-3 py-1 rounded-2xl border-2 border-black"
+                        key={index}>
                         {val}
                       </span>
                     ))}
@@ -70,7 +70,7 @@ function ProjectJobCard({ image, website, tags, country }) {
                   {website && (
                     <a href={website} target="_blank">
                       <button className="font-[450] border text-xs text-[#ffffff] py-[7px] px-[9px] rounded-md border-[#FFFFFF4D] drop-shadow-[#00000040]  bg-[#3505B2] text-nowrap">
-                      I'm interested!
+                        I'm interested!
                       </button>
                     </a>
                   )}
