@@ -13,7 +13,7 @@ export default function ButtonDiv({ role, onClose }) {
             : role?.name === 'mentor'
                 ? '/create-mentor'
                 : role?.name === 'vc'
-                    ? '/create-vc'
+                    ? '/create-investor'
                     : '/';
 
     if (role?.status === 'active') {

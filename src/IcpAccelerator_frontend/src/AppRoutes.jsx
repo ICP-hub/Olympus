@@ -50,7 +50,7 @@ const AppRoutes = () => {
   const publicRoutes = [
     { path: "/", element: <DashBoard /> },
     { path: "/create-user", element: <NormalUser /> },
-    {path:"/create-vc", element : <InvestorRegistration/>},
+    {path:"/create-investor", element : <InvestorRegistration/>},
     { path: "/create-project", element: <CreateProject /> },
     { path: "/details", element: <AllDetailsForm /> },
     // { path: "/roleSelect", element: <RoleSelector /> },

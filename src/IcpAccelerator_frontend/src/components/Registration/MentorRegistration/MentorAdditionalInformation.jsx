@@ -48,7 +48,7 @@ const MentorAdditionalInformation = ({ onSubmit, register, errors, fields, goToP
                 radius="9"
                 ariaLabel="three-dots-loading"
                 wrapperStyle={{}}
-                wrapperClass=""
+                wrapperclassName=""
               />
             ) : (
               "Submit"

@@ -18,18 +18,32 @@ function getNameOfCurrentStatus(rolesStatusArray) {
 }
 
 
-function* fetchCurrentRoleStatus() {
+function* fetchCurrentRoleStatus(action) {
+    // const actor = action.payload;
 
-    try {
-        const actor = yield select(selectActor);
-        const currentRoleArray = yield call([actor, actor.get_role_status]);
+    const actor = yield select(selectActor);
+    console.log('actor', actor)
+
+    const currentRoleArray = yield call([actor, actor.get_role_status]);
+    console.log('currentRoleArray', currentRoleArray)
+    if (currentRoleArray && currentRoleArray.length !== 0) {
         const currentActiveRole = yield call(getNameOfCurrentStatus, currentRoleArray)
         yield put(setCurrentRoleStatus(currentRoleArray));
         yield put(setCurrentActiveRole(currentActiveRole));
-    } catch (error) {
+    } else {
         yield put(getCurrentRoleStatusFailureHandler(error.toString()));
         yield put(setCurrentActiveRole(null));
     }
+    // try {
+    //     const actor = yield select(selectActor);
+    //     const currentRoleArray = yield call([actor, actor.get_role_status]);
+    //     const currentActiveRole = yield call(getNameOfCurrentStatus, currentRoleArray)
+    //     yield put(setCurrentRoleStatus(currentRoleArray));
+    //     yield put(setCurrentActiveRole(currentActiveRole));
+    // } catch (error) {
+    //     yield put(getCurrentRoleStatusFailureHandler(error.toString()));
+    //     yield put(setCurrentActiveRole(null));
+    // }
 }
 
 function* switchRoleRequestHandlerFunc(action) {

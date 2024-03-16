@@ -46,7 +46,7 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
   //     onClose();
   //     navigate(`/${roleNavigate}`);
   //   } else if (
-  //     hasSelectedRole === true &&
+  //     hasSelectedRole === true &&https://www.fvr
   //     isAuthenticated &&
   //     userRole !== null
   //   ) {
