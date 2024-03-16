@@ -48,7 +48,7 @@ pub struct ProjectInfo {
     pub project_name: String,
     pub project_logo: Vec<u8>,
     pub preferred_icp_hub: Option<String>,
-    pub live_on_icp_mainnet: Option<String>,
+    pub live_on_icp_mainnet: Option<bool>,
     pub money_raised_till_now: Option<bool>,
     pub supports_multichain: Option<String>,
     pub project_elevator_pitch: Option<String>,
