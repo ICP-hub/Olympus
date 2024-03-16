@@ -1,7 +1,4 @@
-import React from "react";
-import IcpWallet from "../../../../assets/WalletLogo/IcpWallet.png";
-export const bg=(
-    <svg width="312" height="178" viewBox="0 0 312 178" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="312" height="178" viewBox="0 0 312 178" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_1908_55181)">
 <rect width="312" height="178" rx="16" fill="white"/>
 <g clip-path="url(#clip1_1908_55181)">
@@ -136,5 +133,3 @@ export const bg=(
 </clipPath>
 </defs>
 </svg>
-
-);

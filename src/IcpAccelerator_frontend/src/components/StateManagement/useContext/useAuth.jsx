@@ -146,6 +146,7 @@ export const useAuthClient = (options = defaultOptions) => {
     process.env.ICPACCELERATOR_BACKEND_CANISTER_ID;
 
   const actor = createActor(canisterId, { agentOptions: { identity } });
+  
 
   return {
     isAuthenticated,

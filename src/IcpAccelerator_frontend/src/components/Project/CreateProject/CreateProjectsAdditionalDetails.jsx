@@ -21,18 +21,33 @@ const CreateProjectsAdditionalDetails = ({
               >
                 {field.label}
               </label>
-              <input
-                type={field.type}
-                name={field.name}
-                id={field.id}
-                {...register(field.name)}
-                className={`bg-gray-50 border-2 ${
-                  errors[field.name]
-                    ? "border-red-500 placeholder:text-red-500"
-                    : "border-[#737373]"
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                placeholder={field.placeholder}
-              />
+              {field.type === "textarea" ? (
+                <textarea
+                  name={field.name}
+                  id={field.id}
+                  {...register(field.name)}
+                  className={`bg-gray-50 border-2 ${
+                    errors[field.name]
+                      ? "border-red-500 placeholder:text-red-500"
+                      : "border-[#737373]"
+                  } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  placeholder={field.placeholder}
+                  rows={2}
+                ></textarea>
+              ) : (
+                <input
+                  type={field.type}
+                  name={field.name}
+                  id={field.id}
+                  {...register(field.name)}
+                  className={`bg-gray-50 border-2 ${
+                    errors[field.name]
+                      ? "border-red-500 placeholder:text-red-500"
+                      : "border-[#737373]"
+                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  placeholder={field.placeholder}
+                />
+              )}
               {errors[field.name] && (
                 <span className="mt-1 text-sm text-red-500 font-bold">
                   {errors[field.name].message}

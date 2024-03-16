@@ -1,50 +1,64 @@
 import { takeLatest, call, put, select } from "redux-saga/effects";
+import {
+  uint8ArrayToBase64,
+  principalToText,
+  formatDateFromBigInt,
+} from "../../../Utils/AdminData/saga_function/blobImageToUrl";
+import {
+  mentorApprovedFailure,
+  mentorApprovedSuccess,
+  mentorApprovedRequest,
+} from "../Reducers/mentorApproved";
 
-import { mentorApprovedFailure, mentorApprovedSuccess, mentorApprovedRequest } from "../Reducers/mentorApproved";
 const selectActor = (currState) => currState.actors.actor;
-
-
-function uint8ArrayToBase64(uint8Arr) {
-  let buffer = Buffer.from(uint8Arr);
-  const decryptedBlob = new Blob([buffer]);
-  const url = URL.createObjectURL(decryptedBlob);
-  return url;
-}
-
-
-function principalToText(principal){
-  return principal.toText()
-}
-
 
 function* fetchMentorApprovedHandler() {
   try {
-
     const actor = yield select(selectActor);
-    // console.log('actor => => => ', actor)
+    const allMentorApprovedStatus = yield call([
+      actor,
+      actor.get_all_mentors_candid,
+    ]);
 
-    const allMentorApprovedStatus = yield call([actor, actor.get_all_mentors_candid]);
+    const updatedMentorProfiles = allMentorApprovedStatus.map(
+      ([principal, { mentor_profile, roles }]) => {
+        const principalText = principalToText(principal);
+        const profilePictureBase64 = mentor_profile.profile.user_data
+          .profile_picture
+          ? uint8ArrayToBase64(mentor_profile.profile.user_data.profile_picture)
+          : null;
 
-    console.log('allMentorApprovedStatus in allMentorApprovedStatus => ', allMentorApprovedStatus)
+        const mentorRole = roles.find((role) => role.name === "mentor");
+        let requestedTimeFormatted =
+          mentorRole &&
+          mentorRole.requested_on
+            .map((time) => formatDateFromBigInt(time))
+            .join(", ");
+        let rejectedTimeFormatted =
+          mentorRole &&
+          mentorRole.rejected_on
+            .map((time) => formatDateFromBigInt(time))
+            .join(", ");
 
-    const updatedMentorProfiles = allMentorApprovedStatus.map(([principal, data]) => {
-      // const { data, principal } = mentor;
-      const profilePictureBase64 = data.user_data.profile_picture ? uint8ArrayToBase64(data.user_data.profile_picture) : null;
-
-      // const principalText = principalToText(principal);
-
-      return {
-        ...data,
-        user_data: {
-          ...data.user_data,
-          profile_picture: profilePictureBase64,
-        },
-        // principal: principalToText(principal),
-      };
-    });
+        return {
+          principal: principalText,
+          ...mentor_profile,
+          profile: {
+            ...mentor_profile.profile,
+            user_data: {
+              ...mentor_profile.profile.user_data,
+              profile_picture: profilePictureBase64,
+            },
+          },
+          requestedTime: requestedTimeFormatted,
+          rejectedTime: rejectedTimeFormatted,
+        };
+      }
+    );
 
     yield put(mentorApprovedSuccess(updatedMentorProfiles));
   } catch (error) {
+    console.error(error);
     yield put(mentorApprovedFailure(error.toString()));
   }
 }

@@ -41,9 +41,9 @@ const MembersProfileCard = ({ profile, type, name, role, socials, filter }) => {
     ];
     const filteredArray = filter === 'team' ? cardData : cardData.filter((val) => val.type === filter);
     return (
-        <div className="md1:flex flex-wrap">
-            {filteredArray.map((data) => (
-                <div className="w-[100%] md1:w-[calc(100%/2-10px)] dxl:w-[calc(100%/3-10px)] xl2:w-[calc(25%-10px)] rounded-[10px] shadow-lg md:m-1 p-4">
+        <div className="md1:flex flex-wrap gap-10">
+            {filteredArray.map((data, index) => (
+                <div key={index} className={`w-[100%] md1:w-[calc(100%/2-40px)] dxl:w-[calc(100%/3-40px)] xl2:w-[calc(25%-10px)] rounded-[10px] shadow-lg md:m-1 mb-10 p-6 ${index === 0 ? 'bg-blue-200' : 'bg-white'}`}>
                     <div className="flex w-full justify-between">
                         {profile && (
                             <div className="p-[3px] rounded-full flex bg-blend-overlay "
@@ -71,9 +71,9 @@ const MembersProfileCard = ({ profile, type, name, role, socials, filter }) => {
                             {data?.type ?? ""}
                         </span>
                     )}
-                    {name && role && (<div className="px-6 pt-4 pb-4 sm:pb-2 md:pb-0">
-                        <div className="font-bold text-xl mb-2">{data?.name ?? ""}</div>
-                        <p className="text-gray-700 text-base">{data?.role ?? ""}</p>
+                    {name && role && (<div className="pt-4 pb-4 sm:pb-2 md:pb-0">
+                        <div className="font-extrabold text-lg md:text-2xl mb-1">{data?.name ?? ""}</div>
+                        <p className="text-gray-700 text-base capitalize">{index === 0 ? 'Author' : 'project member'}</p>
                     </div>
                     )}
                 </div>
