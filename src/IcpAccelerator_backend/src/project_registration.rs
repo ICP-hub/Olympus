@@ -79,7 +79,7 @@ pub struct ProjectInfo {
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct ProjectInfoForUser {
-    pub date_of_joining: Option<String>,
+    pub date_of_joining: Option<u64>,
     pub mentor_associated: Option<Vec<MentorProfile>>,
     pub vc_associated: Option<Vec<VentureCapitalist>>,
     pub team_member_info: Option<Vec<TeamMember>>,
@@ -740,7 +740,7 @@ pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUse
             .flat_map(|(_, project_list)| project_list.iter())
             .find(|project_internal| project_internal.uid == project_id)
             .map(|project_internal| ProjectInfoForUser {
-                date_of_joining: project_internal.params.user_data.date_of_joining.clone(),
+                date_of_joining: Some(project_internal.creation_date),
                 mentor_associated: project_internal.params.mentors_assigned.clone(),
                 vc_associated: project_internal.params.vc_assigned.clone(),
                 team_member_info: project_internal.params.project_team.clone(),
@@ -805,7 +805,6 @@ fn get_dummy_user_information() -> UserInformation {
         area_of_intrest: "Artificial Intelligence".to_string(),
         twitter_id: Some("@janedoeAI".to_string()),
         openchat_username: Some("janedoeChat".to_string()),
-        date_of_joining: None,
     }
 }
 
