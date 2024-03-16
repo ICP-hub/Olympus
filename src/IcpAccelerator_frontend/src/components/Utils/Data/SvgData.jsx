@@ -5,7 +5,8 @@ import IcpWallet from "../../../../assets/WalletLogo/IcpWallet.png";
 import PlugWallet from "../../../../assets/WalletLogo/PlugWallet.png";
 
 export const globesvg = (
-  <svg xmlns="http://www.w3.org/2000/svg"
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
     fill="none"
     viewBox="0 0 24 24"
     strokeWidth="1.5"
@@ -18,67 +19,67 @@ export const globesvg = (
       d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418"
     />
   </svg>
-)
+);
 
 export const twitterSvg = (
   <svg
-  xmlns="http://www.w3.org/2000/svg"
-  xmlnsXlink="http://www.w3.org/1999/xlink"
-  version="1.1"
-  width="24"
-  height="24"
-  viewBox="0 0 256 256"
-  xmlSpace="preserve"
->
-  <defs></defs>
-  <g
-    style={{
-      stroke: 'none',
-      strokeWidth: 0,
-      strokeDasharray: 'none',
-      strokeLinecap: 'butt',
-      strokeLinejoin: 'miter',
-      strokeMiterlimit: 10,
-      fill: 'none',
-      fillRule: 'nonzero',
-      opacity: 1,
-    }}
-    transform="translate(1.4065934065934016 1.4065934065934016) scale(2.81 2.81)"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlnsXlink="http://www.w3.org/1999/xlink"
+    version="1.1"
+    width="24"
+    height="24"
+    viewBox="0 0 256 256"
+    xmlSpace="preserve"
   >
-    <polygon
-      points="24.89,23.01 57.79,66.99 65.24,66.99 32.34,23.01"
-      transform="matrix(1 0 0 1 0 0)"
+    <defs></defs>
+    <g
       style={{
-        stroke: 'none',
-        strokeWidth: 1,
-        strokeDasharray: 'none',
-        strokeLinecap: 'butt',
-        strokeLinejoin: 'miter',
+        stroke: "none",
+        strokeWidth: 0,
+        strokeDasharray: "none",
+        strokeLinecap: "butt",
+        strokeLinejoin: "miter",
         strokeMiterlimit: 10,
-        fill: 'rgb(0,0,0)',
-        fillRule: 'nonzero',
+        fill: "none",
+        fillRule: "nonzero",
         opacity: 1,
       }}
-    />
-    <path
-      d="M 45 0 L 45 0 C 20.147 0 0 20.147 0 45 v 0 c 0 24.853 20.147 45 45 45 h 0 c 24.853 0 45 -20.147 45 -45 v 0 C 90 20.147 69.853 0 45 0 z M 56.032 70.504 L 41.054 50.477 L 22.516 70.504 h -4.765 L 38.925 47.63 L 17.884 19.496 h 16.217 L 47.895 37.94 l 17.072 -18.444 h 4.765 L 50.024 40.788 l 22.225 29.716 H 56.032 z"
-      style={{
-        stroke: 'none',
-        strokeWidth: 1,
-        strokeDasharray: 'none',
-        strokeLinecap: 'butt',
-        strokeLinejoin: 'miter',
-        strokeMiterlimit: 10,
-        fill: 'rgb(0,0,0)',
-        fillRule: 'nonzero',
-        opacity: 1,
-      }}
-      transform="matrix(1 0 0 1 0 0)"
-      strokeLinecap="round"
-    />
-  </g>
-</svg>
-)
+      transform="translate(1.4065934065934016 1.4065934065934016) scale(2.81 2.81)"
+    >
+      <polygon
+        points="24.89,23.01 57.79,66.99 65.24,66.99 32.34,23.01"
+        transform="matrix(1 0 0 1 0 0)"
+        style={{
+          stroke: "none",
+          strokeWidth: 1,
+          strokeDasharray: "none",
+          strokeLinecap: "butt",
+          strokeLinejoin: "miter",
+          strokeMiterlimit: 10,
+          fill: "rgb(0,0,0)",
+          fillRule: "nonzero",
+          opacity: 1,
+        }}
+      />
+      <path
+        d="M 45 0 L 45 0 C 20.147 0 0 20.147 0 45 v 0 c 0 24.853 20.147 45 45 45 h 0 c 24.853 0 45 -20.147 45 -45 v 0 C 90 20.147 69.853 0 45 0 z M 56.032 70.504 L 41.054 50.477 L 22.516 70.504 h -4.765 L 38.925 47.63 L 17.884 19.496 h 16.217 L 47.895 37.94 l 17.072 -18.444 h 4.765 L 50.024 40.788 l 22.225 29.716 H 56.032 z"
+        style={{
+          stroke: "none",
+          strokeWidth: 1,
+          strokeDasharray: "none",
+          strokeLinecap: "butt",
+          strokeLinejoin: "miter",
+          strokeMiterlimit: 10,
+          fill: "rgb(0,0,0)",
+          fillRule: "nonzero",
+          opacity: 1,
+        }}
+        transform="matrix(1 0 0 1 0 0)"
+        strokeLinecap="round"
+      />
+    </g>
+  </svg>
+);
 export const linkedInSvg = (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -92,14 +93,14 @@ export const linkedInSvg = (
     <defs></defs>
     <g
       style={{
-        stroke: 'none',
+        stroke: "none",
         strokeWidth: 0,
-        strokeDasharray: 'none',
-        strokeLinecap: 'butt',
-        strokeLinejoin: 'miter',
+        strokeDasharray: "none",
+        strokeLinecap: "butt",
+        strokeLinejoin: "miter",
         strokeMiterlimit: 10,
-        fill: 'none',
-        fillRule: 'nonzero',
+        fill: "none",
+        fillRule: "nonzero",
         opacity: 1,
       }}
       transform="translate(1.4065934065934016 1.4065934065934016) scale(2.81 2.81)"
@@ -107,14 +108,14 @@ export const linkedInSvg = (
       <path
         d="M 45 0 C 20.147 0 0 20.147 0 45 c 0 24.853 20.147 45 45 45 c 24.853 0 45 -20.147 45 -45 C 90 20.147 69.853 0 45 0 z M 31.187 69.956 H 20.822 V 36.617 h 10.365 V 69.956 z M 26.005 32.062 c -3.32 0 -6.005 -2.692 -6.005 -6.007 c 0 -3.318 2.685 -6.011 6.005 -6.011 c 3.313 0 6.005 2.692 6.005 6.011 C 32.01 29.37 29.317 32.062 26.005 32.062 z M 70 69.956 H 59.643 V 53.743 c 0 -3.867 -0.067 -8.84 -5.385 -8.84 c -5.392 0 -6.215 4.215 -6.215 8.562 v 16.491 H 37.686 V 36.617 h 9.939 v 4.559 h 0.141 c 1.383 -2.622 4.764 -5.385 9.804 -5.385 C 68.063 35.791 70 42.694 70 51.671 V 69.956 z"
         style={{
-          stroke: 'none',
+          stroke: "none",
           strokeWidth: 1,
-          strokeDasharray: 'none',
-          strokeLinecap: 'butt',
-          strokeLinejoin: 'miter',
+          strokeDasharray: "none",
+          strokeLinecap: "butt",
+          strokeLinejoin: "miter",
           strokeMiterlimit: 10,
-          fill: 'rgb(37,99,235)',
-          fillRule: 'nonzero',
+          fill: "rgb(37,99,235)",
+          fillRule: "nonzero",
           opacity: 1,
         }}
         transform="matrix(1 0 0 1 0 0)"
@@ -122,8 +123,7 @@ export const linkedInSvg = (
       />
     </g>
   </svg>
-
-)
+);
 
 export const afterCopySvg = (
   <svg
@@ -477,8 +477,6 @@ export const walletModalSvg = [
     ),
   },
 
-
-
   // {
   //   id: "plug",
   //   content: (
@@ -516,15 +514,20 @@ export const closeModalSvg = (
       d="M53.837 13.3223C54.6654 13.3228 55.3374 12.6516 55.3379 11.8232C55.3384 10.9947 54.6672 10.3228 53.8388 10.3223L53.837 13.3223ZM1.08727 10.7299C0.501131 11.3153 0.500559 12.2651 1.08599 12.8512L10.6262 22.4029C11.2116 22.989 12.1614 22.9896 12.7475 22.4042C13.3336 21.8187 13.3342 20.869 12.7488 20.2828L4.26861 11.7925L12.759 3.31228C13.3451 2.72684 13.3457 1.7771 12.7603 1.19096C12.1748 0.604819 11.2251 0.604248 10.639 1.18968L1.08727 10.7299ZM53.8388 10.3223L2.14819 10.2912L2.14639 13.2912L53.837 13.3223L53.8388 10.3223Z"
       fill="#B3B3B3"
     />
-  </svg> 
-);
-
-export const middleLineSvg = (
-  <svg width="30" height="1" viewBox="0 0 30 1" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M1 0.5H29" stroke="#9C9C9C" strokeLinecap="round" />
   </svg>
 );
 
+export const middleLineSvg = (
+  <svg
+    width="30"
+    height="1"
+    viewBox="0 0 30 1"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M1 0.5H29" stroke="#9C9C9C" strokeLinecap="round" />
+  </svg>
+);
 
 export const projectFilterSvg = (
   <svg
@@ -1066,20 +1069,86 @@ export const checktab = (
     />
   </svg>
 );
- export  const winner = (
-  <svg width="13" height="16" viewBox="0 0 13 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M1.27882 0.169922H11.7468C11.873 0.169922 11.9941 0.222129 12.0833 0.315059C12.1725 0.407989 12.2227 0.53403 12.2227 0.665453V14.9002C12.2227 14.9964 12.1959 15.0906 12.1454 15.1712C12.095 15.2518 12.023 15.3154 11.9385 15.3542C11.8539 15.3929 11.7603 15.4052 11.6691 15.3895C11.5779 15.3738 11.4931 15.3307 11.4251 15.2656L6.51283 10.5761L1.60059 15.2656C1.53251 15.3307 1.44771 15.3738 1.35654 15.3895C1.26537 15.4052 1.17178 15.3929 1.0872 15.3542C1.00261 15.3154 0.930693 15.2518 0.880224 15.1712C0.829756 15.0906 0.80292 14.9964 0.802997 14.9002V0.665453C0.802997 0.53403 0.853127 0.407989 0.942361 0.315059C1.03159 0.222129 1.15262 0.169922 1.27882 0.169922Z" fill="white"/>
-</svg>
+export const winner = (
+  <svg
+    width="77"
+    height="77"
+    viewBox="0 0 77 77"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <g filter="url(#filter0_d_0_1)">
+      <circle cx="38.3016" cy="39.3016" r="20.3016" fill="#5040A1" />
+    </g>
+    <path
+      d="M33.0679 31.6885H43.5359C43.6621 31.6885 43.7831 31.7407 43.8724 31.8336C43.9616 31.9265 44.0117 32.0526 44.0117 32.184V46.4187C44.0118 46.515 43.985 46.6092 43.9345 46.6898C43.884 46.7704 43.8121 46.834 43.7275 46.8727C43.6429 46.9115 43.5493 46.9238 43.4582 46.908C43.367 46.8923 43.2822 46.8493 43.2141 46.7842L38.3019 42.0946L33.3897 46.7842C33.3216 46.8493 33.2368 46.8923 33.1456 46.908C33.0544 46.9238 32.9608 46.9115 32.8763 46.8727C32.7917 46.834 32.7198 46.7704 32.6693 46.6898C32.6188 46.6092 32.592 46.515 32.5921 46.4187V32.184C32.5921 32.0526 32.6422 31.9265 32.7314 31.8336C32.8207 31.7407 32.9417 31.6885 33.0679 31.6885Z"
+      fill="white"
+    />
+    <defs>
+      <filter
+        id="filter0_d_0_1"
+        x="0.5"
+        y="0.5"
+        width="75.603"
+        height="75.6033"
+        filterUnits="userSpaceOnUse"
+        color-interpolation-filters="sRGB"
+      >
+        <feFlood flood-opacity="0" result="BackgroundImageFix" />
+        <feColorMatrix
+          in="SourceAlpha"
+          type="matrix"
+          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+          result="hardAlpha"
+        />
+        <feOffset dy="-1" />
+        <feGaussianBlur stdDeviation="8.75" />
+        <feComposite in2="hardAlpha" operator="out" />
+        <feColorMatrix
+          type="matrix"
+          values="0 0 0 0 0.313726 0 0 0 0 0.25098 0 0 0 0 0.631373 0 0 0 0.6 0"
+        />
+        <feBlend
+          mode="normal"
+          in2="BackgroundImageFix"
+          result="effect1_dropShadow_0_1"
+        />
+        <feBlend
+          mode="normal"
+          in="SourceGraphic"
+          in2="effect1_dropShadow_0_1"
+          result="shape"
+        />
+      </filter>
+    </defs>
+  </svg>
+);
 
- );
-
- export const Star=(
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M14.0732 1.73301L16.1849 5.99145C16.4729 6.58424 17.2408 7.15284 17.8887 7.26172L21.7163 7.90291C24.164 8.31423 24.74 10.1047 22.9762 11.871L20.0005 14.8713C19.4966 15.3794 19.2206 16.3593 19.3766 17.061L20.2285 20.775C20.9004 23.7148 19.3526 24.852 16.7729 23.3155L13.1853 21.1742C12.5373 20.7871 11.4695 20.7871 10.8095 21.1742L7.22192 23.3155C4.6542 24.852 3.09438 23.7027 3.7663 20.775L4.61821 17.061C4.77419 16.3593 4.49822 15.3794 3.99428 14.8713L1.01861 11.871C-0.7332 10.1047 -0.169262 8.31423 2.27847 7.90291L6.10604 7.26172C6.74197 7.15284 7.50989 6.58424 7.79786 5.99145L9.90963 1.73301C11.0615 -0.577671 12.9333 -0.577671 14.0732 1.73301Z" fill="white"/>
-</svg>
-
- );
-export const colorStar=(<svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M8.78095 1.8694L9.95103 4.22888C10.1106 4.55733 10.5361 4.87237 10.8951 4.9327L13.0158 5.28796C14.372 5.51587 14.6911 6.50793 13.7139 7.48657L12.0651 9.14894C11.7859 9.43047 11.633 9.97342 11.7194 10.3622L12.1915 12.42C12.5637 14.0489 11.7061 14.679 10.2768 13.8277L8.28899 12.6412C7.92999 12.4267 7.33831 12.4267 6.97266 12.6412L4.98487 13.8277C3.56217 14.679 2.69791 14.0422 3.0702 12.42L3.54222 10.3622C3.62865 9.97342 3.47574 9.43047 3.19652 9.14894L1.54778 7.48657C0.577152 6.50793 0.889615 5.51587 2.24584 5.28796L4.36659 4.9327C4.71894 4.87237 5.14442 4.55733 5.30398 4.22888L6.47405 1.8694C7.11227 0.589108 8.14938 0.589108 8.78095 1.8694Z" fill="#B9C0F2"/>
-</svg>
+export const Star = (
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M14.0732 1.73301L16.1849 5.99145C16.4729 6.58424 17.2408 7.15284 17.8887 7.26172L21.7163 7.90291C24.164 8.31423 24.74 10.1047 22.9762 11.871L20.0005 14.8713C19.4966 15.3794 19.2206 16.3593 19.3766 17.061L20.2285 20.775C20.9004 23.7148 19.3526 24.852 16.7729 23.3155L13.1853 21.1742C12.5373 20.7871 11.4695 20.7871 10.8095 21.1742L7.22192 23.3155C4.6542 24.852 3.09438 23.7027 3.7663 20.775L4.61821 17.061C4.77419 16.3593 4.49822 15.3794 3.99428 14.8713L1.01861 11.871C-0.7332 10.1047 -0.169262 8.31423 2.27847 7.90291L6.10604 7.26172C6.74197 7.15284 7.50989 6.58424 7.79786 5.99145L9.90963 1.73301C11.0615 -0.577671 12.9333 -0.577671 14.0732 1.73301Z"
+      fill="white"
+    />
+  </svg>
+);
+export const colorStar = (
+  <svg
+    width="15"
+    height="15"
+    viewBox="0 0 15 15"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M8.78095 1.8694L9.95103 4.22888C10.1106 4.55733 10.5361 4.87237 10.8951 4.9327L13.0158 5.28796C14.372 5.51587 14.6911 6.50793 13.7139 7.48657L12.0651 9.14894C11.7859 9.43047 11.633 9.97342 11.7194 10.3622L12.1915 12.42C12.5637 14.0489 11.7061 14.679 10.2768 13.8277L8.28899 12.6412C7.92999 12.4267 7.33831 12.4267 6.97266 12.6412L4.98487 13.8277C3.56217 14.679 2.69791 14.0422 3.0702 12.42L3.54222 10.3622C3.62865 9.97342 3.47574 9.43047 3.19652 9.14894L1.54778 7.48657C0.577152 6.50793 0.889615 5.51587 2.24584 5.28796L4.36659 4.9327C4.71894 4.87237 5.14442 4.55733 5.30398 4.22888L6.47405 1.8694C7.11227 0.589108 8.14938 0.589108 8.78095 1.8694Z"
+      fill="#B9C0F2"
+    />
+  </svg>
 );
