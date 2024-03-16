@@ -235,11 +235,11 @@ const CreateProjectRegistration = () => {
 
   useEffect(() => {
     // Update isLiveOnICP based on live_on_icp_mainnet field value
-    setIsLiveOnICP(liveOnICPMainnetValue === true);
-    if (liveOnICPMainnetValue !== true) {
-      setValue("money_raised_till_now", false);
+    setIsLiveOnICP(liveOnICPMainnetValue === "true");
+    if (liveOnICPMainnetValue !== "true") {
+      setValue("money_raised_till_now", "false");
     }
-    setIsMoneyRaised(MoneyRaisedTillNow === true);
+    setIsMoneyRaised(MoneyRaisedTillNow === "true");
     setIsMulti_Chain(IsMultiChain === "true");
   }, [liveOnICPMainnetValue, MoneyRaisedTillNow, IsMultiChain, setValue]);
 
@@ -669,6 +669,9 @@ const CreateProjectRegistration = () => {
       (undefined && step > steps.length - 1)
     ) {
       // console.log("exisiting user visit ");
+      
+      const updateMoneyRaisedTillNow =
+        MoneyRaisedTillNow === "true" ? true : false;
       let tempObj2 = {
         user_data: {
           profile_picture: [updatedFormData.imageData],
@@ -692,8 +695,8 @@ const CreateProjectRegistration = () => {
         ],
         promotional_video: [updatedFormData.promotional_video],
         project_area_of_focus: updatedFormData.project_area_of_focus || "",
-        money_raised_till_now: [MoneyRaisedTillNow],
-        supports_multichain: updatedFormData.supports_multichain || [],
+        money_raised_till_now: [updateMoneyRaisedTillNow],
+        supports_multichain: [updatedFormData.supports_multichain],
         project_name: updatedFormData.project_name || "",
         live_on_icp_mainnet: [liveOnICPMainnetValue],
         preferred_icp_hub: [updatedFormData.preferred_icp_hub],
@@ -748,8 +751,8 @@ const CreateProjectRegistration = () => {
         ],
         promotional_video: [updatedFormData.promotional_video],
         project_area_of_focus: updatedFormData.project_area_of_focus || "",
-        money_raised_till_now: [MoneyRaisedTillNow],
-        supports_multichain: updatedFormData.supports_multichain || [],
+        money_raised_till_now: [updateMoneyRaisedTillNow],
+        supports_multichain: [updatedFormData.supports_multichain],
         project_name: updatedFormData.project_name || "",
         live_on_icp_mainnet: [liveOnICPMainnetValue],
         preferred_icp_hub: [updatedFormData.preferred_icp_hub],

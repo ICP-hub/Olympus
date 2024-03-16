@@ -7,6 +7,11 @@ import ProjectReviewRatings from "../ProjectReviewRatings";
 import ProjectRatings from "../ProjectRatings";
 import Announcement from "./Announcement";
 import ProjectJobCard from "./ProjectJobCard";
+import  Frame from "../../../../assets/images/Frame.png";
+import girl from "../../../../assets/images/girl.jpeg";
+import { Pagination, Autoplay } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
 
 const ProjectDetailsForUser = () => {
   const headerData = [
@@ -25,6 +30,23 @@ const ProjectDetailsForUser = () => {
     {
       id: "review-ratings",
       label: "review & ratings",
+    },
+  ];
+  const AnnouncementData = [
+    {
+      id: 1,
+      img: Frame,
+      img2: girl,
+    },
+    {
+      id: 2,
+      img: Frame,
+      img2: girl,
+    },
+    {
+      id: 3,
+      img: Frame,
+      img2: girl,
     },
   ];
   const [activeTab, setActiveTab] = useState(headerData[0].id);
@@ -117,7 +139,21 @@ const ProjectDetailsForUser = () => {
             {renderComponent()}
           </div>
           <div>
-            <Announcement />
+            <Swiper
+              modules={[Pagination, Autoplay]}
+              centeredSlides={true}
+              loop={true}
+              autoplay={{ delay: 2500 }}
+              pagination={{ clickable: true }}
+              spaceBetween={0}
+              slidesPerView={1}
+            >
+              {AnnouncementData.map((data, index) => (
+                <SwiperSlide key={index}>
+                  <Announcement data={data} />
+                </SwiperSlide>
+              ))}
+            </Swiper>
           </div>
           <div className="mb-4 md1:w-1/2 w-full">
             <h1 className="font-[950] text-3xl text-[#000000] p-2">Jobs</h1>
