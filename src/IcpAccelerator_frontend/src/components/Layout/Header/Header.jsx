@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import logoWithText from "../../../../assets/Logo/topLogo.png";
 import LogoutModal from "../../../models/LogoutModal";
 import SwitchRole from "../../../models/SwitchRole";
+import { OutSideClickHandler } from "../../hooks/OutSideClickHandler";
 import { getCurrentRoleStatusRequestHandler } from "../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 const Header = ({ setModalOpen, gradient }) => {
   const dispatch = useDispatch();
@@ -21,7 +22,8 @@ const Header = ({ setModalOpen, gradient }) => {
 
 
   const [showSwitchRole, setShowSwitchRole] = useState(false);
-
+  const dropdownRef = useRef(null);
+  OutSideClickHandler(dropdownRef, () => setShowSwitchRole(false))
   // console.log("principal in header", connectedWalletPrincipal);
 
   const manageHandler = () => {
@@ -65,7 +67,7 @@ const Header = ({ setModalOpen, gradient }) => {
           <>
             {userCurrentRoleStatus && userCurrentRoleStatusActiveRole
               ? <div className="flex items-center flex-row gap-2">
-                <button onClick={() => setShowSwitchRole(true)} className="border border-violet-800 p-1 font-bold rounded-md text-violet-800 px-2 uppercase">
+                <button onClick={() => setShowSwitchRole(true)} className="border border-violet-800 p-1 font-bold rounded-md text-violet-800 px-2 uppercase" ref={dropdownRef}>
                   {userCurrentRoleStatusActiveRole}
                 </button>
                 <SwitchRole isModalOpen={showSwitchRole} onClose={() => setShowSwitchRole(false)} />

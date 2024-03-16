@@ -68,7 +68,7 @@ export default function TabsDiv({ role, onClose }) {
               className={`relative w-11 h-6 bg-[#B2B1B6] rounded-full peer peer-checked:after:translate-x-full ${status.current
                   ? "rtl:peer-checked:after:-translate-x-full"
                   : "peer-checked:after:translate-x-full"
-                } peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-700`}
+                } peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#320099]`}
             ></div>
           </label>
         ) : status === "switch" ? (
@@ -84,7 +84,7 @@ export default function TabsDiv({ role, onClose }) {
               className={`relative w-11 h-6 bg-[#B2B1B6] rounded-full peer peer-checked:after:translate-x-full ${status.current
                   ? "rtl:peer-checked:after:-translate-x-full"
                   : "peer-checked:after:translate-x-full"
-                } peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-700`}
+                } peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#320099]`}
             ></div>
           </label>
         ) : (
