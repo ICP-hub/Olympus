@@ -23,6 +23,11 @@ import ProjectJobCard from "../Project/ProjectDetails/ProjectJobCard";
 import ProjectJobs from "../Project/ProjectDetails/ProjectJobs";
 import Announcement from "../Project/ProjectDetails/Announcement";
 import SecondEventCard from "./SecondEventCard";
+import ment from "../../../assets/images/ment.jpg";
+import InvestorCard from "./InvestorCard";
+import MentorCard from "./MentorCard";
+import RegisterCard from "./RegisterCard";
+import hover from "../../../assets/images/hover.png";
 
 const DashBoard = () => {
   const dispatch = useDispatch();
@@ -60,10 +65,46 @@ const DashBoard = () => {
     }
   }, [actor, dispatch, userCurrentRoleStatus, userCurrentRoleStatusActiveRole]);
 
+  const projectJobData = [
+    {
+      image: ment,
+      tags: ["Imo", "Ludi", "Ndaru"],
+      country: "india",
+      website: "https://www.google.co.in/",
+    },
+    {
+      image: ment,
+      tags: ["Imo", "Ludi", "Ndaru"],
+      country: "india",
+      website: "https://www.google.co.in/",
+    },
+    // Add more objects here as needed
+  ];
+
   const underline =
     "relative focus:after:content-[''] focus:after:block focus:after:w-full focus:after:h-[2px] focus:after:bg-blue-800 focus:after:absolute focus:after:left-0 focus:after:bottom-[-4px]";
 
   console.log("principal", principal);
+  const categories = [
+    {
+      title: "Register as an Investor",
+      description: "Discover innovative projects to invest in.",
+      buttonText: "Register Now",
+      imgSrc: hover, 
+    },
+ 
+    
+  ];
+  const mentorcategories = [
+    {
+      title: "Register as a Mentor",
+      description: "Join our community as a mentor to guide projects.",
+      buttonText: "Register Now",
+      imgSrc: hover,
+    },
+ 
+    
+  ];
   return (
     <section className="overflow-hidden relative bg-gray-100">
       <div className="font-fontUse flex flex-col w-full h-fit px-[5%] lg1:px-[4%] py-[4%]">
@@ -114,11 +155,57 @@ const DashBoard = () => {
             Explore more
           </button>
         </div>
-        <div className="flex md:w-[calc(100%/2-10px)] dxl:w-[calc(100%/3-10px)] justify-between w-full">
-        <SecondEventCard />
-        <SecondEventCard />
+        <div className="flex md:w-[calc(100%/2-10px)] dxl:w-[calc(100%/3-10px)] justify-between w-full gap-4 flex-row">
+          <div className="grid grid-col-2 gap-4">
+            {[...Array(2)].map((_, index) => (
+              <SecondEventCard key={index} />
+            ))}
+          </div>
         </div>
-        <ProjectJobs />
+
+        <div className="flex flex-wrap md:flex-nowrap gap-4 mb-8">
+          {projectJobData.map((data, index) => (
+            <ProjectJobCard
+              key={index}
+              image={data.image}
+              tags={data.tags}
+              country={data.country}
+              website={data.website}
+            />
+          ))}
+        </div>
+        <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
+          <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
+            Projects for Investors
+          </h1>
+          <button className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
+            See all Investors
+          </button>
+        </div>
+        <div className="flex flex-wrap -mx-4 mb-4 flex-row items-start">
+          <div className="overflow-x-auto flex w-3/4">
+            <InvestorCard />
+          </div>
+          <div className="w-1/4">
+            <RegisterCard categories={categories} />
+          </div>
+        </div>
+        <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
+          <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
+            Projects for Mentors
+          </h1>
+          <button className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
+            See all Mentors
+          </button>
+        </div>
+        <div className="flex flex-wrap -mx-4 mb-4 flex-row items-start">
+          <div className="overflow-x-auto flex w-3/4">
+            <MentorCard />
+          </div>
+          <div className="w-1/4">
+            <RegisterCard categories={mentorcategories} />
+          </div>
+        </div>
         {/* <Announcement/> */}
         <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
           <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
