@@ -28,6 +28,7 @@ import InvestorCard from "./InvestorCard";
 import MentorCard from "./MentorCard";
 import RegisterCard from "./RegisterCard";
 import hover from "../../../assets/images/hover.png";
+import Testimonial from "./Testimonial";
 
 const DashBoard = () => {
   const dispatch = useDispatch();
@@ -100,6 +101,16 @@ const DashBoard = () => {
       title: "Register as a Mentor",
       description: "Join our community as a mentor to guide projects.",
       buttonText: "Register Now",
+      imgSrc: hover,
+    },
+ 
+    
+  ];
+  const testimonialcategories = [
+    {
+      title: "Add your testimonial",
+      description: "See a project missing? All community members are invited to submit their projects to this page.",
+      buttonText: "Add now",
       imgSrc: hover,
     },
  
@@ -209,11 +220,16 @@ const DashBoard = () => {
         {/* <Announcement/> */}
         <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
           <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
-            Projects for Investors
+          Testimonial
           </h1>
-          <button className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
-            See all Investors
-          </button>
+        </div>
+        <div className="flex flex-wrap -mx-4 mb-4 flex-row items-start bg-[#DBDDF3] rounded-lg p-4">
+          <div className="overflow-x-auto flex w-3/4">
+            <Testimonial/>
+          </div>
+          <div className="w-1/4">
+            <RegisterCard categories={testimonialcategories} />
+          </div>
         </div>
         <div className="flex- flex-col mb-10">
           <h1 className=" font-bold bg-gradient-to-r from-blue-900 to-sky-400 text-transparent bg-clip-text">
