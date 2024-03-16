@@ -12,6 +12,7 @@ import CreateProject from "./components/Project/CreateProject/CreateProject";
 import InvestorRegistration from "./components/Registration/InvestorRegistration/InvestorRegistration";
 import MentorRegistration from "./components/Registration/MentorRegistration/MentorRegistration";
 import ProjectDetailsForUser from "./components/Project/ProjectDetails/ProjectDetailsForUser";
+import Newcards from "./components/Project/ProjectDetails/Newcards";
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
 const AllDetailsForm = lazy(() =>
@@ -47,8 +48,7 @@ const AppRoutes = () => {
   // ]
 
   const publicRoutes = [
-    // { path: "/", element: <Home /> },
-    { path: "/", element: <DashBoard /> },
+    { path: "/", element: <ProjectDetailsForUser /> },
     { path: "/create-user", element: <NormalUser /> },
     {path:"/create-vc", element : <InvestorRegistration/>},
     { path: "/create-project", element: <CreateProject /> },

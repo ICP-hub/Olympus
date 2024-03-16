@@ -68,11 +68,11 @@ const Announcement = ({ data }) => {
               Announced by MS.Lucy
             </p>
           </div>
-          <div className="ml-auto">
+          {/* <div className="ml-auto">
             <button className="px-2 bg-blue-900 mt-2 text-white text-xs rounded-md py-2">
               Add announcement
             </button>
-          </div>
+          </div> */}
         </div>
         <div className="w-full sm3:hidden block lg:w-3/5 text-[#737373] text-xs">
           <p className="text-black sm3:hidden block font-bold text-xs py-2">
@@ -93,7 +93,7 @@ const Announcement = ({ data }) => {
           </p>
           <div className="xxs:block hidden">
             <p>
-              Additional Features: In addition to the core functionalities
+              Additional Features: In addition to the core functionalities
               mentioned above, the website may include other features to enhance
               the learning experience. These may include:
             </p>

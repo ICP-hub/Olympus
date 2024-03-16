@@ -113,7 +113,7 @@ export const linkedInSvg = (
           strokeLinecap: 'butt',
           strokeLinejoin: 'miter',
           strokeMiterlimit: 10,
-          fill: 'rgb(0,0,0)',
+          fill: 'rgb(37,99,235)',
           fillRule: 'nonzero',
           opacity: 1,
         }}
