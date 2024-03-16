@@ -18,6 +18,7 @@ import { popularLiveProjectSaga } from './popularLive';
 import { userCurrentRoleSaga } from './userCurrentRoleStatusSaga';
 
 import { fetchUserSaga } from './userSaga';
+import { chainsSaga } from './multiChainSaga';
 
 
 
@@ -35,6 +36,7 @@ export default function* rootSaga() {
         fetchInvestorSaga(),
         fetchMentorSaga(),
         expertiseInSaga(),
+        chainsSaga(),
         latestListedProjectSaga(),
         latestLiveProjectSaga(),
         popularListedProjectSaga(),
