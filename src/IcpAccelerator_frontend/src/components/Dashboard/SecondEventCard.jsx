@@ -3,20 +3,20 @@ import hover from "../../../assets/images/hover.png";
 import { winner } from "../Utils/Data/SvgData";
 import girl from "../../../assets/images/girl.jpeg";
 
-const EventCard = () => {
+const SecondEventCard = () => {
   return (
-    <div className="block lgx:flex w-full drop-shadow-xl rounded-lg bg-gray-200 lgx:h-96 mb-8">
-      <div className="lgx:w-[70%] w-full relative">
+    <div className="block w-full drop-shadow-xl rounded-lg bg-gray-200 mb-8">
+      <div className="w-full relative">
         <img
-          className="w-full h-[30vw] lgx:h-full object-fill rounded-lg "
+          className="w-full object-fill h-[280px] rounded-lg "
           src={hover}
           alt="not found"
         />
-        <div className="absolute h-12 w-12 -bottom-1 lgx:top-0 lgx:right-[-8px] right-[20px]">
+        <div className="absolute h-12 w-12 -bottom-1 right-[20px]">
           {winner}
         </div>
       </div>
-      <div className="lgx:w-[30%] w-full">
+      <div className="w-full">
         <div className="p-8">
           <div className="w-full mt-4">
             <div className="w-1/2 flex-col text-[#737373] flex  ">
@@ -37,8 +37,8 @@ const EventCard = () => {
               <li>1 hour live session</li>
             </ul>
 
-            <div className="flex flex-row flex-wrap lg:justify-between md:justify-center space-x-8 mt-2">
-              <div className="flex lg:justify-start gap-4 ">
+            <div className="flex flex-row flex-wrap space-x-8 mt-2">
+              <div className="flex gap-4 ">
                 <div className="flex flex-col font-bold">
                   <p className="text-[#7283EA]">Date</p>
                   <p className="text-black whitespace-nowrap">25 Oct 2021</p>
@@ -65,4 +65,4 @@ const EventCard = () => {
   );
 };
 
-export default EventCard;
+export default SecondEventCard;
