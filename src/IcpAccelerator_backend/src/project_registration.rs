@@ -34,6 +34,16 @@ pub struct TeamMember {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
+pub struct Jobs {
+    title: String,
+    description: String,
+    opportunity: String,
+    link: String,
+    project_id: String,
+    timestamp: u64,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct ProjectInfo {
     pub project_name: String,
     pub project_logo: Vec<u8>,
@@ -167,6 +177,7 @@ pub type PendingDetails = HashMap<String, ProjectUpdateRequest>;
 pub type DeclinedDetails = HashMap<String, ProjectUpdateRequest>;
 
 pub type ProjectDetails = HashMap<Principal, ProjectInfoInternal>;
+pub type JobDetails = HashMap<Principal, Vec<Jobs>>;
 
 thread_local! {
     pub static APPLICATION_FORM: RefCell<ApplicationDetails> = RefCell::new(ApplicationDetails::new());
@@ -181,6 +192,8 @@ thread_local! {
 
     pub static PENDING_PROJECT_UPDATES: RefCell<PendingDetails> = RefCell::new(PendingDetails::new());
     pub static DECLINED_PROJECT_UPDATES: RefCell<DeclinedDetails> = RefCell::new(DeclinedDetails::new());
+    pub static POST_JOB: RefCell<JobDetails> = RefCell::new(JobDetails::new());
+    pub static JOB_TYPE: RefCell<Vec<String>> = RefCell::new(vec!["Bounty".to_string(),"Job".to_string()]);
 
 }
 
@@ -304,7 +317,6 @@ pub fn find_project_by_id(project_id: &str) -> Option<ProjectInfoInternal> {
         None
     })
 }
-
 
 pub fn list_all_projects() -> HashMap<Principal, ProjectVecWithRoles> {
     let project_awaiters = APPLICATION_FORM.with(|awaiters| awaiters.borrow().clone());
@@ -836,4 +848,49 @@ pub fn get_dummy_data_for_project_details_for_users() -> ProjectInfoForUser {
         area_of_focus: Some("Technology".to_string()),
         country_of_project: Some("USA".to_string()),
     }
+}
+
+#[update]
+pub fn post_job(
+    title: String,
+    description: String,
+    opportunity: String,
+    link: String,
+    project_id: String,
+) -> String {
+    let principal_id = caller();
+    let is_owner = APPLICATION_FORM.with(|projects| {
+        projects.borrow().iter().any(|(owner_principal, projects)| {
+            *owner_principal == principal_id && projects.iter().any(|p| p.uid == project_id)
+        })
+    });
+
+    if !is_owner {
+        return "Error: Only the project owner can request updates.".to_string();
+    }
+    let current_time = time();
+
+    JOB_TYPE.with(|job_types| {
+        let job_types = job_types.borrow();
+        if job_types.contains(&opportunity) {
+            POST_JOB.with(|state| {
+                let mut state = state.borrow_mut();
+                let new_blog = Jobs {
+                    link: link,
+                    title: title,
+                    timestamp: current_time,
+                    description: description,
+                    project_id: project_id,
+                    opportunity: opportunity,
+                };
+                state
+                    .entry(principal_id)
+                    .or_insert_with(Vec::new)
+                    .push(new_blog);
+                format!("Job Post added successfully at {}", current_time)
+            })
+        } else {
+            return "Choose correct job type".to_string();
+        }
+    })
 }

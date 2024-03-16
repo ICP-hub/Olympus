@@ -913,3 +913,12 @@ pub fn approve_project_update(requester: Principal, project_id: String, approve:
         format!("No pending update found for project ID {}.", project_id)
     }
 }
+
+#[update]
+pub fn add_job_type(job_type: String) -> String {
+    JOB_TYPE.with(|state| {
+        let mut state = state.borrow_mut();
+        state.push(job_type);
+        format!("job type added")
+    })
+}
