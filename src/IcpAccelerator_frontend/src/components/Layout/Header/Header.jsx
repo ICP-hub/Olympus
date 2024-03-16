@@ -22,8 +22,6 @@ const Header = ({ setModalOpen, gradient }) => {
 
 
   const [showSwitchRole, setShowSwitchRole] = useState(false);
-  const dropdownRef = useRef(null);
-  OutSideClickHandler(dropdownRef, () => setShowSwitchRole(false))
   // console.log("principal in header", connectedWalletPrincipal);
 
   const manageHandler = () => {
@@ -67,7 +65,7 @@ const Header = ({ setModalOpen, gradient }) => {
           <>
             {userCurrentRoleStatus && userCurrentRoleStatusActiveRole
               ? <div className="flex items-center flex-row gap-2">
-                <button onClick={() => setShowSwitchRole(true)} className="border border-violet-800 p-1 font-bold rounded-md text-violet-800 px-2 uppercase" ref={dropdownRef}>
+                <button onClick={() => setShowSwitchRole(true)} className="border border-violet-800 p-1 font-bold rounded-md text-violet-800 px-2 uppercase">
                   {userCurrentRoleStatusActiveRole}
                 </button>
                 <SwitchRole isModalOpen={showSwitchRole} onClose={() => setShowSwitchRole(false)} />
