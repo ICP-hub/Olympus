@@ -180,6 +180,17 @@ pub fn get_mentor() -> Option<MentorProfile> {
             .map(|mentor_internal| mentor_internal.profile.clone())
     })
 }
+
+#[query]
+pub fn get_mentor_by_principal(id : Principal) -> Option<MentorProfile>{
+    MENTOR_REGISTRY.with(|registry| {
+        registry
+            .borrow()
+            .get(&id)
+            .map(|mentor_internal| mentor_internal.profile.clone())
+    })
+}
+
 #[update]
 pub async fn update_mentor(updated_profile: MentorProfile) -> String {
     let caller = caller();
