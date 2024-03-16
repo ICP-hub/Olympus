@@ -135,7 +135,7 @@ const CreateProjectRegistration = () => {
     (currState) => currState.current.specificRole
   );
   const multiChain = useSelector((currState) => currState.chains.chains);
-  console.log(multiChain);
+
   const userData = useSelector((currState) => currState.userData.data.Ok);
   const projectFullData = useSelector(
     (currState) => currState.projectData.data

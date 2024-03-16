@@ -23,48 +23,43 @@ import CompressedImage from "../../ImageCompressed/CompressedImage";
 import DetailHeroSection from "../../Common/DetailHeroSection";
 import Mentor from "../../../../assets/images/mentorRegistration.png";
 import { bufferToImageBlob } from "../../Utils/formatter/bufferToImageBlob";
+import { defaultUserImage } from "../../RoleSelector/Image";
 
 const validationSchema = {
   userDetails: yup.object().shape({
     full_name: yup
       .string()
-      .test("is-non-empty", "Full Name is required", (value) =>
-        /\S/.test(value)
-      )
-      .required("Name is required"),
+      .required()
+      .test("is-non-empty", null, (value) => value && value.trim().length > 0),
     openchat_username: yup
       .string()
-      .test("is-non-empty", "0penchat username is required", (value) =>
-        /\S/.test(value)
+      .nullable(true) // Allows the value to be null
+      .test(
+        "is-valid-username",
+        "Username must be between 6 and 20 characters and can only contain letters, numbers, and underscores",
+        (value) => {
+          // If no value is provided, consider it valid (since it's optional)
+          if (!value) return true;
+
+          // Check length
+          const isValidLength = value.length >= 6 && value.length <= 20;
+          // Check allowed characters (including at least one uppercase letter or number)
+          const hasValidChars = /^(?=.*[A-Z0-9_])[a-zA-Z0-9_]+$/.test(value);
+
+          return isValidLength && hasValidChars;
+        }
       ),
-      // .required("Openchat username is required"),
-    bio: yup
-      .string()
-      .test("is-non-empty", "Bio is required", (value) => /\S/.test(value)),
-      // .required("Bio is required"),
-    email: yup
-      .string()
-      .email("Invalid email")
-      .test("is-non-empty", "Email is required", (value) => /\S/.test(value)),
-      // .required("Email is required"),
-    telegram_id: yup
-      .string()
-      .url("Invalid telegram_id URL")
-      .test("is-non-empty", "telegram_id URL is required", (value) =>
-        /\S/.test(value)
-      ),
-      // .required("telegram_id URL is required"),
+    bio: yup.string().optional(),
+    email: yup.string().email().optional(),
+    telegram_id: yup.string().optional().url(),
     twitter_id: yup.string().optional().url(),
     country: yup
       .string()
-      .required()
-      .test("is-non-empty", null, (value) => /\S/.test(value)),
-    area_of_intrest: yup
-      .string()
-      .test("is-non-empty", "Area of interest is required", (value) =>
+      .test("is-non-empty", "ICP Hub selection is required", (value) =>
         /\S/.test(value)
       )
-      // .required("Area of interest required"),
+      .required("Selecting a interest is required."),
+    area_of_intrest: yup.string().required("Selecting a interest is required."),
   }),
   investorDetails: yup.object().shape({
     preferred_icp_hub: yup
@@ -74,16 +69,33 @@ const validationSchema = {
         /\S/.test(value)
       )
       .required("ICP Hub selection is required"),
-    name_of_fund: yup
-      .string()
-      .required("Name of fund is required")
-      .test("is-non-empty", "Name of fund required", (value) =>
-        /\S/.test(value)
-      ),
+    existing_icp_investor: yup
+      .boolean()
+      .required("Are you an existing ICP investor")
+      .test("is-non-empty", "Data is required", (value) => /\S/.test(value)),
     existing_icp_portfolio: yup
       .string()
-      .required("exisitng icp portfolio required")
+      .optional()
       .test("is-non-empty", "icp protfolio required", (value) =>
+        /\S/.test(value)
+      ),
+    investor_type: yup
+      .string()
+      .optional()
+      .test("is-non-empty", "Investor type is required", (value) =>
+        /\S/.test(value)
+      ),
+    money_invested: yup
+      .number()
+      .positive("Must be a positive number")
+      .optional()
+      .test("is-non-empty", "Money invested is required", (value) =>
+        /\S/.test(value)
+      ),
+    registered_under_any_hub: yup
+      .boolean()
+      .optional()
+      .test("is-non-empty", "registered under any hub required", (value) =>
         /\S/.test(value)
       ),
     assets_under_management: yup
@@ -92,37 +104,12 @@ const validationSchema = {
       .test("is-non-empty", "assets_under_management is required", (value) =>
         /\S/.test(value)
       ),
-    portfolio_link: yup
+    name_of_fund: yup
       .string()
-      .required("Portfolio required")
-      .test("is-non-empty", "portfolio is required", (value) =>
+      .required("Name of fund is required")
+      .test("is-non-empty", "Name of fund required", (value) =>
         /\S/.test(value)
       ),
-    existing_icp_investor: yup
-      .boolean()
-      .required("Are you an existing ICP investor")
-      .test("is-non-empty", "Data is required", (value) => /\S/.test(value)),
-    registered_under_any_hub: yup
-      .boolean()
-      .required("registered under any hub required")
-      .test("is-non-empty", "registered under any hub required", (value) =>
-        /\S/.test(value)
-      ),
-
-    money_invested: yup
-      .number()
-      .positive("Must be a positive number")
-      .required("Size of fund is required")
-      .test("is-non-empty", "Money invested is required", (value) =>
-        /\S/.test(value)
-      ),
-    project_on_multichain: yup
-      .string()
-      .required("Are your project is on Multichain")
-      .test("is-non-empty", "Confirmation is required", (value) =>
-        /\S/.test(value)
-      ),
-
     fund_size: yup
       .number()
       .positive("Must be a positive number")
@@ -130,6 +117,14 @@ const validationSchema = {
       .test("is-non-empty", "Size of fund is required", (value) =>
         /\S/.test(value)
       ),
+    // preferred_investment_sectors: yup
+    //   .string()
+    //   .required("Preferred investment sectors are required")
+    //   .test(
+    //     "is-non-empty",
+    //     "Preferred investment sectors are required",
+    //     (value) => /\S/.test(value)
+    //   ),
     average_check_size: yup
       .number()
       .required("Size of managed fund is required")
@@ -139,17 +134,36 @@ const validationSchema = {
         "Size of managed fund must be a positive number with at most two decimal places",
         (value) => value && /^\d+(\.\d{1,2})?$/.test(value)
       ),
-
-    preferred_investment_sectors: yup
+    portfolio_link: yup
       .string()
-      .required("Preferred investment sectors are required")
-      .test(
-        "is-non-empty",
-        "Preferred investment sectors are required",
-        (value) => /\S/.test(value)
+      .required("Portfolio required")
+      .test("is-non-empty", "portfolio is required", (value) =>
+        /\S/.test(value)
       ),
   }),
   additionalInfo: yup.object().shape({
+    project_on_multichain: yup
+      .string()
+      .optional()
+      .test("is-non-empty", "Confirmation is required", (value) =>
+        /\S/.test(value)
+      ),
+    reason_for_joining: yup
+      .string()
+      .required("Reason for joining is required")
+      .test("is-non-empty", "Reason for joining is required", (value) =>
+        /\S/.test(value)
+      ),
+    number_of_portfolio_companies: yup
+      .number()
+      .positive("Must be a positive number")
+      .integer("Must be an integer")
+      .required("Number of portfolio companies is required")
+      .test(
+        "is-non-empty",
+        "Number of portfolio companies is required",
+        (value) => /\S/.test(value)
+      ),
     type_of_investment: yup
       .string()
       .required("type of icp investment required")
@@ -164,37 +178,24 @@ const validationSchema = {
       .test("is-non-empty", "Category of investment required", (value) =>
         /\S/.test(value)
       ),
-    reason_for_joining: yup
-      .string()
-      .required("Reason for joining is required")
-      .test("is-non-empty", "Reason for joining is required", (value) =>
-        /\S/.test(value)
-      ),
-
     announcement_details: yup
       .string()
-      .required("Investment stage preference is required")
+      .optional()
       .test(
         "is-non-empty",
         "Investment stage preference is required",
         (value) => /\S/.test(value)
       ),
-
-    number_of_portfolio_companies: yup
-      .number()
-      .positive("Must be a positive number")
-      .integer("Must be an integer")
-      .required("Number of portfolio companies is required")
-      .test(
-        "is-non-empty",
-        "Number of portfolio companies is required",
-        (value) => /\S/.test(value)
-      ),
-
-    investor_type: yup
+    website_link: yup
       .string()
-      .required("Investor type is required")
-      .test("is-non-empty", "Investor type is required", (value) =>
+      .required("Portfolio required")
+      .test("is-non-empty", "portfolio is required", (value) =>
+        /\S/.test(value)
+      ),
+    linkedin_link: yup
+      .string()
+      .required("LinkedIn required")
+      .test("is-non-empty", "portfolio is required", (value) =>
         /\S/.test(value)
       ),
   }),
@@ -212,6 +213,7 @@ const InvestorRegistration = () => {
   const activeRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
+  const multiChain = useSelector((currState) => currState.chains.chains);
 
   const investorFullData = useSelector(
     (currState) => currState.investorData.data
@@ -232,10 +234,12 @@ const InvestorRegistration = () => {
   const [investorDataObject, setInvestorDataObject] = useState({});
   const [image, setImage] = useState(null);
   const [logo, setlogo] = useState(null);
-  const [isMultiChain, setIsMultiChain] = useState(false);
 
   const [profileImage, setProfileImage] = useState(null);
   const [venture_image, setVenture_image] = useState(null);
+  // Form Updates Changes in enable and diabled
+  const [isExistingICPInvestor, setExistingICPInvestor] = useState(false);
+  const [isMulti_Chain, setIsMulti_Chain] = useState(false);
 
   const userData = useSelector((currState) => currState.userData.data.Ok);
 
@@ -289,7 +293,9 @@ const InvestorRegistration = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
     trigger,
+    watch,
     reset,
+    setValue,
   } = useForm({
     resolver: yupResolver(currentValidationSchema),
     mode: "all",
@@ -310,6 +316,15 @@ const InvestorRegistration = () => {
     } else {
     }
   };
+  // Watch the value of existing_icp_investor to update ExistingICPInvestor state
+  const ExistingICPInvestor = watch("existing_icp_investor");
+  const IsMultiChain = watch("multi_chain");
+
+  useEffect(() => {
+    // Update ExistingICPInvestor based on existing_icp_investor field value
+    setExistingICPInvestor(ExistingICPInvestor === "true");
+    setIsMulti_Chain(IsMultiChain === "true");
+  }, [ExistingICPInvestor, IsMultiChain]);
 
   useEffect(() => {
     if (!userHasInteracted) return;
@@ -404,6 +419,7 @@ const InvestorRegistration = () => {
 
   const sendingInvestorData = async (val) => {
     console.log("data jo jaega backend mai =>", val);
+    // val.logo = val.logo[0] || defaultUserImage;
     let result;
     try {
       // if (specificRole !== null || undefined) {
@@ -492,15 +508,15 @@ const InvestorRegistration = () => {
     // (step > steps.length - 1)
     // )
     else {
-      // console.log("first time visit ");
+      console.log("first time visit ");
 
-      const interestInBoardPosition =
-        updatedFormData.existing_icp_investor === "true" ? true : false;
       const updatedregisteredUnderAnyHub =
         updatedFormData.registered_under_any_hub === "true" ? true : false;
+      const updatedexisting_icp_investor =
+        ExistingICPInvestor === "true" ? true : false;
       // const updatedMultiChain =
       //   updatedFormData.project_on_multichain === "true" ? true : false;
-
+      const parsedMoneyInvested = parseFloat(updatedFormData.money_invested);
       let tempObj = {
         user_data: {
           bio: [updatedFormData.bio],
@@ -513,29 +529,34 @@ const InvestorRegistration = () => {
           full_name: updatedFormData.full_name,
           profile_picture: [updatedFormData.venture_image],
         },
-        average_check_size: Number(updatedFormData.average_check_size),
-        existing_icp_investor: interestInBoardPosition,
+        preferred_icp_hub: updatedFormData.preferred_icp_hub,
+        existing_icp_investor: updatedexisting_icp_investor,
+        existing_icp_portfolio: [updatedFormData.existing_icp_portfolio],
+        investor_type: updatedFormData.investor_type,
+        money_invested: [parsedMoneyInvested],
         registered_under_any_hub: [updatedregisteredUnderAnyHub],
-        money_invested: Number(updatedFormData.money_invested),
-        project_on_multichain: updatedFormData.project_on_multichain ? [updatedFormData.project_on_multichain] : [],
-        reason_for_joining: updatedFormData.reason_for_joining,
-        announcement_details: updatedFormData.announcement_details,
+        assets_under_management: updatedFormData.assets_under_management,
         name_of_fund: updatedFormData.name_of_fund,
-        existing_icp_portfolio: updatedFormData.existing_icp_portfolio,
+        fund_size: Number(updatedFormData.fund_size),
+        average_check_size: Number(updatedFormData.average_check_size),
+        project_on_multichain: updatedFormData.project_on_multichain
+          ? [updatedFormData.project_on_multichain]
+          : [],
+        reason_for_joining: updatedFormData.reason_for_joining,
         number_of_portfolio_companies:
           updatedFormData.number_of_portfolio_companies,
-        portfolio_link: updatedFormData.portfolio_link,
-        preferred_icp_hub: updatedFormData.preferred_icp_hub,
         type_of_investment: updatedFormData.type_of_investment,
         category_of_investment: updatedFormData.category_of_investment,
-        preferred_investment_sectors: [
-          updatedFormData.preferred_investment_sectors,
-        ],
-        investor_type: updatedFormData.investor_type,
-        fund_size: Number(updatedFormData.fund_size),
-        assets_under_management: updatedFormData.assets_under_management,
+        announcement_details: [updatedFormData.announcement_details],
+        portfolio_link: updatedFormData.portfolio_link,
+        website_link: updatedFormData.website_link,
+        linkedin_link: updatedFormData.linkedin_link,
+        // preferred_investment_sectors: [
+        //   updatedFormData.preferred_investment_sectors,
+        // ],
         logo: logo ? [logo] : [],
       };
+      console.log("eh rha tempObj agya hai investor pr ===>", tempObj);
       setInvestorDataObject(tempObj);
       await sendingInvestorData(tempObj);
     }
@@ -645,81 +666,78 @@ const InvestorRegistration = () => {
                     Upload image
                   </label>
                 </div>
-           
-           <div className="w-full flex md:flex-row flex-col px-4 gap-5">
-              <div className="z-0 md:w-1/2 w-full my-3 group">
-                  <label
-                    htmlFor="country"
-                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                  >
-                    Country*
-                  </label>
-                  <select
-                    {...register("country")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.country
-                        ? "border-red-500 placeholder:text-red-500"
-                        : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                  >
-                    <option className="text-lg font-bold" value="">
-                      select your country  
-                    </option>
-                    {countries?.map((expert) => (
-                      <option
-                        key={expert.name}
-                        value={`${expert.name}`}
-                        className="text-lg font-bold"
-                      >
-                        {expert.name}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-3 px-4">
+                  <div className="z-0 w-full mb-3 group">
+                    <label
+                      htmlFor="country"
+                      className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                    >
+                      Country*
+                    </label>
+                    <select
+                      {...register("country")}
+                      className={`bg-gray-50 border-2 ${
+                        errors.country
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    >
+                      <option className="text-lg font-bold" value="">
+                        select your country
                       </option>
-                    ))}
-                  </select>
+                      {countries?.map((expert) => (
+                        <option
+                          key={expert.name}
+                          value={`${expert.name}`}
+                          className="text-lg font-bold"
+                        >
+                          {expert.name}
+                        </option>
+                      ))}
+                    </select>
 
-                  {errors.country && (
-                    <p className="text-red-500 text-xs italic">
-                      {errors.country.message}
-                    </p>
-                  )}
-                </div>
-
-                <div className=" md:w-1/2 w-full z-0 group my-3">
-                  <label
-                    htmlFor="area_of_intrest"
-                    className="block mb-2 text-lg font-medium  text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                  >
-                    interest*
-                  </label>
-                  <select
-                    {...register("area_of_intrest")}
-                    // id="area_of_intrest"
-                    className={`bg-gray-50 border-2 ${
-                      errors.area_of_intrest
-                        ? "border-red-500 placeholder:text-red-500"
-                        : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                  >
-                    <option className="text-lg font-bold" value="">
-                      select your interest  
-                    </option>
-                    {areaOfExpertise?.map((intrest) => (
-                      <option
-                        key={intrest.id}
-                        value={`${intrest.name}`}
-                        className="text-lg font-bold"
-                      >
-                        {intrest.name}
+                    {errors.country && (
+                      <p className="text-red-500 text-xs italic">
+                        {errors.country.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="z-0 w-full mb-3 group">
+                    <label
+                      htmlFor="area_of_intrest"
+                      className="block mb-2 text-lg font-medium  text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                    >
+                      interest*
+                    </label>
+                    <select
+                      {...register("area_of_intrest")}
+                      // id="area_of_intrest"
+                      className={`bg-gray-50 border-2 ${
+                        errors.area_of_intrest
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    >
+                      <option className="text-lg font-bold" value="">
+                        select your interest
                       </option>
-                    ))}
-                  </select>
-                  {errors.area_of_intrest && (
-                    <span className="mt-1 text-sm text-red-500 font-bold">
-                      {errors.area_of_intrest.message}
-                    </span>
-                  )}
+                      {areaOfExpertise?.map((intrest) => (
+                        <option
+                          key={intrest.id}
+                          value={`${intrest.name}`}
+                          className="text-lg font-bold"
+                        >
+                          {intrest.name}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.area_of_intrest && (
+                      <span className="mt-1 text-sm text-red-500 font-bold">
+                        {errors.area_of_intrest.message}
+                      </span>
+                    )}
+                  </div>
                 </div>
-           </div>
-               
               </div>
             )}
 
@@ -770,251 +788,301 @@ const InvestorRegistration = () => {
                     Upload Logo
                   </label>
                 </div>
-
-                <div className="relative z-0 group mb-6 px-4">
-                  <label
-                    htmlFor="preferred_icp_hub"
-                    className="block mb-2 text-lg font-medium  text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                  >
-                    Preferred ICP Hub*
-                  </label>
-                  <select
-                    {...register("preferred_icp_hub")}
-                    // id="preferred_icp_hub"
-                    className={`bg-gray-50 border-2 ${
-                      errors.preferred_icp_hub
-                        ? "border-red-500 placeholder:text-red-500"
-                        : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                  >
-                    <option className="text-lg font-bold" value="">
-                      Select
-                    </option>
-                    {getAllIcpHubs?.map((hub) => (
-                      <option
-                        key={hub.id}
-                        value={`${hub.name} ,${hub.region}`}
-                        className="text-lg font-bold"
-                      >
-                        {hub.name} , {hub.region}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-3 px-4">
+                  <div className="z-0 w-full mb-3 group">
+                    <label
+                      htmlFor="preferred_icp_hub"
+                      className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                    >
+                      Preferred ICP Hub *
+                    </label>
+                    <select
+                      {...register("preferred_icp_hub")}
+                      className={`bg-gray-50 border-2 ${
+                        errors.preferred_icp_hub
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    >
+                      <option className="text-lg font-bold" value="">
+                        Select ⌄
                       </option>
-                    ))}
-                  </select>
-                  {errors.preferred_icp_hub && (
-                    <span className="mt-1 text-sm text-red-500 font-bold">
-                      {errors.preferred_icp_hub.message}
-                    </span>
-                  )}
-                </div>
+                      {getAllIcpHubs?.map((hub) => (
+                        <option
+                          key={hub.id}
+                          value={`${hub.name} ,${hub.region}`}
+                          className="text-lg font-bold"
+                        >
+                          {hub.name} , {hub.region}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.preferred_icp_hub && (
+                      <p className="text-red-500 text-xs italic">
+                        {errors.preferred_icp_hub.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="z-0 w-full mb-3 group">
+                    <label
+                      htmlFor="existing_icp_investor"
+                      className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                    >
+                      Are you an existing ICP Investor ?*
+                    </label>
+                    <select
+                      {...register("existing_icp_investor")}
+                      className={`bg-gray-50 border-2 ${
+                        errors.existing_icp_investor
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    >
+                      <option className="text-lg font-bold" value="false">
+                        No
+                      </option>
+                      <option className="text-lg font-bold" value="true">
+                        Yes
+                      </option>
+                    </select>
+                    {errors.existing_icp_investor && (
+                      <p className="text-red-500 text-xs italic">
+                        {errors.existing_icp_investor.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="z-0 w-full mb-3 group">
+                    <label
+                      htmlFor="investor_type"
+                      className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                    >
+                      Type of investment*
+                    </label>
+                    <select
+                      {...register("investor_type")}
+                      className={`bg-gray-50 border-2 ${
+                        errors.investor_type
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      disabled={!isExistingICPInvestor}
+                    >
+                      <option className="text-lg font-bold" value="">
+                        Select
+                      </option>
+                      <option className="text-lg font-bold" value="Direct">
+                        Direct
+                      </option>
+                      <option className="text-lg font-bold" value="SNS">
+                        SNS
+                      </option>
+                      <option className="text-lg font-bold" value="both">
+                        both
+                      </option>
+                    </select>
+                    {errors.investor_type && (
+                      <p className="text-red-500 text-xs italic">
+                        {errors.investor_type.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="z-0 w-full mb-3 group">
+                    <label
+                      htmlFor="money_invested"
+                      className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                    >
+                      How much money you invested ?
+                    </label>
+                    <input
+                      type="number"
+                      name="money_invested"
+                      id="money_invested"
+                      {...register("money_invested")}
+                      className={`bg-gray-50 border-2 ${
+                        errors.money_invested
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      placeholder="$"
+                      disabled={!isExistingICPInvestor}
+                    />
+                    {errors.money_invested && (
+                      <p className="text-red-500 text-xs italic">
+                        {errors.money_invested.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="z-0 w-full mb-3 group">
+                    <label
+                      htmlFor="existing_icp_portfolio"
+                      className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                    >
+                      Existing ICP Portfolio
+                    </label>
+                    <input
+                      type="text"
+                      name="existing_icp_portfolio"
+                      id="existing_icp_portfolio"
+                      {...register("existing_icp_portfolio")}
+                      className={`bg-gray-50 border-2 ${
+                        errors.existing_icp_portfolio
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      disabled={!isExistingICPInvestor}
+                    />
+                    {errors.existing_icp_portfolio && (
+                      <p className="text-red-500 text-xs italic">
+                        {errors.existing_icp_portfolio.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="z-0 w-full mb-3 group">
+                    <label
+                      htmlFor="registered_under_any_hub"
+                      className="block mb-2 text-lg font-medium text-gray-500 hover:text-black  truncate overflow-hidden text-start"
+                    >
+                      Are you an under any hub ?
+                    </label>
+                    <select
+                      {...register("registered_under_any_hub")}
+                      className={`bg-gray-50 border-2 ${
+                        errors.registered_under_any_hub
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    >
+                      <option className="text-lg font-bold" value="false">
+                        No
+                      </option>
+                      <option className="text-lg font-bold" value="true">
+                        Yes
+                      </option>
+                    </select>
 
-                <div className="relative z-0 group mb-6 px-4">
-                  <label
-                    htmlFor="existing_icp_investor"
-                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black  truncate overflow-hidden text-start"
-                  >
-                    Are you an exisitng ICP investor ?
-                  </label>
-                  <select
-                    {...register("existing_icp_investor")}
-                    id="existing_icp_investor"
-                    className={`bg-gray-50 border-2 ${
-                      errors.existing_icp_investor
-                        ? "border-red-500 placeholder:text-red-500"
-                        : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                  >
-                    <option className="text-lg font-bold" value="">
-                      Exisitng investor
-                    </option>
-                    <option className="text-lg font-bold" value="true">
-                      Yes
-                    </option>
-                    <option className="text-lg font-bold" value="false">
-                      No
-                    </option>
-                  </select>
-
-                  {errors.existing_icp_investor && (
-                    <span className="mt-1 text-sm text-red-500 font-bold">
-                      {errors.existing_icp_investor.message}
-                    </span>
-                  )}
-                </div>
-
-                <div className="relative z-0 group mb-6 px-4">
-                  <label
-                    htmlFor="registered_under_any_hub"
-                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black  truncate overflow-hidden text-start"
-                  >
-                    Are you an under any hub ?
-                  </label>
-                  <select
-                    {...register("registered_under_any_hub")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.registered_under_any_hub
-                        ? "border-red-500 placeholder:text-red-500"
-                        : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                  >
-                    <option className="text-lg font-bold" value="">
-                      Registered under any hub
-                    </option>
-                    <option className="text-lg font-bold" value="true">
-                      Yes
-                    </option>
-                    <option className="text-lg font-bold" value="false">
-                      No
-                    </option>
-                  </select>
-
-                  {errors.registered_under_any_hub && (
-                    <span className="mt-1 text-sm text-red-500 font-bold">
-                      {errors.registered_under_any_hub.message}
-                    </span>
-                  )}
+                    {errors.registered_under_any_hub && (
+                      <span className="mt-1 text-sm text-red-500 font-bold">
+                        {errors.registered_under_any_hub.message}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
 
             {step == 2 && (
               <div className="flex flex-col">
-                <div className="relative z-0 group mb-6 px-4">
-                  <label
-                    htmlFor="type_of_investment"
-                    className="block mb-2 text-lg font-medium  text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                  >
-                    Type of ICP investment ?
-                  </label>
-                  <select
-                    {...register("type_of_investment")}
-                    // id="type_of_investment"
-                    className={`bg-gray-50 border-2 ${
-                      errors.type_of_investment
-                        ? "border-red-500 placeholder:text-red-500"
-                        : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                  >
-                    <option className="text-lg font-bold" value="">
-                      Select your ICP investment
-                    </option>
-                    {getAllIcpHubs?.map((hub) => (
-                      <option
-                        key={hub.id}
-                        value={`${hub.name} ,${hub.region}`}
-                        className="text-lg font-bold"
-                      >
-                        {hub.name} , {hub.region}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-3 px-4">
+                  <div className="z-0 w-full mb-3 group">
+                    <label
+                      htmlFor="multi_chain"
+                      className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                    >
+                      Are you on multi-chain
+                    </label>
+                    <select
+                      {...register("multi_chain")}
+                      className={`bg-gray-50 border-2 ${
+                        errors.multi_chain
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    >
+                      <option className="text-lg font-bold" value="false">
+                        No
                       </option>
-                    ))}
-                  </select>
-                  {errors.type_of_investment && (
-                    <span className="mt-1 text-sm text-red-500 font-bold">
-                      {errors.type_of_investment.message}
-                    </span>
-                  )}
-                </div>
-
-                <div className="relative z-0 group mb-6 px-4">
-                  <label
-                    htmlFor="type_of_investment"
-                    className="block mb-2 text-lg font-medium  text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                  >
-                    type of investment ?
-                  </label>
-                  <select
-                    {...register("category_of_investment")}
-                    // id="category_of_investment"
-                    className={`bg-gray-50 border-2 ${
-                      errors.category_of_investment
-                        ? "border-red-500 placeholder:text-red-500"
-                        : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                  >
-                    <option className="text-lg font-bold" value="">
-                      Investment category
-                    </option>
-                    {getAllIcpHubs?.map((hub) => (
-                      <option
-                        key={hub.id}
-                        value={`${hub.name} ,${hub.region}`}
-                        className="text-lg font-bold"
-                      >
-                        {hub.name} , {hub.region}
+                      <option className="text-lg font-bold" value="true">
+                        Yes
                       </option>
-                    ))}
-                  </select>
-                  {errors.category_of_investment && (
-                    <span className="mt-1 text-sm text-red-500 font-bold">
-                      {errors.category_of_investment.message}
-                    </span>
-                  )}
-                </div>
-
-                <div className="z-0 w-full my-3 group">
-                  <label
-                    htmlFor="multi_chain"
-                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                  >
-                    Are you on multi-chain
-                  </label>
-                  <select
-                    onChange={(e) => setIsMultiChain(e.target.value === "Yes")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.multi_chain
-                        ? "border-red-500 placeholder:text-red-500"
-                        : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                  >
-                    <option className="text-lg font-bold" value="">
-                      Select your option⌄
-                    </option>
-                    <option className="text-lg font-bold">Yes</option>
-                    <option className="text-lg font-bold">No</option>
-                  </select>
-                  {errors.multi_chain && (
-                    <p className="text-red-500 text-xs italic">
-                      {errors.multi_chain.message}
-                    </p>
-                  )}
-                </div>
-                {isMultiChain && (
-                  <div className="z-0 w-full my-3 group">
-                    <div className="">
-                      <label
-                        htmlFor="project_on_multichain"
-                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                      >
-                        Multi-chain options
-                      </label>
-                      <select
-                        {...register("project_on_multichain")}
-                        className={`bg-gray-50 border-2 ${
-                          errors.project_on_multichain
-                            ? "border-red-500 placeholder:text-red-500"
-                            : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                      >
-                        <option className="text-lg font-bold" value="">
-                          Select your option⌄
-                        </option>
-                        <option className="text-lg font-bold" value="ethereum">
-                          Ethereum
-                        </option>
-                        <option className="text-lg font-bold" value="bitcoin">
-                          Bitcoin
-                        </option>
-                        <option className="text-lg font-bold" value="binance">
-                          Binance Smart Chain
-                        </option>
-                      </select>
-                      {errors.project_on_multichain && (
-                        <p className="text-red-500 text-xs italic">
-                          {errors.project_on_multichain.message}
-                        </p>
-                      )}
-                    </div>
+                    </select>
+                    {errors.multi_chain && (
+                      <p className="text-red-500 text-xs italic">
+                        {errors.multi_chain.message}
+                      </p>
+                    )}
                   </div>
-                )}
+                  <div className="z-0 w-full mb-3 group">
+                    <label
+                      htmlFor="project_on_multichain"
+                      className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                    >
+                      Multi-chain options
+                    </label>
+                    <select
+                      {...register("project_on_multichain")}
+                      className={`bg-gray-50 border-2 ${
+                        errors.project_on_multichain
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      disabled={!isMulti_Chain}
+                    >
+                      <option className="text-lg font-bold" value="">
+                        Select ⌄
+                      </option>
+                      {multiChain?.map((chain, i) => (
+                        <option
+                          key={i}
+                          value={`${chain}`}
+                          className="text-lg font-bold"
+                        >
+                          {chain}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.project_on_multichain && (
+                      <p className="text-red-500 text-xs italic">
+                        {errors.project_on_multichain.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="z-0 w-full mb-3 group">
+                    <label
+                      htmlFor="reason_for_joining"
+                      className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                    >
+                      Why do you want to join ICP ?*
+                    </label>
+                    <select
+                      {...register("reason_for_joining")}
+                      className={`bg-gray-50 border-2 ${
+                        errors.reason_for_joining
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    >
+                      <option className="text-lg font-bold" value="">
+                        Select reason ⌄
+                      </option>
+                      <option
+                        className="text-lg font-bold"
+                        value="listing_and_promotion"
+                      >
+                        Project listing and promotion
+                      </option>
+                      <option className="text-lg font-bold" value="Funding">
+                        Funding
+                      </option>
+                      <option className="text-lg font-bold" value="Mentoring">
+                        Mentoring
+                      </option>
+                      <option className="text-lg font-bold" value="Incubation">
+                        Incubation
+                      </option>
+                      <option
+                        className="text-lg font-bold"
+                        value="Engaging_and_building_community"
+                      >
+                        Engaging and building community
+                      </option>
+                    </select>
+                    {errors.reason_for_joining && (
+                      <p className="text-red-500 text-xs italic">
+                        {errors.reason_for_joining.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
               </div>
             )}
           </div>
