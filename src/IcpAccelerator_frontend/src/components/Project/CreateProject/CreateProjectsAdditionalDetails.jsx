@@ -79,7 +79,7 @@ const CreateProjectsAdditionalDetails = ({
                 radius="9"
                 ariaLabel="three-dots-loading"
                 wrapperStyle={{}}
-                wrapperClass=""
+                wrapperclassName=""
               />
             ) : (
               "Submit"

@@ -14,7 +14,7 @@ export default function TabsDiv({ role, onClose }) {
       case "mentor":
         return "/create-mentor";
       case "vc":
-        return "/create-vc";
+        return "/create-investor";
       default:
         return "/";
     }
@@ -42,7 +42,9 @@ export default function TabsDiv({ role, onClose }) {
 
     const handleCheckboxClick = () => {
       if (status === "switch") {
-        setIsChecked(true);
+        setIsChecked(false);
+        onClose();
+        window.location.href = '/';
       }
     };
     return (
@@ -51,33 +53,47 @@ export default function TabsDiv({ role, onClose }) {
         onClick={() => clickEventHandler(roleName, status)}
       >
         <span className="font-bold text-lg text-[#252641] uppercase">
-          {roleName}
+          {roleName === 'vc' ? 'investor' : roleName}
         </span>
-        {status === "current" && "switch" ? (
+        {status === "current" ? (
           <label className="inline-flex items-center cursor-pointer">
             <input
+              disabled={true}
               type="checkbox"
-              value=""
               className="sr-only peer"
               checked={isChecked}
-              onClick={handleCheckboxClick}
+              onChange={() => e.target.checked === true}
             />
             <div
-              className={`relative w-11 h-6 bg-[#B2B1B6] rounded-full peer peer-checked:after:translate-x-full ${
-                status.current
+              className={`relative w-11 h-6 bg-[#B2B1B6] rounded-full peer peer-checked:after:translate-x-full ${status.current
                   ? "rtl:peer-checked:after:-translate-x-full"
                   : "peer-checked:after:translate-x-full"
-              } peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600`}
+                } peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-700`}
+            ></div>
+          </label>
+        ) : status === "switch" ? (
+          <label className="inline-flex items-center cursor-pointer">
+            <input
+              disabled={false}
+              type="checkbox"
+              className="sr-only peer"
+              defaultChecked={false}
+              onChange={() => { handleCheckboxClick() }}
+            />
+            <div
+              className={`relative w-11 h-6 bg-[#B2B1B6] rounded-full peer peer-checked:after:translate-x-full ${status.current
+                  ? "rtl:peer-checked:after:-translate-x-full"
+                  : "peer-checked:after:translate-x-full"
+                } peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-700`}
             ></div>
           </label>
         ) : (
           <button
             type="button"
-            className={`rounded-[44px] text-lg px-3 py-1 ${
-              status === "Pending"
+            className={`capitalize rounded-[44px] text-lg px-3 py-1 ${status === "pending"
                 ? "bg-[#E5E5E5] text-[#737373] font-normal"
                 : "bg-[#320099] text-[#FFFFFF] font-bold"
-            }`}
+              }`}
           >
             {status}
           </button>
@@ -92,9 +108,9 @@ export default function TabsDiv({ role, onClose }) {
     case "approved":
       return getSpans(role?.name, "switch");
     case "requested":
-      return getSpans(role?.name, "Pending");
+      return getSpans(role?.name, "pending");
     case "default":
-      return getSpans(role?.name, "Request");
+      return getSpans(role?.name, "request");
     default:
       return null;
   }

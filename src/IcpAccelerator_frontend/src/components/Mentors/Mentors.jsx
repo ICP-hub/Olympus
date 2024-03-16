@@ -137,7 +137,7 @@ const Mentors = () => {
         </div>
 
         <div className="flex space-x-4 flex-wrap md:flex-nowrap">
-          <button class="border text-[#737373] p-[5px] px-3 rounded-md border-[#C7C7C7] flex items-center">
+          <button className="border text-[#737373] p-[5px] px-3 rounded-md border-[#C7C7C7] flex items-center">
             <svg
               width="15"
               height="15"
@@ -151,7 +151,7 @@ const Mentors = () => {
                 fill="#737373"
               />
             </svg>
-            <span class="ml-1"> 50</span>
+            <span className="ml-1"> 50</span>
           </button>
 
           {selectedOption === "Accepted" && (

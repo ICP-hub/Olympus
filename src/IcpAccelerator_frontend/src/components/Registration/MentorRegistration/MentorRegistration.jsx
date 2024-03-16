@@ -22,6 +22,7 @@ import { userRoleHandler } from "../../StateManagement/Redux/Reducers/userRoleRe
 import { useCountries } from "react-countries";
 import { userRegisteredHandlerRequest } from "../../StateManagement/Redux/Reducers/userRegisteredData";
 import { bufferToImageBlob } from "../../Utils/formatter/bufferToImageBlob";
+import DetailHeroSection from "../../Common/DetailHeroSection";
 
 const validationSchema = {
   personalDetails: yup.object().shape({
