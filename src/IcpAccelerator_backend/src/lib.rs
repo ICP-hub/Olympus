@@ -179,6 +179,11 @@ fn get_project_using_id(project_id: String) -> Option<ProjectInfoInternal> {
 }
 
 #[query]
+fn get_project_details_or_user_role(project_id: String) -> Option<ProjectInfoForUser>{
+    project_registration::get_project_info_for_user(project_id)
+}
+
+#[query]
 fn list_all_projects() -> HashMap<Principal, ProjectVecWithRoles> {
     project_registration::list_all_projects()
 }
