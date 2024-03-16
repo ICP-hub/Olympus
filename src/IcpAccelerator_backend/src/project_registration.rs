@@ -731,7 +731,7 @@ pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUse
 
     let announcements_project = get_announcements();
     let project_reviews = crate::roadmap_suggestion::get_suggestions_by_status(project_id.clone(), "In Progress".to_string());
-    let jobs_opportunity_posted = get_jobs_for_project(&project_id);
+    let jobs_opportunity_posted = get_jobs_for_project(project_id.clone());
 
     APPLICATION_FORM.with(|storage| {
         let projects = storage.borrow();
@@ -938,7 +938,9 @@ pub fn post_job(
     })
 }
 
-pub fn get_jobs_for_project(project_id: &str) -> Vec<Jobs> {
+
+#[query]
+pub fn get_jobs_for_project(project_id: String) -> Vec<Jobs> {
     let mut jobs_for_project = Vec::new();
     
     // Iterate through all job postings to find those matching the given project_id
