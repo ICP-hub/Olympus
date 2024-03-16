@@ -50,7 +50,7 @@ export default function TabsDiv({ role, onClose }) {
     return (
       <div
         className="border border-[#B8B8B8] flex items-baseline justify-between p-4 bg-gradient-to-l from-[#FFFFFF00] to-[#FFFFFF6B]"
-        onClick={() => clickEventHandler(roleName, status)}
+       
       >
         <span className="font-bold text-lg text-[#252641] uppercase">
           {roleName === 'vc' ? 'investor' : roleName}
@@ -90,6 +90,7 @@ export default function TabsDiv({ role, onClose }) {
         ) : (
           <button
             type="button"
+            onClick={() => clickEventHandler(roleName, status)}
             className={`capitalize rounded-[44px] text-lg px-3 py-1 ${status === "pending"
                 ? "bg-[#E5E5E5] text-[#737373] font-normal"
                 : "bg-[#320099] text-[#FFFFFF] font-bold"
