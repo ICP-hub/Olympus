@@ -46,7 +46,6 @@ mod trie;
 use crate::notification::Notification;
 use crate::project_registration::Announcements;
 use crate::project_registration::Blog;
-use crate::ratings::MainLevel;
 use crate::ratings::MainLevelRatings;
 use crate::ratings::Rating;
 use admin::*;
@@ -237,13 +236,13 @@ fn get_user_likes(project_id: String) -> Option<LikeRecord> {
     project_like::get_user_likes(project_id)
 }
 
-#[update]
-fn add_suggestion_caller(
-    content: String,
-    project_id: String,
-) -> Result<(u64, String), &'static str> {
-    roadmap_suggestion::add_suggestion(content, project_id)
-}
+// #[update]
+// fn add_suggestion_caller(
+//     content: String,
+//     project_id: String,
+// ) -> Result<(u64, String), &'static str> {
+//     roadmap_suggestion::add_suggestion(content, project_id)
+// }
 
 #[update]
 fn update_suggestion_status_caller(id: u64, status: String, project_id: String) {
@@ -470,7 +469,7 @@ fn calculate_average_api(project_id: String) -> RatingAverages {
 
 #[query]
 
-fn get_main_level_ratings(project_id: String) -> HashMap<MainLevel, MainLevelRatings> {
+fn get_main_level_ratings(project_id: String) -> HashMap<String, MainLevelRatings> {
     ratings::get_ratings_by_project_id(&project_id)
 }
 

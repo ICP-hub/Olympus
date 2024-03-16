@@ -206,8 +206,7 @@ type RatingAverages = record {
   mentor_average : opt float64;
 };
 type Request = record { mentor : opt MentorInternal; "text" : text };
-type Result = variant { Ok : record { nat64; text }; Err : text };
-type Result_1 = variant { Ok : UserInformation; Err : text };
+type Result = variant { Ok : UserInformation; Err : text };
 type Role = record {
   status : text;
   rejected_on : opt nat64;
@@ -336,7 +335,6 @@ service : () -> {
   add_announcement : (Announcements) -> (text);
   add_job_type : (text) -> (text);
   add_mentor_announcement : (text, text) -> (text);
-  add_suggestion_caller : (text, text) -> (Result);
   add_vc_announcement : (text, text) -> (text);
   approve_mentor_creation_request_candid : (principal, bool) -> (text);
   approve_mentor_profile_update : (principal, bool) -> (text);
@@ -357,7 +355,7 @@ service : () -> {
   delete_venture_capitalist : () -> (text);
   delete_venture_capitalist_caller : () -> (text);
   filter_out_projects : (FilterCriteria) -> (vec ProjectInfo) query;
-  get_admin_notifications : (principal) -> (vec Notification) query;
+  get_admin_notifications : () -> (vec Notification) query;
   get_all_mentors : () -> (vec record { principal; MentorWithRoles }) query;
   get_all_mentors_candid : () -> (
       vec record { principal; MentorWithRoles },
@@ -404,8 +402,8 @@ service : () -> {
   get_suggestions_by_status_caller : (text, text) -> (vec Suggestion) query;
   get_total_suggestions : (text) -> (nat64) query;
   get_user_info_struct : () -> (opt UserInformation) query;
-  get_user_information : () -> (Result_1) query;
-  get_user_information_using_uid : (text) -> (Result_1) query;
+  get_user_information : () -> (Result) query;
+  get_user_information_using_uid : (text) -> (Result) query;
   get_user_likes : (text) -> (opt LikeRecord) query;
   get_vc_announcements : () -> (
       vec record { principal; vec MAnnouncements },

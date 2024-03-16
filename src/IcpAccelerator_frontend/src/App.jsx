@@ -39,6 +39,8 @@ import MentorRegistration from "./components/Registration/MentorRegistration/Men
 import { getCurrentRoleStatusRequestHandler } from "./components/StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 import { userRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/userRegisteredData";
 import InvestorRegistration from "./components/Registration/InvestorRegistration/InvestorRegistration";
+import CreateProjectRegistration from "./components/Project/CreateProject/CreateProjectRegistration";
+import { multiChainHandlerRequest } from "./components/StateManagement/Redux/Reducers/getMultiChainList";
 
 const App = () => {
   const identity = useSelector((currState) => currState.internet.identity);
@@ -70,6 +72,11 @@ const App = () => {
   useEffect(() => {
     if (isAuthenticated && identity) {
       dispatch(handleActorRequest());
+    }
+  }, [isAuthenticated, identity, dispatch]);
+  useEffect(() => {
+    if (isAuthenticated && identity) {
+      dispatch(multiChainHandlerRequest());
     }
   }, [isAuthenticated, identity, dispatch]);
 
@@ -147,8 +154,9 @@ const App = () => {
       {/* <UserProfile/> */}
       {/* <RoleSelector /> */}
       {/* <NormalUser /> */}
-      <InvestorRegistration/>
-      {/* <AppRoutes /> */}
+      {/* <InvestorRegistration/> */}
+      {/* <CreateProjectRegistration /> */}
+      <AppRoutes />
       </div>
       </div>
       {/* <MentorRegistration /> */}

@@ -12,7 +12,7 @@ const CreateProjectPersonalInformation = ({
       <form onSubmit={onSubmit} className="w-full px-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {fields.map((field) => (
-            <div key={field.id} className="relative z-0 group mb-6">
+            <div key={field.id} className="relative z-0 group mb-3">
               <label
                 htmlFor={field.id}
                 className="block mb-2 text-lg font-medium text-gray-500 hover:text-black  hover:whitespace-normal truncate overflow-hidden text-start"

@@ -27,24 +27,24 @@ const validationSchema = {
       .string()
       .required()
       .test("is-non-empty", null, (value) => value && value.trim().length > 0),
-    user_name: yup
-      .string()
-      .min(6, "Username must be at least 6 characters")
-      .max(20, "Username must be at most 20 characters")
-      .matches(
-        /^(?=.*[A-Z0-9_])[a-zA-Z0-9_]+$/,
-        "Username can only contain letters, numbers, and underscores"
-      )
-      .optional(),
     openchat_username: yup
       .string()
-      .min(6, "openchat username must be at least 6 characters")
-      .max(20, "openchat username must be at most 20 characters")
-      .matches(
-        /^(?=.*[A-Z0-9_])[a-zA-Z0-9_]+$/,
-        "openchat username can only contain letters, numbers, and underscores"
-      )
-      .optional(),
+      .nullable(true) // Allows the value to be null
+      .test(
+        "is-valid-username",
+        "Username must be between 6 and 20 characters and can only contain letters, numbers, and underscores",
+        (value) => {
+          // If no value is provided, consider it valid (since it's optional)
+          if (!value) return true;
+
+          // Check length
+          const isValidLength = value.length >= 6 && value.length <= 20;
+          // Check allowed characters (including at least one uppercase letter or number)
+          const hasValidChars = /^(?=.*[A-Z0-9_])[a-zA-Z0-9_]+$/.test(value);
+
+          return isValidLength && hasValidChars;
+        }
+      ),
     bio: yup.string().optional(),
     email: yup.string().email().optional(),
     telegram_id: yup.string().optional().url(),
@@ -53,37 +53,75 @@ const validationSchema = {
       .string()
       .test("is-non-empty", "ICP Hub selection is required", (value) =>
         /\S/.test(value)
-      ),
+      )
+      .required("Selecting a interest is required."),
     area_of_intrest: yup.string().required("Selecting a interest is required."),
     imageData: yup.mixed().required("An image is required"),
   }),
   projectDetails: yup.object().shape({
-    project_elevator_pitch: yup.string(),
-    reason_to_join_incubator: yup.string(),
-    project_name: yup.string().required("Project name is required"),
-    project_description: yup.string().required("Description is required"),
-    token_economics: yup.string().required("Field is required"),
-    self_rating_of_project: yup.string().required("Self Rating is required"),
-    preferred_icp_hub: yup.string(),
-    supports_multichain: yup.string(),
-    promotional_video: yup
+    project_elevator_pitch: yup
       .string()
       .url("Must be a valid URL")
-      .required("URL is required"),
-    logoData: yup.mixed().required("Logo is required"),
+      .required("Project elevator pitch is Required"),
+    reason_to_join_incubator: yup.string().required("Reason is required"),
+    money_raised_till_now: yup.string(),
+    icp_grants: yup
+      .string()
+      .test(
+        "is-integer",
+        "ICP Grants value must be an integer",
+        (value) =>
+          value === "" ||
+          (!isNaN(value) && parseInt(value, 10).toString() === value)
+      ),
+    investors: yup
+      .string()
+      .test(
+        "is-integer",
+        "ICP Grants value must be an integer",
+        (value) =>
+          value === "" ||
+          (!isNaN(value) && parseInt(value, 10).toString() === value)
+      ),
+    sns: yup
+      .string()
+      .test(
+        "is-integer",
+        "ICP Grants value must be an integer",
+        (value) =>
+          value === "" ||
+          (!isNaN(value) && parseInt(value, 10).toString() === value)
+      ),
+    raised_from_other_ecosystem: yup
+      .string()
+      .test(
+        "is-integer",
+        "ICP Grants value must be an integer",
+        (value) =>
+          value === "" ||
+          (!isNaN(value) && parseInt(value, 10).toString() === value)
+      ),
+    project_name: yup.string().required("Project name is required"),
+    live_on_icp_mainnet: yup.string(),
+    project_area_of_focus: yup.string().required("Area of focus is required"),
+    self_rating_of_project: yup.string().optional(),
+    preferred_icp_hub: yup.string().required("ICP hub is required"),
+    supports_multichain: yup.string(),
+    promotional_video: yup.string().url("Must be a valid URL").optional(),
+    project_website: yup.string().url("Must be a valid URL").optional(),
+    project_twitter: yup.string().url("Must be a valid URL").optional(),
+    project_discord: yup.string().url("Must be a valid URL").optional(),
+    project_linkedin: yup.string().url("Must be a valid URL").optional(),
+    logoData: yup.mixed().optional(),
   }),
   additionalDetails: yup.object().shape({
-    github_link: yup
-      .string()
-      .url("Must be a valid URL")
-      .required("URL is required"),
-    target_market: yup.string().required("Target Market is required"),
-    long_term_goals: yup.string().required("Long Term Goals is required"),
-    project_area_of_focus: yup.string().required("Area of focus is required"),
-    technical_docs: yup.string().required("Technical Docs is required"),
-    live_on_icp_mainnet: yup.string(),
-    money_raised_till_now: yup.string(),
-    coverData: yup.mixed().required("Project Cover is required"),
+    project_description: yup.string().required("Description is required"),
+    token_economics: yup.string().optional(),
+    target_market: yup.string().optional(),
+    long_term_goals: yup.string().optional(),
+    technical_docs: yup.string().optional(),
+    github_link: yup.string().optional(),
+    coverData: yup.mixed().optional(),
   }),
 };
 
@@ -96,6 +134,8 @@ const CreateProjectRegistration = () => {
   const specificRole = useSelector(
     (currState) => currState.current.specificRole
   );
+  const multiChain = useSelector((currState) => currState.chains.chains);
+
   const userData = useSelector((currState) => currState.userData.data.Ok);
   const projectFullData = useSelector(
     (currState) => currState.projectData.data
@@ -123,6 +163,11 @@ const CreateProjectRegistration = () => {
   const [coverPreview, setCoverPreview] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [projectDataObject, setProjectDataObject] = useState({});
+  // Form Updates Changes in enable and diabled
+  const [isLiveOnICP, setIsLiveOnICP] = useState(false);
+  const [isMoneyRaised, setIsMoneyRaised] = useState(false);
+  const [isMulti_Chain, setIsMulti_Chain] = useState(false);
+
   // Used to convert strings to Uint8Array
   function stringToUint8Array(str) {
     const encoder = new TextEncoder();
@@ -157,6 +202,7 @@ const CreateProjectRegistration = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
     trigger,
+    watch,
     setError,
     clearErrors,
     setValue,
@@ -182,6 +228,20 @@ const CreateProjectRegistration = () => {
     } else {
     }
   };
+  // Watch the value of live_on_icp_mainnet to update isLiveOnICP state
+  const liveOnICPMainnetValue = watch("live_on_icp_mainnet");
+  const MoneyRaisedTillNow = watch("money_raised_till_now");
+  const IsMultiChain = watch("multi_chain");
+
+  useEffect(() => {
+    // Update isLiveOnICP based on live_on_icp_mainnet field value
+    setIsLiveOnICP(liveOnICPMainnetValue === "true");
+    if (liveOnICPMainnetValue !== "true") {
+      setValue("money_raised_till_now", "false");
+    }
+    setIsMoneyRaised(MoneyRaisedTillNow === "true");
+    setIsMulti_Chain(IsMultiChain === "true");
+  }, [liveOnICPMainnetValue, MoneyRaisedTillNow, IsMultiChain, setValue]);
 
   useEffect(() => {
     if (!userHasInteracted) return;
@@ -609,6 +669,9 @@ const CreateProjectRegistration = () => {
       (undefined && step > steps.length - 1)
     ) {
       // console.log("exisiting user visit ");
+      
+      const updateMoneyRaisedTillNow =
+        MoneyRaisedTillNow === "true" ? true : false;
       let tempObj2 = {
         user_data: {
           profile_picture: [updatedFormData.imageData],
@@ -621,32 +684,40 @@ const CreateProjectRegistration = () => {
           bio: [updatedFormData.bio] || [],
           area_of_intrest: updatedFormData.area_of_intrest || [],
         },
-        project_elevator_pitch: stringToUint8Array(
-          updatedFormData.project_elevator_pitch
-        ),
+        project_elevator_pitch: [updatedFormData.project_elevator_pitch],
         reason_to_join_incubator:
           updatedFormData.reason_to_join_incubator || "",
-        project_description: updatedFormData.project_description || "",
+        icp_grants: [updatedFormData.icp_grants || ""],
+        investors: [updatedFormData.investors || ""],
+        sns: [updatedFormData.sns || ""],
+        raised_from_other_ecosystem: [
+          updatedFormData.raised_from_other_ecosystem || "",
+        ],
+        promotional_video: [updatedFormData.promotional_video],
+        project_area_of_focus: updatedFormData.project_area_of_focus || "",
+        money_raised_till_now: [updateMoneyRaisedTillNow],
+        supports_multichain: [updatedFormData.supports_multichain],
+        project_name: updatedFormData.project_name || "",
+        live_on_icp_mainnet: [liveOnICPMainnetValue],
+        preferred_icp_hub: [updatedFormData.preferred_icp_hub],
+        project_website: [updatedFormData.project_website],
+        project_twitter: [updatedFormData.project_twitter],
+        project_discord: [updatedFormData.project_discord],
+        project_linkedin: [updatedFormData.project_linkedin],
+        project_logo: [updatedFormData.logoData],
         vc_assigned: [],
         mentors_assigned: [],
         project_team: [],
-        token_economics: updatedFormData.token_economics || "",
+        project_description: updatedFormData.project_description || "",
+        token_economics: [updatedFormData.token_economics || ""],
         self_rating_of_project: updatedFormData.self_rating_of_project
           ? parseFloat(updatedFormData.self_rating_of_project)
           : 0,
-        target_market: updatedFormData.target_market || "",
-        long_term_goals: updatedFormData.long_term_goals || "",
-        project_area_of_focus: updatedFormData.project_area_of_focus || "",
-        live_on_icp_mainnet: updatedFormData.live_on_icp_mainnet || [],
-        technical_docs: updatedFormData.technical_docs || "",
-        money_raised_till_now: updatedFormData.money_raised_till_now || [],
-        supports_multichain: updatedFormData.supports_multichain || [],
-        project_name: updatedFormData.project_name || "",
-        preferred_icp_hub: [updatedFormData.preferred_icp_hub],
-        github_link: updatedFormData.github_link,
+        target_market: [updatedFormData.target_market || ""],
+        long_term_goals: [updatedFormData.long_term_goals || ""],
+        technical_docs: [updatedFormData.technical_docs || ""],
+        github_link: [updatedFormData.github_link],
         project_cover: [updatedFormData.coverData],
-        project_logo: [updatedFormData.logoData],
-        promotional_video: updatedFormData.promotional_video,
       };
 
       console.log("tempObj2 kaam kia ????? ", tempObj2); // work kia
@@ -669,32 +740,40 @@ const CreateProjectRegistration = () => {
           bio: [updatedFormData.bio] || [],
           area_of_intrest: updatedFormData.area_of_intrest || [],
         },
-        project_elevator_pitch: stringToUint8Array(
-          updatedFormData.project_elevator_pitch
-        ),
+        project_elevator_pitch: [updatedFormData.project_elevator_pitch],
         reason_to_join_incubator:
           updatedFormData.reason_to_join_incubator || "",
-        project_description: updatedFormData.project_description || "",
+        icp_grants: [updatedFormData.icp_grants || ""],
+        investors: [updatedFormData.investors || ""],
+        sns: [updatedFormData.sns || ""],
+        raised_from_other_ecosystem: [
+          updatedFormData.raised_from_other_ecosystem || "",
+        ],
+        promotional_video: [updatedFormData.promotional_video],
+        project_area_of_focus: updatedFormData.project_area_of_focus || "",
+        money_raised_till_now: [updateMoneyRaisedTillNow],
+        supports_multichain: [updatedFormData.supports_multichain],
+        project_name: updatedFormData.project_name || "",
+        live_on_icp_mainnet: [liveOnICPMainnetValue],
+        preferred_icp_hub: [updatedFormData.preferred_icp_hub],
+        project_website: [updatedFormData.project_website],
+        project_twitter: [updatedFormData.project_twitter],
+        project_discord: [updatedFormData.project_discord],
+        project_linkedin: [updatedFormData.project_linkedin],
+        project_logo: [updatedFormData.logoData],
         vc_assigned: [],
         mentors_assigned: [],
         project_team: [],
-        token_economics: updatedFormData.token_economics || "",
+        project_description: updatedFormData.project_description || "",
+        token_economics: [updatedFormData.token_economics || ""],
         self_rating_of_project: updatedFormData.self_rating_of_project
           ? parseFloat(updatedFormData.self_rating_of_project)
           : 0,
-        target_market: updatedFormData.target_market || "",
-        long_term_goals: updatedFormData.long_term_goals || "",
-        project_area_of_focus: updatedFormData.project_area_of_focus || "",
-        live_on_icp_mainnet: updatedFormData.live_on_icp_mainnet || [],
-        technical_docs: updatedFormData.technical_docs || "",
-        money_raised_till_now: updatedFormData.money_raised_till_now || [],
-        supports_multichain: updatedFormData.supports_multichain || [],
-        project_name: updatedFormData.project_name || "",
-        preferred_icp_hub: [updatedFormData.preferred_icp_hub],
-        github_link: updatedFormData.github_link,
+        target_market: [updatedFormData.target_market || ""],
+        long_term_goals: [updatedFormData.long_term_goals || ""],
+        technical_docs: [updatedFormData.technical_docs || ""],
+        github_link: [updatedFormData.github_link],
         project_cover: [updatedFormData.coverData],
-        project_logo: [updatedFormData.logoData],
-        promotional_video: updatedFormData.promotional_video,
       };
       console.log("tempObj kaam kia ????? ", tempObj); // work kia
 
@@ -835,13 +914,13 @@ const CreateProjectRegistration = () => {
                   </span>
                 )}
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div className="z-0 w-full my-3 group px-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-3 px-4">
+                <div className="z-0 w-full mb-3 group">
                   <label
                     htmlFor="country"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Please select your Country.
+                    Country *
                   </label>
                   <select
                     {...register("country")}
@@ -871,12 +950,12 @@ const CreateProjectRegistration = () => {
                     </p>
                   )}
                 </div>
-                <div className="z-0 w-full my-3 group px-4">
+                <div className="z-0 w-full mb-3 group">
                   <label
                     htmlFor="area_of_intrest"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Area of Intrest
+                    Area of Intrest *
                   </label>
                   <select
                     {...register("area_of_intrest")}
@@ -987,39 +1066,346 @@ const CreateProjectRegistration = () => {
                   </span>
                 )}
               </div>
-              <div className="z-0 w-full my-3 group px-4">
+              <div className="z-0 w-full mb-3 group px-4">
                 <label
-                  htmlFor="preferred_icp_hub"
+                  htmlFor="reason_to_join_incubator"
                   className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                 >
-                  Can you please share your preferred ICP Hub
+                  Why you want to join ? *
                 </label>
                 <select
-                  {...register("preferred_icp_hub")}
+                  {...register("reason_to_join_incubator")}
                   className={`bg-gray-50 border-2 ${
-                    errors.preferred_icp_hub
+                    errors.reason_to_join_incubator
                       ? "border-red-500 placeholder:text-red-500"
                       : "border-[#737373]"
                   } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                 >
                   <option className="text-lg font-bold" value="">
-                    Select your ICP Hub⌄
+                    Select reason ⌄
                   </option>
-                  {getAllIcpHubs?.map((hub) => (
-                    <option
-                      key={hub.id}
-                      value={`${hub.name} ,${hub.region}`}
-                      className="text-lg font-bold"
-                    >
-                      {hub.name} , {hub.region}
-                    </option>
-                  ))}
+                  <option
+                    className="text-lg font-bold"
+                    value="listing_and_promotion"
+                  >
+                    Project listing and promotion
+                  </option>
+                  <option className="text-lg font-bold" value="Funding">
+                    Funding
+                  </option>
+                  <option className="text-lg font-bold" value="Mentoring">
+                    Mentoring
+                  </option>
+                  <option className="text-lg font-bold" value="Incubation">
+                    Incubation
+                  </option>
+                  <option
+                    className="text-lg font-bold"
+                    value="Engaging_and_building_community"
+                  >
+                    Engaging and building community
+                  </option>
                 </select>
-                {errors.preferred_icp_hub && (
+                {errors.reason_to_join_incubator && (
                   <p className="text-red-500 text-xs italic">
-                    {errors.preferred_icp_hub.message}
+                    {errors.reason_to_join_incubator.message}
                   </p>
                 )}
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-3 px-4">
+                <div className="z-0 w-full mb-3 group">
+                  <label
+                    htmlFor="preferred_icp_hub"
+                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    ICP Hub *
+                  </label>
+                  <select
+                    {...register("preferred_icp_hub")}
+                    className={`bg-gray-50 border-2 ${
+                      errors.preferred_icp_hub
+                        ? "border-red-500 placeholder:text-red-500"
+                        : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  >
+                    <option className="text-lg font-bold" value="">
+                      Select your ICP Hub⌄
+                    </option>
+                    {getAllIcpHubs?.map((hub) => (
+                      <option
+                        key={hub.id}
+                        value={`${hub.name} ,${hub.region}`}
+                        className="text-lg font-bold"
+                      >
+                        {hub.name} , {hub.region}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.preferred_icp_hub && (
+                    <p className="text-red-500 text-xs italic">
+                      {errors.preferred_icp_hub.message}
+                    </p>
+                  )}
+                </div>
+                <div className="z-0 w-full mb-3 group">
+                  <label
+                    htmlFor="project_area_of_focus"
+                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    Area of focus *
+                  </label>
+                  <select
+                    {...register("project_area_of_focus")}
+                    className={`bg-gray-50 border-2 ${
+                      errors.project_area_of_focus
+                        ? "border-red-500 placeholder:text-red-500"
+                        : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  >
+                    <option className="text-lg font-bold" value="">
+                      Select ⌄
+                    </option>
+                    {areaOfExpertise?.map((intrest) => (
+                      <option
+                        key={intrest.id}
+                        value={`${intrest.name}`}
+                        className="text-lg font-bold"
+                      >
+                        {intrest.name}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.project_area_of_focus && (
+                    <p className="text-red-500 text-xs italic">
+                      {errors.project_area_of_focus.message}
+                    </p>
+                  )}
+                </div>
+                <div className="z-0 w-full mb-3 group">
+                  <label
+                    htmlFor="live_on_icp_mainnet"
+                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    Live on ICP *
+                  </label>
+                  <select
+                    {...register("live_on_icp_mainnet")}
+                    className={`bg-gray-50 border-2 ${
+                      errors.live_on_icp_mainnet
+                        ? "border-red-500 placeholder:text-red-500"
+                        : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  >
+                    <option className="text-lg font-bold" value="false">
+                      No
+                    </option>
+                    <option className="text-lg font-bold" value="true">
+                      Yes
+                    </option>
+                  </select>
+                  {errors.live_on_icp_mainnet && (
+                    <p className="text-red-500 text-xs italic">
+                      {errors.live_on_icp_mainnet.message}
+                    </p>
+                  )}
+                </div>
+                <div className="z-0 w-full mb-3 group">
+                  <label
+                    htmlFor="money_raised_till_now"
+                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    Money raised till now
+                  </label>
+                  <select
+                    {...register("money_raised_till_now")}
+                    className={`bg-gray-50 border-2 ${
+                      errors.money_raised_till_now
+                        ? "border-red-500 placeholder:text-red-500"
+                        : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    disabled={!isLiveOnICP}
+                  >
+                    <option className="text-lg font-bold" value="false">
+                      No
+                    </option>
+                    <option className="text-lg font-bold" value="true">
+                      Yes
+                    </option>
+                  </select>
+                  {errors.money_raised_till_now && (
+                    <p className="text-red-500 text-xs italic">
+                      {errors.money_raised_till_now.message}
+                    </p>
+                  )}
+                </div>
+                {isMoneyRaised && (
+                  <>
+                    <div className="z-0 w-full mb-3 group">
+                      <label
+                        htmlFor="icp_grants"
+                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                      >
+                        ICP Grants
+                      </label>
+                      <input
+                        type="number"
+                        name="icp_grants"
+                        id="icp_grants"
+                        {...register("icp_grants")}
+                        className={`bg-gray-50 border-2 ${
+                          errors.icp_grants
+                            ? "border-red-500 placeholder:text-red-500"
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        placeholder="$"
+                      />
+                      {errors.icp_grants && (
+                        <p className="text-red-500 text-xs italic">
+                          {errors.icp_grants.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="z-0 w-full mb-3 group">
+                      <label
+                        htmlFor="investors"
+                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                      >
+                        Investors
+                      </label>
+                      <input
+                        type="number"
+                        name="investors"
+                        id="investors"
+                        {...register("investors")}
+                        className={`bg-gray-50 border-2 ${
+                          errors.investors
+                            ? "border-red-500 placeholder:text-red-500"
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        placeholder="$"
+                      />
+                      {errors.investors && (
+                        <p className="text-red-500 text-xs italic">
+                          {errors.investors.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="z-0 w-full mb-3 group">
+                      <label
+                        htmlFor="sns"
+                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                      >
+                        Sns
+                      </label>
+                      <input
+                        type="number"
+                        name="sns"
+                        id="sns"
+                        {...register("sns")}
+                        className={`bg-gray-50 border-2 ${
+                          errors.sns
+                            ? "border-red-500 placeholder:text-red-500"
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        placeholder="$"
+                      />
+                      {errors.sns && (
+                        <p className="text-red-500 text-xs italic">
+                          {errors.sns.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="z-0 w-full mb-3 group">
+                      <label
+                        htmlFor="raised_from_other_ecosystem"
+                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                      >
+                        Raised from other ecosystem
+                      </label>
+                      <input
+                        type="number"
+                        name="raised_from_other_ecosystem"
+                        id="raised_from_other_ecosystem"
+                        {...register("raised_from_other_ecosystem")}
+                        className={`bg-gray-50 border-2 ${
+                          errors.raised_from_other_ecosystem
+                            ? "border-red-500 placeholder:text-red-500"
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        placeholder="$"
+                      />
+                      {errors.raised_from_other_ecosystem && (
+                        <p className="text-red-500 text-xs italic">
+                          {errors.raised_from_other_ecosystem.message}
+                        </p>
+                      )}
+                    </div>
+                  </>
+                )}
+
+                <div className="z-0 w-full mb-3 group">
+                  <label
+                    htmlFor="multi_chain"
+                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    Are you on multi-chain
+                  </label>
+                  <select
+                    {...register("multi_chain")}
+                    className={`bg-gray-50 border-2 ${
+                      errors.multi_chain
+                        ? "border-red-500 placeholder:text-red-500"
+                        : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  >
+                    <option className="text-lg font-bold" value="false">
+                      No
+                    </option>
+                    <option className="text-lg font-bold" value="true">
+                      Yes
+                    </option>
+                  </select>
+                  {errors.multi_chain && (
+                    <p className="text-red-500 text-xs italic">
+                      {errors.multi_chain.message}
+                    </p>
+                  )}
+                </div>
+                <div className="z-0 w-full mb-3 group">
+                  <label
+                    htmlFor="supports_multichain"
+                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    Multi-chain options
+                  </label>
+                  <select
+                    {...register("supports_multichain")}
+                    className={`bg-gray-50 border-2 ${
+                      errors.supports_multichain
+                        ? "border-red-500 placeholder:text-red-500"
+                        : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    disabled={!isMulti_Chain}
+                  >
+                    <option className="text-lg font-bold" value="">
+                      Select ⌄
+                    </option>
+                    {multiChain?.map((chain, i) => (
+                      <option
+                        key={i}
+                        value={`${chain}`}
+                        className="text-lg font-bold"
+                      >
+                        {chain}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.supports_multichain && (
+                    <p className="text-red-500 text-xs italic">
+                      {errors.supports_multichain.message}
+                    </p>
+                  )}
+                </div>
               </div>
             </>
           )}
