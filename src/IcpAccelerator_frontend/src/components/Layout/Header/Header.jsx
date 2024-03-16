@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import logoWithText from "../../../../assets/Logo/topLogo.png";
 import LogoutModal from "../../../models/LogoutModal";
 import SwitchRole from "../../../models/SwitchRole";
+import { OutSideClickHandler } from "../../hooks/OutSideClickHandler";
 import { getCurrentRoleStatusRequestHandler } from "../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 const Header = ({ setModalOpen, gradient }) => {
   const dispatch = useDispatch();
@@ -21,7 +22,6 @@ const Header = ({ setModalOpen, gradient }) => {
 
 
   const [showSwitchRole, setShowSwitchRole] = useState(false);
-
   // console.log("principal in header", connectedWalletPrincipal);
 
   const manageHandler = () => {

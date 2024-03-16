@@ -28,6 +28,8 @@ import InvestorCard from "./InvestorCard";
 import MentorCard from "./MentorCard";
 import RegisterCard from "./RegisterCard";
 import hover from "../../../assets/images/hover.png";
+import Testimonial from "./Testimonial";
+import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
 
 const DashBoard = () => {
   const dispatch = useDispatch();
@@ -90,10 +92,10 @@ const DashBoard = () => {
       title: "Register as an Investor",
       description: "Discover innovative projects to invest in.",
       buttonText: "Register Now",
-      imgSrc: hover, 
+      imgSrc: hover,
     },
- 
-    
+
+
   ];
   const mentorcategories = [
     {
@@ -102,9 +104,59 @@ const DashBoard = () => {
       buttonText: "Register Now",
       imgSrc: hover,
     },
- 
-    
+
+
   ];
+  const testimonialcategories = [
+    {
+      title: "Add your testimonial",
+      description: "See a project missing? All community members are invited to submit their projects to this page.",
+      buttonText: "Add now",
+      imgSrc: hover,
+    },
+  ];
+
+
+
+
+
+
+  const getAllProject = async (caller) => {
+    await caller.list_all_projects().then((result) => {
+      console.log('result-in-get-all-projects', result)
+    }).catch((error) => {
+      console.log('error-in-get-all-projects', error)
+    })
+  }
+
+  const getAllMentors = async (caller) => {
+    await caller.get_all_mentors_candid().then((result) => {
+      console.log('result-in-get-all-mentors', result)
+    }).catch((error) => {
+      console.log('error-in-get-all-mentors', error)
+    })
+  }
+
+  const getAllInvestors = async (caller) => {
+    await caller.list_all_vcs().then((result) => {
+      console.log('result-in-get-all-investors', result)
+    }).catch((error) => {
+      console.log('error-in-get-all-investors', error)
+    })
+  }
+
+  useEffect(() => {
+    if (actor) {
+      getAllProject(actor);
+      getAllMentors(actor);
+      getAllInvestors(actor);
+    } else {
+      getAllProject(IcpAccelerator_backend);
+      getAllMentors(IcpAccelerator_backend);
+      getAllInvestors(IcpAccelerator_backend);
+    }
+  }, [actor])
+
   return (
     <section className="overflow-hidden relative bg-gray-100">
       <div className="font-fontUse flex flex-col w-full h-fit px-[5%] lg1:px-[4%] py-[4%]">
@@ -209,11 +261,16 @@ const DashBoard = () => {
         {/* <Announcement/> */}
         <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
           <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
-            Projects for Investors
+            Testimonial
           </h1>
-          <button className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
-            See all Investors
-          </button>
+        </div>
+        <div className="flex flex-wrap -mx-4 mb-4 flex-row items-start bg-[#DBDDF3] rounded-lg p-4">
+          <div className="overflow-x-auto flex w-3/4">
+            <Testimonial />
+          </div>
+          <div className="w-1/4">
+            <RegisterCard categories={testimonialcategories} />
+          </div>
         </div>
         <div className="flex- flex-col mb-10">
           <h1 className=" font-bold bg-gradient-to-r from-blue-900 to-sky-400 text-transparent bg-clip-text">

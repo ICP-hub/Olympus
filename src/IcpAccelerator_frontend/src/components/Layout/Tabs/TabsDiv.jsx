@@ -50,7 +50,7 @@ export default function TabsDiv({ role, onClose }) {
     return (
       <div
         className="border border-[#B8B8B8] flex items-baseline justify-between p-4 bg-gradient-to-l from-[#FFFFFF00] to-[#FFFFFF6B]"
-        onClick={() => clickEventHandler(roleName, status)}
+       
       >
         <span className="font-bold text-lg text-[#252641] uppercase">
           {roleName === 'vc' ? 'investor' : roleName}
@@ -68,7 +68,7 @@ export default function TabsDiv({ role, onClose }) {
               className={`relative w-11 h-6 bg-[#B2B1B6] rounded-full peer peer-checked:after:translate-x-full ${status.current
                   ? "rtl:peer-checked:after:-translate-x-full"
                   : "peer-checked:after:translate-x-full"
-                } peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-700`}
+                } peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#320099]`}
             ></div>
           </label>
         ) : status === "switch" ? (
@@ -84,12 +84,13 @@ export default function TabsDiv({ role, onClose }) {
               className={`relative w-11 h-6 bg-[#B2B1B6] rounded-full peer peer-checked:after:translate-x-full ${status.current
                   ? "rtl:peer-checked:after:-translate-x-full"
                   : "peer-checked:after:translate-x-full"
-                } peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-700`}
+                } peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#320099]`}
             ></div>
           </label>
         ) : (
           <button
             type="button"
+            onClick={() => clickEventHandler(roleName, status)}
             className={`capitalize rounded-[44px] text-lg px-3 py-1 ${status === "pending"
                 ? "bg-[#E5E5E5] text-[#737373] font-normal"
                 : "bg-[#320099] text-[#FFFFFF] font-bold"
