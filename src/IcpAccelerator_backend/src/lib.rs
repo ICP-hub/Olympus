@@ -1,3 +1,4 @@
+mod notification_to_mentor;
 mod admin;
 mod hub_organizer;
 mod latest_popular_projects;
@@ -12,9 +13,8 @@ mod roles;
 mod upvotes;
 mod user_module;
 mod vc_registration;
-// mod mentor_notifications;
 
-// use mentor_notifications::*;
+use notification_to_mentor::*;
 use crate::project_registration::*;
 use hub_organizer::{HubOrganizerRegistration, UniqueHubs};
 use ic_cdk::api::caller;
@@ -285,11 +285,11 @@ async fn register_mentor_candid(profile: MentorProfile) -> String {
     "request has been made to admin".to_string()
 }
 
-#[query]
+// #[query]
 
-fn get_mentor_candid() -> Option<MentorProfile> {
-    mentor::get_mentor()
-}
+// fn get_mentor_candid() -> Option<MentorProfile> {
+//     mentor::get_mentor()
+// }
 
 #[update]
 fn delete_mentor_candid() -> String {
