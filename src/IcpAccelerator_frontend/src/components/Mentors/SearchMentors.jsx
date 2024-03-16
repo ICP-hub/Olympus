@@ -121,7 +121,8 @@ function SearchMentors() {
         autoplay={{ delay: 2500 }}
         pagination={{ clickable: true }}
         spaceBetween={0}
-        slidesPerView={2}
+        slidesPerView={1}
+        slidesPerGroup={1} 
         breakpoints={{
           240: {
             slidesPerView: 1,

@@ -6,7 +6,7 @@ import Coding2 from "../../../../assets/images/Coding2.jpg";
 import hover from "../../../../assets/images/hover.png";
 import coding1 from "../../../../assets/images/coding1.jpeg";
 import { winner } from "../../Utils/Data/SvgData";
-import { bg } from "../../Utils/Data/Longsvg";
+// import { bg } from "../../Utils/Data/Longsvg";
 
 const Projectdashboard = () => {
 
