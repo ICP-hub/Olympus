@@ -163,7 +163,7 @@ type ProjectInfo = record {
   target_market : opt text;
   long_term_goals : opt text;
   project_area_of_focus : text;
-  live_on_icp_mainnet : opt bool;
+  live_on_icp_mainnet : opt text;
   technical_docs : opt text;
   github_link : opt text;
   project_cover : vec nat8;
@@ -407,12 +407,12 @@ service : () -> {
   get_main_level_ratings : (text) -> (
       vec record { text; MainLevelRatings },
     ) query;
+  get_mentor : () -> (opt MentorProfile) query;
   get_mentor_announcements : () -> (
       vec record { principal; vec MAnnouncements },
     ) query;
   get_mentor_by_expertise : (text) -> (vec MentorProfile) query;
   get_mentor_by_principal : (principal) -> (opt MentorProfile) query;
-  get_mentor_candid : () -> (opt MentorProfile) query;
   get_multichain_list : () -> (vec text) query;
   get_my_id : () -> (principal) query;
   get_notifications_for_hubs : () -> (vec NotificationProject) query;
