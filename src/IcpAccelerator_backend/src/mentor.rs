@@ -171,6 +171,7 @@ pub async fn register_mentor(profile: MentorProfile) -> String {
     // }
 }
 
+#[query]
 pub fn get_mentor() -> Option<MentorProfile> {
     let caller = caller();
     MENTOR_REGISTRY.with(|registry| {

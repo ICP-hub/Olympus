@@ -48,7 +48,7 @@ pub struct ProjectInfo {
     pub project_name: String,
     pub project_logo: Vec<u8>,
     pub preferred_icp_hub: Option<String>,
-    pub live_on_icp_mainnet: Option<bool>,
+    pub live_on_icp_mainnet: Option<String>,
     pub money_raised_till_now: Option<bool>,
     pub supports_multichain: Option<String>,
     pub project_elevator_pitch: Option<String>,
@@ -179,7 +179,7 @@ pub type ProjectDetails = HashMap<Principal, ProjectInfoInternal>;
 pub type JobDetails = HashMap<Principal, Vec<Jobs>>;
 
 thread_local! {
-    pub static APPLICATION_FORM: RefCell<ApplicationDetails> = RefCell::new(ApplicationDetails::new());
+    pub static  APPLICATION_FORM: RefCell<ApplicationDetails> = RefCell::new(ApplicationDetails::new());
     pub static PROJECT_DETAILS: RefCell<ProjectDetails> = RefCell::new(ProjectDetails::new());
     pub static NOTIFICATIONS: RefCell<Notifications> = RefCell::new(Notifications::new());
     static OWNER_NOTIFICATIONS: RefCell<HashMap<Principal, Vec<NotificationForOwner>>> = RefCell::new(HashMap::new());
