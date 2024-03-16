@@ -11,8 +11,6 @@ import { toHex } from "@dfinity/agent";
 import { initActor } from "../ActorManager";
 import { setActor } from "../Reducers/actorBindReducer";
 
-
-
 function* internetIdentityHandler() {
   try {
     const authClient = yield AuthClient.create();
@@ -27,7 +25,7 @@ function* internetIdentityHandler() {
     });
 
     const identity = authClient.getIdentity();
-    console.log('identity mai aya =>', identity)
+    // console.log('identity mai aya =>', identity)
     const actor = yield initActor(identity);
     yield put(setActor(actor));
 
@@ -46,15 +44,13 @@ function* internetIdentityHandler() {
   }
 }
 
-
-
 function* plugWalletHandler() {
   if (window?.ic?.plug) {
     try {
       yield window.ic.plug.requestConnect();
       const isConnected = yield window.ic.plug.isConnected();
       if (isConnected) {
-        console.log("Plug Wallet is connected!", isConnected);
+        // console.log("Plug Wallet is connected!", isConnected);
 
         if (!window.ic.plug.agent) {
           yield window.ic.plug.createAgent();
@@ -90,10 +86,10 @@ function* astroxMeWalletHandler() {
 
       const isConnected = yield window.ic.astroxme.isConnected();
       if (isConnected) {
-        console.log("AstroX ME is connected!");
+        // console.log("AstroX ME is connected!");
       }
     } catch (error) {
-      console.error("Error connecting to AstroX ME:", error);
+      // console.error("Error connecting to AstroX ME:", error);
     }
   } else {
     alert("AstroX ME extension is not installed!");
@@ -128,7 +124,7 @@ function* bitfinityWalletHandler() {
 
 export function* walletSagas() {
   // yield takeLatest(triggerInternetIdentity().type, internetIdentityHandler),
-    yield takeLatest(triggerPlugWallet().type, plugWalletHandler);
+  yield takeLatest(triggerPlugWallet().type, plugWalletHandler);
   // yield takeLatest(triggerAstroxMeWallet().type, astroxMeWalletHandler);
   yield takeLatest(triggeBitfinityWallet().type, bitfinityWalletHandler);
 }

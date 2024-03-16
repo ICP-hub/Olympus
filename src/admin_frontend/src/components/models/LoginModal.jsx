@@ -4,32 +4,15 @@ const LoginModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [heading, setHeading] = useState("Log in");
 
-  // // Function to open the modal
-  // const openModal = () => {
-  //   setIsModalOpen(true);
-  // };
-
   const closeModal = () => {
     setIsModalOpen(false);
   };
 
   return (
     <div>
-      {/* Modal toggle */}
-      {/* <button
-          onClick={openModal}
-          className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-          type="button"
-        >
-          Toggle modal
-        </button> */}
-
-      {/* {isModalOpen && ( */}
       <div className="fixed inset-0 flex items-center justify-center z-10">
         <div className="relative p-4 w-full max-w-lg">
-          {/* Modal content */}
           <div className="relative bg-white rounded-lg shadow-2xl">
-            {/* Modal header */}
             <div className="flex  text-center p-4 md:p-5 rounded-t ">
               <button
                 onClick={closeModal}
@@ -54,7 +37,6 @@ const LoginModal = () => {
                 {heading}
               </h3>
             </div>
-            {/* Modal body */}
             <div className="p-4 md:p-5">
               <form className="space-y-4" action="#">
                 {heading != "Sign Up" && (
@@ -168,7 +150,6 @@ const LoginModal = () => {
           </div>
         </div>
       </div>
-      {/* )} */}
     </div>
   );
 };

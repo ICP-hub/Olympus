@@ -7,64 +7,29 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../AdminStateManagement/useContext/useAuth";
 
 const ConnectWallet = ({ isModalOpen, onClose }) => {
-  // const roleNavigate = useSelector((currState) => currState.internet.navi);
-  // const userRole = useSelector((currState) => currState.current.specificRole);
-  // const hasSelectedRole = useSelector(
-  //   (currState) => currState.current.hasSelectedRole
-  // );
-  // const isAuthenticated = useSelector(
-  //   (currState) => currState.internet.isAuthenticated
-  // );
+
+  const isAuthenticated = useSelector(
+    (currState) => currState.internet.isAuthenticated
+  );
   const { login } = useAuth();
   // const dispatch = useDispatch();
-  // const navigate = useNavigate();
-
-  // console.log("bande ka role ", userRole);
-
-  // useEffect(() => {
-  //   console.log(
-  //     "isAuthenticated=> ",
-  //     isAuthenticated,
-  //     "roleNavigate =>",
-  //     roleNavigate,
-  //     "userRole=>",
-  //     userRole,
-  //     "hasSelectedRole =>",
-  //     hasSelectedRole
-  //   );
-  //   if (userRole && isAuthenticated) {
-  //     // console.log("1");
-  //     onClose();
-  //     navigate("/dashboard");
-  //   } else if (
-  //     userRole === null &&
-  //     roleNavigate === "roleSelect" &&
-  //     isAuthenticated &&
-  //     hasSelectedRole === false
-  //   ) {
-  //     // console.log("2");
-  //     onClose();
-  //     navigate(`/${roleNavigate}`);
-  //   } else if (
-  //     hasSelectedRole === true &&
-  //     isAuthenticated &&
-  //     userRole !== null
-  //   ) {
-  //     navigate("/details");
-  //   } else if (!isAuthenticated) {
-  //     // console.log("3");
-  //     navigate("/");
-  //   }
-  // }, [isAuthenticated, roleNavigate, userRole]);
+  const navigate = useNavigate();
 
   const loginHandler = async () => {
     await login();
+    onClose();
   };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/request");
+    }
+  }, [isAuthenticated]);
 
   return (
     <>
       {isModalOpen && (
-        <div className=" overflow-y-auto overflow-x-hidden  top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full fixed flex">
+        <div className=" inset-0 bg-black bg-opacity-30 backdrop-blur-sm overflow-y-auto overflow-x-hidden  top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full fixed flex">
           <div className="relative p-4 w-full max-w-md max-h-full">
             <div className="relative bg-white rounded-lg shadow">
               <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
