@@ -68,18 +68,7 @@ type MAnnouncements = record {
   timestamp : nat64;
   project_name : text;
 };
-type MainLevel = variant {
-  Level1;
-  Level2;
-  Level3;
-  Level4;
-  Level5;
-  Level6;
-  Level7;
-  Level8;
-  Level9;
-};
-type MainLevelRatings = record { ratings : vec float64; level : MainLevel };
+type MainLevelRatings = record { ratings : vec float64; level : text };
 type MentorInternal = record {
   uid : text;
   active : bool;
@@ -202,8 +191,10 @@ type ProjectWithRoles = record {
   roles : vec Role;
 };
 type Rating = record {
-  sub_level : SubLevel;
-  level_name : MainLevel;
+  sub_level : text;
+  level_name : text;
+  sub_level_number : nat32;
+  level_number : nat32;
   rating : float64;
   project_id : text;
 };
@@ -264,19 +255,6 @@ type SeventyInfoFounder = record {
   location : opt text;
   refer : opt text;
   employee_count : opt text;
-};
-type SubLevel = variant {
-  All;
-  SubLevel0;
-  SubLevel1;
-  SubLevel2;
-  SubLevel3;
-  SubLevel4;
-  SubLevel5;
-  SubLevel6;
-  SubLevel7;
-  SubLevel8;
-  SubLevel9;
 };
 type Suggestion = record {
   id : nat64;
@@ -356,6 +334,7 @@ type VentureCapitalistInternal = record {
 service : () -> {
   add_BlogPost : (text) -> (text);
   add_announcement : (Announcements) -> (text);
+  add_job_type : (text) -> (text);
   add_mentor_announcement : (text, text) -> (text);
   add_suggestion_caller : (text, text) -> (Result);
   add_vc_announcement : (text, text) -> (text);
@@ -401,7 +380,7 @@ service : () -> {
   get_leaderboard_using_ratings : () -> (vec LeaderboardEntryForRatings) query;
   get_leaderboard_using_upvotes : () -> (vec LeaderboardEntryForUpvote) query;
   get_main_level_ratings : (text) -> (
-      vec record { MainLevel; MainLevelRatings },
+      vec record { text; MainLevelRatings },
     ) query;
   get_mentor_announcements : () -> (
       vec record { principal; vec MAnnouncements },
@@ -452,6 +431,7 @@ service : () -> {
   mentors_awaiting_approval : () -> (
       vec record { principal; MentorWithRoles },
     ) query;
+  post_job : (text, text, text, text, text) -> (text);
   project_awaiting_approval : () -> (
       vec record { principal; ProjectWithRoles },
     ) query;
