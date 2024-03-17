@@ -55,10 +55,10 @@ function AdminDashboard() {
               Login as admin
             </button>
           </div>
-          <div className="justify-end hidden md:flex">
-            {/* The image will be hidden on screens smaller than md (medium) */}
-            <img src={adminGif} alt="gif" className="absolute top-[200px]" />
-          </div>
+          <div className="justify-end hidden lg:flex">
+  <img src={adminGif} alt="gif" className="absolute top-[200px]" />
+</div>
+
         </div>
 
 
@@ -124,12 +124,12 @@ function AdminDashboard() {
         </div>
       </div>
       <div className="flex flex-col justify-start items-start mt-12 mb-12">
-  <div className="flex">
+  {/* <div className="flex">
     <h1 className="text-transparent bg-gradient-to-r from-[#3C04BA] to-[#4087BF] bg-clip-text text-2xl font-extrabold  flex justify-start">Meet all our members</h1>
-  </div>
-  <div>
+  </div> */}
+  {/* <div>
     <p className="text-[#737373]"> We are connected with thousands of VCs, Hubs,founders and mentors</p>
-  </div>
+  </div> */}
   <div className="border-2 border-[#737373] w-full">
   {/* <section className="text-black bg-gray-100 pb-4">
       <div className="w-full px-[4%] lg1:px-[5%]">
