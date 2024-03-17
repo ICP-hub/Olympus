@@ -79,7 +79,7 @@ const SpotLight = () => {
   // ];
 
   return (
-    <div className=" p-6 ">
+    <div className="py-4">
       <div className="flex justify-between  gap-4 overflow-x-auto">
         <Swiper
           modules={[Pagination, Autoplay]}
@@ -109,11 +109,11 @@ const SpotLight = () => {
         >
           {data.map((card, index) => (
             <SwiperSlide key={index}>
-              <div className="shadow-md rounded-3xl overflow-hidden border-2 spotlight-card-image ">
+              <div className="mb-2 shadow-md rounded-3xl overflow-hidden border-2 spotlight-card-image ">
                 <div className="p-6">
                   <div className="flex flex-row gap-2">
                     <img
-                      className="border-2 rounded-lg border-blue-400 w-12 h-12"
+                      className="rounded-lg w-12 h-12"
                       src={card.project_logo}
                       alt={'img'}
                     />
