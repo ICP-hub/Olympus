@@ -1,12 +1,14 @@
 use candid::{CandidType, Principal};
 use ic_cdk::api::caller;
 use ic_cdk::api::management_canister::main::raw_rand;
+use ic_cdk::api::stable::{StableReader, StableWriter};
 use ic_cdk::api::time;
 use ic_cdk_macros::*;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::cell::RefCell;
 use std::collections::HashMap;
+use std::io::Read;
 use crate::default_images::*;
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
@@ -449,4 +451,43 @@ pub async fn update_user(info: UserInformation) -> std::string::String {
             "User not found. Please register before updating.".to_string()
         }
     })
+}
+
+pub fn pre_upgrade_user_modules() {
+    USER_STORAGE.with(|notifications| {
+        let serialized =
+            bincode::serialize(&*notifications.borrow()).expect("Serialization failed");
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+
+    ROLE_STATUS_ARRAY.with(|notifications| {
+        let serialized =
+            bincode::serialize(&*notifications.borrow()).expect("Serialization failed");
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+}
+
+pub fn post_upgrade_user_modules() {
+    let mut reader = StableReader::default();
+    let mut data = Vec::new();
+    reader
+        .read_to_end(&mut data)
+        .expect("Failed to read from stable storage");
+    let user_storage: HashMap<Principal, UserInfoInternal> =
+        bincode::deserialize(&data).expect("Deserialization failed of notification");
+    USER_STORAGE.with(|notifications_ref| {
+        *notifications_ref.borrow_mut() = user_storage;
+    });
+
+    let role_storage: HashMap<Principal, Vec<Role>> =
+        bincode::deserialize(&data).expect("Deserialization failed of notification");
+    ROLE_STATUS_ARRAY.with(|notifications_ref| {
+        *notifications_ref.borrow_mut() = role_storage;
+    });
 }

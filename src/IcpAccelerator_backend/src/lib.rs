@@ -13,29 +13,33 @@ mod roles;
 mod upvotes;
 mod user_module;
 mod vc_registration;
+use ic_cdk_macros::post_upgrade;
 mod default_images;
 
 use notification_to_mentor::*;
 use crate::project_registration::*;
+
 use hub_organizer::{HubOrganizerRegistration, UniqueHubs};
 use ic_cdk::api::caller;
+use ic_cdk::pre_upgrade;
 use leaderboard::{
     LeaderboardEntryForLikes, LeaderboardEntryForRatings, LeaderboardEntryForUpvote,
 };
+use notification::pre_upgrade_notifications;
 use project_like::LikeRecord;
 use project_registration::FilterCriteria;
 use ratings::RatingAverages;
 use requests::Request;
 use roles::{get_roles, RolesResponse};
 use std::collections::{HashMap, HashSet};
+
 use user_module::*;
-//use user_module::UserInformation;
 
 use ic_cdk::export_candid;
 use manage_focus_expertise::{get_areas, Areas};
 use manage_hubs::{get_icp_hubs, IcpHub};
 use mentor::MentorProfile;
-use upvotes::UpvoteRecord;
+use upvotes::*;
 
 mod project_registration;
 mod ratings;
@@ -58,6 +62,7 @@ use project_registration::{
     NotificationForOwner, NotificationProject, ProjectInfo, ProjectInfoInternal, TeamMember,
 };
 
+use notification::*;
 use rbac::{has_required_role, UserRole};
 use register_user::{FounderInfo, FounderInfoInternal, ThirtyInfoFounder};
 use roadmap_suggestion::Suggestion;
@@ -538,5 +543,21 @@ fn get_admin_notifications() -> Vec<admin::Notification> {
 // }
 
 //2vxsx-fae
+
+#[pre_upgrade]
+fn pre_upgrade() {
+    pre_upgrade_notifications();
+    pre_upgrade_vc();
+    pre_upgrade_user_modules();
+    pre_upgrade_upvotes();
+}
+
+#[post_upgrade]
+fn post_upgrade() {
+    post_upgrade_notifications();
+    post_upgrade_vc();
+    post_upgrade_user_modules();
+    post_upgrade_upvotes();
+}
 
 export_candid!();

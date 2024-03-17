@@ -195,3 +195,4 @@ pub fn get_total_suggestions_count(project_id: String) -> u64 {
             .unwrap_or(0)
     })
 }
+
