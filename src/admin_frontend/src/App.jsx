@@ -23,7 +23,7 @@ import { projectPendingRequest } from "./components/AdminStateManagement/Redux/R
 import AdminRoute from "./AdminRoute";
 
 const App = () => {
-  // const actor = useSelector((currState) => currState.actors.actor);
+  const actor = useSelector((currState) => currState.actors.actor);
   const isAuthenticated = useSelector(
     (currState) => currState.internet.isAuthenticated
   );
@@ -39,35 +39,35 @@ const App = () => {
 
   useEffect(() => {
     dispatch(mentorPendingRequest());
-  }, [isAuthenticated, dispatch]);
+  }, [isAuthenticated,actor, dispatch]);
 
   useEffect(() => {
     dispatch(mentorDeclinedRequest());
-  }, [isAuthenticated, dispatch]);
+  }, [isAuthenticated,actor, dispatch]);
 
   useEffect(() => {
     dispatch(investorApprovedRequest());
-  }, [isAuthenticated, dispatch]);
+  }, [isAuthenticated,actor, dispatch]);
 
   useEffect(() => {
     dispatch(investorPendingRequest());
-  }, [isAuthenticated, dispatch]);
+  }, [isAuthenticated,actor, dispatch]);
 
   useEffect(() => {
     dispatch(investorDeclinedRequest());
-  }, [isAuthenticated, dispatch]);
+  }, [isAuthenticated,actor, dispatch]);
 
   useEffect(() => {
     dispatch(projectApprovedRequest());
-  }, [isAuthenticated, dispatch]);
+  }, [isAuthenticated,actor, dispatch]);
 
   useEffect(() => {
     dispatch(projectDeclinedRequest());
-  }, [isAuthenticated, dispatch]);
+  }, [isAuthenticated,actor, dispatch]);
 
   useEffect(() => {
     dispatch(projectPendingRequest());
-  }, [isAuthenticated, dispatch]);
+  }, [isAuthenticated,actor, dispatch]);
 
   useEffect(() => {
     reloadLogin();
