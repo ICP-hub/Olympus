@@ -38,6 +38,7 @@ enum MyError {
     CanisterInfoError(String),
 }
 
+
 thread_local! {
     static ADMIN_NOTIFICATIONS : RefCell<HashMap<Principal, Vec<Notification>>> = RefCell::new(HashMap::new())
 }
@@ -921,4 +922,51 @@ pub fn add_job_type(job_type: String) -> String {
         state.push(job_type);
         format!("job type added")
     })
+}
+
+#[update]
+pub fn add_project_to_spotlight(project_id: String) -> Result<(), String> {
+    let caller = caller();
+
+    let project_info = APPLICATION_FORM.with(|details| {
+        details.borrow().iter()
+            .flat_map(|(_, projects)| projects.iter())
+            .find(|project| project.uid == project_id)
+            .cloned() 
+    });
+
+    match project_info {
+        Some(project_info) => {
+
+            let spotlight_details = SpotlightDetails {
+                added_by: caller,
+                project_id: project_id,
+                project_details: project_info.params,
+            };
+
+            SPOTLIGHT_PROJECTS.with(|spotlight| {
+                spotlight.borrow_mut().push(spotlight_details);
+            });
+            Ok(())
+        },
+        None => Err("Project not found.".to_string()),
+    }
+}
+
+#[update]
+pub fn remove_project_from_spotlight(project_id: String) -> Result<(), String> {
+    SPOTLIGHT_PROJECTS.with(|spotlight| {
+        let mut spotlight = spotlight.borrow_mut();
+        if let Some(index) = spotlight.iter().position(|x| x.project_id == project_id) {
+            spotlight.remove(index);
+            Ok(())
+        } else {
+            Err("Project not found in spotlight.".to_string())
+        }
+    })
+}
+
+#[query]
+pub fn get_spotlight_projects() -> Vec<SpotlightDetails> {
+    SPOTLIGHT_PROJECTS.with(|spotlight| spotlight.borrow().clone())
 }
