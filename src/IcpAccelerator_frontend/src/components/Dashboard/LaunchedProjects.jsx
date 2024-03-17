@@ -309,7 +309,7 @@ const handleNavigate=(projectId)=>{
         
       </div>
       <div className="w-1/4">
-        <RegisterCard categories={categories} />
+        <RegisterCard categories={categories} redirect={'create-project'}/>
       </div>
     </div>
   );
