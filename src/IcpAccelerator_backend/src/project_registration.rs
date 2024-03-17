@@ -317,6 +317,18 @@ pub fn get_projects_with_all_info () -> Vec<ProjectInfoInternal>{
     })
 }
 
+#[query]
+pub fn get_project_id () -> String{
+    let caller = caller();
+    APPLICATION_FORM.with(|storage| {
+        let projects = storage.borrow();
+        let project_info= projects.get(&caller);
+        let projects = project_info.expect("couldn't get project information").clone();
+        let one = projects[0].clone();
+        one.uid
+    })
+}
+
 pub fn find_project_by_id(project_id: &str) -> Option<ProjectInfoInternal> {
     APPLICATION_FORM.with(|storage| {
         for projects in storage.borrow().values() {
@@ -955,7 +967,7 @@ pub fn post_job(
 pub fn get_jobs_for_project(project_id: String) -> Vec<Jobs> {
     let mut jobs_for_project = Vec::new();
     
-    // Iterate through all job postings to find those matching the given project_id
+    
     POST_JOB.with(|jobs| {
         let jobs = jobs.borrow();
         
@@ -970,3 +982,12 @@ pub fn get_jobs_for_project(project_id: String) -> Vec<Jobs> {
 
     jobs_for_project
 }
+
+// pub fn get_jobs_posted_by_project(project_id : String){
+//     //
+
+//     POST_JOB.with(|state|{
+//         let jobs = state.borrow();
+
+//     })
+// }
