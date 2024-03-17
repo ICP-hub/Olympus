@@ -307,23 +307,27 @@ pub fn get_projects_for_caller() -> Vec<ProjectInfo> {
 }
 
 #[query]
-pub fn get_projects_with_all_info () -> Vec<ProjectInfoInternal>{
+pub fn get_projects_with_all_info() -> Vec<ProjectInfoInternal> {
     let caller = caller();
     APPLICATION_FORM.with(|storage| {
         let projects = storage.borrow();
-        let project_info= projects.get(&caller);
-        let projects = project_info.expect("couldn't get project information").clone();
+        let project_info = projects.get(&caller);
+        let projects = project_info
+            .expect("couldn't get project information")
+            .clone();
         projects
     })
 }
 
 #[query]
-pub fn get_project_id () -> String{
+pub fn get_project_id() -> String {
     let caller = caller();
     APPLICATION_FORM.with(|storage| {
         let projects = storage.borrow();
-        let project_info= projects.get(&caller);
-        let projects = project_info.expect("couldn't get project information").clone();
+        let project_info = projects.get(&caller);
+        let projects = project_info
+            .expect("couldn't get project information")
+            .clone();
         let one = projects[0].clone();
         one.uid
     })
@@ -339,7 +343,6 @@ pub fn find_project_by_id(project_id: &str) -> Option<ProjectInfoInternal> {
         None
     })
 }
-
 
 pub fn list_all_projects() -> HashMap<Principal, ProjectVecWithRoles> {
     let project_awaiters = APPLICATION_FORM.with(|awaiters| awaiters.borrow().clone());
@@ -598,7 +601,7 @@ pub async fn update_team_member(project_id: &str, member_uid: String) -> String 
             if let Some(team) = &mut project_internal.params.project_team {
                 // Look for an existing team member with the same UID
                 let existing_member = team.iter_mut().find(|m| m.member_uid == member_uid);
-                
+
                 if let Some(member) = existing_member {
                     // If the member exists, update their info
                     member.member_data = user_info.clone();
@@ -753,15 +756,18 @@ pub fn filter_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
 
 #[query]
 pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUser> {
-
     let announcements_project = get_announcements();
-    let project_reviews = crate::roadmap_suggestion::get_suggestions_by_status(project_id.clone(), "In Progress".to_string());
+    let project_reviews = crate::roadmap_suggestion::get_suggestions_by_status(
+        project_id.clone(),
+        "In Progress".to_string(),
+    );
     let jobs_opportunity_posted = get_jobs_for_project(project_id.clone());
 
     APPLICATION_FORM.with(|storage| {
         let projects = storage.borrow();
 
-        projects.iter()
+        projects
+            .iter()
             .flat_map(|(_, project_list)| project_list.iter())
             .find(|project_internal| project_internal.uid == project_id)
             .map(|project_internal| ProjectInfoForUser {
@@ -896,8 +902,15 @@ pub fn get_dummy_suggestion() -> Suggestion {
     }
 }
 
-pub fn get_dummy_jon_opportunity() -> Jobs{
-    Jobs { title: ("Example Job Title".to_string()), description: ("This Job Is For Testing Purpose".to_string()), opportunity: ("Software Developer".to_string()), link: ("test link".to_string()), project_id: ("Testing Project Id".to_string()), timestamp: (time()) }
+pub fn get_dummy_jon_opportunity() -> Jobs {
+    Jobs {
+        title: ("Example Job Title".to_string()),
+        description: ("This Job Is For Testing Purpose".to_string()),
+        opportunity: ("Software Developer".to_string()),
+        link: ("test link".to_string()),
+        project_id: ("Testing Project Id".to_string()),
+        timestamp: (time()),
+    }
 }
 
 // #[query]
@@ -963,14 +976,12 @@ pub fn post_job(
 }
 
 
-#[query]
 pub fn get_jobs_for_project(project_id: String) -> Vec<Jobs> {
     let mut jobs_for_project = Vec::new();
-    
-    
+
     POST_JOB.with(|jobs| {
         let jobs = jobs.borrow();
-        
+
         for job_list in jobs.values() {
             for job in job_list {
                 if job.project_id == project_id {
@@ -983,11 +994,22 @@ pub fn get_jobs_for_project(project_id: String) -> Vec<Jobs> {
     jobs_for_project
 }
 
-// pub fn get_jobs_posted_by_project(project_id : String){
-//     //
+#[query]
+pub fn get_jobs_posted_by_project(project_id: String) -> Vec<Jobs>{
 
-//     POST_JOB.with(|state|{
-//         let jobs = state.borrow();
+    POST_JOB.with(|jobs| {
+        if let Some(job_list) = jobs.borrow().get(&caller()) {
+            
+            let mut project_jobs: Vec<&Jobs> = job_list
+                .iter()
+                .filter(|job| job.project_id == project_id)
+                .collect();
 
-//     })
-// }
+            project_jobs.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
+
+            project_jobs.into_iter().take(6).cloned().collect()
+        }else{
+            Vec::new()
+        }
+    })
+}
