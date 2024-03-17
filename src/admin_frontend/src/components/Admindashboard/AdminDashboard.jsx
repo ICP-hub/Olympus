@@ -70,12 +70,13 @@ function AdminDashboard() {
             <p className="text-2xl text-transparent bg-gradient-to-r from-[#3C04BA] to-[#4087BF] bg-clip-text flex justify-center font-extrabold">How we work</p>
             <div className="h-[200px] md:w-[450px] mx-auto">
   <p className="text-left ">
-    Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatu Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatuQuis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatu
+    Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatu Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatuQuis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatu.
   </p>
 </div>
 
           </div>
-          <div className="w-11/12 md:h-[11.5rem]  bg-neutral-50 rounded-[20px] drop-shadow-2xl   z-10">
+          <div className="w-11/12 md:h-[11.5rem] bg-neutral-50 rounded-[20px] drop-shadow-2xl z-10 mt-[160px] md:mt-0 mb-4">
+  {/* Your content here */}
         <div className="flex  justify-center ">
           <div className="w-5/6 px-4 md:justify-between md:items-center md:flex md:left-[-60px] md:top-[60px]  md:relative  ">
             <div className="relative mb-4 mt-4 md:mt-0">
@@ -88,10 +89,10 @@ function AdminDashboard() {
             </div>
             <div className="relative mb-4 ">
               <div className="top-0 md:absolute text-center text-violet-800 md:text-4xl xl:text-5xl text-4xl font-extrabold font-fontUse">
-                $250M+
+                250+
               </div>
-              <div className={`${responsiveText} left-[53px] top-[50px] md:absolute text-center text-neutral-500 md:text-lg font-normal font-fontUse flex justify-center`}>
-                Hub Organisers
+              <div className={`${responsiveText} left-0 top-[50px] md:absolute text-center text-neutral-500 md:text-lg font-normal font-fontUse`}>
+                Hub 
               </div>
             </div>
             <div className="relative mb-4">
@@ -163,27 +164,24 @@ function AdminDashboard() {
 
       
         </div>
-        <div className="mt-12  mb-12">
+        <div className="mt-12 mb-12">
   <div className="w-full h-fit bg-indigo-300 rounded-md shadow-md">
     <div className="relative flex flex-col md:flex-row items-center justify-center md:justify-center md:p-8">
-      <div className="font-bold text-center md:text-center mb-4 md:mb-0 md:w-1/2 md:pr-4 ">
-       <div className="flex justify-center">
-        <p className="text-4xl text-transparent bg-gradient-to-r  from-[#3C04BA] to-[#4087BF] bg-clip-text font-extrabold md:w-[450px]">
+      <div className="font-bold text-center md:text-center mb-4 md:mb-0 md:w-full md:max-w-[450px] md:pr-4">
+        <p className=" xl:lg:text-4xl  md:text-xl sm:text-lg text-transparent bg-gradient-to-r from-[#3C04BA] to-[#4087BF] bg-clip-text font-extrabold">
           Learn more about our accelerator program
         </p>
-        </div>
-        <div className="flex justify-center">
-        <p className="text-white md:w-[350px] text-left mt-2 ml-2">
+        <p className="text-white text-left mt-2 ml-2">
           Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatu.
         </p>
-      </div>
       </div>  
-      <div className="text-center md:text-right  md:pl-4">
-        <img className="h-[280px] w-[300px] mx-auto md:mx-0 scale-x-[-1]" src={admin} alt="k" />
+      <div className="text-center md:text-right md:w-full md:max-w-[300px] md:pl-4">
+        <img className="h-auto w-full mx-auto md:mx-0" src={admin} alt="k" />
       </div>
     </div>
   </div>
 </div>
+
 <div className="mt-12 mb-12">
         <SubmitSection />
       </div>
