@@ -49,7 +49,7 @@ const CreateProjectsAdditionalDetails = ({
                 />
               )}
               {errors[field.name] && (
-                <span className="mt-1 text-sm text-red-500 font-bold">
+                <span className="mt-1 text-sm text-red-500 font-bold text-left">
                   {errors[field.name].message}
                 </span>
               )}
