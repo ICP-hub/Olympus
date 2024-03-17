@@ -20,9 +20,7 @@ const ImpactTool = () => {
           <div className="w-5/6 px-4 md:justify-between md:items-center md:flex md:left-[-60px] md:top-[45px] md:relative">
             {data.map(({ count, label, position }) => (
               <div className="relative mb-4 mt-4 md:mt-0" key={label}>
-                <div
-                  className={`top-0 md:absolute text-center text-violet-800 md:text-4xl xl:text-5xl text-4xl font-extrabold font-fontUse`}
-                >
+                <div className={`top-0 md:absolute text-center text-violet-800 md:text-4xl xl:text-5xl text-4xl font-extrabold font-fontUse`}>
                   {count}
                 </div>
                 <div

@@ -19,6 +19,7 @@ import ProjectDashboard from "./components/Dashboard/RoleDashboard/ProjectDashbo
 import MentorDashboard from "./components/Dashboard/RoleDashboard/MentorDashboard";
 import InvestorDashboard from "./components/Dashboard/RoleDashboard/InvestorDashboard";
 import { useNavigate } from 'react-router-dom';
+import SearchMentors from "./components/Mentors/SearchMentors";
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
 
@@ -73,6 +74,7 @@ const AppRoutes = () => {
     { path: "/individual-project-details/:id", element: <ProjectDetailsForUser /> },
     { path: "/view-mentor-details/:id", element: <MentorsProfile /> },
     { path: "/view-investor-details/:id", element: <InvestorProfile /> },
+    { path: "/view-mentors", element: <SearchMentors /> },
 
   ];
 
