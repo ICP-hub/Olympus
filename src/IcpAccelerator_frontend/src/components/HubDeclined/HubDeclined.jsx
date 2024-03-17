@@ -83,7 +83,7 @@ useEffect(() => {
     </div>
 
     <div className="flex space-x-4 flex-wrap md:flex-nowrap">
-      <button class="border text-[#737373] p-[5px] px-3 rounded-md border-[#C7C7C7] flex items-center">
+      <button className="border text-[#737373] p-[5px] px-3 rounded-md border-[#C7C7C7] flex items-center">
         <svg
           width="15"
           height="15"
@@ -97,7 +97,7 @@ useEffect(() => {
             fill="#737373"
           />
         </svg>
-        <span class="ml-1"> 50</span>
+        <span className="ml-1"> 50</span>
       </button>
       <button className='bg-[#A62B41] text-white rounded-md px-4'>Declined</button>
 </div>

@@ -4,7 +4,7 @@ import internetIdentity from "../../../../IcpAccelerator_frontend/assets/WalletL
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 // import { logoutStart } from "../components/StateManagement/Redux/Reducers/InternetIdentityReducer";
-import { changeHasSelectedRoleHandler } from "../AdminStateManagement/Redux/Reducers/userRoleReducer";
+// import { changeHasSelectedRoleHandler } from "../AdminStateManagement/Redux/Reducers/userRoleReducer";
 import { useNavigate } from "react-router-dom";
 // import { mentorRegisteredHandlerRequest } from "../components/StateManagement/Redux/Reducers/mentorRegisteredData";
 // import { founderRegisteredHandlerRequest } from "../components/StateManagement/Redux/Reducers/founderRegisteredData";
@@ -17,21 +17,13 @@ import toast, { Toaster } from "react-hot-toast";
 import { beforeCopySvg } from "../Utils/AdminData/SvgData";
 import { afterCopySvg } from "../Utils/AdminData/SvgData";
 
-
 const LogoutModal = () => {
-
-
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
   const principal = useSelector((currState) => currState.internet.principal);
   const actor = useSelector((currState) => currState.actors.actor);
-  // const specificRole = useSelector(
-  //   (currState) => currState.current.specificRole
-  // );
 
   const { logout } = useAuth();
   const [customSvg, setCustomSvg] = useState(beforeCopySvg);
-
-  // console.log('specific role in logout handler => ', specificRole )
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -41,45 +33,10 @@ const LogoutModal = () => {
     setDropdownOpen(!isDropdownOpen);
   };
 
-  // useEffect(() => {
-  //   dispatch(userRoleHandler());
-  // }, [isAuthenticated, dispatch, actor]);
-
   const logoutHandler = async () => {
-    dispatch(changeHasSelectedRoleHandler(false));
     await logout();
     navigate("/");
-    // setDropdownOpen(false)
   };
-
-  // const profileHandler = async (specificRole) => {
-  //   console.log(
-  //     "specific role inside profilehandler logout component ",
-  //     specificRole
-  //   );
-  //   switch (specificRole) {
-  //     case "Project":
-  //       dispatch(founderRegisteredHandlerRequest());
-  //       setDropdownOpen(false);
-  //       break;
-  //     case "Mentor":
-  //       dispatch(mentorRegisteredHandlerRequest());
-  //       setDropdownOpen(false);
-  //       break;
-  //     case "ICPHubOrganizer":
-  //       dispatch(hubRegisteredHandlerRequest());
-  //       setDropdownOpen(false);
-  //       break;
-  //     case "VC":
-  //       // console.log("vc =>", specificRole);
-  //       dispatch(investorRegisteredHandlerRequest());
-  //       setDropdownOpen(false);
-  //       break;
-  //     default:
-  //       return null;
-  //   }
-  //   navigate("/profile");
-  // };
 
   const copyToClipboard = useCallback(() => {
     navigator.clipboard.writeText(principal).then(
@@ -172,22 +129,14 @@ const LogoutModal = () => {
                 </li>
               </ul>
             )}
-           <div className="text-sm text-black font-bold">
-               {/* {specificRole && (
-                <p
-                  onClick={() => profileHandler(specificRole)}
-                  className="py-2 px-4 hover:bg-gray-200"
-                >
-                  My Profile
-                </p>
-              )}*/}
+            <div className="text-sm text-black font-bold">
               <p
                 className="py-2 px-4 hover:bg-gray-200"
                 onClick={logoutHandler}
               >
                 Sign out
               </p>
-            </div> 
+            </div>
           </div>
         )}
       </div>

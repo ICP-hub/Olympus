@@ -58,7 +58,7 @@ const HubDetails = ({ onSubmit, register, errors, fields, goToPrevious ,isSubmit
                 radius="9"
                 ariaLabel="three-dots-loading"
                 wrapperStyle={{}}
-                wrapperClass=""
+                wrapperclassName=""
               />
             ) : (
               "Submit"

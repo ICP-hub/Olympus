@@ -29,8 +29,8 @@ use std::io::Read;
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct TeamMember {
-    member_uid: String,
-    member_data: Vec<UserInformation>,
+    pub member_uid: String,
+    pub member_data: UserInformation,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
@@ -58,7 +58,7 @@ pub struct ProjectInfo {
     pub reason_to_join_incubator: String,
     pub project_description: String,
     pub project_cover: Vec<u8>,
-    pub project_team: Option<TeamMember>,
+    pub project_team: Option<Vec<TeamMember>>,
     pub token_economics: Option<String>,
     pub technical_docs: Option<String>,
     pub long_term_goals: Option<String>,
@@ -79,16 +79,15 @@ pub struct ProjectInfo {
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct ProjectInfoForUser {
-    pub date_ofjoining: String,
+    pub date_of_joining: Option<u64>,
     pub mentor_associated: Option<Vec<MentorProfile>>,
     pub vc_associated: Option<Vec<VentureCapitalist>>,
     pub team_member_info: Option<Vec<TeamMember>>,
-    pub announcements: Option<Vec<Announcements>>,
-    pub reviews: Option<Suggestion>,
+    pub announcements: HashMap<Principal, Vec<Announcements>>,
+    pub reviews: Vec<Suggestion>,
     pub website_social_group: Option<String>,
     pub live_link_of_project: Option<String>,
-    pub jobs_opportunity: Option<String>,
-    pub rank_of_project: Option<u64>,
+    pub jobs_opportunity: Option<Vec<Jobs>>,
     pub area_of_focus: Option<String>,
     pub country_of_project: Option<String>,
 }
@@ -180,7 +179,7 @@ pub type ProjectDetails = HashMap<Principal, ProjectInfoInternal>;
 pub type JobDetails = HashMap<Principal, Vec<Jobs>>;
 
 thread_local! {
-    pub static APPLICATION_FORM: RefCell<ApplicationDetails> = RefCell::new(ApplicationDetails::new());
+    pub static  APPLICATION_FORM: RefCell<ApplicationDetails> = RefCell::new(ApplicationDetails::new());
     pub static PROJECT_DETAILS: RefCell<ProjectDetails> = RefCell::new(ProjectDetails::new());
     pub static NOTIFICATIONS: RefCell<Notifications> = RefCell::new(Notifications::new());
     static OWNER_NOTIFICATIONS: RefCell<HashMap<Principal, Vec<NotificationForOwner>>> = RefCell::new(HashMap::new());
@@ -304,6 +303,33 @@ pub fn get_projects_for_caller() -> Vec<ProjectInfo> {
         } else {
             Vec::new()
         }
+    })
+}
+
+#[query]
+pub fn get_projects_with_all_info() -> Vec<ProjectInfoInternal> {
+    let caller = caller();
+    APPLICATION_FORM.with(|storage| {
+        let projects = storage.borrow();
+        let project_info = projects.get(&caller);
+        let projects = project_info
+            .expect("couldn't get project information")
+            .clone();
+        projects
+    })
+}
+
+#[query]
+pub fn get_project_id() -> String {
+    let caller = caller();
+    APPLICATION_FORM.with(|storage| {
+        let projects = storage.borrow();
+        let project_info = projects.get(&caller);
+        let projects = project_info
+            .expect("couldn't get project information")
+            .clone();
+        let one = projects[0].clone();
+        one.uid
     })
 }
 
@@ -571,15 +597,31 @@ pub async fn update_team_member(project_id: &str, member_uid: String) -> String 
         {
             project_found = true;
 
+            // Check if the project already has a team member list
             if let Some(team) = &mut project_internal.params.project_team {
-                team.member_data.push(user_info);
-                member_added_or_updated = true;
+                // Look for an existing team member with the same UID
+                let existing_member = team.iter_mut().find(|m| m.member_uid == member_uid);
+
+                if let Some(member) = existing_member {
+                    // If the member exists, update their info
+                    member.member_data = user_info.clone();
+                    member_added_or_updated = true;
+                } else {
+                    // If the member doesn't exist, add them to the list
+                    let new_team_member = TeamMember {
+                        member_uid: member_uid.clone(),
+                        member_data: user_info.clone(),
+                    };
+                    team.push(new_team_member);
+                    member_added_or_updated = true;
+                }
             } else {
+                // If the project does not have any team members yet, create a new list
                 let new_team_member = TeamMember {
                     member_uid: member_uid.clone(),
-                    member_data: vec![user_info],
+                    member_data: user_info.clone(),
                 };
-                project_internal.params.project_team = Some(new_team_member);
+                project_internal.params.project_team = Some(vec![new_team_member]);
                 member_added_or_updated = true;
             }
         }
@@ -712,6 +754,38 @@ pub fn filter_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
     })
 }
 
+#[query]
+pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUser> {
+    let announcements_project = get_announcements();
+    let project_reviews = crate::roadmap_suggestion::get_suggestions_by_status(
+        project_id.clone(),
+        "In Progress".to_string(),
+    );
+    let jobs_opportunity_posted = get_jobs_for_project(project_id.clone());
+
+    APPLICATION_FORM.with(|storage| {
+        let projects = storage.borrow();
+
+        projects
+            .iter()
+            .flat_map(|(_, project_list)| project_list.iter())
+            .find(|project_internal| project_internal.uid == project_id)
+            .map(|project_internal| ProjectInfoForUser {
+                date_of_joining: Some(project_internal.creation_date),
+                mentor_associated: project_internal.params.mentors_assigned.clone(),
+                vc_associated: project_internal.params.vc_assigned.clone(),
+                team_member_info: project_internal.params.project_team.clone(),
+                announcements: announcements_project,
+                reviews: project_reviews,
+                website_social_group: project_internal.params.project_discord.clone(),
+                live_link_of_project: project_internal.params.live_on_icp_mainnet.clone(),
+                jobs_opportunity: Some(jobs_opportunity_posted),
+                area_of_focus: Some(project_internal.params.project_area_of_focus.clone()),
+                country_of_project: project_internal.params.preferred_icp_hub.clone(),
+            })
+    })
+}
+
 #[update]
 pub fn make_project_active_inactive(p_id: Principal, project_id: String) -> String {
     let principal_id = caller();
@@ -747,11 +821,7 @@ pub fn make_project_active_inactive(p_id: Principal, project_id: String) -> Stri
 pub fn get_dummy_team_member() -> TeamMember {
     TeamMember {
         member_uid: "TM123456".to_string(),
-        member_data: vec![
-            get_dummy_user_information(), // First dummy user information
-            get_dummy_user_information(), // Second dummy user information, you can customize as needed
-                                          // Add more UserInformation instances if necessary
-        ],
+        member_data: get_dummy_user_information(),
     }
 }
 
@@ -832,23 +902,33 @@ pub fn get_dummy_suggestion() -> Suggestion {
     }
 }
 
-#[query]
-pub fn get_dummy_data_for_project_details_for_users() -> ProjectInfoForUser {
-    ProjectInfoForUser {
-        date_ofjoining: "2024-01-01".to_string(),
-        mentor_associated: Some(vec![get_dummy_mentor_profile()]),
-        vc_associated: Some(vec![get_dummy_venture_capitalist()]),
-        team_member_info: Some(vec![get_dummy_team_member()]),
-        announcements: Some(vec![get_dummy_announcements()]),
-        reviews: Some(get_dummy_suggestion()),
-        website_social_group: Some("https://example.com".to_string()),
-        live_link_of_project: Some("https://projectlink.com".to_string()),
-        jobs_opportunity: Some("Looking for a developer".to_string()),
-        rank_of_project: Some(1),
-        area_of_focus: Some("Technology".to_string()),
-        country_of_project: Some("USA".to_string()),
+pub fn get_dummy_jon_opportunity() -> Jobs {
+    Jobs {
+        title: ("Example Job Title".to_string()),
+        description: ("This Job Is For Testing Purpose".to_string()),
+        opportunity: ("Software Developer".to_string()),
+        link: ("test link".to_string()),
+        project_id: ("Testing Project Id".to_string()),
+        timestamp: (time()),
     }
 }
+
+// #[query]
+// pub fn get_dummy_data_for_project_details_for_users() -> ProjectInfoForUser {
+//     ProjectInfoForUser {
+//         date_of_joining: Some("2024-01-01".to_string()),
+//         mentor_associated: Some(vec![get_dummy_mentor_profile()]),
+//         vc_associated: Some(vec![get_dummy_venture_capitalist()]),
+//         team_member_info: Some(vec![get_dummy_team_member()]),
+//         //announcements: Some(vec![get_dummy_announcements()]),
+//         //reviews: Some(get_dummy_suggestion()),
+//         website_social_group: Some("https://example.com".to_string()),
+//         live_link_of_project: Some("https://projectlink.com".to_string()),
+//         jobs_opportunity: Some(vec![get_dummy_jon_opportunity()]),
+//         area_of_focus: Some("Technology".to_string()),
+//         country_of_project: Some("USA".to_string()),
+//     }
+// }
 
 #[update]
 pub fn post_job(
@@ -891,6 +971,45 @@ pub fn post_job(
             })
         } else {
             return "Choose correct job type".to_string();
+        }
+    })
+}
+
+
+pub fn get_jobs_for_project(project_id: String) -> Vec<Jobs> {
+    let mut jobs_for_project = Vec::new();
+
+    POST_JOB.with(|jobs| {
+        let jobs = jobs.borrow();
+
+        for job_list in jobs.values() {
+            for job in job_list {
+                if job.project_id == project_id {
+                    jobs_for_project.push(job.clone());
+                }
+            }
+        }
+    });
+
+    jobs_for_project
+}
+
+#[query]
+pub fn get_jobs_posted_by_project(project_id: String) -> Vec<Jobs>{
+
+    POST_JOB.with(|jobs| {
+        if let Some(job_list) = jobs.borrow().get(&caller()) {
+            
+            let mut project_jobs: Vec<&Jobs> = job_list
+                .iter()
+                .filter(|job| job.project_id == project_id)
+                .collect();
+
+            project_jobs.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
+
+            project_jobs.into_iter().take(6).cloned().collect()
+        }else{
+            Vec::new()
         }
     })
 }

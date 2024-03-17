@@ -20,7 +20,6 @@ import { userRegisteredHandlerRequest } from "../../StateManagement/Redux/Reduce
 import CreateProjectsDetails from "./CreateProjectsDetails";
 import { bufferToImageBlob } from "../../Utils/formatter/bufferToImageBlob";
 import CreateProjectsAdditionalDetails from "./CreateProjectsAdditionalDetails";
-import { defaultUserImage } from "../../RoleSelector/Image";
 const validationSchema = {
   personalDetails: yup.object().shape({
     full_name: yup
@@ -56,7 +55,7 @@ const validationSchema = {
       )
       .required("Selecting a interest is required."),
     area_of_intrest: yup.string().required("Selecting a interest is required."),
-    imageData: yup.mixed().required("An image is required"),
+    imageData: yup.mixed(),
   }),
   projectDetails: yup.object().shape({
     project_elevator_pitch: yup
@@ -115,7 +114,11 @@ const validationSchema = {
     logoData: yup.mixed().optional(),
   }),
   additionalDetails: yup.object().shape({
-    project_description: yup.string().required("Description is required"),
+    project_description: yup
+      .string()
+      .trim()
+      .required("Textarea is required")
+      .matches(/^[^\s].*$/, "Cannot start with a space"),
     token_economics: yup.string().optional(),
     target_market: yup.string().optional(),
     long_term_goals: yup.string().optional(),
@@ -238,6 +241,10 @@ const CreateProjectRegistration = () => {
     setIsLiveOnICP(liveOnICPMainnetValue === "true");
     if (liveOnICPMainnetValue !== "true") {
       setValue("money_raised_till_now", "false");
+      setValue("icp_grants", "");
+      setValue("investors", "");
+      setValue("sns", "");
+      setValue("raised_from_other_ecosystem", "");
     }
     setIsMoneyRaised(MoneyRaisedTillNow === "true");
     setIsMulti_Chain(IsMultiChain === "true");
@@ -569,7 +576,19 @@ const CreateProjectRegistration = () => {
       setActiveTab(projectRegistration[step - 1]?.id);
     }
   };
+  useEffect(() => {
+    const preventScroll = (e) => {
+      if (e.target.type === "number") {
+        e.preventDefault();
+      }
+    };
 
+    window.addEventListener("wheel", preventScroll, { passive: false });
+
+    return () => {
+      window.removeEventListener("wheel", preventScroll);
+    };
+  }, []);
   useEffect(() => {
     if (projectFullData && projectFullData.length > 0) {
       const data = projectFullData[0];
@@ -630,8 +649,8 @@ const CreateProjectRegistration = () => {
   };
   const sendingProjectData = async (val) => {
     // console.log("run sendingProjectData =========");
-    val.project_cover = val.project_cover[0] || defaultUserImage;
-    val.project_logo = val.project_logo[0] || defaultUserImage;
+    val.project_cover = val.project_cover[0] || [];
+    val.project_logo = val.project_logo[0] || [];
     console.log("sendingProjectData ==>> ", val);
 
     let result;
@@ -669,12 +688,12 @@ const CreateProjectRegistration = () => {
       (undefined && step > steps.length - 1)
     ) {
       // console.log("exisiting user visit ");
-      
+
       const updateMoneyRaisedTillNow =
         MoneyRaisedTillNow === "true" ? true : false;
       let tempObj2 = {
         user_data: {
-          profile_picture: [updatedFormData.imageData],
+          profile_picture: [updatedFormData.imageData] || [],
           full_name: updatedFormData.full_name || "",
           country: updatedFormData.country || "",
           email: [updatedFormData.email] || [],
@@ -696,7 +715,7 @@ const CreateProjectRegistration = () => {
         promotional_video: [updatedFormData.promotional_video],
         project_area_of_focus: updatedFormData.project_area_of_focus || "",
         money_raised_till_now: [updateMoneyRaisedTillNow],
-        supports_multichain: [updatedFormData.supports_multichain],
+        supports_multichain: [updatedFormData.supports_multichain || ""],
         project_name: updatedFormData.project_name || "",
         live_on_icp_mainnet: [liveOnICPMainnetValue],
         preferred_icp_hub: [updatedFormData.preferred_icp_hub],
@@ -752,7 +771,7 @@ const CreateProjectRegistration = () => {
         promotional_video: [updatedFormData.promotional_video],
         project_area_of_focus: updatedFormData.project_area_of_focus || "",
         money_raised_till_now: [updateMoneyRaisedTillNow],
-        supports_multichain: [updatedFormData.supports_multichain],
+        supports_multichain: [updatedFormData.supports_multichain || ""],
         project_name: updatedFormData.project_name || "",
         live_on_icp_mainnet: [liveOnICPMainnetValue],
         preferred_icp_hub: [updatedFormData.preferred_icp_hub],
@@ -945,7 +964,7 @@ const CreateProjectRegistration = () => {
                   </select>
 
                   {errors.country && (
-                    <p className="text-red-500 text-xs italic">
+                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
                       {errors.country.message}
                     </p>
                   )}
@@ -979,7 +998,7 @@ const CreateProjectRegistration = () => {
                     ))}
                   </select>
                   {errors.area_of_intrest && (
-                    <p className="text-red-500 text-xs italic">
+                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
                       {errors.area_of_intrest.message}
                     </p>
                   )}
@@ -1107,7 +1126,7 @@ const CreateProjectRegistration = () => {
                   </option>
                 </select>
                 {errors.reason_to_join_incubator && (
-                  <p className="text-red-500 text-xs italic">
+                  <p className="mt-1 text-sm text-red-500 font-bold text-left">
                     {errors.reason_to_join_incubator.message}
                   </p>
                 )}
@@ -1142,7 +1161,7 @@ const CreateProjectRegistration = () => {
                     ))}
                   </select>
                   {errors.preferred_icp_hub && (
-                    <p className="text-red-500 text-xs italic">
+                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
                       {errors.preferred_icp_hub.message}
                     </p>
                   )}
@@ -1176,7 +1195,7 @@ const CreateProjectRegistration = () => {
                     ))}
                   </select>
                   {errors.project_area_of_focus && (
-                    <p className="text-red-500 text-xs italic">
+                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
                       {errors.project_area_of_focus.message}
                     </p>
                   )}
@@ -1204,7 +1223,7 @@ const CreateProjectRegistration = () => {
                     </option>
                   </select>
                   {errors.live_on_icp_mainnet && (
-                    <p className="text-red-500 text-xs italic">
+                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
                       {errors.live_on_icp_mainnet.message}
                     </p>
                   )}
@@ -1233,7 +1252,7 @@ const CreateProjectRegistration = () => {
                     </option>
                   </select>
                   {errors.money_raised_till_now && (
-                    <p className="text-red-500 text-xs italic">
+                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
                       {errors.money_raised_till_now.message}
                     </p>
                   )}
@@ -1260,7 +1279,7 @@ const CreateProjectRegistration = () => {
                         placeholder="$"
                       />
                       {errors.icp_grants && (
-                        <p className="text-red-500 text-xs italic">
+                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
                           {errors.icp_grants.message}
                         </p>
                       )}
@@ -1285,7 +1304,7 @@ const CreateProjectRegistration = () => {
                         placeholder="$"
                       />
                       {errors.investors && (
-                        <p className="text-red-500 text-xs italic">
+                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
                           {errors.investors.message}
                         </p>
                       )}
@@ -1310,7 +1329,7 @@ const CreateProjectRegistration = () => {
                         placeholder="$"
                       />
                       {errors.sns && (
-                        <p className="text-red-500 text-xs italic">
+                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
                           {errors.sns.message}
                         </p>
                       )}
@@ -1335,7 +1354,7 @@ const CreateProjectRegistration = () => {
                         placeholder="$"
                       />
                       {errors.raised_from_other_ecosystem && (
-                        <p className="text-red-500 text-xs italic">
+                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
                           {errors.raised_from_other_ecosystem.message}
                         </p>
                       )}
@@ -1366,7 +1385,7 @@ const CreateProjectRegistration = () => {
                     </option>
                   </select>
                   {errors.multi_chain && (
-                    <p className="text-red-500 text-xs italic">
+                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
                       {errors.multi_chain.message}
                     </p>
                   )}
@@ -1401,7 +1420,7 @@ const CreateProjectRegistration = () => {
                     ))}
                   </select>
                   {errors.supports_multichain && (
-                    <p className="text-red-500 text-xs italic">
+                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
                       {errors.supports_multichain.message}
                     </p>
                   )}
@@ -1711,7 +1730,7 @@ const CreateProjectRegistration = () => {
                     ))}
                   </select>
                   {errors.preferred_icp_hub && (
-                    <p className="text-red-500 text-xs italic">
+                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
                       {errors.preferred_icp_hub.message}
                     </p>
                   )}
@@ -1744,7 +1763,7 @@ const CreateProjectRegistration = () => {
                     ))}
                   </select>
                   {errors.areas_of_focus && (
-                    <p className="text-red-500 text-xs italic">
+                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
                       {errors.areas_of_focus.message}
                     </p>
                   )}

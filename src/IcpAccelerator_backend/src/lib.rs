@@ -1,3 +1,4 @@
+mod notification_to_mentor;
 mod admin;
 mod hub_organizer;
 mod latest_popular_projects;
@@ -13,9 +14,9 @@ mod upvotes;
 mod user_module;
 mod vc_registration;
 use ic_cdk_macros::post_upgrade;
-// mod mentor_notifications;
+mod default_images;
 
-// use mentor_notifications::*;
+use notification_to_mentor::*;
 use crate::project_registration::*;
 
 use hub_organizer::{HubOrganizerRegistration, UniqueHubs};
@@ -199,11 +200,9 @@ async fn update_project(project_id: String, updated_project: ProjectInfo) -> Str
 
 #[update]
 async fn update_team_member(project_id: String, member_uid: String) -> String {
-    if has_required_role(&vec![UserRole::Project]) {
+
         project_registration::update_team_member(&project_id, member_uid).await
-    } else {
-        "you hv n't registered as a user yet".to_string()
-    }
+    
 }
 
 #[update]
@@ -290,11 +289,11 @@ async fn register_mentor_candid(profile: MentorProfile) -> String {
     "request has been made to admin".to_string()
 }
 
-#[query]
+// #[query]
 
-fn get_mentor_candid() -> Option<MentorProfile> {
-    mentor::get_mentor()
-}
+// fn get_mentor_candid() -> Option<MentorProfile> {
+//     mentor::get_mentor()
+// }
 
 #[update]
 fn delete_mentor_candid() -> String {

@@ -66,11 +66,11 @@ impl VentureCapitalist {
         //     }
         // }
 
-        if let Some(ref project_on_multichain) = self.project_on_multichain {
-            if project_on_multichain.trim().is_empty() {
-                return Err("Field cannot be empty".into());
-            }
-        }
+        // if let Some(ref project_on_multichain) = self.project_on_multichain {
+        //     if project_on_multichain.trim().is_empty() {
+        //         return Err("Field cannot be empty".into());
+        //     }
+        // }
 
         if self.number_of_portfolio_companies <= u16::MIN
             || self.number_of_portfolio_companies > u16::MAX

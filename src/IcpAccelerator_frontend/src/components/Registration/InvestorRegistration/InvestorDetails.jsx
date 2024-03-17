@@ -17,7 +17,7 @@ const InvestorDetails = ({ onSubmit, register, errors, fields, goToPrevious, goT
                 placeholder={field.placeholder}
               />
               {errors[field.name] && (
-                <span className="mt-1 text-sm text-red-500 font-bold">{errors[field.name].message}</span>
+                <span className="mt-1 text-sm text-red-500 font-bold text-left">{errors[field.name].message}</span>
               )}
             </div>
           ))}
