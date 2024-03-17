@@ -206,23 +206,25 @@ const DashBoard = () => {
                 View all
               </button>
             </div>
+            <div className="mb-4">
             <CurrentlyRaising />
+            </div>
             <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
               <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
                 Ongoing Accelerators
               </h1>
-              <button className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
+              {/* <button className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
                 Explore more
-              </button>
+              </button> */}
             </div>
             <EventCard />
             <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
               <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
                 Event Announcement
               </h1>
-              <button className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
+              {/* <button className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
                 Explore more
-              </button>
+              </button> */}
             </div>
             <div className="flex flex-wrap md:flex-nowrap gap-4 mb-4">
               <SecondEventCard />
@@ -285,11 +287,11 @@ const DashBoard = () => {
                 Testimonial
               </h1>
             </div>
-            <div className="flex flex-wrap -mx-4 mb-4 flex-row items-start bg-[#DBDDF3] rounded-lg p-4">
-              <div className="overflow-x-auto flex w-3/4">
+            <div className="flex flex-wrap -mx-4 mb-4 flex-row justify-center items-start bg-[#DBDDF3] rounded-lg p-4">
+              <div className="overflow-x-auto flex w-[61%]">
                 <Testimonial />
               </div>
-              <div className="w-1/4">
+              <div className="w-1/3">
                 <RegisterCard categories={testimonialcategories} redirect={''} />
               </div>
             </div>

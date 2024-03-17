@@ -8,7 +8,7 @@ const SecondEventCard = () => {
     <div className="block w-full drop-shadow-xl rounded-lg bg-gray-200 mb-8">
       <div className="w-full relative">
         <img
-          className="w-full object-fill h-[280px] rounded-lg "
+          className="w-full object-cover h-[280px] rounded-lg "
           src={hover}
           alt="not found"
         />
