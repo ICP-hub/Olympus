@@ -118,7 +118,7 @@ const validationSchema = {
       .string()
       .trim()
       .required("Textarea is required")
-      .matches(/^\S*$/, "Spaces are not allowed"),
+      .matches(/^[^\s].*$/, "Cannot start with a space"),
     token_economics: yup.string().optional(),
     target_market: yup.string().optional(),
     long_term_goals: yup.string().optional(),
@@ -576,7 +576,7 @@ const CreateProjectRegistration = () => {
       setActiveTab(projectRegistration[step - 1]?.id);
     }
   };
-useEffect(() => {
+  useEffect(() => {
     const preventScroll = (e) => {
       if (e.target.type === "number") {
         e.preventDefault();
