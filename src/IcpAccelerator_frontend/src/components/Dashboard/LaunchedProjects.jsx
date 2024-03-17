@@ -113,6 +113,8 @@ import React, { useState, useEffect, useRef } from "react";
 import ment from "../../../assets/images/ment.jpg";
 import girl from "../../../assets/images/girl.jpeg";
 import hover from "../../../assets/images/hover.png";
+import RegisterCard from "./RegisterCard";
+import { title } from "process";
 
 const LaunchedProjects = () => {
   const [cards, setCards] = useState([
@@ -179,9 +181,30 @@ const LaunchedProjects = () => {
       return prevPercent + 1;
     });
   };
+  const categories = [
+    // {
+    //   title: "Register as a Mentor",
+    //   description: "Join our community as a mentor to guide projects.",
+    //   buttonText: "Register Now",
+    //   imgSrc: "mentorImageSrc", 
+    // },
+    // {
+    //   title: "Register as an Investor",
+    //   description: "Discover innovative projects to invest in.",
+    //   buttonText: "Register Now",
+    //   imgSrc: "investorImageSrc", 
+    // },
+    {
+      title: "Register your Projects",
+      description: "See a project missing? Submit your projects to this page.",
+      buttonText: "Register Now",
+      imgSrc: hover, 
+    },
+    
+  ];
 
   return (
-    <div className="flex flex-wrap -mx-4 mb-4 flex-row">
+    <div className="flex flex-wrap -mx-4 mb-4 flex-row items-start">
       <div className="overflow-x-auto flex w-3/4">
         {cards.map((card) => (
           <div key={card.id} className="px-4 w-full sm:w-1/2 md:w-1/3 ">
@@ -271,30 +294,9 @@ const LaunchedProjects = () => {
           </div>
         ))}
       </div>
-      <div className="px-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 h-fit">
-        <div className="shadow-md rounded-lg overflow-hidden border-2 drop-shadow-2xl gap-2 bg-[#B9C0F2]">
-          <div className="p-4">
-            <img
-              className="h-[6.8rem] w-full  rounded-md object-fill"
-              src={hover}
-              alt="not found"
-            />
-            <div>
-              <div className="text-xl sm:text-2xl text-white mt-4 font-bold">
-                <h1>Register your Projects?</h1>
-              </div>
-              <p className="text-white mt-3 line-clamp-2">
-                See a project missing? All community members are invited to
-                submit their projects to this page.
-              </p>
-
-              <button className="mt-4 uppercase bg-[#7283EA] text-white px-4 py-2 rounded-xl w-full justify-center items-center font-extrabold">
-                Register Now
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div className="w-1/4">
+    <RegisterCard categories={categories}/>
+    </div>
     </div>
   );
 };

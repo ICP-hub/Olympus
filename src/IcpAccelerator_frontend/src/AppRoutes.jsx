@@ -13,6 +13,8 @@ import InvestorRegistration from "./components/Registration/InvestorRegistration
 import MentorRegistration from "./components/Registration/MentorRegistration/MentorRegistration";
 import ProjectDetailsForUser from "./components/Project/ProjectDetails/ProjectDetailsForUser";
 import Newcards from "./components/Project/ProjectDetails/Newcards";
+import MentorsProfile from "./components/Mentors/MentorsProfile";
+import InvestorProfile from "./components/Dashboard/Investor/InvestorProfile";
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
 const AllDetailsForm = lazy(() =>
@@ -50,14 +52,16 @@ const AppRoutes = () => {
   const publicRoutes = [
     { path: "/", element: <DashBoard /> },
     { path: "/create-user", element: <NormalUser /> },
-    {path:"/create-vc", element : <InvestorRegistration/>},
+    {path:"/create-investor", element : <InvestorRegistration/>},
     { path: "/create-project", element: <CreateProject /> },
     { path: "/details", element: <AllDetailsForm /> },
     // { path: "/roleSelect", element: <RoleSelector /> },
     { path: "/project-details", element: <ProjectDetails /> },
     { path: "/profile", element: <UserProfile /> },
     {path:"/create-mentor",element: <MentorRegistration />},
-    { path: "/individual-project-details", element: <ProjectDetailsForUser /> },
+    { path: "/individual-project-details/:id", element: <ProjectDetailsForUser /> },
+    { path: "/view-mentor-details/:id", element: <MentorsProfile /> },
+    { path: "/view-investor-details/:id", element: <InvestorProfile /> },
 
   ];
 

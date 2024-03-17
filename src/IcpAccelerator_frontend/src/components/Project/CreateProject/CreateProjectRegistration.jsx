@@ -21,6 +21,13 @@ import CreateProjectsDetails from "./CreateProjectsDetails";
 import { bufferToImageBlob } from "../../Utils/formatter/bufferToImageBlob";
 import CreateProjectsAdditionalDetails from "./CreateProjectsAdditionalDetails";
 import { defaultUserImage } from "../../RoleSelector/Image";
+// import { defaultProjectLogo } from "../../RoleSelector/ProjectLogo";
+// import { defaultProjectCover } from "../../RoleSelector/ProjectCover";
+// import { defaultProjectCover } from "../../RoleSelector/ProjectCover";
+// import { defaultProjectCover } from "../../RoleSelector/ProjectCover";
+import { defaultUserImage as defaultProjectLogo } from "../../RoleSelector/Image";
+import { defaultUserImage as defaultProjectCover } from "../../RoleSelector/Image";
+
 const validationSchema = {
   personalDetails: yup.object().shape({
     full_name: yup
@@ -634,8 +641,8 @@ const CreateProjectRegistration = () => {
   };
   const sendingProjectData = async (val) => {
     // console.log("run sendingProjectData =========");
-    val.project_cover = val.project_cover[0] || defaultUserImage;
-    val.project_logo = val.project_logo[0] || defaultUserImage;
+    val.project_cover = val.project_cover[0] || defaultProjectCover;
+    val.project_logo = val.project_logo[0] || defaultProjectLogo;
     console.log("sendingProjectData ==>> ", val);
 
     let result;
@@ -700,7 +707,7 @@ const CreateProjectRegistration = () => {
         promotional_video: [updatedFormData.promotional_video],
         project_area_of_focus: updatedFormData.project_area_of_focus || "",
         money_raised_till_now: [updateMoneyRaisedTillNow],
-        supports_multichain: [updatedFormData.supports_multichain],
+        supports_multichain: [updatedFormData.supports_multichain || ""],
         project_name: updatedFormData.project_name || "",
         live_on_icp_mainnet: [liveOnICPMainnetValue],
         preferred_icp_hub: [updatedFormData.preferred_icp_hub],
@@ -756,7 +763,7 @@ const CreateProjectRegistration = () => {
         promotional_video: [updatedFormData.promotional_video],
         project_area_of_focus: updatedFormData.project_area_of_focus || "",
         money_raised_till_now: [updateMoneyRaisedTillNow],
-        supports_multichain: [updatedFormData.supports_multichain],
+        supports_multichain: [updatedFormData.supports_multichain || ""],
         project_name: updatedFormData.project_name || "",
         live_on_icp_mainnet: [liveOnICPMainnetValue],
         preferred_icp_hub: [updatedFormData.preferred_icp_hub],

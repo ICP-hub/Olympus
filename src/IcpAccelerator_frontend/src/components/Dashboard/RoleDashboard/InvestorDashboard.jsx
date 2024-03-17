@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 // import Sidebar from "../Layout/SidePanel/Sidebar";
-import LiveProjects from "./LiveProjects";
-import SearchForm from "./SearchForm";
+// import LiveProjects from "./LiveProjects";
+// import SearchForm from "./SearchForm";
 // import VideoScroller from "./VideoScroller";
 // import Founder from "./Founder";
 // import Partners from "./Partners";
@@ -9,33 +9,27 @@ import SearchForm from "./SearchForm";
 // import Bottombar from "../Layout/BottomBar/Bottombar";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import ListedProjects from "./ListedProjects";
-import guide from "../../../assets/getStarted/guide.png";
-import upvote from "../../../assets/getStarted/upvote.png";
-import SubmitSection from "../Footer/SubmitSection";
-import { getCurrentRoleStatusRequestHandler } from "../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
-import SpotLight from "./SpotLight";
-import ImpactTool from "./ImpactTool";
-import LaunchedProjects from "./LaunchedProjects";
-import CurrentlyRaising from "./CurrentlyRaising";
-import EventCard from "./EventCard";
-import ProjectJobCard from "../Project/ProjectDetails/ProjectJobCard";
-import ProjectJobs from "../Project/ProjectDetails/ProjectJobs";
-import Announcement from "../Project/ProjectDetails/Announcement";
-import SecondEventCard from "./SecondEventCard";
-import ment from "../../../assets/images/ment.jpg";
-import InvestorCard from "./InvestorCard";
-import MentorCard from "./MentorCard";
-import RegisterCard from "./RegisterCard";
-import hover from "../../../assets/images/hover.png";
-import Testimonial from "./Testimonial";
-import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
+// import ListedProjects from "../ListedProjects";
+import guide from "../../../../assets/getStarted/guide.png";
+import upvote from "../../../../assets/getStarted/upvote.png";
+import SubmitSection from "../../Footer/SubmitSection";
+import { getCurrentRoleStatusRequestHandler } from "../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
+import SpotLight from "../SpotLight";
+import ImpactTool from "../ImpactTool";
+import LaunchedProjects from "../LaunchedProjects";
+import CurrentlyRaising from "../CurrentlyRaising";
+import EventCard from "../EventCard";
+import ProjectJobs from "../../Project/ProjectDetails/ProjectJobs";
+import InvestedProjects from "../InvestedProjects";
+import SecondEventCard from "../SecondEventCard";
+// import ProjectJobCard from "../../Project/ProjectDetails/ProjectJobCard";
+// import Announcement from "../../Project/ProjectDetails/Announcement";
 
-const DashBoard = () => {
+const InvestorDashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const actor = useSelector((currState) => currState.actors.actor);
-  // console.log("actor in dashboard =>", actor);
+  // console.log("actor in InvestorDashboard =>", actor);
 
   const principal = useSelector((currState) => currState.internet.principal);
   const userCurrentRoleStatus = useSelector(
@@ -67,132 +61,35 @@ const DashBoard = () => {
     }
   }, [actor, dispatch, userCurrentRoleStatus, userCurrentRoleStatusActiveRole]);
 
-  const projectJobData = [
-    {
-      image: ment,
-      tags: ["Imo", "Ludi", "Ndaru"],
-      country: "india",
-      website: "https://www.google.co.in/",
-    },
-    {
-      image: ment,
-      tags: ["Imo", "Ludi", "Ndaru"],
-      country: "india",
-      website: "https://www.google.co.in/",
-    },
-    // Add more objects here as needed
-  ];
-
   const underline =
     "relative focus:after:content-[''] focus:after:block focus:after:w-full focus:after:h-[2px] focus:after:bg-blue-800 focus:after:absolute focus:after:left-0 focus:after:bottom-[-4px]";
 
   console.log("principal", principal);
-  const categories = [
-    {
-      title: "Register as an Investor",
-      description: "Discover innovative projects to invest in.",
-      buttonText: "Register Now",
-      imgSrc: hover,
-    },
-
-
-  ];
-  const mentorcategories = [
-    {
-      title: "Register as a Mentor",
-      description: "Join our community as a mentor to guide projects.",
-      buttonText: "Register Now",
-      imgSrc: hover,
-    },
-
-
-  ];
-  const testimonialcategories = [
-    {
-      title: "Add your testimonial",
-      description: "See a project missing? All community members are invited to submit their projects to this page.",
-      buttonText: "Add now",
-      imgSrc: hover,
-    },
-  ];
-
-
-
-
-
-
-  const getAllProject = async (caller) => {
-    await caller.list_all_projects().then((result) => {
-      console.log('result-in-get-all-projects', result)
-    }).catch((error) => {
-      console.log('error-in-get-all-projects', error)
-    })
-  }
-
-  // const getAllMentors = async (caller) => {
-  //   await caller.get_all_mentors_candid().then((result) => {
-  //     console.log('result-in-get-all-mentors', result)
-  //   }).catch((error) => {
-  //     console.log('error-in-get-all-mentors', error)
-  //   })
-  // }
-
-  // const getAllInvestors = async (caller) => {
-  //   await caller.list_all_vcs().then((result) => {
-  //     console.log('result-in-get-all-investors', result)
-  //   }).catch((error) => {
-  //     console.log('error-in-get-all-investors', error)
-  //   })
-  // }
-
-  useEffect(() => {
-    if (actor) {
-      getAllProject(actor);
-      // getAllMentors(actor);
-      // getAllInvestors(actor);
-    } else {
-      getAllProject(IcpAccelerator_backend);
-      // getAllMentors(IcpAccelerator_backend);
-      // getAllInvestors(IcpAccelerator_backend);
-    }
-  }, [actor])
-
   return (
     <section className="overflow-hidden relative bg-gray-100">
       <div className="font-fontUse flex flex-col w-full h-fit px-[5%] lg1:px-[4%] py-[4%]">
-        <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
+       
+      <div className="flex flex-wrap flex-row  md:flex-nowrap mb-4">
+
+       <InvestedProjects/>
+       <InvestedProjects/>
+       <InvestedProjects/>
+       
+       </div>
+       
+       <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
           <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
-            Spotlight on the month
+          Spotlight on the month
           </h1>
+          <button className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
+          Explore more
+          </button>
         </div>
         <SpotLight />
+      
         <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
           <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
-            Impact of the tool
-          </h1>
-        </div>
-        <ImpactTool />
-        <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
-          <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
-            Launched Projects
-          </h1>
-          <button className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
-            View all
-          </button>
-        </div>
-        <LaunchedProjects />
-        <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
-          <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
-            Currently Raising
-          </h1>
-          <button className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
-            View all
-          </button>
-        </div>
-        <CurrentlyRaising />
-        <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
-          <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
-            Ongoing Accelerators
+            Event Announcement
           </h1>
           <button className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
             Explore more
@@ -201,78 +98,44 @@ const DashBoard = () => {
         <EventCard />
         <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
           <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
+            Live Projects
+          </h1>
+          <button className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
+          Explore more
+          </button>
+        </div>
+        <CurrentlyRaising />
+        {/* <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
+          <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
             Ongoing Accelerators
           </h1>
           <button className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
             Explore more
           </button>
         </div>
-        <div className="flex md:w-[calc(100%/2-10px)] dxl:w-[calc(100%/3-10px)] justify-between w-full gap-4 flex-row">
-          <div className="grid grid-col-2 gap-4">
-            {[...Array(2)].map((_, index) => (
-              <SecondEventCard key={index} />
-            ))}
-          </div>
-        </div>
-
-        <div className="flex flex-wrap md:flex-nowrap gap-4 mb-8">
-          {projectJobData.map((data, index) => (
-            <ProjectJobCard
-              key={index}
-              image={data.image}
-              tags={data.tags}
-              country={data.country}
-              website={data.website}
-            />
-          ))}
-        </div>
+        <EventCard /> */}
         <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
           <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
-            Projects for Investors
+          Event Announcement
           </h1>
           <button className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
-            See all Investors
+            Explore more
           </button>
         </div>
-        <div className="flex flex-wrap -mx-4 mb-4 flex-row items-start">
-          <div className="overflow-x-auto flex w-3/4">
-            <InvestorCard />
-          </div>
-          <div className="w-1/4">
-            <RegisterCard categories={categories} />
-          </div>
+        <div className="flex flex-wrap gap-4 flex-row  md:flex-nowrap mb-4">
+        <SecondEventCard />
+        <SecondEventCard/>
         </div>
-        <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
+{/* <Announcement/> */}
+{/* <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
           <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
-            Projects for Mentors
+          Projects for Investors
           </h1>
           <button className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
-            See all Mentors
+          See all Investors
           </button>
-        </div>
-        <div className="flex flex-wrap -mx-4 mb-4 flex-row items-start">
-          <div className="overflow-x-auto flex w-3/4">
-            <MentorCard />
-          </div>
-          <div className="w-1/4">
-            <RegisterCard categories={mentorcategories} />
-          </div>
-        </div>
-        {/* <Announcement/> */}
-        <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
-          <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
-            Testimonial
-          </h1>
-        </div>
-        <div className="flex flex-wrap -mx-4 mb-4 flex-row items-start bg-[#DBDDF3] rounded-lg p-4">
-          <div className="overflow-x-auto flex w-3/4">
-            <Testimonial />
-          </div>
-          <div className="w-1/4">
-            <RegisterCard categories={testimonialcategories} />
-          </div>
-        </div>
-        <div className="flex- flex-col mb-10">
+        </div> */}
+        {/* <div className="flex- flex-col mb-10">
           <h1 className=" font-bold bg-gradient-to-r from-blue-900 to-sky-400 text-transparent bg-clip-text">
             Get Started
           </h1>
@@ -349,11 +212,11 @@ const DashBoard = () => {
               </div>
             </div>
           </div>
-        </div>
-        <SubmitSection />
+        </div> */}
+        {/* <SubmitSection /> */}
       </div>
     </section>
   );
 };
 
-export default DashBoard;
+export default InvestorDashboard;

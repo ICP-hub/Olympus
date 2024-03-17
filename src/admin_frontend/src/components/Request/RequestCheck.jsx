@@ -10,39 +10,6 @@ import { useSelector } from "react-redux";
 import NotificationCard from "../Notification/NotificationCard";
 import Loader from "../Loader/Loader";
 
-// const allMentorDeclinedStatus = [
-//   {
-//     uid: "7f9329debc6a765eb51dce5e6c2ecc1347088d6ac18267bdfc3ce5fdef7f9e93",
-//     active: true,
-//     approve: false,
-//     decline: false,
-//     profile: {
-//       user_data: {
-//         bio: [],
-//         country: "",
-//         area_of_intrest: "",
-//         profile_picture: [],
-//         telegram_id: [],
-//         twitter_id: [],
-//         openchat_username: ["nafees_04"],
-//         email: [],
-//         full_name: "nafees",
-//       },
-//       social_link: "",
-//       reason_for_joining: "",
-//       existing_icp_mentor: true,
-//       preferred_icp_hub: [],
-//       website: "",
-//       multichain: [],
-//       area_of_expertise: "",
-//       category_of_mentoring_service: "",
-//       years_of_mentoring: "",
-//       exisitng_icp_project_porfolio: [],
-//       icop_hub_or_spoke: true,
-//     },
-//   },
-//   // Add another mentor object here if needed
-// ];
 
 const RequestCheck = () => {
   // const allNotification = useSelector(
@@ -102,7 +69,14 @@ const RequestCheck = () => {
       investorApproved.length > 0 ||
       investorDeclined.length > 0;
 
-    setIsLoading(!isDataLoaded);
+    if (isDataLoaded) {
+      setIsLoading(false);
+    } else {
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 5000); 
+        return () => clearTimeout(timer);
+    }
   }, [
     mentorPending,
     mentorApproved,
@@ -135,6 +109,7 @@ const RequestCheck = () => {
     };
 
     const currentData = categoryMapping[activeCategory][selectedStatus];
+    // console.log("currentData =>", currentData);
     setFilteredNotifications(currentData);
   }, [
     activeCategory,
