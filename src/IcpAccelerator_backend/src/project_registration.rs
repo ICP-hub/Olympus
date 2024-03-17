@@ -306,6 +306,17 @@ pub fn get_projects_for_caller() -> Vec<ProjectInfo> {
     })
 }
 
+#[query]
+pub fn get_projects_with_all_info () -> Vec<ProjectInfoInternal>{
+    let caller = caller();
+    APPLICATION_FORM.with(|storage| {
+        let projects = storage.borrow();
+        let project_info= projects.get(&caller);
+        let projects = project_info.expect("couldn't get project information").clone();
+        projects
+    })
+}
+
 pub fn find_project_by_id(project_id: &str) -> Option<ProjectInfoInternal> {
     APPLICATION_FORM.with(|storage| {
         for projects in storage.borrow().values() {
@@ -316,6 +327,7 @@ pub fn find_project_by_id(project_id: &str) -> Option<ProjectInfoInternal> {
         None
     })
 }
+
 
 pub fn list_all_projects() -> HashMap<Principal, ProjectVecWithRoles> {
     let project_awaiters = APPLICATION_FORM.with(|awaiters| awaiters.borrow().clone());
@@ -727,6 +739,7 @@ pub fn filter_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
     })
 }
 
+#[query]
 pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUser> {
 
     let announcements_project = get_announcements();

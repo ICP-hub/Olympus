@@ -15,6 +15,8 @@ pub struct OfferToMentor {
     mentor_name: String,
     offer_i_have_written: String,
     time_of_request: u64,
+    accepted_at: u64,
+    declined_at: u64,
     request_status: String,
     response: String,
 }
@@ -33,6 +35,8 @@ pub struct OfferToSendToMentor {
     project_info: ProjectInfo,
     offer: String,
     sent_at: u64,
+    accepted_at: u64,
+    declined_at: u64,
     request_status: String,
     sender_principal: Principal,
     response: String,
@@ -94,6 +98,8 @@ pub async fn send_offer_to_mentor(mentor_id: Principal, msg: String, project_id:
         mentor_name: mentor.user_data.full_name,
         offer_i_have_written: msg.clone(),
         time_of_request: time(),
+        accepted_at: 0,
+        declined_at: 0,
         request_status: "pending".to_string(),
         response: "".to_string(),
     };
@@ -114,6 +120,8 @@ pub async fn send_offer_to_mentor(mentor_id: Principal, msg: String, project_id:
         project_info: project_info,
         offer: msg.clone(),
         sent_at: time(),
+        accepted_at: 0,
+        declined_at: 0,
         request_status: "pending".to_string(),
         sender_principal: caller(),
         response: "".to_string(),
@@ -122,6 +130,7 @@ pub async fn send_offer_to_mentor(mentor_id: Principal, msg: String, project_id:
     notify_mentor_with_offer(mentor_id, offer_to_send_to_mentor);
 }
 
+#[update]
 pub fn accept_offer(offer_id: String, response_message: String) {
     let mentor_id = caller();
 
@@ -131,6 +140,7 @@ pub fn accept_offer(offer_id: String, response_message: String) {
             if let Some(offer) = offers.iter_mut().find(|o| o.offer_id == offer_id) {
                 offer.request_status = "accepted".to_string();
                 offer.response = response_message.clone();
+                offer.accepted_at = time();
 
                 MY_SENT_NOTIFICATIONS.with(|sent_state| {
                     if let Some(sent_status_vector) =
@@ -142,6 +152,7 @@ pub fn accept_offer(offer_id: String, response_message: String) {
                         {
                             project_offer.request_status = "accepted".to_string();
                             project_offer.response = response_message.clone();
+                            project_offer.accepted_at = time()
                         }
                     }
                 });
@@ -150,6 +161,35 @@ pub fn accept_offer(offer_id: String, response_message: String) {
     });
 }
 
+#[update]
+pub fn decline_offer(offer_id: String, response_message: String) {
+    let mentor_id = caller();
+
+    MENTOR_ALERTS.with(|state| {
+        if let Some(offers) = state.borrow_mut().get_mut(&mentor_id) {
+            if let Some(offer) = offers.iter_mut().find(|o| o.offer_id == offer_id) {
+                offer.request_status = "declined".to_string();
+                offer.response = response_message.clone();
+                offer.declined_at = time()
+            }
+        }
+    });
+
+    MY_SENT_NOTIFICATIONS.with(|sent_state| {
+        for sent_status_vector in sent_state.borrow_mut().values_mut() {
+            if let Some(project_offer) = sent_status_vector
+                .iter_mut()
+                .find(|offer| offer.offer_id == offer_id)
+            {
+                project_offer.request_status = "declined".to_string();
+                project_offer.response = response_message.clone();
+                project_offer.declined_at = time()
+            }
+        }
+    });
+}
+
+#[query]
 pub fn get_pending_request_for_mentor(mentor_id: Principal) -> Vec<OfferToSendToMentor> {
     MENTOR_ALERTS.with(|pending_alerts| {
         pending_alerts
@@ -168,10 +208,12 @@ pub fn get_pending_request_for_mentor(mentor_id: Principal) -> Vec<OfferToSendTo
 #[query]
 pub fn get_project_pending_offers() -> Vec<OfferToMentor> {
     MY_SENT_NOTIFICATIONS.with(|sent_notifications| {
-        sent_notifications.borrow()
+        sent_notifications
+            .borrow()
             .get(&caller())
             .map_or_else(Vec::new, |offers| {
-                offers.iter()
+                offers
+                    .iter()
                     .filter(|offer| offer.request_status == "pending")
                     .cloned()
                     .collect()
@@ -179,3 +221,76 @@ pub fn get_project_pending_offers() -> Vec<OfferToMentor> {
     })
 }
 
+#[query]
+pub fn get_accepted_request_for_mentor(mentor_id: Principal) -> Vec<OfferToSendToMentor> {
+    MENTOR_ALERTS.with(|alerts| {
+        alerts
+            .borrow()
+            .get(&mentor_id)
+            .map_or_else(Vec::new, |offers| {
+                offers
+                    .iter()
+                    .filter(|offer| offer.request_status == "accepted")
+                    .cloned()
+                    .collect()
+            })
+    })
+}
+
+#[query]
+pub fn get_accepted_request_for_project() -> Vec<OfferToMentor> {
+    MY_SENT_NOTIFICATIONS.with(|notifications| {
+        notifications
+            .borrow()
+            .get(&caller())
+            .map_or_else(Vec::new, |offers| {
+                offers
+                    .iter()
+                    .filter(|offer| offer.request_status == "accepted")
+                    .cloned()
+                    .collect()
+            })
+    })
+}
+
+#[query]
+pub fn get_declined_request_for_mentor(mentor_id: Principal) -> Vec<OfferToSendToMentor> {
+    MENTOR_ALERTS.with(|alerts| {
+        alerts
+            .borrow()
+            .get(&mentor_id)
+            .map_or_else(Vec::new, |offers| {
+                offers
+                    .iter()
+                    .filter(|offer| offer.request_status == "declined")
+                    .cloned()
+                    .collect()
+            })
+    })
+}
+
+#[query]
+pub fn get_declined_request_for_project() -> Vec<OfferToMentor> {
+    MY_SENT_NOTIFICATIONS.with(|notifications| {
+        notifications
+            .borrow()
+            .get(&caller())
+            .map_or_else(Vec::new, |offers| {
+                offers
+                    .iter()
+                    .filter(|offer| offer.request_status == "declined")
+                    .cloned()
+                    .collect()
+            })
+    })
+}
+
+
+// self decline the send 
+
+// pub fn self_decline_request(){
+
+//     MY_SENT_NOTIFICATIONS.with(|sent_ones|{
+//         sent_ones.borrow_mut().get_mut(k)
+//     })
+// }

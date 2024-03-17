@@ -44,6 +44,14 @@ type HubOrganizerRegistration = record {
   hub_description : opt text;
 };
 type IcpHub = record { id : int32; region : text; name : text };
+type Jobs = record {
+  title : text;
+  link : text;
+  description : text;
+  opportunity : text;
+  timestamp : nat64;
+  project_id : text;
+};
 type LeaderboardEntryForLikes = record {
   like_count : opt nat;
   project_id : opt text;
@@ -128,6 +136,8 @@ type Notification_1 = record {
 type OfferToMentor = record {
   mentor_image : opt vec nat8;
   request_status : text;
+  accepted_at : nat64;
+  declined_at : nat64;
   offer_i_have_written : text;
   offer_id : text;
   response : text;
@@ -138,6 +148,8 @@ type OfferToMentor = record {
 type OfferToSendToMentor = record {
   request_status : text;
   offer : text;
+  accepted_at : nat64;
+  declined_at : nat64;
   offer_id : text;
   response : text;
   sent_at : nat64;
@@ -173,22 +185,21 @@ type ProjectInfo = record {
   supports_multichain : opt text;
   project_logo : vec nat8;
   project_name : text;
-  project_team : opt TeamMember;
+  project_team : opt vec TeamMember;
   icp_grants : opt text;
 };
 type ProjectInfoForUser = record {
   vc_associated : opt vec VentureCapitalist;
   area_of_focus : opt text;
-  date_ofjoining : text;
-  reviews : opt Suggestion;
+  reviews : vec Suggestion;
   team_member_info : opt vec TeamMember;
+  date_of_joining : opt nat64;
   website_social_group : opt text;
   mentor_associated : opt vec MentorProfile;
   country_of_project : opt text;
-  announcements : opt vec Announcements;
+  announcements : vec record { principal; vec MAnnouncements };
   live_link_of_project : opt text;
-  jobs_opportunity : opt text;
-  rank_of_project : opt nat64;
+  jobs_opportunity : opt vec Jobs;
 };
 type ProjectInfoInternal = record {
   uid : text;
@@ -287,10 +298,7 @@ type Suggestion = record {
   parent_id : opt nat64;
   project_id : text;
 };
-type TeamMember = record {
-  member_data : vec UserInformation;
-  member_uid : text;
-};
+type TeamMember = record { member_data : UserInformation; member_uid : text };
 type ThirtyInfoFounder = record {
   linked_in_profile : opt text;
   telegram_id : opt text;
@@ -356,6 +364,7 @@ type VentureCapitalistInternal = record {
   params : VentureCapitalist;
 };
 service : () -> {
+  accept_offer : (text, text) -> ();
   add_BlogPost : (text) -> (text);
   add_announcement : (Announcements) -> (text);
   add_job_type : (text) -> (text);
@@ -371,6 +380,7 @@ service : () -> {
   connect_to_team_member : (text, text) -> (text);
   decline_mentor_creation_request_candid : (principal, bool) -> (text);
   decline_mentor_profile_update_request : (principal, bool) -> (text);
+  decline_offer : (text, text) -> ();
   decline_project_creation_request : (principal) -> (text);
   decline_vc_creation_request : (principal, bool) -> (text);
   decline_vc_profile_update_request : (principal, bool) -> (text);
@@ -380,6 +390,10 @@ service : () -> {
   delete_venture_capitalist : () -> (text);
   delete_venture_capitalist_caller : () -> (text);
   filter_out_projects : (FilterCriteria) -> (vec ProjectInfo) query;
+  get_accepted_request_for_mentor : (principal) -> (
+      vec OfferToSendToMentor,
+    ) query;
+  get_accepted_request_for_project : () -> (vec OfferToMentor) query;
   get_admin_notifications : () -> (vec Notification) query;
   get_all_mentor_notification : (principal) -> (vec OfferToSendToMentor) query;
   get_all_mentors : () -> (vec record { principal; MentorWithRoles }) query;
@@ -392,13 +406,15 @@ service : () -> {
   get_announcements : () -> (vec record { principal; vec Announcements }) query;
   get_area_focus_expertise : () -> (vec Role_1) query;
   get_blog_post : () -> (vec record { principal; vec Blog }) query;
-  get_dummy_data_for_project_details_for_users : () -> (
-      ProjectInfoForUser,
+  get_declined_request_for_mentor : (principal) -> (
+      vec OfferToSendToMentor,
     ) query;
+  get_declined_request_for_project : () -> (vec OfferToMentor) query;
   get_founder_info_caller : () -> (opt FounderInfo) query;
   get_hub_organizer_candid : () -> (opt UniqueHubs) query;
   get_hubs_principal_using_region : (text) -> (vec text) query;
   get_icp_hubs_candid : () -> (vec IcpHub) query;
+  get_jobs_for_project : (text) -> (vec Jobs) query;
   get_latest_listed_project : () -> (vec ProjectInfoInternal) query;
   get_latest_live_proposal : () -> (vec ProjectInfoInternal) query;
   get_leaderboard_using_likes : () -> (vec LeaderboardEntryForLikes) query;
@@ -416,8 +432,12 @@ service : () -> {
   get_multichain_list : () -> (vec text) query;
   get_my_id : () -> (principal) query;
   get_notifications_for_hubs : () -> (vec NotificationProject) query;
+  get_pending_request_for_mentor : (principal) -> (
+      vec OfferToSendToMentor,
+    ) query;
   get_popular_listed_project : () -> (vec ProjectInfoInternal) query;
   get_popular_live_proposal : () -> (vec ProjectInfoInternal) query;
+  get_project_info_for_user : (text) -> (opt ProjectInfoForUser) query;
   get_project_pending_offers : () -> (vec OfferToMentor) query;
   get_project_requests : (text) -> (vec Request) query;
   get_project_upvotes : (text) -> (opt UpvoteRecord) query;
