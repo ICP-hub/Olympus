@@ -38,6 +38,12 @@ pub struct VentureCapitalist {
     pub linkedin_link: String,
 }
 
+#[derive(Clone, CandidType)]
+pub struct VentureCapitalistAll {
+    principal: Principal,
+    profile: VentureCapitalistInternal,
+}
+
 impl VentureCapitalist {
     //validation functions for Vc
     pub fn validate(&self) -> Result<(), String> {
@@ -101,6 +107,7 @@ pub type VcAnnouncements = HashMap<Principal, Vec<Announcements>>;
 pub type VentureCapitalistStorage = HashMap<Principal, VentureCapitalistInternal>;
 pub type VentureCapitalistParams = HashMap<Principal, VentureCapitalist>;
 
+
 thread_local! {
     pub static VENTURECAPITALIST_STORAGE: RefCell<VentureCapitalistStorage> = RefCell::new(VentureCapitalistStorage::new());
     pub static VC_AWAITS_RESPONSE: RefCell<VentureCapitalistStorage> = RefCell::new(VentureCapitalistStorage::new());
@@ -147,7 +154,7 @@ pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::
 
         for role in role_status
             .get_mut(&caller)
-            .expect("couldn't get role status for this principal")
+            .expect("you are not a user! be a user first!")
             .iter_mut()
         {
             if role.name == "vc" {
@@ -228,6 +235,24 @@ pub fn get_vc_info() -> Option<VentureCapitalist> {
             .borrow()
             .get(&caller)
             .map(|vc_internal| vc_internal.params.clone())
+    })
+}
+
+
+#[update]
+pub fn get_vc_info_by_principal(caller: Principal) -> HashMap<Principal, VentureCapitalistAll> {
+    VENTURECAPITALIST_STORAGE.with(|registry| {
+        let profile = registry.borrow().get(&caller).expect("couldn't get venture capital").clone();
+
+        let mut vc_all_info : HashMap<Principal, VentureCapitalistAll> = HashMap::new();
+
+        let all_capitalist_info = VentureCapitalistAll{
+            principal : caller,
+            profile : profile
+        };
+
+        vc_all_info.insert(caller, all_capitalist_info);
+        vc_all_info
     })
 }
 
