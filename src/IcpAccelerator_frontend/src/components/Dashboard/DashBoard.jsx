@@ -211,20 +211,24 @@ const DashBoard = () => {
             </div>
             <EventCard />
             <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
-              <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
-                Ongoing Accelerators
-              </h1>
-              <button className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
-                Explore more
-              </button>
-            </div>
-            <div className="flex md:w-[calc(100%/2-10px)] dxl:w-[calc(100%/3-10px)] justify-between w-full gap-4 flex-row">
+          <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
+            Event Announcement
+          </h1>
+          <button className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
+            Explore more
+          </button>
+        </div>
+        <div className="flex flex-wrap md:flex-nowrap gap-4 mb-4">
+          <SecondEventCard />
+          <SecondEventCard />
+        </div>
+            {/* <div className="flex md:w-[calc(100%/2-10px)] dxl:w-[calc(100%/3-10px)] justify-between w-full gap-4 flex-row">
               <div className="grid grid-col-2 gap-4">
                 {[...Array(2)].map((_, index) => (
                   <SecondEventCard key={index} />
                 ))}
               </div>
-            </div>
+            </div> */}
 
             <div className="flex flex-wrap md:flex-nowrap gap-4 mb-8">
               {projectJobData.map((data, index) => (
@@ -250,7 +254,7 @@ const DashBoard = () => {
                 <InvestorCard />
               </div>
               <div className="w-1/4">
-                <RegisterCard categories={categories} />
+                <RegisterCard categories={categories} redirect={'create-investor'}/>
               </div>
             </div>
             <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
@@ -266,7 +270,7 @@ const DashBoard = () => {
                 <MentorCard />
               </div>
               <div className="w-1/4">
-                <RegisterCard categories={mentorcategories} />
+                <RegisterCard categories={mentorcategories} redirect={'create-mentor'}/>
               </div>
             </div>
             {/* <Announcement/> */}
@@ -280,7 +284,7 @@ const DashBoard = () => {
                 <Testimonial />
               </div>
               <div className="w-1/4">
-                <RegisterCard categories={testimonialcategories} />
+                <RegisterCard categories={testimonialcategories} redirect={''}/>
               </div>
             </div>
             <div className="flex- flex-col mb-10">
