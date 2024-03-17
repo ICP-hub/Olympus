@@ -176,7 +176,7 @@ const LaunchedProjects = () => {
       projectDescription: "This is an amazing project focused on innovation.",
       projectAreaOfFocus: "Technology"
     },
-    {
+    {  
       projectName: "Creative Initiative",
       projectId: "DEF456",
       projectImage: ment,
@@ -196,7 +196,7 @@ const LaunchedProjects = () => {
     }
   ];
 
-  const [noData, setNoData] = useState(false);
+  const [noData, setNoData] = useState(null);
   const [allProjectData, setAllProjectData] = useState([]);
 
   const getAllProject = async (caller) => {
@@ -234,7 +234,6 @@ const LaunchedProjects = () => {
     }
   }
 
-
   return (
     <div className="flex flex-wrap -mx-4 mb-4 flex-row items-start">
       <div className="overflow-x-auto flex flex-row w-3/4">
@@ -265,21 +264,21 @@ const LaunchedProjects = () => {
               projectAreaOfFocus = data.projectAreaOfFocus
             }
             return (
-              <div className="w-full sm:w-1/2 md:w-1/3 mb-2" key={index}>
+              <div className="w-full sm:w-1/2 md:w-1/3 mb-2 px-3" key={index}>
                 <div className="flex justify-between items-baseline mb-4 flex-wrap bg-white m-2 overflow-hidden rounded-lg shadow-lg">
                   <div className="p-4">
                     <div className="flex justify-between items-baseline mb-4 flex-wrap">
-                      <div className="flex items-baseline">
+                      <div className="flex items-baseline w-1/2">
                         <img
                           className="rounded-full w-12 h-12 object-cover"
                           src={projectImage}
                           alt="profile"
                         />
-                        <h1 className="font-bold text-nowrap truncate">
+                        <h1 className="font-bold text-nowrap truncate w-1/2">
                           {projectName}
                         </h1>
                       </div>
-                      <div className="flex items-baseline">
+                      <div className="flex items-baseline w-1/2">
                         <img
                           className="h-5 w-5 rounded-full mr-2"
                           src={userImage}
@@ -459,7 +458,7 @@ const LaunchedProjects = () => {
             );
           })} */}
       </div>
-      <div className="w-1/4 mt-1.5">
+      <div className="w-1/4 py-2">
         <RegisterCard categories={categories} redirect={'create-project'} />
       </div>
     </div>

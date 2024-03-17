@@ -43,6 +43,46 @@ const CurrentlyRaising = () => {
   //     });
   // };
 
+  const defaultArray = [
+    {
+      projectName: "Innovative Solutions",
+      projectId: "ZYX987",
+      projectImage: "solutionImage",
+      userImage: "engineerImage",
+      principalId: "user001",
+      projectDescription: "This project aims to provide innovative solutions to real-world problems.",
+      projectAreaOfFocus: "Technology"
+    },
+    {
+      projectName: "Artistic Expressions",
+      projectId: "WVU654",
+      projectImage: "artImage",
+      userImage: "artistImage",
+      principalId: "user002",
+      projectDescription: "An exploration of artistic expressions pushing the boundaries of creativity.",
+      projectAreaOfFocus: "Art and Design"
+    },
+    {
+      projectName: "Community Empowerment",
+      projectId: "TSR321",
+      projectImage: "communityImage",
+      userImage: "activistImage",
+      principalId: "user003",
+      projectDescription: "Empowering communities through grassroots initiatives for lasting impact.",
+      projectAreaOfFocus: "Social Impact"
+    },
+    {
+      projectName: "Event Management",
+      projectId: "TSR321",
+      projectImage: "communityImage",
+      userImage: "activistImage",
+      principalId: "user003",
+      projectDescription: "Welcome to the best event management system on ICP. Fully Decentralized On ICP ",
+      projectAreaOfFocus: "Social Impact"
+    }
+  ];
+
+  const [noData, setNoData] = useState(null);
   const [allProjectData, setAllProjectData] = useState([]);
 
   const getAllProject = async (caller) => {
@@ -50,9 +90,17 @@ const CurrentlyRaising = () => {
       .list_all_projects()
       .then((result) => {
         console.log("result-in-get-all-projects", result);
-        setAllProjectData(result);
+        if (!result || result.length == 0) {
+          setNoData(true)
+          setAllProjectData(defaultArray)
+        } else {
+          setAllProjectData(result);
+          setNoData(false)
+        }
       })
       .catch((error) => {
+        setNoData(true)
+        setAllProjectData(defaultArray)
         console.log("error-in-get-all-projects", error);
       });
   };
@@ -71,124 +119,254 @@ const CurrentlyRaising = () => {
     }
   };
   return (
-    <div className="flex flex-wrap -mx-4 mb-4">
+    <div className="flex flex-wrap -mx-4 mb-4 flex-row items-start">
+    <div className="overflow-x-auto flex flex-row w-full">
       {allProjectData &&
         allProjectData.map((data, index) => {
-          console.log("data", data[1]?.project_profile[0]?.params);
-          let projectName = data[1]?.project_profile[0]?.params?.project_name;
-          let projectId = data[1]?.project_profile[0]?.uid;
-          let projectImage = uint8ArrayToBase64(
-            data[1]?.project_profile[0]?.params?.project_logo
-          );
-          let userImage = uint8ArrayToBase64(
-            data[1]?.project_profile[0]?.params?.user_data?.profile_picture[0]
-          );
-          let principalId = data[0].toText();
-          let projectDescription =
-            data[1]?.project_profile[0]?.params?.project_description;
-          let projectAreaOfFocus =
-            data[1]?.project_profile[0]?.params?.project_area_of_focus;
-          let moneyRaisedTillNow =
-            data[1]?.project_profile[0]?.params?.money_raised_till_now[0];
+          let projectName = ""
+          let projectId = ""
+          let projectImage = ""
+          let userImage = ""
+          let principalId = ""
+          let projectDescription = ""
+          let projectAreaOfFocus = ""
+          let moneyRaisedTillNow = ""
+           
+          if (noData === false) {
+            moneyRaisedTillNow = data[1]?.project_profile[0]?.params?.money_raised_till_now[0];
+            projectName = data[1]?.project_profile[0]?.params?.project_name;
+            projectId = data[1]?.project_profile[0]?.uid;
+            projectImage = uint8ArrayToBase64(data[1]?.project_profile[0]?.params?.project_logo);
+            userImage = uint8ArrayToBase64(data[1]?.project_profile[0]?.params?.user_data?.profile_picture[0]);
+            principalId = data[0].toText()
+            projectDescription = data[1]?.project_profile[0]?.params?.project_description
+            projectAreaOfFocus = data[1]?.project_profile[0]?.params?.project_area_of_focus
+          } else {
+            projectName = data.projectName
+            projectId = data.projectId
+            projectImage = data.projectImage
+            userImage = data.userImage
+            principalId = data.principalId
+            projectDescription = data.projectDescription
+            projectAreaOfFocus = data.projectAreaOfFocus
+            moneyRaisedTillNow = true
+          }
+          if(!moneyRaisedTillNow){
+            return null;
+          }
           return (
-            <>
-              {moneyRaisedTillNow === true ? (
-                <div
-                  key={index}
-                  className="px-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4"
-                >
-                  <div className="bg-white shadow-md rounded-lg overflow-hidden border border-gray-300 m-2">
-                    <div className="p-4">
-                      <div className="flex justify-between items-baseline mb-4 flex-wrap">
-                        <div className="flex items-baseline">
-                          <img
-                            className="rounded-full w-12 h-12"
-                            src={projectImage}
-                            alt="profile"
-                          />
-                          <h1 className="font-bold text-nowrap truncate">
-                            {projectName}
-                          </h1>
-                        </div>
-                        <div className="flex items-baseline">
-                          <img
-                            className="h-5 w-5 rounded-full mr-2"
-                            src={userImage}
-                            alt="not found"
-                          />
-                          <p className="text-xs truncate w-20">{principalId}</p>
-                        </div>
-                      </div>
-                      <div className="mb-4 flex items-baseline">
-                        <svg
-                          width="100%"
-                          height="8"
-                          className="rounded-lg"
-                          onMouseEnter={() => setIsHovered(true)}
-                          onMouseLeave={() => setIsHovered(false)}
-                        >
-                          <defs>
-                            <linearGradient
-                              id={`gradient-${projectId}`}
-                              x1="0%"
-                              y1="0%"
-                              x2="100%"
-                              y2="0%"
-                            >
-                              <stop
-                                offset="0%"
-                                stopColor={gradientStops.stop1}
-                                stopOpacity="1"
-                              />
-                              <stop
-                                offset="100%"
-                                stopColor={gradientStops.stop2}
-                                stopOpacity="1"
-                              />
-                            </linearGradient>
-                          </defs>
-                          <rect
-                            x="0"
-                            y="0"
-                            width={`${percent}%`}
-                            height="10"
-                            fill={`url(#gradient-${projectId})`}
-                          />
-                        </svg>
-                        <div className="ml-2 text-nowrap text-sm">Level 2</div>
-                      </div>
-                      <p className="text-gray-700 text-sm md:line-clamp-8 sxs:line-clamp-4 sm:line-clamp-6 line-clamp-8 h-36">
-                        {projectDescription}
-                      </p>
-                      {projectAreaOfFocus ? (
-                        <div className="flex gap-2 mt-2 text-xs">
-                          <p>{projectAreaOfFocus}</p>
-
-                          <p
-                            onClick={() => handleNavigate(projectId)}
-                            className="cursor-pointer"
-                          >
-                            +1 more
-                          </p>
-                        </div>
-                      ) : (
-                        ""
-                      )}
-                      <button
-                        className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"
-                        onClick={() => handleNavigate(projectId)}
-                      >
-                        KNOW MORE
-                      </button>
+            <div className="w-full sm:w-1/2 md:w-1/4 mb-2 px-3" key={index}>
+              <div className="flex justify-between items-baseline mb-4 flex-wrap bg-white m-2 overflow-hidden rounded-lg shadow-lg min-w-1/2">
+                <div className="p-4">
+                  <div className="flex justify-between items-baseline mb-4 flex-wrap">
+                    <div className="flex items-baseline w-1/2">
+                      <img
+                        className="rounded-full w-12 h-12 object-cover"
+                        src={projectImage}
+                        alt="profile"
+                      />
+                      <h1 className="font-bold text-nowrap truncate w-1/2">
+                        {projectName}
+                      </h1>
+                    </div>
+                    <div className="flex items-baseline w-1/2">
+                      <img
+                        className="h-5 w-5 rounded-full mr-2"
+                        src={userImage}
+                        alt="not found"
+                      />
+                      <p className="text-xs truncate w-20">{principalId}</p>
                     </div>
                   </div>
+                  <div className="mb-4 flex items-baseline">
+                    <svg
+                      width="100%"
+                      height="8"
+                      className="rounded-lg"
+                      onMouseEnter={() => setIsHovered(true)}
+                      onMouseLeave={() => setIsHovered(false)}
+                    >
+                      <defs>
+                        <linearGradient
+                          id={`gradient-${projectId}`}
+                          x1="0%"
+                          y1="0%"
+                          x2="100%"
+                          y2="0%"
+                        >
+                          <stop
+                            offset="0%"
+                            stopColor={gradientStops.stop1}
+                            stopOpacity="1"
+                          />
+                          <stop
+                            offset="100%"
+                            stopColor={gradientStops.stop2}
+                            stopOpacity="1"
+                          />
+                        </linearGradient>
+                      </defs>
+                      <rect
+                        x="0"
+                        y="0"
+                        width={`${percent}%`}
+                        height="10"
+                        fill={`url(#gradient-${projectId})`}
+                      />
+                    </svg>
+                    <div className="ml-2 text-nowrap text-sm">Level 2</div>
+                  </div>
+                  <p className="text-gray-700 text-sm md:line-clamp-8 sxs:line-clamp-4 sm:line-clamp-6 line-clamp-8 h-36">
+                    {projectDescription}
+                  </p>
+                  {projectAreaOfFocus ?
+                    <div className="flex gap-2 mt-2 text-xs">
+                      <p>{projectAreaOfFocus}</p>
+
+                      <p
+                        onClick={() =>
+                          handleNavigate(projectId)
+                        }
+                        className="cursor-pointer"
+                      >
+                        +1 more
+                      </p>
+                    </div> : ''}
+
+                  <button
+                    className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"
+                    onClick={() =>
+                      handleNavigate(projectId)
+                    }
+                  >
+                    KNOW MORE
+                  </button>
                 </div>
-              ) : (
-                ""
-              )}
-            </>
+              </div>
+            </div>
           );
         })}
+         {/* {allProjectData &&
+        allProjectData.map((data, index) => {
+          let projectName = ""
+          let projectId = ""
+          let projectImage = ""
+          let userImage = ""
+          let principalId = ""
+          let projectDescription = ""
+          let projectAreaOfFocus = ""
+          let moneyRaisedTillNow =
+            data[1]?.project_profile[0]?.params?.money_raised_till_now[0];
+          if (noData === false && moneyRaisedTillNow === true) {
+            projectName = data[1]?.project_profile[0]?.params?.project_name;
+            projectId = data[1]?.project_profile[0]?.uid;
+            projectImage = uint8ArrayToBase64(data[1]?.project_profile[0]?.params?.project_logo);
+            userImage = uint8ArrayToBase64(data[1]?.project_profile[0]?.params?.user_data?.profile_picture[0]);
+            principalId = data[0].toText()
+            projectDescription = data[1]?.project_profile[0]?.params?.project_description
+            projectAreaOfFocus = data[1]?.project_profile[0]?.params?.project_area_of_focus
+          } else {
+            projectName = data.projectName
+            projectId = data.projectId
+            projectImage = data.projectImage
+            userImage = data.userImage
+            principalId = data.principalId
+            projectDescription = data.projectDescription
+            projectAreaOfFocus = data.projectAreaOfFocus
+          }
+          return (
+            <div className="w-full sm:w-1/2 md:w-1/3 mb-2" key={index}>
+              <div className="flex justify-between items-baseline mb-4 flex-wrap bg-white m-2 overflow-hidden rounded-lg shadow-lg">
+                <div className="p-4">
+                  <div className="flex justify-between items-baseline mb-4 flex-wrap">
+                    <div className="flex items-baseline">
+                      <img
+                        className="rounded-full w-12 h-12 object-cover"
+                        src={projectImage}
+                        alt="profile"
+                      />
+                      <h1 className="font-bold text-nowrap truncate w-1/2">
+                        {projectName}
+                      </h1>
+                    </div>
+                    <div className="flex items-baseline">
+                      <img
+                        className="h-5 w-5 rounded-full mr-2"
+                        src={userImage}
+                        alt="not found"
+                      />
+                      <p className="text-xs truncate w-20">{principalId}</p>
+                    </div>
+                  </div>
+                  <div className="mb-4 flex items-baseline">
+                    <svg
+                      width="100%"
+                      height="8"
+                      className="rounded-lg"
+                      onMouseEnter={() => setIsHovered(true)}
+                      onMouseLeave={() => setIsHovered(false)}
+                    >
+                      <defs>
+                        <linearGradient
+                          id={`gradient-${projectId}`}
+                          x1="0%"
+                          y1="0%"
+                          x2="100%"
+                          y2="0%"
+                        >
+                          <stop
+                            offset="0%"
+                            stopColor={gradientStops.stop1}
+                            stopOpacity="1"
+                          />
+                          <stop
+                            offset="100%"
+                            stopColor={gradientStops.stop2}
+                            stopOpacity="1"
+                          />
+                        </linearGradient>
+                      </defs>
+                      <rect
+                        x="0"
+                        y="0"
+                        width={`${percent}%`}
+                        height="10"
+                        fill={`url(#gradient-${projectId})`}
+                      />
+                    </svg>
+                    <div className="ml-2 text-nowrap text-sm">Level 2</div>
+                  </div>
+                  <p className="text-gray-700 text-sm md:line-clamp-8 sxs:line-clamp-4 sm:line-clamp-6 line-clamp-8 h-36">
+                    {projectDescription}
+                  </p>
+                  {projectAreaOfFocus ?
+                    <div className="flex gap-2 mt-2 text-xs">
+                      <p>{projectAreaOfFocus}</p>
+
+                      <p
+                        onClick={() =>
+                          handleNavigate(projectId)
+                        }
+                        className="cursor-pointer"
+                      >
+                        +1 more
+                      </p>
+                    </div> : ''}
+
+                  <button
+                    className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"
+                    onClick={() =>
+                      handleNavigate(projectId)
+                    }
+                  >
+                    KNOW MORE
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        })} */}
+    </div>
     </div>
   );
 };

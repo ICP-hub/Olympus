@@ -8,7 +8,7 @@ const EventCard = () => {
     <div className="block lgx:flex w-full drop-shadow-xl rounded-lg bg-gray-200 lgx:h-96 mb-8">
       <div className="lgx:w-[70%] w-full relative">
         <img
-          className="w-full h-[30vw] lgx:h-full object-fill rounded-lg "
+          className="h-full object-cover rounded-lg w-full"
           src={hover}
           alt="not found"
         />
@@ -53,7 +53,7 @@ const EventCard = () => {
                 </div>
               </div>
             </div>
-            <div className="flex justify-center items-center ">
+            <div className="flex justify-center items-center mt-8">
               <button className="mb-2 uppercase w-full bg-[#3505B2] mr-2 text-white  px-4 py-2 rounded-md  items-center font-extrabold text-sm mt-2 ">
                 Register now
               </button>
