@@ -419,7 +419,7 @@ service : () -> {
   get_hub_organizer_candid : () -> (opt UniqueHubs) query;
   get_hubs_principal_using_region : (text) -> (vec text) query;
   get_icp_hubs_candid : () -> (vec IcpHub) query;
-  get_jobs_for_project : (text) -> (vec Jobs) query;
+  get_jobs_posted_by_project : (text) -> (vec Jobs) query;
   get_latest_listed_project : () -> (vec ProjectInfoInternal) query;
   get_latest_live_proposal : () -> (vec ProjectInfoInternal) query;
   get_leaderboard_using_likes : () -> (vec LeaderboardEntryForLikes) query;
