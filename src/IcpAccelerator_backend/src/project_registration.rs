@@ -444,49 +444,49 @@ pub fn delete_project(id: String) -> std::string::String {
     }
 }
 
-pub fn verify_project(project_id: &str) -> String {
-    let verifier_info = hub_organizer::get_hub_organizer();
+// pub fn verify_project(project_id: &str) -> String {
+//     let verifier_info = hub_organizer::get_hub_organizer();
 
-    match verifier_info {
-        Some(info) => {
-            let mut project_found = false;
+//     match verifier_info {
+//         Some(info) => {
+//             let mut project_found = false;
 
-            APPLICATION_FORM.with(|projects| {
-                let mut projects = projects.borrow_mut();
-                for project_internal in projects.values_mut().flat_map(|v| v.iter_mut()) {
-                    if project_internal.uid == project_id {
-                        project_internal.is_verified = true;
-                        project_found = true;
-                        break;
-                    }
-                }
-            });
+//             APPLICATION_FORM.with(|projects| {
+//                 let mut projects = projects.borrow_mut();
+//                 for project_internal in projects.values_mut().flat_map(|v| v.iter_mut()) {
+//                     if project_internal.uid == project_id {
+//                         project_internal.is_verified = true;
+//                         project_found = true;
+//                         break;
+//                     }
+//                 }
+//             });
 
-            if project_found {
-                NOTIFICATIONS.with(|notifications| {
-                    let mut notifications = notifications.borrow_mut();
-                    if let Some(notification) = notifications
-                        .values_mut()
-                        .flat_map(|n| n.iter_mut())
-                        .find(|n| n.project_id == project_id)
-                    {
-                        notification.notification_verifier = NotificationVerifier {
-                            name: info
-                                .hubs
-                                .full_name
-                                .clone()
-                                .unwrap_or_else(|| "Default Name".to_string()),
-                            image: info.hubs.profile_picture.clone().unwrap_or_else(|| vec![]),
-                        };
-                    }
-                });
-            }
+//             if project_found {
+//                 NOTIFICATIONS.with(|notifications| {
+//                     let mut notifications = notifications.borrow_mut();
+//                     if let Some(notification) = notifications
+//                         .values_mut()
+//                         .flat_map(|n| n.iter_mut())
+//                         .find(|n| n.project_id == project_id)
+//                     {
+//                         notification.notification_verifier = NotificationVerifier {
+//                             name: info
+//                                 .hubs
+//                                 .full_name
+//                                 .clone()
+//                                 .unwrap_or_else(|| "Default Name".to_string()),
+//                             image: info.hubs.profile_picture.clone().unwrap_or_else(|| vec![]),
+//                         };
+//                     }
+//                 });
+//             }
 
-            "Project verified successfully.".to_string()
-        }
-        None => "Verifier information could not be retrieved.".to_string(),
-    }
-}
+//             "Project verified successfully.".to_string()
+//         }
+//         None => "Verifier information could not be retrieved.".to_string(),
+//     }
+// }
 
 pub fn get_notifications_for_caller() -> Vec<NotificationProject> {
     let hub_principal = caller();

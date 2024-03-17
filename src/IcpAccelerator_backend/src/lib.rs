@@ -1,4 +1,3 @@
-mod notification_to_mentor;
 mod admin;
 mod hub_organizer;
 mod latest_popular_projects;
@@ -7,6 +6,7 @@ mod manage_focus_expertise;
 mod manage_hubs;
 mod mentor;
 mod notification;
+mod notification_to_mentor;
 mod project_like;
 mod requests;
 mod roles;
@@ -16,16 +16,16 @@ mod vc_registration;
 use ic_cdk_macros::post_upgrade;
 mod default_images;
 
-use notification_to_mentor::*;
 use crate::project_registration::*;
+use notification_to_mentor::*;
 
-use hub_organizer::{HubOrganizerRegistration, UniqueHubs};
+
 use ic_cdk::api::caller;
 use ic_cdk::pre_upgrade;
 use leaderboard::{
     LeaderboardEntryForLikes, LeaderboardEntryForRatings, LeaderboardEntryForUpvote,
 };
-use notification::pre_upgrade_notifications;
+// use notification::pre_upgrade_notifications;
 use project_like::LikeRecord;
 use project_registration::FilterCriteria;
 use ratings::RatingAverages;
@@ -48,7 +48,7 @@ mod register_user;
 mod roadmap_suggestion;
 mod trie;
 
-use crate::notification::Notification;
+// use crate::notification::Notification;
 use crate::project_registration::Announcements;
 use crate::project_registration::Blog;
 use crate::ratings::MainLevelRatings;
@@ -199,8 +199,8 @@ async fn update_project(project_id: String, updated_project: ProjectInfo) -> Str
 }
 
 #[update]
-async fn update_team_member(project_id: String, member_uid: String) -> String { 
-        project_registration::update_team_member(&project_id, member_uid).await
+async fn update_team_member(project_id: String, member_uid: String) -> String {
+    project_registration::update_team_member(&project_id, member_uid).await
 }
 
 #[update]
@@ -208,10 +208,10 @@ fn delete_project(id: String) -> std::string::String {
     project_registration::delete_project(id)
 }
 
-#[update]
-fn verify_project_under_your_hub(project_id: String) -> String {
-    project_registration::verify_project(&project_id)
-}
+// #[update]
+// fn verify_project_under_your_hub(project_id: String) -> String {
+//     project_registration::verify_project(&project_id)
+// }
 
 #[update]
 fn connect_to_team_member(project_id: String, team_user_name: String) -> String {
@@ -388,56 +388,8 @@ fn get_area_focus_expertise() -> Vec<Areas> {
 }
 
 #[query]
-fn get_hubs_principal_using_region(region: String) -> Vec<String> {
-    hub_organizer::get_hub_organizer_principals_by_region(region)
-}
-
-#[query]
 fn greet(name: String) -> String {
     format!("Hello! {}", name)
-}
-
-#[update]
-fn send_connection_request(mentor_id: Principal, msg: String) -> String {
-    notification::send_connection_request(mentor_id, msg)
-}
-
-#[query]
-fn view_notifications_candid(mentor_id: Principal) -> Vec<Notification> {
-    notification::view_notifications(mentor_id)
-}
-
-#[update]
-fn respond_to_connection_request_candid(startup_id: Principal, accept: bool) -> String {
-    notification::respond_to_connection_request(startup_id, accept)
-}
-
-//Hub Organizers
-#[update]
-
-async fn register_hub_organizer_candid(form: hub_organizer::HubOrganizerRegistration) -> String {
-    let reg_response = hub_organizer::register_hub_organizer(form).await;
-
-    //if assigned { return format!("roles assigned")}
-    reg_response
-}
-
-#[query]
-
-fn get_hub_organizer_candid() -> Option<UniqueHubs> {
-    hub_organizer::get_hub_organizer()
-}
-
-#[update]
-
-fn update_hub_organizer_candid(params: HubOrganizerRegistration) -> String {
-    let required_role = vec![UserRole::ICPHubOrganizer];
-
-    if has_required_role(&required_role) {
-        hub_organizer::update_hub_organizer(params)
-    } else {
-        "you don't have access to this function".to_string()
-    }
 }
 
 #[query]
@@ -544,7 +496,6 @@ fn get_admin_notifications() -> Vec<admin::Notification> {
 
 #[pre_upgrade]
 fn pre_upgrade() {
-    pre_upgrade_notifications();
     pre_upgrade_vc();
     pre_upgrade_user_modules();
     pre_upgrade_upvotes();
@@ -552,7 +503,6 @@ fn pre_upgrade() {
 
 #[post_upgrade]
 fn post_upgrade() {
-    post_upgrade_notifications();
     post_upgrade_vc();
     post_upgrade_user_modules();
     post_upgrade_upvotes();
