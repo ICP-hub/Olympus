@@ -121,6 +121,8 @@ import { useSelector } from "react-redux";
 
 const LaunchedProjects = () => {
   const actor = useSelector((currState) => currState.actors.actor);
+  const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
+
   const [isHovered, setIsHovered] = useState(false);
   const [percent, setPercent] = useState(0);
   const [showLine, setShowLine] = useState({});
@@ -156,18 +158,6 @@ const LaunchedProjects = () => {
   // };
 
   const categories = [
-    // {
-    //   title: "Register as a Mentor",
-    //   description: "Join our community as a mentor to guide projects.",
-    //   buttonText: "Register Now",
-    //   imgSrc: "mentorImageSrc",
-    // },
-    // {
-    //   title: "Register as an Investor",
-    //   description: "Discover innovative projects to invest in.",
-    //   buttonText: "Register Now",
-    //   imgSrc: "investorImageSrc",
-    // },
     {
       title: "Register your Projects",
       description: "See a project missing? Submit your projects to this page.",
@@ -175,15 +165,6 @@ const LaunchedProjects = () => {
       imgSrc: hover,
     },
   ];
-  //   function uint8ArrayToBase64(uint8Arr) {
-  //     // Directly use the entire Uint8Array to create a Buffer
-  //     let buffer = Buffer.from(uint8Arr);
-  //     // Create a blob from the buffer
-  //     const blob = new Blob([buffer], { type: 'image/png' }); // Assuming it's PNG, adjust the MIME type accordingly
-  //     // Generate an object URL from the blob
-  //     const url = URL.createObjectURL(blob);
-  //     return url;
-  // }
 
   const [allProjectData, setAllProjectData] = useState([]);
 
@@ -192,9 +173,6 @@ const LaunchedProjects = () => {
       .list_all_projects()
       .then((result) => {
         console.log("result-in-get-all-projects", result);
-        // const project = result.map((project) => {
-        //   return project;
-        // });
         setAllProjectData(result);
       })
       .catch((error) => {
@@ -210,11 +188,12 @@ const LaunchedProjects = () => {
     }
   }, [actor]);
 
-  // console.log("allProjectData", data[1]?.[0]._isPrincipal);
+const handleNavigate=(projectId)=>{
+  if (isAuthenticated){
+    navigate(`/individual-project-details/${projectId}`)
+  }
 
-  // let userPrincipalId = allProjectData[1]?.[0]?._isPrincipal.toText()
-  //  console.log(userPrincipalId)
-
+}
   return (
     <div className="flex flex-wrap -mx-4 mb-4 flex-row items-start">
       <div className="overflow-x-auto flex flex-row w-3/4">
@@ -306,7 +285,7 @@ const LaunchedProjects = () => {
                      
                       <p
                          onClick={() =>
-                          navigate(`/individual-project-details/${projectId}`)
+                          handleNavigate(projectId)
                         }
                         className="cursor-pointer"
                       >
@@ -317,7 +296,7 @@ const LaunchedProjects = () => {
                     <button
                       className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"
                       onClick={() =>
-                        navigate(`/individual-project-details/${projectId}`)
+                        handleNavigate(projectId)
                       }
                     >
                       KNOW MORE
