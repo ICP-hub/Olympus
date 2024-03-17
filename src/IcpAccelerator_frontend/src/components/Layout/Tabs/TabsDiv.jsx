@@ -6,6 +6,7 @@ import { switchRoleRequestHandler } from "../../StateManagement/Redux/Reducers/u
 export default function TabsDiv({ role, onClose }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [isChecked, setIsChecked] = useState(true);
 
   const redirectPath = (val) => {
     switch (val) {
@@ -25,6 +26,7 @@ export default function TabsDiv({ role, onClose }) {
       navigate(redirectPath(roleName));
       onClose();
     } else if (status === "switch") {
+      setIsChecked(false)
       await dispatch(
         switchRoleRequestHandler({
           roleName,
@@ -38,15 +40,7 @@ export default function TabsDiv({ role, onClose }) {
   };
 
   const getSpans = (roleName, status) => {
-    const [isChecked, setIsChecked] = useState(true);
 
-    const handleCheckboxClick = () => {
-      if (status === "switch") {
-        setIsChecked(false);
-        onClose();
-        window.location.href = '/';
-      }
-    };
     return (
       <div
         className="border border-[#B8B8B8] flex items-baseline justify-between p-4 bg-gradient-to-l from-[#FFFFFF00] to-[#FFFFFF6B]"
@@ -78,7 +72,7 @@ export default function TabsDiv({ role, onClose }) {
               type="checkbox"
               className="sr-only peer"
               defaultChecked={false}
-              onChange={() => { handleCheckboxClick() }}
+              onChange={() => clickEventHandler(roleName, status)}
             />
             <div
               className={`relative w-11 h-6 bg-[#B2B1B6] rounded-full peer peer-checked:after:translate-x-full ${status.current

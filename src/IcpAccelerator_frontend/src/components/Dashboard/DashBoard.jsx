@@ -129,31 +129,31 @@ const DashBoard = () => {
     })
   }
 
-  const getAllMentors = async (caller) => {
-    await caller.get_all_mentors_candid().then((result) => {
-      console.log('result-in-get-all-mentors', result)
-    }).catch((error) => {
-      console.log('error-in-get-all-mentors', error)
-    })
-  }
+  // const getAllMentors = async (caller) => {
+  //   await caller.get_all_mentors_candid().then((result) => {
+  //     console.log('result-in-get-all-mentors', result)
+  //   }).catch((error) => {
+  //     console.log('error-in-get-all-mentors', error)
+  //   })
+  // }
 
-  const getAllInvestors = async (caller) => {
-    await caller.list_all_vcs().then((result) => {
-      console.log('result-in-get-all-investors', result)
-    }).catch((error) => {
-      console.log('error-in-get-all-investors', error)
-    })
-  }
+  // const getAllInvestors = async (caller) => {
+  //   await caller.list_all_vcs().then((result) => {
+  //     console.log('result-in-get-all-investors', result)
+  //   }).catch((error) => {
+  //     console.log('error-in-get-all-investors', error)
+  //   })
+  // }
 
   useEffect(() => {
     if (actor) {
       getAllProject(actor);
-      getAllMentors(actor);
-      getAllInvestors(actor);
+      // getAllMentors(actor);
+      // getAllInvestors(actor);
     } else {
       getAllProject(IcpAccelerator_backend);
-      getAllMentors(IcpAccelerator_backend);
-      getAllInvestors(IcpAccelerator_backend);
+      // getAllMentors(IcpAccelerator_backend);
+      // getAllInvestors(IcpAccelerator_backend);
     }
   }, [actor])
 

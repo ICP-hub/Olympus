@@ -21,8 +21,13 @@ import CreateProjectsDetails from "./CreateProjectsDetails";
 import { bufferToImageBlob } from "../../Utils/formatter/bufferToImageBlob";
 import CreateProjectsAdditionalDetails from "./CreateProjectsAdditionalDetails";
 import { defaultUserImage } from "../../RoleSelector/Image";
-import { defaultProjectLogo } from "../../RoleSelector/ProjectLogo";
-import { defaultProjectCover } from "../../RoleSelector/ProjectCover";
+// import { defaultProjectLogo } from "../../RoleSelector/ProjectLogo";
+// import { defaultProjectCover } from "../../RoleSelector/ProjectCover";
+// import { defaultProjectCover } from "../../RoleSelector/ProjectCover";
+// import { defaultProjectCover } from "../../RoleSelector/ProjectCover";
+import { defaultUserImage as defaultProjectLogo } from "../../RoleSelector/Image";
+import { defaultUserImage as defaultProjectCover } from "../../RoleSelector/Image";
+
 const validationSchema = {
   personalDetails: yup.object().shape({
     full_name: yup
