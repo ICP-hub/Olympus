@@ -80,7 +80,7 @@ const LiveProjectBar = () => {
           </div>
         </div>
 
-        <div className="mt-4 w-full mx-[4%]">
+        <div className="bg-blue-100 border mt-4 mx-[4%] pt-4 px-10 rounded-lg w-[80%]">
           <h1 className="font-extrabold text-xl mb-2">Project Progress</h1>
           <div className="flex items-center">
             <div className="flex-1 bg-gray-300 rounded-full h-2 overflow-hidden">
