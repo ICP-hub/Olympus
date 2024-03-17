@@ -23,7 +23,6 @@ import CompressedImage from "../../ImageCompressed/CompressedImage";
 import DetailHeroSection from "../../Common/DetailHeroSection";
 import Mentor from "../../../../assets/images/mentorRegistration.png";
 import { bufferToImageBlob } from "../../Utils/formatter/bufferToImageBlob";
-import { defaultUserImage } from "../../RoleSelector/Image";
 
 const validationSchema = {
   userDetails: yup.object().shape({
@@ -87,6 +86,7 @@ const validationSchema = {
       ),
     money_invested: yup
       .number()
+      .typeError("You must enter a number")
       .positive("Must be a positive number")
       .optional()
       .test("is-non-empty", "Money invested is required", (value) =>
@@ -112,6 +112,7 @@ const validationSchema = {
       ),
     fund_size: yup
       .number()
+      .typeError("You must enter a number")
       .positive("Must be a positive number")
       .required("Size of fund is required")
       .test("is-non-empty", "Size of fund is required", (value) =>
@@ -127,11 +128,12 @@ const validationSchema = {
     //   ),
     average_check_size: yup
       .number()
+      .typeError("You must enter a number")
       .required("Size of managed fund is required")
       .positive("Must be a positive number")
       .test(
         "is-float",
-        "Size of managed fund must be a positive number with at most two decimal places",
+        "Size of managed fund must be a positive number",
         (value) => value && /^\d+(\.\d{1,2})?$/.test(value)
       ),
     portfolio_link: yup
@@ -144,10 +146,7 @@ const validationSchema = {
   additionalInfo: yup.object().shape({
     project_on_multichain: yup
       .string()
-      .optional()
-      .test("is-non-empty", "Confirmation is required", (value) =>
-        /\S/.test(value)
-      ),
+      .optional(),
     reason_for_joining: yup
       .string()
       .required("Reason for joining is required")
@@ -156,6 +155,7 @@ const validationSchema = {
       ),
     number_of_portfolio_companies: yup
       .number()
+      .typeError("You must enter a number")
       .positive("Must be a positive number")
       .integer("Must be an integer")
       .required("Number of portfolio companies is required")
@@ -180,12 +180,7 @@ const validationSchema = {
       ),
     announcement_details: yup
       .string()
-      .optional()
-      .test(
-        "is-non-empty",
-        "Investment stage preference is required",
-        (value) => /\S/.test(value)
-      ),
+      .optional(),
     website_link: yup
       .string()
       .required("Portfolio required")
@@ -324,7 +319,10 @@ const InvestorRegistration = () => {
     // Update ExistingICPInvestor based on existing_icp_investor field value
     setExistingICPInvestor(ExistingICPInvestor === "true");
     setIsMulti_Chain(IsMultiChain === "true");
-  }, [ExistingICPInvestor, IsMultiChain]);
+    if (IsMultiChain !== "true") {
+      setValue("project_on_multichain", "");
+    }
+  }, [ExistingICPInvestor, IsMultiChain, setValue]);
 
   useEffect(() => {
     if (!userHasInteracted) return;
@@ -345,10 +343,6 @@ const InvestorRegistration = () => {
     const fieldsToValidate = steps[step].fields.map((field) => field.name);
     const result = await trigger(fieldsToValidate);
     if (result) {
-      if (!image && !formData.venture_image) {
-        alert("Please upload a profile image.");
-        return;
-      }
       setStep((prevStep) => prevStep + 1);
       setActiveTab(investorRegistration[step + 1]?.id);
     }
@@ -392,6 +386,19 @@ const InvestorRegistration = () => {
       setActiveTab(investorRegistration[step - 1]?.id);
     }
   };
+  useEffect(() => {
+    const preventScroll = (e) => {
+      if (e.target.type === "number") {
+        e.preventDefault();
+      }
+    };
+
+    window.addEventListener("wheel", preventScroll, { passive: false });
+
+    return () => {
+      window.removeEventListener("wheel", preventScroll);
+    };
+  }, []);
 
   useEffect(() => {
     if (investorFullData && investorFullData.length > 0) {
@@ -419,7 +426,7 @@ const InvestorRegistration = () => {
 
   const sendingInvestorData = async (val) => {
     console.log("data jo jaega backend mai =>", val);
-    // val.logo = val.logo[0] || defaultUserImage;
+    // val.logo = val.logo[0] || [];
     let result;
     try {
       // if (specificRole !== null || undefined) {
@@ -527,7 +534,7 @@ const InvestorRegistration = () => {
           openchat_username: [updatedFormData.openchat_username],
           email: [updatedFormData.email],
           full_name: updatedFormData.full_name,
-          profile_picture: [updatedFormData.venture_image],
+          profile_picture: [updatedFormData.venture_image] || [],
         },
         preferred_icp_hub: updatedFormData.preferred_icp_hub,
         existing_icp_investor: updatedexisting_icp_investor,
@@ -697,7 +704,7 @@ const InvestorRegistration = () => {
                     </select>
 
                     {errors.country && (
-                      <p className="text-red-500 text-xs italic">
+                      <p className="mt-1 text-sm text-red-500 font-bold text-left">
                         {errors.country.message}
                       </p>
                     )}
@@ -818,7 +825,7 @@ const InvestorRegistration = () => {
                       ))}
                     </select>
                     {errors.preferred_icp_hub && (
-                      <p className="text-red-500 text-xs italic">
+                      <p className="mt-1 text-sm text-red-500 font-bold text-left">
                         {errors.preferred_icp_hub.message}
                       </p>
                     )}
@@ -846,7 +853,7 @@ const InvestorRegistration = () => {
                       </option>
                     </select>
                     {errors.existing_icp_investor && (
-                      <p className="text-red-500 text-xs italic">
+                      <p className="mt-1 text-sm text-red-500 font-bold text-left">
                         {errors.existing_icp_investor.message}
                       </p>
                     )}
@@ -881,7 +888,7 @@ const InvestorRegistration = () => {
                       </option>
                     </select>
                     {errors.investor_type && (
-                      <p className="text-red-500 text-xs italic">
+                      <p className="mt-1 text-sm text-red-500 font-bold text-left">
                         {errors.investor_type.message}
                       </p>
                     )}
@@ -907,7 +914,7 @@ const InvestorRegistration = () => {
                       disabled={!isExistingICPInvestor}
                     />
                     {errors.money_invested && (
-                      <p className="text-red-500 text-xs italic">
+                      <p className="mt-1 text-sm text-red-500 font-bold text-left">
                         {errors.money_invested.message}
                       </p>
                     )}
@@ -932,7 +939,7 @@ const InvestorRegistration = () => {
                       disabled={!isExistingICPInvestor}
                     />
                     {errors.existing_icp_portfolio && (
-                      <p className="text-red-500 text-xs italic">
+                      <p className="mt-1 text-sm text-red-500 font-bold text-left">
                         {errors.existing_icp_portfolio.message}
                       </p>
                     )}
@@ -996,7 +1003,7 @@ const InvestorRegistration = () => {
                       </option>
                     </select>
                     {errors.multi_chain && (
-                      <p className="text-red-500 text-xs italic">
+                      <p className="mt-1 text-sm text-red-500 font-bold text-left">
                         {errors.multi_chain.message}
                       </p>
                     )}
@@ -1031,7 +1038,7 @@ const InvestorRegistration = () => {
                       ))}
                     </select>
                     {errors.project_on_multichain && (
-                      <p className="text-red-500 text-xs italic">
+                      <p className="mt-1 text-sm text-red-500 font-bold text-left">
                         {errors.project_on_multichain.message}
                       </p>
                     )}
@@ -1077,7 +1084,7 @@ const InvestorRegistration = () => {
                       </option>
                     </select>
                     {errors.reason_for_joining && (
-                      <p className="text-red-500 text-xs italic">
+                      <p className="mt-1 text-sm text-red-500 font-bold text-left">
                         {errors.reason_for_joining.message}
                       </p>
                     )}

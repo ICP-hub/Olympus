@@ -4,7 +4,7 @@ export const mentorRegistrationPersonalDetails = [
     type: "text",
     name: "full_name",
     required: true,
-    label: "Full name",
+    label: "Full name*",
     onFocus: null,
     onBlur: null,
   },
