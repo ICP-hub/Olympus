@@ -199,10 +199,8 @@ async fn update_project(project_id: String, updated_project: ProjectInfo) -> Str
 }
 
 #[update]
-async fn update_team_member(project_id: String, member_uid: String) -> String {
-
+async fn update_team_member(project_id: String, member_uid: String) -> String { 
         project_registration::update_team_member(&project_id, member_uid).await
-    
 }
 
 #[update]

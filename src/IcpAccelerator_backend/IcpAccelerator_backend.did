@@ -361,6 +361,10 @@ type VentureCapitalist = record {
   category_of_investment : text;
   type_of_investment : text;
 };
+type VentureCapitalistAll = record {
+  "principal" : principal;
+  profile : VentureCapitalistInternal;
+};
 type VentureCapitalistInternal = record {
   uid : text;
   approve : bool;
@@ -467,6 +471,9 @@ service : () -> {
       vec record { principal; vec MAnnouncements },
     ) query;
   get_vc_info : () -> (opt VentureCapitalist) query;
+  get_vc_info_by_principal : (principal) -> (
+      vec record { principal; VentureCapitalistAll },
+    );
   get_venture_capitalist_info : () -> (opt VentureCapitalist) query;
   get_your_project_notifications : () -> (vec NotificationForOwner) query;
   greet : (text) -> (text) query;
