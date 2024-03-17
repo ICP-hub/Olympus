@@ -7,10 +7,11 @@ use ic_cdk::api::caller;
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::api::stable::{StableReader, StableWriter};
 use ic_cdk::api::time;
-use ic_cdk_macros::{query, update};
+use ic_cdk_macros::*;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::cell::RefCell;
+use std::io::Read;
 use std::{collections::HashMap, io::Write};
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq)]
@@ -110,7 +111,7 @@ thread_local! {
     pub static VC_ANNOUNCEMENTS:RefCell<VcAnnouncements> = RefCell::new(VcAnnouncements::new());
 }
 
-pub fn pre_upgrade() {
+pub fn pre_upgrade_vc() {
     VENTURECAPITALIST_STORAGE.with(|registry| {
         let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
 
@@ -118,6 +119,90 @@ pub fn pre_upgrade() {
         writer
             .write(&serialized)
             .expect("Failed to write to stable storage");
+    });
+
+    VC_AWAITS_RESPONSE.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+
+    DECLINED_VC_REQUESTS.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    VC_PROFILE_EDIT_AWAITS.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    DECLINED_VC_PROFILE_EDIT_REQUEST.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    VC_ANNOUNCEMENTS.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+}
+
+pub fn post_upgrade_vc() {
+    let mut reader = StableReader::default();
+    let mut data = Vec::new();
+    reader
+        .read_to_end(&mut data)
+        .expect("Failed to read from stable storage");
+    let notifications: HashMap<Principal, Vec<Announcements>> =
+        bincode::deserialize(&data).expect("Deserialization failed of notification");
+    VC_ANNOUNCEMENTS.with(|notifications_ref| {
+        *notifications_ref.borrow_mut() = notifications;
+    });
+    let vc_storage: HashMap<Principal, VentureCapitalistInternal> =
+        bincode::deserialize(&data).expect("Deserialization failed of notification");
+    VENTURECAPITALIST_STORAGE.with(|notifications_ref| {
+        *notifications_ref.borrow_mut() = vc_storage;
+    });
+
+    let vc_awaits: HashMap<Principal, VentureCapitalistInternal> =
+        bincode::deserialize(&data).expect("Deserialization failed of notification");
+    VC_AWAITS_RESPONSE.with(|notifications_ref| {
+        *notifications_ref.borrow_mut() = vc_awaits;
+    });
+
+    let declined_vc: HashMap<Principal, VentureCapitalistInternal> =
+        bincode::deserialize(&data).expect("Deserialization failed of notification");
+    DECLINED_VC_REQUESTS.with(|notifications_ref| {
+        *notifications_ref.borrow_mut() = declined_vc;
+    });
+
+    let vc_profile_await: HashMap<Principal, VentureCapitalist> =
+        bincode::deserialize(&data).expect("Deserialization failed of notification");
+    VC_PROFILE_EDIT_AWAITS.with(|notifications_ref| {
+        *notifications_ref.borrow_mut() = vc_profile_await;
+    });
+
+    let vc_profile_edit_declined: HashMap<Principal, VentureCapitalist> =
+        bincode::deserialize(&data).expect("Deserialization failed of notification");
+    DECLINED_VC_PROFILE_EDIT_REQUEST.with(|notifications_ref| {
+        *notifications_ref.borrow_mut() = vc_profile_edit_declined;
     });
 }
 

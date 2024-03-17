@@ -4,7 +4,7 @@ use candid::Principal;
 use candid::{CandidType, Deserialize};
 use ic_cdk::api::caller;
 use ic_cdk::api::stable::{StableReader, StableWriter};
-use ic_cdk_macros::{query, update};
+use ic_cdk_macros::*;
 use serde::Serialize;
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -39,25 +39,30 @@ thread_local! {
     static NOTIFICATIONS : RefCell<HashMap<Principal, Vec<Notification>>> = RefCell::new(HashMap::new());
 }
 
-// pub fn pre_upgrade_notifications() {
-//     NOTIFICATIONS.with(|notifications| {
-//         let serialized = bincode::serialize(&*notifications.borrow())
-//             .expect("Serialization failed");
-//         let mut writer = StableWriter::default();
-//         writer.write(&serialized).expect("Failed to write to stable storage");
-//     });
-// }
 
-// pub fn post_upgrade_notifications() {
-//     let mut reader = StableReader::default();
-//     let mut data = Vec::new();
-//     reader.read_to_end(&mut data).expect("Failed to read from stable storage");
-//     let notifications: HashMap<Principal, Vec<Notification>> = bincode::deserialize(&data)
-//         .expect("Deserialization failed of notification");
-//     NOTIFICATIONS.with(|notifications_ref| {
-//         *notifications_ref.borrow_mut() = notifications;
-//     });
-// }
+pub fn pre_upgrade_notifications() {
+    NOTIFICATIONS.with(|notifications| {
+        let serialized =
+            bincode::serialize(&*notifications.borrow()).expect("Serialization failed");
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+}
+
+pub fn post_upgrade_notifications() {
+    let mut reader = StableReader::default();
+    let mut data = Vec::new();
+    reader
+        .read_to_end(&mut data)
+        .expect("Failed to read from stable storage");
+    let notifications: HashMap<Principal, Vec<Notification>> =
+        bincode::deserialize(&data).expect("Deserialization failed of notification");
+    NOTIFICATIONS.with(|notifications_ref| {
+        *notifications_ref.borrow_mut() = notifications;
+    });
+}
 
 pub fn send_connection_request(mentor_id: Principal, msg: String) -> String {
     let my_id = caller();
