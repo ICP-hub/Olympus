@@ -13,6 +13,7 @@ mod roles;
 mod upvotes;
 mod user_module;
 mod vc_registration;
+mod default_images;
 
 use notification_to_mentor::*;
 use crate::project_registration::*;
@@ -27,7 +28,7 @@ use ratings::RatingAverages;
 use requests::Request;
 use roles::{get_roles, RolesResponse};
 use std::collections::{HashMap, HashSet};
-use user_module::{Role, UserInformation};
+use user_module::*;
 //use user_module::UserInformation;
 
 use ic_cdk::export_candid;
@@ -176,11 +177,6 @@ fn get_projects_for_caller() -> Vec<ProjectInfo> {
 #[query]
 fn get_project_using_id(project_id: String) -> Option<ProjectInfoInternal> {
     project_registration::find_project_by_id(&project_id)
-}
-
-#[query]
-fn get_project_details_or_user_role(project_id: String) -> Option<ProjectInfoForUser>{
-    project_registration::get_project_info_for_user(project_id)
 }
 
 #[query]

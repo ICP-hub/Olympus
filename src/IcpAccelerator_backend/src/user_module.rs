@@ -7,6 +7,8 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::cell::RefCell;
 use std::collections::HashMap;
+use crate::default_images::*;
+
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
 pub struct UserInformation {
     pub full_name: String,
@@ -113,9 +115,20 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
     let uid = format!("{:x}", Sha256::digest(&uuids));
     let new_id = uid.clone().to_string();
 
+
+    fn default_profile_picture() -> Vec<u8> {
+        base64::decode(DEFAULT_PROFILE_PICTURE_BASE64).expect("Failed to decode base64 image")
+    }
+
+    let mut info_with_default = info.clone();
+
+    if info_with_default.profile_picture.is_none() {
+        info_with_default.profile_picture = Some(default_profile_picture());
+    }
+
     let user_info_internal = UserInfoInternal {
         uid: new_id.clone(),
-        params: info,
+        params: info_with_default,
         is_active: true,
     };
 
@@ -354,6 +367,26 @@ pub fn get_user_info_struct() -> Option<UserInformation> {
             .borrow()
             .get(&caller)
             .map(|user_internal| user_internal.params.clone())
+    })
+}
+
+#[query]
+pub fn get_member_id() -> String {
+    let caller = caller();
+    USER_STORAGE.with(|registry| {
+        let members = registry.borrow();
+        let members: &UserInfoInternal = members.get(&caller).expect("you are not a user");
+        members.uid.clone()
+    })
+}
+
+#[query]
+pub fn get_users_with_all_info() -> UserInfoInternal {
+    let caller = caller();
+    USER_STORAGE.with(|registry| {
+        let user_info_ref = registry.borrow();
+        let user_all_info = user_info_ref.get(&caller).expect("couldn't find user information");
+        user_all_info.clone()
     })
 }
 
