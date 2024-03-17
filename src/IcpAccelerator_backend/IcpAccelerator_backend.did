@@ -13,11 +13,6 @@ type ApprovalRequest = record {
   receiver : principal;
 };
 type Blog = record { blog_url : text; timestamp : nat64 };
-type ConnectionRequest = record {
-  startup_id : principal;
-  message : text;
-  mentor_id : principal;
-};
 type FilterCriteria = record {
   area_of_focus : opt text;
   country : opt text;
@@ -29,19 +24,6 @@ type FilterCriteria = record {
 type FounderInfo = record {
   seventy_info : opt SeventyInfoFounder;
   thirty_info : opt ThirtyInfoFounder;
-};
-type HubOrganizerRegistration = record {
-  website_url : opt text;
-  profile_picture : opt vec nat8;
-  hub_location : opt text;
-  hub_name : opt text;
-  email : opt text;
-  contact_number : opt text;
-  privacy_policy_consent : opt bool;
-  communication_consent : opt bool;
-  full_name : opt text;
-  id_professional_document_upload : opt vec nat8;
-  hub_description : opt text;
 };
 type IcpHub = record { id : int32; region : text; name : text };
 type Jobs = record {
@@ -121,18 +103,6 @@ type NotificationProject = record {
 };
 type NotificationSender = record { name : text; image : vec nat8 };
 type NotificationType = variant { ApprovalRequest : ApprovalRequest };
-type NotificationType_1 = variant {
-  ConnectionAcknowledgement : record {
-    social_handles : opt text;
-    accepted : bool;
-    mentor_id : principal;
-  };
-  ConnectionRequest : ConnectionRequest;
-};
-type Notification_1 = record {
-  read : bool;
-  notification_type : NotificationType_1;
-};
 type OfferToMentor = record {
   mentor_image : opt vec nat8;
   request_status : text;
@@ -242,7 +212,8 @@ type RatingAverages = record {
   mentor_average : opt float64;
 };
 type Request = record { mentor : opt MentorInternal; "text" : text };
-type Result = variant { Ok : UserInformation; Err : text };
+type Result = variant { Ok; Err : text };
+type Result_1 = variant { Ok : UserInformation; Err : text };
 type Role = record {
   status : text;
   rejected_on : opt nat64;
@@ -291,6 +262,11 @@ type SeventyInfoFounder = record {
   refer : opt text;
   employee_count : opt text;
 };
+type SpotlightDetails = record {
+  project_details : ProjectInfo;
+  added_by : principal;
+  project_id : text;
+};
 type Suggestion = record {
   id : nat64;
   status : text;
@@ -309,7 +285,6 @@ type ThirtyInfoFounder = record {
   phone_number : opt text;
   full_name : opt text;
 };
-type UniqueHubs = record { hubs : HubOrganizerRegistration; uuid : text };
 type UpvoteRecord = record { count : nat; upvoters : vec UpvoterInfo };
 type UpvoterInfo = record {
   name : opt text;
@@ -333,7 +308,6 @@ type UserInformation = record {
   email : opt text;
   full_name : text;
 };
-type UserRole = variant { VC; Mentor; Founder; Project; ICPHubOrganizer };
 type VcWithRoles = record {
   vc_profile : VentureCapitalistInternal;
   roles : vec Role;
@@ -378,6 +352,7 @@ service : () -> {
   add_announcement : (Announcements) -> (text);
   add_job_type : (text) -> (text);
   add_mentor_announcement : (text, text) -> (text);
+  add_project_to_spotlight : (text) -> (Result);
   add_vc_announcement : (text, text) -> (text);
   approve_mentor_creation_request_candid : (principal, bool) -> (text);
   approve_mentor_profile_update : (principal, bool) -> (text);
@@ -420,8 +395,6 @@ service : () -> {
     ) query;
   get_declined_request_for_project : () -> (vec OfferToMentor) query;
   get_founder_info_caller : () -> (opt FounderInfo) query;
-  get_hub_organizer_candid : () -> (opt UniqueHubs) query;
-  get_hubs_principal_using_region : (text) -> (vec text) query;
   get_icp_hubs_candid : () -> (vec IcpHub) query;
   get_jobs_posted_by_project : (text) -> (vec Jobs) query;
   get_latest_listed_project : () -> (vec ProjectInfoInternal) query;
@@ -456,15 +429,15 @@ service : () -> {
   get_projects_for_caller : () -> (vec ProjectInfo) query;
   get_projects_with_all_info : () -> (vec ProjectInfoInternal) query;
   get_role : () -> (RolesResponse) query;
-  get_role_from_p_id : () -> (opt vec UserRole) query;
   get_role_status : () -> (vec Role) query;
   get_roles_for_principal : (principal) -> (vec Role) query;
+  get_spotlight_projects : () -> (vec SpotlightDetails) query;
   get_suggestions_by_parent_id_caller : (text, nat64) -> (vec Suggestion) query;
   get_suggestions_by_status_caller : (text, text) -> (vec Suggestion) query;
   get_total_suggestions : (text) -> (nat64) query;
   get_user_info_struct : () -> (opt UserInformation) query;
-  get_user_information : () -> (Result) query;
-  get_user_information_using_uid : (text) -> (Result) query;
+  get_user_information : () -> (Result_1) query;
+  get_user_information_using_uid : (text) -> (Result_1) query;
   get_user_likes : (text) -> (opt LikeRecord) query;
   get_users_with_all_info : () -> (UserInfoInternal) query;
   get_vc_announcements : () -> (
@@ -502,19 +475,16 @@ service : () -> {
   project_update_awaiting_approval : () -> (
       vec record { text; ProjectUpdateRequest },
     ) query;
-  register_hub_organizer_candid : (HubOrganizerRegistration) -> (text);
   register_mentor_candid : (MentorProfile) -> (text);
   register_project : (ProjectInfo) -> (text);
   register_user : (UserInformation) -> (text);
   register_venture_capitalist : (VentureCapitalist) -> (text);
+  remove_project_from_spotlight : (text) -> (Result);
   reply_to_suggestion_caller : (nat64, text, text) -> (nat64, text);
-  respond_to_connection_request_candid : (principal, bool) -> (text);
-  send_connection_request : (principal, text) -> (text);
   send_offer_to_mentor : (principal, text, text) -> ();
   send_request_as_mentor : (text, text) -> (text);
   switch_role : (text, text) -> ();
   update_founder_caller : (FounderInfo) -> (text);
-  update_hub_organizer_candid : (HubOrganizerRegistration) -> (text);
   update_mentor : (MentorProfile) -> (text);
   update_project : (text, ProjectInfo) -> (text);
   update_rating_api : (vec Rating) -> ();
@@ -528,6 +498,4 @@ service : () -> {
   vc_profile_edit_awaiting_approval : () -> (
       vec record { principal; VentureCapitalist },
     ) query;
-  verify_project_under_your_hub : (text) -> (text);
-  view_notifications_candid : (principal) -> (vec Notification_1) query;
 }
