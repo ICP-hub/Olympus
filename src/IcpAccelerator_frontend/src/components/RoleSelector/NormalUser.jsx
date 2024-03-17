@@ -15,7 +15,6 @@ import DetailHeroSection from "../Common/DetailHeroSection";
 import Founder from "../../../assets/images/founderRegistration.png";
 import { useCountries } from "react-countries";
 import { getCurrentRoleStatusRequestHandler } from "../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
-import { defaultUserImage } from "./Image";
 
 const today = new Date();
 const startDate = new Date("1900-01-01");
@@ -132,7 +131,6 @@ const NormalUser = () => {
   );
   const onSubmitHandler = async (data) => {
     // console.log("data aaya data aaya ", data);
-    console.log(" setImageData(defaultUserImage)", defaultUserImage);
     const userData = {
       full_name: data.full_name,
       openchat_username: [data.user_name],
@@ -142,7 +140,7 @@ const NormalUser = () => {
       twitter_id: [data.twitter_id.toString()],
       country: data.country,
       area_of_intrest: data.areas_of_expertise,
-      profile_picture: imageData ? [imageData] : [defaultUserImage],
+      profile_picture: imageData ? [imageData] : [],
     };
 
     console.log("userData => ", userData);

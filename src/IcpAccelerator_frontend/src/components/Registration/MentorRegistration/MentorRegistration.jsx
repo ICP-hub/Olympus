@@ -247,10 +247,6 @@ const MentorRegistration = () => {
     const result = await trigger(fieldsToValidate);
     // console.log("fieldsToValidate", fieldsToValidate);
     if (result) {
-      if (!image && !formData.mentor_image) {
-        alert("Please upload a profile image.");
-        return;
-      }
       setStep((prevStep) => prevStep + 1);
       setActiveTab(mentorRegistration[step + 1]?.id);
     }
@@ -281,7 +277,7 @@ const MentorRegistration = () => {
         const byteArray = await compressedFile.arrayBuffer(); // Convert krega Blob ko ArrayBuffer mai
         const imageBytes = Array.from(new Uint8Array(byteArray)); // Convert ArrayBuffer ko array of bytes mai
         setmentor_image(imageBytes);
-        // console.log("imageBytes", imageBytes);
+        console.log("imageBytes", imageBytes);
       } catch (error) {
         console.error("Error compressing the image:", error);
       }
@@ -404,7 +400,7 @@ const MentorRegistration = () => {
         updatedFormData.icop_hub_or_spoke === "true" ? true : false;
       let tempObj2 = {
         user_data: {
-          profile_picture: [updatedFormData.mentor_image],
+          profile_picture: [updatedFormData.mentor_image] || [],
           full_name: updatedFormData.full_name || "",
           country: updatedFormData.country || "",
           email: [updatedFormData.email] || [],
@@ -441,7 +437,7 @@ const MentorRegistration = () => {
       console.log("first time visit ");
       let tempObj = {
         user_data: {
-          profile_picture: [updatedFormData.mentor_image],
+          profile_picture: [updatedFormData.mentor_image] || [],
           full_name: updatedFormData.full_name,
           country: updatedFormData.country,
           email: [updatedFormData.email],
@@ -600,7 +596,7 @@ const MentorRegistration = () => {
                       ))}
                     </select>
                     {errors.area_of_intrest && (
-                      <p className="text-red-500 text-xs italic">
+                      <p className="mt-1 text-sm text-red-500 font-bold text-left">
                         {errors.area_of_intrest.message}
                       </p>
                     )}
@@ -635,7 +631,7 @@ const MentorRegistration = () => {
                     </select>
 
                     {errors.country && (
-                      <p className="text-red-500 text-xs italic">
+                      <p className="mt-1 text-sm text-red-500 font-bold text-left">
                         {errors.country.message}
                       </p>
                     )}
@@ -675,7 +671,7 @@ const MentorRegistration = () => {
                     ))}
                   </select>
                   {errors.preferred_icp_hub && (
-                    <p className="text-red-500 text-xs italic">
+                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
                       {errors.preferred_icp_hub.message}
                     </p>
                   )}
@@ -704,7 +700,7 @@ const MentorRegistration = () => {
                       </option>
                     </select>
                     {errors.multi_chain && (
-                      <p className="text-red-500 text-xs italic">
+                      <p className="mt-1 text-sm text-red-500 font-bold text-left">
                         {errors.multi_chain.message}
                       </p>
                     )}
@@ -739,7 +735,7 @@ const MentorRegistration = () => {
                       ))}
                     </select>
                     {errors.multichain && (
-                      <p className="text-red-500 text-xs italic">
+                      <p className="mt-1 text-sm text-red-500 font-bold text-left">
                         {errors.multichain.message}
                       </p>
                     )}
@@ -767,7 +763,7 @@ const MentorRegistration = () => {
                       </option>
                     </select>
                     {errors.existing_icp_mentor && (
-                      <p className="text-red-500 text-xs italic">
+                      <p className="mt-1 text-sm text-red-500 font-bold text-left">
                         {errors.existing_icp_mentor.message}
                       </p>
                     )}
@@ -792,7 +788,7 @@ const MentorRegistration = () => {
                       disabled={!isExistingICPMentor}
                     />
                     {errors.existing_icp_project_porfolio && (
-                      <p className="text-red-500 text-xs italic">
+                      <p className="mt-1 text-sm text-red-500 font-bold text-left">
                         {errors.existing_icp_project_porfolio.message}
                       </p>
                     )}
@@ -802,7 +798,7 @@ const MentorRegistration = () => {
                       htmlFor="area_of_expertise"
                       className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                     >
-                      What are your areas of expertise?
+                      What are your areas of expertise? *
                     </label>
                     <select
                       {...register("area_of_expertise")}
@@ -826,7 +822,7 @@ const MentorRegistration = () => {
                       ))}
                     </select>
                     {errors.area_of_expertise && (
-                      <p className="text-red-500 text-xs italic">
+                      <p className="mt-1 text-sm text-red-500 font-bold text-left">
                         {errors.area_of_expertise.message}
                       </p>
                     )}
@@ -837,7 +833,7 @@ const MentorRegistration = () => {
                       htmlFor="category_of_mentoring_service"
                       className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                     >
-                      Categories of mentoring services
+                      Categories of mentoring services *
                     </label>
                     <select
                       {...register("category_of_mentoring_service")}
@@ -857,7 +853,7 @@ const MentorRegistration = () => {
                       <option className="text-lg font-bold">Raise</option>
                     </select>
                     {errors.category_of_mentoring_service && (
-                      <p className="text-red-500 text-xs italic">
+                      <p className="mt-1 text-sm text-red-500 font-bold text-left">
                         {errors.category_of_mentoring_service.message}
                       </p>
                     )}
@@ -885,7 +881,7 @@ const MentorRegistration = () => {
                       </option>
                     </select>
                     {errors.icop_hub_or_spoke && (
-                      <p className="text-red-500 text-xs italic">
+                      <p className="mt-1 text-sm text-red-500 font-bold text-left">
                         {errors.icop_hub_or_spoke.message}
                       </p>
                     )}
@@ -920,7 +916,7 @@ const MentorRegistration = () => {
                       ))}
                     </select>
                     {errors.hub_owner && (
-                      <p className="text-red-500 text-xs italic">
+                      <p className="mt-1 text-sm text-red-500 font-bold text-left">
                         {errors.hub_owner.message}
                       </p>
                     )}
