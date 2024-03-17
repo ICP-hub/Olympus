@@ -15,8 +15,13 @@ import ProjectDetailsForUser from "./components/Project/ProjectDetails/ProjectDe
 import Newcards from "./components/Project/ProjectDetails/Newcards";
 import MentorsProfile from "./components/Mentors/MentorsProfile";
 import InvestorProfile from "./components/Dashboard/Investor/InvestorProfile";
+import ProjectDashboard from "./components/Dashboard/RoleDashboard/ProjectDashboard";
+import MentorDashboard from "./components/Dashboard/RoleDashboard/MentorDashboard";
+import InvestorDashboard from "./components/Dashboard/RoleDashboard/InvestorDashboard";
+import { useNavigate } from 'react-router-dom';
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
+
 const AllDetailsForm = lazy(() =>
   import("./components/Registration/AllDetailsForm")
 );
@@ -38,6 +43,9 @@ const AppRoutes = () => {
     (currState) => currState.internet.isAuthenticated
   );
 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const roleNames = isAuthenticated
     ? allRoles.roles?.map((role) => role.name)
     : [];
@@ -51,14 +59,17 @@ const AppRoutes = () => {
 
   const publicRoutes = [
     { path: "/", element: <DashBoard /> },
+    // { path: "/", element: <ProjectDashboard /> },
+    // { path: "/", element: <MentorDashboard /> },
+    // { path: "/", element: <InvestorDashboard /> },
     { path: "/create-user", element: <NormalUser /> },
-    {path:"/create-investor", element : <InvestorRegistration/>},
+    { path: "/create-investor", element: <InvestorRegistration /> },
     { path: "/create-project", element: <CreateProject /> },
     { path: "/details", element: <AllDetailsForm /> },
     // { path: "/roleSelect", element: <RoleSelector /> },
     { path: "/project-details", element: <ProjectDetails /> },
     { path: "/profile", element: <UserProfile /> },
-    {path:"/create-mentor",element: <MentorRegistration />},
+    { path: "/create-mentor", element: <MentorRegistration /> },
     { path: "/individual-project-details/:id", element: <ProjectDetailsForUser /> },
     { path: "/view-mentor-details/:id", element: <MentorsProfile /> },
     { path: "/view-investor-details/:id", element: <InvestorProfile /> },
@@ -74,8 +85,6 @@ const AppRoutes = () => {
     },
     { path: "/profile", component: UserProfile, allowedRoles: roleNames },
   ];
-
-  const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(userRoleHandler());

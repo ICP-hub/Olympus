@@ -62,7 +62,7 @@ const CommunityRatings = ({ profile, type, name, role, socials, filter }) => {
                                     </defs>
                                 </svg>
                                 <CircularProgressbar
-                                    className="w-24 h-24"
+                                    className="w-24 h-24 -rotate-90"
                                     value={10}
                                     strokeWidth={8}
                                     text={`${0}%`}

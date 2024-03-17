@@ -18,15 +18,11 @@ function getNameOfCurrentStatus(rolesStatusArray) {
 }
 
 
-function* fetchCurrentRoleStatus(action) {
-    // const actor = action.payload;
-
+function* fetchCurrentRoleStatus() {
     const actor = yield select(selectActor);
-    console.log('actor', actor)
 
     if (actor) {
         const currentRoleArray = yield call([actor, actor.get_role_status]);
-        console.log('currentRoleArray', currentRoleArray)
         if (currentRoleArray && currentRoleArray.length !== 0) {
             const currentActiveRole = yield call(getNameOfCurrentStatus, currentRoleArray)
             yield put(setCurrentRoleStatus(currentRoleArray));
