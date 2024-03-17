@@ -195,11 +195,9 @@ async fn update_project(project_id: String, updated_project: ProjectInfo) -> Str
 
 #[update]
 async fn update_team_member(project_id: String, member_uid: String) -> String {
-    if has_required_role(&vec![UserRole::Project]) {
+
         project_registration::update_team_member(&project_id, member_uid).await
-    } else {
-        "you hv n't registered as a user yet".to_string()
-    }
+    
 }
 
 #[update]
