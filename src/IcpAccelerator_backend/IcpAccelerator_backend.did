@@ -13,18 +13,11 @@ type ApprovalRequest = record {
   receiver : principal;
 };
 type Blog = record { blog_url : text; timestamp : nat64 };
-type Cohort = record {
-  cohort_end_date : text;
-  title : text;
-  tags : text;
-  description : text;
-  deadline : text;
-  criteria : Eligibility;
-  no_of_seats : nat8;
-  cohort_launch_date : text;
+type ConnectionRequest = record {
+  startup_id : principal;
+  message : text;
+  mentor_id : principal;
 };
-type CohortDetails = record { uid : text; created_at : nat64; cohort : Cohort };
-type Eligibility = record { level_on_rubric : float64; eligibility : opt text };
 type FilterCriteria = record {
   area_of_focus : opt text;
   country : opt text;
@@ -224,7 +217,8 @@ type RatingAverages = record {
   mentor_average : opt float64;
 };
 type Request = record { mentor : opt MentorInternal; "text" : text };
-type Result = variant { Ok : UserInformation; Err : text };
+type Result = variant { Ok; Err : text };
+type Result_1 = variant { Ok : UserInformation; Err : text };
 type Role = record {
   status : text;
   rejected_on : opt nat64;
@@ -272,6 +266,11 @@ type SeventyInfoFounder = record {
   location : opt text;
   refer : opt text;
   employee_count : opt text;
+};
+type SpotlightDetails = record {
+  project_details : ProjectInfo;
+  added_by : principal;
+  project_id : text;
 };
 type Suggestion = record {
   id : nat64;
@@ -358,6 +357,7 @@ service : () -> {
   add_announcement : (Announcements) -> (text);
   add_job_type : (text) -> (text);
   add_mentor_announcement : (text, text) -> (text);
+  add_project_to_spotlight : (text) -> (Result);
   add_vc_announcement : (text, text) -> (text);
   approve_mentor_creation_request_candid : (principal, bool) -> (text);
   approve_mentor_profile_update : (principal, bool) -> (text);
@@ -439,12 +439,13 @@ service : () -> {
   get_role : () -> (RolesResponse) query;
   get_role_status : () -> (vec Role) query;
   get_roles_for_principal : (principal) -> (vec Role) query;
+  get_spotlight_projects : () -> (vec SpotlightDetails) query;
   get_suggestions_by_parent_id_caller : (text, nat64) -> (vec Suggestion) query;
   get_suggestions_by_status_caller : (text, text) -> (vec Suggestion) query;
   get_total_suggestions : (text) -> (nat64) query;
   get_user_info_struct : () -> (opt UserInformation) query;
-  get_user_information : () -> (Result) query;
-  get_user_information_using_uid : (text) -> (Result) query;
+  get_user_information : () -> (Result_1) query;
+  get_user_information_using_uid : (text) -> (Result_1) query;
   get_user_likes : (text) -> (opt LikeRecord) query;
   get_users_with_all_info : () -> (UserInfoInternal) query;
   get_vc_announcements : () -> (
@@ -486,6 +487,7 @@ service : () -> {
   register_project : (ProjectInfo) -> (text);
   register_user : (UserInformation) -> (text);
   register_venture_capitalist : (VentureCapitalist) -> (text);
+  remove_project_from_spotlight : (text) -> (Result);
   reply_to_suggestion_caller : (nat64, text, text) -> (nat64, text);
   send_offer_to_mentor : (principal, text, text) -> ();
   send_request_as_mentor : (text, text) -> (text);

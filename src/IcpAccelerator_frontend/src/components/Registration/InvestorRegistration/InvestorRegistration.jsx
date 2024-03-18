@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { investorRegistration } from "../../Utils/Data/AllDetailFormData";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import { useForm } from "react-hook-form";
@@ -144,9 +144,7 @@ const validationSchema = {
       ),
   }),
   additionalInfo: yup.object().shape({
-    project_on_multichain: yup
-      .string()
-      .optional(),
+    project_on_multichain: yup.string().optional(),
     reason_for_joining: yup
       .string()
       .required("Reason for joining is required")
@@ -178,9 +176,7 @@ const validationSchema = {
       .test("is-non-empty", "Category of investment required", (value) =>
         /\S/.test(value)
       ),
-    announcement_details: yup
-      .string()
-      .optional(),
+    announcement_details: yup.string().optional(),
     website_link: yup
       .string()
       .required("Portfolio required")
@@ -228,8 +224,9 @@ const InvestorRegistration = () => {
   const [userHasInteracted, setUserHasInteracted] = useState(false);
   const [investorDataObject, setInvestorDataObject] = useState({});
   const [image, setImage] = useState(null);
-  const [logo, setlogo] = useState(null);
-
+  const [logoData, setLogoData] = useState(null);
+  const [logoPreview, setLogoPreview] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
   const [venture_image, setVenture_image] = useState(null);
   // Form Updates Changes in enable and diabled
@@ -257,7 +254,7 @@ const InvestorRegistration = () => {
         bufferToImageBlob(userData?.profile_picture)
           .then((imageUrl) => {
             setProfileImage(imageUrl);
-            setFormData({ venture_image: userData.profile_picture[0] });
+            setFormData({ profileImage: userData.profile_picture[0] });
             // You might also need to handle setting the image for display if required
           })
           .catch((error) => console.error("Error converting image:", error));
@@ -289,8 +286,11 @@ const InvestorRegistration = () => {
     formState: { errors, isSubmitting },
     trigger,
     watch,
-    reset,
+    setError,
+    clearErrors,
     setValue,
+    reset,
+    control,
   } = useForm({
     resolver: yupResolver(currentValidationSchema),
     mode: "all",
@@ -318,6 +318,11 @@ const InvestorRegistration = () => {
   useEffect(() => {
     // Update ExistingICPInvestor based on existing_icp_investor field value
     setExistingICPInvestor(ExistingICPInvestor === "true");
+    if (ExistingICPInvestor !== "true") {
+      setValue("investor_type", "");
+      setValue("money_invested", "");
+      setValue("existing_icp_portfolio", "");
+    }
     setIsMulti_Chain(IsMultiChain === "true");
     if (IsMultiChain !== "true") {
       setValue("project_on_multichain", "");
@@ -365,14 +370,60 @@ const InvestorRegistration = () => {
         // 3) image ko backend mai bhejne k lie
         const byteArray = await compressedFile.arrayBuffer(); // Convert krega Blob ko ArrayBuffer mai
         const imageBytes = Array.from(new Uint8Array(byteArray)); // Convert ArrayBuffer ko array of bytes mai
-        setlogo(imageBytes);
+        setProfileImage(imageBytes);
         // console.log("imageBytes", imageBytes);
       } catch (error) {
         console.error("Error compressing the image:", error);
       }
     }
   };
+  // Adding Project_Logo image Here
+  const addLogoHandler = useCallback(
+    async (file) => {
+      clearErrors("logoData");
+      // if (!file)
+      //   return setError("logoData", {
+      //     type: "manual",
+      //     message: "An logo is required",
+      //   });
+      if (!["image/jpeg", "image/png", "image/gif"].includes(file.type))
+        return setError("logoData", {
+          type: "manual",
+          message: "Unsupported file format",
+        });
+      if (file.size > 1024 * 1024)
+        // 1MB
+        return setError("logoData", {
+          type: "manual",
+          message: "The file is too large",
+        });
 
+      setIsLoading(true);
+      try {
+        const compressedFile = await CompressedImage(file);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setLogoPreview(reader.result);
+          setIsLoading(false);
+        };
+        reader.readAsDataURL(compressedFile);
+
+        const byteArray = await compressedFile.arrayBuffer();
+        const logoDataArray = new Uint8Array(byteArray);
+        setLogoData(logoDataArray);
+        console.log("logoData", logoDataArray);
+        setValue("logoData", logoDataArray, { shouldValidate: true });
+      } catch (error) {
+        console.error("Error processing the logo:", error);
+        setError("logoData", {
+          type: "manual",
+          message: "Could not process logo, please try another.",
+        });
+        setIsLoading(false);
+      }
+    },
+    [setError, clearErrors, setValue, setIsLoading, setLogoPreview, setLogoData]
+  );
   const imageUrlToByteArray = async (imageUrl) => {
     const response = await fetch(imageUrl);
     const blob = await response.blob();
@@ -411,10 +462,10 @@ const InvestorRegistration = () => {
       reset(formattedData);
       setFormData(formattedData);
 
-      if (formattedData.logo) {
-        imageUrlToByteArray(formattedData.logo)
+      if (formattedData.profileImage) {
+        imageUrlToByteArray(formattedData.profil)
           .then((imageBytes) => {
-            setlogo(imageBytes);
+            setProfileImage(imageBytes);
           })
           .catch((error) => console.error("Error converting image:", error));
       }
@@ -534,7 +585,7 @@ const InvestorRegistration = () => {
           openchat_username: [updatedFormData.openchat_username],
           email: [updatedFormData.email],
           full_name: updatedFormData.full_name,
-          profile_picture: [updatedFormData.venture_image] || [],
+          profile_picture: [updatedFormData.profileImage] || [],
         },
         preferred_icp_hub: updatedFormData.preferred_icp_hub,
         existing_icp_investor: updatedexisting_icp_investor,
@@ -561,7 +612,7 @@ const InvestorRegistration = () => {
         // preferred_investment_sectors: [
         //   updatedFormData.preferred_investment_sectors,
         // ],
-        logo: logo ? [logo] : [],
+        logo: logoData ? [logoData] : [],
       };
       console.log("eh rha tempObj agya hai investor pr ===>", tempObj);
       setInvestorDataObject(tempObj);
@@ -591,7 +642,7 @@ const InvestorRegistration = () => {
       <section className="w-full h-fit px-[6%] lg1:px-[4%] py-[6%] lg1:py-[4%] bg-gray-100">
         <div className="w-full h-full bg-gray-100 pt-8">
           <div className="bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-[30px]  sm:text-[25px] md1:text-[30px] md2:text-[35px] font-black font-fontUse dxl:text-[40px] p-8">
-            VC's Information
+            Investor's Information
           </div>
           <div className="text-sm font-medium text-center text-gray-200 ">
             <ul className="flex flex-wrap mb-4 text-sxxs:text-[7px] sxs:text-[7.5px] sxs1:text-[8px] sxs2:text-[8.5px] sxs3:text-[9px] ss:text-[9.5px] ss1:text-[10px] ss2:text-[10.5px] ss3:text-[11px] ss4:text-[11.5px] dxs:text-[12px] xxs:text-[12.5px] xxs1:text-[13px] sm1:text-[13.5px] sm4:text-[14px] sm2:text-[14.5px] sm3:text-[13px] sm:text-[11.5px] md:text-[14px.3] md1:text-[13px] md2:text-[13px] md3:text-[13px] lg:text-[14.5px] dlg:text-[15px] lg1:text-[16.5px] lgx:text-[16px] dxl:text-[16.5px] xl:text-[19px] xl2:text-[19.5px] cursor-pointer justify-around">
@@ -630,15 +681,15 @@ const InvestorRegistration = () => {
               <div className="flex flex-col">
                 <div className="flex-row w-full flex justify-start gap-4 items-center">
                   <div className="mb-3 ml-6 h-24 w-24 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
-                    {profileImage ? (
+                    {image ? (
                       <img
-                        src={profileImage}
+                        src={image}
                         alt="New profile"
                         className="h-full w-full object-cover"
                       />
-                    ) : formData.venture_image ? (
+                    ) : formData.profileImage ? (
                       <img
-                        src={formData?.venture_image}
+                        src={formData?.profileImage}
                         alt="User"
                         className="h-full w-full object-cover"
                       />
@@ -752,15 +803,29 @@ const InvestorRegistration = () => {
               <div className="flex flex-col">
                 <div className="flex-row w-full flex justify-start gap-4 items-center">
                   <div className="mb-3 ml-6 h-24 w-24 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
-                    {image ? (
+                    {isLoading ? (
+                      <svg
+                        width="35"
+                        height="37"
+                        viewBox="0 0 35 37"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="bg-no-repeat animate-pulse"
+                      >
+                        <path
+                          d="M8.53049 8.62583C8.5304 13.3783 12.3575 17.2449 17.0605 17.2438C21.7634 17.2428 25.5907 13.3744 25.5908 8.62196C25.5909 3.8695 21.7638 0.00287764 17.0608 0.00394405C12.3579 0.00501045 8.53058 3.87336 8.53049 8.62583ZM32.2249 36.3959L34.1204 36.3954L34.1205 34.4799C34.1206 27.0878 28.1667 21.0724 20.8516 21.0741L13.2692 21.0758C5.95224 21.0775 -3.41468e-05 27.0955 -0.000176714 34.4876L-0.000213659 36.4032L32.2249 36.3959Z"
+                          fill="#BBBBBB"
+                        />
+                      </svg>
+                    ) : logoPreview ? (
                       <img
-                        src={image}
-                        alt="New profile"
+                        src={logoPreview}
+                        alt="Logo"
                         className="h-full w-full object-cover"
                       />
-                    ) : formData.logo ? (
+                    ) : formData.logoData ? (
                       <img
-                        src={formData?.logo}
+                        src={formData?.logoData}
                         alt="User"
                         className="h-full w-full object-cover"
                       />
@@ -779,22 +844,30 @@ const InvestorRegistration = () => {
                         />
                       </svg>
                     )}
-                    <input
-                      id="images"
-                      type="file"
-                      name="images"
-                      onChange={(e) => addImageHandler(e)}
-                      className="hidden"
-                    />
                   </div>
 
+                  <input
+                    id="logo"
+                    type="file"
+                    name="logo"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      addLogoHandler(file);
+                    }}
+                  />
                   <label
-                    htmlFor="images"
+                    htmlFor="logo"
                     className="p-2 border-2 border-blue-800 items-center rounded-md text-md bg-transparent text-blue-800 cursor-pointer font-extrabold"
                   >
                     Upload Logo
                   </label>
                 </div>
+                {errors.logoData && (
+                  <span className="mt-1 text-sm text-red-500 font-bold text-start px-4">
+                    {errors.logoData.message}
+                  </span>
+                )}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-3 px-4">
                   <div className="z-0 w-full mb-3 group">
                     <label
@@ -868,9 +941,13 @@ const InvestorRegistration = () => {
                     <select
                       {...register("investor_type")}
                       className={`bg-gray-50 border-2 ${
-                        errors.investor_type
-                          ? "border-red-500 placeholder:text-red-500"
-                          : "border-[#737373]"
+                        !isExistingICPInvestor
+                          ? "" // Remove border if disabled
+                          : `border-[#737373] ${
+                              errors.investor_type
+                                ? "border-red-500 placeholder:text-red-500"
+                                : "border-[#737373]"
+                            }`
                       } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                       disabled={!isExistingICPInvestor}
                     >
@@ -905,10 +982,14 @@ const InvestorRegistration = () => {
                       name="money_invested"
                       id="money_invested"
                       {...register("money_invested")}
-                      className={`bg-gray-50 border-2 ${
-                        errors.money_invested
-                          ? "border-red-500 placeholder:text-red-500"
-                          : "border-[#737373]"
+                      className={`bg-gray-50 border-2  ${
+                        !isExistingICPInvestor
+                          ? "" // Remove border if disabled
+                          : `border-[#737373]${
+                              errors.money_invested
+                                ? "border-red-500 placeholder:text-red-500"
+                                : "border-[#737373]"
+                            }`
                       } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                       placeholder="$"
                       disabled={!isExistingICPInvestor}
@@ -932,9 +1013,13 @@ const InvestorRegistration = () => {
                       id="existing_icp_portfolio"
                       {...register("existing_icp_portfolio")}
                       className={`bg-gray-50 border-2 ${
-                        errors.existing_icp_portfolio
-                          ? "border-red-500 placeholder:text-red-500"
-                          : "border-[#737373]"
+                        !isExistingICPInvestor
+                          ? "" // Remove border if disabled
+                          : `border-[#737373] ${
+                              errors.existing_icp_portfolio
+                                ? "border-red-500 placeholder:text-red-500"
+                                : "border-[#737373]"
+                            }`
                       } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                       disabled={!isExistingICPInvestor}
                     />
@@ -979,6 +1064,52 @@ const InvestorRegistration = () => {
 
             {step == 2 && (
               <div className="flex flex-col">
+                <div className="z-0 w-full mb-3 group px-4">
+                  <label
+                    htmlFor="reason_for_joining"
+                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    Why do you want to join ICP ?*
+                  </label>
+                  <select
+                    {...register("reason_for_joining")}
+                    className={`bg-gray-50 border-2 ${
+                      errors.reason_for_joining
+                        ? "border-red-500 placeholder:text-red-500"
+                        : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  >
+                    <option className="text-lg font-bold" value="">
+                      Select reason ⌄
+                    </option>
+                    <option
+                      className="text-lg font-bold"
+                      value="listing_and_promotion"
+                    >
+                      Project listing and promotion
+                    </option>
+                    <option className="text-lg font-bold" value="Funding">
+                      Funding
+                    </option>
+                    <option className="text-lg font-bold" value="Mentoring">
+                      Mentoring
+                    </option>
+                    <option className="text-lg font-bold" value="Incubation">
+                      Incubation
+                    </option>
+                    <option
+                      className="text-lg font-bold"
+                      value="Engaging_and_building_community"
+                    >
+                      Engaging and building community
+                    </option>
+                  </select>
+                  {errors.reason_for_joining && (
+                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                      {errors.reason_for_joining.message}
+                    </p>
+                  )}
+                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-3 px-4">
                   <div className="z-0 w-full mb-3 group">
                     <label
@@ -1040,52 +1171,6 @@ const InvestorRegistration = () => {
                     {errors.project_on_multichain && (
                       <p className="mt-1 text-sm text-red-500 font-bold text-left">
                         {errors.project_on_multichain.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="z-0 w-full mb-3 group">
-                    <label
-                      htmlFor="reason_for_joining"
-                      className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                    >
-                      Why do you want to join ICP ?*
-                    </label>
-                    <select
-                      {...register("reason_for_joining")}
-                      className={`bg-gray-50 border-2 ${
-                        errors.reason_for_joining
-                          ? "border-red-500 placeholder:text-red-500"
-                          : "border-[#737373]"
-                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                    >
-                      <option className="text-lg font-bold" value="">
-                        Select reason ⌄
-                      </option>
-                      <option
-                        className="text-lg font-bold"
-                        value="listing_and_promotion"
-                      >
-                        Project listing and promotion
-                      </option>
-                      <option className="text-lg font-bold" value="Funding">
-                        Funding
-                      </option>
-                      <option className="text-lg font-bold" value="Mentoring">
-                        Mentoring
-                      </option>
-                      <option className="text-lg font-bold" value="Incubation">
-                        Incubation
-                      </option>
-                      <option
-                        className="text-lg font-bold"
-                        value="Engaging_and_building_community"
-                      >
-                        Engaging and building community
-                      </option>
-                    </select>
-                    {errors.reason_for_joining && (
-                      <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                        {errors.reason_for_joining.message}
                       </p>
                     )}
                   </div>

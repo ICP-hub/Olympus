@@ -1,6 +1,7 @@
 import React from "react";
 import logo from "../../../assets/Logo/icpLogo2.png";
-import BigLogo from "../../../assets/Logo/bigLogo.png";
+// import BigLogo from "../../../assets/Logo/bigLogo.png";
+import BigLogo from "../../../assets/Logo/topLogoWhitepng.png";
 
 const SubmitSection = () => {
   return (
@@ -10,8 +11,8 @@ const SubmitSection = () => {
         <div className="absolute top-0 right-0 bg-gradient-to-br from-indigo-100 to-purple-600 w-36 h-36  ellipse-quarter-right rounded-md"></div>
         <div className="p-8 flex flex-col justify-between items-center md:flex-row md:justify-start h-fit">
           <div className="flex md:flex-col justify-center w-1/4 relative md:flex-1 mb-8">
-            <img src={BigLogo} alt="BigLogo" className="object-contain w-24 h-auto " />
-            <h1 className="text-xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-white font-fontUse ">INTERNET COMPUTER</h1>
+            <img src={BigLogo} alt="BigLogo" />
+            {/* <h1 className="text-xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-white font-fontUse ">INTERNET COMPUTER</h1> */}
           </div>
           <div className="flex flex-col w-full md:w-3/4">
             <div className="w-fit h-fit text-white text-2xl font-bold font-fontUse leading-none md:ml-14">

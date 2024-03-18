@@ -176,52 +176,60 @@ const DashBoard = () => {
                 Spotlight on the month
               </h1>
             </div>
-            <SpotLight />
+            <div className="mb-4">
+              <SpotLight />
+            </div>
             <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
               <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
                 Impact of the tool
               </h1>
             </div>
-            <ImpactTool />
+            <div className="mb-4">
+              <ImpactTool />
+            </div>
             <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
               <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
                 Launched Projects
               </h1>
-              <button className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
+              <button onClick={() => navigate("/launch-projects")} className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
                 View all
               </button>
             </div>
-            <LaunchedProjects />
+            <div className="mb-4">
+              <LaunchedProjects />
+            </div>
             <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
               <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
                 Currently Raising
               </h1>
-              <button className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
+              <button onClick={() => navigate("/raising-projects")} className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
                 View all
               </button>
             </div>
-            <CurrentlyRaising />
+            <div className="mb-4">
+              <CurrentlyRaising />
+            </div>
             <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
               <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
                 Ongoing Accelerators
               </h1>
-              <button className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
+              {/* <button className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
                 Explore more
-              </button>
+              </button> */}
             </div>
             <EventCard />
             <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
-          <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
-            Event Announcement
-          </h1>
-          <button className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
-            Explore more
-          </button>
-        </div>
-        <div className="flex flex-wrap md:flex-nowrap gap-4 mb-4">
-          <SecondEventCard />
-          <SecondEventCard />
-        </div>
+              <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
+                Event Announcement
+              </h1>
+              {/* <button className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
+                Explore more
+              </button> */}
+            </div>
+            <div className="flex flex-wrap md:flex-nowrap gap-4 mb-4">
+              <SecondEventCard />
+              <SecondEventCard />
+            </div>
             {/* <div className="flex md:w-[calc(100%/2-10px)] dxl:w-[calc(100%/3-10px)] justify-between w-full gap-4 flex-row">
               <div className="grid grid-col-2 gap-4">
                 {[...Array(2)].map((_, index) => (
@@ -230,22 +238,26 @@ const DashBoard = () => {
               </div>
             </div> */}
 
-            <div className="flex flex-wrap md:flex-nowrap gap-4 mb-8">
-              {projectJobData.map((data, index) => (
-                <ProjectJobCard
-                  key={index}
-                  image={data.image}
-                  tags={data.tags}
-                  country={data.country}
-                  website={data.website}
-                />
-              ))}
-            </div>
+
+              <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl pb-3 font-bold">
+                Jobs / Opportunity
+              </h1>
+              <div className="flex flex-wrap md:flex-nowrap gap-4 mb-8">
+                {projectJobData.map((data, index) => (
+                  <ProjectJobCard
+                    key={index}
+                    image={data.image}
+                    tags={data.tags}
+                    country={data.country}
+                    website={data.website}
+                  />
+                ))}
+              </div>
             <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
               <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
-                Projects for Investors
+                Investors
               </h1>
-              <button className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
+              <button onClick={() => navigate('/view-investor')} className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
                 See all Investors
               </button>
             </div>
@@ -254,14 +266,14 @@ const DashBoard = () => {
                 <InvestorCard />
               </div>
               <div className="w-1/4">
-                <RegisterCard categories={categories} redirect={'create-investor'}/>
+                <RegisterCard categories={categories} redirect={'create-investor'} />
               </div>
             </div>
             <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
               <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
-                Projects for Mentors
+                Mentors
               </h1>
-              <button className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
+              <button onClick={() => navigate("/view-mentors")} className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
                 See all Mentors
               </button>
             </div>
@@ -269,8 +281,8 @@ const DashBoard = () => {
               <div className="overflow-x-auto flex w-3/4">
                 <MentorCard />
               </div>
-              <div className="w-1/4">
-                <RegisterCard categories={mentorcategories} redirect={'create-mentor'}/>
+              <div className="w-1/4 py-3">
+                <RegisterCard categories={mentorcategories} redirect={'create-mentor'} />
               </div>
             </div>
             {/* <Announcement/> */}
@@ -279,18 +291,20 @@ const DashBoard = () => {
                 Testimonial
               </h1>
             </div>
-            <div className="flex flex-wrap -mx-4 mb-4 flex-row items-start bg-[#DBDDF3] rounded-lg p-4">
-              <div className="overflow-x-auto flex w-3/4">
+            <div className="flex flex-wrap -mx-4 mb-4 flex-row justify-center items-start bg-[#DBDDF3] rounded-lg p-4">
+              <div className="overflow-x-auto flex w-[61%]">
                 <Testimonial />
               </div>
-              <div className="w-1/4">
-                <RegisterCard categories={testimonialcategories} redirect={''}/>
+              <div className="w-1/3">
+                <RegisterCard categories={testimonialcategories} redirect={''} />
               </div>
             </div>
             <div className="flex- flex-col mb-10">
-              <h1 className=" font-bold bg-gradient-to-r from-blue-900 to-sky-400 text-transparent bg-clip-text">
-                Get Started
-              </h1>
+              <div className="flex items-center justify-between flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
+                <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
+                  Get Started
+                </h1>
+              </div>
 
               <div className="flex flex-row  gap-10 flex-wrap md:justify-start md:ml-6 justify-center items-center">
                 <div className="mt-8 bg-white w-[280px] h-[345px] rounded-xl border border-gray-200 shadow-md">
@@ -373,3 +387,4 @@ const DashBoard = () => {
 };
 
 export default DashBoard;
+

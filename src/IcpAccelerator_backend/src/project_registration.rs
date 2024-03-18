@@ -167,6 +167,13 @@ pub struct ProjectVecWithRoles {
     pub roles: Vec<Role>,
 }
 
+#[derive(Clone, CandidType)]
+pub struct SpotlightDetails {
+    pub added_by: Principal,
+    pub project_id: String,
+    pub project_details: ProjectInfo, 
+}
+
 pub type ProjectAnnouncements = HashMap<Principal, Vec<Announcements>>;
 pub type Notifications = HashMap<Principal, Vec<NotificationProject>>;
 pub type BlogPost = HashMap<Principal, Vec<Blog>>;
@@ -177,6 +184,7 @@ pub type DeclinedDetails = HashMap<String, ProjectUpdateRequest>;
 
 pub type ProjectDetails = HashMap<Principal, ProjectInfoInternal>;
 pub type JobDetails = HashMap<Principal, Vec<Jobs>>;
+pub type SpotlightProjects = Vec<SpotlightDetails>;
 
 thread_local! {
     pub static  APPLICATION_FORM: RefCell<ApplicationDetails> = RefCell::new(ApplicationDetails::new());
@@ -193,6 +201,7 @@ thread_local! {
     pub static DECLINED_PROJECT_UPDATES: RefCell<DeclinedDetails> = RefCell::new(DeclinedDetails::new());
     pub static POST_JOB: RefCell<JobDetails> = RefCell::new(JobDetails::new());
     pub static JOB_TYPE: RefCell<Vec<String>> = RefCell::new(vec!["Bounty".to_string(),"Job".to_string()]);
+    pub static SPOTLIGHT_PROJECTS: RefCell<SpotlightProjects> = RefCell::new(SpotlightProjects::new());
 
 }
 

@@ -19,6 +19,11 @@ import ProjectDashboard from "./components/Dashboard/RoleDashboard/ProjectDashbo
 import MentorDashboard from "./components/Dashboard/RoleDashboard/MentorDashboard";
 import InvestorDashboard from "./components/Dashboard/RoleDashboard/InvestorDashboard";
 import { useNavigate } from 'react-router-dom';
+import SearchMentors from "./components/Mentors/SearchMentors";
+import EventForm from "./components/Mentors/Event/EventForm";
+import MoreProjectLaunchPage from "./components/Dashboard/MoreLaunchPages/MoreProjectLaunchPage";
+import MoreCurrentlyRaisingProjects from "./components/Dashboard/MoreLaunchPages/MoreCurrentlyRaisingProjects";
+import ViewInvestor from "./components/Dashboard/MoreLaunchPages/ViewInvestors";
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
 
@@ -65,6 +70,7 @@ const AppRoutes = () => {
     { path: "/create-user", element: <NormalUser /> },
     { path: "/create-investor", element: <InvestorRegistration /> },
     { path: "/create-project", element: <CreateProject /> },
+    { path: "/event-form", element: <EventForm /> },
     { path: "/details", element: <AllDetailsForm /> },
     // { path: "/roleSelect", element: <RoleSelector /> },
     { path: "/project-details", element: <ProjectDetails /> },
@@ -73,6 +79,10 @@ const AppRoutes = () => {
     { path: "/individual-project-details/:id", element: <ProjectDetailsForUser /> },
     { path: "/view-mentor-details/:id", element: <MentorsProfile /> },
     { path: "/view-investor-details/:id", element: <InvestorProfile /> },
+    { path: "/view-mentors", element: <SearchMentors /> },
+    { path: "/launch-projects", element: <MoreProjectLaunchPage /> },
+    { path: "/raising-projects", element: <MoreCurrentlyRaisingProjects /> },
+    { path: "/view-investor", element: <ViewInvestor /> },
 
   ];
 

@@ -34,8 +34,8 @@ const InvestedProjects = () => {
                 <div className='bg-[#B8B8B8] rounded-md flex justify-center mr-2'>
                     <button className='text-extrabold flex justify-center px-2 py-2 text-[#4E5999] font-bold '>$ 10000 USD</button>
                 </div>
-                <div className='flex   mt-4 mb-4 text-sm bg-[#3505B2]  rounded-md justify-center mr-2 '>
-                    <button className=" flex justify-center items-center text-white px-4 py-2 font-bold ">See projects</button>
+                <div className='flex   mt-4 text-sm bg-[#3505B2]  rounded-md justify-center mr-2 '>
+                    {/* <button className=" flex justify-center items-center text-white px-4 py-2 font-bold ">See projects</button> */}
                 </div>
             </div>
 

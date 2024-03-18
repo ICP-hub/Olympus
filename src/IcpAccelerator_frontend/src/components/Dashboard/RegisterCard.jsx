@@ -8,14 +8,14 @@ const RegisterCard = ({ categories, redirect }) => {
     <div className="flex flex-wrap w-full">
       {categories.map((category, index) => (
         <div key={index} className="px-4 w-full h-fit">
-          <div className="shadow-md rounded-lg overflow-hidden border-2 drop-shadow-2xl gap-2 bg-[#B9C0F2]">
-            <div className="p-4">
+          <div className="bg-[#B9C0F2] drop-shadow-2xl gap-2 overflow-hidden rounded-lg">
+            <div className="px-4 pt-4">
               <img
-                className="h-[8.6rem] w-full rounded-md object-fill"
+                className="h-[8.6rem] w-full rounded-md object-cover"
                 src={category.imgSrc}
                 alt="not found"
               />
-              <div>
+              <div className='py-8'>
                 <div className="text-xl sm:text-2xl text-white mt-4 font-bold line-clamp-2">
                   <h1>{category.title}</h1>
                 </div>

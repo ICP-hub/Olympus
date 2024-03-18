@@ -23,9 +23,9 @@ function* fetchProjectApprovedHandler() {
     const updatedProjectProfiles = allProjectApprovedStatus.map(
       ([principal, { project_profile, roles }]) => {
         const principalText = principalToText(principal);
-        const profilePictureBase64 = project_profile.params.user_data
+        const profilePictureBase64 = project_profile[0].params.user_data
           .profile_picture
-          ? uint8ArrayToBase64(project_profile.params.user_data.profile_picture)
+          ? uint8ArrayToBase64(project_profile[0].params.user_data.profile_picture)
           : null;
 
         const projectRole = roles.find((role) => role.name === "project");
@@ -44,9 +44,9 @@ function* fetchProjectApprovedHandler() {
           principal: principalText,
           ...project_profile,
           profile: {
-            ...project_profile.params,
+            ...project_profile[0].params,
             user_data: {
-              ...project_profile.params.user_data,
+              ...project_profile[0].params.user_data,
               profile_picture: profilePictureBase64,
             },
           },

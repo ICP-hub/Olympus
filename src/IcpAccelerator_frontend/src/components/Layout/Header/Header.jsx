@@ -5,6 +5,7 @@ import LogoutModal from "../../../models/LogoutModal";
 import SwitchRole from "../../../models/SwitchRole";
 import { OutSideClickHandler } from "../../hooks/OutSideClickHandler";
 import { getCurrentRoleStatusRequestHandler } from "../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
+import { logoSvg } from "../../Utils/Data/SvgData";
 const Header = ({ setModalOpen, gradient }) => {
   const dispatch = useDispatch();
   const principal = useSelector((currState) => currState.internet.principal);
@@ -34,15 +35,18 @@ const Header = ({ setModalOpen, gradient }) => {
   return (
     <header className={`text-gray-700 body-font ${gradient}`}>
 
-      <div className="  flex  items-center justify-between px-[5%] lg1:px-[4%] py-[3%]">
+      <div className="flex items-center justify-between px-[5%] lg1:px-[4%] py-[3%]">
         <img
-          className="w-auto md:h-[35px] xxs1:h-[30px] xxs:h-[23px] dxs:h-[22px] ss4:h-[22px] ss3:h-[21px] ss2:h-[20px] ss1:h-[19px] ss:h-[19px] sxs3:h-[19px] sxs2:h-[19px] sxs1:h-[19px] sxs:h-[19px] sxxs:h-[18px]  h-[30px]"
+          className=""
           src={logoWithText}
           alt="IcpLogo"
           loading="lazy"
         />
+        {/* <div>
+          {logoSvg}
+        </div> */}
 
-        {isAuthenticated && (
+        {/* {isAuthenticated && (
           <div className="space-x-3 text-xs md:block hidden">
             <a href="#" className={`${underline}`}>
               Home
@@ -57,7 +61,7 @@ const Header = ({ setModalOpen, gradient }) => {
               Projects
             </a>
           </div>
-        )}
+        )} */}
 
 
 
@@ -66,7 +70,7 @@ const Header = ({ setModalOpen, gradient }) => {
             {userCurrentRoleStatus && userCurrentRoleStatusActiveRole
               ? <div className="flex items-center flex-row gap-2">
                 <button onClick={() => setShowSwitchRole(true)} className="border border-violet-800 p-1 font-bold rounded-md text-violet-800 px-2 uppercase">
-                  {userCurrentRoleStatusActiveRole}
+                  {userCurrentRoleStatusActiveRole == 'vc' ? 'investor' : userCurrentRoleStatusActiveRole}
                 </button>
                 <SwitchRole isModalOpen={showSwitchRole} onClose={() => setShowSwitchRole(false)} />
                 <LogoutModal />
