@@ -13,6 +13,18 @@ type ApprovalRequest = record {
   receiver : principal;
 };
 type Blog = record { blog_url : text; timestamp : nat64 };
+type Cohort = record {
+  cohort_end_date : text;
+  title : text;
+  tags : text;
+  description : text;
+  deadline : text;
+  criteria : Eligibility;
+  no_of_seats : nat8;
+  cohort_launch_date : text;
+};
+type CohortDetails = record { uid : text; created_at : nat64; cohort : Cohort };
+type Eligibility = record { level_on_rubric : float64; eligibility : opt text };
 type FilterCriteria = record {
   area_of_focus : opt text;
   country : opt text;
@@ -362,6 +374,7 @@ service : () -> {
   approve_vc_profile_update : (principal, bool) -> (text);
   calculate_average_api : (text) -> (RatingAverages) query;
   connect_to_team_member : (text, text) -> (text);
+  create_cohort : (Cohort) -> (text);
   decline_mentor_creation_request_candid : (principal, bool) -> (text);
   decline_mentor_profile_update_request : (principal, bool) -> (text);
   decline_offer : (text, text) -> ();
@@ -379,6 +392,7 @@ service : () -> {
     ) query;
   get_accepted_request_for_project : () -> (vec OfferToMentor) query;
   get_admin_notifications : () -> (vec Notification) query;
+  get_all_cohorts : () -> (vec CohortDetails) query;
   get_all_mentor_notification : (principal) -> (vec OfferToSendToMentor) query;
   get_all_mentors : () -> (vec record { principal; MentorWithRoles }) query;
   get_all_mentors_candid : () -> (
@@ -390,6 +404,7 @@ service : () -> {
   get_announcements : () -> (vec record { principal; vec Announcements }) query;
   get_area_focus_expertise : () -> (vec Role_1) query;
   get_blog_post : () -> (vec record { principal; vec Blog }) query;
+  get_cohort : () -> (vec CohortDetails) query;
   get_declined_request_for_mentor : (principal) -> (
       vec OfferToSendToMentor,
     ) query;
