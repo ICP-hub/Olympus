@@ -72,7 +72,7 @@ const InvestorsList = () => {
         if (noData === false) {
 
           id = investor[0].toText();
-          img = uint8ArrayToBase64(investor[1]?.vc_profile?.params?.user_data?.profile_picture);
+          img = uint8ArrayToBase64(investor[1]?.vc_profile?.params?.user_data?.profile_picture[0]);
           name = investor[1]?.vc_profile?.params?.user_data?.full_name;
           company = investor[1]?.vc_profile?.params?.name_of_fund;
           role = 'Investor';
