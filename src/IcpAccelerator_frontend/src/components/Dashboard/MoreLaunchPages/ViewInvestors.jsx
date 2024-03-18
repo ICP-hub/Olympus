@@ -54,12 +54,12 @@ const ViewInvestor = () => {
       .list_all_vcs()
       .then((result) => {
         console.log("result-in-get-all-investors", result);
-        if (result?.length > 0) {
-          setNoData(false);
-          setData(result);
-        } else {
+        if (!result || result.length == 0) {
           setNoData(true);
           setData(investors);
+        } else {
+          setNoData(false);
+          setData(result);
         }
       })
       .catch((error) => {
@@ -79,9 +79,9 @@ const ViewInvestor = () => {
     <div className="flex flex-col text-center items-center justify-center">
         <div className="py-8">
           <h2 className="text-[40px] font-black leading-10 bg-gradient-to-r from-[#7283EA] to-[#4087BF] bg-clip-text text-transparent transform">
-            Get{" "}
+            Our{" "}
             <span className=" bg-gradient-to-r from-[#3C04BA] to-[#4087BF] bg-clip-text text-transparent transform">
-              investments
+              Investors
             </span>
           </h2>
         </div>
@@ -118,7 +118,7 @@ const ViewInvestor = () => {
         let id = "";
         let img = "";
         let name = "";
-        let company = [];
+        let company = "";
         let role = "";
         if(noData){
             id = investor.id;
@@ -129,7 +129,7 @@ const ViewInvestor = () => {
         }else{
             id = investor[1]?.vc_profile?.uid;
             img = uint8ArrayToBase64(
-              investor[1]?.vc_profile?.params?.user_data?.profile_picture
+              investor[1]?.vc_profile?.params?.user_data?.profile_picture[0]
             );
             name = investor[1]?.vc_profile?.params?.user_data?.full_name;
             company = investor[1]?.vc_profile?.params?.name_of_fund;
@@ -137,24 +137,22 @@ const ViewInvestor = () => {
         }
 
         return (
-            <div className="">
+            <div className="" key={index}>
             <div className="w-full sm:w-full md:w-full lg:w-full xl:w-full p-4">
                 <div className="shadow-md rounded-lg overflow-hidden  drop-shadow-2xl gap-2 bg-[#C1CAFF]">
                     <div className='flex flex-col sm:flex-row gap-6 p-2'>
                         <img className='w-full sm:w-[300.53px] rounded-md h-auto sm:h-[200.45px] flex lg:items-center lg:justify-center  ' src={img} alt="alt" />
                         <div className='flex flex-col w-full'>
-                            <h1 className="text-black text-2xl font-extrabold">SamyKarim</h1>
-                            <p className="text-[#737373]">Toshi, Managing Partner, Ex-Binance</p>
+                            <h1 className="text-black text-2xl font-extrabold">{name}</h1>
+                            <p className="text-[#737373]">{role}</p>
                             <div className='flex flex-wrap bg-white rounded-full underline mt-6 text-[#737373] justify-center'>
-                                <p className=''>SRE</p>
-                                <p className=''>observability</p>
-                                <p className=''>Kubernetes</p>
+                                <p className=''>{company}</p>
                             </div>
 
                             <div className='w-100px border-2 text-gray-900 mt-2'></div>
                             <div className='flex justify-end mt-6 xl:mr-8'>
                                 <button className=' font-bold py-2 px-4 bg-white text-[#7283EA] rounded-md'>
-                                    ReachOut
+                                    Reach Out
                                 </button>
                             </div>
                         </div>
