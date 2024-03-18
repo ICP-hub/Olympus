@@ -2,17 +2,20 @@ use crate::mentor::*;
 use crate::project_registration::*;
 use crate::user_module::*;
 use crate::vc_registration::*;
-use serde::{Deserialize, Serialize};
-
 use candid::{CandidType, Principal};
 use ic_cdk::api::management_canister::main::{canister_info, CanisterInfoRequest};
+use ic_cdk::api::stable::{StableReader, StableWriter};
 use ic_cdk::api::time;
 use ic_cdk::api::{caller, id};
 use ic_cdk_macros::*;
-use std::cell::RefCell;
-use std::collections::HashMap;
 
-#[derive(Clone, CandidType)]
+use serde::{Deserialize, Serialize};
+use std::cell::RefCell;
+use std::{
+    collections::HashMap,
+    io::{Read, Write},
+};
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 struct ApprovalRequest {
     sender: Principal,
     receiver: Principal,
@@ -23,12 +26,12 @@ struct ApprovalRequest {
     requested_for: String,
 }
 
-#[derive(Clone, CandidType)]
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 enum NotificationType {
     ApprovalRequest(ApprovalRequest),
 }
 
-#[derive(Clone, CandidType)]
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct Notification {
     notification_type: NotificationType,
 }
@@ -37,7 +40,6 @@ pub struct Notification {
 enum MyError {
     CanisterInfoError(String),
 }
-
 
 thread_local! {
     static ADMIN_NOTIFICATIONS : RefCell<HashMap<Principal, Vec<Notification>>> = RefCell::new(HashMap::new())
@@ -929,15 +931,16 @@ pub fn add_project_to_spotlight(project_id: String) -> Result<(), String> {
     let caller = caller();
 
     let project_info = APPLICATION_FORM.with(|details| {
-        details.borrow().iter()
+        details
+            .borrow()
+            .iter()
             .flat_map(|(_, projects)| projects.iter())
             .find(|project| project.uid == project_id)
-            .cloned() 
+            .cloned()
     });
 
     match project_info {
         Some(project_info) => {
-
             let spotlight_details = SpotlightDetails {
                 added_by: caller,
                 project_id: project_id,
@@ -948,7 +951,7 @@ pub fn add_project_to_spotlight(project_id: String) -> Result<(), String> {
                 spotlight.borrow_mut().push(spotlight_details);
             });
             Ok(())
-        },
+        }
         None => Err("Project not found.".to_string()),
     }
 }
@@ -969,4 +972,28 @@ pub fn remove_project_from_spotlight(project_id: String) -> Result<(), String> {
 #[query]
 pub fn get_spotlight_projects() -> Vec<SpotlightDetails> {
     SPOTLIGHT_PROJECTS.with(|spotlight| spotlight.borrow().clone())
+}
+
+pub fn pre_upgrade_admin() {
+    ADMIN_NOTIFICATIONS.with(|notifications| {
+        let serialized =
+            bincode::serialize(&*notifications.borrow()).expect("Serialization failed");
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+}
+
+pub fn post_upgrade_admin() {
+    let mut reader = StableReader::default();
+    let mut data = Vec::new();
+    reader
+        .read_to_end(&mut data)
+        .expect("Failed to read from stable storage");
+    let upvotes: HashMap<Principal, Vec<Notification>> =
+        bincode::deserialize(&data).expect("Deserialization failed of notification");
+    ADMIN_NOTIFICATIONS.with(|notifications_ref| {
+        *notifications_ref.borrow_mut() = upvotes;
+    });
 }
