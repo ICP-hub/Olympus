@@ -56,7 +56,7 @@ const LiveProjectBar = () => {
   const projectProgress = 50;
 
   return (
-    <div className="bg-gradient-to-r from-gray-100 to-white border border-gray-700 rounded-xl shadow-lg p-4 w-full">
+    <div className="bg-gradient-to-r from-gray-100 to-white border rounded-xl shadow-lg p-4 w-full">
       <div className="flex flex-row space-x-2 justify-between">
         <div className="flex items-center mb-4">
           <img
@@ -110,9 +110,9 @@ const LiveProjectBar = () => {
         <div className="text-sm flex items-center space-x-4">
           <span className="font-extrabold text-gray-700">Day Rank #1</span>
           <span className="font-extrabold text-gray-700">Week Rank #3</span>
-          <button className="text-white bg-purple-600 hover:bg-purple-700 transition duration-300 ease-in-out rounded-lg text-sm font-medium py-2 px-6">
+          {/* <button className="text-white bg-purple-600 hover:bg-purple-700 transition duration-300 ease-in-out rounded-lg text-sm font-medium py-2 px-6">
             Visit
-          </button>
+          </button> */}
         </div>
       </div>
     </div>

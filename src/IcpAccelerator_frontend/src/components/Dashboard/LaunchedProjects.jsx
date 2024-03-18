@@ -169,7 +169,7 @@ const LaunchedProjects = () => {
   const defaultArray = [
     {
       projectName: "Awesome Project",
-      projectId: "ABC123",
+      projectId: null,
       projectImage: ment,
       userImage: girl,
       principalId: "user123",
@@ -178,7 +178,7 @@ const LaunchedProjects = () => {
     },
     {  
       projectName: "Creative Initiative",
-      projectId: "DEF456",
+      projectId: null,
       projectImage: ment,
       userImage: girl,
       principalId: "user456",
@@ -187,7 +187,7 @@ const LaunchedProjects = () => {
     },
     {
       projectName: "Community Outreach",
-      projectId: "GHI789",
+      projectId: null,
       projectImage: ment,
       userImage: girl,
       principalId: "user789",
@@ -267,14 +267,14 @@ const LaunchedProjects = () => {
               <div className="w-full sm:w-1/2 md:w-1/3 mb-2 px-3" key={index}>
                 <div className="flex justify-between items-baseline mb-4 flex-wrap bg-white m-2 overflow-hidden rounded-lg shadow-lg">
                   <div className="p-4">
-                    <div className="flex justify-between items-baseline mb-4 flex-wrap">
+                    <div className="flex justify-between items-baseline mb-4 flex-wrap w-[265px]">
                       <div className="flex items-baseline w-1/2">
                         <img
                           className="rounded-full w-12 h-12 object-cover"
                           src={projectImage}
                           alt="profile"
                         />
-                        <h1 className="font-bold text-nowrap truncate w-1/2">
+                        <h1 className="font-bold text-nowrap truncate w-[220px]">
                           {projectName}
                         </h1>
                       </div>
@@ -297,7 +297,7 @@ const LaunchedProjects = () => {
                       >
                         <defs>
                           <linearGradient
-                            id={`gradient-${projectId}`}
+                            id={`gradient-${index}`}
                             x1="0%"
                             y1="0%"
                             x2="100%"
@@ -320,7 +320,7 @@ const LaunchedProjects = () => {
                           y="0"
                           width={`${percent}%`}
                           height="10"
-                          fill={`url(#gradient-${projectId})`}
+                          fill={`url(#gradient-${index})`}
                         />
                       </svg>
                       <div className="ml-2 text-nowrap text-sm">Level 2</div>
@@ -334,7 +334,9 @@ const LaunchedProjects = () => {
 
                         <p
                           onClick={() =>
+                            projectId ?
                             handleNavigate(projectId)
+                            :''
                           }
                           className="cursor-pointer"
                         >
@@ -345,7 +347,9 @@ const LaunchedProjects = () => {
                     <button
                       className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"
                       onClick={() =>
+                        projectId ?
                         handleNavigate(projectId)
+                        :''
                       }
                     >
                       KNOW MORE

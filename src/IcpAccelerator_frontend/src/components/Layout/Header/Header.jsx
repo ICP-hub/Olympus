@@ -5,6 +5,7 @@ import LogoutModal from "../../../models/LogoutModal";
 import SwitchRole from "../../../models/SwitchRole";
 import { OutSideClickHandler } from "../../hooks/OutSideClickHandler";
 import { getCurrentRoleStatusRequestHandler } from "../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
+import { logoSvg } from "../../Utils/Data/SvgData";
 const Header = ({ setModalOpen, gradient }) => {
   const dispatch = useDispatch();
   const principal = useSelector((currState) => currState.internet.principal);
@@ -41,8 +42,11 @@ const Header = ({ setModalOpen, gradient }) => {
           alt="IcpLogo"
           loading="lazy"
         />
+        {/* <div>
+          {logoSvg}
+        </div> */}
 
-        {isAuthenticated && (
+        {/* {isAuthenticated && (
           <div className="space-x-3 text-xs md:block hidden">
             <a href="#" className={`${underline}`}>
               Home
@@ -57,7 +61,7 @@ const Header = ({ setModalOpen, gradient }) => {
               Projects
             </a>
           </div>
-        )}
+        )} */}
 
 
 
@@ -66,7 +70,7 @@ const Header = ({ setModalOpen, gradient }) => {
             {userCurrentRoleStatus && userCurrentRoleStatusActiveRole
               ? <div className="flex items-center flex-row gap-2">
                 <button onClick={() => setShowSwitchRole(true)} className="border border-violet-800 p-1 font-bold rounded-md text-violet-800 px-2 uppercase">
-                  {userCurrentRoleStatusActiveRole}
+                  {userCurrentRoleStatusActiveRole == 'vc' ? 'investor' : userCurrentRoleStatusActiveRole}
                 </button>
                 <SwitchRole isModalOpen={showSwitchRole} onClose={() => setShowSwitchRole(false)} />
                 <LogoutModal />

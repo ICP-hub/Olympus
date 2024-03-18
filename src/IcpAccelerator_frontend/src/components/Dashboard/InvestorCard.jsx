@@ -4,35 +4,51 @@ import uint8ArrayToBase64 from '../Utils/uint8ArrayToBase64';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from "react-redux";
 import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
-// const investors = [
-//   {
-//     id: 1,
-//     image: image,
-//     name: "SamyKarim",
-//     role: "Toshi, Managing Partner. Ex-Binance",
-//     company: ["SRE", "Observability ", "Kubernetes"],
-//   },
-//   {
-//     id: 2,
-//     image: image,
-//     name: "SamyKarim",
-//     role: "Toshi, Managing Partner. Ex-Binance",
-//     company: 'Reliability Engineer and DevOps'
-//   },
 
-// ];
+const investors = [
+  {
+    id: null,
+    image: image,
+    name: "John Doe",
+    role: "Investment Analyst",
+    company: "Venture Capital Partners",
+  },
+  {
+    id: null,
+    image: image,
+    name: "Jane Smith",
+    role: "Senior Partner",
+    company: "Tech Growth Fund",
+  },
+  {
+    id: null,
+    image: image,
+    name: "Michael Johnson",
+    role: "Managing Director",
+    company: "Innovate Ventures",
+  }
+];
+
 
 const InvestorsList = () => {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
+  const [noData, setNoData] = useState(null);
 
   const actor = useSelector((currState) => currState.actors.actor);
 
   const getAllInvestors = async (caller) => {
     await caller.list_all_vcs().then((result) => {
       console.log('result-in-get-all-investors', result)
-      setData(result)
+      if (!result || result.length == 0) {
+        setNoData(true)
+        setData(investors)
+      } else {
+        setAllProjectData(result);
+        setData(false)
+      }
     }).catch((error) => {
+      setData(investors)
       console.log('error-in-get-all-investors', error)
     })
   }
@@ -47,15 +63,29 @@ const InvestorsList = () => {
   return (
     <div className="p-1 flex items-center mb-8 gap-4">
       {data.map((investor, index) => {
-        let id = investor[1]?.vc_profile?.uid;
-        let img = uint8ArrayToBase64(investor[1]?.vc_profile?.params?.user_data?.profile_picture);
-        let name = investor[1]?.vc_profile?.params?.user_data?.full_name;
-        let company = investor[1]?.vc_profile?.params?.assets_under_management;
-        let role = 'Investor'
+        let id = null
+        let img = ""
+        let name = ""
+        let company = ""
+        let role = '';
 
+        if (noData === false) {
+
+          id = investor[0].toText();
+          img = uint8ArrayToBase64(investor[1]?.vc_profile?.params?.user_data?.profile_picture);
+          name = investor[1]?.vc_profile?.params?.user_data?.full_name;
+          company = investor[1]?.vc_profile?.params?.name_of_fund;
+          role = 'Investor';
+        } else {
+          id = investor.id
+          img = investor.image
+          name = investor.name
+          company = investor.company
+          role = investor.role;
+        }
         return (
 
-          <div key={index} className="flex-shrink-0 overflow-hidden bg-white rounded-lg max-w-xs shadow-lg p-5">
+          <div key={index} className="flex-shrink-0 overflow-hidden bg-white rounded-lg max-w-xs shadow-lg p-5 w-1/3">
             <div className=" flex items-center justify-center px-8">
               <img className="w-full h-40 object-fill rounded-md" src={img} alt="" />
             </div>
@@ -63,7 +93,7 @@ const InvestorsList = () => {
               <span className="font-semibold text-lg line-clamp-1">
                 {name}
               </span>
-              <span className="block font-semibold line-clamp-2">
+              <span className="block font-semibold line-clamp-2 h-10">
                 {role}
               </span>
               <div className="flex flex-wrap gap-2 border-t-2">
@@ -71,7 +101,7 @@ const InvestorsList = () => {
                   {company}
                 </span>
               </div>
-              <button onClick={() => navigate(`/view-investor-details/${id}`)} className="mt-4  text-white px-4 py-1 rounded-lg uppercase w-full text-center border border-gray-300 font-bold bg-[#3505B2] transition-colors duration-200 ease-in-out">
+              <button onClick={() => id ? navigate(`/view-investor-details/${id}`) : ''} className="mt-4  text-white px-4 py-1 rounded-lg uppercase w-full text-center border border-gray-300 font-bold bg-[#3505B2] transition-colors duration-200 ease-in-out">
                 View Profile
               </button>
             </div>
