@@ -19,12 +19,12 @@ const CurrentlyRaising = () => {
     ? { stop1: "#4087BF", stop2: "#3C04BA" }
     : { stop1: "#B5B5B5", stop2: "#5B5B5B" };
 
-  // useEffect(() => {
-  //     if (percent < 100) {
-  //         tm.current = setTimeout(increase, 30);
-  //     }
-  //     return () => clearTimeout(tm.current);
-  // }, [percent]);
+  useEffect(() => {
+      if (percent < 100) {
+          tm.current = setTimeout(increase, 30);
+      }
+      return () => clearTimeout(tm.current);
+  }, [percent]);
 
   const handleClickPlusOne = (id) => {
     setShowLine((prevShowLine) => ({
@@ -33,22 +33,22 @@ const CurrentlyRaising = () => {
     }));
   };
 
-  // const increase = () => {
-  //     setPercent((prevPercent) => {
-  //         if (prevPercent >= 100) {
-  //             clearTimeout(tm.current);
-  //             return 100;
-  //         }
-  //         return prevPercent + 1;
-  //     });
-  // };
+  const increase = () => {
+      setPercent((prevPercent) => {
+          if (prevPercent >= 100) {
+              clearTimeout(tm.current);
+              return 100;
+          }
+          return prevPercent + 1;
+      });
+  };
 
   const defaultArray = [
     {
       projectName: "Innovative Solutions",
       projectId: null,
-      projectImage: "solutionImage",
-      userImage: "engineerImage",
+      projectImage: ment,
+      userImage: girl,
       principalId: "user001",
       projectDescription: "This project aims to provide innovative solutions to real-world problems.",
       projectAreaOfFocus: "Technology"
@@ -56,8 +56,8 @@ const CurrentlyRaising = () => {
     {
       projectName: "Artistic Expressions",
       projectId: null,
-      projectImage: "artImage",
-      userImage: "artistImage",
+      projectImage: ment,
+      userImage: girl,
       principalId: "user002",
       projectDescription: "An exploration of artistic expressions pushing the boundaries of creativity.",
       projectAreaOfFocus: "Art and Design"
@@ -65,8 +65,8 @@ const CurrentlyRaising = () => {
     {
       projectName: "Community Empowerment",
       projectId: null,
-      projectImage: "communityImage",
-      userImage: "activistImage",
+      projectImage: ment,
+      userImage: girl,
       principalId: "user003",
       projectDescription: "Empowering communities through grassroots initiatives for lasting impact.",
       projectAreaOfFocus: "Social Impact"
@@ -74,8 +74,8 @@ const CurrentlyRaising = () => {
     {
       projectName: "Event Management",
       projectId: null,
-      projectImage: "communityImage",
-      userImage: "activistImage",
+      projectImage: ment,
+      userImage: girl,
       principalId: "user003",
       projectDescription: "Welcome to the best event management system on ICP. Fully Decentralized On ICP ",
       projectAreaOfFocus: "Social Impact"
@@ -158,7 +158,7 @@ const CurrentlyRaising = () => {
             <div className="w-full sm:w-1/2 md:w-1/4 mb-2 px-3" key={index}>
               <div className="flex justify-between items-baseline mb-4 flex-wrap bg-white m-2 overflow-hidden rounded-lg shadow-lg min-w-1/2">
                 <div className="p-4">
-                  <div className="flex justify-between items-baseline mb-4 flex-wrap w-[265px]">
+                  <div className="flex justify-between items-baseline mb-2 flex-col flex-wrap w-[265px]">
                     <div className="flex items-baseline w-1/2">
                       <img
                         className="rounded-full w-12 h-12 object-cover"
@@ -170,7 +170,7 @@ const CurrentlyRaising = () => {
                     </div>
                     <div className="flex items-baseline w-1/2">
                       <img
-                        className="h-5 w-5 rounded-full mr-2"
+                        className="h-5 w-5 rounded-full mx-2 mt-2"
                         src={userImage}
                         alt="not found"
                       />

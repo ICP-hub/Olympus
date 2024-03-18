@@ -1,7 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Pagination, Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
+import girlImage from "../../../assets/images/girl.jpeg";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
+import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
 
 function SearchMentors() {
   const cardData = [
@@ -69,6 +74,38 @@ function SearchMentors() {
         "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ",
     },
   ];
+
+  const navigate = useNavigate();
+  const [data, setData] = useState([]);
+  const [noData, setNoData] = useState(null);
+
+  const actor = useSelector((currState) => currState.actors.actor);
+  const getAllMentors = async (caller) => {
+    await caller
+      .get_all_mentors_candid()
+      .then((result) => {
+        console.log("result-in-get-all-mentors", result);
+        if (result.length > 0) {
+          setData(result);
+          setNoData(false);
+        } else {
+          setData(cardData);
+          setNoData(true);
+        }
+      })
+      .catch((error) => {
+        console.log("error-in-get-all-mentors", error);
+      });
+  };
+
+  useEffect(() => {
+    if (actor) {
+      getAllMentors(actor);
+    } else {
+      getAllMentors(IcpAccelerator_backend);
+    }
+  }, [actor]);
+
   return (
     <div className="px-[4%] w-full bg-gray-100 h-screen overflow-y-scroll">
       <div className="flex flex-col text-center items-center justify-center">
@@ -114,55 +151,69 @@ function SearchMentors() {
           </button>
         </div>
       </div>
-      <Swiper
-        modules={[Pagination, Autoplay]}
-        centeredSlides={true}
-        loop={true}
-        autoplay={{ delay: 2500 }}
-        pagination={{ clickable: true }}
-        spaceBetween={0}
-        slidesPerView={1}
-        slidesPerGroup={1} 
-        breakpoints={{
-          240: {
-            slidesPerView: 1,
-          },
-          440: {
-            slidesPerView: 3,
-          },
-          768: {
-            slidesPerView: 5,
-          },
-          1024: {
-            slidesPerView: 7,
-          },
-        }}
-      >
-        {cardData.map((data, index) => (
-          <SwiperSlide key={index}>
-            <div className="flex flex-col shadow rounded-lg pt-4 m-2 border-2 border-white/50 bg-white/50 items-center justify-center backdrop-blur-md">
-              <div
-                className="relative p-1 bg-blend-overlay rounded-full bg-no-repeat bg-center bg-cover"
-                style={{
-                  backgroundImage: `url(${data.imageUrl}), linear-gradient(168deg, rgba(255, 255, 255, 0.25) -0.86%, rgba(255, 255, 255, 0) 103.57%)`,
-                  backdropFilter: "blur(20px)",
-                }}
-              >
-                {" "}
-                <img
-                  className="rounded-full object-cover w-20 h-20"
-                  src={data.imageUrl}
-                  alt={data.name}
-                />
-              </div>
-              <div className="px-4 text-center py-2">
-                <div className="font-bold text-sm mb-2">{data.name}</div>
-                <p className="font-normal text-xs">{data.role}</p>
+
+      <div className="flex flex-wrap justify-center">
+        {cardData.map((mentor, index) => {
+          let id = "";
+          let img = "";
+          let name = "";
+          let skills = "";
+          let role = "";
+          if (noData) {
+            id = mentor?.id;
+            img = mentor?.imageUrl;
+            name = mentor?.name;
+            skills = mentor?.skills;
+            role = mentor?.role;
+          } else {
+            id = mentor[1]?.mentor_profile?.uid;
+            img = uint8ArrayToBase64(
+              mentor[1]?.mentor_profile?.profile?.user_data?.profile_picture
+            );
+            name = mentor[1]?.mentor_profile?.profile?.user_data?.full_name;
+            skills = mentor[1]?.mentor_profile?.profile?.area_of_expertise;
+            role = "Mentor";
+          }
+          return (
+            <div className="">
+              <div className="w-full sm:w-full md:w-full lg:w-full xl:w-full p-4">
+                <div className="shadow-md rounded-lg overflow-hidden border-2 drop-shadow-2xl gap-2 bg-white">
+                  <div className="flex flex-col sm:flex-row gap-6 p-2">
+                    <img
+                      className="w-full sm:w-[300.53px] rounded-md h-auto sm:h-[200.45px] flex lg:items-center lg:justify-center  "
+                      src={img}
+                      alt="alt"
+                    />
+                    <div className="flex flex-col w-full mt-4">
+                      <h1 className="text-black text-2xl font-extrabold">
+                        {name}
+                      </h1>
+                      <p className="text-[#737373]">{role}</p>
+                      <div className="flex flex-wrap gap-4 underline mt-6 text-[#737373]">
+                        <p className="bg-gray-200 rounded-full py-2 px-4">
+                          SRE
+                        </p>
+                        <p className="bg-gray-200 rounded-full py-2 px-4">
+                          observability
+                        </p>
+                        <p className="bg-gray-200 rounded-full py-2 px-4">
+                          Kubernetes
+                        </p>
+                      </div>
+                      <div className="w-100px border-2 text-gray-100 mt-2"></div>
+                      <div className="flex justify-end mt-6 xl:mr-8">
+                        <button className="text-white font-bold py-2 px-4 bg-[#3505B2] rounded-md">
+                          ReachOut
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
+          );
+        })}
+      </div>
     </div>
   );
 }

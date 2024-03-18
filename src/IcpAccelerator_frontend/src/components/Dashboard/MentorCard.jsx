@@ -43,8 +43,8 @@ const MentorCard = () => {
         setNoData(true)
         setData(mentors)
       } else {
-        setAllProjectData(result);
-        setData(false)
+        setData(result);
+        setNoData(false)
       }
     }).catch((error) => {
       setNoData(true)
@@ -62,7 +62,7 @@ const MentorCard = () => {
   }, [actor]);
   return (
     <div className="p-1 flex items-center mb-8 gap-8">
-      {data.map((mentor, index) => {
+      {data && data.map((mentor, index) => {
         let id = null
         let img = ""
         let name = ""
@@ -85,16 +85,16 @@ const MentorCard = () => {
         return (
           <div key={index} className="flex-shrink-0 overflow-hidden bg-white rounded-lg max-w-xs shadow-lg p-5 w-1/3">
             <div className=" flex items-center justify-center px-8">
-              <img className="w-full h-40 object-fill rounded-md" src={img} alt="" />
+              <img className="w-full h-40 object-cover rounded-md" src={img} alt="" />
             </div>
             <div className="text-black mt-2 text-center">
               <span className="font-semibold text-lg line-clamp-1">
                 {name}
               </span>
-              <span className="block font-semibold line-clamp-2 h-10">
+              <span className="block font-semibold line-clamp-2 h-10 overflow-y-scroll">
                 {role}
               </span>
-              <div className="flex flex-wrap gap-2 border-t-2">
+              <div className="flex flex-wrap gap-2 border-t-2 py-3">
                 {/* {mentor.areaOfFocus.map((investment, index) => ( */}
                 <span className="bg-[#E7E7E8] rounded-full text-gray-600 text-xs font-bold px-3 py-2 leading-none flex items-center mt-2">
                   {skills}

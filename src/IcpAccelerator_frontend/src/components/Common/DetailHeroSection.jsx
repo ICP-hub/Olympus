@@ -33,7 +33,7 @@ const DetailHeroSection = () => {
       alt: "Astronaut",
       className:
         "z-20 w-[500px] md:w-[250px] sm:w-[250px] sxs:w-[160px] md:h-56 relative  sxs:-right-3 right-16 md:right-0 sm:right-0 top-10 object-contain",
-      text: "Sign Up As VC",
+      text: "Sign Up As INVESTOR",
     },
     "/create-user": {
       src: User,

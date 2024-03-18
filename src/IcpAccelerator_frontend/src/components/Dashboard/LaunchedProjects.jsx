@@ -133,12 +133,12 @@ const LaunchedProjects = () => {
     ? { stop1: "#4087BF", stop2: "#3C04BA" }
     : { stop1: "#B5B5B5", stop2: "#5B5B5B" };
 
-  // useEffect(() => {
-  //   if (percent < 100) {
-  //     tm.current = setTimeout(increase, 30);
-  //   }
-  //   return () => clearTimeout(tm.current);
-  // }, [percent]);
+  useEffect(() => {
+    if (percent < 100) {
+      tm.current = setTimeout(increase, 30);
+    }
+    return () => clearTimeout(tm.current);
+  }, [percent]);
 
   const handleClickPlusOne = (id) => {
     setShowLine((prevShowLine) => ({
@@ -147,15 +147,15 @@ const LaunchedProjects = () => {
     }));
   };
 
-  // const increase = () => {
-  //   setPercent((prevPercent) => {
-  //     if (prevPercent >= 100) {
-  //       clearTimeout(tm.current);
-  //       return 100;
-  //     }
-  //     return prevPercent + 1;
-  //   });
-  // };
+  const increase = () => {
+    setPercent((prevPercent) => {
+      if (prevPercent >= 100) {
+        clearTimeout(tm.current);
+        return 100;
+      }
+      return prevPercent + 1;
+    });
+  };
 
   const categories = [
     {
@@ -228,11 +228,11 @@ const LaunchedProjects = () => {
     }
   }, [actor]);
 
-  const handleNavigate = (projectId, data) => {
+  const handleNavigate = (projectId) => {
     if (isAuthenticated) {
-      navigate(`/individual-project-details/${projectId}`, { state: { data } });
+      navigate(`/individual-project-details/${projectId}`)
     }
-  };
+  }
 
   return (
     <div className="flex flex-wrap -mx-4 mb-4 flex-row items-start">
@@ -267,7 +267,7 @@ const LaunchedProjects = () => {
               <div className="w-full sm:w-1/2 md:w-1/3 mb-2 px-3" key={index}>
                 <div className="flex justify-between items-baseline mb-4 flex-wrap bg-white m-2 overflow-hidden rounded-lg shadow-lg">
                   <div className="p-4">
-                    <div className="flex justify-between items-baseline mb-4 flex-wrap w-[265px]">
+                    <div className="flex justify-between items-baseline mb-2 flex-col flex-wrap w-[265px]">
                       <div className="flex items-baseline w-1/2">
                         <img
                           className="rounded-full w-12 h-12 object-cover"
@@ -280,7 +280,7 @@ const LaunchedProjects = () => {
                       </div>
                       <div className="flex items-baseline w-1/2">
                         <img
-                          className="h-5 w-5 rounded-full mr-2"
+                          className="h-5 w-5 rounded-full mx-2 mt-2"
                           src={userImage}
                           alt="not found"
                         />

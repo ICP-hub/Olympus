@@ -21,6 +21,9 @@ import InvestorDashboard from "./components/Dashboard/RoleDashboard/InvestorDash
 import { useNavigate } from 'react-router-dom';
 import SearchMentors from "./components/Mentors/SearchMentors";
 import EventForm from "./components/Mentors/Event/EventForm";
+import MoreProjectLaunchPage from "./components/Dashboard/MoreLaunchPages/MoreProjectLaunchPage";
+import MoreCurrentlyRaisingProjects from "./components/Dashboard/MoreLaunchPages/MoreCurrentlyRaisingProjects";
+import ViewInvestor from "./components/Dashboard/MoreLaunchPages/ViewInvestors";
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
 
@@ -77,6 +80,9 @@ const AppRoutes = () => {
     { path: "/view-mentor-details/:id", element: <MentorsProfile /> },
     { path: "/view-investor-details/:id", element: <InvestorProfile /> },
     { path: "/view-mentors", element: <SearchMentors /> },
+    { path: "/launch-projects", element: <MoreProjectLaunchPage /> },
+    { path: "/raising-projects", element: <MoreCurrentlyRaisingProjects /> },
+    { path: "/view-investor", element: <ViewInvestor /> },
 
   ];
 
