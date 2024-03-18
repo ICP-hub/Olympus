@@ -72,7 +72,7 @@ const InvestorsList = () => {
         if (noData === false) {
 
           id = investor[0].toText();
-          img = uint8ArrayToBase64(investor[1]?.vc_profile?.params?.user_data?.profile_picture);
+          img = uint8ArrayToBase64(investor[1]?.vc_profile?.params?.user_data?.profile_picture[0]);
           name = investor[1]?.vc_profile?.params?.user_data?.full_name;
           company = investor[1]?.vc_profile?.params?.name_of_fund;
           role = 'Investor';
@@ -87,7 +87,7 @@ const InvestorsList = () => {
 
           <div key={index} className="flex-shrink-0 overflow-hidden bg-white rounded-lg max-w-xs shadow-lg p-5 w-1/2">
             <div className=" flex items-center justify-center px-8">
-              <img className="w-full h-40 object-fill rounded-md" src={img} alt="" />
+              <img className="w-full h-40 object-cover rounded-md" src={img} alt="" />
             </div>
             <div className="text-black mt-2">
               <span className="font-semibold text-lg line-clamp-1">

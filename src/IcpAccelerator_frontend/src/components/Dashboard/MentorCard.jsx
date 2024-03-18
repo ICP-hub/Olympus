@@ -85,7 +85,7 @@ const MentorCard = () => {
         return (
           <div key={index} className="flex-shrink-0 overflow-hidden bg-white rounded-lg max-w-xs shadow-lg p-5 w-1/3">
             <div className=" flex items-center justify-center px-8">
-              <img className="w-full h-40 object-fill rounded-md" src={img} alt="" />
+              <img className="w-full h-40 object-cover rounded-md" src={img} alt="" />
             </div>
             <div className="text-black mt-2 text-center">
               <span className="font-semibold text-lg line-clamp-1">
