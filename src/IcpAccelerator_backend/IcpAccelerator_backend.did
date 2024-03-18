@@ -13,11 +13,18 @@ type ApprovalRequest = record {
   receiver : principal;
 };
 type Blog = record { blog_url : text; timestamp : nat64 };
-type ConnectionRequest = record {
-  startup_id : principal;
-  message : text;
-  mentor_id : principal;
+type Cohort = record {
+  cohort_end_date : text;
+  title : text;
+  tags : text;
+  description : text;
+  deadline : text;
+  criteria : Eligibility;
+  no_of_seats : nat8;
+  cohort_launch_date : text;
 };
+type CohortDetails = record { uid : text; created_at : nat64; cohort : Cohort };
+type Eligibility = record { level_on_rubric : float64; eligibility : opt text };
 type FilterCriteria = record {
   area_of_focus : opt text;
   country : opt text;
