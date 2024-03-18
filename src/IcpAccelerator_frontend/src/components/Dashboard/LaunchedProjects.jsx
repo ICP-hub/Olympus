@@ -126,6 +126,7 @@ const LaunchedProjects = () => {
   const [isHovered, setIsHovered] = useState(false);
   const [percent, setPercent] = useState(0);
   const [showLine, setShowLine] = useState({});
+  const [idArr, setIdArr] = useState([]);
   const tm = useRef(null);
   const navigate = useNavigate();
   // Gradient color stops, changes when hovered
@@ -174,16 +175,17 @@ const LaunchedProjects = () => {
       userImage: girl,
       principalId: "user123",
       projectDescription: "This is an amazing project focused on innovation.",
-      projectAreaOfFocus: "Technology"
+      projectAreaOfFocus: "Technology",
     },
-    {  
+    {
       projectName: "Creative Initiative",
       projectId: null,
       projectImage: ment,
       userImage: girl,
       principalId: "user456",
-      projectDescription: "A creative initiative aiming to bring positive change.",
-      projectAreaOfFocus: "Art and Design"
+      projectDescription:
+        "A creative initiative aiming to bring positive change.",
+      projectAreaOfFocus: "Art and Design",
     },
     {
       projectName: "Community Outreach",
@@ -191,9 +193,10 @@ const LaunchedProjects = () => {
       projectImage: ment,
       userImage: girl,
       principalId: "user789",
-      projectDescription: "Engaging community outreach program fostering collaboration.",
-      projectAreaOfFocus: "Social Impact"
-    }
+      projectDescription:
+        "Engaging community outreach program fostering collaboration.",
+      projectAreaOfFocus: "Social Impact",
+    },
   ];
 
   const [noData, setNoData] = useState(null);
@@ -206,16 +209,16 @@ const LaunchedProjects = () => {
         console.log("result-in-get-all-projects", result);
 
         if (!result || result.length == 0) {
-          setNoData(true)
-          setAllProjectData(defaultArray)
+          setNoData(true);
+          setAllProjectData(defaultArray);
         } else {
           setAllProjectData(result);
-          setNoData(false)
+          setNoData(false);
         }
       })
       .catch((error) => {
-        setNoData(true)
-        setAllProjectData(defaultArray)
+        setNoData(true);
+        setAllProjectData(defaultArray);
         console.log("error-in-get-all-projects", error);
       });
   };
@@ -230,38 +233,53 @@ const LaunchedProjects = () => {
 
   const handleNavigate = (projectId) => {
     if (isAuthenticated) {
-      navigate(`/individual-project-details/${projectId}`)
+      navigate(`/individual-project-details/${projectId}`);
     }
-  }
+  };
+
+  const fetchIdHandler = (id, index) => {
+    setIdArr((prevIdArr) => [...prevIdArr, id]);
+    localStorage.setItem("idArr", JSON.stringify([...idArr, id]));
+  };
 
   return (
     <div className="flex flex-wrap -mx-4 mb-4 flex-row items-start">
       <div className="overflow-x-auto flex flex-row w-3/4">
         {allProjectData &&
           allProjectData.map((data, index) => {
-            let projectName = ""
-            let projectId = ""
-            let projectImage = ""
-            let userImage = ""
-            let principalId = ""
-            let projectDescription = ""
-            let projectAreaOfFocus = ""
+            let projectName = "";
+            let projectId = "";
+            let projectImage = "";
+            let userImage = "";
+            let principalId = "";
+            let projectDescription = "";
+            let projectAreaOfFocus = "";
             if (noData === false) {
               projectName = data[1]?.project_profile[0]?.params?.project_name;
               projectId = data[1]?.project_profile[0]?.uid;
-              projectImage = uint8ArrayToBase64(data[1]?.project_profile[0]?.params?.project_logo);
-              userImage = uint8ArrayToBase64(data[1]?.project_profile[0]?.params?.user_data?.profile_picture[0]);
-              principalId = data[0].toText()
-              projectDescription = data[1]?.project_profile[0]?.params?.project_description
-              projectAreaOfFocus = data[1]?.project_profile[0]?.params?.project_area_of_focus
+              projectImage = uint8ArrayToBase64(
+                data[1]?.project_profile[0]?.params?.project_logo
+              );
+              userImage = uint8ArrayToBase64(
+                data[1]?.project_profile[0]?.params?.user_data
+                  ?.profile_picture[0]
+              );
+              principalId = data[0].toText();
+              projectDescription =
+                data[1]?.project_profile[0]?.params?.project_description;
+              projectAreaOfFocus =
+                data[1]?.project_profile[0]?.params?.project_area_of_focus;
+              {
+                index <= 5 && fetchIdHandler(projectId, index);
+              }
             } else {
-              projectName = data.projectName
-              projectId = data.projectId
-              projectImage = data.projectImage
-              userImage = data.userImage
-              principalId = data.principalId
-              projectDescription = data.projectDescription
-              projectAreaOfFocus = data.projectAreaOfFocus
+              projectName = data.projectName;
+              projectId = data.projectId;
+              projectImage = data.projectImage;
+              userImage = data.userImage;
+              principalId = data.principalId;
+              projectDescription = data.projectDescription;
+              projectAreaOfFocus = data.projectAreaOfFocus;
             }
             return (
               <div className="w-full sm:w-1/2 md:w-1/3 mb-2 px-3" key={index}>
@@ -328,28 +346,27 @@ const LaunchedProjects = () => {
                     <p className="text-gray-700 text-sm md:line-clamp-8 sxs:line-clamp-4 sm:line-clamp-6 line-clamp-8 h-36">
                       {projectDescription}
                     </p>
-                    {projectAreaOfFocus ?
+                    {projectAreaOfFocus ? (
                       <div className="flex gap-2 mt-2 text-xs">
                         <p>{projectAreaOfFocus}</p>
 
                         <p
                           onClick={() =>
-                            projectId ?
-                            handleNavigate(projectId)
-                            :''
+                            projectId ? handleNavigate(projectId) : ""
                           }
                           className="cursor-pointer"
                         >
                           +1 more
                         </p>
-                      </div> : ''}
+                      </div>
+                    ) : (
+                      ""
+                    )}
 
                     <button
                       className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"
                       onClick={() =>
-                        projectId ?
-                        handleNavigate(projectId)
-                        :''
+                        projectId ? handleNavigate(projectId) : ""
                       }
                     >
                       KNOW MORE
@@ -463,7 +480,7 @@ const LaunchedProjects = () => {
           })} */}
       </div>
       <div className="w-1/4 py-2">
-        <RegisterCard categories={categories} redirect={'create-project'} />
+        <RegisterCard categories={categories} redirect={"create-project"} />
       </div>
     </div>
   );

@@ -222,11 +222,29 @@ const ProjectDetailsForUser = () => {
       img2: girl,
     },
   ];
+
+  const idArr = JSON.parse(localStorage.getItem("idArr")) || [];
+
+  const projectJobData = [
+    {
+      image: ment,
+      tags: ["Imo", "Ludi", "Ndaru"],
+      country: "india",
+      website: "https://www.google.co.in/",
+    },
+    {
+      image: ment,
+      tags: ["Ludi", "Ndaru", "Imo"],
+      country: "America",
+      website: "https://www.google.co.in/",
+    },
+  ];
+
   const [activeTab, setActiveTab] = useState(headerData[0].id);
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
-  console.log(userCurrentRoleStatusActiveRole)
+  console.log(userCurrentRoleStatusActiveRole);
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
@@ -452,7 +470,7 @@ const ProjectDetailsForUser = () => {
             <h1 className="font-[950] text-lg md:text-2xl p-4 text-blue-700">
               jobs/opportunity
             </h1>
-            <div className="flex flex-wrap md:flex-nowrap gap-4">
+            {/* <div className="flex flex-wrap md:flex-nowrap gap-4">
               <ProjectJobCard
                 image={ment}
                 tags={["Imo", "Ludi", "Ndaru"]}
@@ -465,6 +483,35 @@ const ProjectDetailsForUser = () => {
                 country={"india"}
                 website={"https://www.google.co.in/"}
               />
+            </div> */}
+
+            <div className="flex flex-wrap md:flex-nowrap gap-6 justify-between mb-8 overflow-x-auto">
+              {idArr.slice(0, 5).map((id, index) => (
+                <ProjectJobCard
+                  key={index}
+                  image={projectJobData[index % projectJobData.length].image}
+                  tags={projectJobData[index % projectJobData.length].tags}
+                  country={
+                    projectJobData[index % projectJobData.length].country
+                  }
+                  website={
+                    projectJobData[index % projectJobData.length].website
+                  }
+                />
+              ))}
+              {idArr.length === 0 && (
+                <>
+                  {projectJobData.map((data, index) => (
+                    <ProjectJobCard
+                      key={index}
+                      image={data.image}
+                      tags={data.tags}
+                      country={data.country}
+                      website={data.website}
+                    />
+                  ))}
+                </>
+              )}
             </div>
           </div>
         </div>
