@@ -195,6 +195,7 @@ const MentorRegistration = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
     trigger,
+    setValue,
     control,
     reset,
     watch,
@@ -225,9 +226,18 @@ const MentorRegistration = () => {
   useEffect(() => {
     // Update ExistingICPMentor based on existing_icp_mentor field value
     setExistingICPMentor(ExistingICPMentor === "true");
+    if (ExistingICPMentor !== "true") {
+      setValue("existing_icp_project_porfolio", "");
+    }
     setIsMulti_Chain(IsMultiChain === "true");
+    if (IsMultiChain !== "true") {
+      setValue("multichain", "");
+    }
     setIcopHuborSpoke(IcopHuborSpoke === "true");
-  }, [ExistingICPMentor, IsMultiChain, IcopHuborSpoke]);
+    if (IcopHuborSpoke !== "true") {
+      setValue("hub_owner", "");
+    }
+  }, [ExistingICPMentor, IsMultiChain, IcopHuborSpoke, setValue]);
   useEffect(() => {
     if (!userHasInteracted) return;
     const validateStep = async () => {

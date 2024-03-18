@@ -457,13 +457,13 @@ const ProjectRatings = () => {
   const appendSendDataFunc = (name, step) => {
     console.log('name', name);
     console.log('step', step);
-    let sendingArray = [...sendingData]
-    const foundObject = sendingArray.find(item => item.level_name === name);
-    const foundIndex = sendingArray.findIndex(item => item.level_name === name);
-    if (foundObject && foundIndex !== -1) {
-      sendingArray[foundIndex - 1].sub_level = rubric_table_data[currentStep].levels[step].title;
-    }
-    setSendingData(sendingArray);
+    // let sendingArray = [...sendingData]
+    // const foundObject = sendingArray.find(item => item.level_name === name);
+    // const foundIndex = sendingArray.findIndex(item => item.level_name === name);
+    // if (foundObject && foundIndex !== -1) {
+    //   sendingArray[foundIndex - 1].sub_level = rubric_table_data[currentStep].levels[step].title;
+    // }
+    // setSendingData(sendingArray);
     setShowConsentForm(false);
     setSelectedValue(0);
   };

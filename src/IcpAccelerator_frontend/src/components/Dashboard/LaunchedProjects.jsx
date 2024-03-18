@@ -228,11 +228,11 @@ const LaunchedProjects = () => {
     }
   }, [actor]);
 
-  const handleNavigate = (projectId) => {
+  const handleNavigate = (projectId, data) => {
     if (isAuthenticated) {
-      navigate(`/individual-project-details/${projectId}`)
+      navigate(`/individual-project-details/${projectId}`, { state: { data } });
     }
-  }
+  };
 
   return (
     <div className="flex flex-wrap -mx-4 mb-4 flex-row items-start">
