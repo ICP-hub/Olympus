@@ -175,11 +175,16 @@ import { Pagination, Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import CommunityRatings from "./CommunityRatings";
-import { useParams } from 'react-router-dom';
+import { useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 
-const ProjectDetailsForUser = (data) => {
+const ProjectDetailsForUser = () => {
+  const location = useLocation();
+  const { data } = location.state;
   const actor = useSelector((currState) => currState.actors.actor);
   const { id } = useParams();
+  const [details, setDetails] = useState();
 
   const headerData = [
     {
@@ -193,6 +198,10 @@ const ProjectDetailsForUser = (data) => {
     {
       id: "investors-associated",
       label: "investors",
+    },
+    {
+      id: "project-ratings",
+      label: "Rubric Rating",
     },
   ];
 
@@ -214,11 +223,37 @@ const ProjectDetailsForUser = (data) => {
     },
   ];
   const [activeTab, setActiveTab] = useState(headerData[0].id);
-
+  const userCurrentRoleStatusActiveRole = useSelector(
+    (currState) => currState.currentRoleStatus.activeRole
+  );
+  console.log(userCurrentRoleStatusActiveRole)
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
+  const reducerhandler = (result) => {
+    console.log(result);
+    if (result.length > 0) {
+      const projectDetails = result[0];
 
+      const detail = {
+        announcements: projectDetails.announcements[0],
+        areaOfFocus: projectDetails?.area_of_focus[0],
+        countryOfProject: projectDetails.country_of_project[0],
+        dateOfJoining: new Date(
+          projectDetails.date_of_joining[0]
+        ).toLocaleDateString("en-US"),
+        jobsOpportunity: projectDetails.jobs_opportunity[0],
+        liveLinkOfProject: projectDetails.live_link_of_project[0],
+        mentorAssociated: projectDetails.mentor_associated[0],
+        reviews: projectDetails.reviews[0],
+        teamMemberInfo: projectDetails.team_member_info[0],
+        vcAssociated: projectDetails.vc_associated[0],
+        websiteSocialGroup: projectDetails.website_social_group[0],
+      };
+
+      setDetails(detail);
+    }
+  };
   const getTabClassName = (tab) => {
     return `inline-block p-1 ${
       activeTab === tab
@@ -262,18 +297,30 @@ const ProjectDetailsForUser = (data) => {
             filter={"investor"}
           />
         );
+      case "project-ratings":
+        return (
+          <ProjectRatings
+            profile={true}
+            type={!true}
+            name={true}
+            role={true}
+            socials={true}
+            filter={"rubric"}
+          />
+        );
       default:
         return null;
     }
   };
-  
-  console.log("ProjectId ===> ", id)
+
+  console.log("ProjectId ===> ", id);
   const getProjectDetail = async (caller) => {
     console.log("caller", caller);
     await caller
       .get_project_info_for_user(id)
       .then((result) => {
         console.log("result-in-get_Project_Detail", result);
+        reducerhandler(result);
       })
       .catch((error) => {
         console.log("error-in-get_Project_Detail", error);
@@ -292,7 +339,8 @@ const ProjectDetailsForUser = (data) => {
   //         }
   //     })();
   // }, [actor]);
-  console.log(data);
+  console.log("details ===>", details);
+  console.log("data ===>", data);
   return (
     <section className="text-black bg-gray-100 pb-4">
       <div className="w-full px-[4%] lg1:px-[5%]">
@@ -300,10 +348,10 @@ const ProjectDetailsForUser = (data) => {
           <div className="mb-4">
             <ProjectCard
               image={ment}
-              title={data[1]?.project_profile[0]?.params?.project_name}
-              tags={["Defi", "NFT", "Game"]}
-              doj={"10 October, 2023"}
-              country={"india"}
+              title="buider.io"
+              tags={details?.areaOfFocus || ["Defi", "NFT", "Game"]}
+              doj={details?.dateOfJoining || "10 October, 2023"}
+              country={details?.countryOfProject || "india"}
               website={"https://www.google.co.in/"}
               dapp={"https://6lqbm-ryaaa-aaaai-qibsa-cai.ic0.app/"}
             />
@@ -345,16 +393,25 @@ const ProjectDetailsForUser = (data) => {
             {/* <ProjectRank dayRank={true} weekRank={true} /> */}
             <div className="text-sm font-bold text-center text-[#737373] mt-2">
               <ul className="flex flex-wrap -mb-px text-[10px] ss2:text-[10.5px] ss3:text-[11px]  cursor-pointer">
-                {headerData.map((header) => (
-                  <li key={header.id} className="me-6 relative group">
-                    <button
-                      className={getTabClassName(header?.id)}
-                      onClick={() => handleTabClick(header?.id)}
-                    >
-                      <div className="capitalize text-base">{header.label}</div>
-                    </button>
-                  </li>
-                ))}
+                {headerData
+                  .filter((header) => {
+                    // Always include if not the Rubric Rating tab
+                    if (header.id !== "project-ratings") return true;
+                    // Include the Rubric Rating tab only if activeRole is mentor
+                    return userCurrentRoleStatusActiveRole === "mentor";
+                  })
+                  .map((header) => (
+                    <li key={header.id} className="me-6 relative group">
+                      <button
+                        className={getTabClassName(header?.id)}
+                        onClick={() => handleTabClick(header?.id)}
+                      >
+                        <div className="capitalize text-base">
+                          {header.label}
+                        </div>
+                      </button>
+                    </li>
+                  ))}
               </ul>
             </div>
             <div className="py-4">{renderComponent()}</div>

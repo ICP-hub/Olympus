@@ -119,11 +119,11 @@ const validationSchema = {
       .trim()
       .required("Textarea is required")
       .matches(/^[^\s].*$/, "Cannot start with a space"),
-    token_economics: yup.string().optional(),
-    target_market: yup.string().optional(),
-    long_term_goals: yup.string().optional(),
-    technical_docs: yup.string().optional(),
-    github_link: yup.string().optional(),
+    token_economics: yup.string().url("Must be a valid URL").optional(),
+    target_market: yup.string().url("Must be a valid URL").optional(),
+    long_term_goals: yup.string().url("Must be a valid URL").optional(),
+    technical_docs: yup.string().url("Must be a valid URL").optional(),
+    github_link: yup.string().url("Must be a valid URL").optional(),
     coverData: yup.mixed().optional(),
   }),
 };
@@ -241,13 +241,18 @@ const CreateProjectRegistration = () => {
     setIsLiveOnICP(liveOnICPMainnetValue === "true");
     if (liveOnICPMainnetValue !== "true") {
       setValue("money_raised_till_now", "false");
+    }
+    setIsMoneyRaised(MoneyRaisedTillNow === "true");
+    if (liveOnICPMainnetValue !== "true" || MoneyRaisedTillNow !== "true") {
       setValue("icp_grants", "");
       setValue("investors", "");
       setValue("sns", "");
       setValue("raised_from_other_ecosystem", "");
     }
-    setIsMoneyRaised(MoneyRaisedTillNow === "true");
     setIsMulti_Chain(IsMultiChain === "true");
+    if (IsMultiChain !== "true") {
+      setValue("supports_multichain", "");
+    }
   }, [liveOnICPMainnetValue, MoneyRaisedTillNow, IsMultiChain, setValue]);
 
   useEffect(() => {
@@ -653,7 +658,7 @@ const CreateProjectRegistration = () => {
     val.project_logo = val.project_logo[0] || [];
     console.log("sendingProjectData ==>> ", val);
 
-    let result;
+    // let result;
 
     try {
       // if (specificRole !== null || undefined) {

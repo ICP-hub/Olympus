@@ -20,6 +20,7 @@ import MentorDashboard from "./components/Dashboard/RoleDashboard/MentorDashboar
 import InvestorDashboard from "./components/Dashboard/RoleDashboard/InvestorDashboard";
 import { useNavigate } from 'react-router-dom';
 import SearchMentors from "./components/Mentors/SearchMentors";
+import EventForm from "./components/Mentors/Event/EventForm";
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
 
@@ -66,6 +67,7 @@ const AppRoutes = () => {
     { path: "/create-user", element: <NormalUser /> },
     { path: "/create-investor", element: <InvestorRegistration /> },
     { path: "/create-project", element: <CreateProject /> },
+    { path: "/event-form", element: <EventForm /> },
     { path: "/details", element: <AllDetailsForm /> },
     // { path: "/roleSelect", element: <RoleSelector /> },
     { path: "/project-details", element: <ProjectDetails /> },
