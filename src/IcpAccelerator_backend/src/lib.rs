@@ -15,7 +15,9 @@ mod user_module;
 mod vc_registration;
 use ic_cdk_macros::post_upgrade;
 mod default_images;
+mod cohort;
 
+use cohort::*;
 use crate::project_registration::*;
 use notification_to_mentor::*;
 
