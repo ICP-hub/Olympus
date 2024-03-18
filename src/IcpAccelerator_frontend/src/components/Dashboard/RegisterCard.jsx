@@ -11,7 +11,7 @@ const RegisterCard = ({ categories, redirect }) => {
           <div className="bg-[#B9C0F2] drop-shadow-2xl gap-2 overflow-hidden rounded-lg">
             <div className="px-4 pt-4">
               <img
-                className="h-[8.6rem] w-full rounded-md object-fill"
+                className="h-[8.6rem] w-full rounded-md object-cover"
                 src={category.imgSrc}
                 alt="not found"
               />

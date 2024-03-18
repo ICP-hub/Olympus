@@ -1,6 +1,7 @@
 import React from "react";
 // import logo from "../../../assets/Logo/icpLogo.png";
 import logo from "../../../assets/Logo/topLogo.png";
+// import { logoSvg } from "../Utils/Data/SvgData";
 
 
 const Footer = () => {
@@ -11,6 +12,9 @@ const Footer = () => {
           <div className="mb-4">
             <h4 className="text-xl font-bold mb-3">
               <img src={logo} alt="logo" className="text-white h-16 sm:h-20" />
+              {/* <div>
+                {logoSvg}
+              </div> */}
             </h4>
             <ul className="list-none text-sm p-0 m-0 flex items-center space-x-4">
               <li className="text-white">

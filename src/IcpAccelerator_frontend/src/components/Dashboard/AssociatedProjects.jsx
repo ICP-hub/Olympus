@@ -5,7 +5,7 @@ import ment from "../../../assets/images/ment.jpg"
 const AssociatedProjects = () => {
   return (
     <div className="flex flex-wrap justify-start">
-      <div className="w-full p-4 flex flex-col gap-4">
+      <div className="w-full flex flex-col gap-4">
         <div className="relative shadow-md rounded-lg overflow-hidden drop-shadow-2xl gap-2 bg-white">
           <div className="flex flex-col sm:flex-row gap-2">
             <div className="w-full sm:w-2/3">

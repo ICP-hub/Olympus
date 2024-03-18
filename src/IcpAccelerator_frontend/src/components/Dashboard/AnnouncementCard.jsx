@@ -9,7 +9,7 @@ import data from "../../data/spotlight.json";
 
 const AnnouncementCard = () => {
   return (
-    <div className=" p-6 ">
+    // <div className="">
       <div className="flex justify-between  gap-2 overflow-x-auto">
         <Swiper
           modules={[Pagination, Autoplay]}
@@ -76,7 +76,7 @@ const AnnouncementCard = () => {
           ))}
         </Swiper>
       </div>
-    </div>
+    // </div>
   );
 };
 
