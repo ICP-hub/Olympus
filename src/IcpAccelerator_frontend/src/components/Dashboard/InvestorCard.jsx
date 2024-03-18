@@ -44,7 +44,7 @@ const InvestorsList = () => {
         setNoData(true)
         setData(investors)
       } else {
-        setAllProjectData(result);
+        setData(result);
         setData(false)
       }
     }).catch((error) => {
@@ -85,7 +85,7 @@ const InvestorsList = () => {
         }
         return (
 
-          <div key={index} className="flex-shrink-0 overflow-hidden bg-white rounded-lg max-w-xs shadow-lg p-5 w-1/3">
+          <div key={index} className="flex-shrink-0 overflow-hidden bg-white rounded-lg max-w-xs shadow-lg p-5 w-1/2">
             <div className=" flex items-center justify-center px-8">
               <img className="w-full h-40 object-fill rounded-md" src={img} alt="" />
             </div>
@@ -96,7 +96,7 @@ const InvestorsList = () => {
               <span className="block font-semibold line-clamp-2 h-10">
                 {role}
               </span>
-              <div className="flex flex-wrap gap-2 border-t-2">
+              <div className="flex flex-wrap gap-2 border-t-2 mt-5 py-3">
                 <span className="bg-[#E7E7E8] rounded-full text-gray-600 text-xs font-bold px-3 py-2 leading-none flex items-center mt-2">
                   {company}
                 </span>

@@ -43,7 +43,7 @@ const MentorCard = () => {
         setNoData(true)
         setData(mentors)
       } else {
-        setAllProjectData(result);
+        setData(result);
         setData(false)
       }
     }).catch((error) => {
@@ -91,10 +91,10 @@ const MentorCard = () => {
               <span className="font-semibold text-lg line-clamp-1">
                 {name}
               </span>
-              <span className="block font-semibold line-clamp-2 h-10">
+              <span className="block font-semibold line-clamp-2 h-10 overflow-y-scroll">
                 {role}
               </span>
-              <div className="flex flex-wrap gap-2 border-t-2">
+              <div className="flex flex-wrap gap-2 border-t-2 py-3">
                 {/* {mentor.areaOfFocus.map((investment, index) => ( */}
                 <span className="bg-[#E7E7E8] rounded-full text-gray-600 text-xs font-bold px-3 py-2 leading-none flex items-center mt-2">
                   {skills}

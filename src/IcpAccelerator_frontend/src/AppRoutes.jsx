@@ -63,7 +63,7 @@ const AppRoutes = () => {
   // ]
 
   const publicRoutes = [
-    { path: "/", element: <MoreProjectLaunchPage /> },
+    { path: "/", element: <DashBoard /> },
     // { path: "/", element: <ProjectDashboard /> },
     // { path: "/", element: <MentorDashboard /> },
     // { path: "/", element: <InvestorDashboard /> },

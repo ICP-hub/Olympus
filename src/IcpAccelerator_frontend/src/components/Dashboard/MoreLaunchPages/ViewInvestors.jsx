@@ -31,14 +31,14 @@ const investors = [
     image: image,
     name: "SamyKarim",
     role: "Toshi, Managing Partner. Ex-Binance",
-    company: "Reliability Engineer and DevOps",
+    company: "Tech Growth Fund",
   },
   {
     id: 2,
     image: image,
     name: "SamyKarim",
     role: "Toshi, Managing Partner. Ex-Binance",
-    company: "Reliability Engineer and DevOps",
+    company: "Innovate Ventures",
   },
 ];
 
@@ -132,7 +132,7 @@ const ViewInvestor = () => {
               investor[1]?.vc_profile?.params?.user_data?.profile_picture
             );
             name = investor[1]?.vc_profile?.params?.user_data?.full_name;
-            company = investor[1]?.vc_profile?.params?.assets_under_management;
+            company = investor[1]?.vc_profile?.params?.name_of_fund;
             role = "Investor";
         }
 
