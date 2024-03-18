@@ -15,7 +15,7 @@ const RegisterCard = ({ categories, redirect }) => {
                 src={category.imgSrc}
                 alt="not found"
               />
-              <div className='py-5'>
+              <div className='py-8'>
                 <div className="text-xl sm:text-2xl text-white mt-4 font-bold line-clamp-2">
                   <h1>{category.title}</h1>
                 </div>

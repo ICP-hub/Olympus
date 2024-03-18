@@ -37,7 +37,7 @@ const Header = ({ setModalOpen, gradient }) => {
 
       <div className="flex items-center justify-between px-[5%] lg1:px-[4%] py-[3%]">
         <img
-          className="h-16 sm:h-20"
+          className=""
           src={logoWithText}
           alt="IcpLogo"
           loading="lazy"

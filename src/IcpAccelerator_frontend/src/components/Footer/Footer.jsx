@@ -1,6 +1,6 @@
 import React from "react";
 // import logo from "../../../assets/Logo/icpLogo.png";
-import logo from "../../../assets/Logo/topLogo.png";
+import logo from "../../../assets/Logo/topLogoWhitepng.png";
 // import { logoSvg } from "../Utils/Data/SvgData";
 
 
@@ -11,7 +11,7 @@ const Footer = () => {
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-20">
           <div className="mb-4">
             <h4 className="text-xl font-bold mb-3">
-              <img src={logo} alt="logo" className="text-white h-16 sm:h-20" />
+              <img src={logo} alt="logo" className="text-white" />
               {/* <div>
                 {logoSvg}
               </div> */}
