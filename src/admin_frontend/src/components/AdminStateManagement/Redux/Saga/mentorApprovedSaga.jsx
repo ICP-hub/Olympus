@@ -11,10 +11,11 @@ import {
 } from "../Reducers/mentorApproved";
 
 const selectActor = (currState) => currState.actors.actor;
-
+console.log("selectActor =======================>",selectActor)
 function* fetchMentorApprovedHandler() {
   try {
     const actor = yield select(selectActor);
+    console.log("actor =======================>",actor)
     const allMentorApprovedStatus = yield call([
       actor,
       actor.get_all_mentors_candid,

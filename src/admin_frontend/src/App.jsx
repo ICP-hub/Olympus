@@ -35,7 +35,7 @@ const App = () => {
 
   useEffect(() => {
     dispatch(mentorApprovedRequest());
-  }, [isAuthenticated, dispatch]);
+  }, [isAuthenticated,actor, dispatch]);
 
   useEffect(() => {
     dispatch(mentorPendingRequest());
