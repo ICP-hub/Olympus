@@ -44,7 +44,7 @@ const MentorCard = () => {
         setData(mentors)
       } else {
         setData(result);
-        setData(false)
+        setNoData(false)
       }
     }).catch((error) => {
       setNoData(true)
@@ -62,7 +62,7 @@ const MentorCard = () => {
   }, [actor]);
   return (
     <div className="p-1 flex items-center mb-8 gap-8">
-      {data.map((mentor, index) => {
+      {data && data.map((mentor, index) => {
         let id = null
         let img = ""
         let name = ""
