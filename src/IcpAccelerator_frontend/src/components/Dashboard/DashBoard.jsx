@@ -117,16 +117,16 @@ const DashBoard = () => {
     },
   ];
 
-  const getAllProject = async (caller) => {
-    await caller
-      .list_all_projects()
-      .then((result) => {
-        console.log("result-in-get-all-projects", result);
-      })
-      .catch((error) => {
-        console.log("error-in-get-all-projects", error);
-      });
-  };
+  // const getAllProject = async (caller) => {
+  //   await caller
+  //     .list_all_projects()
+  //     .then((result) => {
+  //       console.log("result-in-get-all-projects", result);
+  //     })
+  //     .catch((error) => {
+  //       console.log("error-in-get-all-projects", error);
+  //     });
+  // };
 
   // const getAllMentors = async (caller) => {
   //   await caller.get_all_mentors_candid().then((result) => {
@@ -144,17 +144,17 @@ const DashBoard = () => {
   //   })
   // }
 
-  useEffect(() => {
-    if (actor) {
-      getAllProject(actor);
-      // getAllMentors(actor);
-      // getAllInvestors(actor);
-    } else {
-      getAllProject(IcpAccelerator_backend);
-      // getAllMentors(IcpAccelerator_backend);
-      // getAllInvestors(IcpAccelerator_backend);
-    }
-  }, [actor]);
+  // useEffect(() => {
+  //   if (actor) {
+  //     getAllProject(actor);
+  //     // getAllMentors(actor);
+  //     // getAllInvestors(actor);
+  //   } else {
+  //     getAllProject(IcpAccelerator_backend);
+  //     // getAllMentors(IcpAccelerator_backend);
+  //     // getAllInvestors(IcpAccelerator_backend);
+  //   }
+  // }, [actor]);
 
   switch (userCurrentRoleStatusActiveRole) {
     case "project":
