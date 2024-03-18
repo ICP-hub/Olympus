@@ -163,7 +163,7 @@ function SearchMentors() {
             id = mentor?.id;
             img = mentor?.imageUrl;
             name = mentor?.name;
-            skills = mentor?.skills;
+            // skills = mentor?.skills;
             skills = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis error recusandae ad quo sit repellat quod dicta numquam labore deleniti. Nemo nostrum dolorem debitis soluta eligendi temporibus esse et officiis";
             role = mentor?.role;
           } else {
@@ -191,8 +191,8 @@ function SearchMentors() {
                         {name}
                       </h1>
                       <p className="text-[#737373]">{role}</p>
-                      <div className="flex flex-wrap gap-4 underline mt-6 text-[#737373]">
-                        <p className="bg-gray-200 rounded-full py-2 px-4">
+                      <div className="flex flex-wrap gap-4 mt-6 text-[#737373]">
+                        <p className="rounded-full py-2 px-4">
                           {skills}
                         </p>
                         {/* <p className="bg-gray-200 rounded-full py-2 px-4">

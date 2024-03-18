@@ -124,7 +124,8 @@ const ViewInvestor = () => {
             id = investor.id;
             img = investor.image;
             name = investor.name;
-            company = investor.company;
+            // company = investor.company;
+            company = "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nesciunt cumque saepe laborum, quis error harum ad quo, nobis alias explicabo tempora. Error voluptates laudantium assumenda eum ipsum non ullam veritatis.";
             role = investor.role;
         }else{
             id = investor[1]?.vc_profile?.uid;
@@ -132,7 +133,8 @@ const ViewInvestor = () => {
               investor[1]?.vc_profile?.params?.user_data?.profile_picture[0]
             );
             name = investor[1]?.vc_profile?.params?.user_data?.full_name;
-            company = investor[1]?.vc_profile?.params?.name_of_fund;
+            // company = investor[1]?.vc_profile?.params?.name_of_fund;
+            company = investor[1]?.vc_profile?.params?.user_data?.bio[0];
             role = "Investor";
         }
 
@@ -145,7 +147,7 @@ const ViewInvestor = () => {
                         <div className='flex flex-col w-full'>
                             <h1 className="text-black text-2xl font-extrabold">{name}</h1>
                             <p className="text-[#737373]">{role}</p>
-                            <div className='flex flex-wrap bg-white rounded-full underline mt-6 text-[#737373] justify-center'>
+                            <div className='flex flex-wrap rounded-full mt-6 text-[#737373] justify-center'>
                                 <p className=''>{company}</p>
                             </div>
 
