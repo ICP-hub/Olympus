@@ -44,6 +44,23 @@ const ProjectDashboard = () => {
     (currState) => currState.currentRoleStatus.activeRole
   );
 
+  const idArr = JSON.parse(localStorage.getItem("idArr")) || [];
+
+  const projectJobData = [
+    {
+      image: ment,
+      tags: ["Imo", "Ludi", "Ndaru"],
+      country: "india",
+      website: "https://www.google.co.in/",
+    },
+    {
+      image: ment,
+      tags: ["Ludi", "Ndaru", "Imo"],
+      country: "America",
+      website: "https://www.google.co.in/",
+    },
+  ];
+
   useEffect(() => {
     const founderDataFetchHandler = async () => {
       // const founderDataFetch = await actor.get_mentor_candid();
@@ -79,23 +96,22 @@ const ProjectDashboard = () => {
           </h1>
         </div>
         <div className="mb-4 md:md-8">
-         <LiveProjectBar/>
-         </div>
+          <LiveProjectBar />
+        </div>
         <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
           <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
             Announcements
           </h1>
         </div>
         <div className="mb-4">
-        <AnnouncementCard/>
+          <AnnouncementCard />
         </div>
         <div className="flex items-center justify-between mb-4 mt-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
           <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
             Jobs/Opportunities
           </h1>
         </div>
-        {/* <ImpactTool /> */}
-        <div className="flex flex-wrap md:flex-nowrap gap-4 mb-4">
+        {/* <div className="flex flex-wrap md:flex-nowrap gap-4 mb-4">
           <ProjectJobCard
             image={ment}
             tags={["Imo", "Ludi", "Ndaru"]}
@@ -108,6 +124,32 @@ const ProjectDashboard = () => {
             country={"india"}
             website={"https://www.google.co.in/"}
           />
+        </div> */}
+        <div className="overflow-x-auto">
+          <div className="flex flex-wrap md:flex-nowrap gap-6 justify-between mb-8 ">
+            {idArr.slice(0, 5).map((id, index) => (
+              <ProjectJobCard
+                key={index}
+                image={projectJobData[index % projectJobData.length].image}
+                tags={projectJobData[index % projectJobData.length].tags}
+                country={projectJobData[index % projectJobData.length].country}
+                website={projectJobData[index % projectJobData.length].website}
+              />
+            ))}
+            {idArr.length === 0 && (
+              <>
+                {projectJobData.map((data, index) => (
+                  <ProjectJobCard
+                    key={index}
+                    image={data.image}
+                    tags={data.tags}
+                    country={data.country}
+                    website={data.website}
+                  />
+                ))}
+              </>
+            )}
+          </div>
         </div>
 
         <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
@@ -130,7 +172,10 @@ const ProjectDashboard = () => {
           <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
             Live Projects
           </h1>
-          <button  onClick={()=> navigate("/launch-projects")}  className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
+          <button
+            onClick={() => navigate("/launch-projects")}
+            className="border border-violet-800 px-4 py-2 rounded-md text-violet-800"
+          >
             Explore more
           </button>
         </div>
@@ -148,7 +193,6 @@ const ProjectDashboard = () => {
           <SecondEventCard />
           <SecondEventCard />
         </div>
-
       </div>
     </section>
   );
