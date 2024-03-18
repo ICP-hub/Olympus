@@ -45,7 +45,7 @@ const InvestorsList = () => {
         setData(investors)
       } else {
         setData(result);
-        setData(false)
+        setNoData(false)
       }
     }).catch((error) => {
       setData(investors)
