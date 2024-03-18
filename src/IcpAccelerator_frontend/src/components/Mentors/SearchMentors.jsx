@@ -163,15 +163,17 @@ function SearchMentors() {
             id = mentor?.id;
             img = mentor?.imageUrl;
             name = mentor?.name;
-            skills = mentor?.skills;
+            // skills = mentor?.skills;
+            skills = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis error recusandae ad quo sit repellat quod dicta numquam labore deleniti. Nemo nostrum dolorem debitis soluta eligendi temporibus esse et officiis";
             role = mentor?.role;
           } else {
             id = mentor[1]?.mentor_profile?.uid;
             img = uint8ArrayToBase64(
-              mentor[1]?.mentor_profile?.profile?.user_data?.profile_picture
+              mentor[1]?.mentor_profile?.profile?.user_data?.profile_picture[0]
             );
             name = mentor[1]?.mentor_profile?.profile?.user_data?.full_name;
-            skills = mentor[1]?.mentor_profile?.profile?.area_of_expertise;
+            // skills = mentor[1]?.mentor_profile?.profile?.area_of_expertise;
+            skills = mentor[1]?.mentor_profile?.profile?.user_data?.bio[0];
             role = "Mentor";
           }
           return (
@@ -189,21 +191,21 @@ function SearchMentors() {
                         {name}
                       </h1>
                       <p className="text-[#737373]">{role}</p>
-                      <div className="flex flex-wrap gap-4 underline mt-6 text-[#737373]">
-                        <p className="bg-gray-200 rounded-full py-2 px-4">
-                          SRE
+                      <div className="flex flex-wrap gap-4 mt-6 text-[#737373]">
+                        <p className="rounded-full py-2 px-4">
+                          {skills}
                         </p>
-                        <p className="bg-gray-200 rounded-full py-2 px-4">
+                        {/* <p className="bg-gray-200 rounded-full py-2 px-4">
                           observability
                         </p>
                         <p className="bg-gray-200 rounded-full py-2 px-4">
                           Kubernetes
-                        </p>
+                        </p> */}
                       </div>
                       <div className="w-100px border-2 text-gray-100 mt-2"></div>
                       <div className="flex justify-end mt-6 xl:mr-8">
                         <button className="text-white font-bold py-2 px-4 bg-[#3505B2] rounded-md">
-                          ReachOut
+                          Reach Out
                         </button>
                       </div>
                     </div>

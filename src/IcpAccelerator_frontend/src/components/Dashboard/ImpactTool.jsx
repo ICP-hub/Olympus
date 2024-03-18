@@ -8,7 +8,7 @@ const data = [
   },
   { count: "45", label: "No of Investors", position: "-left-[5px] top-[50px]" },
   { count: "50", label: "No of Mentors", position: " top-[50px]" },
-  { count: "100", label: "Investment Committed", position: " top-[50px]" },
+  { count: "100M", label: "Investment Committed", position: " top-[50px]" },
   { count: "100", label: "No of Jobs Given", position: "top-[50px]" },
   { count: "100", label: "Number of Users", position: " top-[50px]" },
 ];
