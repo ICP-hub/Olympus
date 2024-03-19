@@ -12,7 +12,7 @@ const RegisterCard = ({ categories, redirect }) => {
     <div className="flex flex-wrap w-full">
       {categories.map((category, index) => (
         <div key={index} className="px-4 w-full h-fit">
-          <div className="bg-[#B9C0F2] drop-shadow-2xl gap-2 overflow-hidden rounded-lg">
+          <div className={`bg-[#B9C0F2] ${category.title === "Add your testimonial" ? '' : 'drop-shadow-2xl'} gap-2 overflow-hidden rounded-lg`}>
             <div className="px-4 pt-4">
               <img
                 className="h-[8.6rem] w-full rounded-md object-cover"

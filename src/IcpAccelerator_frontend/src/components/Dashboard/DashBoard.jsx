@@ -291,7 +291,7 @@ const DashBoard = () => {
                 Testimonial
               </h1>
             </div>
-            <div className="flex flex-wrap -mx-4 mb-4 flex-row justify-center items-start bg-[#DBDDF3] rounded-lg p-4">
+            <div className="flex flex-wrap -mx-4 mb-4 flex-row justify-center items-start bg-[#B9C0F2] rounded-lg p-4">
               <div className="overflow-x-auto flex w-[61%]">
                 <Testimonial />
               </div>

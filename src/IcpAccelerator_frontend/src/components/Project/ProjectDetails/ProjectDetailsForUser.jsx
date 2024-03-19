@@ -181,7 +181,7 @@ import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 
 const ProjectDetailsForUser = () => {
   const location = useLocation();
-  const { data } = location.state;
+  // const { data } = location.state;
   const actor = useSelector((currState) => currState.actors.actor);
   const { id } = useParams();
   const [details, setDetails] = useState();
@@ -339,8 +339,8 @@ const ProjectDetailsForUser = () => {
   //         }
   //     })();
   // }, [actor]);
-  console.log("details ===>", details);
-  console.log("data ===>", data);
+  // console.log("details ===>", details);
+  // console.log("data ===>", data);
   return (
     <section className="text-black bg-gray-100 pb-4">
       <div className="w-full px-[4%] lg1:px-[5%]">

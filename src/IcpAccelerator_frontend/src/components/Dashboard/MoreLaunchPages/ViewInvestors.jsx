@@ -141,7 +141,7 @@ const ViewInvestor = () => {
         return (
             <div className="" key={index}>
             <div className="w-full sm:w-full md:w-full lg:w-full xl:w-full p-4">
-                <div className="shadow-md rounded-lg overflow-hidden  drop-shadow-2xl gap-2 bg-[#C1CAFF]">
+                <div className="shadow-md rounded-lg overflow-hidden  drop-shadow-2xl gap-2 bg-[#C1CAFF] w-1/2">
                     <div className='flex flex-col sm:flex-row gap-6 p-2'>
                         <img className='w-full sm:w-[300.53px] rounded-md h-auto sm:h-[200.45px] flex lg:items-center lg:justify-center  ' src={img} alt="alt" />
                         <div className='flex flex-col w-full'>

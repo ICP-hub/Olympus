@@ -153,7 +153,7 @@ function SearchMentors() {
       </div>
 
       <div className="flex flex-wrap justify-center">
-        {cardData.map((mentor, index) => {
+        {data.map((mentor, index) => {
           let id = "";
           let img = "";
           let name = "";
