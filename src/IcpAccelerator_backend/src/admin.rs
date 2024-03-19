@@ -24,7 +24,6 @@ struct ApprovalRequest {
     country: String,
     tag_used: String,
     requested_for: String,
-    requested_on: u64,
 }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
@@ -35,6 +34,7 @@ enum NotificationType {
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct Notification {
     notification_type: NotificationType,
+    timestamp: u64,
 }
 
 #[derive(Debug)]
@@ -76,11 +76,11 @@ pub async fn send_approval_request(
                     country: country.clone(),
                     tag_used: tag_used.clone(),
                     requested_for: requested_for.clone(),
-                    requested_on: time(),
                 };
 
                 let notification_to_send = Notification {
                     notification_type: NotificationType::ApprovalRequest(approval_request),
+                    timestamp: time(),
                 };
                 ADMIN_NOTIFICATIONS.with(|admin_notifications| {
                     let mut notifications = admin_notifications.borrow_mut();
@@ -219,8 +219,10 @@ pub fn get_admin_notifications() -> Vec<Notification> {
     let caller = caller();
 
     ADMIN_NOTIFICATIONS.with(|alerts| {
-        let alerts = alerts.borrow();
-        alerts.get(&caller).cloned().unwrap_or_default()
+        let mut alerts = alerts.borrow().get(&caller).cloned().unwrap_or_default();
+        // Sort the alerts by timestamp in descending order
+        alerts.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
+        alerts
     })
 }
 
@@ -1038,7 +1040,7 @@ fn get_total_pending_request() -> usize {
 }
 
 #[query]
-fn get_only_user() -> usize {
+fn get_only_user_count() -> usize {
     ROLE_STATUS_ARRAY.with(|awaiters| {
         awaiters
             .borrow()
