@@ -108,7 +108,6 @@ pub type VcAnnouncements = HashMap<Principal, Vec<Announcements>>;
 pub type VentureCapitalistStorage = HashMap<Principal, VentureCapitalistInternal>;
 pub type VentureCapitalistParams = HashMap<Principal, VentureCapitalist>;
 
-
 thread_local! {
     pub static VENTURECAPITALIST_STORAGE: RefCell<VentureCapitalistStorage> = RefCell::new(VentureCapitalistStorage::new());
     pub static VC_AWAITS_RESPONSE: RefCell<VentureCapitalistStorage> = RefCell::new(VentureCapitalistStorage::new());
@@ -323,17 +322,20 @@ pub fn get_vc_info() -> Option<VentureCapitalist> {
     })
 }
 
-
 #[update]
 pub fn get_vc_info_by_principal(caller: Principal) -> HashMap<Principal, VentureCapitalistAll> {
     VENTURECAPITALIST_STORAGE.with(|registry| {
-        let profile = registry.borrow().get(&caller).expect("couldn't get venture capital").clone();
+        let profile = registry
+            .borrow()
+            .get(&caller)
+            .expect("couldn't get venture capital")
+            .clone();
 
-        let mut vc_all_info : HashMap<Principal, VentureCapitalistAll> = HashMap::new();
+        let mut vc_all_info: HashMap<Principal, VentureCapitalistAll> = HashMap::new();
 
-        let all_capitalist_info = VentureCapitalistAll{
-            principal : caller,
-            profile : profile
+        let all_capitalist_info = VentureCapitalistAll {
+            principal: caller,
+            profile: profile,
         };
 
         vc_all_info.insert(caller, all_capitalist_info);
