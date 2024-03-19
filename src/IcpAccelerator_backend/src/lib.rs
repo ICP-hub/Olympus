@@ -14,11 +14,11 @@ mod upvotes;
 mod user_module;
 mod vc_registration;
 use ic_cdk_macros::post_upgrade;
-mod default_images;
 mod cohort;
+mod default_images;
 
-use cohort::*;
 use crate::project_registration::*;
+use cohort::*;
 use notification_to_mentor::*;
 
 use ic_cdk::api::caller;
@@ -104,7 +104,6 @@ fn approve_project_details_updation_request(
     admin::approve_project_update(requester, project_id, approve)
 }
 
-
 #[query]
 pub async fn get_user_information_using_uid(uid: String) -> Result<UserInformation, &'static str> {
     user_module::get_user_info_by_id(uid).await
@@ -147,7 +146,7 @@ fn delete_founder_caller() -> std::string::String {
 
 #[update]
 fn update_founder_caller(updated_profile: FounderInfo) -> String {
-        register_user::update_founder(updated_profile)
+    register_user::update_founder(updated_profile)
 }
 
 #[update]
@@ -178,7 +177,7 @@ fn list_all_projects() -> HashMap<Principal, ProjectVecWithRoles> {
 
 #[update]
 async fn update_project(project_id: String, updated_project: ProjectInfo) -> String {
-        project_registration::update_project(project_id, updated_project).await
+    project_registration::update_project(project_id, updated_project).await
 }
 
 #[update]
@@ -475,13 +474,17 @@ fn pre_upgrade() {
     pre_upgrade_vc();
     pre_upgrade_user_modules();
     pre_upgrade_upvotes();
+    pre_upgrade_mentor();
+    pre_upgrade_admin();
 }
 
 #[post_upgrade]
 fn post_upgrade() {
-    //post_upgrade_vc();
-    //post_upgrade_user_modules();
-    //post_upgrade_upvotes();
+    post_upgrade_vc();
+    post_upgrade_user_modules();
+    post_upgrade_upvotes();
+    post_upgrade_mentor();
+    post_upgrade_admin();
 }
 
 export_candid!();

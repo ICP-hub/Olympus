@@ -1007,41 +1007,22 @@ fn get_pending_cycles() -> u128 {
     canister_balance128()
 }
 
-#[query]
-fn get_vc_count() -> usize {
-    let vc_awaiters = VENTURECAPITALIST_STORAGE.with(|awaiters| awaiters.borrow().len());
-    vc_awaiters
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+pub struct Counts {
+    vc_count: usize,
+    mentor_count: usize,
+    project_count: usize,
+    user_count: usize,
+    only_user_count: usize,
 }
 
 #[query]
-fn get_mentor_count() -> usize {
+pub fn get_total_count() -> Counts {
+    let vc_count = VENTURECAPITALIST_STORAGE.with(|awaiters| awaiters.borrow().len());
     let mentor_count = MENTOR_REGISTRY.with(|awaiters| awaiters.borrow().len());
-    mentor_count
-}
-
-#[query]
-fn get_project_count() -> usize {
     let project_count = APPLICATION_FORM.with(|awaiters| awaiters.borrow().len());
-    project_count
-}
-
-#[query]
-fn get_total_user_count() -> usize {
     let user_count = USER_STORAGE.with(|awaiters| awaiters.borrow().len());
-    user_count
-}
-
-#[query]
-fn get_total_pending_request() -> usize {
-    let pending_requests = MENTOR_AWAITS_RESPONSE.with(|awaiters| awaiters.borrow().len())
-        + VC_AWAITS_RESPONSE.with(|awaiters| awaiters.borrow().len())
-        + PROJECT_AWAITS_RESPONSE.with(|awaiters| awaiters.borrow().len());
-    pending_requests
-}
-
-#[query]
-fn get_only_user_count() -> usize {
-    ROLE_STATUS_ARRAY.with(|awaiters| {
+    let only_user_count = ROLE_STATUS_ARRAY.with(|awaiters| {
         awaiters
             .borrow()
             .iter()
@@ -1065,5 +1046,23 @@ fn get_only_user_count() -> usize {
                 has_user_role && other_roles_are_default_or_requested
             })
             .count()
-    })
+    });
+    Counts {
+        vc_count,
+        mentor_count,
+        project_count,
+        user_count,
+        only_user_count,
+    }
 }
+
+#[query]
+fn get_total_pending_request() -> usize {
+    let pending_requests = MENTOR_AWAITS_RESPONSE.with(|awaiters| awaiters.borrow().len())
+        + VC_AWAITS_RESPONSE.with(|awaiters| awaiters.borrow().len())
+        + PROJECT_AWAITS_RESPONSE.with(|awaiters| awaiters.borrow().len());
+    pending_requests
+}
+
+// #[query]
+// fn get_top()
