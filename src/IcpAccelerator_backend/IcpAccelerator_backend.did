@@ -24,6 +24,13 @@ type Cohort = record {
   cohort_launch_date : text;
 };
 type CohortDetails = record { uid : text; created_at : nat64; cohort : Cohort };
+type Counts = record {
+  user_count : nat64;
+  only_user_count : nat64;
+  mentor_count : nat64;
+  vc_count : nat64;
+  project_count : nat64;
+};
 type Eligibility = record { level_on_rubric : float64; eligibility : opt text };
 type FilterCriteria = record {
   area_of_focus : opt text;
@@ -430,18 +437,15 @@ service : () -> {
     ) query;
   get_mentor_by_expertise : (text) -> (vec MentorProfile) query;
   get_mentor_by_principal : (principal) -> (opt MentorProfile) query;
-  get_mentor_count : () -> (nat64) query;
   get_multichain_list : () -> (vec text) query;
   get_my_id : () -> (principal) query;
   get_notifications_for_hubs : () -> (vec NotificationProject) query;
-  get_only_user_count : () -> (nat64) query;
   get_pending_cycles : () -> (nat) query;
   get_pending_request_for_mentor : (principal) -> (
       vec OfferToSendToMentor,
     ) query;
   get_popular_listed_project : () -> (vec ProjectInfoInternal) query;
   get_popular_live_proposal : () -> (vec ProjectInfoInternal) query;
-  get_project_count : () -> (nat64) query;
   get_project_id : () -> (text) query;
   get_project_info_for_user : (text) -> (opt ProjectInfoForUser) query;
   get_project_pending_offers : () -> (vec OfferToMentor) query;
@@ -456,9 +460,9 @@ service : () -> {
   get_spotlight_projects : () -> (vec SpotlightDetails) query;
   get_suggestions_by_parent_id_caller : (text, nat64) -> (vec Suggestion) query;
   get_suggestions_by_status_caller : (text, text) -> (vec Suggestion) query;
+  get_total_count : () -> (Counts) query;
   get_total_pending_request : () -> (nat64) query;
   get_total_suggestions : (text) -> (nat64) query;
-  get_total_user_count : () -> (nat64) query;
   get_user_info_struct : () -> (opt UserInformation) query;
   get_user_information : () -> (Result_1) query;
   get_user_information_using_uid : (text) -> (Result_1) query;
@@ -467,7 +471,6 @@ service : () -> {
   get_vc_announcements : () -> (
       vec record { principal; vec MAnnouncements },
     ) query;
-  get_vc_count : () -> (nat64) query;
   get_vc_info : () -> (opt VentureCapitalist) query;
   get_vc_info_by_principal : (principal) -> (
       vec record { principal; VentureCapitalistAll },
