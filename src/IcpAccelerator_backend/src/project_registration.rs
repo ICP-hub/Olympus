@@ -668,6 +668,18 @@ pub fn get_announcements() -> HashMap<Principal, Vec<Announcements>> {
     })
 }
 
+#[query]
+pub fn get_latest_announcements() -> HashMap<Principal, Vec<Announcements>> {
+    PROJECT_ANNOUNCEMENTS.with(|state| {
+        let state = state.borrow();
+        let mut sorted_state = state.clone();
+        for (_principal, announcements) in sorted_state.iter_mut() {
+            announcements.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
+        }
+        sorted_state
+    })
+}
+
 #[update]
 pub fn add_BlogPost(url: String) -> String {
     let caller_id = caller();
@@ -1000,6 +1012,27 @@ pub fn get_jobs_for_project(project_id: String) -> Vec<Jobs> {
     });
 
     jobs_for_project
+}
+
+#[query]
+pub fn get_all_jobs() -> Vec<Jobs> {
+    let mut all_jobs = Vec::new();
+
+    // Collect all jobs from the storage
+    POST_JOB.with(|jobs| {
+        let jobs = jobs.borrow();
+
+        for job_list in jobs.values() {
+            for job in job_list {
+                all_jobs.push(job.clone());
+            }
+        }
+    });
+
+    
+    all_jobs.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
+
+    all_jobs
 }
 
 #[query]
