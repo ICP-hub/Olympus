@@ -7,11 +7,11 @@ use std::collections::HashMap;
 extern crate serde_cbor;
 use crate::admin::*;
 use crate::trie::EXPERTISE_TRIE;
-
 use crate::user_module::*;
+use ic_cdk::api::stable::{StableReader, StableWriter};
 use ic_cdk::api::time;
 use std::cell::RefCell;
-
+use std::io::Read;
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, Default, PartialEq)]
 
 pub struct MentorProfile {
@@ -183,7 +183,7 @@ pub fn get_mentor() -> Option<MentorProfile> {
 }
 
 #[query]
-pub fn get_mentor_by_principal(id : Principal) -> Option<MentorProfile>{
+pub fn get_mentor_by_principal(id: Principal) -> Option<MentorProfile> {
     MENTOR_REGISTRY.with(|registry| {
         registry
             .borrow()
@@ -372,4 +372,99 @@ pub fn get_mentor_announcements() -> HashMap<Principal, Vec<MAnnouncements>> {
         let state = state.borrow();
         state.clone()
     })
+}
+
+pub fn pre_upgrade_mentor() {
+    MENTOR_REGISTRY.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+
+    MENTOR_AWAITS_RESPONSE.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+
+    DECLINED_MENTOR_REQUESTS.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    MENTOR_PROFILE_EDIT_AWAITS.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    DECLINED_MENTOR_PROFILE_EDIT_REQUEST.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    MENTOR_ANNOUNCEMENTS.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+}
+
+pub fn post_upgrade_mentor() {
+    let mut reader = StableReader::default();
+    let mut data = Vec::new();
+    reader
+        .read_to_end(&mut data)
+        .expect("Failed to read from stable storage");
+    let notifications: HashMap<Principal, Vec<MAnnouncements>> =
+        bincode::deserialize(&data).expect("Deserialization failed of notification");
+    MENTOR_ANNOUNCEMENTS.with(|notifications_ref| {
+        *notifications_ref.borrow_mut() = notifications;
+    });
+    let vc_storage: HashMap<Principal, MentorInternal> =
+        bincode::deserialize(&data).expect("Deserialization failed of notification");
+    MENTOR_REGISTRY.with(|notifications_ref| {
+        *notifications_ref.borrow_mut() = vc_storage;
+    });
+
+    let vc_awaits: HashMap<Principal, MentorInternal> =
+        bincode::deserialize(&data).expect("Deserialization failed of notification");
+    MENTOR_AWAITS_RESPONSE.with(|notifications_ref| {
+        *notifications_ref.borrow_mut() = vc_awaits;
+    });
+
+    let declined_vc: HashMap<Principal, MentorInternal> =
+        bincode::deserialize(&data).expect("Deserialization failed of notification");
+    DECLINED_MENTOR_REQUESTS.with(|notifications_ref| {
+        *notifications_ref.borrow_mut() = declined_vc;
+    });
+
+    let vc_profile_await: HashMap<Principal, MentorProfile> =
+        bincode::deserialize(&data).expect("Deserialization failed of notification");
+    MENTOR_PROFILE_EDIT_AWAITS.with(|notifications_ref| {
+        *notifications_ref.borrow_mut() = vc_profile_await;
+    });
+
+    let vc_profile_edit_declined: HashMap<Principal, MentorProfile> =
+        bincode::deserialize(&data).expect("Deserialization failed of notification");
+    DECLINED_MENTOR_PROFILE_EDIT_REQUEST.with(|notifications_ref| {
+        *notifications_ref.borrow_mut() = vc_profile_edit_declined;
+    });
 }

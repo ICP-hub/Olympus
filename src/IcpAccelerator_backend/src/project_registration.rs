@@ -171,7 +171,7 @@ pub struct ProjectVecWithRoles {
 pub struct SpotlightDetails {
     pub added_by: Principal,
     pub project_id: String,
-    pub project_details: ProjectInfo, 
+    pub project_details: ProjectInfo,
 }
 
 pub type ProjectAnnouncements = HashMap<Principal, Vec<Announcements>>;
@@ -984,7 +984,6 @@ pub fn post_job(
     })
 }
 
-
 pub fn get_jobs_for_project(project_id: String) -> Vec<Jobs> {
     let mut jobs_for_project = Vec::new();
 
@@ -1004,11 +1003,9 @@ pub fn get_jobs_for_project(project_id: String) -> Vec<Jobs> {
 }
 
 #[query]
-pub fn get_jobs_posted_by_project(project_id: String) -> Vec<Jobs>{
-
+pub fn get_jobs_posted_by_project(project_id: String) -> Vec<Jobs> {
     POST_JOB.with(|jobs| {
         if let Some(job_list) = jobs.borrow().get(&caller()) {
-            
             let mut project_jobs: Vec<&Jobs> = job_list
                 .iter()
                 .filter(|job| job.project_id == project_id)
@@ -1017,7 +1014,7 @@ pub fn get_jobs_posted_by_project(project_id: String) -> Vec<Jobs>{
             project_jobs.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
 
             project_jobs.into_iter().take(6).cloned().collect()
-        }else{
+        } else {
             Vec::new()
         }
     })
