@@ -40,9 +40,16 @@ pub struct Jobs {
     category: String,
     link: String,
     project_id: String,
-    timestamp: u64,
     location: String,
-    project_data: ProjectInfo,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
+pub struct JobsInternal{
+    job_data: Jobs,
+    timestamp: u64,
+    project_name: String,
+    project_desc: String,
+    project_logo: Vec<u8>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
@@ -73,10 +80,50 @@ pub struct ProjectInfo {
     pub project_linkedin: Option<String>,
     pub project_website: Option<String>,
     pub project_discord: Option<String>,
+    pub money_raised: Option<MoneyRaised>,
+    upload_private_documents: Option<bool>,
+    private_docs: Option<Docs>,
+    public_docs: Option<Docs>,
+}
+
+impl ProjectInfo {}
+
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
+pub struct Docs {
+    title: String,
+    link: String,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
+pub struct MoneyRaised {
+    pub target_amount: f64,
     pub icp_grants: Option<String>,
     pub investors: Option<String>,
     pub sns: Option<String>,
     pub raised_from_other_ecosystem: Option<String>,
+}
+
+impl MoneyRaised {
+    // Calculates the total amount raised from various sources.
+    // Assumes all Option<String> fields represent valid f64 values or None.
+    pub fn total_amount(&self) -> f64 {
+        let mut total: f64 = 0.0;
+
+        if let Some(icp_grants) = &self.icp_grants {
+            total += icp_grants.parse::<f64>().unwrap_or(0.0);
+        }
+        if let Some(investors) = &self.investors {
+            total += investors.parse::<f64>().unwrap_or(0.0);
+        }
+        if let Some(sns) = &self.sns {
+            total += sns.parse::<f64>().unwrap_or(0.0);
+        }
+        if let Some(raised_from_other_ecosystem) = &self.raised_from_other_ecosystem {
+            total += raised_from_other_ecosystem.parse::<f64>().unwrap_or(0.0);
+        }
+
+        total
+    }
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
@@ -89,7 +136,7 @@ pub struct ProjectInfoForUser {
     pub reviews: Vec<Suggestion>,
     pub website_social_group: Option<String>,
     pub live_link_of_project: Option<String>,
-    pub jobs_opportunity: Option<Vec<Jobs>>,
+    pub jobs_opportunity: Option<Vec<JobsInternal>>,
     pub area_of_focus: Option<String>,
     pub country_of_project: Option<String>,
 }
@@ -187,7 +234,7 @@ pub type PendingDetails = HashMap<String, ProjectUpdateRequest>;
 pub type DeclinedDetails = HashMap<String, ProjectUpdateRequest>;
 
 pub type ProjectDetails = HashMap<Principal, ProjectInfoInternal>;
-pub type JobDetails = HashMap<Principal, Vec<Jobs>>;
+pub type JobDetails = HashMap<Principal, Vec<JobsInternal>>;
 pub type SpotlightProjects = Vec<SpotlightDetails>;
 
 thread_local! {
@@ -206,6 +253,8 @@ thread_local! {
     pub static POST_JOB: RefCell<JobDetails> = RefCell::new(JobDetails::new());
     pub static JOB_TYPE: RefCell<Vec<String>> = RefCell::new(vec!["Bounty".to_string(),"Job".to_string()]);
     pub static SPOTLIGHT_PROJECTS: RefCell<SpotlightProjects> = RefCell::new(SpotlightProjects::new());
+    pub static  MONEY_ACCESS: RefCell<Vec<Principal>> = RefCell::new(Vec::new());
+    pub static PRIVATE_DOCS_ACCESS: RefCell<Vec<Principal>> = RefCell::new(Vec::new());
 
 }
 
@@ -235,6 +284,24 @@ pub fn pre_upgrade() {
 // }
 
 pub async fn create_project(info: ProjectInfo) -> String {
+    if info.private_docs.is_some() && info.upload_private_documents != Some(true) {
+        return "Cannot set private documents unless upload private docs has been set to true"
+            .to_string();
+    }
+
+    if info.money_raised.is_some() && info.money_raised_till_now != Some(true) {
+        return "Cannot populate MoneyRaised unless money_raised_till_now is true.".to_string();
+    }
+
+    if let Some(money_raised) = &info.money_raised {
+        let total_raised = money_raised.total_amount();
+        if total_raised <= 0.0 {
+            return "The total amount raised must be greater than zero.".to_string();
+        } else if total_raised > money_raised.target_amount {
+            return "The sum of funding sources exceeds the target amount.".to_string();
+        }
+    }
+
     // Validate the project info
 
     // Validation succeeded, continue with creating the project
@@ -298,6 +365,7 @@ pub async fn create_project(info: ProjectInfo) -> String {
         info.user_data.country,
         info.project_area_of_focus,
         "project".to_string(),
+        info.user_data.bio.unwrap_or("no bio".to_string()),
     )
     .await;
 
@@ -439,6 +507,10 @@ pub async fn update_project(project_id: String, updated_project: ProjectInfo) ->
         updated_project.user_data.country,
         updated_project.project_area_of_focus,
         "project".to_string(),
+        updated_project
+            .user_data
+            .bio
+            .unwrap_or("no bio".to_string()),
     )
     .await;
 
@@ -818,7 +890,7 @@ pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUse
         project_id.clone(),
         "In Progress".to_string(),
     );
-    let jobs_opportunity_posted = get_jobs_for_project(project_id.clone());
+    let jobs_opportunity_posted = get_jobs_posted_by_project(project_id.clone());
 
     APPLICATION_FORM.with(|storage| {
         let projects = storage.borrow();
@@ -959,18 +1031,18 @@ pub fn get_dummy_suggestion() -> Suggestion {
     }
 }
 
-pub fn get_dummy_jon_opportunity() -> Jobs {
-    Jobs {
-        title: ("Example Job Title".to_string()),
-        description: ("This Job Is For Testing Purpose".to_string()),
-        category: ("Software Developer".to_string()),
-        link: ("test link".to_string()),
-        project_id: ("Testing Project Id".to_string()),
-        timestamp: (time()),
-        location: ("Test Location".to_string()),
-        project_data: todo!(),
-    }
-}
+// pub fn get_dummy_jon_opportunity() -> Jobs {
+//     Jobs {
+//         title: ("Example Job Title".to_string()),
+//         description: ("This Job Is For Testing Purpose".to_string()),
+//         category: ("Software Developer".to_string()),
+//         link: ("test link".to_string()),
+//         project_id: ("Testing Project Id".to_string()),
+//         timestamp: (time()),
+//         location: ("Test Location".to_string()),
+//         project_data: todo!(),
+//     }
+// }
 
 // #[query]
 // pub fn get_dummy_data_for_project_details_for_users() -> ProjectInfoForUser {
@@ -1011,15 +1083,12 @@ pub fn post_job(params: Jobs) -> String {
                 if job_types.contains(&params.category) {
                     POST_JOB.with(|state| {
                         let mut state = state.borrow_mut();
-                        let new_job = Jobs {
-                            link: params.link,
-                            title: params.title,
+                        let new_job = JobsInternal {
+                            job_data: params,
                             timestamp: current_time,
-                            description: params.description,
-                            project_id: params.project_id,
-                            category: params.category,
-                            location: params.location,
-                            project_data: project_data_for_job, 
+                            project_name: project_data_for_job.project_name,
+                            project_desc: project_data_for_job.project_description,
+                            project_logo: project_data_for_job.project_logo
                         };
                         state
                             .entry(principal_id)
@@ -1031,7 +1100,7 @@ pub fn post_job(params: Jobs) -> String {
                     "Choose correct job type".to_string()
                 }
             })
-        },
+        }
         None => "Error: Project not found.".to_string(),
     }
 }
@@ -1044,7 +1113,7 @@ pub fn get_jobs_for_project(project_id: String) -> Vec<Jobs> {
 
         for job_list in jobs.values() {
             for job in job_list {
-                if job.project_id == project_id {
+                if job.job_data.project_id == project_id {
                     jobs_for_project.push(job.clone());
                 }
             }
@@ -1053,42 +1122,45 @@ pub fn get_jobs_for_project(project_id: String) -> Vec<Jobs> {
     jobs_for_project
 }
 
+// #[query]
+// pub fn get_latest_jobs() -> Vec<Jobs> {
+
 #[query]
-pub fn get_latest_jobs() -> Vec<Jobs> {
+pub fn get_all_jobs() -> Vec<JobsInternal> {
     let mut all_jobs = Vec::new();
 
     POST_JOB.with(|jobs| {
         let jobs = jobs.borrow();
 
         for job_list in jobs.values() {
-            for job in job_list {
-                all_jobs.push(job.clone());
+            for job_internal in job_list {
+                all_jobs.push(job_internal.clone());
             }
         }
     });
 
-    
     all_jobs.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
 
     all_jobs
 }
 
 #[query]
-pub fn get_jobs_posted_by_project(project_id: String) -> Vec<Jobs> {
+pub fn get_jobs_posted_by_project(project_id: String) -> Vec<JobsInternal> {
+    let mut jobs_for_project = Vec::new();
+
     POST_JOB.with(|jobs| {
-        if let Some(job_list) = jobs.borrow().get(&caller()) {
-            let mut project_jobs: Vec<&Jobs> = job_list
-                .iter()
-                .filter(|job| job.project_id == project_id)
-                .collect();
+        let jobs = jobs.borrow();
 
-            project_jobs.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
-
-            project_jobs.into_iter().take(6).cloned().collect()
-        } else {
-            Vec::new()
+        for job_list in jobs.values() {
+            for job_internal in job_list {
+                if job_internal.job_data.project_id == project_id {
+                    jobs_for_project.push(job_internal.clone());
+                }
+            }
         }
-    })
+    });
+
+    jobs_for_project
 }
 
 #[derive(Serialize, Deserialize, Debug, CandidType)]

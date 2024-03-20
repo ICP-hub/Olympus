@@ -205,6 +205,7 @@ type ProjectInfo = record {
   project_area_of_focus : text;
   live_on_icp_mainnet : opt text;
   technical_docs : opt text;
+  target_amount : opt float64;
   github_link : opt text;
   project_cover : vec nat8;
   project_website : opt text;
@@ -271,7 +272,17 @@ type RatingAverages = record {
 };
 type Request = record { mentor : opt MentorInternal; "text" : text };
 type Result = variant { Ok; Err : text };
-type Result_1 = variant { Ok : UserInformation; Err : text };
+type Result_1 = variant { Ok : vec Review; Err : text };
+type Result_2 = variant { Ok : vec Testimonial; Err : text };
+type Result_3 = variant { Ok : UserInformation; Err : text };
+type Review = record {
+  tag : text;
+  name : text;
+  message : text;
+  timestamp : nat64;
+  rating : float32;
+  profile_pic : vec nat8;
+};
 type Role = record {
   status : text;
   rejected_on : opt nat64;
@@ -334,6 +345,12 @@ type Suggestion = record {
   project_id : text;
 };
 type TeamMember = record { member_data : UserInformation; member_uid : text };
+type Testimonial = record {
+  name : text;
+  message : text;
+  timestamp : nat64;
+  profile_pic : vec nat8;
+};
 type ThirtyInfoFounder = record {
   linked_in_profile : opt text;
   telegram_id : opt text;
@@ -413,6 +430,8 @@ service : () -> {
   add_job_type : (text) -> (text);
   add_mentor_announcement : (text, text) -> (text);
   add_project_to_spotlight : (text) -> (Result);
+  add_review : (float32, text) -> (text);
+  add_testimonial : (text) -> (text);
   add_vc_announcement : (text, text) -> (text);
   approve_mentor_creation_request_candid : (principal, bool) -> (text);
   approve_mentor_profile_update : (principal, bool) -> (text);
@@ -524,6 +543,7 @@ service : () -> {
   get_project_upvotes : (text) -> (opt UpvoteRecord) query;
   get_project_using_id : (text) -> (opt ProjectInfoInternal) query;
   get_projects_with_all_info : () -> (vec ProjectInfoInternal) query;
+  get_review : (principal) -> (Result_1) query;
   get_role : () -> (RolesResponse) query;
   get_role_status : () -> (vec Role) query;
   get_roles_for_principal : (principal) -> (vec Role) query;
@@ -532,12 +552,13 @@ service : () -> {
   get_spotlight_projects : () -> (vec SpotlightDetails) query;
   get_suggestions_by_parent_id_caller : (text, nat64) -> (vec Suggestion) query;
   get_suggestions_by_status_caller : (text, text) -> (vec Suggestion) query;
+  get_testimonials : (principal) -> (Result_2) query;
   get_total_count : () -> (Counts) query;
   get_total_pending_request : () -> (nat64) query;
   get_total_suggestions : (text) -> (nat64) query;
   get_user_info_struct : () -> (opt UserInformation) query;
-  get_user_information : () -> (Result_1) query;
-  get_user_information_using_uid : (text) -> (Result_1) query;
+  get_user_information : () -> (Result_3) query;
+  get_user_information_using_uid : (text) -> (Result_3) query;
   get_user_likes : (text) -> (opt LikeRecord) query;
   get_users_with_all_info : () -> (UserInfoInternal) query;
   get_vc_announcements : () -> (
