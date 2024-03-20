@@ -7,6 +7,7 @@ mod manage_hubs;
 mod mentor;
 mod notification;
 mod notification_to_mentor;
+mod notification_to_project;
 mod project_like;
 mod requests;
 mod roles;
@@ -19,7 +20,9 @@ mod default_images;
 
 use crate::project_registration::*;
 use cohort::*;
+
 use notification_to_mentor::*;
+use notification_to_project::*;
 
 use ic_cdk::api::caller;
 use ic_cdk::pre_upgrade;
