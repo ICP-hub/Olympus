@@ -953,6 +953,7 @@ pub fn add_project_to_spotlight(project_id: String) -> Result<(), String> {
                 added_by: caller,
                 project_id: project_id,
                 project_details: project_info.params,
+                approval_time: time(),
             };
 
             SPOTLIGHT_PROJECTS.with(|spotlight| {
@@ -979,7 +980,11 @@ pub fn remove_project_from_spotlight(project_id: String) -> Result<(), String> {
 
 #[query]
 pub fn get_spotlight_projects() -> Vec<SpotlightDetails> {
-    SPOTLIGHT_PROJECTS.with(|spotlight| spotlight.borrow().clone())
+    let mut projects = SPOTLIGHT_PROJECTS.with(|spotlight| spotlight.borrow().clone());
+    
+    projects.sort_by(|a, b| b.approval_time.cmp(&a.approval_time));
+    
+    projects
 }
 
 pub fn pre_upgrade_admin() {

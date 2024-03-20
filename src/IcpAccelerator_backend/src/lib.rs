@@ -7,6 +7,7 @@ mod manage_hubs;
 mod mentor;
 mod notification;
 mod notification_to_mentor;
+mod notification_to_project;
 mod project_like;
 mod requests;
 mod roles;
@@ -19,7 +20,9 @@ mod default_images;
 
 use crate::project_registration::*;
 use cohort::*;
+
 use notification_to_mentor::*;
+use notification_to_project::*;
 
 use ic_cdk::api::caller;
 use ic_cdk::pre_upgrade;
@@ -160,10 +163,10 @@ fn filter_out_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
     project_registration::filter_projects(criteria)
 }
 
-#[query]
-fn get_projects_for_caller() -> Vec<ProjectInfo> {
-    project_registration::get_projects_for_caller()
-}
+// #[query]
+// fn get_projects_for_caller() -> Vec<ProjectInfo> {
+//     project_registration::get_projects_for_caller()
+// }
 
 #[query]
 fn get_project_using_id(project_id: String) -> Option<ProjectInfoInternal> {
