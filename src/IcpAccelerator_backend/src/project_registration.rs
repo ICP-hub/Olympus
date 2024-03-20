@@ -37,10 +37,12 @@ pub struct TeamMember {
 pub struct Jobs {
     title: String,
     description: String,
-    opportunity: String,
+    category: String,
     link: String,
     project_id: String,
     timestamp: u64,
+    location: String,
+    project_data: ProjectInfo,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
@@ -134,8 +136,9 @@ pub struct NotificationForOwner {
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct Announcements {
-    project_name: String,
-    announcement_message: String,
+    project_id: String,
+    announcement_title: String,
+    announcement_description: String,
     timestamp: u64,
 }
 
@@ -905,13 +908,13 @@ pub fn get_dummy_venture_capitalist() -> VentureCapitalist {
     }
 }
 
-pub fn get_dummy_announcements() -> Announcements {
-    Announcements {
-        project_name: "Project X".to_string(),
-        announcement_message: "We are thrilled to announce the launch of Project X, set to revolutionize the industry!".to_string(),
-        timestamp: 1672522562, // Example timestamp in Unix time format
-    }
-}
+// pub fn get_dummy_announcements() -> Announcements {
+//     Announcements {
+//         project_name: "Project X".to_string(),
+//         announcement_message: "We are thrilled to announce the launch of Project X, set to revolutionize the industry!".to_string(),
+//         timestamp: 1672522562, // Example timestamp in Unix time format
+//     }
+// }
 
 pub fn get_dummy_suggestion() -> Suggestion {
     Suggestion {
@@ -927,10 +930,12 @@ pub fn get_dummy_jon_opportunity() -> Jobs {
     Jobs {
         title: ("Example Job Title".to_string()),
         description: ("This Job Is For Testing Purpose".to_string()),
-        opportunity: ("Software Developer".to_string()),
+        category: ("Software Developer".to_string()),
         link: ("test link".to_string()),
         project_id: ("Testing Project Id".to_string()),
         timestamp: (time()),
+        location: ("Test Location".to_string()),
+        project_data: todo!(),
     }
 }
 
@@ -955,9 +960,10 @@ pub fn get_dummy_jon_opportunity() -> Jobs {
 pub fn post_job(
     title: String,
     description: String,
-    opportunity: String,
+    category: String,
     link: String,
     project_id: String,
+    location: String,
 ) -> String {
     let principal_id = caller();
     let is_owner = APPLICATION_FORM.with(|projects| {
@@ -969,31 +975,39 @@ pub fn post_job(
     if !is_owner {
         return "Error: Only the project owner can request updates.".to_string();
     }
-    let current_time = time();
+    match find_project_by_id(&project_id) {
+        Some(project_data_internal) => {
+            let current_time = time();
+            let project_data_for_job = project_data_internal.params;
 
-    JOB_TYPE.with(|job_types| {
-        let job_types = job_types.borrow();
-        if job_types.contains(&opportunity) {
-            POST_JOB.with(|state| {
-                let mut state = state.borrow_mut();
-                let new_blog = Jobs {
-                    link: link,
-                    title: title,
-                    timestamp: current_time,
-                    description: description,
-                    project_id: project_id,
-                    opportunity: opportunity,
-                };
-                state
-                    .entry(principal_id)
-                    .or_insert_with(Vec::new)
-                    .push(new_blog);
-                format!("Job Post added successfully at {}", current_time)
+            JOB_TYPE.with(|job_types| {
+                let job_types = job_types.borrow();
+                if job_types.contains(&category) {
+                    POST_JOB.with(|state| {
+                        let mut state = state.borrow_mut();
+                        let new_job = Jobs {
+                            link,
+                            title,
+                            timestamp: current_time,
+                            description,
+                            project_id,
+                            category,
+                            location,
+                            project_data: project_data_for_job, 
+                        };
+                        state
+                            .entry(principal_id)
+                            .or_insert_with(Vec::new)
+                            .push(new_job);
+                        format!("Job Post added successfully at {}", current_time)
+                    })
+                } else {
+                    "Choose correct job type".to_string()
+                }
             })
-        } else {
-            return "Choose correct job type".to_string();
-        }
-    })
+        },
+        None => "Error: Project not found.".to_string(),
+    }
 }
 
 pub fn get_jobs_for_project(project_id: String) -> Vec<Jobs> {
