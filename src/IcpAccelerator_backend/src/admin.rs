@@ -24,6 +24,7 @@ struct ApprovalRequest {
     country: String,
     tag_used: String,
     requested_for: String,
+    bio: String,
 }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
@@ -52,6 +53,7 @@ pub async fn send_approval_request(
     country: String,
     tag_used: String,
     requested_for: String,
+    bio: String,
 ) -> String {
     //sender
     let caller: Principal = caller();
@@ -76,6 +78,7 @@ pub async fn send_approval_request(
                     country: country.clone(),
                     tag_used: tag_used.clone(),
                     requested_for: requested_for.clone(),
+                    bio: bio.clone(),
                 };
 
                 let notification_to_send = Notification {
@@ -892,6 +895,7 @@ pub fn approve_project_update(requester: Principal, project_id: String, approve:
                             project_update_request.updated_info.mentors_assigned;
                         project.params.vc_assigned =
                             project_update_request.updated_info.vc_assigned;
+
                         true
                     } else {
                         false

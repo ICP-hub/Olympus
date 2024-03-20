@@ -1,3 +1,4 @@
+use crate::default_images::*;
 use candid::{CandidType, Principal};
 use ic_cdk::api::caller;
 use ic_cdk::api::management_canister::main::raw_rand;
@@ -9,7 +10,6 @@ use sha2::{Digest, Sha256};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::io::Read;
-use crate::default_images::*;
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
 pub struct UserInformation {
@@ -40,6 +40,58 @@ pub struct Role {
     pub rejected_on: Option<u64>,
 }
 
+#[derive(CandidType, Clone, Serialize, Deserialize)]
+pub struct Testimonial {
+    name: String,
+    profile_pic: Vec<u8>,
+    message: String,
+    timestamp: u64,
+}
+
+#[derive(CandidType, Clone, Serialize, Deserialize)]
+pub struct Review {
+    name: String,
+    profile_pic: Vec<u8>,
+    message: String,
+    timestamp: u64,
+    tag: String,
+    rating: f32,
+}
+
+impl Review {
+    pub fn new(
+        name: String,
+        profile_pic: Vec<u8>,
+        message: String,
+        rating: f32,
+    ) -> Result<Review, &'static str> {
+        if rating < 0.0 || rating > 5.0 {
+            return Err("Rating must be between 0.0 and 5.0");
+        }
+
+        let rating_int = (rating * 10.0) as i32;
+
+        let tag = match rating_int {
+            0..=10 => "Needs Improvement",
+            11..=20 => "Fair",
+            21..=30 => "Good",
+            31..=40 => "Very Good",
+            41..=50 => "Excellent",
+            _ => "Unknown",
+        }
+        .to_string();
+
+        Ok(Review {
+            name,
+            profile_pic,
+            message,
+            timestamp: time(),
+            tag,
+            rating,
+        })
+    }
+}
+
 #[derive(CandidType, Clone)]
 pub struct RegisterResponse {
     id: String,
@@ -48,9 +100,14 @@ pub struct RegisterResponse {
 
 pub type UserInfoStorage = HashMap<Principal, UserInfoInternal>;
 
+pub type UserTestimonial = HashMap<Principal, Vec<Testimonial>>;
+pub type UserRating = HashMap<Principal, Vec<Review>>;
+
 thread_local! {
     pub static USER_STORAGE: RefCell<UserInfoStorage> = RefCell::new(UserInfoStorage::new());
     pub static ROLE_STATUS_ARRAY : RefCell<HashMap<Principal, Vec<Role>>> = RefCell::new(HashMap::new());
+    pub static USER_TESTIMONIAL : RefCell<UserTestimonial> = RefCell::new(UserTestimonial::new());
+    pub static USER_RATING : RefCell<UserRating> = RefCell::new(UserRating::new());
 }
 
 pub fn initialize_roles() {
@@ -116,7 +173,6 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
     let uuids = raw_rand().await.unwrap().0;
     let uid = format!("{:x}", Sha256::digest(&uuids));
     let new_id = uid.clone().to_string();
-
 
     fn default_profile_picture() -> Vec<u8> {
         base64::decode(DEFAULT_PROFILE_PICTURE_BASE64).expect("Failed to decode base64 image")
@@ -387,7 +443,9 @@ pub fn get_users_with_all_info() -> UserInfoInternal {
     let caller = caller();
     USER_STORAGE.with(|registry| {
         let user_info_ref = registry.borrow();
-        let user_all_info = user_info_ref.get(&caller).expect("couldn't find user information");
+        let user_all_info = user_info_ref
+            .get(&caller)
+            .expect("couldn't find user information");
         user_all_info.clone()
     })
 }
@@ -490,4 +548,86 @@ pub fn post_upgrade_user_modules() {
     ROLE_STATUS_ARRAY.with(|notifications_ref| {
         *notifications_ref.borrow_mut() = role_storage;
     });
+}
+
+pub fn get_user_info_by_principal(caller: Principal) -> Result<UserInformation, &'static str> {
+    USER_STORAGE.with(|registry| {
+        registry
+            .borrow()
+            .get(&caller)
+            .map(|user_internal| user_internal.params.clone())
+            .ok_or("User not Found")
+    })
+}
+
+#[update]
+fn add_testimonial(message: String) -> String {
+    let principal_id = caller();
+    let userData = get_user_info();
+    let userData = userData.clone().unwrap();
+    USER_TESTIMONIAL.with(|registry| {
+        let testimony = Testimonial {
+            name: userData.full_name,
+            profile_pic: userData.profile_picture.expect("not found"),
+            timestamp: time(),
+            message,
+        };
+
+        let mut registry = registry.borrow_mut();
+        registry
+            .entry(principal_id)
+            .or_insert_with(Vec::new)
+            .push(testimony);
+        format!("testimony added")
+    })
+}
+
+#[query]
+fn get_testimonials(principal_id: Principal) -> Result<Vec<Testimonial>, &'static str> {
+    USER_TESTIMONIAL.with(|registry| {
+        let registry = registry.borrow();
+        if let Some(testimonials) = registry.get(&principal_id) {
+            Ok(testimonials.clone()) // Return a clone of the testimonials vector
+        } else {
+            Err("No testimonials found for the given user.")
+        }
+    })
+}
+
+#[query]
+fn get_review(principal_id: Principal) -> Result<Vec<Review>, &'static str> {
+    USER_RATING.with(|registry| {
+        let registry = registry.borrow();
+        if let Some(rating) = registry.get(&principal_id) {
+            Ok(rating.clone())
+        } else {
+            Err("No rating found for the given user.")
+        }
+    })
+}
+
+#[update]
+fn add_review(rating: f32, message: String) -> String {
+    let principal_id = caller();
+    let userData = get_user_info();
+
+    let userData = userData.clone().unwrap();
+    USER_RATING.with(|registry| {
+        match Review::new(
+            userData.full_name,
+            userData.profile_picture.expect("not found"),
+            message,
+            rating,
+        ) {
+            Ok(review) => {
+                let mut registry = registry.borrow_mut();
+                registry
+                    .entry(principal_id)
+                    .or_insert_with(Vec::new)
+                    .push(review);
+                format!("rating added")
+            }
+            Err(e) => format!("Error creating review: {}", e),
+        }
+    })
 }
