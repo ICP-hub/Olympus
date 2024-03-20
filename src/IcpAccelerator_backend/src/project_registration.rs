@@ -601,7 +601,16 @@ pub fn get_notifications_for_owner() -> Vec<NotificationForOwner> {
     })
 }
 
-pub async fn update_team_member(project_id: &str, member_uid: String) -> String {
+pub async fn update_team_member(project_id: &str, member_principal_id : Principal ) -> String {
+    
+
+   let member_uid =  USER_STORAGE.with(|storage|{
+        let storage = storage.borrow();
+        let user = storage.get(&member_principal_id);
+        let u = user.expect("principal hasn't registered himself as a user");
+        u.uid.clone()
+    });
+
     let user_info_result = crate::user_module::get_user_info_by_id(member_uid.clone()).await;
 
     let user_info = match user_info_result {
