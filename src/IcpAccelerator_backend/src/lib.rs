@@ -163,10 +163,10 @@ fn filter_out_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
     project_registration::filter_projects(criteria)
 }
 
-#[query]
-fn get_projects_for_caller() -> Vec<ProjectInfo> {
-    project_registration::get_projects_for_caller()
-}
+// #[query]
+// fn get_projects_for_caller() -> Vec<ProjectInfo> {
+//     project_registration::get_projects_for_caller()
+// }
 
 #[query]
 fn get_project_using_id(project_id: String) -> Option<ProjectInfoInternal> {

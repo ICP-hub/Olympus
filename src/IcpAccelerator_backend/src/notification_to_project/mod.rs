@@ -60,7 +60,7 @@ pub fn store_request_sent_by_mentor(offer: OfferToProject) {
 }
 
 #[query]
-pub fn get_all_sent_request() -> Vec<OfferToProject> {
+pub fn get_all_sent_request_for_mentor() -> Vec<OfferToProject> {
     MY_SENT_NOTIFICATIONS.with(|state| {
         state
             .borrow()
@@ -139,7 +139,7 @@ pub async fn send_offer_to_project(project_id: String, msg: String, mentor_id: P
 
 
 #[update]
-pub fn accept_offer(offer_id: String, response_message: String, project_id : String) -> String{
+pub fn accept_offer_of_mentor(offer_id: String, response_message: String, project_id : String) -> String{
     //let project_id = caller();
 
     PROJECT_ALERTS.with(|state| {
@@ -172,7 +172,7 @@ pub fn accept_offer(offer_id: String, response_message: String, project_id : Str
 }
 
 #[update]
-pub fn decline_offer(offer_id: String, response_message: String, project_id: String) -> String{
+pub fn decline_offer_of_mentor(offer_id: String, response_message: String, project_id: String) -> String{
 
     PROJECT_ALERTS.with(|state| {
         if let Some(offers) = state.borrow_mut().get_mut(&project_id) {
@@ -202,7 +202,7 @@ pub fn decline_offer(offer_id: String, response_message: String, project_id: Str
 
 
 #[query]
-pub fn get_pending_request_for_projects(project_id: String) -> Vec<OfferToSendToProject> {
+pub fn get_all_offers_which_are_pending_for_project(project_id: String) -> Vec<OfferToSendToProject> {
     PROJECT_ALERTS.with(|pending_alerts| {
         pending_alerts
             .borrow()
@@ -219,7 +219,7 @@ pub fn get_pending_request_for_projects(project_id: String) -> Vec<OfferToSendTo
 
 //mentor will call
 #[query]
-pub fn get_mentor_pending_offers() -> Vec<OfferToProject> {
+pub fn get_all_offers_which_are_pending_for_mentor() -> Vec<OfferToProject> {
     MY_SENT_NOTIFICATIONS.with(|sent_notifications| {
         sent_notifications
             .borrow()
@@ -235,7 +235,7 @@ pub fn get_mentor_pending_offers() -> Vec<OfferToProject> {
 }
 
 #[query]
-pub fn get_accepted_request_for_project(project_id: String) -> Vec<OfferToSendToProject> {
+pub fn get_all_requests_which_got_accepted_for_project(project_id: String) -> Vec<OfferToSendToProject> {
     PROJECT_ALERTS.with(|alerts| {
         alerts
             .borrow()
@@ -251,7 +251,7 @@ pub fn get_accepted_request_for_project(project_id: String) -> Vec<OfferToSendTo
 }
 
 #[query]
-pub fn get_accepted_request_for_mentor() -> Vec<OfferToProject> {
+pub fn get_all_requests_which_got_accepted_for_mentor() -> Vec<OfferToProject> {
     MY_SENT_NOTIFICATIONS.with(|notifications| {
         notifications
             .borrow()
@@ -267,7 +267,7 @@ pub fn get_accepted_request_for_mentor() -> Vec<OfferToProject> {
 }
 
 #[query]
-pub fn get_declined_request_for_project(project_id: String) -> Vec<OfferToSendToProject> {
+pub fn get_all_requests_which_got_declined_for_project(project_id: String) -> Vec<OfferToSendToProject> {
     PROJECT_ALERTS.with(|alerts| {
         alerts
             .borrow()
@@ -283,7 +283,7 @@ pub fn get_declined_request_for_project(project_id: String) -> Vec<OfferToSendTo
 }
 
 #[query]
-pub fn get_declined_request_for_mentor() -> Vec<OfferToProject> {
+pub fn get_all_requests_which_got_declined_for_mentor() -> Vec<OfferToProject> {
     MY_SENT_NOTIFICATIONS.with(|notifications| {
         notifications
             .borrow()
@@ -304,7 +304,7 @@ pub fn get_declined_request_for_mentor() -> Vec<OfferToProject> {
 //for project
 
 #[update]
-pub fn self_decline_request(offer_id: String) -> String {
+pub fn self_decline_request_for_mentor(offer_id: String) -> String {
     let mut response = String::new();
 
     MY_SENT_NOTIFICATIONS.with(|sent_ones| {
@@ -343,7 +343,7 @@ pub fn self_decline_request(offer_id: String) -> String {
 }
 
 #[query]
-pub fn get_self_declined_requests_for_mentor() -> Vec<OfferToProject>{
+pub fn get_all_requests_which_got_self_declined_for_mentor() -> Vec<OfferToProject>{
     MY_SENT_NOTIFICATIONS.with(|offers| {
         let offers = offers.borrow();
         let offers = offers.get(&caller());
@@ -354,7 +354,7 @@ pub fn get_self_declined_requests_for_mentor() -> Vec<OfferToProject>{
 }
 
 #[query]
-pub fn get_self_declined_requests_for_project(project_id: String) -> Vec<OfferToSendToProject>{
+pub fn get_all_requests_which_got_self_declined_for_project(project_id: String) -> Vec<OfferToSendToProject>{
     PROJECT_ALERTS.with(|offers| {
         let offers = offers.borrow();
         let offers = offers.get(&project_id);

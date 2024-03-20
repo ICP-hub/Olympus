@@ -137,7 +137,7 @@ pub async fn send_offer_to_mentor(mentor_id: Principal, msg: String, project_id:
 }
 
 #[update]
-pub fn accept_offer(offer_id: String, response_message: String) -> String{
+pub fn accept_offer_of_project(offer_id: String, response_message: String) -> String{
     let mentor_id = caller();
 
     MENTOR_ALERTS.with(|state| {
@@ -170,7 +170,7 @@ pub fn accept_offer(offer_id: String, response_message: String) -> String{
 }
 
 #[update]
-pub fn decline_offer(offer_id: String, response_message: String) -> String{
+pub fn decline_offer_of_project(offer_id: String, response_message: String) -> String{
     let mentor_id = caller();
 
     MENTOR_ALERTS.with(|state| {
