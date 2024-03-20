@@ -73,11 +73,50 @@ pub struct ProjectInfo {
     pub project_linkedin: Option<String>,
     pub project_website: Option<String>,
     pub project_discord: Option<String>,
+    pub money_raised: Option<MoneyRaised>,
+    upload_private_documents: Option<bool>,
+    private_docs: Option<Docs>,
+    public_docs: Option<Docs>,
+}
+
+impl ProjectInfo {}
+
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
+pub struct Docs {
+    title: String,
+    link: String,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
+pub struct MoneyRaised {
+    pub target_amount: f64,
     pub icp_grants: Option<String>,
     pub investors: Option<String>,
     pub sns: Option<String>,
     pub raised_from_other_ecosystem: Option<String>,
-    pub target_amount: Option<f64>,
+}
+
+impl MoneyRaised {
+    // Calculates the total amount raised from various sources.
+    // Assumes all Option<String> fields represent valid f64 values or None.
+    pub fn total_amount(&self) -> f64 {
+        let mut total: f64 = 0.0;
+
+        if let Some(icp_grants) = &self.icp_grants {
+            total += icp_grants.parse::<f64>().unwrap_or(0.0);
+        }
+        if let Some(investors) = &self.investors {
+            total += investors.parse::<f64>().unwrap_or(0.0);
+        }
+        if let Some(sns) = &self.sns {
+            total += sns.parse::<f64>().unwrap_or(0.0);
+        }
+        if let Some(raised_from_other_ecosystem) = &self.raised_from_other_ecosystem {
+            total += raised_from_other_ecosystem.parse::<f64>().unwrap_or(0.0);
+        }
+
+        total
+    }
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
@@ -206,6 +245,8 @@ thread_local! {
     pub static POST_JOB: RefCell<JobDetails> = RefCell::new(JobDetails::new());
     pub static JOB_TYPE: RefCell<Vec<String>> = RefCell::new(vec!["Bounty".to_string(),"Job".to_string()]);
     pub static SPOTLIGHT_PROJECTS: RefCell<SpotlightProjects> = RefCell::new(SpotlightProjects::new());
+    pub static  MONEY_ACCESS: RefCell<Vec<Principal>> = RefCell::new(Vec::new());
+    pub static PRIVATE_DOCS_ACCESS: RefCell<Vec<Principal>> = RefCell::new(Vec::new());
 
 }
 
@@ -235,6 +276,24 @@ pub fn pre_upgrade() {
 // }
 
 pub async fn create_project(info: ProjectInfo) -> String {
+    if info.private_docs.is_some() && info.upload_private_documents != Some(true) {
+        return "Cannot set private documents unless upload private docs has been set to true"
+            .to_string();
+    }
+
+    if info.money_raised.is_some() && info.money_raised_till_now != Some(true) {
+        return "Cannot populate MoneyRaised unless money_raised_till_now is true.".to_string();
+    }
+
+    if let Some(money_raised) = &info.money_raised {
+        let total_raised = money_raised.total_amount();
+        if total_raised <= 0.0 {
+            return "The total amount raised must be greater than zero.".to_string();
+        } else if total_raised > money_raised.target_amount {
+            return "The sum of funding sources exceeds the target amount.".to_string();
+        }
+    }
+
     // Validate the project info
 
     // Validation succeeded, continue with creating the project
@@ -298,6 +357,7 @@ pub async fn create_project(info: ProjectInfo) -> String {
         info.user_data.country,
         info.project_area_of_focus,
         "project".to_string(),
+        info.user_data.bio.unwrap_or("no bio".to_string()),
     )
     .await;
 
@@ -428,6 +488,10 @@ pub async fn update_project(project_id: String, updated_project: ProjectInfo) ->
         updated_project.user_data.country,
         updated_project.project_area_of_focus,
         "project".to_string(),
+        updated_project
+            .user_data
+            .bio
+            .unwrap_or("no bio".to_string()),
     )
     .await;
 
@@ -994,7 +1058,7 @@ pub fn post_job(
                             project_id,
                             category,
                             location,
-                            project_data: project_data_for_job, 
+                            project_data: project_data_for_job,
                         };
                         state
                             .entry(principal_id)
@@ -1006,7 +1070,7 @@ pub fn post_job(
                     "Choose correct job type".to_string()
                 }
             })
-        },
+        }
         None => "Error: Project not found.".to_string(),
     }
 }
@@ -1044,7 +1108,6 @@ pub fn get_all_jobs() -> Vec<Jobs> {
         }
     });
 
-    
     all_jobs.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
 
     all_jobs
