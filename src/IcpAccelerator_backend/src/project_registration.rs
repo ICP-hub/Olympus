@@ -1036,12 +1036,11 @@ pub fn get_jobs_for_project(project_id: String) -> Vec<Jobs> {
             }
         }
     });
-
     jobs_for_project
 }
 
 #[query]
-pub fn get_all_jobs() -> Vec<Jobs> {
+pub fn get_latest_jobs() -> Vec<Jobs> {
     let mut all_jobs = Vec::new();
 
     // Collect all jobs from the storage
@@ -1078,3 +1077,4 @@ pub fn get_jobs_posted_by_project(project_id: String) -> Vec<Jobs> {
         }
     })
 }
+
