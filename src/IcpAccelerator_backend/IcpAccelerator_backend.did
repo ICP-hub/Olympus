@@ -422,6 +422,7 @@ service : () -> {
   get_accepted_request_for_project : () -> (vec OfferToMentor) query;
   get_admin_notifications : () -> (vec Notification) query;
   get_all_cohorts : () -> (vec CohortDetails) query;
+  get_all_jobs : () -> (vec Jobs) query;
   get_all_mentor_notification : (principal) -> (vec OfferToSendToMentor) query;
   get_all_mentors : () -> (vec record { principal; MentorWithRoles }) query;
   get_all_mentors_candid : () -> (
