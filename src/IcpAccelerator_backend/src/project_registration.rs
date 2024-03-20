@@ -318,6 +318,17 @@ pub fn get_projects_for_caller() -> Vec<ProjectInfo> {
         }
     })
 }
+//get_my_project; firstly created project || all_pub_plus_private_info
+#[query]
+pub fn get_my_project() -> ProjectInfoInternal {
+    let caller = caller();
+    APPLICATION_FORM.with(|storage| {
+        let projects = storage.borrow();
+        let one_project = projects.get(&caller).expect("couldn't get a project");
+        let one = one_project[0].clone();
+        one.clone()
+    })
+}
 
 #[query]
 pub fn get_projects_with_all_info() -> Vec<ProjectInfoInternal> {
