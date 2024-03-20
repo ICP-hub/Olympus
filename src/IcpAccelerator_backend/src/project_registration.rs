@@ -663,6 +663,18 @@ pub fn add_announcement(mut announcement_details: Announcements) -> String {
 
     let current_time = time();
 
+    let project_id_exists = APPLICATION_FORM.with(|forms| {
+        forms.borrow().values().any(|projects| 
+            projects.iter().any(|project_info| 
+                project_info.uid == announcement_details.project_id
+            )
+        )
+    });
+
+    if !project_id_exists {
+        return "Project ID does not exist in application forms.".to_string();
+    }
+
     PROJECT_ANNOUNCEMENTS.with(|state| {
         let mut state = state.borrow_mut();
         announcement_details.timestamp = current_time;
@@ -969,42 +981,35 @@ pub fn get_dummy_jon_opportunity() -> Jobs {
 // }
 
 #[update]
-pub fn post_job(
-    title: String,
-    description: String,
-    category: String,
-    link: String,
-    project_id: String,
-    location: String,
-) -> String {
+pub fn post_job(params: Jobs) -> String {
     let principal_id = caller();
     let is_owner = APPLICATION_FORM.with(|projects| {
         projects.borrow().iter().any(|(owner_principal, projects)| {
-            *owner_principal == principal_id && projects.iter().any(|p| p.uid == project_id)
+            *owner_principal == principal_id && projects.iter().any(|p| p.uid == params.project_id)
         })
     });
 
     if !is_owner {
         return "Error: Only the project owner can request updates.".to_string();
     }
-    match find_project_by_id(&project_id) {
+    match find_project_by_id(&params.project_id) {
         Some(project_data_internal) => {
             let current_time = time();
             let project_data_for_job = project_data_internal.params;
 
             JOB_TYPE.with(|job_types| {
                 let job_types = job_types.borrow();
-                if job_types.contains(&category) {
+                if job_types.contains(&params.category) {
                     POST_JOB.with(|state| {
                         let mut state = state.borrow_mut();
                         let new_job = Jobs {
-                            link,
-                            title,
+                            link: params.link,
+                            title: params.title,
                             timestamp: current_time,
-                            description,
-                            project_id,
-                            category,
-                            location,
+                            description: params.description,
+                            project_id: params.project_id,
+                            category: params.category,
+                            location: params.location,
                             project_data: project_data_for_job, 
                         };
                         state
@@ -1044,7 +1049,6 @@ pub fn get_jobs_for_project(project_id: String) -> Vec<Jobs> {
 pub fn get_all_jobs() -> Vec<Jobs> {
     let mut all_jobs = Vec::new();
 
-    // Collect all jobs from the storage
     POST_JOB.with(|jobs| {
         let jobs = jobs.borrow();
 
@@ -1077,4 +1081,28 @@ pub fn get_jobs_posted_by_project(project_id: String) -> Vec<Jobs> {
             Vec::new()
         }
     })
+}
+
+#[derive(Serialize, Deserialize, Debug, CandidType)]
+pub struct JobCategory {
+    id: i32,
+    name: String,
+}
+
+#[query]
+pub fn get_job_category() -> Vec<JobCategory> {
+    vec![
+        JobCategory {
+            id: 1,
+            name: "Opportunities".to_string(),
+        },
+        JobCategory {
+            id: 2,
+            name: "Bounties".to_string(),
+        },
+        JobCategory {
+            id: 3,
+            name: "Request For Proposal".to_string(),
+        },
+    ]
 }
