@@ -40,9 +40,16 @@ pub struct Jobs {
     category: String,
     link: String,
     project_id: String,
-    timestamp: u64,
     location: String,
-    project_data: ProjectInfo,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
+pub struct JobsInternal{
+    job_data: Jobs,
+    timestamp: u64,
+    project_name: String,
+    project_desc: String,
+    project_logo: Vec<u8>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
@@ -129,7 +136,7 @@ pub struct ProjectInfoForUser {
     pub reviews: Vec<Suggestion>,
     pub website_social_group: Option<String>,
     pub live_link_of_project: Option<String>,
-    pub jobs_opportunity: Option<Vec<Jobs>>,
+    pub jobs_opportunity: Option<Vec<JobsInternal>>,
     pub area_of_focus: Option<String>,
     pub country_of_project: Option<String>,
 }
@@ -227,7 +234,7 @@ pub type PendingDetails = HashMap<String, ProjectUpdateRequest>;
 pub type DeclinedDetails = HashMap<String, ProjectUpdateRequest>;
 
 pub type ProjectDetails = HashMap<Principal, ProjectInfoInternal>;
-pub type JobDetails = HashMap<Principal, Vec<Jobs>>;
+pub type JobDetails = HashMap<Principal, Vec<JobsInternal>>;
 pub type SpotlightProjects = Vec<SpotlightDetails>;
 
 thread_local! {
@@ -874,7 +881,7 @@ pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUse
         project_id.clone(),
         "In Progress".to_string(),
     );
-    let jobs_opportunity_posted = get_jobs_for_project(project_id.clone());
+    let jobs_opportunity_posted = get_jobs_posted_by_project(project_id.clone());
 
     APPLICATION_FORM.with(|storage| {
         let projects = storage.borrow();
@@ -1015,18 +1022,18 @@ pub fn get_dummy_suggestion() -> Suggestion {
     }
 }
 
-pub fn get_dummy_jon_opportunity() -> Jobs {
-    Jobs {
-        title: ("Example Job Title".to_string()),
-        description: ("This Job Is For Testing Purpose".to_string()),
-        category: ("Software Developer".to_string()),
-        link: ("test link".to_string()),
-        project_id: ("Testing Project Id".to_string()),
-        timestamp: (time()),
-        location: ("Test Location".to_string()),
-        project_data: todo!(),
-    }
-}
+// pub fn get_dummy_jon_opportunity() -> Jobs {
+//     Jobs {
+//         title: ("Example Job Title".to_string()),
+//         description: ("This Job Is For Testing Purpose".to_string()),
+//         category: ("Software Developer".to_string()),
+//         link: ("test link".to_string()),
+//         project_id: ("Testing Project Id".to_string()),
+//         timestamp: (time()),
+//         location: ("Test Location".to_string()),
+//         project_data: todo!(),
+//     }
+// }
 
 // #[query]
 // pub fn get_dummy_data_for_project_details_for_users() -> ProjectInfoForUser {
@@ -1067,15 +1074,12 @@ pub fn post_job(params: Jobs) -> String {
                 if job_types.contains(&params.category) {
                     POST_JOB.with(|state| {
                         let mut state = state.borrow_mut();
-                        let new_job = Jobs {
-                            link: params.link,
-                            title: params.title,
+                        let new_job = JobsInternal {
+                            job_data: params,
                             timestamp: current_time,
-                            description: params.description,
-                            project_id: params.project_id,
-                            category: params.category,
-                            location: params.location,
-                            project_data: project_data_for_job, 
+                            project_name: project_data_for_job.project_name,
+                            project_desc: project_data_for_job.project_description,
+                            project_logo: project_data_for_job.project_logo
                         };
                         state
                             .entry(principal_id)
@@ -1092,34 +1096,17 @@ pub fn post_job(params: Jobs) -> String {
     }
 }
 
-pub fn get_jobs_for_project(project_id: String) -> Vec<Jobs> {
-    let mut jobs_for_project = Vec::new();
-
-    POST_JOB.with(|jobs| {
-        let jobs = jobs.borrow();
-
-        for job_list in jobs.values() {
-            for job in job_list {
-                if job.project_id == project_id {
-                    jobs_for_project.push(job.clone());
-                }
-            }
-        }
-    });
-
-    jobs_for_project
-}
 
 #[query]
-pub fn get_all_jobs() -> Vec<Jobs> {
+pub fn get_all_jobs() -> Vec<JobsInternal> {
     let mut all_jobs = Vec::new();
 
     POST_JOB.with(|jobs| {
         let jobs = jobs.borrow();
 
         for job_list in jobs.values() {
-            for job in job_list {
-                all_jobs.push(job.clone());
+            for job_internal in job_list {
+                all_jobs.push(job_internal.clone());
             }
         }
     });
@@ -1130,21 +1117,22 @@ pub fn get_all_jobs() -> Vec<Jobs> {
 }
 
 #[query]
-pub fn get_jobs_posted_by_project(project_id: String) -> Vec<Jobs> {
+pub fn get_jobs_posted_by_project(project_id: String) -> Vec<JobsInternal> {
+    let mut jobs_for_project = Vec::new();
+
     POST_JOB.with(|jobs| {
-        if let Some(job_list) = jobs.borrow().get(&caller()) {
-            let mut project_jobs: Vec<&Jobs> = job_list
-                .iter()
-                .filter(|job| job.project_id == project_id)
-                .collect();
+        let jobs = jobs.borrow();
 
-            project_jobs.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
-
-            project_jobs.into_iter().take(6).cloned().collect()
-        } else {
-            Vec::new()
+        for job_list in jobs.values() {
+            for job_internal in job_list {
+                if job_internal.job_data.project_id == project_id {
+                    jobs_for_project.push(job_internal.clone());
+                }
+            }
         }
-    })
+    });
+
+    jobs_for_project
 }
 
 #[derive(Serialize, Deserialize, Debug, CandidType)]
