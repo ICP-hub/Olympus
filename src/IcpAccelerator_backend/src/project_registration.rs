@@ -175,6 +175,7 @@ pub struct SpotlightDetails {
     pub added_by: Principal,
     pub project_id: String,
     pub project_details: ProjectInfo,
+    pub approval_time: u64,
 }
 
 pub type ProjectAnnouncements = HashMap<Principal, Vec<Announcements>>;
