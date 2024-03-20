@@ -1105,7 +1105,7 @@ pub fn post_job(params: Jobs) -> String {
     }
 }
 
-pub fn get_jobs_for_project(project_id: String) -> Vec<Jobs> {
+pub fn get_jobs_for_project(project_id: String) -> Vec<JobsInternal> {
     let mut jobs_for_project = Vec::new();
 
     POST_JOB.with(|jobs| {
