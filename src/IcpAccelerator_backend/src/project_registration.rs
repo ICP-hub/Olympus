@@ -673,7 +673,16 @@ pub fn get_notifications_for_owner() -> Vec<NotificationForOwner> {
     })
 }
 
-pub async fn update_team_member(project_id: &str, member_uid: String) -> String {
+pub async fn update_team_member(project_id: &str, member_principal_id : Principal ) -> String {
+    
+
+   let member_uid =  USER_STORAGE.with(|storage|{
+        let storage = storage.borrow();
+        let user = storage.get(&member_principal_id);
+        let u = user.expect("principal hasn't registered himself as a user");
+        u.uid.clone()
+    });
+
     let user_info_result = crate::user_module::get_user_info_by_id(member_uid.clone()).await;
 
     let user_info = match user_info_result {
@@ -1096,6 +1105,25 @@ pub fn post_job(params: Jobs) -> String {
     }
 }
 
+pub fn get_jobs_for_project(project_id: String) -> Vec<JobsInternal> {
+    let mut jobs_for_project = Vec::new();
+
+    POST_JOB.with(|jobs| {
+        let jobs = jobs.borrow();
+
+        for job_list in jobs.values() {
+            for job in job_list {
+                if job.job_data.project_id == project_id {
+                    jobs_for_project.push(job.clone());
+                }
+            }
+        }
+    });
+    jobs_for_project
+}
+
+// #[query]
+// pub fn get_latest_jobs() -> Vec<Jobs> {
 
 #[query]
 pub fn get_all_jobs() -> Vec<JobsInternal> {
