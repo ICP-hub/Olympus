@@ -75,6 +75,7 @@ pub struct ProjectInfo {
     pub investors: Option<String>,
     pub sns: Option<String>,
     pub raised_from_other_ecosystem: Option<String>,
+    pub target_amount: Option<f64>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]

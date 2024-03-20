@@ -892,6 +892,8 @@ pub fn approve_project_update(requester: Principal, project_id: String, approve:
                             project_update_request.updated_info.mentors_assigned;
                         project.params.vc_assigned =
                             project_update_request.updated_info.vc_assigned;
+                        project.params.target_amount =
+                            project_update_request.updated_info.target_amount;
                         true
                     } else {
                         false
