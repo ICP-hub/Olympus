@@ -550,6 +550,11 @@ pub fn approve_vc_profile_update(requester: Principal, approve: bool) -> String 
                             .clone()
                             .or(existing_vc_internal.params.announcement_details.clone());
 
+                        existing_vc_internal.params.registered_country = vc_internal
+                            .registered_country
+                            .clone()
+                            .or(existing_vc_internal.params.registered_country.clone());
+
                         existing_vc_internal.params.fund_size =
                             (vc_internal.fund_size * 100.0).round() / 100.0;
                         existing_vc_internal.params.assets_under_management =
@@ -581,6 +586,7 @@ pub fn approve_vc_profile_update(requester: Principal, approve: bool) -> String 
                         existing_vc_internal.params.linkedin_link =
                             vc_internal.linkedin_link.clone();
                         existing_vc_internal.params.website_link = vc_internal.website_link.clone();
+                        existing_vc_internal.params.registered = vc_internal.registered.clone();
                     }
                 });
 
@@ -981,9 +987,9 @@ pub fn remove_project_from_spotlight(project_id: String) -> Result<(), String> {
 #[query]
 pub fn get_spotlight_projects() -> Vec<SpotlightDetails> {
     let mut projects = SPOTLIGHT_PROJECTS.with(|spotlight| spotlight.borrow().clone());
-    
+
     projects.sort_by(|a, b| b.approval_time.cmp(&a.approval_time));
-    
+
     projects
 }
 
