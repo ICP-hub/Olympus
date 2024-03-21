@@ -13,7 +13,6 @@ type Announcements = record {
 };
 type ApprovalRequest = record {
   bio : text;
-  bio : text;
   country : text;
   name : text;
   sender : principal;
@@ -127,6 +126,13 @@ type MentorProfile = record {
 type MentorWithRoles = record {
   mentor_profile : MentorInternal;
   roles : vec Role;
+};
+type MoneyRaised = record {
+  sns : opt text;
+  investors : opt text;
+  raised_from_other_ecosystem : opt text;
+  target_amount : opt float64;
+  icp_grants : opt text;
 };
 type Notification = record {
   notification_type : NotificationType;
