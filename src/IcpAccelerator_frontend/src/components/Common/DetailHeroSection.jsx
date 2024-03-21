@@ -10,7 +10,7 @@ import User from "../../../assets/images/userRegistration.png";
 import Event from "../../../assets/images/Event.png";
 import Investor from "../../../assets/images/investorRegistration.png";
 import { useNavigate } from "react-router-dom";
-import { closeSwitchModalSvg } from "../Utils/Data/SvgData";
+import { closeSwitchBlackModalSvg } from "../Utils/Data/SvgData";
 
 const DetailHeroSection = () => {
   const routeSettings = {
@@ -64,7 +64,7 @@ const DetailHeroSection = () => {
         <div className="w-full px-[4%] lg1:px-[5%]">
           <div className="flex flex-col space-y-4">
             <span className="p-2 cursor-pointer" onClick={() => navigate(-1)}>
-              {closeSwitchModalSvg}
+              {closeSwitchBlackModalSvg}
             </span>
             <div className="flex justify-center  lg:flex-row lg:justify-between items-center md:flex-col-reverse sxs:flex-col-reverse ">
               <div className="relative lg:static sxs:top-20 sxs:left-8 md:-left-24 md:top-20 lg:top-24 lg:-left-32 sm:-left-12">

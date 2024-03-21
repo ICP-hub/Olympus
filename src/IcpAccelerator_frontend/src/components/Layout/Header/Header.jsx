@@ -1,4 +1,4 @@
-import React, { useEffect, useState,useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import logoWithText from "../../../../assets/Logo/topLogo.png";
 import LogoutModal from "../../../models/LogoutModal";
@@ -6,21 +6,22 @@ import SwitchRole from "../../../models/SwitchRole";
 import { OutSideClickHandler } from "../../hooks/OutSideClickHandler";
 import { getCurrentRoleStatusRequestHandler } from "../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 import { logoSvg } from "../../Utils/Data/SvgData";
+import { useNavigate } from "react-router-dom";
+
 const Header = ({ setModalOpen, gradient }) => {
+  const navigate = useNavigate();
+
   const dispatch = useDispatch();
   const principal = useSelector((currState) => currState.internet.principal);
   const isAuthenticated = useSelector(
     (currState) => currState.internet.isAuthenticated
   );
-
   const userCurrentRoleStatus = useSelector(
     (currState) => currState.currentRoleStatus.rolesStatusArray
   );
-
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
-
 
   const [showSwitchRole, setShowSwitchRole] = useState(false);
   // console.log("principal in header", connectedWalletPrincipal);
@@ -34,14 +35,10 @@ const Header = ({ setModalOpen, gradient }) => {
 
   return (
     <header className={`text-gray-700 body-font ${gradient}`}>
-
       <div className="flex items-center justify-between px-[5%] lg1:px-[4%] py-[3%]">
-        <img
-          className=""
-          src={logoWithText}
-          alt="IcpLogo"
-          loading="lazy"
-        />
+        <div onClick={() => navigate("/")}>
+          <img className="sxs:scale-75 sxs:-ml-5 md:scale-100" src={logoWithText} alt="IcpLogo" loading="lazy" />
+        </div>
         {/* <div>
           {logoSvg}
         </div> */}
@@ -63,19 +60,25 @@ const Header = ({ setModalOpen, gradient }) => {
           </div>
         )} */}
 
-
-
         {principal && isAuthenticated == true ? (
           <>
-            {userCurrentRoleStatus && userCurrentRoleStatusActiveRole
-              ? <div className="flex items-center flex-row gap-2">
-                <button onClick={() => setShowSwitchRole(true)} className="border border-violet-800 p-1 font-bold rounded-md text-violet-800 px-2 uppercase">
-                  {userCurrentRoleStatusActiveRole == 'vc' ? 'investor' : userCurrentRoleStatusActiveRole}
+            {userCurrentRoleStatus && userCurrentRoleStatusActiveRole ? (
+              <div className="flex items-center flex-row gap-2">
+                <button
+                  onClick={() => setShowSwitchRole(true)}
+                  className="border border-violet-800 md:p-1 font-bold rounded-md text-violet-800 md:px-2 px-1 text-base md:text-lg  uppercase"
+                >
+                  {userCurrentRoleStatusActiveRole == "vc"
+                    ? "investor"
+                    : userCurrentRoleStatusActiveRole}
                 </button>
-                <SwitchRole isModalOpen={showSwitchRole} onClose={() => setShowSwitchRole(false)} />
+                <SwitchRole
+                  isModalOpen={showSwitchRole}
+                  onClose={() => setShowSwitchRole(false)}
+                />
                 <LogoutModal />
               </div>
-              :
+            ) : (
               // <div className="flex items-center flex-row gap-2">
               //   <button onClick={() => { dispatch(getCurrentRoleStatusRequestHandler()) }} className="border border-violet-800 p-1 font-bold rounded-md text-violet-800">
               //     Sign Up User
@@ -83,7 +86,7 @@ const Header = ({ setModalOpen, gradient }) => {
               //   <LogoutModal />
               // </div>
               <LogoutModal />
-            }
+            )}
           </>
         ) : (
           <button

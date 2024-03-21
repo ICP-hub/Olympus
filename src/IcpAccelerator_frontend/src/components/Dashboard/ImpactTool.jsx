@@ -21,7 +21,7 @@ const ImpactTool = () => {
             {data.map(({ count, label, position }) => (
               <div className="relative mb-4 mt-4 md:mt-0" key={label}>
                 <div className={`top-0 md:absolute text-center text-violet-800 md:text-4xl xl:text-5xl text-4xl font-extrabold font-fontUse`}>
-                  {count}
+                  <div className="animate-spin">{count}</div>
                 </div>
                 <div
                   className={`${position} md:absolute text-center text-neutral-500 md:text-lg font-normal font-fontUse line-clamp-2`}

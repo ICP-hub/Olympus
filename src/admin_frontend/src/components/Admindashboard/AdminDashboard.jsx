@@ -44,7 +44,7 @@ function AdminDashboard() {
       <div className="font-fontUse flex flex-col w-full h-fit px-[5%] lg1:px-[4%] py-[4%]">
         <div>
           <div className="relative bg-white p-8 pt-16 rounded-lg">
-            <h1 className="font-extrabold text-transparent lg:text-6xl text-3xl bg-gradient-to-r from-[#3C04BA] to-[#4087BF] bg-clip-text mb-3">
+          <h1 className="font-extrabold text-transparent xl:text-6xl lg:text-4xl md:text-xl sm:text-xl  bg-gradient-to-r from-[#3C04BA] to-[#4087BF] bg-clip-text mb-3">
               Effortless Administration Made Possible with Our Accelerator
             </h1>
             <h6 className="text-xl font-[450] lg:w-[50%] w-[90%] mb-6">

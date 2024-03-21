@@ -24,6 +24,9 @@ import EventForm from "./components/Mentors/Event/EventForm";
 import MoreProjectLaunchPage from "./components/Dashboard/MoreLaunchPages/MoreProjectLaunchPage";
 import MoreCurrentlyRaisingProjects from "./components/Dashboard/MoreLaunchPages/MoreCurrentlyRaisingProjects";
 import ViewInvestor from "./components/Dashboard/MoreLaunchPages/ViewInvestors";
+import Breadcrumbs from "./components/Layout/Breadcrumbs/BreadCrumbs";
+import ProjectAssociation from "./components/Association/ProjectAssociation";
+import ProjectDetailsForOwnerProject from "./components/Project/ProjectDetailsPages/ProjectDetailsForOwnerProject";
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
 
@@ -67,16 +70,17 @@ const AppRoutes = () => {
     // { path: "/", element: <ProjectDashboard /> },
     // { path: "/", element: <MentorDashboard /> },
     // { path: "/", element: <InvestorDashboard /> },
+    { path: "/individual-project-details-project-owner/:id", element: <ProjectDetailsForOwnerProject /> },
+    { path: "/association", element: <ProjectAssociation /> },
     { path: "/create-user", element: <NormalUser /> },
-    { path: "/create-investor", element: <InvestorRegistration /> },
     { path: "/create-project", element: <CreateProject /> },
+    { path: "/create-investor", element: <InvestorRegistration /> },
     { path: "/event-form", element: <EventForm /> },
-    { path: "/details", element: <AllDetailsForm /> },
-    // { path: "/roleSelect", element: <RoleSelector /> },
+    // { path: "/details", element: <AllDetailsForm /> ,label:'Home'},
     { path: "/project-details", element: <ProjectDetails /> },
     { path: "/profile", element: <UserProfile /> },
     { path: "/create-mentor", element: <MentorRegistration /> },
-    { path: "/individual-project-details/:id", element: <ProjectDetailsForUser /> },
+    { path: "/individual-project-details-user/:id", element: <ProjectDetailsForUser /> },
     { path: "/view-mentor-details/:id", element: <MentorsProfile /> },
     { path: "/view-investor-details/:id", element: <InvestorProfile /> },
     { path: "/view-mentors", element: <SearchMentors /> },
@@ -96,15 +100,8 @@ const AppRoutes = () => {
     { path: "/profile", component: UserProfile, allowedRoles: roleNames },
   ];
 
-  useEffect(() => {
-    dispatch(userRoleHandler());
-  }, [actor, dispatch]);
-
-  useEffect(() => {
-    dispatch(rolesHandlerRequest());
-  }, [actor, dispatch]);
-
-  return (
+  return (<>
+    <Breadcrumbs publicRoutes={publicRoutes} />
     <Suspense fallback={<Loader />}>
       <Routes>
         {/* {protectedRoutes.map((route, index) => {
@@ -123,6 +120,7 @@ const AppRoutes = () => {
         <Route path="*" element={<Error404 />} />
       </Routes>
     </Suspense>
+  </>
   );
 };
 

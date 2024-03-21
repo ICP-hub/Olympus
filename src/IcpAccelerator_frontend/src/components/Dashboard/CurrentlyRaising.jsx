@@ -115,7 +115,7 @@ const CurrentlyRaising = () => {
 
   const handleNavigate = (projectId) => {
     if (isAuthenticated) {
-      navigate(`/individual-project-details/${projectId}`);
+      navigate(`/individual-project-details-user/${projectId}`);
     }
   };
   return (
@@ -155,7 +155,7 @@ const CurrentlyRaising = () => {
             return null;
           }
           return (
-            <div className="w-full sm:w-1/2 md:w-1/4 mb-2 px-3" key={index}>
+            <div className="w-full sm:w-1/2 md:w-1/4 mb-2 px-3 hover:scale-105 transition-transform duration-300 ease-in-out" key={index}>
               <div className="flex justify-between items-baseline mb-4 flex-wrap bg-white m-2 overflow-hidden rounded-lg shadow-lg min-w-1/2">
                 <div className="p-4">
                   <div className="flex justify-between items-baseline mb-2 flex-col flex-wrap w-[265px]">

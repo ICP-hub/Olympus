@@ -89,3 +89,7 @@
    background-repeat: no-repeat;
    background-size: cover;
 }
+
+.CircularProgressbar-text {
+  font-weight: '900' !important;
+}

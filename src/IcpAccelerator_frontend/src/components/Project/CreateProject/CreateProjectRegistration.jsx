@@ -64,6 +64,15 @@ const validationSchema = {
       .required("Project elevator pitch is Required"),
     reason_to_join_incubator: yup.string().required("Reason is required"),
     money_raised_till_now: yup.string(),
+    target_amount: yup
+      .string()
+      .test(
+        "is-integer",
+        "Target Amount value must be an integer",
+        (value) =>
+          value === "" ||
+          (!isNaN(value) && parseInt(value, 10).toString() === value)
+      ),
     icp_grants: yup
       .string()
       .test(
@@ -102,6 +111,9 @@ const validationSchema = {
       ),
     project_name: yup.string().required("Project name is required"),
     live_on_icp_mainnet: yup.string(),
+    upload_private_documents: yup.string(),
+    title1: yup.string(),
+    link1: yup.string().url(),
     project_area_of_focus: yup.string().required("Area of focus is required"),
     self_rating_of_project: yup.string().optional(),
     preferred_icp_hub: yup.string().required("ICP hub is required"),
@@ -111,6 +123,7 @@ const validationSchema = {
     project_twitter: yup.string().url("Must be a valid URL").optional(),
     project_discord: yup.string().url("Must be a valid URL").optional(),
     project_linkedin: yup.string().url("Must be a valid URL").optional(),
+    github_link: yup.string().url("Must be a valid URL").optional(),
     logoData: yup.mixed().optional(),
   }),
   additionalDetails: yup.object().shape({
@@ -119,11 +132,12 @@ const validationSchema = {
       .trim()
       .required("Textarea is required")
       .matches(/^[^\s].*$/, "Cannot start with a space"),
+    title2: yup.string(),
+    link2: yup.string().url(),
     token_economics: yup.string().url("Must be a valid URL").optional(),
     target_market: yup.string().url("Must be a valid URL").optional(),
     long_term_goals: yup.string().url("Must be a valid URL").optional(),
     technical_docs: yup.string().url("Must be a valid URL").optional(),
-    github_link: yup.string().url("Must be a valid URL").optional(),
     coverData: yup.mixed().optional(),
   }),
 };
@@ -143,7 +157,7 @@ const CreateProjectRegistration = () => {
   const projectFullData = useSelector(
     (currState) => currState.projectData.data
   );
-  console.log("Checking projectFullData Over Here ===> ", projectFullData);
+  // console.log("Checking projectFullData Over Here ===> ", projectFullData);
   const dispatch = useDispatch();
   const { countries } = useCountries();
 
@@ -170,13 +184,14 @@ const CreateProjectRegistration = () => {
   const [isLiveOnICP, setIsLiveOnICP] = useState(false);
   const [isMoneyRaised, setIsMoneyRaised] = useState(false);
   const [isMulti_Chain, setIsMulti_Chain] = useState(false);
+  const [isPrivateDocument, setIsPrivateDocuments] = useState(false);
 
   // Used to convert strings to Uint8Array
   function stringToUint8Array(str) {
     const encoder = new TextEncoder();
     return encoder.encode(str);
   }
-  console.log("userData", userData);
+  // console.log("userData", userData);
 
   const getTabClassName = (tab) => {
     return `inline-block p-2 font-bold ${
@@ -235,15 +250,48 @@ const CreateProjectRegistration = () => {
   const liveOnICPMainnetValue = watch("live_on_icp_mainnet");
   const MoneyRaisedTillNow = watch("money_raised_till_now");
   const IsMultiChain = watch("multi_chain");
+  const IsPrivateDocument = watch("upload_private_documents");
+  // checking total for target market
+  const checkTotal = (event) => {
+    // Prevent default form submission behavior
+    const targetAmount = watch(Number("target_amount"));
+    const icpGrants = watch(Number("icp_grants"));
+    const investors = watch(Number("investors"));
+    const sns = watch(Number("sns"));
+    const raisedFromOtherEcosystem = watch(
+      Number("raised_from_other_ecosystem")
+    );
 
+    console.log(icpGrants);
+    console.log(total);
+    const total = icpGrants + investors + sns + raisedFromOtherEcosystem;
+
+    if (total > targetAmount) {
+      setError(
+        "The total amount exceeds the target amount. Please adjust the values."
+      );
+    } else {
+      setError(""); // Clear error if condition is met
+    }
+  };
   useEffect(() => {
     // Update isLiveOnICP based on live_on_icp_mainnet field value
+    setIsPrivateDocuments(IsPrivateDocument === "true");
+    if (IsPrivateDocument !== "true") {
+      setValue("title1", "");
+      setValue("link1", "");
+    }
+
     setIsLiveOnICP(liveOnICPMainnetValue === "true");
     if (liveOnICPMainnetValue !== "true") {
       setValue("money_raised_till_now", "false");
     }
     setIsMoneyRaised(MoneyRaisedTillNow === "true");
+    // if(MoneyRaisedTillNow === "true"){
+    //   checkTotal();
+    // }
     if (liveOnICPMainnetValue !== "true" || MoneyRaisedTillNow !== "true") {
+      setValue("target_amount", "");
       setValue("icp_grants", "");
       setValue("investors", "");
       setValue("sns", "");
@@ -253,7 +301,13 @@ const CreateProjectRegistration = () => {
     if (IsMultiChain !== "true") {
       setValue("supports_multichain", "");
     }
-  }, [liveOnICPMainnetValue, MoneyRaisedTillNow, IsMultiChain, setValue]);
+  }, [
+    liveOnICPMainnetValue,
+    MoneyRaisedTillNow,
+    IsMultiChain,
+    IsPrivateDocument,
+    setValue,
+  ]);
 
   useEffect(() => {
     if (!userHasInteracted) return;
@@ -264,138 +318,138 @@ const CreateProjectRegistration = () => {
     };
     validateStep();
   }, [step, trigger, userHasInteracted]);
-  const addProjectLogoHandler = useCallback(
-    async (file) => {
-      clearErrors("project_logo");
-      if (!file)
-        return setError("project_logo", {
-          type: "manual",
-          message: "An image is required",
-        });
-      if (!["image/jpeg", "image/png", "image/gif"].includes(file.type))
-        return setError("project_logo", {
-          type: "manual",
-          message: "Unsupported file format",
-        });
-      if (file.size > 1024 * 1024)
-        // 1MB
-        return setError("project_logo", {
-          type: "manual",
-          message: "The file is too large",
-        });
+  // const addProjectLogoHandler = useCallback(
+  //   async (file) => {
+  //     clearErrors("project_logo");
+  //     if (!file)
+  //       return setError("project_logo", {
+  //         type: "manual",
+  //         message: "An image is required",
+  //       });
+  //     if (!["image/jpeg", "image/png", "image/gif"].includes(file.type))
+  //       return setError("project_logo", {
+  //         type: "manual",
+  //         message: "Unsupported file format",
+  //       });
+  //     if (file.size > 1024 * 1024)
+  //       // 1MB
+  //       return setError("project_logo", {
+  //         type: "manual",
+  //         message: "The file is too large",
+  //       });
 
-      setIsProjectLoading(true);
-      try {
-        const compressedFile = await CompressedImage(file);
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setProjectLogoPreview(reader.result);
-          setIsProjectLoading(false);
-        };
-        reader.readAsDataURL(compressedFile);
+  //     setIsProjectLoading(true);
+  //     try {
+  //       const compressedFile = await CompressedImage(file);
+  //       const reader = new FileReader();
+  //       reader.onloadend = () => {
+  //         setProjectLogoPreview(reader.result);
+  //         setIsProjectLoading(false);
+  //       };
+  //       reader.readAsDataURL(compressedFile);
 
-        const byteArray = await compressedFile.arrayBuffer();
-        setProjectLogo(Array.from(new Uint8Array(byteArray)));
-        clearErrors("project_logo");
-      } catch (error) {
-        console.error("Error processing the image:", error);
-        setError("project_logo", {
-          type: "manual",
-          message: "Could not process image, please try another.",
-        });
-        setIsProjectLoading(false);
-      }
-    },
-    [
-      setError,
-      clearErrors,
-      setIsProjectLoading,
-      setProjectLogoPreview,
-      setProjectLogo,
-    ]
-  );
+  //       const byteArray = await compressedFile.arrayBuffer();
+  //       setProjectLogo(Array.from(new Uint8Array(byteArray)));
+  //       clearErrors("project_logo");
+  //     } catch (error) {
+  //       console.error("Error processing the image:", error);
+  //       setError("project_logo", {
+  //         type: "manual",
+  //         message: "Could not process image, please try another.",
+  //       });
+  //       setIsProjectLoading(false);
+  //     }
+  //   },
+  //   [
+  //     setError,
+  //     clearErrors,
+  //     setIsProjectLoading,
+  //     setProjectLogoPreview,
+  //     setProjectLogo,
+  //   ]
+  // );
 
-  const addMultipleImageHandler = useCallback(
-    async (acceptedFiles) => {
-      clearErrors("project_cover");
-      setIsMultipleLoading(true);
-      const validatedFiles = acceptedFiles.filter((file, index) => {
-        if (index >= 5) {
-          setError("project_cover", {
-            type: "manual",
-            message: "You can only upload up to 5 images",
-          });
-          return false;
-        }
-        if (!["image/jpeg", "image/png", "image/gif"].includes(file.type)) {
-          setError("project_cover", {
-            type: "manual",
-            message: "Unsupported file format",
-          });
-          return false;
-        }
-        if (file.size > 1024 * 1024) {
-          // 1MB
-          setError("project_cover", {
-            type: "manual",
-            message: "The file is too large",
-          });
-          return false;
-        }
-        return true;
-      });
+  // const addMultipleImageHandler = useCallback(
+  //   async (acceptedFiles) => {
+  //     clearErrors("project_cover");
+  //     setIsMultipleLoading(true);
+  //     const validatedFiles = acceptedFiles.filter((file, index) => {
+  //       if (index >= 5) {
+  //         setError("project_cover", {
+  //           type: "manual",
+  //           message: "You can only upload up to 5 images",
+  //         });
+  //         return false;
+  //       }
+  //       if (!["image/jpeg", "image/png", "image/gif"].includes(file.type)) {
+  //         setError("project_cover", {
+  //           type: "manual",
+  //           message: "Unsupported file format",
+  //         });
+  //         return false;
+  //       }
+  //       if (file.size > 1024 * 1024) {
+  //         // 1MB
+  //         setError("project_cover", {
+  //           type: "manual",
+  //           message: "The file is too large",
+  //         });
+  //         return false;
+  //       }
+  //       return true;
+  //     });
 
-      // Check if the number of validated files is greater than 5
-      if (validatedFiles.length > 5) {
-        setIsMultipleLoading(false);
-        return; // Stop further processing
-      }
+  //     // Check if the number of validated files is greater than 5
+  //     if (validatedFiles.length > 5) {
+  //       setIsMultipleLoading(false);
+  //       return; // Stop further processing
+  //     }
 
-      const multipleImagesPreviewTemp = [];
-      const imagesDataTemp = [];
+  //     const multipleImagesPreviewTemp = [];
+  //     const imagesDataTemp = [];
 
-      for (const file of validatedFiles) {
-        try {
-          const compressedFile = await CompressedImage(file);
-          const reader = new FileReader();
+  //     for (const file of validatedFiles) {
+  //       try {
+  //         const compressedFile = await CompressedImage(file);
+  //         const reader = new FileReader();
 
-          reader.onloadend = () => {
-            multipleImagesPreviewTemp.push(reader.result);
-            setMultipleImagesPreview([...multipleImagesPreviewTemp]);
-            setIsMultipleLoading(false);
-          };
-          reader.readAsDataURL(compressedFile);
+  //         reader.onloadend = () => {
+  //           multipleImagesPreviewTemp.push(reader.result);
+  //           setMultipleImagesPreview([...multipleImagesPreviewTemp]);
+  //           setIsMultipleLoading(false);
+  //         };
+  //         reader.readAsDataURL(compressedFile);
 
-          const byteArray = await compressedFile.arrayBuffer();
-          imagesDataTemp.push(Array.from(new Uint8Array(byteArray)));
-          setMultipleImageData([...imagesDataTemp]);
-        } catch (error) {
-          console.error("Error processing the image:", error);
-          setError("project_cover", {
-            type: "manual",
-            message: "Could not process image, please try another.",
-          });
-          setIsMultipleLoading(false);
-        }
-      }
-    },
-    [
-      setError,
-      clearErrors,
-      setIsMultipleLoading,
-      setMultipleImagesPreview,
-      setMultipleImageData,
-    ]
-  );
-  const removeImage = (index) => {
-    const newPreviewImages = [...multipleImagesPreview];
-    newPreviewImages.splice(index, 1);
-    setMultipleImagesPreview(newPreviewImages);
+  //         const byteArray = await compressedFile.arrayBuffer();
+  //         imagesDataTemp.push(Array.from(new Uint8Array(byteArray)));
+  //         setMultipleImageData([...imagesDataTemp]);
+  //       } catch (error) {
+  //         console.error("Error processing the image:", error);
+  //         setError("project_cover", {
+  //           type: "manual",
+  //           message: "Could not process image, please try another.",
+  //         });
+  //         setIsMultipleLoading(false);
+  //       }
+  //     }
+  //   },
+  //   [
+  //     setError,
+  //     clearErrors,
+  //     setIsMultipleLoading,
+  //     setMultipleImagesPreview,
+  //     setMultipleImageData,
+  //   ]
+  // );
+  // const removeImage = (index) => {
+  //   const newPreviewImages = [...multipleImagesPreview];
+  //   newPreviewImages.splice(index, 1);
+  //   setMultipleImagesPreview(newPreviewImages);
 
-    const newData = [...multipleImageData];
-    newData.splice(index, 1);
-    setMultipleImageData(newData);
-  };
+  //   const newData = [...multipleImageData];
+  //   newData.splice(index, 1);
+  //   setMultipleImageData(newData);
+  // };
   // Adding Project_image Here
   const addImageHandler = useCallback(
     async (file) => {
@@ -555,7 +609,7 @@ const CreateProjectRegistration = () => {
   );
   const handleNext = async () => {
     const fieldsToValidate = steps[step].fields.map((field) => field.name);
-    console.log(fieldsToValidate);
+    console.log("fieldsToValidate ===> ", fieldsToValidate);
     const result = await trigger(fieldsToValidate);
     console.log(result);
     // const isImageUploaded = imageData && imageData.length > 0;
@@ -696,6 +750,26 @@ const CreateProjectRegistration = () => {
 
       const updateMoneyRaisedTillNow =
         MoneyRaisedTillNow === "true" ? true : false;
+      const updateIsPrivateDocument =
+        IsPrivateDocument === "true" ? true : false;
+      const privateDocs = {
+        title: updatedFormData.title1 || "",
+        link: updatedFormData.link1 || "",
+      };
+      const publicDocs = {
+        title: updatedFormData.title2 || "",
+        link: updatedFormData.link2 || "",
+      };
+      const moneyRaised = {
+        target_amount: updatedFormData.target_amount
+          ? parseFloat(updatedFormData.target_amount)
+          : 0,
+        icp_grants: [updatedFormData.icp_grants || ""],
+        investors: [updatedFormData.investors || ""],
+        sns: [updatedFormData.sns || ""],
+        raised_from_other_ecosystem:
+          [updatedFormData.raised_from_other_ecosystem || ""],
+      };
       let tempObj2 = {
         user_data: {
           profile_picture: [updatedFormData.imageData] || [],
@@ -708,15 +782,21 @@ const CreateProjectRegistration = () => {
           bio: [updatedFormData.bio] || [],
           area_of_intrest: updatedFormData.area_of_intrest || [],
         },
+        upload_private_documents: [updateIsPrivateDocument],
         project_elevator_pitch: [updatedFormData.project_elevator_pitch],
+        public_docs: [publicDocs],
+        private_docs: [privateDocs],
+        technical_docs: [updatedFormData.technical_docs],
         reason_to_join_incubator:
           updatedFormData.reason_to_join_incubator || "",
-        icp_grants: [updatedFormData.icp_grants || ""],
-        investors: [updatedFormData.investors || ""],
-        sns: [updatedFormData.sns || ""],
-        raised_from_other_ecosystem: [
-          updatedFormData.raised_from_other_ecosystem || "",
-        ],
+        // target_amount: [updatedFormData.target_amount || ""],
+        // icp_grants: [updatedFormData.icp_grants || ""],
+        // investors: [updatedFormData.investors || ""],
+        // sns: [updatedFormData.sns || ""],
+        // raised_from_other_ecosystem: [
+        //   updatedFormData.raised_from_other_ecosystem || "",
+        // ],
+        money_raised: [moneyRaised],
         promotional_video: [updatedFormData.promotional_video],
         project_area_of_focus: updatedFormData.project_area_of_focus || "",
         money_raised_till_now: [updateMoneyRaisedTillNow],
@@ -754,7 +834,7 @@ const CreateProjectRegistration = () => {
       console.log("first time visit ");
       let tempObj = {
         user_data: {
-          profile_picture: [updatedFormData.imageData],
+          profile_picture: [updatedFormData.imageData] || [],
           full_name: updatedFormData.full_name || "",
           country: updatedFormData.country || "",
           email: [updatedFormData.email] || [],
@@ -764,9 +844,20 @@ const CreateProjectRegistration = () => {
           bio: [updatedFormData.bio] || [],
           area_of_intrest: updatedFormData.area_of_intrest || [],
         },
+        upload_private_documents: [updatedFormData.upload_private_documents],
         project_elevator_pitch: [updatedFormData.project_elevator_pitch],
+        public_docs: {
+          title: [updatedFormData.title] || [],
+          link: [updatedFormData.link] || [],
+        },
+        private_docs: {
+          title: [updatedFormData.title] || [],
+          link: [updatedFormData.link] || [],
+        },
+        technical_docs: [updatedFormData.technical_docs],
         reason_to_join_incubator:
           updatedFormData.reason_to_join_incubator || "",
+        target_amount: [updatedFormData.target_amount || ""],
         icp_grants: [updatedFormData.icp_grants || ""],
         investors: [updatedFormData.investors || ""],
         sns: [updatedFormData.sns || ""],
@@ -805,11 +896,11 @@ const CreateProjectRegistration = () => {
       await sendingProjectData(tempObj);
     }
   };
-  const { getRootProps, getInputProps } = useDropzone({
-    accept: "image/jpeg, image/png, image/gif",
-    onDrop: addMultipleImageHandler,
-    multiple: true,
-  });
+  // const { getRootProps, getInputProps } = useDropzone({
+  //   accept: "image/jpeg, image/png, image/gif",
+  //   onDrop: addMultipleImageHandler,
+  //   multiple: true,
+  // });
   const stepFields = steps[step].fields;
   let StepComponent;
   if (step === 0) {
@@ -953,6 +1044,7 @@ const CreateProjectRegistration = () => {
                         ? "border-red-500 placeholder:text-red-500"
                         : "border-[#737373]"
                     } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    required
                   >
                     <option className="text-lg font-bold" value="">
                       select your Country ⌄
@@ -1104,6 +1196,7 @@ const CreateProjectRegistration = () => {
                       ? "border-red-500 placeholder:text-red-500"
                       : "border-[#737373]"
                   } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  required
                 >
                   <option className="text-lg font-bold" value="">
                     Select reason ⌄
@@ -1137,6 +1230,86 @@ const CreateProjectRegistration = () => {
                 )}
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-3 px-4">
+                <div className="z-0 w-full mb-3 group">
+                  <label
+                    htmlFor="upload_private_documents"
+                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    Upload Private Documents
+                  </label>
+                  <select
+                    {...register("upload_private_documents")}
+                    className={`bg-gray-50 border-2 ${
+                      errors.upload_private_documents
+                        ? "border-red-500 placeholder:text-red-500"
+                        : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  >
+                    <option className="text-lg font-bold" value="false">
+                      No
+                    </option>
+                    <option className="text-lg font-bold" value="true">
+                      Yes
+                    </option>
+                  </select>
+                  {errors.upload_private_documents && (
+                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                      {errors.upload_private_documents.message}
+                    </p>
+                  )}
+                </div>
+                {isPrivateDocument && (
+                  <>
+                    <div className="z-0 w-full mb-3 group">
+                      <label
+                        htmlFor="title1"
+                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                      >
+                        Title
+                      </label>
+                      <input
+                        type="text"
+                        name="title1"
+                        id="title1"
+                        {...register("title1")}
+                        className={`bg-gray-50 border-2 ${
+                          errors.title1
+                            ? "border-red-500 placeholder:text-red-500"
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      />
+                      {errors.title1 && (
+                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                          {errors.title1.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="z-0 w-full mb-3 group">
+                      <label
+                        htmlFor="link1"
+                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                      >
+                        Link
+                      </label>
+                      <input
+                        type="text"
+                        name="link1"
+                        id="link1"
+                        {...register("link1")}
+                        className={`bg-gray-50 border-2 ${
+                          errors.link1
+                            ? "border-red-500 placeholder:text-red-500"
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      />
+                      {errors.link1 && (
+                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                          {errors.link1.message}
+                        </p>
+                      )}
+                    </div>
+                  </>
+                )}
                 <div className="z-0 w-full mb-3 group">
                   <label
                     htmlFor="preferred_icp_hub"
@@ -1361,6 +1534,31 @@ const CreateProjectRegistration = () => {
                       {errors.raised_from_other_ecosystem && (
                         <p className="mt-1 text-sm text-red-500 font-bold text-left">
                           {errors.raised_from_other_ecosystem.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="z-0 w-full mb-3 group">
+                      <label
+                        htmlFor="target_amount"
+                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                      >
+                        Target Amount
+                      </label>
+                      <input
+                        type="number"
+                        name="target_amount"
+                        id="target_amount"
+                        {...register("target_amount")}
+                        className={`bg-gray-50 border-2 ${
+                          errors.target_amount
+                            ? "border-red-500 placeholder:text-red-500"
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        placeholder="$"
+                      />
+                      {errors.target_amount && (
+                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                          {errors.target_amount.message}
                         </p>
                       )}
                     </div>

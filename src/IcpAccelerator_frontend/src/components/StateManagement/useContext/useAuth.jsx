@@ -122,7 +122,7 @@ export const useAuthClient = (options = defaultOptions) => {
           isAuthenticated: true,
           identity,
           principal,
-          navi: "roleSelect",
+          // navi: "roleSelect",
         })
       );
       dispatch(setActor(actor));
