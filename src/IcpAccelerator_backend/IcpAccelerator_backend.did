@@ -529,6 +529,7 @@ service : () -> {
   get_area_focus_expertise : () -> (vec Role_1) query;
   get_blog_post : () -> (vec record { principal; vec Blog }) query;
   get_cohort : () -> (vec CohortDetails) query;
+  get_dapp_link : (text) -> (text) query;
   get_declined_request_for_mentor : (principal) -> (
       vec OfferToSendToMentor,
     ) query;
@@ -640,6 +641,7 @@ service : () -> {
   send_private_docs_access_request : (text) -> (text);
   send_request_as_mentor : (text, text) -> (text);
   switch_role : (text, text) -> ();
+  update_dapp_link : (text, text) -> (text);
   update_founder_caller : (FounderInfo) -> (text);
   update_mentor : (MentorProfile) -> (text);
   update_project : (text, ProjectInfo) -> (text);

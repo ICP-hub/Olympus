@@ -1081,3 +1081,21 @@ fn get_total_pending_request() -> usize {
 
 // #[query]
 // fn get_top()
+
+#[update]
+fn update_dapp_link(project_id: String, new_dapp_link: String) -> String {
+    APPLICATION_FORM.with(|projects_registry| {
+        let mut projects = projects_registry.borrow_mut();
+        // Iterate through the entire HashMap
+        for project_list in projects.values_mut() {
+            // Iterate through each project in the list
+            if let Some(project) = project_list.iter_mut().find(|p| p.uid == project_id) {
+                // If a project with the matching project_id is found, update its dapp_link
+                project.params.dapp_link = Some(new_dapp_link.clone());
+                return "Project updated successfully.".to_string(); // Confirm update
+            }
+        }
+        // If no project with the matching ID was found
+        "Project ID not found.".to_string()
+    })
+}

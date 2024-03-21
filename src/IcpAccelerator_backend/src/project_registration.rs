@@ -1353,3 +1353,14 @@ pub fn get_pending_money_requestes(project_id: String) -> Vec<ProjectNotificatio
         projects
     })
 }
+
+#[query]
+pub fn get_dapp_link(project_id: String) -> String {
+    match find_project_by_id(&project_id) {
+        Some(project_data_internal) => match project_data_internal.params.dapp_link {
+            Some(link) => link,
+            None => "DApp link not available.".to_string(),
+        },
+        None => "Error: Project not_found.".to_string(),
+    }
+}
