@@ -39,9 +39,7 @@ const AdminRating = () => {
 
   return (
     <div>
-      <div className="left-4 lg:left-auto bg-gradient-to-r from-purple-900 to-blue-500 text-transparent bg-clip-text text-2xl font-extrabold ml-8">
-        {selectedOption}
-      </div>
+
       <div className="p-3 flex items-center bg-[#FFFFFF4D] border-[#E9E9E9] border-1 drop-shadow-[#0000000D] rounded-[10px] ml-12">
 
         <div className="md:p-4">
