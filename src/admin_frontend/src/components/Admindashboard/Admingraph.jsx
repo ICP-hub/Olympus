@@ -135,8 +135,8 @@ const Admingraph = () => {
       <div className="flex lg:flex-row flex-col  w-full flex-wrap lg:flex-nowrap space-x-2 px-[4%] justify-start item-start gap-16  ">
 
 
-        {/* <div className="flex flex-col md:flex-row gap-12"> */}
-          {/* <div className="rounded-lg flex justify-center  flex-col h-[190px] w-[355px] bg-[#B9C0F2] drop-shadow-xl border-2  ">
+      <div className="flex flex-col md:flex-row gap-12">
+          <div className="rounded-lg flex justify-center  flex-col h-[190px] w-[355px] bg-[#B9C0F2] drop-shadow-xl border-2  ">
             <div className="absolute bottom-0 left-0 w-36 h-40 bg-gradient-to-r from-purple-300 via-purple-400 to-purple-600 ellipse-quarter-left rounded-md"></div>
             <div className="absolute top-0 right-0 bg-gradient-to-br from-indigo-100 to-purple-600 w-28 h-28 ellipse-quarter-right rounded-md"></div>
 
@@ -144,7 +144,7 @@ const Admingraph = () => {
               <p className="flex justify-start">Total Revenue</p>
               <p className="font-extrabold -[59px] h-[62px] text-white flex justify-center text-5xl">$1005.095</p>
             </div>
-          </div> */}
+          </div> 
           {/* <div className="rounded-lg flex justify-center items-center flex-col h-[190px] w-[355px]  bg-[#B9C0F2]  drop-shadow-xl border-2  ">
             <div className="absolute bottom-0 left-0 w-36 h-40 bg-gradient-to-r from-purple-300 via-purple-400 to-purple-600 ellipse-quarter-left rounded-md"></div>
             <div className="absolute top-0 right-0 bg-gradient-to-br from-indigo-100 to-purple-600 w-28 h-28 ellipse-quarter-right rounded-md"></div>
@@ -154,7 +154,7 @@ const Admingraph = () => {
               <p className="font-extrabold -[59px] h-[62px] text-white flex justify-center text-5xl">$1005.095</p>
             </div>
           </div> */}
-        {/* </div> */}
+        </div>
 
 
 
