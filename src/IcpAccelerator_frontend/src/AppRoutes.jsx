@@ -66,11 +66,11 @@ const AppRoutes = () => {
   // ]
 
   const publicRoutes = [
-    // { path: "/", element: <DashBoard /> },
+    { path: "/", element: <DashBoard /> },
     // { path: "/", element: <ProjectDashboard /> },
     // { path: "/", element: <MentorDashboard /> },
     // { path: "/", element: <InvestorDashboard /> },
-    { path: "/", element: <ProjectDetailsForOwnerProject /> },
+    { path: "/individual-project-details-project-owner/:id", element: <ProjectDetailsForOwnerProject /> },
     { path: "/association", element: <ProjectAssociation /> },
     { path: "/create-user", element: <NormalUser /> },
     { path: "/create-project", element: <CreateProject /> },
