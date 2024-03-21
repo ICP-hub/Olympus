@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import guide from "../../../assets/getStarted/guide.png";
 import upvote from "../../../assets/getStarted/upvote.png";
 import SubmitSection from "../Footer/SubmitSection";
-import { getCurrentRoleStatusRequestHandler } from "../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
+import { getCurrentRoleStatusFailureHandler, setCurrentActiveRole, setCurrentRoleStatus } from "../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 import SpotLight from "./SpotLight";
 import ImpactTool from "./ImpactTool";
 import LaunchedProjects from "./LaunchedProjects";
@@ -36,12 +36,27 @@ const DashBoard = () => {
     (currState) => currState.currentRoleStatus.activeRole
   );
 
- 
+
 
   useEffect(() => {
     if (actor) {
       if (!userCurrentRoleStatus.length) {
-        dispatch(getCurrentRoleStatusRequestHandler());
+        (async () => {
+          try {
+            const currentRoleArray = await actor.get_role_status()
+            if (currentRoleArray && currentRoleArray.length !== 0) {
+              const currentActiveRole = getNameOfCurrentStatus(currentRoleArray)
+              dispatch(setCurrentRoleStatus(currentRoleArray));
+              dispatch(setCurrentActiveRole(currentActiveRole));
+            } else {
+              dispatch(getCurrentRoleStatusFailureHandler('error-in-fetching-role-at-dashboard'));
+              dispatch(setCurrentActiveRole(null));
+            }
+          } catch (error) {
+            dispatch(getCurrentRoleStatusFailureHandler(error.toString()));
+            dispatch(setCurrentActiveRole(null));
+          }
+        })();
       } else if (
         userCurrentRoleStatus.length === 4 &&
         userCurrentRoleStatus[0]?.status === "default"
@@ -50,8 +65,9 @@ const DashBoard = () => {
       } else {
       }
     }
+    console.log('userCurrentRoleStatus--in--dashboard', userCurrentRoleStatus)
   }, [actor, dispatch, userCurrentRoleStatus, userCurrentRoleStatusActiveRole]);
-
+  
   const projectJobData = [
     {
       image: ment,
@@ -73,7 +89,7 @@ const DashBoard = () => {
       title: "Register as an Investor",
       description: "Discover innovative projects to invest in.",
       buttonText: "Register Now",
-      imgSrc: hover 
+      imgSrc: hover
     }
   ];
   const mentorCategories = [
@@ -82,20 +98,20 @@ const DashBoard = () => {
       title: "Register as a Mentor",
       description: "Join our community as a mentor to guide projects.",
       buttonText: "Register Now",
-      imgSrc:hover
+      imgSrc: hover
     }
   ];
- 
+
   const testimonialCategories = [
     {
       id: 'addTestimonial',
       title: "Add your testimonial",
       description: "Share your experience and insights with our community.",
       buttonText: "Add now",
-      imgSrc:hover
+      imgSrc: hover
     }
   ];
-    
+
 
 
 
@@ -178,20 +194,20 @@ const DashBoard = () => {
             </div> */}
 
 
-              <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl pb-3 font-bold">
-                Jobs / Opportunity
-              </h1>
-              <div className="flex flex-wrap md:flex-nowrap gap-4 mb-8">
-                {projectJobData.map((data, index) => (
-                  <ProjectJobCard
-                    key={index}
-                    image={data.image}
-                    tags={data.tags}
-                    country={data.country}
-                    website={data.website}
-                  />
-                ))}
-              </div>
+            <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl pb-3 font-bold">
+              Jobs / Opportunity
+            </h1>
+            <div className="flex flex-wrap md:flex-nowrap gap-4 mb-8">
+              {projectJobData.map((data, index) => (
+                <ProjectJobCard
+                  key={index}
+                  image={data.image}
+                  tags={data.tags}
+                  country={data.country}
+                  website={data.website}
+                />
+              ))}
+            </div>
             <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
               <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
                 Investors
@@ -205,7 +221,7 @@ const DashBoard = () => {
                 <InvestorCard />
               </div>
               <div className="w-1/4">
-                <RegisterCard categories={investorCategories}/>
+                <RegisterCard categories={investorCategories} />
               </div>
             </div>
             <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
@@ -221,10 +237,10 @@ const DashBoard = () => {
                 <MentorCard />
               </div>
               <div className="w-1/4 py-3">
-                <RegisterCard categories={mentorCategories}/>
+                <RegisterCard categories={mentorCategories} />
               </div>
             </div>
-           <AnnouncementCard/>
+            <AnnouncementCard />
             <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
               <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
                 Testimonial
@@ -321,7 +337,7 @@ const DashBoard = () => {
             <SubmitSection />
           </div>
         </section>
-        </>
+      </>
       );
   }
 };

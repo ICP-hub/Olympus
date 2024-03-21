@@ -36,13 +36,14 @@ import HubDeclined from "./components/HubDeclined/HubDeclined";
 import { areaOfExpertiseHandlerRequest } from "./components/StateManagement/Redux/Reducers/getAreaOfExpertise";
 import NormalUser from "./components/RoleSelector/NormalUser";
 import MentorRegistration from "./components/Registration/MentorRegistration/MentorRegistration";
-import { getCurrentRoleStatusRequestHandler } from "./components/StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
+import { getCurrentRoleStatusFailureHandler, getCurrentRoleStatusRequestHandler, setCurrentActiveRole, setCurrentRoleStatus } from "./components/StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 import { userRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/userRegisteredData";
 import InvestorRegistration from "./components/Registration/InvestorRegistration/InvestorRegistration";
 import CreateProjectRegistration from "./components/Project/CreateProject/CreateProjectRegistration";
 import { multiChainHandlerRequest } from "./components/StateManagement/Redux/Reducers/getMultiChainList";
 
 const App = () => {
+  const actor = useSelector((currState) => currState.actors.actor);
   const identity = useSelector((currState) => currState.internet.identity);
   const isAuthenticated = useSelector(
     (currState) => currState.internet.isAuthenticated
@@ -69,95 +70,134 @@ const App = () => {
     reloadLogin();
   }, []);
 
+  // useEffect(() => {
+  //   if (isAuthenticated && identity) {
+  //     dispatch(handleActorRequest());
+  //   }
+  // }, [isAuthenticated, identity, dispatch]);
+  // useEffect(() => {
+  //   if (isAuthenticated && identity) {
+  //     dispatch(multiChainHandlerRequest());
+  //   }
+  // }, [isAuthenticated, identity, dispatch]);
+ 
+
+  // useEffect(() => {
+  //   dispatch(userRoleHandler());
+  // }, [isAuthenticated, identity, dispatch]);
+
+  // useEffect(() => {
+  //   dispatch(areaOfExpertiseHandlerRequest());
+  // }, [isAuthenticated, identity, dispatch]);
+
+  // useEffect(() => {
+  //   dispatch(userRegisteredHandlerRequest());
+  // }, [isAuthenticated, dispatch]);
+
+
+  // check if any role have status current ?? 
+  function getNameOfCurrentStatus(rolesStatusArray) {
+    const currentStatus = rolesStatusArray.find(role => role.status === 'active');
+    return currentStatus ? currentStatus.name : null;
+  }
+
+  useEffect(() => {
+
+    if (actor && isAuthenticated && identity) {
+
+      (async() => {
+      try {
+        const currentRoleArray = await actor.get_role_status()
+        if (currentRoleArray && currentRoleArray.length !== 0) {
+          const currentActiveRole = getNameOfCurrentStatus(currentRoleArray)
+          dispatch(setCurrentRoleStatus(currentRoleArray));
+          dispatch(setCurrentActiveRole(currentActiveRole));
+          // dispatch(setCurrentActiveRole('project'));
+        } else {
+          dispatch(getCurrentRoleStatusFailureHandler('error-in-fetching-role-at-dashboard'));
+          dispatch(setCurrentActiveRole(null));
+        }
+      } catch (error) {
+        dispatch(getCurrentRoleStatusFailureHandler(error.toString()));
+        dispatch(setCurrentActiveRole(null));
+      }
+    })();
+    }
+  }, [actor, isAuthenticated, identity, dispatch]);
+
+  console.log('actor---in---dashboard', actor)
+
+  // useEffect(() => {
+  //   // console.log("specific role inside effect of app 1", specificRole);
+
+  //   switch (specificRole) {
+  //     case "Project":
+  //       dispatch(founderRegisteredHandlerRequest());
+  //       break;
+  //     case "Mentor":
+  //       dispatch(mentorRegisteredHandlerRequest());
+  //       break;
+  //     case "ICPHubOrganizer":
+  //       dispatch(hubRegisteredHandlerRequest());
+  //       break;
+  //     case "VC":
+  //       dispatch(investorRegisteredHandlerRequest());
+  //       break;
+  //     default:
+  //       return null;
+  //   }
+  // }, [specificRole, isAuthenticated, dispatch]);
+
+  // useEffect(() => {
+  //   dispatch(areaOfExpertiseHandlerRequest());
+  // }, [isAuthenticated, identity, dispatch]);
+
   useEffect(() => {
     if (isAuthenticated && identity) {
       dispatch(handleActorRequest());
-    }
-  }, [isAuthenticated, identity, dispatch]);
-  useEffect(() => {
-    if (isAuthenticated && identity) {
       dispatch(multiChainHandlerRequest());
+      dispatch(areaOfExpertiseHandlerRequest());
+      dispatch(userRegisteredHandlerRequest());
     }
   }, [isAuthenticated, identity, dispatch]);
 
-  useEffect(() => {
-    dispatch(userRoleHandler());
-  }, [isAuthenticated, identity, dispatch]);
-
-  useEffect(() => {
-    dispatch(areaOfExpertiseHandlerRequest());
-  }, [isAuthenticated, identity, dispatch]);
-
-  useEffect(() => {
-    dispatch(userRegisteredHandlerRequest());
-  }, [isAuthenticated, dispatch]);
-
-  useEffect(() => {
-    // console.log("specific role inside effect of app 1", specificRole);
-    switch (specificRole) {
-      case "Project":
-        dispatch(founderRegisteredHandlerRequest());
-        break;
-      case "Mentor":
-        dispatch(mentorRegisteredHandlerRequest());
-        break;
-      case "ICPHubOrganizer":
-        dispatch(hubRegisteredHandlerRequest());
-        break;
-      case "VC":
-        dispatch(investorRegisteredHandlerRequest());
-        break;
-      default:
-        return null;
-    }
-  }, [specificRole, isAuthenticated, dispatch]);
-
-  useEffect(() => {
-    dispatch(areaOfExpertiseHandlerRequest());
-  }, [isAuthenticated, identity, dispatch]);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      dispatch(getCurrentRoleStatusRequestHandler());
-    }
-  }, [dispatch, isAuthenticated])
   return (
     <>
-    <div className="bg-gray-100">
-    <div className="container mx-auto">
-      {/* {isModalOpen && (
+      <div className="bg-gray-100">
+        <div className="container mx-auto">
+          {/* {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-50"></div>
       )} */}
-      <Header setModalOpen={setModalOpen} gradient={"bg-gray-100"} />
-      <ConnectWallet
-        isModalOpen={isModalOpen}
-        onClose={() => setModalOpen(false)}
-      />
-      {/* <DashBoard/> */}
-      {/* <ProgressCard/> */}
-      {/* <AllDetailsForm/> */}
-      {/* <ProjectDetails/> */}
-      {/* <Home/> */}
-      {/* <Adminoption /> */}
-      {/* <Admingraph /> */}
-      {/* <AdminDashboard /> */}
-      {/* <Hubcards /> */}
-      {/* <Hubdashboard /> */}
-      {/* <Hubdashboard /> */}
-      {/* <Hubapproved /> */}
-      {/* <HubDeclined /> */}
-      {/* <Mentors /> */}
-      {/* <Hublisten /> */}
-      {/* <ListedProjects /> */}
-      {/* <Hubdashboardlive /> */}
-      {/* <DashBoard /> */}
-      {/* <UserProfile/> */}
-      {/* <RoleSelector /> */}
-      {/* <NormalUser /> */}
-      {/* <InvestorRegistration/> */}
-      {/* <CreateProjectRegistration /> */}
-      <AppRoutes />
-      </div>
+          <Header setModalOpen={setModalOpen} gradient={"bg-gray-100"} />
+          <ConnectWallet
+            isModalOpen={isModalOpen}
+            onClose={() => setModalOpen(false)}
+          />
+          {/* <DashBoard/> */}
+          {/* <ProgressCard/> */}
+          {/* <AllDetailsForm/> */}
+          {/* <ProjectDetails/> */}
+          {/* <Home/> */}
+          {/* <Adminoption /> */}
+          {/* <Admingraph /> */}
+          {/* <AdminDashboard /> */}
+          {/* <Hubcards /> */}
+          {/* <Hubdashboard /> */}
+          {/* <Hubdashboard /> */}
+          {/* <Hubapproved /> */}
+          {/* <HubDeclined /> */}
+          {/* <Mentors /> */}
+          {/* <Hublisten /> */}
+          {/* <ListedProjects /> */}
+          {/* <Hubdashboardlive /> */}
+          {/* <DashBoard /> */}
+          {/* <UserProfile/> */}
+          {/* <RoleSelector /> */}
+          {/* <NormalUser /> */}
+          {/* <InvestorRegistration/> */}
+          {/* <CreateProjectRegistration /> */}
+          <AppRoutes />
+        </div>
       </div>
       {/* <MentorRegistration /> */}
       <Footer />

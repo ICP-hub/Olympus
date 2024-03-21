@@ -47,19 +47,19 @@ const InvestorDashboard = () => {
     // founderDataFetchHandler();
   }, [actor]);
 
-  useEffect(() => {
-    if (actor) {
-      if (!userCurrentRoleStatus.length) {
-        dispatch(getCurrentRoleStatusRequestHandler());
-      } else if (
-        userCurrentRoleStatus.length === 4 &&
-        userCurrentRoleStatus[0]?.status === "default"
-      ) {
-        navigate("/create-user");
-      } else {
-      }
-    }
-  }, [actor, dispatch, userCurrentRoleStatus, userCurrentRoleStatusActiveRole]);
+  // useEffect(() => {
+  //   if (actor) {
+  //     if (!userCurrentRoleStatus.length) {
+  //       dispatch(getCurrentRoleStatusRequestHandler());
+  //     } else if (
+  //       userCurrentRoleStatus.length === 4 &&
+  //       userCurrentRoleStatus[0]?.status === "default"
+  //     ) {
+  //       navigate("/create-user");
+  //     } else {
+  //     }
+  //   }
+  // }, [actor, dispatch, userCurrentRoleStatus, userCurrentRoleStatusActiveRole]);
 
   const underline =
     "relative focus:after:content-[''] focus:after:block focus:after:w-full focus:after:h-[2px] focus:after:bg-blue-800 focus:after:absolute focus:after:left-0 focus:after:bottom-[-4px]";

@@ -495,7 +495,7 @@ const FounderRegistration = () => {
         result = await actor.register_mentor_candid(val);
       }
       toast.success(result);
-      await dispatch(userRoleHandler());
+      // await dispatch(userRoleHandler());
       await navigate("/dashboard");
     } catch (error) {
       toast.error(error);

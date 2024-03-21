@@ -78,7 +78,7 @@ const ProjectDetailsForUser = () => {
 
 
   const handleCloseModal = () => setAnnouncementModalOpen(false);
-  const handleOpenModal = () =>  setAnnouncementModalOpen(true);
+  const handleOpenModal = () => setAnnouncementModalOpen(true);
   const handleJobsCloseModal = () => setJobsModalOpen(false);
   const handleJobsOpenModal = () => setJobsModalOpen(true);
   const handleRatingCloseModal = () => setRatingModalOpen(false);
@@ -113,11 +113,10 @@ const ProjectDetailsForUser = () => {
     }
   };
   const getTabClassName = (tab) => {
-    return `inline-block p-1 ${
-      activeTab === tab
-        ? "border-b-2 border-[#3505B2]"
-        : "text-[#737373]  border-transparent"
-    } rounded-t-lg`;
+    return `inline-block p-1 ${activeTab === tab
+      ? "border-b-2 border-[#3505B2]"
+      : "text-[#737373]  border-transparent"
+      } rounded-t-lg`;
   };
 
   const renderComponent = () => {
@@ -281,12 +280,12 @@ const ProjectDetailsForUser = () => {
                 Add Announcement
               </button>
             </div>
-            <AnnouncementCard/>
+            <AnnouncementCard />
           </div>
           <div className="flex flex-col py-4">
             <div className="flex justify-end">
               <button className="font-[950] border bg-[#3505B2] py-[7px] px-[9px] rounded-md text-white text-nowrap capitalize"
-              onClick={handleRatingOpenModal}>
+                onClick={handleRatingOpenModal}>
                 Add Rating
               </button>
             </div>
@@ -301,11 +300,11 @@ const ProjectDetailsForUser = () => {
           </div>
           <div className="flex flex-col py-4">
             <div className="flex justify-between">
-            <h1 className="font-[950] text-lg md:text-2xl  text-blue-700">
-              jobs/opportunity
-            </h1>
+              <h1 className="font-[950] text-lg md:text-2xl  text-blue-700">
+                jobs/opportunity
+              </h1>
               <button className="font-[950] border bg-[#3505B2] px-4 py-2 rounded-md text-white text-nowrap capitalize"
-              onClick={handleJobsOpenModal}>
+                onClick={handleJobsOpenModal}>
                 Add Jobs
               </button>
             </div>
@@ -327,11 +326,11 @@ const ProjectDetailsForUser = () => {
         </div>
       </div>
       {isAnnouncementModalOpen && (
-        <AnnouncementModal onClose={handleCloseModal}/>)}
-         {isJobsModalOpen && (
-        <AddJobsModal onJobsClose={handleJobsCloseModal}/>)}
-         {isRatingModalOpen && (
-        <AddRatingModal onRatingClose={handleRatingCloseModal}/>)}
+        <AnnouncementModal onClose={handleCloseModal} />)}
+      {isJobsModalOpen && (
+        <AddJobsModal onJobsClose={handleJobsCloseModal} />)}
+      {isRatingModalOpen && (
+        <AddRatingModal onRatingClose={handleRatingCloseModal} />)}
     </section>
   );
 };
