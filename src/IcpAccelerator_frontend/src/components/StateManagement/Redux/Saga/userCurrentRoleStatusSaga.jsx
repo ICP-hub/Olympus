@@ -20,7 +20,7 @@ function getNameOfCurrentStatus(rolesStatusArray) {
 
 function* fetchCurrentRoleStatus() {
     const actor = yield select(selectActor);
-
+    console.log('actor', actor)
     if (actor) {
         const currentRoleArray = yield call([actor, actor.get_role_status]);
         if (currentRoleArray && currentRoleArray.length !== 0) {
@@ -28,7 +28,7 @@ function* fetchCurrentRoleStatus() {
             yield put(setCurrentRoleStatus(currentRoleArray));
             yield put(setCurrentActiveRole(currentActiveRole));
         } else {
-            yield put(getCurrentRoleStatusFailureHandler(error.toString()));
+            yield put(getCurrentRoleStatusFailureHandler('error-in-fetching-role'));
             yield put(setCurrentActiveRole(null));
         }
     }

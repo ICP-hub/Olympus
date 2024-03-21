@@ -83,9 +83,9 @@ const MentorsProfile = () => {
                 <path
                   d="M6.87358 1.72209L7.75349 3.49644C7.87347 3.74343 8.19344 3.98035 8.46341 4.02572L10.0582 4.29288C11.0781 4.46426 11.3181 5.2103 10.5832 5.94625L9.34331 7.19636C9.13333 7.40807 9.01835 7.81637 9.08334 8.10873L9.4383 9.65625C9.71827 10.8812 9.07334 11.355 7.99846 10.7148L6.50362 9.82259C6.23365 9.66129 5.7887 9.66129 5.51373 9.82259L4.0189 10.7148C2.94902 11.355 2.29909 10.8761 2.57906 9.65625L2.93402 8.10873C2.99901 7.81637 2.88402 7.40807 2.67405 7.19636L1.43418 5.94625C0.704266 5.2103 0.93924 4.46426 1.95913 4.29288L3.55395 4.02572C3.81892 3.98035 4.13889 3.74343 4.25887 3.49644L5.13878 1.72209C5.61872 0.759304 6.39864 0.759304 6.87358 1.72209Z"
                   stroke="#7283EA"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
               </svg>
               <spna>Top mentor</spna>
@@ -192,23 +192,23 @@ const MentorsProfile = () => {
                 <path
                   d="M18 2L18 4M6 2L6 4"
                   stroke="#2A353D"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
                 <path
                   d="M2.5 12.2432C2.5 7.88594 2.5 5.70728 3.75212 4.35364C5.00424 3 7.01949 3 11.05 3L12.95 3C16.9805 3 18.9958 3 20.2479 4.35364C21.5 5.70728 21.5 7.88594 21.5 12.2432L21.5 12.7568C21.5 17.1141 21.5 19.2927 20.2479 20.6464C18.9958 22 16.9805 22 12.95 22L11.05 22C7.01949 22 5.00424 22 3.75212 20.6464C2.5 19.2927 2.5 17.1141 2.5 12.7568L2.5 12.2432Z"
                   stroke="#2A353D"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
                 <path
                   d="M3 8L21 8"
                   stroke="#2A353D"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
               </svg>
               <h6 className="ml-2">{yearsOfMentoring} Years</h6>

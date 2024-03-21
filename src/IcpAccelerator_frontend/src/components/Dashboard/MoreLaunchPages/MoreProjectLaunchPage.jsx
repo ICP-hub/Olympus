@@ -136,7 +136,7 @@ const MoreProjectLaunchPage = () => {
 
   const handleNavigate = (projectId) => {
     if (isAuthenticated) {
-      navigate(`/individual-project-details/${projectId}`);
+      navigate(`/individual-project-details-user/${projectId}`);
     }
   };
 
