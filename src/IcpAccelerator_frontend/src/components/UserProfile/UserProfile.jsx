@@ -21,14 +21,14 @@ import HubRegistration from "../Registration/IcpHubRegistration/HubRegistration"
 import InvestorRegistration from "../Registration/InvestorRegistration/InvestorRegistration";
 
 const UserProfile = () => {
-  const specificRole = useSelector(
-    (currState) => currState.current.specificRole
+  const userCurrentRoleStatusActiveRole = useSelector(
+    (currState) => currState.currentRoleStatus.activeRole
   );
 
   const [activeTab, setActiveTab] = useState(headerData[0].id);
   const [percentage, setPercentage] = useState(80);
 
-  // console.log('specificRole in userprofile !!!!!!!  ', specificRole)
+  console.log('userCurrentRoleStatusActiveRole in userprofile !!!!!!!  ', userCurrentRoleStatusActiveRole)
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -195,10 +195,10 @@ const UserProfile = () => {
                 ))}
               </ul>
             </div> */}
-            {specificRole === "Mentor" && <MentorRegistration />}
-            {specificRole === "Project" && <FounderInfo />}
-            {specificRole === "VC" && <InvestorRegistration />}
-            {specificRole === "ICPHubOrganizer" && <HubRegistration />}
+            {userCurrentRoleStatusActiveRole === "mentor" && <MentorRegistration />}
+            {userCurrentRoleStatusActiveRole === "Project" && <FounderInfo />}
+            {userCurrentRoleStatusActiveRole === "VC" && <InvestorRegistration />}
+            {userCurrentRoleStatusActiveRole === "ICPHubOrganizer" && <HubRegistration />}
           </div>
         </div>
       </section>

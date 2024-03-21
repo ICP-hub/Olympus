@@ -64,6 +64,15 @@ const validationSchema = {
       .required("Project elevator pitch is Required"),
     reason_to_join_incubator: yup.string().required("Reason is required"),
     money_raised_till_now: yup.string(),
+    target_amount: yup
+      .string()
+      .test(
+        "is-integer",
+        "Target Amount value must be an integer",
+        (value) =>
+          value === "" ||
+          (!isNaN(value) && parseInt(value, 10).toString() === value)
+      ),
     icp_grants: yup
       .string()
       .test(
@@ -111,6 +120,7 @@ const validationSchema = {
     project_twitter: yup.string().url("Must be a valid URL").optional(),
     project_discord: yup.string().url("Must be a valid URL").optional(),
     project_linkedin: yup.string().url("Must be a valid URL").optional(),
+    github_link: yup.string().url("Must be a valid URL").optional(),
     logoData: yup.mixed().optional(),
   }),
   additionalDetails: yup.object().shape({
@@ -123,7 +133,6 @@ const validationSchema = {
     target_market: yup.string().url("Must be a valid URL").optional(),
     long_term_goals: yup.string().url("Must be a valid URL").optional(),
     technical_docs: yup.string().url("Must be a valid URL").optional(),
-    github_link: yup.string().url("Must be a valid URL").optional(),
     coverData: yup.mixed().optional(),
   }),
 };
@@ -143,7 +152,7 @@ const CreateProjectRegistration = () => {
   const projectFullData = useSelector(
     (currState) => currState.projectData.data
   );
-  console.log("Checking projectFullData Over Here ===> ", projectFullData);
+  // console.log("Checking projectFullData Over Here ===> ", projectFullData);
   const dispatch = useDispatch();
   const { countries } = useCountries();
 
@@ -176,7 +185,7 @@ const CreateProjectRegistration = () => {
     const encoder = new TextEncoder();
     return encoder.encode(str);
   }
-  console.log("userData", userData);
+  // console.log("userData", userData);
 
   const getTabClassName = (tab) => {
     return `inline-block p-2 font-bold ${
@@ -235,7 +244,29 @@ const CreateProjectRegistration = () => {
   const liveOnICPMainnetValue = watch("live_on_icp_mainnet");
   const MoneyRaisedTillNow = watch("money_raised_till_now");
   const IsMultiChain = watch("multi_chain");
+  // checking total for target market
+  const checkTotal = (event) => {
+    // Prevent default form submission behavior
+    const targetAmount = watch(Number("target_amount"));
+    const icpGrants = watch(Number("icp_grants"));
+    const investors = watch(Number("investors"));
+    const sns = watch(Number("sns"));
+    const raisedFromOtherEcosystem = watch(
+      Number("raised_from_other_ecosystem")
+    );
 
+    console.log(icpGrants);
+    console.log(total);
+    const total = icpGrants + investors + sns + raisedFromOtherEcosystem;
+
+    if (total > targetAmount) {
+      setError(
+        "The total amount exceeds the target amount. Please adjust the values."
+      );
+    } else {
+      setError(""); // Clear error if condition is met
+    }
+  };
   useEffect(() => {
     // Update isLiveOnICP based on live_on_icp_mainnet field value
     setIsLiveOnICP(liveOnICPMainnetValue === "true");
@@ -243,7 +274,11 @@ const CreateProjectRegistration = () => {
       setValue("money_raised_till_now", "false");
     }
     setIsMoneyRaised(MoneyRaisedTillNow === "true");
+    // if(MoneyRaisedTillNow === "true"){
+    //   checkTotal();
+    // }
     if (liveOnICPMainnetValue !== "true" || MoneyRaisedTillNow !== "true") {
+      setValue("target_amount", "");
       setValue("icp_grants", "");
       setValue("investors", "");
       setValue("sns", "");
@@ -264,138 +299,138 @@ const CreateProjectRegistration = () => {
     };
     validateStep();
   }, [step, trigger, userHasInteracted]);
-  const addProjectLogoHandler = useCallback(
-    async (file) => {
-      clearErrors("project_logo");
-      if (!file)
-        return setError("project_logo", {
-          type: "manual",
-          message: "An image is required",
-        });
-      if (!["image/jpeg", "image/png", "image/gif"].includes(file.type))
-        return setError("project_logo", {
-          type: "manual",
-          message: "Unsupported file format",
-        });
-      if (file.size > 1024 * 1024)
-        // 1MB
-        return setError("project_logo", {
-          type: "manual",
-          message: "The file is too large",
-        });
+  // const addProjectLogoHandler = useCallback(
+  //   async (file) => {
+  //     clearErrors("project_logo");
+  //     if (!file)
+  //       return setError("project_logo", {
+  //         type: "manual",
+  //         message: "An image is required",
+  //       });
+  //     if (!["image/jpeg", "image/png", "image/gif"].includes(file.type))
+  //       return setError("project_logo", {
+  //         type: "manual",
+  //         message: "Unsupported file format",
+  //       });
+  //     if (file.size > 1024 * 1024)
+  //       // 1MB
+  //       return setError("project_logo", {
+  //         type: "manual",
+  //         message: "The file is too large",
+  //       });
 
-      setIsProjectLoading(true);
-      try {
-        const compressedFile = await CompressedImage(file);
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setProjectLogoPreview(reader.result);
-          setIsProjectLoading(false);
-        };
-        reader.readAsDataURL(compressedFile);
+  //     setIsProjectLoading(true);
+  //     try {
+  //       const compressedFile = await CompressedImage(file);
+  //       const reader = new FileReader();
+  //       reader.onloadend = () => {
+  //         setProjectLogoPreview(reader.result);
+  //         setIsProjectLoading(false);
+  //       };
+  //       reader.readAsDataURL(compressedFile);
 
-        const byteArray = await compressedFile.arrayBuffer();
-        setProjectLogo(Array.from(new Uint8Array(byteArray)));
-        clearErrors("project_logo");
-      } catch (error) {
-        console.error("Error processing the image:", error);
-        setError("project_logo", {
-          type: "manual",
-          message: "Could not process image, please try another.",
-        });
-        setIsProjectLoading(false);
-      }
-    },
-    [
-      setError,
-      clearErrors,
-      setIsProjectLoading,
-      setProjectLogoPreview,
-      setProjectLogo,
-    ]
-  );
+  //       const byteArray = await compressedFile.arrayBuffer();
+  //       setProjectLogo(Array.from(new Uint8Array(byteArray)));
+  //       clearErrors("project_logo");
+  //     } catch (error) {
+  //       console.error("Error processing the image:", error);
+  //       setError("project_logo", {
+  //         type: "manual",
+  //         message: "Could not process image, please try another.",
+  //       });
+  //       setIsProjectLoading(false);
+  //     }
+  //   },
+  //   [
+  //     setError,
+  //     clearErrors,
+  //     setIsProjectLoading,
+  //     setProjectLogoPreview,
+  //     setProjectLogo,
+  //   ]
+  // );
 
-  const addMultipleImageHandler = useCallback(
-    async (acceptedFiles) => {
-      clearErrors("project_cover");
-      setIsMultipleLoading(true);
-      const validatedFiles = acceptedFiles.filter((file, index) => {
-        if (index >= 5) {
-          setError("project_cover", {
-            type: "manual",
-            message: "You can only upload up to 5 images",
-          });
-          return false;
-        }
-        if (!["image/jpeg", "image/png", "image/gif"].includes(file.type)) {
-          setError("project_cover", {
-            type: "manual",
-            message: "Unsupported file format",
-          });
-          return false;
-        }
-        if (file.size > 1024 * 1024) {
-          // 1MB
-          setError("project_cover", {
-            type: "manual",
-            message: "The file is too large",
-          });
-          return false;
-        }
-        return true;
-      });
+  // const addMultipleImageHandler = useCallback(
+  //   async (acceptedFiles) => {
+  //     clearErrors("project_cover");
+  //     setIsMultipleLoading(true);
+  //     const validatedFiles = acceptedFiles.filter((file, index) => {
+  //       if (index >= 5) {
+  //         setError("project_cover", {
+  //           type: "manual",
+  //           message: "You can only upload up to 5 images",
+  //         });
+  //         return false;
+  //       }
+  //       if (!["image/jpeg", "image/png", "image/gif"].includes(file.type)) {
+  //         setError("project_cover", {
+  //           type: "manual",
+  //           message: "Unsupported file format",
+  //         });
+  //         return false;
+  //       }
+  //       if (file.size > 1024 * 1024) {
+  //         // 1MB
+  //         setError("project_cover", {
+  //           type: "manual",
+  //           message: "The file is too large",
+  //         });
+  //         return false;
+  //       }
+  //       return true;
+  //     });
 
-      // Check if the number of validated files is greater than 5
-      if (validatedFiles.length > 5) {
-        setIsMultipleLoading(false);
-        return; // Stop further processing
-      }
+  //     // Check if the number of validated files is greater than 5
+  //     if (validatedFiles.length > 5) {
+  //       setIsMultipleLoading(false);
+  //       return; // Stop further processing
+  //     }
 
-      const multipleImagesPreviewTemp = [];
-      const imagesDataTemp = [];
+  //     const multipleImagesPreviewTemp = [];
+  //     const imagesDataTemp = [];
 
-      for (const file of validatedFiles) {
-        try {
-          const compressedFile = await CompressedImage(file);
-          const reader = new FileReader();
+  //     for (const file of validatedFiles) {
+  //       try {
+  //         const compressedFile = await CompressedImage(file);
+  //         const reader = new FileReader();
 
-          reader.onloadend = () => {
-            multipleImagesPreviewTemp.push(reader.result);
-            setMultipleImagesPreview([...multipleImagesPreviewTemp]);
-            setIsMultipleLoading(false);
-          };
-          reader.readAsDataURL(compressedFile);
+  //         reader.onloadend = () => {
+  //           multipleImagesPreviewTemp.push(reader.result);
+  //           setMultipleImagesPreview([...multipleImagesPreviewTemp]);
+  //           setIsMultipleLoading(false);
+  //         };
+  //         reader.readAsDataURL(compressedFile);
 
-          const byteArray = await compressedFile.arrayBuffer();
-          imagesDataTemp.push(Array.from(new Uint8Array(byteArray)));
-          setMultipleImageData([...imagesDataTemp]);
-        } catch (error) {
-          console.error("Error processing the image:", error);
-          setError("project_cover", {
-            type: "manual",
-            message: "Could not process image, please try another.",
-          });
-          setIsMultipleLoading(false);
-        }
-      }
-    },
-    [
-      setError,
-      clearErrors,
-      setIsMultipleLoading,
-      setMultipleImagesPreview,
-      setMultipleImageData,
-    ]
-  );
-  const removeImage = (index) => {
-    const newPreviewImages = [...multipleImagesPreview];
-    newPreviewImages.splice(index, 1);
-    setMultipleImagesPreview(newPreviewImages);
+  //         const byteArray = await compressedFile.arrayBuffer();
+  //         imagesDataTemp.push(Array.from(new Uint8Array(byteArray)));
+  //         setMultipleImageData([...imagesDataTemp]);
+  //       } catch (error) {
+  //         console.error("Error processing the image:", error);
+  //         setError("project_cover", {
+  //           type: "manual",
+  //           message: "Could not process image, please try another.",
+  //         });
+  //         setIsMultipleLoading(false);
+  //       }
+  //     }
+  //   },
+  //   [
+  //     setError,
+  //     clearErrors,
+  //     setIsMultipleLoading,
+  //     setMultipleImagesPreview,
+  //     setMultipleImageData,
+  //   ]
+  // );
+  // const removeImage = (index) => {
+  //   const newPreviewImages = [...multipleImagesPreview];
+  //   newPreviewImages.splice(index, 1);
+  //   setMultipleImagesPreview(newPreviewImages);
 
-    const newData = [...multipleImageData];
-    newData.splice(index, 1);
-    setMultipleImageData(newData);
-  };
+  //   const newData = [...multipleImageData];
+  //   newData.splice(index, 1);
+  //   setMultipleImageData(newData);
+  // };
   // Adding Project_image Here
   const addImageHandler = useCallback(
     async (file) => {
@@ -555,7 +590,7 @@ const CreateProjectRegistration = () => {
   );
   const handleNext = async () => {
     const fieldsToValidate = steps[step].fields.map((field) => field.name);
-    console.log(fieldsToValidate);
+    console.log("fieldsToValidate ===> ", fieldsToValidate);
     const result = await trigger(fieldsToValidate);
     console.log(result);
     // const isImageUploaded = imageData && imageData.length > 0;
@@ -711,6 +746,7 @@ const CreateProjectRegistration = () => {
         project_elevator_pitch: [updatedFormData.project_elevator_pitch],
         reason_to_join_incubator:
           updatedFormData.reason_to_join_incubator || "",
+        target_amount: [updatedFormData.target_amount || ""],
         icp_grants: [updatedFormData.icp_grants || ""],
         investors: [updatedFormData.investors || ""],
         sns: [updatedFormData.sns || ""],
@@ -767,6 +803,7 @@ const CreateProjectRegistration = () => {
         project_elevator_pitch: [updatedFormData.project_elevator_pitch],
         reason_to_join_incubator:
           updatedFormData.reason_to_join_incubator || "",
+        target_amount: [updatedFormData.target_amount || ""],
         icp_grants: [updatedFormData.icp_grants || ""],
         investors: [updatedFormData.investors || ""],
         sns: [updatedFormData.sns || ""],
@@ -805,11 +842,11 @@ const CreateProjectRegistration = () => {
       await sendingProjectData(tempObj);
     }
   };
-  const { getRootProps, getInputProps } = useDropzone({
-    accept: "image/jpeg, image/png, image/gif",
-    onDrop: addMultipleImageHandler,
-    multiple: true,
-  });
+  // const { getRootProps, getInputProps } = useDropzone({
+  //   accept: "image/jpeg, image/png, image/gif",
+  //   onDrop: addMultipleImageHandler,
+  //   multiple: true,
+  // });
   const stepFields = steps[step].fields;
   let StepComponent;
   if (step === 0) {
@@ -953,6 +990,7 @@ const CreateProjectRegistration = () => {
                         ? "border-red-500 placeholder:text-red-500"
                         : "border-[#737373]"
                     } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    required
                   >
                     <option className="text-lg font-bold" value="">
                       select your Country ⌄
@@ -1104,6 +1142,7 @@ const CreateProjectRegistration = () => {
                       ? "border-red-500 placeholder:text-red-500"
                       : "border-[#737373]"
                   } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  required
                 >
                   <option className="text-lg font-bold" value="">
                     Select reason ⌄
