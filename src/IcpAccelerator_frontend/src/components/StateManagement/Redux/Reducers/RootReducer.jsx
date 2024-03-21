@@ -14,6 +14,7 @@ import latestListedReducer from "./latestListed";
 import latestLiveReducer from "./latestLive";
 import popularListedReducer from "./popularListed";
 import userCurrentRoleStatusReducer from "./userCurrentRoleStatusReducer";
+import getJobCategory from "./getJobCategory";
 
 const rootReducer = combineReducers({
   role: RoleReducer,
@@ -31,7 +32,8 @@ const rootReducer = combineReducers({
   latestListed: latestListedReducer,
   latestLive: latestLiveReducer,
   popularListed: popularListedReducer,
-  currentRoleStatus: userCurrentRoleStatusReducer
+  currentRoleStatus: userCurrentRoleStatusReducer,
+  jobsCategory:getJobCategory
 });
 
 export default rootReducer;

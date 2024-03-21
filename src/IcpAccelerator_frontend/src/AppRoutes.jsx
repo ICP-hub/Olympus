@@ -24,6 +24,7 @@ import EventForm from "./components/Mentors/Event/EventForm";
 import MoreProjectLaunchPage from "./components/Dashboard/MoreLaunchPages/MoreProjectLaunchPage";
 import MoreCurrentlyRaisingProjects from "./components/Dashboard/MoreLaunchPages/MoreCurrentlyRaisingProjects";
 import ViewInvestor from "./components/Dashboard/MoreLaunchPages/ViewInvestors";
+import Breadcrumbs from "./components/Layout/Breadcrumbs/BreadCrumbs";
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
 
@@ -68,18 +69,17 @@ const AppRoutes = () => {
     // { path: "/", element: <MentorDashboard /> },
     // { path: "/", element: <InvestorDashboard /> },
     { path: "/create-user", element: <NormalUser /> },
-    { path: "/create-investor", element: <InvestorRegistration /> },
     { path: "/create-project", element: <CreateProject /> },
+    { path: "/create-investor", element: <InvestorRegistration /> },
     { path: "/event-form", element: <EventForm /> },
-    { path: "/details", element: <AllDetailsForm /> },
-    // { path: "/roleSelect", element: <RoleSelector /> },
+    // { path: "/details", element: <AllDetailsForm /> ,label:'Home'},
     { path: "/project-details", element: <ProjectDetails /> },
-    { path: "/profile", element: <UserProfile /> },
+    { path: "/profile", element: <UserProfile />},
     { path: "/create-mentor", element: <MentorRegistration /> },
-    { path: "/individual-project-details/:id", element: <ProjectDetailsForUser /> },
+    { path: "/individual-project-details/:id", element: <ProjectDetailsForUser />  },
     { path: "/view-mentor-details/:id", element: <MentorsProfile /> },
     { path: "/view-investor-details/:id", element: <InvestorProfile /> },
-    { path: "/view-mentors", element: <SearchMentors /> },
+    { path: "/view-mentors", element: <SearchMentors />},
     { path: "/launch-projects", element: <MoreProjectLaunchPage /> },
     { path: "/raising-projects", element: <MoreCurrentlyRaisingProjects /> },
     { path: "/view-investor", element: <ViewInvestor /> },
@@ -104,7 +104,8 @@ const AppRoutes = () => {
     dispatch(rolesHandlerRequest());
   }, [actor, dispatch]);
 
-  return (
+  return (<>
+    <Breadcrumbs publicRoutes={publicRoutes}/>
     <Suspense fallback={<Loader />}>
       <Routes>
         {/* {protectedRoutes.map((route, index) => {
@@ -123,6 +124,7 @@ const AppRoutes = () => {
         <Route path="*" element={<Error404 />} />
       </Routes>
     </Suspense>
+    </>
   );
 };
 

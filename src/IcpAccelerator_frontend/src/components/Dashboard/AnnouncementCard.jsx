@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useState,useEffect} from "react";
 import ment from "../../../assets/images/ment.jpg";
 import { Pagination, Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -6,8 +6,42 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/autoplay";
 import data from "../../data/spotlight.json";
+import { useSelector } from "react-redux";
+import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
 
 const AnnouncementCard = () => {
+  const actor = useSelector((currState) => currState.actors.actor);
+  const [noData, setNoData] = useState(null);
+  const [latestAnnouncementData, setLatestAnnouncementData] = useState([]);
+
+  const fetchLatestAnnouncement = async (caller) => {
+    await caller
+      .get_latest_announcements()
+      .then((result) => {
+        console.log("result-in-latest-announcement", result);
+        if (!result || result.length == 0) {
+          setNoData(true)
+          // setLatestAnnouncementData(defaultArray)
+        } else {
+          setLatestAnnouncementData(result);
+          setNoData(false)
+        }
+      })
+      .catch((error) => {
+        setNoData(true)
+        // setLatestAnnouncementData(defaultArray)
+        console.log("error-in-get-all-projects", error);
+      });
+  };
+
+  useEffect(() => {
+    if (actor) {
+      fetchLatestAnnouncement(actor);
+    } else {
+      fetchLatestAnnouncement(IcpAccelerator_backend);
+    }
+  }, [actor]);
+
   return (
     // <div className="">
       <div className="flex justify-between  gap-2 overflow-x-auto">

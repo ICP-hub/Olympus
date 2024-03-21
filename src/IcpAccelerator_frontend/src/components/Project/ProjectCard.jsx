@@ -1,8 +1,12 @@
-import React from "react";
+import React,{useState} from "react";
 import { useNavigate } from 'react-router-dom'
 import { globesvg, linkedInSvg, twitterSvg } from "../Utils/Data/SvgData";
-
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import 'react-circular-progressbar/dist/styles.css';
 function ProjectCard({ image, title, tags, doj, country, website, dapp }) {
+  const [rating, setRating] = useState(4);
+
+  const ratingPercentage = (rating / 9) * 100;
   const navigate = useNavigate();
   return (
     <>
@@ -20,6 +24,19 @@ function ProjectCard({ image, title, tags, doj, country, website, dapp }) {
               <div className="flex items-center">
                 <div className="flex items-center">
                   <p className="font-[950] text-2xl pr-2">{title}</p>
+                  <CircularProgressbar
+                      value={ratingPercentage}
+                      text={`${rating}/9`}
+                      className="w-10 h-10 font-extrabold text-lg"
+                      strokeWidth={8}
+                      styles={buildStyles({
+                        strokeLinecap: "round",
+                        pathTransitionDuration: 0.5,
+                        pathColor: `#2247AF`,
+                        trailColor: "#d6d6d6",
+                        textColor: "#3505B2",
+                      })}
+                    />
                 </div>
               </div>
               <div className="md:flex block text-xs md:text-sm text-[#737373]">
