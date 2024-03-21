@@ -1,6 +1,42 @@
-import React from "react";
+import React,{useState,useEffect} from "react";
+import { useSelector } from "react-redux";
+import { IcpAccelerator_backend } from "../../../../../declarations/IcpAccelerator_backend/index"
 
-function ProjectJobCard({ image, website, tags, country }) {
+
+
+const ProjectJobCard = ({ image, website, tags, country }) => {
+  const actor = useSelector((currState) => currState.actors.actor);
+
+  const [noData, setNoData] = useState(null);
+  const [latestJobs, setLatestJobs] = useState([]);
+
+  const fetchLatestJobs = async (caller) => {
+    await caller
+      .get_all_jobs()
+      .then((result) => {
+        console.log("result-in-latest-Jobs", result);
+        if (!result || result.length == 0) {
+          setNoData(true)
+          // setLatestJobs(defaultArray)
+        } else {
+          setLatestJobs(result);
+          setNoData(false)
+        }
+      })
+      .catch((error) => {
+        setNoData(true)
+        // setLatestJobs(defaultArray)
+        console.log("result-in-latest-Jobs", error);
+      });
+  };
+
+  useEffect(() => {
+    if (actor) {
+      fetchLatestJobs(actor);
+    } else {
+      fetchLatestJobs(IcpAccelerator_backend);
+    }
+  }, [actor]);
   return (
 
     <div className="">

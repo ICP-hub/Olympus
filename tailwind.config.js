@@ -45,9 +45,20 @@ module.exports = {
           "0%, 100%": { transform: "rotate(-30deg)" },
           "50%": { transform: "rotate(30deg)" },
         },
+        spin: {
+          '0%, 100%': {
+            opacity: '0',
+            transform: 'rotateX(0deg)',
+          },
+          '50%': {
+            opacity: '1',
+            transform: 'rotateX(360deg)',
+          },
+        },
       },
       animation: {
         wiggle: "wiggle 5s ease-in-out infinite",
+        spin: 'spin 2s ease-in-out infinite',
       },
     },
     screens: {

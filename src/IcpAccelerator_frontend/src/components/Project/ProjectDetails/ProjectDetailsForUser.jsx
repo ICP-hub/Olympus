@@ -1,162 +1,3 @@
-// import React, { useState } from "react";
-// import ProjectCard from "../ProjectCard";
-// import ment from "../../../../assets/images/ment.jpg";
-// import MembersProfileCard from "../../TeamMembers/MembersProfileCard";
-// import ProjectRank from "../ProjectRank";
-// import ProjectReviewRatings from "../ProjectReviewRatings";
-// import ProjectRatings from "../ProjectRatings";
-// import Announcement from "./Announcement";
-// import ProjectJobCard from "./ProjectJobCard";
-// import Frame from "../../../../assets/images/Frame.png";
-// import girl from "../../../../assets/images/girl.jpeg";
-// import { Pagination, Autoplay } from "swiper/modules";
-// import { Swiper, SwiperSlide } from "swiper/react";
-// import "swiper/css";
-
-// const ProjectDetailsForUser = () => {
-//     const headerData = [
-//         {
-//             id: "team-member",
-//             label: "team member",
-//         },
-//         {
-//             id: "mentor-partner-associated",
-//             label: "mentor / partner",
-//         },
-//         {
-//             id: "vc-associated",
-//             label: "vc",
-//         },
-//         {
-//             id: "review-ratings",
-//             label: "review & ratings",
-//         },
-//     ];
-//     const AnnouncementData = [
-//         {
-//             id: 1,
-//             img: Frame,
-//             img2: girl,
-//         },
-//         {
-//             id: 2,
-//             img: Frame,
-//             img2: girl,
-//         },
-//         {
-//             id: 3,
-//             img: Frame,
-//             img2: girl,
-//         },
-//     ];
-//     const [activeTab, setActiveTab] = useState(headerData[0].id);
-
-//     const handleTabClick = (tab) => {
-//         setActiveTab(tab);
-//     };
-
-//     const getTabClassName = (tab) => {
-//         return `inline-block p-1 ${activeTab === tab
-//                 ? "border-b-2 border-[#3505B2]"
-//                 : "text-[#737373]  border-transparent"
-//             } rounded-t-lg`;
-//     };
-
-//     const renderComponent = () => {
-//         switch (activeTab) {
-//             case "team-member":
-//                 return (
-//                     <MembersProfileCard
-//                         profile={true}
-//                         type={true}
-//                         name={true}
-//                         role={true}
-//                         socials={true}
-//                         filter={"team"}
-//                     />
-//                 );
-//             case "mentor-partner-associated":
-//                 return (
-//                     <MembersProfileCard
-//                         profile={true}
-//                         type={true}
-//                         name={true}
-//                         role={true}
-//                         socials={true}
-//                         filter={"mentor"}
-//                     />
-//                 );
-//             case "vc-associated":
-//                 return (
-//                     <MembersProfileCard
-//                         profile={true}
-//                         type={true}
-//                         name={true}
-//                         role={true}
-//                         socials={true}
-//                         filter={"vc"}
-//                     />
-//                 );
-//             case "review-ratings":
-//                 return <ProjectRatings />;
-//             default:
-//                 return null;
-//         }
-//     };
-
-//     return (
-//         <section className="text-black bg-gray-100 pb-4">
-//             <div className="w-full px-[4%] lg1:px-[5%]">
-//                 <div className="flex-col">
-//                     <div className="mb-4">
-//                         <ProjectCard
-//                             image={ment}
-//                             title={"builder.fi"}
-//                             tags={["Defi", "NFT", "Game"]}
-//                             doj={"28/May/2024"}
-//                             country={"india"}
-//                             website={"https://www.google.co.in/"}
-//                             dapp={"https://6lqbm-ryaaa-aaaai-qibsa-cai.ic0.app/"}
-//                         />
-//                     </div>
-//                     <div className="mb-4">
-//                         <ProjectRank dayRank={true} weekRank={true} />
-//                         <div className="text-sm font-extrabold text-center text-[#737373] mt-2">
-//                             <ul className="flex flex-wrap -mb-px text-[10px] ss2:text-[10.5px] ss3:text-[11px]  cursor-pointer">
-//                                 {headerData.map((header) => (
-//                                     <li key={header.id} className="me-6 relative group">
-//                                         <button
-//                                             className={getTabClassName(header?.id)}
-//                                             onClick={() => handleTabClick(header?.id)}
-//                                         >
-//                                             <div className="uppercase">{header.label}</div>
-//                                         </button>
-//                                     </li>
-//                                 ))}
-//                             </ul>
-//                         </div>
-//                         {renderComponent()}
-//                     </div>
-//                     <div>
-
-//                     </div>
-//                     <div className="mb-4 md1:w-1/2 w-full">
-//                         <h1 className="font-[950] text-3xl text-[#000000] p-2">Jobs</h1>
-//                         <ProjectJobCard
-//                             image={ment}
-//                             tags={["Imo", "Ludi", "Ndaru"]}
-//                             country={"india"}
-//                             website={"https://www.google.co.in/"}
-//                         />
-//                     </div>
-//                 </div>
-//             </div>
-//         </section>
-//     );
-// };
-
-// export default ProjectDetailsForUser;
-
 import React, { useEffect, useState } from "react";
 import ProjectCard from "../ProjectCard";
 import ment from "../../../../assets/images/ment.jpg";
@@ -178,6 +19,10 @@ import CommunityRatings from "./CommunityRatings";
 import { useParams } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
+import AnnouncementCard from "../../Dashboard/AnnouncementCard";
+import AnnouncementModal from "../../../models/AnnouncementModal";
+import AddJobsModal from "../../../models/AddJobsModal";
+import AddRatingModal from "../../../models/AddRatingModal";
 
 const ProjectDetailsForUser = () => {
   const location = useLocation();
@@ -185,6 +30,9 @@ const ProjectDetailsForUser = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const { id } = useParams();
   const [details, setDetails] = useState();
+  const [isAnnouncementModalOpen, setAnnouncementModalOpen] = useState(false);
+  const [isJobsModalOpen, setJobsModalOpen] = useState(false);
+  const [isRatingModalOpen, setRatingModalOpen] = useState(false);
 
   const headerData = [
     {
@@ -226,6 +74,16 @@ const ProjectDetailsForUser = () => {
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
+
+
+
+  const handleCloseModal = () => setAnnouncementModalOpen(false);
+  const handleOpenModal = () =>  setAnnouncementModalOpen(true);
+  const handleJobsCloseModal = () => setJobsModalOpen(false);
+  const handleJobsOpenModal = () => setJobsModalOpen(true);
+  const handleRatingCloseModal = () => setRatingModalOpen(false);
+  const handleRatingOpenModal = () => setRatingModalOpen(true);
+
   console.log(userCurrentRoleStatusActiveRole)
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -416,27 +274,20 @@ const ProjectDetailsForUser = () => {
             </div>
             <div className="py-4">{renderComponent()}</div>
           </div>
-          <div>
-            <Swiper
-              modules={[Pagination, Autoplay]}
-              centeredSlides={true}
-              loop={true}
-              autoplay={{ delay: 2500 }}
-              pagination={{ clickable: true }}
-              spaceBetween={0}
-              slidesPerView={1}
-            >
-              {AnnouncementData.map((data, index) => (
-                <SwiperSlide key={index}>
-                  <Announcement data={data} />
-                </SwiperSlide>
-              ))}
-            </Swiper>
+          <div className="flex flex-col py-4">
+            <div className="flex justify-end mb-4">
+              <button className="font-[950] border bg-[#3505B2] py-[7px] px-[9px] rounded-md text-white text-nowrap capitalize"
+                onClick={handleOpenModal}>
+                Add Announcement
+              </button>
+            </div>
+            <AnnouncementCard/>
           </div>
           <div className="flex flex-col py-4">
             <div className="flex justify-end">
-              <button className="font-[950] border bg-[#3505B2] py-[7px] px-[9px] rounded-md text-white text-nowrap capitalize">
-                add rating
+              <button className="font-[950] border bg-[#3505B2] py-[7px] px-[9px] rounded-md text-white text-nowrap capitalize"
+              onClick={handleRatingOpenModal}>
+                Add Rating
               </button>
             </div>
             <CommunityRatings
@@ -448,10 +299,16 @@ const ProjectDetailsForUser = () => {
               filter={"team"}
             />
           </div>
-          <div className="mb-4 w-full">
-            <h1 className="font-[950] text-lg md:text-2xl p-4 text-blue-700">
+          <div className="flex flex-col py-4">
+            <div className="flex justify-between">
+            <h1 className="font-[950] text-lg md:text-2xl  text-blue-700">
               jobs/opportunity
             </h1>
+              <button className="font-[950] border bg-[#3505B2] px-4 py-2 rounded-md text-white text-nowrap capitalize"
+              onClick={handleJobsOpenModal}>
+                Add Jobs
+              </button>
+            </div>
             <div className="flex flex-wrap md:flex-nowrap gap-4">
               <ProjectJobCard
                 image={ment}
@@ -469,6 +326,12 @@ const ProjectDetailsForUser = () => {
           </div>
         </div>
       </div>
+      {isAnnouncementModalOpen && (
+        <AnnouncementModal onClose={handleCloseModal}/>)}
+         {isJobsModalOpen && (
+        <AddJobsModal onJobsClose={handleJobsCloseModal}/>)}
+         {isRatingModalOpen && (
+        <AddRatingModal onRatingClose={handleRatingCloseModal}/>)}
     </section>
   );
 };

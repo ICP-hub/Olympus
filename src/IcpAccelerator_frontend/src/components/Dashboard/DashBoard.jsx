@@ -1,15 +1,6 @@
 import React, { useEffect } from "react";
-// import Sidebar from "../Layout/SidePanel/Sidebar";
-import LiveProjects from "./LiveProjects";
-import SearchForm from "./SearchForm";
-// import VideoScroller from "./VideoScroller";
-// import Founder from "./Founder";
-// import Partners from "./Partners";
-// import Footer from "../Footer/Footer";
-// import Bottombar from "../Layout/BottomBar/Bottombar";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import ListedProjects from "./ListedProjects";
 import guide from "../../../assets/getStarted/guide.png";
 import upvote from "../../../assets/getStarted/upvote.png";
 import SubmitSection from "../Footer/SubmitSection";
@@ -20,8 +11,6 @@ import LaunchedProjects from "./LaunchedProjects";
 import CurrentlyRaising from "./CurrentlyRaising";
 import EventCard from "./EventCard";
 import ProjectJobCard from "../Project/ProjectDetails/ProjectJobCard";
-import ProjectJobs from "../Project/ProjectDetails/ProjectJobs";
-import Announcement from "../Project/ProjectDetails/Announcement";
 import SecondEventCard from "./SecondEventCard";
 import ment from "../../../assets/images/ment.jpg";
 import InvestorCard from "./InvestorCard";
@@ -29,17 +18,16 @@ import MentorCard from "./MentorCard";
 import RegisterCard from "./RegisterCard";
 import hover from "../../../assets/images/hover.png";
 import Testimonial from "./Testimonial";
-import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
 import ProjectDashboard from "./RoleDashboard/ProjectDashboard";
 import MentorDashboard from "./RoleDashboard/MentorDashboard";
 import InvestorDashboard from "./RoleDashboard/InvestorDashboard";
+import AnnouncementCard from "./AnnouncementCard";
+
 
 const DashBoard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const actor = useSelector((currState) => currState.actors.actor);
-  // console.log("actor in dashboard =>", actor);
-
   const principal = useSelector((currState) => currState.internet.principal);
   const userCurrentRoleStatus = useSelector(
     (currState) => currState.currentRoleStatus.rolesStatusArray
@@ -48,13 +36,7 @@ const DashBoard = () => {
     (currState) => currState.currentRoleStatus.activeRole
   );
 
-  useEffect(() => {
-    const founderDataFetchHandler = async () => {
-      // const founderDataFetch = await actor.get_mentor_candid();
-      // console.log("dekho dekho founder data aaya => ", founderDataFetch);
-    };
-    // founderDataFetchHandler();
-  }, [actor]);
+ 
 
   useEffect(() => {
     if (actor) {
@@ -83,82 +65,39 @@ const DashBoard = () => {
       country: "india",
       website: "https://www.google.co.in/",
     },
-    // Add more objects here as needed
   ];
 
-  const underline =
-    "relative focus:after:content-[''] focus:after:block focus:after:w-full focus:after:h-[2px] focus:after:bg-blue-800 focus:after:absolute focus:after:left-0 focus:after:bottom-[-4px]";
-
-  console.log("principal", principal);
-  const categories = [
+  const investorCategories = [
     {
+      id: 'registerInvestor',
       title: "Register as an Investor",
       description: "Discover innovative projects to invest in.",
       buttonText: "Register Now",
-      imgSrc: hover,
-    },
-
-
+      imgSrc: hover 
+    }
   ];
-  const mentorcategories = [
+  const mentorCategories = [
     {
+      id: 'registerMentor',
       title: "Register as a Mentor",
       description: "Join our community as a mentor to guide projects.",
       buttonText: "Register Now",
-      imgSrc: hover,
-    },
-
-
-  ];
-  const testimonialcategories = [
-    {
-      title: "Add your testimonial",
-      description: "See a project missing? All community members are invited to submit their projects to this page.",
-      buttonText: "Add now",
-      imgSrc: hover,
-    },
-  ];
-
-
-
-
-
-
-  const getAllProject = async (caller) => {
-    await caller.list_all_projects().then((result) => {
-      console.log('result-in-get-all-projects', result)
-    }).catch((error) => {
-      console.log('error-in-get-all-projects', error)
-    })
-  }
-
-  // const getAllMentors = async (caller) => {
-  //   await caller.get_all_mentors_candid().then((result) => {
-  //     console.log('result-in-get-all-mentors', result)
-  //   }).catch((error) => {
-  //     console.log('error-in-get-all-mentors', error)
-  //   })
-  // }
-
-  // const getAllInvestors = async (caller) => {
-  //   await caller.list_all_vcs().then((result) => {
-  //     console.log('result-in-get-all-investors', result)
-  //   }).catch((error) => {
-  //     console.log('error-in-get-all-investors', error)
-  //   })
-  // }
-
-  useEffect(() => {
-    if (actor) {
-      getAllProject(actor);
-      // getAllMentors(actor);
-      // getAllInvestors(actor);
-    } else {
-      getAllProject(IcpAccelerator_backend);
-      // getAllMentors(IcpAccelerator_backend);
-      // getAllInvestors(IcpAccelerator_backend);
+      imgSrc:hover
     }
-  }, [actor])
+  ];
+ 
+  const testimonialCategories = [
+    {
+      id: 'addTestimonial',
+      title: "Add your testimonial",
+      description: "Share your experience and insights with our community.",
+      buttonText: "Add now",
+      imgSrc:hover
+    }
+  ];
+    
+
+
 
   switch (userCurrentRoleStatusActiveRole) {
     case 'project':
@@ -168,11 +107,11 @@ const DashBoard = () => {
     case 'vc':
       return <InvestorDashboard />;
     default:
-      return (
+      return (<>
         <section className="overflow-hidden relative bg-gray-100">
           <div className="font-fontUse flex flex-col w-full h-fit px-[5%] lg1:px-[4%] py-[4%]">
             <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
-              <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
+              <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent inline-block bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
                 Spotlight on the month
               </h1>
             </div>
@@ -266,7 +205,7 @@ const DashBoard = () => {
                 <InvestorCard />
               </div>
               <div className="w-1/4">
-                <RegisterCard categories={categories} redirect={'create-investor'} />
+                <RegisterCard categories={investorCategories}/>
               </div>
             </div>
             <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
@@ -282,10 +221,10 @@ const DashBoard = () => {
                 <MentorCard />
               </div>
               <div className="w-1/4 py-3">
-                <RegisterCard categories={mentorcategories} redirect={'create-mentor'} />
+                <RegisterCard categories={mentorCategories}/>
               </div>
             </div>
-            {/* <Announcement/> */}
+           <AnnouncementCard/>
             <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
               <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
                 Testimonial
@@ -296,7 +235,7 @@ const DashBoard = () => {
                 <Testimonial />
               </div>
               <div className="w-1/3">
-                <RegisterCard categories={testimonialcategories} redirect={''} />
+                <RegisterCard categories={testimonialCategories} />
               </div>
             </div>
             <div className="flex- flex-col mb-10">
@@ -382,6 +321,7 @@ const DashBoard = () => {
             <SubmitSection />
           </div>
         </section>
+        </>
       );
   }
 };
