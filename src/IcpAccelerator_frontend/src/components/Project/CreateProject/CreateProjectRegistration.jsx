@@ -111,6 +111,9 @@ const validationSchema = {
       ),
     project_name: yup.string().required("Project name is required"),
     live_on_icp_mainnet: yup.string(),
+    upload_private_documents: yup.string(),
+    title1: yup.string(),
+    link1: yup.string().url(),
     project_area_of_focus: yup.string().required("Area of focus is required"),
     self_rating_of_project: yup.string().optional(),
     preferred_icp_hub: yup.string().required("ICP hub is required"),
@@ -129,6 +132,8 @@ const validationSchema = {
       .trim()
       .required("Textarea is required")
       .matches(/^[^\s].*$/, "Cannot start with a space"),
+    title2: yup.string(),
+    link2: yup.string().url(),
     token_economics: yup.string().url("Must be a valid URL").optional(),
     target_market: yup.string().url("Must be a valid URL").optional(),
     long_term_goals: yup.string().url("Must be a valid URL").optional(),
@@ -179,6 +184,7 @@ const CreateProjectRegistration = () => {
   const [isLiveOnICP, setIsLiveOnICP] = useState(false);
   const [isMoneyRaised, setIsMoneyRaised] = useState(false);
   const [isMulti_Chain, setIsMulti_Chain] = useState(false);
+  const [isPrivateDocument, setIsPrivateDocuments] = useState(false);
 
   // Used to convert strings to Uint8Array
   function stringToUint8Array(str) {
@@ -244,6 +250,7 @@ const CreateProjectRegistration = () => {
   const liveOnICPMainnetValue = watch("live_on_icp_mainnet");
   const MoneyRaisedTillNow = watch("money_raised_till_now");
   const IsMultiChain = watch("multi_chain");
+  const IsPrivateDocument = watch("upload_private_documents");
   // checking total for target market
   const checkTotal = (event) => {
     // Prevent default form submission behavior
@@ -269,6 +276,12 @@ const CreateProjectRegistration = () => {
   };
   useEffect(() => {
     // Update isLiveOnICP based on live_on_icp_mainnet field value
+    setIsPrivateDocuments(IsPrivateDocument === "true");
+    if (IsPrivateDocument !== "true") {
+      setValue("title1", "");
+      setValue("link1", "");
+    }
+
     setIsLiveOnICP(liveOnICPMainnetValue === "true");
     if (liveOnICPMainnetValue !== "true") {
       setValue("money_raised_till_now", "false");
@@ -288,7 +301,13 @@ const CreateProjectRegistration = () => {
     if (IsMultiChain !== "true") {
       setValue("supports_multichain", "");
     }
-  }, [liveOnICPMainnetValue, MoneyRaisedTillNow, IsMultiChain, setValue]);
+  }, [
+    liveOnICPMainnetValue,
+    MoneyRaisedTillNow,
+    IsMultiChain,
+    IsPrivateDocument,
+    setValue,
+  ]);
 
   useEffect(() => {
     if (!userHasInteracted) return;
@@ -731,6 +750,26 @@ const CreateProjectRegistration = () => {
 
       const updateMoneyRaisedTillNow =
         MoneyRaisedTillNow === "true" ? true : false;
+      const updateIsPrivateDocument =
+        IsPrivateDocument === "true" ? true : false;
+      const privateDocs = {
+        title: updatedFormData.title1 || "",
+        link: updatedFormData.link1 || "",
+      };
+      const publicDocs = {
+        title: updatedFormData.title2 || "",
+        link: updatedFormData.link2 || "",
+      };
+      const moneyRaised = {
+        target_amount: updatedFormData.target_amount
+          ? parseFloat(updatedFormData.target_amount)
+          : 0,
+        icp_grants: [updatedFormData.icp_grants || ""],
+        investors: [updatedFormData.investors || ""],
+        sns: [updatedFormData.sns || ""],
+        raised_from_other_ecosystem:
+          [updatedFormData.raised_from_other_ecosystem || ""],
+      };
       let tempObj2 = {
         user_data: {
           profile_picture: [updatedFormData.imageData] || [],
@@ -743,16 +782,21 @@ const CreateProjectRegistration = () => {
           bio: [updatedFormData.bio] || [],
           area_of_intrest: updatedFormData.area_of_intrest || [],
         },
+        upload_private_documents: [updateIsPrivateDocument],
         project_elevator_pitch: [updatedFormData.project_elevator_pitch],
+        public_docs: [publicDocs],
+        private_docs: [privateDocs],
+        technical_docs: [updatedFormData.technical_docs],
         reason_to_join_incubator:
           updatedFormData.reason_to_join_incubator || "",
-        target_amount: [updatedFormData.target_amount || ""],
-        icp_grants: [updatedFormData.icp_grants || ""],
-        investors: [updatedFormData.investors || ""],
-        sns: [updatedFormData.sns || ""],
-        raised_from_other_ecosystem: [
-          updatedFormData.raised_from_other_ecosystem || "",
-        ],
+        // target_amount: [updatedFormData.target_amount || ""],
+        // icp_grants: [updatedFormData.icp_grants || ""],
+        // investors: [updatedFormData.investors || ""],
+        // sns: [updatedFormData.sns || ""],
+        // raised_from_other_ecosystem: [
+        //   updatedFormData.raised_from_other_ecosystem || "",
+        // ],
+        money_raised: [moneyRaised],
         promotional_video: [updatedFormData.promotional_video],
         project_area_of_focus: updatedFormData.project_area_of_focus || "",
         money_raised_till_now: [updateMoneyRaisedTillNow],
@@ -790,7 +834,7 @@ const CreateProjectRegistration = () => {
       console.log("first time visit ");
       let tempObj = {
         user_data: {
-          profile_picture: [updatedFormData.imageData],
+          profile_picture: [updatedFormData.imageData] || [],
           full_name: updatedFormData.full_name || "",
           country: updatedFormData.country || "",
           email: [updatedFormData.email] || [],
@@ -800,7 +844,17 @@ const CreateProjectRegistration = () => {
           bio: [updatedFormData.bio] || [],
           area_of_intrest: updatedFormData.area_of_intrest || [],
         },
+        upload_private_documents: [updatedFormData.upload_private_documents],
         project_elevator_pitch: [updatedFormData.project_elevator_pitch],
+        public_docs: {
+          title: [updatedFormData.title] || [],
+          link: [updatedFormData.link] || [],
+        },
+        private_docs: {
+          title: [updatedFormData.title] || [],
+          link: [updatedFormData.link] || [],
+        },
+        technical_docs: [updatedFormData.technical_docs],
         reason_to_join_incubator:
           updatedFormData.reason_to_join_incubator || "",
         target_amount: [updatedFormData.target_amount || ""],
@@ -1178,6 +1232,86 @@ const CreateProjectRegistration = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-3 px-4">
                 <div className="z-0 w-full mb-3 group">
                   <label
+                    htmlFor="upload_private_documents"
+                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    Upload Private Documents
+                  </label>
+                  <select
+                    {...register("upload_private_documents")}
+                    className={`bg-gray-50 border-2 ${
+                      errors.upload_private_documents
+                        ? "border-red-500 placeholder:text-red-500"
+                        : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  >
+                    <option className="text-lg font-bold" value="false">
+                      No
+                    </option>
+                    <option className="text-lg font-bold" value="true">
+                      Yes
+                    </option>
+                  </select>
+                  {errors.upload_private_documents && (
+                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                      {errors.upload_private_documents.message}
+                    </p>
+                  )}
+                </div>
+                {isPrivateDocument && (
+                  <>
+                    <div className="z-0 w-full mb-3 group">
+                      <label
+                        htmlFor="title1"
+                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                      >
+                        Title
+                      </label>
+                      <input
+                        type="text"
+                        name="title1"
+                        id="title1"
+                        {...register("title1")}
+                        className={`bg-gray-50 border-2 ${
+                          errors.title1
+                            ? "border-red-500 placeholder:text-red-500"
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      />
+                      {errors.title1 && (
+                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                          {errors.title1.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="z-0 w-full mb-3 group">
+                      <label
+                        htmlFor="link1"
+                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                      >
+                        Link
+                      </label>
+                      <input
+                        type="text"
+                        name="link1"
+                        id="link1"
+                        {...register("link1")}
+                        className={`bg-gray-50 border-2 ${
+                          errors.link1
+                            ? "border-red-500 placeholder:text-red-500"
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      />
+                      {errors.link1 && (
+                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                          {errors.link1.message}
+                        </p>
+                      )}
+                    </div>
+                  </>
+                )}
+                <div className="z-0 w-full mb-3 group">
+                  <label
                     htmlFor="preferred_icp_hub"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
@@ -1400,6 +1534,31 @@ const CreateProjectRegistration = () => {
                       {errors.raised_from_other_ecosystem && (
                         <p className="mt-1 text-sm text-red-500 font-bold text-left">
                           {errors.raised_from_other_ecosystem.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="z-0 w-full mb-3 group">
+                      <label
+                        htmlFor="target_amount"
+                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                      >
+                        Target Amount
+                      </label>
+                      <input
+                        type="number"
+                        name="target_amount"
+                        id="target_amount"
+                        {...register("target_amount")}
+                        className={`bg-gray-50 border-2 ${
+                          errors.target_amount
+                            ? "border-red-500 placeholder:text-red-500"
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        placeholder="$"
+                      />
+                      {errors.target_amount && (
+                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                          {errors.target_amount.message}
                         </p>
                       )}
                     </div>
