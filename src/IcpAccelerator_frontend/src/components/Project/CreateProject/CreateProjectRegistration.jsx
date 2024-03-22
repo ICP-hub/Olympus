@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useState, useMemo } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useDropzone } from "react-dropzone";
@@ -114,8 +114,17 @@ const validationSchema = {
     project_name: yup.string().required("Project name is required"),
     live_on_icp_mainnet: yup.string(),
     upload_private_documents: yup.string(),
-    title1: yup.string(),
-    link1: yup.string().url(),
+    // title1: yup.string(),
+    // link1: yup.string().url(),
+    private_docs: yup.array().of(
+      yup.object().shape({
+        title: yup.string().optional("Title is required"),
+        link: yup
+          .string()
+          .url("Must be a valid URL")
+          .optional("Link is required"),
+      })
+    ),
     project_area_of_focus: yup.string().required("Area of focus is required"),
     self_rating_of_project: yup.string().optional(),
     preferred_icp_hub: yup.string().required("ICP hub is required"),
@@ -237,14 +246,23 @@ const CreateProjectRegistration = () => {
     watch,
     setError,
     clearErrors,
+    getValues,
     setValue,
     reset,
     control,
   } = useForm({
+    defaultValues: {
+      private_docs: [{ title: "", link: "" }],
+    },
     resolver: yupResolver(currentValidationSchema),
     mode: "all",
   });
+  const { fields, append } = useFieldArray({
+    control,
+    name: "private_docs",
+  });
 
+  console.log('private',getValues('private_docs'))
   const handleTabClick = async (tab) => {
     const targetStep = projectRegistration.findIndex(
       (header) => header.id === tab
@@ -306,6 +324,7 @@ const CreateProjectRegistration = () => {
     // }
     if (liveOnICPMainnetValue !== "true" || MoneyRaisedTillNow !== "true") {
       setValue("target_amount", "");
+      setValue("dapp_link", "");
       setValue("icp_grants", "");
       setValue("investors", "");
       setValue("sns", "");
@@ -322,7 +341,6 @@ const CreateProjectRegistration = () => {
     IsPrivateDocument,
     setValue,
   ]);
-
   useEffect(() => {
     if (!userHasInteracted) return;
     const validateStep = async () => {
@@ -738,7 +756,7 @@ const CreateProjectRegistration = () => {
         console.log("register register_project functn ka result ", result);
         toast.success(result);
         // navigate("/")
-        window.location.href = "/";
+        // window.location.href = "/";
       });
       // }
       // await dispatch(userRoleHandler());
@@ -769,17 +787,19 @@ const CreateProjectRegistration = () => {
       const updateliveOnICPMainnetValue =
         liveOnICPMainnetValue === "true" ? true : false;
       const privateDocs = {
-        title: updatedFormData.title1 || "",
-        link: updatedFormData.link1 || "",
+        title: updatedFormData.title || "",
+        link: updatedFormData.link || "",
       };
       const publicDocs = {
         title: updatedFormData.title2 || "",
         link: updatedFormData.link2 || "",
       };
       const moneyRaised = {
-        target_amount: [updatedFormData.target_amount
-          ? parseFloat(updatedFormData.target_amount)
-          : 0],
+        target_amount: [
+          updatedFormData.target_amount
+            ? parseFloat(updatedFormData.target_amount)
+            : 0,
+        ],
         icp_grants: [updatedFormData.icp_grants || ""],
         investors: [updatedFormData.investors || ""],
         sns: [updatedFormData.sns || ""],
@@ -821,7 +841,7 @@ const CreateProjectRegistration = () => {
         project_name: updatedFormData.project_name || "",
         live_on_icp_mainnet: [updateliveOnICPMainnetValue],
         preferred_icp_hub: [updatedFormData.preferred_icp_hub],
-        dapp_link: [updatedFormData.dapp_link],
+        dapp_link: [updatedFormData.dapp_link || ""],
         project_website: [updatedFormData.project_website],
         project_twitter: [updatedFormData.project_twitter],
         project_discord: [updatedFormData.project_discord],
@@ -1279,7 +1299,56 @@ const CreateProjectRegistration = () => {
                 </div>
                 {isPrivateDocument && (
                   <>
-                    <div className="z-0 w-full mb-3 group">
+                    {fields.map((item, index) => (
+                      <div key={item.id}>
+                        <div className="z-0 w-full mb-3 group">
+                          <label
+                            htmlFor="title"
+                            className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                          >
+                            Title
+                          </label>
+                          <input
+                            {...register(`private_docs[${index}].title`)}
+                            className={`bg-gray-50 border-2 ${
+                              errors.title1
+                                ? "border-red-500 placeholder:text-red-500"
+                                : "border-[#737373]"
+                            } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                          />
+                          {errors.items?.[index]?.title && (
+                            <p>{errors.items[index].title.message}</p>
+                          )}
+                          <label
+                            htmlFor="link"
+                            className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                          >
+                            Link
+                          </label>
+                          <input
+                            {...register(`items[${index}].link`)}
+                            className={`bg-gray-50 border-2 ${
+                              errors.link
+                                ? "border-red-500 placeholder:text-red-500"
+                                : "border-[#737373]"
+                            } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                          />
+                          {errors.items?.[index]?.link && (
+                            <p>{errors.items[index].link.message}</p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                   <div>
+                   <button
+                      type="button"
+                      className="bg-blue-500 rounded-lg text-white p-2"
+                      onClick={() => append({ title: "", link: "" })}
+                    >
+                      Add More
+                    </button>
+                   </div>
+                    {/* <div className="z-0 w-full mb-3 group">
                       <label
                         htmlFor="title1"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
@@ -1326,7 +1395,7 @@ const CreateProjectRegistration = () => {
                           {errors.link1.message}
                         </p>
                       )}
-                    </div>
+                    </div> */}
                   </>
                 )}
                 <div className="z-0 w-full mb-3 group">
@@ -1392,14 +1461,14 @@ const CreateProjectRegistration = () => {
                     classNamePrefix="select"
                     className="basic-multi-select"
                     placeholder="Select your areas of expertise"
-                    name="area_of_focus"
-                    {...register("area_of_focus")}
+                    name="project_area_of_focus"
+                    {...register("project_area_of_focus")}
                     onChange={(selectedOptions) => {
                       // You might need to adapt this part to fit how you handle form data
-                      setValue(
-                        "area_of_focus",
-                        selectedOptions.map((option) => option.value)
-                      );
+                      const selectedValues = selectedOptions
+                        .map((option) => option.value)
+                        .join(", ");
+                      setValue("project_area_of_focus", selectedValues);
                     }}
                   />
                 </div>
