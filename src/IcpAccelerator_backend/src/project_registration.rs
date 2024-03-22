@@ -53,6 +53,22 @@ pub struct JobsInternal {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
+pub struct Announcements {
+    project_id: String,
+    announcement_title: String,
+    announcement_description: String,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
+pub struct AnnouncementsInternal{
+    announcement_data: Announcements,
+    timestamp: u64,
+    project_name: String,
+    project_desc: String,
+    project_logo: Vec<u8>,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct ProjectInfo {
     pub project_name: String,
     pub project_logo: Vec<u8>,
@@ -133,7 +149,7 @@ pub struct ProjectInfoForUser {
     pub mentor_associated: Option<Vec<MentorProfile>>,
     pub vc_associated: Option<Vec<VentureCapitalist>>,
     pub team_member_info: Option<Vec<TeamMember>>,
-    pub announcements: HashMap<Principal, Vec<Announcements>>,
+    pub announcements: HashMap<Principal, Vec<AnnouncementsInternal>>,
     pub reviews: Vec<Suggestion>,
     pub website_social_group: Option<String>,
     pub live_link_of_project: Option<String>,
@@ -183,14 +199,6 @@ pub struct NotificationForOwner {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
-pub struct Announcements {
-    project_id: String,
-    announcement_title: String,
-    announcement_description: String,
-    timestamp: u64,
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct Blog {
     blog_url: String,
     timestamp: u64,
@@ -226,7 +234,7 @@ pub struct SpotlightDetails {
     pub approval_time: u64,
 }
 
-pub type ProjectAnnouncements = HashMap<Principal, Vec<Announcements>>;
+pub type ProjectAnnouncements = HashMap<Principal, Vec<AnnouncementsInternal>>;
 pub type Notifications = HashMap<Principal, Vec<NotificationProject>>;
 pub type BlogPost = HashMap<Principal, Vec<Blog>>;
 
@@ -786,39 +794,60 @@ pub fn add_announcement(mut announcement_details: Announcements) -> String {
         })
     });
 
+    let project_info_internal = match find_project_by_id(&announcement_details.project_id) {
+        Some(project_info) => project_info,
+        None => return "Project ID does not exist in application forms.".to_string(),
+    };
+
     if !project_id_exists {
         return "Project ID does not exist in application forms.".to_string();
     }
+    
+    let new_announcement = AnnouncementsInternal {
+        announcement_data: announcement_details,
+        timestamp: current_time,
+        project_name: project_info_internal.params.project_name,
+        project_desc: project_info_internal.params.project_description,
+        project_logo: project_info_internal.params.project_logo,
+    };
 
     PROJECT_ANNOUNCEMENTS.with(|state| {
         let mut state = state.borrow_mut();
-        announcement_details.timestamp = current_time;
         state
             .entry(caller_id)
             .or_insert_with(Vec::new)
-            .push(announcement_details);
+            .push(new_announcement);
         format!("Announcement added successfully at {}", current_time)
     })
 }
 
 //for testing purpose
 #[query]
-pub fn get_announcements() -> HashMap<Principal, Vec<Announcements>> {
+pub fn get_announcements() -> HashMap<Principal, Vec<AnnouncementsInternal>> {
     PROJECT_ANNOUNCEMENTS.with(|state| {
-        let state = state.borrow();
-        state.clone()
+        state.borrow().clone()
     })
 }
 
 #[query]
-pub fn get_latest_announcements() -> HashMap<Principal, Vec<Announcements>> {
+pub fn get_latest_announcements() -> HashMap<Principal, Vec<AnnouncementsInternal>> {
     PROJECT_ANNOUNCEMENTS.with(|state| {
         let state = state.borrow();
-        let mut sorted_state = state.clone();
-        for (_principal, announcements) in sorted_state.iter_mut() {
-            announcements.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
-        }
-        sorted_state
+        state.iter().map(|(principal, announcement_internals)| {
+            let mut sorted_announcements = announcement_internals.clone();
+            sorted_announcements.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
+            (principal.clone(), sorted_announcements)
+        }).collect()
+    })
+}
+
+#[query]
+pub fn get_announcements_by_project_id(project_id: String) -> Vec<AnnouncementsInternal> {
+    PROJECT_ANNOUNCEMENTS.with(|state| {
+        state.borrow().values()
+            .flat_map(|announcements| announcements.iter().filter(|announcement| announcement.announcement_data.project_id == project_id))
+            .cloned()
+            .collect()
     })
 }
 
@@ -999,6 +1028,7 @@ fn get_dummy_user_information() -> UserInformation {
         area_of_intrest: "Artificial Intelligence".to_string(),
         twitter_id: Some("@janedoeAI".to_string()),
         openchat_username: Some("janedoeChat".to_string()),
+        joining_date: 0,
     }
 }
 
