@@ -20,6 +20,8 @@ import { userRegisteredHandlerRequest } from "../../StateManagement/Redux/Reduce
 import CreateProjectsDetails from "./CreateProjectsDetails";
 import { bufferToImageBlob } from "../../Utils/formatter/bufferToImageBlob";
 import CreateProjectsAdditionalDetails from "./CreateProjectsAdditionalDetails";
+import ReactSelect from "react-select";
+
 const validationSchema = {
   personalDetails: yup.object().shape({
     full_name: yup
@@ -119,6 +121,7 @@ const validationSchema = {
     preferred_icp_hub: yup.string().required("ICP hub is required"),
     supports_multichain: yup.string(),
     promotional_video: yup.string().url("Must be a valid URL").optional(),
+    dapp_link: yup.string().url("Must be a valid URL").optional(),
     project_website: yup.string().url("Must be a valid URL").optional(),
     project_twitter: yup.string().url("Must be a valid URL").optional(),
     project_discord: yup.string().url("Must be a valid URL").optional(),
@@ -131,7 +134,18 @@ const validationSchema = {
       .string()
       .trim()
       .required("Textarea is required")
-      .matches(/^[^\s].*$/, "Cannot start with a space"),
+      .matches(/^[^\s].*$/, "Cannot start with a space")
+      .test(
+        "wordCount",
+        "Project description must be 300 words or fewer",
+        (value) => {
+          if (typeof value === "string") {
+            const words = value.trim().split(/\s+/); // Split by any whitespace
+            return words.length <= 300;
+          }
+          return false; // Fails validation if not a string
+        }
+      ),
     title2: yup.string(),
     link2: yup.string().url(),
     token_economics: yup.string().url("Must be a valid URL").optional(),
@@ -752,6 +766,8 @@ const CreateProjectRegistration = () => {
         MoneyRaisedTillNow === "true" ? true : false;
       const updateIsPrivateDocument =
         IsPrivateDocument === "true" ? true : false;
+      const updateliveOnICPMainnetValue =
+        liveOnICPMainnetValue === "true" ? true : false;
       const privateDocs = {
         title: updatedFormData.title1 || "",
         link: updatedFormData.link1 || "",
@@ -761,14 +777,15 @@ const CreateProjectRegistration = () => {
         link: updatedFormData.link2 || "",
       };
       const moneyRaised = {
-        target_amount: updatedFormData.target_amount
+        target_amount: [updatedFormData.target_amount
           ? parseFloat(updatedFormData.target_amount)
-          : 0,
+          : 0],
         icp_grants: [updatedFormData.icp_grants || ""],
         investors: [updatedFormData.investors || ""],
         sns: [updatedFormData.sns || ""],
-        raised_from_other_ecosystem:
-          [updatedFormData.raised_from_other_ecosystem || ""],
+        raised_from_other_ecosystem: [
+          updatedFormData.raised_from_other_ecosystem || "",
+        ],
       };
       let tempObj2 = {
         user_data: {
@@ -802,8 +819,9 @@ const CreateProjectRegistration = () => {
         money_raised_till_now: [updateMoneyRaisedTillNow],
         supports_multichain: [updatedFormData.supports_multichain || ""],
         project_name: updatedFormData.project_name || "",
-        live_on_icp_mainnet: [liveOnICPMainnetValue],
+        live_on_icp_mainnet: [updateliveOnICPMainnetValue],
         preferred_icp_hub: [updatedFormData.preferred_icp_hub],
+        dapp_link: [updatedFormData.dapp_link],
         project_website: [updatedFormData.project_website],
         project_twitter: [updatedFormData.project_twitter],
         project_discord: [updatedFormData.project_discord],
@@ -869,8 +887,9 @@ const CreateProjectRegistration = () => {
         money_raised_till_now: [updateMoneyRaisedTillNow],
         supports_multichain: [updatedFormData.supports_multichain || ""],
         project_name: updatedFormData.project_name || "",
-        live_on_icp_mainnet: [liveOnICPMainnetValue],
+        live_on_icp_mainnet: [updateliveOnICPMainnetValue],
         preferred_icp_hub: [updatedFormData.preferred_icp_hub],
+        dapp_link: [updatedFormData.dapp_link],
         project_website: [updatedFormData.project_website],
         project_twitter: [updatedFormData.project_twitter],
         project_discord: [updatedFormData.project_discord],
@@ -1351,32 +1370,38 @@ const CreateProjectRegistration = () => {
                   >
                     Area of focus *
                   </label>
-                  <select
-                    {...register("project_area_of_focus")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.project_area_of_focus
-                        ? "border-red-500 placeholder:text-red-500"
-                        : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                  >
-                    <option className="text-lg font-bold" value="">
-                      Select ⌄
-                    </option>
-                    {areaOfExpertise?.map((intrest) => (
-                      <option
-                        key={intrest.id}
-                        value={`${intrest.name}`}
-                        className="text-lg font-bold"
-                      >
-                        {intrest.name}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.project_area_of_focus && (
-                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                      {errors.project_area_of_focus.message}
-                    </p>
-                  )}
+                  <ReactSelect
+                    isMulti
+                    options={areaOfExpertise.map((expert) => ({
+                      value: expert.name,
+                      label: expert.name,
+                    }))}
+                    menuPortalTarget={document.body}
+                    menuPosition={"fixed"}
+                    styles={{
+                      menuPortal: (base) => ({
+                        ...base,
+                        zIndex: 9999, // Set the desired z-index value
+                      }),
+                      control: (provided, state) => ({
+                        ...provided,
+                        color: "black", // Initial color of the label
+                        // Add other control styles if needed
+                      }),
+                    }}
+                    classNamePrefix="select"
+                    className="basic-multi-select"
+                    placeholder="Select your areas of expertise"
+                    name="area_of_focus"
+                    {...register("area_of_focus")}
+                    onChange={(selectedOptions) => {
+                      // You might need to adapt this part to fit how you handle form data
+                      setValue(
+                        "area_of_focus",
+                        selectedOptions.map((option) => option.value)
+                      );
+                    }}
+                  />
                 </div>
                 <div className="z-0 w-full mb-3 group">
                   <label
@@ -1406,35 +1431,62 @@ const CreateProjectRegistration = () => {
                     </p>
                   )}
                 </div>
-                <div className="z-0 w-full mb-3 group">
-                  <label
-                    htmlFor="money_raised_till_now"
-                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                  >
-                    Money raised till now
-                  </label>
-                  <select
-                    {...register("money_raised_till_now")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.money_raised_till_now
-                        ? "border-red-500 placeholder:text-red-500"
-                        : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                    disabled={!isLiveOnICP}
-                  >
-                    <option className="text-lg font-bold" value="false">
-                      No
-                    </option>
-                    <option className="text-lg font-bold" value="true">
-                      Yes
-                    </option>
-                  </select>
-                  {errors.money_raised_till_now && (
-                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                      {errors.money_raised_till_now.message}
-                    </p>
-                  )}
-                </div>
+                {isLiveOnICP && (
+                  <>
+                    <div className="z-0 w-full mb-3 group">
+                      <label
+                        htmlFor="money_raised_till_now"
+                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                      >
+                        Money raised till now
+                      </label>
+                      <select
+                        {...register("money_raised_till_now")}
+                        className={`bg-gray-50 border-2 ${
+                          errors.money_raised_till_now
+                            ? "border-red-500 placeholder:text-red-500"
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      >
+                        <option className="text-lg font-bold" value="false">
+                          No
+                        </option>
+                        <option className="text-lg font-bold" value="true">
+                          Yes
+                        </option>
+                      </select>
+                      {errors.money_raised_till_now && (
+                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                          {errors.money_raised_till_now.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="z-0 w-full mb-3 group">
+                      <label
+                        htmlFor="dapp_link"
+                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                      >
+                        Dapp Link
+                      </label>
+                      <input
+                        type="text"
+                        name="dapp_link"
+                        id="dapp_link"
+                        {...register("dapp_link")}
+                        className={`bg-gray-50 border-2 ${
+                          errors.dapp_link
+                            ? "border-red-500 placeholder:text-red-500"
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      />
+                      {errors.dapp_link && (
+                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                          {errors.dapp_link.message}
+                        </p>
+                      )}
+                    </div>
+                  </>
+                )}
                 {isMoneyRaised && (
                   <>
                     <div className="z-0 w-full mb-3 group">
@@ -1593,41 +1645,42 @@ const CreateProjectRegistration = () => {
                     </p>
                   )}
                 </div>
-                <div className="z-0 w-full mb-3 group">
-                  <label
-                    htmlFor="supports_multichain"
-                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                  >
-                    Multi-chain options
-                  </label>
-                  <select
-                    {...register("supports_multichain")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.supports_multichain
-                        ? "border-red-500 placeholder:text-red-500"
-                        : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                    disabled={!isMulti_Chain}
-                  >
-                    <option className="text-lg font-bold" value="">
-                      Select ⌄
-                    </option>
-                    {multiChain?.map((chain, i) => (
-                      <option
-                        key={i}
-                        value={`${chain}`}
-                        className="text-lg font-bold"
-                      >
-                        {chain}
+                {isMulti_Chain && (
+                  <div className="z-0 w-full mb-3 group">
+                    <label
+                      htmlFor="supports_multichain"
+                      className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                    >
+                      Multi-chain options
+                    </label>
+                    <select
+                      {...register("supports_multichain")}
+                      className={`bg-gray-50 border-2 ${
+                        errors.supports_multichain
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    >
+                      <option className="text-lg font-bold" value="">
+                        Select ⌄
                       </option>
-                    ))}
-                  </select>
-                  {errors.supports_multichain && (
-                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                      {errors.supports_multichain.message}
-                    </p>
-                  )}
-                </div>
+                      {multiChain?.map((chain, i) => (
+                        <option
+                          key={i}
+                          value={`${chain}`}
+                          className="text-lg font-bold"
+                        >
+                          {chain}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.supports_multichain && (
+                      <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                        {errors.supports_multichain.message}
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
             </>
           )}
