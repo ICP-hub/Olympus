@@ -1,4 +1,5 @@
 type AccessRequest = record {
+  status : text;
   request_type : text;
   name : text;
   sender : principal;
@@ -215,7 +216,7 @@ type ProjectInfo = record {
   upload_private_documents : opt bool;
   project_description : text;
   vc_assigned : opt vec VentureCapitalist;
-  private_docs : opt Docs;
+  private_docs : opt vec Docs;
   token_economics : opt text;
   self_rating_of_project : float64;
   preferred_icp_hub : opt text;
@@ -227,7 +228,7 @@ type ProjectInfo = record {
   live_on_icp_mainnet : opt bool;
   technical_docs : opt text;
   github_link : opt text;
-  public_docs : opt Docs;
+  public_docs : opt vec Docs;
   project_cover : vec nat8;
   project_website : opt text;
   promotional_video : opt text;
@@ -297,10 +298,12 @@ type RatingAverages = record {
   mentor_average : opt float64;
 };
 type Request = record { mentor : opt MentorInternal; "text" : text };
-type Result = variant { Ok; Err : text };
-type Result_1 = variant { Ok : vec Review; Err : text };
-type Result_2 = variant { Ok : vec Testimonial; Err : text };
-type Result_3 = variant { Ok : UserInformation; Err : text };
+type Result = variant { Ok : MoneyRaised; Err : text };
+type Result_1 = variant { Ok : vec Docs; Err : text };
+type Result_2 = variant { Ok; Err : text };
+type Result_3 = variant { Ok : vec Review; Err : text };
+type Result_4 = variant { Ok : vec Testimonial; Err : text };
+type Result_5 = variant { Ok : UserInformation; Err : text };
 type Review = record {
   tag : text;
   name : text;
@@ -453,16 +456,20 @@ type VentureCapitalistInternal = record {
 service : () -> {
   accept_offer_of_mentor : (text, text, text) -> (text);
   accept_offer_of_project : (text, text) -> (text);
+  access_money_details : (text) -> (Result) query;
+  access_private_docs : (text) -> (Result_1) query;
   add_BlogPost : (text) -> (text);
   add_announcement : (Announcements) -> (text);
   add_job_type : (text) -> (text);
   add_mentor_announcement : (text, text) -> (text);
-  add_project_to_spotlight : (text) -> (Result);
+  add_project_to_spotlight : (text) -> (Result_2);
   add_review : (float32, text) -> (text);
   add_testimonial : (text) -> (text);
   add_vc_announcement : (text, text) -> (text);
   approve_mentor_creation_request_candid : (principal, bool) -> (text);
   approve_mentor_profile_update : (principal, bool) -> (text);
+  approve_money_access_request : (text, principal) -> (text);
+  approve_private_docs_access_request : (text, principal) -> (text);
   approve_project_creation_request : (principal) -> (text);
   approve_project_details_updation_request : (principal, text, bool) -> (text);
   approve_vc_creation_request : (principal, bool) -> (text);
@@ -472,8 +479,10 @@ service : () -> {
   create_cohort : (Cohort) -> (text);
   decline_mentor_creation_request_candid : (principal, bool) -> (text);
   decline_mentor_profile_update_request : (principal, bool) -> (text);
+  decline_money_access_request : (text, principal) -> (text);
   decline_offer_of_mentor : (text, text, text) -> (text);
   decline_offer_of_project : (text, text) -> (text);
+  decline_private_docs_access_request : (text, principal) -> (text);
   decline_project_creation_request : (principal) -> (text);
   decline_vc_creation_request : (principal, bool) -> (text);
   decline_vc_profile_update_request : (principal, bool) -> (text);
@@ -488,20 +497,22 @@ service : () -> {
     ) query;
   get_accepted_request_for_project : () -> (vec OfferToMentor) query;
   get_admin_notifications : () -> (vec Notification) query;
+  get_all_approved_requests : () -> (vec ProjectNotification) query;
   get_all_cohorts : () -> (vec CohortDetails) query;
+  get_all_declined_requests : () -> (vec ProjectNotification) query;
   get_all_jobs : () -> (vec JobsInternal) query;
   get_all_mentor_notification : (principal) -> (vec OfferToSendToMentor) query;
   get_all_mentors : () -> (vec record { principal; MentorWithRoles }) query;
   get_all_mentors_candid : () -> (
       vec record { principal; MentorWithRoles },
     ) query;
-  get_all_notifications : (text) -> (vec ProjectNotification) query;
   get_all_offers_which_are_pending_for_mentor : () -> (
       vec OfferToProject,
     ) query;
   get_all_offers_which_are_pending_for_project : (text) -> (
       vec OfferToSendToProject,
     ) query;
+  get_all_pending_requests : () -> (vec ProjectNotification) query;
   get_all_project_notification : (text) -> (vec OfferToSendToProject) query;
   get_all_requests_which_got_accepted_for_mentor : () -> (
       vec OfferToProject,
@@ -574,7 +585,7 @@ service : () -> {
   get_project_upvotes : (text) -> (opt UpvoteRecord) query;
   get_project_using_id : (text) -> (opt ProjectInfoInternal) query;
   get_projects_with_all_info : () -> (vec ProjectInfoInternal) query;
-  get_review : (principal) -> (Result_1) query;
+  get_review : (principal) -> (Result_3) query;
   get_role : () -> (RolesResponse) query;
   get_role_status : () -> (vec Role) query;
   get_roles_for_principal : (principal) -> (vec Role) query;
@@ -583,13 +594,13 @@ service : () -> {
   get_spotlight_projects : () -> (vec SpotlightDetails) query;
   get_suggestions_by_parent_id_caller : (text, nat64) -> (vec Suggestion) query;
   get_suggestions_by_status_caller : (text, text) -> (vec Suggestion) query;
-  get_testimonials : (principal) -> (Result_2) query;
+  get_testimonials : (principal) -> (Result_4) query;
   get_total_count : () -> (Counts) query;
   get_total_pending_request : () -> (nat64) query;
   get_total_suggestions : (text) -> (nat64) query;
   get_user_info_struct : () -> (opt UserInformation) query;
-  get_user_information : () -> (Result_3) query;
-  get_user_information_using_uid : (text) -> (Result_3) query;
+  get_user_information : () -> (Result_5) query;
+  get_user_information_using_uid : (text) -> (Result_5) query;
   get_user_likes : (text) -> (opt LikeRecord) query;
   get_users_with_all_info : () -> (UserInfoInternal) query;
   get_vc_announcements : () -> (
@@ -631,7 +642,7 @@ service : () -> {
   register_project : (ProjectInfo) -> (text);
   register_user : (UserInformation) -> (text);
   register_venture_capitalist : (VentureCapitalist) -> (text);
-  remove_project_from_spotlight : (text) -> (Result);
+  remove_project_from_spotlight : (text) -> (Result_2);
   reply_to_suggestion_caller : (nat64, text, text) -> (nat64, text);
   self_decline_request : (text) -> (text);
   self_decline_request_for_mentor : (text) -> (text);
