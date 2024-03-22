@@ -1,31 +1,30 @@
 import React, { useState ,useEffect, useRef} from "react";
-// import {OutSideClickHandler} from "../hooks/OutSideClickHandler";
+import girl from "../../../../IcpAccelerator_frontend/assets/images/girl.jpeg";
+import { projectFilterSvg, remove, badge } from "../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
 import { OutSideClickHandler } from "../../../../IcpAccelerator_frontend/src/components/hooks/OutSideClickHandler";
-import  img1 from "../../../assets/images/img1.png";
-import { linkedIn  } from "../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
 
-const Adminalluser  = () => {
+const Adminalluser = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState("All Users");
+  const [selectedOption, setSelectedOption] = useState("Users");
   const dropdownRef = useRef(null);
-  OutSideClickHandler(dropdownRef, () => setIsPopupOpen(false))
+  OutSideClickHandler(dropdownRef, () => setIsPopupOpen(false));
 
   const projects = [
     {
-      img: <img src={img1} alt='Img'  />,
-      number: "Jammy Anderson",
-      name: "Mentor",
-      url: "Dubai",
-      pdf: "110",
-      upvotes: "www.linkedin.com",
+      img: girl,
+      Role: "mentor",
+      name: "Jammy",
+      linkedin: "http://www.konmatfix.com",
+      level: 110,
+      Country: "India",
     },
     {
-      img: <img src={img1} alt='Img'  />,
-      number: "Jammy Anderson",
-      name: "Mentor",
-      url: "Pakistan",
-      pdf: "110",
-      upvotes: "www.linkedin.com",
+      img: girl,
+      Role: "mentor",
+      name: "Jammy",
+      linkedin: "http://www.konmatfix.com",
+      level: 110,
+      Country: "India",
     },
     // Add more projects as needed
   ];
@@ -38,93 +37,62 @@ const Adminalluser  = () => {
   };
 
   return (
-    <div>
-           
-    <div className="px-[4%]  w-full flex flex-col bg-gray-100  justify-center ">
-      <div className="flex items-center justify-between">
-      <div className="left-4 lg:left-auto bg-gradient-to-r from-purple-900 to-blue-500 text-transparent bg-clip-text text-2xl font-extrabold ml-8">
-        {selectedOption}
-      </div>
+    <div className="px-[4%] w-full flex flex-col bg-gray-100 justify-center gap-8">
+     
+        <div className="w-full bg-gradient-to-r from-purple-900 to-blue-500 text-transparent bg-clip-text text-2xl font-extrabold">
+          {selectedOption}
+        </div>
+   
 
-        {/* <div className="flex justify-end gap-4 relative " ref={dropdownRef}>
-          <div
-            className="cursor-pointer"
-            onClick={() => setIsPopupOpen(true)}
-          >
-      
-
-            {isPopupOpen && (
-              <div className="absolute w-[250px] top-full right-9 bg-white shadow-md rounded-lg border border-gray-200 p-3 z-10">
-                <ul className="flex flex-col">
-                  <li>
-                    <button className="border-[#9C9C9C] py-[18px] border-b-2 w-[230px] font-bold px-4 focus:outline-none text-xl flex justify-start">
-                      Projects
-                    </button>
-                  </li>
-                  <li>
-                    <button className="border-[#9C9C9C] py-[18px] w-[230px] border-b-2 px-4 font-bold focus:outline-none text-xl flex justify-start">
-                      Mentors
-                    </button>
-                  </li>
-                  <li>
-                    <button className="px-4 font-bold py-[18px] focus:outline-none text-xl flex justify-start">
-                      VCs
-                    </button>
-                  </li>
-                </ul>
-              </div>
-            )}
-          </div>
-          <div className="mt-1"></div>
-        </div> */}
-      </div>
-
-      <div> 
-        <div className="bg-white border-2 border-black  border-b-2  rounded-lg p-4  mt-16 text-lg rounded-b-none">
+      <div>
+        <div className="bg-gray-200 rounded-lg p-4  text-lg rounded-b-none">
           <table className="w-full text-black font-bold lg:text-xl md:text-lg sm:text-s text-xms">
             <thead>
-              <tr className="flex flex-row justify-around mt-4">
-                <th className="mr-36">Name</th>
-                <th className=" md:table-cell">Role</th>
+              <tr className="flex flex-row justify-around mt-4 ">
+                <th>Name</th>
+                <th className="md:table-cell">Role</th>
                 <th className="hidden md:table-cell">Country</th>
-                <th className="hidden md:table-cell">Level</th>
-                <th className=" md:table-cell">LinkedIn</th>
+                <th className=" hidden md:table-cell ">Level</th>
+                <th className="hidden md:table-cell">LinkedIn</th>
                 <th></th>
               </tr>
             </thead>
           </table>
         </div>
 
-        <div className="text-[#737373] font-bold bg-white bg-opacity-30 border-l-[1px] border-r-[1px] border-b-[1px] border-[#737373] h-screen rounded-lg text-lg rounded-t-none overflow-y-auto mb-4">
+        <div className="text-[#737373] font-bold bg-gray-200  bg-opacity-30  h-screen rounded-lg text-lg drop-shadow-2xl overflow-y-auto mb-4">
           <table className="w-full">
-            <tbody>
+            <tbody className="overflow-y-auto">
               {projects.map((project, index) => (
                 <React.Fragment key={index}>
-                  <tr className="flex flex-row justify-around py-4">
+                  <tr className="flex flex-row justify-between py-4  gap-2 p-2">
                     <td className="flex justify-center relative items-center">
-                   
-                     
-                      <div className="relative w-[40px] h-[40px]  rounded-full border-2 border-black ">{project.img}</div>
-                    
-                    <div className="relative text-center ml-2">
-                      <div className="absolute flex justify-center items-center"></div>
-                      <div className="relative z-10 mt-2 ">{project.number}</div>
-                    </div>
+                      <div className="relative text-center">
+                        
+                      </div>
+                      <div className="flex flex-row lg:space-x-6">
+                          <img className="w-10 h-10 rounded-full ml-2" src={project.img} alt="abc" />
+                          <td className="truncate ">{project.name}</td>
+                        </div>
                     </td>
-                    <td className="truncate items-center mt-2">{project.name}</td>
-                    <td className="hidden md:table-cell truncate items-center mt-2">{project.url}</td>
-                    <td className="hidden md:table-cell truncate items-center mt-2">{project.pdf}</td>
-                    <td className="truncate items-center mt-2">{project.upvotes}</td>
-                    <td>
-                      <button className="mt-2" onClick={() => toggleAccordion(project.number)}>
-                        ...
-                      </button>
-                    </td>
+                  
+                    <td className="truncate md:ml-4 ">{project.Role}</td>
+                    <td className="truncate hidden md:table-cell md:ml-8 ">{project.Country}</td>
+                    <td className="hidden md:table-cell truncate md:ml-20 ">{project.level}</td>
+                    <td className="hidden md:table-cell truncate ">{project.linkedin}</td>
+                    <tr>
+                      <td className="md:hidden"> 
+                        <button onClick={() => toggleAccordion(project.number)}>
+                          +3more..
+                        </button>
+                      </td>
+                    </tr>
                   </tr>
                   {visibleProject === project.number && (
                     <tr className="flex flex-col md:hidden p-4">
-                      <td>URL: {project.url}</td>
-                      <td>PDF: {project.pdf}</td>
+                      <td className="truncate">Country: {project.Country}</td>
+                      <td>linkedin: {project.linkedin}</td>
+                      <td>level: {project.level}</td>
                     </tr>
                   )}
                 </React.Fragment>
@@ -134,8 +102,7 @@ const Adminalluser  = () => {
         </div>
       </div>
     </div>
-    </div>
   );
 };
 
-export default Adminalluser ;
+export default Adminalluser;
