@@ -1,3 +1,10 @@
+type AccessRequest = record {
+  request_type : text;
+  name : text;
+  sender : principal;
+  image : vec nat8;
+  project_id : text;
+};
 type Announcements = record {
   announcement_title : text;
   announcement_description : text;
@@ -124,7 +131,7 @@ type MoneyRaised = record {
   sns : opt text;
   investors : opt text;
   raised_from_other_ecosystem : opt text;
-  target_amount : float64;
+  target_amount : opt float64;
   icp_grants : opt text;
 };
 type Notification = record {
@@ -201,6 +208,7 @@ type OfferToSendToProject = record {
 type ProjectInfo = record {
   project_linkedin : opt text;
   project_elevator_pitch : opt text;
+  dapp_link : opt text;
   reason_to_join_incubator : text;
   user_data : UserInformation;
   project_discord : opt text;
@@ -216,7 +224,7 @@ type ProjectInfo = record {
   target_market : opt text;
   long_term_goals : opt text;
   project_area_of_focus : text;
-  live_on_icp_mainnet : opt text;
+  live_on_icp_mainnet : opt bool;
   technical_docs : opt text;
   github_link : opt text;
   public_docs : opt Docs;
@@ -256,6 +264,11 @@ type ProjectInfo_1 = record {
   project_logo : vec nat8;
   project_name : text;
 };
+type ProjectNotification = record {
+  notification_type : ProjectNotificationType;
+  timestamp : nat64;
+};
+type ProjectNotificationType = variant { AccessRequest : AccessRequest };
 type ProjectUpdateRequest = record {
   updated_info : ProjectInfo;
   project_id : text;
@@ -404,6 +417,7 @@ type VcWithRoles = record {
 type VentureCapitalist = record {
   fund_size : float64;
   user_data : UserInformation;
+  registered_country : opt text;
   existing_icp_portfolio : opt text;
   registered_under_any_hub : opt bool;
   name_of_fund : text;
@@ -422,6 +436,7 @@ type VentureCapitalist = record {
   portfolio_link : text;
   linkedin_link : text;
   category_of_investment : text;
+  registered : bool;
   type_of_investment : text;
 };
 type VentureCapitalistAll = record {
@@ -480,6 +495,7 @@ service : () -> {
   get_all_mentors_candid : () -> (
       vec record { principal; MentorWithRoles },
     ) query;
+  get_all_notifications : (text) -> (vec ProjectNotification) query;
   get_all_offers_which_are_pending_for_mentor : () -> (
       vec OfferToProject,
     ) query;
@@ -513,6 +529,7 @@ service : () -> {
   get_area_focus_expertise : () -> (vec Role_1) query;
   get_blog_post : () -> (vec record { principal; vec Blog }) query;
   get_cohort : () -> (vec CohortDetails) query;
+  get_dapp_link : (text) -> (text) query;
   get_declined_request_for_mentor : (principal) -> (
       vec OfferToSendToMentor,
     ) query;
@@ -544,6 +561,7 @@ service : () -> {
   get_my_project : () -> (ProjectInfoInternal) query;
   get_notifications_for_hubs : () -> (vec NotificationProject) query;
   get_pending_cycles : () -> (nat) query;
+  get_pending_money_requestes : (text) -> (vec ProjectNotification) query;
   get_pending_request_for_mentor : (principal) -> (
       vec OfferToSendToMentor,
     ) query;
@@ -617,10 +635,13 @@ service : () -> {
   reply_to_suggestion_caller : (nat64, text, text) -> (nat64, text);
   self_decline_request : (text) -> (text);
   self_decline_request_for_mentor : (text) -> (text);
+  send_money_access_request : (text) -> (text);
   send_offer_to_mentor : (principal, text, text) -> (text);
   send_offer_to_project : (text, text, principal) -> (text);
+  send_private_docs_access_request : (text) -> (text);
   send_request_as_mentor : (text, text) -> (text);
   switch_role : (text, text) -> ();
+  update_dapp_link : (text, text) -> (text);
   update_founder_caller : (FounderInfo) -> (text);
   update_mentor : (MentorProfile) -> (text);
   update_project : (text, ProjectInfo) -> (text);

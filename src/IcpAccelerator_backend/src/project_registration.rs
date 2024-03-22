@@ -44,7 +44,7 @@ pub struct Jobs {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
-pub struct JobsInternal{
+pub struct JobsInternal {
     job_data: Jobs,
     timestamp: u64,
     project_name: String,
@@ -57,7 +57,7 @@ pub struct ProjectInfo {
     pub project_name: String,
     pub project_logo: Vec<u8>,
     pub preferred_icp_hub: Option<String>,
-    pub live_on_icp_mainnet: Option<String>,
+    pub live_on_icp_mainnet: Option<bool>,
     pub money_raised_till_now: Option<bool>,
     pub supports_multichain: Option<String>,
     pub project_elevator_pitch: Option<String>,
@@ -84,6 +84,7 @@ pub struct ProjectInfo {
     upload_private_documents: Option<bool>,
     private_docs: Option<Docs>,
     public_docs: Option<Docs>,
+    pub dapp_link: Option<String>,
 }
 
 impl ProjectInfo {}
@@ -96,7 +97,7 @@ pub struct Docs {
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct MoneyRaised {
-    pub target_amount: f64,
+    pub target_amount: Option<f64>,
     pub icp_grants: Option<String>,
     pub investors: Option<String>,
     pub sns: Option<String>,
@@ -237,11 +238,33 @@ pub type ProjectDetails = HashMap<Principal, ProjectInfoInternal>;
 pub type JobDetails = HashMap<Principal, Vec<JobsInternal>>;
 pub type SpotlightProjects = Vec<SpotlightDetails>;
 
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+pub struct AccessRequest {
+    sender: Principal,
+    name: String,
+    image: Vec<u8>,
+    project_id: String,
+    request_type: String,
+}
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+enum ProjectNotificationType {
+    AccessRequest(AccessRequest),
+}
+
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+pub struct ProjectNotification {
+    notification_type: ProjectNotificationType,
+    timestamp: u64,
+}
+
+pub type MoneyAccess = HashMap<Principal, Vec<AccessRequest>>;
+pub type PrivateDocsAccess = HashMap<Principal, Vec<AccessRequest>>;
 thread_local! {
+    pub static PROJECT_ACCESS_NOTIFICATIONS : RefCell<HashMap<String, Vec<ProjectNotification>>> = RefCell::new(HashMap::new());
     pub static  APPLICATION_FORM: RefCell<ApplicationDetails> = RefCell::new(ApplicationDetails::new());
     pub static PROJECT_DETAILS: RefCell<ProjectDetails> = RefCell::new(ProjectDetails::new());
     pub static NOTIFICATIONS: RefCell<Notifications> = RefCell::new(Notifications::new());
-    static OWNER_NOTIFICATIONS: RefCell<HashMap<Principal, Vec<NotificationForOwner>>> = RefCell::new(HashMap::new());
+    pub static OWNER_NOTIFICATIONS: RefCell<HashMap<Principal, Vec<NotificationForOwner>>> = RefCell::new(HashMap::new());
     pub static PROJECT_ANNOUNCEMENTS:RefCell<ProjectAnnouncements> = RefCell::new(ProjectAnnouncements::new());
     pub static BLOG_POST:RefCell<BlogPost> = RefCell::new(BlogPost::new());
 
@@ -255,6 +278,16 @@ thread_local! {
     pub static SPOTLIGHT_PROJECTS: RefCell<SpotlightProjects> = RefCell::new(SpotlightProjects::new());
     pub static  MONEY_ACCESS: RefCell<Vec<Principal>> = RefCell::new(Vec::new());
     pub static PRIVATE_DOCS_ACCESS: RefCell<Vec<Principal>> = RefCell::new(Vec::new());
+    pub static MONEY_DETAILS_ACCESS_PROJECT_VISE : RefCell<HashMap<String, Vec<Principal>>> = RefCell::new(HashMap::new());
+    pub static PRIVATE_DOCS_ACCESS_PROJECT_VISE : RefCell<HashMap<String, Vec<Principal>>> = RefCell::new(HashMap::new());
+
+
+    pub static  MONEY_ACCESS_AWAITS :RefCell<MoneyAccess> = RefCell::new(MoneyAccess::new());
+    pub static DECLINED_MONEY_ACCESS :RefCell<MoneyAccess> = RefCell::new(MoneyAccess::new());
+    pub static APPROVED_MONEY_ACCESS :RefCell<MoneyAccess> = RefCell::new(MoneyAccess::new());
+    pub static  APPROVED_PRIVATE_DOCS_ACCESS :RefCell<PrivateDocsAccess> = RefCell::new(PrivateDocsAccess::new());
+    pub static  PRIVATE_DOCS_ACCESS_AWAITS :RefCell<PrivateDocsAccess> = RefCell::new(PrivateDocsAccess::new());
+    pub static DECLINED_PRIVATE_DOCS_ACCESS :RefCell<PrivateDocsAccess> = RefCell::new(PrivateDocsAccess::new());
 
 }
 
@@ -297,11 +330,14 @@ pub async fn create_project(info: ProjectInfo) -> String {
         let total_raised = money_raised.total_amount();
         if total_raised <= 0.0 {
             return "The total amount raised must be greater than zero.".to_string();
-        } else if total_raised > money_raised.target_amount {
+        } else if total_raised
+            > money_raised
+                .target_amount
+                .expect("Target amount must be set.")
+        {
             return "The sum of funding sources exceeds the target amount.".to_string();
         }
     }
-
     // Validate the project info
 
     // Validation succeeded, continue with creating the project
@@ -673,10 +709,8 @@ pub fn get_notifications_for_owner() -> Vec<NotificationForOwner> {
     })
 }
 
-pub async fn update_team_member(project_id: &str, member_principal_id : Principal ) -> String {
-    
-
-   let member_uid =  USER_STORAGE.with(|storage|{
+pub async fn update_team_member(project_id: &str, member_principal_id: Principal) -> String {
+    let member_uid = USER_STORAGE.with(|storage| {
         let storage = storage.borrow();
         let user = storage.get(&member_principal_id);
         let u = user.expect("principal hasn't registered himself as a user");
@@ -745,11 +779,11 @@ pub fn add_announcement(mut announcement_details: Announcements) -> String {
     let current_time = time();
 
     let project_id_exists = APPLICATION_FORM.with(|forms| {
-        forms.borrow().values().any(|projects| 
-            projects.iter().any(|project_info| 
-                project_info.uid == announcement_details.project_id
-            )
-        )
+        forms.borrow().values().any(|projects| {
+            projects
+                .iter()
+                .any(|project_info| project_info.uid == announcement_details.project_id)
+        })
     });
 
     if !project_id_exists {
@@ -907,7 +941,7 @@ pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUse
                 announcements: announcements_project,
                 reviews: project_reviews,
                 website_social_group: project_internal.params.project_discord.clone(),
-                live_link_of_project: project_internal.params.live_on_icp_mainnet.clone(),
+                live_link_of_project: project_internal.params.dapp_link.clone(),
                 jobs_opportunity: Some(jobs_opportunity_posted),
                 area_of_focus: Some(project_internal.params.project_area_of_focus.clone()),
                 country_of_project: project_internal.params.preferred_icp_hub.clone(),
@@ -1009,7 +1043,9 @@ pub fn get_dummy_venture_capitalist() -> VentureCapitalist {
         announcement_details: Some("New funding round opened".to_string()),
         user_data: get_dummy_user_information(),
         website_link: "hfdfdfdf".to_string(),
-        linkedin_link: "dfdfdfdf".to_string(), // Generate dummy user information
+        linkedin_link: "dfdfdfdf".to_string(),
+        registered_country: Some("india".to_string()),
+        registered: true, // Generate dummy user information
     }
 }
 
@@ -1088,7 +1124,7 @@ pub fn post_job(params: Jobs) -> String {
                             timestamp: current_time,
                             project_name: project_data_for_job.project_name,
                             project_desc: project_data_for_job.project_description,
-                            project_logo: project_data_for_job.project_logo
+                            project_logo: project_data_for_job.project_logo,
                         };
                         state
                             .entry(principal_id)
@@ -1185,4 +1221,146 @@ pub fn get_job_category() -> Vec<JobCategory> {
             name: "Request For Proposal".to_string(),
         },
     ]
+}
+
+#[update]
+pub async fn send_money_access_request(project_id: String) -> String {
+    let caller = caller();
+    let declined_request = DECLINED_MONEY_ACCESS.with(|requests| {
+        let requests = requests.borrow();
+
+        // Check if the caller exists in the HashMap
+        if let Some(request_vec) = requests.get(&caller) {
+            // Iterate through the Vec<AccessRequest> to find a matching project_id
+            request_vec
+                .iter()
+                .any(|request| request.project_id == project_id)
+        } else {
+            false
+        }
+    });
+
+    if declined_request {
+        return "Your request has already been declined".to_string();
+    }
+
+    let request_awaiting = MONEY_ACCESS_AWAITS.with(|requests| {
+        let requests = requests.borrow();
+
+        // Check if the caller exists in the HashMap
+        if let Some(request_vec) = requests.get(&caller) {
+            // Iterate through the Vec<AccessRequest> to find a matching project_id
+            request_vec
+                .iter()
+                .any(|request| request.project_id == project_id)
+        } else {
+            false
+        }
+    });
+
+    if request_awaiting {
+        return "You have already requested for it".to_string();
+    }
+
+    //sender
+
+    let userData: Result<UserInformation, &str> = get_user_info();
+
+    let userData = userData.clone().unwrap();
+
+    //access whom you wanna send the notification; receiver
+
+    let approval_request = AccessRequest {
+        sender: caller,
+        image: userData.profile_picture.expect("not found"),
+        name: userData.full_name.clone(),
+        project_id: project_id.clone(),
+        request_type: "money_details_access".to_string(),
+    };
+
+    let notification_to_send = ProjectNotification {
+        notification_type: ProjectNotificationType::AccessRequest(approval_request),
+        timestamp: time(),
+    };
+    PROJECT_ACCESS_NOTIFICATIONS.with(|project_notifications| {
+        let mut notifications = project_notifications.borrow_mut();
+        notifications
+            .entry(project_id)
+            .or_default()
+            .push(notification_to_send)
+    });
+
+    format!("approval request is sent")
+}
+
+// pub get_money_details_access()->String{
+
+// }
+
+#[update]
+pub async fn send_private_docs_access_request(project_id: String) -> String {
+    //sender
+    let caller: Principal = caller();
+    let userData: Result<UserInformation, &str> = get_user_info();
+
+    let userData = userData.clone().unwrap();
+
+    //access whom you wanna send the notification; receiver
+
+    let approval_request = AccessRequest {
+        sender: caller,
+        image: userData.profile_picture.expect("not found"),
+        name: userData.full_name.clone(),
+        project_id: project_id.clone(),
+        request_type: "private_docs_access".to_string(),
+    };
+
+    let notification_to_send = ProjectNotification {
+        notification_type: ProjectNotificationType::AccessRequest(approval_request),
+        timestamp: time(),
+    };
+    PROJECT_ACCESS_NOTIFICATIONS.with(|project_notifications| {
+        let mut notifications = project_notifications.borrow_mut();
+        notifications
+            .entry(project_id)
+            .or_default()
+            .push(notification_to_send)
+    });
+
+    format!("approval request is sent")
+}
+
+#[query]
+pub fn get_all_notifications(project_id: String) -> Vec<ProjectNotification> {
+    PROJECT_ACCESS_NOTIFICATIONS.with(|storage| {
+        let projects = storage.borrow();
+        let project_info = projects.get(&project_id);
+        let projects = project_info
+            .expect("couldn't get project information")
+            .clone();
+        projects
+    })
+}
+
+#[query]
+pub fn get_pending_money_requestes(project_id: String) -> Vec<ProjectNotification> {
+    PROJECT_ACCESS_NOTIFICATIONS.with(|storage| {
+        let projects = storage.borrow();
+        let project_info = projects.get(&project_id);
+        let projects = project_info
+            .expect("couldn't get project information")
+            .clone();
+        projects
+    })
+}
+
+#[query]
+pub fn get_dapp_link(project_id: String) -> String {
+    match find_project_by_id(&project_id) {
+        Some(project_data_internal) => match project_data_internal.params.dapp_link {
+            Some(link) => link,
+            None => "DApp link not available.".to_string(),
+        },
+        None => "Error: Project not_found.".to_string(),
+    }
 }
