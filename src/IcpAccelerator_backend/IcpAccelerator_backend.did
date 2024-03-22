@@ -9,8 +9,14 @@ type AccessRequest = record {
 type Announcements = record {
   announcement_title : text;
   announcement_description : text;
-  timestamp : nat64;
   project_id : text;
+};
+type AnnouncementsInternal = record {
+  announcement_data : Announcements;
+  timestamp : nat64;
+  project_desc : text;
+  project_logo : vec nat8;
+  project_name : text;
 };
 type ApprovalRequest = record {
   bio : text;
@@ -248,7 +254,7 @@ type ProjectInfoForUser = record {
   website_social_group : opt text;
   mentor_associated : opt vec MentorProfile;
   country_of_project : opt text;
-  announcements : vec record { principal; vec Announcements };
+  announcements : vec record { principal; vec AnnouncementsInternal };
   live_link_of_project : opt text;
   jobs_opportunity : opt vec JobsInternal;
 };
@@ -536,7 +542,10 @@ service : () -> {
   get_all_sent_request : () -> (vec OfferToMentor) query;
   get_all_sent_request_for_mentor : () -> (vec OfferToProject) query;
   get_all_users_information : () -> (vec UserInformation) query;
-  get_announcements : () -> (vec record { principal; vec Announcements }) query;
+  get_announcements : () -> (
+      vec record { principal; vec AnnouncementsInternal },
+    ) query;
+  get_announcements_by_project_id : (text) -> (vec AnnouncementsInternal) query;
   get_area_focus_expertise : () -> (vec Role_1) query;
   get_blog_post : () -> (vec record { principal; vec Blog }) query;
   get_cohort : () -> (vec CohortDetails) query;
@@ -550,7 +559,7 @@ service : () -> {
   get_job_category : () -> (vec Role_1) query;
   get_jobs_posted_by_project : (text) -> (vec JobsInternal) query;
   get_latest_announcements : () -> (
-      vec record { principal; vec Announcements },
+      vec record { principal; vec AnnouncementsInternal },
     ) query;
   get_latest_listed_project : () -> (vec ProjectInfoInternal) query;
   get_latest_live_proposal : () -> (vec ProjectInfoInternal) query;

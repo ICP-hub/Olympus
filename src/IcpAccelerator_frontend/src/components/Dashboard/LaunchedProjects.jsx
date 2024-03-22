@@ -9,6 +9,8 @@ import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
+import { useInView } from 'react-intersection-observer';
+import { useSpring, animated ,useTrail} from 'react-spring';
 
 const LaunchedProjects = () => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -23,6 +25,19 @@ const LaunchedProjects = () => {
   const gradientStops = isHovered
     ? { stop1: "#4087BF", stop2: "#3C04BA" }
     : { stop1: "#B5B5B5", stop2: "#5B5B5B" };
+
+
+    // const [ref, inView] = useInView({
+    //   triggerOnce: true, // Trigger the animation once
+    //   threshold: 0.1, // Trigger when 10% of the element is in view
+    // });
+
+    // // Define the fade-in animation
+    // const fadeIn = useSpring({
+    //   opacity: inView ? 1 : 0,
+    //   transform: inView ? 'translateY(0)' : 'translateY(20px)',
+    //   config: { duration: 1000 }, // Customize duration as needed
+    // });
 
   useEffect(() => {
     if (percent < 100) {
@@ -97,7 +112,7 @@ const LaunchedProjects = () => {
       .then((result) => {
         console.log("result-in-get-all-projects", result);
 
-        if (!result || result.length == 0) {
+        if (!result || result.length === 0) {
           setNoData(true)
           setAllProjectData(defaultArray)
         } else {
@@ -118,12 +133,13 @@ const LaunchedProjects = () => {
     } else {
       getAllProject(IcpAccelerator_backend);
     }
+    return
   }, [actor]);
 
 
   const handleNavigate = (projectId) => {
     if (isAuthenticated) {
-      navigate(`/individual-project-details-user/${projectId}`)
+      navigate(`/individual-project-details-project-owner/${projectId}`)
     }else{
       toast.error('Please Sign Up !!!')
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -161,7 +177,7 @@ const LaunchedProjects = () => {
               projectAreaOfFocus = data.projectAreaOfFocus
             }
             return (
-              <div className="w-full sm:w-1/2 md:w-1/3 mb-2 px-3 hover:scale-105 transition-transform duration-300 ease-in-out" key={index}>
+              <animated.div  className="w-full sm:w-1/2 md:w-1/3 mb-2 px-3 hover:scale-105 transition-transform duration-300 ease-in-out" key={index}>
                 <div className="flex justify-between items-baseline mb-4 flex-wrap bg-white m-2 overflow-hidden rounded-lg shadow-lg">
                   <div className="p-4">
                     <div className="flex justify-between items-baseline mb-2 flex-col flex-wrap w-[265px]">
@@ -253,7 +269,7 @@ const LaunchedProjects = () => {
                     </button>
                   </div>
                 </div>
-              </div>
+              </animated.div>
             );
           })}
 

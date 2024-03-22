@@ -180,21 +180,13 @@ const CreateProjectRegistration = () => {
   const projectFullData = useSelector(
     (currState) => currState.projectData.data
   );
-  // console.log("Checking projectFullData Over Here ===> ", projectFullData);
   const dispatch = useDispatch();
   const { countries } = useCountries();
-
   const [activeTab, setActiveTab] = useState(projectRegistration[0].id);
   const [formData, setFormData] = useState({});
   const [step, setStep] = useState(0);
   const [isCurrentStepValid, setIsCurrentStepValid] = useState(false);
   const [userHasInteracted, setUserHasInteracted] = useState(false);
-  const [projectLogo, setProjectLogo] = useState(null);
-  const [projectLogoPreview, setProjectLogoPreview] = useState(null);
-  const [isProjectLoading, setIsProjectLoading] = useState(false);
-  const [isLoadingMultiple, setIsMultipleLoading] = useState(false);
-  const [multipleImagesPreview, setMultipleImagesPreview] = useState([]);
-  const [multipleImageData, setMultipleImageData] = useState([]);
   const [imageData, setImageData] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [logoData, setLogoData] = useState(null);
@@ -214,7 +206,6 @@ const CreateProjectRegistration = () => {
     const encoder = new TextEncoder();
     return encoder.encode(str);
   }
-  // console.log("userData", userData);
 
   const getTabClassName = (tab) => {
     return `inline-block p-2 font-bold ${
@@ -262,7 +253,8 @@ const CreateProjectRegistration = () => {
     name: "private_docs",
   });
 
-  console.log('private',getValues('private_docs'))
+  console.log("private", getValues("private_docs"));
+
   const handleTabClick = async (tab) => {
     const targetStep = projectRegistration.findIndex(
       (header) => header.id === tab
@@ -278,12 +270,12 @@ const CreateProjectRegistration = () => {
     } else {
     }
   };
-  // Watch the value of live_on_icp_mainnet to update isLiveOnICP state
+
   const liveOnICPMainnetValue = watch("live_on_icp_mainnet");
   const MoneyRaisedTillNow = watch("money_raised_till_now");
   const IsMultiChain = watch("multi_chain");
   const IsPrivateDocument = watch("upload_private_documents");
-  // checking total for target market
+
   const checkTotal = (event) => {
     // Prevent default form submission behavior
     const targetAmount = watch(Number("target_amount"));
@@ -294,8 +286,6 @@ const CreateProjectRegistration = () => {
       Number("raised_from_other_ecosystem")
     );
 
-    console.log(icpGrants);
-    console.log(total);
     const total = icpGrants + investors + sns + raisedFromOtherEcosystem;
 
     if (total > targetAmount) {
@@ -306,6 +296,7 @@ const CreateProjectRegistration = () => {
       setError(""); // Clear error if condition is met
     }
   };
+
   useEffect(() => {
     // Update isLiveOnICP based on live_on_icp_mainnet field value
     setIsPrivateDocuments(IsPrivateDocument === "true");
@@ -341,6 +332,7 @@ const CreateProjectRegistration = () => {
     IsPrivateDocument,
     setValue,
   ]);
+
   useEffect(() => {
     if (!userHasInteracted) return;
     const validateStep = async () => {
@@ -571,7 +563,6 @@ const CreateProjectRegistration = () => {
         const byteArray = await compressedFile.arrayBuffer();
         const logoDataArray = new Uint8Array(byteArray);
         setLogoData(logoDataArray);
-        console.log("logoData", logoDataArray);
         setValue("logoData", logoDataArray, { shouldValidate: true });
       } catch (error) {
         console.error("Error processing the logo:", error);
@@ -618,7 +609,6 @@ const CreateProjectRegistration = () => {
         const byteArray = await compressedFile.arrayBuffer();
         const coverDataArray = new Uint8Array(byteArray);
         setCoverData(coverDataArray);
-        console.log("coverData", coverDataArray);
         setValue("coverData", coverDataArray, { shouldValidate: true });
         clearErrors("coverData");
       } catch (error) {
@@ -641,9 +631,7 @@ const CreateProjectRegistration = () => {
   );
   const handleNext = async () => {
     const fieldsToValidate = steps[step].fields.map((field) => field.name);
-    console.log("fieldsToValidate ===> ", fieldsToValidate);
     const result = await trigger(fieldsToValidate);
-    console.log(result);
     // const isImageUploaded = imageData && imageData.length > 0;
 
     // if (!isImageUploaded) {
@@ -689,8 +677,8 @@ const CreateProjectRegistration = () => {
       }, {});
       reset(formattedData);
       setFormData(formattedData);
-      console.log("formattedData341", formattedData);
-      console.log("342 data", data);
+      // console.log("formattedData341", formattedData);
+      // console.log("342 data", data);
       if (formattedData.imageData) {
         bufferToImageBlob(formattedData.imageData)
           .then((imageUrl) => {
@@ -723,10 +711,10 @@ const CreateProjectRegistration = () => {
               });
               // You might also need to handle setting the image for display if required
 
-              console.log(
-                "kya scene hai profile_picture ka ===>",
-                userData.profile_picture[0]
-              );
+              // console.log(
+              //   "kya scene hai profile_picture ka ===>",
+              //   userData.profile_picture[0]
+              // );
             })
             .catch((error) => console.error("Error converting image:", error));
         }
@@ -736,13 +724,13 @@ const CreateProjectRegistration = () => {
   }, [projectFullData, reset, setValue, userData]);
 
   const errorFunc = (val) => {
-    console.log("val", val);
+    // console.log("val", val);
   };
   const sendingProjectData = async (val) => {
     // console.log("run sendingProjectData =========");
     val.project_cover = val.project_cover[0] || [];
     val.project_logo = val.project_logo[0] || [];
-    console.log("sendingProjectData ==>> ", val);
+    // console.log("sendingProjectData ==>> ", val);
 
     // let result;
 
@@ -772,6 +760,7 @@ const CreateProjectRegistration = () => {
     const updatedFormData = { ...formData, ...data };
     setFormData(updatedFormData);
 
+    console.log('updatedFormData',updatedFormData)
     if (step < steps.length - 1) {
       handleNext();
     } else if (
@@ -786,14 +775,14 @@ const CreateProjectRegistration = () => {
         IsPrivateDocument === "true" ? true : false;
       const updateliveOnICPMainnetValue =
         liveOnICPMainnetValue === "true" ? true : false;
-      const privateDocs = {
-        title: updatedFormData.title || "",
-        link: updatedFormData.link || "",
-      };
-      const publicDocs = {
-        title: updatedFormData.title2 || "",
-        link: updatedFormData.link2 || "",
-      };
+      const privateDocs = updatedFormData.private_docs.map(doc => ({
+        title: doc.title,
+        link: doc.link
+    }));
+    //   const publicDocs = updatedFormData.public_docs.map(doc => ({
+    //     title: doc.title,
+    //     link: doc.link
+    // }));
       const moneyRaised = {
         target_amount: [
           updatedFormData.target_amount
@@ -821,7 +810,7 @@ const CreateProjectRegistration = () => {
         },
         upload_private_documents: [updateIsPrivateDocument],
         project_elevator_pitch: [updatedFormData.project_elevator_pitch],
-        public_docs: [publicDocs],
+        public_docs: [],
         private_docs: [privateDocs],
         technical_docs: [updatedFormData.technical_docs],
         reason_to_join_incubator:
@@ -862,14 +851,14 @@ const CreateProjectRegistration = () => {
         project_cover: [updatedFormData.coverData],
       };
 
-      console.log("tempObj2 kaam kia ????? ", tempObj2); // work kia
+      // console.log("tempObj2 kaam kia ????? ", tempObj2); // work kia
       setProjectDataObject(tempObj2);
       await sendingProjectData(tempObj2);
     } else if (
       specificRole === null ||
       (specificRole === undefined && step > steps.length - 1)
     ) {
-      console.log("first time visit ");
+      // console.log("first time visit ");
       let tempObj = {
         user_data: {
           profile_picture: [updatedFormData.imageData] || [],
@@ -929,7 +918,7 @@ const CreateProjectRegistration = () => {
         github_link: [updatedFormData.github_link],
         project_cover: [updatedFormData.coverData],
       };
-      console.log("tempObj kaam kia ????? ", tempObj); // work kia
+      // console.log("tempObj kaam kia ????? ", tempObj); // work kia
 
       setProjectDataObject(tempObj);
       await sendingProjectData(tempObj);
@@ -1309,16 +1298,17 @@ const CreateProjectRegistration = () => {
                             Title
                           </label>
                           <input
-                            {...register(`private_docs[${index}].title`)}
+                            {...register(`private_docs.${index}.title`)}
                             className={`bg-gray-50 border-2 ${
                               errors.title1
                                 ? "border-red-500 placeholder:text-red-500"
                                 : "border-[#737373]"
                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                           />
-                          {errors.items?.[index]?.title && (
-                            <p>{errors.items[index].title.message}</p>
-                          )}
+                          {errors.private_docs &&
+                            errors.private_docs[index]?.title && (
+                              <p>{errors.private_docs[index].title.message}</p>
+                            )}
                           <label
                             htmlFor="link"
                             className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
@@ -1326,76 +1316,30 @@ const CreateProjectRegistration = () => {
                             Link
                           </label>
                           <input
-                            {...register(`items[${index}].link`)}
+                            {...register(`private_docs.${index}.link`)}
                             className={`bg-gray-50 border-2 ${
                               errors.link
                                 ? "border-red-500 placeholder:text-red-500"
                                 : "border-[#737373]"
                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                           />
-                          {errors.items?.[index]?.link && (
-                            <p>{errors.items[index].link.message}</p>
-                          )}
+                          {errors.private_docs &&
+                            errors.private_docs[index]?.link && (
+                              <p>{errors.private_docs[index].link.message}</p>
+                            )}
                         </div>
                       </div>
                     ))}
-                   <div>
-                   <button
-                      type="button"
-                      className="bg-blue-500 rounded-lg text-white p-2"
-                      onClick={() => append({ title: "", link: "" })}
-                    >
-                      Add More
-                    </button>
-                   </div>
-                    {/* <div className="z-0 w-full mb-3 group">
-                      <label
-                        htmlFor="title1"
-                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                    <div>
+                      <button
+                        type="button"
+                        className="bg-blue-500 rounded-lg text-white p-2"
+                        onClick={() => append({ title: "", link: "" })}
                       >
-                        Title
-                      </label>
-                      <input
-                        type="text"
-                        name="title1"
-                        id="title1"
-                        {...register("title1")}
-                        className={`bg-gray-50 border-2 ${
-                          errors.title1
-                            ? "border-red-500 placeholder:text-red-500"
-                            : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                      />
-                      {errors.title1 && (
-                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                          {errors.title1.message}
-                        </p>
-                      )}
+                        Add More
+                      </button>
                     </div>
-                    <div className="z-0 w-full mb-3 group">
-                      <label
-                        htmlFor="link1"
-                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                      >
-                        Link
-                      </label>
-                      <input
-                        type="text"
-                        name="link1"
-                        id="link1"
-                        {...register("link1")}
-                        className={`bg-gray-50 border-2 ${
-                          errors.link1
-                            ? "border-red-500 placeholder:text-red-500"
-                            : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                      />
-                      {errors.link1 && (
-                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                          {errors.link1.message}
-                        </p>
-                      )}
-                    </div> */}
+                    
                   </>
                 )}
                 <div className="z-0 w-full mb-3 group">
@@ -1842,353 +1786,6 @@ const CreateProjectRegistration = () => {
               goToNext: handleNext,
             })}
           <Toaster />
-          {/* <form className="w-full px-4" onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex flex-col mb-6">
-              <div className="flex flex-row flex-wrap-reverse">
-                <div className="flex flex-col w-1/2">
-                <div className="flex-row w-full flex justify-start gap-4 items-center">
-                    <div className="mb-3 ml-6 h-24 w-24 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
-                      {isProjectLoading ? (
-                        <div>Loading...</div>
-                      ) : projectLogoPreview ? (
-                        <img
-                          src={projectLogoPreview}
-                          alt="Profile"
-                          className="h-full w-full object-cover"
-                        />
-                      ) : (
-                        <svg
-                          width="35"
-                          height="37"
-                          viewBox="0 0 35 37"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="bg-no-repeat"
-                        >
-                          <path
-                            d="M8.53049 8.62583C8.5304 13.3783 12.3575 17.2449 17.0605 17.2438C21.7634 17.2428 25.5907 13.3744 25.5908 8.62196C25.5909 3.8695 21.7638 0.00287764 17.0608 0.00394405C12.3579 0.00501045 8.53058 3.87336 8.53049 8.62583ZM32.2249 36.3959L34.1204 36.3954L34.1205 34.4799C34.1206 27.0878 28.1667 21.0724 20.8516 21.0741L13.2692 21.0758C5.95224 21.0775 -3.41468e-05 27.0955 -0.000176714 34.4876L-0.000213659 36.4032L32.2249 36.3959Z"
-                            fill="#BBBBBB"
-                          />
-                        </svg>
-                      )}
-                    </div>
-
-                    <Controller
-                      name="project_logo"
-                      control={control}
-                      render={({ field }) => (
-                        <>
-                          <input
-                            id="images"
-                            type="file"
-                            name="images"
-                            className="hidden"
-                            onChange={(e) => {
-                              const file = e.target.files[0];
-                              addProjectLogoHandler(file);
-                            }}
-                          />
-                          <label
-                            htmlFor="images"
-                            className="p-2 border-2 border-blue-800 items-center rounded-md text-md bg-transparent text-blue-800 cursor-pointer font-extrabold"
-                          >
-                            Project Logo
-                          </label>
-                        </>
-                      )}
-                    />
-
-                    {errors.project_logo && (
-                      <span className="mt-1 text-sm text-red-500 font-bold text-start px-4">
-                        {errors.project_logo.message}
-                      </span>
-                    )}
-                  </div>
-                  <div className="mb-6">
-                    <label
-                      htmlFor="project_name"
-                      className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                    >
-                      Project Name
-                    </label>
-                    <input
-                      type="text" // Assuming project_name is of type text
-                      name="project_name"
-                      id="project_name"
-                      {...register("project_name")}
-                      className={`bg-gray-50 border-2 ${errors["project_name"]
-                          ? "border-red-500 placeholder:text-red-500"
-                          : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block lg:md:w-full  p-2.5 `}
-                      placeholder="Enter the project name    "
-                    />
-                    {errors["project_name"] && (
-                      <span className="mt-1 text-sm text-red-500 font-bold flex justify-start ">
-                        {errors["project_name"].message}
-                      </span>
-                    )}
-                  </div>
-                  <div className="mb-6">
-                    <label
-                      htmlFor="project_url"
-                      className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                    >
-                      Project URL
-                    </label>
-                    <input
-                      type="text" // Assuming project_name is of type text
-                      name="project_url"
-                      id="project_url"
-                      {...register("project_url")}
-                      className={`bg-gray-50 border-2 ${errors["project_url"]
-                          ? "border-red-500 placeholder:text-red-500"
-                          : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block lg:md:w-full p-2.5 `}
-                      placeholder="Enter the project URL"
-                    />
-                    {errors["project_url"] && (
-                      <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                        {errors["project_url"].message}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className="w-full md:w-1/2  flex justify-center ">
-                  <div className="md:w-[300px] w-full mb-8 flex flex-col ">
-                    <div className="flex flex-col justify-between border border-gray-300 rounded-xl pt-3">
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center">
-                          <img
-                            className="object-fill rounded-full h-12 w-12 ml-4"
-                            src={imagePreview}
-                            alt="Project logo"
-                          />
-                          <div className="ml-2">
-                            <p className="text-[16px] font-extrabold text-black">
-                              project
-                            </p>
-                            <p
-                              className="truncate overflow-hidden whitespace-nowrap text-[10px] text-gray-400"
-                              style={{ maxHeight: "4.5rem" }}
-                            >
-                             
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                      <p
-                        className="text-[10px] px-4 pt-3 text-gray-400 overflow-hidden"
-                        style={{
-                          display: "-webkit-box",
-                          WebkitLineClamp: "2",
-                          WebkitBoxOrient: "vertical",
-                        }}
-                      >
-                        jgdhgdg
-                      </p>
-
-                      
-                      <div className="flex items-center w-full mt-4 px-2">
-                        <div className="relative flex-grow  h-2  rounded-lg bg-gradient-to-r from-gray-100 to-black"></div>
-                        <p className="text-xs ml-2 text-black">level 9</p>
-                      </div>
-                     
-                      <div className="w-full px-8 my-5 border-t-2 border-gray-300"></div>
-
-                      <div className="flex flex-row justify-between items-center px-4 pb-4 ">
-                        <img
-                          className="object-fill h-5 w-5 rounded-full"
-                          src={imagePreview}
-                          alt="Project logo"
-                        />
-                        <button className="rounded-sm h-8 w-16 mr-4 border border-gray-300 flex justify-center items-center">
-                          <div className="flex flex-row gap-2 justify-center items-center">
-                            <svg
-                              width="15"
-                              height="15"
-                              viewBox="0 0 8 6"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="transition-transform transform hover:scale-150"
-                            >
-                              <path
-                                d="M3.04007 0.934606C3.44005 0.449652 4.18299 0.449652 4.58298 0.934606L6.79207 3.61298C7.33002 4.26522 6.86608 5.24927 6.02061 5.24927H1.60244C0.756969 5.24927 0.293022 4.26522 0.830981 3.61298L3.04007 0.934606Z"
-                                fill="#737373"
-                              />
-                            </svg>
-                            <span className="text-black text-[10px] font-bold">
-                              UpVote
-                            </span>
-                          </div>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="relative z-0 group">
-                  <label
-                    htmlFor="preferred_icp_hub"
-                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                  >
-                    Can you please share your preferred ICP Hub
-                  </label>
-                  <select
-                    {...register("preferred_icp_hub")}
-                    className={`bg-gray-50 border-2 ${errors.preferred_icp_hub
-                        ? "border-red-500 placeholder:text-red-500"
-                        : "border-[#737373]"
-                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                  >
-                    <option className="text-lg font-bold" value="">
-                      Select your ICP Hub
-                    </option>
-                    {getAllIcpHubs?.map((hub) => (
-                      <option
-                        key={hub.id}
-                        value={`${hub.name} ,${hub.region}`}
-                        className="text-lg font-bold"
-                      >
-                        {hub.name} , {hub.region}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.preferred_icp_hub && (
-                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                      {errors.preferred_icp_hub.message}
-                    </p>
-                  )}
-                </div>
-                <div className="relative z-0 group">
-                  <label
-                    htmlFor="areas_of_focus"
-                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                  >
-                    What are your areas of expertise?
-                  </label>
-                  <select
-                    {...register("areas_of_focus")}
-                    className={`bg-gray-50 border-2 ${errors.areas_of_focus
-                        ? "border-red-500 placeholder:text-red-500"
-                        : "border-[#737373]"
-                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                  >
-                    <option className="text-lg font-bold" value="">
-                      Areas of Focus
-                    </option>
-                    {areaOfExpertise?.map((expert) => (
-                      <option
-                        key={expert.id}
-                        value={`${expert.name}`}
-                        className="text-lg font-bold"
-                      >
-                        {expert.name}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.areas_of_focus && (
-                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                      {errors.areas_of_focus.message}
-                    </p>
-                  )}
-                </div>
-
-                <div className="relative z-0 group">
-                  <label
-                    htmlFor="project_description"
-                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                  >
-                    Project Description
-                  </label>
-                  <textarea
-                    name="project_description"
-                    id="project_description"
-                    {...register("project_description")}
-                    className={`bg-gray-50 border-2 ${errors["project_description"]
-                        ? "border-red-500 placeholder:text-red-500"
-                        : "border-[#737373]"
-                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                    placeholder="Enter the project description"
-                    rows="4" // Adjust the number of rows as needed
-                  ></textarea>
-                  {errors["project_description"] && (
-                    <span className="mt-1 text-sm text-red-500 font-bold">
-                      {errors["project_description"].message}
-                    </span>
-                  )}
-                </div>
-                <div className="flex flex-col w-full justify-start">
-                  <label
-                    htmlFor="project_description"
-                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                  >
-                    Project Cover
-                  </label>
-                  <div
-                    {...getRootProps()}
-                    className=" h-24 w-full rounded border-2 border-black border-dashed flex justify-center items-center overflow-hidden cursor-pointer"
-                  >
-                    <input {...getInputProps()} />
-                    {isLoadingMultiple ? (
-                      <div>Loading...</div>
-                    ) : (
-                      <div className="flex flex-wrap">
-                        {multipleImagesPreview.length > 0 ? (
-                          multipleImagesPreview.map((src, index) => (
-                            <div key={index} className="relative">
-                              <img
-                                src={src}
-                                alt={`Preview ${index}`}
-                                className="h-16 w-16 object-cover"
-                              />
-                              <button
-                                onClick={() => removeImage(index)}
-                                className="absolute top-0 right-0 bg-red-500 text-white rounded-full "
-                              >
-                                X
-                              </button>
-                            </div>
-                          ))
-                        ) : (
-                          <p className="text-black">Drag 'n' drop some files here, or click to select files</p>
-                        )}
-                        {control && (
-                          <Controller
-                            name="project_cover"
-                            control={control}
-                            render={({ field }) => <></>} // As the input is being managed by Dropzone, this remains empty.
-                          />
-                        )}
-
-                        {setError && (
-                          <div>
-                            {multipleImageData.length > 0 && (
-                              <p className="text-sm text-green-500">
-                                Images are ready for upload.
-                              </p>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-
-
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="flex justify-end">
-              <button
-                type="submit"
-                className="text-white font-bold bg-blue-800 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md w-auto sm:w-auto px-5 py-2 text-center mb-4"
-              // onClick={goToNext}
-              >
-                Next
-              </button>
-            </div>
-          </form> */}
         </div>
       </div>
     </section>

@@ -8,6 +8,12 @@ import { jobCategoryHandlerRequest } from "../components/StateManagement/Redux/R
 const schema = yup.object({
   jobTitle: yup.string().required('Job Title is required').min(5, 'Title must be at least 5 characters'),
   jobLocation: yup.string().required('Job Location is required'),
+  jobLink:yup
+  .string()
+  .url("Invalid website URL")
+  .test("is-non-empty", "website URL is required", (value) =>
+    /\S/.test(value)
+  ),
   jobCategory: yup
     .string()
     .test("is-non-empty", "Category are required", (value) =>
@@ -96,6 +102,20 @@ const AddJobsModal = ({ onJobsClose, onSubmitHandler }) => {
                   />
                   {errors.jobLocation && (
                     <span className="mt-1 text-sm text-red-500 font-bold">{errors.jobLocation.message}</span>
+                  )}
+                </div>
+                <div className="col-span-2">
+                  <label htmlFor="jobLink" className="block mb-2 text-lg font-medium text-gray-500 hover:text-black  hover:whitespace-normal truncate overflow-hidden hover:text-left">
+                    Job Link
+                  </label>
+                  <input
+                    type="text"
+                    {...register('jobLink')}
+                    className={`bg-gray-50 border-2 ${errors.jobLink ? 'border-red-500 placeholder:text-red-500' : 'border-[#737373]'} text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    placeholder="Job Link"
+                  />
+                  {errors.jobLink && (
+                    <span className="mt-1 text-sm text-red-500 font-bold">{errors.jobLink.message}</span>
                   )}
                 </div>
                 <div className="col-span-2">
