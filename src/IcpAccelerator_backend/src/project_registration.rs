@@ -1025,7 +1025,7 @@ fn get_dummy_user_information() -> UserInformation {
         area_of_intrest: "Artificial Intelligence".to_string(),
         twitter_id: Some("@janedoeAI".to_string()),
         openchat_username: Some("janedoeChat".to_string()),
-        joining_date: 0,
+        // joining_date: 0,
     }
 }
 

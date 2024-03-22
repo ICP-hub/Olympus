@@ -22,7 +22,7 @@ pub struct UserInformation {
     pub area_of_intrest: String,
     pub twitter_id: Option<String>,
     pub openchat_username: Option<String>,
-    pub joining_date: u64,
+    // pub joining_date: u64,
 }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default)]

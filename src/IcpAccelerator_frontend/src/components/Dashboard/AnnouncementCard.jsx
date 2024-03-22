@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import ment from "../../../assets/images/ment.jpg";
 import { Pagination, Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -8,6 +8,7 @@ import "swiper/css/autoplay";
 import data from "../../data/spotlight.json";
 import { useSelector } from "react-redux";
 import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
+import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 
 const AnnouncementCard = () => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -19,18 +20,18 @@ const AnnouncementCard = () => {
       .get_latest_announcements()
       .then((result) => {
         console.log("result-in-latest-announcement", result);
-        if (!result || result.length == 0) {
-          setNoData(true)
-          // setLatestAnnouncementData(defaultArray)
+        if (!result || result.length === 0) {
+          setNoData(true);
+          setLatestAnnouncementData([]);
         } else {
           setLatestAnnouncementData(result);
-          setNoData(false)
+          setNoData(false);
         }
       })
       .catch((error) => {
-        setNoData(true)
+        setNoData(true);
         // setLatestAnnouncementData(defaultArray)
-        console.log("error-in-get-all-projects", error);
+        console.log("error-in-latest-announcement", error);
       });
   };
 
@@ -44,34 +45,57 @@ const AnnouncementCard = () => {
 
   return (
     // <div className="">
-      <div className="flex justify-between  gap-2 overflow-x-auto">
-        <Swiper
-          modules={[Pagination, Autoplay]}
-          centeredSlides={true}
-          loop={true}
-          autoplay={{
-            delay: 2500,
-            disableOnInteraction: false,
-          }}
-          pagination={{
-            clickable: true,
-          }}
-          spaceBetween={30}
-          slidesPerView="auto"
-          slidesOffsetAfter={100}
-          breakpoints={{
-            640: {
-              slidesPerView: 1,
-            },
-            768: {
-              slidesPerView: 2,
-            },
-            1024: {
-              slidesPerView: 3,
-            },
-          }}
-        >
-          {data.map((card, index) => (
+    <div className="flex justify-between  gap-2 overflow-x-auto">
+      <Swiper
+        modules={[Pagination, Autoplay]}
+        centeredSlides={true}
+        loop={true}
+        autoplay={{
+          delay: 2500,
+          disableOnInteraction: false,
+        }}
+        pagination={{
+          clickable: true,
+        }}
+        spaceBetween={30}
+        slidesPerView="auto"
+        slidesOffsetAfter={100}
+        breakpoints={{
+          640: {
+            slidesPerView: 1,
+          },
+          768: {
+            slidesPerView: 2,
+          },
+          1024: {
+            slidesPerView: 3,
+          },
+        }}
+      >
+        {latestAnnouncementData &&
+          latestAnnouncementData.map((data, index) => {
+            console.log("data", data);
+            let projectName = "";
+            let projectImage = "";
+            let projectDescription = "";
+            let announcementDate= "";
+          
+            if (noData !== false) {
+              projectName = data?.project_name;
+              projectImage = uint8ArrayToBase64(data?.project_logo);
+              projectDescription = data?.project_desc;
+              announcementDate = timeAgo(data?.timestamp);
+            } else {
+              projectName = data.projectName;
+              projectImage = data.projectImage;
+              projectDescription = data.projectDescription;
+              jobName = "";
+              jobDescription = "";
+              jobCategory = "";
+              jobLink = "";
+              jobLocation = "";
+            }
+
             <SwiperSlide key={index}>
               <div className="shadow-md rounded-3xl overflow-hidden border-2 ">
                 <div className="p-6">
@@ -106,10 +130,10 @@ const AnnouncementCard = () => {
                   </div>
                 </div>
               </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </div>
+            </SwiperSlide>;
+          })}
+      </Swiper>
+    </div>
     // </div>
   );
 };
