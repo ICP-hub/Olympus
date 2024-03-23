@@ -56,13 +56,15 @@ const ViewInvestor = () => {
         console.log("result-in-get-all-investors", result);
         if (!result || result.length == 0) {
           setNoData(true);
-          setData(investors);
+          setData([]);
         } else {
           setNoData(false);
           setData(result);
         }
       })
       .catch((error) => {
+        setNoData(true);
+          setData([]);
         console.log("error-in-get-all-investors", error);
       });
   };
@@ -114,7 +116,8 @@ const ViewInvestor = () => {
         </div>
       </div>
     <div className="flex flex-wrap justify-center">
-      {data.map((investor, index) => {
+      {noData ? <h1>No Data</h1> :
+      data.map((investor, index) => {
         let id = "";
         let img = "";
         let name = "";

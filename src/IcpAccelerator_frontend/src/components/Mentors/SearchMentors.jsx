@@ -89,11 +89,13 @@ function SearchMentors() {
           setData(result);
           setNoData(false);
         } else {
-          setData(cardData);
+          setData([]);
           setNoData(true);
         }
       })
       .catch((error) => {
+        setData([]);
+        setNoData(true);
         console.log("error-in-get-all-mentors", error);
       });
   };
@@ -153,7 +155,8 @@ function SearchMentors() {
       </div>
 
       <div className="flex flex-wrap justify-center">
-        {data.map((mentor, index) => {
+        {noData ? <h1>No Data</h1> :
+        data.map((mentor, index) => {
           let id = "";
           let img = "";
           let name = "";
