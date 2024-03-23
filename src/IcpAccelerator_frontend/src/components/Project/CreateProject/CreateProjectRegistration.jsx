@@ -21,6 +21,7 @@ import CreateProjectsDetails from "./CreateProjectsDetails";
 import { bufferToImageBlob } from "../../Utils/formatter/bufferToImageBlob";
 import CreateProjectsAdditionalDetails from "./CreateProjectsAdditionalDetails";
 import ReactSelect from "react-select";
+import { useNavigate } from "react-router-dom";
 
 const validationSchema = {
   personalDetails: yup.object().shape({
@@ -166,6 +167,8 @@ const validationSchema = {
 };
 
 const CreateProjectRegistration = () => {
+  const navigate = useNavigate();
+
   const actor = useSelector((currState) => currState.actors.actor);
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
   const areaOfExpertise = useSelector(
@@ -742,9 +745,13 @@ const CreateProjectRegistration = () => {
       console.log("register register_project functn k pass reached");
       await actor.register_project(val).then((result) => {
         console.log("register register_project functn ka result ", result);
-        toast.success(result);
-        // navigate("/")
-        // window.location.href = "/";
+        if (result && result.length > 0) {
+          toast.success(result);
+          navigate("/");
+          window.location.href = "/";
+        } else {
+          toast.error(result);
+        }
       });
       // }
       // await dispatch(userRoleHandler());
@@ -760,7 +767,7 @@ const CreateProjectRegistration = () => {
     const updatedFormData = { ...formData, ...data };
     setFormData(updatedFormData);
 
-    console.log('updatedFormData',updatedFormData)
+    console.log("updatedFormData", updatedFormData);
     if (step < steps.length - 1) {
       handleNext();
     } else if (
@@ -775,14 +782,14 @@ const CreateProjectRegistration = () => {
         IsPrivateDocument === "true" ? true : false;
       const updateliveOnICPMainnetValue =
         liveOnICPMainnetValue === "true" ? true : false;
-      const privateDocs = updatedFormData.private_docs.map(doc => ({
+      const privateDocs = updatedFormData?.private_docs?.map((doc) => ({
         title: doc.title,
-        link: doc.link
-    }));
-    //   const publicDocs = updatedFormData.public_docs.map(doc => ({
-    //     title: doc.title,
-    //     link: doc.link
-    // }));
+        link: doc.link,
+      }));
+      //   const publicDocs = updatedFormData.public_docs.map(doc => ({
+      //     title: doc.title,
+      //     link: doc.link
+      // }));
       const moneyRaised = {
         target_amount: [
           updatedFormData.target_amount
@@ -811,7 +818,7 @@ const CreateProjectRegistration = () => {
         upload_private_documents: [updateIsPrivateDocument],
         project_elevator_pitch: [updatedFormData.project_elevator_pitch],
         public_docs: [],
-        private_docs: [privateDocs],
+        private_docs: updateIsPrivateDocument === true ? [privateDocs] : [],
         technical_docs: [updatedFormData.technical_docs],
         reason_to_join_incubator:
           updatedFormData.reason_to_join_incubator || "",
@@ -822,7 +829,7 @@ const CreateProjectRegistration = () => {
         // raised_from_other_ecosystem: [
         //   updatedFormData.raised_from_other_ecosystem || "",
         // ],
-        money_raised: [moneyRaised],
+        money_raised: updateMoneyRaisedTillNow === true ? [moneyRaised] : [],
         promotional_video: [updatedFormData.promotional_video],
         project_area_of_focus: updatedFormData.project_area_of_focus || "",
         money_raised_till_now: [updateMoneyRaisedTillNow],
@@ -1339,7 +1346,6 @@ const CreateProjectRegistration = () => {
                         Add More
                       </button>
                     </div>
-                    
                   </>
                 )}
                 <div className="z-0 w-full mb-3 group">
