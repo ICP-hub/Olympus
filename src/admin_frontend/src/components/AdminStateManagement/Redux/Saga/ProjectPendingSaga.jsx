@@ -20,6 +20,8 @@ function* fetchProjectPendingHandler() {
       actor.project_awaiting_approval,
     ]);
 
+    // console.log("allProjectPendingStatus======>  ", allProjectPendingStatus);
+
     const updatedProjectProfiles = allProjectPendingStatus.map(
       ([principal, { project_profile, roles }]) => {
         const principalText = principalToText(principal);
@@ -30,14 +32,15 @@ function* fetchProjectPendingHandler() {
         //   : null;
 
           const profilePictureBase64 = project_profile.params.user_data
-          .profile_picture && project_profile.params.user_data
-          .profile_picture instanceof Uint8Array && project_profile.params.user_data
-          .profile_picture.length > 0
+          .profile_picture[0] && project_profile.params.user_data
+          .profile_picture[0] instanceof Uint8Array && project_profile.params.user_data
+          .profile_picture[0].length > 0
           ? uint8ArrayToBase64(project_profile.params.user_data
-          .profile_picture)
+          .profile_picture[0])
           : null;
 
-
+      //  console.log("profilePictureBase64======>  ", project_profile.params.user_data
+      //  .profile_picture[0]);
         const projectRole = roles.find((role) => role.name === "project");
         let requestedTimeFormatted = "";
         if (projectRole && projectRole.requested_on.length > 0) {
