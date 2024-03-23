@@ -315,12 +315,12 @@ const ProjectDetailsForUser = () => {
                 country={"india"}
                 website={"https://www.google.co.in/"}
               />
-              <ProjectJobCard
+              {/* <ProjectJobCard
                 image={ment}
                 tags={["Imo", "Ludi", "Ndaru"]}
                 country={"india"}
                 website={"https://www.google.co.in/"}
-              />
+              /> */}
             </div>
           </div>
         </div>
