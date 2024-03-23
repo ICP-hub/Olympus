@@ -745,7 +745,7 @@ const CreateProjectRegistration = () => {
       console.log("register register_project functn k pass reached");
       await actor.register_project(val).then((result) => {
         console.log("register register_project functn ka result ", result);
-        if (result && result.length > 0) {
+        if (result) {
           toast.success(result);
           navigate("/");
           window.location.href = "/";

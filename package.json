@@ -34,6 +34,7 @@
     "autoprefixer": "^10.4.16",
     "browser-image-compression": "^2.0.2",
     "chart.js": "^4.4.2",
+    "date-fns": "^3.6.0",
     "file-loader": "^6.2.0",
     "rc-progress": "^3.5.1",
     "react": "^17.0.2",
