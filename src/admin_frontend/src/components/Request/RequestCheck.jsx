@@ -21,6 +21,8 @@ const RequestCheck = () => {
   );
   const [activeCategory, setActiveCategory] = useState("Project");
   const [selectedStatus, setSelectedStatus] = useState("Pending");
+ const [filteredNotifications, setFilteredNotifications] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const mentorPending = useSelector(
     (currState) => currState.mentor_pending.data
@@ -52,11 +54,10 @@ const RequestCheck = () => {
     (currState) => currState.investor_declined.data
   );
 
+  // console.log("filteredNotifications in requestcheck", filteredNotifications)
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
-  const [filteredNotifications, setFilteredNotifications] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-
+ 
   useEffect(() => {
     const isDataLoaded =
       mentorPending.length > 0 ||
@@ -219,6 +220,9 @@ const RequestCheck = () => {
             <NotificationCard
               key={index}
               notificationDetails={{
+                active : notification.active,
+                approve : notification.approve,
+                decline:notification.decline,
                 principal: notification.principal,
                 requestedTime: notification.requestedTime,
                 rejectedTime: notification.rejectedTime,

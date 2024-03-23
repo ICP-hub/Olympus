@@ -489,35 +489,35 @@ const Newscards2 = () => {
 
 
             {/* // General Query card Start */}
-            <div class="flex flex-wrap justify-center p-4">
-                <div class="w-full sm:w-full md:w-full lg:w-1/2 xl:w-1/2 p-4">
-                    <div class="relative shadow-md rounded-lg overflow-hidden drop-shadow-xl gap-2 bg-white bg-opacity-40 border-opacity-20 p-4 border-2 border-black">
+            <div className="flex flex-wrap justify-center p-4">
+                <div className="w-full sm:w-full md:w-full lg:w-1/2 xl:w-1/2 p-4">
+                    <div className="relative shadow-md rounded-lg overflow-hidden drop-shadow-xl gap-2 bg-white bg-opacity-40 border-opacity-20 p-4 border-2 border-black">
 
-                        <div class="flex justify-start font-bold text-black text-xl">
+                        <div className="flex justify-start font-bold text-black text-xl">
                             <p>Name</p>
                         </div>
 
-                        <div class="w-full flex flex-col sm:flex-row">
-                            <p class="mb-2 sm:mb-0">General Inquiry</p>
-                            <p class="sm:ml-2 text-[#737373] line-clamp-2">The Student Side Dashboard provides students with access to the assigned tests and assessments created by their respective teachers. Students can log in to their accounts, view a list of available tests, and choose the tests they want to attempt.</p>
+                        <div className="w-full flex flex-col sm:flex-row">
+                            <p className="mb-2 sm:mb-0">General Inquiry</p>
+                            <p className="sm:ml-2 text-[#737373] line-clamp-2">The Student Side Dashboard provides students with access to the assigned tests and assessments created by their respective teachers. Students can log in to their accounts, view a list of available tests, and choose the tests they want to attempt.</p>
                         </div>
 
-                        <div class="flex flex-wrap w-full space-x-4 mt-4">
+                        <div className="flex flex-wrap w-full space-x-4 mt-4">
                             <p className='text-[#737373]'>Register your interest here:</p>
-                            <button class="bg-[#7283EA] underline rounded-full px-4 text-white">Interested</button>
+                            <button className="bg-[#7283EA] underline rounded-full px-4 text-white">Interested</button>
                         </div>
 
-                        <div class="flex flex-wrap w-full justify-between mt-4">
-                            <p class="text-[#737373]">About the Company</p>
-                            <div class="bg-gray-200 w-[70%] py-2 rounded-lg flex sm:justify-start p-4">
+                        <div className="flex flex-wrap w-full justify-between mt-4">
+                            <p className="text-[#737373]">About the Company</p>
+                            <div className="bg-gray-200 w-[70%] py-2 rounded-lg flex sm:justify-start p-4">
                                 <p className='text-[#737373]'>We work with many partners!</p>
                             </div>
                         </div>
 
-                        <div class="flex flex-wrap w-full justify-between mt-4 gap-2">
-                            <p class="text-[#737373]">Responsibilities</p>
-                            <div class="bg-gray-200 w-[70%] py-2 rounded-lg flex justify-start p-4">
-                                <div class="flex flex-col">
+                        <div className="flex flex-wrap w-full justify-between mt-4 gap-2">
+                            <p className="text-[#737373]">Responsibilities</p>
+                            <div className="bg-gray-200 w-[70%] py-2 rounded-lg flex justify-start p-4">
+                                <div className="flex flex-col">
                                     <div className='text-[#737373]'>
                                         <ul className='list-disc p-2'>
                                             <li>Submit a general inquiry for our recruitment support!</li>
@@ -534,25 +534,25 @@ const Newscards2 = () => {
 
                         </div>
 
-                        <div class="flex flex-wrap w-full justify-between mt-4 gap-2">
-                            <p class="text-[#737373]">Requirements</p>
-                            <div class="bg-gray-200 w-[70%] py-2 rounded-lg flex justify-start p-4">
+                        <div className="flex flex-wrap w-full justify-between mt-4 gap-2">
+                            <p className="text-[#737373]">Requirements</p>
+                            <div className="bg-gray-200 w-[70%] py-2 rounded-lg flex justify-start p-4">
 
                                 <div className='text-[#737373]'>
                                     <ul className='list-disc p-2'><li>Fill out the form with your CV and LinkedIn, and we'll get back to you!</li></ul></div>
                             </div>
                         </div>
 
-                        <div class="flex flex-wrap w-full justify-between mt-4">
-                            <p class="text-[#737373]">Location</p>
-                            <div class="bg-gray-200 w-[70%] py-2 rounded-lg flex justify-start p-4">
+                        <div className="flex flex-wrap w-full justify-between mt-4">
+                            <p className="text-[#737373]">Location</p>
+                            <div className="bg-gray-200 w-[70%] py-2 rounded-lg flex justify-start p-4">
                                 <p className='text-[#737373]'>N/A</p>
                             </div>
                         </div>
 
-                        <div class="flex flex-wrap w-full justify-between mt-4">
-                            <p class="text-[#737373]">TAGS</p>
-                            <div class="bg-gray-200 w-[70%] py-2 rounded-lg flex justify-start p-4">
+                        <div className="flex flex-wrap w-full justify-between mt-4">
+                            <p className="text-[#737373]">TAGS</p>
+                            <div className="bg-gray-200 w-[70%] py-2 rounded-lg flex justify-start p-4">
                                 <p className='text-[#737373]'>N/A</p>
                             </div>
                         </div>

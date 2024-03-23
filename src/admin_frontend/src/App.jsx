@@ -6,11 +6,6 @@ import Header from "./components/Layout/Header/Header";
 import { useDispatch } from "react-redux";
 import Footer from "./components/Footer/Footer";
 import { useAuth } from "./components/AdminStateManagement/useContext/useAuth";
-// import AdminDashboard from "./components/Admindashboard/AdminDashboard";
-import Request from "./components/Request/Request";
-import RequestCheck from "./components/Request/RequestCheck";
-import AppRoutes from "./AdminRoute";
-import ConfirmationModal from "./components/models/ConfirmationModal";
 import { mentorApprovedRequest } from "./components/AdminStateManagement/Redux/Reducers/mentorApproved";
 import { mentorPendingRequest } from "./components/AdminStateManagement/Redux/Reducers/mentorPending";
 import { mentorDeclinedRequest } from "./components/AdminStateManagement/Redux/Reducers/mentorDeclined";
@@ -21,6 +16,15 @@ import { projectApprovedRequest } from "./components/AdminStateManagement/Redux/
 import { projectDeclinedRequest } from "./components/AdminStateManagement/Redux/Reducers/projectDeclined";
 import { projectPendingRequest } from "./components/AdminStateManagement/Redux/Reducers/projectPending";
 import AdminRoute from "./AdminRoute";
+import { checkCountStart } from "./components/AdminStateManagement/Redux/Reducers/CountReducer";
+import { checkCycleStart } from "./components/AdminStateManagement/Redux/Reducers/cyclePendingReducer";
+import { checkTotalPendingStart } from "./components/AdminStateManagement/Redux/Reducers/totalPendingRequestReducer";
+import { notificationHandlerRequest } from "./components/AdminStateManagement/Redux/Reducers/notificationReducer";
+import AdminProjectdetails from "./components/Admindashboard/AdminProjectdetails";
+import Projectdetails from "./components/Admindashboard/Projectdetails";
+import Projectprofile from "./components/Admindashboard/Profile/Projectprofile";
+
+
 
 const App = () => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -34,44 +38,26 @@ const App = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(mentorApprovedRequest());
-  }, [isAuthenticated, dispatch]);
-
-  useEffect(() => {
-    dispatch(mentorPendingRequest());
-  }, [isAuthenticated,actor, dispatch]);
-
-  useEffect(() => {
-    dispatch(mentorDeclinedRequest());
-  }, [isAuthenticated,actor, dispatch]);
-
-  useEffect(() => {
-    dispatch(investorApprovedRequest());
-  }, [isAuthenticated,actor, dispatch]);
-
-  useEffect(() => {
-    dispatch(investorPendingRequest());
-  }, [isAuthenticated,actor, dispatch]);
-
-  useEffect(() => {
-    dispatch(investorDeclinedRequest());
-  }, [isAuthenticated,actor, dispatch]);
-
-  useEffect(() => {
-    dispatch(projectApprovedRequest());
-  }, [isAuthenticated,actor, dispatch]);
-
-  useEffect(() => {
-    dispatch(projectDeclinedRequest());
-  }, [isAuthenticated,actor, dispatch]);
-
-  useEffect(() => {
-    dispatch(projectPendingRequest());
-  }, [isAuthenticated,actor, dispatch]);
-
-  useEffect(() => {
     reloadLogin();
   }, []);
+
+  useEffect(() => {
+    if (actor && isAuthenticated) {
+      dispatch(mentorApprovedRequest());
+      dispatch(mentorPendingRequest());
+      dispatch(mentorDeclinedRequest());
+      dispatch(investorApprovedRequest());
+      dispatch(investorPendingRequest());
+      dispatch(investorDeclinedRequest());
+      dispatch(projectApprovedRequest());
+      dispatch(projectDeclinedRequest());
+      dispatch(projectPendingRequest());
+      dispatch(checkCountStart());
+      dispatch(checkCycleStart());
+      dispatch(checkTotalPendingStart())
+      dispatch(notificationHandlerRequest())
+    }
+  }, [isAuthenticated, actor, dispatch]);
 
   return (
     <>
@@ -82,7 +68,9 @@ const App = () => {
             isModalOpen={isModalOpen}
             onClose={() => setModalOpen(false)}
           />
-          <AdminRoute />
+          <AdminRoute setModalOpen={setModalOpen} />
+          {/* <Projectdetails/> */}
+          {/* <Projectprofile/> */}
         </div>
       </div>
 

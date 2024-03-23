@@ -1,11 +1,20 @@
 
-export function uint8ArrayToBase64(uint8Arr) {
-    let buffer = Buffer.from(uint8Arr);
-    const decryptedBlob = new Blob([buffer]);
-    const url = URL.createObjectURL(decryptedBlob);
+// export function uint8ArrayToBase64(uint8Arr) {
+//     let buffer = Buffer.from(uint8Arr);
+//     const decryptedBlob = new Blob([buffer]);
+//     const url = URL.createObjectURL(decryptedBlob);
+//     return url;
+//   }
+
+
+  export function uint8ArrayToBase64(uint8Arr) {
+    const blob = new Blob([uint8Arr]);
+    const url = URL.createObjectURL(blob);
     return url;
   }
-
+  
+  
+  
 
 
 export function principalToText(principal){
