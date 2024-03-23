@@ -226,7 +226,7 @@ pub struct ProjectVecWithRoles {
     pub roles: Vec<Role>,
 }
 
-#[derive(Clone, CandidType)]
+#[derive(Clone, CandidType, Serialize, Deserialize)]
 pub struct SpotlightDetails {
     pub added_by: Principal,
     pub project_id: String,
@@ -296,10 +296,148 @@ thread_local! {
 
 }
 
+
 pub fn pre_upgrade() {
     // Serialize and write data to stable storage
-    APPLICATION_FORM.with(|forms| {
-        let serialized = bincode::serialize(&*forms.borrow()).expect("Serialization failed");
+    APPLICATION_FORM.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    PROJECT_ACCESS_NOTIFICATIONS.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    PROJECT_DETAILS.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    NOTIFICATIONS.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    OWNER_NOTIFICATIONS.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    PROJECT_ANNOUNCEMENTS.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    BLOG_POST.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    PROJECT_AWAITS_RESPONSE.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    DECLINED_PROJECT_REQUESTS.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    PENDING_PROJECT_UPDATES.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    DECLINED_PROJECT_UPDATES.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    POST_JOB.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    JOB_TYPE.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    SPOTLIGHT_PROJECTS.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    MONEY_ACCESS.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    PRIVATE_DOCS_ACCESS.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    MONEY_ACCESS_REQUESTS.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    PRIVATE_DOCS_ACCESS_REQUESTS.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
         let mut writer = StableWriter::default();
         writer
             .write(&serialized)
@@ -307,19 +445,20 @@ pub fn pre_upgrade() {
     });
 }
 
-// pub fn post_upgrade() {
-//     // Read and deserialize data from stable storage
-//     let mut reader = StableReader::default();
-//     let mut data = Vec::new();
-//     reader
-//         .read_to_end(&mut data)
-//         .expect("Failed to read from stable storage");
-//     let project_registry: ApplicationDetails = bincode::deserialize(&data).expect("Deserialization failed");
-//     // Restore data
-//     APPLICATION_FORM.with(|registry| {
-//         *registry.borrow_mut() = project_registry;
-//     });
-// }
+
+pub fn post_upgrade() {
+    // Read and deserialize data from stable storage
+    let mut reader = StableReader::default();
+    let mut data = Vec::new();
+    reader
+        .read_to_end(&mut data)
+        .expect("Failed to read from stable storage");
+    let project_registry: ApplicationDetails = bincode::deserialize(&data).expect("Deserialization failed");
+    // Restore data
+    APPLICATION_FORM.with(|registry| {
+        *registry.borrow_mut() = project_registry;
+    });
+}
 
 pub async fn create_project(info: ProjectInfo) -> String {
     if info.private_docs.is_some() && info.upload_private_documents != Some(true) {

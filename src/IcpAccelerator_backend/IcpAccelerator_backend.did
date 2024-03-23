@@ -405,6 +405,7 @@ type UpvoterInfo = record {
 };
 type UserInfoInternal = record {
   uid : text;
+  joining_date : nat64;
   is_active : bool;
   params : UserInformation;
 };

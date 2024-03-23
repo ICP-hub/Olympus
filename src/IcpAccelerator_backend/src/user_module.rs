@@ -22,7 +22,6 @@ pub struct UserInformation {
     pub area_of_intrest: String,
     pub twitter_id: Option<String>,
     pub openchat_username: Option<String>,
-    // pub joining_date: u64,
 }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default)]
@@ -30,6 +29,7 @@ pub struct UserInfoInternal {
     pub uid: String,
     pub params: UserInformation,
     pub is_active: bool,
+    pub joining_date: u64,
 }
 
 #[derive(CandidType, Clone, Serialize, Deserialize)]
@@ -189,6 +189,7 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
         uid: new_id.clone(),
         params: info_with_default,
         is_active: true,
+        joining_date: time(),
     };
 
     USER_STORAGE.with(|storage| {
