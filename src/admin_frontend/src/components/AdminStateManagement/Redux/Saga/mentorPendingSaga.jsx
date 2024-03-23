@@ -22,9 +22,14 @@ function* fetchMentorPendingHandler() {
 
     const updatedMentorProfiles = allMentorPendingStatus.map(
       ([principal, { mentor_profile, roles }]) => {
-        const profilePictureBase64 = uint8ArrayToBase64(
-          mentor_profile.profile.user_data.profile_picture
-        );
+
+        // const profilePictureBase64 = uint8ArrayToBase64(
+        //   mentor_profile.profile.user_data.profile_picture
+        // );
+
+        const profilePictureBase64 = mentor_profile.profile.user_data.profile_picture && mentor_profile.profile.user_data.profile_picture instanceof Uint8Array && mentor_profile.profile.user_data.profile_picture.length > 0
+          ? uint8ArrayToBase64(mentor_profile.profile.user_data.profile_picture)
+          : null;
         const principalText = principalToText(principal);
 
         const mentorRole = roles.find((role) => role.name === "mentor");

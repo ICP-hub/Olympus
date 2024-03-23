@@ -23,10 +23,22 @@ function* fetchProjectApprovedHandler() {
     const updatedProjectProfiles = allProjectApprovedStatus.map(
       ([principal, { project_profile, roles }]) => {
         const principalText = principalToText(principal);
-        const profilePictureBase64 = project_profile[0].params.user_data
-          .profile_picture
-          ? uint8ArrayToBase64(project_profile[0].params.user_data.profile_picture)
+      
+      
+        // const profilePictureBase64 = project_profile[0].params.user_data
+        //   .profile_picture
+        //   ? uint8ArrayToBase64(project_profile[0].params.user_data.profile_picture)
+        //   : null;
+
+
+          const profilePictureBase64 = project_profile[0].params.user_data
+          .profile_picture && project_profile[0].params.user_data
+          .profile_picture instanceof Uint8Array && project_profile[0].params.user_data
+          .profile_picture.length > 0
+          ? uint8ArrayToBase64(project_profile[0].params.user_data
+          .profile_picture)
           : null;
+
 
         const projectRole = roles.find((role) => role.name === "project");
         let requestedTimeFormatted = "",

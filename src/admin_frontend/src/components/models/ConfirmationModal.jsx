@@ -33,48 +33,6 @@ const ConfirmationModal = ({
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // const declineUserRoleHandler = async (
-  //   principal,
-  //   boolean,
-  //   state,
-  //   category
-  // ) => {
-  //   setIsDeclining(true);
-  //   const covertedPrincipal = await Principal.fromText(principal);
-
-  //   console.log("covertedPrincipal ", covertedPrincipal);
-  //   switch (category) {
-  //     case "Mentor":
-  //       switch (state) {
-  //         case "Pending":
-  //           await actor.decline_mentor_creation_request_candid(
-  //             covertedPrincipal,
-  //             boolean
-  //           );
-  //           await dispatch(mentorDeclinedRequest());
-  //       }
-  //       break;
-  //     case "Investor":
-  //       switch (state) {
-  //         case "Pending":
-  //           await actor.decline_vc_creation_request(covertedPrincipal, boolean);
-  //           await dispatch(investorDeclinedRequest());
-  //           break;
-  //       }
-  //       break;
-  //     case "Project":
-  //       switch (state) {
-  //         case "Pending":
-  //           await actor.decline_project_creation_request(covertedPrincipal);
-  //           await dispatch(projectDeclinedRequest());
-  //           break;
-  //       }
-  //     default:
-  //       return null;
-  //   }
-  //   setIsDeclining(false);
-  //   toggleModelPopUp(false);
-  // };
 
   const declineUserRoleHandler = async (
     principal,
@@ -120,48 +78,6 @@ const ConfirmationModal = ({
       window.location.reload();
     }
   };
-
-  // const allowUserRoleHnadler = async (principal, boolean, state, category) => {
-  //   setIsAccepting(true);
-
-  //   const covertedPrincipal = await Principal.fromText(principal);
-
-  //   console.log("covertedPrincipal ", covertedPrincipal);
-  //   switch (category) {
-  //     case "Mentor":
-  //       switch (state) {
-  //         case "Pending":
-  //           await actor.approve_mentor_creation_request_candid(
-  //             covertedPrincipal,
-  //             boolean
-  //           );
-  //           await dispatch(mentorApprovedRequest());
-  //           window.location.reload()
-  //       }
-  //       break;
-  //     case "Investor":
-  //       switch (state) {
-  //         case "Pending":
-  //           await actor.approve_vc_creation_request(covertedPrincipal, boolean);
-  //           await dispatch(investorApprovedRequest());
-  //           window.location.reload()
-  //           break;
-  //       }
-  //       break;
-  //     case "Project":
-  //       switch (state) {
-  //         case "Pending":
-  //           await actor.approve_project_creation_request(covertedPrincipal);
-  //           await dispatch(projectApprovedRequest());
-  //           window.location.reload()
-  //           break;
-  //       }
-  //     default:
-  //       return null;
-  //   }
-  //   setIsAccepting(false);
-  //   toggleModelPopUp(false);
-  // };
 
   const allowUserRoleHnadler = async (principal, boolean, state, category) => {
     setIsAccepting(true);
@@ -233,7 +149,7 @@ const ConfirmationModal = ({
 
             <div className="flex flex-col md:flex-row items-start space-y-4 md:space-y-0 md:space-x-4 p-4">
               <img
-                src={notificationDetails.user_data.profile_picture || ment}
+                src={notificationDetails.user_data.profile_picture}
                 alt="Profile"
                 className="w-16 h-16 rounded-full object-cover"
               />

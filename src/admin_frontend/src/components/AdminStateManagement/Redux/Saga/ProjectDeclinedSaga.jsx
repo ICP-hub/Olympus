@@ -23,10 +23,20 @@ function* fetchProjectDeclinedHandler() {
     const updatedProjectProfiles = allProjectDeclinedStatus.map(
       ([principal, { project_profile, roles }]) => {
         const principalText = principalToText(principal);
-        const profilePictureBase64 = project_profile.params.user_data
-          .profile_picture
-          ? uint8ArrayToBase64(project_profile.params.user_data.profile_picture)
+      
+        // const profilePictureBase64 = project_profile.params.user_data
+        //   .profile_picture
+        //   ? uint8ArrayToBase64(project_profile.params.user_data.profile_picture)
+        //   : null;
+
+          const profilePictureBase64 = project_profile.params.user_data
+          .profile_picture && project_profile.params.user_data
+          .profile_picture instanceof Uint8Array && project_profile.params.user_data
+          .profile_picture.length > 0
+          ? uint8ArrayToBase64(project_profile.params.user_data
+          .profile_picture)
           : null;
+
 
         // Assuming similar role structure as mentors for date formatting
         const projectRole = roles.find((role) => role.name === "project");
