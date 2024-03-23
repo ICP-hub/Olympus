@@ -25,14 +25,14 @@ const TestimonialModal = ({ onClose, categories }) => {
       <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-50"></div>
       <div className=" overflow-y-auto overflow-x-hidden  top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full fixed flex">
         <div className="relative p-4 w-full max-w-md max-h-full">
-          <div className="relative bg-transparent backdrop:blur-md  border-2 rounded-lg shadow-lg">
+          <div className="relative bg-white   border-2 rounded-lg shadow-lg">
             <div className="flex items-center justify-between p-4 md:p-5 rounded-t ">
-              <h3 className="text-3xl font-bold text-white">
+              <h3 className="text-3xl font-bold text-black">
                 {categories[0].title}
               </h3>
               <button
                 type="button"
-                className="text-white bg-transparent rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
+                className="text-black bg-transparent rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
                 onClick={onClose}
               >
                 <svg
