@@ -139,7 +139,7 @@ const LaunchedProjects = () => {
 
   const handleNavigate = (projectId) => {
     if (isAuthenticated) {
-      navigate(`/individual-project-details-project-user/${projectId}`);
+      navigate(`/individual-project-details-user/${projectId}`);
     } else {
       toast.error("Please Sign Up !!!");
       window.scrollTo({ top: 0, behavior: "smooth" });
