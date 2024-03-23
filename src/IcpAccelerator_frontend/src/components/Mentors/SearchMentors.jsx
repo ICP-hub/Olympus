@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
+import NoDataCard from "./Event/NoDataCard";
 
 function SearchMentors() {
   const cardData = [
@@ -155,7 +156,7 @@ function SearchMentors() {
       </div>
 
       <div className="flex flex-wrap justify-center">
-        {noData ? <h1>No Data</h1> :
+        {noData ? <NoDataCard /> :
         data.map((mentor, index) => {
           let id = "";
           let img = "";

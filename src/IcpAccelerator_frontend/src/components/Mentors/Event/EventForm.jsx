@@ -14,68 +14,47 @@ import DetailHeroSection from "../../Common/DetailHeroSection";
 // import { userRoleHandler } from "../../StateManagement/Redux/Reducers/userRoleReducer";
 import Founder from "../../../../assets/images/founderRegistration.png";
 // import { getCurrentRoleStatusRequestHandler } from "../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
-
+import { format } from "date-fns";
 const today = new Date();
 const startDate = new Date("1900-01-01");
 
 const schema = yup.object({
-  // full_name: yup
-  //   .string()
-  //   .required()
-  //   .test("is-non-empty", null, (value) => value && value.trim().length > 0),
-  // user_name: yup
-  //   .string()
-  //   .nullable(true) // Allows the value to be null
-  //   .test(
-  //     "is-valid-username",
-  //     "Username must be between 6 and 20 characters and can only contain letters, numbers, and underscores",
-  //     (value) => {
-  //       // If no value is provided, consider it valid (since it's optional)
-  //       if (!value) return true;
-
-  //       // Check length
-  //       const isValidLength = value.length >= 6 && value.length <= 20;
-  //       // Check allowed characters (including at least one uppercase letter or number)
-  //       const hasValidChars = /^(?=.*[A-Z0-9_])[a-zA-Z0-9_]+$/.test(value);
-
-  //       return isValidLength && hasValidChars;
-  //     }
-  //   ),
-  // bio: yup.string().optional(),
-  // email: yup.string().email().optional(),
-  // telegram_id: yup.string().optional().url(),
-  // twitter_id: yup.string().optional().url(),
-  // country: yup.string().required("Country is required."),
-  // areas_of_expertise: yup
-  //   .string()
-  //   .required("Selecting a interest is required."),
+  title: yup
+    .string()
+    .required()
+    .test("is-non-empty", null, (value) => value && value.trim().length > 0),
+  description: yup
+    .string()
+    .trim()
+    .required("Description is required")
+    .matches(/^[^\s].*$/, "Cannot start with a space"),
+  cohort_launch_date: yup.date().required(),
+  cohort_end_date: yup.date().required(),
+  tags: yup
+    .string()
+    .required()
+    .test("is-non-empty", null, (value) => value && value.trim().length > 0),
+  deadline: yup.date().required(),
+  eligibility: yup.string(),
+  rubric_eligibility: yup
+    .number()
+    .typeError("You must enter a number")
+    .required(),
+  no_of_seats: yup.number().typeError("You must enter a number").required(),
 });
 
 const EventForm = () => {
   const actor = useSelector((currState) => currState.actors.actor);
-  const userFullData = useSelector((currState) => currState.userData);
 
   const [inputType, setInputType] = useState("date");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  console.log("userInfo run =>", userFullData);
-  //   console.log("getAllIcpHubs", getAllIcpHubs);
-
-  //   useEffect(() => {
-  //     dispatch(allHubHandlerRequest());
-  //   }, [actor, dispatch]);
-
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    trigger,
-    setError,
-    clearErrors,
-    control,
-    reset,
   } = useForm({
     resolver: yupResolver(schema),
     mode: "all",
@@ -121,24 +100,32 @@ const EventForm = () => {
   // );
   const onSubmitHandler = async (data) => {
     // console.log("data aaya data aaya ", data);
-    const userData = {
+    const eventData = {
       title: data.title,
       description: data.description,
-      cohort_launch_date: data.cohort_launch_date,
-      cohort_end_date: data.cohort_end_date,
-      eligibility: data.eligibility,
-      rubric_eligibility: data.rubric_eligibility,
-      no_of_seats: data.no_of_seats,
+      cohort_launch_date: format(
+        new Date(data.cohort_launch_date),
+        "yyyy-MM-dd"
+      ),
+      cohort_end_date: format(new Date(data.cohort_end_date), "yyyy-MM-dd"),
+      deadline: format(new Date(data.deadline), "yyyy-MM-dd"),
+      tags: data.tags,
+      criteria: {
+        eligibility: [data.eligibility],
+        level_on_rubric: parseFloat(data.rubric_eligibility),
+      },
+      no_of_seats: parseInt(data.no_of_seats),
     };
 
-    console.log("userData => ", userData);
+    console.log("eventData => ", eventData);
 
     try {
-      // await actor.register_user(userData).then((result) => {
-        toast.success("Registered as a User");
+      await actor.create_cohort(eventData).then((result) => {
+        toast.success("Event Created");
+        console.log("Event Created", result);
         // navigate("/");
         // window.location.href = "/";
-      // });
+      });
       console.log("data passed to backend");
       // await dispatch(getCurrentRoleStatusRequestHandler());
       // await dispatch(userRoleHandler());
@@ -159,7 +146,19 @@ const EventForm = () => {
       setInputType(field.onBlur);
     }
   };
+  useEffect(() => {
+    const preventScroll = (e) => {
+      if (e.target.type === "number") {
+        e.preventDefault();
+      }
+    };
 
+    window.addEventListener("wheel", preventScroll, { passive: false });
+
+    return () => {
+      window.removeEventListener("wheel", preventScroll);
+    };
+  }, []);
   const HeroImage = (
     <img
       src={Founder}
@@ -189,22 +188,38 @@ const EventForm = () => {
                     >
                       {field.label}
                     </label>
-                    <input
-                      type={
-                        field.id === "date_of_birth" ? inputType : field.type
-                      }
-                      name={field.name}
-                      id={field.id}
-                      {...register(field.name)}
-                      className={`bg-gray-50 border-2 ${
-                        errors[field.name]
-                          ? "border-red-500 placeholder:text-red-500"
-                          : "border-[#737373]"
-                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                      placeholder={field.placeholder}
-                      onFocus={() => handleFocus(field)}
-                      onBlur={() => handleBlur(field)}
-                    />
+                    {field.type === "textarea" ? (
+                      <textarea
+                        name={field.name}
+                        id={field.id}
+                        {...register(field.name)}
+                        className={`bg-gray-50 border-2 ${
+                          errors[field.name]
+                            ? "border-red-500 placeholder:text-red-500"
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        placeholder={field.placeholder}
+                        onFocus={() => handleFocus(field)}
+                        onBlur={() => handleBlur(field)}
+                      ></textarea>
+                    ) : (
+                      <input
+                        type={
+                          field.id === "date_of_birth" ? inputType : field.type
+                        }
+                        name={field.name}
+                        id={field.id}
+                        {...register(field.name)}
+                        className={`bg-gray-50 border-2 ${
+                          errors[field.name]
+                            ? "border-red-500 placeholder:text-red-500"
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        placeholder={field.placeholder}
+                        onFocus={() => handleFocus(field)}
+                        onBlur={() => handleBlur(field)}
+                      />
+                    )}
                     {errors[field.name] && (
                       <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
                         {errors[field.name].message}

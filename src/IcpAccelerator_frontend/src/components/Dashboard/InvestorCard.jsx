@@ -4,6 +4,7 @@ import uint8ArrayToBase64 from '../Utils/uint8ArrayToBase64';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from "react-redux";
 import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
+import NoDataCard from "../Mentors/Event/NoDataCard";
 
 const investors = [
   {
@@ -63,7 +64,9 @@ const InvestorsList = () => {
   }, [actor]);
 
   if(noData){
-    return <h1>No Data</h1>
+    return <div className="items-center w-full">
+    <NoDataCard />
+        </div>
   }
   return (
     <div className="p-1 flex items-center mb-8 gap-4">
