@@ -1,4 +1,5 @@
-use crate::{find_project_by_id, get_mentor_by_principal, mentor};
+use crate::mentor::MentorProfile;
+use crate::{find_project_by_id, get_mentor_by_principal, mentor, APPLICATION_FORM, MENTOR_REGISTRY};
 use candid::{CandidType, Principal};
 use ic_cdk::api::call;
 use ic_cdk::api::management_canister::main::raw_rand;
@@ -91,7 +92,7 @@ pub async fn send_offer_to_mentor(mentor_id: Principal, msg: String, project_id:
     let mentor = get_mentor_by_principal(mentor_id).expect("mentor doesn't exist");
 
     let uids = raw_rand().await.unwrap().0;
-    let uid = format!("{:?}", Sha256::digest(&uids));
+    let uid = format!("{:x}", Sha256::digest(&uids));
     let offer_id = uid.clone().to_string();
 
     let offer_to_mentor = OfferToMentor {
@@ -140,14 +141,47 @@ pub async fn send_offer_to_mentor(mentor_id: Principal, msg: String, project_id:
 pub fn accept_offer_of_project(offer_id: String, response_message: String) -> String{
     let mentor_id = caller();
 
-    MENTOR_ALERTS.with(|state| {
+    MENTOR_ALERTS.with(|state: &RefCell<HashMap<Principal, Vec<OfferToSendToMentor>>>| {
         //let state = state.borrow_mut().get(&mentor_id).cloned().unwrap_or_else(Vec::new);
         if let Some(offers) = state.borrow_mut().get_mut(&mentor_id) {
             if let Some(offer) = offers.iter_mut().find(|o| o.offer_id == offer_id) {
                 offer.request_status = "accepted".to_string();
                 offer.response = response_message.clone();
                 offer.accepted_at = time();
+                
+                // APPLICATION_FORM.with(|project|{
+                //     let project = project.borrow().get(&mentor_id).
+                // });
 
+                MENTOR_REGISTRY.with(|storage|{
+                    let mentor_profile = storage.borrow().get(&mentor_id).expect("couldn't get mentor profile").clone();
+
+                    APPLICATION_FORM.with(|projects| {
+                        // offer.project_info.project_id;
+                        let mut project = projects.borrow_mut();
+                       // let mut project = project.get_mut(&offer.sender_principal).expect("couldn't get project");
+                       if let Some(project) =  project.get_mut(&offer.sender_principal){
+                        if let Some(project) = project.iter_mut().find(|project|{project.uid == offer.project_info.project_id}){
+                            // let mut associated_mentor = project.params.mentors_assigned.clone().unwrap_or(Vec::new());
+                            // associated_mentor.push(mentor_profile.profile.clone())
+                            //let mentor_assigned = vec![];
+
+                            if project.params.mentors_assigned.is_none() {
+                                project.params.mentors_assigned = Some(Vec::new());
+                            }
+
+                            // project.params.mentors_assigned.clone().unwrap_or_else(Vec::new).push(mentor_profile.profile);
+
+                            project.params.mentors_assigned.as_mut().unwrap().push(mentor_profile.profile.clone());
+                            
+                            // project.params.mentors_assigned = Some(mentors);
+                        }
+
+                       }
+
+                    })
+                });
+                
                 MY_SENT_NOTIFICATIONS.with(|sent_state| {
                     if let Some(sent_status_vector) =
                         sent_state.borrow_mut().get_mut(&offer.sender_principal)
@@ -303,7 +337,7 @@ pub fn get_declined_request_for_project() -> Vec<OfferToMentor> {
 
 #[update]
 pub fn self_decline_request(offer_id: String) -> String {
-    let mut response = String::new();
+    let mut response: String = String::new();
 
     MY_SENT_NOTIFICATIONS.with(|sent_ones| {
         let mut my_offers = sent_ones.borrow_mut();
@@ -312,8 +346,8 @@ pub fn self_decline_request(offer_id: String) -> String {
         if let Some(offers) = caller_offers {
             if let Some(offer) = offers.iter_mut().find(|o| o.offer_id == offer_id) {
                 match offer.request_status.as_str() {
-                    "accepted" => response = "Your request has been approved.".to_string(),
-                    "declined" => response = "Your request has been declined.".to_string(),
+                    "accepted" => response = "Your request has been approved already".to_string(),
+                    "declined" => response = "Your request has been declined already".to_string(),
                     _ => {
                         offer.request_status = "self_declined".to_string();
                         offer.self_declined_at = time();

@@ -92,7 +92,7 @@ pub async fn send_offer_to_project(project_id: String, msg: String, mentor_id: P
     let project = crate::get_project_using_id(project_id.clone()).expect("project not found");
 
     let uids = raw_rand().await.unwrap().0;
-    let uid = format!("{:?}", Sha256::digest(&uids));
+    let uid = format!("{:x}", Sha256::digest(&uids));
     let offer_id = uid.clone().to_string();
 
     let offer_to_project = OfferToProject {

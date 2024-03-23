@@ -6,15 +6,17 @@ mod manage_focus_expertise;
 mod manage_hubs;
 mod mentor;
 mod notification;
+
 mod notification_to_mentor;
 mod notification_to_project;
+// mod project_offer_to_investor;
+
 mod project_like;
 mod requests;
 mod roles;
 mod upvotes;
 mod user_module;
 mod vc_registration;
-use ic_cdk_macros::post_upgrade;
 mod cohort;
 mod default_images;
 
@@ -481,13 +483,13 @@ fn pre_upgrade() {
     pre_upgrade_admin();
 }
 
-#[post_upgrade]
-fn post_upgrade() {
-    post_upgrade_vc();
-    post_upgrade_user_modules();
-    post_upgrade_upvotes();
-    post_upgrade_mentor();
-    post_upgrade_admin();
-}
+// #[post_upgrade]
+// fn post_upgrade() {
+//     post_upgrade_vc();
+//     post_upgrade_user_modules();
+//     post_upgrade_upvotes();
+//     post_upgrade_mentor();
+//     post_upgrade_admin();
+// }
 
 export_candid!();
