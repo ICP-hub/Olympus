@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialTotalPendingState = {
-  total_Pending: 10,
+  total_Pending: 0,
   loading: false,
   error: null,
 };

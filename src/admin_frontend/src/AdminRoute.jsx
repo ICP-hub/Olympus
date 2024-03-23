@@ -16,6 +16,7 @@ const ConfirmationModal = lazy(() =>
   import("./components/models/ConfirmationModal")
 );
 
+const AllProject = lazy(()=> import("./components/Admindashboard/AllProject"))
 const AdminRoute = ({ setModalOpen }) => {
   // const actor = useSelector((currState) => currState.actors.actor);
 
@@ -27,6 +28,8 @@ const AdminRoute = ({ setModalOpen }) => {
     { path: "/reject", element: <RejectModal /> },
     { path: "/accept", element: <AcceptModal /> },
     { path: "/profile", element: <Projectprofile /> },
+    { path: "/allProject", element: <AllProject /> },
+
 
   ];
 
