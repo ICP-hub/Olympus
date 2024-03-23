@@ -63,7 +63,7 @@ const ProjectJobCard = ({ image, website, tags, country }) => {
     </div>
   }
   return (
-    <div className="flex flex-wrap md:flex-nowrap gap-4 mb-8">
+    <div className="flex overflow-x-scroll gap-4 mb-8">
       {latestJobs &&
         latestJobs.map((data, index) => {
           console.log("data", data);
@@ -97,7 +97,7 @@ const ProjectJobCard = ({ image, website, tags, country }) => {
             jobLocation = "";
           }
           return (
-            <div className="border-2 shadow-lg rounded-2xl">
+            <div className="border-2 shadow-lg rounded-2xl" style={{minWidth: '50%'}}>
               <div className="md:p-4 p-2">
                 <h3 className="text-lg font-[950]">{jobName}</h3>
                 <div className="sm:flex">

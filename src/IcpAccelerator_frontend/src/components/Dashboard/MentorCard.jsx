@@ -37,6 +37,7 @@ const MentorCard = () => {
   const [noData, setNoData] = useState(null);
 
   const actor = useSelector((currState) => currState.actors.actor);
+  
   const getAllMentors = async (caller) => {
     await caller.get_all_mentors_candid().then((result) => {
       console.log('result-in-get-all-mentors', result)
@@ -61,9 +62,9 @@ const MentorCard = () => {
       getAllMentors(IcpAccelerator_backend);
     }
   }, [actor]);
-  if(noData){
+  if (noData) {
     return <div className="items-center w-full">
-<NoDataCard />
+      <NoDataCard />
     </div>
   }
   return (
