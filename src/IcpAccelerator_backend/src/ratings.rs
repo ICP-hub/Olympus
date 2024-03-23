@@ -200,16 +200,11 @@ pub fn update_rating(ratings: Vec<Rating>) {
 
 
 
-// Function to calculate average rating
-
 pub fn calculate_average(project_id: &str) -> RatingAverages {
     RATING_SYSTEM.with(|system| {
         let system = system.borrow();
 
         if let Some(project_ratings) = system.get(project_id) {
-            let mut total_rating = 0.0;
-            let mut total_count = 0;
-
             let mut mentor_sum = 0.0;
             let mut mentor_count = 0;
 
@@ -240,18 +235,33 @@ pub fn calculate_average(project_id: &str) -> RatingAverages {
                 }
             }
 
-            total_rating = mentor_sum + vc_sum + peer_sum + own_sum;
-            total_count = mentor_count + vc_count + peer_count + own_count;
+            let mentor_average = if mentor_count > 0 { Some(mentor_sum / mentor_count as f64) } else { None };
+            let vc_average = if vc_count > 0 { Some(vc_sum / vc_count as f64) } else { None };
+            let peer_average = if peer_count > 0 { Some(peer_sum / peer_count as f64) } else { None };
+            let own_average = if own_count > 0 { Some(own_sum / own_count as f64) } else { None };
+
+            let mentor_vc_sum = mentor_sum + vc_sum;
+            let mentor_vc_count = mentor_count + vc_count;
+            let mentor_vc_average = if mentor_vc_count > 0 {
+                mentor_vc_sum / mentor_vc_count as f64
+            } else {
+                0.0
+            };
+
+            let overall_average = if mentor_count + vc_count + peer_count > 0 {
+                (mentor_vc_average * 0.6) + (peer_average.unwrap_or(0.0) * 0.4)
+            } else {
+                0.0
+            };
 
             RatingAverages {
-                mentor_average: if mentor_count > 0 { Some(mentor_sum / mentor_count as f64) } else { None },
-                vc_average: if vc_count > 0 { Some(vc_sum / vc_count as f64) } else { None },
-                peer_average: if peer_count > 0 { Some(peer_sum / peer_count as f64) } else { None },
-                own_average: if own_count > 0 { Some(own_sum / own_count as f64) } else { None },
-                overall_average: if total_count > 0 { Some(total_rating / total_count as f64) } else { None },
+                mentor_average,
+                vc_average,
+                peer_average,
+                own_average,
+                overall_average: if overall_average > 0.0 { Some(overall_average) } else { None },
             }
         } else {
-            // If there are no ratings for the project, return a RatingAverages instance with all fields set to None
             RatingAverages {
                 mentor_average: None,
                 vc_average: None,
