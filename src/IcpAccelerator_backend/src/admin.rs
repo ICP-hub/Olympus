@@ -25,6 +25,7 @@ struct ApprovalRequest {
     tag_used: String,
     requested_for: String,
     bio: String,
+    status: String,
 }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
@@ -45,6 +46,26 @@ enum MyError {
 
 thread_local! {
     static ADMIN_NOTIFICATIONS : RefCell<HashMap<Principal, Vec<Notification>>> = RefCell::new(HashMap::new())
+}
+
+fn change_notification_status(requester: Principal, requested_for: String, changed_status: String) {
+    ADMIN_NOTIFICATIONS.with(|admin_notifications| {
+        let mut notifications = admin_notifications.borrow_mut();
+        for (_, admin_notif_list) in notifications.iter_mut() {
+            for notification in admin_notif_list.iter_mut() {
+                match &mut notification.notification_type {
+                    NotificationType::ApprovalRequest(approval_request)
+                        if approval_request.sender == requester
+                            && approval_request.status == "pending"
+                            && approval_request.requested_for == requested_for =>
+                    {
+                        approval_request.status = changed_status.clone()
+                    }
+                    _ => {} // Do nothing for other cases or variants
+                }
+            }
+        }
+    });
 }
 
 pub async fn send_approval_request(
@@ -79,6 +100,7 @@ pub async fn send_approval_request(
                     tag_used: tag_used.clone(),
                     requested_for: requested_for.clone(),
                     bio: bio.clone(),
+                    status: "pending".to_string(),
                 };
 
                 let notification_to_send = Notification {
@@ -139,6 +161,11 @@ pub fn approve_mentor_creation_request(requester: Principal, approve: bool) -> S
                         });
 
                         awaiters.remove(&requester);
+                        change_notification_status(
+                            requester,
+                            "mentor".to_string(),
+                            "approved".to_string(),
+                        )
                     }
                     None => {
                         return format!(
@@ -193,6 +220,11 @@ pub fn decline_mentor_creation_request(requester: Principal, decline: bool) -> S
                         });
 
                         awaiters.remove(&requester);
+                        change_notification_status(
+                            requester,
+                            "mentor".to_string(),
+                            "declined".to_string(),
+                        )
                     }
                     None => {
                         return format!(
@@ -228,6 +260,37 @@ pub fn get_admin_notifications() -> Vec<Notification> {
         alerts
     })
 }
+
+#[query]
+pub fn get_pending_admin_notifications() -> Vec<Notification> {
+    let caller = caller();
+
+    ADMIN_NOTIFICATIONS.with(|alerts| {
+        let alerts = alerts.borrow();
+
+        // First, get the caller's notifications, if any, and filter them by "pending" status.
+        let pending_alerts: Vec<Notification> = alerts
+            .get(&caller)
+            .unwrap_or(&Vec::new())
+            .iter()
+            .filter(|notification| {
+                // Check if the notification is an ApprovalRequest and its status is "pending".
+                // This assumes all notifications you're interested in are of type ApprovalRequest.
+                // If there are other types with a status field, you'll need to adjust this logic accordingly.
+                matches!(&notification.notification_type, NotificationType::ApprovalRequest(approval_request) if approval_request.status == "pending")
+            })
+            .cloned() // Clone the filtered notifications to a new vector
+            .collect();
+
+        // Now, sort the filtered alerts by timestamp in descending order
+        let mut sorted_pending_alerts = pending_alerts;
+        sorted_pending_alerts.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
+
+        sorted_pending_alerts
+    })
+}
+
+
 
 async fn get_info() -> Result<Vec<Principal>, MyError> {
     let canister_id: candid::Principal = id();
@@ -429,6 +492,11 @@ pub fn decline_vc_creation_request(requester: Principal, decline: bool) -> Strin
                         });
 
                         awaiters.remove(&requester);
+                        change_notification_status(
+                            requester,
+                            "vc".to_string(),
+                            "declined".to_string(),
+                        )
                     }
                     None => {
                         return format!(
@@ -490,6 +558,11 @@ pub fn approve_vc_creation_request(requester: Principal, approve: bool) -> Strin
                         });
 
                         awaiters.remove(&requester);
+                        change_notification_status(
+                            requester,
+                            "vc".to_string(),
+                            "approved".to_string(),
+                        )
                     }
                     None => {
                         return format!(
@@ -591,6 +664,7 @@ pub fn approve_vc_profile_update(requester: Principal, approve: bool) -> String 
                 });
 
                 awaiters.remove(&requester);
+                change_notification_status(requester, "vc".to_string(), "approved".to_string());
                 format!("Requester with principal id {} is approved", requester)
             } else {
                 format!(
@@ -622,6 +696,7 @@ pub fn decline_vc_profile_update_request(requester: Principal, decline: bool) ->
 
                 // Remove the requester from the awaiters
                 awaiters.remove(&requester);
+                change_notification_status(requester, "vc".to_string(), "declined".to_string());
 
                 // Return a success message for declining the request
                 format!("Requester with principal id {} is declined", requester)
@@ -695,6 +770,7 @@ pub fn approve_mentor_profile_update(requester: Principal, approve: bool) -> Str
                 });
 
                 awaiters.remove(&requester);
+                change_notification_status(requester, "mentor".to_string(), "approved".to_string());
                 format!("Requester with principal id {} is approved", requester)
             } else {
                 format!(
@@ -726,6 +802,7 @@ pub fn decline_mentor_profile_update_request(requester: Principal, decline: bool
 
                 // Remove the requester from the awaiters
                 awaiters.remove(&requester);
+                change_notification_status(requester, "mentor".to_string(), "declined".to_string());
 
                 // Return a success message for declining the request
                 format!("Requester with principal id {} is declined", requester)
@@ -782,6 +859,11 @@ pub fn approve_project_creation_request(requester: Principal) -> String {
                     });
 
                     awaiters.remove(&requester);
+                    change_notification_status(
+                        requester,
+                        "project".to_string(),
+                        "approved".to_string(),
+                    )
                 }
                 None => {
                     return format!(
@@ -830,6 +912,11 @@ pub fn decline_project_creation_request(requester: Principal) -> String {
                     });
 
                     awaiters.remove(&requester);
+                    change_notification_status(
+                        requester,
+                        "project".to_string(),
+                        "declined".to_string(),
+                    )
                 }
                 None => {
                     return format!(
@@ -912,6 +999,11 @@ pub fn approve_project_update(requester: Principal, project_id: String, approve:
             });
 
             if updated {
+                change_notification_status(
+                    requester,
+                    "project".to_string(),
+                    "approved".to_string(),
+                );
                 format!(
                     "Project update for ID {} has been approved and applied.",
                     project_id
@@ -923,6 +1015,7 @@ pub fn approve_project_update(requester: Principal, project_id: String, approve:
                 )
             }
         } else {
+            change_notification_status(requester, "project".to_string(), "declined".to_string());
             // Optionally handle declined updates, such as logging or notifying the requester.
             format!("Project update for ID {} was declined.", project_id)
         }

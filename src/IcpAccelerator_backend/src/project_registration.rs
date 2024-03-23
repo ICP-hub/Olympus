@@ -60,7 +60,7 @@ pub struct Announcements {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
-pub struct AnnouncementsInternal{
+pub struct AnnouncementsInternal {
     announcement_data: Announcements,
     timestamp: u64,
     project_name: String,
@@ -266,6 +266,57 @@ pub struct ProjectNotification {
     timestamp: u64,
 }
 
+#[derive(CandidType, Clone, Serialize, Deserialize)]
+pub struct ProjectReview {
+    name: String,
+    profile_pic: Vec<u8>,
+    message: String,
+    timestamp: u64,
+    tag: String,
+    rating: u32,
+}
+
+#[derive(CandidType, Clone, Serialize, Deserialize)]
+pub struct ProjectRatingStruct {
+    rating: u32,
+    message: String,
+    project_id: String,
+}
+
+impl ProjectReview {
+    pub fn new(
+        name: String,
+        profile_pic: Vec<u8>,
+        message: String,
+        rating: u32,
+    ) -> Result<ProjectReview, &'static str> {
+        if rating > 5 {
+            return Err("Rating must be between 0.0 and 5.0");
+        }
+
+        let rating_int = (rating * 10) as i32;
+
+        let tag = match rating_int {
+            0..=10 => "Needs Improvement",
+            11..=20 => "Fair",
+            21..=30 => "Good",
+            31..=40 => "Very Good",
+            41..=50 => "Excellent",
+            _ => "Unknown",
+        }
+        .to_string();
+
+        Ok(ProjectReview {
+            name,
+            profile_pic,
+            message,
+            timestamp: time(),
+            tag,
+            rating,
+        })
+    }
+}
+
 pub type MoneyAccess = HashMap<Principal, Vec<AccessRequest>>;
 pub type PrivateDocsAccess = HashMap<Principal, Vec<AccessRequest>>;
 thread_local! {
@@ -288,7 +339,7 @@ thread_local! {
     pub static MONEY_ACCESS: RefCell<HashMap<String, Vec<Principal>>> = RefCell::new(HashMap::new());
     pub static PRIVATE_DOCS_ACCESS: RefCell<HashMap<String, Vec<Principal>>> = RefCell::new(HashMap::new());
 
-
+    pub static PROJECT_RATING : RefCell<HashMap<String, Vec<(Principal,ProjectReview)>>> = RefCell::new(HashMap::new());
 
     pub static  MONEY_ACCESS_REQUESTS :RefCell<MoneyAccess> = RefCell::new(MoneyAccess::new());
 
@@ -799,7 +850,7 @@ pub fn add_announcement(mut announcement_details: Announcements) -> String {
     if !project_id_exists {
         return "Project ID does not exist in application forms.".to_string();
     }
-    
+
     let new_announcement = AnnouncementsInternal {
         announcement_data: announcement_details,
         timestamp: current_time,
@@ -821,28 +872,35 @@ pub fn add_announcement(mut announcement_details: Announcements) -> String {
 //for testing purpose
 #[query]
 pub fn get_announcements() -> HashMap<Principal, Vec<AnnouncementsInternal>> {
-    PROJECT_ANNOUNCEMENTS.with(|state| {
-        state.borrow().clone()
-    })
+    PROJECT_ANNOUNCEMENTS.with(|state| state.borrow().clone())
 }
 
 #[query]
 pub fn get_latest_announcements() -> HashMap<Principal, Vec<AnnouncementsInternal>> {
     PROJECT_ANNOUNCEMENTS.with(|state| {
         let state = state.borrow();
-        state.iter().map(|(principal, announcement_internals)| {
-            let mut sorted_announcements = announcement_internals.clone();
-            sorted_announcements.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
-            (principal.clone(), sorted_announcements)
-        }).collect()
+        state
+            .iter()
+            .map(|(principal, announcement_internals)| {
+                let mut sorted_announcements = announcement_internals.clone();
+                sorted_announcements.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
+                (principal.clone(), sorted_announcements)
+            })
+            .collect()
     })
 }
 
 #[query]
 pub fn get_announcements_by_project_id(project_id: String) -> Vec<AnnouncementsInternal> {
     PROJECT_ANNOUNCEMENTS.with(|state| {
-        state.borrow().values()
-            .flat_map(|announcements| announcements.iter().filter(|announcement| announcement.announcement_data.project_id == project_id))
+        state
+            .borrow()
+            .values()
+            .flat_map(|announcements| {
+                announcements
+                    .iter()
+                    .filter(|announcement| announcement.announcement_data.project_id == project_id)
+            })
             .cloned()
             .collect()
     })
@@ -1377,22 +1435,23 @@ pub async fn send_private_docs_access_request(project_id: String) -> String {
     "Your access request has been sent and is pending approval.".to_string()
 }
 
-
 #[query]
 pub fn get_all_pending_requests() -> Vec<ProjectNotification> {
     PROJECT_ACCESS_NOTIFICATIONS.with(|storage| {
         let projects = storage.borrow();
-        projects.values()
+        projects
+            .values()
             .flat_map(|notifications| {
-                notifications.iter()
-                    .filter_map(|notification| {
-                        match &notification.notification_type {
-                            ProjectNotificationType::AccessRequest(access_request) if access_request.status == "pending" => {
-                                Some(notification.clone())
-                            },
-                            _ => None,
+                notifications.iter().filter_map(|notification| {
+                    match &notification.notification_type {
+                        ProjectNotificationType::AccessRequest(access_request)
+                            if access_request.status == "pending" =>
+                        {
+                            Some(notification.clone())
                         }
-                    })
+                        _ => None,
+                    }
+                })
             })
             .collect()
     })
@@ -1402,17 +1461,19 @@ pub fn get_all_pending_requests() -> Vec<ProjectNotification> {
 pub fn get_all_declined_requests() -> Vec<ProjectNotification> {
     PROJECT_ACCESS_NOTIFICATIONS.with(|storage| {
         let projects = storage.borrow();
-        projects.values()
+        projects
+            .values()
             .flat_map(|notifications| {
-                notifications.iter()
-                    .filter_map(|notification| {
-                        match &notification.notification_type {
-                            ProjectNotificationType::AccessRequest(access_request) if access_request.status == "declined" => {
-                                Some(notification.clone())
-                            },
-                            _ => None,
+                notifications.iter().filter_map(|notification| {
+                    match &notification.notification_type {
+                        ProjectNotificationType::AccessRequest(access_request)
+                            if access_request.status == "declined" =>
+                        {
+                            Some(notification.clone())
                         }
-                    })
+                        _ => None,
+                    }
+                })
             })
             .collect()
     })
@@ -1422,17 +1483,19 @@ pub fn get_all_declined_requests() -> Vec<ProjectNotification> {
 pub fn get_all_approved_requests() -> Vec<ProjectNotification> {
     PROJECT_ACCESS_NOTIFICATIONS.with(|storage| {
         let projects = storage.borrow();
-        projects.values()
+        projects
+            .values()
             .flat_map(|notifications| {
-                notifications.iter()
-                    .filter_map(|notification| {
-                        match &notification.notification_type {
-                            ProjectNotificationType::AccessRequest(access_request) if access_request.status == "approved" => {
-                                Some(notification.clone())
-                            },
-                            _ => None,
+                notifications.iter().filter_map(|notification| {
+                    match &notification.notification_type {
+                        ProjectNotificationType::AccessRequest(access_request)
+                            if access_request.status == "approved" =>
+                        {
+                            Some(notification.clone())
                         }
-                    })
+                        _ => None,
+                    }
+                })
             })
             .collect()
     })
@@ -1746,4 +1809,45 @@ pub fn decline_private_docs_access_request(project_id: String, sender_id: Princi
     });
 
     "Private docs access request declined successfully.".to_string()
+}
+
+pub fn check_project_exists(project_id: String) -> bool {
+    find_project_by_id(&project_id).is_some()
+}
+
+#[update]
+pub fn add_project_rating(ratings: ProjectRatingStruct) -> Result<String, String> {
+    if check_project_exists(ratings.project_id.clone()) {
+        let principal = caller();
+        let user_data = get_user_info().clone().unwrap();
+
+        let project_review = ProjectReview::new(
+            user_data.full_name,
+            user_data
+                .profile_picture
+                .ok_or("Profile picture not found")?,
+            ratings.message,
+            ratings.rating,
+        )
+        .map_err(|e| e.to_string())?; // Gracefully handle the error
+
+        PROJECT_RATING.with(|registry| {
+            registry
+                .borrow_mut()
+                .entry(ratings.project_id.clone())
+                .or_insert_with(Vec::new)
+                .push((principal, project_review));
+        });
+        Ok("Rating added".to_string())
+    } else {
+        Err("Project with ID does not exist.".to_string())
+    }
+}
+
+#[query]
+fn get_project_ratings(project_id: String) -> Option<Vec<(Principal, ProjectReview)>> {
+    PROJECT_RATING.with(|ratings| {
+        
+        ratings.borrow().get(&project_id).cloned()
+    })
 }
