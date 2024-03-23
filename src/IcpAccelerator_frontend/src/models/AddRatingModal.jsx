@@ -16,7 +16,7 @@ const schema = yup
   })
   .required();
 
-const AddRatingModal = ({ onRatingClose }) => {
+const AddRatingModal = ({ onRatingClose, onSubmitHandler }) => {
   const [rating, setRating] = useState(0);
   const {
     register,
@@ -63,11 +63,12 @@ const AddRatingModal = ({ onRatingClose }) => {
 
   const ratingPercentage = (watch("rating") / 5) * 100;
 
-  console.log("rating", rating);
-  console.log(errors);
+  // console.log("rating", rating);
+  // console.log(errors);
 
   const onSubmit = (data) => {
     console.log(data);
+    onSubmitHandler(data);
   };
   return (
     <>
@@ -76,7 +77,7 @@ const AddRatingModal = ({ onRatingClose }) => {
         <div className="relative p-4 w-full max-w-md max-h-full">
           <div className="relative bg-white rounded-lg shadow">
             <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t ">
-              <h3 className="text-xl font-semibold text-gray-900 ">Ratings</h3>
+              <h3 className="text-xl font-semibold text-gray-900 ">Community Ratings</h3>
               <button
                 type="button"
                 className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center "
@@ -165,7 +166,7 @@ const AddRatingModal = ({ onRatingClose }) => {
                         ? "border-red-500 placeholder:text-red-500"
                         : "border-[#737373]"
                     } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                    placeholder="Job Description here"
+                    placeholder="Write a review"
                   ></textarea>
                   {errors.ratingDescription && (
                     <span className="mt-1 text-sm text-red-500 font-bold">

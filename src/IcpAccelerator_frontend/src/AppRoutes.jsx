@@ -70,7 +70,8 @@ const AppRoutes = () => {
     // { path: "/", element: <ProjectDashboard /> },
     // { path: "/", element: <MentorDashboard /> },
     // { path: "/", element: <InvestorDashboard /> },
-    { path: "/individual-project-details-project-owner/:id", element: <ProjectDetailsForOwnerProject /> },
+    // { path: "/", element: <ProjectDetailsForOwnerProject /> },
+    { path: "/individual-project-details-project-owner", element: <ProjectDetailsForOwnerProject /> },
     { path: "/association", element: <ProjectAssociation /> },
     { path: "/create-user", element: <NormalUser /> },
     { path: "/create-project", element: <CreateProject /> },
@@ -87,7 +88,6 @@ const AppRoutes = () => {
     { path: "/launch-projects", element: <MoreProjectLaunchPage /> },
     { path: "/raising-projects", element: <MoreCurrentlyRaisingProjects /> },
     { path: "/view-investor", element: <ViewInvestor /> },
-
   ];
 
   const protectedRoutes = [

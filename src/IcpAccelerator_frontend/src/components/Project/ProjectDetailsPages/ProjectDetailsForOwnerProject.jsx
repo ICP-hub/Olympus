@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { Principal } from '@dfinity/principal';
 import ProjectDetailsCard from './ProjectDetailsCard';
 import MembersProfileCard from '../../TeamMembers/MembersProfileCard';
 import MentorsProfileCard from '../../TeamMembers/MentorsProfileCard';
@@ -8,9 +9,18 @@ import ProjectRatings from '../ProjectRatings';
 import MembersProfileDetailsCard from './MembersProfileDetailsCard';
 import MentorsProfileDetailsCard from './MentorsProfileDetailsCard';
 import InvestorProfileDetailsCard from './InvestorProfileDetailsCard';
-import { Principal } from '@dfinity/principal';
 import AnnouncementModal from '../../../models/AnnouncementModal';
 import AddJobsModal from '../../../models/AddJobsModal';
+import AddRatingModal from '../../../models/AddRatingModal';
+import AddTeamMember from '../../../models/AddTeamMember';
+import AnnouncementCard from '../../Dashboard/AnnouncementCard';
+import ProjectJobCard from '../ProjectDetails/ProjectJobCard';
+import ment from "../../../../assets/images/ment.jpg";
+import AnnouncementDetailsCard from './AnnouncementDetailsCard';
+import ProjectJobDetailsCard from './ProjectJobDetailsCard';
+import ProjectDetailsCommunityRatings from './ProjectDetailsCommunityRatings';
+import AddAMentorRequestModal from '../../../models/AddAMentorRequestModal';
+
 const ProjectDetailsForOwnerProject = () => {
     // Add your component logic here
     const actor = useSelector((currState) => currState.actors.actor)
@@ -46,19 +56,32 @@ const ProjectDetailsForOwnerProject = () => {
             label: "investors",
         },
         {
+            id: "community-ratings",
+            label: "community rating",
+        },
+        {
             id: "project-ratings",
             label: "Rubric Rating",
         },
     ];
 
     const [activeTab, setActiveTab] = useState(headerData[0].id);
+    const [isAddTeamModalOpen, setIsAddTeamModalOpen] = useState(false);
+    const [isAddMentorModalOpen, setIsAddMentorModalOpen] = useState(false);
     const [isAnnouncementModalOpen, setAnnouncementModalOpen] = useState(false);
     const [isJobsModalOpen, setJobsModalOpen] = useState(false);
+    const [isRatingModalOpen, setRatingModalOpen] = useState(false);
 
+    const handleTeamMemberCloseModal = () => setIsAddTeamModalOpen(false);
+    const handleTeamMemberOpenModal = () => setIsAddTeamModalOpen(true);
+    const handleMentorCloseModal = () => setIsAddMentorModalOpen(false);
+    const handleMentorOpenModal = () => setIsAddMentorModalOpen(true);
     const handleCloseModal = () => setAnnouncementModalOpen(false);
     const handleOpenModal = () => setAnnouncementModalOpen(true);
     const handleJobsCloseModal = () => setJobsModalOpen(false);
     const handleJobsOpenModal = () => setJobsModalOpen(true);
+    const handleRatingCloseModal = () => setRatingModalOpen(false);
+    const handleRatingOpenModal = () => setRatingModalOpen(true);
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);
@@ -108,6 +131,19 @@ const ProjectDetailsForOwnerProject = () => {
                         filter={"investor"}
                     />
                 );
+            case "community-ratings":
+                return (
+                    <ProjectDetailsCommunityRatings
+                        data={projectData}
+                        profile={true}
+                        type={!true}
+                        name={true}
+                        role={true}
+                        socials={true}
+                        filter={"team"}
+                    />
+                )
+
             case "project-ratings":
                 return (
                     <ProjectRatings
@@ -127,31 +163,62 @@ const ProjectDetailsForOwnerProject = () => {
     const renderAddButton = () => {
 
     }
-
-    const handleAddTeamMember = () => {
+    
+    const handleAddTeamMember = ({ user_id }) => {
         console.log('add team member')
         if (actor) {
-            let argument = {
-                project_id: projectData?.uid,
-                member_principal_id: Principal.fromText('mjyg6-bruno-7wwxo-mfpgo-gm2ny-f4v7c-fzzzg-4x75y-5c4rp-uyn2d-fqe')
-            }
-            console.log('argument', argument)
-            actor.update_team_member(argument)
+            let project_id = projectData?.uid;
+            let member_principal_id = Principal.fromText(user_id)
+            actor.update_team_member(project_id, member_principal_id)
                 .then((result) => {
                     console.log('result-in-update_team_member', result)
-                    // if (result && Object.keys(result).length > 0) {
-                    //     fetchProjectData();
-                    // } else {
-                    //     fetchProjectData();
-                    // }
+                    if (result) {
+                        handleTeamMemberCloseModal();
+                        fetchProjectData();
+                        toast.success('team member added successfully')
+                    } else {
+                        handleTeamMemberCloseModal();
+                        toast.error('something got wrong')
+
+                    }
                 })
                 .catch((error) => {
                     console.log('error-in-update_team_member', error)
-                    // fetchProjectData();
+                    handleTeamMemberCloseModal();
+                    toast.error('something got wrong')
+
                 })
         }
     }
 
+    const handleAddMentor = ({ user_id, message }) => {
+        console.log('add a mentor')
+        if (actor) {
+            let mentor_id = Principal.fromText(user_id)
+            let msg = message
+            let project_id = projectData?.uid;
+
+            actor.send_offer_to_mentor(mentor_id, msg, project_id)
+                .then((result) => {
+                    console.log('result-in-send_offer_to_mentor', result)
+                    if (result) {
+                        handleMentorCloseModal();
+                        fetchProjectData();
+                        toast.success('offer sent to mentor successfully')
+                    } else {
+                        handleMentorCloseModal();
+                        toast.error('something got wrong')
+
+                    }
+                })
+                .catch((error) => {
+                    console.log('error-in-send_offer_to_mentor', error)
+                    handleMentorCloseModal();
+                    toast.error('something got wrong')
+
+                })
+        }
+    }
 
     const handleAddAnnouncement = ({ announcementTitle, announcementDescription }) => {
         console.log('add announcement')
@@ -166,21 +233,24 @@ const ProjectDetailsForOwnerProject = () => {
             actor.add_announcement(argument)
                 .then((result) => {
                     console.log('result-in-add_announcement', result)
-                    // if (result && Object.keys(result).length > 0) {
-                    //     fetchProjectData();
-                    // } else {
-                    //     fetchProjectData();
-                    // }
+                    if (result && Object.keys(result).length > 0) {
+                        handleCloseModal();
+                        fetchProjectData();
+                        toast.success('announcement added successfully')
+                    } else {
+                        handleCloseModal();
+                        toast.error('something got wrong')
+                    }
                 })
                 .catch((error) => {
                     console.log('error-in-add_announcement', error)
-                    // fetchProjectData();
+                    toast.error('something got wrong')
+                    handleCloseModal();
                 })
         }
     }
 
     const handleAddJob = ({ jobTitle, jobDescription, jobCategory, jobLocation }) => {
-        // const handleAddJob = () => {
         console.log('add job')
         if (actor) {
             let argument = {
@@ -196,19 +266,45 @@ const ProjectDetailsForOwnerProject = () => {
             actor.post_job(argument)
                 .then((result) => {
                     console.log('result-in-post_job', result)
-                    // if (result) {
-                    //     fetchProjectData();
-                    // } else {
-                    //     fetchProjectData();
-                    // }
+                    if (result) {
+                        handleJobsCloseModal();
+                        fetchProjectData();
+                        toast.success('job posted successfully')
+                    } else {
+                        handleJobsCloseModal();
+                        toast.error('something got wrong')
+                    }
                 })
                 .catch((error) => {
                     console.log('error-in-post_job', error)
-                    // fetchProjectData();
+                    toast.error('something got wrong')
+                    handleJobsCloseModal();
                 })
         }
     }
 
+    const handleAddRating = ({ rating, ratingDescription }) => {
+        console.log('add job')
+        if (actor) {
+            actor.add_review(rating, ratingDescription)
+                .then((result) => {
+                    console.log('result-in-add_review', result)
+                    if (result) {
+                        handleRatingCloseModal();
+                        fetchProjectData();
+                        toast.success('review added successfully')
+                    } else {
+                        handleRatingCloseModal();
+                        toast.error('something got wrong')
+                    }
+                })
+                .catch((error) => {
+                    console.log('error-in-add_review', error)
+                    toast.error('something got wrong')
+                    handleRatingCloseModal();
+                })
+        }
+    }
 
     useEffect(() => {
         if (actor) {
@@ -220,7 +316,7 @@ const ProjectDetailsForOwnerProject = () => {
         <section className="text-black bg-gray-100 pb-4">
             <div className="w-full px-[4%] lg1:px-[5%]">
                 <div className="flex-col">
-                    <div className="mb-4">
+                    <div className="pt-4 mb-4">
                         <ProjectDetailsCard
                             data={projectData}
                             image={true}
@@ -241,19 +337,20 @@ const ProjectDetailsForOwnerProject = () => {
                             </p>
                         </div>
                     )}
-                    <div className="flex flex-col justify-between w-full py-4">
-                        <div className='flex'>
-                            <button onClick={() => handleAddTeamMember()} className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900">
-                                Add Team
+                    <div className="flex justify-end w-full py-4">
+                        <div className='flex gap-2'>
+                            <button onClick={handleTeamMemberOpenModal} className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900">
+                                Add Team Member
                             </button>
-                            <button onClick={handleOpenModal} className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900">
-                                Add Announcement
+                            <button onClick={handleMentorOpenModal} className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900">
+                                Associate Mentor
                             </button>
                             <button onClick={handleJobsOpenModal} className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900">
-                                Add Job
+                                Associate Investor
                             </button>
-
-                            {/* {renderAddButton()} */}
+                            <button onClick={handleRatingOpenModal} className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900">
+                                Add Community Rating
+                            </button>
                         </div>
                     </div>
                     <div className="mb-4">
@@ -274,16 +371,69 @@ const ProjectDetailsForOwnerProject = () => {
                                 ))}
                             </ul>
                         </div>
-                        <div>
+                        <div className='py-4'>
                             {renderComponent()}
                         </div>
                     </div>
+                    <div className="flex flex-col py-4">
+                        <div className="flex justify-between items-center mb-4">
+                            <h1 className="font-[950] text-lg md:text-2xl  text-blue-700">
+                                Announcement
+                            </h1>
+                            <button className="font-[950] border bg-[#3505B2] py-[7px] px-[9px] rounded-md text-white text-nowrap capitalize"
+                                onClick={handleOpenModal}>
+                                Add Announcement
+                            </button>
+                        </div>
+                        <AnnouncementDetailsCard data={projectData} />
+                    </div>
+                    <div className="flex flex-col py-4">
+                        <div className="flex justify-between">
+                            <h1 className="font-[950] text-lg md:text-2xl  text-blue-700">
+                                jobs/opportunity
+                            </h1>
+                            <button className="font-[950] border bg-[#3505B2] px-4 py-2 rounded-md text-white text-nowrap capitalize"
+                                onClick={handleJobsOpenModal}>
+                                Add Jobs
+                            </button>
+                        </div>
+                        <ProjectJobDetailsCard
+                            data={projectData}
+                            image={true}
+                            tags={true}
+                            country={true}
+                            website={true}
+                        />
+                    </div>
                 </div>
             </div>
+            {isAddTeamModalOpen && (
+                <AddTeamMember
+                    title={'Add Team Member'}
+                    onClose={handleTeamMemberCloseModal}
+                    onSubmitHandler={handleAddTeamMember}
+                />)}
+              {isAddMentorModalOpen && (
+                <AddAMentorRequestModal
+                    title={'Associate Mentor'}
+                    onClose={handleMentorCloseModal}
+                    onSubmitHandler={handleAddMentor}
+                />)}
             {isAnnouncementModalOpen && (
-                <AnnouncementModal onClose={handleCloseModal} onSubmitHandler={handleAddAnnouncement} />)}
+                <AnnouncementModal 
+                onClose={handleCloseModal} 
+                onSubmitHandler={handleAddAnnouncement} 
+                />)}
             {isJobsModalOpen && (
-                <AddJobsModal onJobsClose={handleJobsCloseModal} onSubmitHandler={handleAddJob} />)}
+                <AddJobsModal 
+                onJobsClose={handleJobsCloseModal} 
+                onSubmitHandler={handleAddJob} 
+                />)}
+            {isRatingModalOpen && (
+                <AddRatingModal 
+                onRatingClose={handleRatingCloseModal} 
+                onSubmitHandler={handleAddRating} 
+                />)}
         </section>
     );
 };
