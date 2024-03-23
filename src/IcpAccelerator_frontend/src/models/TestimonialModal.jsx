@@ -1,22 +1,37 @@
 import React from "react";
 import toast, { Toaster } from "react-hot-toast";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 const TestimonialModal = ({ onClose, categories }) => {
+  const actor = useSelector((currState) => currState.actors.actor);
   const navigate = useNavigate();
 
   console.log(categories);
   const handleSubmit = async (categories) => {
     if (categories.id === "registerInvestor") {
-       navigate('\create-investor')
+      navigate("create-investor");
     } else if (categories.id === "registerMentor") {
       navigate("create-mentor");
     } else if (categories.id === "registerProject") {
       navigate("create-project");
     } else if (categories.id === "addTestimonial") {
-      toast.success(
-        "Your Insights are Valuable to us. Thank you for sharing your Testimonial it will br Added Shorlty!"
-      );
+      const description = document.getElementById("description").value;
+      actor
+        .add_testimonial(description)
+        .then((result) => {
+          console.log("result-in-add_testimonial", result);
+          toast.success(
+            "Your Insights are Valuable to us. Thank you for sharing your Testimonial it will br Added Shorlty!"
+          );
+        })
+        .catch((error) => {
+          console.log("error-in-add_testimonial", error);
+          // Handle error
+          // handleModalClose(); // You might need to define this function
+          toast.error("Something went wrong");
+        });
+
       await onClose();
     }
   };
