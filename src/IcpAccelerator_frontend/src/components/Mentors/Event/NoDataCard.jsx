@@ -7,7 +7,7 @@ function NoDataCard() {
       <div>
         <img src={NoData} alt="No data Found" />
       </div>
-      <h2>No Data avialable</h2>
+      <h2>No Data</h2>
     </div>
   );
 }
