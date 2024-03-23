@@ -45,7 +45,7 @@ function ProjectDetailsCard({ data, image, title, tags, socials, doj, country, w
                                         <div className="flex items-center">
                                             <p className="font-bold text-lg pr-2">{name}</p>
                                             <CircularProgressbar
-                                                value={ratingPercentage}
+                                                value={(4 / 9) * 100 }
                                                 text={`4/9`}
                                                 className="w-10 h-10 font-extrabold text-lg"
                                                 strokeWidth={8}
