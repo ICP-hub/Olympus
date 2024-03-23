@@ -17,7 +17,7 @@ function* initActorSaga() {
       process.env.ICPACCELERATOR_BACKEND_CANISTER_ID;
 
     const actor = yield call(createActor, canisterId, {
-      agentOptions: { identity },
+      agentOptions: { identity, verifyQuerySignatures: false },
     });
 
     // console.log('Actor initialized in initActorSaga:', actor);
