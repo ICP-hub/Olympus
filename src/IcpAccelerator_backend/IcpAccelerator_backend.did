@@ -138,11 +138,7 @@ type MoneyRaised = record {
   sns : opt text;
   investors : opt text;
   raised_from_other_ecosystem : opt text;
-<<<<<<< HEAD
-  target_amount : float64;
-=======
   target_amount : opt float64;
->>>>>>> dbb7681d9be7d44630ef1f3201b332c574e10f48
   icp_grants : opt text;
 };
 type Notification = record {
@@ -510,10 +506,7 @@ service : () -> {
   get_admin_notifications : () -> (vec Notification) query;
   get_all_approved_requests : () -> (vec ProjectNotification) query;
   get_all_cohorts : () -> (vec CohortDetails) query;
-<<<<<<< HEAD
-=======
   get_all_declined_requests : () -> (vec ProjectNotification) query;
->>>>>>> dbb7681d9be7d44630ef1f3201b332c574e10f48
   get_all_jobs : () -> (vec JobsInternal) query;
   get_all_mentor_notification : (principal) -> (vec OfferToSendToMentor) query;
   get_all_mentors : () -> (vec record { principal; MentorWithRoles }) query;
