@@ -2,12 +2,16 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import logoWithText from "../../../../../IcpAccelerator_frontend/assets/Logo/topLogo.png"
 import LogoutModal from "../../models/LogoutModal";
+import { useNavigate, useLocation } from "react-router-dom";
+
 
 const Header = ({ setModalOpen, gradient }) => {
   const principal = useSelector((currState) => currState.internet.principal);
   const isAuthenticated = useSelector(
     (currState) => currState.internet.isAuthenticated
   );
+  const navigate = useNavigate()
+  const location = useLocation();
 
   // console.log("principal in header", connectedWalletPrincipal);
 
@@ -15,9 +19,13 @@ const Header = ({ setModalOpen, gradient }) => {
     !principal ? setModalOpen(true) : setModalOpen(false);
   };
 
-  const underline =
-    "relative focus:after:content-[''] focus:after:block focus:after:w-full focus:after:h-[2px] focus:after:bg-blue-800 focus:after:absolute focus:after:left-0 focus:after:bottom-[-4px]";
-
+  const getLinkStyle = (path) => {
+    return location.pathname === path
+      ? "pb-1 border-b-2 border-gray-700 font-bold text-gray-700"
+      : "text-gray-500";
+  };
+  
+  
   return (
     <header className={`text-gray-700 body-font ${gradient}`}>
       <div className="  flex  items-center justify-between px-[5%] lg1:px-[4%] py-[3%]">
@@ -29,18 +37,15 @@ const Header = ({ setModalOpen, gradient }) => {
         />
 
         {isAuthenticated && (
-          <div className="space-x-3 text-xs md:block hidden">
-            <a href="#" className={`${underline}`}>
-              Home
+          <div className="space-x-3 text-xs md:block hidden cursor-pointer">
+            <a onClick={()=>navigate('/dashboard')} className={`${getLinkStyle('/dashboard')}`}>
+              Dashboard
             </a>
-            <a href="#" className={`${underline}`}>
-              Event
+            <a onClick={()=>navigate('/users')} className={`${getLinkStyle('/users')}`}>
+              Users
             </a>
-            <a href="#" className={`${underline}`}>
-              Mentor
-            </a>
-            <a href="#" className={`${underline}`}>
-              Projects
+            <a onClick={()=>navigate('/request')} className={`${getLinkStyle('/request')}`}>
+              Requests
             </a>
           </div>
         )}

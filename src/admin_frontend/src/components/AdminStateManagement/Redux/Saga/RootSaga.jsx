@@ -9,8 +9,10 @@ import { fetchMentorPendingSaga } from './mentorPendingSaga';
 import { fetchProjectApprovedSaga } from './projectApprovedSaga';
 import { fetchProjectDeclinedSaga } from './ProjectDeclinedSaga';
 import { fetchProjectPendingSaga } from './ProjectPendingSaga';
-
-
+import { CountSaga } from './countSaga';
+import { cycleSaga } from './cycleSaga';
+import { totalPendingSaga } from './totalPendingSaga';
+import { notificationSaga } from './notification';
 
 export default function* rootSaga() {
     yield all([
@@ -23,7 +25,10 @@ export default function* rootSaga() {
         fetchMentorPendingSaga(),
         fetchProjectApprovedSaga(),
         fetchProjectDeclinedSaga(),
-        fetchProjectPendingSaga()
-
+        fetchProjectPendingSaga(),
+        notificationSaga(),
+        CountSaga(),
+        cycleSaga(),
+        totalPendingSaga()
     ]);
 }

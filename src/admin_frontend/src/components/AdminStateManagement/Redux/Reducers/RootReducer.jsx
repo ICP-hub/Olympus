@@ -1,6 +1,4 @@
 import { combineReducers } from "@reduxjs/toolkit";
-// import RoleReducer from "./RoleReducer";
-// import AllHubReducer from "./All_IcpHubReducer";
 import actorReducer from "./adminActor";
 import internetIdentityReducer from "./adminInternetIdentity";
 import mentorApprovedReducer from "./mentorApproved";
@@ -12,7 +10,10 @@ import investorPendingReducer  from "./investorPending";
 import projectApprovedReducer  from "./projectApproved";
 import projectDeclinedReducer  from "./projectDeclined";
 import projectPendingReducer  from "./projectPending";
-
+import CountReducer from "./CountReducer";
+import cyclePendingReducer from "./cyclePendingReducer";
+import totalPendingRequestReducer from "./totalPendingRequestReducer";
+import notificationReducer from "./notificationReducer";
 
 const rootReducer = combineReducers({
   actors: actorReducer,
@@ -25,7 +26,11 @@ const rootReducer = combineReducers({
   project_pending : projectPendingReducer,
   mentor_declined :mentorDeclinedReducer,
   mentor_approved: mentorApprovedReducer,
-  mentor_pending :mentorPendingReducer
+  mentor_pending :mentorPendingReducer,
+  count:CountReducer,
+  cyclePending: cyclePendingReducer,
+  totpending : totalPendingRequestReducer,
+  notification : notificationReducer
 });
 
 export default rootReducer;
