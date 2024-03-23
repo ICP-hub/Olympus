@@ -36,27 +36,28 @@ const DashBoard = () => {
     (currState) => currState.currentRoleStatus.activeRole
   );
 
+  const initialApi = async () => {
+    try {
+      const currentRoleArray = await actor.get_role_status()
+      if (currentRoleArray && currentRoleArray.length !== 0) {
+        const currentActiveRole = getNameOfCurrentStatus(currentRoleArray)
+        dispatch(setCurrentRoleStatus(currentRoleArray));
+        dispatch(setCurrentActiveRole(currentActiveRole));
+      } else {
+        dispatch(getCurrentRoleStatusFailureHandler('error-in-fetching-role-at-dashboard'));
+        dispatch(setCurrentActiveRole(null));
+      }
+    } catch (error) {
+      dispatch(getCurrentRoleStatusFailureHandler(error.toString()));
+      dispatch(setCurrentActiveRole(null));
+    }
+  }
 
 
   useEffect(() => {
     if (actor) {
       if (!userCurrentRoleStatus.length) {
-        (async () => {
-          try {
-            const currentRoleArray = await actor.get_role_status()
-            if (currentRoleArray && currentRoleArray.length !== 0) {
-              const currentActiveRole = getNameOfCurrentStatus(currentRoleArray)
-              dispatch(setCurrentRoleStatus(currentRoleArray));
-              dispatch(setCurrentActiveRole(currentActiveRole));
-            } else {
-              dispatch(getCurrentRoleStatusFailureHandler('error-in-fetching-role-at-dashboard'));
-              dispatch(setCurrentActiveRole(null));
-            }
-          } catch (error) {
-            dispatch(getCurrentRoleStatusFailureHandler(error.toString()));
-            dispatch(setCurrentActiveRole(null));
-          }
-        })();
+        initialApi();
       } else if (
         userCurrentRoleStatus.length === 4 &&
         userCurrentRoleStatus[0]?.status === "default"
