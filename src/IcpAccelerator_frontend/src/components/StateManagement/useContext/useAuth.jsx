@@ -122,7 +122,7 @@ export const useAuthClient = (options = defaultOptions) => {
           isAuthenticated: true,
           identity,
           principal,
-          navi: "roleSelect",
+          // navi: "roleSelect",
         })
       );
       dispatch(setActor(actor));
@@ -145,7 +145,7 @@ export const useAuthClient = (options = defaultOptions) => {
     process.env.CANISTER_ID_ICPACCELERATOR_BACKEND ||
     process.env.ICPACCELERATOR_BACKEND_CANISTER_ID;
 
-  const actor = createActor(canisterId, { agentOptions: { identity } });
+  const actor = createActor(canisterId, { agentOptions: { identity, verifyQuerySignatures: false } });
   
 
   return {

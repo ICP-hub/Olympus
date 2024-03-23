@@ -1,12 +1,19 @@
 import React, { useState } from "react";
 import ConfirmationModal from "../models/ConfirmationModal";
+import { useNavigate } from "react-router-dom";
 
 function NotificationCard({ notificationDetails }) {
   const [modalPopUp, setModalPopUp] = useState(false);
+  const navigate =useNavigate()
 
   const toggleModelPopUp = () => {
     setModalPopUp((prev) => !prev);
   };
+
+
+  const dataSendToProfileHandler=()=>{
+    navigate('/profile', { state: notificationDetails });
+  }
 
   return (
     <>
@@ -72,6 +79,7 @@ function NotificationCard({ notificationDetails }) {
         <div className="flex justify-center md:justify-end space-x-2">
           <button
             onClick={toggleModelPopUp}
+            // onClick={dataSendToProfileHandler}
             className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-red-700 border border-red-700 rounded-md hover:bg-red-100"
           >
             View

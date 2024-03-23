@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
+import NoDataCard from "./Event/NoDataCard";
 
 function SearchMentors() {
   const cardData = [
@@ -89,11 +90,13 @@ function SearchMentors() {
           setData(result);
           setNoData(false);
         } else {
-          setData(cardData);
+          setData([]);
           setNoData(true);
         }
       })
       .catch((error) => {
+        setData([]);
+        setNoData(true);
         console.log("error-in-get-all-mentors", error);
       });
   };
@@ -153,7 +156,8 @@ function SearchMentors() {
       </div>
 
       <div className="flex flex-wrap justify-center">
-        {data.map((mentor, index) => {
+        {noData ? <NoDataCard /> :
+        data.map((mentor, index) => {
           let id = "";
           let img = "";
           let name = "";

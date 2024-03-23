@@ -83,7 +83,7 @@ const FounderInfo = () => {
       const result = await actor.register_founder_caller(founderData);
       toast.success(result);
       console.log("data passed to backend");
-      await dispatch(userRoleHandler());
+      // await dispatch(userRoleHandler());
       await navigate("/dashboard");
     } catch (error) {
       toast.error(error);

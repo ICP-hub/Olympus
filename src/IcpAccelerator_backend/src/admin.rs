@@ -550,6 +550,11 @@ pub fn approve_vc_profile_update(requester: Principal, approve: bool) -> String 
                             .clone()
                             .or(existing_vc_internal.params.announcement_details.clone());
 
+                        existing_vc_internal.params.registered_country = vc_internal
+                            .registered_country
+                            .clone()
+                            .or(existing_vc_internal.params.registered_country.clone());
+
                         existing_vc_internal.params.fund_size =
                             (vc_internal.fund_size * 100.0).round() / 100.0;
                         existing_vc_internal.params.assets_under_management =
@@ -581,6 +586,7 @@ pub fn approve_vc_profile_update(requester: Principal, approve: bool) -> String 
                         existing_vc_internal.params.linkedin_link =
                             vc_internal.linkedin_link.clone();
                         existing_vc_internal.params.website_link = vc_internal.website_link.clone();
+                        existing_vc_internal.params.registered = vc_internal.registered.clone();
                     }
                 });
 
@@ -935,8 +941,17 @@ pub fn add_job_type(job_type: String) -> String {
 }
 
 #[update]
-pub fn add_project_to_spotlight(project_id: String) -> Result<(), String> {
+pub async fn add_project_to_spotlight(project_id: String) -> Result<(), String> {
     let caller = caller();
+
+    let admin_principals = match get_info().await {
+        Ok(principals) => principals,
+        Err(e) => return Err(format!("Failed to retrieve admin principals")),
+    };
+
+    if !admin_principals.contains(&caller) {
+        return Err("Unauthorized: Caller is not an admin.".to_string());
+    }
 
     let project_info = APPLICATION_FORM.with(|details| {
         details
@@ -981,9 +996,9 @@ pub fn remove_project_from_spotlight(project_id: String) -> Result<(), String> {
 #[query]
 pub fn get_spotlight_projects() -> Vec<SpotlightDetails> {
     let mut projects = SPOTLIGHT_PROJECTS.with(|spotlight| spotlight.borrow().clone());
-    
+
     projects.sort_by(|a, b| b.approval_time.cmp(&a.approval_time));
-    
+
     projects
 }
 
@@ -1075,3 +1090,21 @@ fn get_total_pending_request() -> usize {
 
 // #[query]
 // fn get_top()
+
+#[update]
+fn update_dapp_link(project_id: String, new_dapp_link: String) -> String {
+    APPLICATION_FORM.with(|projects_registry| {
+        let mut projects = projects_registry.borrow_mut();
+        // Iterate through the entire HashMap
+        for project_list in projects.values_mut() {
+            // Iterate through each project in the list
+            if let Some(project) = project_list.iter_mut().find(|p| p.uid == project_id) {
+                // If a project with the matching project_id is found, update its dapp_link
+                project.params.dapp_link = Some(new_dapp_link.clone());
+                return "Project updated successfully.".to_string(); // Confirm update
+            }
+        }
+        // If no project with the matching ID was found
+        "Project ID not found.".to_string()
+    })
+}

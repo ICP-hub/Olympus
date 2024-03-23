@@ -14,7 +14,7 @@ import { latestLiveProjectSaga } from './latestLiveSaga';
 import { latestListedProjectSaga } from './latestListedSaga';
 import { popularListedProjectSaga } from './popularListedSaga';
 import { popularLiveProjectSaga } from './popularLive';
-
+import {JobCategorySaga} from './jobCategorySaga'
 import { userCurrentRoleSaga } from './userCurrentRoleStatusSaga';
 
 import { fetchUserSaga } from './userSaga';
@@ -41,6 +41,7 @@ export default function* rootSaga() {
         latestLiveProjectSaga(),
         popularListedProjectSaga(),
         popularLiveProjectSaga(),
-        userCurrentRoleSaga()
+        userCurrentRoleSaga(),
+        JobCategorySaga(),
     ]);
 }

@@ -18,9 +18,9 @@ const Testimonial = () => {
           },
       ];
   return (
-    <div className='flex flex-wrap space-x-8'>
+    <div className='flex space-x-8'>
     {data.map((card) => (
-      <div key={card.id} className="bg-white rounded-lg shadow-lg max-w-sm p-12 mb-4 h-[22.2rem]">
+      <div key={card.id} className="bg-white rounded-lg shadow-lg w-1/2 p-12 mb-4 h-[22.2rem]">
         <div className="flex items-center space-x-4">
           <img src={card.imageUrl} alt="profile picture" className="w-14 h-14 rounded-full" />
           

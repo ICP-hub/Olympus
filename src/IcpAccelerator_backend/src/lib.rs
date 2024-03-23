@@ -474,14 +474,14 @@ fn get_admin_notifications() -> Vec<admin::Notification> {
 
 //2vxsx-fae
 
-#[pre_upgrade]
-fn pre_upgrade() {
-    pre_upgrade_vc();
-    pre_upgrade_user_modules();
-    pre_upgrade_upvotes();
-    pre_upgrade_mentor();
-    pre_upgrade_admin();
-}
+// #[pre_upgrade]
+// fn pre_upgrade() {
+//     pre_upgrade_vc();
+//     pre_upgrade_user_modules();
+//     pre_upgrade_upvotes();
+//     pre_upgrade_mentor();
+//     pre_upgrade_admin();
+// }
 
 // #[post_upgrade]
 // fn post_upgrade() {

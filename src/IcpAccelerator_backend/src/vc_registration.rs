@@ -37,6 +37,8 @@ pub struct VentureCapitalist {
     pub user_data: UserInformation,
     pub website_link: String,
     pub linkedin_link: String,
+    pub registered: bool,
+    pub registered_country: Option<String>,
 }
 
 #[derive(Clone, CandidType)]

@@ -21,7 +21,7 @@ const sagaMiddleware = createSagaMiddleware();
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["role", "hubs", "current"],
+  whitelist: [],
   // transforms: [encryptor], // encrypt k lie kia
 };
 

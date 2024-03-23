@@ -21,10 +21,11 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
     window.location.reload();
   };
 
-  useEffect(() => {
+  useEffect(async() => {
     if (isAuthenticated) {
-      navigate("/request");
+     await navigate("/dashboard");
     }
+    onClose()
   }, [isAuthenticated]);
 
   return (

@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "../../../../IcpAccelerator_frontend/assets/Logo/icpLogo.png";
+import logo from "../../../../IcpAccelerator_frontend/assets/Logo/topLogoWhitepng.png"
 
 
 const Footer = () => {

@@ -609,7 +609,7 @@ const Projectdashboard = () => {
                     <div className="w-full sm:w-full md:w-full lg:w-1/2 xl:w-1/2 p-4">
                         <div className="shadow-md rounded-lg overflow-hidden border-2 drop-shadow-2xl gap-2 bg-white">
                         <div className='flex flex-col sm:flex-row gap-6 p-2'>
-                                <img className='w-full sm:w-[300.53px] rounded-md h-auto sm:h-[200.45px] flex lg:items-center lg:justify-center  ' src={samya} alt="alt" />
+                                <img className='w-[100px] sm:w-[300.53px] rounded-md h-auto sm:h-[200.45px]  flex lg:items-center lg:justify-center  ' src={samya} alt="alt" />
                                 <div className='flex flex-col w-full mt-4'>
                                     <h1 className="text-black text-2xl font-extrabold">SamyKarim</h1>
                                     <p className="text-[#737373]">Toshi, Managing Partner, Ex-Binance</p>
@@ -641,7 +641,7 @@ const Projectdashboard = () => {
                     <div className="w-full sm:w-full md:w-full lg:w-1/2 xl:w-1/2 p-4">
                         <div className="shadow-md rounded-lg overflow-hidden  drop-shadow-2xl gap-2 bg-[#C1CAFF]">
                             <div className='flex flex-col sm:flex-row gap-6 p-2'>
-                                <img className='w-full sm:w-[300.53px] rounded-md h-auto sm:h-[200.45px] flex lg:items-center lg:justify-center  ' src={samya} alt="alt" />
+                                <img className='w-32 sm:w-[300.53px] rounded-md h-auto sm:h-[200.45px] flex lg:items-center lg:justify-center' src={samya} alt="alt" />
                                 <div className='flex flex-col w-full'>
                                     <h1 className="text-black text-2xl font-extrabold">SamyKarim</h1>
                                     <p className="text-[#737373]">Toshi, Managing Partner, Ex-Binance</p>

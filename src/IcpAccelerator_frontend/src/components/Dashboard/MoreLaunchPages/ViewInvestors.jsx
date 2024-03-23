@@ -4,6 +4,7 @@ import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { IcpAccelerator_backend } from "../../../../../declarations/IcpAccelerator_backend/index";
+import NoDataCard from "../../Mentors/Event/NoDataCard";
 const investors = [
   {
     id: 1,
@@ -56,13 +57,15 @@ const ViewInvestor = () => {
         console.log("result-in-get-all-investors", result);
         if (!result || result.length == 0) {
           setNoData(true);
-          setData(investors);
+          setData([]);
         } else {
           setNoData(false);
           setData(result);
         }
       })
       .catch((error) => {
+        setNoData(true);
+          setData([]);
         console.log("error-in-get-all-investors", error);
       });
   };
@@ -114,7 +117,8 @@ const ViewInvestor = () => {
         </div>
       </div>
     <div className="flex flex-wrap justify-center">
-      {data.map((investor, index) => {
+      {noData ? <NoDataCard /> :
+      data.map((investor, index) => {
         let id = "";
         let img = "";
         let name = "";

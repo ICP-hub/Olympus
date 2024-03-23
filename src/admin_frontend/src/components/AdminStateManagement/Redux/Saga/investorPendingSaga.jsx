@@ -25,9 +25,16 @@ function* fetchInvestorPendingHandler() {
 
     const updatedInvestorProfiles = allInvestorPendingStatus.map(
       ([principal, { vc_profile, roles }]) => {
-        const profilePictureBase64 = uint8ArrayToBase64(
-          vc_profile.params.user_data.profile_picture
-        );
+        // const profilePictureBase64 = uint8ArrayToBase64(
+        //   vc_profile.params.user_data.profile_picture
+        // );
+
+        const profilePictureBase64 = vc_profile.params.user_data.profile_picture[0] && vc_profile.params.user_data.profile_picture[0] instanceof Uint8Array && vc_profile.params.user_data.profile_picture[0].length > 0
+        ? uint8ArrayToBase64(vc_profile.params.user_data.profile_picture[0])
+        : null;
+        
+        // console.log("profilePictureBase64 ====> ", vc_profile.params.user_data.profile_picture[0]);
+
         const principalText = principalToText(principal);
 
         const investorRole = roles.find((role) => role.name === "vc");

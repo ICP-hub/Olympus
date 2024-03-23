@@ -61,6 +61,11 @@ const validationSchema = {
     area_of_intrest: yup.string().required("Selecting a interest is required."),
   }),
   investorDetails: yup.object().shape({
+    registered: yup.string().required().required("Field is required"),
+    registered_country: yup
+      .string()
+      .required()
+      .required("Registered Country is required"),
     preferred_icp_hub: yup
       .string()
       .required()
@@ -232,6 +237,7 @@ const InvestorRegistration = () => {
   // Form Updates Changes in enable and diabled
   const [isExistingICPInvestor, setExistingICPInvestor] = useState(false);
   const [isMulti_Chain, setIsMulti_Chain] = useState(false);
+  const [isRegistered, setIsRegistered] = useState(false);
 
   const userData = useSelector((currState) => currState.userData.data.Ok);
 
@@ -253,7 +259,7 @@ const InvestorRegistration = () => {
       if (userData.profile_picture) {
         bufferToImageBlob(userData?.profile_picture)
           .then((imageUrl) => {
-            setProfileImage(imageUrl);
+            setImage(imageUrl);
             setFormData({ profileImage: userData.profile_picture[0] });
             // You might also need to handle setting the image for display if required
           })
@@ -314,6 +320,7 @@ const InvestorRegistration = () => {
   // Watch the value of existing_icp_investor to update ExistingICPInvestor state
   const ExistingICPInvestor = watch("existing_icp_investor");
   const IsMultiChain = watch("multi_chain");
+  const IsRegistered = watch("registered");
 
   useEffect(() => {
     // Update ExistingICPInvestor based on existing_icp_investor field value
@@ -323,11 +330,15 @@ const InvestorRegistration = () => {
       setValue("money_invested", "");
       setValue("existing_icp_portfolio", "");
     }
+    setIsRegistered(IsRegistered === "true");
+    if (IsRegistered !== "true") {
+      setValue("registered_country", "");
+    }
     setIsMulti_Chain(IsMultiChain === "true");
     if (IsMultiChain !== "true") {
       setValue("project_on_multichain", "");
     }
-  }, [ExistingICPInvestor, IsMultiChain, setValue]);
+  }, [ExistingICPInvestor, IsMultiChain, IsRegistered, setValue]);
 
   useEffect(() => {
     if (!userHasInteracted) return;
@@ -572,6 +583,7 @@ const InvestorRegistration = () => {
         updatedFormData.registered_under_any_hub === "true" ? true : false;
       const updatedexisting_icp_investor =
         ExistingICPInvestor === "true" ? true : false;
+      const updatedIsRegistered = IsRegistered === "true" ? true : false;
       // const updatedMultiChain =
       //   updatedFormData.project_on_multichain === "true" ? true : false;
       const parsedMoneyInvested = parseFloat(updatedFormData.money_invested);
@@ -592,8 +604,12 @@ const InvestorRegistration = () => {
         existing_icp_portfolio: [updatedFormData.existing_icp_portfolio],
         investor_type: updatedFormData.investor_type,
         money_invested: [parsedMoneyInvested],
+        registered: updatedIsRegistered,
         registered_under_any_hub: [updatedregisteredUnderAnyHub],
         assets_under_management: updatedFormData.assets_under_management,
+        registered_country: updatedFormData.registered_country
+          ? [updatedFormData.registered_country]
+          : [],
         name_of_fund: updatedFormData.name_of_fund,
         fund_size: Number(updatedFormData.fund_size),
         average_check_size: Number(updatedFormData.average_check_size),
@@ -871,6 +887,71 @@ const InvestorRegistration = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-3 px-4">
                   <div className="z-0 w-full mb-3 group">
                     <label
+                      htmlFor="registered"
+                      className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                    >
+                      Are you Registered ?*
+                    </label>
+                    <select
+                      {...register("registered")}
+                      className={`bg-gray-50 border-2 ${
+                        errors.registered
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    >
+                      <option className="text-lg font-bold" value="false">
+                        No
+                      </option>
+                      <option className="text-lg font-bold" value="true">
+                        Yes
+                      </option>
+                    </select>
+                    {errors.registered && (
+                      <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                        {errors.registered.message}
+                      </p>
+                    )}
+                  </div>
+                  {isRegistered && (
+                    <div className="z-0 w-full mb-3 group">
+                      <label
+                        htmlFor="registered_country"
+                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                      >
+                        Registered Country*
+                      </label>
+                      <select
+                        {...register("registered_country")}
+                        className={`bg-gray-50 border-2 ${
+                          errors.registered_country
+                            ? "border-red-500 placeholder:text-red-500"
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      >
+                        <option className="text-lg font-bold" value="">
+                          select your Registered Country
+                        </option>
+                        {countries?.map((expert) => (
+                          <option
+                            key={expert.name}
+                            value={`${expert.name}`}
+                            className="text-lg font-bold"
+                          >
+                            {expert.name}
+                          </option>
+                        ))}
+                      </select>
+
+                      {errors.registered_country && (
+                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                          {errors.registered_country.message}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                  <div className="z-0 w-full mb-3 group">
+                    <label
                       htmlFor="preferred_icp_hub"
                       className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                     >
@@ -931,104 +1012,93 @@ const InvestorRegistration = () => {
                       </p>
                     )}
                   </div>
-                  <div className="z-0 w-full mb-3 group">
-                    <label
-                      htmlFor="investor_type"
-                      className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                    >
-                      Type of investment*
-                    </label>
-                    <select
-                      {...register("investor_type")}
-                      className={`bg-gray-50 border-2 ${
-                        !isExistingICPInvestor
-                          ? "" // Remove border if disabled
-                          : `border-[#737373] ${
-                              errors.investor_type
-                                ? "border-red-500 placeholder:text-red-500"
-                                : "border-[#737373]"
-                            }`
-                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                      disabled={!isExistingICPInvestor}
-                    >
-                      <option className="text-lg font-bold" value="">
-                        Select
-                      </option>
-                      <option className="text-lg font-bold" value="Direct">
-                        Direct
-                      </option>
-                      <option className="text-lg font-bold" value="SNS">
-                        SNS
-                      </option>
-                      <option className="text-lg font-bold" value="both">
-                        both
-                      </option>
-                    </select>
-                    {errors.investor_type && (
-                      <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                        {errors.investor_type.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="z-0 w-full mb-3 group">
-                    <label
-                      htmlFor="money_invested"
-                      className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                    >
-                      How much money you invested ?
-                    </label>
-                    <input
-                      type="number"
-                      name="money_invested"
-                      id="money_invested"
-                      {...register("money_invested")}
-                      className={`bg-gray-50 border-2  ${
-                        !isExistingICPInvestor
-                          ? "" // Remove border if disabled
-                          : `border-[#737373]${
-                              errors.money_invested
-                                ? "border-red-500 placeholder:text-red-500"
-                                : "border-[#737373]"
-                            }`
-                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                      placeholder="$"
-                      disabled={!isExistingICPInvestor}
-                    />
-                    {errors.money_invested && (
-                      <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                        {errors.money_invested.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="z-0 w-full mb-3 group">
-                    <label
-                      htmlFor="existing_icp_portfolio"
-                      className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                    >
-                      Existing ICP Portfolio
-                    </label>
-                    <input
-                      type="text"
-                      name="existing_icp_portfolio"
-                      id="existing_icp_portfolio"
-                      {...register("existing_icp_portfolio")}
-                      className={`bg-gray-50 border-2 ${
-                        !isExistingICPInvestor
-                          ? "" // Remove border if disabled
-                          : `border-[#737373] ${
-                              errors.existing_icp_portfolio
-                                ? "border-red-500 placeholder:text-red-500"
-                                : "border-[#737373]"
-                            }`
-                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                      disabled={!isExistingICPInvestor}
-                    />
-                    {errors.existing_icp_portfolio && (
-                      <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                        {errors.existing_icp_portfolio.message}
-                      </p>
-                    )}
-                  </div>
+                  {isExistingICPInvestor && (
+                    <>
+                      <div className="z-0 w-full mb-3 group">
+                        <label
+                          htmlFor="investor_type"
+                          className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                        >
+                          Type of investment*
+                        </label>
+                        <select
+                          {...register("investor_type")}
+                          className={`bg-gray-50 border-2 ${
+                            errors.investor_type
+                              ? "border-red-500 placeholder:text-red-500"
+                              : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        >
+                          <option className="text-lg font-bold" value="">
+                            Select
+                          </option>
+                          <option className="text-lg font-bold" value="Direct">
+                            Direct
+                          </option>
+                          <option className="text-lg font-bold" value="SNS">
+                            SNS
+                          </option>
+                          <option className="text-lg font-bold" value="both">
+                            both
+                          </option>
+                        </select>
+                        {errors.investor_type && (
+                          <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                            {errors.investor_type.message}
+                          </p>
+                        )}
+                      </div>
+                      <div className="z-0 w-full mb-3 group">
+                        <label
+                          htmlFor="money_invested"
+                          className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                        >
+                          How much money you invested ?
+                        </label>
+                        <input
+                          type="number"
+                          name="money_invested"
+                          id="money_invested"
+                          {...register("money_invested")}
+                          className={`bg-gray-50 border-2 ${
+                            errors.money_invested
+                              ? "border-red-500 placeholder:text-red-500"
+                              : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                          placeholder="$"
+                        />
+                        {errors.money_invested && (
+                          <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                            {errors.money_invested.message}
+                          </p>
+                        )}
+                      </div>
+                      <div className="z-0 w-full mb-3 group">
+                        <label
+                          htmlFor="existing_icp_portfolio"
+                          className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                        >
+                          Existing ICP Portfolio
+                        </label>
+                        <input
+                          type="text"
+                          name="existing_icp_portfolio"
+                          id="existing_icp_portfolio"
+                          {...register("existing_icp_portfolio")}
+                          className={`bg-gray-50 border-2${
+                            errors.existing_icp_portfolio
+                              ? "border-red-500 placeholder:text-red-500"
+                              : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        />
+                        {errors.existing_icp_portfolio && (
+                          <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                            {errors.existing_icp_portfolio.message}
+                          </p>
+                        )}
+                      </div>
+                    </>
+                  )}
                   <div className="z-0 w-full mb-3 group">
                     <label
                       htmlFor="registered_under_any_hub"

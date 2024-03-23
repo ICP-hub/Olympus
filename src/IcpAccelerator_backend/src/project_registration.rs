@@ -44,8 +44,24 @@ pub struct Jobs {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
-pub struct JobsInternal{
+pub struct JobsInternal {
     job_data: Jobs,
+    timestamp: u64,
+    project_name: String,
+    project_desc: String,
+    project_logo: Vec<u8>,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
+pub struct Announcements {
+    project_id: String,
+    announcement_title: String,
+    announcement_description: String,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
+pub struct AnnouncementsInternal{
+    announcement_data: Announcements,
     timestamp: u64,
     project_name: String,
     project_desc: String,
@@ -57,7 +73,7 @@ pub struct ProjectInfo {
     pub project_name: String,
     pub project_logo: Vec<u8>,
     pub preferred_icp_hub: Option<String>,
-    pub live_on_icp_mainnet: Option<String>,
+    pub live_on_icp_mainnet: Option<bool>,
     pub money_raised_till_now: Option<bool>,
     pub supports_multichain: Option<String>,
     pub project_elevator_pitch: Option<String>,
@@ -82,8 +98,9 @@ pub struct ProjectInfo {
     pub project_discord: Option<String>,
     pub money_raised: Option<MoneyRaised>,
     upload_private_documents: Option<bool>,
-    private_docs: Option<Docs>,
-    public_docs: Option<Docs>,
+    private_docs: Option<Vec<Docs>>,
+    public_docs: Option<Vec<Docs>>,
+    pub dapp_link: Option<String>,
 }
 
 impl ProjectInfo {}
@@ -96,7 +113,7 @@ pub struct Docs {
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct MoneyRaised {
-    pub target_amount: f64,
+    pub target_amount: Option<f64>,
     pub icp_grants: Option<String>,
     pub investors: Option<String>,
     pub sns: Option<String>,
@@ -132,7 +149,7 @@ pub struct ProjectInfoForUser {
     pub mentor_associated: Option<Vec<MentorProfile>>,
     pub vc_associated: Option<Vec<VentureCapitalist>>,
     pub team_member_info: Option<Vec<TeamMember>>,
-    pub announcements: HashMap<Principal, Vec<Announcements>>,
+    pub announcements: HashMap<Principal, Vec<AnnouncementsInternal>>,
     pub reviews: Vec<Suggestion>,
     pub website_social_group: Option<String>,
     pub live_link_of_project: Option<String>,
@@ -182,14 +199,6 @@ pub struct NotificationForOwner {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
-pub struct Announcements {
-    project_id: String,
-    announcement_title: String,
-    announcement_description: String,
-    timestamp: u64,
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct Blog {
     blog_url: String,
     timestamp: u64,
@@ -217,7 +226,7 @@ pub struct ProjectVecWithRoles {
     pub roles: Vec<Role>,
 }
 
-#[derive(Clone, CandidType)]
+#[derive(Clone, CandidType, Serialize, Deserialize)]
 pub struct SpotlightDetails {
     pub added_by: Principal,
     pub project_id: String,
@@ -225,7 +234,7 @@ pub struct SpotlightDetails {
     pub approval_time: u64,
 }
 
-pub type ProjectAnnouncements = HashMap<Principal, Vec<Announcements>>;
+pub type ProjectAnnouncements = HashMap<Principal, Vec<AnnouncementsInternal>>;
 pub type Notifications = HashMap<Principal, Vec<NotificationProject>>;
 pub type BlogPost = HashMap<Principal, Vec<Blog>>;
 
@@ -237,11 +246,34 @@ pub type ProjectDetails = HashMap<Principal, ProjectInfoInternal>;
 pub type JobDetails = HashMap<Principal, Vec<JobsInternal>>;
 pub type SpotlightProjects = Vec<SpotlightDetails>;
 
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+pub struct AccessRequest {
+    sender: Principal,
+    name: String,
+    image: Vec<u8>,
+    project_id: String,
+    request_type: String,
+    status: String,
+}
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+enum ProjectNotificationType {
+    AccessRequest(AccessRequest),
+}
+
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+pub struct ProjectNotification {
+    notification_type: ProjectNotificationType,
+    timestamp: u64,
+}
+
+pub type MoneyAccess = HashMap<Principal, Vec<AccessRequest>>;
+pub type PrivateDocsAccess = HashMap<Principal, Vec<AccessRequest>>;
 thread_local! {
+    pub static PROJECT_ACCESS_NOTIFICATIONS : RefCell<HashMap<String, Vec<ProjectNotification>>> = RefCell::new(HashMap::new());
     pub static  APPLICATION_FORM: RefCell<ApplicationDetails> = RefCell::new(ApplicationDetails::new());
     pub static PROJECT_DETAILS: RefCell<ProjectDetails> = RefCell::new(ProjectDetails::new());
     pub static NOTIFICATIONS: RefCell<Notifications> = RefCell::new(Notifications::new());
-    static OWNER_NOTIFICATIONS: RefCell<HashMap<Principal, Vec<NotificationForOwner>>> = RefCell::new(HashMap::new());
+    pub static OWNER_NOTIFICATIONS: RefCell<HashMap<Principal, Vec<NotificationForOwner>>> = RefCell::new(HashMap::new());
     pub static PROJECT_ANNOUNCEMENTS:RefCell<ProjectAnnouncements> = RefCell::new(ProjectAnnouncements::new());
     pub static BLOG_POST:RefCell<BlogPost> = RefCell::new(BlogPost::new());
 
@@ -253,15 +285,159 @@ thread_local! {
     pub static POST_JOB: RefCell<JobDetails> = RefCell::new(JobDetails::new());
     pub static JOB_TYPE: RefCell<Vec<String>> = RefCell::new(vec!["Bounty".to_string(),"Job".to_string()]);
     pub static SPOTLIGHT_PROJECTS: RefCell<SpotlightProjects> = RefCell::new(SpotlightProjects::new());
-    pub static  MONEY_ACCESS: RefCell<Vec<Principal>> = RefCell::new(Vec::new());
-    pub static PRIVATE_DOCS_ACCESS: RefCell<Vec<Principal>> = RefCell::new(Vec::new());
+    pub static MONEY_ACCESS: RefCell<HashMap<String, Vec<Principal>>> = RefCell::new(HashMap::new());
+    pub static PRIVATE_DOCS_ACCESS: RefCell<HashMap<String, Vec<Principal>>> = RefCell::new(HashMap::new());
+
+
+
+    pub static  MONEY_ACCESS_REQUESTS :RefCell<MoneyAccess> = RefCell::new(MoneyAccess::new());
+
+    pub static PRIVATE_DOCS_ACCESS_REQUESTS :RefCell<PrivateDocsAccess> = RefCell::new(PrivateDocsAccess::new());
 
 }
 
+
 pub fn pre_upgrade() {
     // Serialize and write data to stable storage
-    APPLICATION_FORM.with(|forms| {
-        let serialized = bincode::serialize(&*forms.borrow()).expect("Serialization failed");
+    APPLICATION_FORM.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    PROJECT_ACCESS_NOTIFICATIONS.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    PROJECT_DETAILS.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    NOTIFICATIONS.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    OWNER_NOTIFICATIONS.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    PROJECT_ANNOUNCEMENTS.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    BLOG_POST.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    PROJECT_AWAITS_RESPONSE.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    DECLINED_PROJECT_REQUESTS.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    PENDING_PROJECT_UPDATES.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    DECLINED_PROJECT_UPDATES.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    POST_JOB.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    JOB_TYPE.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    SPOTLIGHT_PROJECTS.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    MONEY_ACCESS.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    PRIVATE_DOCS_ACCESS.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    MONEY_ACCESS_REQUESTS.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    PRIVATE_DOCS_ACCESS_REQUESTS.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
         let mut writer = StableWriter::default();
         writer
             .write(&serialized)
@@ -269,19 +445,20 @@ pub fn pre_upgrade() {
     });
 }
 
-// pub fn post_upgrade() {
-//     // Read and deserialize data from stable storage
-//     let mut reader = StableReader::default();
-//     let mut data = Vec::new();
-//     reader
-//         .read_to_end(&mut data)
-//         .expect("Failed to read from stable storage");
-//     let project_registry: ApplicationDetails = bincode::deserialize(&data).expect("Deserialization failed");
-//     // Restore data
-//     APPLICATION_FORM.with(|registry| {
-//         *registry.borrow_mut() = project_registry;
-//     });
-// }
+
+pub fn post_upgrade() {
+    // Read and deserialize data from stable storage
+    let mut reader = StableReader::default();
+    let mut data = Vec::new();
+    reader
+        .read_to_end(&mut data)
+        .expect("Failed to read from stable storage");
+    let project_registry: ApplicationDetails = bincode::deserialize(&data).expect("Deserialization failed");
+    // Restore data
+    APPLICATION_FORM.with(|registry| {
+        *registry.borrow_mut() = project_registry;
+    });
+}
 
 pub async fn create_project(info: ProjectInfo) -> String {
     if info.private_docs.is_some() && info.upload_private_documents != Some(true) {
@@ -297,11 +474,14 @@ pub async fn create_project(info: ProjectInfo) -> String {
         let total_raised = money_raised.total_amount();
         if total_raised <= 0.0 {
             return "The total amount raised must be greater than zero.".to_string();
-        } else if total_raised > money_raised.target_amount {
+        } else if total_raised
+            > money_raised
+                .target_amount
+                .expect("Target amount must be set.")
+        {
             return "The sum of funding sources exceeds the target amount.".to_string();
         }
     }
-
     // Validate the project info
 
     // Validation succeeded, continue with creating the project
@@ -673,10 +853,8 @@ pub fn get_notifications_for_owner() -> Vec<NotificationForOwner> {
     })
 }
 
-pub async fn update_team_member(project_id: &str, member_principal_id : Principal ) -> String {
-    
-
-   let member_uid =  USER_STORAGE.with(|storage|{
+pub async fn update_team_member(project_id: &str, member_principal_id: Principal) -> String {
+    let member_uid = USER_STORAGE.with(|storage| {
         let storage = storage.borrow();
         let user = storage.get(&member_principal_id);
         let u = user.expect("principal hasn't registered himself as a user");
@@ -745,46 +923,67 @@ pub fn add_announcement(mut announcement_details: Announcements) -> String {
     let current_time = time();
 
     let project_id_exists = APPLICATION_FORM.with(|forms| {
-        forms.borrow().values().any(|projects| 
-            projects.iter().any(|project_info| 
-                project_info.uid == announcement_details.project_id
-            )
-        )
+        forms.borrow().values().any(|projects| {
+            projects
+                .iter()
+                .any(|project_info| project_info.uid == announcement_details.project_id)
+        })
     });
+
+    let project_info_internal = match find_project_by_id(&announcement_details.project_id) {
+        Some(project_info) => project_info,
+        None => return "Project ID does not exist in application forms.".to_string(),
+    };
 
     if !project_id_exists {
         return "Project ID does not exist in application forms.".to_string();
     }
+    
+    let new_announcement = AnnouncementsInternal {
+        announcement_data: announcement_details,
+        timestamp: current_time,
+        project_name: project_info_internal.params.project_name,
+        project_desc: project_info_internal.params.project_description,
+        project_logo: project_info_internal.params.project_logo,
+    };
 
     PROJECT_ANNOUNCEMENTS.with(|state| {
         let mut state = state.borrow_mut();
-        announcement_details.timestamp = current_time;
         state
             .entry(caller_id)
             .or_insert_with(Vec::new)
-            .push(announcement_details);
+            .push(new_announcement);
         format!("Announcement added successfully at {}", current_time)
     })
 }
 
 //for testing purpose
 #[query]
-pub fn get_announcements() -> HashMap<Principal, Vec<Announcements>> {
+pub fn get_announcements() -> HashMap<Principal, Vec<AnnouncementsInternal>> {
     PROJECT_ANNOUNCEMENTS.with(|state| {
-        let state = state.borrow();
-        state.clone()
+        state.borrow().clone()
     })
 }
 
 #[query]
-pub fn get_latest_announcements() -> HashMap<Principal, Vec<Announcements>> {
+pub fn get_latest_announcements() -> HashMap<Principal, Vec<AnnouncementsInternal>> {
     PROJECT_ANNOUNCEMENTS.with(|state| {
         let state = state.borrow();
-        let mut sorted_state = state.clone();
-        for (_principal, announcements) in sorted_state.iter_mut() {
-            announcements.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
-        }
-        sorted_state
+        state.iter().map(|(principal, announcement_internals)| {
+            let mut sorted_announcements = announcement_internals.clone();
+            sorted_announcements.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
+            (principal.clone(), sorted_announcements)
+        }).collect()
+    })
+}
+
+#[query]
+pub fn get_announcements_by_project_id(project_id: String) -> Vec<AnnouncementsInternal> {
+    PROJECT_ANNOUNCEMENTS.with(|state| {
+        state.borrow().values()
+            .flat_map(|announcements| announcements.iter().filter(|announcement| announcement.announcement_data.project_id == project_id))
+            .cloned()
+            .collect()
     })
 }
 
@@ -907,7 +1106,7 @@ pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUse
                 announcements: announcements_project,
                 reviews: project_reviews,
                 website_social_group: project_internal.params.project_discord.clone(),
-                live_link_of_project: project_internal.params.live_on_icp_mainnet.clone(),
+                live_link_of_project: project_internal.params.dapp_link.clone(),
                 jobs_opportunity: Some(jobs_opportunity_posted),
                 area_of_focus: Some(project_internal.params.project_area_of_focus.clone()),
                 country_of_project: project_internal.params.preferred_icp_hub.clone(),
@@ -965,6 +1164,7 @@ fn get_dummy_user_information() -> UserInformation {
         area_of_intrest: "Artificial Intelligence".to_string(),
         twitter_id: Some("@janedoeAI".to_string()),
         openchat_username: Some("janedoeChat".to_string()),
+        // joining_date: 0,
     }
 }
 
@@ -1009,7 +1209,9 @@ pub fn get_dummy_venture_capitalist() -> VentureCapitalist {
         announcement_details: Some("New funding round opened".to_string()),
         user_data: get_dummy_user_information(),
         website_link: "hfdfdfdf".to_string(),
-        linkedin_link: "dfdfdfdf".to_string(), // Generate dummy user information
+        linkedin_link: "dfdfdfdf".to_string(),
+        registered_country: Some("india".to_string()),
+        registered: true, // Generate dummy user information
     }
 }
 
@@ -1088,7 +1290,7 @@ pub fn post_job(params: Jobs) -> String {
                             timestamp: current_time,
                             project_name: project_data_for_job.project_name,
                             project_desc: project_data_for_job.project_description,
-                            project_logo: project_data_for_job.project_logo
+                            project_logo: project_data_for_job.project_logo,
                         };
                         state
                             .entry(principal_id)
@@ -1185,4 +1387,502 @@ pub fn get_job_category() -> Vec<JobCategory> {
             name: "Request For Proposal".to_string(),
         },
     ]
+}
+
+#[update]
+pub async fn send_money_access_request(project_id: String) -> String {
+    let caller = caller();
+    let mut has_pending_request = false;
+
+    MONEY_ACCESS_REQUESTS.with(|requests| {
+        let requests = requests.borrow();
+
+        // Check if the caller exists in the HashMap
+        if let Some(request_vec) = requests.get(&caller) {
+            // Iterate through the Vec<AccessRequest> to find a matching and pending project_id request
+            has_pending_request = request_vec
+                .iter()
+                .any(|request| request.project_id == project_id && request.status == "pending");
+        }
+    });
+
+    if has_pending_request {
+        return "You already have a pending request for this project.".to_string();
+    }
+
+    let userData: Result<UserInformation, &str> = get_user_info();
+
+    // Assuming the existence of get_user_info() which might fail hence the unwrap_or_else pattern
+    let userData = userData.unwrap_or_else(|_| panic!("Failed to get user data"));
+
+    let access_request = AccessRequest {
+        sender: caller.clone(), // Assuming caller() gives us Principal
+        name: userData.full_name,
+        image: userData.profile_picture.expect("Profile picture not found"),
+        project_id: project_id.clone(),
+        request_type: "money_details_access".to_string(),
+        status: "pending".to_string(),
+    };
+
+    // Add request to the MONEY_ACCESS_REQUESTS hashmap
+    MONEY_ACCESS_REQUESTS.with(|requests| {
+        let mut requests = requests.borrow_mut();
+        requests
+            .entry(caller)
+            .or_insert_with(Vec::new)
+            .push(access_request.clone());
+    });
+
+    // Create and send a notification for the request
+    let notification_to_send = ProjectNotification {
+        notification_type: ProjectNotificationType::AccessRequest(access_request.clone()), // Cloned to satisfy borrow checker
+        timestamp: time(), // Assuming the existence of time() that returns u64 timestamp
+    };
+
+    PROJECT_ACCESS_NOTIFICATIONS.with(|notifications| {
+        let mut notifications = notifications.borrow_mut();
+        notifications
+            .entry(project_id)
+            .or_default()
+            .push(notification_to_send);
+    });
+
+    "Your access request has been sent and is pending approval.".to_string()
+}
+
+// pub get_money_details_access()->String{
+
+// }
+
+#[update]
+pub async fn send_private_docs_access_request(project_id: String) -> String {
+    //sender
+    let caller = caller();
+    let mut has_pending_request = false;
+
+    PRIVATE_DOCS_ACCESS_REQUESTS.with(|requests| {
+        let requests = requests.borrow();
+
+        // Check if the caller exists in the HashMap
+        if let Some(request_vec) = requests.get(&caller) {
+            // Iterate through the Vec<AccessRequest> to find a matching and pending project_id request
+            has_pending_request = request_vec
+                .iter()
+                .any(|request| request.project_id == project_id && request.status == "pending");
+        }
+    });
+
+    if has_pending_request {
+        return "You already have a pending request for this project.".to_string();
+    }
+
+    let userData: Result<UserInformation, &str> = get_user_info();
+
+    // Assuming the existence of get_user_info() which might fail hence the unwrap_or_else pattern
+    let userData = userData.unwrap_or_else(|_| panic!("Failed to get user data"));
+
+    let access_request = AccessRequest {
+        sender: caller.clone(), // Assuming caller() gives us Principal
+        name: userData.full_name,
+        image: userData.profile_picture.expect("Profile picture not found"),
+        project_id: project_id.clone(),
+        request_type: "private_docs_access".to_string(),
+        status: "pending".to_string(),
+    };
+
+    // Add request to the MONEY_ACCESS_REQUESTS hashmap
+    PRIVATE_DOCS_ACCESS_REQUESTS.with(|requests| {
+        let mut requests = requests.borrow_mut();
+        requests
+            .entry(caller)
+            .or_insert_with(Vec::new)
+            .push(access_request.clone());
+    });
+
+    // Create and send a notification for the request
+    let notification_to_send = ProjectNotification {
+        notification_type: ProjectNotificationType::AccessRequest(access_request.clone()), // Cloned to satisfy borrow checker
+        timestamp: time(), // Assuming the existence of time() that returns u64 timestamp
+    };
+
+    PROJECT_ACCESS_NOTIFICATIONS.with(|notifications| {
+        let mut notifications = notifications.borrow_mut();
+        notifications
+            .entry(project_id)
+            .or_default()
+            .push(notification_to_send);
+    });
+
+    "Your access request has been sent and is pending approval.".to_string()
+}
+
+
+#[query]
+pub fn get_all_pending_requests() -> Vec<ProjectNotification> {
+    PROJECT_ACCESS_NOTIFICATIONS.with(|storage| {
+        let projects = storage.borrow();
+        projects.values()
+            .flat_map(|notifications| {
+                notifications.iter()
+                    .filter_map(|notification| {
+                        match &notification.notification_type {
+                            ProjectNotificationType::AccessRequest(access_request) if access_request.status == "pending" => {
+                                Some(notification.clone())
+                            },
+                            _ => None,
+                        }
+                    })
+            })
+            .collect()
+    })
+}
+
+#[query]
+pub fn get_all_declined_requests() -> Vec<ProjectNotification> {
+    PROJECT_ACCESS_NOTIFICATIONS.with(|storage| {
+        let projects = storage.borrow();
+        projects.values()
+            .flat_map(|notifications| {
+                notifications.iter()
+                    .filter_map(|notification| {
+                        match &notification.notification_type {
+                            ProjectNotificationType::AccessRequest(access_request) if access_request.status == "declined" => {
+                                Some(notification.clone())
+                            },
+                            _ => None,
+                        }
+                    })
+            })
+            .collect()
+    })
+}
+
+#[query]
+pub fn get_all_approved_requests() -> Vec<ProjectNotification> {
+    PROJECT_ACCESS_NOTIFICATIONS.with(|storage| {
+        let projects = storage.borrow();
+        projects.values()
+            .flat_map(|notifications| {
+                notifications.iter()
+                    .filter_map(|notification| {
+                        match &notification.notification_type {
+                            ProjectNotificationType::AccessRequest(access_request) if access_request.status == "approved" => {
+                                Some(notification.clone())
+                            },
+                            _ => None,
+                        }
+                    })
+            })
+            .collect()
+    })
+}
+
+#[query]
+pub fn get_pending_money_requestes(project_id: String) -> Vec<ProjectNotification> {
+    PROJECT_ACCESS_NOTIFICATIONS.with(|storage| {
+        let projects = storage.borrow();
+        let project_info = projects.get(&project_id);
+        let projects = project_info
+            .expect("couldn't get project information")
+            .clone();
+        projects
+    })
+}
+
+#[query]
+pub fn get_dapp_link(project_id: String) -> String {
+    match find_project_by_id(&project_id) {
+        Some(project_data_internal) => match project_data_internal.params.dapp_link {
+            Some(link) => link,
+            None => "DApp link not available.".to_string(),
+        },
+        None => "Error: Project not_found.".to_string(),
+    }
+}
+
+fn add_user_to_money_access(project_id: String, user: Principal) {
+    MONEY_ACCESS.with(|access| {
+        let mut access = access.borrow_mut();
+        access.entry(project_id).or_default().push(user);
+    });
+}
+
+/// Adds a `Principal` to the list of approved users for a given project in the `PRIVATE_DOCS_ACCESS` hashmap.
+fn add_user_to_private_docs_access(project_id: String, user: Principal) {
+    PRIVATE_DOCS_ACCESS.with(|access| {
+        let mut access = access.borrow_mut();
+        access.entry(project_id).or_default().push(user);
+    });
+}
+
+#[update]
+pub async fn approve_money_access_request(project_id: String, sender_id: Principal) -> String {
+    let mut request_found_and_updated = false;
+
+    // Update the status in MONEY_ACCESS_REQUESTS
+    MONEY_ACCESS_REQUESTS.with(|requests| {
+        let mut requests = requests.borrow_mut();
+        if let Some(request_vec) = requests.get_mut(&sender_id) {
+            for request in request_vec.iter_mut() {
+                if request.project_id == project_id && request.status == "pending" {
+                    request.status = "approved".to_string();
+                    request_found_and_updated = true;
+                    break;
+                }
+            }
+        }
+    });
+
+    if !request_found_and_updated {
+        return "Request not found or already approved.".to_string();
+    }
+
+    // Update the status in PROJECT_ACCESS_NOTIFICATIONS
+    PROJECT_ACCESS_NOTIFICATIONS.with(|notifications| {
+        let mut notifications = notifications.borrow_mut();
+        if let Some(notification_vec) = notifications.get_mut(&project_id) {
+            for notification in notification_vec.iter_mut() {
+                match &mut notification.notification_type {
+                    ProjectNotificationType::AccessRequest(access_request)
+                        if access_request.sender == sender_id
+                            && access_request.status == "pending"
+                            && access_request.request_type == "money_details_access" =>
+                    {
+                        access_request.status = "approved".to_string();
+                        break; // Exit after finding and updating the first matching request
+                    }
+                    _ => {} // Do nothing for other cases or variants
+                }
+            }
+        }
+    });
+
+    // Assuming the existence of a function or mechanism to add the sender's Principal to a money_access vector
+    add_user_to_money_access(project_id, sender_id);
+
+    "Money access request approved successfully.".to_string()
+}
+
+// Placeholder for the function to add the sender's Principal to the money_access vector
+// Implement this function based on how your application manages the money_access data
+
+#[update]
+pub async fn approve_private_docs_access_request(
+    project_id: String,
+    sender_id: Principal,
+) -> String {
+    let mut request_found_and_updated = false;
+
+    // Update the status in MONEY_ACCESS_REQUESTS
+    PRIVATE_DOCS_ACCESS_REQUESTS.with(|requests| {
+        let mut requests = requests.borrow_mut();
+        if let Some(request_vec) = requests.get_mut(&sender_id) {
+            for request in request_vec.iter_mut() {
+                if request.project_id == project_id && request.status == "pending" {
+                    request.status = "approved".to_string();
+                    request_found_and_updated = true;
+                    break;
+                }
+            }
+        }
+    });
+
+    if !request_found_and_updated {
+        return "Request not found or already approved.".to_string();
+    }
+
+    // Update the status in PROJECT_ACCESS_NOTIFICATIONS
+    PROJECT_ACCESS_NOTIFICATIONS.with(|notifications| {
+        let mut notifications = notifications.borrow_mut();
+        if let Some(notification_vec) = notifications.get_mut(&project_id) {
+            for notification in notification_vec.iter_mut() {
+                match &mut notification.notification_type {
+                    ProjectNotificationType::AccessRequest(access_request)
+                        if access_request.sender == sender_id
+                            && access_request.status == "pending"
+                            && access_request.request_type == "private_docs_access" =>
+                    {
+                        access_request.status = "approved".to_string();
+                        break; // Exit after finding and updating the first matching request
+                    }
+                    _ => {} // Do nothing for other cases or variants
+                }
+            }
+        }
+    });
+
+    // Assuming the existence of a function or mechanism to add the sender's Principal to a money_access vector
+    add_user_to_private_docs_access(project_id, sender_id);
+
+    "Private docs access request approved successfully.".to_string()
+}
+
+#[query]
+pub fn access_money_details(project_id: String) -> Result<MoneyRaised, String> {
+    let caller = ic_cdk::api::caller();
+
+    // Check if the caller is approved to access the money details for this project
+    let is_approved = MONEY_ACCESS.with(|access| {
+        access
+            .borrow()
+            .get(&project_id)
+            .map_or(false, |principals| principals.contains(&caller))
+    });
+
+    if !is_approved {
+        return Err(
+            "You do not have access to view the money details for this project.".to_string(),
+        );
+    }
+
+    // Access the project details from APPLICATION_FORM
+    APPLICATION_FORM.with(|projects_registry| {
+        let projects = projects_registry.borrow();
+
+        // Iterate through the entire HashMap to find the project by ID
+        for project_list in projects.values() {
+            // Iterate through each project in the list
+            if let Some(project) = project_list.iter().find(|p| p.uid == project_id) {
+                // If a project with the matching project_id is found, return its MoneyRaised details if available
+                return project
+                    .params
+                    .money_raised
+                    .clone()
+                    .ok_or("Money raised details not available for this project.".to_string());
+            }
+        }
+
+        // If no project with the matching ID was found
+        Err("Project ID not found.".to_string())
+    })
+}
+
+#[query]
+pub fn access_private_docs(project_id: String) -> Result<Vec<Docs>, String> {
+    let caller = ic_cdk::api::caller();
+
+    // Check if the caller is approved to access the private documents for this project
+    let is_approved = PRIVATE_DOCS_ACCESS.with(|access| {
+        access
+            .borrow()
+            .get(&project_id)
+            .map_or(false, |principals| principals.contains(&caller))
+    });
+
+    if !is_approved {
+        return Err(
+            "You do not have access to view the private documents for this project.".to_string(),
+        );
+    }
+
+    // Access the project details from APPLICATION_FORM
+    APPLICATION_FORM.with(|projects_registry| {
+        let projects = projects_registry.borrow();
+
+        // Iterate through the entire HashMap to find the project by ID
+        for project_list in projects.values() {
+            // Iterate through each project in the list
+            if let Some(project) = project_list.iter().find(|p| p.uid == project_id) {
+                // If a project with the matching project_id is found, return its private documents if available
+                return project
+                    .params
+                    .private_docs
+                    .clone()
+                    .ok_or("Private documents not available for this project.".to_string());
+            }
+        }
+
+        // If no project with the matching ID was found
+        Err("Project ID not found.".to_string())
+    })
+}
+
+#[update]
+pub fn decline_money_access_request(project_id: String, sender_id: Principal) -> String {
+    let mut request_found_and_updated = false;
+
+    // Update the status in MONEY_ACCESS_REQUESTS
+    MONEY_ACCESS_REQUESTS.with(|requests| {
+        let mut requests = requests.borrow_mut();
+        if let Some(request_vec) = requests.get_mut(&sender_id) {
+            for request in request_vec.iter_mut() {
+                if request.project_id == project_id && request.status == "pending" {
+                    request.status = "declined".to_string();
+                    request_found_and_updated = true;
+                    break;
+                }
+            }
+        }
+    });
+
+    if !request_found_and_updated {
+        return "Request not found or not in pending status.".to_string();
+    }
+
+    // Update the status in PROJECT_ACCESS_NOTIFICATIONS
+    PROJECT_ACCESS_NOTIFICATIONS.with(|notifications| {
+        let mut notifications = notifications.borrow_mut();
+        if let Some(notification_vec) = notifications.get_mut(&project_id) {
+            for notification in notification_vec.iter_mut() {
+                match &mut notification.notification_type {
+                    ProjectNotificationType::AccessRequest(access_request)
+                        if access_request.sender == sender_id
+                            && access_request.status == "pending"
+                            && access_request.request_type == "money_details_access" =>
+                    {
+                        access_request.status = "declined".to_string();
+                        break;
+                    }
+                    _ => {} // Do nothing for other types or statuses
+                }
+            }
+        }
+    });
+
+    "Money access request declined successfully.".to_string()
+}
+
+#[update]
+pub fn decline_private_docs_access_request(project_id: String, sender_id: Principal) -> String {
+    let mut request_found_and_updated = false;
+
+    // Update the status in PRIVATE_DOCS_ACCESS_REQUESTS
+    PRIVATE_DOCS_ACCESS_REQUESTS.with(|requests| {
+        let mut requests = requests.borrow_mut();
+        if let Some(request_vec) = requests.get_mut(&sender_id) {
+            for request in request_vec.iter_mut() {
+                if request.project_id == project_id && request.status == "pending" {
+                    request.status = "declined".to_string();
+                    request_found_and_updated = true;
+                    break;
+                }
+            }
+        }
+    });
+
+    if !request_found_and_updated {
+        return "Request not found or already processed.".to_string();
+    }
+
+    // Assuming you also track notifications for private docs requests
+    PROJECT_ACCESS_NOTIFICATIONS.with(|notifications| {
+        let mut notifications = notifications.borrow_mut();
+        if let Some(notification_vec) = notifications.get_mut(&project_id) {
+            for notification in notification_vec.iter_mut() {
+                match &mut notification.notification_type {
+                    ProjectNotificationType::AccessRequest(access_request)
+                        if access_request.sender == sender_id
+                            && access_request.status == "pending"
+                            && access_request.request_type == "private_docs_access" =>
+                    {
+                        access_request.status = "declined".to_string();
+                        break; // Exit after finding and updating the first matching request
+                    }
+                    _ => {} // Do nothing for other cases or variants
+                }
+            }
+        }
+    });
+
+    "Private docs access request declined successfully.".to_string()
 }

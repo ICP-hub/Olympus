@@ -20,10 +20,21 @@ function* fetchMentorDeclinedHandler() {
     const updatedMentorProfiles = allMentorDeclinedStatus.map(
       ([principal, { mentor_profile, roles }]) => {
         const principalText = principalToText(principal);
-        const profilePictureBase64 = mentor_profile.profile.user_data
-          .profile_picture
-          ? uint8ArrayToBase64(mentor_profile.profile.user_data.profile_picture)
+       
+        // const profilePictureBase64 = mentor_profile.profile.user_data
+        //   .profile_picture
+        //   ? uint8ArrayToBase64(mentor_profile.profile.user_data.profile_picture)
+        //   : null;
+
+
+          const profilePictureBase64 = mentor_profile.profile.user_data
+          .profile_picture && mentor_profile.profile.user_data
+          .profile_picture instanceof Uint8Array && mentor_profile.profile.user_data
+          .profile_picture.length > 0
+          ? uint8ArrayToBase64(mentor_profile.profile.user_data
+          .profile_picture)
           : null;
+
 
         const mentorRole = roles.find((role) => role.name === "mentor");
         let requestedTimeFormatted = mentorRole.requested_on

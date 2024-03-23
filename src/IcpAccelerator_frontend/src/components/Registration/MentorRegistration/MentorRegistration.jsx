@@ -123,14 +123,7 @@ const validationSchema = {
         (value) => /\S/.test(value)
       )
       .required("Category of mentoring service is required"),
-    existing_icp_project_porfolio: yup
-      .string()
-      .test(
-        "is-non-empty",
-        "Exisitng Icp project porfolio is required",
-        (value) => /\S/.test(value)
-      )
-      .optional(),
+    existing_icp_project_porfolio: yup.string().optional(),
     years_of_mentoring: yup
       .number()
       .typeError("You must enter a number")
@@ -715,41 +708,42 @@ const MentorRegistration = () => {
                       </p>
                     )}
                   </div>
-                  <div className="z-0 w-full mb-3 group">
-                    <label
-                      htmlFor="multichain"
-                      className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                    >
-                      Multi-chain options
-                    </label>
-                    <select
-                      {...register("multichain")}
-                      className={`bg-gray-50 border-2 ${
-                        errors.multichain
-                          ? "border-red-500 placeholder:text-red-500"
-                          : "border-[#737373]"
-                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                      disabled={!isMulti_Chain}
-                    >
-                      <option className="text-lg font-bold" value="">
-                        Select ⌄
-                      </option>
-                      {multiChain?.map((chain, i) => (
-                        <option
-                          key={i}
-                          value={`${chain}`}
-                          className="text-lg font-bold"
-                        >
-                          {chain}
+                  {isMulti_Chain && (
+                    <div className="z-0 w-full mb-3 group">
+                      <label
+                        htmlFor="multichain"
+                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                      >
+                        Multi-chain options
+                      </label>
+                      <select
+                        {...register("multichain")}
+                        className={`bg-gray-50 border-2 ${
+                          errors.multichain
+                            ? "border-red-500 placeholder:text-red-500"
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      >
+                        <option className="text-lg font-bold" value="">
+                          Select ⌄
                         </option>
-                      ))}
-                    </select>
-                    {errors.multichain && (
-                      <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                        {errors.multichain.message}
-                      </p>
-                    )}
-                  </div>
+                        {multiChain?.map((chain, i) => (
+                          <option
+                            key={i}
+                            value={`${chain}`}
+                            className="text-lg font-bold"
+                          >
+                            {chain}
+                          </option>
+                        ))}
+                      </select>
+                      {errors.multichain && (
+                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                          {errors.multichain.message}
+                        </p>
+                      )}
+                    </div>
+                  )}
                   <div className="z-0 w-full mb-3 group">
                     <label
                       htmlFor="existing_icp_mentor"
@@ -778,31 +772,32 @@ const MentorRegistration = () => {
                       </p>
                     )}
                   </div>
-                  <div className="z-0 w-full mb-3 group">
-                    <label
-                      htmlFor="existing_icp_project_porfolio"
-                      className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                    >
-                      Existing ICP project portfolio
-                    </label>
-                    <input
-                      type="text"
-                      name="existing_icp_project_porfolio"
-                      id="existing_icp_project_porfolio"
-                      {...register("existing_icp_project_porfolio")}
-                      className={`bg-gray-50 border-2 ${
-                        errors.existing_icp_project_porfolio
-                          ? "border-red-500 placeholder:text-red-500"
-                          : "border-[#737373]"
-                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                      disabled={!isExistingICPMentor}
-                    />
-                    {errors.existing_icp_project_porfolio && (
-                      <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                        {errors.existing_icp_project_porfolio.message}
-                      </p>
-                    )}
-                  </div>
+                  {isExistingICPMentor && (
+                    <div className="z-0 w-full mb-3 group">
+                      <label
+                        htmlFor="existing_icp_project_porfolio"
+                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                      >
+                        Existing ICP project portfolio
+                      </label>
+                      <input
+                        type="text"
+                        name="existing_icp_project_porfolio"
+                        id="existing_icp_project_porfolio"
+                        {...register("existing_icp_project_porfolio")}
+                        className={`bg-gray-50 border-2 ${
+                          errors.existing_icp_project_porfolio
+                            ? "border-red-500 placeholder:text-red-500"
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      />
+                      {errors.existing_icp_project_porfolio && (
+                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                          {errors.existing_icp_project_porfolio.message}
+                        </p>
+                      )}
+                    </div>
+                  )}
                   <div className="z-0 w-full mb-3 group">
                     <label
                       htmlFor="area_of_expertise"
@@ -896,41 +891,42 @@ const MentorRegistration = () => {
                       </p>
                     )}
                   </div>
-                  <div className="z-0 w-full mb-3 group">
-                    <label
-                      htmlFor="hub_owner"
-                      className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                    >
-                      Hub Owner
-                    </label>
-                    <select
-                      {...register("hub_owner")}
-                      className={`bg-gray-50 border-2 ${
-                        errors.hub_owner
-                          ? "border-red-500 placeholder:text-red-500"
-                          : "border-[#737373]"
-                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                      disabled={!isicopHuborSpoke}
-                    >
-                      <option className="text-lg font-bold" value="">
-                        Select your ICP Hub⌄
-                      </option>
-                      {getAllIcpHubs?.map((hub) => (
-                        <option
-                          key={hub.id}
-                          value={`${hub.name} ,${hub.region}`}
-                          className="text-lg font-bold"
-                        >
-                          {hub.name} , {hub.region}
+                  {isicopHuborSpoke && (
+                    <div className="z-0 w-full mb-3 group">
+                      <label
+                        htmlFor="hub_owner"
+                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                      >
+                        Hub Owner
+                      </label>
+                      <select
+                        {...register("hub_owner")}
+                        className={`bg-gray-50 border-2 ${
+                          errors.hub_owner
+                            ? "border-red-500 placeholder:text-red-500"
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      >
+                        <option className="text-lg font-bold" value="">
+                          Select your ICP Hub⌄
                         </option>
-                      ))}
-                    </select>
-                    {errors.hub_owner && (
-                      <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                        {errors.hub_owner.message}
-                      </p>
-                    )}
-                  </div>
+                        {getAllIcpHubs?.map((hub) => (
+                          <option
+                            key={hub.id}
+                            value={`${hub.name} ,${hub.region}`}
+                            className="text-lg font-bold"
+                          >
+                            {hub.name} , {hub.region}
+                          </option>
+                        ))}
+                      </select>
+                      {errors.hub_owner && (
+                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                          {errors.hub_owner.message}
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </div>
               </>
             )}

@@ -20,9 +20,14 @@ function* fetchInvestorDeclinedHandler() {
     const updatedInvestorProfiles = allInvestorDeclinedStatus.map(
       ([principal, { vc_profile, roles }]) => {
         const principalText = principalToText(principal);
-        const profilePictureBase64 = vc_profile.params.user_data.profile_picture
+        // const profilePictureBase64 = vc_profile.params.user_data.profile_picture
+        //   ? uint8ArrayToBase64(vc_profile.params.user_data.profile_picture)
+        //   : null;
+
+          const profilePictureBase64 = vc_profile.params.user_data.profile_picture && vc_profile.params.user_data.profile_picture instanceof Uint8Array && vc_profile.params.user_data.profile_picture.length > 0
           ? uint8ArrayToBase64(vc_profile.params.user_data.profile_picture)
           : null;
+
 
         const investorRole = roles.find((role) => role.name === "vc");
         let requestedTimeFormatted = "",
