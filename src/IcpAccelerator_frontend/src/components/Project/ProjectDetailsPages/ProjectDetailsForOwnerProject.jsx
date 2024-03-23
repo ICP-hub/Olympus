@@ -20,6 +20,7 @@ import AnnouncementDetailsCard from './AnnouncementDetailsCard';
 import ProjectJobDetailsCard from './ProjectJobDetailsCard';
 import ProjectDetailsCommunityRatings from './ProjectDetailsCommunityRatings';
 import AddAMentorRequestModal from '../../../models/AddAMentorRequestModal';
+import toast, { Toaster } from "react-hot-toast";
 
 const ProjectDetailsForOwnerProject = () => {
     // Add your component logic here
@@ -250,15 +251,15 @@ const ProjectDetailsForOwnerProject = () => {
         }
     }
 
-    const handleAddJob = ({ jobTitle, jobDescription, jobCategory, jobLocation }) => {
+    const handleAddJob = ({ jobTitle, jobLink, jobDescription, jobCategory, jobLocation }) => {
         console.log('add job')
         if (actor) {
             let argument = {
                 title: jobTitle,
                 description: jobDescription,
-                category: 'Bounty',
+                category: jobCategory,
                 location: jobLocation,
-                link: 'hhtps://www.jeevan.me',
+                link: jobLink,
                 project_id: projectData?.uid,
 
             }
@@ -434,6 +435,7 @@ const ProjectDetailsForOwnerProject = () => {
                 onRatingClose={handleRatingCloseModal} 
                 onSubmitHandler={handleAddRating} 
                 />)}
+            <Toaster/>
         </section>
     );
 };

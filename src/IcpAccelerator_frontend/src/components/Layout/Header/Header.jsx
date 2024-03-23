@@ -4,7 +4,7 @@ import logoWithText from "../../../../assets/Logo/topLogo.png";
 import LogoutModal from "../../../models/LogoutModal";
 import SwitchRole from "../../../models/SwitchRole";
 import { OutSideClickHandler } from "../../hooks/OutSideClickHandler";
-import { getCurrentRoleStatusRequestHandler } from "../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
+import { getCurrentRoleStatusFailureHandler, getCurrentRoleStatusRequestHandler, setCurrentActiveRole, setCurrentRoleStatus } from "../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 import { logoSvg } from "../../Utils/Data/SvgData";
 import { useNavigate } from "react-router-dom";
 
@@ -12,6 +12,7 @@ const Header = ({ setModalOpen, gradient }) => {
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
+  const actor = useSelector((currState) => currState.actors.actor);
   const principal = useSelector((currState) => currState.internet.principal);
   const isAuthenticated = useSelector(
     (currState) => currState.internet.isAuthenticated
@@ -32,6 +33,34 @@ const Header = ({ setModalOpen, gradient }) => {
 
   const underline =
     "relative focus:after:content-[''] focus:after:block focus:after:w-full focus:after:h-[2px] focus:after:bg-blue-800 focus:after:absolute focus:after:left-0 focus:after:bottom-[-4px]";
+
+
+  const initialApi = async () => {
+    try {
+      const currentRoleArray = await actor.get_role_status()
+      if (currentRoleArray && currentRoleArray.length !== 0) {
+        const currentActiveRole = getNameOfCurrentStatus(currentRoleArray)
+        dispatch(setCurrentRoleStatus(currentRoleArray));
+        dispatch(setCurrentActiveRole(currentActiveRole));
+      } else {
+        dispatch(getCurrentRoleStatusFailureHandler('error-in-fetching-role-at-header'));
+        dispatch(setCurrentActiveRole(null));
+      }
+    } catch (error) {
+      dispatch(getCurrentRoleStatusFailureHandler(error.toString()));
+      dispatch(setCurrentActiveRole(null));
+    }
+  }
+
+
+  useEffect(() => {
+    if (actor) {
+      if (!userCurrentRoleStatus.length) {
+        initialApi();
+      } 
+    }
+    console.log('userCurrentRoleStatus--in--header', userCurrentRoleStatus)
+  }, [actor, dispatch, userCurrentRoleStatus, userCurrentRoleStatusActiveRole]);
 
   return (
     <header className={`text-gray-700 body-font ${gradient}`}>

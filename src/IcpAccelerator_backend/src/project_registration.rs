@@ -283,7 +283,7 @@ thread_local! {
     pub static PENDING_PROJECT_UPDATES: RefCell<PendingDetails> = RefCell::new(PendingDetails::new());
     pub static DECLINED_PROJECT_UPDATES: RefCell<DeclinedDetails> = RefCell::new(DeclinedDetails::new());
     pub static POST_JOB: RefCell<JobDetails> = RefCell::new(JobDetails::new());
-    pub static JOB_TYPE: RefCell<Vec<String>> = RefCell::new(vec!["Bounty".to_string(),"Job".to_string()]);
+    pub static JOB_TYPE: RefCell<Vec<String>> = RefCell::new(vec!["BOUNTY".to_string(),"JOBS".to_string(),"RFP".to_string()]);
     pub static SPOTLIGHT_PROJECTS: RefCell<SpotlightProjects> = RefCell::new(SpotlightProjects::new());
     pub static MONEY_ACCESS: RefCell<HashMap<String, Vec<Principal>>> = RefCell::new(HashMap::new());
     pub static PRIVATE_DOCS_ACCESS: RefCell<HashMap<String, Vec<Principal>>> = RefCell::new(HashMap::new());
@@ -1376,15 +1376,15 @@ pub fn get_job_category() -> Vec<JobCategory> {
     vec![
         JobCategory {
             id: 1,
-            name: "Opportunities".to_string(),
+            name: "JOBS".to_string(),
         },
         JobCategory {
             id: 2,
-            name: "Bounties".to_string(),
+            name: "BOUNTY".to_string(),
         },
         JobCategory {
             id: 3,
-            name: "Request For Proposal".to_string(),
+            name: "RFP".to_string(),
         },
     ]
 }
