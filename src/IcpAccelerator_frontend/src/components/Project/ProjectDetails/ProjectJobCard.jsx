@@ -4,6 +4,7 @@ import { IcpAccelerator_backend } from "../../../../../declarations/IcpAccelerat
 import ment from "../../../../assets/images/ment.jpg";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import useFormatDateFromBigInt from "../../hooks/useFormatDateFromBigInt"
+import NoDataCard from "../../Mentors/Event/NoDataCard";
 
 const ProjectJobCard = ({ image, website, tags, country }) => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -57,9 +58,9 @@ const ProjectJobCard = ({ image, website, tags, country }) => {
     }
   }, [actor]);
   if (noData) {
-    return <h1 className="w-full text-center">
-      No Data
-    </h1>
+    return <div className="w-full items-center md:py-4 py-2">
+      <NoDataCard />
+    </div>
   }
   return (
     <div className="flex flex-wrap md:flex-nowrap gap-4 mb-8">

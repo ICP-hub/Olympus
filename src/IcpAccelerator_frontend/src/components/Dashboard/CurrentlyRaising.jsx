@@ -5,6 +5,7 @@ import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import NoDataCard from "../Mentors/Event/NoDataCard";
 const CurrentlyRaising = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
@@ -120,7 +121,7 @@ const CurrentlyRaising = () => {
   };
   return (
     <div className="flex flex-wrap -mx-4 mb-4 flex-row items-start">
-      {noData ? '' :
+      {noData ? <NoDataCard /> :
         <div className="overflow-x-auto flex flex-row w-full">
           {allProjectData &&
             allProjectData.map((data, index) => {

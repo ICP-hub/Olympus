@@ -6,6 +6,7 @@ import { IcpAccelerator_backend } from "../../../../../declarations/IcpAccelerat
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import NoDataCard from "../../Mentors/Event/NoDataCard";
 
 const MoreProjectLaunchPage = () => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -143,7 +144,7 @@ const MoreProjectLaunchPage = () => {
   return (
     <div className="flex justify-center" style={{ minHeight: "60vh" }}>
       {noData ?
-        <h1>No Data</h1>
+        <NoDataCard />
         :
         <div className="flex-wrap flex flex-row">
           {allProjectData &&

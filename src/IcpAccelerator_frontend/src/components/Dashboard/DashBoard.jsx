@@ -196,7 +196,7 @@ const DashBoard = () => {
                 See all Investors
               </button>
             </div>
-            <div className="flex flex-wrap -mx-4 mb-4 flex-row items-start">
+            <div className="flex flex-wrap -mx-4 mb-4 flex-row items-center">
               <div className="overflow-x-auto flex w-3/4">
                 <InvestorCard />
               </div>
@@ -212,7 +212,7 @@ const DashBoard = () => {
                 See all Mentors
               </button>
             </div>
-            <div className="flex flex-wrap -mx-4 mb-4 flex-row items-start">
+            <div className="flex flex-wrap -mx-4 mb-4 flex-row items-center">
               <div className="overflow-x-auto flex w-3/4">
                 <MentorCard />
               </div>

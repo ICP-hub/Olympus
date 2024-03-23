@@ -4,6 +4,7 @@ import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { IcpAccelerator_backend } from "../../../../../declarations/IcpAccelerator_backend/index";
+import NoDataCard from "../../Mentors/Event/NoDataCard";
 const investors = [
   {
     id: 1,
@@ -116,7 +117,7 @@ const ViewInvestor = () => {
         </div>
       </div>
     <div className="flex flex-wrap justify-center">
-      {noData ? <h1>No Data</h1> :
+      {noData ? <NoDataCard /> :
       data.map((investor, index) => {
         let id = "";
         let img = "";
