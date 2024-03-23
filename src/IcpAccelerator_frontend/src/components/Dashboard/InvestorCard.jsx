@@ -42,13 +42,14 @@ const InvestorsList = () => {
       console.log('result-in-get-all-investors', result)
       if (!result || result.length == 0) {
         setNoData(true)
-        setData(investors)
+        setData([]);
       } else {
         setData(result);
         setNoData(false)
       }
     }).catch((error) => {
-      setData(investors)
+      setData([]);
+      setNoData(true)
       console.log('error-in-get-all-investors', error)
     })
   }
@@ -60,6 +61,10 @@ const InvestorsList = () => {
       getAllInvestors(IcpAccelerator_backend);
     }
   }, [actor]);
+
+  if(noData){
+    return <h1>No Data</h1>
+  }
   return (
     <div className="p-1 flex items-center mb-8 gap-4">
       {data.map((investor, index) => {
@@ -84,7 +89,6 @@ const InvestorsList = () => {
           role = investor.role;
         }
         return (
-
           <div key={index} className="flex-shrink-0 overflow-hidden bg-white rounded-lg max-w-xs shadow-lg p-5 w-1/2">
             <div className=" flex items-center justify-center px-8">
               <img className="w-full h-40 object-cover rounded-md" src={img} alt="" />

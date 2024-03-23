@@ -41,14 +41,14 @@ const MentorCard = () => {
       console.log('result-in-get-all-mentors', result)
       if (!result || result.length == 0) {
         setNoData(true)
-        setData(mentors)
+        setData([])
       } else {
         setData(result);
         setNoData(false)
       }
     }).catch((error) => {
       setNoData(true)
-      setData(mentors)
+      setData([])
       console.log('error-in-get-all-mentors', error)
     })
   }
@@ -60,6 +60,9 @@ const MentorCard = () => {
       getAllMentors(IcpAccelerator_backend);
     }
   }, [actor]);
+  if(noData){
+    return <h1>No Data</h1>
+  }
   return (
     <div className="p-1 flex items-center mb-8 gap-8">
       {data && data.map((mentor, index) => {

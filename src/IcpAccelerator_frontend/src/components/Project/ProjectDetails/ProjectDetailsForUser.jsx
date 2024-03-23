@@ -75,8 +75,6 @@ const ProjectDetailsForUser = () => {
     (currState) => currState.currentRoleStatus.activeRole
   );
 
-
-
   const handleCloseModal = () => setAnnouncementModalOpen(false);
   const handleOpenModal = () => setAnnouncementModalOpen(true);
   const handleJobsCloseModal = () => setJobsModalOpen(false);
