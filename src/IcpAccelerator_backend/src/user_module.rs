@@ -597,6 +597,21 @@ fn get_testimonials(principal_id: Principal) -> Result<Vec<Testimonial>, &'stati
 }
 
 #[query]
+fn get_latest_testimonials(principal_id: Principal) -> Result<Vec<Testimonial>, &'static str>{
+    USER_TESTIMONIAL.with(|registry| {
+        let registry = registry.borrow();
+        if let Some(testimonials) = registry.get(&principal_id) {
+            let mut sorted_testimonials = testimonials.clone(); 
+            sorted_testimonials.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
+            Ok(sorted_testimonials)
+        } else {
+            Err("No testimonials found for the given user.")
+        }
+    })
+}
+
+
+#[query]
 fn get_review(principal_id: Principal) -> Result<Vec<Review>, &'static str> {
     USER_RATING.with(|registry| {
         let registry = registry.borrow();
