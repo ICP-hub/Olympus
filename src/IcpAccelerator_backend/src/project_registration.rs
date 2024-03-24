@@ -1761,8 +1761,16 @@ pub fn access_money_details(project_id: String) -> Result<MoneyRaised, String> {
 pub fn access_private_docs(project_id: String) -> Result<Vec<Docs>, String> {
     let caller = ic_cdk::api::caller();
 
+    let is_owner = APPLICATION_FORM.with(|app_form| {
+        let app_details = app_form.borrow();
+
+        app_details.iter().any(|(principal, projects)| {
+            *principal == caller && projects.iter().any(|p| p.uid == project_id)
+        })
+    });
+
     // Check if the caller is approved to access the private documents for this project
-    let is_approved = PRIVATE_DOCS_ACCESS.with(|access| {
+    let is_approved = is_owner || PRIVATE_DOCS_ACCESS.with(|access| {
         access
             .borrow()
             .get(&project_id)
