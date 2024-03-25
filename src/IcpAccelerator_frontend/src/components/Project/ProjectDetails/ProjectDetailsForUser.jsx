@@ -23,16 +23,22 @@ import AnnouncementCard from "../../Dashboard/AnnouncementCard";
 import AnnouncementModal from "../../../models/AnnouncementModal";
 import AddJobsModal from "../../../models/AddJobsModal";
 import AddRatingModal from "../../../models/AddRatingModal";
+import { useNavigate } from "react-router-dom";
+import AddAMentorRequestModal from "../../../models/AddAMentorRequestModal";
+import { Principal } from '@dfinity/principal';
+import toast, { Toaster } from "react-hot-toast";
 
 const ProjectDetailsForUser = () => {
   const location = useLocation();
   // const { data } = location.state;
   const actor = useSelector((currState) => currState.actors.actor);
   const { id } = useParams();
+  const navigate = useNavigate();
   const [details, setDetails] = useState();
   const [isAnnouncementModalOpen, setAnnouncementModalOpen] = useState(false);
   const [isJobsModalOpen, setJobsModalOpen] = useState(false);
   const [isRatingModalOpen, setRatingModalOpen] = useState(false);
+  const principal = useSelector((currState) => currState.internet.principal);
 
   const headerData = [
     {
@@ -182,10 +188,10 @@ const ProjectDetailsForUser = () => {
       });
   };
   useEffect(() => {
-    if (actor) {
+    if (actor && principal) {
       getProjectDetail(actor);
     }
-  }, [actor]);
+  }, [actor, principal]);
   // useEffect(() => {
   //     (async () => {
   //         if (actor) {
@@ -196,11 +202,56 @@ const ProjectDetailsForUser = () => {
   // }, [actor]);
   // console.log("details ===>", details);
   // console.log("data ===>", data);
+
+  const [isAddProjectModalOpen, setIsAddProjectModalOpen] = useState(false);
+
+  const handleProjectCloseModal = () => setIsAddProjectModalOpen(false);
+  const handleProjectOpenModal = () => setIsAddProjectModalOpen(true);
+
+
+  const handleAddProject = async ({ message }) => {
+    console.log('add into a project')
+    if (actor && principal) {
+      let project_id = id;
+      let msg = message
+      let mentor_id = Principal.fromText(principal)
+
+
+     await actor.send_offer_to_project(project_id, msg, mentor_id)
+        .then((result) => {
+          console.log('result-in-send_offer_to_project', result)
+          if (result) {
+            handleProjectCloseModal();
+            toast.success('offer sent to project successfully')
+          } else {
+            handleProjectCloseModal();
+            toast.error('something got wrong')
+          }
+        })
+        .catch((error) => {
+          console.log('error-in-send_offer_to_project', error)
+          handleProjectCloseModal();
+          toast.error('something got wrong')
+
+        })
+    }
+  }
+  
   return (
     <section className="text-black bg-gray-100 pb-4">
       <div className="w-full px-[4%] lg1:px-[5%]">
         <div className="flex-col">
           <div className="mb-4">
+            <div className="py-4 w-full flex justify-end">
+              <div className="flex gap-2">
+                <button onClick={handleProjectOpenModal} className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900">
+                  Reach Out
+                </button>
+                <button onClick={() => navigate('/mentor-association-requests')} className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900">
+                  View Association Requests
+                </button>
+              </div>
+            </div>
             <ProjectCard
               image={ment}
               title="buider.io"
@@ -329,6 +380,13 @@ const ProjectDetailsForUser = () => {
         <AddJobsModal onJobsClose={handleJobsCloseModal} />)}
       {isRatingModalOpen && (
         <AddRatingModal onRatingClose={handleRatingCloseModal} />)}
+      {isAddProjectModalOpen && (
+        <AddAMentorRequestModal
+          title={'Associate Project'}
+          onClose={handleProjectCloseModal}
+          onSubmitHandler={handleAddProject}
+        />)}
+        <Toaster/>
     </section>
   );
 };
