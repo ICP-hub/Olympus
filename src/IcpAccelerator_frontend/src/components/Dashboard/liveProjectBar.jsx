@@ -62,7 +62,7 @@ const LiveProjectBar = () => {
       <div className="flex flex-row space-x-2 justify-between">
         <div className="flex items-center mb-4">
           <img
-            className="rounded-lg border border-gray-200 shadow-sm w-16 h-16"
+            className="rounded-lg border border-gray-200 shadow-sm w-16 h-16 object-cover"
             src={ment}
             alt="Project Logo"
           />

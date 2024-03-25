@@ -21,9 +21,11 @@ import ProjectJobDetailsCard from './ProjectJobDetailsCard';
 import ProjectDetailsCommunityRatings from './ProjectDetailsCommunityRatings';
 import AddAMentorRequestModal from '../../../models/AddAMentorRequestModal';
 import toast, { Toaster } from "react-hot-toast";
+import { useNavigate } from 'react-router-dom';
 
 const ProjectDetailsForOwnerProject = () => {
     // Add your component logic here
+    const navigate = useNavigate();
     const actor = useSelector((currState) => currState.actors.actor)
     const [projectData, setProjectData] = useState(null);
 
@@ -68,16 +70,13 @@ const ProjectDetailsForOwnerProject = () => {
 
     const [activeTab, setActiveTab] = useState(headerData[0].id);
     const [isAddTeamModalOpen, setIsAddTeamModalOpen] = useState(false);
-    const [isAddMentorModalOpen, setIsAddMentorModalOpen] = useState(false);
     const [isAnnouncementModalOpen, setAnnouncementModalOpen] = useState(false);
     const [isJobsModalOpen, setJobsModalOpen] = useState(false);
     const [isRatingModalOpen, setRatingModalOpen] = useState(false);
 
     const handleTeamMemberCloseModal = () => setIsAddTeamModalOpen(false);
     const handleTeamMemberOpenModal = () => setIsAddTeamModalOpen(true);
-    const handleMentorCloseModal = () => setIsAddMentorModalOpen(false);
-    const handleMentorOpenModal = () => setIsAddMentorModalOpen(true);
-    const handleCloseModal = () => setAnnouncementModalOpen(false);
+   const handleCloseModal = () => setAnnouncementModalOpen(false);
     const handleOpenModal = () => setAnnouncementModalOpen(true);
     const handleJobsCloseModal = () => setJobsModalOpen(false);
     const handleJobsOpenModal = () => setJobsModalOpen(true);
@@ -161,16 +160,13 @@ const ProjectDetailsForOwnerProject = () => {
         }
     };
 
-    const renderAddButton = () => {
 
-    }
-    
-    const handleAddTeamMember = ({ user_id }) => {
+    const handleAddTeamMember = async ({ user_id }) => {
         console.log('add team member')
         if (actor) {
             let project_id = projectData?.uid;
             let member_principal_id = Principal.fromText(user_id)
-            actor.update_team_member(project_id, member_principal_id)
+           await actor.update_team_member(project_id, member_principal_id)
                 .then((result) => {
                     console.log('result-in-update_team_member', result)
                     if (result) {
@@ -192,36 +188,9 @@ const ProjectDetailsForOwnerProject = () => {
         }
     }
 
-    const handleAddMentor = ({ user_id, message }) => {
-        console.log('add a mentor')
-        if (actor) {
-            let mentor_id = Principal.fromText(user_id)
-            let msg = message
-            let project_id = projectData?.uid;
+   
 
-            actor.send_offer_to_mentor(mentor_id, msg, project_id)
-                .then((result) => {
-                    console.log('result-in-send_offer_to_mentor', result)
-                    if (result) {
-                        handleMentorCloseModal();
-                        fetchProjectData();
-                        toast.success('offer sent to mentor successfully')
-                    } else {
-                        handleMentorCloseModal();
-                        toast.error('something got wrong')
-
-                    }
-                })
-                .catch((error) => {
-                    console.log('error-in-send_offer_to_mentor', error)
-                    handleMentorCloseModal();
-                    toast.error('something got wrong')
-
-                })
-        }
-    }
-
-    const handleAddAnnouncement = ({ announcementTitle, announcementDescription }) => {
+    const handleAddAnnouncement = async ({ announcementTitle, announcementDescription }) => {
         console.log('add announcement')
         if (actor) {
             let argument = {
@@ -231,7 +200,7 @@ const ProjectDetailsForOwnerProject = () => {
                 timestamp: Date.now(),
             }
             console.log('argument', argument)
-            actor.add_announcement(argument)
+           await actor.add_announcement(argument)
                 .then((result) => {
                     console.log('result-in-add_announcement', result)
                     if (result && Object.keys(result).length > 0) {
@@ -251,7 +220,7 @@ const ProjectDetailsForOwnerProject = () => {
         }
     }
 
-    const handleAddJob = ({ jobTitle, jobLink, jobDescription, jobCategory, jobLocation }) => {
+    const handleAddJob = async ({ jobTitle, jobLink, jobDescription, jobCategory, jobLocation }) => {
         console.log('add job')
         if (actor) {
             let argument = {
@@ -264,7 +233,7 @@ const ProjectDetailsForOwnerProject = () => {
 
             }
             console.log('argument', argument)
-            actor.post_job(argument)
+            await actor.post_job(argument)
                 .then((result) => {
                     console.log('result-in-post_job', result)
                     if (result) {
@@ -284,10 +253,10 @@ const ProjectDetailsForOwnerProject = () => {
         }
     }
 
-    const handleAddRating = ({ rating, ratingDescription }) => {
+    const handleAddRating = async({ rating, ratingDescription }) => {
         console.log('add job')
         if (actor) {
-            actor.add_review(rating, ratingDescription)
+            await actor.add_review(rating, ratingDescription)
                 .then((result) => {
                     console.log('result-in-add_review', result)
                     if (result) {
@@ -343,7 +312,7 @@ const ProjectDetailsForOwnerProject = () => {
                             <button onClick={handleTeamMemberOpenModal} className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900">
                                 Add Team Member
                             </button>
-                            <button onClick={handleMentorOpenModal} className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900">
+                            <button onClick={() => navigate(`/view-mentors/${projectData?.uid}`)} className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900">
                                 Associate Mentor
                             </button>
                             <button onClick={handleJobsOpenModal} className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900">
@@ -352,6 +321,10 @@ const ProjectDetailsForOwnerProject = () => {
                             <button onClick={handleRatingOpenModal} className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900">
                                 Add Community Rating
                             </button>
+                            <button onClick={() => navigate('/project-association-requests')} className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900">
+                                View Association Requests
+                            </button>
+
                         </div>
                     </div>
                     <div className="mb-4">
@@ -414,28 +387,23 @@ const ProjectDetailsForOwnerProject = () => {
                     onClose={handleTeamMemberCloseModal}
                     onSubmitHandler={handleAddTeamMember}
                 />)}
-              {isAddMentorModalOpen && (
-                <AddAMentorRequestModal
-                    title={'Associate Mentor'}
-                    onClose={handleMentorCloseModal}
-                    onSubmitHandler={handleAddMentor}
-                />)}
+           
             {isAnnouncementModalOpen && (
-                <AnnouncementModal 
-                onClose={handleCloseModal} 
-                onSubmitHandler={handleAddAnnouncement} 
+                <AnnouncementModal
+                    onClose={handleCloseModal}
+                    onSubmitHandler={handleAddAnnouncement}
                 />)}
             {isJobsModalOpen && (
-                <AddJobsModal 
-                onJobsClose={handleJobsCloseModal} 
-                onSubmitHandler={handleAddJob} 
+                <AddJobsModal
+                    onJobsClose={handleJobsCloseModal}
+                    onSubmitHandler={handleAddJob}
                 />)}
             {isRatingModalOpen && (
-                <AddRatingModal 
-                onRatingClose={handleRatingCloseModal} 
-                onSubmitHandler={handleAddRating} 
+                <AddRatingModal
+                    onRatingClose={handleRatingCloseModal}
+                    onSubmitHandler={handleAddRating}
                 />)}
-            <Toaster/>
+            <Toaster />
         </section>
     );
 };

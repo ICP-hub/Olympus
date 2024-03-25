@@ -4,10 +4,11 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
 const schema = yup.object({
+  user_id: yup.string().required('User Principal is required'),
   message: yup.string().required('Required'),
 }).required();
 
-const AddAMentorRequestModal = ({ title, onClose, onSubmitHandler }) => {
+const RequestAssociationModal = ({ title, onClose, onSubmitHandler }) => {
  
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema), mode: 'all'
@@ -52,7 +53,20 @@ const AddAMentorRequestModal = ({ title, onClose, onSubmitHandler }) => {
             </div>
             <form onSubmit={handleSubmit(onSubmit)} className="p-4 md:p-5">
               <div className="grid gap-4 mb-4 grid-cols-2">
-               
+                <div className="col-span-2">
+                  <label htmlFor="user_id" className="block mb-2 text-lg font-medium text-gray-500 hover:text-black  hover:whitespace-normal truncate overflow-hidden hover:text-left">
+                    User Principal
+                  </label>
+                  <input
+                    type="text"
+                    {...register('user_id')}
+                    className={`bg-gray-50 border-2 ${errors.user_id ? 'border-red-500 placeholder:text-red-500' : 'border-[#737373]'} text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    placeholder="Enter user principal id here"
+                  />
+                  {errors.user_id && (
+                    <span className="mt-1 text-sm text-red-500 font-bold">{errors.user_id.message}</span>
+                  )}
+                </div>
                 <div className="col-span-2">
                   <label htmlFor="user_id" className="block mb-2 text-lg font-medium text-gray-500 hover:text-black  hover:whitespace-normal truncate overflow-hidden hover:text-left">
                     Your Offer
@@ -84,5 +98,5 @@ const AddAMentorRequestModal = ({ title, onClose, onSubmitHandler }) => {
   );
 };
 
-export default AddAMentorRequestModal;
+export default RequestAssociationModal;
 
