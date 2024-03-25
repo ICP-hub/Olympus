@@ -382,10 +382,11 @@ type RatingAverages = record {
 type Request = record { mentor : opt MentorInternal; "text" : text };
 type Result = variant { Ok : MoneyRaised; Err : text };
 type Result_1 = variant { Ok : vec Docs; Err : text };
-type Result_2 = variant { Ok; Err : text };
-type Result_3 = variant { Ok : vec Testimonial; Err : text };
+type Result_2 = variant { Ok : text; Err : text };
+type Result_3 = variant { Ok; Err : text };
 type Result_4 = variant { Ok : vec Review; Err : text };
-type Result_5 = variant { Ok : UserInformation; Err : text };
+type Result_5 = variant { Ok : vec Testimonial; Err : text };
+type Result_6 = variant { Ok : UserInformation; Err : text };
 type Review = record {
   tag : text;
   name : text;
@@ -683,7 +684,7 @@ service : {
     ) query;
   get_latest_listed_project : () -> (vec ProjectInfoInternal) query;
   get_latest_live_proposal : () -> (vec ProjectInfoInternal) query;
-  get_latest_testimonials : (principal) -> (Result_3) query;
+  get_latest_testimonials : () -> (vec Testimonial) query;
   get_leaderboard_using_likes : () -> (vec LeaderboardEntryForLikes) query;
   get_leaderboard_using_ratings : () -> (vec LeaderboardEntryForRatings) query;
   get_leaderboard_using_upvotes : () -> (vec LeaderboardEntryForUpvote) query;
@@ -736,7 +737,7 @@ service : {
   get_spotlight_projects : () -> (vec SpotlightDetails) query;
   get_suggestions_by_parent_id_caller : (text, nat64) -> (vec Suggestion) query;
   get_suggestions_by_status_caller : (text, text) -> (vec Suggestion) query;
-  get_testimonials : (principal) -> (Result_3) query;
+  get_testimonials : (principal) -> (Result_5) query;
   get_total_count : () -> (Counts) query;
   get_total_pending_request : () -> (nat64) query;
   get_total_suggestions : (text) -> (nat64) query;
