@@ -114,7 +114,7 @@ thread_local! {
 pub fn initialize_roles() {
     let caller = caller();
 
-    ic_cdk::println!("inside initialize func ");
+    //ic_cdk::println!("inside initialize func ");
 
     let initial_roles = vec![
         Role {
@@ -150,10 +150,10 @@ pub fn initialize_roles() {
     ROLE_STATUS_ARRAY.with(|roles_arr| {
         let mut arr = roles_arr.borrow_mut();
         if arr.contains_key(&caller) {
-            ic_cdk::println!("role status is already assigned")
+            //ic_cdk::println!("role status is already assigned")
         } else {
             arr.insert(caller, initial_roles);
-            ic_cdk::println!("default role are assigned")
+            //ic_cdk::println!("default role are assigned")
         }
     })
 }

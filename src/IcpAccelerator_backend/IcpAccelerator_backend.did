@@ -62,6 +62,12 @@ type FounderInfo = record {
   thirty_info : opt ThirtyInfoFounder;
 };
 type IcpHub = record { id : int32; region : text; name : text };
+type InvestorInfo = record {
+  investor_name : text;
+  investor_description : text;
+  investor_id : principal;
+  investor_image : vec nat8;
+};
 type Jobs = record {
   title : text;
   link : text;
@@ -188,6 +194,19 @@ type OfferToProject = record {
   project_name : text;
   self_declined_at : nat64;
 };
+type OfferToProjectByInvestor = record {
+  request_status : text;
+  project_image : opt vec nat8;
+  accepted_at : nat64;
+  declined_at : nat64;
+  offer_i_have_written : text;
+  offer_id : text;
+  response : text;
+  time_of_request : nat64;
+  project_id : text;
+  project_name : text;
+  self_declined_at : nat64;
+};
 type OfferToSendToMentor = record {
   request_status : text;
   offer : text;
@@ -209,6 +228,18 @@ type OfferToSendToProject = record {
   response : text;
   sent_at : nat64;
   mentor_info : MentorInfo;
+  sender_principal : principal;
+  self_declined_at : nat64;
+};
+type OfferToSendToProjectByInvestor = record {
+  request_status : text;
+  offer : text;
+  accepted_at : nat64;
+  declined_at : nat64;
+  investor_info : InvestorInfo;
+  offer_id : text;
+  response : text;
+  sent_at : nat64;
   sender_principal : principal;
   self_declined_at : nat64;
 };
@@ -460,7 +491,7 @@ type VentureCapitalistInternal = record {
   decline : bool;
   params : VentureCapitalist;
 };
-service : () -> {
+service : {
   accept_offer_of_investor : (text, text, text) -> (text);
   accept_offer_of_mentor : (text, text, text) -> (text);
   accept_offer_of_project : (text, text) -> (text);
@@ -516,7 +547,7 @@ service : () -> {
       vec record { principal; MentorWithRoles },
     ) query;
   get_all_offers_which_are_pending_for_investor : () -> (
-      vec OfferToProject,
+      vec OfferToProjectByInvestor,
     ) query;
   get_all_offers_which_are_pending_for_mentor : () -> (
       vec OfferToProject,
@@ -525,15 +556,15 @@ service : () -> {
       vec OfferToSendToProject,
     ) query;
   get_all_offers_which_are_pending_for_project_from_investor : (text) -> (
-      vec OfferToSendToProject,
+      vec OfferToSendToProjectByInvestor,
     ) query;
   get_all_pending_requests : () -> (vec ProjectNotification) query;
   get_all_project_notification : (text) -> (vec OfferToSendToProject) query;
   get_all_project_notification_sent_by_investor : (text) -> (
-      vec OfferToSendToProject,
+      vec OfferToSendToProjectByInvestor,
     ) query;
   get_all_requests_which_got_accepted_by_project_of_investor : (text) -> (
-      vec OfferToSendToProject,
+      vec OfferToSendToProjectByInvestor,
     ) query;
   get_all_requests_which_got_accepted_for_investor : () -> (
       vec OfferToProject,
@@ -545,7 +576,7 @@ service : () -> {
       vec OfferToSendToProject,
     ) query;
   get_all_requests_which_got_declined_by_project_of_investor : (text) -> (
-      vec OfferToSendToProject,
+      vec OfferToSendToProjectByInvestor,
     ) query;
   get_all_requests_which_got_declined_for_investor : () -> (
       vec OfferToProject,
@@ -557,7 +588,7 @@ service : () -> {
       vec OfferToSendToProject,
     ) query;
   get_all_requests_which_got_self_declined_by_investor : (text) -> (
-      vec OfferToSendToProject,
+      vec OfferToSendToProjectByInvestor,
     ) query;
   get_all_requests_which_got_self_declined_for_investor : () -> (
       vec OfferToProject,

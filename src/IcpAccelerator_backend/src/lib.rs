@@ -24,10 +24,12 @@ mod default_images;
 use crate::project_registration::*;
 use cohort::*;
 
+use investor_offer_to_project::*;
 use notification_to_mentor::*;
 use notification_to_project::*;
 
 use ic_cdk::api::caller;
+use ic_cdk_macros::pre_upgrade;
 
 use leaderboard::{
     LeaderboardEntryForLikes, LeaderboardEntryForRatings, LeaderboardEntryForUpvote,
@@ -83,11 +85,11 @@ fn check_admin() {
     }
 }
 
-#[init]
-fn init() {
-    user_module::initialize_roles();
-    ic_cdk::println!("initialization done");
-}
+// #[init]
+// fn init() {
+//     user_module::initialize_roles();
+//     //ic_cdk::println!("initialization done");
+// }
 
 #[update]
 fn approve_mentor_creation_request_candid(requester: Principal, approve: bool) -> String {
