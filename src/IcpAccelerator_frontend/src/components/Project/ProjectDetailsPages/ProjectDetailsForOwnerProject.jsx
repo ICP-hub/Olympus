@@ -315,7 +315,7 @@ const ProjectDetailsForOwnerProject = () => {
                             <button onClick={() => navigate(`/view-mentors/${projectData?.uid}`)} className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900">
                                 Associate Mentor
                             </button>
-                            <button onClick={handleJobsOpenModal} className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900">
+                            <button onClick={() => navigate(`/view-investor/${projectData?.uid}`)} className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900">
                                 Associate Investor
                             </button>
                             <button onClick={handleRatingOpenModal} className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900">
