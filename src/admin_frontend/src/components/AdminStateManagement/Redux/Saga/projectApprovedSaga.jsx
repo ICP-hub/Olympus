@@ -20,6 +20,7 @@ function* fetchProjectApprovedHandler() {
       actor.list_all_projects,
     ]);
 
+    console.log("allProjectApprovedStatus  => ", allProjectApprovedStatus);
     const updatedProjectProfiles = allProjectApprovedStatus.map(
       ([principal, { project_profile, roles }]) => {
         const principalText = principalToText(principal);
@@ -31,12 +32,12 @@ function* fetchProjectApprovedHandler() {
         //   : null;
 
 
-          const profilePictureBase64 = project_profile[0].params.user_data
-          .profile_picture && project_profile[0].params.user_data
-          .profile_picture instanceof Uint8Array && project_profile[0].params.user_data
-          .profile_picture.length > 0
+          const profilePictureBase64 = project_profile.params.user_data
+          .profile_picture[0] && project_profile.params.user_data
+          .profile_picture[0] instanceof Uint8Array && project_profile.params.user_data
+          .profile_picture[0].length > 0
           ? uint8ArrayToBase64(project_profile[0].params.user_data
-          .profile_picture)
+          .profile_picture[0])
           : null;
 
 
