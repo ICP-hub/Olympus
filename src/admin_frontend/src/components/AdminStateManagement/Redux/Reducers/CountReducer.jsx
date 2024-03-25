@@ -1,11 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialCountState = {
-  mentor_count: 10,
-  vc_count: 10,
-  project_count: 10,
-  total_user: 10,
-  only_user: 10,
+  mentor_count: 0,
+  vc_count: 0,
+  project_count: 0,
+  total_user: 0,
+  only_user: 0,
   loading: false,
   error: null,
 };

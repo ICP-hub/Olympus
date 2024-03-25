@@ -4,6 +4,7 @@ import { IcpAccelerator_backend } from "../../../../../declarations/IcpAccelerat
 import ment from "../../../../assets/images/ment.jpg";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import useFormatDateFromBigInt from "../../hooks/useFormatDateFromBigInt"
+import NoDataCard from "../../Mentors/Event/NoDataCard";
 
 const ProjectJobCard = ({ image, website, tags, country }) => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -34,11 +35,11 @@ const ProjectJobCard = ({ image, website, tags, country }) => {
       .get_all_jobs()
       .then((result) => {
         console.log("result-in-latest-Jobs", result);
-        if (!result || result.length !== 0) {
+        if (!result || result.length == 0) {
           setNoData(true);
-          setLatestJobs(result);
+          setLatestJobs([]);
         } else {
-          setLatestJobs(projectJobData);
+          setLatestJobs(result);
           setNoData(false);
         }
       })
@@ -56,8 +57,13 @@ const ProjectJobCard = ({ image, website, tags, country }) => {
       fetchLatestJobs(IcpAccelerator_backend);
     }
   }, [actor]);
+  if (noData) {
+    return <div className="w-full items-center md:py-4 py-2">
+      <NoDataCard />
+    </div>
+  }
   return (
-    <div className="flex flex-wrap md:flex-nowrap gap-4 mb-8">
+    <div className="flex overflow-x-scroll gap-4 mb-8">
       {latestJobs &&
         latestJobs.map((data, index) => {
           console.log("data", data);
@@ -68,9 +74,9 @@ const ProjectJobCard = ({ image, website, tags, country }) => {
           let jobDescription = "";
           let jobCategory = "";
           let jobLink = "";
-          let jobLocation = ""; 
-          let JobPosted=""
-          if (noData !== false) {
+          let jobLocation = "";
+          let JobPosted = ""
+          if (noData == false) {
             projectName = data?.project_name;
             projectImage = uint8ArrayToBase64(data?.project_logo);
             projectDescription = data?.project_desc;
@@ -79,7 +85,7 @@ const ProjectJobCard = ({ image, website, tags, country }) => {
             jobCategory = data?.job_data?.category;
             jobLink = data?.job_data?.link;
             jobLocation = data?.job_data?.location;
-            JobPosted=timeAgo(data?.timestamp)
+            JobPosted = timeAgo(data?.timestamp)
           } else {
             projectName = data.projectName;
             projectImage = data.projectImage;
@@ -91,7 +97,7 @@ const ProjectJobCard = ({ image, website, tags, country }) => {
             jobLocation = "";
           }
           return (
-            <div className="border-2 shadow-lg rounded-2xl">
+            <div className="border-2 shadow-lg rounded-2xl" style={{minWidth: '50%'}}>
               <div className="md:p-4 p-2">
                 <h3 className="text-lg font-[950]">{jobName}</h3>
                 <div className="sm:flex">
@@ -107,7 +113,7 @@ const ProjectJobCard = ({ image, website, tags, country }) => {
                           {projectName}
                         </p>
                         <p className="text-xs font-[450]">
-                        {JobPosted}
+                          {JobPosted}
                         </p>
                       </div>
                     </div>
@@ -115,30 +121,30 @@ const ProjectJobCard = ({ image, website, tags, country }) => {
                       <p className="text-base font-[950] py-2">
                         {projectDescription}
                       </p>
-                      
+
                     </div>
                   </div>
                   <div className="sm:w-1/2">
                     <div className="flex justify-center items-center">
                       <p className="text-base font-[950] px-2">TAGS</p>
-                      
-                        <p className="flex items-center flex-wrap py-2 gap-2">
-                          
-                            <span
-                              className="bg-transparent text-xs font-semibold px-3 py-1 rounded-2xl border-2 border-black"
-                    
-                            >
-                              {jobCategory}
-                            </span>
-                      
-                        </p>
-                    
+
+                      <p className="flex items-center flex-wrap py-2 gap-2">
+
+                        <span
+                          className="bg-transparent text-xs font-semibold px-3 py-1 rounded-2xl border-2 border-black"
+
+                        >
+                          {jobCategory}
+                        </span>
+
+                      </p>
+
                     </div>
                     <div className="mt-2">
                       <p className="text-base font-[950] py-2 line-clamp-3">
                         {jobDescription}
                       </p>
-                      
+
                     </div>
 
                     <div className="mt-2">
@@ -150,12 +156,12 @@ const ProjectJobCard = ({ image, website, tags, country }) => {
                         <span>Register your interest here:</span>
                       </div>
                       <div className="w-full sm:w-1/2">
-                        
-                          <a href={jobLink} target="_blank">
-                            <button className="font-[450] border text-xs text-[#ffffff] py-[7px] px-[9px] rounded-md border-[#FFFFFF4D] drop-shadow-[#00000040]  bg-[#3505B2] text-nowrap">
-                              I'm interested!
-                            </button>
-                          </a>
+
+                        <a href={jobLink} target="_blank">
+                          <button className="font-[450] border text-xs text-[#ffffff] py-[7px] px-[9px] rounded-md border-[#FFFFFF4D] drop-shadow-[#00000040]  bg-[#3505B2] text-nowrap">
+                            I'm interested!
+                          </button>
+                        </a>
                       </div>
                     </div>
                   </div>

@@ -6,26 +6,31 @@ mod manage_focus_expertise;
 mod manage_hubs;
 mod mentor;
 mod notification;
+
 mod notification_to_mentor;
 mod notification_to_project;
+// mod project_offer_to_investor;
+mod investor_offer_to_project;
+
 mod project_like;
 mod requests;
 mod roles;
 mod upvotes;
 mod user_module;
 mod vc_registration;
-use ic_cdk_macros::post_upgrade;
 mod cohort;
 mod default_images;
 
 use crate::project_registration::*;
 use cohort::*;
 
+use investor_offer_to_project::*;
 use notification_to_mentor::*;
 use notification_to_project::*;
 
 use ic_cdk::api::caller;
-use ic_cdk::pre_upgrade;
+use ic_cdk_macros::pre_upgrade;
+
 use leaderboard::{
     LeaderboardEntryForLikes, LeaderboardEntryForRatings, LeaderboardEntryForUpvote,
 };
@@ -35,7 +40,7 @@ use project_registration::FilterCriteria;
 use ratings::RatingAverages;
 use requests::Request;
 use roles::{get_roles, RolesResponse};
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 
 use user_module::*;
 
@@ -67,9 +72,9 @@ use project_registration::{
 };
 
 use notification::*;
-use register_user::{FounderInfo, FounderInfoInternal, ThirtyInfoFounder};
+use register_user::FounderInfo;
 use roadmap_suggestion::Suggestion;
-use upvotes::UpvoteStorage;
+
 use vc_registration::VentureCapitalist;
 use vc_registration::*;
 
@@ -80,11 +85,11 @@ fn check_admin() {
     }
 }
 
-#[init]
-fn init() {
-    user_module::initialize_roles();
-    ic_cdk::println!("initialization done");
-}
+// #[init]
+// fn init() {
+//     user_module::initialize_roles();
+//     //ic_cdk::println!("initialization done");
+// }
 
 #[update]
 fn approve_mentor_creation_request_candid(requester: Principal, approve: bool) -> String {

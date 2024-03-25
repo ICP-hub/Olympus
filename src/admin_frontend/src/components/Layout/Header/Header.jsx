@@ -41,7 +41,7 @@ const Header = ({ setModalOpen, gradient }) => {
             <a onClick={()=>navigate('/dashboard')} className={`${getLinkStyle('/dashboard')}`}>
               Dashboard
             </a>
-            <a onClick={()=>navigate('/users')} className={`${getLinkStyle('/users')}`}>
+            <a className={`${getLinkStyle('/users')}`}>
               Users
             </a>
             <a onClick={()=>navigate('/request')} className={`${getLinkStyle('/request')}`}>

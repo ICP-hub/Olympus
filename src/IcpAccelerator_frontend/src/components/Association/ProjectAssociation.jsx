@@ -3,58 +3,62 @@ import girl from "../../../assets/images/girl.jpeg";
 import { projectFilterSvg } from '../Utils/Data/SvgData';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { Principal } from '@dfinity/principal';
 import fetchRequestFromUtils from '../Utils/apiNames/getAssociationApiName';
 import viewProfileHandlerFromUtils from '../Utils/navigationHelper/navigationFromAssociation';
+import uint8ArrayToBase64 from '../Utils/uint8ArrayToBase64';
+import { formatFullDateFromBigInt } from '../Utils/formatter/formatDateFromBigInt';
 
 const ProjectAssociation = () => {
     const navigate = useNavigate();
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [activeTab, setActiveTab] = useState('pending');
-    const [data, setData] = useState([
-        {
-            image: girl,
-            name: 'Ms.Lisa',
-            date: '10 October, 2023',
-            msg: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ad quaerat, dolorem, sequi placeat, perferendis explicabo sint magnam odit vitae velit minima aliquam. Quasi, cumque cum omnis animi enim rem voluptas.',
-        },
-        {
-            image: girl,
-            name: 'Ms.Lisa',
-            date: '10 October, 2023',
-            msg: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ad quaerat, dolorem, sequi placeat, perferendis explicabo sint magnam odit vitae velit minima aliquam. Quasi, cumque cum omnis animi enim rem voluptas.',
-        },
-        {
-            image: girl,
-            name: 'Ms.Lisa',
-            date: '10 October, 2023',
-            msg: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ad quaerat, dolorem, sequi placeat, perferendis explicabo sint magnam odit vitae velit minima aliquam. Quasi, cumque cum omnis animi enim rem voluptas.',
-        },
-        {
-            image: girl,
-            name: 'Ms.Lisa',
-            date: '10 October, 2023',
-            msg: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ad quaerat, dolorem, sequi placeat, perferendis explicabo sint magnam odit vitae velit minima aliquam. Quasi, cumque cum omnis animi enim rem voluptas.',
-        },
-        {
-            image: girl,
-            name: 'Ms.Lisa',
-            date: '10 October, 2023',
-            msg: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ad quaerat, dolorem, sequi placeat, perferendis explicabo sint magnam odit vitae velit minima aliquam. Quasi, cumque cum omnis animi enim rem voluptas.',
-        },
-        {
-            image: girl,
-            name: 'Ms.Lisa',
-            date: '10 October, 2023',
-            msg: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ad quaerat, dolorem, sequi placeat, perferendis explicabo sint magnam odit vitae velit minima aliquam. Quasi, cumque cum omnis animi enim rem voluptas.',
-        },
-        {
-            image: girl,
-            name: 'Ms.Lisa',
-            date: '10 October, 2023',
-            msg: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ad quaerat, dolorem, sequi placeat, perferendis explicabo sint magnam odit vitae velit minima aliquam. Quasi, cumque cum omnis animi enim rem voluptas.',
-        },
+    const [data, setData] = useState([]);
+    // const [data, setData] = useState([
+    //     {
+    //         image: girl,
+    //         name: 'Ms.Lisa',
+    //         date: '10 October, 2023',
+    //         msg: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ad quaerat, dolorem, sequi placeat, perferendis explicabo sint magnam odit vitae velit minima aliquam. Quasi, cumque cum omnis animi enim rem voluptas.',
+    //     },
+    //     {
+    //         image: girl,
+    //         name: 'Ms.Lisa',
+    //         date: '10 October, 2023',
+    //         msg: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ad quaerat, dolorem, sequi placeat, perferendis explicabo sint magnam odit vitae velit minima aliquam. Quasi, cumque cum omnis animi enim rem voluptas.',
+    //     },
+    //     {
+    //         image: girl,
+    //         name: 'Ms.Lisa',
+    //         date: '10 October, 2023',
+    //         msg: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ad quaerat, dolorem, sequi placeat, perferendis explicabo sint magnam odit vitae velit minima aliquam. Quasi, cumque cum omnis animi enim rem voluptas.',
+    //     },
+    //     {
+    //         image: girl,
+    //         name: 'Ms.Lisa',
+    //         date: '10 October, 2023',
+    //         msg: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ad quaerat, dolorem, sequi placeat, perferendis explicabo sint magnam odit vitae velit minima aliquam. Quasi, cumque cum omnis animi enim rem voluptas.',
+    //     },
+    //     {
+    //         image: girl,
+    //         name: 'Ms.Lisa',
+    //         date: '10 October, 2023',
+    //         msg: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ad quaerat, dolorem, sequi placeat, perferendis explicabo sint magnam odit vitae velit minima aliquam. Quasi, cumque cum omnis animi enim rem voluptas.',
+    //     },
+    //     {
+    //         image: girl,
+    //         name: 'Ms.Lisa',
+    //         date: '10 October, 2023',
+    //         msg: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ad quaerat, dolorem, sequi placeat, perferendis explicabo sint magnam odit vitae velit minima aliquam. Quasi, cumque cum omnis animi enim rem voluptas.',
+    //     },
+    //     {
+    //         image: girl,
+    //         name: 'Ms.Lisa',
+    //         date: '10 October, 2023',
+    //         msg: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ad quaerat, dolorem, sequi placeat, perferendis explicabo sint magnam odit vitae velit minima aliquam. Quasi, cumque cum omnis animi enim rem voluptas.',
+    //     },
 
-    ]);
+    // ]);
     const [noData, setNoData] = useState(false);
     const headerData = [
         {
@@ -79,6 +83,8 @@ const ProjectAssociation = () => {
     const userCurrentRoleStatus = useSelector((currState) => currState.currentRoleStatus.rolesStatusArray);
     const userCurrentRoleStatusActiveRole = useSelector((currState) => currState.currentRoleStatus.activeRole);
     const actor = useSelector((currState) => currState.actors.actor);
+    const principal = useSelector((currState) => currState.internet.principal);
+
 
     const getTabClassName = (tab) => {
         return `inline-block p-1 ${activeTab === tab
@@ -91,21 +97,43 @@ const ProjectAssociation = () => {
         setActiveTab(tab);
     };
 
-    useEffect(() => {
-        if (actor) {
-            const api_name = fetchRequestFromUtils(activeTab, selectedStatus, userCurrentRoleStatusActiveRole);
-            console.log('api_name', api_name)
-            // if (api_name) {
-            //     (async () => {
-            //         await actor.api_name().then((result) => {
-            //             console.log(`result-in-${api_name}`, result);
-            //         }).catch((error) => {
-            //             console.log(`error-in-${api_name}`, error)
-            //         });
-            //     })();
-            // }
+    const handleApproveFunc = async (offer_id) => {
+        // let offer_id = offer_id;
+        let response_message = "Accepted";
+        try {
+            const result = await actor.accept_offer_of_project(offer_id, response_message);
+            console.log(`result-in-accept_offer_of_project`, result);
+
+            // setData(result)
+        } catch (error) {
+            console.log(`error-in-accept_offer_of_project`, error);
+            // setData([]);
         }
-    }, [actor, activeTab, selectedStatus, userCurrentRoleStatusActiveRole])
+    }
+
+    useEffect(() => {
+        // if (actor && principal) {
+        //     const { api_name, api_payload } = fetchRequestFromUtils(activeTab, selectedStatus, userCurrentRoleStatusActiveRole);
+        //     console.log('api_name', api_name)
+        //     let mentor_id = Principal.fromText(principal) 
+        //     if (api_name) {
+        //         (async () => {
+        //             try {
+        //                 // const result = await actor[api_name](mentor_id);
+        //                 const result = await actor[api_name]();
+        //                 console.log(`result-in-${api_name}`, result);
+        //                 setData(result)
+        //             } catch (error) {
+        //                 console.log(`error-in-${api_name}`, error);
+        //                 setData([]);
+        //             }
+        //         })().catch((error) => {
+        //             console.log(`error-in-${api_name}`, error);
+        //             setData([]);
+        //         });
+        //     }
+        // }
+    }, [actor, principal, activeTab, selectedStatus, userCurrentRoleStatusActiveRole])
 
 
     useEffect(() => {
@@ -219,10 +247,11 @@ const ProjectAssociation = () => {
             <div className='h-screen overflow-y-scroll scroll-smooth'>
                 {data && data.length > 0 ?
                     data.map((val, index) => {
-                        let img = val.image
-                        let name = val.name
-                        let date = val.date
-                        let msg = val.msg
+                        let img = val?.project_info?.project_logo ? uint8ArrayToBase64(val?.project_info?.project_logo) : ''
+                        let name = val?.project_info?.project_name ?? ""
+                        let date = val?.sent_at ? formatFullDateFromBigInt(val?.sent_at) : ''
+                        let msg = val?.offer ?? ""
+                        let offer_id = val?.offer_id
                         return (
                             <div className='p-4 border-2 bg-white rounded-lg mb-4' key={index}>
                                 <div className='flex'>
@@ -262,7 +291,9 @@ const ProjectAssociation = () => {
                                                                     </button>
                                                                 </div>
                                                                 <div>
-                                                                    <button className="capitalize border-2 font-semibold bg-blue-900 border-blue-900 text-white px-2 py-1 rounded-md  hover:text-blue-900 hover:bg-white">
+                                                                    <button 
+                                                                    // onClick={() => handleApproveFunc(offer_id)} 
+                                                                    className="capitalize border-2 font-semibold bg-blue-900 border-blue-900 text-white px-2 py-1 rounded-md  hover:text-blue-900 hover:bg-white">
                                                                         approve
                                                                     </button>
                                                                 </div>

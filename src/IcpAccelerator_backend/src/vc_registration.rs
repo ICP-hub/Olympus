@@ -43,8 +43,8 @@ pub struct VentureCapitalist {
 
 #[derive(Clone, CandidType)]
 pub struct VentureCapitalistAll {
-    principal: Principal,
-    profile: VentureCapitalistInternal,
+    pub principal: Principal,
+    pub profile: VentureCapitalistInternal,
 }
 
 impl VentureCapitalist {
@@ -345,6 +345,7 @@ pub fn get_vc_info_by_principal(caller: Principal) -> HashMap<Principal, Venture
         vc_all_info
     })
 }
+
 
 #[query]
 pub fn list_all_vcs() -> HashMap<Principal, VcWithRoles> {

@@ -66,7 +66,7 @@ const AdminDashboard = () => {
               <div className="flex flex-col items-center justify-start font-bold text-lg text-white z-10">
                 <p className="flex justify-start">Live Projects</p>
                 <p className="font-extrabold -[59px] h-[62px] text-white flex justify-center xl:md:text-5xl text-2xl">
-                  767
+                  0
                 </p>
               </div>
             </div>
@@ -74,7 +74,7 @@ const AdminDashboard = () => {
         </div>
         <div className="flex md:flex-row flex-col  w-full  mt-2 justify-between ">
           <div
-            className="rounded-[1rem]  space-x-2 flex my-2 justify-center cursor-pointer flex-col  w-full  bg-white drop-shadow-xl border-2"
+            className="rounded-[1rem]  space-x-2 flex my-2 justify-center  flex-col  w-full  bg-white drop-shadow-xl border-2"
             // onClick={() => navigate("/request")}
           >
             <div className="flex  flex-row  flex-wrap justify-around  font-bold text-lg text-black items-center ">
@@ -87,7 +87,7 @@ const AdminDashboard = () => {
               </p>
             </div>
           </div>
-          <div className="rounded-[1rem]  space-x-2 flex my-2 justify-center cursor-pointer flex-col  w-full  bg-white drop-shadow-xl border-2">
+          <div className="rounded-[1rem]  space-x-2 flex my-2 justify-center  flex-col  w-full  bg-white drop-shadow-xl border-2">
             <div className="flex  flex-row  flex-wrap justify-around font-bold text-lg text-black items-center ">
               <div className="gap-2 flex flex-row items-center">
                 <svg
@@ -107,7 +107,7 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          <div className="rounded-[1rem] space-x-2 flex  my-2  justify-center cursor-pointer flex-col  w-full  bg-white drop-shadow-xl border-2 ">
+          <div onClick={()=>navigate('/allProject')} className="rounded-[1rem] space-x-2 flex  my-2  justify-center cursor-pointer flex-col  w-full  bg-white drop-shadow-xl border-2 ">
             <div className="flex  flex-row  flex-wrap justify-around font-bold text-lg text-black items-center ">
               <div className="gap-2 flex-row flex items-center">
                 <img src={founder} alt="founder" />
@@ -120,7 +120,7 @@ const AdminDashboard = () => {
           </div>
 
           <div
-            className="rounded-[1rem]  space-x-2 flex my-2 justify-center cursor-pointer flex-col  w-full  bg-white drop-shadow-xl border-2"
+            className="rounded-[1rem]  space-x-2 flex my-2 justify-center  flex-col  w-full  bg-white drop-shadow-xl border-2"
             // onClick={() => navigate("/request")}
           >
             <div className="flex  flex-row  flex-wrap justify-around font-bold text-lg text-black items-center ">
@@ -152,12 +152,12 @@ const AdminDashboard = () => {
 
           <div
             className="rounded-[1rem] space-x-2 flex  my-2  justify-center  flex-col  w-full  bg-[#0071FF]  drop-shadow-xl border-2 "
-            onClick={() => navigate("/notification")}
+            // onClick={() => navigate("/notification")}
           >
             <div className="flex  flex-row  flex-wrap justify-around font-bold text-lg text-black items-center ">
-              <p className="flex justify-start text-sm">Active Cohorts</p>
+              <p className="flex justify-between text-sm">Active Cohorts</p>
               <p className="font-extrabold w-[59px]  text-2xl h-[62px] flex  justify-center items-center">
-                1500
+                0
               </p>
             </div>
           </div>
@@ -166,7 +166,7 @@ const AdminDashboard = () => {
             onClick={() => navigate("/request")}
           >
             <div className="flex  flex-row  flex-wrap justify-around font-bold text-lg text-black items-center ">
-              <p className="flex justify-start text-sm"> Pending Requests</p>
+              <p className="flex justify-between text-sm"> Pending Requests</p>
               <p className="font-extrabold w-[59px]  text-2xl h-[62px] flex  justify-center items-center">
                 {totalPending}
               </p>

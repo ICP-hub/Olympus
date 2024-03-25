@@ -18,7 +18,7 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
   const loginHandler = async () => {
     await login();
     onClose();
-    // window.location.reload();
+    window.location.reload();
   };
 
   useEffect(async() => {

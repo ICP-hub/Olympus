@@ -4,6 +4,8 @@ import { globesvg, linkedInSvg, twitterSvg } from "../../Utils/Data/SvgData";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import girl from "../../../../assets/images/girl.jpeg";
 import { formatDateFromBigInt, formatFullDateFromBigInt } from "../../Utils/formatter/formatDateFromBigInt";
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import 'react-circular-progressbar/dist/styles.css';
 
 function ProjectDetailsCard({ data, image, title, tags, socials, doj, country, website, dapp }) {
     if (!data) {
@@ -22,7 +24,7 @@ function ProjectDetailsCard({ data, image, title, tags, socials, doj, country, w
     let joined_on = data?.creation_date ?? "";
 
 
-   
+
     return (
         <>
             <div className="p-6 shadow-lg pb-1 bg-[#FFFFFF4D] border-[#E9E9E9] border-1 drop-shadow-[#0000000D] rounded-[10px]">
@@ -42,6 +44,19 @@ function ProjectDetailsCard({ data, image, title, tags, socials, doj, country, w
                                     (
                                         <div className="flex items-center">
                                             <p className="font-bold text-lg pr-2">{name}</p>
+                                            <CircularProgressbar
+                                                value={(4 / 9) * 100 }
+                                                text={`4/9`}
+                                                className="w-10 h-10 font-extrabold text-lg"
+                                                strokeWidth={8}
+                                                styles={buildStyles({
+                                                    strokeLinecap: "round",
+                                                    pathTransitionDuration: 0.5,
+                                                    pathColor: `#2247AF`,
+                                                    trailColor: "#d6d6d6",
+                                                    textColor: "#3505B2",
+                                                })}
+                                            />
                                         </div>
                                     )}
                             </div>

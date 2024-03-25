@@ -1,22 +1,37 @@
 import React from "react";
 import toast, { Toaster } from "react-hot-toast";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 const TestimonialModal = ({ onClose, categories }) => {
+  const actor = useSelector((currState) => currState.actors.actor);
   const navigate = useNavigate();
 
   console.log(categories);
   const handleSubmit = async (categories) => {
     if (categories.id === "registerInvestor") {
-       navigate('\create-investor')
+      navigate("create-investor");
     } else if (categories.id === "registerMentor") {
       navigate("create-mentor");
     } else if (categories.id === "registerProject") {
       navigate("create-project");
     } else if (categories.id === "addTestimonial") {
-      toast.success(
-        "Your Insights are Valuable to us. Thank you for sharing your Testimonial it will br Added Shorlty!"
-      );
+      const description = document.getElementById("description").value;
+      actor
+        .add_testimonial(description)
+        .then((result) => {
+          console.log("result-in-add_testimonial", result);
+          toast.success(
+            "Your Insights are Valuable to us. Thank you for sharing your Testimonial it will br Added Shorlty!"
+          );
+        })
+        .catch((error) => {
+          console.log("error-in-add_testimonial", error);
+          // Handle error
+          // handleModalClose(); // You might need to define this function
+          toast.error("Something went wrong");
+        });
+
       await onClose();
     }
   };
@@ -25,14 +40,14 @@ const TestimonialModal = ({ onClose, categories }) => {
       <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-50"></div>
       <div className=" overflow-y-auto overflow-x-hidden  top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full fixed flex">
         <div className="relative p-4 w-full max-w-md max-h-full">
-          <div className="relative bg-transparent backdrop:blur-md  border-2 rounded-lg shadow-lg">
+          <div className="relative bg-white   border-2 rounded-lg shadow-lg">
             <div className="flex items-center justify-between p-4 md:p-5 rounded-t ">
-              <h3 className="text-3xl font-bold text-white">
+              <h3 className="text-3xl font-bold text-black">
                 {categories[0].title}
               </h3>
               <button
                 type="button"
-                className="text-white bg-transparent rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
+                className="text-black bg-transparent rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
                 onClick={onClose}
               >
                 <svg

@@ -39,7 +39,7 @@ const AcceptModal = ({ onClose, allNotification }) => {
     } finally {
       setIsAccepting(false);
       onClose();
-      // window.location.reload();
+      window.location.reload();
     }
   };
 

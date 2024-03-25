@@ -20,6 +20,10 @@ function* fetchMentorPendingHandler() {
       actor.mentors_awaiting_approval,
     ]);
 
+
+    // console.log("allMentorPendingStatus =>", allMentorPendingStatus);
+
+    
     const updatedMentorProfiles = allMentorPendingStatus.map(
       ([principal, { mentor_profile, roles }]) => {
 
@@ -27,9 +31,13 @@ function* fetchMentorPendingHandler() {
         //   mentor_profile.profile.user_data.profile_picture
         // );
 
-        const profilePictureBase64 = mentor_profile.profile.user_data.profile_picture && mentor_profile.profile.user_data.profile_picture instanceof Uint8Array && mentor_profile.profile.user_data.profile_picture.length > 0
-          ? uint8ArrayToBase64(mentor_profile.profile.user_data.profile_picture)
+        const profilePictureBase64 = mentor_profile.profile.user_data.profile_picture[0] && mentor_profile.profile.user_data.profile_picture[0] instanceof Uint8Array && mentor_profile.profile.user_data.profile_picture[0].length > 0
+          ? uint8ArrayToBase64(mentor_profile.profile.user_data.profile_picture[0])
           : null;
+
+          
+          // console.log("profilePictureBase64 in allMentorPendingStatus =>", mentor_profile.profile.user_data.profile_picture[0]);
+
         const principalText = principalToText(principal);
 
         const mentorRole = roles.find((role) => role.name === "mentor");

@@ -4,6 +4,7 @@ import p1 from "../../../assets/Founders/p1.png";
 import p2 from "../../../assets/Founders/p2.png";
 import p3 from "../../../assets/Founders/p3.png";
 import p4 from "../../../assets/Founders/p4.png";
+import { useNavigate } from "react-router-dom";
 
 const CircularProgressBar = ({ progress }) => {
   const radius = 30;
@@ -53,6 +54,7 @@ const CircularProgressBar = ({ progress }) => {
 };
 
 const LiveProjectBar = () => {
+  const navigate = useNavigate();
   const projectProgress = 50;
 
   return (
@@ -60,7 +62,7 @@ const LiveProjectBar = () => {
       <div className="flex flex-row space-x-2 justify-between">
         <div className="flex items-center mb-4">
           <img
-            className="rounded-lg border border-gray-200 shadow-sm w-16 h-16"
+            className="rounded-lg border border-gray-200 shadow-sm w-16 h-16 object-cover"
             src={ment}
             alt="Project Logo"
           />
@@ -108,11 +110,11 @@ const LiveProjectBar = () => {
           ))}
         </div>
         <div className="text-sm flex items-center space-x-4">
-          <span className="font-extrabold text-gray-700">Day Rank #1</span>
-          <span className="font-extrabold text-gray-700">Week Rank #3</span>
-          {/* <button className="text-white bg-purple-600 hover:bg-purple-700 transition duration-300 ease-in-out rounded-lg text-sm font-medium py-2 px-6">
-            Visit
-          </button> */}
+          {/* <span className="font-extrabold text-gray-700">Day Rank #1</span>
+          <span className="font-extrabold text-gray-700">Week Rank #3</span> */}
+          <button onClick={() => navigate('/individual-project-details-project-owner')} className="text-white bg-purple-600 hover:bg-purple-700 transition duration-300 ease-in-out rounded-lg text-sm font-medium py-2 px-6">
+            View Project
+          </button>
         </div>
       </div>
     </div>

@@ -4,6 +4,7 @@ import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_
 import { useSelector } from "react-redux";
 import { useNavigate } from 'react-router-dom';
 import uint8ArrayToBase64 from '../Utils/uint8ArrayToBase64';
+import NoDataCard from "../Mentors/Event/NoDataCard";
 const mentors = [
   {
     id: null,
@@ -36,19 +37,20 @@ const MentorCard = () => {
   const [noData, setNoData] = useState(null);
 
   const actor = useSelector((currState) => currState.actors.actor);
+  
   const getAllMentors = async (caller) => {
     await caller.get_all_mentors_candid().then((result) => {
       console.log('result-in-get-all-mentors', result)
       if (!result || result.length == 0) {
         setNoData(true)
-        setData(mentors)
+        setData([])
       } else {
         setData(result);
         setNoData(false)
       }
     }).catch((error) => {
       setNoData(true)
-      setData(mentors)
+      setData([])
       console.log('error-in-get-all-mentors', error)
     })
   }
@@ -60,6 +62,11 @@ const MentorCard = () => {
       getAllMentors(IcpAccelerator_backend);
     }
   }, [actor]);
+  if (noData) {
+    return <div className="items-center w-full">
+      <NoDataCard />
+    </div>
+  }
   return (
     <div className="p-1 flex items-center mb-8 gap-8">
       {data && data.map((mentor, index) => {

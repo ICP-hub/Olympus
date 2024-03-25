@@ -44,13 +44,7 @@ const ProjectDashboard = () => {
     (currState) => currState.currentRoleStatus.activeRole
   );
 
-  useEffect(() => {
-    const founderDataFetchHandler = async () => {
-      // const founderDataFetch = await actor.get_mentor_candid();
-      // console.log("dekho dekho founder data aaya => ", founderDataFetch);
-    };
-    // founderDataFetchHandler();
-  }, [actor]);
+
 
   // useEffect(() => {
   //   if (actor) {
@@ -103,12 +97,12 @@ const ProjectDashboard = () => {
             country={"india"}
             website={"https://www.google.co.in/"}
           />
-          <ProjectJobCard
+          {/* <ProjectJobCard
             image={ment}
             tags={["Imo", "Ludi", "Ndaru"]}
             country={"india"}
             website={"https://www.google.co.in/"}
-          />
+          /> */}
         </div>
 
         <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">

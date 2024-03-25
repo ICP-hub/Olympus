@@ -39,7 +39,7 @@ const RejectModal = ({ onClose, allNotification }) => {
     } finally {
       setIsDeclining(false);
       onClose();
-      // window.location.reload();
+      window.location.reload();
     }
   };
 
