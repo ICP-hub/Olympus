@@ -27,6 +27,9 @@ import ViewInvestor from "./components/Dashboard/MoreLaunchPages/ViewInvestors";
 import Breadcrumbs from "./components/Layout/Breadcrumbs/BreadCrumbs";
 import ProjectAssociation from "./components/Association/ProjectAssociation";
 import ProjectDetailsForOwnerProject from "./components/Project/ProjectDetailsPages/ProjectDetailsForOwnerProject";
+import ProjectSideAssociation from "./components/Association/ProjectSideAssociation";
+import MentorSideAssociation from "./components/Association/MentorSideAssociation";
+import SearchMentorsByProjectId from "./components/Mentors/SearchMentorsByProjectId";
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
 
@@ -72,6 +75,8 @@ const AppRoutes = () => {
     // { path: "/", element: <InvestorDashboard /> },
     // { path: "/", element: <ProjectDetailsForOwnerProject /> },
     { path: "/individual-project-details-project-owner", element: <ProjectDetailsForOwnerProject /> },
+    { path: "/individual-project-details-project-mentor/:id", element: <ProjectDetailsForUser /> },
+    { path: "/individual-project-details-project-investor/:id", element: <ProjectDetailsForUser /> },
     { path: "/association", element: <ProjectAssociation /> },
     { path: "/create-user", element: <NormalUser /> },
     { path: "/create-project", element: <CreateProject /> },
@@ -84,10 +89,14 @@ const AppRoutes = () => {
     { path: "/individual-project-details-user/:id", element: <ProjectDetailsForUser /> },
     { path: "/view-mentor-details/:id", element: <MentorsProfile /> },
     { path: "/view-investor-details/:id", element: <InvestorProfile /> },
-    { path: "/view-mentors", element: <SearchMentors /> },
+    { path: "/view-mentors", element: <SearchMentors /> }, 
+    { path: "/view-mentors/:id", element: <SearchMentorsByProjectId /> }, 
     { path: "/launch-projects", element: <MoreProjectLaunchPage /> },
     { path: "/raising-projects", element: <MoreCurrentlyRaisingProjects /> },
     { path: "/view-investor", element: <ViewInvestor /> },
+    { path: "/project-association-requests", element: <ProjectSideAssociation /> },
+    { path: "/mentor-association-requests", element: <MentorSideAssociation /> },
+
   ];
 
   const protectedRoutes = [

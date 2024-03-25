@@ -10,13 +10,13 @@ const AssociatedProjects = () => {
           <div className="flex flex-col sm:flex-row gap-2">
             <div className="w-full sm:w-2/3">
               <img
-                className="w-full h-full rounded-md rounded-r-none"
+                className="w-full h-full rounded-md rounded-r-none object-cover"
                 src={coding1}
                 alt="hh"
               />
             </div>
             <div className="flex flex-col p-2">
-              <img className="w-12 h-12 rounded-lg" src={ment} alt="popup" />
+              <img className="w-12 h-12 rounded-lg object-cover" src={ment} alt="popup" />
               <p>Dirac Finance</p>
               <p>
                 Dirac Finance is an institutional-grade decentralized Options

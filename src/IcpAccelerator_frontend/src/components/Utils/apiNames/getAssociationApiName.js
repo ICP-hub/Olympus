@@ -8,16 +8,16 @@ export default function fetchRequestFromUtils(activeTab, selectedStatus, role) {
                     case 'project':
                         switch (selectedStatus) {
                             case 'to-mentor':
-                                api_name = 'api_to_get_pending_request_from_project_to_mentor';
+                                api_name = 'api_to_get_pending_request_from_project_to_mentor_via_project';
                                 break;
                             case 'from-mentor':
-                                api_name = 'api_to_get_pending_request_from_mentor_to_project';
+                                api_name = 'api_to_get_pending_request_from_mentor_to_project_via_project';
                                 break;
                             case 'to-investor':
-                                api_name = 'api_to_get_pending_request_from_project_to_investor';
+                                api_name = 'api_to_get_pending_request_from_project_to_investor_via_project';
                                 break;
                             case 'from-investor':
-                                api_name = 'api_to_get_pending_request_from_investor_to_project';
+                                api_name = 'api_to_get_pending_request_from_investor_to_project_via_project';
                                 break;
                             default:
                                 api_name = null;
@@ -27,10 +27,10 @@ export default function fetchRequestFromUtils(activeTab, selectedStatus, role) {
                     case 'mentor':
                         switch (selectedStatus) {
                             case 'to-project':
-                                api_name = 'api_to_get_pending_request_from_mentor_to_project';
+                                api_name = 'api_to_get_pending_request_from_mentor_to_project_via_mentor';
                                 break;
                             case 'from-project':
-                                api_name = 'api_to_get_pending_request_from_project_to_mentor';
+                                api_name = 'api_to_get_pending_request_from_project_to_mentor_via_mentor';
                                 break;
                             default:
                                 api_name = null;
@@ -40,10 +40,10 @@ export default function fetchRequestFromUtils(activeTab, selectedStatus, role) {
                     case 'vc':
                         switch (selectedStatus) {
                             case 'to-project':
-                                api_name = 'api_to_get_pending_request_from_investor_to_project';
+                                api_name = 'api_to_get_pending_request_from_investor_to_project_via_investor';
                                 break;
                             case 'from-project':
-                                api_name = 'api_to_get_pending_request_from_project_to_investor';
+                                api_name = 'api_to_get_pending_request_from_project_to_investor_via_investor';
                                 break;
                             default:
                                 api_name = null;
@@ -60,16 +60,16 @@ export default function fetchRequestFromUtils(activeTab, selectedStatus, role) {
                     case 'project':
                         switch (selectedStatus) {
                             case 'to-mentor':
-                                api_name = 'api_to_get_approved_request_from_project_to_mentor';
+                                api_name = 'api_to_get_approved_request_from_project_to_mentor_via_project';
                                 break;
                             case 'from-mentor':
-                                api_name = 'api_to_get_approved_request_from_mentor_to_project';
+                                api_name = 'api_to_get_approved_request_from_mentor_to_project_via_project';
                                 break;
                             case 'to-investor':
-                                api_name = 'api_to_get_approved_request_from_project_to_investor';
+                                api_name = 'api_to_get_approved_request_from_project_to_investor_via_project';
                                 break;
                             case 'from-investor':
-                                api_name = 'api_to_get_approved_request_from_investor_to_project';
+                                api_name = 'api_to_get_approved_request_from_investor_to_project_via_project';
                                 break;
                             default:
                                 api_name = null;
@@ -79,10 +79,10 @@ export default function fetchRequestFromUtils(activeTab, selectedStatus, role) {
                     case 'mentor':
                         switch (selectedStatus) {
                             case 'to-project':
-                                api_name = 'api_to_get_approved_request_from_mentor_to_project';
+                                api_name = 'api_to_get_approved_request_from_mentor_to_project_via_mentor';
                                 break;
                             case 'from-project':
-                                api_name = 'api_to_get_approved_request_from_project_to_mentor';
+                                api_name = 'api_to_get_approved_request_from_project_to_mentor_via_mentor';
                                 break;
                             default:
                                 api_name = null;
@@ -92,10 +92,10 @@ export default function fetchRequestFromUtils(activeTab, selectedStatus, role) {
                     case 'vc':
                         switch (selectedStatus) {
                             case 'to-project':
-                                api_name = 'api_to_get_approved_request_from_investor_to_project';
+                                api_name = 'api_to_get_approved_request_from_investor_to_project_via_investor';
                                 break;
                             case 'from-project':
-                                api_name = 'api_to_get_approved_request_from_project_to_investor';
+                                api_name = 'api_to_get_approved_request_from_project_to_investor_via_investor';
                                 break;
                             default:
                                 api_name = null;
@@ -112,16 +112,16 @@ export default function fetchRequestFromUtils(activeTab, selectedStatus, role) {
                     case 'project':
                         switch (selectedStatus) {
                             case 'to-mentor':
-                                api_name = 'api_to_get_declined_request_from_project_to_mentor';
+                                api_name = 'api_to_get_declined_request_from_project_to_mentor_via_project';
                                 break;
                             case 'from-mentor':
-                                api_name = 'api_to_get_declined_request_from_mentor_to_project';
+                                api_name = 'api_to_get_declined_request_from_mentor_to_project_via_project';
                                 break;
                             case 'to-investor':
-                                api_name = 'api_to_get_declined_request_from_project_to_investor';
+                                api_name = 'api_to_get_declined_request_from_project_to_investor_via_project';
                                 break;
                             case 'from-investor':
-                                api_name = 'api_to_get_declined_request_from_investor_to_project';
+                                api_name = 'api_to_get_declined_request_from_investor_to_project_via_project';
                                 break;
                             default:
                                 api_name = null;
@@ -131,10 +131,10 @@ export default function fetchRequestFromUtils(activeTab, selectedStatus, role) {
                     case 'mentor':
                         switch (selectedStatus) {
                             case 'to-project':
-                                api_name = 'api_to_get_declined_request_from_mentor_to_project';
+                                api_name = 'api_to_get_declined_request_from_mentor_to_project_via_mentor';
                                 break;
                             case 'from-project':
-                                api_name = 'api_to_get_declined_request_from_project_to_mentor';
+                                api_name = 'api_to_get_declined_request_from_project_to_mentor_via_mentor';
                                 break;
                             default:
                                 api_name = null;
@@ -144,10 +144,10 @@ export default function fetchRequestFromUtils(activeTab, selectedStatus, role) {
                     case 'vc':
                         switch (selectedStatus) {
                             case 'to-project':
-                                api_name = 'api_to_get_declined_request_from_investor_to_project';
+                                api_name = 'api_to_get_declined_request_from_investor_to_project_via_investor';
                                 break;
                             case 'from-project':
-                                api_name = 'api_to_get_declined_request_from_project_to_investor';
+                                api_name = 'api_to_get_declined_request_from_project_to_investor_via_investor';
                                 break;
                             default:
                                 api_name = null;
@@ -164,16 +164,16 @@ export default function fetchRequestFromUtils(activeTab, selectedStatus, role) {
                     case 'project':
                         switch (selectedStatus) {
                             case 'to-mentor':
-                                api_name = 'api_to_get_self_reject_request_from_project_to_mentor';
+                                api_name = 'api_to_get_self_reject_request_from_project_to_mentor_via_project';
                                 break;
                             case 'from-mentor':
-                                api_name = 'api_to_get_self_reject_request_from_mentor_to_project';
+                                api_name = 'api_to_get_self_reject_request_from_mentor_to_project_via_project';
                                 break;
                             case 'to-investor':
-                                api_name = 'api_to_get_self_reject_request_from_project_to_investor';
+                                api_name = 'api_to_get_self_reject_request_from_project_to_investor_via_project';
                                 break;
                             case 'from-investor':
-                                api_name = 'api_to_get_self_reject_request_from_investor_to_project';
+                                api_name = 'api_to_get_self_reject_request_from_investor_to_project_via_project';
                                 break;
                             default:
                                 api_name = null;
@@ -183,10 +183,10 @@ export default function fetchRequestFromUtils(activeTab, selectedStatus, role) {
                     case 'mentor':
                         switch (selectedStatus) {
                             case 'to-project':
-                                api_name = 'api_to_get_self_reject_request_from_mentor_to_project';
+                                api_name = 'api_to_get_self_reject_request_from_mentor_to_project_via_mentor';
                                 break;
                             case 'from-project':
-                                api_name = 'api_to_get_self_reject_request_from_project_to_mentor';
+                                api_name = 'api_to_get_self_reject_request_from_project_to_mentor_via_mentor';
                                 break;
                             default:
                                 api_name = null;
@@ -196,10 +196,10 @@ export default function fetchRequestFromUtils(activeTab, selectedStatus, role) {
                     case 'vc':
                         switch (selectedStatus) {
                             case 'to-project':
-                                api_name = 'api_to_get_self_reject_request_from_investor_to_project';
+                                api_name = 'api_to_get_self_reject_request_from_investor_to_project_via_investor';
                                 break;
                             case 'from-project':
-                                api_name = 'api_to_get_self_reject_request_from_project_to_investor';
+                                api_name = 'api_to_get_self_reject_request_from_project_to_investor_via_investor';
                                 break;
                             default:
                                 api_name = null;
