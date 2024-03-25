@@ -9,7 +9,7 @@ mod notification;
 
 mod notification_to_mentor;
 mod notification_to_project;
-// mod project_offer_to_investor;
+mod project_offer_to_investor;
 mod investor_offer_to_project;
 
 mod project_like;
@@ -24,6 +24,7 @@ mod default_images;
 use crate::project_registration::*;
 use cohort::*;
 
+use project_offer_to_investor::*;
 use investor_offer_to_project::*;
 use notification_to_mentor::*;
 use notification_to_project::*;
