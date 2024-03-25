@@ -53,8 +53,8 @@ const Projectrequest = () => {
     ];
     const [rolesFilterArray, setRolesFilterArray] = useState([]);
     const [selectedStatus, setSelectedStatus] = useState(rolesFilterArray.length > 0 ? rolesFilterArray[0].id : "");
-    const userCurrentRoleStatus = useSelector((currState) => currState.currentRoleStatus.rolesStatusArray);
-    const userCurrentRoleStatusActiveRole = useSelector((currState) => currState.currentRoleStatus.activeRole);
+    // const userCurrentRoleStatus = useSelector((currState) => currState.currentRoleStatus.rolesStatusArray);
+    // const userCurrentRoleStatusActiveRole = useSelector((currState) => currState.currentRoleStatus.activeRole);
     const actor = useSelector((currState) => currState.actors.actor);
 
     const getTabClassName = (tab) => {
@@ -68,85 +68,85 @@ const Projectrequest = () => {
         setActiveTab(tab);
     };
 
-    useEffect(() => {
-        if (actor) {
-            const api_name = fetchRequestFromUtils(activeTab, selectedStatus, userCurrentRoleStatusActiveRole);
-            console.log('api_name', api_name)
-            // if (api_name) {
-            //     (async () => {
-            //         await actor.api_name().then((result) => {
-            //             console.log(`result-in-${api_name}`, result);
-            //         }).catch((error) => {
-            //             console.log(`error-in-${api_name}`, error)
-            //         });
-            //     })();
-            // }
-        }
-    }, [actor, activeTab, selectedStatus, userCurrentRoleStatusActiveRole])
+    // useEffect(() => {
+    //     if (actor) {
+    //         // const api_name = fetchRequestFromUtils(activeTab, selectedStatus, userCurrentRoleStatusActiveRole);
+    //         console.log('api_name', api_name)
+    //         // if (api_name) {
+    //         //     (async () => {
+    //         //         await actor.api_name().then((result) => {
+    //         //             console.log(`result-in-${api_name}`, result);
+    //         //         }).catch((error) => {
+    //         //             console.log(`error-in-${api_name}`, error)
+    //         //         });
+    //         //     })();
+    //         // }
+    //     }
+    // }, [actor, activeTab, selectedStatus,])
 
 
-    useEffect(() => {
-        if (userCurrentRoleStatus.length === 4 && userCurrentRoleStatusActiveRole) {
-            // console.log('userCurrentRoleStatusActiveRole--inside', userCurrentRoleStatusActiveRole)
-            switch (userCurrentRoleStatusActiveRole) {
-                case "project":
-                    setRolesFilterArray([
-                        {
-                            id: "to-mentor",
-                            label: "to mentor"
-                        },
-                        {
-                            id: "from-mentor",
-                            label: "from mentor"
-                        },
-                        {
-                            id: "to-investor",
-                            label: "to investor"
-                        },
-                        {
-                            id: "from-investor",
-                            label: "from investor"
-                        }
-                    ]);
-                    setSelectedStatus('to-mentor')
-                    break;
-                case "mentor":
-                    setRolesFilterArray([
-                        {
-                            id: "to-project",
-                            label: "to project"
-                        },
-                        {
-                            id: "from-project",
-                            label: "from project"
-                        }
-                    ]);
-                    setSelectedStatus('to-project');
-                    break;
-                case "vc":
-                    setRolesFilterArray([
-                        {
-                            id: "to-project",
-                            label: "to project"
-                        },
-                        {
-                            id: "from-project",
-                            label: "from project"
-                        }
-                    ]);
-                    setSelectedStatus('to-project');
-                    break;
-                default:
-                    navigate('/');
-                    break;
-            }
-        } {
-            //     navigate('/');
-            //     console.log('userCurrentRoleStatus-outside', userCurrentRoleStatus)
-            //     console.log('userCurrentRoleStatusActiveRole-outside', userCurrentRoleStatusActiveRole)
-        }
+    // useEffect(() => {
+    //     if (userCurrentRoleStatus.length === 4 && userCurrentRoleStatusActiveRole) {
+    //         // console.log('userCurrentRoleStatusActiveRole--inside', userCurrentRoleStatusActiveRole)
+    //         switch (userCurrentRoleStatusActiveRole) {
+    //             case "project":
+    //                 setRolesFilterArray([
+    //                     {
+    //                         id: "to-mentor",
+    //                         label: "to mentor"
+    //                     },
+    //                     {
+    //                         id: "from-mentor",
+    //                         label: "from mentor"
+    //                     },
+    //                     {
+    //                         id: "to-investor",
+    //                         label: "to investor"
+    //                     },
+    //                     {
+    //                         id: "from-investor",
+    //                         label: "from investor"
+    //                     }
+    //                 ]);
+    //                 setSelectedStatus('to-mentor')
+    //                 break;
+    //             case "mentor":
+    //                 setRolesFilterArray([
+    //                     {
+    //                         id: "to-project",
+    //                         label: "to project"
+    //                     },
+    //                     {
+    //                         id: "from-project",
+    //                         label: "from project"
+    //                     }
+    //                 ]);
+    //                 setSelectedStatus('to-project');
+    //                 break;
+    //             case "vc":
+    //                 setRolesFilterArray([
+    //                     {
+    //                         id: "to-project",
+    //                         label: "to project"
+    //                     },
+    //                     {
+    //                         id: "from-project",
+    //                         label: "from project"
+    //                     }
+    //                 ]);
+    //                 setSelectedStatus('to-project');
+    //                 break;
+    //             default:
+    //                 navigate('/');
+    //                 break;
+    //         }
+    //     } {
+    //         //     navigate('/');
+    //         //     console.log('userCurrentRoleStatus-outside', userCurrentRoleStatus)
+    //         //     console.log('userCurrentRoleStatusActiveRole-outside', userCurrentRoleStatusActiveRole)
+    //     }
 
-    }, [userCurrentRoleStatus, userCurrentRoleStatusActiveRole])
+    // }, [userCurrentRoleStatus, userCurrentRoleStatusActiveRole])
 
     // if(noData){
     //     return <h1>Loading...</h1>
@@ -212,6 +212,10 @@ const Projectrequest = () => {
                         let date = val.date
                         let msg = val.msg
                         return (
+
+
+
+                            
                             <div className='p-4 border-2 bg-white rounded-lg mb-4' key={index}>
                                 <div className='flex'>
                                     <div className='flex flex-col'>
@@ -221,7 +225,7 @@ const Projectrequest = () => {
                                     </div>
                                     <div>
                                         <div className="flex flex-col w-full pl-4 ">
-                                            <div className='flex justify-between'>
+                                            <div className='flex justify-between flex-wrap md:flex-nowrap'>
                                                 <p className='text-2xl font-extrabold text-[#3505B2]'>{name}</p>
                                                 <p className='text-[#3505B2] font-bold'>{date}</p>
                                             </div>

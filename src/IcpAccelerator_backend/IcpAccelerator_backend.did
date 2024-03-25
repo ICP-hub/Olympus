@@ -20,6 +20,7 @@ type AnnouncementsInternal = record {
 };
 type ApprovalRequest = record {
   bio : text;
+  status : text;
   country : text;
   name : text;
   sender : principal;
@@ -338,6 +339,19 @@ type ProjectNotification = record {
   timestamp : nat64;
 };
 type ProjectNotificationType = variant { AccessRequest : AccessRequest };
+type ProjectRatingStruct = record {
+  message : text;
+  rating : nat32;
+  project_id : text;
+};
+type ProjectReview = record {
+  tag : text;
+  name : text;
+  message : text;
+  timestamp : nat64;
+  rating : nat32;
+  profile_pic : vec nat8;
+};
 type ProjectUpdateRequest = record {
   updated_info : ProjectInfo;
   project_id : text;
@@ -533,7 +547,8 @@ service : {
   add_announcement : (Announcements) -> (text);
   add_job_type : (text) -> (text);
   add_mentor_announcement : (text, text) -> (text);
-  add_project_to_spotlight : (text) -> (Result_2);
+  add_project_rating : (ProjectRatingStruct) -> (Result_2);
+  add_project_to_spotlight : (text) -> (Result_3);
   add_review : (float32, text) -> (text);
   add_testimonial : (text) -> (text);
   add_vc_announcement : (text, text) -> (text);
@@ -686,6 +701,7 @@ service : {
   get_my_id : () -> (principal) query;
   get_my_project : () -> (ProjectInfoInternal) query;
   get_notifications_for_hubs : () -> (vec NotificationProject) query;
+  get_pending_admin_notifications : () -> (vec Notification) query;
   get_pending_cycles : () -> (nat) query;
   get_pending_money_requestes : (text) -> (vec ProjectNotification) query;
   get_pending_offers_received_from_investor : (text) -> (
@@ -700,6 +716,9 @@ service : {
   get_project_id : () -> (text) query;
   get_project_info_for_user : (text) -> (opt ProjectInfoForUser) query;
   get_project_pending_offers : () -> (vec OfferToMentor) query;
+  get_project_ratings : (text) -> (
+      opt vec record { principal; ProjectReview },
+    ) query;
   get_project_requests : (text) -> (vec Request) query;
   get_project_upvotes : (text) -> (opt UpvoteRecord) query;
   get_project_using_id : (text) -> (opt ProjectInfoInternal) query;
@@ -722,8 +741,8 @@ service : {
   get_total_pending_request : () -> (nat64) query;
   get_total_suggestions : (text) -> (nat64) query;
   get_user_info_struct : () -> (opt UserInformation) query;
-  get_user_information : () -> (Result_5) query;
-  get_user_information_using_uid : (text) -> (Result_5) query;
+  get_user_information : () -> (Result_6) query;
+  get_user_information_using_uid : (text) -> (Result_6) query;
   get_user_likes : (text) -> (opt LikeRecord) query;
   get_users_with_all_info : () -> (UserInfoInternal) query;
   get_vc_announcements : () -> (
@@ -765,7 +784,7 @@ service : {
   register_project : (ProjectInfo) -> (text);
   register_user : (UserInformation) -> (text);
   register_venture_capitalist : (VentureCapitalist) -> (text);
-  remove_project_from_spotlight : (text) -> (Result_2);
+  remove_project_from_spotlight : (text) -> (Result_3);
   reply_to_suggestion_caller : (nat64, text, text) -> (nat64, text);
   self_decline_request : (text) -> (text);
   self_decline_request_for_investor : (text) -> (text);
