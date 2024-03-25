@@ -31,11 +31,11 @@ function* fetchMentorApprovedHandler() {
         //   : null;
 
           const profilePictureBase64 = mentor_profile.profile.user_data
-          .profile_picture && mentor_profile.profile.user_data
-          .profile_picture instanceof Uint8Array && mentor_profile.profile.user_data
-          .profile_picture.length > 0
+          .profile_picture[0] && mentor_profile.profile.user_data
+          .profile_picture[0] instanceof Uint8Array && mentor_profile.profile.user_data
+          .profile_picture[0].length > 0
           ? uint8ArrayToBase64(mentor_profile.profile.user_data
-          .profile_picture)
+          .profile_picture[0])
           : null;
 
 

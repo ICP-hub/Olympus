@@ -23,6 +23,8 @@ import { notificationHandlerRequest } from "./components/AdminStateManagement/Re
 import AdminProjectdetails from "./components/Admindashboard/AdminProjectdetails";
 import Projectdetails from "./components/Admindashboard/Projectdetails";
 import Projectprofile from "./components/Admindashboard/Profile/Projectprofile";
+import AllProject from "./components/Admindashboard/AllProject";
+import Projectrequest from "./components/Admindashboard/Projectrequest";
 
 
 
@@ -71,6 +73,9 @@ const App = () => {
           <AdminRoute setModalOpen={setModalOpen} />
           {/* <Projectdetails/> */}
           {/* <Projectprofile/> */}
+         {/* <AllProject/> */}
+          {/* <Projectrequest/> */}
+          
         </div>
       </div>
 

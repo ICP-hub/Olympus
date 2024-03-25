@@ -24,8 +24,8 @@ function* fetchInvestorDeclinedHandler() {
         //   ? uint8ArrayToBase64(vc_profile.params.user_data.profile_picture)
         //   : null;
 
-          const profilePictureBase64 = vc_profile.params.user_data.profile_picture && vc_profile.params.user_data.profile_picture instanceof Uint8Array && vc_profile.params.user_data.profile_picture.length > 0
-          ? uint8ArrayToBase64(vc_profile.params.user_data.profile_picture)
+          const profilePictureBase64 = vc_profile.params.user_data.profile_picture[0] && vc_profile.params.user_data.profile_picture[0] instanceof Uint8Array && vc_profile.params.user_data.profile_picture[0].length > 0
+          ? uint8ArrayToBase64(vc_profile.params.user_data.profile_picture[0])
           : null;
 
 

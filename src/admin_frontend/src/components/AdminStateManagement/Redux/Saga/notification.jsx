@@ -15,7 +15,9 @@ const selectActor = (currState) => currState.actors.actor;
 function* fetchNotificationHandler() {
   try {
     const actor = yield select(selectActor);
-    const allNotifications = yield call([actor, actor.get_admin_notifications]);
+    const allNotifications = yield call([actor, actor.get_pending_admin_notifications]);
+
+    console.log("get_pending_admin_notifications =>", allNotifications)
     const formattedNotifications = allNotifications.map((notification) => {
       const {
         notification_type: { ApprovalRequest: details },
