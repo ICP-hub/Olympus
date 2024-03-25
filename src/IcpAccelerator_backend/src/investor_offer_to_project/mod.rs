@@ -81,7 +81,7 @@ pub fn notify_project_with_offer(project_id: String, offer: OfferToSendToProject
 }
 
 #[query]
-pub fn get_all_project_notification(id: String) -> Vec<OfferToSendToProject> {
+pub fn get_all_project_notification_sent_by_investor(id: String) -> Vec<OfferToSendToProject> {
     PROJECT_ALERTS.with(|state| state.borrow().get(&id).cloned().unwrap_or_else(Vec::new))
 }
 
@@ -89,7 +89,7 @@ pub fn get_all_project_notification(id: String) -> Vec<OfferToSendToProject> {
 
 
 #[update]
-pub async fn send_offer_to_project(project_id: String, msg: String) -> String{
+pub async fn send_offer_to_project_by_investor(project_id: String, msg: String) -> String{
     let investor_id = caller();
 
     let investor_profile = crate::get_vc_info_by_principal(investor_id).get(&investor_id).expect("investor does not exist").clone();
@@ -175,7 +175,7 @@ pub fn accept_offer_of_investor(offer_id: String, response_message: String, proj
 }
 
 #[update]
-pub fn decline_offer_of_mentor(offer_id: String, response_message: String, project_id: String) -> String{
+pub fn decline_offer_of_investor(offer_id: String, response_message: String, project_id: String) -> String{
 
     PROJECT_ALERTS.with(|state| {
         if let Some(offers) = state.borrow_mut().get_mut(&project_id) {
@@ -238,7 +238,7 @@ pub fn get_all_offers_which_are_pending_for_investor() -> Vec<OfferToProject> {
 }
 
 #[query]
-pub fn get_all_requests_which_got_accepted_for_project(project_id: String) -> Vec<OfferToSendToProject> {
+pub fn get_all_requests_which_got_accepted_by_project_of_investor(project_id: String) -> Vec<OfferToSendToProject> {
     PROJECT_ALERTS.with(|alerts| {
         alerts
             .borrow()
@@ -270,7 +270,7 @@ pub fn get_all_requests_which_got_accepted_for_investor() -> Vec<OfferToProject>
 }
 
 #[query]
-pub fn get_all_requests_which_got_declined_for_project(project_id: String) -> Vec<OfferToSendToProject> {
+pub fn get_all_requests_which_got_declined_by_project_of_investor(project_id: String) -> Vec<OfferToSendToProject> {
     PROJECT_ALERTS.with(|alerts| {
         alerts
             .borrow()
@@ -357,7 +357,7 @@ pub fn get_all_requests_which_got_self_declined_for_investor() -> Vec<OfferToPro
 }
 
 #[query]
-pub fn get_all_requests_which_got_self_declined_for_project(project_id: String) -> Vec<OfferToSendToProject>{
+pub fn get_all_requests_which_got_self_declined_by_investor(project_id: String) -> Vec<OfferToSendToProject>{
     PROJECT_ALERTS.with(|offers| {
         let offers = offers.borrow();
         let offers = offers.get(&project_id);
