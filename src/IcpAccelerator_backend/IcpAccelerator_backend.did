@@ -491,7 +491,7 @@ type VentureCapitalistInternal = record {
   decline : bool;
   params : VentureCapitalist;
 };
-service : () -> {
+service : {
   accept_offer_of_investor : (text, text, text) -> (text);
   accept_offer_of_mentor : (text, text, text) -> (text);
   accept_offer_of_project : (text, text) -> (text);

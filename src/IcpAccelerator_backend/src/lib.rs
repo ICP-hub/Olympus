@@ -85,11 +85,11 @@ fn check_admin() {
     }
 }
 
-#[init]
-fn init() {
-    user_module::initialize_roles();
-    ic_cdk::println!("initialization done");
-}
+// #[init]
+// fn init() {
+//     user_module::initialize_roles();
+//     //ic_cdk::println!("initialization done");
+// }
 
 #[update]
 fn approve_mentor_creation_request_candid(requester: Principal, approve: bool) -> String {
