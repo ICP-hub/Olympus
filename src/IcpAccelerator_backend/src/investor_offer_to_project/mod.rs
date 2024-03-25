@@ -23,17 +23,17 @@ pub struct OfferToProject {
 }
 
 #[derive(Clone, CandidType, Deserialize)]
-pub struct MentorInfo {
-    mentor_id: Principal,
-    mentor_name: String,
-    mentor_description: String,
-    mentor_image: Vec<u8>,
+pub struct InvestorInfo {
+    investor_id: Principal,
+    investor_name: String,
+    investor_description: String,
+    investor_image: Vec<u8>,
 }
 
 #[derive(Clone, CandidType, Deserialize)]
 pub struct OfferToSendToProject {
     offer_id: String, // Added field
-    mentor_info: MentorInfo,
+    investor_info: InvestorInfo,
     offer: String,
     sent_at: u64,
     accepted_at: u64,
@@ -45,12 +45,12 @@ pub struct OfferToSendToProject {
 }
 
 thread_local! {
-    pub static MY_SENT_NOTIFICATIONS : RefCell<HashMap<Principal, Vec<OfferToProject>>> = RefCell::new(HashMap::new());
+    pub static OFFERS_SENT_BY_INVESTOR : RefCell<HashMap<Principal, Vec<OfferToProject>>> = RefCell::new(HashMap::new());
     pub static PROJECT_ALERTS : RefCell<HashMap<String, Vec<OfferToSendToProject>>> = RefCell::new(HashMap::new());
 }
 
-pub fn store_request_sent_by_mentor(offer: OfferToProject) {
-    MY_SENT_NOTIFICATIONS.with(|store| {
+pub fn store_request_sent_by_capitalist(offer: OfferToProject) {
+    OFFERS_SENT_BY_INVESTOR.with(|store| {
         store
             .borrow_mut()
             .entry(caller())
@@ -60,8 +60,8 @@ pub fn store_request_sent_by_mentor(offer: OfferToProject) {
 }
 
 #[query]
-pub fn get_all_sent_request_for_mentor() -> Vec<OfferToProject> {
-    MY_SENT_NOTIFICATIONS.with(|state| {
+pub fn get_all_sent_request_from_investor_to_project() -> Vec<OfferToProject> {
+    OFFERS_SENT_BY_INVESTOR.with(|state| {
         state
             .borrow()
             .get(&caller())
@@ -85,9 +85,14 @@ pub fn get_all_project_notification(id: String) -> Vec<OfferToSendToProject> {
     PROJECT_ALERTS.with(|state| state.borrow().get(&id).cloned().unwrap_or_else(Vec::new))
 }
 
+
+
+
 #[update]
-pub async fn send_offer_to_project(project_id: String, msg: String, mentor_id: Principal) -> String{
-    let mentor = get_mentor_by_principal(mentor_id).expect("mentor doesn't exist");
+pub async fn send_offer_to_project(project_id: String, msg: String) -> String{
+    let investor_id = caller();
+
+    let investor_profile = crate::get_vc_info_by_principal(investor_id).get(&investor_id).expect("investor does not exist").clone();
 
     let project = crate::get_project_using_id(project_id.clone()).expect("project not found");
 
@@ -109,20 +114,18 @@ pub async fn send_offer_to_project(project_id: String, msg: String, mentor_id: P
         response: "".to_string(),
     };
 
-    store_request_sent_by_mentor(offer_to_project);
+    store_request_sent_by_capitalist(offer_to_project);
 
-    //let project_info = find_project_by_id(&project_id).expect("project does not exist");
-
-    let mentor_info =  MentorInfo{
-        mentor_id: mentor_id,
-        mentor_name: mentor.user_data.full_name,
-        mentor_description: mentor.area_of_expertise,
-        mentor_image: mentor.user_data.profile_picture.unwrap_or_else(Vec::new)
+    let investor_info =  InvestorInfo{
+        investor_id: investor_id,
+        investor_name: investor_profile.profile.params.user_data.full_name.clone(),
+        investor_description: investor_profile.profile.params.category_of_investment.clone(),
+        investor_image: investor_profile.profile.params.user_data.profile_picture.clone().unwrap_or_else(Vec::new)
     }; 
 
     let offer_to_send_to_project = OfferToSendToProject {
         offer_id: offer_id.clone(),
-        mentor_info: mentor_info,
+        investor_info: investor_info,
         offer: msg.clone(),
         sent_at: time(),
         accepted_at: 0,
@@ -139,7 +142,7 @@ pub async fn send_offer_to_project(project_id: String, msg: String, mentor_id: P
 
 
 #[update]
-pub fn accept_offer_of_mentor(offer_id: String, response_message: String, project_id : String) -> String{
+pub fn accept_offer_of_investor(offer_id: String, response_message: String, project_id : String) -> String{
     //let project_id = caller();
 
     PROJECT_ALERTS.with(|state| {
@@ -150,7 +153,7 @@ pub fn accept_offer_of_mentor(offer_id: String, response_message: String, projec
                 offer.response = response_message.clone();
                 offer.accepted_at = time();
 
-                MY_SENT_NOTIFICATIONS.with(|sent_state| {
+                OFFERS_SENT_BY_INVESTOR.with(|sent_state| {
                     if let Some(sent_status_vector) =
                         sent_state.borrow_mut().get_mut(&offer.sender_principal)
                     {
@@ -184,7 +187,7 @@ pub fn decline_offer_of_mentor(offer_id: String, response_message: String, proje
         }
     });
 
-    MY_SENT_NOTIFICATIONS.with(|sent_state| {
+    OFFERS_SENT_BY_INVESTOR.with(|sent_state| {
         for sent_status_vector in sent_state.borrow_mut().values_mut() {
             if let Some(project_offer) = sent_status_vector
                 .iter_mut()
@@ -202,7 +205,7 @@ pub fn decline_offer_of_mentor(offer_id: String, response_message: String, proje
 
 
 #[query]
-pub fn get_all_offers_which_are_pending_for_project(project_id: String) -> Vec<OfferToSendToProject> {
+pub fn get_all_offers_which_are_pending_for_project_from_investor(project_id: String) -> Vec<OfferToSendToProject> {
     PROJECT_ALERTS.with(|pending_alerts| {
         pending_alerts
             .borrow()
@@ -219,8 +222,8 @@ pub fn get_all_offers_which_are_pending_for_project(project_id: String) -> Vec<O
 
 //mentor will call
 #[query]
-pub fn get_all_offers_which_are_pending_for_mentor() -> Vec<OfferToProject> {
-    MY_SENT_NOTIFICATIONS.with(|sent_notifications| {
+pub fn get_all_offers_which_are_pending_for_investor() -> Vec<OfferToProject> {
+    OFFERS_SENT_BY_INVESTOR.with(|sent_notifications| {
         sent_notifications
             .borrow()
             .get(&caller())
@@ -251,8 +254,8 @@ pub fn get_all_requests_which_got_accepted_for_project(project_id: String) -> Ve
 }
 
 #[query]
-pub fn get_all_requests_which_got_accepted_for_mentor() -> Vec<OfferToProject> {
-    MY_SENT_NOTIFICATIONS.with(|notifications| {
+pub fn get_all_requests_which_got_accepted_for_investor() -> Vec<OfferToProject> {
+    OFFERS_SENT_BY_INVESTOR.with(|notifications| {
         notifications
             .borrow()
             .get(&caller())
@@ -283,8 +286,8 @@ pub fn get_all_requests_which_got_declined_for_project(project_id: String) -> Ve
 }
 
 #[query]
-pub fn get_all_requests_which_got_declined_for_mentor() -> Vec<OfferToProject> {
-    MY_SENT_NOTIFICATIONS.with(|notifications| {
+pub fn get_all_requests_which_got_declined_for_investor() -> Vec<OfferToProject> {
+    OFFERS_SENT_BY_INVESTOR.with(|notifications| {
         notifications
             .borrow()
             .get(&caller())
@@ -304,10 +307,10 @@ pub fn get_all_requests_which_got_declined_for_mentor() -> Vec<OfferToProject> {
 //for project
 
 #[update]
-pub fn self_decline_request_for_mentor(offer_id: String) -> String {
+pub fn self_decline_request_for_investor(offer_id: String) -> String {
     let mut response = String::new();
 
-    MY_SENT_NOTIFICATIONS.with(|sent_ones| {
+    OFFERS_SENT_BY_INVESTOR.with(|sent_ones| {
         let mut my_offers = sent_ones.borrow_mut();
         let caller_offers = my_offers.get_mut(&caller());
         
@@ -343,8 +346,8 @@ pub fn self_decline_request_for_mentor(offer_id: String) -> String {
 }
 
 #[query]
-pub fn get_all_requests_which_got_self_declined_for_mentor() -> Vec<OfferToProject>{
-    MY_SENT_NOTIFICATIONS.with(|offers| {
+pub fn get_all_requests_which_got_self_declined_for_investor() -> Vec<OfferToProject>{
+    OFFERS_SENT_BY_INVESTOR.with(|offers| {
         let offers = offers.borrow();
         let offers = offers.get(&caller());
         offers.map_or_else(Vec::new, |offers|{
