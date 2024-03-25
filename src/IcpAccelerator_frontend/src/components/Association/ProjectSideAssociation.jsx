@@ -58,29 +58,13 @@ const ProjectSideAssociation = () => {
     const actor = useSelector((currState) => currState.actors.actor);
     const principal = useSelector((currState) => currState.internet.principal);
     const [selectedStatus, setSelectedStatus] = useState('to-mentor');
-    const [isAcceptOfferModal, setIsAcceptOfferModal] = useState(null);
-    const [isDeclineOfferModal, setIsDeclineOfferModal] = useState(null);
+    const [isAcceptMentorOfferModal, setIsAcceptMentorOfferModal] = useState(null);
+    const [isDeclineMentorOfferModal, setIsDeclineMentorOfferModal] = useState(null);
+    const [isAcceptInvestorOfferModal, setIsAcceptInvestorOfferModal] = useState(null);
+    const [isDeclineInvestorOfferModal, setIsDeclineInvestorOfferModal] = useState(null);
     const [offerId, setOfferId] = useState(null);
     const [projectId, setProjectId] = useState(null);
 
-    const handleAcceptModalCloseHandler = () => {
-        setOfferId(null);
-        setIsAcceptOfferModal(false);
-    }
-    const handleAcceptModalOpenHandler = (val) => {
-        setOfferId(val);
-        setIsAcceptOfferModal(true);
-    }
-
-
-    const handleDeclineModalCloseHandler = () => {
-        setOfferId(null);
-        setIsDeclineOfferModal(false);
-    }
-    const handleDeclineModalOpenHandler = (val) => {
-        setOfferId(val);
-        setIsDeclineOfferModal(true);
-    }
 
     const getTabClassName = (tab) => {
         return `inline-block p-1 ${activeTab === tab
@@ -92,6 +76,51 @@ const ProjectSideAssociation = () => {
     const handleTabClick = (tab) => {
         setActiveTab(tab);
     };
+
+    // // // MENTOR SIDE REQUEST MODAL HANDLER // // //
+    const handleMentorAcceptModalCloseHandler = () => {
+        setOfferId(null);
+        setIsAcceptMentorOfferModal(false);
+    }
+    const handleMentorAcceptModalOpenHandler = (val) => {
+        setOfferId(val);
+        setIsAcceptMentorOfferModal(true);
+    }
+
+
+    const handleMentorDeclineModalCloseHandler = () => {
+        setOfferId(null);
+        setIsDeclineMentorOfferModal(false);
+    }
+    const handleMentorDeclineModalOpenHandler = (val) => {
+        setOfferId(val);
+        setIsDeclineMentorOfferModal(true);
+    }
+
+
+    // // // INVESTOR SIDE REQUEST MODAL HANDLER // // //
+
+    const handleInvestorAcceptModalCloseHandler = () => {
+        setOfferId(null);
+        setIsAcceptInvestorOfferModal(false);
+    }
+    const handleInvestorAcceptModalOpenHandler = (val) => {
+        setOfferId(val);
+        setIsAcceptInvestorOfferModal(true);
+    }
+
+
+    const handleInvestorDeclineModalCloseHandler = () => {
+        setOfferId(null);
+        setIsDeclineInvestorOfferModal(false);
+    }
+    const handleInvestorDeclineModalOpenHandler = (val) => {
+        setOfferId(val);
+        setIsDeclineInvestorOfferModal(true);
+    }
+
+
+
 
     // GET MY PROJECT ID HANDLER
     const fetchProjectId = async () => {
@@ -108,6 +137,9 @@ const ProjectSideAssociation = () => {
             setProjectId(null);
         }
     }
+
+    /// /// MENTOR SIDE
+
 
     // // // GET POST API HANDLERS WHERE PROJECT APPROCHES MENTOR // // //
 
@@ -160,7 +192,7 @@ const ProjectSideAssociation = () => {
     }
 
     // POST API HANDLER TO SELF-REJECT A REQUEST WHERE PROJECT APPROCHES MENTOR
-    const handleSelfReject = async (offer_id) => {
+    const handleMentorSelfReject = async (offer_id) => {
         try {
             const result = await actor.self_decline_request(offer_id);
             console.log(`result-in-self_decline_request`, result);
@@ -170,6 +202,8 @@ const ProjectSideAssociation = () => {
         }
 
     }
+
+
 
     // // // GET POST API HANDLERS WHERE MENTOR APPROCHES PROJECT // // //
 
@@ -222,33 +256,176 @@ const ProjectSideAssociation = () => {
     }
 
     // POST API HANDLER TO APPROVE THE PENDING REQUEST BY PROJECT WHERE MENTOR APPROCHES PROJECT
-    const handleAcceptOffer = async ({ message }) => {
+    const handleAcceptMentorOffer = async ({ message }) => {
 
         try {
             const result = await actor.accept_offer_of_mentor(offerId, message, projectId);
             console.log(`result-in-accept_offer_of_mentor`, result);
-            handleAcceptModalCloseHandler();
+            handleMentorAcceptModalCloseHandler();
             fetchPendingRequestFromMentorToProject();
         } catch (error) {
             console.log(`error-in-accept_offer_of_mentor`, error);
-            handleAcceptModalCloseHandler();
+            handleMentorAcceptModalCloseHandler();
         }
     }
 
-
     // POST API HANDLER TO DECLINE THE PENDING REQUEST BY PROJECT WHERE MENTOR APPROCHES PROJECT
-    const handleDeclineOffer = async ({ message }) => {
+    const handleDeclineMentorOffer = async ({ message }) => {
 
         try {
             const result = await actor.decline_offer_of_mentor(offerId, message, projectId);
             console.log(`result-in-decline_offer_of_mentor`, result);
-            handleDeclineModalCloseHandler();
+            handleMentorDeclineModalCloseHandler();
             fetchPendingRequestFromMentorToProject();
         } catch (error) {
             console.log(`error-in-decline_offer_of_mentor`, error);
-            handleDeclineModalCloseHandler();
+            handleMentorDeclineModalCloseHandler();
         }
     }
+
+
+    /// /// INVESTOR SIDE
+
+    // // // GET POST API HANDLERS WHERE PROJECT APPROCHES INVESTOR // // //
+
+    // GET API HANDLER TO GET THE PENDING REQUESTS DATA WHERE PROJECT APPROCHES INVESTOR
+    const fetchPendingRequestFromProjectToInvestor = async () => {
+        try {
+            const result = await actor.get_pending_offers_received_from_investor(projectId);
+            console.log(`result-in-get_pending_offers_received_from_investor`, result);
+            setData(result)
+        } catch (error) {
+            console.log(`error-in-get_pending_offers_received_from_investor`, error);
+            setData([]);
+        }
+    }
+
+    // GET API HANDLER TO GET THE APPROVED REQUESTS DATA WHERE PROJECT APPROCHES INVESTOR
+    const fetchApprovedRequestFromProjectToInvestor = async () => {
+        try {
+            const result = await actor.get_accepted_request_of_project_by_investor(projectId);
+            console.log(`result-in-get_accepted_request_of_project_by_investor`, result);
+            setData(result)
+        } catch (error) {
+            console.log(`error-in-get_accepted_request_of_project_by_investor`, error);
+            setData([]);
+        }
+    }
+
+    // GET API HANDLER TO GET THE DECLINED REQUESTS DATA WHERE PROJECT APPROCHES INVESTOR
+    const fetchDeclinedRequestFromProjectToInvestor = async () => {
+        try {
+            const result = await actor.get_declined_request_of_project_by_investor(projectId);
+            console.log(`result-in-get_declined_request_of_project_by_investor`, result);
+            setData(result)
+        } catch (error) {
+            console.log(`error-in-get_declined_request_of_project_by_investor`, error);
+            setData([]);
+        }
+    }
+
+    // GET API HANDLER TO GET THE SELF-REJECT REQUESTS DATA WHERE PROJECT APPROCHES INVESTOR AND SELF DECLINED THE REQUEST
+    const fetchSelfRejectedRequestFromProjectToInvestor = async () => {
+        try {
+            const result = await actor.get_self_declined_requests_of_project(projectId);
+            console.log(`result-in-get_self_declined_requests_for_project`, result);
+            setData(result)
+        } catch (error) {
+            console.log(`error-in-get_self_declined_requests_for_project`, error);
+            setData([]);
+        }
+    }
+
+    // POST API HANDLER TO SELF-REJECT A REQUEST WHERE PROJECT APPROCHES INVESTOR
+    const handleInvestorSelfReject = async (offer_id) => {
+        try {
+            const result = await actor.self_decline_request_for_project(offer_id, projectId);
+            console.log(`result-in-self_decline_request_for_project`, result);
+            fetchPendingRequestFromProjectToInvestor();
+        } catch (error) {
+            console.log(`error-in-self_decline_request_for_project`, error);
+        }
+
+    }
+
+
+
+    // // // GET POST API HANDLERS WHERE INVESTOR APPROCHES PROJECT // // //
+
+    // GET API HANDLER TO GET THE PENDING REQUESTS DATA WHERE INVESTOR APPROCHES PROJECT
+    const fetchPendingRequestFromInvestorToProject = async () => {
+        try {
+            const result = await actor.get_all_offers_which_are_pending_for_project_from_investor(projectId);
+            console.log(`result-in-get_all_offers_which_are_pending_for_project_from_investor`, result);
+            setData(result)
+        } catch (error) {
+            console.log(`error-in-get_all_offers_which_are_pending_for_project_from_investor`, error);
+            setData([]);
+        }
+    }
+
+    // GET API HANDLER TO GET THE APPROVED REQUESTS DATA WHERE INVESTOR APPROCHES PROJECT
+    const fetchApprovedRequestFromInvestorToProject = async () => {
+        try {
+            const result = await actor.get_all_requests_which_got_accepted_by_project_of_investor(projectId);
+            console.log(`result-in-get_all_requests_which_got_accepted_by_project_of_investor`, result);
+            setData(result)
+        } catch (error) {
+            console.log(`error-in-get_all_requests_which_got_accepted_by_project_of_investor`, error);
+            setData([]);
+        }
+    }
+
+    // GET API HANDLER TO GET THE DECLINED REQUESTS DATA WHERE INVESTOR APPROCHES PROJECT
+    const fetchDeclinedRequestFromInvestorToProject = async () => {
+        try {
+            const result = await actor.get_all_requests_which_got_declined_by_project_of_investor(projectId);
+            console.log(`result-in-get_all_requests_which_got_declined_by_project_of_investor`, result);
+            setData(result)
+        } catch (error) {
+            console.log(`error-in-get_all_requests_which_got_declined_by_project_of_investor`, error);
+            setData([]);
+        }
+    }
+
+    // GET API HANDLER TO GET THE SELF-REJECT REQUESTS DATA WHERE INVESTOR APPROCHES PROJECT AND SELF DECLINED THE REQUEST
+    const fetchSelfRejectedRequestFromInvestorToProject = async () => {
+        try {
+            const result = await actor.get_all_requests_which_got_self_declined_by_investor(projectId);
+            console.log(`result-in-get_all_requests_which_got_self_declined_by_investor`, result);
+            setData(result)
+        } catch (error) {
+            console.log(`error-in-get_all_requests_which_got_self_declined_by_investor`, error);
+            setData([]);
+        }
+    }
+
+    // POST API HANDLER TO APPROVE THE PENDING REQUEST BY PROJECT WHERE INVESTOR APPROCHES PROJECT
+    const handleAcceptInvestorOffer = async ({ message }) => {
+        try {
+            const result = await actor.accept_offer_of_investor(offerId, message, projectId);
+            console.log(`result-in-accept_offer_of_investor`, result);
+            handleInvestorAcceptModalCloseHandler();
+            fetchPendingRequestFromInvestorToProject();
+        } catch (error) {
+            console.log(`error-in-accept_offer_of_investor`, error);
+            handleInvestorAcceptModalCloseHandler();
+        }
+    }
+
+    // POST API HANDLER TO DECLINE THE PENDING REQUEST BY PROJECT WHERE INVESTOR APPROCHES PROJECT
+    const handleDeclineInvestorOffer = async ({ message }) => {
+        try {
+            const result = await actor.decline_offer_of_investor(offerId, message, projectId);
+            console.log(`result-in-decline_offer_of_investor`, result);
+            handleInvestorDeclineModalCloseHandler();
+            fetchPendingRequestFromInvestorToProject();
+        } catch (error) {
+            console.log(`error-in-decline_offer_of_investor`, error);
+            handleInvestorDeclineModalCloseHandler();
+        }
+    }
+
 
     // NAVIGATE TO VIEW MENTOR OR VIEW INVESTOR DETAILS PAGE HANDLER
     const viewMentorOrInvestorProfileHanlder = (val) => {
@@ -261,10 +438,10 @@ const ProjectSideAssociation = () => {
                 route = `/view-mentor-details/${val?.mentor_info?.mentor_id.toText()}`
                 break;
             case 'to-investor':
-                route = `/view-investor-details/${null}`
+                route = `/view-investor-details/${val?.investor_id.toText()}`
                 break;
             case 'from-investor':
-                route = `/view-investor-details/${null}`
+                route = `/view-investor-details/${val?.investor_info?.investor_id.toText()}`
                 break;
             default:
                 break;
@@ -286,6 +463,12 @@ const ProjectSideAssociation = () => {
                         case 'from-mentor':
                             fetchPendingRequestFromMentorToProject();
                             break;
+                        case 'to-investor':
+                            fetchPendingRequestFromProjectToInvestor();
+                            break;
+                        case 'from-investor':
+                            fetchPendingRequestFromInvestorToProject();
+                            break;
                         default:
                             break;
                     }
@@ -297,6 +480,12 @@ const ProjectSideAssociation = () => {
                             break;
                         case 'from-mentor':
                             fetchApprovedRequestFromMentorToProject();
+                            break;
+                        case 'to-investor':
+                            fetchApprovedRequestFromProjectToInvestor();
+                            break;
+                        case 'from-investor':
+                            fetchApprovedRequestFromInvestorToProject();
                             break;
                         default:
                             break;
@@ -310,6 +499,12 @@ const ProjectSideAssociation = () => {
                         case 'from-mentor':
                             fetchDeclinedRequestFromMentorToProject();
                             break;
+                        case 'to-investor':
+                            fetchDeclinedRequestFromProjectToInvestor();
+                            break;
+                        case 'from-investor':
+                            fetchDeclinedRequestFromInvestorToProject();
+                            break;
                         default:
                             break;
                     }
@@ -321,6 +516,12 @@ const ProjectSideAssociation = () => {
                             break;
                         case 'from-mentor':
                             fetchSelfRejectedRequestFromMentorToProject();
+                            break;
+                        case 'to-investor':
+                            fetchSelfRejectedRequestFromProjectToInvestor();
+                            break;
+                        case 'from-investor':
+                            fetchSelfRejectedRequestFromInvestorToProject();
                             break;
                         default:
                             break;
@@ -407,10 +608,23 @@ const ProjectSideAssociation = () => {
                                         msg = val?.offer ?? ""
                                         offer_id = val?.offer_id ?? ""
                                         break;
+                                    case 'to-investor':
+                                        img = val?.investor_image[0] ? uint8ArrayToBase64(val?.investor_image[0]) : ""
+                                        name = val?.investor_name ?? ""
+                                        date = val?.time_of_request ? formatFullDateFromBigInt(val?.time_of_request) : ""
+                                        msg = val?.offer_i_have_written ?? ""
+                                        offer_id = val?.offer_id ?? ""
+                                        break;
+                                    case 'from-investor':
+                                        img = val?.investor_info?.investor_image ? uint8ArrayToBase64(val?.investor_info?.investor_image) : ""
+                                        name = val?.investor_info?.investor_name ?? ""
+                                        date = val?.sent_at ? formatFullDateFromBigInt(val?.sent_at) : ""
+                                        msg = val?.offer ?? ""
+                                        offer_id = val?.offer_id ?? ""
+                                        break;
                                     default:
                                         break;
                                 }
-
                                 break;
                             case "approved":
                                 switch (selectedStatus) {
@@ -426,6 +640,24 @@ const ProjectSideAssociation = () => {
                                     case 'from-mentor':
                                         img = val?.mentor_info?.mentor_image ? uint8ArrayToBase64(val?.mentor_info?.mentor_image) : ""
                                         name = val?.mentor_info?.mentor_name ?? ""
+                                        date = val?.sent_at ? formatFullDateFromBigInt(val?.sent_at) : ""
+                                        msg = val?.offer ?? ""
+                                        offer_id = val?.offer_id ?? ""
+                                        resp_msg = val?.response ?? ""
+                                        accpt_date = val?.accepted_at ? formatFullDateFromBigInt(val?.accepted_at) : ""
+                                        break;
+                                    case 'to-investor':
+                                        img = val?.investor_image[0] ? uint8ArrayToBase64(val?.investor_image[0]) : ""
+                                        name = val?.investor_name ?? ""
+                                        date = val?.time_of_request ? formatFullDateFromBigInt(val?.time_of_request) : ""
+                                        msg = val?.offer_i_have_written ?? ""
+                                        offer_id = val?.offer_id ?? ""
+                                        resp_msg = val?.response ?? ""
+                                        accpt_date = val?.accepted_at ? formatFullDateFromBigInt(val?.accepted_at) : ""
+                                        break;
+                                    case 'from-investor':
+                                        img = val?.investor_info?.investor_image ? uint8ArrayToBase64(val?.investor_info?.investor_image) : ""
+                                        name = val?.investor_info?.investor_name ?? ""
                                         date = val?.sent_at ? formatFullDateFromBigInt(val?.sent_at) : ""
                                         msg = val?.offer ?? ""
                                         offer_id = val?.offer_id ?? ""
@@ -456,6 +688,24 @@ const ProjectSideAssociation = () => {
                                         resp_msg = val?.response ?? ""
                                         decln_date = val?.declined_at ? formatFullDateFromBigInt(val?.declined_at) : ""
                                         break;
+                                    case 'to-investor':
+                                        img = val?.investor_image[0] ? uint8ArrayToBase64(val?.investor_image[0]) : ""
+                                        name = val?.investor_name ?? ""
+                                        date = val?.time_of_request ? formatFullDateFromBigInt(val?.time_of_request) : ""
+                                        msg = val?.offer_i_have_written ?? ""
+                                        offer_id = val?.offer_id ?? ""
+                                        resp_msg = val?.response ?? ""
+                                        decln_date = val?.declined_at ? formatFullDateFromBigInt(val?.declined_at) : ""
+                                        break;
+                                    case 'from-investor':
+                                        img = val?.investor_info?.investor_image ? uint8ArrayToBase64(val?.investor_info?.investor_image) : ""
+                                        name = val?.investor_info?.investor_name ?? ""
+                                        date = val?.sent_at ? formatFullDateFromBigInt(val?.sent_at) : ""
+                                        msg = val?.offer ?? ""
+                                        offer_id = val?.offer_id ?? ""
+                                        resp_msg = val?.response ?? ""
+                                        decln_date = val?.declined_at ? formatFullDateFromBigInt(val?.declined_at) : ""
+                                        break;
                                     default:
                                         break;
                                 }
@@ -473,6 +723,22 @@ const ProjectSideAssociation = () => {
                                     case 'from-mentor':
                                         img = val?.mentor_info?.mentor_image ? uint8ArrayToBase64(val?.mentor_info?.mentor_image) : ""
                                         name = val?.mentor_info?.mentor_name ?? ""
+                                        date = val?.sent_at ? formatFullDateFromBigInt(val?.sent_at) : ""
+                                        msg = val?.offer ?? ""
+                                        offer_id = val?.offer_id ?? ""
+                                        self_decln = val?.self_declined_at ? formatFullDateFromBigInt(val?.self_declined_at) : ""
+                                        break;
+                                    case 'to-investor':
+                                        img = val?.investor_image[0] ? uint8ArrayToBase64(val?.investor_image[0]) : ""
+                                        name = val?.investor_name ?? ""
+                                        date = val?.time_of_request ? formatFullDateFromBigInt(val?.time_of_request) : ""
+                                        msg = val?.offer_i_have_written ?? ""
+                                        offer_id = val?.offer_id ?? ""
+                                        self_decln = val?.self_declined_at ? formatFullDateFromBigInt(val?.self_declined_at) : ""
+                                        break;
+                                    case 'from-investor':
+                                        img = val?.investor_info?.investor_image ? uint8ArrayToBase64(val?.investor_info?.investor_image) : ""
+                                        name = val?.investor_info?.investor_name ?? ""
                                         date = val?.sent_at ? formatFullDateFromBigInt(val?.sent_at) : ""
                                         msg = val?.offer ?? ""
                                         offer_id = val?.offer_id ?? ""
@@ -549,28 +815,46 @@ const ProjectSideAssociation = () => {
                                                         selectedStatus.startsWith('to-') ?
                                                             <div>
                                                                 <button
-                                                                    onClick={() => handleSelfReject(offer_id)}
+                                                                    onClick={() => { selectedStatus.endsWith('mentor') ? handleMentorSelfReject(offer_id) : handleInvestorSelfReject(offer_id) }}
                                                                     className="capitalize border-2 font-semibold bg-blue-900 border-blue-900 text-white px-2 py-1 rounded-md  hover:text-blue-900 hover:bg-white">
                                                                     self decline
                                                                 </button>
                                                             </div>
                                                             :
-                                                            <>
-                                                                <div>
-                                                                    <button
-                                                                        onClick={() => handleDeclineModalOpenHandler(offer_id)}
-                                                                        className='capitalize border-2 font-semibold bg-red-700 border-red-700 text-white px-2 py-1 rounded-md  hover:text-red-900 hover:bg-white'>
-                                                                        reject
-                                                                    </button>
-                                                                </div>
-                                                                <div>
-                                                                    <button
-                                                                        onClick={() => handleAcceptModalOpenHandler(offer_id)}
-                                                                        className="capitalize border-2 font-semibold bg-blue-900 border-blue-900 text-white px-2 py-1 rounded-md  hover:text-blue-900 hover:bg-white">
-                                                                        approve
-                                                                    </button>
-                                                                </div>
-                                                            </>
+                                                            selectedStatus.endsWith('mentor') ?
+                                                                <>
+                                                                    <div>
+                                                                        <button
+                                                                            onClick={() => handleMentorDeclineModalOpenHandler(offer_id)}
+                                                                            className='capitalize border-2 font-semibold bg-red-700 border-red-700 text-white px-2 py-1 rounded-md  hover:text-red-900 hover:bg-white'>
+                                                                            reject
+                                                                        </button>
+                                                                    </div>
+                                                                    <div>
+                                                                        <button
+                                                                            onClick={() => handleMentorAcceptModalOpenHandler(offer_id)}
+                                                                            className="capitalize border-2 font-semibold bg-blue-900 border-blue-900 text-white px-2 py-1 rounded-md  hover:text-blue-900 hover:bg-white">
+                                                                            approve
+                                                                        </button>
+                                                                    </div>
+                                                                </>
+                                                                :
+                                                                <>
+                                                                    <div>
+                                                                        <button
+                                                                            onClick={() => handleInvestorDeclineModalOpenHandler(offer_id)}
+                                                                            className='capitalize border-2 font-semibold bg-red-700 border-red-700 text-white px-2 py-1 rounded-md  hover:text-red-900 hover:bg-white'>
+                                                                            reject
+                                                                        </button>
+                                                                    </div>
+                                                                    <div>
+                                                                        <button
+                                                                            onClick={() => handleInvestorAcceptModalOpenHandler(offer_id)}
+                                                                            className="capitalize border-2 font-semibold bg-blue-900 border-blue-900 text-white px-2 py-1 rounded-md  hover:text-blue-900 hover:bg-white">
+                                                                            approve
+                                                                        </button>
+                                                                    </div>
+                                                                </>
                                                     }
                                                 </div>
                                             </div>
@@ -586,19 +870,31 @@ const ProjectSideAssociation = () => {
                 }
             </div>
 
-            {isAcceptOfferModal && (
+            {isAcceptMentorOfferModal && (
                 <AcceptOfferModal
                     title={'Accept Offer'}
-                    onClose={handleAcceptModalCloseHandler}
-                    onSubmitHandler={handleAcceptOffer}
+                    onClose={handleMentorAcceptModalCloseHandler}
+                    onSubmitHandler={handleAcceptMentorOffer}
                 />)}
-            {isDeclineOfferModal && (
+            {isDeclineMentorOfferModal && (
                 <DeclineOfferModal
                     title={'Decline Offer'}
-                    onClose={handleDeclineModalCloseHandler}
-                    onSubmitHandler={handleDeclineOffer}
+                    onClose={handleMentorDeclineModalCloseHandler}
+                    onSubmitHandler={handleDeclineMentorOffer}
                 />)}
 
+            {isAcceptInvestorOfferModal && (
+                <AcceptOfferModal
+                    title={'Accept Offer'}
+                    onClose={handleInvestorAcceptModalCloseHandler}
+                    onSubmitHandler={handleAcceptInvestorOffer}
+                />)}
+            {isDeclineInvestorOfferModal && (
+                <DeclineOfferModal
+                    title={'Decline Offer'}
+                    onClose={handleInvestorDeclineModalCloseHandler}
+                    onSubmitHandler={handleDeclineInvestorOffer}
+                />)}
         </div >
     )
 }

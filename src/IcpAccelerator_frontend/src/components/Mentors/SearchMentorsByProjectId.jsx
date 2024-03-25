@@ -144,7 +144,6 @@ function SearchMentorsByProjectId() {
             let skills = "";
             let role = "";
             let mentor_id = null;
-            console.log('mentor[0]', mentor[0])
             // console.log('mentor[0]', Principal.toText(mentor[0]))
             if (noData) {
               id = mentor?.id;

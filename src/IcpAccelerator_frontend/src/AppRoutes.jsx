@@ -2,9 +2,7 @@ import React, { lazy, Suspense, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { rolesHandlerRequest } from "./components/StateManagement/Redux/Reducers/RoleReducer";
-
 import Hubdashboardlive from "./components/Hubdashboardlive/Hubdashboardlive";
-
 import { userRoleHandler } from "./components/StateManagement/Redux/Reducers/userRoleReducer";
 import Loader from "./components/Loader/Loader";
 import NormalUser from "./components/RoleSelector/NormalUser";
@@ -30,6 +28,8 @@ import ProjectDetailsForOwnerProject from "./components/Project/ProjectDetailsPa
 import ProjectSideAssociation from "./components/Association/ProjectSideAssociation";
 import MentorSideAssociation from "./components/Association/MentorSideAssociation";
 import SearchMentorsByProjectId from "./components/Mentors/SearchMentorsByProjectId";
+import InvestorSideAssociation from "./components/Association/InvestorSideAssociation";
+import ViewInvestorByProjectId from "./components/Dashboard/MoreLaunchPages/ViewInvestorByProjectId";
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
 
@@ -94,8 +94,10 @@ const AppRoutes = () => {
     { path: "/launch-projects", element: <MoreProjectLaunchPage /> },
     { path: "/raising-projects", element: <MoreCurrentlyRaisingProjects /> },
     { path: "/view-investor", element: <ViewInvestor /> },
+    { path: "/view-investor/:id", element: <ViewInvestorByProjectId /> },
     { path: "/project-association-requests", element: <ProjectSideAssociation /> },
     { path: "/mentor-association-requests", element: <MentorSideAssociation /> },
+    { path: "/investor-association-requests", element: <InvestorSideAssociation /> },
 
   ];
 

@@ -80,6 +80,15 @@ const ProjectDetailsForUser = () => {
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
+  const [isAddProjectModalOpen, setIsAddProjectModalOpen] = useState(false);
+
+  const handleProjectCloseModal = () => setIsAddProjectModalOpen(false);
+  const handleProjectOpenModal = () => setIsAddProjectModalOpen(true);
+
+  const [isAddProjectModalOpenAsInvestor, setIsAddProjectModalOpenAsInvestor] = useState(false);
+
+  const handleProjectCloseModalAsInvestor = () => setIsAddProjectModalOpenAsInvestor(false);
+  const handleProjectOpenModalAsInvestor = () => setIsAddProjectModalOpenAsInvestor(true);
 
   const handleCloseModal = () => setAnnouncementModalOpen(false);
   const handleOpenModal = () => setAnnouncementModalOpen(true);
@@ -203,12 +212,8 @@ const ProjectDetailsForUser = () => {
   // console.log("details ===>", details);
   // console.log("data ===>", data);
 
-  const [isAddProjectModalOpen, setIsAddProjectModalOpen] = useState(false);
 
-  const handleProjectCloseModal = () => setIsAddProjectModalOpen(false);
-  const handleProjectOpenModal = () => setIsAddProjectModalOpen(true);
-
-
+  // ASSOCIATE IN A PROJECT HANDLER AS A MENTOR
   const handleAddProject = async ({ message }) => {
     console.log('add into a project')
     if (actor && principal) {
@@ -217,7 +222,7 @@ const ProjectDetailsForUser = () => {
       let mentor_id = Principal.fromText(principal)
 
 
-     await actor.send_offer_to_project(project_id, msg, mentor_id)
+      await actor.send_offer_to_project(project_id, msg, mentor_id)
         .then((result) => {
           console.log('result-in-send_offer_to_project', result)
           if (result) {
@@ -236,6 +241,33 @@ const ProjectDetailsForUser = () => {
         })
     }
   }
+
+  // ASSOCIATE IN A PROJECT HANDLER AS A MENTOR
+  const handleAddProjectAsInvestor = async ({ message }) => {
+    console.log('add into a project AS INVESTOR')
+    if (actor && principal) {
+      let project_id = id;
+      let msg = message
+
+      await actor.send_offer_to_project_by_investor(project_id, msg)
+        .then((result) => {
+          console.log('result-in-send_offer_to_project_by_investor', result)
+          if (result) {
+            handleProjectCloseModalAsInvestor();
+            toast.success('offer sent to project successfully')
+          } else {
+            handleProjectCloseModalAsInvestor();
+            toast.error('something got wrong')
+          }
+        })
+        .catch((error) => {
+          console.log('error-in-send_offer_to_project_by_investor', error)
+          handleProjectCloseModalAsInvestor();
+          toast.error('something got wrong')
+
+        })
+    }
+  }
   
   return (
     <section className="text-black bg-gray-100 pb-4">
@@ -245,10 +277,16 @@ const ProjectDetailsForUser = () => {
             <div className="py-4 w-full flex justify-end">
               <div className="flex gap-2">
                 <button onClick={handleProjectOpenModal} className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900">
-                  Reach Out
+                  Reach Out As Mentor
                 </button>
                 <button onClick={() => navigate('/mentor-association-requests')} className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900">
-                  View Association Requests
+                  View Mentor Association Requests
+                </button>
+                <button onClick={handleProjectOpenModalAsInvestor} className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900">
+                  Reach Out As Investor
+                </button>
+                <button onClick={() => navigate('/investor-association-requests')} className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900">
+                  View Investor Association Requests
                 </button>
               </div>
             </div>
@@ -386,7 +424,13 @@ const ProjectDetailsForUser = () => {
           onClose={handleProjectCloseModal}
           onSubmitHandler={handleAddProject}
         />)}
-        <Toaster/>
+      {isAddProjectModalOpenAsInvestor && (
+        <AddAMentorRequestModal
+          title={'Associate Project'}
+          onClose={handleProjectCloseModalAsInvestor}
+          onSubmitHandler={handleAddProjectAsInvestor}
+        />)}
+      <Toaster />
     </section>
   );
 };
