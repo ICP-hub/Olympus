@@ -105,7 +105,7 @@ pub struct ProjectInfo {
     pub revenue: Option<u32>,
 }
 
-#[derive(CandidType)]
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct ProjectPublicInfo {
     pub project_id : String,
     pub project_name: String,
@@ -137,6 +137,11 @@ pub struct ProjectPublicInfo {
     upload_private_documents: Option<bool>,
     public_docs: Option<Vec<Docs>>,
     pub dapp_link: Option<String>,
+}
+
+#[derive(Deserialize, Clone, Debug, CandidType, PartialEq)]
+pub struct ProjectPublicInfoInternal{
+    pub params: ProjectPublicInfo,
 }
 
 impl ProjectInfo {}
@@ -707,7 +712,7 @@ pub fn find_project_by_id(project_id: &str) -> Option<ProjectInfoInternal> {
 
 //newbie api shows restricted info!
 #[query]
-pub fn get_project_details_for_mentor_and_investor(project_id: String) -> ProjectPublicInfo {
+pub fn get_project_details_for_mentor_and_investor(project_id: String) -> ProjectPublicInfoInternal {
     
     let project_details = find_project_by_id(project_id.as_str()).expect("project not found");
     let project_id = project_id.to_string().clone();
@@ -745,7 +750,11 @@ pub fn get_project_details_for_mentor_and_investor(project_id: String) -> Projec
         dapp_link: project_details.params.dapp_link,
     };
 
-    project
+    let project_internal = ProjectPublicInfoInternal {
+        params: project,
+    };
+
+    project_internal
 }
 
 pub fn list_all_projects() -> HashMap<Principal, ProjectVecWithRoles> {
