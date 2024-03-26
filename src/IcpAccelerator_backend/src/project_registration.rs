@@ -1879,7 +1879,7 @@ pub async fn approve_private_docs_access_request(
 }
 
 #[query]
-pub fn access_money_details(project_id: String) -> Result<(MoneyRaised, bool), String> {
+pub fn access_money_details(project_id: String) -> Result<MoneyRaised, CustomError> {
     let caller = ic_cdk::api::caller();
 
     let is_owner = APPLICATION_FORM.with(|app_form| {
@@ -1899,33 +1899,39 @@ pub fn access_money_details(project_id: String) -> Result<(MoneyRaised, bool), S
     });
 
     if !is_approved {
-        return Err(
-            "You do not have access to view the money details for this project.".to_string(),
-        );
+        return Err(CustomError {
+            message: "You do not have access to view the money details for this project.".to_string(),
+            is_owner,
+        });
     }
 
-    // Access the project details from APPLICATION_FORM
     APPLICATION_FORM.with(|projects_registry| {
         let projects = projects_registry.borrow();
 
-        // Iterate through the entire HashMap to find the project by ID
         for project_list in projects.values() {
-
             if let Some(project) = project_list.iter().find(|p| p.uid == project_id) {
-                return Ok((
-                    project.params.money_raised.clone().ok_or("Money raised details not available for this project.".to_string())?,
-                    is_owner
-                ));
+                return project.params.money_raised.clone().ok_or(CustomError {
+                    message: "Money raised details not available for this project.".to_string(),
+                    is_owner,
+                });
             }
         }
 
-        // If no project with the matching ID was found
-        Err("Project ID not found.".to_string())
+        Err(CustomError {
+            message: "Project ID not found.".to_string(),
+            is_owner,
+        })
     })
 }
 
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
+pub struct CustomError {
+    message: String,
+    is_owner: bool,
+}
+
 #[query]
-pub fn access_private_docs(project_id: String) -> Result<(Vec<Docs>, bool), String> {
+pub fn access_private_docs(project_id: String) -> Result<Vec<Docs>, CustomError> {
     let caller = ic_cdk::api::caller();
 
     let is_owner = APPLICATION_FORM.with(|app_form| {
@@ -1936,7 +1942,6 @@ pub fn access_private_docs(project_id: String) -> Result<(Vec<Docs>, bool), Stri
         })
     });
 
-    // Check if the caller is approved to access the private documents for this project
     let is_approved = is_owner
         || PRIVATE_DOCS_ACCESS.with(|access| {
             access
@@ -1946,28 +1951,28 @@ pub fn access_private_docs(project_id: String) -> Result<(Vec<Docs>, bool), Stri
         });
 
     if !is_approved {
-        return Err(
-            "You do not have access to view the private documents for this project.".to_string(),
-        );
+        return Err(CustomError {
+            message: "You do not have access to view the private documents for this project.".to_string(),
+            is_owner,
+        });
     }
 
-    // Access the project details from APPLICATION_FORM
     APPLICATION_FORM.with(|projects_registry| {
         let projects = projects_registry.borrow();
 
-        // Iterate through the entire HashMap to find the project by ID
         for project_list in projects.values() {
-            // Iterate through each project in the list
             if let Some(project) = project_list.iter().find(|p| p.uid == project_id) {
-                return Ok((
-                    project.params.private_docs.clone().ok_or("Private documents not available for this project.".to_string())?,
-                    is_owner
-                ));
+                return Ok(project.params.private_docs.clone().ok_or(CustomError {
+                    message: "Private documents not available for this project.".to_string(),
+                    is_owner,
+                })?);
             }
         }
 
-        // If no project with the matching ID was found
-        Err("Project ID not found.".to_string())
+        Err(CustomError {
+            message: "Project ID not found.".to_string(),
+            is_owner,
+        })
     })
 }
 
