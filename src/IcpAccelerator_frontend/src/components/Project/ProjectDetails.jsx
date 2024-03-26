@@ -3,7 +3,7 @@ import ProjectCard from "./ProjectCard";
 import ProjectDescription from "./ProjectDescription";
 import ProjectInterestedPop from "./ProjectInterestedPop";
 import Members from "../TeamMembers/Members";
-import Details from "../Resources/Resources";
+import Details from "../Resources/ProjectDocuments";
 const ProjectDetails = () => {
   const headerData = [
     {

@@ -30,6 +30,8 @@ import MentorSideAssociation from "./components/Association/MentorSideAssociatio
 import SearchMentorsByProjectId from "./components/Mentors/SearchMentorsByProjectId";
 import InvestorSideAssociation from "./components/Association/InvestorSideAssociation";
 import ViewInvestorByProjectId from "./components/Dashboard/MoreLaunchPages/ViewInvestorByProjectId";
+import ProjectDetailsForMentorProject from "./components/Project/ProjectDetailsPages/ProjectDetailsForMentorProject";
+import RequestsPrivateDocument from "./components/Project/ProjectDetailsPages/RequestsPrivateDocument";
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
 
@@ -75,7 +77,7 @@ const AppRoutes = () => {
     // { path: "/", element: <InvestorDashboard /> },
     // { path: "/", element: <ProjectDetailsForOwnerProject /> },
     { path: "/individual-project-details-project-owner", element: <ProjectDetailsForOwnerProject /> },
-    { path: "/individual-project-details-project-mentor/:id", element: <ProjectDetailsForUser /> },
+    { path: "/individual-project-details-project-mentor/:id", element: <ProjectDetailsForMentorProject /> },
     { path: "/individual-project-details-project-investor/:id", element: <ProjectDetailsForUser /> },
     { path: "/association", element: <ProjectAssociation /> },
     { path: "/create-user", element: <NormalUser /> },
@@ -98,7 +100,7 @@ const AppRoutes = () => {
     { path: "/project-association-requests", element: <ProjectSideAssociation /> },
     { path: "/mentor-association-requests", element: <MentorSideAssociation /> },
     { path: "/investor-association-requests", element: <InvestorSideAssociation /> },
-
+    { path: "/project-private-document-requests", element: <RequestsPrivateDocument /> },
   ];
 
   const protectedRoutes = [

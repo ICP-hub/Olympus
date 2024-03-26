@@ -24,17 +24,32 @@ function ProjectDescription() {
         </div>
         <div className="lg:w-[50%]">
           <div className="relative lg:float-right w-[calc(100%/2-10px)] mx-auto self-center">
-            <Swiper
-              modules={[Pagination, Autoplay]}
-              spaceBetween={10}
-              slidesPerView={"auto"}
-              centeredSlides={true}
-              onSlideChange={() => console.log("slide change")}
-              onSwiper={(swiper) => console.log(swiper)}
-              loop={true}
-              autoplay
-              pagination={{ clickable: true }}
-            >
+          <Swiper
+  modules={[Pagination, Autoplay]}
+  centeredSlides={true}
+  loop={true}
+  autoplay={{
+    delay: 2500,
+    disableOnInteraction: false,
+  }}
+  pagination={{
+    clickable: true,
+  }}
+  spaceBetween={30}
+  slidesPerView="auto"
+  slidesOffsetAfter={100}
+  breakpoints={{
+    640: {
+      slidesPerView: 1,
+    },
+    768: {
+      slidesPerView: 2, 
+    },
+    1024: {
+      slidesPerView: 3,
+    },
+  }}
+>
               {[...Array(numberOfSlides)].map((_, index) => (
                 <SwiperSlide key={index}>
                   <img
