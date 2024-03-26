@@ -1,41 +1,93 @@
-import React from 'react'
-import user from "../../../assets/images/Ellipse 1382.svg"
+import React, { useState, useEffect } from "react";
+import user from "../../../assets/images/Ellipse 1382.svg";
+import { useSelector } from "react-redux";
+import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
+import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
+import useFormatDateFromBigInt from "../hooks/useFormatDateFromBigInt";
+import NoDataCard from "../Mentors/Event/NoDataCard";
 const Testimonial = () => {
-    const data = [
-        {
-          id: 1,
-          name: 'James Dani',
-          date: '15 Mar 2022',
-          content: 'Araa and I talked about career field decisions and my portfolio. I really appreciated his feedback and advice. :)',
-          imageUrl: user,
-        },
-        {
-            id: 2,
-            name: 'James Dani',
-            date: '15 Mar 2022',
-            content: 'Araa and I talked about career field decisions and my portfolio. I really appreciated his feedback and advice. :)',
-            imageUrl: user,
-          },
-      ];
-  return (
-    <div className='flex space-x-8'>
-    {data.map((card) => (
-      <div key={card.id} className="bg-white rounded-lg shadow-lg w-1/2 p-12 mb-4 h-[22.2rem]">
-        <div className="flex items-center space-x-4">
-          <img src={card.imageUrl} alt="profile picture" className="w-14 h-14 rounded-full" />
-          
-          <div>
-            <div className="text-xl font-semibold">{card.name}</div>
-            <div className="text-gray-500">{card.date}</div>
-          </div>
-        </div>
-        <div className="mt-4 text-gray-800">
-          {card.content}
-        </div>
-      </div>
-    ))}
-  </div>
-  )
-}
+  const actor = useSelector((currState) => currState.actors.actor);
+  const [noData, setNoData] = useState(null);
+  const [testimonialData, setTestimonialData] = useState([]);
+  const [formatDate] = useFormatDateFromBigInt();
 
-export default Testimonial
+  const fetchTestimonial = async (caller) => {
+    await caller
+      .get_latest_testimonials()
+      .then((result) => {
+        console.log("result-in-Testimonial", result);
+        if (result && result.length > 0) {
+          setTestimonialData(result);
+          setNoData(false);
+        } else {
+          setTestimonialData([]);
+          setNoData(true);
+        }
+      })
+      .catch((error) => {
+        setNoData(true);
+        setTestimonialData([]);
+        console.log("error-in-Testimonial", error);
+      });
+  };
+
+  useEffect(() => {
+    if (actor) {
+      fetchTestimonial(actor);
+    } else {
+      fetchTestimonial(IcpAccelerator_backend);
+    }
+  }, [actor]);
+  const data = [
+    {
+      id: 1,
+      name: "James Dani",
+      date: "15 Mar 2022",
+      content:
+        "Araa and I talked about career field decisions and my portfolio. I really appreciated his feedback and advice. :)",
+      imageUrl: user,
+    },
+    {
+      id: 2,
+      name: "James Dani",
+      date: "15 Mar 2022",
+      content:
+        "Araa and I talked about career field decisions and my portfolio. I really appreciated his feedback and advice. :)",
+      imageUrl: user,
+    },
+  ];
+  return (
+    <div className="flex flex-col sm:flex-row space-x-0 sm:space-x-8 mt-3">
+      {testimonialData &&
+        testimonialData.slice(0, 2).map((card, index) => {
+          let testimonialImage = uint8ArrayToBase64(card?.profile_pic);
+          let testimonialName = card?.name;
+          let testimoniaDescription = card?.message;
+          let testimoniaDate = formatDate(card?.timestamp);
+
+          return (
+            <div
+              key={index}
+              className="bg-white rounded-lg shadow-lg w-full max-w-md sm:max-w-sm p-11 mb-4:"
+            >
+              <div className="flex items-center space-x-4">
+                <img
+                  src={testimonialImage}
+                  alt="profile picture"
+                  className="w-14 h-14 rounded-full"
+                />
+
+                <div>
+                  <div className="text-xl font-semibold">{testimonialName}</div>
+                  <div className="text-gray-500">{testimoniaDate}</div>
+                </div>
+              </div>
+              <div className="mt-4 text-gray-800 min-h-56 line-clamp-6">{testimoniaDescription}</div>
+            </div>
+          );
+        })}
+    </div>
+  );
+};
+
+export default Testimonial;

@@ -26,17 +26,17 @@ const LaunchedProjects = () => {
     ? { stop1: "#4087BF", stop2: "#3C04BA" }
     : { stop1: "#B5B5B5", stop2: "#5B5B5B" };
 
-  // const [ref, inView] = useInView({
-  //   triggerOnce: true, // Trigger the animation once
-  //   threshold: 0.1, // Trigger when 10% of the element is in view
-  // });
+  const [ref, inView] = useInView({
+    triggerOnce: true, // Trigger the animation once
+    threshold: 0.1, // Trigger when 10% of the element is in view
+  });
 
-  // // Define the fade-in animation
-  // const fadeIn = useSpring({
-  //   opacity: inView ? 1 : 0,
-  //   transform: inView ? 'translateY(0)' : 'translateY(20px)',
-  //   config: { duration: 1000 }, // Customize duration as needed
-  // });
+  // Define the fade-in animation
+  const fadeIn = useSpring({
+    opacity: inView ? 1 : 0,
+    transform: inView ? 'translateY(0)' : 'translateY(20px)',
+    config: { duration: 1000 }, // Customize duration as needed
+  });
 
   useEffect(() => {
     if (percent < 100) {
@@ -148,14 +148,14 @@ const LaunchedProjects = () => {
 
   return (
     <>
-      <div className="flex flex-wrap -mx-4 mb-4 flex-row items-center">
-        <div className="overflow-x-auto flex flex-row w-3/4">
+      <div className="flex flex-wrap -mx-4 mb-4 items-center">
+        <div className="w-full md:w-3/4 px-4 md:flex md:gap-4">
           {noData ? (
             <NoDataCard />
           ) : (
             <>
               {allProjectData &&
-                allProjectData.map((data, index) => {
+                allProjectData.slice(0, 3).map((data, index) => {
                   let projectName = "";
                   let projectId = "";
                   let projectImage = "";
@@ -191,12 +191,12 @@ const LaunchedProjects = () => {
                   }
                   return (
                     <animated.div
-                      className="w-full sm:w-1/2 md:w-1/3 mb-2 px-3 hover:scale-105 transition-transform duration-300 ease-in-out"
+                      className="w-full sm:w-1/2 md:w-1/3 mb-2  hover:scale-105 transition-transform duration-300 ease-in-out"
                       key={index}
                     >
-                      <div className="flex justify-between items-baseline mb-4 flex-wrap bg-white m-2 overflow-hidden rounded-lg shadow-lg">
+                      <div className="flex justify-between items-baseline flex-wrap bg-white overflow-hidden rounded-lg shadow-lg">
                         <div className="p-4">
-                          <div className="flex justify-between items-baseline mb-2 flex-col flex-wrap w-[265px]">
+                          <div className="flex justify-between items-baseline mb-2 flex-col flex-wrap w-fit">
                             <div className="flex items-baseline w-1/2">
                               <img
                                 className="rounded-full w-12 h-12 object-cover"
@@ -258,21 +258,33 @@ const LaunchedProjects = () => {
                               Level 2
                             </div>
                           </div>
-                          <p className="text-gray-700 text-sm md:line-clamp-8 sxs:line-clamp-4 sm:line-clamp-6 line-clamp-8 h-36">
+                          <p className="text-gray-700 text-sm p-2 h-36 overflow-hidden line-clamp-8">
                             {projectDescription}
                           </p>
-                          {projectAreaOfFocus ? (
-                            <div className="flex gap-2 mt-2 text-xs">
-                              <p>{projectAreaOfFocus}</p>
 
-                              <p
-                                onClick={() =>
-                                  projectId ? handleNavigate(projectId) : ""
-                                }
-                                className="cursor-pointer"
-                              >
-                                +1 more
-                              </p>
+                          {projectAreaOfFocus ? (
+                            <div className="flex gap-2 mt-2 text-xs items-center">
+                              {projectAreaOfFocus
+                                .split(",")
+                                .slice(0, 3)
+                                .map((tag, index) => (
+                                  <div
+                                    key={index}
+                                    className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-gray-100"
+                                  >
+                                    {tag.trim()}
+                                  </div>
+                                ))}
+                              {projectAreaOfFocus.split(",").length > 3 && (
+                                <p
+                                  onClick={() =>
+                                    projectId ? handleNavigate(projectId) : ""
+                                  }
+                                  className="cursor-pointer"
+                                >
+                                  +1 more
+                                </p>
+                              )}
                             </div>
                           ) : (
                             ""
@@ -292,7 +304,7 @@ const LaunchedProjects = () => {
             </>
           )}
         </div>
-        <div className="w-1/4 py-2">
+        <div className="w-full md:w-1/4 pr-4 md:flex md:gap-4">
           <RegisterCard categories={projectCategories} />
         </div>
       </div>

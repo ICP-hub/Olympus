@@ -51,8 +51,9 @@ const CurrentlyRaising = () => {
       projectImage: ment,
       userImage: girl,
       principalId: "user001",
-      projectDescription: "This project aims to provide innovative solutions to real-world problems.",
-      projectAreaOfFocus: "Technology"
+      projectDescription:
+        "This project aims to provide innovative solutions to real-world problems.",
+      projectAreaOfFocus: "Technology",
     },
     {
       projectName: "Artistic Expressions",
@@ -60,8 +61,9 @@ const CurrentlyRaising = () => {
       projectImage: ment,
       userImage: girl,
       principalId: "user002",
-      projectDescription: "An exploration of artistic expressions pushing the boundaries of creativity.",
-      projectAreaOfFocus: "Art and Design"
+      projectDescription:
+        "An exploration of artistic expressions pushing the boundaries of creativity.",
+      projectAreaOfFocus: "Art and Design",
     },
     {
       projectName: "Community Empowerment",
@@ -69,8 +71,9 @@ const CurrentlyRaising = () => {
       projectImage: ment,
       userImage: girl,
       principalId: "user003",
-      projectDescription: "Empowering communities through grassroots initiatives for lasting impact.",
-      projectAreaOfFocus: "Social Impact"
+      projectDescription:
+        "Empowering communities through grassroots initiatives for lasting impact.",
+      projectAreaOfFocus: "Social Impact",
     },
     {
       projectName: "Event Management",
@@ -78,9 +81,10 @@ const CurrentlyRaising = () => {
       projectImage: ment,
       userImage: girl,
       principalId: "user003",
-      projectDescription: "Welcome to the best event management system on ICP. Fully Decentralized On ICP ",
-      projectAreaOfFocus: "Social Impact"
-    }
+      projectDescription:
+        "Welcome to the best event management system on ICP. Fully Decentralized On ICP ",
+      projectAreaOfFocus: "Social Impact",
+    },
   ];
 
   const [noData, setNoData] = useState(null);
@@ -92,16 +96,16 @@ const CurrentlyRaising = () => {
       .then((result) => {
         console.log("result-in-get-all-projects", result);
         if (!result || result.length == 0) {
-          setNoData(true)
-          setAllProjectData(defaultArray)
+          setNoData(true);
+          setAllProjectData(defaultArray);
         } else {
           setAllProjectData(result);
-          setNoData(false)
+          setNoData(false);
         }
       })
       .catch((error) => {
-        setNoData(true)
-        setAllProjectData(defaultArray)
+        setNoData(true);
+        setAllProjectData(defaultArray);
         console.log("error-in-get-all-projects", error);
       });
   };
@@ -120,44 +124,58 @@ const CurrentlyRaising = () => {
     }
   };
   return (
-    <div className="flex flex-wrap -mx-4 mb-4 flex-row items-start">
-      {noData ? <NoDataCard /> :
-        <div className="overflow-x-auto flex flex-row w-full">
+    <div className="flex flex-wrap -mx-4 mb-4 items-start">
+      {noData ? (
+        <NoDataCard />
+      ) : (
+        
+        <div className=" md:flex md:flex-row w-full">
           {allProjectData &&
-            allProjectData.map((data, index) => {
-              let projectName = ""
-              let projectId = ""
-              let projectImage = ""
-              let userImage = ""
-              let principalId = ""
-              let projectDescription = ""
-              let projectAreaOfFocus = ""
-              let moneyRaisedTillNow = ""
+            allProjectData.slice(0,4).map((data, index) => {
+              let projectName = "";
+              let projectId = "";
+              let projectImage = "";
+              let userImage = "";
+              let principalId = "";
+              let projectDescription = "";
+              let projectAreaOfFocus = "";
+              let moneyRaisedTillNow = "";
 
               if (noData === false) {
-                moneyRaisedTillNow = data[1]?.project_profile[0]?.params?.money_raised_till_now[0];
+                moneyRaisedTillNow =
+                  data[1]?.project_profile[0]?.params?.money_raised_till_now[0];
                 projectName = data[1]?.project_profile[0]?.params?.project_name;
                 projectId = data[1]?.project_profile[0]?.uid;
-                projectImage = uint8ArrayToBase64(data[1]?.project_profile[0]?.params?.project_logo);
-                userImage = uint8ArrayToBase64(data[1]?.project_profile[0]?.params?.user_data?.profile_picture[0]);
-                principalId = data[0].toText()
-                projectDescription = data[1]?.project_profile[0]?.params?.project_description
-                projectAreaOfFocus = data[1]?.project_profile[0]?.params?.project_area_of_focus
+                projectImage = uint8ArrayToBase64(
+                  data[1]?.project_profile[0]?.params?.project_logo
+                );
+                userImage = uint8ArrayToBase64(
+                  data[1]?.project_profile[0]?.params?.user_data
+                    ?.profile_picture[0]
+                );
+                principalId = data[0].toText();
+                projectDescription =
+                  data[1]?.project_profile[0]?.params?.project_description;
+                projectAreaOfFocus =
+                  data[1]?.project_profile[0]?.params?.project_area_of_focus;
               } else {
-                projectName = data.projectName
-                projectId = data.projectId
-                projectImage = data.projectImage
-                userImage = data.userImage
-                principalId = data.principalId
-                projectDescription = data.projectDescription
-                projectAreaOfFocus = data.projectAreaOfFocus
-                moneyRaisedTillNow = true
+                projectName = data.projectName;
+                projectId = data.projectId;
+                projectImage = data.projectImage;
+                userImage = data.userImage;
+                principalId = data.principalId;
+                projectDescription = data.projectDescription;
+                projectAreaOfFocus = data.projectAreaOfFocus;
+                moneyRaisedTillNow = true;
               }
               if (!moneyRaisedTillNow) {
                 return null;
               }
               return (
-                <div className="w-full sm:w-1/2 md:w-1/4 mb-2 px-3 hover:scale-105 transition-transform duration-300 ease-in-out" key={index}>
+                <div
+                  className="w-full sm:w-1/2 md:w-1/4 mb-2 hover:scale-105 transition-transform duration-300 ease-in-out"
+                  key={index}
+                >
                   <div className="flex justify-between items-baseline mb-4 flex-wrap bg-white m-2 overflow-hidden rounded-lg shadow-lg min-w-1/2">
                     <div className="p-4">
                       <div className="flex justify-between items-baseline mb-2 flex-col flex-wrap w-[265px]">
@@ -217,41 +235,52 @@ const CurrentlyRaising = () => {
                         </svg>
                         <div className="ml-2 text-nowrap text-sm">Level 2</div>
                       </div>
-                      <p className="text-gray-700 text-sm md:line-clamp-8 sxs:line-clamp-4 sm:line-clamp-6 line-clamp-8 h-36">
+                      <p className="text-gray-700 text-sm p-2 h-36 overflow-hidden line-clamp-8 mb-4">
                         {projectDescription}
                       </p>
-                      {projectAreaOfFocus ?
-                        <div className="flex gap-2 mt-2 text-xs">
-                          <p>{projectAreaOfFocus}</p>
-
-                          <p
-                            onClick={() =>
-                              projectId ?
-                                handleNavigate(projectId)
-                                : ''
-                            }
-                            className="cursor-pointer"
-                          >
-                            +1 more
-                          </p>
-                        </div> : ''}
+                      {projectAreaOfFocus ? (
+                        <div className="flex gap-2 mt-2 text-xs items-center">
+                          {projectAreaOfFocus
+                            .split(",")
+                            .slice(0, 3)
+                            .map((tag, index) => (
+                              <div
+                                key={index}
+                                className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-gray-100"
+                              >
+                                {tag.trim()}
+                              </div>
+                            ))}
+                          {projectAreaOfFocus.split(",").length > 3 && (
+                            <p
+                              onClick={() =>
+                                projectId ? handleNavigate(projectId) : ""
+                              }
+                              className="cursor-pointer"
+                            >
+                              +1 more
+                            </p>
+                          )}
+                        </div>
+                      ) : (
+                        ""
+                      )}
 
                       <button
                         className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"
                         onClick={() =>
-                          projectId ?
-                            handleNavigate(projectId)
-                            : ''
+                          projectId ? handleNavigate(projectId) : ""
                         }
                       >
-                        KNOW MORE
+                        INVEST NOW
                       </button>
                     </div>
                   </div>
                 </div>
               );
             })}
-        </div>}
+        </div>
+      )}
     </div>
   );
 };

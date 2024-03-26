@@ -1,154 +1,144 @@
-import React from "react";
-import ment from "../../../assets/images/ment.jpg";
-import girl from "../../../assets/images/girl.jpeg";
+import React, { useState, useEffect } from "react";
 import { Pagination, Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/autoplay";
-import data from '../../data/spotlight.json';
+import { useSelector } from "react-redux";
+import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
+import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
+import NoDataCard from "../Mentors/Event/NoDataCard";
 
 const SpotLight = () => {
-  // const cards = [
-  //   {
-  //     logo: ment,
-  //     altText: "Dirac Finance Logo",
-  //     title: "Dirac Finance",
-  //     description: ["DeFi", "Q&A market place built on..."],
-  //     userImage: girl,
-  //     userAddress: "0x2085...016B",
-  //     longDescription:
-  //       "Dirac Finance is an institutional-grade decentralized Options Vault (DOV) that... Beep! 2.0 by Beep! - New Era for Collaboration",
-  //     tags: ["DAO", "Infrastructure", "+ 1 more"],
-  //   },
-  //   {
-  //     logo: ment,
-  //     altText: "Another Company Logo",
-  //     title: "Another Company",
-  //     description: ["Crypto", "Innovative solutions for..."],
-  //     userImage: girl,
-  //     userAddress: "0x1234...ABCD",
-  //     longDescription:
-  //       "Another Company provides cutting-edge solutions for the crypto market that... Disrupt 3.0 by Innovate! - The Future is Now",
-  //     tags: ["Tech", "Blockchain", "+ 2 more"],
-  //   },
-  //   {
-  //     logo: ment,
-  //     altText: "Another Company Logo",
-  //     title: "Another Company",
-  //     description: ["Crypto", "Innovative solutions for..."],
-  //     userImage: girl,
-  //     userAddress: "0x1234...ABCD",
-  //     longDescription:
-  //       "Another Company provides cutting-edge solutions for the crypto market that... Disrupt 3.0 by Innovate! - The Future is Now",
-  //     tags: ["Tech", "Blockchain", "+ 2 more"],
-  //   },
-  //   {
-  //     logo: ment,
-  //     altText: "Another Company Logo",
-  //     title: "Another Company",
-  //     description: ["Crypto", "Innovative solutions for..."],
-  //     userImage: girl,
-  //     userAddress: "0x1234...ABCD",
-  //     longDescription:
-  //       "Another Company provides cutting-edge solutions for the crypto market that... Disrupt 3.0 by Innovate! - The Future is Now",
-  //     tags: ["Tech", "Blockchain", "+ 2 more"],
-  //   },
-  //   {
-  //     logo: ment,
-  //     altText: "Another Company Logo",
-  //     title: "Another Company",
-  //     description: ["Crypto", "Innovative solutions for..."],
-  //     userImage: girl,
-  //     userAddress: "0x1234...ABCD",
-  //     longDescription:
-  //       "Another Company provides cutting-edge solutions for the crypto market that... Disrupt 3.0 by Innovate! - The Future is Now",
-  //     tags: ["Tech", "Blockchain", "+ 2 more"],
-  //   },
-  //   {
-  //     logo: ment,
-  //     altText: "Another Company Logo",
-  //     title: "Another Company",
-  //     description: ["Crypto", "Innovative solutions for..."],
-  //     userImage: girl,
-  //     userAddress: "0x1234...ABCD",
-  //     longDescription:
-  //       "Another Company provides cutting-edge solutions for the crypto market that... Disrupt 3.0 by Innovate! - The Future is Now",
-  //     tags: ["Tech", "Blockchain", "+ 2 more"],
-  //   },
-  // ];
+  const actor = useSelector((currState) => currState.actors.actor);
+  const [noData, setNoData] = useState(null);
+  const [spotLightData, setSpotLightData] = useState([]);
+
+  const fetchSpotLight = async (caller) => {
+    await caller
+      .get_spotlight_projects()
+      .then((result) => {
+        console.log("result-in-spotlight", result);
+        if (result && result.length > 0) {
+          setSpotLightData(result);
+          setNoData(false);
+        } else {
+          setSpotLightData([]);
+          setNoData(true);
+        }
+      })
+      .catch((error) => {
+        setNoData(true);
+        setSpotLightData([]);
+        console.log("error-in-spotlight", error);
+      });
+  };
+
+  useEffect(() => {
+    if (actor) {
+      fetchSpotLight(actor);
+    } else {
+      fetchSpotLight(IcpAccelerator_backend);
+    }
+  }, [actor]);
 
   return (
     <div className="py-4">
       <div className="flex justify-between  gap-4 overflow-x-auto">
-        <Swiper
-          modules={[Pagination, Autoplay]}
-          centeredSlides={true}
-          loop={true}
-          autoplay={{
-            delay: 2500,
-            disableOnInteraction: false,
-          }}
-          pagination={{
-            clickable: true,
-          }}
-          spaceBetween={30}
-          slidesPerView="auto"
-          slidesOffsetAfter={100}
-          breakpoints={{
-            640: {
-              slidesPerView: 1,
-            },
-            768: {
-              slidesPerView: 2,
-            },
-            1024: {
-              slidesPerView: 3,
-            },
-          }}
-        >
-          {data.map((card, index) => (
-            <SwiperSlide key={index}>
-              <div className="mb-2 shadow-md rounded-3xl overflow-hidden border-2 spotlight-card-image ">
-                <div className="p-6">
-                  <div className="flex flex-row gap-2">
-                    <img
-                      className="rounded-lg w-12 h-12"
-                      src={card.project_logo}
-                      alt={'img'}
-                    />
-                    <div className="flex flex-col">
-                      <p className="text-[#7283EA] font-bold">{card.project_name}</p>
-                      <div className="text-sm line-clamp-2">
-                        {card.project_area_of_focus.split(',').map((desc, index) => (
-                          <p key={index}>{desc}</p>
-                        ))}
-                      </div>
-                      <div className="flex flex-row gap-2 items-center">
-                        <img
-                          className="h-6 w-6 rounded-full"
-                          src={girl}
-                          alt="User Profile"
-                        />
-                        <p className="text-xs truncate">{'0x1234...ABCD'}</p>
+        {noData ? (
+          <NoDataCard />
+        ) : (
+          <Swiper
+  modules={[Pagination, Autoplay]}
+  centeredSlides={true}
+  loop={true}
+  autoplay={{
+    delay: 2500,
+    disableOnInteraction: false,
+  }}
+  pagination={{
+    clickable: true,
+  }}
+  spaceBetween={30}
+  slidesPerView="auto"
+  slidesOffsetAfter={100}
+  breakpoints={{
+    640: {
+      slidesPerView: 1,
+    },
+    768: {
+      slidesPerView: 2, 
+    },
+    1024: {
+      slidesPerView: 3,
+    },
+  }}
+>
+            {spotLightData &&
+              spotLightData.map((data, index) => {
+                console.log("spotlight", data);
+                let addedBy = data?.added_by?.toText();
+                let userImage = data?.user_data?.profile_picture[0];
+                let projectName = data?.project_details?.project_name;
+                let projectImage = uint8ArrayToBase64(
+                  data?.project_details?.project_logo
+                );
+                let projectDescription =
+                  data?.project_details?.project_description;
+                let projectAreaOfFocus =
+                  data?.project_details?.project_area_of_focus;
+                return (
+                  <SwiperSlide key={index}>
+                    <div className="mb-2 shadow-md rounded-3xl overflow-hidden border-2 spotlight-card-image w-full">
+                      <div className="p-6">
+                        <div className="flex flex-row gap-2">
+                          <img
+                            className="rounded-lg w-12 h-12"
+                            src={projectImage}
+                            alt={"img"}
+                          />
+                          <div className="flex flex-col">
+                            <div className="text-[#7283EA] font-bold">
+                              {projectName}
+                            </div>
+
+                            <div className="flex flex-row gap-2 items-center">
+                              <img
+                                className="h-6 w-6 rounded-full"
+                                src={userImage}
+                                alt="User Profile"
+                              />
+                              <div className="text-xs truncate w-56 lg:w-56 sxs:w-36 md:w-56">
+                                {addedBy}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-sm my-2 line-clamp-3 min-h-16">
+                          {projectDescription}
+                        </div>
+                        <div className="flex flex-row gap-4 mt-2">
+                            <div className="flex gap-2 mt-2 text-xs items-center">
+                              {projectAreaOfFocus
+                                .split(",")
+                                .slice(0, 3)
+                                .map((tag, index) => (
+                                  <div
+                                    key={index}
+                                    className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-gray-100"
+                                  >
+                                    {tag.trim()}
+                                  </div>
+                                ))}
+                            </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <p className="text-sm mt-2 line-clamp-3 min-h-16">
-                    {card.project_description}
-                  </p>
-                  <div className="flex flex-row gap-4 mt-2">
-                    {card.project_tags.map((tag, index) => (
-                      <p key={index} className="text-xs">
-                        {tag}
-                      </p>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
+                  </SwiperSlide>
+                );
+              })}
+          </Swiper>
+        )}
       </div>
     </div>
   );

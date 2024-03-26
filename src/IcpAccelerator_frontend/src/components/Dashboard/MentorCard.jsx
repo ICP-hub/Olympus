@@ -68,8 +68,8 @@ const MentorCard = () => {
     </div>
   }
   return (
-    <div className="p-1 flex items-center mb-8 gap-8">
-      {data && data.map((mentor, index) => {
+    <div className="flex flex-col lg:flex-row items-center my-8 gap-12 md:w-fit w-full">
+      {data && data.slice(0,3).map((mentor, index) => {
         let id = null
         let img = ""
         let name = ""
@@ -90,11 +90,11 @@ const MentorCard = () => {
           role = mentor.role;
         }
         return (
-          <div key={index} className="flex-shrink-0 overflow-hidden bg-white rounded-lg max-w-xs shadow-lg p-5 w-1/3">
+          <div key={index} className="flex-shrink-0 overflow-hidden bg-white rounded-lg max-w-xs shadow-lg p-5 w-full lg:w-1/3">
             <div className=" flex items-center justify-center px-8">
               <img className="w-full h-40 object-cover rounded-md" src={img} alt="" />
             </div>
-            <div className="text-black mt-2 text-center">
+            <div className="text-black mt-4 text-center">
               <span className="font-semibold text-lg line-clamp-1">
                 {name}
               </span>
