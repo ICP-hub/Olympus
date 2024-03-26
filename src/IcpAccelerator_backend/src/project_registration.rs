@@ -142,6 +142,10 @@ pub struct ProjectPublicInfo {
 #[derive(Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct ProjectPublicInfoInternal{
     pub params: ProjectPublicInfo,
+    pub uid: String,
+    pub is_active: bool,
+    pub is_verified: bool,
+    creation_date: u64,
 }
 
 impl ProjectInfo {}
@@ -752,6 +756,10 @@ pub fn get_project_details_for_mentor_and_investor(project_id: String) -> Projec
 
     let project_internal = ProjectPublicInfoInternal {
         params: project,
+        uid: project_details.uid,
+        is_active: project_details.is_active,
+        is_verified: project_details.is_verified,
+        creation_date: project_details.creation_date
     };
 
     project_internal
