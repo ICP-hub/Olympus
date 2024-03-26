@@ -1781,11 +1781,19 @@ pub async fn approve_private_docs_access_request(
 }
 
 #[query]
-pub fn access_money_details(project_id: String) -> Result<MoneyRaised, String> {
+pub fn access_money_details(project_id: String) -> Result<(MoneyRaised, bool), String> {
     let caller = ic_cdk::api::caller();
 
+    let is_owner = APPLICATION_FORM.with(|app_form| {
+        let app_details = app_form.borrow();
+
+        app_details.iter().any(|(principal, projects)| {
+            *principal == caller && projects.iter().any(|p| p.uid == project_id)
+        })
+    });
+
     // Check if the caller is approved to access the money details for this project
-    let is_approved = MONEY_ACCESS.with(|access| {
+    let is_approved = is_owner || MONEY_ACCESS.with(|access| {
         access
             .borrow()
             .get(&project_id)
@@ -1804,14 +1812,12 @@ pub fn access_money_details(project_id: String) -> Result<MoneyRaised, String> {
 
         // Iterate through the entire HashMap to find the project by ID
         for project_list in projects.values() {
-            // Iterate through each project in the list
+
             if let Some(project) = project_list.iter().find(|p| p.uid == project_id) {
-                // If a project with the matching project_id is found, return its MoneyRaised details if available
-                return project
-                    .params
-                    .money_raised
-                    .clone()
-                    .ok_or("Money raised details not available for this project.".to_string());
+                return Ok((
+                    project.params.money_raised.clone().ok_or("Money raised details not available for this project.".to_string())?,
+                    is_owner
+                ));
             }
         }
 
