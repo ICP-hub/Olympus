@@ -1,177 +1,271 @@
-import * as React from "react";
-import { useNavigate } from 'react-router-dom';
-import { useSelector } from "react-redux";
-import { useState, useEffect } from "react";
-import project from "../../../assets/images/project.png";
+import React, { useState, useEffect, useRef } from "react";
 import ment from "../../../assets/images/ment.jpg";
-// import btn from "../../../assets/Comprehensive/upote.png";
-import { Line } from "rc-progress";
+import girl from "../../../assets/images/girl.jpeg";
+import hover from "../../../assets/images/hover.png";
+import RegisterCard from "./RegisterCard";
+import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
+import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import toast, { Toaster } from "react-hot-toast";
+import { useInView } from "react-intersection-observer";
+import { useSpring, animated, useTrail } from "react-spring";
+import NoDataCard from "../Mentors/Event/NoDataCard";
 
-const dummyData = [
-  {
-    id: 1,
-    logo: project,
-    name: "Builder.fi",
-    description: "Q&A marketplace built on...",
-    code: "0x2085...016B",
-  },
-  {
-    id: 2,
-    logo: project,
-    name: "Project 2",
-    description: "Description for project 2",
-    code: "0x2085...016C",
-  },
-  {
-    id: 3,
-    logo: project,
-    name: "Project 3",
-    description: "Description for project 33333333333333333333333",
-    code: "0x2085...016Cbbbbbbbbbbbbbbbbbbbb",
-  },
-  {
-    id: 4,
-    logo: project,
-    name: "Project 4",
-    description: "Description for project 4",
-    code: "0x2085...016C",
-  },
-  {
-    id: 5,
-    logo: project,
-    name: "Project 5",
-    description: "Description for project 5",
-    code: "0x2085...016C",
-  },
-  {
-    id: 6,
-    logo: project,
-    name: "Project 6",
-    description: "Description for project 6",
-    code: "0x2085...016C",
-  },
-];
+const LiveProjects = () => {
+  const actor = useSelector((currState) => currState.actors.actor);
+  const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
 
-const ProjectSection = () => {
+  const [isHovered, setIsHovered] = useState(false);
+  const [percent, setPercent] = useState(0);
+  const [showLine, setShowLine] = useState({});
+  const tm = useRef(null);
   const navigate = useNavigate();
-  const role = useSelector((currState) => currState.current.specificRole);
-  const [show, setShow] = useState(false);
+  // Gradient color stops, changes when hovered
+  const gradientStops = isHovered
+    ? { stop1: "#4087BF", stop2: "#3C04BA" }
+    : { stop1: "#B5B5B5", stop2: "#5B5B5B" };
+
+  const [ref, inView] = useInView({
+    triggerOnce: true, // Trigger the animation once
+    threshold: 0.1, // Trigger when 10% of the element is in view
+  });
+
+  // Define the fade-in animation
+  const fadeIn = useSpring({
+    opacity: inView ? 1 : 0,
+    transform: inView ? 'translateY(0)' : 'translateY(20px)',
+    config: { duration: 1000 }, // Customize duration as needed
+  });
+
+
+  const increase = () => {
+    setPercent((prevPercent) => {
+      if (prevPercent >= 100) {
+        clearTimeout(tm.current);
+        return 100;
+      }
+      return prevPercent + 1;
+    });
+  };
+
+  const projectCategories = [
+    {
+      id: "registerProject",
+      title: "Register your Projects",
+      description: "See a project missing? Submit your projects to this page.",
+      buttonText: "Register Now",
+      imgSrc: hover,
+    },
+  ];
+
+  const [noData, setNoData] = useState(null);
+  const [allProjectData, setAllProjectData] = useState([]);
+
+  const getAllProject = async (caller) => {
+    await caller
+      .list_all_projects()
+      .then((result) => {
+        console.log("result-in-get-all-projects", result);
+
+        if (!result || result.length === 0) {
+          setNoData(true);
+          setAllProjectData([]);
+        } else {
+          setAllProjectData(result);
+          setNoData(false);
+        }
+      })
+      .catch((error) => {
+        setNoData(true);
+        setAllProjectData([]);
+        console.log("error-in-get-all-projects", error);
+      });
+  };
 
   useEffect(() => {
-    if (role) {
-      if (
-        role === "Mentor" ||
-        role === "VC" ||
-        role === "ICPHubOrganizer" ||
-        role === "Project"
-      ) {
-        setShow(true);
-      } else {
-        setShow(false);
-      }
+    if (actor) {
+      getAllProject(actor);
+    } else {
+      getAllProject(IcpAccelerator_backend);
     }
-  }, [role]);
+    return;
+  }, [actor]);
 
-  function truncateWithEllipsis(str, startLen = 3, endLen = 3) {
-    if (str.length <= startLen + endLen) {
-      return str;
+  const handleNavigate = (projectId) => {
+    if (isAuthenticated) {
+      navigate(`/individual-project-details-project-mentor/${projectId}`);
+    } else {
+      toast.error("Please Sign Up !!!");
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
-    const start = str.substring(0, startLen);
-    const end = str.substring(str.length - endLen);
-    return `${start}...${end}`;
-  }
+  };
 
   return (
-    <div className="w-full flex flex-row md:flex-nowrap flex-wrap rounded-md text-sxxs:text-[7px] sxs:text-[7.5px] sxs1:text-[8px] sxs2:text-[8.5px] sxs3:text-[9px] ss:text-[9.5px] ss1:text-[10px] ss2:text-[10.5px] ss3:text-[11px] ss4:text-[11.5px] dxs:text-[12px] xxs:text-[12.5px] xxs1:text-[13px] sm1:text-[13.5px] sm4:text-[14px] sm2:text-[14.5px] sm3:text-[13px] sm:text-[13.5px] md:text-[14px.3] md1:text-[14px] md2:text-[14px] md3:text-[14px] lg:text-[16.5px] dlg:text-[17px] lg1:text-[15.5px] lgx:text-[16px] dxl:text-[16.5px] xl:text-[19px] xl2:text-[19.5px]  my-2 box-shadow-blur bg-gradient-black-transparent">
-      <div className="flex flex-wrap -mx-4 gap-3 px-4">
-        {dummyData?.map((item) => (
-          <div key={item.id} className="md:w-[300px] w-full mb-8 flex flex-col" onClick={() => navigate('/individual-project-details-user')}>
-            <div className="flex flex-col justify-between border border-gray-200 rounded-xl pt-3">
-              <div className="flex justify-between items-center">
-                <div className="flex items-center">
-                  <img
-                    className="object-fill rounded-md h-16 w-16 ml-4"
-                    src={ment}
-                    alt="Project logo"
-                  />
-                  <div className="ml-2">
-                    <p className="text-[13px] font-bold text-black">
-                      {item.name}
-                    </p>
-                    <p
-                      className="truncate overflow-hidden whitespace-nowrap text-[10px] text-gray-400"
-                      style={{ maxHeight: "4.5rem" }}
+    <>
+      <div className="flex flex-wrap -mx-4 mb-4 items-center">
+        <div className="w-full md:w-3/4 px-4 md:flex md:gap-4">
+          {noData ? (
+            <NoDataCard />
+          ) : (
+            <>
+              {allProjectData &&
+                allProjectData.slice(0, 3).map((data, index) => {
+                  let projectName = "";
+                  let projectId = "";
+                  let projectImage = "";
+                  let userImage = "";
+                  let principalId = "";
+                  let projectDescription = "";
+                  let projectAreaOfFocus = "";
+                  if (noData === false) {
+                    projectName =
+                      data[1]?.project_profile[0]?.params?.project_name;
+                    projectId = data[1]?.project_profile[0]?.uid;
+                    projectImage = uint8ArrayToBase64(
+                      data[1]?.project_profile[0]?.params?.project_logo
+                    );
+                    userImage = uint8ArrayToBase64(
+                      data[1]?.project_profile[0]?.params?.user_data
+                        ?.profile_picture[0]
+                    );
+                    principalId = data[0].toText();
+                    projectDescription =
+                      data[1]?.project_profile[0]?.params?.project_description;
+                    projectAreaOfFocus =
+                      data[1]?.project_profile[0]?.params
+                        ?.project_area_of_focus;
+                  } else {
+                    projectName = data.projectName;
+                    projectId = data.projectId;
+                    projectImage = data.projectImage;
+                    userImage = data.userImage;
+                    principalId = data.principalId;
+                    projectDescription = data.projectDescription;
+                    projectAreaOfFocus = data.projectAreaOfFocus;
+                  }
+                  return (
+                    <animated.div
+                      className="w-full sm:w-1/2 md:w-1/3 mb-2  hover:scale-105 transition-transform duration-300 ease-in-out"
+                      key={index}
                     >
-                      {truncateWithEllipsis(item.description)}
-                    </p>
+                      <div className="flex justify-between items-baseline flex-wrap bg-white overflow-hidden rounded-lg shadow-lg">
+                        <div className="p-4">
+                          <div className="flex justify-between items-baseline mb-2 flex-col flex-wrap w-fit">
+                            <div className="flex items-baseline w-1/2">
+                              <img
+                                className="rounded-full w-12 h-12 object-cover"
+                                src={projectImage}
+                                alt="profile"
+                              />
+                              <h1 className="font-bold text-nowrap truncate w-[220px]">
+                                {projectName}
+                              </h1>
+                            </div>
+                            <div className="flex items-baseline w-1/2">
+                              <img
+                                className="h-5 w-5 rounded-full mx-2 mt-2"
+                                src={userImage}
+                                alt="not found"
+                              />
+                              <p className="text-xs truncate w-20">
+                                {principalId}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="mb-4 flex items-baseline">
+                            <svg
+                              width="100%"
+                              height="8"
+                              className="rounded-lg"
+                              onMouseEnter={() => setIsHovered(true)}
+                              onMouseLeave={() => setIsHovered(false)}
+                            >
+                              <defs>
+                                <linearGradient
+                                  id={`gradient-${index}`}
+                                  x1="0%"
+                                  y1="0%"
+                                  x2="100%"
+                                  y2="0%"
+                                >
+                                  <stop
+                                    offset="0%"
+                                    stopColor={gradientStops.stop1}
+                                    stopOpacity="1"
+                                  />
+                                  <stop
+                                    offset="100%"
+                                    stopColor={gradientStops.stop2}
+                                    stopOpacity="1"
+                                  />
+                                </linearGradient>
+                              </defs>
+                              <rect
+                                x="0"
+                                y="0"
+                                width={`${percent}%`}
+                                height="10"
+                                fill={`url(#gradient-${index})`}
+                              />
+                            </svg>
+                            <div className="ml-2 text-nowrap text-sm">
+                              Level 2
+                            </div>
+                          </div>
+                          <p className="text-gray-700 text-sm p-2 h-36 overflow-hidden line-clamp-8">
+                            {projectDescription}
+                          </p>
 
-                    <div className="flex flex-row gap-1">
-                      <img
-                        className="object-fill h-4 w-4 rounded-full"
-                        src={item.logo}
-                        alt="Project logo"
-                      />
-                      <p className="text-[12px] text-gray-500 hover:text-clip">
-                        {truncateWithEllipsis(item.code)}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <button className="rounded-md h-16 w-16 mr-4 border border-gray-300 flex justify-center items-center">
-                  <div className="flex flex-col justify-center items-center">
-                    <svg
-                      width="15"
-                      height="15"
-                      viewBox="0 0 8 6"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="transition-transform transform hover:scale-150"
-                    >
-                      <path
-                        d="M3.04007 0.934606C3.44005 0.449652 4.18299 0.449652 4.58298 0.934606L6.79207 3.61298C7.33002 4.26522 6.86608 5.24927 6.02061 5.24927H1.60244C0.756969 5.24927 0.293022 4.26522 0.830981 3.61298L3.04007 0.934606Z"
-                        fill="#737373"
-                      />
-                    </svg>
-                    <span className="text-black text-[10px] font-semibold">
-                      {" "}
-                      10
-                    </span>
-                  </div>
-                </button>
-              </div>
+                          {projectAreaOfFocus ? (
+                            <div className="flex gap-2 mt-2 text-xs items-center">
+                              {projectAreaOfFocus
+                                .split(",")
+                                .slice(0, 3)
+                                .map((tag, index) => (
+                                  <div
+                                    key={index}
+                                    className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-gray-100"
+                                  >
+                                    {tag.trim()}
+                                  </div>
+                                ))}
+                              {projectAreaOfFocus.split(",").length > 3 && (
+                                <p
+                                  onClick={() =>
+                                    projectId ? handleNavigate(projectId) : ""
+                                  }
+                                  className="cursor-pointer"
+                                >
+                                  +1 more
+                                </p>
+                              )}
+                            </div>
+                          ) : (
+                            ""
+                          )}
 
-              {show && (
-                <div className="flex items-center w-full mt-4 px-2">
-                  <div className="relative flex-grow  h-2  rounded-lg bg-gradient-to-r from-gray-100 to-black"></div>
-                  <p className="text-xs ml-2">level 9</p>
-                </div>
-              )}
-
-              {/* <Line
-              strokeWidth={0.2}
-              percent={percent}
-              strokeColor="transparent"
-              className="line-vertical md:line-horizontal"
-            /> */}
-
-              <div className="flex rounded-b-xl flex-row justify-between items-center mt-2 px-4 py-1 bg-gray-200">
-                <div className="flex flex-row space-x-2 text-[10px] text-black">
-                  <p>. DAO</p>
-                  <p>. Infrastructure</p>
-                  <p>+1 more</p>
-                </div>
-                <img
-                  className="object-fill h-4 w-4 rounded-full"
-                  src={item.logo}
-                  alt="Project logo"
-                />
-              </div>
-            </div>
-          </div>
-        ))}
+                          <button
+                            className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"
+                            onClick={() => handleNavigate(projectId)}
+                          >
+                            KNOW MORE
+                          </button>
+                        </div>
+                      </div>
+                    </animated.div>
+                  );
+                })}
+            </>
+          )}
+        </div>
+        <div className="w-full md:w-1/4 pr-4 md:flex md:gap-4">
+          <RegisterCard categories={projectCategories} />
+        </div>
       </div>
-    </div>
+      <Toaster />
+    </>
   );
 };
 
-export default ProjectSection;
+export default LiveProjects;

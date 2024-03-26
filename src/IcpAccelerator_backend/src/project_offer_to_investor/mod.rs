@@ -9,11 +9,13 @@ use ic_cdk::api::call;
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::{api::time, caller};
 use ic_cdk::{query, update};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
+use std::io::Read;
 use std::{cell::RefCell, collections::HashMap, fmt::format, ptr::null};
+use ic_cdk::api::stable::{StableReader, StableWriter};
 
-#[derive(Clone, CandidType, Deserialize)]
+#[derive(Clone, CandidType, Deserialize, Serialize)]
 pub struct OfferToInvestor {
     offer_id: String, // Added field
     investor_id: Principal,
@@ -28,7 +30,7 @@ pub struct OfferToInvestor {
     response: String,
 }
 
-#[derive(Clone, CandidType, Deserialize)]
+#[derive(Clone, CandidType, Deserialize, Serialize)]
 pub struct ProjectInfo {
     project_id: String,
     project_name: String,
@@ -36,7 +38,7 @@ pub struct ProjectInfo {
     project_logo: Vec<u8>,
 }
 
-#[derive(Clone, CandidType, Deserialize)]
+#[derive(Clone, CandidType, Deserialize, Serialize)]
 pub struct OfferToSendToInvestor {
     offer_id: String, // Added field
     project_info: ProjectInfo,
@@ -53,6 +55,44 @@ pub struct OfferToSendToInvestor {
 thread_local! {
     pub static OFFERS_OFFERED_BY_ME : RefCell<HashMap<String, Vec<OfferToInvestor>>> = RefCell::new(HashMap::new());
     pub static INVESTOR_ALERTS : RefCell<HashMap<Principal, Vec<OfferToSendToInvestor>>> = RefCell::new(HashMap::new());
+}
+
+pub fn pre_upgrade() {
+    // Serialize and write data to stable storage
+    OFFERS_OFFERED_BY_ME.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+    INVESTOR_ALERTS.with(|registry| {
+        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
+
+        let mut writer = StableWriter::default();
+        writer
+            .write(&serialized)
+            .expect("Failed to write to stable storage");
+    });
+}
+
+pub fn post_upgrade_vc() {
+    let mut reader = StableReader::default();
+    let mut data = Vec::new();
+    reader
+        .read_to_end(&mut data)
+        .expect("Failed to read from stable storage");
+    let offertoproject: HashMap<String, Vec<OfferToInvestor>> =
+        bincode::deserialize(&data).expect("Deserialization failed of notification");
+    OFFERS_OFFERED_BY_ME.with(|notifications_ref| {
+        *notifications_ref.borrow_mut() = offertoproject;
+    });
+    let offers: HashMap<Principal, Vec<OfferToSendToInvestor>> =
+        bincode::deserialize(&data).expect("Deserialization failed of notification");
+    INVESTOR_ALERTS.with(|notifications_ref| {
+        *notifications_ref.borrow_mut() = offers;
+    });
 }
 
 pub fn store_request_sent_by_project_to_investor(project_id : String, offer: OfferToInvestor) {

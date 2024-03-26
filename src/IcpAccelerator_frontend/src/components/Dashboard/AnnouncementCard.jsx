@@ -5,11 +5,11 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/autoplay";
-import data from "../../data/spotlight.json";
 import { useSelector } from "react-redux";
 import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import useFormatDateFromBigInt from "../hooks/useFormatDateFromBigInt";
+import NoDataCard from "../Mentors/Event/NoDataCard";
 
 const AnnouncementCard = () => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -50,23 +50,35 @@ const AnnouncementCard = () => {
   return (
     // <div className="">
     <div className="flex justify-between  gap-2 overflow-x-auto">
-          {/* <h1>Hello</h1> */}
-
-      <Swiper
-        modules={[Pagination, Autoplay]}
-        centeredSlides={true}
-        loop={true}
-        autoplay={{ delay: 2500, disableOnInteraction: false }}
-        pagination={{ clickable: true }}
-        spaceBetween={30}
-        slidesPerView="auto"
-        slidesOffsetAfter={100}
-        breakpoints={{
-          640: { slidesPerView: 1 },
-          768: { slidesPerView: 2 },
-          1024: { slidesPerView: 3 },
-        }}
-      >
+          {noData ? 
+            <NoDataCard />
+          : 
+          <Swiper
+          modules={[Pagination, Autoplay]}
+          centeredSlides={true}
+          loop={true}
+          autoplay={{
+            delay: 2500,
+            disableOnInteraction: false,
+          }}
+          pagination={{
+            clickable: true,
+          }}
+          spaceBetween={30}
+          slidesPerView="auto"
+          slidesOffsetAfter={100}
+          breakpoints={{
+            640: {
+              slidesPerView: 1,
+            },
+            768: {
+              slidesPerView: 2, 
+            },
+            1024: {
+              slidesPerView: 3,
+            },
+          }}
+        >
         {latestAnnouncementData &&
           latestAnnouncementData.map((result, index) => {
             result[1].map((data) => {
@@ -131,7 +143,7 @@ const AnnouncementCard = () => {
             );
           });
           })}
-      </Swiper>
+      </Swiper>}
     </div>
     // </div>
   );

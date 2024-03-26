@@ -6,31 +6,6 @@ import { useSelector } from "react-redux";
 import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
 import NoDataCard from "../Mentors/Event/NoDataCard";
 
-const investors = [
-  {
-    id: null,
-    image: image,
-    name: "John Doe",
-    role: "Investment Analyst",
-    company: "Venture Capital Partners",
-  },
-  {
-    id: null,
-    image: image,
-    name: "Jane Smith",
-    role: "Senior Partner",
-    company: "Tech Growth Fund",
-  },
-  {
-    id: null,
-    image: image,
-    name: "Michael Johnson",
-    role: "Managing Director",
-    company: "Innovate Ventures",
-  }
-];
-
-
 const InvestorsList = () => {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
@@ -69,34 +44,20 @@ const InvestorsList = () => {
         </div>
   }
   return (
-    <div className="p-1 flex items-center mb-8 gap-4">
-      {data.map((investor, index) => {
-        let id = null
-        let img = ""
-        let name = ""
-        let company = ""
-        let role = '';
-
-        if (noData === false) {
-
-          id = investor[0].toText();
-          img = uint8ArrayToBase64(investor[1]?.vc_profile?.params?.user_data?.profile_picture[0]);
-          name = investor[1]?.vc_profile?.params?.user_data?.full_name;
-          company = investor[1]?.vc_profile?.params?.name_of_fund;
-          role = 'Investor';
-        } else {
-          id = investor.id
-          img = investor.image
-          name = investor.name
-          company = investor.company
-          role = investor.role;
-        }
+    <div className="flex flex-col lg:flex-row items-center mt-8 gap-12 md:w-fit w-full">
+      {data&& data.slice(0,3).map((investor, index) => {
+        let  id = investor[0].toText();
+        let   img = uint8ArrayToBase64(investor[1]?.vc_profile?.params?.user_data?.profile_picture[0]);
+        let name = investor[1]?.vc_profile?.params?.user_data?.full_name;
+        let  company = investor[1]?.vc_profile?.params?.name_of_fund;
+        let  role = 'Investor';
+       
         return (
-          <div key={index} className="flex-shrink-0 overflow-hidden bg-white rounded-lg max-w-xs shadow-lg p-5 w-1/2">
+          <div key={index} className="flex-shrink-0 overflow-hidden bg-white rounded-lg max-w-xs shadow-lg p-5 w-full lg:w-1/3">
             <div className=" flex items-center justify-center px-8">
               <img className="w-full h-40 object-cover rounded-md" src={img} alt="" />
             </div>
-            <div className="text-black mt-2">
+            <div className="text-black mt-2 text-center">
               <span className="font-semibold text-lg line-clamp-1">
                 {name}
               </span>
