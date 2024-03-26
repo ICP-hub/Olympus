@@ -1821,7 +1821,7 @@ pub fn access_money_details(project_id: String) -> Result<MoneyRaised, String> {
 }
 
 #[query]
-pub fn access_private_docs(project_id: String) -> Result<Vec<Docs>, String> {
+pub fn access_private_docs(project_id: String) -> Result<(Vec<Docs>, bool), String> {
     let caller = ic_cdk::api::caller();
 
     let is_owner = APPLICATION_FORM.with(|app_form| {
@@ -1854,12 +1854,10 @@ pub fn access_private_docs(project_id: String) -> Result<Vec<Docs>, String> {
         for project_list in projects.values() {
             // Iterate through each project in the list
             if let Some(project) = project_list.iter().find(|p| p.uid == project_id) {
-                // If a project with the matching project_id is found, return its private documents if available
-                return project
-                    .params
-                    .private_docs
-                    .clone()
-                    .ok_or("Private documents not available for this project.".to_string());
+                return Ok((
+                    project.params.private_docs.clone().ok_or("Private documents not available for this project.".to_string())?,
+                    is_owner
+                ));
             }
         }
 
