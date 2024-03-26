@@ -103,6 +103,40 @@ pub struct ProjectInfo {
     pub dapp_link: Option<String>,
 }
 
+#[derive(CandidType)]
+pub struct ProjectPublicInfo {
+    pub project_id : String,
+    pub project_name: String,
+    pub project_logo: Vec<u8>,
+    pub preferred_icp_hub: Option<String>,
+    pub live_on_icp_mainnet: Option<bool>,
+    pub money_raised_till_now: Option<bool>,
+    pub supports_multichain: Option<String>,
+    pub project_elevator_pitch: Option<String>,
+    pub project_area_of_focus: String,
+    pub promotional_video: Option<String>,
+    pub github_link: Option<String>,
+    pub reason_to_join_incubator: String,
+    pub project_description: String,
+    pub project_cover: Vec<u8>,
+    pub project_team: Option<Vec<TeamMember>>,
+    pub token_economics: Option<String>,
+    pub technical_docs: Option<String>,
+    pub long_term_goals: Option<String>,
+    pub target_market: Option<String>,
+    pub self_rating_of_project: f64,
+    pub user_data: UserInformation,
+    pub mentors_assigned: Option<Vec<MentorProfile>>,
+    pub vc_assigned: Option<Vec<VentureCapitalist>>,
+    pub project_twitter: Option<String>,
+    pub project_linkedin: Option<String>,
+    pub project_website: Option<String>,
+    pub project_discord: Option<String>,
+    upload_private_documents: Option<bool>,
+    public_docs: Option<Vec<Docs>>,
+    pub dapp_link: Option<String>,
+}
+
 impl ProjectInfo {}
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
@@ -347,7 +381,6 @@ thread_local! {
 
 }
 
-
 pub fn pre_upgrade() {
     // Serialize and write data to stable storage
     APPLICATION_FORM.with(|registry| {
@@ -496,7 +529,6 @@ pub fn pre_upgrade() {
     });
 }
 
-
 pub fn post_upgrade() {
     // Read and deserialize data from stable storage
     let mut reader = StableReader::default();
@@ -504,7 +536,8 @@ pub fn post_upgrade() {
     reader
         .read_to_end(&mut data)
         .expect("Failed to read from stable storage");
-    let project_registry: ApplicationDetails = bincode::deserialize(&data).expect("Deserialization failed");
+    let project_registry: ApplicationDetails =
+        bincode::deserialize(&data).expect("Deserialization failed");
     // Restore data
     APPLICATION_FORM.with(|registry| {
         *registry.borrow_mut() = project_registry;
@@ -603,6 +636,7 @@ pub async fn create_project(info: ProjectInfo) -> String {
     format!("{}", res)
 }
 
+// all created projects but without ProjectInternal
 pub fn get_projects_for_caller() -> Vec<ProjectInfo> {
     let caller = caller();
     APPLICATION_FORM.with(|storage| {
@@ -617,6 +651,7 @@ pub fn get_projects_for_caller() -> Vec<ProjectInfo> {
         }
     })
 }
+
 //get_my_project; firstly created project || all_pub_plus_private_info
 #[query]
 pub fn get_my_project() -> ProjectInfoInternal {
@@ -629,6 +664,7 @@ pub fn get_my_project() -> ProjectInfoInternal {
     })
 }
 
+// all created projects
 #[query]
 pub fn get_projects_with_all_info() -> Vec<ProjectInfoInternal> {
     let caller = caller();
@@ -665,6 +701,49 @@ pub fn find_project_by_id(project_id: &str) -> Option<ProjectInfoInternal> {
         }
         None
     })
+}
+
+//newbie api shows restricted info!
+#[query]
+pub fn get_project_details_for_mentor_and_investor(project_id: String) -> ProjectPublicInfo {
+    
+    let project_details = find_project_by_id(project_id.as_str()).expect("project not found");
+    let project_id = project_id.to_string().clone();
+
+    let project = ProjectPublicInfo {
+        project_id,
+        project_name: project_details.params.project_name,
+        project_logo: project_details.params.project_logo,
+        preferred_icp_hub: project_details.params.preferred_icp_hub,
+        live_on_icp_mainnet: project_details.params.live_on_icp_mainnet,
+        money_raised_till_now: project_details.params.money_raised_till_now,
+        supports_multichain: project_details.params.supports_multichain,
+        project_elevator_pitch: project_details.params.project_elevator_pitch,
+        project_area_of_focus: project_details.params.project_area_of_focus,
+        promotional_video: project_details.params.promotional_video,
+        github_link: project_details.params.github_link,
+        reason_to_join_incubator: project_details.params.reason_to_join_incubator,
+        project_description: project_details.params.project_description,
+        project_cover: project_details.params.project_cover,
+        project_team: project_details.params.project_team,
+        token_economics: project_details.params.token_economics,
+        technical_docs: project_details.params.technical_docs,
+        long_term_goals: project_details.params.long_term_goals,
+        target_market: project_details.params.target_market,
+        self_rating_of_project: project_details.params.self_rating_of_project,
+        user_data: project_details.params.user_data,
+        mentors_assigned: project_details.params.mentors_assigned,
+        vc_assigned: project_details.params.vc_assigned,
+        project_twitter: project_details.params.project_twitter,
+        project_linkedin: project_details.params.project_linkedin,
+        project_website: project_details.params.project_website,
+        project_discord: project_details.params.project_discord,
+        upload_private_documents: project_details.params.upload_private_documents,
+        public_docs: project_details.params.public_docs,
+        dapp_link: project_details.params.dapp_link,
+    };
+
+    project
 }
 
 pub fn list_all_projects() -> HashMap<Principal, ProjectVecWithRoles> {
@@ -1833,12 +1912,13 @@ pub fn access_private_docs(project_id: String) -> Result<Vec<Docs>, String> {
     });
 
     // Check if the caller is approved to access the private documents for this project
-    let is_approved = is_owner || PRIVATE_DOCS_ACCESS.with(|access| {
-        access
-            .borrow()
-            .get(&project_id)
-            .map_or(false, |principals| principals.contains(&caller))
-    });
+    let is_approved = is_owner
+        || PRIVATE_DOCS_ACCESS.with(|access| {
+            access
+                .borrow()
+                .get(&project_id)
+                .map_or(false, |principals| principals.contains(&caller))
+        });
 
     if !is_approved {
         return Err(
@@ -1867,6 +1947,7 @@ pub fn access_private_docs(project_id: String) -> Result<Vec<Docs>, String> {
         Err("Project ID not found.".to_string())
     })
 }
+
 
 #[update]
 pub fn decline_money_access_request(project_id: String, sender_id: Principal) -> String {
@@ -1993,8 +2074,5 @@ pub fn add_project_rating(ratings: ProjectRatingStruct) -> Result<String, String
 
 #[query]
 fn get_project_ratings(project_id: String) -> Option<Vec<(Principal, ProjectReview)>> {
-    PROJECT_RATING.with(|ratings| {
-        
-        ratings.borrow().get(&project_id).cloned()
-    })
+    PROJECT_RATING.with(|ratings| ratings.borrow().get(&project_id).cloned())
 }

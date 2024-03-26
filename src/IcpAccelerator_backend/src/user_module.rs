@@ -365,10 +365,10 @@ pub fn switch_role(role_to_switch: String, new_status: String) {
                     roles[active_index].status = "approved".to_string();
                 }
             } else {
-                ic_cdk::println!("The role to switch is not approved or doesn't exist.");
+               // ic_cdk::println!("The role to switch is not approved or doesn't exist.");
             }
         } else {
-            ic_cdk::println!("Only roles with 'approved' status can be set to 'active'");
+           // ic_cdk::println!("Only roles with 'approved' status can be set to 'active'");
         }
     });
 }

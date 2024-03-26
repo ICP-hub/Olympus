@@ -339,6 +339,38 @@ type ProjectNotification = record {
   timestamp : nat64;
 };
 type ProjectNotificationType = variant { AccessRequest : AccessRequest };
+type ProjectPublicInfo = record {
+  project_linkedin : opt text;
+  project_elevator_pitch : opt text;
+  dapp_link : opt text;
+  reason_to_join_incubator : text;
+  user_data : UserInformation;
+  project_discord : opt text;
+  upload_private_documents : opt bool;
+  project_description : text;
+  vc_assigned : opt vec VentureCapitalist;
+  token_economics : opt text;
+  self_rating_of_project : float64;
+  preferred_icp_hub : opt text;
+  mentors_assigned : opt vec MentorProfile;
+  project_twitter : opt text;
+  target_market : opt text;
+  long_term_goals : opt text;
+  project_area_of_focus : text;
+  live_on_icp_mainnet : opt bool;
+  technical_docs : opt text;
+  github_link : opt text;
+  public_docs : opt vec Docs;
+  project_cover : vec nat8;
+  project_id : text;
+  project_website : opt text;
+  promotional_video : opt text;
+  money_raised_till_now : opt bool;
+  supports_multichain : opt text;
+  project_logo : vec nat8;
+  project_name : text;
+  project_team : opt vec TeamMember;
+};
 type ProjectRatingStruct = record {
   message : text;
   rating : nat32;
@@ -581,6 +613,9 @@ service : {
   delete_venture_capitalist : () -> (text);
   delete_venture_capitalist_caller : () -> (text);
   filter_out_projects : (FilterCriteria) -> (vec ProjectInfo) query;
+  find_project_details_for_mentor_and_investor : (text) -> (
+      ProjectPublicInfo,
+    ) query;
   get_accepted_request_for_investor : () -> (vec OfferToSendToInvestor) query;
   get_accepted_request_for_mentor : (principal) -> (
       vec OfferToSendToMentor,
