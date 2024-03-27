@@ -14,6 +14,7 @@ use sha2::{Digest, Sha256};
 use std::io::Read;
 use std::{cell::RefCell, collections::HashMap, fmt::format, ptr::null};
 use ic_cdk::api::stable::{StableReader, StableWriter};
+use crate::PROJECTS_ASSOCIATED_WITH_INVESTOR;
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
 pub struct OfferToInvestor {
@@ -231,6 +232,11 @@ pub fn accept_offer_of_project_by_investor(offer_id: String, response_message: S
                                         .as_mut()
                                         .unwrap()
                                         .push(investor_profile.params.clone());
+
+                                        PROJECTS_ASSOCIATED_WITH_INVESTOR.with(|storage|{
+                                            let mut associate_project = storage.borrow_mut();
+                                            associate_project.entry(offer.sender_principal).or_insert_with(Vec::new).push(project.params.clone())
+                                        })
                                 }
                             }
                         })

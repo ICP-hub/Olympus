@@ -1,4 +1,4 @@
-use crate::get_mentor_by_principal;
+use crate::{get_mentor_by_principal, APPLICATION_FORM, VENTURECAPITALIST_STORAGE};
 use candid::{CandidType, Principal};
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::{api::time, caller};
@@ -8,6 +8,7 @@ use sha2::{Digest, Sha256};
 use std::io::Read;
 use std::{cell::RefCell, collections::HashMap, fmt::format, ptr::null};
 use ic_cdk::api::stable::{StableReader, StableWriter};
+use crate::PROJECTS_ASSOCIATED_WITH_INVESTOR;
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
 pub struct OfferToProjectByInvestor {
@@ -203,10 +204,43 @@ pub fn accept_offer_of_investor(offer_id: String, response_message: String, proj
                         {
                             project_offer.request_status = "accepted".to_string();
                             project_offer.response = response_message.clone();
-                            project_offer.accepted_at = time()
+                            project_offer.accepted_at = time();
+
+                            VENTURECAPITALIST_STORAGE.with(|state|{
+                                let state = state.borrow();
+                                let capitalist= state.get(&offer.sender_principal).expect("investor not found");
+            
+                                APPLICATION_FORM.with(|project_details|{
+
+                                    let mut project_details = project_details.borrow_mut();
+                                    //let project_details = project_details.get(&caller()).expect("");
+                                    if let Some(projects) = project_details.get_mut(&caller()){
+                                        if let Some(project) = projects.iter_mut().find(|project| project.uid == project_offer.project_id){
+
+                                            if project.params.vc_assigned.is_none() {
+                                                project.params.vc_assigned = Some(Vec::new());
+                                            }
+
+                                          project.params.vc_assigned.as_mut().unwrap().push(capitalist.params.clone());
+
+                                          PROJECTS_ASSOCIATED_WITH_INVESTOR.with(|storage|{
+                                            let mut associate_project = storage.borrow_mut();
+                                            associate_project.entry(offer.sender_principal).or_insert_with(Vec::new).push(project.params.clone())
+                                        })
+            
+                                        }
+                                    }
+            
+                                })
+                            })
+
+                            
                         }
                     }
                 });
+
+
+                
             }
         }
     });

@@ -10,6 +10,7 @@ use sha2::{Digest, Sha256};
 use ic_cdk::api::stable::{StableReader, StableWriter};
 use std::io::Read;
 use std::{cell::RefCell, collections::HashMap, fmt::format, ptr::null};
+use crate::PROJECTS_ASSOCIATED_WITH_MENTOR;
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
 pub struct OfferToMentor {
@@ -188,35 +189,30 @@ pub fn accept_offer_of_project(offer_id: String, response_message: String) -> St
                 offer.request_status = "accepted".to_string();
                 offer.response = response_message.clone();
                 offer.accepted_at = time();
-                
-                // APPLICATION_FORM.with(|project|{
-                //     let project = project.borrow().get(&mentor_id).
-                // });
+            
 
                 MENTOR_REGISTRY.with(|storage|{
                     let mentor_profile = storage.borrow().get(&mentor_id).expect("couldn't get mentor profile").clone();
 
                     APPLICATION_FORM.with(|projects| {
-                        // offer.project_info.project_id;
-                        let mut project = projects.borrow_mut();
-                       // let mut project = project.get_mut(&offer.sender_principal).expect("couldn't get project");
+                        
+                        
+                    let mut project = projects.borrow_mut();
+                       
                        if let Some(project) =  project.get_mut(&offer.sender_principal){
                         if let Some(project) = project.iter_mut().find(|project|{project.uid == offer.project_info.project_id}){
-                            // let mut associated_mentor = project.params.mentors_assigned.clone().unwrap_or(Vec::new());
-                            // associated_mentor.push(mentor_profile.profile.clone())
-                            //let mentor_assigned = vec![];
-
+                            
                             if project.params.mentors_assigned.is_none() {
                                 project.params.mentors_assigned = Some(Vec::new());
                             }
-
-                            // project.params.mentors_assigned.clone().unwrap_or_else(Vec::new).push(mentor_profile.profile);
-
                             project.params.mentors_assigned.as_mut().unwrap().push(mentor_profile.profile.clone());
-                            
-                            // project.params.mentors_assigned = Some(mentors);
-                        }
 
+                            //get_assigned_projects_to_mentor
+                            PROJECTS_ASSOCIATED_WITH_MENTOR.with(|storage|{
+                                let mut associate_project = storage.borrow_mut();
+                                associate_project.entry(mentor_id).or_insert_with(Vec::new).push(project.params.clone())
+                            })
+                        }
                        }
 
                     })

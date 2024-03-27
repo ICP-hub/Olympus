@@ -12,6 +12,8 @@ mod notification_to_project;
 mod project_offer_to_investor;
 mod investor_offer_to_project;
 
+mod associations;
+
 mod project_like;
 mod requests;
 mod roles;
@@ -28,6 +30,8 @@ use project_offer_to_investor::*;
 use investor_offer_to_project::*;
 use notification_to_mentor::*;
 use notification_to_project::*;
+use associations::*;
+
 
 use ic_cdk::api::caller;
 use ic_cdk_macros::pre_upgrade;
