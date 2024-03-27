@@ -1,43 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import ProjectDetailsCard from './ProjectDetailsCard';
-import MembersProfileCard from '../../TeamMembers/MembersProfileCard';
-import MentorsProfileCard from '../../TeamMembers/MentorsProfileCard';
-import InvenstorProfileCard from '../../TeamMembers/InvenstorProfileCard';
-import ProjectRatings from '../ProjectRatings';
 import MembersProfileDetailsCard from './MembersProfileDetailsCard';
 import MentorsProfileDetailsCard from './MentorsProfileDetailsCard';
 import InvestorProfileDetailsCard from './InvestorProfileDetailsCard';
-import AnnouncementModal from '../../../models/AnnouncementModal';
-import AddJobsModal from '../../../models/AddJobsModal';
-import AddRatingModal from '../../../models/AddRatingModal';
-import AnnouncementCard from '../../Dashboard/AnnouncementCard';
-import ProjectJobCard from '../ProjectDetails/ProjectJobCard';
-import ment from "../../../../assets/images/ment.jpg";
 import AnnouncementDetailsCard from './AnnouncementDetailsCard';
 import ProjectJobDetailsCard from './ProjectJobDetailsCard';
 import ProjectDetailsCommunityRatings from './ProjectDetailsCommunityRatings';
-import AddAMentorRequestModal from '../../../models/AddAMentorRequestModal';
 import toast, { Toaster } from "react-hot-toast";
-import { useNavigate } from 'react-router-dom';
-import ProjectDocuments from '../../Resources/ProjectDocuments';
-const ProjectDetailsForOwnerProject = () => {
+import { useParams, useNavigate } from 'react-router-dom';
+
+const ProjectDetailsForUserRole = () => {
     const navigate = useNavigate();
+    const {id} = useParams()
     const actor = useSelector((currState) => currState.actors.actor)
+    const principal = useSelector((currState) => currState.internet.principal);
     const [projectData, setProjectData] = useState(null);
 
     const fetchProjectData = async () => {
-        await actor.get_my_project()
+        await actor.get_project_info_for_user(id)
             .then((result) => {
-                console.log('result-in-get_my_project', result)
+                console.log('result-in-get_project_info_for_user', result)
                 if (result && Object.keys(result).length > 0) {
-                    setProjectData(result)
+                    setProjectData(result[0])
                 } else {
                     setProjectData(null)
                 }
             })
             .catch((error) => {
-                console.log('error-in-get_my_project', error)
+                console.log('error-in-get_project_info_for_user', error)
                 setProjectData(null)
             })
     };
@@ -59,29 +50,10 @@ const ProjectDetailsForOwnerProject = () => {
             id: "community-ratings",
             label: "community rating",
         },
-        {
-            id: "project-ratings",
-            label: "Rubric Rating",
-        },
-        {
-            id: "project-documents",
-            label: "Documents",
-        },
-        {
-            id: "project-money-raising",
-            label: "Money Raised",
-        },
     ];
 
     const [activeTab, setActiveTab] = useState(headerData[0].id);
-    const [isAnnouncementModalOpen, setAnnouncementModalOpen] = useState(false);
-    const [isJobsModalOpen, setJobsModalOpen] = useState(false);
-
-    const handleCloseModal = () => setAnnouncementModalOpen(false);
-    const handleOpenModal = () => setAnnouncementModalOpen(true);
-    const handleJobsCloseModal = () => setJobsModalOpen(false);
-    const handleJobsOpenModal = () => setJobsModalOpen(true);
-
+  
     const handleTabClick = (tab) => {
         setActiveTab(tab);
     };
@@ -103,7 +75,7 @@ const ProjectDetailsForOwnerProject = () => {
                         name={true}
                         role={true}
                         socials={true}
-                        addButton={true}
+                        addButton={false}
                         filter={"team"}
                     />
                 );
@@ -116,7 +88,7 @@ const ProjectDetailsForOwnerProject = () => {
                         name={true}
                         role={true}
                         socials={true}
-                        addButton={true}
+                        addButton={false}
                         filter={"mentor"}
                     />
                 );
@@ -129,7 +101,7 @@ const ProjectDetailsForOwnerProject = () => {
                         name={true}
                         role={true}
                         socials={true}
-                        addButton={true}
+                        addButton={false}
                         filter={"investor"}
                     />
                 );
@@ -146,121 +118,22 @@ const ProjectDetailsForOwnerProject = () => {
                     />
                 )
 
-            case "project-ratings":
-                return (
-                    <ProjectRatings
-                        profile={true}
-                        type={!true}
-                        name={true}
-                        role={true}
-                        socials={true}
-                        filter={"rubric"}
-                    />
-                );
-            case "project-documents":
-                return (
-                    <ProjectDocuments
-                        data={projectData}
-                        profile={true}
-                        type={!true}
-                        name={true}
-                        role={true}
-                        socials={true}
-                        filter={"documents"}
-                    />
-                ); 
+          
             default:
                 return null;
         }
     };
 
 
-    const handleAddAnnouncement = async ({ announcementTitle, announcementDescription }) => {
-        console.log('add announcement')
-        if (actor) {
-            let argument = {
-                project_id: projectData?.uid,
-                announcement_title: announcementTitle,
-                announcement_description: announcementDescription,
-                timestamp: Date.now(),
-            }
-            console.log('argument', argument)
-            await actor.add_announcement(argument)
-                .then((result) => {
-                    console.log('result-in-add_announcement', result)
-                    if (result && Object.keys(result).length > 0) {
-                        handleCloseModal();
-                        fetchProjectData();
-                        toast.success('announcement added successfully')
-                    } else {
-                        handleCloseModal();
-                        toast.error('something got wrong')
-                    }
-                })
-                .catch((error) => {
-                    console.log('error-in-add_announcement', error)
-                    toast.error('something got wrong')
-                    handleCloseModal();
-                })
-        }
-    }
-
-    const handleAddJob = async ({ jobTitle, jobLink, jobDescription, jobCategory, jobLocation }) => {
-        console.log('add job')
-        if (actor) {
-            let argument = {
-                title: jobTitle,
-                description: jobDescription,
-                category: jobCategory,
-                location: jobLocation,
-                link: jobLink,
-                project_id: projectData?.uid,
-
-            }
-            console.log('argument', argument)
-            await actor.post_job(argument)
-                .then((result) => {
-                    console.log('result-in-post_job', result)
-                    if (result) {
-                        handleJobsCloseModal();
-                        fetchProjectData();
-                        toast.success('job posted successfully')
-                    } else {
-                        handleJobsCloseModal();
-                        toast.error('something got wrong')
-                    }
-                })
-                .catch((error) => {
-                    console.log('error-in-post_job', error)
-                    toast.error('something got wrong')
-                    handleJobsCloseModal();
-                })
-        }
-    }
-
-
-    const fetchRubricRating = async (val) => {
-        await actor.calculate_average(val?.uid)
-            .then((result) => {
-                console.log('result-in-calculate_average', result)
-            })
-            .catch((error) => {
-                console.log('error-in-calculate_average', error)
-            })
-    }
-
-    
-   
-    
     useEffect(() => {
-        if (actor) {
+        if (actor && principal) {
             if (!projectData) {
                 fetchProjectData();
             } else {
-                fetchRubricRating(projectData);
+              
             }
         }
-    }, [actor, projectData]);
+    }, [actor, principal, projectData]);
 
     return (
         <section className="text-black bg-gray-100 pb-4">
@@ -271,7 +144,7 @@ const ProjectDetailsForOwnerProject = () => {
                             data={projectData}
                             image={true}
                             title={true}
-                            rubric={true}
+                            rubric={false}
                             tags={true}
                             socials={true}
                             doj={true}
@@ -280,16 +153,10 @@ const ProjectDetailsForOwnerProject = () => {
                             dapp={true}
                         />
                     </div>
-                    <div className="flex justify-end w-full py-4">
-
-                    </div>
                     {projectData?.params?.project_description && (
                         <div className="flex flex-col w-full py-4">
                             <div className='flex justify-between w-full'>
                                 <p className="capitalize pb-2 font-bold text-xl">overview</p>
-                                <button onClick={() => navigate('/project-association-requests')} className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900">
-                                    View Association Requests
-                                </button>
                             </div>
                             <p className="text-base text-gray-500 max-h-32 overflow-y-scroll">
                                 {projectData?.params?.project_description}
@@ -298,7 +165,6 @@ const ProjectDetailsForOwnerProject = () => {
                     )}
 
                     <div className="mb-4">
-                        {/* <ProjectRank dayRank={true} weekRank={true} /> */}
                         <div className="text-sm font-bold text-center text-[#737373] mt-2">
                             <ul className="flex flex-wrap -mb-px text-[10px] ss2:text-[10.5px] ss3:text-[11px]  cursor-pointer">
                                 {headerData.map((header) => (
@@ -324,10 +190,6 @@ const ProjectDetailsForOwnerProject = () => {
                             <h1 className="font-[950] text-lg md:text-2xl  text-blue-700">
                                 Announcement
                             </h1>
-                            <button className="font-[950] border bg-[#3505B2] py-[7px] px-[9px] rounded-md text-white text-nowrap capitalize"
-                                onClick={handleOpenModal}>
-                                Add Announcement
-                            </button>
                         </div>
                         <AnnouncementDetailsCard data={projectData} />
                     </div>
@@ -336,13 +198,9 @@ const ProjectDetailsForOwnerProject = () => {
                             <h1 className="font-[950] text-lg md:text-2xl  text-blue-700">
                                 jobs/opportunity
                             </h1>
-                            <button className="font-[950] border bg-[#3505B2] px-4 py-2 rounded-md text-white text-nowrap capitalize"
-                                onClick={handleJobsOpenModal}>
-                                Add Jobs
-                            </button>
                         </div>
                         <ProjectJobDetailsCard
-                            data={projectData}
+                            data={projectData} 
                             image={true}
                             tags={true}
                             country={true}
@@ -351,22 +209,9 @@ const ProjectDetailsForOwnerProject = () => {
                     </div>
                 </div>
             </div>
-
-
-            {isAnnouncementModalOpen && (
-                <AnnouncementModal
-                    onClose={handleCloseModal}
-                    onSubmitHandler={handleAddAnnouncement}
-                />)}
-            {isJobsModalOpen && (
-                <AddJobsModal
-                    onJobsClose={handleJobsCloseModal}
-                    onSubmitHandler={handleAddJob}
-                />)}
-
             <Toaster />
         </section>
     );
 };
 
-export default ProjectDetailsForOwnerProject;
+export default ProjectDetailsForUserRole;

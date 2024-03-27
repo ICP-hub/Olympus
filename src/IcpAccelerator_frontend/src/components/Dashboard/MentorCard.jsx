@@ -5,31 +5,6 @@ import { useSelector } from "react-redux";
 import { useNavigate } from 'react-router-dom';
 import uint8ArrayToBase64 from '../Utils/uint8ArrayToBase64';
 import NoDataCard from "../Mentors/Event/NoDataCard";
-const mentors = [
-  {
-    id: null,
-    image: image,
-    name: "SamyKarim",
-    role: "Toshi",
-    areaOfFocus: "Kubernetes",
-  },
-  {
-    id: null,
-    image: image,
-    name: "SamyKarim",
-    role: "Toshi, Managing Partner. Ex-Binance",
-    areaOfFocus: "Observability",
-  },
-  {
-    id: null,
-    image: image,
-    name: "SamyKarim",
-    role: "Toshi, Managing Partner. Ex-Binance",
-    areaOfFocus: "SRE",
-  },
-
-];
-
 
 const MentorCard = () => {
   const navigate = useNavigate();
@@ -68,7 +43,7 @@ const MentorCard = () => {
     </div>
   }
   return (
-    <div className="flex flex-col lg:flex-row items-center my-8 gap-12 md:w-fit w-full">
+    <div className="flex flex-col lg:flex-row items-center my-8 gap-4 w-full">
       {data && data.slice(0,3).map((mentor, index) => {
         let id = null
         let img = ""

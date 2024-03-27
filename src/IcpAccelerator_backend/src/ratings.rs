@@ -200,7 +200,7 @@ pub fn update_rating(ratings: Vec<Rating>) {
 
 
 
-pub fn calculate_average(project_id: &str) -> RatingAverages {
+pub fn calculate_average_api(project_id: &str) -> RatingAverages {
     RATING_SYSTEM.with(|system| {
         let system = system.borrow();
 

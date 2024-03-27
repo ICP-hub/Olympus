@@ -204,7 +204,7 @@ pub struct ProjectInfoForUser {
     pub user_data: UserInformation,
     pub project_team: Option<Vec<TeamMember>>,
     pub dapp_link: Option<String>,
-    pub weekly_active_users: Option<u32>,
+    pub weekly_active_users: Option<u64>,
     pub date_of_joining: Option<u64>,
     pub mentor_associated: Option<Vec<MentorProfile>>,
     pub vc_associated: Option<Vec<VentureCapitalist>>,
@@ -1268,7 +1268,7 @@ pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUse
     );
     let jobs_opportunity_posted = get_jobs_posted_by_project(project_id.clone());
 
-    let community_ratings = crate::ratings::calculate_average(&project_id);
+    let community_ratings = crate::ratings::calculate_average_api(&project_id);
 
     APPLICATION_FORM.with(|storage| {
         let projects = storage.borrow();
