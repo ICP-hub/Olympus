@@ -101,8 +101,8 @@ pub struct ProjectInfo {
     private_docs: Option<Vec<Docs>>,
     public_docs: Option<Vec<Docs>>,
     pub dapp_link: Option<String>,
-    pub weekly_active_users: Option<u32>,
-    pub revenue: Option<u32>,
+    pub weekly_active_users: Option<u64>,
+    pub revenue: Option<u64>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
