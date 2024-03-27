@@ -32,6 +32,9 @@ import InvestorSideAssociation from "./components/Association/InvestorSideAssoci
 import ViewInvestorByProjectId from "./components/Dashboard/MoreLaunchPages/ViewInvestorByProjectId";
 import ProjectDetailsForMentorProject from "./components/Project/ProjectDetailsPages/ProjectDetailsForMentorProject";
 import RequestsPrivateDocument from "./components/Project/ProjectDetailsPages/RequestsPrivateDocument";
+import ProjectDetailsForMentor from "./components/Project/ProjectDetailsPages/ProjectDetailsForMentor";
+import ProjectDetailsForInvestor from "./components/Project/ProjectDetailsPages/ProjectDetailsForInvestor";
+import ProjectDetailsForUserRole from "./components/Project/ProjectDetailsPages/ProjectDetailsForUserRole";
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
 
@@ -76,9 +79,12 @@ const AppRoutes = () => {
     // { path: "/", element: <MentorDashboard /> },
     // { path: "/", element: <InvestorDashboard /> },
     // { path: "/", element: <ProjectDetailsForOwnerProject /> },
+    // { path: "/individual-project-details-project-mentor/:id", element: <ProjectDetailsForMentorProject /> },
+    // { path: "/individual-project-details-user/:id", element: <ProjectDetailsForUser /> },
+    { path: "/individual-project-details-user/:id", element: <ProjectDetailsForUserRole /> },
     { path: "/individual-project-details-project-owner", element: <ProjectDetailsForOwnerProject /> },
-    { path: "/individual-project-details-project-mentor/:id", element: <ProjectDetailsForMentorProject /> },
-    { path: "/individual-project-details-project-investor/:id", element: <ProjectDetailsForUser /> },
+    { path: "/individual-project-details-project-mentor/:id", element: <ProjectDetailsForMentor /> },
+    { path: "/individual-project-details-project-investor/:id", element: <ProjectDetailsForInvestor /> },
     { path: "/association", element: <ProjectAssociation /> },
     { path: "/create-user", element: <NormalUser /> },
     { path: "/create-project", element: <CreateProject /> },
@@ -88,11 +94,10 @@ const AppRoutes = () => {
     { path: "/project-details", element: <ProjectDetails /> },
     { path: "/profile", element: <UserProfile /> },
     { path: "/create-mentor", element: <MentorRegistration /> },
-    { path: "/individual-project-details-user/:id", element: <ProjectDetailsForUser /> },
     { path: "/view-mentor-details/:id", element: <MentorsProfile /> },
     { path: "/view-investor-details/:id", element: <InvestorProfile /> },
-    { path: "/view-mentors", element: <SearchMentors /> }, 
-    { path: "/view-mentors/:id", element: <SearchMentorsByProjectId /> }, 
+    { path: "/view-mentors", element: <SearchMentors /> },
+    { path: "/view-mentors/:id", element: <SearchMentorsByProjectId /> },
     { path: "/launch-projects", element: <MoreProjectLaunchPage /> },
     { path: "/raising-projects", element: <MoreCurrentlyRaisingProjects /> },
     { path: "/view-investor", element: <ViewInvestor /> },

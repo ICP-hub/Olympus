@@ -405,8 +405,8 @@ fn update_rating_api(rating: Vec<Rating>) {
 
 #[query]
 
-fn calculate_average_api(project_id: String) -> RatingAverages {
-    ratings::calculate_average(&project_id)
+fn calculate_average(project_id: String) -> RatingAverages {
+    ratings::calculate_average_api(&project_id)
 }
 
 #[query]
