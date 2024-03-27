@@ -290,8 +290,6 @@ pub fn get_pending_admin_notifications() -> Vec<Notification> {
     })
 }
 
-
-
 async fn get_info() -> Result<Vec<Principal>, MyError> {
     let canister_id: candid::Principal = id();
 
@@ -1133,6 +1131,115 @@ pub struct Counts {
     only_user_count: usize,
 }
 
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+
+pub struct ApprovedList {
+    approved_type: String,
+    user_data: UserInformation,
+}
+
+pub fn get_approved_mentor_list_with_user_data() -> HashMap<Principal, ApprovedList> {
+    let mentor_vec = MENTOR_REGISTRY.with(|registry| {
+        registry
+            .borrow()
+            .keys()
+            .cloned()
+            .collect::<Vec<Principal>>()
+    });
+
+    mentor_vec
+        .into_iter()
+        .filter_map(|principal| {
+            match get_user_info_by_principal(principal) {
+                Ok(user_data) => {
+                    let approved_list = ApprovedList {
+                        approved_type: String::from("Mentor"),
+                        user_data,
+                    };
+                    Some((principal, approved_list))
+                }
+                Err(_) => None, // Error handling: in this case, we skip the entry
+            }
+        })
+        .collect()
+}
+
+pub fn get_approved_vc_list_with_user_data() -> HashMap<Principal, ApprovedList> {
+    let vc_vec = VENTURECAPITALIST_STORAGE.with(|registry| {
+        registry
+            .borrow()
+            .keys()
+            .cloned()
+            .collect::<Vec<Principal>>()
+    });
+
+    vc_vec
+        .into_iter()
+        .filter_map(|principal| {
+            match get_user_info_by_principal(principal) {
+                Ok(user_data) => {
+                    let approved_list = ApprovedList {
+                        approved_type: String::from("Vc"),
+                        user_data,
+                    };
+                    Some((principal, approved_list))
+                }
+                Err(_) => None, // Error handling: in this case, we skip the entry
+            }
+        })
+        .collect()
+}
+
+pub fn get_approved_project_list_with_user_data() -> HashMap<Principal, ApprovedList> {
+    let vc_vec = APPLICATION_FORM.with(|registry| {
+        registry
+            .borrow()
+            .keys()
+            .cloned()
+            .collect::<Vec<Principal>>()
+    });
+
+    vc_vec
+        .into_iter()
+        .filter_map(|principal| {
+            match get_user_info_by_principal(principal) {
+                Ok(user_data) => {
+                    let approved_list = ApprovedList {
+                        approved_type: String::from("Project"),
+                        user_data,
+                    };
+                    Some((principal, approved_list))
+                }
+                Err(_) => None, // Error handling: in this case, we skip the entry
+            }
+        })
+        .collect()
+}
+
+#[query]
+
+fn get_total_approved_list_with_user_data() -> HashMap<Principal, Vec<ApprovedList>> {
+    let mut combined_map = HashMap::new();
+
+    // Assuming these functions return HashMap<Principal, ApprovedRoleList>
+    let mentor_list = get_approved_mentor_list_with_user_data();
+    let vc_list = get_approved_vc_list_with_user_data();
+    let project_list = get_approved_project_list_with_user_data();
+
+   
+
+    for (principal, role_list) in [mentor_list, vc_list, project_list]
+        .iter()
+        .flat_map(|list| list)
+    {
+        combined_map
+            .entry(principal.clone())
+            .or_insert_with(Vec::new)
+            .push(role_list.clone());
+    }
+
+    combined_map
+}
 #[query]
 pub fn get_total_count() -> Counts {
     let vc_count = VENTURECAPITALIST_STORAGE.with(|awaiters| awaiters.borrow().len());
