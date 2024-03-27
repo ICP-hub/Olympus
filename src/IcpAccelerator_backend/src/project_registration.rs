@@ -624,7 +624,7 @@ pub async fn create_project(info: ProjectInfo) -> String {
     });
 
     let info_clone = info.clone();
-    let user_uid = crate::get_member_id();
+    let user_uid = crate::user_module::update_user(info_clone.user_data).await;
     let uuids = raw_rand().await.unwrap().0;
     let uid = format!("{:x}", Sha256::digest(&uuids));
     let new_id = uid.clone().to_string();
