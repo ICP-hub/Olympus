@@ -279,7 +279,7 @@ type ProjectInfo = record {
   project_elevator_pitch : opt text;
   dapp_link : opt text;
   reason_to_join_incubator : text;
-  user_data : UserInformation;
+  user_data : UserInfoInternal;
   project_discord : opt text;
   upload_private_documents : opt bool;
   weekly_active_users : opt nat32;
@@ -310,14 +310,24 @@ type ProjectInfo = record {
   project_team : opt vec TeamMember;
 };
 type ProjectInfoForUser = record {
+  project_linkedin : opt text;
   vc_associated : opt vec VentureCapitalist;
+  project_discord : opt text;
   area_of_focus : opt text;
+  project_description : opt text;
   reviews : vec Suggestion;
+  community_rating : opt RatingAverages;
   team_member_info : opt vec TeamMember;
   date_of_joining : opt nat64;
   website_social_group : opt text;
+  project_twitter : opt text;
   mentor_associated : opt vec MentorProfile;
   country_of_project : opt text;
+  project_cover : vec nat8;
+  project_website : opt text;
+  promotional_video : opt text;
+  project_logo : opt vec nat8;
+  project_name : opt text;
   announcements : vec record { principal; vec AnnouncementsInternal };
   live_link_of_project : opt text;
   jobs_opportunity : opt vec JobsInternal;
@@ -351,7 +361,7 @@ type ProjectPublicInfo = record {
   project_elevator_pitch : opt text;
   dapp_link : opt text;
   reason_to_join_incubator : text;
-  user_data : UserInformation;
+  user_data : UserInfoInternal;
   project_discord : opt text;
   upload_private_documents : opt bool;
   project_description : text;
@@ -430,9 +440,13 @@ type Result = variant { Ok : MoneyRaised; Err : CustomError };
 type Result_1 = variant { Ok : vec Docs; Err : CustomError };
 type Result_2 = variant { Ok : text; Err : text };
 type Result_3 = variant { Ok; Err : text };
-type Result_4 = variant { Ok : vec Review; Err : text };
-type Result_5 = variant { Ok : vec Testimonial; Err : text };
-type Result_6 = variant { Ok : UserInformation; Err : text };
+type Result_4 = variant {
+  Ok : record { opt vec record { principal; ProjectReview }; float32; bool };
+  Err : text;
+};
+type Result_5 = variant { Ok : vec Review; Err : text };
+type Result_6 = variant { Ok : vec Testimonial; Err : text };
+type Result_7 = variant { Ok : UserInformation; Err : text };
 type Review = record {
   tag : text;
   name : text;
@@ -766,14 +780,16 @@ service : {
   get_project_id : () -> (text) query;
   get_project_info_for_user : (text) -> (opt ProjectInfoForUser) query;
   get_project_pending_offers : () -> (vec OfferToMentor) query;
-  get_project_ratings : (text) -> (
-      opt vec record { principal; ProjectReview },
-    ) query;
+  get_project_ratings : (text) -> (Result_4) query;
   get_project_requests : (text) -> (vec Request) query;
   get_project_upvotes : (text) -> (opt UpvoteRecord) query;
   get_project_using_id : (text) -> (opt ProjectInfoInternal) query;
+  get_projects_associated_with_investor : (principal) -> (
+      vec ProjectInfo,
+    ) query;
+  get_projects_associated_with_mentor : (principal) -> (vec ProjectInfo) query;
   get_projects_with_all_info : () -> (vec ProjectInfoInternal) query;
-  get_review : (principal) -> (Result_4) query;
+  get_review : (principal) -> (Result_5) query;
   get_role : () -> (RolesResponse) query;
   get_role_status : () -> (vec Role) query;
   get_roles_for_principal : (principal) -> (vec Role) query;
@@ -786,7 +802,7 @@ service : {
   get_spotlight_projects : () -> (vec SpotlightDetails) query;
   get_suggestions_by_parent_id_caller : (text, nat64) -> (vec Suggestion) query;
   get_suggestions_by_status_caller : (text, text) -> (vec Suggestion) query;
-  get_testimonials : (principal) -> (Result_5) query;
+  get_testimonials : (principal) -> (Result_6) query;
   get_total_approved_list_with_user_data : () -> (
       vec record { principal; ApprovedList },
     ) query;
@@ -794,8 +810,8 @@ service : {
   get_total_pending_request : () -> (nat64) query;
   get_total_suggestions : (text) -> (nat64) query;
   get_user_info_struct : () -> (opt UserInformation) query;
-  get_user_information : () -> (Result_6) query;
-  get_user_information_using_uid : (text) -> (Result_6) query;
+  get_user_information : () -> (Result_7) query;
+  get_user_information_using_uid : (text) -> (Result_7) query;
   get_user_likes : (text) -> (opt LikeRecord) query;
   get_users_with_all_info : () -> (UserInfoInternal) query;
   get_vc_announcements : () -> (
