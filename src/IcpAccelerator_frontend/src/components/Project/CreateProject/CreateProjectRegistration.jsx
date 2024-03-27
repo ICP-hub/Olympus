@@ -128,6 +128,24 @@ const validationSchema = {
     ),
     project_area_of_focus: yup.string().required("Area of focus is required"),
     self_rating_of_project: yup.string().optional(),
+    weekly_active_users: yup
+      .string()
+      .test(
+        "is-integer",
+        "ICP Grants value must be an integer",
+        (value) =>
+          value === "" ||
+          (!isNaN(value) && parseInt(value, 10).toString() === value)
+      ),
+    revenue: yup
+      .string()
+      .test(
+        "is-integer",
+        "ICP Grants value must be an integer",
+        (value) =>
+          value === "" ||
+          (!isNaN(value) && parseInt(value, 10).toString() === value)
+      ),
     preferred_icp_hub: yup.string().required("ICP hub is required"),
     supports_multichain: yup.string(),
     promotional_video: yup.string().url("Must be a valid URL").optional(),
@@ -303,26 +321,24 @@ const CreateProjectRegistration = () => {
   useEffect(() => {
     // Update isLiveOnICP based on live_on_icp_mainnet field value
     setIsPrivateDocuments(IsPrivateDocument === "true");
-    if (IsPrivateDocument !== "true") {
-      setValue("title1", "");
-      setValue("link1", "");
-    }
 
     setIsLiveOnICP(liveOnICPMainnetValue === "true");
     if (liveOnICPMainnetValue !== "true") {
-      setValue("money_raised_till_now", "false");
+      setValue("dapp_link", "");
+      setValue("weekly_active_users", "");
+      setValue("revenue", "");
     }
     setIsMoneyRaised(MoneyRaisedTillNow === "true");
     // if(MoneyRaisedTillNow === "true"){
     //   checkTotal();
     // }
-    if (liveOnICPMainnetValue !== "true" || MoneyRaisedTillNow !== "true") {
+    if (MoneyRaisedTillNow !== "true") {
       setValue("target_amount", "");
-      setValue("dapp_link", "");
       setValue("icp_grants", "");
       setValue("investors", "");
       setValue("sns", "");
       setValue("raised_from_other_ecosystem", "");
+      setValue("upload_private_documents", "false");
     }
     setIsMulti_Chain(IsMultiChain === "true");
     if (IsMultiChain !== "true") {
@@ -345,138 +361,6 @@ const CreateProjectRegistration = () => {
     };
     validateStep();
   }, [step, trigger, userHasInteracted]);
-  // const addProjectLogoHandler = useCallback(
-  //   async (file) => {
-  //     clearErrors("project_logo");
-  //     if (!file)
-  //       return setError("project_logo", {
-  //         type: "manual",
-  //         message: "An image is required",
-  //       });
-  //     if (!["image/jpeg", "image/png", "image/gif"].includes(file.type))
-  //       return setError("project_logo", {
-  //         type: "manual",
-  //         message: "Unsupported file format",
-  //       });
-  //     if (file.size > 1024 * 1024)
-  //       // 1MB
-  //       return setError("project_logo", {
-  //         type: "manual",
-  //         message: "The file is too large",
-  //       });
-
-  //     setIsProjectLoading(true);
-  //     try {
-  //       const compressedFile = await CompressedImage(file);
-  //       const reader = new FileReader();
-  //       reader.onloadend = () => {
-  //         setProjectLogoPreview(reader.result);
-  //         setIsProjectLoading(false);
-  //       };
-  //       reader.readAsDataURL(compressedFile);
-
-  //       const byteArray = await compressedFile.arrayBuffer();
-  //       setProjectLogo(Array.from(new Uint8Array(byteArray)));
-  //       clearErrors("project_logo");
-  //     } catch (error) {
-  //       console.error("Error processing the image:", error);
-  //       setError("project_logo", {
-  //         type: "manual",
-  //         message: "Could not process image, please try another.",
-  //       });
-  //       setIsProjectLoading(false);
-  //     }
-  //   },
-  //   [
-  //     setError,
-  //     clearErrors,
-  //     setIsProjectLoading,
-  //     setProjectLogoPreview,
-  //     setProjectLogo,
-  //   ]
-  // );
-
-  // const addMultipleImageHandler = useCallback(
-  //   async (acceptedFiles) => {
-  //     clearErrors("project_cover");
-  //     setIsMultipleLoading(true);
-  //     const validatedFiles = acceptedFiles.filter((file, index) => {
-  //       if (index >= 5) {
-  //         setError("project_cover", {
-  //           type: "manual",
-  //           message: "You can only upload up to 5 images",
-  //         });
-  //         return false;
-  //       }
-  //       if (!["image/jpeg", "image/png", "image/gif"].includes(file.type)) {
-  //         setError("project_cover", {
-  //           type: "manual",
-  //           message: "Unsupported file format",
-  //         });
-  //         return false;
-  //       }
-  //       if (file.size > 1024 * 1024) {
-  //         // 1MB
-  //         setError("project_cover", {
-  //           type: "manual",
-  //           message: "The file is too large",
-  //         });
-  //         return false;
-  //       }
-  //       return true;
-  //     });
-
-  //     // Check if the number of validated files is greater than 5
-  //     if (validatedFiles.length > 5) {
-  //       setIsMultipleLoading(false);
-  //       return; // Stop further processing
-  //     }
-
-  //     const multipleImagesPreviewTemp = [];
-  //     const imagesDataTemp = [];
-
-  //     for (const file of validatedFiles) {
-  //       try {
-  //         const compressedFile = await CompressedImage(file);
-  //         const reader = new FileReader();
-
-  //         reader.onloadend = () => {
-  //           multipleImagesPreviewTemp.push(reader.result);
-  //           setMultipleImagesPreview([...multipleImagesPreviewTemp]);
-  //           setIsMultipleLoading(false);
-  //         };
-  //         reader.readAsDataURL(compressedFile);
-
-  //         const byteArray = await compressedFile.arrayBuffer();
-  //         imagesDataTemp.push(Array.from(new Uint8Array(byteArray)));
-  //         setMultipleImageData([...imagesDataTemp]);
-  //       } catch (error) {
-  //         console.error("Error processing the image:", error);
-  //         setError("project_cover", {
-  //           type: "manual",
-  //           message: "Could not process image, please try another.",
-  //         });
-  //         setIsMultipleLoading(false);
-  //       }
-  //     }
-  //   },
-  //   [
-  //     setError,
-  //     clearErrors,
-  //     setIsMultipleLoading,
-  //     setMultipleImagesPreview,
-  //     setMultipleImageData,
-  //   ]
-  // );
-  // const removeImage = (index) => {
-  //   const newPreviewImages = [...multipleImagesPreview];
-  //   newPreviewImages.splice(index, 1);
-  //   setMultipleImagesPreview(newPreviewImages);
-
-  //   const newData = [...multipleImageData];
-  //   newData.splice(index, 1);
-  //   setMultipleImageData(newData);
-  // };
   // Adding Project_image Here
   const addImageHandler = useCallback(
     async (file) => {
@@ -536,11 +420,6 @@ const CreateProjectRegistration = () => {
   const addLogoHandler = useCallback(
     async (file) => {
       clearErrors("logoData");
-      // if (!file)
-      //   return setError("logoData", {
-      //     type: "manual",
-      //     message: "An logo is required",
-      //   });
       if (!["image/jpeg", "image/png", "image/gif"].includes(file.type))
         return setError("logoData", {
           type: "manual",
@@ -582,11 +461,6 @@ const CreateProjectRegistration = () => {
   const addImageCoverHandler = useCallback(
     async (file) => {
       clearErrors("coverData");
-      // if (!file)
-      //   return setError("coverData", {
-      //     type: "manual",
-      //     message: "An cover image is required",
-      //   });
       if (!["image/jpeg", "image/png", "image/gif"].includes(file.type))
         return setError("coverData", {
           type: "manual",
@@ -635,17 +509,6 @@ const CreateProjectRegistration = () => {
   const handleNext = async () => {
     const fieldsToValidate = steps[step].fields.map((field) => field.name);
     const result = await trigger(fieldsToValidate);
-    // const isImageUploaded = imageData && imageData.length > 0;
-
-    // if (!isImageUploaded) {
-    //   setError("imageData", {
-    //     type: "manual",
-    //     message: "Please upload a ICP Hub profile.",
-    //   });
-    //   return;
-    // }
-    // if (result && isImageUploaded) {
-    //   clearErrors("imageData");
     if (result) {
       setStep((prevStep) => prevStep + 1);
       setActiveTab(projectRegistration[step + 1]?.id);
@@ -851,6 +714,12 @@ const CreateProjectRegistration = () => {
         self_rating_of_project: updatedFormData.self_rating_of_project
           ? parseFloat(updatedFormData.self_rating_of_project)
           : 0,
+        weekly_active_users: updatedFormData.weekly_active_users
+          ? [parseInt(updatedFormData.weekly_active_users)]
+          : [],
+        revenue: updatedFormData.weekly_active_users
+          ? [parseInt(updatedFormData.weekly_active_users)]
+          : [],
         target_market: [updatedFormData.target_market || ""],
         long_term_goals: [updatedFormData.long_term_goals || ""],
         technical_docs: [updatedFormData.technical_docs || ""],
@@ -858,7 +727,7 @@ const CreateProjectRegistration = () => {
         project_cover: [updatedFormData.coverData],
       };
 
-      // console.log("tempObj2 kaam kia ????? ", tempObj2); // work kia
+      console.log("tempObj2 kaam kia ????? ", tempObj2); // work kia
       setProjectDataObject(tempObj2);
       await sendingProjectData(tempObj2);
     } else if (
@@ -866,6 +735,33 @@ const CreateProjectRegistration = () => {
       (specificRole === undefined && step > steps.length - 1)
     ) {
       // console.log("first time visit ");
+      const updateMoneyRaisedTillNow =
+        MoneyRaisedTillNow === "true" ? true : false;
+      const updateIsPrivateDocument =
+        IsPrivateDocument === "true" ? true : false;
+      const updateliveOnICPMainnetValue =
+        liveOnICPMainnetValue === "true" ? true : false;
+      const privateDocs = updatedFormData?.private_docs?.map((doc) => ({
+        title: doc.title,
+        link: doc.link,
+      }));
+      //   const publicDocs = updatedFormData.public_docs.map(doc => ({
+      //     title: doc.title,
+      //     link: doc.link
+      // }));
+      const moneyRaised = {
+        target_amount: [
+          updatedFormData.target_amount
+            ? parseFloat(updatedFormData.target_amount)
+            : 0,
+        ],
+        icp_grants: [updatedFormData.icp_grants || ""],
+        investors: [updatedFormData.investors || ""],
+        sns: [updatedFormData.sns || ""],
+        raised_from_other_ecosystem: [
+          updatedFormData.raised_from_other_ecosystem || "",
+        ],
+      };
       let tempObj = {
         user_data: {
           profile_picture: [updatedFormData.imageData] || [],
@@ -878,26 +774,21 @@ const CreateProjectRegistration = () => {
           bio: [updatedFormData.bio] || [],
           area_of_intrest: updatedFormData.area_of_intrest || [],
         },
-        upload_private_documents: [updatedFormData.upload_private_documents],
+        upload_private_documents: [updateIsPrivateDocument],
         project_elevator_pitch: [updatedFormData.project_elevator_pitch],
-        public_docs: {
-          title: [updatedFormData.title] || [],
-          link: [updatedFormData.link] || [],
-        },
-        private_docs: {
-          title: [updatedFormData.title] || [],
-          link: [updatedFormData.link] || [],
-        },
+        public_docs: [],
+        private_docs: updateIsPrivateDocument === true ? [privateDocs] : [],
         technical_docs: [updatedFormData.technical_docs],
         reason_to_join_incubator:
           updatedFormData.reason_to_join_incubator || "",
-        target_amount: [updatedFormData.target_amount || ""],
-        icp_grants: [updatedFormData.icp_grants || ""],
-        investors: [updatedFormData.investors || ""],
-        sns: [updatedFormData.sns || ""],
-        raised_from_other_ecosystem: [
-          updatedFormData.raised_from_other_ecosystem || "",
-        ],
+        // target_amount: [updatedFormData.target_amount || ""],
+        // icp_grants: [updatedFormData.icp_grants || ""],
+        // investors: [updatedFormData.investors || ""],
+        // sns: [updatedFormData.sns || ""],
+        // raised_from_other_ecosystem: [
+        //   updatedFormData.raised_from_other_ecosystem || "",
+        // ],
+        money_raised: updateMoneyRaisedTillNow === true ? [moneyRaised] : [],
         promotional_video: [updatedFormData.promotional_video],
         project_area_of_focus: updatedFormData.project_area_of_focus || "",
         money_raised_till_now: [updateMoneyRaisedTillNow],
@@ -905,7 +796,7 @@ const CreateProjectRegistration = () => {
         project_name: updatedFormData.project_name || "",
         live_on_icp_mainnet: [updateliveOnICPMainnetValue],
         preferred_icp_hub: [updatedFormData.preferred_icp_hub],
-        dapp_link: [updatedFormData.dapp_link],
+        dapp_link: [updatedFormData.dapp_link || ""],
         project_website: [updatedFormData.project_website],
         project_twitter: [updatedFormData.project_twitter],
         project_discord: [updatedFormData.project_discord],
@@ -919,6 +810,8 @@ const CreateProjectRegistration = () => {
         self_rating_of_project: updatedFormData.self_rating_of_project
           ? parseFloat(updatedFormData.self_rating_of_project)
           : 0,
+        weekly_active_users: [updatedFormData.weekly_active_users || ""],
+        revenue: [updatedFormData.revenue || ""],
         target_market: [updatedFormData.target_market || ""],
         long_term_goals: [updatedFormData.long_term_goals || ""],
         technical_docs: [updatedFormData.technical_docs || ""],
@@ -1267,89 +1160,6 @@ const CreateProjectRegistration = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-3 px-4">
                 <div className="z-0 w-full mb-3 group">
                   <label
-                    htmlFor="upload_private_documents"
-                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                  >
-                    Upload Private Documents
-                  </label>
-                  <select
-                    {...register("upload_private_documents")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.upload_private_documents
-                        ? "border-red-500 placeholder:text-red-500"
-                        : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                  >
-                    <option className="text-lg font-bold" value="false">
-                      No
-                    </option>
-                    <option className="text-lg font-bold" value="true">
-                      Yes
-                    </option>
-                  </select>
-                  {errors.upload_private_documents && (
-                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                      {errors.upload_private_documents.message}
-                    </p>
-                  )}
-                </div>
-                {isPrivateDocument && (
-                  <>
-                    {fields.map((item, index) => (
-                      <div key={item.id}>
-                        <div className="z-0 w-full mb-3 group">
-                          <label
-                            htmlFor="title"
-                            className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                          >
-                            Title
-                          </label>
-                          <input
-                            {...register(`private_docs.${index}.title`)}
-                            className={`bg-gray-50 border-2 ${
-                              errors.title1
-                                ? "border-red-500 placeholder:text-red-500"
-                                : "border-[#737373]"
-                            } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                          />
-                          {errors.private_docs &&
-                            errors.private_docs[index]?.title && (
-                              <p>{errors.private_docs[index].title.message}</p>
-                            )}
-                          <label
-                            htmlFor="link"
-                            className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                          >
-                            Link
-                          </label>
-                          <input
-                            {...register(`private_docs.${index}.link`)}
-                            className={`bg-gray-50 border-2 ${
-                              errors.link
-                                ? "border-red-500 placeholder:text-red-500"
-                                : "border-[#737373]"
-                            } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                          />
-                          {errors.private_docs &&
-                            errors.private_docs[index]?.link && (
-                              <p>{errors.private_docs[index].link.message}</p>
-                            )}
-                        </div>
-                      </div>
-                    ))}
-                    <div>
-                      <button
-                        type="button"
-                        className="bg-blue-500 rounded-lg text-white p-2"
-                        onClick={() => append({ title: "", link: "" })}
-                      >
-                        Add More
-                      </button>
-                    </div>
-                  </>
-                )}
-                <div className="z-0 w-full mb-3 group">
-                  <label
                     htmlFor="preferred_icp_hub"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
@@ -1454,34 +1264,6 @@ const CreateProjectRegistration = () => {
                   <>
                     <div className="z-0 w-full mb-3 group">
                       <label
-                        htmlFor="money_raised_till_now"
-                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                      >
-                        Money raised till now
-                      </label>
-                      <select
-                        {...register("money_raised_till_now")}
-                        className={`bg-gray-50 border-2 ${
-                          errors.money_raised_till_now
-                            ? "border-red-500 placeholder:text-red-500"
-                            : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                      >
-                        <option className="text-lg font-bold" value="false">
-                          No
-                        </option>
-                        <option className="text-lg font-bold" value="true">
-                          Yes
-                        </option>
-                      </select>
-                      {errors.money_raised_till_now && (
-                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                          {errors.money_raised_till_now.message}
-                        </p>
-                      )}
-                    </div>
-                    <div className="z-0 w-full mb-3 group">
-                      <label
                         htmlFor="dapp_link"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
@@ -1504,8 +1286,150 @@ const CreateProjectRegistration = () => {
                         </p>
                       )}
                     </div>
+                    <div className="z-0 w-full mb-3 group">
+                      <label
+                        htmlFor="weekly_active_users"
+                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                      >
+                        weekly Active Users
+                      </label>
+                      <input
+                        type="number"
+                        name="weekly_active_users"
+                        id="weekly_active_users"
+                        {...register("weekly_active_users")}
+                        className={`bg-gray-50 border-2 ${
+                          errors.weekly_active_users
+                            ? "border-red-500 placeholder:text-red-500"
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        placeholder="$"
+                      />
+                      {errors.weekly_active_users && (
+                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                          {errors.weekly_active_users.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="z-0 w-full mb-3 group">
+                      <label
+                        htmlFor="revenue"
+                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                      >
+                        Revenue
+                      </label>
+                      <input
+                        type="number"
+                        name="revenue"
+                        id="revenue"
+                        {...register("revenue")}
+                        className={`bg-gray-50 border-2 ${
+                          errors.revenue
+                            ? "border-red-500 placeholder:text-red-500"
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        placeholder="$"
+                      />
+                      {errors.revenue && (
+                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                          {errors.revenue.message}
+                        </p>
+                      )}
+                    </div>
                   </>
                 )}
+                <div className="z-0 w-full mb-3 group">
+                  <label
+                    htmlFor="multi_chain"
+                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    Are you on multi-chain
+                  </label>
+                  <select
+                    {...register("multi_chain")}
+                    className={`bg-gray-50 border-2 ${
+                      errors.multi_chain
+                        ? "border-red-500 placeholder:text-red-500"
+                        : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  >
+                    <option className="text-lg font-bold" value="false">
+                      No
+                    </option>
+                    <option className="text-lg font-bold" value="true">
+                      Yes
+                    </option>
+                  </select>
+                  {errors.multi_chain && (
+                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                      {errors.multi_chain.message}
+                    </p>
+                  )}
+                </div>
+                {isMulti_Chain && (
+                  <div className="z-0 w-full mb-3 group">
+                    <label
+                      htmlFor="supports_multichain"
+                      className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                    >
+                      Multi-chain options
+                    </label>
+                    <select
+                      {...register("supports_multichain")}
+                      className={`bg-gray-50 border-2 ${
+                        errors.supports_multichain
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    >
+                      <option className="text-lg font-bold" value="">
+                        Select ⌄
+                      </option>
+                      {multiChain?.map((chain, i) => (
+                        <option
+                          key={i}
+                          value={`${chain}`}
+                          className="text-lg font-bold"
+                        >
+                          {chain}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.supports_multichain && (
+                      <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                        {errors.supports_multichain.message}
+                      </p>
+                    )}
+                  </div>
+                )}
+                <div className="z-0 w-full mb-3 group">
+                  <label
+                    htmlFor="money_raised_till_now"
+                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    Money raised till now
+                  </label>
+                  <select
+                    {...register("money_raised_till_now")}
+                    className={`bg-gray-50 border-2 ${
+                      errors.money_raised_till_now
+                        ? "border-red-500 placeholder:text-red-500"
+                        : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  >
+                    <option className="text-lg font-bold" value="false">
+                      No
+                    </option>
+                    <option className="text-lg font-bold" value="true">
+                      Yes
+                    </option>
+                  </select>
+                  {errors.money_raised_till_now && (
+                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                      {errors.money_raised_till_now.message}
+                    </p>
+                  )}
+                </div>
                 {isMoneyRaised && (
                   <>
                     <div className="z-0 w-full mb-3 group">
@@ -1633,74 +1557,92 @@ const CreateProjectRegistration = () => {
                         </p>
                       )}
                     </div>
+                    <div className="z-0 w-full mb-3 group">
+                      <label
+                        htmlFor="upload_private_documents"
+                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                      >
+                        Upload Private Documents
+                      </label>
+                      <select
+                        {...register("upload_private_documents")}
+                        className={`bg-gray-50 border-2 ${
+                          errors.upload_private_documents
+                            ? "border-red-500 placeholder:text-red-500"
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      >
+                        <option className="text-lg font-bold" value="false">
+                          No
+                        </option>
+                        <option className="text-lg font-bold" value="true">
+                          Yes
+                        </option>
+                      </select>
+                      {errors.upload_private_documents && (
+                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                          {errors.upload_private_documents.message}
+                        </p>
+                      )}
+                    </div>
                   </>
                 )}
-
-                <div className="z-0 w-full mb-3 group">
-                  <label
-                    htmlFor="multi_chain"
-                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                  >
-                    Are you on multi-chain
-                  </label>
-                  <select
-                    {...register("multi_chain")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.multi_chain
-                        ? "border-red-500 placeholder:text-red-500"
-                        : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                  >
-                    <option className="text-lg font-bold" value="false">
-                      No
-                    </option>
-                    <option className="text-lg font-bold" value="true">
-                      Yes
-                    </option>
-                  </select>
-                  {errors.multi_chain && (
-                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                      {errors.multi_chain.message}
-                    </p>
-                  )}
-                </div>
-                {isMulti_Chain && (
-                  <div className="z-0 w-full mb-3 group">
-                    <label
-                      htmlFor="supports_multichain"
-                      className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                    >
-                      Multi-chain options
-                    </label>
-                    <select
-                      {...register("supports_multichain")}
-                      className={`bg-gray-50 border-2 ${
-                        errors.supports_multichain
-                          ? "border-red-500 placeholder:text-red-500"
-                          : "border-[#737373]"
-                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                    >
-                      <option className="text-lg font-bold" value="">
-                        Select ⌄
-                      </option>
-                      {multiChain?.map((chain, i) => (
-                        <option
-                          key={i}
-                          value={`${chain}`}
-                          className="text-lg font-bold"
-                        >
-                          {chain}
-                        </option>
-                      ))}
-                    </select>
-                    {errors.supports_multichain && (
-                      <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                        {errors.supports_multichain.message}
-                      </p>
-                    )}
-                  </div>
-                )}
               </div>
+              {isPrivateDocument && (
+                <>
+                  {fields.map((item, index) => (
+                    <div key={item.id}>
+                      <div className="z-0 w-full mb-3 group px-4">
+                        <label
+                          htmlFor="title"
+                          className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                        >
+                          Title
+                        </label>
+                        <input
+                          {...register(`private_docs.${index}.title`)}
+                          className={`bg-gray-50 border-2 ${
+                            errors.title1
+                              ? "border-red-500 placeholder:text-red-500"
+                              : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        />
+                        {errors.private_docs &&
+                          errors.private_docs[index]?.title && (
+                            <p>{errors.private_docs[index].title.message}</p>
+                          )}
+                        <label
+                          htmlFor="link"
+                          className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                        >
+                          Link
+                        </label>
+                        <input
+                          {...register(`private_docs.${index}.link`)}
+                          className={`bg-gray-50 border-2 ${
+                            errors.link
+                              ? "border-red-500 placeholder:text-red-500"
+                              : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        />
+                        {errors.private_docs &&
+                          errors.private_docs[index]?.link && (
+                            <p>{errors.private_docs[index].link.message}</p>
+                          )}
+                      </div>
+                    </div>
+                  ))}
+                  <div>
+                    <button
+                      type="button"
+                      className="bg-blue-500 rounded-lg text-white p-2"
+                      onClick={() => append({ title: "", link: "" })}
+                    >
+                      Add More
+                    </button>
+                  </div>
+                </>
+              )}
             </>
           )}
           {step === 2 && (

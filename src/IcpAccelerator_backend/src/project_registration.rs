@@ -89,7 +89,7 @@ pub struct ProjectInfo {
     pub long_term_goals: Option<String>,
     pub target_market: Option<String>,
     pub self_rating_of_project: f64,
-    pub user_data: UserInfoInternal,
+    pub user_data: UserInformation,
     pub mentors_assigned: Option<Vec<MentorProfile>>,
     pub vc_assigned: Option<Vec<VentureCapitalist>>,
     pub project_twitter: Option<String>,
@@ -101,8 +101,8 @@ pub struct ProjectInfo {
     private_docs: Option<Vec<Docs>>,
     public_docs: Option<Vec<Docs>>,
     pub dapp_link: Option<String>,
-    pub weekly_active_users: Option<u32>,
-    pub revenue: Option<u32>,
+    pub weekly_active_users: Option<u64>,
+    pub revenue: Option<u64>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
@@ -127,7 +127,7 @@ pub struct ProjectPublicInfo {
     pub long_term_goals: Option<String>,
     pub target_market: Option<String>,
     pub self_rating_of_project: f64,
-    pub user_data: UserInfoInternal,
+    pub user_data: UserInformation,
     pub mentors_assigned: Option<Vec<MentorProfile>>,
     pub vc_assigned: Option<Vec<VentureCapitalist>>,
     pub project_twitter: Option<String>,
@@ -624,7 +624,7 @@ pub async fn create_project(info: ProjectInfo) -> String {
     });
 
     let info_clone = info.clone();
-    //let user_uid = crate::user_module::update_user(info_clone.user_data).await;
+    let user_uid = crate::user_module::update_user(info_clone.user_data).await;
     let uuids = raw_rand().await.unwrap().0;
     let uid = format!("{:x}", Sha256::digest(&uuids));
     let new_id = uid.clone().to_string();
@@ -645,15 +645,12 @@ pub async fn create_project(info: ProjectInfo) -> String {
         },
     );
     let res = send_approval_request(
-        info.user_data
-            .params
-            .profile_picture
-            .unwrap_or_else(|| Vec::new()),
-        info.user_data.params.full_name,
-        info.user_data.params.country,
+        info.user_data.profile_picture.unwrap_or_else(|| Vec::new()),
+        info.user_data.full_name,
+        info.user_data.country,
         info.project_area_of_focus,
         "project".to_string(),
-        info.user_data.params.bio.unwrap_or("no bio".to_string()),
+        info.user_data.bio.unwrap_or("no bio".to_string()),
     )
     .await;
 
@@ -844,16 +841,14 @@ pub async fn update_project(project_id: String, updated_project: ProjectInfo) ->
     let res = send_approval_request(
         updated_project
             .user_data
-            .params
             .profile_picture
             .unwrap_or_else(|| Vec::new()),
-        updated_project.user_data.params.full_name,
-        updated_project.user_data.params.country,
+        updated_project.user_data.full_name,
+        updated_project.user_data.country,
         updated_project.project_area_of_focus,
         "project".to_string(),
         updated_project
             .user_data
-            .params
             .bio
             .unwrap_or("no bio".to_string()),
     )
@@ -1196,9 +1191,10 @@ pub fn filter_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
             .iter()
             .flat_map(|(_, project_list)| project_list.iter())
             .filter(|project_internal| {
-                let country_match = criteria.country.as_ref().map_or(true, |c| {
-                    &project_internal.params.user_data.params.country == c
-                });
+                let country_match = criteria
+                    .country
+                    .as_ref()
+                    .map_or(true, |c| &project_internal.params.user_data.country == c);
 
                 let rating_match = criteria.rating_range.map_or(true, |(min, max)| {
                     project_internal.params.self_rating_of_project >= min

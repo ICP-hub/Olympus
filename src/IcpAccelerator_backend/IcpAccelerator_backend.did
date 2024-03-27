@@ -282,10 +282,10 @@ type ProjectInfo = record {
   user_data : UserInfoInternal;
   project_discord : opt text;
   upload_private_documents : opt bool;
-  weekly_active_users : opt nat32;
+  weekly_active_users : opt nat64;
   project_description : text;
   vc_assigned : opt vec VentureCapitalist;
-  revenue : opt nat32;
+  revenue : opt nat64;
   private_docs : opt vec Docs;
   token_economics : opt text;
   self_rating_of_project : float64;
