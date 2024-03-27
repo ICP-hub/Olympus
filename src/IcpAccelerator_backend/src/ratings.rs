@@ -49,7 +49,7 @@ pub struct MainLevelRatings {
     ratings: Vec<f64>,
 }
 
-#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct RatingAverages {
     pub mentor_average: Option<f64>,
     pub vc_average: Option<f64>,

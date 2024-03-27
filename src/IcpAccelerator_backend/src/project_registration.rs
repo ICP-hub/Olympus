@@ -3,9 +3,9 @@ use crate::mentor::MentorProfile;
 
 use crate::user_module::*;
 
-use crate::ratings::RatingSystem;
+use crate::ratings::{RatingSystem, RatingAverages};
 use crate::roadmap_suggestion::Suggestion;
-use crate::user_module::UserInformation;
+use crate::user_module::{UserInformation, UserInfoInternal};
 
 use crate::admin::send_approval_request;
 use crate::vc_registration::VentureCapitalist;
@@ -101,8 +101,8 @@ pub struct ProjectInfo {
     private_docs: Option<Vec<Docs>>,
     public_docs: Option<Vec<Docs>>,
     pub dapp_link: Option<String>,
-    pub weekly_active_users: Option<u32>,
-    pub revenue: Option<u32>,
+    pub weekly_active_users: Option<u64>,
+    pub revenue: Option<u64>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
@@ -190,6 +190,16 @@ impl MoneyRaised {
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct ProjectInfoForUser {
+    pub project_name: Option<String>,
+    pub project_logo: Option<Vec<u8>>,
+    pub project_description: Option<String>,
+    pub community_rating: Option<RatingAverages>,
+    pub project_cover: Vec<u8>,
+    pub project_twitter: Option<String>,
+    pub project_linkedin: Option<String>,
+    pub project_website: Option<String>,
+    pub project_discord: Option<String>,
+    pub promotional_video: Option<String>,
     pub date_of_joining: Option<u64>,
     pub mentor_associated: Option<Vec<MentorProfile>>,
     pub vc_associated: Option<Vec<VentureCapitalist>>,
@@ -1247,6 +1257,8 @@ pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUse
     );
     let jobs_opportunity_posted = get_jobs_posted_by_project(project_id.clone());
 
+    let community_ratings = crate::ratings::calculate_average(&project_id);
+
     APPLICATION_FORM.with(|storage| {
         let projects = storage.borrow();
 
@@ -1255,6 +1267,16 @@ pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUse
             .flat_map(|(_, project_list)| project_list.iter())
             .find(|project_internal| project_internal.uid == project_id)
             .map(|project_internal| ProjectInfoForUser {
+                project_name: Some(project_internal.params.project_name.clone()),
+                project_logo: Some(project_internal.params.project_logo.clone()),
+                project_description: Some(project_internal.params.project_description.clone()),
+                community_rating: Some(community_ratings),
+                project_cover: project_internal.params.project_cover.clone(),
+                project_twitter: project_internal.params.project_twitter.clone(),
+                project_linkedin: project_internal.params.project_linkedin.clone(),
+                project_website: project_internal.params.project_website.clone(),
+                project_discord: project_internal.params.project_discord.clone(),
+                promotional_video: project_internal.params.promotional_video.clone(),
                 date_of_joining: Some(project_internal.creation_date),
                 mentor_associated: project_internal.params.mentors_assigned.clone(),
                 vc_associated: project_internal.params.vc_assigned.clone(),

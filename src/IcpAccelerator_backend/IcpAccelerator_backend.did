@@ -29,6 +29,10 @@ type ApprovalRequest = record {
   tag_used : text;
   receiver : principal;
 };
+type ApprovedList = record {
+  user_data : UserInformation;
+  approved_type : vec text;
+};
 type Blog = record { blog_url : text; timestamp : nat64 };
 type Cohort = record {
   cohort_end_date : text;
@@ -278,10 +282,10 @@ type ProjectInfo = record {
   user_data : UserInformation;
   project_discord : opt text;
   upload_private_documents : opt bool;
-  weekly_active_users : opt nat32;
+  weekly_active_users : opt nat64;
   project_description : text;
   vc_assigned : opt vec VentureCapitalist;
-  revenue : opt nat32;
+  revenue : opt nat64;
   private_docs : opt vec Docs;
   token_economics : opt text;
   self_rating_of_project : float64;
@@ -306,14 +310,24 @@ type ProjectInfo = record {
   project_team : opt vec TeamMember;
 };
 type ProjectInfoForUser = record {
+  project_linkedin : opt text;
   vc_associated : opt vec VentureCapitalist;
+  project_discord : opt text;
   area_of_focus : opt text;
+  project_description : opt text;
   reviews : vec Suggestion;
+  community_rating : opt RatingAverages;
   team_member_info : opt vec TeamMember;
   date_of_joining : opt nat64;
   website_social_group : opt text;
+  project_twitter : opt text;
   mentor_associated : opt vec MentorProfile;
   country_of_project : opt text;
+  project_cover : vec nat8;
+  project_website : opt text;
+  promotional_video : opt text;
+  project_logo : opt vec nat8;
+  project_name : opt text;
   announcements : vec record { principal; vec AnnouncementsInternal };
   live_link_of_project : opt text;
   jobs_opportunity : opt vec JobsInternal;
@@ -787,6 +801,9 @@ service : {
   get_suggestions_by_parent_id_caller : (text, nat64) -> (vec Suggestion) query;
   get_suggestions_by_status_caller : (text, text) -> (vec Suggestion) query;
   get_testimonials : (principal) -> (Result_5) query;
+  get_total_approved_list_with_user_data : () -> (
+      vec record { principal; ApprovedList },
+    ) query;
   get_total_count : () -> (Counts) query;
   get_total_pending_request : () -> (nat64) query;
   get_total_suggestions : (text) -> (nat64) query;

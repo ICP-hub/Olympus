@@ -11,10 +11,9 @@ use ic_cdk::api::{canister_balance128, time};
 use ic_cdk_macros::*;
 use serde::{Deserialize, Serialize};
 use std::cell::RefCell;
-use std::{
-    collections::HashMap,
-    io::{Read, Write},
-};
+use std::collections::{HashMap, HashSet};
+use std::io::{Read, Write};
+
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 struct ApprovalRequest {
     sender: Principal,
@@ -289,8 +288,6 @@ pub fn get_pending_admin_notifications() -> Vec<Notification> {
         sorted_pending_alerts
     })
 }
-
-
 
 async fn get_info() -> Result<Vec<Principal>, MyError> {
     let canister_id: candid::Principal = id();
@@ -1133,6 +1130,71 @@ pub struct Counts {
     only_user_count: usize,
 }
 
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+
+pub struct ApprovedList {
+    approved_type: Vec<String>,
+    user_data: UserInformation,
+}
+
+fn get_principals_by_role(role_name: &str) -> HashSet<Principal> {
+    ROLE_STATUS_ARRAY.with(|awaiters| {
+        awaiters
+            .borrow()
+            .iter()
+            .filter_map(|(principal, roles)| {
+                let has_target_role = roles.iter().any(|role| {
+                    role.name == role_name && role.status != "default" && role.status != "requested"
+                });
+                if has_target_role {
+                    Some(principal.clone())
+                } else {
+                    None
+                }
+            })
+            .collect()
+    })
+}
+
+#[query]
+
+fn get_total_approved_list_with_user_data() -> HashMap<Principal, ApprovedList> {
+    let roles_to_check = vec!["user", "mentor", "vc", "project"]; // These are now just string literals
+
+    let mut principals_roles: HashMap<Principal, Vec<String>> = HashMap::new();
+
+    // Collect principals for each role
+    for role_name in roles_to_check.iter() {
+        let principals = get_principals_by_role(role_name); // Assuming this function exists and works as described before
+        for principal in principals {
+            principals_roles
+                .entry(principal)
+                .or_default()
+                .push(role_name.to_string());
+        }
+    }
+
+    // Fetch user data once for each unique principal and create ApprovedList
+    principals_roles
+        .iter()
+        .filter_map(|(principal, roles)| {
+            USER_STORAGE.with(|users| {
+                // Directly extract UserInformation from UserInfoInternal
+                users
+                    .borrow()
+                    .get(principal)
+                    .cloned()
+                    .map(|user_info_internal| {
+                        let approved_list = ApprovedList {
+                            approved_type: roles.clone(),                 // Roles are now strings
+                            user_data: user_info_internal.params.clone(), // Directly use UserInformation
+                        };
+                        (principal.clone(), approved_list)
+                    })
+            })
+        })
+        .collect()
+}
 #[query]
 pub fn get_total_count() -> Counts {
     let vc_count = VENTURECAPITALIST_STORAGE.with(|awaiters| awaiters.borrow().len());
