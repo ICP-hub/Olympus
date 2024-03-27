@@ -29,6 +29,10 @@ type ApprovalRequest = record {
   tag_used : text;
   receiver : principal;
 };
+type ApprovedList = record {
+  user_data : UserInformation;
+  approved_type : text;
+};
 type Blog = record { blog_url : text; timestamp : nat64 };
 type Cohort = record {
   cohort_end_date : text;
@@ -48,6 +52,7 @@ type Counts = record {
   vc_count : nat64;
   project_count : nat64;
 };
+type CustomError = record { is_owner : bool; message : text };
 type Docs = record { title : text; link : text };
 type Eligibility = record { level_on_rubric : float64; eligibility : opt text };
 type FilterCriteria = record {
@@ -277,8 +282,10 @@ type ProjectInfo = record {
   user_data : UserInformation;
   project_discord : opt text;
   upload_private_documents : opt bool;
+  weekly_active_users : opt nat32;
   project_description : text;
   vc_assigned : opt vec VentureCapitalist;
+  revenue : opt nat32;
   private_docs : opt vec Docs;
   token_economics : opt text;
   self_rating_of_project : float64;
@@ -371,6 +378,13 @@ type ProjectPublicInfo = record {
   project_name : text;
   project_team : opt vec TeamMember;
 };
+type ProjectPublicInfoInternal = record {
+  uid : text;
+  is_verified : bool;
+  is_active : bool;
+  params : ProjectPublicInfo;
+  creation_date : nat64;
+};
 type ProjectRatingStruct = record {
   message : text;
   rating : nat32;
@@ -412,8 +426,8 @@ type RatingAverages = record {
   mentor_average : opt float64;
 };
 type Request = record { mentor : opt MentorInternal; "text" : text };
-type Result = variant { Ok : MoneyRaised; Err : text };
-type Result_1 = variant { Ok : vec Docs; Err : text };
+type Result = variant { Ok : MoneyRaised; Err : CustomError };
+type Result_1 = variant { Ok : vec Docs; Err : CustomError };
 type Result_2 = variant { Ok : text; Err : text };
 type Result_3 = variant { Ok; Err : text };
 type Result_4 = variant { Ok : vec Review; Err : text };
@@ -613,9 +627,6 @@ service : {
   delete_venture_capitalist : () -> (text);
   delete_venture_capitalist_caller : () -> (text);
   filter_out_projects : (FilterCriteria) -> (vec ProjectInfo) query;
-  find_project_details_for_mentor_and_investor : (text) -> (
-      ProjectPublicInfo,
-    ) query;
   get_accepted_request_for_investor : () -> (vec OfferToSendToInvestor) query;
   get_accepted_request_for_mentor : (principal) -> (
       vec OfferToSendToMentor,
@@ -749,6 +760,9 @@ service : {
   get_pending_request_sent_by_investor : () -> (vec OfferToSendToMentor) query;
   get_popular_listed_project : () -> (vec ProjectInfoInternal) query;
   get_popular_live_proposal : () -> (vec ProjectInfoInternal) query;
+  get_project_details_for_mentor_and_investor : (text) -> (
+      ProjectPublicInfoInternal,
+    ) query;
   get_project_id : () -> (text) query;
   get_project_info_for_user : (text) -> (opt ProjectInfoForUser) query;
   get_project_pending_offers : () -> (vec OfferToMentor) query;
@@ -773,6 +787,9 @@ service : {
   get_suggestions_by_parent_id_caller : (text, nat64) -> (vec Suggestion) query;
   get_suggestions_by_status_caller : (text, text) -> (vec Suggestion) query;
   get_testimonials : (principal) -> (Result_5) query;
+  get_total_approved_list_with_user_data : () -> (
+      vec record { principal; vec ApprovedList },
+    ) query;
   get_total_count : () -> (Counts) query;
   get_total_pending_request : () -> (nat64) query;
   get_total_suggestions : (text) -> (nat64) query;
