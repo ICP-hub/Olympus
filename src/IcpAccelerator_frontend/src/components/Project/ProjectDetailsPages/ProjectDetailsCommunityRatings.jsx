@@ -15,13 +15,13 @@ const ProjectDetailsCommunityRatings = ({ data, profile, type, name, role, socia
     }
     const actor = useSelector((currState) => currState.actors.actor)
 
-    const [rating, setRating] = useState(4);
 
-    const ratingPercentage = (rating / 5) * 100;
 
     const [isRatingModalOpen, setRatingModalOpen] = useState(false);
-
     const [cardData, setCardData] = useState([]);
+    const [alreadyRated, setAlreadyRated] = useState(null);
+    const [overallRating, setOverallRating] = useState(0);
+    const ratingPercentage = (overallRating / 5) * 100;
     const handleRatingCloseModal = () => setRatingModalOpen(false);
     const handleRatingOpenModal = () => setRatingModalOpen(true);
 
@@ -54,20 +54,26 @@ const ProjectDetailsCommunityRatings = ({ data, profile, type, name, role, socia
                 })
         }
     }
-    4
+
     const fetchCommunityRating = async (val) => {
         await actor.get_project_ratings(val?.uid)
             .then((result) => {
                 console.log('result-in-get_project_ratings', result)
                 if (result && result.length > 0) {
-                    setCardData(result)
+                    setCardData(result.Ok[0])
+                    setAlreadyRated(result.Ok[2]);
+                    setOverallRating(result.Ok[1]);
                 } else {
                     setCardData([])
+                    setAlreadyRated(false)
+                    setOverallRating(0);
                 }
             })
             .catch((error) => {
                 console.log('error-in-get_project_ratings', error)
                 setCardData([])
+                setAlreadyRated(false)
+                setOverallRating(0);
             })
     }
 
@@ -80,20 +86,21 @@ const ProjectDetailsCommunityRatings = ({ data, profile, type, name, role, socia
     return (
         <>
 
-            <div className="w-full flex justify-end mb-4">
-                <button onClick={handleRatingOpenModal} className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900">
-                    Add Community Rating
-                </button>
-            </div>
+            {alreadyRated ? null :
+                <div className="w-full flex justify-end mb-4">
+                    <button onClick={handleRatingOpenModal} className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900">
+                        Add Community Rating
+                    </button>
+                </div>}
             <div className="md1:flex sm:flex flex-wrap ">
 
                 {/* Overall circlular   part1 Cards  Start */}
-                {/* <div className="flex w-full sm:w/1/2 md:w-1/3 justify-between">
+                <div className="flex w-full sm:w/1/2 md:w-1/3 justify-between">
                     <div className="w-full sm:w-full md:w-full p-4">
                         <div className="shadow-md rounded-lg overflow-hidden drop-shadow-2xl gap-2 bg-blue-200 p-4 h-full">
                             <div className='flex flex-row justify-between flex-wrap'>
-                                <p className='text-lg text-black font-extrabold'>Overall Rating</p>
-                                <p className='text-[#737373] text-sm flex items-center'>10 October, 2023</p>
+                                <p className='text-lg text-black font-bold'>Overall Rating</p>
+                                {/* <p className='text-[#737373] text-sm flex items-center'>10 October, 2023</p> */}
                             </div>
                             <div className='flex flex-row gap-6 flex-wrap items-center'>
                                 <div>
@@ -107,7 +114,7 @@ const ProjectDetailsCommunityRatings = ({ data, profile, type, name, role, socia
                                     </svg>
                                     <CircularProgressbar
                                         value={ratingPercentage}
-                                        text={`${rating}/5`}
+                                        text={`${overallRating}/5`}
                                         className="w-20 h-20 font-extrabold text-md"
                                         strokeWidth={8}
                                         styles={buildStyles({
@@ -127,7 +134,7 @@ const ProjectDetailsCommunityRatings = ({ data, profile, type, name, role, socia
                                                 <button
                                                     key={index}
                                                     className={
-                                                        index <= rating
+                                                        index <= overallRating
                                                             ? "text-blue-800"
                                                             : "text-gray-300 dark:text-gray-500"
                                                     }
@@ -150,7 +157,7 @@ const ProjectDetailsCommunityRatings = ({ data, profile, type, name, role, socia
                             <p className='text-[#737373]'>On basis of all Community ratings</p>
                         </div>
                     </div>
-                </div> */}
+                </div>
                 {/* Overall rating part1 Cards Ending */}
 
                 {cardData[0]?.map((val, index) => {
