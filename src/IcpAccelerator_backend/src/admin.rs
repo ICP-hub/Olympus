@@ -11,10 +11,9 @@ use ic_cdk::api::{canister_balance128, time};
 use ic_cdk_macros::*;
 use serde::{Deserialize, Serialize};
 use std::cell::RefCell;
-use std::{
-    collections::HashMap,
-    io::{Read, Write},
-};
+use std::collections::{HashMap, HashSet};
+use std::io::{Read, Write};
+
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 struct ApprovalRequest {
     sender: Principal,
@@ -1134,111 +1133,67 @@ pub struct Counts {
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 
 pub struct ApprovedList {
-    approved_type: String,
+    approved_type: Vec<String>,
     user_data: UserInformation,
 }
 
-pub fn get_approved_mentor_list_with_user_data() -> HashMap<Principal, ApprovedList> {
-    let mentor_vec = MENTOR_REGISTRY.with(|registry| {
-        registry
+fn get_principals_by_role(role_name: &str) -> HashSet<Principal> {
+    ROLE_STATUS_ARRAY.with(|awaiters| {
+        awaiters
             .borrow()
-            .keys()
-            .cloned()
-            .collect::<Vec<Principal>>()
-    });
-
-    mentor_vec
-        .into_iter()
-        .filter_map(|principal| {
-            match get_user_info_by_principal(principal) {
-                Ok(user_data) => {
-                    let approved_list = ApprovedList {
-                        approved_type: String::from("Mentor"),
-                        user_data,
-                    };
-                    Some((principal, approved_list))
+            .iter()
+            .filter_map(|(principal, roles)| {
+                let has_target_role = roles.iter().any(|role| {
+                    role.name == role_name && role.status != "default" && role.status != "requested"
+                });
+                if has_target_role {
+                    Some(principal.clone())
+                } else {
+                    None
                 }
-                Err(_) => None, // Error handling: in this case, we skip the entry
-            }
-        })
-        .collect()
-}
-
-pub fn get_approved_vc_list_with_user_data() -> HashMap<Principal, ApprovedList> {
-    let vc_vec = VENTURECAPITALIST_STORAGE.with(|registry| {
-        registry
-            .borrow()
-            .keys()
-            .cloned()
-            .collect::<Vec<Principal>>()
-    });
-
-    vc_vec
-        .into_iter()
-        .filter_map(|principal| {
-            match get_user_info_by_principal(principal) {
-                Ok(user_data) => {
-                    let approved_list = ApprovedList {
-                        approved_type: String::from("Vc"),
-                        user_data,
-                    };
-                    Some((principal, approved_list))
-                }
-                Err(_) => None, // Error handling: in this case, we skip the entry
-            }
-        })
-        .collect()
-}
-
-pub fn get_approved_project_list_with_user_data() -> HashMap<Principal, ApprovedList> {
-    let vc_vec = APPLICATION_FORM.with(|registry| {
-        registry
-            .borrow()
-            .keys()
-            .cloned()
-            .collect::<Vec<Principal>>()
-    });
-
-    vc_vec
-        .into_iter()
-        .filter_map(|principal| {
-            match get_user_info_by_principal(principal) {
-                Ok(user_data) => {
-                    let approved_list = ApprovedList {
-                        approved_type: String::from("Project"),
-                        user_data,
-                    };
-                    Some((principal, approved_list))
-                }
-                Err(_) => None, // Error handling: in this case, we skip the entry
-            }
-        })
-        .collect()
+            })
+            .collect()
+    })
 }
 
 #[query]
 
-fn get_total_approved_list_with_user_data() -> HashMap<Principal, Vec<ApprovedList>> {
-    let mut combined_map = HashMap::new();
+fn get_total_approved_list_with_user_data() -> HashMap<Principal, ApprovedList> {
+    let roles_to_check = vec!["user", "mentor", "vc", "project"]; // These are now just string literals
 
-    // Assuming these functions return HashMap<Principal, ApprovedRoleList>
-    let mentor_list = get_approved_mentor_list_with_user_data();
-    let vc_list = get_approved_vc_list_with_user_data();
-    let project_list = get_approved_project_list_with_user_data();
+    let mut principals_roles: HashMap<Principal, Vec<String>> = HashMap::new();
 
-   
-
-    for (principal, role_list) in [mentor_list, vc_list, project_list]
-        .iter()
-        .flat_map(|list| list)
-    {
-        combined_map
-            .entry(principal.clone())
-            .or_insert_with(Vec::new)
-            .push(role_list.clone());
+    // Collect principals for each role
+    for role_name in roles_to_check.iter() {
+        let principals = get_principals_by_role(role_name); // Assuming this function exists and works as described before
+        for principal in principals {
+            principals_roles
+                .entry(principal)
+                .or_default()
+                .push(role_name.to_string());
+        }
     }
 
-    combined_map
+    // Fetch user data once for each unique principal and create ApprovedList
+    principals_roles
+        .iter()
+        .filter_map(|(principal, roles)| {
+            USER_STORAGE.with(|users| {
+                // Directly extract UserInformation from UserInfoInternal
+                users
+                    .borrow()
+                    .get(principal)
+                    .cloned()
+                    .map(|user_info_internal| {
+                        let approved_list = ApprovedList {
+                            approved_type: roles.clone(),                 // Roles are now strings
+                            user_data: user_info_internal.params.clone(), // Directly use UserInformation
+                        };
+                        (principal.clone(), approved_list)
+                    })
+            })
+        })
+        .collect()
 }
 #[query]
 pub fn get_total_count() -> Counts {

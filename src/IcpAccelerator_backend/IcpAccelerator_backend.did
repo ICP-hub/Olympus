@@ -31,7 +31,7 @@ type ApprovalRequest = record {
 };
 type ApprovedList = record {
   user_data : UserInformation;
-  approved_type : text;
+  approved_type : vec text;
 };
 type Blog = record { blog_url : text; timestamp : nat64 };
 type Cohort = record {
@@ -788,7 +788,7 @@ service : {
   get_suggestions_by_status_caller : (text, text) -> (vec Suggestion) query;
   get_testimonials : (principal) -> (Result_5) query;
   get_total_approved_list_with_user_data : () -> (
-      vec record { principal; vec ApprovedList },
+      vec record { principal; ApprovedList },
     ) query;
   get_total_count : () -> (Counts) query;
   get_total_pending_request : () -> (nat64) query;
