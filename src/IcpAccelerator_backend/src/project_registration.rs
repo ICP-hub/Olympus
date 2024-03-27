@@ -200,6 +200,11 @@ pub struct ProjectInfoForUser {
     pub project_website: Option<String>,
     pub project_discord: Option<String>,
     pub promotional_video: Option<String>,
+    pub github_link: Option<String>,
+    pub user_data: UserInformation,
+    pub project_team: Option<Vec<TeamMember>>,
+    pub dapp_link: Option<String>,
+    pub weekly_active_users: Option<u32>,
     pub date_of_joining: Option<u64>,
     pub mentor_associated: Option<Vec<MentorProfile>>,
     pub vc_associated: Option<Vec<VentureCapitalist>>,
@@ -211,6 +216,11 @@ pub struct ProjectInfoForUser {
     pub jobs_opportunity: Option<Vec<JobsInternal>>,
     pub area_of_focus: Option<String>,
     pub country_of_project: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
+pub struct ProjectInfoForUserInternal{
+    pub params: ProjectInfoForUser
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
@@ -1249,7 +1259,7 @@ pub fn filter_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
 }
 
 #[query]
-pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUser> {
+pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUserInternal> {
     let announcements_project = get_announcements();
     let project_reviews = crate::roadmap_suggestion::get_suggestions_by_status(
         project_id.clone(),
@@ -1266,28 +1276,35 @@ pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUse
             .iter()
             .flat_map(|(_, project_list)| project_list.iter())
             .find(|project_internal| project_internal.uid == project_id)
-            .map(|project_internal| ProjectInfoForUser {
-                project_name: Some(project_internal.params.project_name.clone()),
-                project_logo: Some(project_internal.params.project_logo.clone()),
-                project_description: Some(project_internal.params.project_description.clone()),
-                community_rating: Some(community_ratings),
-                project_cover: project_internal.params.project_cover.clone(),
-                project_twitter: project_internal.params.project_twitter.clone(),
-                project_linkedin: project_internal.params.project_linkedin.clone(),
-                project_website: project_internal.params.project_website.clone(),
-                project_discord: project_internal.params.project_discord.clone(),
-                promotional_video: project_internal.params.promotional_video.clone(),
-                date_of_joining: Some(project_internal.creation_date),
-                mentor_associated: project_internal.params.mentors_assigned.clone(),
-                vc_associated: project_internal.params.vc_assigned.clone(),
-                team_member_info: project_internal.params.project_team.clone(),
-                announcements: announcements_project,
-                reviews: project_reviews,
-                website_social_group: project_internal.params.project_discord.clone(),
-                live_link_of_project: project_internal.params.dapp_link.clone(),
-                jobs_opportunity: Some(jobs_opportunity_posted),
-                area_of_focus: Some(project_internal.params.project_area_of_focus.clone()),
-                country_of_project: project_internal.params.preferred_icp_hub.clone(),
+            .map(|project_internal| ProjectInfoForUserInternal {
+                params: ProjectInfoForUser {
+                    project_name: Some(project_internal.params.project_name.clone()),
+                    project_logo: Some(project_internal.params.project_logo.clone()),
+                    project_description: Some(project_internal.params.project_description.clone()),
+                    community_rating: Some(community_ratings),
+                    project_cover: project_internal.params.project_cover.clone(),
+                    project_twitter: project_internal.params.project_twitter.clone(),
+                    project_linkedin: project_internal.params.project_linkedin.clone(),
+                    project_website: project_internal.params.project_website.clone(),
+                    project_discord: project_internal.params.project_discord.clone(),
+                    promotional_video: project_internal.params.promotional_video.clone(),
+                    github_link: project_internal.params.github_link.clone(),
+                    user_data: project_internal.params.user_data.clone(),
+                    project_team: project_internal.params.project_team.clone(),
+                    dapp_link: project_internal.params.dapp_link.clone(),
+                    weekly_active_users: project_internal.params.weekly_active_users.clone(),
+                    date_of_joining: Some(project_internal.creation_date),
+                    mentor_associated: project_internal.params.mentors_assigned.clone(),
+                    vc_associated: project_internal.params.vc_assigned.clone(),
+                    team_member_info: project_internal.params.project_team.clone(),
+                    announcements: announcements_project,
+                    reviews: project_reviews,
+                    website_social_group: project_internal.params.project_discord.clone(),
+                    live_link_of_project: project_internal.params.dapp_link.clone(),
+                    jobs_opportunity: Some(jobs_opportunity_posted),
+                    area_of_focus: Some(project_internal.params.project_area_of_focus.clone()),
+                    country_of_project: project_internal.params.preferred_icp_hub.clone(),
+                }
             })
     })
 }
