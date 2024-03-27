@@ -1,14 +1,14 @@
+use crate::PROJECTS_ASSOCIATED_WITH_INVESTOR;
 use crate::{get_mentor_by_principal, APPLICATION_FORM, VENTURECAPITALIST_STORAGE};
 use candid::{CandidType, Principal};
 use ic_cdk::api::management_canister::main::raw_rand;
+use ic_cdk::api::stable::{StableReader, StableWriter};
 use ic_cdk::{api::time, caller};
 use ic_cdk::{query, update};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::io::Read;
 use std::{cell::RefCell, collections::HashMap, fmt::format, ptr::null};
-use ic_cdk::api::stable::{StableReader, StableWriter};
-use crate::PROJECTS_ASSOCIATED_WITH_INVESTOR;
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
 pub struct OfferToProjectByInvestor {
@@ -20,7 +20,7 @@ pub struct OfferToProjectByInvestor {
     time_of_request: u64,
     accepted_at: u64,
     declined_at: u64,
-    self_declined_at : u64,
+    self_declined_at: u64,
     request_status: String,
     response: String,
 }
@@ -41,7 +41,7 @@ pub struct OfferToSendToProjectByInvestor {
     sent_at: u64,
     accepted_at: u64,
     declined_at: u64,
-    self_declined_at : u64,
+    self_declined_at: u64,
     request_status: String,
     sender_principal: Principal,
     response: String,
@@ -122,18 +122,21 @@ pub fn notify_project_with_offer(project_id: String, offer: OfferToSendToProject
 }
 
 #[query]
-pub fn get_all_project_notification_sent_by_investor(id: String) -> Vec<OfferToSendToProjectByInvestor> {
-    PROJECT_ALERTS_OF_INVESTOR.with(|state| state.borrow().get(&id).cloned().unwrap_or_else(Vec::new))
+pub fn get_all_project_notification_sent_by_investor(
+    id: String,
+) -> Vec<OfferToSendToProjectByInvestor> {
+    PROJECT_ALERTS_OF_INVESTOR
+        .with(|state| state.borrow().get(&id).cloned().unwrap_or_else(Vec::new))
 }
 
-
-
-
 #[update]
-pub async fn send_offer_to_project_by_investor(project_id: String, msg: String) -> String{
+pub async fn send_offer_to_project_by_investor(project_id: String, msg: String) -> String {
     let investor_id = caller();
 
-    let investor_profile = crate::get_vc_info_by_principal(investor_id).get(&investor_id).expect("investor does not exist").clone();
+    let investor_profile = crate::get_vc_info_by_principal(investor_id)
+        .get(&investor_id)
+        .expect("investor does not exist")
+        .clone();
 
     let project = crate::get_project_using_id(project_id.clone()).expect("project not found");
 
@@ -157,12 +160,22 @@ pub async fn send_offer_to_project_by_investor(project_id: String, msg: String) 
 
     store_request_sent_by_capitalist(offer_to_project);
 
-    let investor_info =  InvestorInfo {
+    let investor_info = InvestorInfo {
         investor_id,
         investor_name: investor_profile.profile.params.user_data.full_name.clone(),
-        investor_description: investor_profile.profile.params.category_of_investment.clone(),
-        investor_image: investor_profile.profile.params.user_data.profile_picture.clone().unwrap_or_else(Vec::new)
-    }; 
+        investor_description: investor_profile
+            .profile
+            .params
+            .category_of_investment
+            .clone(),
+        investor_image: investor_profile
+            .profile
+            .params
+            .user_data
+            .profile_picture
+            .clone()
+            .unwrap_or_else(Vec::new),
+    };
 
     let offer_to_send_to_project = OfferToSendToProjectByInvestor {
         offer_id: offer_id.clone(),
@@ -171,7 +184,7 @@ pub async fn send_offer_to_project_by_investor(project_id: String, msg: String) 
         sent_at: time(),
         accepted_at: 0,
         declined_at: 0,
-        self_declined_at : 0,
+        self_declined_at: 0,
         request_status: "pending".to_string(),
         sender_principal: caller(),
         response: "".to_string(),
@@ -181,13 +194,30 @@ pub async fn send_offer_to_project_by_investor(project_id: String, msg: String) 
     format!("offer sent sucessfully to {}", project_id)
 }
 
-
 #[update]
-pub fn accept_offer_of_investor(offer_id: String, response_message: String, project_id : String) -> String{
-    //let project_id = caller();
+pub fn accept_offer_of_investor(
+    offer_id: String,
+    response_message: String,
+    project_id: String,
+) -> String {
+    let mut already_accepted = false;
 
     PROJECT_ALERTS_OF_INVESTOR.with(|state| {
-        //let state = state.borrow_mut().get(&mentor_id).cloned().unwrap_or_else(Vec::new);
+        if let Some(offers) = state.borrow().get(&project_id) {
+            if offers
+                .iter()
+                .any(|o| o.offer_id == offer_id && o.request_status == "accepted")
+            {
+                already_accepted = true;
+            }
+        }
+    });
+
+    if already_accepted {
+        return format!("Offer with id: {} has already been accepted.", offer_id);
+    }
+
+    PROJECT_ALERTS_OF_INVESTOR.with(|state| {
         if let Some(offers) = state.borrow_mut().get_mut(&project_id) {
             if let Some(offer) = offers.iter_mut().find(|o| o.offer_id == offer_id) {
                 offer.request_status = "accepted".to_string();
@@ -206,41 +236,66 @@ pub fn accept_offer_of_investor(offer_id: String, response_message: String, proj
                             project_offer.response = response_message.clone();
                             project_offer.accepted_at = time();
 
-                            VENTURECAPITALIST_STORAGE.with(|state|{
+                            VENTURECAPITALIST_STORAGE.with(|state| {
                                 let state = state.borrow();
-                                let capitalist= state.get(&offer.sender_principal).expect("investor not found");
-            
-                                APPLICATION_FORM.with(|project_details|{
+                                let capitalist = state
+                                    .get(&offer.sender_principal)
+                                    .expect("investor not found");
 
+                                APPLICATION_FORM.with(|project_details| {
                                     let mut project_details = project_details.borrow_mut();
                                     //let project_details = project_details.get(&caller()).expect("");
-                                    if let Some(projects) = project_details.get_mut(&caller()){
-                                        if let Some(project) = projects.iter_mut().find(|project| project.uid == project_offer.project_id){
+                                    if let Some(projects) = project_details.get_mut(&caller()) {
+                                        if let Some(project) = projects
+                                            .iter_mut()
+                                            .find(|project| project.uid == project_offer.project_id)
+                                        {
+                                            // if project.params.vc_assigned.is_none() {
+                                            //     project.params.vc_assigned = Some(Vec::new());
+                                            // }
+
+                                            // project
+                                            //     .params
+                                            //     .vc_assigned
+                                            //     .as_mut()
+                                            //     .unwrap()
+                                            //     .push(capitalist.params.clone());
 
                                             if project.params.vc_assigned.is_none() {
                                                 project.params.vc_assigned = Some(Vec::new());
                                             }
 
-                                          project.params.vc_assigned.as_mut().unwrap().push(capitalist.params.clone());
+                                            let vc_assigned =
+                                                project.params.vc_assigned.as_mut().unwrap();
 
-                                          PROJECTS_ASSOCIATED_WITH_INVESTOR.with(|storage|{
-                                            let mut associate_project = storage.borrow_mut();
-                                            associate_project.entry(offer.sender_principal).or_insert_with(Vec::new).push(project.params.clone())
-                                        })
-            
+                                            if !vc_assigned.contains(&capitalist.params) {
+                                                vc_assigned.push(capitalist.params.clone());
+                                            }
+
+                                            PROJECTS_ASSOCIATED_WITH_INVESTOR.with(|storage| {
+                                                // let mut associate_project = storage.borrow_mut();
+                                                // associate_project
+                                                //     .entry(offer.sender_principal)
+                                                //     .or_insert_with(Vec::new)
+                                                //     .push(project.params.clone())
+
+                                                let mut associate_project = storage.borrow_mut();
+
+                                                let projects = associate_project
+                                                    .entry(offer.sender_principal)
+                                                    .or_insert_with(Vec::new);
+
+                                                if !projects.contains(&project.params) {
+                                                    projects.push(project.params.clone());
+                                                }
+                                            });
                                         }
                                     }
-            
                                 })
                             })
-
-                            
                         }
                     }
                 });
-
-
-                
             }
         }
     });
@@ -249,8 +304,11 @@ pub fn accept_offer_of_investor(offer_id: String, response_message: String, proj
 }
 
 #[update]
-pub fn decline_offer_of_investor(offer_id: String, response_message: String, project_id: String) -> String{
-
+pub fn decline_offer_of_investor(
+    offer_id: String,
+    response_message: String,
+    project_id: String,
+) -> String {
     PROJECT_ALERTS_OF_INVESTOR.with(|state| {
         if let Some(offers) = state.borrow_mut().get_mut(&project_id) {
             if let Some(offer) = offers.iter_mut().find(|o| o.offer_id == offer_id) {
@@ -276,10 +334,10 @@ pub fn decline_offer_of_investor(offer_id: String, response_message: String, pro
     format!("you have declined the offer with offer id: {}", offer_id)
 }
 
-
-
 #[query]
-pub fn get_all_offers_which_are_pending_for_project_from_investor(project_id: String) -> Vec<OfferToSendToProjectByInvestor> {
+pub fn get_all_offers_which_are_pending_for_project_from_investor(
+    project_id: String,
+) -> Vec<OfferToSendToProjectByInvestor> {
     PROJECT_ALERTS_OF_INVESTOR.with(|pending_alerts| {
         pending_alerts
             .borrow()
@@ -312,7 +370,9 @@ pub fn get_all_offers_which_are_pending_for_investor() -> Vec<OfferToProjectByIn
 }
 
 #[query]
-pub fn get_all_requests_which_got_accepted_by_project_of_investor(project_id: String) -> Vec<OfferToSendToProjectByInvestor> {
+pub fn get_all_requests_which_got_accepted_by_project_of_investor(
+    project_id: String,
+) -> Vec<OfferToSendToProjectByInvestor> {
     PROJECT_ALERTS_OF_INVESTOR.with(|alerts| {
         alerts
             .borrow()
@@ -344,7 +404,9 @@ pub fn get_all_requests_which_got_accepted_for_investor() -> Vec<OfferToProjectB
 }
 
 #[query]
-pub fn get_all_requests_which_got_declined_by_project_of_investor(project_id: String) -> Vec<OfferToSendToProjectByInvestor> {
+pub fn get_all_requests_which_got_declined_by_project_of_investor(
+    project_id: String,
+) -> Vec<OfferToSendToProjectByInvestor> {
     PROJECT_ALERTS_OF_INVESTOR.with(|alerts| {
         alerts
             .borrow()
@@ -375,8 +437,7 @@ pub fn get_all_requests_which_got_declined_for_investor() -> Vec<OfferToProjectB
     })
 }
 
-
-//self decline the send 
+//self decline the send
 
 //for project
 
@@ -387,7 +448,7 @@ pub fn self_decline_request_for_investor(offer_id: String) -> String {
     OFFERS_SENT_BY_INVESTOR.with(|sent_ones| {
         let mut my_offers = sent_ones.borrow_mut();
         let caller_offers = my_offers.get_mut(&caller());
-        
+
         if let Some(offers) = caller_offers {
             if let Some(offer) = offers.iter_mut().find(|o| o.offer_id == offer_id) {
                 match offer.request_status.as_str() {
@@ -397,7 +458,7 @@ pub fn self_decline_request_for_investor(offer_id: String) -> String {
                         offer.request_status = "self_declined".to_string();
                         offer.self_declined_at = time();
                         response = "Request got self declined.".to_string();
-                    },
+                    }
                 }
             }
         }
@@ -416,27 +477,36 @@ pub fn self_decline_request_for_investor(offer_id: String) -> String {
     }
 
     response
-
 }
 
 #[query]
-pub fn get_all_requests_which_got_self_declined_for_investor() -> Vec<OfferToProjectByInvestor>{
+pub fn get_all_requests_which_got_self_declined_for_investor() -> Vec<OfferToProjectByInvestor> {
     OFFERS_SENT_BY_INVESTOR.with(|offers| {
         let offers = offers.borrow();
         let offers = offers.get(&caller());
-        offers.map_or_else(Vec::new, |offers|{
-            offers.iter().filter(|offer|{ offer.request_status == "self_declined"}).cloned().collect()
+        offers.map_or_else(Vec::new, |offers| {
+            offers
+                .iter()
+                .filter(|offer| offer.request_status == "self_declined")
+                .cloned()
+                .collect()
         })
     })
 }
 
 #[query]
-pub fn get_all_requests_which_got_self_declined_by_investor(project_id: String) -> Vec<OfferToSendToProjectByInvestor>{
+pub fn get_all_requests_which_got_self_declined_by_investor(
+    project_id: String,
+) -> Vec<OfferToSendToProjectByInvestor> {
     PROJECT_ALERTS_OF_INVESTOR.with(|offers| {
         let offers = offers.borrow();
         let offers = offers.get(&project_id);
-        offers.map_or_else(Vec::new, |offers|{
-            offers.iter().filter(|offer|{ offer.request_status == "self_declined"}).cloned().collect()
+        offers.map_or_else(Vec::new, |offers| {
+            offers
+                .iter()
+                .filter(|offer| offer.request_status == "self_declined")
+                .cloned()
+                .collect()
         })
     })
 }
