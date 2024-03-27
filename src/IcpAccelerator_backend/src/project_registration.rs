@@ -101,9 +101,11 @@ pub struct ProjectInfo {
     private_docs: Option<Vec<Docs>>,
     public_docs: Option<Vec<Docs>>,
     pub dapp_link: Option<String>,
+    pub weekly_active_users: Option<u32>,
+    pub revenue: Option<u32>,
 }
 
-#[derive(CandidType)]
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct ProjectPublicInfo {
     pub project_id : String,
     pub project_name: String,
@@ -135,6 +137,15 @@ pub struct ProjectPublicInfo {
     upload_private_documents: Option<bool>,
     public_docs: Option<Vec<Docs>>,
     pub dapp_link: Option<String>,
+}
+
+#[derive(Deserialize, Clone, Debug, CandidType, PartialEq)]
+pub struct ProjectPublicInfoInternal{
+    pub params: ProjectPublicInfo,
+    pub uid: String,
+    pub is_active: bool,
+    pub is_verified: bool,
+    creation_date: u64,
 }
 
 impl ProjectInfo {}
@@ -705,7 +716,7 @@ pub fn find_project_by_id(project_id: &str) -> Option<ProjectInfoInternal> {
 
 //newbie api shows restricted info!
 #[query]
-pub fn get_project_details_for_mentor_and_investor(project_id: String) -> ProjectPublicInfo {
+pub fn get_project_details_for_mentor_and_investor(project_id: String) -> ProjectPublicInfoInternal {
     
     let project_details = find_project_by_id(project_id.as_str()).expect("project not found");
     let project_id = project_id.to_string().clone();
@@ -743,7 +754,15 @@ pub fn get_project_details_for_mentor_and_investor(project_id: String) -> Projec
         dapp_link: project_details.params.dapp_link,
     };
 
-    project
+    let project_internal = ProjectPublicInfoInternal {
+        params: project,
+        uid: project_details.uid,
+        is_active: project_details.is_active,
+        is_verified: project_details.is_verified,
+        creation_date: project_details.creation_date
+    };
+
+    project_internal
 }
 
 pub fn list_all_projects() -> HashMap<Principal, ProjectVecWithRoles> {
@@ -1860,7 +1879,7 @@ pub async fn approve_private_docs_access_request(
 }
 
 #[query]
-pub fn access_money_details(project_id: String) -> Result<(MoneyRaised, bool), String> {
+pub fn access_money_details(project_id: String) -> Result<MoneyRaised, CustomError> {
     let caller = ic_cdk::api::caller();
 
     let is_owner = APPLICATION_FORM.with(|app_form| {
@@ -1880,33 +1899,39 @@ pub fn access_money_details(project_id: String) -> Result<(MoneyRaised, bool), S
     });
 
     if !is_approved {
-        return Err(
-            "You do not have access to view the money details for this project.".to_string(),
-        );
+        return Err(CustomError {
+            message: "You do not have access to view the money details for this project.".to_string(),
+            is_owner,
+        });
     }
 
-    // Access the project details from APPLICATION_FORM
     APPLICATION_FORM.with(|projects_registry| {
         let projects = projects_registry.borrow();
 
-        // Iterate through the entire HashMap to find the project by ID
         for project_list in projects.values() {
-
             if let Some(project) = project_list.iter().find(|p| p.uid == project_id) {
-                return Ok((
-                    project.params.money_raised.clone().ok_or("Money raised details not available for this project.".to_string())?,
-                    is_owner
-                ));
+                return project.params.money_raised.clone().ok_or(CustomError {
+                    message: "Money raised details not available for this project.".to_string(),
+                    is_owner,
+                });
             }
         }
 
-        // If no project with the matching ID was found
-        Err("Project ID not found.".to_string())
+        Err(CustomError {
+            message: "Project ID not found.".to_string(),
+            is_owner,
+        })
     })
 }
 
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
+pub struct CustomError {
+    message: String,
+    is_owner: bool,
+}
+
 #[query]
-pub fn access_private_docs(project_id: String) -> Result<(Vec<Docs>, bool), String> {
+pub fn access_private_docs(project_id: String) -> Result<Vec<Docs>, CustomError> {
     let caller = ic_cdk::api::caller();
 
     let is_owner = APPLICATION_FORM.with(|app_form| {
@@ -1917,7 +1942,6 @@ pub fn access_private_docs(project_id: String) -> Result<(Vec<Docs>, bool), Stri
         })
     });
 
-    // Check if the caller is approved to access the private documents for this project
     let is_approved = is_owner
         || PRIVATE_DOCS_ACCESS.with(|access| {
             access
@@ -1927,28 +1951,28 @@ pub fn access_private_docs(project_id: String) -> Result<(Vec<Docs>, bool), Stri
         });
 
     if !is_approved {
-        return Err(
-            "You do not have access to view the private documents for this project.".to_string(),
-        );
+        return Err(CustomError {
+            message: "You do not have access to view the private documents for this project.".to_string(),
+            is_owner,
+        });
     }
 
-    // Access the project details from APPLICATION_FORM
     APPLICATION_FORM.with(|projects_registry| {
         let projects = projects_registry.borrow();
 
-        // Iterate through the entire HashMap to find the project by ID
         for project_list in projects.values() {
-            // Iterate through each project in the list
             if let Some(project) = project_list.iter().find(|p| p.uid == project_id) {
-                return Ok((
-                    project.params.private_docs.clone().ok_or("Private documents not available for this project.".to_string())?,
-                    is_owner
-                ));
+                return Ok(project.params.private_docs.clone().ok_or(CustomError {
+                    message: "Private documents not available for this project.".to_string(),
+                    is_owner,
+                })?);
             }
         }
 
-        // If no project with the matching ID was found
-        Err("Project ID not found.".to_string())
+        Err(CustomError {
+            message: "Project ID not found.".to_string(),
+            is_owner,
+        })
     })
 }
 
