@@ -24,7 +24,7 @@ pub struct UserInformation {
     pub openchat_username: Option<String>,
 }
 
-#[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default)]
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
 pub struct UserInfoInternal {
     pub uid: String,
     pub params: UserInformation,
