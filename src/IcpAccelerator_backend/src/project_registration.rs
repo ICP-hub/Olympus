@@ -3,9 +3,9 @@ use crate::mentor::MentorProfile;
 
 use crate::user_module::*;
 
-use crate::ratings::RatingSystem;
+use crate::ratings::{RatingSystem, RatingAverages};
 use crate::roadmap_suggestion::Suggestion;
-use crate::user_module::UserInformation;
+use crate::user_module::{UserInformation, UserInfoInternal};
 
 use crate::admin::send_approval_request;
 use crate::vc_registration::VentureCapitalist;
@@ -89,7 +89,7 @@ pub struct ProjectInfo {
     pub long_term_goals: Option<String>,
     pub target_market: Option<String>,
     pub self_rating_of_project: f64,
-    pub user_data: UserInformation,
+    pub user_data: UserInfoInternal,
     pub mentors_assigned: Option<Vec<MentorProfile>>,
     pub vc_assigned: Option<Vec<VentureCapitalist>>,
     pub project_twitter: Option<String>,
@@ -127,7 +127,7 @@ pub struct ProjectPublicInfo {
     pub long_term_goals: Option<String>,
     pub target_market: Option<String>,
     pub self_rating_of_project: f64,
-    pub user_data: UserInformation,
+    pub user_data: UserInfoInternal,
     pub mentors_assigned: Option<Vec<MentorProfile>>,
     pub vc_assigned: Option<Vec<VentureCapitalist>>,
     pub project_twitter: Option<String>,
@@ -190,6 +190,16 @@ impl MoneyRaised {
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct ProjectInfoForUser {
+    pub project_name: Option<String>,
+    pub project_logo: Option<Vec<u8>>,
+    pub project_description: Option<String>,
+    pub community_rating: Option<RatingAverages>,
+    pub project_cover: Vec<u8>,
+    pub project_twitter: Option<String>,
+    pub project_linkedin: Option<String>,
+    pub project_website: Option<String>,
+    pub project_discord: Option<String>,
+    pub promotional_video: Option<String>,
     pub date_of_joining: Option<u64>,
     pub mentor_associated: Option<Vec<MentorProfile>>,
     pub vc_associated: Option<Vec<VentureCapitalist>>,
@@ -614,7 +624,7 @@ pub async fn create_project(info: ProjectInfo) -> String {
     });
 
     let info_clone = info.clone();
-    let user_uid = crate::user_module::update_user(info_clone.user_data).await;
+    //let user_uid = crate::user_module::update_user(info_clone.user_data).await;
     let uuids = raw_rand().await.unwrap().0;
     let uid = format!("{:x}", Sha256::digest(&uuids));
     let new_id = uid.clone().to_string();
@@ -635,12 +645,12 @@ pub async fn create_project(info: ProjectInfo) -> String {
         },
     );
     let res = send_approval_request(
-        info.user_data.profile_picture.unwrap_or_else(|| Vec::new()),
-        info.user_data.full_name,
-        info.user_data.country,
+        info.user_data.params.profile_picture.unwrap_or_else(|| Vec::new()),
+        info.user_data.params.full_name,
+        info.user_data.params.country,
         info.project_area_of_focus,
         "project".to_string(),
-        info.user_data.bio.unwrap_or("no bio".to_string()),
+        info.user_data.params.bio.unwrap_or("no bio".to_string()),
     )
     .await;
 
@@ -830,15 +840,15 @@ pub async fn update_project(project_id: String, updated_project: ProjectInfo) ->
     let res = send_approval_request(
         updated_project
             .user_data
-            .profile_picture
+            .params.profile_picture
             .unwrap_or_else(|| Vec::new()),
-        updated_project.user_data.full_name,
-        updated_project.user_data.country,
+        updated_project.user_data.params.full_name,
+        updated_project.user_data.params.country,
         updated_project.project_area_of_focus,
         "project".to_string(),
         updated_project
             .user_data
-            .bio
+            .params.bio
             .unwrap_or("no bio".to_string()),
     )
     .await;
@@ -1183,7 +1193,7 @@ pub fn filter_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
                 let country_match = criteria
                     .country
                     .as_ref()
-                    .map_or(true, |c| &project_internal.params.user_data.country == c);
+                    .map_or(true, |c| &project_internal.params.user_data.params.country == c);
 
                 let rating_match = criteria.rating_range.map_or(true, |(min, max)| {
                     project_internal.params.self_rating_of_project >= min
@@ -1247,6 +1257,8 @@ pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUse
     );
     let jobs_opportunity_posted = get_jobs_posted_by_project(project_id.clone());
 
+    let community_ratings = crate::ratings::calculate_average(&project_id);
+
     APPLICATION_FORM.with(|storage| {
         let projects = storage.borrow();
 
@@ -1255,6 +1267,16 @@ pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUse
             .flat_map(|(_, project_list)| project_list.iter())
             .find(|project_internal| project_internal.uid == project_id)
             .map(|project_internal| ProjectInfoForUser {
+                project_name: Some(project_internal.params.project_name.clone()),
+                project_logo: Some(project_internal.params.project_logo.clone()),
+                project_description: Some(project_internal.params.project_description.clone()),
+                community_rating: Some(community_ratings),
+                project_cover: project_internal.params.project_cover.clone(),
+                project_twitter: project_internal.params.project_twitter.clone(),
+                project_linkedin: project_internal.params.project_linkedin.clone(),
+                project_website: project_internal.params.project_website.clone(),
+                project_discord: project_internal.params.project_discord.clone(),
+                promotional_video: project_internal.params.promotional_video.clone(),
                 date_of_joining: Some(project_internal.creation_date),
                 mentor_associated: project_internal.params.mentors_assigned.clone(),
                 vc_associated: project_internal.params.vc_assigned.clone(),
