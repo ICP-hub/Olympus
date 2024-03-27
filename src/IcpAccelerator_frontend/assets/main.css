@@ -16,6 +16,12 @@
   .swiper-pagination-bullet {
     background: white !important;
   }
+  .css-1hb7zxy-IndicatorsContainer {
+    padding-block: 3px !important;
+  }
+  .css-ovqh0o-control{
+    border: 2px solid #737373 !important;
+  }
   
   .swiper-pagination-bullet-active {
     background: white !important; /* Or any other color you want for the active bullet */
