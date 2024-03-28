@@ -7,7 +7,7 @@ import { formatDateFromBigInt, formatFullDateFromBigInt } from "../../Utils/form
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import 'react-circular-progressbar/dist/styles.css';
 
-function ProjectDetailsCard({ data, image, title, tags, socials, doj, country, website, dapp }) {
+function ProjectDetailsCard({ data, image, title, rubric, tags, socials, doj, country, website, dapp }) {
     if (!data) {
         return null;
     }
@@ -18,10 +18,9 @@ function ProjectDetailsCard({ data, image, title, tags, socials, doj, country, w
     let linkenin_link = data?.params?.project_linkedin[0] ?? '';
     let twitter_link = data?.params?.project_twitter[0] ?? '';
     let website_link = data?.params?.project_website[0] ?? '';
-    // let dapp_link = data?.params?.project_dapp?.[0] ?? null;
-    let dapp_link = null;
+    let dapp_link = data?.params?.dapp_link?.[0].trim() !== '' ? data?.params?.dapp_link?.[0] : null;
     let pro_country = data?.params?.user_data?.country ?? "";
-    let joined_on = data?.creation_date ?? "";
+    let joined_on = data?.creation_date ? formatFullDateFromBigInt(data?.creation_date) : "";
 
 
 
@@ -44,8 +43,8 @@ function ProjectDetailsCard({ data, image, title, tags, socials, doj, country, w
                                     (
                                         <div className="flex items-center">
                                             <p className="font-bold text-lg pr-2">{name}</p>
-                                            <CircularProgressbar
-                                                value={(4 / 9) * 100 }
+                                            {rubric && (<CircularProgressbar
+                                                value={(4 / 9) * 100}
                                                 text={`4/9`}
                                                 className="w-10 h-10 font-extrabold text-lg"
                                                 strokeWidth={8}
@@ -56,18 +55,18 @@ function ProjectDetailsCard({ data, image, title, tags, socials, doj, country, w
                                                     trailColor: "#d6d6d6",
                                                     textColor: "#3505B2",
                                                 })}
-                                            />
+                                            />)}
                                         </div>
                                     )}
                             </div>
                             <div className="md:flex block text-xs md:text-sm text-[#737373]">
                                 {tags && (
                                     <p className="flex items-center flex-wrap py-2 gap-2">
-                                        {/* {tags.map((val, index) => ( */}
-                                        <span className="bg-[#B5B5B54D] px-4 rounded-full">
-                                            {area_tags}
-                                        </span>
-                                        {/* ))} */}
+                                        {area_tags.split(",").slice(0, 3).map((val, index) => (
+                                            <span className="bg-[#B5B5B54D] px-4 rounded-full" key={index}>
+                                                {val}
+                                            </span>
+                                        ))}
                                     </p>
                                 )}
                             </div>
@@ -95,13 +94,19 @@ function ProjectDetailsCard({ data, image, title, tags, socials, doj, country, w
                                     </button>
                                 </a>
                             )}
-                            {dapp && dapp_link && (
-                                <a href={dapp_link} target="_blank">
+                            {dapp &&
+                                (dapp_link ? (
+                                    <a href={dapp_link} target="_blank">
+                                        <button className="font-[950] border text-[#3505B2] py-[7px] px-[9px] rounded-md border-[#C7C7C7] bg-[#FFFFFF] text-nowrap">
+                                            Visit Dapp
+                                        </button>
+                                    </a>
+                                ) : (
                                     <button className="font-[950] border text-[#3505B2] py-[7px] px-[9px] rounded-md border-[#C7C7C7] bg-[#FFFFFF] text-nowrap">
-                                        Visit Dapp
+                                        Live Now
                                     </button>
-                                </a>
-                            )}
+                                )
+                                )}
                         </div>
                     </div>
                 </div>
@@ -114,7 +119,7 @@ function ProjectDetailsCard({ data, image, title, tags, socials, doj, country, w
                                 <p>
                                     {doj && (
                                         <div className="flex text-xs md:text-sm text-[#737373]">
-                                            <span>Platform Joined On {formatFullDateFromBigInt(joined_on)}</span>
+                                            <span>Platform Joined On {joined_on}</span>
                                         </div>
                                     )}
                                 </p>

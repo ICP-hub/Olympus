@@ -38,20 +38,20 @@ const InvestorsList = () => {
     }
   }, [actor]);
 
-  if(noData){
+  if (noData) {
     return <div className="items-center w-full">
-    <NoDataCard />
-        </div>
+      <NoDataCard />
+    </div>
   }
   return (
-    <div className="flex flex-col lg:flex-row items-center mt-8 gap-12 md:w-fit w-full">
-      {data&& data.slice(0,3).map((investor, index) => {
-        let  id = investor[0].toText();
-        let   img = uint8ArrayToBase64(investor[1]?.vc_profile?.params?.user_data?.profile_picture[0]);
+    <div className="flex flex-col lg:flex-row items-center mt-8 gap-4 w-full">
+      {data && data.slice(0, 3).map((investor, index) => {
+        let id = investor[0].toText();
+        let img = uint8ArrayToBase64(investor[1]?.vc_profile?.params?.user_data?.profile_picture[0]);
         let name = investor[1]?.vc_profile?.params?.user_data?.full_name;
-        let  company = investor[1]?.vc_profile?.params?.name_of_fund;
-        let  role = 'Investor';
-       
+        let company = investor[1]?.vc_profile?.params?.name_of_fund;
+        let role = 'Investor';
+
         return (
           <div key={index} className="flex-shrink-0 overflow-hidden bg-white rounded-lg max-w-xs shadow-lg p-5 w-full lg:w-1/3">
             <div className=" flex items-center justify-center px-8">

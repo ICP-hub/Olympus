@@ -3,9 +3,9 @@ use crate::mentor::MentorProfile;
 
 use crate::user_module::*;
 
-use crate::ratings::{RatingSystem, RatingAverages};
+use crate::ratings::{RatingAverages, RatingSystem};
 use crate::roadmap_suggestion::Suggestion;
-use crate::user_module::{UserInformation, UserInfoInternal};
+use crate::user_module::{UserInfoInternal, UserInformation};
 
 use crate::admin::send_approval_request;
 use crate::vc_registration::VentureCapitalist;
@@ -107,7 +107,7 @@ pub struct ProjectInfo {
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct ProjectPublicInfo {
-    pub project_id : String,
+    pub project_id: String,
     pub project_name: String,
     pub project_logo: Vec<u8>,
     pub preferred_icp_hub: Option<String>,
@@ -140,7 +140,7 @@ pub struct ProjectPublicInfo {
 }
 
 #[derive(Deserialize, Clone, Debug, CandidType, PartialEq)]
-pub struct ProjectPublicInfoInternal{
+pub struct ProjectPublicInfoInternal {
     pub params: ProjectPublicInfo,
     pub uid: String,
     pub is_active: bool,
@@ -200,6 +200,11 @@ pub struct ProjectInfoForUser {
     pub project_website: Option<String>,
     pub project_discord: Option<String>,
     pub promotional_video: Option<String>,
+    pub github_link: Option<String>,
+    pub user_data: UserInformation,
+    pub project_team: Option<Vec<TeamMember>>,
+    pub dapp_link: Option<String>,
+    pub weekly_active_users: Option<u64>,
     pub date_of_joining: Option<u64>,
     pub mentor_associated: Option<Vec<MentorProfile>>,
     pub vc_associated: Option<Vec<VentureCapitalist>>,
@@ -211,6 +216,11 @@ pub struct ProjectInfoForUser {
     pub jobs_opportunity: Option<Vec<JobsInternal>>,
     pub area_of_focus: Option<String>,
     pub country_of_project: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
+pub struct ProjectInfoForUserInternal{
+    pub params: ProjectInfoForUser
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
@@ -726,8 +736,9 @@ pub fn find_project_by_id(project_id: &str) -> Option<ProjectInfoInternal> {
 
 //newbie api shows restricted info!
 #[query]
-pub fn get_project_details_for_mentor_and_investor(project_id: String) -> ProjectPublicInfoInternal {
-    
+pub fn get_project_details_for_mentor_and_investor(
+    project_id: String,
+) -> ProjectPublicInfoInternal {
     let project_details = find_project_by_id(project_id.as_str()).expect("project not found");
     let project_id = project_id.to_string().clone();
 
@@ -769,7 +780,7 @@ pub fn get_project_details_for_mentor_and_investor(project_id: String) -> Projec
         uid: project_details.uid,
         is_active: project_details.is_active,
         is_verified: project_details.is_verified,
-        creation_date: project_details.creation_date
+        creation_date: project_details.creation_date,
     };
 
     project_internal
@@ -1249,7 +1260,7 @@ pub fn filter_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
 }
 
 #[query]
-pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUser> {
+pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUserInternal> {
     let announcements_project = get_announcements();
     let project_reviews = crate::roadmap_suggestion::get_suggestions_by_status(
         project_id.clone(),
@@ -1257,7 +1268,7 @@ pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUse
     );
     let jobs_opportunity_posted = get_jobs_posted_by_project(project_id.clone());
 
-    let community_ratings = crate::ratings::calculate_average(&project_id);
+    let community_ratings = crate::ratings::calculate_average_api(&project_id);
 
     APPLICATION_FORM.with(|storage| {
         let projects = storage.borrow();
@@ -1266,28 +1277,35 @@ pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUse
             .iter()
             .flat_map(|(_, project_list)| project_list.iter())
             .find(|project_internal| project_internal.uid == project_id)
-            .map(|project_internal| ProjectInfoForUser {
-                project_name: Some(project_internal.params.project_name.clone()),
-                project_logo: Some(project_internal.params.project_logo.clone()),
-                project_description: Some(project_internal.params.project_description.clone()),
-                community_rating: Some(community_ratings),
-                project_cover: project_internal.params.project_cover.clone(),
-                project_twitter: project_internal.params.project_twitter.clone(),
-                project_linkedin: project_internal.params.project_linkedin.clone(),
-                project_website: project_internal.params.project_website.clone(),
-                project_discord: project_internal.params.project_discord.clone(),
-                promotional_video: project_internal.params.promotional_video.clone(),
-                date_of_joining: Some(project_internal.creation_date),
-                mentor_associated: project_internal.params.mentors_assigned.clone(),
-                vc_associated: project_internal.params.vc_assigned.clone(),
-                team_member_info: project_internal.params.project_team.clone(),
-                announcements: announcements_project,
-                reviews: project_reviews,
-                website_social_group: project_internal.params.project_discord.clone(),
-                live_link_of_project: project_internal.params.dapp_link.clone(),
-                jobs_opportunity: Some(jobs_opportunity_posted),
-                area_of_focus: Some(project_internal.params.project_area_of_focus.clone()),
-                country_of_project: project_internal.params.preferred_icp_hub.clone(),
+            .map(|project_internal| ProjectInfoForUserInternal {
+                params: ProjectInfoForUser {
+                    project_name: Some(project_internal.params.project_name.clone()),
+                    project_logo: Some(project_internal.params.project_logo.clone()),
+                    project_description: Some(project_internal.params.project_description.clone()),
+                    community_rating: Some(community_ratings),
+                    project_cover: project_internal.params.project_cover.clone(),
+                    project_twitter: project_internal.params.project_twitter.clone(),
+                    project_linkedin: project_internal.params.project_linkedin.clone(),
+                    project_website: project_internal.params.project_website.clone(),
+                    project_discord: project_internal.params.project_discord.clone(),
+                    promotional_video: project_internal.params.promotional_video.clone(),
+                    github_link: project_internal.params.github_link.clone(),
+                    user_data: project_internal.params.user_data.clone(),
+                    project_team: project_internal.params.project_team.clone(),
+                    dapp_link: project_internal.params.dapp_link.clone(),
+                    weekly_active_users: project_internal.params.weekly_active_users.clone(),
+                    date_of_joining: Some(project_internal.creation_date),
+                    mentor_associated: project_internal.params.mentors_assigned.clone(),
+                    vc_associated: project_internal.params.vc_assigned.clone(),
+                    team_member_info: project_internal.params.project_team.clone(),
+                    announcements: announcements_project,
+                    reviews: project_reviews,
+                    website_social_group: project_internal.params.project_discord.clone(),
+                    live_link_of_project: project_internal.params.dapp_link.clone(),
+                    jobs_opportunity: Some(jobs_opportunity_posted),
+                    area_of_focus: Some(project_internal.params.project_area_of_focus.clone()),
+                    country_of_project: project_internal.params.preferred_icp_hub.clone(),
+                }
             })
     })
 }
@@ -1913,16 +1931,18 @@ pub fn access_money_details(project_id: String) -> Result<MoneyRaised, CustomErr
     });
 
     // Check if the caller is approved to access the money details for this project
-    let is_approved = is_owner || MONEY_ACCESS.with(|access| {
-        access
-            .borrow()
-            .get(&project_id)
-            .map_or(false, |principals| principals.contains(&caller))
-    });
+    let is_approved = is_owner
+        || MONEY_ACCESS.with(|access| {
+            access
+                .borrow()
+                .get(&project_id)
+                .map_or(false, |principals| principals.contains(&caller))
+        });
 
     if !is_approved {
         return Err(CustomError {
-            message: "You do not have access to view the money details for this project.".to_string(),
+            message: "You do not have access to view the money details for this project."
+                .to_string(),
             is_owner,
         });
     }
@@ -1974,7 +1994,8 @@ pub fn access_private_docs(project_id: String) -> Result<Vec<Docs>, CustomError>
 
     if !is_approved {
         return Err(CustomError {
-            message: "You do not have access to view the private documents for this project.".to_string(),
+            message: "You do not have access to view the private documents for this project."
+                .to_string(),
             is_owner,
         });
     }
@@ -1997,7 +2018,6 @@ pub fn access_private_docs(project_id: String) -> Result<Vec<Docs>, CustomError>
         })
     })
 }
-
 
 #[update]
 pub fn decline_money_access_request(project_id: String, sender_id: Principal) -> String {
@@ -2096,8 +2116,24 @@ pub fn check_project_exists(project_id: String) -> bool {
 #[update]
 pub fn add_project_rating(ratings: ProjectRatingStruct) -> Result<String, String> {
     if check_project_exists(ratings.project_id.clone()) {
-        let principal = caller();
+        let principal = caller(); // Assuming `caller()` correctly retrieves the principal of the caller
         let user_data = get_user_info().clone().unwrap();
+
+        // Check if the current user has already submitted a review for this project
+        let already_rated = PROJECT_RATING.with(|registry| {
+            registry
+                .borrow()
+                .get(&ratings.project_id)
+                .map_or(false, |reviews| {
+                    reviews
+                        .iter()
+                        .any(|(user_principal, _)| *user_principal == principal)
+                })
+        });
+
+        if already_rated {
+            return Err("User has already rated this project.".to_string());
+        }
 
         let project_review = ProjectReview::new(
             user_data.full_name,
@@ -2116,6 +2152,7 @@ pub fn add_project_rating(ratings: ProjectRatingStruct) -> Result<String, String
                 .or_insert_with(Vec::new)
                 .push((principal, project_review));
         });
+
         Ok("Rating added".to_string())
     } else {
         Err("Project with ID does not exist.".to_string())
@@ -2123,6 +2160,26 @@ pub fn add_project_rating(ratings: ProjectRatingStruct) -> Result<String, String
 }
 
 #[query]
-fn get_project_ratings(project_id: String) -> Option<Vec<(Principal, ProjectReview)>> {
-    PROJECT_RATING.with(|ratings| ratings.borrow().get(&project_id).cloned())
+fn get_project_ratings(
+    project_id: String,
+) -> Result<(Option<Vec<(Principal, ProjectReview)>>, f32, bool), String> {
+    let caller = caller(); // Assuming this retrieves the current user's principal
+    PROJECT_RATING.with(|ratings| {
+        let ratings = ratings.borrow();
+        match ratings.get(&project_id) {
+            Some(ratings) => {
+                let total_ratings = ratings.len() as f32;
+                if total_ratings == 0.0 {
+                    // No ratings exist for the project
+                    Ok((Some(vec![]), 0.0, false))
+                } else {
+                    let sum_ratings: u32 = ratings.iter().map(|(_, review)| review.rating).sum();
+                    let average_rating = sum_ratings as f32 / total_ratings;
+                    let caller_present = ratings.iter().any(|(principal, _)| principal == &caller);
+                    Ok((Some(ratings.clone()), average_rating, caller_present))
+                }
+            }
+            None => Err("No ratings found for the specified project ID.".to_string()),
+        }
+    })
 }

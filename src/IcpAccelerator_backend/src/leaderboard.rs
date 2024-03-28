@@ -1,5 +1,5 @@
 use crate::upvotes::{UPVOTES, UpvoteRecord}; 
-use crate::ratings::{Rating,RATING_SYSTEM, calculate_average};
+use crate::ratings::{Rating,RATING_SYSTEM, calculate_average_api};
 use crate::project_like::STATE;
 use std::fmt::Display;
 use candid::{CandidType, Principal, Nat};
@@ -68,7 +68,7 @@ pub fn get_leaderboard_by_ratings() -> Vec<LeaderboardEntryForRatings> {
         let system = system.borrow();
 
         for (project_id, _) in system.iter() {
-            if let Some(average_ratings) = calculate_average(project_id).overall_average {
+            if let Some(average_ratings) = calculate_average_api(project_id).overall_average {
                 // Here, average_ratings is successfully unwrapped from the Option
                 leaderboard.push(LeaderboardEntryForRatings {
                     project_id: Some(project_id.clone()),

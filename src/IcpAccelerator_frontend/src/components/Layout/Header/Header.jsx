@@ -57,7 +57,7 @@ const Header = ({ setModalOpen, gradient }) => {
     if (actor) {
       if (!userCurrentRoleStatus.length) {
         initialApi();
-      } 
+      }
     }
     console.log('userCurrentRoleStatus--in--header', userCurrentRoleStatus)
   }, [actor, dispatch, userCurrentRoleStatus, userCurrentRoleStatusActiveRole]);
@@ -72,27 +72,55 @@ const Header = ({ setModalOpen, gradient }) => {
           {logoSvg}
         </div> */}
 
-        {/* {isAuthenticated && (
+        {isAuthenticated && (
           <div className="space-x-3 text-xs md:block hidden">
-            <a href="#" className={`${underline}`}>
+            {/* <a href="" className={`${underline}`}>
               Home
-            </a>
-            <a href="#" className={`${underline}`}>
+            </a> */}
+            {/* <a href="#" className={`${underline}`}>
               Event
             </a>
             <a href="#" className={`${underline}`}>
               Mentor
-            </a>
-            <a href="#" className={`${underline}`}>
-              Projects
-            </a>
+            </a> */}
+
+            {userCurrentRoleStatus && userCurrentRoleStatusActiveRole && userCurrentRoleStatusActiveRole !== 'project' ?
+              <span onClick={() => navigate(
+                userCurrentRoleStatusActiveRole === 'user'
+                  ? '/project-association-requests'
+                  : userCurrentRoleStatusActiveRole === 'mentor'
+                    ? '/mentor-association-requests'
+                    : userCurrentRoleStatusActiveRole === 'investor'
+                      ? "/investor-association-requests"
+                      : ''
+              )}
+                // className={`${underline}`}
+                className="cursor-pointer focus:after:absolute focus:after:bg-blue-800 focus:after:block focus:after:bottom-[-4px] focus:after:content-[''] focus:after:h-[2px] focus:after:left-0 focus:after:w-full relative text-lg"
+              >
+                Associations
+              </span>
+              : ''}
+
           </div>
-        )} */}
+        )}
 
         {principal && isAuthenticated == true ? (
           <>
             {userCurrentRoleStatus && userCurrentRoleStatusActiveRole ? (
               <div className="flex items-center flex-row gap-2">
+                {/* {userCurrentRoleStatusActiveRole !== 'user' ?
+                  <button
+                    onClick={() => navigate(
+                      userCurrentRoleStatusActiveRole === 'project'
+                        ? '/project-association-requests'
+                        : userCurrentRoleStatusActiveRole === 'mentor'
+                          ? '/mentor-association-requests'
+                          : userCurrentRoleStatusActiveRole === 'investor'
+                            ? "/investor-association-requests"
+                            : ''
+                    )}
+                    className="border border-violet-800 md:p-1 font-bold rounded-md text-violet-800 md:px-2 px-1 text-base md:text-lg  uppercase"
+                  >associations</button> : ''} */}
                 <button
                   onClick={() => setShowSwitchRole(true)}
                   className="border border-violet-800 md:p-1 font-bold rounded-md text-violet-800 md:px-2 px-1 text-base md:text-lg  uppercase"
