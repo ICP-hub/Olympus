@@ -8,30 +8,37 @@ import AnnouncementDetailsCard from './AnnouncementDetailsCard';
 import ProjectJobDetailsCard from './ProjectJobDetailsCard';
 import ProjectDetailsCommunityRatings from './ProjectDetailsCommunityRatings';
 import toast, { Toaster } from "react-hot-toast";
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 
 const ProjectDetailsForUserRole = () => {
+
+    const stateData = useLocation();
+    const projectData = stateData.state
+
+    if (!projectData) {
+        return null
+    }
+    console.log("projectData ================>>>>>>", projectData)
     const navigate = useNavigate();
-    const {id} = useParams()
+    const { id } = useParams()
     const actor = useSelector((currState) => currState.actors.actor)
     const principal = useSelector((currState) => currState.internet.principal);
-    const [projectData, setProjectData] = useState(null);
 
-    const fetchProjectData = async () => {
-        await actor.get_project_info_for_user(id)
-            .then((result) => {
-                console.log('result-in-get_project_info_for_user', result)
-                if (result && Object.keys(result).length > 0) {
-                    setProjectData(result[0])
-                } else {
-                    setProjectData(null)
-                }
-            })
-            .catch((error) => {
-                console.log('error-in-get_project_info_for_user', error)
-                setProjectData(null)
-            })
-    };
+    // const fetchProjectData = async () => {
+    //     await actor.get_project_info_for_user(id)
+    //         .then((result) => {
+    //             console.log('result-in-get_project_info_for_user', result)
+    //             if (result && Object.keys(result).length > 0) {
+    //                 setProjectData(result[0])
+    //             } else {
+    //                 setProjectData(null)
+    //             }
+    //         })
+    //         .catch((error) => {
+    //             console.log('error-in-get_project_info_for_user', error)
+    //             setProjectData(null)
+    //         })
+    // };
 
     const headerData = [
         {
@@ -53,7 +60,7 @@ const ProjectDetailsForUserRole = () => {
     ];
 
     const [activeTab, setActiveTab] = useState(headerData[0].id);
-  
+
     const handleTabClick = (tab) => {
         setActiveTab(tab);
     };
@@ -118,22 +125,22 @@ const ProjectDetailsForUserRole = () => {
                     />
                 )
 
-          
+
             default:
                 return null;
         }
     };
 
 
-    useEffect(() => {
-        if (actor && principal) {
-            if (!projectData) {
-                fetchProjectData();
-            } else {
-              
-            }
-        }
-    }, [actor, principal, projectData]);
+    // useEffect(() => {
+    //     if (actor && principal) {
+    //         if (!projectData) {
+    //             fetchProjectData();
+    //         } else {
+
+    //         }
+    //     }
+    // }, [actor, principal, projectData]);
 
     return (
         <section className="text-black bg-gray-100 pb-4">
@@ -200,7 +207,7 @@ const ProjectDetailsForUserRole = () => {
                             </h1>
                         </div>
                         <ProjectJobDetailsCard
-                            data={projectData} 
+                            data={projectData}
                             image={true}
                             tags={true}
                             country={true}

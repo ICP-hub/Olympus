@@ -133,9 +133,11 @@ const MoreCurrentlyRaisingProjects = () => {
     }
   }, [actor]);
 
-  const handleNavigate = (projectId) => {
+  const handleNavigate = (projectId, projectData) => {
     if (isAuthenticated) {
-      navigate(`/individual-project-details-user/${projectId}`);
+      navigate(`/individual-project-details-user/${projectId}`, {
+        state: projectData
+      });
     }
   };
   return (
@@ -154,7 +156,7 @@ const MoreCurrentlyRaisingProjects = () => {
               let projectDescription = "";
               let projectAreaOfFocus = "";
               let moneyRaisedTillNow = "";
-
+              let projectData = null ;
               if (noData === false) {
                 projectName = data[1]?.project_profile[0]?.params?.project_name;
                 projectId = data[1]?.project_profile[0]?.uid;
@@ -171,6 +173,7 @@ const MoreCurrentlyRaisingProjects = () => {
                 projectAreaOfFocus =
                   data[1]?.project_profile[0]?.params?.project_area_of_focus;
                 moneyRaisedTillNow = data[1]?.project_profile[0]?.params?.money_raised_till_now[0];
+                projectData = data[1]?.project_profile[0];
               } else {
                 projectName = data.projectName;
                 projectId = data.projectId;
@@ -255,7 +258,7 @@ const MoreCurrentlyRaisingProjects = () => {
 
                           <p
                             onClick={() =>
-                              handleNavigate(projectId)
+                              handleNavigate(projectId, projectData)
                             }
                             className="cursor-pointer"
                           >
@@ -266,7 +269,7 @@ const MoreCurrentlyRaisingProjects = () => {
                       <button
                         className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"
                         onClick={() =>
-                          handleNavigate(projectId)
+                          handleNavigate(projectId, projectData)
                         }
                       >
                         KNOW MORE
