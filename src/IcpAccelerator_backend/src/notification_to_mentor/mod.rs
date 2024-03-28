@@ -28,7 +28,7 @@ pub struct OfferToMentor {
 }
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
-pub struct ProjectInfo {
+pub struct ProjectInfoo {
     project_id: String,
     project_name: String,
     project_description: String,
@@ -38,7 +38,7 @@ pub struct ProjectInfo {
 #[derive(Clone, CandidType, Deserialize, Serialize)]
 pub struct OfferToSendToMentor {
     offer_id: String, // Added field
-    project_info: ProjectInfo,
+    project_info: ProjectInfoo,
     offer: String,
     sent_at: u64,
     accepted_at: u64,
@@ -154,7 +154,7 @@ pub async fn send_offer_to_mentor(mentor_id: Principal, msg: String, project_id:
 
     let project_info = find_project_by_id(&project_id).expect("project does not exist");
 
-    let project_info = ProjectInfo {
+    let project_info = ProjectInfoo {
         project_id: project_id,
         project_name: project_info.params.project_name,
         project_description: project_info.params.project_description,
