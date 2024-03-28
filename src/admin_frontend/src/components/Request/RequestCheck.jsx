@@ -60,7 +60,9 @@ const RequestCheck = () => {
     (currState) => currState.investor_declined.data
   );
 
-  // console.log("filteredNotifications in requestcheck", filteredNotifications)
+  console.log("data in =>=>>>>>> requestcheck", filteredNotifications)
+  // console.log("investorPending in requestcheck", investorPending)
+
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
  
@@ -116,7 +118,7 @@ const RequestCheck = () => {
     };
 
     const currentData = categoryMapping[activeCategory][selectedStatus];
-    // console.log("currentData =>", currentData);
+    console.log("currentData =>", currentData);
     setFilteredNotifications(currentData);
   }, [
     activeCategory,
@@ -248,7 +250,7 @@ const RequestCheck = () => {
   </div>
 
   {isPopupOpen && (
-    <div className="absolute  w-[143px]  md:top-[12rem] top-[13rem] right-[1rem] md:right-[5.5rem] bg-white shadow-xl rounded-lg border border-gray-300 md:p-4 z-50">
+    <div className="absolute  w-[143px]  md:top-[14rem] top-[13rem] right-[1rem] md:right-[7.5rem] bg-white shadow-xl rounded-lg border border-gray-300 md:p-4 z-50">
       {["Pending", "Approved", "Declined"].map((status) => (
         <button
           key={status}
@@ -274,9 +276,7 @@ const RequestCheck = () => {
             <NotificationCard
               key={index}
               notificationDetails={{
-                active : notification.active,
-                approve : notification.approve,
-                decline:notification.decline,
+                role: notification.role,
                 principal: notification.principal,
                 requestedTime: notification.requestedTime,
                 rejectedTime: notification.rejectedTime,

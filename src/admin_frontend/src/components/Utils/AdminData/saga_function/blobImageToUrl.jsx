@@ -31,3 +31,16 @@ export function principalToText(principal){
     });
     return dateString;
 }
+
+
+
+export function numberToDate(bigIntDate) {
+  // Convert BigInt to Number before division
+  const date = new Date(Number(bigIntDate) / 1000000);
+  const dateString = date.toLocaleDateString('en-US', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric'
+  });
+  return dateString;
+}
