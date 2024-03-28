@@ -4,3 +4,5 @@
 . ./main_test_data/main_mentor_data.sh
 . ./main_test_data/main_jobs.sh
 . ./main_test_data/main_team.sh
+. ./main_test_data/main_testimonials.sh
+. ./main_test_data/main_anouncements_and_spotlight.sh
