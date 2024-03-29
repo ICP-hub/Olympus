@@ -635,7 +635,8 @@ service : {
   approve_project_details_updation_request : (principal, text, bool) -> (text);
   approve_vc_creation_request : (principal, bool) -> (text);
   approve_vc_profile_update : (principal, bool) -> (text);
-  calculate_average_api : (text) -> (RatingAverages) query;
+  calculate_average : (text) -> (RatingAverages) query;
+  change_live_status : (principal, text, bool, opt text) -> (Result_3) query;
   connect_to_team_member : (text, text) -> (text);
   create_cohort : (Cohort) -> (text);
   decline_mentor_creation_request_candid : (principal, bool) -> (text);
@@ -800,7 +801,11 @@ service : {
       ProjectPublicInfoInternal,
     ) query;
   get_project_id : () -> (text) query;
-  get_project_info_for_user : (text) -> (opt ProjectInfoForUser) query;
+  get_project_info_combined : (principal) -> (opt ProjectInfoInternal) query;
+  get_project_info_for_user : (text) -> (opt ProjectInfoForUserInternal) query;
+  get_project_info_using_principal : (principal) -> (
+      opt ProjectInfoInternal,
+    ) query;
   get_project_pending_offers : () -> (vec OfferToMentor) query;
   get_project_ratings : (text) -> (Result_4) query;
   get_project_requests : (text) -> (vec Request) query;
