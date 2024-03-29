@@ -1044,31 +1044,29 @@ pub async fn add_project_to_spotlight(project_id: String) -> Result<(), String> 
         return Err("Unauthorized: Caller is not an admin.".to_string());
     }
 
-    let project_info = APPLICATION_FORM.with(|details| {
-        details
-            .borrow()
-            .iter()
-            .flat_map(|(_, projects)| projects.iter())
-            .find(|project| project.uid == project_id)
-            .cloned()
+    let project_creator_and_info = APPLICATION_FORM.with(|details| {
+        details.borrow().iter().find_map(|(creator_principal, projects)| {
+            projects.iter().find(|project| project.uid == project_id)
+                    .map(|project_info| (creator_principal.clone(), project_info.clone()))
+        })
     });
 
-    match project_info {
-        Some(project_info) => {
-            let spotlight_details = SpotlightDetails {
-                added_by: caller,
-                project_id: project_id,
-                project_details: project_info.params,
-                approval_time: time(),
-            };
+    match project_creator_and_info {
+    Some((project_creator, project_info)) => {
+        let spotlight_details = SpotlightDetails {
+            added_by: project_creator, 
+            project_id: project_id,
+            project_details: project_info.params, 
+            approval_time: time(),
+        };
 
-            SPOTLIGHT_PROJECTS.with(|spotlight| {
-                spotlight.borrow_mut().push(spotlight_details);
-            });
-            Ok(())
-        }
-        None => Err("Project not found.".to_string()),
-    }
+        SPOTLIGHT_PROJECTS.with(|spotlight| {
+            spotlight.borrow_mut().push(spotlight_details);
+        });
+        Ok(())
+    },
+    None => Err("Project not found.".to_string()),
+}
 }
 
 #[update]
