@@ -135,12 +135,13 @@ const MoreProjectLaunchPage = () => {
     }
   }, [actor]);
 
-  const handleNavigate = (projectId) => {
+  const handleNavigate = (projectId, projectData) => {
     if (isAuthenticated) {
-      navigate(`/individual-project-details-user/${projectId}`);
+      navigate(`/individual-project-details-user/${projectId}`, {
+        state: projectData
+      });
     }
   };
-
   return (
     <div className="flex justify-center" style={{ minHeight: "60vh" }}>
       {noData ?
@@ -156,6 +157,7 @@ const MoreProjectLaunchPage = () => {
               let principalId = "";
               let projectDescription = "";
               let projectAreaOfFocus = "";
+              let projectData = null ;
               if (noData === false) {
                 projectName = data[1]?.project_profile[0]?.params?.project_name;
                 projectId = data[1]?.project_profile[0]?.uid;
@@ -171,6 +173,7 @@ const MoreProjectLaunchPage = () => {
                   data[1]?.project_profile[0]?.params?.project_description;
                 projectAreaOfFocus =
                   data[1]?.project_profile[0]?.params?.project_area_of_focus;
+                  projectData = data[1]?.project_profile[0];
               } else {
                 projectName = data.projectName;
                 projectId = data.projectId;
@@ -251,7 +254,7 @@ const MoreProjectLaunchPage = () => {
 
                           <p
                             onClick={() =>
-                              handleNavigate(projectId)
+                              handleNavigate(projectId, projectData)
                             }
                             className="cursor-pointer"
                           >
@@ -262,7 +265,7 @@ const MoreProjectLaunchPage = () => {
                       <button
                         className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"
                         onClick={() =>
-                          handleNavigate(projectId)
+                          handleNavigate(projectId, projectData)
                         }
                       >
                         KNOW MORE

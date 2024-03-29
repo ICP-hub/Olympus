@@ -137,9 +137,11 @@ const LaunchedProjects = () => {
     return;
   }, [actor]);
 
-  const handleNavigate = (projectId) => {
+  const handleNavigate = (projectId, projectData) => {
     if (isAuthenticated) {
-      navigate(`/individual-project-details-user/${projectId}`);
+      navigate(`/individual-project-details-user/${projectId}`, {
+        state: projectData
+      });
     } else {
       toast.error("Please Sign Up !!!");
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -163,6 +165,7 @@ const LaunchedProjects = () => {
                   let principalId = "";
                   let projectDescription = "";
                   let projectAreaOfFocus = "";
+                  let projectData = null;
                   if (noData === false) {
                     projectName =
                       data[1]?.project_profile[0]?.params?.project_name;
@@ -180,6 +183,7 @@ const LaunchedProjects = () => {
                     projectAreaOfFocus =
                       data[1]?.project_profile[0]?.params
                         ?.project_area_of_focus;
+                    projectData = data[1]?.project_profile[0]
                   } else {
                     projectName = data.projectName;
                     projectId = data.projectId;
@@ -278,7 +282,7 @@ const LaunchedProjects = () => {
                               {projectAreaOfFocus.split(",").length > 3 && (
                                 <p
                                   onClick={() =>
-                                    projectId ? handleNavigate(projectId) : ""
+                                    projectId ? handleNavigate(projectId, projectData) : ""
                                   }
                                   className="cursor-pointer"
                                 >
@@ -292,7 +296,7 @@ const LaunchedProjects = () => {
 
                           <button
                             className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"
-                            onClick={() => handleNavigate(projectId)}
+                            onClick={() => handleNavigate(projectId, projectData)}
                           >
                             KNOW MORE
                           </button>

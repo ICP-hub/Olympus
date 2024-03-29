@@ -118,9 +118,11 @@ const CurrentlyRaising = () => {
     }
   }, [actor]);
 
-  const handleNavigate = (projectId) => {
+  const handleNavigate = (projectId, projectData) => {
     if (isAuthenticated) {
-      navigate(`/individual-project-details-user/${projectId}`);
+      navigate(`/individual-project-details-user/${projectId}`, {
+        state: projectData
+      });
     }
   };
   return (
@@ -128,10 +130,10 @@ const CurrentlyRaising = () => {
       {noData ? (
         <NoDataCard />
       ) : (
-        
+
         <div className=" md:flex md:flex-row w-full">
           {allProjectData &&
-            allProjectData.slice(0,4).map((data, index) => {
+            allProjectData.slice(0, 4).map((data, index) => {
               let projectName = "";
               let projectId = "";
               let projectImage = "";
@@ -140,6 +142,7 @@ const CurrentlyRaising = () => {
               let projectDescription = "";
               let projectAreaOfFocus = "";
               let moneyRaisedTillNow = "";
+              let projectData = null;
 
               if (noData === false) {
                 moneyRaisedTillNow =
@@ -158,6 +161,8 @@ const CurrentlyRaising = () => {
                   data[1]?.project_profile[0]?.params?.project_description;
                 projectAreaOfFocus =
                   data[1]?.project_profile[0]?.params?.project_area_of_focus;
+                  projectData = data[1]?.project_profile[0];
+
               } else {
                 projectName = data.projectName;
                 projectId = data.projectId;
@@ -254,7 +259,7 @@ const CurrentlyRaising = () => {
                           {projectAreaOfFocus.split(",").length > 3 && (
                             <p
                               onClick={() =>
-                                projectId ? handleNavigate(projectId) : ""
+                                projectId ? handleNavigate(projectId, projectData) : ""
                               }
                               className="cursor-pointer"
                             >
@@ -269,7 +274,7 @@ const CurrentlyRaising = () => {
                       <button
                         className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"
                         onClick={() =>
-                          projectId ? handleNavigate(projectId) : ""
+                          projectId ? handleNavigate(projectId, projectData) : ""
                         }
                       >
                         INVEST NOW
