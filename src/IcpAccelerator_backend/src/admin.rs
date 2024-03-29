@@ -1,6 +1,6 @@
+use crate::associations::*;
 use crate::mentor::*;
 use crate::project_registration::*;
-
 use crate::user_module::*;
 use crate::vc_registration::*;
 use candid::{CandidType, Principal};
@@ -11,6 +11,7 @@ use ic_cdk::api::{canister_balance128, time};
 use ic_cdk_macros::*;
 use serde::{Deserialize, Serialize};
 use std::cell::RefCell;
+use std::cmp::Reverse;
 use std::collections::{HashMap, HashSet};
 use std::io::{Read, Write};
 
@@ -1262,4 +1263,138 @@ fn update_dapp_link(project_id: String, new_dapp_link: String) -> String {
         // If no project with the matching ID was found
         "Project ID not found.".to_string()
     })
+}
+
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default)]
+pub struct TopData {
+    full_name: String,
+    profile_picture: Option<Vec<u8>>, // Assuming profile_picture is optional
+    area_of_interest: String,
+    country: String,
+    joined_on: u64,
+}
+
+fn get_joined_on_(mentor_principal: &Principal, roletype: String) -> Option<u64> {
+    ROLE_STATUS_ARRAY.with(|r| {
+        r.borrow().get(mentor_principal).and_then(|roles| {
+            roles
+                .iter()
+                .find(|role| role.name == roletype && role.status == "approved")
+                .and_then(|role| role.approved_on)
+        })
+    })
+}
+
+#[query]
+fn get_top_5_mentors() -> Vec<(Principal, TopData, usize)> {
+    let mentor_vec = MENTOR_REGISTRY.with(|registry| {
+        registry
+            .borrow()
+            .keys()
+            .cloned()
+            .collect::<Vec<Principal>>()
+    });
+
+    let mut mentor_project_counts: Vec<(Principal, TopData, usize)> = mentor_vec
+        .into_iter()
+        .map(|principal| {
+            let project_count = get_projects_associated_with_mentor(principal.clone()).len();
+            let joined_on = get_joined_on_(&principal, "mentor".to_string()).unwrap_or(0); // Fetch the joined_on date
+            let mentor_data = MENTOR_REGISTRY.with(|registry| {
+                registry
+                    .borrow()
+                    .get(&principal)
+                    .map(|full_mentor_data| TopData {
+                        full_name: full_mentor_data.profile.user_data.full_name.clone(),
+                        profile_picture: full_mentor_data.profile.user_data.profile_picture.clone(),
+                        area_of_interest: full_mentor_data.profile.area_of_expertise.clone(),
+                        country: full_mentor_data.profile.user_data.country.clone(),
+                        joined_on,
+                    })
+                    .unwrap_or_default() // Provide a default in case data is missing
+            });
+            (principal, mentor_data, project_count)
+        })
+        .collect();
+
+    // Sort by the number of associated projects in descending order and take the top 5
+    mentor_project_counts.sort_by_key(|k| std::cmp::Reverse(k.2));
+    mentor_project_counts.into_iter().take(5).collect()
+}
+
+#[query]
+fn get_top_5_vcs() -> Vec<(Principal, TopData, usize)> {
+    let vc_vec = VENTURECAPITALIST_STORAGE.with(|registry| {
+        registry
+            .borrow()
+            .keys()
+            .cloned()
+            .collect::<Vec<Principal>>()
+    });
+
+    let mut mentor_project_counts: Vec<(Principal, TopData, usize)> = vc_vec
+        .into_iter()
+        .map(|principal| {
+            let project_count = get_projects_associated_with_investor(principal.clone()).len();
+            let joined_on = get_joined_on_(&principal, "vc".to_string()).unwrap_or(0); // Fetch the joined_on date
+            let mentor_data = VENTURECAPITALIST_STORAGE.with(|registry| {
+                registry
+                    .borrow()
+                    .get(&principal)
+                    .map(|full_mentor_data| TopData {
+                        full_name: full_mentor_data.params.user_data.full_name.clone(),
+                        profile_picture: full_mentor_data.params.user_data.profile_picture.clone(),
+                        area_of_interest: full_mentor_data.params.category_of_investment.clone(),
+                        country: full_mentor_data.params.user_data.country.clone(),
+                        joined_on,
+                    })
+                    .unwrap_or_default() // Provide a default in case data is missing
+            });
+            (principal, mentor_data, project_count)
+        })
+        .collect();
+
+    // Sort by the number of associated projects in descending order and take the top 5
+    mentor_project_counts.sort_by_key(|k| std::cmp::Reverse(k.2));
+    mentor_project_counts.into_iter().take(5).collect()
+}
+
+#[query]
+fn get_top_5_projects() -> Vec<(String, TopData, usize)> {
+    // Temporarily holding the projects to sort and filter
+    let mut project_counts: Vec<(String, TopData, usize)> = Vec::new();
+
+    // Properly accessing the APPLICATION_FORM RefCell
+    APPLICATION_FORM.with(|application_form| {
+        let application_form = application_form.borrow(); // Access the RefCell for reading
+
+        for (_principal, projects) in application_form.iter() {
+            for project_internal in projects {
+                let project_info = &project_internal.params;
+                let mentor_count = project_info
+                    .mentors_assigned
+                    .as_ref()
+                    .map_or(0, |v| v.len());
+                let vc_count = project_info.vc_assigned.as_ref().map_or(0, |v| v.len());
+                let total_count = mentor_count + vc_count;
+
+                // Placeholder for TopData - adjust according to actual data retrieval method
+                let top_data = TopData {
+                    full_name: project_info.user_data.full_name.clone(),
+                    profile_picture: Some(project_info.project_logo.clone()),
+                    area_of_interest: project_info.project_area_of_focus.clone(),
+                    country: project_info.user_data.country.clone(),
+                    joined_on: project_internal.creation_date.clone(),
+                };
+
+                project_counts.push((project_internal.uid.clone(), top_data, total_count));
+            }
+        }
+    });
+
+    // Sorting by the total count of mentors and VCs in descending order
+    project_counts.sort_by(|a, b| b.2.cmp(&a.2));
+
+    // Taking the top 5 projects based on total counts
+    project_counts.into_iter().take(5).collect()
 }

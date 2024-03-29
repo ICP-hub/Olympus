@@ -219,7 +219,7 @@ pub struct ProjectInfoInternal {
     pub uid: String,
     pub is_active: bool,
     pub is_verified: bool,
-    creation_date: u64,
+    pub creation_date: u64,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
