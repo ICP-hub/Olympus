@@ -365,10 +365,10 @@ pub fn switch_role(role_to_switch: String, new_status: String) {
                     roles[active_index].status = "approved".to_string();
                 }
             } else {
-               // ic_cdk::println!("The role to switch is not approved or doesn't exist.");
+                // ic_cdk::println!("The role to switch is not approved or doesn't exist.");
             }
         } else {
-           // ic_cdk::println!("Only roles with 'approved' status can be set to 'active'");
+            // ic_cdk::println!("Only roles with 'approved' status can be set to 'active'");
         }
     });
 }
@@ -562,6 +562,11 @@ pub fn get_user_info_by_principal(caller: Principal) -> Result<UserInformation, 
     })
 }
 
+#[query]
+pub fn get_user_info_using_principal(caller: Principal) -> Option<UserInfoInternal> {
+    USER_STORAGE.with(|registry| registry.borrow().get(&caller).cloned())
+}
+
 #[update]
 fn add_testimonial(message: String) -> String {
     let principal_id = caller();
@@ -601,7 +606,7 @@ fn get_testimonials(principal_id: Principal) -> Result<Vec<Testimonial>, &'stati
 //     USER_TESTIMONIAL.with(|registry| {
 //         let registry = registry.borrow();
 //         if let Some(testimonials) = registry.get(&principal_id) {
-//             let mut sorted_testimonials = testimonials.clone(); 
+//             let mut sorted_testimonials = testimonials.clone();
 //             sorted_testimonials.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
 //             Ok(sorted_testimonials)
 //         } else {
@@ -611,8 +616,7 @@ fn get_testimonials(principal_id: Principal) -> Result<Vec<Testimonial>, &'stati
 // }
 
 #[query]
-fn get_latest_testimonials() -> Vec<Testimonial>{
-
+fn get_latest_testimonials() -> Vec<Testimonial> {
     USER_TESTIMONIAL.with(|registry| {
         let registry = registry.borrow();
         registry.values().cloned().flatten().collect()

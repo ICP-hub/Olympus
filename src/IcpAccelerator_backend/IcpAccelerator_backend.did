@@ -311,9 +311,12 @@ type ProjectInfo = record {
 };
 type ProjectInfoForUser = record {
   project_linkedin : opt text;
+  dapp_link : opt text;
   vc_associated : opt vec VentureCapitalist;
+  user_data : UserInformation;
   project_discord : opt text;
   area_of_focus : opt text;
+  weekly_active_users : opt nat64;
   project_description : opt text;
   reviews : vec Suggestion;
   community_rating : opt RatingAverages;
@@ -322,16 +325,19 @@ type ProjectInfoForUser = record {
   website_social_group : opt text;
   project_twitter : opt text;
   mentor_associated : opt vec MentorProfile;
+  github_link : opt text;
   country_of_project : opt text;
   project_cover : vec nat8;
   project_website : opt text;
   promotional_video : opt text;
   project_logo : opt vec nat8;
   project_name : opt text;
+  project_team : opt vec TeamMember;
   announcements : vec record { principal; vec AnnouncementsInternal };
   live_link_of_project : opt text;
   jobs_opportunity : opt vec JobsInternal;
 };
+type ProjectInfoForUserInternal = record { params : ProjectInfoForUser };
 type ProjectInfoInternal = record {
   uid : text;
   is_verified : bool;
@@ -628,7 +634,8 @@ service : {
   approve_project_details_updation_request : (principal, text, bool) -> (text);
   approve_vc_creation_request : (principal, bool) -> (text);
   approve_vc_profile_update : (principal, bool) -> (text);
-  calculate_average_api : (text) -> (RatingAverages) query;
+  calculate_average : (text) -> (RatingAverages) query;
+  change_live_status : (principal, text, bool, opt text) -> (Result_3) query;
   connect_to_team_member : (text, text) -> (text);
   create_cohort : (Cohort) -> (text);
   decline_mentor_creation_request_candid : (principal, bool) -> (text);
@@ -763,8 +770,13 @@ service : {
   get_mentor_announcements : () -> (
       vec record { principal; vec MAnnouncements },
     ) query;
+  get_mentor_awaiting_info_using_principal : (principal) -> (
+      opt MentorInternal,
+    ) query;
   get_mentor_by_expertise : (text) -> (vec MentorProfile) query;
   get_mentor_by_principal : (principal) -> (opt MentorProfile) query;
+  get_mentor_info_combined : (principal) -> (opt MentorInternal) query;
+  get_mentor_info_using_principal : (principal) -> (opt MentorInternal) query;
   get_multichain_list : () -> (vec text) query;
   get_my_id : () -> (principal) query;
   get_my_project : () -> (ProjectInfoInternal) query;
@@ -781,11 +793,18 @@ service : {
   get_pending_request_sent_by_investor : () -> (vec OfferToSendToMentor) query;
   get_popular_listed_project : () -> (vec ProjectInfoInternal) query;
   get_popular_live_proposal : () -> (vec ProjectInfoInternal) query;
+  get_project_awaiting_info_using_principal : (principal) -> (
+      opt ProjectInfoInternal,
+    ) query;
   get_project_details_for_mentor_and_investor : (text) -> (
       ProjectPublicInfoInternal,
     ) query;
   get_project_id : () -> (text) query;
-  get_project_info_for_user : (text) -> (opt ProjectInfoForUser) query;
+  get_project_info_combined : (principal) -> (opt ProjectInfoInternal) query;
+  get_project_info_for_user : (text) -> (opt ProjectInfoForUserInternal) query;
+  get_project_info_using_principal : (principal) -> (
+      opt ProjectInfoInternal,
+    ) query;
   get_project_pending_offers : () -> (vec OfferToMentor) query;
   get_project_ratings : (text) -> (Result_4) query;
   get_project_requests : (text) -> (vec Request) query;
@@ -819,7 +838,15 @@ service : {
   get_total_count : () -> (Counts) query;
   get_total_pending_request : () -> (nat64) query;
   get_total_suggestions : (text) -> (nat64) query;
+  get_user_all_data : (principal) -> (
+      opt UserInfoInternal,
+      opt VentureCapitalistInternal,
+      opt MentorInternal,
+      opt ProjectInfoInternal,
+      vec Role,
+    ) query;
   get_user_info_struct : () -> (opt UserInformation) query;
+  get_user_info_using_principal : (principal) -> (opt UserInfoInternal) query;
   get_user_information : () -> (Result_7) query;
   get_user_information_using_uid : (text) -> (Result_7) query;
   get_user_likes : (text) -> (opt LikeRecord) query;
@@ -827,10 +854,17 @@ service : {
   get_vc_announcements : () -> (
       vec record { principal; vec Announcements },
     ) query;
+  get_vc_awaiting_info_using_principal : (principal) -> (
+      opt VentureCapitalistInternal,
+    ) query;
   get_vc_info : () -> (opt VentureCapitalist) query;
   get_vc_info_by_principal : (principal) -> (
       vec record { principal; VentureCapitalistAll },
-    );
+    ) query;
+  get_vc_info_combined : (principal) -> (opt VentureCapitalistInternal) query;
+  get_vc_info_using_principal : (principal) -> (
+      opt VentureCapitalistInternal,
+    ) query;
   get_venture_capitalist_info : () -> (opt VentureCapitalist) query;
   get_your_project_notifications : () -> (vec NotificationForOwner) query;
   greet : (text) -> (text) query;
