@@ -39,7 +39,6 @@ function* fetchNotificationHandler() {
         photo: photo,
         tagUsed: details.tag_used,
         timestamp: formatDateFromBigInt(BigInt(timestamp)),
-        role :roles
       };
     });
 

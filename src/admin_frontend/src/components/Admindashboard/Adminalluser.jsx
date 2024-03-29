@@ -17,7 +17,7 @@ const Adminalluser = () => {
         const rawData = await actor.get_total_approved_list_with_user_data();
         const processedData = [];
 
-        console.log("rawData =>", rawData);
+        // console.log("rawData =>", rawData);
         rawData.forEach((item) => {
           const userDetails = item[1];
           const profilePictureBase64 = userDetails.user_data.profile_picture[0]

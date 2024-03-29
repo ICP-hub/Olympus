@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import ConfirmationModal from "../models/ConfirmationModal";
 import { useNavigate } from "react-router-dom";
-import Projectprofile from "../Admindashboard/Profile/Projectprofile";
 
-
-const NotificationCard = ({ notificationDetails })=>  {
+const NotificationCard = ({ notificationDetails }) => {
   const [modalPopUp, setModalPopUp] = useState(false);
   const navigate = useNavigate();
 
@@ -12,7 +10,7 @@ const NotificationCard = ({ notificationDetails })=>  {
     setModalPopUp((prev) => !prev);
   };
 
-  console.log("notificationDetails =======================================>=> ", notificationDetails);
+  // console.log("notificationDetails =======================================>=> ", notificationDetails);
 
   const dataSendToProfileHandler = () => {
     navigate("/profile", { state: notificationDetails });
@@ -86,13 +84,9 @@ const NotificationCard = ({ notificationDetails })=>  {
           toggleModelPopUp={toggleModelPopUp}
           modalPopUp={modalPopUp}
         />
-
-        
       </div>
-
-     
     </>
   );
-}
+};
 
 export default NotificationCard;
