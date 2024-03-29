@@ -285,7 +285,7 @@ type ProjectInfo = record {
   project_elevator_pitch : opt text;
   dapp_link : opt text;
   reason_to_join_incubator : text;
-  user_data : UserInfoInternal;
+  user_data : UserInformation;
   project_discord : opt text;
   upload_private_documents : opt bool;
   weekly_active_users : opt nat64;
@@ -361,7 +361,7 @@ type ProjectPublicInfo = record {
   project_elevator_pitch : opt text;
   dapp_link : opt text;
   reason_to_join_incubator : text;
-  user_data : UserInfoInternal;
+  user_data : UserInformation;
   project_discord : opt text;
   upload_private_documents : opt bool;
   project_description : text;
@@ -532,6 +532,13 @@ type ThirtyInfoFounder = record {
   date_of_birth : opt text;
   phone_number : opt text;
   full_name : opt text;
+};
+type TopData = record {
+  country : text;
+  profile_picture : opt vec nat8;
+  area_of_interest : text;
+  joined_on : nat64;
+  full_name : text;
 };
 type UpvoteRecord = record { count : nat; upvoters : vec UpvoterInfo };
 type UpvoterInfo = record {
@@ -803,6 +810,9 @@ service : {
   get_suggestions_by_parent_id_caller : (text, nat64) -> (vec Suggestion) query;
   get_suggestions_by_status_caller : (text, text) -> (vec Suggestion) query;
   get_testimonials : (principal) -> (Result_6) query;
+  get_top_5_mentors : () -> (vec record { principal; TopData; nat64 }) query;
+  get_top_5_projects : () -> (vec record { text; TopData; nat64 }) query;
+  get_top_5_vcs : () -> (vec record { principal; TopData; nat64 }) query;
   get_total_approved_list_with_user_data : () -> (
       vec record { principal; ApprovedList },
     ) query;
