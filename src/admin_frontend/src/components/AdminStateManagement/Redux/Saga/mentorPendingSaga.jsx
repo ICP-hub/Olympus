@@ -21,7 +21,7 @@ function* fetchMentorPendingHandler() {
     ]);
 
 
-    // console.log("allMentorPendingStatus =>", allMentorPendingStatus);
+    console.log("allMentorPendingStatus =>", allMentorPendingStatus);
 
     
     const updatedMentorProfiles = allMentorPendingStatus.map(
@@ -41,6 +41,8 @@ function* fetchMentorPendingHandler() {
         const principalText = principalToText(principal);
 
         const mentorRole = roles.find((role) => role.name === "mentor");
+        // const mentorRole = roles;
+
         let requestedTimeFormatted = "";
         if (mentorRole && mentorRole.requested_on.length > 0) {
           requestedTimeFormatted = formatDateFromBigInt(
@@ -59,10 +61,12 @@ function* fetchMentorPendingHandler() {
             },
           },
           requestedTime: requestedTimeFormatted,
+          role :roles
         };
       }
     );
 
+    console.log("updatedMentorProfiles ,,,,,,,,,,,,,,,,", updatedMentorProfiles);
     yield put(mentorPendingSuccess(updatedMentorProfiles));
   } catch (error) {
     console.error(error);

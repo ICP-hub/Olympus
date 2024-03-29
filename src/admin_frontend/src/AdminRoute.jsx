@@ -3,6 +3,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Loader from "./components/Loader/Loader";
 import Projectprofile from "./components/Admindashboard/Profile/Projectprofile";
+import Adminalluser from "./components/Admindashboard/Adminalluser";
+import Projectdetails from "./components/Admindashboard/Projectdetails";
 
 const Error404 = lazy(() => import("./components/Error404/Error404"));
 const AcceptModal = lazy(()=> import ("./components/models/AcceptModal"))
@@ -24,11 +26,14 @@ const AdminRoute = ({ setModalOpen }) => {
     { path: "/", element: <AdminHome setModalOpen={setModalOpen} /> },
     { path: "/dashboard", element: <AdminDashboard setModalOpen={setModalOpen}/> },
     { path: "/request", element: <RequestCheck /> },
+    { path: "/alluser", element: <Adminalluser /> },
     { path: "/modal", element: <ConfirmationModal /> },
     { path: "/reject", element: <RejectModal /> },
     { path: "/accept", element: <AcceptModal /> },
     { path: "/profile", element: <Projectprofile /> },
     { path: "/allProject", element: <AllProject /> },
+    { path: "/project_details", element: <Projectdetails /> },
+
 
 
   ];

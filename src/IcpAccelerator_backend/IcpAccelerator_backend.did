@@ -234,7 +234,7 @@ type OfferToSendToInvestor = record {
   offer_id : text;
   response : text;
   sent_at : nat64;
-  project_info : ProjectInfo_1;
+  project_info : ProjectInf;
   sender_principal : principal;
   self_declined_at : nat64;
 };
@@ -246,7 +246,7 @@ type OfferToSendToMentor = record {
   offer_id : text;
   response : text;
   sent_at : nat64;
-  project_info : ProjectInfo_2;
+  project_info : ProjectInfoo;
   sender_principal : principal;
   self_declined_at : nat64;
 };
@@ -273,6 +273,12 @@ type OfferToSendToProjectByInvestor = record {
   sent_at : nat64;
   sender_principal : principal;
   self_declined_at : nat64;
+};
+type ProjectInf = record {
+  project_description : text;
+  project_id : text;
+  project_logo : vec nat8;
+  project_name : text;
 };
 type ProjectInfo = record {
   project_linkedin : opt text;
@@ -345,13 +351,7 @@ type ProjectInfoInternal = record {
   params : ProjectInfo;
   creation_date : nat64;
 };
-type ProjectInfo_1 = record {
-  project_description : text;
-  project_id : text;
-  project_logo : vec nat8;
-  project_name : text;
-};
-type ProjectInfo_2 = record {
+type ProjectInfoo = record {
   project_description : text;
   project_id : text;
   project_logo : vec nat8;
@@ -431,6 +431,7 @@ type Rating = record {
   level_name : text;
   sub_level_number : nat32;
   level_number : nat32;
+  current_role : text;
   rating : float64;
   project_id : text;
 };
@@ -634,8 +635,7 @@ service : {
   approve_project_details_updation_request : (principal, text, bool) -> (text);
   approve_vc_creation_request : (principal, bool) -> (text);
   approve_vc_profile_update : (principal, bool) -> (text);
-  calculate_average : (text) -> (RatingAverages) query;
-  change_live_status : (principal, text, bool, opt text) -> (Result_3) query;
+  calculate_average_api : (text) -> (RatingAverages) query;
   connect_to_team_member : (text, text) -> (text);
   create_cohort : (Cohort) -> (text);
   decline_mentor_creation_request_candid : (principal, bool) -> (text);
@@ -800,11 +800,7 @@ service : {
       ProjectPublicInfoInternal,
     ) query;
   get_project_id : () -> (text) query;
-  get_project_info_combined : (principal) -> (opt ProjectInfoInternal) query;
-  get_project_info_for_user : (text) -> (opt ProjectInfoForUserInternal) query;
-  get_project_info_using_principal : (principal) -> (
-      opt ProjectInfoInternal,
-    ) query;
+  get_project_info_for_user : (text) -> (opt ProjectInfoForUser) query;
   get_project_pending_offers : () -> (vec OfferToMentor) query;
   get_project_ratings : (text) -> (Result_4) query;
   get_project_requests : (text) -> (vec Request) query;
@@ -915,7 +911,7 @@ service : {
   update_founder_caller : (FounderInfo) -> (text);
   update_mentor : (MentorProfile) -> (text);
   update_project : (text, ProjectInfo) -> (text);
-  update_rating_api : (vec Rating) -> ();
+  update_rating : (vec Rating) -> (text);
   update_suggestion_status_caller : (nat64, text, text) -> ();
   update_team_member : (text, principal) -> (text);
   update_venture_capitalist : (VentureCapitalist) -> (text);
