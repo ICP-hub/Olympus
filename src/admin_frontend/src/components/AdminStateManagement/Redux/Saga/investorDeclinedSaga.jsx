@@ -53,6 +53,7 @@ function* fetchInvestorDeclinedHandler() {
           },
           requestedTime: requestedTimeFormatted,
           rejectedTime: rejectedTimeFormatted,
+          role :roles
         };
       }
     );

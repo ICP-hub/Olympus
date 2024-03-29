@@ -12,7 +12,7 @@ const NotificationCard = ({ notificationDetails })=>  {
     setModalPopUp((prev) => !prev);
   };
 
-  console.log("notificationDetails =>=> ", notificationDetails);
+  console.log("notificationDetails =======================================>=> ", notificationDetails);
 
   const dataSendToProfileHandler = () => {
     navigate("/profile", { state: notificationDetails });

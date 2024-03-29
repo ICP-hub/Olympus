@@ -56,6 +56,7 @@ function* fetchMentorDeclinedHandler() {
           },
           requestedTime: requestedTimeFormatted,
           rejectedTime: rejectedTimeFormatted,
+          role :roles
         };
       }
     );

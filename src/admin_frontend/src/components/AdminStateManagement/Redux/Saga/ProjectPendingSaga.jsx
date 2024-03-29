@@ -19,28 +19,19 @@ function* fetchProjectPendingHandler() {
       actor,
       actor.project_awaiting_approval,
     ]);
-
-    // console.log("allProjectPendingStatus======>  ", allProjectPendingStatus);
-
     const updatedProjectProfiles = allProjectPendingStatus.map(
       ([principal, { project_profile, roles }]) => {
         const principalText = principalToText(principal);
-        
-        // const profilePictureBase64 = project_profile.params.user_data
-        //   .profile_picture
-        //   ? uint8ArrayToBase64(project_profile.params.user_data.profile_picture)
-        //   : null;
+        const profilePictureBase64 =
+          project_profile.params.user_data.profile_picture[0] &&
+          project_profile.params.user_data.profile_picture[0] instanceof
+            Uint8Array &&
+          project_profile.params.user_data.profile_picture[0].length > 0
+            ? uint8ArrayToBase64(
+                project_profile.params.user_data.profile_picture[0]
+              )
+            : null;
 
-          const profilePictureBase64 = project_profile.params.user_data
-          .profile_picture[0] && project_profile.params.user_data
-          .profile_picture[0] instanceof Uint8Array && project_profile.params.user_data
-          .profile_picture[0].length > 0
-          ? uint8ArrayToBase64(project_profile.params.user_data
-          .profile_picture[0])
-          : null;
-
-      //  console.log("profilePictureBase64======>  ", project_profile.params.user_data
-      //  .profile_picture[0]);
         const projectRole = roles.find((role) => role.name === "project");
         let requestedTimeFormatted = "";
         if (projectRole && projectRole.requested_on.length > 0) {
@@ -60,6 +51,7 @@ function* fetchProjectPendingHandler() {
             },
           },
           requestedTime: requestedTimeFormatted,
+          role: roles,
         };
       }
     );

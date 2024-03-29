@@ -65,6 +65,7 @@ function* fetchProjectApprovedHandler() {
           },
           requestedTime: requestedTimeFormatted,
           rejectedTime: rejectedTimeFormatted,
+          role :roles
         };
       }
     );
