@@ -21,7 +21,7 @@ function* fetchInvestorPendingHandler() {
       actor,
       actor.vc_awaiting_approval,
     ]);
-    // console.log('allInvestorPendingStatus:', allInvestorPendingStatus);
+    console.log('allInvestorPendingStatus:', allInvestorPendingStatus);
 
     const updatedInvestorProfiles = allInvestorPendingStatus.map(
       ([principal, { vc_profile, roles }]) => {
@@ -56,6 +56,7 @@ function* fetchInvestorPendingHandler() {
             },
           },
           requestedTime: requestedTimeFormatted,
+          role :roles
         };
       }
     );

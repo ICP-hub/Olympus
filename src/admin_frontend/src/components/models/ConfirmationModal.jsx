@@ -6,13 +6,14 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 // import { useAuth } from "../AdminStateManagement/useContext/useAuth";
 import { Principal } from "@dfinity/principal";
+import { ThreeDots } from "react-loader-spinner";
+
 // import { mentorApprovedRequest } from "../AdminStateManagement/Redux/Reducers/mentorApproved";
 // import { investorApprovedRequest } from "../AdminStateManagement/Redux/Reducers/investorApproved";
 // import { projectApprovedRequest } from "../AdminStateManagement/Redux/Reducers/projectApproved";
 // import { mentorDeclinedRequest } from "../AdminStateManagement/Redux/Reducers/mentorDeclined";
 // import { investorDeclinedRequest } from "../AdminStateManagement/Redux/Reducers/investorDecline";
 // import { projectDeclinedRequest } from "../AdminStateManagement/Redux/Reducers/projectDeclined";
-import { ThreeDots } from "react-loader-spinner";
 
 const ConfirmationModal = ({
   toggleModelPopUp,

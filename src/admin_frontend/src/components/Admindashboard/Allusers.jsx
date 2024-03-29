@@ -1,10 +1,10 @@
 import React, { useState ,useEffect, useRef} from "react";
 // import {OutSideClickHandler} from "../hooks/OutSideClickHandler";
 import { OutSideClickHandler } from "../../../../IcpAccelerator_frontend/src/components/hooks/OutSideClickHandler";
-import  img1 from "../../../assets/images/img1.png";
+import  img1 from "../../../../IcpAccelerator_frontend/assets/images/img1.png";
 import { linkedIn  } from "../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
 
-const Adminalluser  = () => {
+const Allusers  = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState("All Users");
   const dropdownRef = useRef(null);
@@ -138,4 +138,4 @@ const Adminalluser  = () => {
   );
 };
 
-export default Adminalluser ;
+export default Allusers ;

@@ -1,4 +1,4 @@
-use crate::get_mentor_by_principal;
+use crate::{get_mentor_by_principal, MentorRegistry};
 use candid::{CandidType, Principal};
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::{api::time, caller};
@@ -11,7 +11,8 @@ use ic_cdk::api::stable::{StableReader, StableWriter};
 use crate::MENTOR_REGISTRY;
 use crate::APPLICATION_FORM;
 use crate::PROJECTS_ASSOCIATED_WITH_MENTOR;
-
+use crate::ApplicationDetails;
+use std::cell::RefMut;
 #[derive(Clone, CandidType, Deserialize, Serialize)]
 pub struct OfferToProject {
     offer_id: String, // Added field
@@ -181,79 +182,150 @@ pub async fn send_offer_to_project(project_id: String, msg: String, mentor_id: P
 }
 
 
-#[update]
-pub fn accept_offer_of_mentor(offer_id: String, response_message: String, project_id : String) -> String{
-    //let project_id = caller();
+// #[update]
+// pub fn accept_offer_of_mentor(offer_id: String, response_message: String, project_id : String) -> String{
+//     //let project_id = caller();
 
-    PROJECT_ALERTS.with(|state| {
-        //let state = state.borrow_mut().get(&mentor_id).cloned().unwrap_or_else(Vec::new);
-        if let Some(offers) = state.borrow_mut().get_mut(&project_id) {
-            if let Some(offer) = offers.iter_mut().find(|o| o.offer_id == offer_id) {
-                offer.request_status = "accepted".to_string();
-                offer.response = response_message.clone();
-                offer.accepted_at = time();
-
-
+//     PROJECT_ALERTS.with(|state| {
+//         //let state = state.borrow_mut().get(&mentor_id).cloned().unwrap_or_else(Vec::new);
+//         if let Some(offers) = state.borrow_mut().get_mut(&project_id) {
+//             if let Some(offer) = offers.iter_mut().find(|o| o.offer_id == offer_id) {
+//                 offer.request_status = "accepted".to_string();
+//                 offer.response = response_message.clone();
+//                 offer.accepted_at = time();
 
 
-                MY_SENT_NOTIFICATIONS.with(|sent_state| {
-                    if let Some(sent_status_vector) =
-                        sent_state.borrow_mut().get_mut(&offer.sender_principal)
-                    {
-                        if let Some(project_offer) = sent_status_vector
-                            .iter_mut()
-                            .find(|offer| offer.offer_id == offer_id)
-                        {
-                            project_offer.request_status = "accepted".to_string();
-                            project_offer.response = response_message.clone();
-                            project_offer.accepted_at = time();
 
-                            MENTOR_REGISTRY.with(|storage|{
-                                let mentor_profile = storage.borrow().get(&offer.sender_principal).expect("couldn't get mentor profile").clone();
+
+//                 MY_SENT_NOTIFICATIONS.with(|sent_state| {
+//                     if let Some(sent_status_vector) =
+//                         sent_state.borrow_mut().get_mut(&offer.sender_principal)
+//                     {
+//                         if let Some(project_offer) = sent_status_vector
+//                             .iter_mut()
+//                             .find(|offer| offer.offer_id == offer_id)
+//                         {
+//                             project_offer.request_status = "accepted".to_string();
+//                             project_offer.response = response_message.clone();
+//                             project_offer.accepted_at = time();
+
+//                             MENTOR_REGISTRY.with(|storage|{
+//                                 let mentor_profile = storage.borrow().get(&offer.sender_principal).expect("couldn't get mentor profile").clone();
             
-                                APPLICATION_FORM.with(|projects| {
+//                                 APPLICATION_FORM.with(|projects| {
                                     
                                     
-                                    let mut project = projects.borrow_mut();
+//                                     let mut project = projects.borrow_mut();
                                    
-                                   if let Some(project) =  project.get_mut(&offer.sender_principal){
-                                    if let Some(project) = project.iter_mut().find(|project|{project.uid == project_offer.project_id}){
+//                                    if let Some(project) =  project.get_mut(&offer.sender_principal){
+//                                     if let Some(project) = project.iter_mut().find(|project|{project.uid == project_offer.project_id}){
                                         
             
-                                        if project.params.mentors_assigned.is_none() {
-                                            project.params.mentors_assigned = Some(Vec::new());
-                                        }
+//                                         if project.params.mentors_assigned.is_none() {
+//                                             project.params.mentors_assigned = Some(Vec::new());
+//                                         }
             
                                 
             
-                                        project.params.mentors_assigned.as_mut().unwrap().push(mentor_profile.profile.clone());
+//                                         project.params.mentors_assigned.as_mut().unwrap().push(mentor_profile.profile.clone());
 
-                                        //get_assigned_projects_to_mentor
-                            PROJECTS_ASSOCIATED_WITH_MENTOR.with(|storage|{
-                                let mut associate_project = storage.borrow_mut();
-                                associate_project.entry(offer.sender_principal).or_insert_with(Vec::new).push(project.params.clone())
-                            })
+//                                         //get_assigned_projects_to_mentor
+//                             PROJECTS_ASSOCIATED_WITH_MENTOR.with(|storage|{
+//                                 let mut associate_project = storage.borrow_mut();
+//                                 associate_project.entry(offer.sender_principal).or_insert_with(Vec::new).push(project.params.clone())
+//                             })
                                         
                                        
-                                    }
+//                                     }
             
-                                   }
+//                                    }
             
-                                })
-                            });
+//                                 })
+//                             });
 
-                        }
-                    }
-                });
+//                         }
+//                     }
+//                 });
 
 
 
+//             }
+//         }
+//     });
+
+//     format!("you have accepted the offer with offer id: {}", offer_id)
+// }
+
+
+
+#[update]
+pub fn accept_offer_of_mentor(offer_id: String, response_message: String, project_id: String) -> String {
+    let mut already_accepted = false;
+
+    // Check if the offer has already been accepted
+    PROJECT_ALERTS.with(|state| {
+        if let Some(offers) = state.borrow().get(&project_id) {
+            if offers.iter().any(|o| o.offer_id == offer_id && o.request_status == "accepted") {
+                already_accepted = true; // The offer has already been accepted
             }
         }
     });
 
-    format!("you have accepted the offer with offer id: {}", offer_id)
+    if already_accepted {
+        return "Offer has already been accepted.".to_string();
+    }
+
+    PROJECT_ALERTS.with(|state| {
+        if let Some(offers) = state.borrow_mut().get_mut(&project_id) {
+            if let Some(offer) = offers.iter_mut().find(|o| o.offer_id == offer_id) {
+                // Mark the offer as accepted
+                offer.request_status = "accepted".to_string();
+                offer.response = response_message.clone();
+                offer.accepted_at = time();
+
+                MY_SENT_NOTIFICATIONS.with(|sent_state| {
+                    if let Some(sent_status_vector) = sent_state.borrow_mut().get_mut(&offer.sender_principal) {
+                        if let Some(project_offer) = sent_status_vector.iter_mut().find(|o| o.offer_id == offer_id) {
+                            project_offer.request_status = "accepted".to_string();
+                            project_offer.response = response_message.clone();
+                            project_offer.accepted_at = time();
+
+                            MENTOR_REGISTRY.with(|storage| {
+                                let mentor_profile = storage.borrow().get(&offer.sender_principal).expect("Mentor profile not found").clone();
+
+                                APPLICATION_FORM.with(|projects| {
+                                    let mut projects = projects.borrow_mut();
+                                    if let Some(project) = projects.get_mut(&offer.sender_principal) {
+                                        if let Some(project) = project.iter_mut().find(|p| p.uid == project_offer.project_id) {
+                                            if project.params.mentors_assigned.is_none() {
+                                                project.params.mentors_assigned = Some(Vec::new());
+                                            }
+                                            let mentors_assigned = project.params.mentors_assigned.as_mut().unwrap();
+                                            if !mentors_assigned.contains(&mentor_profile.profile) {
+                                                mentors_assigned.push(mentor_profile.profile.clone());
+                                            }
+
+                                            PROJECTS_ASSOCIATED_WITH_MENTOR.with(|storage| {
+                                                let mut associate_project = storage.borrow_mut();
+                                                let projects = associate_project.entry(offer.sender_principal).or_insert_with(Vec::new);
+                                                if !projects.contains(&project.params) {
+                                                    projects.push(project.params.clone());
+                                                }
+                                            });
+                                        }
+                                    }
+                                });
+                            });
+                        }
+                    }
+                });
+            }
+        }
+    });
+
+    format!("You have accepted the offer with offer id: {}", offer_id)
 }
+
 
 #[update]
 pub fn decline_offer_of_mentor(offer_id: String, response_message: String, project_id: String) -> String{

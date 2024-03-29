@@ -10,7 +10,7 @@ thread_local!{
 }
 
 #[ic_cdk::query]
-fn get_projects_associated_with_mentor(mentor_id : Principal) -> Vec<ProjectInfo>{
+pub fn get_projects_associated_with_mentor(mentor_id : Principal) -> Vec<ProjectInfo>{
     PROJECTS_ASSOCIATED_WITH_MENTOR.with(|storage|{
         let storage = storage.borrow();
         storage.get(&mentor_id).unwrap_or(&Vec::new()).clone()
@@ -18,7 +18,7 @@ fn get_projects_associated_with_mentor(mentor_id : Principal) -> Vec<ProjectInfo
 }
 
 #[ic_cdk::query]
-fn get_projects_associated_with_investor(investor_id : Principal) -> Vec<ProjectInfo>{
+pub fn get_projects_associated_with_investor(investor_id : Principal) -> Vec<ProjectInfo>{
     PROJECTS_ASSOCIATED_WITH_INVESTOR.with(|storage|{
         let storage = storage.borrow();
         storage.get(&investor_id).unwrap_or(&Vec::new()).clone()

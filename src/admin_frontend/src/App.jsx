@@ -25,8 +25,9 @@ import Projectdetails from "./components/Admindashboard/Projectdetails";
 import Projectprofile from "./components/Admindashboard/Profile/Projectprofile";
 import AllProject from "./components/Admindashboard/AllProject";
 import Projectrequest from "./components/Admindashboard/Projectrequest";
-
-
+import Allusers from "./components/Admindashboard/Allusers";
+import Adminalluser from "./components/Admindashboard/Adminalluser";
+import CommonUserProfile from "./components/Admindashboard/Profile/CommonUserProfile";
 
 const App = () => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -75,7 +76,9 @@ const App = () => {
           {/* <Projectprofile/> */}
          {/* <AllProject/> */}
           {/* <Projectrequest/> */}
-          
+          {/* <Allusers/> */}
+          {/* <Adminalluser/> */}
+          {/* <CommonUserProfile/> */}
         </div>
       </div>
 

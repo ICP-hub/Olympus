@@ -115,13 +115,31 @@ const LogoutModal = () => {
                 className="text-sm text-black font-bold md:hidden "
                 aria-labelledby="avatarButton"
               >
-                <li onClick={()=>navigate('/dashboard')} className="block px-4 py-2 hover:bg-gray-200 hover:text-black">
+                <li
+                  onClick={() => {
+                    navigate("/dashboard");
+                    toggleDropdown();
+                  }}
+                  className="block px-4 py-2 hover:bg-gray-200 hover:text-black"
+                >
                   Dashboard
                 </li>
-                <li  onClick={()=>navigate('/')}  className="block px-4 py-2 hover:bg-gray-200 hover:text-black">
+                <li
+                  onClick={() => {
+                    navigate("/alluser");
+                    toggleDropdown();
+                  }}
+                  className="block px-4 py-2 hover:bg-gray-200 hover:text-black"
+                >
                   Users
                 </li>
-                <li  onClick={()=>navigate('/request')}  className="block px-4 py-2 hover:bg-gray-200 hover:text-black">
+                <li
+                  onClick={() => {
+                    navigate("/request");
+                    toggleDropdown();
+                  }}
+                  className="block px-4 py-2 hover:bg-gray-200 hover:text-black"
+                >
                   Requests
                 </li>
               </ul>
