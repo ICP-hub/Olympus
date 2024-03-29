@@ -73,8 +73,8 @@ const ProjectJobCard = ({ image, website, tags, country }) => {
               key={index}
             >
               <div className="p-4 flex flex-col">
-                <div className="flex flex-col sm:flex-row">
-                  <div className="w-full sm:w-1/2">
+                <div className="flex flex-col lg:flex-row">
+                  <div className="w-full lg:w-1/2">
                     <div className="flex">
                       <img
                         src={projectImage}
@@ -95,25 +95,25 @@ const ProjectJobCard = ({ image, website, tags, country }) => {
                       {projectDescription}
                     </p>
                   </div>
-                  <div className="w-full sm:w-1/2 mt-4 sm:mt-0">
-                    <div className="hidden sm:flex justify-center items-center">
+                  <div className="w-full lg:w-1/2 mt-4 sm:mt-0">
+                    <div className="hidden sm:flex justify-center items-center mb-2">
                       <span className="bg-transparent text-xs font-semibold px-3 py-1 rounded-2xl border-2 border-black">
                         {jobCategory}
                       </span>
                     </div>
-                    <p className="text-base font-medium py-2">
+                    <p className="text-base font-medium py-2 h-36 overflow-y-scroll">
                       {jobDescription}
                     </p>
                     <p className="text-base font-bold py-1">Location</p>
                     <span className="capitalize">{jobLocation}</span>
-                    <div className="mt-2 flex flex-col sm:flex-row items-center justify-center text-center">
-                      <span>Register your interest here:</span>
+                    <div className="flex flex-col gap-1 items-center lg:items-end justify-end mt-2 sm:flex-row">
+                      <span className="text-sm text-start">Register your interest here:</span>
                       <a
                         href={jobLink}
                         target="_blank"
-                        className="mt-2 sm:mt-0 sm:ml-4"
+                        className="mt-2 sm:mt-0"
                       >
-                        <button className="font-medium border text-sm py-2 px-4 rounded-md border-transparent bg-blue-800 text-white">
+                        <button className="bg-blue-800 border border-transparent flex px-2 py-2 rounded-md text-sm text-white">
                           I'm interested!
                         </button>
                       </a>

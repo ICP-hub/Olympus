@@ -12,7 +12,6 @@ import {
 import SpotLight from "./SpotLight";
 import ImpactTool from "./ImpactTool";
 import LaunchedProjects from "./LaunchedProjects";
-import CurrentlyRaising from "./CurrentlyRaising";
 import EventCard from "./EventCard";
 import ProjectJobCard from "../Project/ProjectDetails/ProjectJobCard";
 import SecondEventCard from "./SecondEventCard";
@@ -26,6 +25,7 @@ import ProjectDashboard from "./RoleDashboard/ProjectDashboard";
 import MentorDashboard from "./RoleDashboard/MentorDashboard";
 import InvestorDashboard from "./RoleDashboard/InvestorDashboard";
 import AnnouncementCard from "./AnnouncementCard";
+import LiveProjects from "./LiveProjects";
 
 const DashBoard = () => {
   const dispatch = useDispatch();
@@ -134,32 +134,20 @@ const DashBoard = () => {
               </div>
               <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
                 <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
-                  Launched Projects
+                  Live Projects
                 </h1>
                 <button
-                  onClick={() => navigate("/launch-projects")}
+                  onClick={() => navigate("/live-projects")}
                   className="border border-violet-800 px-4 py-2 rounded-md text-violet-800"
                 >
                   View all
                 </button>
               </div>
               <div className="mb-4">
-                <LaunchedProjects />
+                {/* <LaunchedProjects /> */}
+                <LiveProjects progress={false}/>
               </div>
-              <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
-                <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
-                  Currently Raising
-                </h1>
-                <button
-                  onClick={() => navigate("/raising-projects")}
-                  className="border border-violet-800 px-4 py-2 rounded-md text-violet-800"
-                >
-                  View all
-                </button>
-              </div>
-              <div className="mb-4">
-                <CurrentlyRaising />
-              </div>
+             
               <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
                 <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
                   Ongoing Accelerators
@@ -206,10 +194,10 @@ const DashBoard = () => {
               </div>
               <div className="flex flex-wrap mx-2 lg:-mx-4 mb-4 flex-col lg:flex-row items-center">
                 <div className="flex w-full lg:w-3/4 mb-4 lg:mb-0">
-                <InvestorCard />
+                  <InvestorCard />
                 </div>
                 <div className="lg:w-1/4 py-1 lg:py-3">
-                <RegisterCard categories={investorCategories} />
+                  <RegisterCard categories={investorCategories} />
                 </div>
               </div>
               <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
@@ -231,8 +219,14 @@ const DashBoard = () => {
                   <RegisterCard categories={mentorCategories} />
                 </div>
               </div>
-
-              <AnnouncementCard />
+              <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
+                <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
+                  Announcements
+                </h1>
+              </div>
+              <div className="mb-4">
+                <AnnouncementCard />
+              </div>
               <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
                 <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
                   Testimonial

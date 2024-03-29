@@ -35,6 +35,7 @@ import RequestsPrivateDocument from "./components/Project/ProjectDetailsPages/Re
 import ProjectDetailsForMentor from "./components/Project/ProjectDetailsPages/ProjectDetailsForMentor";
 import ProjectDetailsForInvestor from "./components/Project/ProjectDetailsPages/ProjectDetailsForInvestor";
 import ProjectDetailsForUserRole from "./components/Project/ProjectDetailsPages/ProjectDetailsForUserRole";
+import MoreLiveProjects from "./components/Dashboard/MoreLivePages/MoreLiveProjects";
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
 
@@ -99,6 +100,7 @@ const AppRoutes = () => {
     { path: "/view-mentors", element: <SearchMentors /> },
     { path: "/view-mentors/:id", element: <SearchMentorsByProjectId /> },
     { path: "/launch-projects", element: <MoreProjectLaunchPage /> },
+    { path: "/live-projects", element: <MoreLiveProjects /> },
     { path: "/raising-projects", element: <MoreCurrentlyRaisingProjects /> },
     { path: "/view-investor", element: <ViewInvestor /> },
     { path: "/view-investor/:id", element: <ViewInvestorByProjectId /> },
