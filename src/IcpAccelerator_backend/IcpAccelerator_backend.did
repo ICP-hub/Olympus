@@ -234,7 +234,7 @@ type OfferToSendToInvestor = record {
   offer_id : text;
   response : text;
   sent_at : nat64;
-  project_info : ProjectInfo_1;
+  project_info : ProjectInf;
   sender_principal : principal;
   self_declined_at : nat64;
 };
@@ -246,7 +246,7 @@ type OfferToSendToMentor = record {
   offer_id : text;
   response : text;
   sent_at : nat64;
-  project_info : ProjectInfo_2;
+  project_info : ProjectInfoo;
   sender_principal : principal;
   self_declined_at : nat64;
 };
@@ -273,6 +273,12 @@ type OfferToSendToProjectByInvestor = record {
   sent_at : nat64;
   sender_principal : principal;
   self_declined_at : nat64;
+};
+type ProjectInf = record {
+  project_description : text;
+  project_id : text;
+  project_logo : vec nat8;
+  project_name : text;
 };
 type ProjectInfo = record {
   project_linkedin : opt text;
@@ -339,13 +345,7 @@ type ProjectInfoInternal = record {
   params : ProjectInfo;
   creation_date : nat64;
 };
-type ProjectInfo_1 = record {
-  project_description : text;
-  project_id : text;
-  project_logo : vec nat8;
-  project_name : text;
-};
-type ProjectInfo_2 = record {
+type ProjectInfoo = record {
   project_description : text;
   project_id : text;
   project_logo : vec nat8;
