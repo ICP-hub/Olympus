@@ -183,10 +183,10 @@ fn get_project_using_id(project_id: String) -> Option<ProjectInfoInternal> {
     project_registration::find_project_by_id(&project_id)
 }
 
-#[query]
-fn list_all_projects() -> HashMap<Principal, ProjectVecWithRoles> {
-    project_registration::list_all_projects()
-}
+// #[query]
+// fn list_all_projects() -> HashMap<Principal, ProjectVecWithRoles> {
+//     project_registration::list_all_projects()
+// }
 
 #[update]
 async fn update_project(project_id: String, updated_project: ProjectInfo) -> String {

@@ -16,8 +16,10 @@ const ProjectDetailsForUserRole = () => {
     const projectData = stateData.state
 
     if (!projectData) {
+        navigate('/');
         return null
     }
+
     console.log("projectData ================>>>>>>", projectData)
     const navigate = useNavigate();
     const { id } = useParams()
@@ -131,6 +133,12 @@ const ProjectDetailsForUserRole = () => {
         }
     };
 
+    useEffect(() => {
+        if(!actor){
+            navigate('/');
+        }
+        // console.log("actor", actor)
+    },[actor])
 
     // useEffect(() => {
     //     if (actor && principal) {

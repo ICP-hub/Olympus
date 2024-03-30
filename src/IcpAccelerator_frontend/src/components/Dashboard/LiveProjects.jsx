@@ -25,9 +25,9 @@ const LiveProjects = ({ progress }) => {
   const tm = useRef(null);
   const navigate = useNavigate();
   // Gradient color stops, changes when hovered
-  const gradientStops = isHovered
-    ? { stop1: "#4087BF", stop2: "#3C04BA" }
-    : { stop1: "#B5B5B5", stop2: "#5B5B5B" };
+  // const gradientStops = isHovered
+  //   ? { stop1: "#4087BF", stop2: "#3C04BA" }
+  //   : { stop1: "#B5B5B5", stop2: "#5B5B5B" };
 
   const [ref, inView] = useInView({
     triggerOnce: true, // Trigger the animation once
@@ -134,45 +134,30 @@ const LiveProjects = ({ progress }) => {
     <>
       <div className="flex flex-wrap -mx-4 mb-4 items-center">
         <div className="w-full md:w-3/4 px-4 md:flex md:gap-4">
-          {noData || (allProjectData &&
-            allProjectData.filter((val) => val[1]?.project_profile[0]?.params?.live_on_icp_mainnet[0] && val[1]?.project_profile[0]?.params?.live_on_icp_mainnet[0] === true).length == 0) ? (
-            <NoDataCard />
+          {noData 
+          || (allProjectData &&
+            allProjectData.filter((val) => val?.params?.params?.live_on_icp_mainnet[0] && val?.params?.params?.live_on_icp_mainnet[0] === true).length == 0) ? (
+           <NoDataCard />
           ) : (
             <>
               {allProjectData &&
-                allProjectData.filter((val) => val[1]?.project_profile[0]?.params?.live_on_icp_mainnet[0] && val[1]?.project_profile[0]?.params?.live_on_icp_mainnet[0] === true).slice(0, 3).map((data, index) => {
-                  let projectName = "";
-                  let projectId = "";
-                  let projectImage = "";
-                  let userImage = "";
-                  let principalId = "";
-                  let projectDescription = "";
-                  let projectAreaOfFocus = "";
-                  let projectData = null;
-
-                  projectName =
-                    data[1]?.project_profile[0]?.params?.project_name;
-                  projectId = data[1]?.project_profile[0]?.uid;
-                  projectImage = uint8ArrayToBase64(
-                    data[1]?.project_profile[0]?.params?.project_logo
-                  );
-                  userImage = uint8ArrayToBase64(
-                    data[1]?.project_profile[0]?.params?.user_data
-                      ?.profile_picture[0]
-                  );
-                  principalId = data[0].toText();
-                  projectDescription =
-                    data[1]?.project_profile[0]?.params?.project_description;
-                  projectAreaOfFocus =
-                    data[1]?.project_profile[0]?.params
-                      ?.project_area_of_focus;
-                  projectData = data[1]?.project_profile[0]
+                allProjectData.filter((val) => val?.params?.params?.live_on_icp_mainnet[0] && val?.params?.params?.live_on_icp_mainnet[0] === true).slice(0, 3).map((data, index) => {
+                  let projectName = data?.params?.params?.project_name ??"";
+                  let projectId = data?.params?.uid ?? "";
+                  let projectImage = data?.params?.params?.project_logo ? uint8ArrayToBase64(data?.params?.params?.project_logo) : "";
+                  let userImage = data?.params?.params?.user_data?.profile_picture[0] ? uint8ArrayToBase64(data?.params?.params?.user_data?.profile_picture[0]) : "";
+                  let principalId = data?.principal ? data?.principal.toText() : "";
+                  let projectDescription = data?.params?.params?.project_description ?? "";
+                  let projectAreaOfFocus = data?.params?.params?.project_area_of_focus ?? "";
+                  let projectData = data?.params ? data?.params : null;
+                  let projectRubricStatus = data?.overall_average.length > 0 ? data?.overall_average[data?.overall_average.length - 1] : 0;
+             
                   return (
                     <animated.div
                       className="w-full sm:w-1/2 md:w-1/3 mb-2  hover:scale-105 transition-transform duration-300 ease-in-out"
                       key={index}
                     >
-                      <div className="flex justify-between items-baseline flex-wrap bg-white overflow-hidden rounded-lg shadow-lg">
+                      <div className="w-fit flex justify-between items-baseline flex-wrap bg-white overflow-hidden rounded-lg shadow-lg">
                         <div className="p-4">
                           <div className="flex justify-between items-baseline mb-2 flex-col flex-wrap w-fit">
                             <div className="flex items-baseline w-1/2">
@@ -200,9 +185,9 @@ const LiveProjects = ({ progress }) => {
                             <svg
                               width="100%"
                               height="8"
-                              className="rounded-lg"
-                              onMouseEnter={() => setIsHovered(true)}
-                              onMouseLeave={() => setIsHovered(false)}
+                              className="bg-[#B2B1B6] rounded-lg"
+                              // onMouseEnter={() => setIsHovered(true)}
+                              // onMouseLeave={() => setIsHovered(false)}
                             >
                               <defs>
                                 <linearGradient
@@ -214,12 +199,12 @@ const LiveProjects = ({ progress }) => {
                                 >
                                   <stop
                                     offset="0%"
-                                    stopColor={gradientStops.stop1}
+                                    stopColor={"#4087BF"}
                                     stopOpacity="1"
                                   />
                                   <stop
-                                    offset="100%"
-                                    stopColor={gradientStops.stop2}
+                                    offset={`${(projectRubricStatus * 100) / 8}%`}
+                                    stopColor={"#3C04BA"}
                                     stopOpacity="1"
                                   />
                                 </linearGradient>
@@ -227,13 +212,13 @@ const LiveProjects = ({ progress }) => {
                               <rect
                                 x="0"
                                 y="0"
-                                width={`${percent}%`}
+                                width={`${(projectRubricStatus * 100) / 8}%`}
                                 height="10"
                                 fill={`url(#gradient-${index})`}
                               />
                             </svg>
                             <div className="ml-2 text-nowrap text-sm">
-                              Level 2
+                              {`${projectRubricStatus}/8`}
                             </div>
                           </div>)}
                           <p className="text-gray-700 text-sm p-2 h-36 overflow-hidden line-clamp-8">
