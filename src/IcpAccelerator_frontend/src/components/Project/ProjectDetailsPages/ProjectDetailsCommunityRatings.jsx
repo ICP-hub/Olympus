@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import { formatFullDateFromBigInt } from "../../Utils/formatter/formatDateFromBigInt";
+import NoDataCard from "../../Mentors/Event/NoDataCard";
 
 
 const ProjectDetailsCommunityRatings = ({ data, profile, type, name, role, socials, filter }) => {
@@ -15,8 +16,6 @@ const ProjectDetailsCommunityRatings = ({ data, profile, type, name, role, socia
     }
     const actor = useSelector((currState) => currState.actors.actor)
 
-
-
     const [isRatingModalOpen, setRatingModalOpen] = useState(false);
     const [cardData, setCardData] = useState([]);
     const [alreadyRated, setAlreadyRated] = useState(null);
@@ -24,7 +23,7 @@ const ProjectDetailsCommunityRatings = ({ data, profile, type, name, role, socia
     const ratingPercentage = (overallRating / 5) * 100;
     const handleRatingCloseModal = () => setRatingModalOpen(false);
     const handleRatingOpenModal = () => setRatingModalOpen(true);
-
+    const [noData, setNoData] = useState(null);
     const handleAddRating = async ({ rating, ratingDescription }) => {
         console.log('add job')
         if (actor) {
@@ -59,30 +58,38 @@ const ProjectDetailsCommunityRatings = ({ data, profile, type, name, role, socia
         await actor.get_project_ratings(val?.uid)
             .then((result) => {
                 console.log('result-in-get_project_ratings', result)
-                if (result && result.length > 0) {
-                    setCardData(result.Ok[0])
-                    setAlreadyRated(result.Ok[2]);
-                    setOverallRating(result.Ok[1]);
-                } else {
+                if (result && result.Err) {
+                    setNoData(true)
                     setCardData([])
                     setAlreadyRated(false)
                     setOverallRating(0);
+                } else {
+                    setNoData(false)
+                    setCardData(result.Ok[0])
+                    setAlreadyRated(result.Ok[2]);
+                    setOverallRating(result.Ok[1]);
                 }
             })
             .catch((error) => {
                 console.log('error-in-get_project_ratings', error)
+                setNoData(true)
                 setCardData([])
                 setAlreadyRated(false)
                 setOverallRating(0);
             })
     }
 
+    console.log('cardData', cardData)
+    console.log('overallRating', overallRating)
+    console.log('alreadyRated', alreadyRated)
 
     useEffect(() => {
         if (actor) {
             fetchCommunityRating(data);
         }
     }, [actor]);
+
+   
     return (
         <>
 
@@ -92,8 +99,8 @@ const ProjectDetailsCommunityRatings = ({ data, profile, type, name, role, socia
                         Add Community Rating
                     </button>
                 </div>}
+                {noData ? <NoDataCard /> :
             <div className="md1:flex sm:flex flex-wrap ">
-
                 {/* Overall circlular   part1 Cards  Start */}
                 <div className="flex w-full sm:w/1/2 md:w-1/3 justify-between">
                     <div className="w-full sm:w-full md:w-full p-4">
@@ -154,7 +161,7 @@ const ProjectDetailsCommunityRatings = ({ data, profile, type, name, role, socia
                                     </div>
                                 </div>
                             </div>
-                            <p className='text-[#737373]'>On basis of all Community ratings</p>
+                            <p className='my-2 overflow-y-scroll text-[#737373]'>On basis of all Community ratings</p>
                         </div>
                     </div>
                 </div>
@@ -179,7 +186,7 @@ const ProjectDetailsCommunityRatings = ({ data, profile, type, name, role, socia
                                             <p className='text-[#737373] flex items-center truncate'>{date}</p>
                                         </div>
                                         <div className='flex flex-row justify-center items-center gap-2'>
-                                            <div className="flex items-center hover:text-blue-800 w-16 h-16">
+                                            <div className="flex items-center hover:text-blue-800 sm:w-16 h-16">
                                                 {[...Array(5)].map((star, index) => {
                                                     index += 1;
                                                     return (
@@ -206,15 +213,15 @@ const ProjectDetailsCommunityRatings = ({ data, profile, type, name, role, socia
                                             </div>
                                         </div>
                                     </div>
-                                    <div className='flex flex-col sm:flex-row lg:flex-col ml-0 sm:ml-0 lg:ml-12'>
+                                    <div className='flex flex-col ml-0 sm:ml-0 lg:ml-12'>
                                         <p className='font-bold'>{`"${tag}"`}</p>
-                                        <p className='text-[#737373]'>{message}</p>
+                                        <p className='h-20 my-2 overflow-y-scroll text-[#737373]'>{message}</p>
                                     </div>
                                 </div>
                             </div>
                         </div>)
                 })}
-            </div>
+            </div>}
             {isRatingModalOpen && (
                 <AddRatingModal
                     onRatingClose={handleRatingCloseModal}

@@ -84,9 +84,9 @@ const Header = ({ setModalOpen, gradient }) => {
               Mentor
             </a> */}
 
-            {userCurrentRoleStatus && userCurrentRoleStatusActiveRole && userCurrentRoleStatusActiveRole !== 'project' ?
+            {userCurrentRoleStatus && userCurrentRoleStatusActiveRole && userCurrentRoleStatusActiveRole !== 'user' ?
               <span onClick={() => navigate(
-                userCurrentRoleStatusActiveRole === 'user'
+                userCurrentRoleStatusActiveRole === 'project'
                   ? '/project-association-requests'
                   : userCurrentRoleStatusActiveRole === 'mentor'
                     ? '/mentor-association-requests'

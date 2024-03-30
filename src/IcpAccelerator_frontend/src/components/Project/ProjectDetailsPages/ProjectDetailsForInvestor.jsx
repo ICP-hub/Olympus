@@ -11,6 +11,7 @@ import ProjectDetailsCommunityRatings from './ProjectDetailsCommunityRatings';
 import toast, { Toaster } from "react-hot-toast";
 import { useParams, useNavigate } from 'react-router-dom';
 import ProjectDocuments from '../../Resources/ProjectDocuments';
+import AddAMentorRequestModal from '../../../models/AddAMentorRequestModal';
 
 const ProjectDetailsForInvestor = () => {
     const navigate = useNavigate();

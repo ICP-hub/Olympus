@@ -149,6 +149,7 @@ const ProjectDetailsForOwnerProject = () => {
             case "project-ratings":
                 return (
                     <ProjectRatings
+                        data={projectData}
                         profile={true}
                         type={!true}
                         name={true}
@@ -168,7 +169,7 @@ const ProjectDetailsForOwnerProject = () => {
                         socials={true}
                         filter={"documents"}
                     />
-                ); 
+                );
             default:
                 return null;
         }
@@ -249,9 +250,9 @@ const ProjectDetailsForOwnerProject = () => {
             })
     }
 
-    
-   
-    
+
+
+
     useEffect(() => {
         if (actor) {
             if (!projectData) {
