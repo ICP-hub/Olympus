@@ -1,5 +1,207 @@
+// import React, { Children, useState } from "react";
+// import Profile from "../../../assets/images/Ellipse 1382.svg";
+// import ReactSlider from "react-slider";
+// import Astro from "../../../assets/images/AstroLeft.png";
+// import { alertCircle } from "../Utils/Data/SvgData";
+// import { Line } from "rc-progress";
 
+
+
+// const ProjectRatings = () => {
+//   const [rating, setRating] = useState([
+//     {
+//       title: "Team",
+//       description:
+//         "Asia 30 under 30 honorees. PANY was established PANONY was established in March 2018 with operations in Greater China, South Korea and the U.S. Both founders are Forbes Asia 30 under 30 honorees. PANY was establishedPANONY was established in March 2018 with operations in Greater China, South Korea and the U.S. Both founders are Forbes Asia 30 under 30 honorees. PANY was established",
+//     },
+//     {
+//       title: "Problem and Vision",
+//       description: "Description for value B",
+//     },
+//     {
+//       title: "Value Prop",
+//       description: "Description for value A",
+//     },
+//     { title: "Product", description: "Description for value B" },
+//     { title: "Market", description: "Description for value A" },
+//     {
+//       title: "Business Model",
+//       description: "Description for value B",
+//     },
+//     { title: "Scale", description: "Description for value A" },
+//     { title: "Exit", description: "Description for value B" },
+//   ]);
+
+//   const [sliderValues, setSliderValues] = useState({
+//     Team: 0,
+//     ProblemAndVision: 0,
+//     ValueProp: 0,
+//     Product: 0,
+//     Market: 0,
+//     BusinessModel: 0,
+//     Scale: 0,
+//     Exit: 0,
+//   });
+//   const [sliderValuesProgress, setSliderValuesProgress] = useState({
+//     Team: 0,
+//     ProblemAndVision: 0,
+//     ValueProp: 0,
+//     Product: 0,
+//     Market: 0,
+//     BusinessModel: 0,
+//     Scale: 0,
+//     Exit: 0,
+//   });
+
+//   const sliderKeys = [
+//     "Team",
+//     "ProblemAndVision",
+//     "ValueProp",
+//     "Product",
+//     "Market",
+//     "BusinessModel",
+//     "Scale",
+//     "Exit",
+//   ];
+
+//   const handleSliderChange = (index, value) => {
+//     const key = sliderKeys[index];
+//     const newSliderValues = { ...sliderValues, [key]: value };
+//     setSliderValues(newSliderValues);
+//     const newSliderValuesProgress = {
+//       ...sliderValuesProgress,
+//       [key]: value === 9 ? 100 : Math.floor(value * 11),
+//     };
+//     setSliderValuesProgress(newSliderValuesProgress);
+//   };
+
+//   const customStyles = `
+//   .slider-mark::after {
+//     content: attr(data-label);
+//     position: absolute;
+//     top: -2rem;
+//     left: 50%;
+//     transform: translateX(-50%);
+//     text-align: center;
+//     white-space: nowrap;
+//     font-size: 0.75rem;
+//     color: #fff;
+//     padding: 0.2rem 0.4rem; 
+//     border-radius: 0.25rem;
+//   }
+// `;
+
+//   return (
+//     <section className=" px-4 bg-gray-100">
+//         {rating.map((value, index) => (
+//           <div
+//             className="mix-blend-darken bg-[#B9C0F3] text-gray-800 my-4 rounded shadow-md w-full mx-auto p-8"
+//             key={index}
+//           >
+//             <div className="flex items-center justify-between p-4 cursor-pointer">
+//               <h2 className="text-lg font-semibold text-white text-nowrap">
+//                 {value.title}
+//               </h2>
+//               <div className="mx-4 flex items-center w-full">
+//                 <Line
+//                   strokeWidth={0.5}
+//                   percent={30}
+//                   strokeColor="white"
+//                   className="line-horizontal"
+//                 />
+//                 <div className="text-white text-[15px] font-normal font-fontUse ml-2">
+//                   {sliderValuesProgress[sliderKeys[index]]}%
+//                 </div>
+
+//               </div>
+//             </div>
+//             <div
+//               className="transition-all duration-200 
+//                max-h-screen
+//              overflow-hidden"
+//             >
+//               <div className="p-4 ">
+//                 <div className="text-white text-sm font-normal font-fontUse">
+//                   {value.description}
+//                 </div>
+
+//                 <div className="w-[271.58px] text-white text-lg font-bold font-fontUse">
+//                   Rate team on sacle of 9
+//                 </div>
+//                 <div className="relative my-8">
+//                   <style dangerouslySetInnerHTML={{ __html: customStyles }} />
+//                   <ReactSlider
+//                     className="bg-gradient-to-r from-white to-blue-500 h-1 rounded-md w-full"
+//                     marks
+//                     markClassName="slider-mark bg-purple-800 rounded-md h-1 w-1"
+//                     min={0}
+//                     max={9}
+//                     thumbClassName="absolute bg-white w-12 h-12 flex items-center justify-center rounded-full shadow-md -top-2"
+//                     trackClassName="h-1 rounded"
+//                     value={sliderValues[sliderKeys[index]]}
+//                     onChange={(value) => handleSliderChange(index, value)}
+//                     renderThumb={(props, state) => (
+//                       // console.log(state.valueNow),
+//                       <div {...props} className="w-8 -top-4 ">
+//                         <img
+//                           src={Astro}
+//                           alt="Progress Icon"
+//                           className="w-[90px] h-[50px]"
+//                         />
+//                       </div>
+//                     )}
+//                     renderMark={({ key, style }) => (
+//                       <div
+//                         key={key}
+//                         className="slider-mark bg-transparent rounded-md h-1 w-1"
+//                         style={{ ...style, top: "0px" }}
+//                       >
+//                         <div className="flex flex-row text-white items-center space-x-1 relative -top-8 justify-between">
+//                           <span>Level</span>
+//                           <span>{key}</span>
+//                           <div className="relative group">
+//                             <span className="cursor-pointer">
+//                               {alertCircle}
+//                             </span>
+//                             <div className="absolute hidden group-hover:block bg-transparent text-white p-2 rounded-lg shadow-lg min-w-[250px] -left-14 -top-[6.95rem] z-20 h-32 drop-shadow-sm backdrop-blur-lg border-white border-2">
+//                               <div className="relative z-10 p-2">
+//                                 <div className="font-bold text-black">
+//                                   Level {key}
+//                                 </div>
+//                                 <div className="line-clamp-3">
+//                                   Lorem ipsum dolor sit amet consectetur,
+//                                   adipisicing elit. Dolore, tempora quibusdam
+//                                   omnis asperiores esse veritatis iure eos? Ipsa
+//                                   molestiae, expedita possimus quaerat,
+//                                   aspernatur hic pariatur dicta sit voluptas
+//                                   illo quidem. Lorem ipsum dolor sit amet
+//                                   consectetur adipisicing elit. Quas dolorem
+//                                   mollitia optio quis doloremque numquam
+//                                   provident, doloribus aspernatur deleniti
+//                                   necessitatibus expedita minima unde velit
+//                                   facere debitis! Asperiores tenetur veniam a.
+//                                 </div>
+//                               </div>
+//                             </div>
+//                           </div>
+//                         </div>
+//                       </div>
+//                     )}
+//                   />
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+//         ))}
+
+
+//     </section>
+//   );
+// };
+
+// export default ProjectRatings;
 import React, { useEffect, useState } from "react";
+// import Profile from "../../../assets/images/Ellipse 1382.svg";
 import ReactSlider from "react-slider";
 import Astro from "../../../assets/images/AstroLeft.png";
 import { alertCircle } from "../Utils/Data/SvgData";
@@ -40,6 +242,72 @@ const ProjectRatings = ({ data }) => {
   });
 
   const [selectedValue, setSelectedValue] = useState(0)
+  // const [sendingData, setSendingData] = useState([
+  //   {
+  //     level_number: 1,
+  //     level_name: 'Team',
+  //     rating: 35, 
+  // sub_level_number: 0,
+  //     sub_level: '',
+  //     project_id: 'projectidtobehere'
+  //   },
+  //   {
+  //     level_number: 2,
+  //     level_name: 'Problem and Vision',
+  //     rating: 35, 
+  // sub_level_number: 0,
+  //     sub_level: '',
+  //     project_id: 'projectidtobehere'
+  //   },
+  //   {
+  //     level_number: 3,
+  //     level_name: 'Value Prop',
+  //     rating: 35, 
+  // sub_level_number: 0,
+  //     sub_level: '',
+  //     project_id: 'projectidtobehere'
+  //   },
+  //   {
+  //     level_number: 4,
+  //     level_name: 'Product',
+  //     rating: 35, 
+  // sub_level_number: 0,
+  //     sub_level: '',
+  //     project_id: 'projectidtobehere'
+  //   },
+  //   {
+  //     level_number: 5,
+  //     level_name: 'Market',
+  //     rating: 35, 
+  // sub_level_number: 0,
+  //     sub_level: '',
+  //     project_id: 'projectidtobehere'
+  //   },
+  //   {
+  //     level_number: 6,
+  //     level_name: 'Business Model',
+  //     rating: 35, 
+  // sub_level_number: 0,
+  //     sub_level: '',
+  //     project_id: 'projectidtobehere'
+  //   },
+  //   {
+  //     level_number: 7,
+  //     level_name: 'Scale',
+  //     rating: 35, 
+  // sub_level_number: 0,
+  //     sub_level: '',
+  //     project_id: 'projectidtobehere'
+  //   },
+  //   {
+  //     level_number: 8,
+  //     level_name: 'Exit',
+  //     rating: 35, 
+  // sub_level_number: 0,
+  //     sub_level: '',
+  //     project_id: 'projectidtobehere'
+  //   },
+  // ]);
 
   const [sendingData, setSendingData] = useState([
     {
@@ -48,8 +316,7 @@ const ProjectRatings = ({ data }) => {
       rating: 35,
       sub_level_number: 4,
       sub_level: 'Validating an Investable Market',
-      project_id: data?.uid,
-      current_role: "Mentor"
+      project_id: data?.uid
     },
     {
       level_number: 2,
@@ -57,8 +324,7 @@ const ProjectRatings = ({ data }) => {
       rating: 35,
       sub_level_number: 2,
       sub_level: 'Setting the Vision',
-      project_id: data?.uid,
-      current_role: "Mentor"
+      project_id: data?.uid
     },
     {
       level_number: 3,
@@ -66,8 +332,7 @@ const ProjectRatings = ({ data }) => {
       rating: 35,
       sub_level_number: 3,
       sub_level: 'Solidifying the Value Proposition',
-      project_id: data?.uid,
-      current_role: "Mentor"
+      project_id: data?.uid
     },
     {
       level_number: 4,
@@ -75,8 +340,7 @@ const ProjectRatings = ({ data }) => {
       rating: 35,
       sub_level_number: 6,
       sub_level: 'Moving Beyond Early Adopters',
-      project_id: data?.uid,
-      current_role: "Mentor"
+      project_id: data?.uid
     },
     {
       level_number: 5,
@@ -84,8 +348,7 @@ const ProjectRatings = ({ data }) => {
       rating: 35,
       sub_level_number: 9,
       sub_level: 'Exit in Sight',
-      project_id: data?.uid,
-      current_role: "Mentor"
+      project_id: data?.uid
     },
     {
       level_number: 6,
@@ -93,8 +356,7 @@ const ProjectRatings = ({ data }) => {
       rating: 35,
       sub_level_number: 1,
       sub_level: 'Establishing the Founding Team',
-      project_id: data?.uid,
-      current_role: "Mentor"
+      project_id: data?.uid
     },
     {
       level_number: 7,
@@ -102,8 +364,7 @@ const ProjectRatings = ({ data }) => {
       rating: 35,
       sub_level_number: 6,
       sub_level: 'Moving Beyond Early Adopters',
-      project_id: data?.uid,
-      current_role: "Mentor"
+      project_id: data?.uid
     },
     {
       level_number: 8,
@@ -111,8 +372,7 @@ const ProjectRatings = ({ data }) => {
       rating: 35,
       sub_level_number: 4,
       sub_level: 'Validating an Investable Market',
-      project_id: data?.uid,
-      current_role: "Mentor"
+      project_id: data?.uid
     },
   ]);
 
@@ -158,26 +418,25 @@ const ProjectRatings = ({ data }) => {
       //   rating,
       //   message: ratingDescription,
       //   project_id: data?.uid,
-      current_role: "Mentor",
-        // }
+      // }
 
 
-        await actor.update_rating(params)
-          .then((result) => {
-            console.log('result-in-update_rating', result)
-            // if (result) {
-            //   handleRatingCloseModal();
-            //   toast.success('review added successfully')
-            // } else {
-            //   handleRatingCloseModal();
-            //   toast.error('something got wrong')
-            // }
-          })
-          .catch((error) => {
-            console.log('error-in-update_rating', error)
-            // toast.error('something got wrong')
-            // handleRatingCloseModal();
-          })
+      await actor.update_rating(params)
+        .then((result) => {
+          console.log('result-in-update_rating', result)
+          // if (result) {
+          //   handleRatingCloseModal();
+          //   toast.success('review added successfully')
+          // } else {
+          //   handleRatingCloseModal();
+          //   toast.error('something got wrong')
+          // }
+        })
+        .catch((error) => {
+          console.log('error-in-update_rating', error)
+          // toast.error('something got wrong')
+          // handleRatingCloseModal();
+        })
     }
   }
 
@@ -345,8 +604,8 @@ const ProjectRatings = ({ data }) => {
             </button>
           )}
           {currentStep < totalSteps - 1 && (
-            <button onClick={handleNext}
-            // <button onClick={handleSubmit}
+            // <button onClick={handleNext}
+            <button onClick={handleSubmit}
               type="button"
               className="ml-3 font-bold text-white bg-blue-500 hover:bg-blue-600  focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md w-auto sm:w-auto px-5 py-2 text-center mb-4">
               Next

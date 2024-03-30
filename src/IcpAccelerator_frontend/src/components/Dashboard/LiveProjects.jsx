@@ -12,9 +12,12 @@ import { useInView } from "react-intersection-observer";
 import { useSpring, animated, useTrail } from "react-spring";
 import NoDataCard from "../Mentors/Event/NoDataCard";
 
-const LiveProjects = () => {
+const LiveProjects = ({ progress }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
+  const userCurrentRoleStatusActiveRole = useSelector(
+    (currState) => currState.currentRoleStatus.activeRole
+  );
 
   const [isHovered, setIsHovered] = useState(false);
   const [percent, setPercent] = useState(0);
@@ -38,6 +41,12 @@ const LiveProjects = () => {
     config: { duration: 1000 }, // Customize duration as needed
   });
 
+  useEffect(() => {
+    if (percent < 100) {
+      tm.current = setTimeout(increase, 30);
+    }
+    return () => clearTimeout(tm.current);
+  }, [percent]);
 
   const increase = () => {
     setPercent((prevPercent) => {
@@ -90,11 +99,31 @@ const LiveProjects = () => {
       getAllProject(IcpAccelerator_backend);
     }
     return;
-  }, [actor]);
+  }, [actor, userCurrentRoleStatusActiveRole]);
 
-  const handleNavigate = (projectId) => {
+  const handleNavigate = (projectId, projectData) => {
     if (isAuthenticated) {
-      navigate(`/individual-project-details-project-mentor/${projectId}`);
+      switch (userCurrentRoleStatusActiveRole) {
+        case 'user':
+          navigate(`/individual-project-details-user/${projectId}`, {
+            state: projectData
+          });
+          break;
+        case 'project':
+          toast.error("Only Access if you are in a same cohort!!");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          break;
+        case 'mentor':
+          navigate(`/individual-project-details-project-mentor/${projectId}`);
+          break;
+        case 'investor':
+          navigate(`/individual-project-details-project-investor/${projectId}`);
+          break;
+        default:
+          toast.error("No Role Found, Please Sign Up !!!");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          break;
+      }
     } else {
       toast.error("Please Sign Up !!!");
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -105,12 +134,13 @@ const LiveProjects = () => {
     <>
       <div className="flex flex-wrap -mx-4 mb-4 items-center">
         <div className="w-full md:w-3/4 px-4 md:flex md:gap-4">
-          {noData ? (
+          {noData || (allProjectData &&
+            allProjectData.filter((val) => val[1]?.project_profile[0]?.params?.live_on_icp_mainnet[0] && val[1]?.project_profile[0]?.params?.live_on_icp_mainnet[0] === true).length == 0) ? (
             <NoDataCard />
           ) : (
             <>
               {allProjectData &&
-                allProjectData.slice(0, 3).map((data, index) => {
+                allProjectData.filter((val) => val[1]?.project_profile[0]?.params?.live_on_icp_mainnet[0] && val[1]?.project_profile[0]?.params?.live_on_icp_mainnet[0] === true).slice(0, 3).map((data, index) => {
                   let projectName = "";
                   let projectId = "";
                   let projectImage = "";
@@ -118,32 +148,25 @@ const LiveProjects = () => {
                   let principalId = "";
                   let projectDescription = "";
                   let projectAreaOfFocus = "";
-                  if (noData === false) {
-                    projectName =
-                      data[1]?.project_profile[0]?.params?.project_name;
-                    projectId = data[1]?.project_profile[0]?.uid;
-                    projectImage = uint8ArrayToBase64(
-                      data[1]?.project_profile[0]?.params?.project_logo
-                    );
-                    userImage = uint8ArrayToBase64(
-                      data[1]?.project_profile[0]?.params?.user_data
-                        ?.profile_picture[0]
-                    );
-                    principalId = data[0].toText();
-                    projectDescription =
-                      data[1]?.project_profile[0]?.params?.project_description;
-                    projectAreaOfFocus =
-                      data[1]?.project_profile[0]?.params
-                        ?.project_area_of_focus;
-                  } else {
-                    projectName = data.projectName;
-                    projectId = data.projectId;
-                    projectImage = data.projectImage;
-                    userImage = data.userImage;
-                    principalId = data.principalId;
-                    projectDescription = data.projectDescription;
-                    projectAreaOfFocus = data.projectAreaOfFocus;
-                  }
+                  let projectData = null;
+
+                  projectName =
+                    data[1]?.project_profile[0]?.params?.project_name;
+                  projectId = data[1]?.project_profile[0]?.uid;
+                  projectImage = uint8ArrayToBase64(
+                    data[1]?.project_profile[0]?.params?.project_logo
+                  );
+                  userImage = uint8ArrayToBase64(
+                    data[1]?.project_profile[0]?.params?.user_data
+                      ?.profile_picture[0]
+                  );
+                  principalId = data[0].toText();
+                  projectDescription =
+                    data[1]?.project_profile[0]?.params?.project_description;
+                  projectAreaOfFocus =
+                    data[1]?.project_profile[0]?.params
+                      ?.project_area_of_focus;
+                  projectData = data[1]?.project_profile[0]
                   return (
                     <animated.div
                       className="w-full sm:w-1/2 md:w-1/3 mb-2  hover:scale-105 transition-transform duration-300 ease-in-out"
@@ -158,7 +181,7 @@ const LiveProjects = () => {
                                 src={projectImage}
                                 alt="profile"
                               />
-                              <h1 className="font-bold text-nowrap truncate w-[220px]">
+                              <h1 className="ms-2 font-bold text-nowrap truncate w-[220px]">
                                 {projectName}
                               </h1>
                             </div>
@@ -173,7 +196,7 @@ const LiveProjects = () => {
                               </p>
                             </div>
                           </div>
-                          <div className="mb-4 flex items-baseline">
+                          {progress && (<div className="mb-4 flex items-baseline">
                             <svg
                               width="100%"
                               height="8"
@@ -212,7 +235,7 @@ const LiveProjects = () => {
                             <div className="ml-2 text-nowrap text-sm">
                               Level 2
                             </div>
-                          </div>
+                          </div>)}
                           <p className="text-gray-700 text-sm p-2 h-36 overflow-hidden line-clamp-8">
                             {projectDescription}
                           </p>
@@ -233,10 +256,9 @@ const LiveProjects = () => {
                               {projectAreaOfFocus.split(",").length > 3 && (
                                 <p
                                   onClick={() =>
-                                    projectId ? handleNavigate(projectId) : ""
+                                    projectId ? handleNavigate(projectId, projectData) : ""
                                   }
-                                  className="cursor-pointer"
-                                >
+                                  className="cursor-pointer">
                                   +1 more
                                 </p>
                               )}
@@ -247,7 +269,7 @@ const LiveProjects = () => {
 
                           <button
                             className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"
-                            onClick={() => handleNavigate(projectId)}
+                            onClick={() => handleNavigate(projectId, projectData)}
                           >
                             KNOW MORE
                           </button>
