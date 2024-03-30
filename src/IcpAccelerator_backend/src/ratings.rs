@@ -169,7 +169,7 @@ pub fn update_rating_api(ratings: Vec<Rating>) -> String {
     let current_active_role = crate::user_module::get_roles_for_principal(principal_id);
 
     let active_roles: Vec<String> = current_active_role.iter()
-        .filter(|role| role.status == "approved") // Adjust this condition based on your criteria for an "active" role.
+        .filter(|role| role.status == "active") // Adjust this condition based on your criteria for an "active" role.
         .map(|role| role.name.clone())
         .collect();
 
