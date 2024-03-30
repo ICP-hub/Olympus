@@ -325,7 +325,7 @@ pub fn get_vc_info() -> Option<VentureCapitalist> {
     })
 }
 
-#[update]
+#[query]
 pub fn get_vc_info_by_principal(caller: Principal) -> HashMap<Principal, VentureCapitalistAll> {
     VENTURECAPITALIST_STORAGE.with(|registry| {
         let profile = registry
@@ -346,6 +346,17 @@ pub fn get_vc_info_by_principal(caller: Principal) -> HashMap<Principal, Venture
     })
 }
 
+#[query]
+pub fn get_vc_info_using_principal(caller: Principal) -> Option<VentureCapitalistInternal> {
+    VENTURECAPITALIST_STORAGE.with(|registry| registry.borrow().get(&caller).cloned())
+}
+
+#[query]
+pub fn get_vc_awaiting_info_using_principal(
+    caller: Principal,
+) -> Option<VentureCapitalistInternal> {
+    VC_AWAITS_RESPONSE.with(|registry| registry.borrow().get(&caller).cloned())
+}
 
 #[query]
 pub fn list_all_vcs() -> HashMap<Principal, VcWithRoles> {

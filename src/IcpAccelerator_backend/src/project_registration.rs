@@ -219,8 +219,8 @@ pub struct ProjectInfoForUser {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
-pub struct ProjectInfoForUserInternal{
-    pub params: ProjectInfoForUser
+pub struct ProjectInfoForUserInternal {
+    pub params: ProjectInfoForUser,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)] 
@@ -229,7 +229,7 @@ pub struct ProjectInfoInternal {
     pub uid: String,
     pub is_active: bool,
     pub is_verified: bool,
-    creation_date: u64,
+    pub creation_date: u64,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
@@ -672,6 +672,21 @@ pub async fn create_project(info: ProjectInfo) -> String {
     .await;
 
     format!("{}", res)
+}
+
+#[query]
+pub fn get_project_info_using_principal(caller: Principal) -> Option<ProjectInfoInternal> {
+    APPLICATION_FORM.with(|registry| {
+        registry
+            .borrow()
+            .get(&caller)
+            .and_then(|projects| projects.first().cloned())
+    })
+}
+
+#[query]
+pub fn get_project_awaiting_info_using_principal(caller: Principal) -> Option<ProjectInfoInternal> {
+    PROJECT_AWAITS_RESPONSE.with(|registry| registry.borrow().get(&caller).cloned())
 }
 
 // all created projects but without ProjectInternal
@@ -1343,7 +1358,7 @@ pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUse
                     jobs_opportunity: Some(jobs_opportunity_posted),
                     area_of_focus: Some(project_internal.params.project_area_of_focus.clone()),
                     country_of_project: project_internal.params.preferred_icp_hub.clone(),
-                }
+                },
             })
     })
 }

@@ -399,8 +399,8 @@ fn get_leaderboard_using_ratings() -> Vec<LeaderboardEntryForRatings> {
 
 #[update]
 
-fn update_rating_api(rating: Vec<Rating>) {
-    ratings::update_rating(rating);
+fn update_rating(rating: Vec<Rating>) -> String {
+    ratings::update_rating_api(rating)
 }
 
 #[query]

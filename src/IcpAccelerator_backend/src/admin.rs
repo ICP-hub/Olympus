@@ -1,6 +1,6 @@
+use crate::associations::*;
 use crate::mentor::*;
 use crate::project_registration::*;
-
 use crate::user_module::*;
 use crate::vc_registration::*;
 use candid::{CandidType, Principal};
@@ -11,6 +11,7 @@ use ic_cdk::api::{canister_balance128, time};
 use ic_cdk_macros::*;
 use serde::{Deserialize, Serialize};
 use std::cell::RefCell;
+use std::cmp::Reverse;
 use std::collections::{HashMap, HashSet};
 use std::io::{Read, Write};
 
@@ -1043,19 +1044,22 @@ pub async fn add_project_to_spotlight(project_id: String) -> Result<(), String> 
         return Err("Unauthorized: Caller is not an admin.".to_string());
     }
 
-    let project_info = APPLICATION_FORM.with(|details| {
+    let project_creator_and_info = APPLICATION_FORM.with(|details| {
         details
             .borrow()
             .iter()
-            .flat_map(|(_, projects)| projects.iter())
-            .find(|project| project.uid == project_id)
-            .cloned()
+            .find_map(|(creator_principal, projects)| {
+                projects
+                    .iter()
+                    .find(|project| project.uid == project_id)
+                    .map(|project_info| (creator_principal.clone(), project_info.clone()))
+            })
     });
 
-    match project_info {
-        Some(project_info) => {
+    match project_creator_and_info {
+        Some((project_creator, project_info)) => {
             let spotlight_details = SpotlightDetails {
-                added_by: caller,
+                added_by: project_creator,
                 project_id: project_id,
                 project_details: project_info.params,
                 approval_time: time(),
@@ -1262,4 +1266,260 @@ fn update_dapp_link(project_id: String, new_dapp_link: String) -> String {
         // If no project with the matching ID was found
         "Project ID not found.".to_string()
     })
+}
+
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default)]
+pub struct TopData {
+    full_name: String,
+    profile_picture: Option<Vec<u8>>, // Assuming profile_picture is optional
+    area_of_interest: String,
+    country: String,
+    joined_on: u64,
+}
+
+fn get_joined_on_(mentor_principal: &Principal, roletype: String) -> Option<u64> {
+    ROLE_STATUS_ARRAY.with(|r| {
+        r.borrow().get(mentor_principal).and_then(|roles| {
+            roles
+                .iter()
+                .find(|role| role.name == roletype && role.status == "approved")
+                .and_then(|role| role.approved_on)
+        })
+    })
+}
+
+#[query]
+fn get_top_5_mentors() -> Vec<(Principal, TopData, usize)> {
+    let mentor_vec = MENTOR_REGISTRY.with(|registry| {
+        registry
+            .borrow()
+            .keys()
+            .cloned()
+            .collect::<Vec<Principal>>()
+    });
+
+    let mut mentor_project_counts: Vec<(Principal, TopData, usize)> = mentor_vec
+        .into_iter()
+        .map(|principal| {
+            let project_count = get_projects_associated_with_mentor(principal.clone()).len();
+            let joined_on = get_joined_on_(&principal, "mentor".to_string()).unwrap_or(0); // Fetch the joined_on date
+            let mentor_data = MENTOR_REGISTRY.with(|registry| {
+                registry
+                    .borrow()
+                    .get(&principal)
+                    .map(|full_mentor_data| TopData {
+                        full_name: full_mentor_data.profile.user_data.full_name.clone(),
+                        profile_picture: full_mentor_data.profile.user_data.profile_picture.clone(),
+                        area_of_interest: full_mentor_data.profile.area_of_expertise.clone(),
+                        country: full_mentor_data.profile.user_data.country.clone(),
+                        joined_on,
+                    })
+                    .unwrap_or_default() // Provide a default in case data is missing
+            });
+            (principal, mentor_data, project_count)
+        })
+        .collect();
+
+    // Sort by the number of associated projects in descending order and take the top 5
+    mentor_project_counts.sort_by_key(|k| std::cmp::Reverse(k.2));
+    mentor_project_counts.into_iter().take(5).collect()
+}
+
+#[query]
+fn get_top_5_vcs() -> Vec<(Principal, TopData, usize)> {
+    let vc_vec = VENTURECAPITALIST_STORAGE.with(|registry| {
+        registry
+            .borrow()
+            .keys()
+            .cloned()
+            .collect::<Vec<Principal>>()
+    });
+
+    let mut mentor_project_counts: Vec<(Principal, TopData, usize)> = vc_vec
+        .into_iter()
+        .map(|principal| {
+            let project_count = get_projects_associated_with_investor(principal.clone()).len();
+            let joined_on = get_joined_on_(&principal, "vc".to_string()).unwrap_or(0); // Fetch the joined_on date
+            let mentor_data = VENTURECAPITALIST_STORAGE.with(|registry| {
+                registry
+                    .borrow()
+                    .get(&principal)
+                    .map(|full_mentor_data| TopData {
+                        full_name: full_mentor_data.params.user_data.full_name.clone(),
+                        profile_picture: full_mentor_data.params.user_data.profile_picture.clone(),
+                        area_of_interest: full_mentor_data.params.category_of_investment.clone(),
+                        country: full_mentor_data.params.user_data.country.clone(),
+                        joined_on,
+                    })
+                    .unwrap_or_default() // Provide a default in case data is missing
+            });
+            (principal, mentor_data, project_count)
+        })
+        .collect();
+
+    // Sort by the number of associated projects in descending order and take the top 5
+    mentor_project_counts.sort_by_key(|k| std::cmp::Reverse(k.2));
+    mentor_project_counts.into_iter().take(5).collect()
+}
+
+#[query]
+fn get_top_5_projects() -> Vec<(String, TopData, usize)> {
+    // Temporarily holding the projects to sort and filter
+    let mut project_counts: Vec<(String, TopData, usize)> = Vec::new();
+
+    // Properly accessing the APPLICATION_FORM RefCell
+    APPLICATION_FORM.with(|application_form| {
+        let application_form = application_form.borrow(); // Access the RefCell for reading
+
+        for (_principal, projects) in application_form.iter() {
+            for project_internal in projects {
+                let project_info = &project_internal.params;
+                let mentor_count = project_info
+                    .mentors_assigned
+                    .as_ref()
+                    .map_or(0, |v| v.len());
+                let vc_count = project_info.vc_assigned.as_ref().map_or(0, |v| v.len());
+                let total_count = mentor_count + vc_count;
+
+                // Placeholder for TopData - adjust according to actual data retrieval method
+                let top_data = TopData {
+                    full_name: project_info.user_data.full_name.clone(),
+                    profile_picture: Some(project_info.project_logo.clone()),
+                    area_of_interest: project_info.project_area_of_focus.clone(),
+                    country: project_info.user_data.country.clone(),
+                    joined_on: project_internal.creation_date.clone(),
+                };
+
+                project_counts.push((project_internal.uid.clone(), top_data, total_count));
+            }
+        }
+    });
+
+    // Sorting by the total count of mentors and VCs in descending order
+    project_counts.sort_by(|a, b| b.2.cmp(&a.2));
+
+    // Taking the top 5 projects based on total counts
+    project_counts.into_iter().take(5).collect()
+}
+
+#[query]
+pub fn change_live_status(
+    project_principal: Principal,
+    project_id: String,
+    live_status: bool,
+    new_dapp_link: Option<String>,
+) -> Result<String, String> {
+    APPLICATION_FORM.with(|projects_registry| {
+        let mut projects = projects_registry.borrow_mut();
+        // Logging before the update attempt
+        println!("Attempting to update project with ID: {}", project_id);
+
+        if let Some(project_list) = projects.get_mut(&project_principal) {
+            if let Some(project_internal) = project_list.iter_mut().find(|p| p.uid == project_id) {
+                // Logging the current state before the update
+                println!(
+                    "Before update: live_on_icp_mainnet = {:?}, dapp_link = {:?}",
+                    project_internal.params.live_on_icp_mainnet, project_internal.params.dapp_link
+                );
+
+                project_internal.params.live_on_icp_mainnet = Some(live_status);
+                project_internal.params.dapp_link = if live_status {
+                    new_dapp_link.clone()
+                } else {
+                    None
+                };
+
+                // Logging the state after the update
+                println!(
+                    "After update: live_on_icp_mainnet = {:?}, dapp_link = {:?}",
+                    project_internal.params.live_on_icp_mainnet, project_internal.params.dapp_link
+                );
+
+                return Ok(format!(
+                    "Project updated successfully: live_on_icp_mainnet = {:?}, dapp_link = {:?}",
+                    project_internal.params.live_on_icp_mainnet, project_internal.params.dapp_link
+                ));
+            }
+        }
+        // Logging in case the project is not found
+        println!("Project with ID: {} not found.", project_id);
+        Err("Project not found.".to_string())
+    })
+}
+
+#[query]
+
+// fn get_user_all_data(user_principal: Principal) {}
+
+pub fn get_vc_info_combined(caller: Principal) -> Option<VentureCapitalistInternal> {
+    // First attempt with get_vc_info_using_principal
+    if let Some(vc_info) = get_vc_info_using_principal(caller) {
+        return Some(vc_info);
+    }
+
+    // Second attempt with get_vc_awaiting_info_using_principal
+    if let Some(vc_awaiting_info) = get_vc_awaiting_info_using_principal(caller) {
+        return Some(vc_awaiting_info);
+    }
+
+    // Return None if both attempts fail
+    None
+}
+
+#[query]
+pub fn get_mentor_info_combined(caller: Principal) -> Option<MentorInternal> {
+    // First attempt with get_vc_info_using_principal
+    if let Some(vc_info) = get_mentor_info_using_principal(caller) {
+        return Some(vc_info);
+    }
+
+    // Second attempt with get_vc_awaiting_info_using_principal
+    if let Some(vc_awaiting_info) = get_mentor_awaiting_info_using_principal(caller) {
+        return Some(vc_awaiting_info);
+    }
+
+    // Return None if both attempts fail
+    None
+}
+
+#[query]
+pub fn get_project_info_combined(caller: Principal) -> Option<ProjectInfoInternal> {
+    // First attempt with get_vc_info_using_principal
+    if let Some(vc_info) = get_project_info_using_principal(caller) {
+        return Some(vc_info);
+    }
+
+    // Second attempt with get_vc_awaiting_info_using_principal
+    if let Some(vc_awaiting_info) = get_project_awaiting_info_using_principal(caller) {
+        return Some(vc_awaiting_info);
+    }
+
+    // Return None if both attempts fail
+    None
+}
+
+#[query]
+pub fn get_user_all_data(
+    caller: Principal,
+) -> (
+    Option<UserInfoInternal>,
+    Option<VentureCapitalistInternal>,
+    Option<MentorInternal>,
+    Option<ProjectInfoInternal>,
+    Vec<Role>,
+) {
+    let user_info = get_user_info_using_principal(caller);
+    let vc_info = get_vc_info_combined(caller);
+    let mentor_info = get_mentor_info_combined(caller);
+    let project_info = get_project_info_combined(caller);
+
+    let role_status_info = get_roles_for_principal(caller);
+
+    (
+        user_info,
+        vc_info,
+        mentor_info,
+        project_info,
+        role_status_info,
+    )
 }

@@ -49,31 +49,31 @@ const SpotLight = () => {
           <NoDataCard />
         ) : (
           <Swiper
-  modules={[Pagination, Autoplay]}
-  centeredSlides={true}
-  loop={true}
-  autoplay={{
-    delay: 2500,
-    disableOnInteraction: false,
-  }}
-  pagination={{
-    clickable: true,
-  }}
-  spaceBetween={30}
-  slidesPerView="auto"
-  slidesOffsetAfter={100}
-  breakpoints={{
-    640: {
-      slidesPerView: 1,
-    },
-    768: {
-      slidesPerView: 2, 
-    },
-    1024: {
-      slidesPerView: 3,
-    },
-  }}
->
+            modules={[Pagination, Autoplay]}
+            centeredSlides={true}
+            loop={true}
+            autoplay={{
+              delay: 2500,
+              disableOnInteraction: false,
+            }}
+            pagination={{
+              clickable: true,
+            }}
+            spaceBetween={30}
+            slidesPerView="auto"
+            slidesOffsetAfter={100}
+            breakpoints={{
+              640: {
+                slidesPerView: 1,
+              },
+              768: {
+                slidesPerView: 2,
+              },
+              1024: {
+                slidesPerView: 3,
+              },
+            }}
+          >
             {spotLightData &&
               spotLightData.map((data, index) => {
                 console.log("spotlight", data);
@@ -118,19 +118,19 @@ const SpotLight = () => {
                           {projectDescription}
                         </div>
                         <div className="flex flex-row gap-4 mt-2">
-                            <div className="flex gap-2 mt-2 text-xs items-center">
-                              {projectAreaOfFocus
-                                .split(",")
-                                .slice(0, 3)
-                                .map((tag, index) => (
-                                  <div
-                                    key={index}
-                                    className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-gray-100"
-                                  >
-                                    {tag.trim()}
-                                  </div>
-                                ))}
-                            </div>
+                          <div className="flex gap-2 mt-2 text-xs items-center">
+                            {projectAreaOfFocus
+                              .split(",")
+                              .slice(0, 3)
+                              .map((tag, index) => (
+                                <div
+                                  key={index}
+                                  className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-gray-100"
+                                >
+                                  {tag.trim()}
+                                </div>
+                              ))}
+                          </div>
                         </div>
                       </div>
                     </div>

@@ -15,6 +15,9 @@ const MoreCurrentlyRaisingProjects = () => {
   const [percent, setPercent] = useState(0);
   const [showLine, setShowLine] = useState({});
   const tm = useRef(null);
+  const userCurrentRoleStatusActiveRole = useSelector(
+    (currState) => currState.currentRoleStatus.activeRole
+  );
   const navigate = useNavigate();
   // Gradient color stops, changes when hovered
   const gradientStops = isHovered
@@ -28,77 +31,77 @@ const MoreCurrentlyRaisingProjects = () => {
     }));
   };
 
-  const defaultArray = [
-    {
-      projectName: "Awesome Project",
-      projectId: "ABC123",
-      projectImage: ment,
-      userImage: girl,
-      principalId: "user123",
-      projectDescription: "This is an amazing project focused on innovation.",
-      projectAreaOfFocus: "Technology",
-    },
-    {
-      projectName: "Creative Initiative",
-      projectId: "DEF456",
-      projectImage: ment,
-      userImage: girl,
-      principalId: "user456",
-      projectDescription:
-        "A creative initiative aiming to bring positive change.",
-      projectAreaOfFocus: "Art and Design",
-    },
-    {
-      projectName: "Community Outreach",
-      projectId: "GHI789",
-      projectImage: ment,
-      userImage: girl,
-      principalId: "user789",
-      projectDescription:
-        "Engaging community outreach program fostering collaboration.",
-      projectAreaOfFocus: "Social Impact",
-    },
-    {
-      projectName: "Community Outreach",
-      projectId: "GHI789",
-      projectImage: ment,
-      userImage: girl,
-      principalId: "user789",
-      projectDescription:
-        "Engaging community outreach program fostering collaboration.",
-      projectAreaOfFocus: "Social Impact",
-    },
-    {
-      projectName: "Community Outreach",
-      projectId: "GHI789",
-      projectImage: ment,
-      userImage: girl,
-      principalId: "user789",
-      projectDescription:
-        "Engaging community outreach program fostering collaboration.",
-      projectAreaOfFocus: "Social Impact",
-    },
-    {
-      projectName: "Community Outreach",
-      projectId: "GHI789",
-      projectImage: ment,
-      userImage: girl,
-      principalId: "user789",
-      projectDescription:
-        "Engaging community outreach program fostering collaboration.",
-      projectAreaOfFocus: "Social Impact",
-    },
-    {
-      projectName: "Community Outreach",
-      projectId: "GHI789",
-      projectImage: ment,
-      userImage: girl,
-      principalId: "user789",
-      projectDescription:
-        "Engaging community outreach program fostering collaboration.",
-      projectAreaOfFocus: "Social Impact",
-    },
-  ];
+  // const defaultArray = [
+  //   {
+  //     projectName: "Awesome Project",
+  //     projectId: "ABC123",
+  //     projectImage: ment,
+  //     userImage: girl,
+  //     principalId: "user123",
+  //     projectDescription: "This is an amazing project focused on innovation.",
+  //     projectAreaOfFocus: "Technology",
+  //   },
+  //   {
+  //     projectName: "Creative Initiative",
+  //     projectId: "DEF456",
+  //     projectImage: ment,
+  //     userImage: girl,
+  //     principalId: "user456",
+  //     projectDescription:
+  //       "A creative initiative aiming to bring positive change.",
+  //     projectAreaOfFocus: "Art and Design",
+  //   },
+  //   {
+  //     projectName: "Community Outreach",
+  //     projectId: "GHI789",
+  //     projectImage: ment,
+  //     userImage: girl,
+  //     principalId: "user789",
+  //     projectDescription:
+  //       "Engaging community outreach program fostering collaboration.",
+  //     projectAreaOfFocus: "Social Impact",
+  //   },
+  //   {
+  //     projectName: "Community Outreach",
+  //     projectId: "GHI789",
+  //     projectImage: ment,
+  //     userImage: girl,
+  //     principalId: "user789",
+  //     projectDescription:
+  //       "Engaging community outreach program fostering collaboration.",
+  //     projectAreaOfFocus: "Social Impact",
+  //   },
+  //   {
+  //     projectName: "Community Outreach",
+  //     projectId: "GHI789",
+  //     projectImage: ment,
+  //     userImage: girl,
+  //     principalId: "user789",
+  //     projectDescription:
+  //       "Engaging community outreach program fostering collaboration.",
+  //     projectAreaOfFocus: "Social Impact",
+  //   },
+  //   {
+  //     projectName: "Community Outreach",
+  //     projectId: "GHI789",
+  //     projectImage: ment,
+  //     userImage: girl,
+  //     principalId: "user789",
+  //     projectDescription:
+  //       "Engaging community outreach program fostering collaboration.",
+  //     projectAreaOfFocus: "Social Impact",
+  //   },
+  //   {
+  //     projectName: "Community Outreach",
+  //     projectId: "GHI789",
+  //     projectImage: ment,
+  //     userImage: girl,
+  //     principalId: "user789",
+  //     projectDescription:
+  //       "Engaging community outreach program fostering collaboration.",
+  //     projectAreaOfFocus: "Social Impact",
+  //   },
+  // ];
 
   const [noData, setNoData] = useState(null);
   const [allProjectData, setAllProjectData] = useState([]);
@@ -125,29 +128,48 @@ const MoreCurrentlyRaisingProjects = () => {
   };
 
   useEffect(() => {
-    setAllProjectData(defaultArray);
+    // setAllProjectData(defaultArray);
     if (actor) {
       getAllProject(actor);
     } else {
       getAllProject(IcpAccelerator_backend);
     }
-  }, [actor]);
+  }, [actor, userCurrentRoleStatusActiveRole]);
 
   const handleNavigate = (projectId, projectData) => {
     if (isAuthenticated) {
-      navigate(`/individual-project-details-user/${projectId}`, {
-        state: projectData
-      });
+      switch (userCurrentRoleStatusActiveRole) {
+        case 'user':
+          toast.error("No Access to user role!!!");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          break;
+        case 'project':
+          toast.error("No Access to project role, without peer project in cohort!!!");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          break;
+        case 'mentor':
+          navigate(`/individual-project-details-project-mentor/${projectId}`);
+          break;
+        case 'investor':
+          navigate(`/individual-project-details-project-investor/${projectId}`);
+          break;
+        default:
+          toast.error("No Role Found, Please Sign Up !!!");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          break;
+      }
+    } else {
+      toast.error("Please Sign Up !!!");
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
   return (
     <div className="" style={{ minHeight: "60vh" }}>
-      {noData ?
-       <div className="h-screen items-center"><NoDataCard /></div>
+       {noData || (allProjectData && allProjectData.filter((val) => val[1]?.project_profile[0]?.params?.live_on_icp_mainnet[0] && val[1]?.project_profile[0]?.params?.live_on_icp_mainnet[0] === true && val[1]?.project_profile[0]?.params?.money_raised_till_now[0] && val[1]?.project_profile[0]?.params?.money_raised_till_now[0] == true).length == 0) ? 
+        <div className="h-screen items-center"><NoDataCard /></div>
         :
         <div className="flex-wrap flex flex-row">
-          {allProjectData &&
-            allProjectData.map((data, index) => {
+          {allProjectData && allProjectData.filter((val) => val[1]?.project_profile[0]?.params?.live_on_icp_mainnet[0] && val[1]?.project_profile[0]?.params?.live_on_icp_mainnet[0] === true && val[1]?.project_profile[0]?.params?.money_raised_till_now[0] && val[1]?.project_profile[0]?.params?.money_raised_till_now[0] == true).map((data, index) => {
               let projectName = "";
               let projectId = "";
               let projectImage = "";
@@ -156,37 +178,25 @@ const MoreCurrentlyRaisingProjects = () => {
               let projectDescription = "";
               let projectAreaOfFocus = "";
               let moneyRaisedTillNow = "";
-              let projectData = null ;
-              if (noData === false) {
-                projectName = data[1]?.project_profile[0]?.params?.project_name;
-                projectId = data[1]?.project_profile[0]?.uid;
-                projectImage = uint8ArrayToBase64(
-                  data[1]?.project_profile[0]?.params?.project_logo
-                );
-                userImage = uint8ArrayToBase64(
-                  data[1]?.project_profile[0]?.params?.user_data
-                    ?.profile_picture[0]
-                );
-                principalId = data[0].toText();
-                projectDescription =
-                  data[1]?.project_profile[0]?.params?.project_description;
-                projectAreaOfFocus =
-                  data[1]?.project_profile[0]?.params?.project_area_of_focus;
-                moneyRaisedTillNow = data[1]?.project_profile[0]?.params?.money_raised_till_now[0];
-                projectData = data[1]?.project_profile[0];
-              } else {
-                projectName = data.projectName;
-                projectId = data.projectId;
-                projectImage = data.projectImage;
-                userImage = data.userImage;
-                principalId = data.principalId;
-                projectDescription = data.projectDescription;
-                projectAreaOfFocus = data.projectAreaOfFocus;
-                moneyRaisedTillNow = true
-              }
-              if (!moneyRaisedTillNow) {
-                return null;
-              }
+              let projectData = null;
+
+              projectName = data[1]?.project_profile[0]?.params?.project_name;
+              projectId = data[1]?.project_profile[0]?.uid;
+              projectImage = uint8ArrayToBase64(
+                data[1]?.project_profile[0]?.params?.project_logo
+              );
+              userImage = uint8ArrayToBase64(
+                data[1]?.project_profile[0]?.params?.user_data
+                  ?.profile_picture[0]
+              );
+              principalId = data[0].toText();
+              projectDescription =
+                data[1]?.project_profile[0]?.params?.project_description;
+              projectAreaOfFocus =
+                data[1]?.project_profile[0]?.params?.project_area_of_focus;
+              moneyRaisedTillNow = data[1]?.project_profile[0]?.params?.money_raised_till_now[0];
+              projectData = data[1]?.project_profile[0];
+
               return (
                 <div className="w-full sm:w-1/2 md:w-1/3 mb-2 px-3" key={index}>
                   <div className="justify-between items-baseline mb-4 flex-wrap bg-white m-2 overflow-hidden rounded-lg shadow-lg">

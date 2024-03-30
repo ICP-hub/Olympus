@@ -36,18 +36,18 @@ user25=$(dfx --identity user25 identity get-principal)
 
 # echo $user13
 
-echo $(dfx --identity user1 canister call $CANISTER update_team_member '('$project1', principal "'$user13'")')
-echo $(dfx --identity user1 canister call $CANISTER update_team_member '('$project1', principal "'$user14'")')
-echo $(dfx --identity user2 canister call $CANISTER update_team_member '('$project2', principal "'$user15'")')
-echo $(dfx --identity user2 canister call $CANISTER update_team_member '('$project2', principal "'$user16'")')
-echo $(dfx --identity user3 canister call $CANISTER update_team_member '('$project3', principal "'$user17'")')
-echo $(dfx --identity user4 canister call $CANISTER update_team_member '('$project4', principal "'$user18'")')
-echo $(dfx --identity user5 canister call $CANISTER update_team_member '('$project5', principal "'$user19'")')
-echo $(dfx --identity user6 canister call $CANISTER update_team_member '('$project6', principal "'$user20'")')
-echo $(dfx --identity user7 canister call $CANISTER update_team_member '('$project7', principal "'$user21'")')
-echo $(dfx --identity user8 canister call $CANISTER update_team_member '('$project8', principal "'$user22'")')
-echo $(dfx --identity user9 canister call $CANISTER update_team_member '('$project9', principal "'$user23'")')
-echo $(dfx --identity user9 canister call $CANISTER update_team_member '('$project9', principal "'$user24'")')
+echo $(dfx --identity user1 canister call $CANISTER update_team_member '('$project1', principal "'$user13'")' --network ic)
+echo $(dfx --identity user1 canister call $CANISTER update_team_member '('$project1', principal "'$user14'")' --network ic)
+echo $(dfx --identity user2 canister call $CANISTER update_team_member '('$project2', principal "'$user15'")' --network ic)
+echo $(dfx --identity user2 canister call $CANISTER update_team_member '('$project2', principal "'$user16'")' --network ic)
+echo $(dfx --identity user3 canister call $CANISTER update_team_member '('$project3', principal "'$user17'")' --network ic)
+echo $(dfx --identity user4 canister call $CANISTER update_team_member '('$project4', principal "'$user18'")' --network ic)
+echo $(dfx --identity user5 canister call $CANISTER update_team_member '('$project5', principal "'$user19'")' --network ic)
+echo $(dfx --identity user6 canister call $CANISTER update_team_member '('$project6', principal "'$user20'")' --network ic)
+echo $(dfx --identity user7 canister call $CANISTER update_team_member '('$project7', principal "'$user21'")' --network ic)
+echo $(dfx --identity user8 canister call $CANISTER update_team_member '('$project8', principal "'$user22'")' --network ic)
+echo $(dfx --identity user9 canister call $CANISTER update_team_member '('$project9', principal "'$user23'")' --network ic)
+echo $(dfx --identity user9 canister call $CANISTER update_team_member '('$project9', principal "'$user24'")' --network ic)
 
 
 # job_data[0]='"DSCVR Frontend Integration on Internet Computer","DSCVR is a decentralized borrowing protocol that allows users to draw interest-free loans against Ether used as collateral. DSCVR now has a fully decentralized, immutable frontend hosted on the Internet Computer.","job","https://dscvr.one/",'${project1}''

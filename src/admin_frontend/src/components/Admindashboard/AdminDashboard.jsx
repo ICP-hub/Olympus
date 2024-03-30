@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import founder from "../../../../IcpAccelerator_frontend/assets/images/founder.png";
 import proj from "../../../../IcpAccelerator_frontend/assets/images/hub.png";
 import vc from "../../../../IcpAccelerator_frontend/assets/images/vc.png";
 import mentor from "../../../../IcpAccelerator_frontend/assets/images/mentor.png";
 import girl from "../../../../IcpAccelerator_frontend/assets/images/girl.jpeg";
 import { useSelector } from "react-redux";
-import AnnouncementCard from "../../../../IcpAccelerator_frontend/src/components/Dashboard/AnnouncementCard";
+// import AnnouncementCard from "../../../../IcpAccelerator_frontend/src/components/Dashboard/AnnouncementCard";
 import TopProjects from "./Top/TopProjects";
 import TopMentors from "./Top/TopMentors";
 import TopInvestors from "./Top/TopInvestors";
@@ -87,9 +87,9 @@ const AdminDashboard = () => {
               </p>
             </div>
           </div>
-          <div className="rounded-[1rem]  space-x-2 flex my-2 justify-center  flex-col  w-full  bg-white drop-shadow-xl border-2">
+          <div className="rounded-[1rem]  space-x-2 flex my-2 justify-center cursor-pointer  flex-col  w-full  bg-white drop-shadow-xl border-2">
             <div className="flex  flex-row  flex-wrap justify-around font-bold text-lg text-black items-center ">
-              <div className="gap-2 flex flex-row items-center">
+              <div  onClick={()=> navigate('/alluser')} className="gap-2 flex flex-row items-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 20 20"

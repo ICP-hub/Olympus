@@ -6,7 +6,7 @@ import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import NoDataCard from "../Mentors/Event/NoDataCard";
-const CurrentlyRaising = () => {
+const CurrentlyRaising = ({ progress }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
   const navigate = useNavigate();
@@ -14,7 +14,9 @@ const CurrentlyRaising = () => {
   const [percent, setPercent] = useState(0);
   const [showLine, setShowLine] = useState({});
   const tm = useRef(null);
-
+  const userCurrentRoleStatusActiveRole = useSelector(
+    (currState) => currState.currentRoleStatus.activeRole
+  );
   // Gradient color stops, changes when hovered
   const gradientStops = isHovered
     ? { stop1: "#4087BF", stop2: "#3C04BA" }
@@ -44,48 +46,6 @@ const CurrentlyRaising = () => {
     });
   };
 
-  const defaultArray = [
-    {
-      projectName: "Innovative Solutions",
-      projectId: null,
-      projectImage: ment,
-      userImage: girl,
-      principalId: "user001",
-      projectDescription:
-        "This project aims to provide innovative solutions to real-world problems.",
-      projectAreaOfFocus: "Technology",
-    },
-    {
-      projectName: "Artistic Expressions",
-      projectId: null,
-      projectImage: ment,
-      userImage: girl,
-      principalId: "user002",
-      projectDescription:
-        "An exploration of artistic expressions pushing the boundaries of creativity.",
-      projectAreaOfFocus: "Art and Design",
-    },
-    {
-      projectName: "Community Empowerment",
-      projectId: null,
-      projectImage: ment,
-      userImage: girl,
-      principalId: "user003",
-      projectDescription:
-        "Empowering communities through grassroots initiatives for lasting impact.",
-      projectAreaOfFocus: "Social Impact",
-    },
-    {
-      projectName: "Event Management",
-      projectId: null,
-      projectImage: ment,
-      userImage: girl,
-      principalId: "user003",
-      projectDescription:
-        "Welcome to the best event management system on ICP. Fully Decentralized On ICP ",
-      projectAreaOfFocus: "Social Impact",
-    },
-  ];
 
   const [noData, setNoData] = useState(null);
   const [allProjectData, setAllProjectData] = useState([]);
@@ -97,7 +57,7 @@ const CurrentlyRaising = () => {
         console.log("result-in-get-all-projects", result);
         if (!result || result.length == 0) {
           setNoData(true);
-          setAllProjectData(defaultArray);
+          setAllProjectData([]);
         } else {
           setAllProjectData(result);
           setNoData(false);
@@ -105,7 +65,7 @@ const CurrentlyRaising = () => {
       })
       .catch((error) => {
         setNoData(true);
-        setAllProjectData(defaultArray);
+        setAllProjectData([]);
         console.log("error-in-get-all-projects", error);
       });
   };
@@ -116,24 +76,44 @@ const CurrentlyRaising = () => {
     } else {
       getAllProject(IcpAccelerator_backend);
     }
-  }, [actor]);
+  }, [actor, userCurrentRoleStatusActiveRole]);
 
   const handleNavigate = (projectId, projectData) => {
     if (isAuthenticated) {
-      navigate(`/individual-project-details-user/${projectId}`, {
-        state: projectData
-      });
+      switch (userCurrentRoleStatusActiveRole) {
+        case 'user':
+          toast.error("No Access to user role!!!");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          break;
+        case 'project':
+          toast.error("No Access to project role, without peer project in cohort!!!");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          break;
+        case 'mentor':
+          navigate(`/individual-project-details-project-mentor/${projectId}`);
+          break;
+        case 'investor':
+          navigate(`/individual-project-details-project-investor/${projectId}`);
+          break;
+        default:
+          toast.error("No Role Found, Please Sign Up !!!");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          break;
+      }
+    } else {
+      toast.error("Please Sign Up !!!");
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
   return (
     <div className="flex flex-wrap -mx-4 mb-4 items-start">
-      {noData ? (
+      {noData || (allProjectData && allProjectData.filter((val) => val[1]?.project_profile[0]?.params?.live_on_icp_mainnet[0] && val[1]?.project_profile[0]?.params?.live_on_icp_mainnet[0] === true && val[1]?.project_profile[0]?.params?.money_raised_till_now[0] && val[1]?.project_profile[0]?.params?.money_raised_till_now[0] == true).length == 0) ? (
         <NoDataCard />
       ) : (
 
         <div className=" md:flex md:flex-row w-full">
           {allProjectData &&
-            allProjectData.slice(0, 4).map((data, index) => {
+            allProjectData.filter((val) => val[1]?.project_profile[0]?.params?.live_on_icp_mainnet[0] && val[1]?.project_profile[0]?.params?.live_on_icp_mainnet[0] === true && val[1]?.project_profile[0]?.params?.money_raised_till_now[0] && val[1]?.project_profile[0]?.params?.money_raised_till_now[0] == true).slice(0, 4).map((data, index) => {
               let projectName = "";
               let projectId = "";
               let projectImage = "";
@@ -141,41 +121,25 @@ const CurrentlyRaising = () => {
               let principalId = "";
               let projectDescription = "";
               let projectAreaOfFocus = "";
-              let moneyRaisedTillNow = "";
               let projectData = null;
 
-              if (noData === false) {
-                moneyRaisedTillNow =
-                  data[1]?.project_profile[0]?.params?.money_raised_till_now[0];
-                projectName = data[1]?.project_profile[0]?.params?.project_name;
-                projectId = data[1]?.project_profile[0]?.uid;
-                projectImage = uint8ArrayToBase64(
-                  data[1]?.project_profile[0]?.params?.project_logo
-                );
-                userImage = uint8ArrayToBase64(
-                  data[1]?.project_profile[0]?.params?.user_data
-                    ?.profile_picture[0]
-                );
-                principalId = data[0].toText();
-                projectDescription =
-                  data[1]?.project_profile[0]?.params?.project_description;
-                projectAreaOfFocus =
-                  data[1]?.project_profile[0]?.params?.project_area_of_focus;
-                  projectData = data[1]?.project_profile[0];
+              projectName = data[1]?.project_profile[0]?.params?.project_name;
+              projectId = data[1]?.project_profile[0]?.uid;
+              projectImage = uint8ArrayToBase64(
+                data[1]?.project_profile[0]?.params?.project_logo
+              );
+              userImage = uint8ArrayToBase64(
+                data[1]?.project_profile[0]?.params?.user_data
+                  ?.profile_picture[0]
+              );
+              principalId = data[0].toText();
+              projectDescription =
+                data[1]?.project_profile[0]?.params?.project_description;
+              projectAreaOfFocus =
+                data[1]?.project_profile[0]?.params?.project_area_of_focus;
+              projectData = data[1]?.project_profile[0];
 
-              } else {
-                projectName = data.projectName;
-                projectId = data.projectId;
-                projectImage = data.projectImage;
-                userImage = data.userImage;
-                principalId = data.principalId;
-                projectDescription = data.projectDescription;
-                projectAreaOfFocus = data.projectAreaOfFocus;
-                moneyRaisedTillNow = true;
-              }
-              if (!moneyRaisedTillNow) {
-                return null;
-              }
+
               return (
                 <div
                   className="w-full sm:w-1/2 md:w-1/4 mb-2 hover:scale-105 transition-transform duration-300 ease-in-out"
@@ -202,7 +166,7 @@ const CurrentlyRaising = () => {
                           <p className="text-xs truncate w-20">{principalId}</p>
                         </div>
                       </div>
-                      <div className="mb-4 flex items-baseline">
+                      {progress && (<div className="mb-4 flex items-baseline">
                         <svg
                           width="100%"
                           height="8"
@@ -239,7 +203,7 @@ const CurrentlyRaising = () => {
                           />
                         </svg>
                         <div className="ml-2 text-nowrap text-sm">Level 2</div>
-                      </div>
+                      </div>)}
                       <p className="text-gray-700 text-sm p-2 h-36 overflow-hidden line-clamp-8 mb-4">
                         {projectDescription}
                       </p>
@@ -277,7 +241,7 @@ const CurrentlyRaising = () => {
                           projectId ? handleNavigate(projectId, projectData) : ""
                         }
                       >
-                        INVEST NOW
+                        view project
                       </button>
                     </div>
                   </div>

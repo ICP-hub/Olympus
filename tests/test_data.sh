@@ -4,6 +4,8 @@
 . ./local_test_data/test_mentor_data.sh
 . ./local_test_data/test_jobs.sh
 . ./local_test_data/test_team.sh
+. ./local_test_data/test_testimonials.sh
+. ./local_test_data/test_anouncements_and_spotlight.sh
 
 # dfx identity remove user1
 # dfx identity remove user2
