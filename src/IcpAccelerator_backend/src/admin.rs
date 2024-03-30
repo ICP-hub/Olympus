@@ -1045,28 +1045,33 @@ pub async fn add_project_to_spotlight(project_id: String) -> Result<(), String> 
     }
 
     let project_creator_and_info = APPLICATION_FORM.with(|details| {
-        details.borrow().iter().find_map(|(creator_principal, projects)| {
-            projects.iter().find(|project| project.uid == project_id)
+        details
+            .borrow()
+            .iter()
+            .find_map(|(creator_principal, projects)| {
+                projects
+                    .iter()
+                    .find(|project| project.uid == project_id)
                     .map(|project_info| (creator_principal.clone(), project_info.clone()))
-        })
+            })
     });
 
     match project_creator_and_info {
-    Some((project_creator, project_info)) => {
-        let spotlight_details = SpotlightDetails {
-            added_by: project_creator, 
-            project_id: project_id,
-            project_details: project_info.params, 
-            approval_time: time(),
-        };
+        Some((project_creator, project_info)) => {
+            let spotlight_details = SpotlightDetails {
+                added_by: project_creator,
+                project_id: project_id,
+                project_details: project_info.params,
+                approval_time: time(),
+            };
 
-        SPOTLIGHT_PROJECTS.with(|spotlight| {
-            spotlight.borrow_mut().push(spotlight_details);
-        });
-        Ok(())
-    },
-    None => Err("Project not found.".to_string()),
-}
+            SPOTLIGHT_PROJECTS.with(|spotlight| {
+                spotlight.borrow_mut().push(spotlight_details);
+            });
+            Ok(())
+        }
+        None => Err("Project not found.".to_string()),
+    }
 }
 
 #[update]
@@ -1395,4 +1400,126 @@ fn get_top_5_projects() -> Vec<(String, TopData, usize)> {
 
     // Taking the top 5 projects based on total counts
     project_counts.into_iter().take(5).collect()
+}
+
+#[query]
+pub fn change_live_status(
+    project_principal: Principal,
+    project_id: String,
+    live_status: bool,
+    new_dapp_link: Option<String>,
+) -> Result<String, String> {
+    APPLICATION_FORM.with(|projects_registry| {
+        let mut projects = projects_registry.borrow_mut();
+        // Logging before the update attempt
+        println!("Attempting to update project with ID: {}", project_id);
+
+        if let Some(project_list) = projects.get_mut(&project_principal) {
+            if let Some(project_internal) = project_list.iter_mut().find(|p| p.uid == project_id) {
+                // Logging the current state before the update
+                println!(
+                    "Before update: live_on_icp_mainnet = {:?}, dapp_link = {:?}",
+                    project_internal.params.live_on_icp_mainnet, project_internal.params.dapp_link
+                );
+
+                project_internal.params.live_on_icp_mainnet = Some(live_status);
+                project_internal.params.dapp_link = if live_status {
+                    new_dapp_link.clone()
+                } else {
+                    None
+                };
+
+                // Logging the state after the update
+                println!(
+                    "After update: live_on_icp_mainnet = {:?}, dapp_link = {:?}",
+                    project_internal.params.live_on_icp_mainnet, project_internal.params.dapp_link
+                );
+
+                return Ok(format!(
+                    "Project updated successfully: live_on_icp_mainnet = {:?}, dapp_link = {:?}",
+                    project_internal.params.live_on_icp_mainnet, project_internal.params.dapp_link
+                ));
+            }
+        }
+        // Logging in case the project is not found
+        println!("Project with ID: {} not found.", project_id);
+        Err("Project not found.".to_string())
+    })
+}
+
+#[query]
+
+// fn get_user_all_data(user_principal: Principal) {}
+
+pub fn get_vc_info_combined(caller: Principal) -> Option<VentureCapitalistInternal> {
+    // First attempt with get_vc_info_using_principal
+    if let Some(vc_info) = get_vc_info_using_principal(caller) {
+        return Some(vc_info);
+    }
+
+    // Second attempt with get_vc_awaiting_info_using_principal
+    if let Some(vc_awaiting_info) = get_vc_awaiting_info_using_principal(caller) {
+        return Some(vc_awaiting_info);
+    }
+
+    // Return None if both attempts fail
+    None
+}
+
+#[query]
+pub fn get_mentor_info_combined(caller: Principal) -> Option<MentorInternal> {
+    // First attempt with get_vc_info_using_principal
+    if let Some(vc_info) = get_mentor_info_using_principal(caller) {
+        return Some(vc_info);
+    }
+
+    // Second attempt with get_vc_awaiting_info_using_principal
+    if let Some(vc_awaiting_info) = get_mentor_awaiting_info_using_principal(caller) {
+        return Some(vc_awaiting_info);
+    }
+
+    // Return None if both attempts fail
+    None
+}
+
+#[query]
+pub fn get_project_info_combined(caller: Principal) -> Option<ProjectInfoInternal> {
+    // First attempt with get_vc_info_using_principal
+    if let Some(vc_info) = get_project_info_using_principal(caller) {
+        return Some(vc_info);
+    }
+
+    // Second attempt with get_vc_awaiting_info_using_principal
+    if let Some(vc_awaiting_info) = get_project_awaiting_info_using_principal(caller) {
+        return Some(vc_awaiting_info);
+    }
+
+    // Return None if both attempts fail
+    None
+}
+
+#[query]
+pub fn get_user_all_data(
+    caller: Principal,
+) -> (
+    Option<UserInfoInternal>,
+    Option<VentureCapitalistInternal>,
+    Option<MentorInternal>,
+    Option<ProjectInfoInternal>,
+    Vec<Role>,
+) {
+    let user_info = get_user_info_using_principal(caller);
+    let vc_info = get_vc_info_combined(caller);
+    let mentor_info = get_mentor_info_combined(caller);
+    let project_info = get_project_info_combined(caller);
+
+    let role_status_info = get_roles_for_principal(caller);
+
+    (
+        user_info,
+        vc_info,
+        mentor_info,
+        project_info,
+        role_status_info,
+    )
 }
