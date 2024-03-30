@@ -636,7 +636,7 @@ service : {
   approve_vc_creation_request : (principal, bool) -> (text);
   approve_vc_profile_update : (principal, bool) -> (text);
   calculate_average : (text) -> (RatingAverages) query;
-  change_live_status : (principal, text, bool, opt text) -> (Result_3) query;
+  change_live_status : (principal, text, bool, opt text) -> (Result_2) query;
   connect_to_team_member : (text, text) -> (text);
   create_cohort : (Cohort) -> (text);
   decline_mentor_creation_request_candid : (principal, bool) -> (text);

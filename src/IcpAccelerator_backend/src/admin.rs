@@ -1045,28 +1045,33 @@ pub async fn add_project_to_spotlight(project_id: String) -> Result<(), String> 
     }
 
     let project_creator_and_info = APPLICATION_FORM.with(|details| {
-        details.borrow().iter().find_map(|(creator_principal, projects)| {
-            projects.iter().find(|project| project.uid == project_id)
+        details
+            .borrow()
+            .iter()
+            .find_map(|(creator_principal, projects)| {
+                projects
+                    .iter()
+                    .find(|project| project.uid == project_id)
                     .map(|project_info| (creator_principal.clone(), project_info.clone()))
-        })
+            })
     });
 
     match project_creator_and_info {
-    Some((project_creator, project_info)) => {
-        let spotlight_details = SpotlightDetails {
-            added_by: project_creator, 
-            project_id: project_id,
-            project_details: project_info.params, 
-            approval_time: time(),
-        };
+        Some((project_creator, project_info)) => {
+            let spotlight_details = SpotlightDetails {
+                added_by: project_creator,
+                project_id: project_id,
+                project_details: project_info.params,
+                approval_time: time(),
+            };
 
-        SPOTLIGHT_PROJECTS.with(|spotlight| {
-            spotlight.borrow_mut().push(spotlight_details);
-        });
-        Ok(())
-    },
-    None => Err("Project not found.".to_string()),
-}
+            SPOTLIGHT_PROJECTS.with(|spotlight| {
+                spotlight.borrow_mut().push(spotlight_details);
+            });
+            Ok(())
+        }
+        None => Err("Project not found.".to_string()),
+    }
 }
 
 #[update]
@@ -1403,7 +1408,7 @@ pub fn change_live_status(
     project_id: String,
     live_status: bool,
     new_dapp_link: Option<String>,
-) -> Result<(), String> {
+) -> Result<String, String> {
     APPLICATION_FORM.with(|projects_registry| {
         let mut projects = projects_registry.borrow_mut();
         // Logging before the update attempt
@@ -1430,7 +1435,10 @@ pub fn change_live_status(
                     project_internal.params.live_on_icp_mainnet, project_internal.params.dapp_link
                 );
 
-                return Ok(());
+                return Ok(format!(
+                    "Project updated successfully: live_on_icp_mainnet = {:?}, dapp_link = {:?}",
+                    project_internal.params.live_on_icp_mainnet, project_internal.params.dapp_link
+                ));
             }
         }
         // Logging in case the project is not found
