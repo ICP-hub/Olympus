@@ -165,6 +165,13 @@ pub fn update_rating_api(ratings: Vec<Rating>) -> String {
 
     let principal_id = caller();
     ic_cdk::println!("Debug: Starting updates for Principal ID: {} with {} ratings.", principal_id, ratings.len());
+    
+    let current_active_role = crate::user_module::get_roles_for_principal(principal_id);
+
+    let active_roles: Vec<String> = current_active_role.iter()
+        .filter(|role| role.status == "active") // Adjust this condition based on your criteria for an "active" role.
+        .map(|role| role.name.clone())
+        .collect();
 
     let mut updated = false; // Flag to track if any updates happen
 
@@ -172,35 +179,40 @@ pub fn update_rating_api(ratings: Vec<Rating>) -> String {
         let mut system = system.borrow_mut();
 
         for rating in ratings {
-            ic_cdk::println!("Debug: Processing rating for project_id={}, level_name={}, sub_level={}, rating_value={}", rating.project_id, rating.level_name, rating.sub_level, rating.rating);
-            
-            let project_ratings = system.entry(rating.project_id.clone()).or_insert_with(HashMap::new);
-            let user_ratings = project_ratings.entry(principal_id.clone()).or_insert_with(HashMap::new);
+            // Only proceed if the rating's role matches one of the principal's active roles.
+            if active_roles.contains(&rating.current_role) {
+                ic_cdk::println!("Debug: Processing rating for project_id={}, level_name={}, sub_level={}, rating_value={}", rating.project_id, rating.level_name, rating.sub_level, rating.rating);
+                
+                let project_ratings = system.entry(rating.project_id.clone()).or_insert_with(HashMap::new);
+                let user_ratings = project_ratings.entry(principal_id.clone()).or_insert_with(HashMap::new);
 
-            let level = user_ratings.entry(rating.level_name.clone())
-                .or_insert_with(|| Level::new(&rating.level_name));
-            let rating_types = level.sub_levels.entry(rating.sub_level.clone())
-                .or_insert_with(RatingTypes::new);
+                let level = user_ratings.entry(rating.level_name.clone())
+                    .or_insert_with(|| Level::new(&rating.level_name));
+                let rating_types = level.sub_levels.entry(rating.sub_level.clone())
+                    .or_insert_with(RatingTypes::new);
 
-            match rating.current_role.as_str() {
-                "VC" => {
-                    rating_types.vc.push(rating.rating);
-                    updated = true;
-                    ic_cdk::println!("Debug: Updated VC rating for project ID: {}", rating.project_id);
-                },
-                "Mentor" => {
-                    rating_types.mentor.push(rating.rating);
-                    updated = true;
-                    ic_cdk::println!("Debug: Updated Mentor rating for project ID: {}", rating.project_id);
-                },
-                "Project" => {
-                    rating_types.own.push(rating.rating);
-                    updated = true;
-                    ic_cdk::println!("Debug: Updated Owner rating for project ID: {}", rating.project_id);
-                },
-                _ => {
-                    ic_cdk::println!("Debug: Encountered unknown or unsupported role: '{}'. No update made for project ID: {}, by principal ID: {}", rating.current_role, rating.project_id, principal_id);
-                },
+                match rating.current_role.as_str() {
+                    "vc" => {
+                        rating_types.vc.push(rating.sub_level_number.into());
+                        updated = true;
+                        ic_cdk::println!("Debug: Updated VC rating for project ID: {}", rating.project_id);
+                    },
+                    "mentor" => {
+                        rating_types.mentor.push(rating.sub_level_number.into());
+                        updated = true;
+                        ic_cdk::println!("Debug: Updated Mentor rating for project ID: {}", rating.project_id);
+                    },
+                    "project" => {
+                        rating_types.own.push(rating.sub_level_number.into());
+                        updated = true;
+                        ic_cdk::println!("Debug: Updated Owner rating for project ID: {}", rating.project_id);
+                    },
+                    _ => {
+                        ic_cdk::println!("Debug: Encountered unknown or unsupported role: '{}'. No update made for project ID: {}, by principal ID: {}", rating.current_role, rating.project_id, principal_id);
+                    },
+                }
+            } else {
+                ic_cdk::println!("Debug: Principal ID: {} does not have an active role matching '{}', no update made for project ID: {}", principal_id, rating.current_role, rating.project_id);
             }
         }
     });
@@ -215,85 +227,65 @@ pub fn update_rating_api(ratings: Vec<Rating>) -> String {
 }
 
 
+fn round_one_decimal(value: Option<f64>) -> Option<f64> {
+    value.map(|v| format!("{:.1}", v).parse::<f64>().unwrap())
+}
 
 
 pub fn calculate_average_api(project_id: &str) -> RatingAverages {
     RATING_SYSTEM.with(|system| {
         let system = system.borrow();
 
-        ic_cdk::println!("Calculating averages for project ID: {}", project_id);
+        println!("Calculating averages for project ID: {}", project_id);
 
-        if let Some(project_ratings) = system.get(project_id) {
-            let mut mentor_sum = 0.0;
+        if let Some(user_ratings) = system.get(project_id) {
+            let mut mentor_sub_level_sum = 0;
             let mut mentor_count = 0;
-
-            let mut vc_sum = 0.0;
+            let mut vc_sub_level_sum = 0;
             let mut vc_count = 0;
-
-            let mut peer_sum = 0.0;
-            let mut peer_count = 0;
-
-            let mut own_sum = 0.0;
+            let mut own_sub_level_sum = 0;
             let mut own_count = 0;
 
-            for user_ratings in project_ratings.values() {
-                for level in user_ratings.values() {
+            let total_levels = 8;
+
+            for levels in user_ratings.values() {
+                for level in levels.values() {
                     for rating_types in level.sub_levels.values() {
-                        mentor_sum += rating_types.mentor.iter().sum::<f64>();
+                        mentor_sub_level_sum += rating_types.mentor.iter().map(|&rating| rating as u32).sum::<u32>();
                         mentor_count += rating_types.mentor.len();
 
-                        vc_sum += rating_types.vc.iter().sum::<f64>();
+                        vc_sub_level_sum += rating_types.vc.iter().map(|&rating| rating as u32).sum::<u32>();
                         vc_count += rating_types.vc.len();
 
-                        peer_sum += rating_types.peer.iter().sum::<f64>();
-                        peer_count += rating_types.peer.len();
-
-                        own_sum += rating_types.own.iter().sum::<f64>();
+                        own_sub_level_sum += rating_types.own.iter().map(|&rating| rating as u32).sum::<u32>();
                         own_count += rating_types.own.len();
                     }
                 }
             }
 
-            ic_cdk::println!("Mentor total sum: {}, total count: {}", mentor_sum, mentor_count);
-            ic_cdk::println!("VC total sum: {}, total count: {}", vc_sum, vc_count);
-            ic_cdk::println!("Peer total sum: {}, total count: {}", peer_sum, peer_count);
-            ic_cdk::println!("Own total sum: {}, total count: {}", own_sum, own_count);
+            let mentor_average = if mentor_count > 0 { mentor_sub_level_sum as f64 / total_levels as f64 } else { 0.0 };
+            let vc_average = if vc_count > 0 { vc_sub_level_sum as f64 / total_levels as f64 } else { 0.0 };
+            let own_average = if own_count > 0 { own_sub_level_sum as f64 / total_levels as f64 } else { 0.0 };
 
-            let mentor_average = if mentor_count > 0 { Some(mentor_sum / mentor_count as f64) } else { None };
-            let vc_average = if vc_count > 0 { Some(vc_sum / vc_count as f64) } else { None };
-            let peer_average = if peer_count > 0 { Some(peer_sum / peer_count as f64) } else { None };
-            let own_average = if own_count > 0 { Some(own_sum / own_count as f64) } else { None };
-
-            ic_cdk::println!("Mentor average: {:?}", mentor_average);
-            ic_cdk::println!("VC average: {:?}", vc_average);
-            ic_cdk::println!("Peer average: {:?}", peer_average);
-            ic_cdk::println!("Own average: {:?}", own_average);
-
-            let mentor_vc_sum = mentor_sum + vc_sum;
-            let mentor_vc_count = mentor_count + vc_count;
-            let mentor_vc_average = if mentor_vc_count > 0 {
-                mentor_vc_sum / mentor_vc_count as f64
+            let combined_vc_mentor_average = if vc_count + mentor_count > 0 {
+                (vc_sub_level_sum + mentor_sub_level_sum) as f64 / (total_levels) as f64
             } else {
                 0.0
             };
 
-            let overall_average = if mentor_count + vc_count + peer_count > 0 {
-                (mentor_vc_average * 0.6) + (peer_average.unwrap_or(0.0) * 0.4)
-            } else {
-                0.0
-            };
+            let overall_average = (combined_vc_mentor_average * 0.6) + (own_average * 0.4);
 
-            ic_cdk::println!("Overall average: {}", overall_average);
+            println!("Overall average: {}", overall_average);
 
             RatingAverages {
-                mentor_average,
-                vc_average,
-                peer_average,
-                own_average,
-                overall_average: if overall_average > 0.0 { Some(overall_average) } else { None },
+                mentor_average: round_one_decimal(Some(mentor_average)),
+                vc_average: round_one_decimal(Some(vc_average)),
+                peer_average: None, 
+                own_average: round_one_decimal(Some(own_average)),
+                overall_average: round_one_decimal(Some(overall_average)),
             }
         } else {
-            ic_cdk::println!("No ratings found for project ID: {}", project_id);
+            println!("No ratings found for project ID: {}", project_id);
             RatingAverages {
                 mentor_average: None,
                 vc_average: None,
