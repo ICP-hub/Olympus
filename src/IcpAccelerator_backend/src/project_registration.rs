@@ -8,6 +8,7 @@ use crate::roadmap_suggestion::Suggestion;
 use crate::user_module::{UserInfoInternal, UserInformation};
 
 use crate::admin::send_approval_request;
+use crate::ratings::calculate_average_api;
 use crate::vc_registration::VentureCapitalist;
 use crate::{
     hub_organizer,
@@ -26,7 +27,6 @@ use sha2::{Digest, Sha256};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::io::Read;
-
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct TeamMember {
     pub member_uid: String,
@@ -223,7 +223,7 @@ pub struct ProjectInfoForUserInternal{
     pub params: ProjectInfoForUser
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)] 
 pub struct ProjectInfoInternal {
     pub params: ProjectInfo,
     pub uid: String,
@@ -290,6 +290,13 @@ pub struct ProjectVecWithRoles {
     pub project_profile: Vec<ProjectInfoInternal>,
     pub roles: Vec<Role>,
 }
+
+// #[derive(Serialize, Deserialize, Clone, CandidType)]
+// pub struct ProjectVecWithRolesAndRating {
+//     pub project_profile: Vec<ProjectInfoInternal>,
+//     pub roles: Vec<Role>,
+//     pub rating : RatingAverages
+// }
 
 #[derive(Clone, CandidType, Serialize, Deserialize)]
 pub struct SpotlightDetails {
@@ -786,22 +793,53 @@ pub fn get_project_details_for_mentor_and_investor(
     project_internal
 }
 
-pub fn list_all_projects() -> HashMap<Principal, ProjectVecWithRoles> {
-    let project_awaiters = APPLICATION_FORM.with(|awaiters| awaiters.borrow().clone());
+// pub fn list_all_projects() -> HashMap<Principal, ProjectVecWithRoles> {
+//     let project_awaiters = APPLICATION_FORM.with(|awaiters| awaiters.borrow().clone());
 
-    let mut project_with_roles_map: HashMap<Principal, ProjectVecWithRoles> = HashMap::new();
+//     let mut project_with_roles_map: HashMap<Principal, ProjectVecWithRoles> = HashMap::new();
 
-    for (principal, vc_internal) in project_awaiters.iter() {
-        let roles = get_roles_for_principal(*principal);
-        let project_with_roles = ProjectVecWithRoles {
-            project_profile: vc_internal.clone(),
-            roles,
-        };
+//     for (principal, vc_internal) in project_awaiters.iter() {
+//         let roles = get_roles_for_principal(*principal);
+//         let project_with_roles = ProjectVecWithRoles {
+//             project_profile: vc_internal.clone(),
+//             roles,
+//         };
 
-        project_with_roles_map.insert(*principal, project_with_roles);
-    }
+//         project_with_roles_map.insert(*principal, project_with_roles);
+//     }
 
-    project_with_roles_map
+//     project_with_roles_map
+// }
+
+#[derive(CandidType)]
+pub struct ListAllProjects {
+    principal: Principal,
+    params: ProjectInfoInternal,
+    overall_average: Option<f64>,
+}
+
+#[query]
+pub fn list_all_projects() -> Vec<ListAllProjects> {
+    APPLICATION_FORM.with(|projects: &RefCell<ApplicationDetails>| {
+        let projects = projects.borrow();
+
+        let mut list_all_projects: Vec<ListAllProjects> = vec![];
+
+        for (principal, projects) in projects.iter() {
+            for project in projects {
+                let get_rating = calculate_average_api(&project.uid);
+
+                let project_info = ListAllProjects {
+                    principal: principal.clone(),
+                    params: project.clone(),
+                    overall_average: get_rating.overall_average,
+                };
+
+                list_all_projects.push(project_info)
+            }
+        }
+        list_all_projects
+    })
 }
 
 pub async fn update_project(project_id: String, updated_project: ProjectInfo) -> String {

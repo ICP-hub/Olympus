@@ -55,7 +55,7 @@ impl MentorProfile {
 pub type MentorRegistry = HashMap<Principal, MentorInternal>;
 pub type MentorParams = HashMap<Principal, MentorProfile>;
 
-#[derive(Serialize, Deserialize, Clone, Debug, CandidType, Default)]
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, Default, PartialEq)]
 pub struct MentorInternal {
     pub profile: MentorProfile,
     pub uid: String,
