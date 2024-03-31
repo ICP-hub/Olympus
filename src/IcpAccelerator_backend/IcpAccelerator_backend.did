@@ -638,6 +638,7 @@ service : {
   calculate_average : (text) -> (RatingAverages) query;
   change_live_status : (principal, text, bool, opt text) -> (Result_2) query;
   connect_to_team_member : (text, text) -> (text);
+  count_live_projects : () -> (nat64) query;
   create_cohort : (Cohort) -> (text);
   decline_mentor_creation_request_candid : (principal, bool) -> (text);
   decline_mentor_profile_update_request : (principal, bool) -> (text);
@@ -776,6 +777,9 @@ service : {
     ) query;
   get_mentor_by_expertise : (text) -> (vec MentorProfile) query;
   get_mentor_by_principal : (principal) -> (opt MentorProfile) query;
+  get_mentor_declined_info_using_principal : (principal) -> (
+      opt MentorInternal,
+    ) query;
   get_mentor_info_combined : (principal) -> (opt MentorInternal) query;
   get_mentor_info_using_principal : (principal) -> (opt MentorInternal) query;
   get_multichain_list : () -> (vec text) query;
@@ -795,6 +799,9 @@ service : {
   get_popular_listed_project : () -> (vec ProjectInfoInternal) query;
   get_popular_live_proposal : () -> (vec ProjectInfoInternal) query;
   get_project_awaiting_info_using_principal : (principal) -> (
+      opt ProjectInfoInternal,
+    ) query;
+  get_project_declined_info_using_principal : (principal) -> (
       opt ProjectInfoInternal,
     ) query;
   get_project_details_for_mentor_and_investor : (text) -> (
@@ -858,6 +865,9 @@ service : {
   get_vc_awaiting_info_using_principal : (principal) -> (
       opt VentureCapitalistInternal,
     ) query;
+  get_vc_declined_info_using_principal : (principal) -> (
+      opt VentureCapitalistInternal,
+    ) query;
   get_vc_info : () -> (opt VentureCapitalist) query;
   get_vc_info_by_principal : (principal) -> (
       vec record { principal; VentureCapitalistAll },
@@ -915,10 +925,12 @@ service : {
   update_dapp_link : (text, text) -> (text);
   update_founder_caller : (FounderInfo) -> (text);
   update_mentor : (MentorProfile) -> (text);
+  update_mentor_profile : (principal, MentorProfile) -> (text);
   update_project : (text, ProjectInfo) -> (text);
   update_rating : (vec Rating) -> (text);
   update_suggestion_status_caller : (nat64, text, text) -> ();
   update_team_member : (text, principal) -> (text);
+  update_vc_profile : (principal, VentureCapitalist) -> (text);
   update_venture_capitalist : (VentureCapitalist) -> (text);
   update_venture_capitalist_caller : (VentureCapitalist) -> (text);
   upvote_project : (text) -> (text);

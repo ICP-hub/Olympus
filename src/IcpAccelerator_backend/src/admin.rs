@@ -1462,6 +1462,10 @@ pub fn get_vc_info_combined(caller: Principal) -> Option<VentureCapitalistIntern
         return Some(vc_awaiting_info);
     }
 
+    if let Some(vc_declined_info) = get_vc_declined_info_using_principal(caller) {
+        return Some(vc_declined_info);
+    }
+
     // Return None if both attempts fail
     None
 }
@@ -1478,6 +1482,10 @@ pub fn get_mentor_info_combined(caller: Principal) -> Option<MentorInternal> {
         return Some(vc_awaiting_info);
     }
 
+    if let Some(mentor_declined_info) = get_mentor_declined_info_using_principal(caller) {
+        return Some(mentor_declined_info);
+    }
+
     // Return None if both attempts fail
     None
 }
@@ -1492,6 +1500,10 @@ pub fn get_project_info_combined(caller: Principal) -> Option<ProjectInfoInterna
     // Second attempt with get_vc_awaiting_info_using_principal
     if let Some(vc_awaiting_info) = get_project_awaiting_info_using_principal(caller) {
         return Some(vc_awaiting_info);
+    }
+
+    if let Some(vc_declined_info) = get_project_declined_info_using_principal(caller) {
+        return Some(vc_declined_info);
     }
 
     // Return None if both attempts fail
@@ -1522,4 +1534,137 @@ pub fn get_user_all_data(
         project_info,
         role_status_info,
     )
+}
+
+#[query]
+fn count_live_projects() -> usize {
+    APPLICATION_FORM.with(|application_form| {
+        let application_form = application_form.borrow(); // Access the RefCell for reading
+
+        application_form
+            .iter()
+            .flat_map(|(_principal, projects)| {
+                projects.iter().filter(|project_internal| {
+                    let project_info = &project_internal.params; // Accessing nested ProjectInfo
+                    project_info.live_on_icp_mainnet == Some(true)
+                        && project_info
+                            .dapp_link
+                            .as_ref()
+                            .map_or(false, |d| !d.is_empty())
+                })
+            })
+            .count()
+    })
+}
+
+#[update]
+pub fn update_vc_profile(requester: Principal, vc_internal: VentureCapitalist) -> String {
+    VENTURECAPITALIST_STORAGE.with(|vc_registry| {
+        let mut vc = vc_registry.borrow_mut();
+        if let Some(existing_vc_internal) = vc.get_mut(&requester) {
+            existing_vc_internal.params.registered_under_any_hub = vc_internal
+                .registered_under_any_hub
+                .clone()
+                .or(existing_vc_internal.params.registered_under_any_hub.clone());
+
+            existing_vc_internal.params.project_on_multichain = vc_internal
+                .project_on_multichain
+                .clone()
+                .or(existing_vc_internal.params.project_on_multichain.clone());
+
+            existing_vc_internal.params.money_invested = vc_internal
+                .money_invested
+                .clone()
+                .or(existing_vc_internal.params.money_invested.clone());
+
+            existing_vc_internal.params.existing_icp_portfolio = vc_internal
+                .existing_icp_portfolio
+                .clone()
+                .or(existing_vc_internal.params.existing_icp_portfolio.clone());
+            existing_vc_internal.params.announcement_details = vc_internal
+                .announcement_details
+                .clone()
+                .or(existing_vc_internal.params.announcement_details.clone());
+
+            existing_vc_internal.params.registered_country = vc_internal
+                .registered_country
+                .clone()
+                .or(existing_vc_internal.params.registered_country.clone());
+
+            existing_vc_internal.params.fund_size = (vc_internal.fund_size * 100.0).round() / 100.0;
+            existing_vc_internal.params.assets_under_management =
+                vc_internal.assets_under_management.clone();
+
+            existing_vc_internal.params.category_of_investment =
+                vc_internal.category_of_investment.clone();
+
+            existing_vc_internal.params.logo = vc_internal.logo.clone();
+            existing_vc_internal.params.average_check_size =
+                (vc_internal.average_check_size * 100.0).round() / 100.0;
+            existing_vc_internal.params.existing_icp_investor = vc_internal.existing_icp_investor;
+            existing_vc_internal.params.investor_type = vc_internal.investor_type.clone();
+            existing_vc_internal.params.number_of_portfolio_companies =
+                vc_internal.number_of_portfolio_companies;
+            existing_vc_internal.params.portfolio_link = vc_internal.portfolio_link.clone();
+            existing_vc_internal.params.reason_for_joining = vc_internal.reason_for_joining.clone();
+            existing_vc_internal.params.name_of_fund = vc_internal.name_of_fund.clone();
+
+            existing_vc_internal.params.preferred_icp_hub = vc_internal.preferred_icp_hub.clone();
+            existing_vc_internal.params.type_of_investment = vc_internal.type_of_investment.clone();
+            existing_vc_internal.params.user_data = vc_internal.user_data.clone();
+            existing_vc_internal.params.linkedin_link = vc_internal.linkedin_link.clone();
+            existing_vc_internal.params.website_link = vc_internal.website_link.clone();
+            existing_vc_internal.params.registered = vc_internal.registered.clone();
+
+            "Venture Capitalist profile updated successfully.".to_string()
+        } else {
+            // This else block handles the case where the `requester` does not exist in `VENTURECAPITALIST_STORAGE`
+            "Venture Capitalist profile not found.".to_string()
+        }
+    })
+}
+
+#[update]
+pub fn update_mentor_profile(requester: Principal, updated_profile: MentorProfile) -> String {
+    MENTOR_REGISTRY.with(|vc_registry| {
+        let mut mentor = vc_registry.borrow_mut();
+        if let Some(mentor_internal) = mentor.get_mut(&requester) {
+            mentor_internal.profile.preferred_icp_hub = updated_profile
+                .preferred_icp_hub
+                .clone()
+                .or(mentor_internal.profile.preferred_icp_hub.clone());
+
+            mentor_internal.profile.multichain = updated_profile
+                .multichain
+                .clone()
+                .or(mentor_internal.profile.multichain.clone());
+            mentor_internal.profile.existing_icp_project_porfolio = updated_profile
+                .existing_icp_project_porfolio
+                .clone()
+                .or(mentor_internal
+                    .profile
+                    .existing_icp_project_porfolio
+                    .clone());
+
+            mentor_internal.profile.area_of_expertise = updated_profile.area_of_expertise.clone();
+            mentor_internal.profile.category_of_mentoring_service =
+                updated_profile.category_of_mentoring_service.clone();
+
+            mentor_internal.profile.existing_icp_mentor =
+                updated_profile.existing_icp_mentor.clone();
+            mentor_internal.profile.icop_hub_or_spoke = updated_profile.icop_hub_or_spoke.clone();
+            mentor_internal.profile.linkedin_link = updated_profile.linkedin_link.clone();
+            mentor_internal.profile.website = updated_profile.website.clone();
+            mentor_internal.profile.years_of_mentoring = updated_profile.years_of_mentoring.clone();
+            mentor_internal.profile.reason_for_joining = updated_profile.reason_for_joining.clone();
+            mentor_internal.profile.user_data = updated_profile.user_data.clone();
+            mentor_internal.profile.hub_owner = updated_profile
+                .hub_owner
+                .clone()
+                .or(mentor_internal.profile.hub_owner.clone());
+            "Mentor profile updated successfully.".to_string()
+        } else {
+            "Mentor profile not found.".to_string()
+        }
+    })
 }

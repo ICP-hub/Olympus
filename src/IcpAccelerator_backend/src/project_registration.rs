@@ -682,6 +682,11 @@ pub fn get_project_awaiting_info_using_principal(caller: Principal) -> Option<Pr
     PROJECT_AWAITS_RESPONSE.with(|registry| registry.borrow().get(&caller).cloned())
 }
 
+#[query]
+pub fn get_project_declined_info_using_principal(caller: Principal) -> Option<ProjectInfoInternal> {
+    DECLINED_PROJECT_REQUESTS.with(|registry| registry.borrow().get(&caller).cloned())
+}
+
 // all created projects but without ProjectInternal
 pub fn get_projects_for_caller() -> Vec<ProjectInfo> {
     let caller = caller();

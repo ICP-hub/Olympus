@@ -359,6 +359,13 @@ pub fn get_vc_awaiting_info_using_principal(
 }
 
 #[query]
+pub fn get_vc_declined_info_using_principal(
+    caller: Principal,
+) -> Option<VentureCapitalistInternal> {
+    DECLINED_VC_REQUESTS.with(|registry| registry.borrow().get(&caller).cloned())
+}
+
+#[query]
 pub fn list_all_vcs() -> HashMap<Principal, VcWithRoles> {
     let vc_awaiters = VENTURECAPITALIST_STORAGE.with(|awaiters| awaiters.borrow().clone());
 
