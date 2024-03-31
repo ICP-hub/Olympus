@@ -13,14 +13,14 @@ const MoreProjectLaunchPage = () => {
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
 
   const [isHovered, setIsHovered] = useState(false);
-  const [percent, setPercent] = useState(0);
+  // const [percent, setPercent] = useState(0);
   const [showLine, setShowLine] = useState({});
   const tm = useRef(null);
   const navigate = useNavigate();
   // Gradient color stops, changes when hovered
-  const gradientStops = isHovered
-    ? { stop1: "#4087BF", stop2: "#3C04BA" }
-    : { stop1: "#B5B5B5", stop2: "#5B5B5B" };
+  // const gradientStops = isHovered
+  //   ? { stop1: "#4087BF", stop2: "#3C04BA" }
+  //   : { stop1: "#B5B5B5", stop2: "#5B5B5B" };
 
 
   const handleClickPlusOne = (id) => {
@@ -127,7 +127,7 @@ const MoreProjectLaunchPage = () => {
   };
 
   useEffect(() => {
-    setAllProjectData(defaultArray);
+    // setAllProjectData(defaultArray);
     if (actor) {
       getAllProject(actor);
     } else {
@@ -144,48 +144,26 @@ const MoreProjectLaunchPage = () => {
   };
   return (
     <div className="flex justify-center" style={{ minHeight: "60vh" }}>
-      {noData ?
+      {noData || (allProjectData &&
+        allProjectData.filter((val) => val?.params?.params?.live_on_icp_mainnet[0] && val?.params?.params?.live_on_icp_mainnet[0] === false).length == 0) ? (
         <NoDataCard />
-        :
+      ) :
         <div className="flex-wrap flex flex-row">
           {allProjectData &&
-            allProjectData.map((data, index) => {
-              let projectName = "";
-              let projectId = "";
-              let projectImage = "";
-              let userImage = "";
-              let principalId = "";
-              let projectDescription = "";
-              let projectAreaOfFocus = "";
-              let projectData = null ;
-              if (noData === false) {
-                projectName = data[1]?.project_profile[0]?.params?.project_name;
-                projectId = data[1]?.project_profile[0]?.uid;
-                projectImage = uint8ArrayToBase64(
-                  data[1]?.project_profile[0]?.params?.project_logo
-                );
-                userImage = uint8ArrayToBase64(
-                  data[1]?.project_profile[0]?.params?.user_data
-                    ?.profile_picture[0]
-                );
-                principalId = data[0].toText();
-                projectDescription =
-                  data[1]?.project_profile[0]?.params?.project_description;
-                projectAreaOfFocus =
-                  data[1]?.project_profile[0]?.params?.project_area_of_focus;
-                  projectData = data[1]?.project_profile[0];
-              } else {
-                projectName = data.projectName;
-                projectId = data.projectId;
-                projectImage = data.projectImage;
-                userImage = data.userImage;
-                principalId = data.principalId;
-                projectDescription = data.projectDescription;
-                projectAreaOfFocus = data.projectAreaOfFocus;
-              }
+            allProjectData.filter((val) => val?.params?.params?.live_on_icp_mainnet[0] && val?.params?.params?.live_on_icp_mainnet[0] === false).map((data, index) => {
+              let projectName = data?.params?.params?.project_name ??"";
+                  let projectId = data?.params?.uid ?? "";
+                  let projectImage = data?.params?.params?.project_logo ? uint8ArrayToBase64(data?.params?.params?.project_logo) : "";
+                  let userImage = data?.params?.params?.user_data?.profile_picture[0] ? uint8ArrayToBase64(data?.params?.params?.user_data?.profile_picture[0]) : "";
+                  let principalId = data?.principal ? data?.principal.toText() : "";
+                  let projectDescription = data?.params?.params?.project_description ?? "";
+                  let projectAreaOfFocus = data?.params?.params?.project_area_of_focus ?? "";
+                  let projectData = data?.params ? data?.params : null;
+                
+             
               return (
                 <div className="w-full sm:w-1/2 md:w-1/3 mb-2 px-3" key={index}>
-                  <div className="justify-between items-baseline mb-4 flex-wrap bg-white m-2 overflow-hidden rounded-lg shadow-lg">
+                  <div className="w-fit justify-between items-baseline mb-4 flex-wrap bg-white m-2 overflow-hidden rounded-lg shadow-lg">
                     <div className="p-4">
                       <div className="flex justify-between items-baseline mb-4 flex-wrap w-[265px]">
                         <div className="flex items-baseline w-1/2">
@@ -207,44 +185,7 @@ const MoreProjectLaunchPage = () => {
                           <p className="text-xs truncate w-20">{principalId}</p>
                         </div>
                       </div>
-                      <div className="mb-4 flex items-baseline">
-                        <svg
-                          width="100%"
-                          height="8"
-                          className="rounded-lg"
-                          onMouseEnter={() => setIsHovered(true)}
-                          onMouseLeave={() => setIsHovered(false)}
-                        >
-                          <defs>
-                            <linearGradient
-                              id={`gradient-${projectId}`}
-                              x1="0%"
-                              y1="0%"
-                              x2="100%"
-                              y2="0%"
-                            >
-                              <stop
-                                offset="0%"
-                                stopColor={gradientStops.stop1}
-                                stopOpacity="1"
-                              />
-                              <stop
-                                offset="100%"
-                                stopColor={gradientStops.stop2}
-                                stopOpacity="1"
-                              />
-                            </linearGradient>
-                          </defs>
-                          <rect
-                            x="0"
-                            y="0"
-                            width={`${percent}%`}
-                            height="10"
-                            fill={`url(#gradient-${projectId})`}
-                          />
-                        </svg>
-                        <div className="ml-2 text-nowrap text-sm">Level 2</div>
-                      </div>
+                     
                       <p className="text-gray-700 text-sm md:line-clamp-8 sxs:line-clamp-4 sm:line-clamp-6 line-clamp-8 h-36">
                         {projectDescription}
                       </p>

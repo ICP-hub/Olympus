@@ -17,14 +17,14 @@ const LaunchedProjects = () => {
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
 
   const [isHovered, setIsHovered] = useState(false);
-  const [percent, setPercent] = useState(0);
+  // const [percent, setPercent] = useState(0);
   const [showLine, setShowLine] = useState({});
   const tm = useRef(null);
   const navigate = useNavigate();
   // Gradient color stops, changes when hovered
-  const gradientStops = isHovered
-    ? { stop1: "#4087BF", stop2: "#3C04BA" }
-    : { stop1: "#B5B5B5", stop2: "#5B5B5B" };
+  // const gradientStops = isHovered
+  //   ? { stop1: "#4087BF", stop2: "#3C04BA" }
+  //   : { stop1: "#B5B5B5", stop2: "#5B5B5B" };
 
   const [ref, inView] = useInView({
     triggerOnce: true, // Trigger the animation once
@@ -38,12 +38,12 @@ const LaunchedProjects = () => {
     config: { duration: 1000 }, // Customize duration as needed
   });
 
-  useEffect(() => {
-    if (percent < 100) {
-      tm.current = setTimeout(increase, 30);
-    }
-    return () => clearTimeout(tm.current);
-  }, [percent]);
+  // useEffect(() => {
+  //   if (percent < 100) {
+  //     tm.current = setTimeout(increase, 30);
+  //   }
+  //   return () => clearTimeout(tm.current);
+  // }, [percent]);
 
   const handleClickPlusOne = (id) => {
     setShowLine((prevShowLine) => ({
@@ -152,53 +152,29 @@ const LaunchedProjects = () => {
     <>
       <div className="flex flex-wrap -mx-4 mb-4 items-center">
         <div className="w-full md:w-3/4 px-4 md:flex md:gap-4">
-          {noData ? (
+          {noData || (allProjectData &&
+            allProjectData.filter((val) => val?.params?.params?.live_on_icp_mainnet[0] && val?.params?.params?.live_on_icp_mainnet[0] === false).length == 0) ? (
             <NoDataCard />
           ) : (
             <>
               {allProjectData &&
-                allProjectData.slice(0, 3).map((data, index) => {
-                  let projectName = "";
-                  let projectId = "";
-                  let projectImage = "";
-                  let userImage = "";
-                  let principalId = "";
-                  let projectDescription = "";
-                  let projectAreaOfFocus = "";
-                  let projectData = null;
-                  if (noData === false) {
-                    projectName =
-                      data[1]?.project_profile[0]?.params?.project_name;
-                    projectId = data[1]?.project_profile[0]?.uid;
-                    projectImage = uint8ArrayToBase64(
-                      data[1]?.project_profile[0]?.params?.project_logo
-                    );
-                    userImage = uint8ArrayToBase64(
-                      data[1]?.project_profile[0]?.params?.user_data
-                        ?.profile_picture[0]
-                    );
-                    principalId = data[0].toText();
-                    projectDescription =
-                      data[1]?.project_profile[0]?.params?.project_description;
-                    projectAreaOfFocus =
-                      data[1]?.project_profile[0]?.params
-                        ?.project_area_of_focus;
-                    projectData = data[1]?.project_profile[0]
-                  } else {
-                    projectName = data.projectName;
-                    projectId = data.projectId;
-                    projectImage = data.projectImage;
-                    userImage = data.userImage;
-                    principalId = data.principalId;
-                    projectDescription = data.projectDescription;
-                    projectAreaOfFocus = data.projectAreaOfFocus;
-                  }
+                allProjectData.filter((val) => val?.params?.params?.live_on_icp_mainnet[0] && val?.params?.params?.live_on_icp_mainnet[0] === false).slice(0, 3).map((data, index) => {
+                  let projectName = data?.params?.params?.project_name ??"";
+                  let projectId = data?.params?.uid ?? "";
+                  let projectImage = data?.params?.params?.project_logo ? uint8ArrayToBase64(data?.params?.params?.project_logo) : "";
+                  let userImage = data?.params?.params?.user_data?.profile_picture[0] ? uint8ArrayToBase64(data?.params?.params?.user_data?.profile_picture[0]) : "";
+                  let principalId = data?.principal ? data?.principal.toText() : "";
+                  let projectDescription = data?.params?.params?.project_description ?? "";
+                  let projectAreaOfFocus = data?.params?.params?.project_area_of_focus ?? "";
+                  let projectData = data?.params ? data?.params : null;
+  
+             
                   return (
                     <animated.div
                       className="w-full sm:w-1/2 md:w-1/3 mb-2  hover:scale-105 transition-transform duration-300 ease-in-out"
                       key={index}
                     >
-                      <div className="flex justify-between items-baseline flex-wrap bg-white overflow-hidden rounded-lg shadow-lg">
+                      <div className="w-fit flex justify-between items-baseline flex-wrap bg-white overflow-hidden rounded-lg shadow-lg">
                         <div className="p-4">
                           <div className="flex justify-between items-baseline mb-2 flex-col flex-wrap w-fit">
                             <div className="flex items-baseline w-1/2">
@@ -222,46 +198,7 @@ const LaunchedProjects = () => {
                               </p>
                             </div>
                           </div>
-                          <div className="mb-4 flex items-baseline">
-                            <svg
-                              width="100%"
-                              height="8"
-                              className="rounded-lg"
-                              onMouseEnter={() => setIsHovered(true)}
-                              onMouseLeave={() => setIsHovered(false)}
-                            >
-                              <defs>
-                                <linearGradient
-                                  id={`gradient-${index}`}
-                                  x1="0%"
-                                  y1="0%"
-                                  x2="100%"
-                                  y2="0%"
-                                >
-                                  <stop
-                                    offset="0%"
-                                    stopColor={gradientStops.stop1}
-                                    stopOpacity="1"
-                                  />
-                                  <stop
-                                    offset="100%"
-                                    stopColor={gradientStops.stop2}
-                                    stopOpacity="1"
-                                  />
-                                </linearGradient>
-                              </defs>
-                              <rect
-                                x="0"
-                                y="0"
-                                width={`${percent}%`}
-                                height="10"
-                                fill={`url(#gradient-${index})`}
-                              />
-                            </svg>
-                            <div className="ml-2 text-nowrap text-sm">
-                              Level 2
-                            </div>
-                          </div>
+                          
                           <p className="text-gray-700 text-sm p-2 h-36 overflow-hidden line-clamp-8">
                             {projectDescription}
                           </p>

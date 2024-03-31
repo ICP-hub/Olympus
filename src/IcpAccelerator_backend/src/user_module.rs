@@ -10,6 +10,8 @@ use sha2::{Digest, Sha256};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::io::Read;
+use ic_cdk::storage;
+
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
 pub struct UserInformation {
@@ -514,41 +516,24 @@ pub async fn update_user(info: UserInformation) -> std::string::String {
 }
 
 pub fn pre_upgrade_user_modules() {
-    USER_STORAGE.with(|notifications| {
-        let serialized =
-            bincode::serialize(&*notifications.borrow()).expect("Serialization failed");
-        let mut writer = StableWriter::default();
-        writer
-            .write(&serialized)
-            .expect("Failed to write to stable storage");
+    USER_STORAGE.with(|user_storage| {
+        ROLE_STATUS_ARRAY.with(|role_status_array| {
+            storage::stable_save((user_storage.borrow().clone(), role_status_array.borrow().clone()))
+                .expect("Failed to save to stable storage");
+        });
     });
-
-    ROLE_STATUS_ARRAY.with(|notifications| {
-        let serialized =
-            bincode::serialize(&*notifications.borrow()).expect("Serialization failed");
-        let mut writer = StableWriter::default();
-        writer
-            .write(&serialized)
-            .expect("Failed to write to stable storage");
-    });
-}
+} 
 
 pub fn post_upgrade_user_modules() {
-    let mut reader = StableReader::default();
-    let mut data = Vec::new();
-    reader
-        .read_to_end(&mut data)
-        .expect("Failed to read from stable storage");
-    let user_storage: HashMap<Principal, UserInfoInternal> =
-        bincode::deserialize(&data).expect("Deserialization failed of notification");
-    USER_STORAGE.with(|notifications_ref| {
-        *notifications_ref.borrow_mut() = user_storage;
-    });
+    let (restored_user_storage, restored_role_status_array): 
+        (HashMap<Principal, UserInfoInternal>, HashMap<Principal, Vec<Role>>) = 
+        storage::stable_restore().expect("Failed to restore from stable storage");
 
-    let role_storage: HashMap<Principal, Vec<Role>> =
-        bincode::deserialize(&data).expect("Deserialization failed of notification");
-    ROLE_STATUS_ARRAY.with(|notifications_ref| {
-        *notifications_ref.borrow_mut() = role_storage;
+    USER_STORAGE.with(|user_storage_ref| {
+        *user_storage_ref.borrow_mut() = restored_user_storage;
+    });
+    ROLE_STATUS_ARRAY.with(|role_status_array_ref| {
+        *role_status_array_ref.borrow_mut() = restored_role_status_array;
     });
 }
 

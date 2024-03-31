@@ -260,6 +260,8 @@ const ProjectDetailsForOwnerProject = () => {
             } else {
                 fetchRubricRating(projectData);
             }
+        }else{
+            navigate('/');
         }
     }, [actor, projectData]);
 

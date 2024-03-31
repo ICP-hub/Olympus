@@ -212,6 +212,8 @@ const ProjectDetailsForMentor = () => {
             } else {
                 fetchRubricRating(projectData);
             }
+        }else{
+            navigate('/');
         }
     }, [actor, principal, projectData]);
 

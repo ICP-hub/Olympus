@@ -32,9 +32,9 @@ use notification_to_mentor::*;
 use notification_to_project::*;
 use associations::*;
 
-
 use ic_cdk::api::caller;
 use ic_cdk_macros::pre_upgrade;
+use ic_cdk_macros::post_upgrade;
 
 use leaderboard::{
     LeaderboardEntryForLikes, LeaderboardEntryForRatings, LeaderboardEntryForUpvote,
@@ -142,10 +142,10 @@ pub fn make_user_inactive() -> String {
     user_module::delete_user()
 }
 
-#[query]
-fn get_founder_info_caller() -> Option<FounderInfo> {
-    register_user::get_founder_info()
-}
+// #[query]
+// fn get_founder_info_caller() -> Option<FounderInfo> {
+//     register_user::get_founder_info()
+// }
 
 #[query]
 fn list_all_founders() -> Vec<register_user::FounderInfo> {
@@ -183,10 +183,10 @@ fn get_project_using_id(project_id: String) -> Option<ProjectInfoInternal> {
     project_registration::find_project_by_id(&project_id)
 }
 
-#[query]
-fn list_all_projects() -> HashMap<Principal, ProjectVecWithRoles> {
-    project_registration::list_all_projects()
-}
+// #[query]
+// fn list_all_projects() -> HashMap<Principal, ProjectVecWithRoles> {
+//     project_registration::list_all_projects()
+// }
 
 #[update]
 async fn update_project(project_id: String, updated_project: ProjectInfo) -> String {
@@ -482,22 +482,22 @@ fn get_admin_notifications() -> Vec<admin::Notification> {
 
 //2vxsx-fae
 
-// #[pre_upgrade]
-// fn pre_upgrade() {
-//     pre_upgrade_vc();
-//     pre_upgrade_user_modules();
-//     pre_upgrade_upvotes();
-//     pre_upgrade_mentor();
-//     pre_upgrade_admin();
-// }
+#[pre_upgrade]
+fn pre_upgrade() {
+    // pre_upgrade_vc();
+    pre_upgrade_user_modules();
+    // pre_upgrade_upvotes();
+    // pre_upgrade_mentor();
+    // pre_upgrade_admin();
+}
 
-// #[post_upgrade]
-// fn post_upgrade() {
-//     post_upgrade_vc();
-//     post_upgrade_user_modules();
-//     post_upgrade_upvotes();
-//     post_upgrade_mentor();
-//     post_upgrade_admin();
-// }
+#[post_upgrade]
+fn post_upgrade() {
+    // post_upgrade_vc();
+    post_upgrade_user_modules();
+    // post_upgrade_upvotes();
+    // post_upgrade_mentor();
+    // post_upgrade_admin();
+}
 
 export_candid!();
