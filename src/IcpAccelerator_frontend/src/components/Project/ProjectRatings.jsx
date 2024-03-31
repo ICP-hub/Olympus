@@ -185,7 +185,7 @@ const ProjectRatings = ({ data }) => {
   const handleSubmit = () => {
     // Your submission logic here
     console.log("Form submitted:", sendingData);
-    handleAddRating(sendingData)
+    // handleAddRating(sendingData)
     // Reset form or navigate to next page
     // setCurrentStep(0);
   };
