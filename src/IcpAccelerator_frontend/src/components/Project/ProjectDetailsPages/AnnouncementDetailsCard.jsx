@@ -42,7 +42,9 @@ const AnnouncementDetailsCard = ({ data }) => {
   }, [actor, data]);
 
 
-
+ if (!data) {
+        return null;
+    }
   return (
     // <div className="">
     <div className="gap-2 overflow-x-auto">

@@ -12,6 +12,7 @@ function ProjectDetailsCard({ data, image, title, rubric, tags, socials, doj, co
         return null;
     }
     const navigate = useNavigate();
+    
     let logo = data?.params?.project_logo ? uint8ArrayToBase64(data?.params?.project_logo) : girl;
     let name = data?.params?.project_name ?? '';
     let area_tags = data?.params?.project_area_of_focus ?? '';
