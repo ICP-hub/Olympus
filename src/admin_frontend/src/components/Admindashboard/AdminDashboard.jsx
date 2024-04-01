@@ -29,6 +29,8 @@ const AdminDashboard = () => {
   const allNotification = useSelector(
     (currState) => currState.notification.data
   );
+  const totalLive = useSelector((currState)=> currState.totalLive.total_Live)
+
 
   const [isAcceptModalOpen, setIsAcceptModalOpen] = useState(false);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
@@ -66,7 +68,7 @@ const AdminDashboard = () => {
               <div className="flex flex-col items-center justify-start font-bold text-lg text-white z-10">
                 <p className="flex justify-start">Live Projects</p>
                 <p className="font-extrabold -[59px] h-[62px] text-white flex justify-center xl:md:text-5xl text-2xl">
-                  0
+                  {totalLive}
                 </p>
               </div>
             </div>

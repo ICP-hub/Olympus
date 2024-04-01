@@ -14,6 +14,8 @@ import CountReducer from "./CountReducer";
 import cyclePendingReducer from "./cyclePendingReducer";
 import totalPendingRequestReducer from "./totalPendingRequestReducer";
 import notificationReducer from "./notificationReducer";
+import TotalLiveReducer from "./TotalLiveReducer";
+
 
 const rootReducer = combineReducers({
   actors: actorReducer,
@@ -30,7 +32,8 @@ const rootReducer = combineReducers({
   count:CountReducer,
   cyclePending: cyclePendingReducer,
   totpending : totalPendingRequestReducer,
-  notification : notificationReducer
+  notification : notificationReducer,
+  totalLive : TotalLiveReducer
 });
 
 export default rootReducer;
