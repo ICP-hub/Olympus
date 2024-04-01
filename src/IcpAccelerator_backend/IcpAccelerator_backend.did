@@ -117,7 +117,6 @@ type MAnnouncements = record {
   timestamp : nat64;
   project_name : text;
 };
-type MainLevelRatings = record { ratings : vec float64; level : text };
 type MentorInfo = record {
   mentor_image : vec nat8;
   mentor_description : text;
@@ -431,9 +430,7 @@ type Rating = record {
   level_name : text;
   sub_level_number : nat32;
   level_number : nat32;
-  current_role : text;
   rating : float64;
-  project_id : text;
 };
 type RatingAverages = record {
   peer_average : opt float64;
@@ -441,6 +438,11 @@ type RatingAverages = record {
   overall_average : opt float64;
   vc_average : opt float64;
   mentor_average : opt float64;
+};
+type RatingUpdate = record {
+  ratings : vec Rating;
+  current_role : text;
+  project_id : text;
 };
 type Request = record { mentor : opt MentorInternal; "text" : text };
 type Result = variant { Ok : MoneyRaised; Err : CustomError };
@@ -761,9 +763,6 @@ service : {
   get_leaderboard_using_likes : () -> (vec LeaderboardEntryForLikes) query;
   get_leaderboard_using_ratings : () -> (vec LeaderboardEntryForRatings) query;
   get_leaderboard_using_upvotes : () -> (vec LeaderboardEntryForUpvote) query;
-  get_main_level_ratings : (text) -> (
-      vec record { text; MainLevelRatings },
-    ) query;
   get_member_id : () -> (text) query;
   get_mentor : () -> (opt MentorProfile) query;
   get_mentor_announcements : () -> (
@@ -922,7 +921,7 @@ service : {
   update_mentor : (MentorProfile) -> (text);
   update_mentor_profile : (principal, MentorProfile) -> (text);
   update_project : (text, ProjectInfo) -> (text);
-  update_rating : (vec Rating) -> (text);
+  update_rating : (RatingUpdate) -> (text);
   update_suggestion_status_caller : (nat64, text, text) -> ();
   update_team_member : (text, principal) -> (text);
   update_vc_profile : (principal, VentureCapitalist) -> (text);

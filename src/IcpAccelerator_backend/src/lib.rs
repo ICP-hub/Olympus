@@ -43,6 +43,7 @@ use leaderboard::{
 use project_like::LikeRecord;
 use project_registration::FilterCriteria;
 use ratings::RatingAverages;
+use ratings::RatingUpdate;
 use requests::Request;
 use roles::{get_roles, RolesResponse};
 use std::collections::HashMap;
@@ -399,8 +400,8 @@ fn get_leaderboard_using_ratings() -> Vec<LeaderboardEntryForRatings> {
 
 #[update]
 
-fn update_rating(rating: Vec<Rating>) -> String {
-    ratings::update_rating_api(rating)
+fn update_rating(rating_data: RatingUpdate) -> String {
+    ratings::update_rating_api(rating_data)
 }
 
 #[query]
@@ -409,11 +410,11 @@ fn calculate_average(project_id: String) -> RatingAverages {
     ratings::calculate_average_api(&project_id)
 }
 
-#[query]
+// #[query]
 
-fn get_main_level_ratings(project_id: String) -> HashMap<String, MainLevelRatings> {
-    ratings::get_ratings_by_project_id(&project_id)
-}
+// fn get_main_level_ratings(project_id: String) -> HashMap<String, MainLevelRatings> {
+//     ratings::get_ratings_by_project_id(&project_id)
+// }
 
 #[update]
 
@@ -486,6 +487,7 @@ fn get_admin_notifications() -> Vec<admin::Notification> {
 fn pre_upgrade() {
     // pre_upgrade_vc();
     pre_upgrade_user_modules();
+    pre_upgrade_project_registration();
     // pre_upgrade_upvotes();
     // pre_upgrade_mentor();
     // pre_upgrade_admin();
@@ -495,6 +497,7 @@ fn pre_upgrade() {
 fn post_upgrade() {
     // post_upgrade_vc();
     post_upgrade_user_modules();
+    post_upgrade_project_registration();
     // post_upgrade_upvotes();
     // post_upgrade_mentor();
     // post_upgrade_admin();
