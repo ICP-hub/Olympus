@@ -44,7 +44,6 @@ type Cohort = record {
   no_of_seats : nat8;
   cohort_launch_date : text;
 };
-type CohortDetails = record { uid : text; created_at : nat64; cohort : Cohort };
 type Counts = record {
   user_count : nat64;
   only_user_count : nat64;
@@ -108,12 +107,16 @@ type LikesInfo = record {
   image : opt vec nat8;
   principal_id : opt text;
 };
+type ListAllProjects = record {
+  "principal" : principal;
+  overall_average : opt float64;
+  params : ProjectInfoInternal;
+};
 type MAnnouncements = record {
   announcement_message : text;
   timestamp : nat64;
   project_name : text;
 };
-type MainLevelRatings = record { ratings : vec float64; level : text };
 type MentorInfo = record {
   mentor_image : vec nat8;
   mentor_description : text;
@@ -418,10 +421,6 @@ type ProjectUpdateRequest = record {
   updated_info : ProjectInfo;
   project_id : text;
 };
-type ProjectVecWithRoles = record {
-  project_profile : vec ProjectInfoInternal;
-  roles : vec Role;
-};
 type ProjectWithRoles = record {
   project_profile : ProjectInfoInternal;
   roles : vec Role;
@@ -431,9 +430,7 @@ type Rating = record {
   level_name : text;
   sub_level_number : nat32;
   level_number : nat32;
-  current_role : text;
   rating : float64;
-  project_id : text;
 };
 type RatingAverages = record {
   peer_average : opt float64;
@@ -441,6 +438,11 @@ type RatingAverages = record {
   overall_average : opt float64;
   vc_average : opt float64;
   mentor_average : opt float64;
+};
+type RatingUpdate = record {
+  ratings : vec Rating;
+  current_role : text;
+  project_id : text;
 };
 type Request = record { mentor : opt MentorInternal; "text" : text };
 type Result = variant { Ok : MoneyRaised; Err : CustomError };
@@ -667,7 +669,6 @@ service : {
     ) query;
   get_admin_notifications : () -> (vec Notification) query;
   get_all_approved_requests : () -> (vec ProjectNotification) query;
-  get_all_cohorts : () -> (vec CohortDetails) query;
   get_all_declined_requests : () -> (vec ProjectNotification) query;
   get_all_jobs : () -> (vec JobsInternal) query;
   get_all_mentor_notification : (principal) -> (vec OfferToSendToMentor) query;
@@ -741,7 +742,6 @@ service : {
   get_announcements_by_project_id : (text) -> (vec AnnouncementsInternal) query;
   get_area_focus_expertise : () -> (vec Role_1) query;
   get_blog_post : () -> (vec record { principal; vec Blog }) query;
-  get_cohort : () -> (vec CohortDetails) query;
   get_dapp_link : (text) -> (text) query;
   get_declined_request_for_investor : () -> (vec OfferToSendToMentor) query;
   get_declined_request_for_mentor : (principal) -> (
@@ -751,7 +751,6 @@ service : {
   get_declined_request_of_project_by_investor : (text) -> (
       vec OfferToInvestor,
     ) query;
-  get_founder_info_caller : () -> (opt FounderInfo) query;
   get_icp_hubs_candid : () -> (vec IcpHub) query;
   get_job_category : () -> (vec Role_1) query;
   get_jobs_posted_by_project : (text) -> (vec JobsInternal) query;
@@ -764,9 +763,6 @@ service : {
   get_leaderboard_using_likes : () -> (vec LeaderboardEntryForLikes) query;
   get_leaderboard_using_ratings : () -> (vec LeaderboardEntryForRatings) query;
   get_leaderboard_using_upvotes : () -> (vec LeaderboardEntryForUpvote) query;
-  get_main_level_ratings : (text) -> (
-      vec record { text; MainLevelRatings },
-    ) query;
   get_member_id : () -> (text) query;
   get_mentor : () -> (opt MentorProfile) query;
   get_mentor_announcements : () -> (
@@ -881,9 +877,7 @@ service : {
   greet : (text) -> (text) query;
   like_project : (text) -> (text);
   list_all_founders : () -> (vec FounderInfo) query;
-  list_all_projects : () -> (
-      vec record { principal; ProjectVecWithRoles },
-    ) query;
+  list_all_projects : () -> (vec ListAllProjects) query;
   list_all_vcs : () -> (vec record { principal; VcWithRoles }) query;
   make_active_inactive_mentor : (principal) -> (text);
   make_project_active_inactive : (principal, text) -> (text);
@@ -927,7 +921,7 @@ service : {
   update_mentor : (MentorProfile) -> (text);
   update_mentor_profile : (principal, MentorProfile) -> (text);
   update_project : (text, ProjectInfo) -> (text);
-  update_rating : (vec Rating) -> (text);
+  update_rating : (RatingUpdate) -> (text);
   update_suggestion_status_caller : (nat64, text, text) -> ();
   update_team_member : (text, principal) -> (text);
   update_vc_profile : (principal, VentureCapitalist) -> (text);

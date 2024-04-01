@@ -487,6 +487,7 @@ fn get_admin_notifications() -> Vec<admin::Notification> {
 fn pre_upgrade() {
     // pre_upgrade_vc();
     pre_upgrade_user_modules();
+    pre_upgrade_project_registration();
     // pre_upgrade_upvotes();
     // pre_upgrade_mentor();
     // pre_upgrade_admin();
@@ -496,6 +497,7 @@ fn pre_upgrade() {
 fn post_upgrade() {
     // post_upgrade_vc();
     post_upgrade_user_modules();
+    post_upgrade_project_registration();
     // post_upgrade_upvotes();
     // post_upgrade_mentor();
     // post_upgrade_admin();
