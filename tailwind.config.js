@@ -32,6 +32,8 @@ module.exports = {
         shadeSkyBlue: "#408FBF",
         custumPurple: "rgba(50, 0, 153, 1)",
         custumSky: "rgba(114, 131, 234, 1)",
+        customBlue: "rgba(185, 192, 242, 1)",
+
       },
       translate: {
         full: "100%",

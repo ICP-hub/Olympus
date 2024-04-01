@@ -27,8 +27,9 @@ import AllProject from "./components/Admindashboard/AllProject";
 import Projectrequest from "./components/Admindashboard/Projectrequest";
 import Allusers from "./components/Admindashboard/Allusers";
 import Adminalluser from "./components/Admindashboard/Adminalluser";
-import CommonUserProfile from "./components/Admindashboard/Profile/CommonUserProfile";
-
+import UserProfile from "./components/Admindashboard/Profile/UserProfile";
+import UserAllProfile from "./components/Admindashboard/Profile/UserAllProfile";
+import { checkTotalLiveStart } from "./components/AdminStateManagement/Redux/Reducers/TotalLiveReducer";
 const App = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const isAuthenticated = useSelector(
@@ -59,6 +60,7 @@ const App = () => {
       dispatch(checkCycleStart());
       dispatch(checkTotalPendingStart())
       dispatch(notificationHandlerRequest())
+      dispatch(checkTotalLiveStart())
     }
   }, [isAuthenticated, actor, dispatch]);
 
@@ -79,6 +81,7 @@ const App = () => {
           {/* <Allusers/> */}
           {/* <Adminalluser/> */}
           {/* <CommonUserProfile/> */}
+          {/* <AllProfile/> */}
         </div>
       </div>
 

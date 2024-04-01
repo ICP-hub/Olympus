@@ -5,7 +5,6 @@ import Loader from "./components/Loader/Loader";
 import Projectprofile from "./components/Admindashboard/Profile/Projectprofile";
 import Adminalluser from "./components/Admindashboard/Adminalluser";
 import Projectdetails from "./components/Admindashboard/Projectdetails";
-
 const Error404 = lazy(() => import("./components/Error404/Error404"));
 const AcceptModal = lazy(()=> import ("./components/models/AcceptModal"))
 const RejectModal = lazy(()=> import ("./components/models/RejectModal"))
@@ -17,6 +16,7 @@ const AdminDashboard = lazy(() =>
 const ConfirmationModal = lazy(() =>
   import("./components/models/ConfirmationModal")
 );
+const UserAllProfile = lazy(()=> import("./components/Admindashboard/Profile/UserAllProfile"))
 
 const AllProject = lazy(()=> import("./components/Admindashboard/AllProject"))
 const AdminRoute = ({ setModalOpen }) => {
@@ -33,9 +33,10 @@ const AdminRoute = ({ setModalOpen }) => {
     { path: "/profile", element: <Projectprofile /> },
     { path: "/allProject", element: <AllProject /> },
     { path: "/project_details", element: <Projectdetails /> },
+    { path: "/all", element: <UserAllProfile /> },
 
 
-
+    
   ];
 
   // const dispatch = useDispatch();

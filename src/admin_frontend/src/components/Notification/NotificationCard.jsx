@@ -10,10 +10,10 @@ const NotificationCard = ({ notificationDetails }) => {
     setModalPopUp((prev) => !prev);
   };
 
-  // console.log("notificationDetails =======================================>=> ", notificationDetails);
+  console.log("notificationDetails =======================================>=> ", notificationDetails);
 
   const dataSendToProfileHandler = () => {
-    navigate("/profile", { state: notificationDetails });
+    navigate("/all", { state: notificationDetails.principal });
   };
 
   return (
@@ -53,11 +53,11 @@ const NotificationCard = ({ notificationDetails }) => {
               </p>
             )}
             {notificationDetails.project_description && (
-              <p className="text-sm font-medium flex flex-row text-gray-600">
+              <div className="text-sm font-medium flex flex-row text-gray-600">
                 <span className="text-gray-500">
                   {<p>{notificationDetails.project_description}</p>}
                 </span>
-              </p>
+              </div>
             )}
             {notificationDetails.rejectedTime && (
               <p className="text-sm font-medium flex flex-row text-gray-600">
@@ -71,19 +71,19 @@ const NotificationCard = ({ notificationDetails }) => {
 
         <div className="flex justify-end space-x-2">
           <button
-            onClick={toggleModelPopUp}
-            // onClick={dataSendToProfileHandler}
+            // onClick={toggleModelPopUp}
+            onClick={dataSendToProfileHandler}
             className="capitalize border-2 font-semibold bg-[#3505B2] border-[#3505B2] md:text-sm text-[8px] text-white px-2 py-1 rounded-md  hover:text-[#3505B2] hover:bg-white"
           >
             View User Profile
           </button>
         </div>
 
-        <ConfirmationModal
+        {/* <ConfirmationModal
           notificationDetails={notificationDetails}
           toggleModelPopUp={toggleModelPopUp}
           modalPopUp={modalPopUp}
-        />
+        /> */}
       </div>
     </>
   );
