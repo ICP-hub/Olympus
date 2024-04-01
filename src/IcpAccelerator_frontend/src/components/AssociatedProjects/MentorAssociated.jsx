@@ -1,49 +1,54 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import AssociatedProjects from '../Dashboard/MentorAssociatedCards'; 
-import { IcpAccelerator_backend } from '../../../../declarations/IcpAccelerator_backend/index';
+import AssociatedProjects from '../Dashboard/MentorAssociatedCards';
+import { useNavigate } from 'react-router-dom';
 import NoDataCard from '../../../../IcpAccelerator_frontend/src/components/Mentors/Event/NoDataCard';
+import { Principal } from "@dfinity/principal";
 
 const MentorAssociated = () => {
+  const navigate = useNavigate();
   const principal = useSelector((currState) => currState.internet.principal);
-  // const actor = useSelector((currState) => currState.actors.actor);
-  let actor = IcpAccelerator_backend;
-  const [data, setMentorAssociatedData] = useState([]);
-  const [selectedOption, setSelectedOption] = useState("Associated Projects");
-  
+  const actor = useSelector((currState) => currState.actors.actor);
+
+  const [data, setData] = useState([]);
+
   const mentorprojects = async () => {
+    let mentor_id = Principal.fromText(principal)
     try {
-      const mentorassociated = await actor.get_mock_project_info();
-      console.log('Mentor Associated Projects: ', mentorassociated);
-      setMentorAssociatedData(mentorassociated); 
+      const result = await actor.get_projects_associated_with_mentor(mentor_id);
+      console.log('Mentor Associated Projects: ', result);
+      if (result && result.length > 0) {
+        setData(result);
+      } else {
+        setData([]);
+      }
     } catch (err) {
+      setData([]);
       console.error('Error:', err);
     }
   };
-  
+
   useEffect(() => {
-    actor && mentorprojects();
-  }, [actor]);
+    if (actor && principal) {
+      mentorprojects()
+    } else {
+      navigate('/');
+    }
+  }, [actor, principal]);
 
   return (
-<div className='md:mx-6'>
-    <div className=" p-6 lg:left-auto bg-gradient-to-r from-purple-900 to-blue-500 text-transparent bg-clip-text text-2xl font-extrabold">
-            {selectedOption}
-          </div>
-   <div className="flex flex-row space-x-4 overflow-x-auto">
+    <div className='md:mx-6'>
+      <div className="flex flex-row space-x-4 overflow-x-auto">
+        {data && data.length === 0 ? (
+          <NoDataCard />
+        ) : (
+          data.map((project, index) => (
+            <AssociatedProjects data={project} key={index} />
+          ))
+        )}
 
-      
-      {data.length === 0 ? (
-        
-        <NoDataCard />
-      ):(
-        data.map((project, index) => (
-          <AssociatedProjects data={project} key={index} />
-            ))
-      )}
-    
-    </div>
-    
+      </div>
+
     </div>
   );
 };

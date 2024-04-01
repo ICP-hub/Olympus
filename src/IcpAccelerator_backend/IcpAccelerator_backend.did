@@ -44,7 +44,6 @@ type Cohort = record {
   no_of_seats : nat8;
   cohort_launch_date : text;
 };
-type CohortDetails = record { uid : text; created_at : nat64; cohort : Cohort };
 type Counts = record {
   user_count : nat64;
   only_user_count : nat64;
@@ -107,6 +106,11 @@ type LikesInfo = record {
   time : nat64;
   image : opt vec nat8;
   principal_id : opt text;
+};
+type ListAllProjects = record {
+  "principal" : principal;
+  overall_average : opt float64;
+  params : ProjectInfoInternal;
 };
 type MAnnouncements = record {
   announcement_message : text;
@@ -418,10 +422,6 @@ type ProjectUpdateRequest = record {
   updated_info : ProjectInfo;
   project_id : text;
 };
-type ProjectVecWithRoles = record {
-  project_profile : vec ProjectInfoInternal;
-  roles : vec Role;
-};
 type ProjectWithRoles = record {
   project_profile : ProjectInfoInternal;
   roles : vec Role;
@@ -667,7 +667,6 @@ service : {
     ) query;
   get_admin_notifications : () -> (vec Notification) query;
   get_all_approved_requests : () -> (vec ProjectNotification) query;
-  get_all_cohorts : () -> (vec CohortDetails) query;
   get_all_declined_requests : () -> (vec ProjectNotification) query;
   get_all_jobs : () -> (vec JobsInternal) query;
   get_all_mentor_notification : (principal) -> (vec OfferToSendToMentor) query;
@@ -741,7 +740,6 @@ service : {
   get_announcements_by_project_id : (text) -> (vec AnnouncementsInternal) query;
   get_area_focus_expertise : () -> (vec Role_1) query;
   get_blog_post : () -> (vec record { principal; vec Blog }) query;
-  get_cohort : () -> (vec CohortDetails) query;
   get_dapp_link : (text) -> (text) query;
   get_declined_request_for_investor : () -> (vec OfferToSendToMentor) query;
   get_declined_request_for_mentor : (principal) -> (
@@ -751,7 +749,6 @@ service : {
   get_declined_request_of_project_by_investor : (text) -> (
       vec OfferToInvestor,
     ) query;
-  get_founder_info_caller : () -> (opt FounderInfo) query;
   get_icp_hubs_candid : () -> (vec IcpHub) query;
   get_job_category : () -> (vec Role_1) query;
   get_jobs_posted_by_project : (text) -> (vec JobsInternal) query;
@@ -881,9 +878,7 @@ service : {
   greet : (text) -> (text) query;
   like_project : (text) -> (text);
   list_all_founders : () -> (vec FounderInfo) query;
-  list_all_projects : () -> (
-      vec record { principal; ProjectVecWithRoles },
-    ) query;
+  list_all_projects : () -> (vec ListAllProjects) query;
   list_all_vcs : () -> (vec record { principal; VcWithRoles }) query;
   make_active_inactive_mentor : (principal) -> (text);
   make_project_active_inactive : (principal, text) -> (text);

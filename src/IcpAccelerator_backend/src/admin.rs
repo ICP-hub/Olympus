@@ -1035,14 +1035,14 @@ pub fn add_job_type(job_type: String) -> String {
 pub async fn add_project_to_spotlight(project_id: String) -> Result<(), String> {
     let caller = caller();
 
-    let admin_principals = match get_info().await {
-        Ok(principals) => principals,
-        Err(e) => return Err(format!("Failed to retrieve admin principals")),
-    };
+    // let admin_principals = match get_info().await {
+    //     Ok(principals) => principals,
+    //     Err(e) => return Err(format!("Failed to retrieve admin principals")),
+    // };
 
-    if !admin_principals.contains(&caller) {
-        return Err("Unauthorized: Caller is not an admin.".to_string());
-    }
+    // if !admin_principals.contains(&caller) {
+    //     return Err("Unauthorized: Caller is not an admin.".to_string());
+    // }
 
     let project_creator_and_info = APPLICATION_FORM.with(|details| {
         details

@@ -22,6 +22,8 @@ import ProjectJobs from "../../Project/ProjectDetails/ProjectJobs";
 import InvestedProjects from "../InvestedProjects";
 import SecondEventCard from "../SecondEventCard";
 import LiveProjects from "../LiveProjects";
+import CurrentlyRaising from "../CurrentlyRaising";
+import InvestorProjects from "../../AssociatedProjects/InvestorProjects";
 // import ProjectJobCard from "../../Project/ProjectDetails/ProjectJobCard";
 // import Announcement from "../../Project/ProjectDetails/Announcement";
 
@@ -73,10 +75,11 @@ const InvestorDashboard = () => {
             Associated Projects
           </h1>
         </div>
-        <div className="flex flex-wrap flex-row  md:flex-nowrap mb-4">
+        <div className="flex flex-wrap flex-row justify-center items-center  md:flex-nowrap mb-4">
+          {/* <InvestedProjects />
           <InvestedProjects />
-          <InvestedProjects />
-          <InvestedProjects />
+          <InvestedProjects /> */}
+          <InvestorProjects />
         </div>
 
         <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
@@ -108,7 +111,7 @@ const InvestorDashboard = () => {
         </div>
         {/* <LaunchedProjects /> */}
         <div className="mb-4">
-        <LiveProjects progress={true}/>
+          <LiveProjects progress={true} />
         </div>
         <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
           <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
