@@ -136,8 +136,9 @@ const MentorRegistration = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
   const specificRole = useSelector(
-    (currState) => currState.current.specificRole
+    (currState) => currState.currentRoleStatus.activeRole
   );
+  console.log("specificRole is Here===>", specificRole);
   const mentorFullData = useSelector((currState) => currState.mentorData.data);
   const areaOfExpertise = useSelector(
     (currState) => currState.expertiseIn.expertise
@@ -362,17 +363,25 @@ const MentorRegistration = () => {
     let result;
 
     try {
-      // if (specificRole !== null || undefined) {
-      // console.log("update mentor functn k pass reached");
-      // result = await actor.update_mentor_profile(val);
-      // } else if (specificRole === null || specificRole === undefined) {
-      console.log("register mentor functn k pass reached");
-      await actor.register_mentor_candid(val).then((result) => {
-        toast.success(result);
-        // navigate("/")
-        window.location.href = "/";
-      });
-      // }
+      if (specificRole === "mentor") {
+        console.log("update mentor functn k pass reached");
+        result = await actor.update_mentor(val).then((result) => {
+          toast.success(result);
+          // navigate("/")
+          window.location.href = "/";
+        });
+      } else if (specificRole === null ||
+        specificRole === "user" ||
+        specificRole === "project" ||
+        specificRole === "vc"
+      ){
+        console.log("register mentor functn k pass reached");
+        await actor.register_mentor_candid(val).then((result) => {
+          toast.success(result);
+          // navigate("/")
+          window.location.href = "/";
+        });
+      }
       // await dispatch(userRoleHandler());
       // await navigate("/");
     } catch (error) {
@@ -586,13 +595,13 @@ const MentorRegistration = () => {
                       } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     >
                       <option className="text-lg font-bold" value="">
-                        Area of Interest 
+                        Area of Interest
                       </option>
                       {areaOfExpertise?.map((intrest) => (
                         <option
                           key={intrest.id}
                           value={`${intrest.name}`}
-                          className="text-lg font-bold"
+                          className="text-lg font-bold capitalize"
                         >
                           {intrest.name}
                         </option>
@@ -726,7 +735,7 @@ const MentorRegistration = () => {
                         } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                       >
                         <option className="text-lg font-bold" value="">
-                          Select 
+                          Select
                         </option>
                         {multiChain?.map((chain, i) => (
                           <option
@@ -815,7 +824,7 @@ const MentorRegistration = () => {
                       } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     >
                       <option className="text-lg font-bold" value="">
-                        Area of expertise 
+                        Area of expertise
                       </option>
                       {areaOfExpertise?.map((expert) => (
                         <option

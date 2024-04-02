@@ -21,7 +21,7 @@ import CreateProjectsDetails from "./CreateProjectsDetails";
 import { bufferToImageBlob } from "../../Utils/formatter/bufferToImageBlob";
 import CreateProjectsAdditionalDetails from "./CreateProjectsAdditionalDetails";
 import ReactSelect from "react-select";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const validationSchema = {
   personalDetails: yup.object().shape({
@@ -65,7 +65,10 @@ const validationSchema = {
       .string()
       .url("Must be a valid URL")
       .required("Project elevator pitch is Required"),
-    reason_to_join_incubator: yup.string().required("Reason is required"),
+    reason_to_join_incubator: yup
+      .string()
+      .test("is-non-empty", "Reason is required", (value) => /\S/.test(value))
+      .required("Reason is required"),
     money_raised_till_now: yup.string(),
     target_amount: yup
       .string()
@@ -187,14 +190,19 @@ const validationSchema = {
 const CreateProjectRegistration = () => {
   const navigate = useNavigate();
 
+  const location = useLocation();
+  const projectId = location.state?.projectId;
+  console.log("id is here ===>", projectId);
+
   const actor = useSelector((currState) => currState.actors.actor);
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
   const areaOfExpertise = useSelector(
     (currState) => currState.expertiseIn.expertise
   );
   const specificRole = useSelector(
-    (currState) => currState.current.specificRole
+    (currState) => currState.currentRoleStatus.activeRole
   );
+  console.log("specificRole is Here===>", specificRole);
   const multiChain = useSelector((currState) => currState.chains.chains);
 
   const userData = useSelector((currState) => currState.userData.data.Ok);
@@ -265,6 +273,7 @@ const CreateProjectRegistration = () => {
   } = useForm({
     defaultValues: {
       private_docs: [{ title: "", link: "" }],
+      public_docs: [{ title: "", link: "" }],
     },
     resolver: yupResolver(currentValidationSchema),
     mode: "all",
@@ -272,9 +281,11 @@ const CreateProjectRegistration = () => {
   const { fields, append } = useFieldArray({
     control,
     name: "private_docs",
+    name: "public_docs",
   });
 
-  console.log("private", getValues("private_docs"));
+  // console.log("private", getValues("private_docs"));
+  // console.log("public", getValues("public_docs"));
 
   const handleTabClick = async (tab) => {
     const targetStep = projectRegistration.findIndex(
@@ -375,11 +386,11 @@ const CreateProjectRegistration = () => {
           type: "manual",
           message: "Unsupported file format",
         });
-      if (file.size > 1024 * 1024)
-        // 1MB
+      if (file.size > 10240 * 10240)
+        // 10MB
         return setError("imageData", {
           type: "manual",
-          message: "The file is too large",
+          message: "The file should be under 10 mb",
         });
 
       setIsLoading(true);
@@ -598,25 +609,38 @@ const CreateProjectRegistration = () => {
     val.project_logo = val.project_logo[0] || [];
     // console.log("sendingProjectData ==>> ", val);
 
-    // let result;
-
+    let result;
     try {
-      // if (specificRole !== null || undefined) {
-      // console.log("update project functn k pass reached");
-      // result = await actor.update_project_profile(val);
-      // } else if (specificRole === null || specificRole === undefined) {
-      console.log("register register_project functn k pass reached");
-      await actor.register_project(val).then((result) => {
-        console.log("register register_project functn ka result ", result);
-        if (result) {
-          toast.success(result);
-          navigate("/");
-          window.location.href = "/";
-        } else {
-          toast.error(result);
-        }
-      });
-      // }
+      if (specificRole === "project") {
+        console.log("update project functn k pass reached");
+        result = await actor.update_project(projectId, val).then((result) => {
+          console.log("register register_project functn ka result ", result);
+          if (result) {
+            toast.success(result);
+            navigate("/");
+            window.location.href = "/";
+          } else {
+            toast.error(result);
+          }
+        });
+      } else if (
+        specificRole === null ||
+        specificRole === "user" ||
+        specificRole === "vc" ||
+        specificRole === "mentor"
+      ) {
+        console.log("register register_project functn k pass reached");
+        await actor.register_project(val).then((result) => {
+          console.log("register register_project functn ka result ", result);
+          if (result) {
+            toast.success(result);
+            navigate("/");
+            window.location.href = "/";
+          } else {
+            toast.error(result);
+          }
+        });
+      }
       // await dispatch(userRoleHandler());
       // await navigate("/");
     } catch (error) {
@@ -649,10 +673,10 @@ const CreateProjectRegistration = () => {
         title: doc.title,
         link: doc.link,
       }));
-      //   const publicDocs = updatedFormData.public_docs.map(doc => ({
-      //     title: doc.title,
-      //     link: doc.link
-      // }));
+      const publicDocs = updatedFormData?.public_docs?.map((doc) => ({
+        title: doc.title,
+        link: doc.link,
+      }));
       const moneyRaised = {
         target_amount: [
           updatedFormData.target_amount
@@ -680,18 +704,11 @@ const CreateProjectRegistration = () => {
         },
         upload_private_documents: [updateIsPrivateDocument],
         project_elevator_pitch: [updatedFormData.project_elevator_pitch],
-        public_docs: [],
+        public_docs: publicDocs ? [publicDocs] : [],
         private_docs: updateIsPrivateDocument === true ? [privateDocs] : [],
         technical_docs: [updatedFormData.technical_docs],
         reason_to_join_incubator:
           updatedFormData.reason_to_join_incubator || "",
-        // target_amount: [updatedFormData.target_amount || ""],
-        // icp_grants: [updatedFormData.icp_grants || ""],
-        // investors: [updatedFormData.investors || ""],
-        // sns: [updatedFormData.sns || ""],
-        // raised_from_other_ecosystem: [
-        //   updatedFormData.raised_from_other_ecosystem || "",
-        // ],
         money_raised: updateMoneyRaisedTillNow === true ? [moneyRaised] : [],
         promotional_video: [updatedFormData.promotional_video],
         project_area_of_focus: updatedFormData.project_area_of_focus || "",
@@ -745,10 +762,10 @@ const CreateProjectRegistration = () => {
         title: doc.title,
         link: doc.link,
       }));
-      //   const publicDocs = updatedFormData.public_docs.map(doc => ({
-      //     title: doc.title,
-      //     link: doc.link
-      // }));
+      const publicDocs = updatedFormData?.public_docs?.map((doc) => ({
+        title: doc.title,
+        link: doc.link,
+      }));
       const moneyRaised = {
         target_amount: [
           updatedFormData.target_amount
@@ -776,18 +793,11 @@ const CreateProjectRegistration = () => {
         },
         upload_private_documents: [updateIsPrivateDocument],
         project_elevator_pitch: [updatedFormData.project_elevator_pitch],
-        public_docs: [],
+        public_docs: publicDocs ? [publicDocs] : [],
         private_docs: updateIsPrivateDocument === true ? [privateDocs] : [],
         technical_docs: [updatedFormData.technical_docs],
         reason_to_join_incubator:
           updatedFormData.reason_to_join_incubator || "",
-        // target_amount: [updatedFormData.target_amount || ""],
-        // icp_grants: [updatedFormData.icp_grants || ""],
-        // investors: [updatedFormData.investors || ""],
-        // sns: [updatedFormData.sns || ""],
-        // raised_from_other_ecosystem: [
-        //   updatedFormData.raised_from_other_ecosystem || "",
-        // ],
         money_raised: updateMoneyRaisedTillNow === true ? [moneyRaised] : [],
         promotional_video: [updatedFormData.promotional_video],
         project_area_of_focus: updatedFormData.project_area_of_focus || "",
@@ -810,14 +820,19 @@ const CreateProjectRegistration = () => {
         self_rating_of_project: updatedFormData.self_rating_of_project
           ? parseFloat(updatedFormData.self_rating_of_project)
           : 0,
-        weekly_active_users: [updatedFormData.weekly_active_users || ""],
-        revenue: [updatedFormData.revenue || ""],
+        weekly_active_users: updatedFormData.weekly_active_users
+          ? [parseInt(updatedFormData.weekly_active_users)]
+          : [],
+        revenue: updatedFormData.weekly_active_users
+          ? [parseInt(updatedFormData.weekly_active_users)]
+          : [],
         target_market: [updatedFormData.target_market || ""],
         long_term_goals: [updatedFormData.long_term_goals || ""],
         technical_docs: [updatedFormData.technical_docs || ""],
         github_link: [updatedFormData.github_link],
         project_cover: [updatedFormData.coverData],
       };
+
       // console.log("tempObj kaam kia ????? ", tempObj); // work kia
 
       setProjectDataObject(tempObj);
@@ -1016,7 +1031,7 @@ const CreateProjectRegistration = () => {
                       <option
                         key={intrest.id}
                         value={`${intrest.name}`}
-                        className="text-lg font-bold"
+                        className="text-lg font-bold capitalize"
                       >
                         {intrest.name}
                       </option>
@@ -1124,7 +1139,7 @@ const CreateProjectRegistration = () => {
                       ? "border-red-500 placeholder:text-red-500"
                       : "border-[#737373]"
                   } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                  required
+                  required={true}
                 >
                   <option className="text-lg font-bold" value="">
                     Select reason 
@@ -1216,6 +1231,17 @@ const CreateProjectRegistration = () => {
                         ...provided,
                         color: "black", // Initial color of the label
                         // Add other control styles if needed
+                        paddingBlock: "2px",
+                        border: errors.project_area_of_focus
+                          ? "2px solid #ef4444"
+                          : "2px solid #737373",
+                        backgroundColor: "rgb(249 250 251)",
+                        // Additional conditional placeholder color if needed
+                        "&::placeholder": {
+                          color: errors.project_area_of_focus
+                            ? "#ef4444"
+                            : "currentColor", // Adjust the placeholder color conditionally
+                        },
                       }),
                     }}
                     classNamePrefix="select"
@@ -1279,6 +1305,7 @@ const CreateProjectRegistration = () => {
                             ? "border-red-500 placeholder:text-red-500"
                             : "border-[#737373]"
                         } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        placeholder="https://"
                       />
                       {errors.dapp_link && (
                         <p className="mt-1 text-sm text-red-500 font-bold text-left">
@@ -1303,7 +1330,6 @@ const CreateProjectRegistration = () => {
                             ? "border-red-500 placeholder:text-red-500"
                             : "border-[#737373]"
                         } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                        placeholder="$"
                       />
                       {errors.weekly_active_users && (
                         <p className="mt-1 text-sm text-red-500 font-bold text-left">
@@ -1316,7 +1342,7 @@ const CreateProjectRegistration = () => {
                         htmlFor="revenue"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        Revenue
+                        Revenue ($)
                       </label>
                       <input
                         type="number"
@@ -1437,7 +1463,7 @@ const CreateProjectRegistration = () => {
                         htmlFor="icp_grants"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        ICP Grants
+                        ICP Grants ($)
                       </label>
                       <input
                         type="number"
@@ -1462,7 +1488,7 @@ const CreateProjectRegistration = () => {
                         htmlFor="investors"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        Investors
+                        Investors ($)
                       </label>
                       <input
                         type="number"
@@ -1487,7 +1513,7 @@ const CreateProjectRegistration = () => {
                         htmlFor="sns"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        Sns
+                        Sns ($)
                       </label>
                       <input
                         type="number"
@@ -1512,7 +1538,7 @@ const CreateProjectRegistration = () => {
                         htmlFor="raised_from_other_ecosystem"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        Raised from other ecosystem
+                        Raised from other ecosystem ($)
                       </label>
                       <input
                         type="number"
@@ -1537,7 +1563,7 @@ const CreateProjectRegistration = () => {
                         htmlFor="target_amount"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        Target Amount
+                        Target Amount ($)
                       </label>
                       <input
                         type="number"
@@ -1556,6 +1582,62 @@ const CreateProjectRegistration = () => {
                           {errors.target_amount.message}
                         </p>
                       )}
+                    </div>
+                    <div>
+                      <h2 className="block mb-2 px-4 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
+                        Public Docs
+                      </h2>
+                      {fields.map((item, index) => (
+                        <div key={item.id}>
+                          <div className="z-0 w-full mb-3 group px-4">
+                            <label
+                              htmlFor="title"
+                              className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                            >
+                              Title
+                            </label>
+                            <input
+                              {...register(`public_docs.${index}.title`)}
+                              className={`bg-gray-50 border-2 ${
+                                errors.title1
+                                  ? "border-red-500 placeholder:text-red-500"
+                                  : "border-[#737373]"
+                              } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                            />
+                            {errors.public_docs &&
+                              errors.public_docs[index]?.title && (
+                                <p>{errors.public_docs[index].title.message}</p>
+                              )}
+                            <label
+                              htmlFor="link"
+                              className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                            >
+                              Link
+                            </label>
+                            <input
+                              {...register(`public_docs.${index}.link`)}
+                              className={`bg-gray-50 border-2 ${
+                                errors.link
+                                  ? "border-red-500 placeholder:text-red-500"
+                                  : "border-[#737373]"
+                              } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                            />
+                            {errors.public_docs &&
+                              errors.public_docs[index]?.link && (
+                                <p>{errors.public_docs[index].link.message}</p>
+                              )}
+                          </div>
+                        </div>
+                      ))}
+                      <div>
+                        <button
+                          type="button"
+                          className="bg-blue-500 rounded-lg text-white p-2"
+                          onClick={() => append({ title: "", link: "" })}
+                        >
+                          Add More
+                        </button>
+                      </div>
                     </div>
                     <div className="z-0 w-full mb-3 group">
                       <label

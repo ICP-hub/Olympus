@@ -201,8 +201,9 @@ const InvestorRegistration = () => {
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
   const actor = useSelector((currState) => currState.actors.actor);
   const specificRole = useSelector(
-    (currState) => currState.current.specificRole
+    (currState) => currState.currentRoleStatus.activeRole
   );
+  console.log("specificRole is Here===>", specificRole);
   const areaOfExpertise = useSelector(
     (currState) => currState.expertiseIn.expertise
   );
@@ -240,36 +241,6 @@ const InvestorRegistration = () => {
   const [isRegistered, setIsRegistered] = useState(false);
 
   const userData = useSelector((currState) => currState.userData.data.Ok);
-
-  useEffect(() => {
-    if (userData) {
-      // Create an object that matches the form fields structure
-      const formData = {
-        full_name: userData.full_name || "",
-        email: userData.email?.[0] || "",
-        telegram_id: userData.telegram_id?.[0] || "",
-        twitter_id: userData.twitter_id?.[0] || "",
-        openchat_username: userData.openchat_username?.[0] || "",
-        bio: userData.bio?.[0] || "",
-        country: userData.country || "",
-        area_of_intrest: userData.area_of_intrest || "",
-      };
-
-      // If there is a mentor_image, handle its conversion and set it separately if needed
-      if (userData.profile_picture) {
-        bufferToImageBlob(userData?.profile_picture)
-          .then((imageUrl) => {
-            setImage(imageUrl);
-            setFormData({ profileImage: userData.profile_picture[0] });
-            // You might also need to handle setting the image for display if required
-          })
-          .catch((error) => console.error("Error converting image:", error));
-      }
-
-      // Use the reset function to populate the form
-      reset(formData);
-    }
-  }, [userData]);
 
   const getTabClassName = (tab) => {
     return `inline-block p-2 font-bold ${
@@ -402,8 +373,8 @@ const InvestorRegistration = () => {
           type: "manual",
           message: "Unsupported file format",
         });
-      if (file.size > 1024 * 1024)
-        // 1MB
+      if (file.size > 10240 * 10240)
+        // 10MB
         return setError("logoData", {
           type: "manual",
           message: "The file is too large",
@@ -473,15 +444,49 @@ const InvestorRegistration = () => {
       reset(formattedData);
       setFormData(formattedData);
 
-      if (formattedData.profileImage) {
-        imageUrlToByteArray(formattedData.profil)
+      if (formattedData.user_data.profile_picture) {
+        imageUrlToByteArray(formattedData.user_data?.profile_picture[0])
           .then((imageBytes) => {
             setProfileImage(imageBytes);
+            console.log("i am here Working ===>", imageBytes);
           })
+
           .catch((error) => console.error("Error converting image:", error));
       }
+    } else {
+      if (userData) {
+        // Create an object that matches the form fields structure
+        const formData = {
+          full_name: userData.full_name || "",
+          email: userData.email?.[0] || "",
+          telegram_id: userData.telegram_id?.[0] || "",
+          twitter_id: userData.twitter_id?.[0] || "",
+          openchat_username: userData.openchat_username?.[0] || "",
+          bio: userData.bio?.[0] || "",
+          country: userData.country || "",
+          area_of_intrest: userData.area_of_intrest || "",
+        };
+
+        // If there is a mentor_image, handle its conversion and set it separately if needed
+        if (userData.profile_picture) {
+          bufferToImageBlob(userData?.profile_picture)
+            .then((imageUrl) => {
+              setImage(imageUrl);
+              setFormData({ profileImage: userData.profile_picture[0] });
+              setValue("profileImage", userData.profile_picture[0], {
+                shouldValidate: true,
+              });
+              console.log("i am here Working ===>", profileImage);
+              // You might also need to handle setting the image for display if required
+            })
+            .catch((error) => console.error("Error converting image:", error));
+        }
+
+        // Use the reset function to populate the form
+        reset(formData);
+      }
     }
-  }, [investorFullData, reset]);
+  }, [investorFullData, reset, userData, setValue]);
 
   const stepFields = steps[step].fields;
   let StepComponent;
@@ -491,16 +496,25 @@ const InvestorRegistration = () => {
     // val.logo = val.logo[0] || [];
     let result;
     try {
-      // if (specificRole !== null || undefined) {
-      // result = await actor.update_venture_capitalist(val);
-      // } else if (specificRole === null || specificRole === undefined) {
-      await actor.register_venture_capitalist(val).then((result) => {
-        toast.success(result);
-        // console.log('result', result)
-        // navigate('/');
-        window.location.href = "/";
-      });
-      // }
+      if (specificRole === "vc") {
+        result = await actor.update_venture_capitalist(val).then((result) => {
+          toast.success(result);
+          // navigate("/")
+          // window.location.href = "/";
+        });
+      } else if (
+        specificRole === null ||
+        specificRole === "user" ||
+        specificRole === "project" ||
+        specificRole === "mentor"
+      ) {
+        await actor.register_venture_capitalist(val).then((result) => {
+          toast.success(result);
+          // console.log('result', result)
+          // navigate('/');
+          window.location.href = "/";
+        });
+      }
 
       console.log("investor data registered in backend");
       // await dispatch(userRoleHandler());
@@ -516,67 +530,76 @@ const InvestorRegistration = () => {
 
     const updatedFormData = { ...formData, ...data };
     setFormData(updatedFormData);
-
+console.log("updatedFormData ================>", updatedFormData)
     if (step < steps.length - 1) {
       handleNext();
-    }
-    // else if (
-    //   specificRole !== null ||
-    //   (undefined && step > steps.length - 1)
-    // ) {
-    // console.log("exisiting user visit ");
+    } else if (
+      specificRole === "vc" ||
+      (undefined && step > steps.length - 1)
+    ) {
+      console.log("exisiting user visit ");
 
-    //   const interestInBoardPosition =
-    //     updatedFormData.existing_icp_investor === "true" ? true : false;
-    //   const updatedregisteredUnderAnyHub =
-    //     updatedFormData.registered_under_any_hub === "true" ? true : false;
-
-    //   // const updatedMultiChain =
-    //   //   updatedFormData.project_on_multichain === "true" ? true : false;
-
-    //   let tempObj2 = {
-    //     average_check_size: Number(updatedFormData.average_check_size),
-    //     email: [updatedFormData.email] || [],
-    //     full_name: updatedFormData.full_name || "",
-    //     openchat_username: [updatedFormData.openchat_username] || [],
-
-    //     existing_icp_investor: interestInBoardPosition,
-    //     money_invested: Number(updatedFormData.money_invested),
-    //     project_on_multichain: [updatedFormData.project_on_multichain] || [],
-
-    //     reason_for_joining: updatedFormData.reason_for_joining || "",
-    //     country: updatedFormData.country || "",
-    //     announcement_details: updatedFormData.announcement_details || "",
-    //     name_of_fund: updatedFormData.name_of_fund || "",
-    //     bio: [updatedFormData.bio] || [],
-    //     existing_icp_portfolio: updatedFormData.existing_icp_portfolio || "",
-    //     registered_under_any_hub: [updatedregisteredUnderAnyHub] || [],
-    //     number_of_portfolio_companies:
-    //       updatedFormData.number_of_portfolio_companies || 0,
-    //     area_of_intrest: updatedFormData.area_of_intrest || [],
-
-    //     portfolio_link: updatedFormData.portfolio_link || "",
-    //     preferred_icp_hub: updatedFormData.preferred_icp_hub,
-    //     type_of_investment: updatedFormData.type_of_investment || "",
-    //     category_of_investment: updatedFormData.category_of_investment || "",
-
-    //     preferred_investment_sectors:
-    //       [updatedFormData.preferred_investment_sectors] || [],
-    //     investor_type: updatedFormData.investor_type ||"",
-    //     fund_size: Number(updatedFormData.fund_size) || "",
-    //     telegram_id: [updatedFormData.telegram_id] || [],
-    //     assets_under_management: updatedFormData.assets_under_management || "",
-    //     logo: [logo] || [],
-    //   };
-
-    //   setInvestorDataObject(tempObj2);
-    //   await sendingInvestorData(tempObj2);
-    // }
-    //  (
-    // specificRole === null ||
-    // (step > steps.length - 1)
-    // )
-    else {
+      const updatedregisteredUnderAnyHub =
+        updatedFormData.registered_under_any_hub === "true" ? true : false;
+      const updatedexisting_icp_investor =
+        ExistingICPInvestor === "true" ? true : false;
+      const updatedIsRegistered = IsRegistered === "true" ? true : false;
+      // const updatedMultiChain =
+      //   updatedFormData.project_on_multichain === "true" ? true : false;
+      const parsedMoneyInvested = parseFloat(updatedFormData.money_invested);
+      let tempObj2 = {
+        user_data: {
+          bio: [updatedFormData.bio],
+          country: updatedFormData.country,
+          area_of_intrest: updatedFormData.area_of_intrest,
+          telegram_id: [updatedFormData.telegram_id],
+          twitter_id: [updatedFormData.twitter_id],
+          openchat_username: [updatedFormData.openchat_username],
+          email: [updatedFormData.email],
+          full_name: updatedFormData.full_name,
+          profile_picture: [profileImage] || [],
+        },
+        preferred_icp_hub: updatedFormData.preferred_icp_hub,
+        existing_icp_investor: updatedexisting_icp_investor,
+        existing_icp_portfolio: [updatedFormData.existing_icp_portfolio],
+        investor_type: updatedFormData.investor_type,
+        money_invested: [parsedMoneyInvested],
+        registered: updatedIsRegistered,
+        registered_under_any_hub: [updatedregisteredUnderAnyHub],
+        assets_under_management: updatedFormData.assets_under_management,
+        registered_country: updatedFormData.registered_country
+          ? [updatedFormData.registered_country]
+          : [],
+        name_of_fund: updatedFormData.name_of_fund,
+        fund_size: Number(updatedFormData.fund_size),
+        average_check_size: Number(updatedFormData.average_check_size),
+        project_on_multichain: updatedFormData.project_on_multichain
+          ? [updatedFormData.project_on_multichain]
+          : [],
+        reason_for_joining: updatedFormData.reason_for_joining,
+        number_of_portfolio_companies:
+          updatedFormData.number_of_portfolio_companies,
+        type_of_investment: updatedFormData.type_of_investment,
+        category_of_investment: updatedFormData.category_of_investment,
+        announcement_details: [updatedFormData.announcement_details],
+        portfolio_link: updatedFormData.portfolio_link,
+        website_link: updatedFormData.website_link,
+        linkedin_link: updatedFormData.linkedin_link,
+        // preferred_investment_sectors: [
+        //   updatedFormData.preferred_investment_sectors,
+        // ],
+        logo: logoData ? [logoData] : [],
+      };
+      console.log("here's the data of tempObj2 ==> ", tempObj2);
+      setInvestorDataObject(tempObj2);
+      await sendingInvestorData(tempObj2);
+    } else if (
+      specificRole === null ||
+      specificRole === "user" ||
+      specificRole === "project" ||
+      specificRole === "mentor" ||
+      step > steps.length - 1
+    ) {
       console.log("first time visit ");
 
       const updatedregisteredUnderAnyHub =

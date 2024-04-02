@@ -334,7 +334,7 @@ const NormalUser = () => {
                   </label>
                   <select
                     {...register("areas_of_expertise")}
-                    className={`bg-gray-50 border-2 ${
+                    className={`bg-gray-50 border-2 capitalize ${
                       errors.areas_of_expertise
                         ? "border-red-500 placeholder:text-red-500"
                         : "border-[#737373]"
@@ -347,7 +347,7 @@ const NormalUser = () => {
                       <option
                         key={expert.id}
                         value={`${expert.name}`}
-                        className="text-lg font-bold"
+                        className="text-lg font-bold capitalize"
                       >
                         {expert.name}
                       </option>
