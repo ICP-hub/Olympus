@@ -16,7 +16,6 @@ import SubmitSection from "../../Footer/SubmitSection";
 import { getCurrentRoleStatusRequestHandler } from "../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 import SpotLight from "../SpotLight";
 import ImpactTool from "../ImpactTool";
-import LaunchedProjects from "../LaunchedProjects";
 import EventCard from "../EventCard";
 import ProjectJobs from "../../Project/ProjectDetails/ProjectJobs";
 import AssociatedProjects from "../AssociatedProjects";
@@ -78,7 +77,7 @@ const MentorDashboard = () => {
             Associated Projects
           </h1>
         </div>
-        <div className="flex flex-wrap md:flex-nowrap gap-4 justify-center items-center mt-4 md:mb-8">
+        <div className="flex flex-wrap items-center mt-4 pb-4">
           {/* <AssociatedProjects />
           <AssociatedProjects /> */}
           <MentorAssociated />

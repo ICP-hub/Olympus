@@ -6,7 +6,7 @@ import {
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import { useNavigate } from 'react-router-dom';
 
-const MentorsProfileDetailsCard = ({ data, profile, type, name, role, socials, addButton, filter }) => {
+const MentorsProfileDetailsCard = ({ data, isProjectLive, profile, type, name, role, socials, addButton, filter }) => {
     const navigate = useNavigate();
 
     if (!data) {
@@ -15,7 +15,7 @@ const MentorsProfileDetailsCard = ({ data, profile, type, name, role, socials, a
 
     return (
         <>
-            {addButton && (
+            {addButton && isProjectLive && (
                 <div className="w-full flex justify-end mb-4">
                     <button onClick={() => navigate(`/view-mentors/${data?.uid}`)} className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900">
                         Associate Mentor

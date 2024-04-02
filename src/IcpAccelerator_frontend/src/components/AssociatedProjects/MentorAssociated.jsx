@@ -37,19 +37,19 @@ const MentorAssociated = () => {
   }, [actor, principal]);
 
   return (
-    <div className='md:mx-6'>
-      <div className="flex flex-row space-x-4 overflow-x-auto">
-        {data && data.length === 0 ? (
-          <NoDataCard />
-        ) : (
-          data.map((project, index) => (
-            <AssociatedProjects data={project} key={index} />
-          ))
-        )}
-
-      </div>
-
-    </div>
+    <>
+      {data && data.length === 0 ? (
+        <NoDataCard />
+      ) : (
+        data.map((project, index) => {
+          return (
+            <div key={index} className='w-full lg:w-1/2 p-2'>
+              <AssociatedProjects data={project} />
+            </div>
+          )
+        })
+      )}
+    </>
   );
 };
 
