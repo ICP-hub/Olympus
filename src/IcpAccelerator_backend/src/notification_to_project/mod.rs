@@ -308,8 +308,8 @@ pub fn accept_offer_of_mentor(offer_id: String, response_message: String, projec
                                             PROJECTS_ASSOCIATED_WITH_MENTOR.with(|storage| {
                                                 let mut associate_project = storage.borrow_mut();
                                                 let projects = associate_project.entry(offer.sender_principal).or_insert_with(Vec::new);
-                                                if !projects.contains(&project.params) {
-                                                    projects.push(project.params.clone());
+                                                if !projects.contains(&project) {
+                                                    projects.push(project.clone());
                                                 }
                                             });
                                         }

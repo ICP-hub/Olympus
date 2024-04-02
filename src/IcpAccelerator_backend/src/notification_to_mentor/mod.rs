@@ -281,6 +281,7 @@ pub fn accept_offer_of_project(offer_id: String, response_message: String) -> St
                                 }
 
                                 let mentors_assigned = project.params.mentors_assigned.as_mut().unwrap();
+                                
                                 if !mentors_assigned.contains(&mentor_profile.profile) {
                                     mentors_assigned.push(mentor_profile.profile.clone());
                                 }
@@ -289,8 +290,9 @@ pub fn accept_offer_of_project(offer_id: String, response_message: String) -> St
                                 PROJECTS_ASSOCIATED_WITH_MENTOR.with(|storage| {
                                     let mut associate_project = storage.borrow_mut();
                                     let projects = associate_project.entry(mentor_id).or_insert_with(Vec::new);
-                                    if !projects.contains(&project.params) {
-                                        projects.push(project.params.clone());
+                                    if !projects.contains(&project) {
+                                        //projects.push(project.params.clone());
+                                        projects.push(project.clone());
                                     }
                                 });
                             }
