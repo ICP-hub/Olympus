@@ -223,7 +223,7 @@ pub struct ProjectInfoForUserInternal {
     pub params: ProjectInfoForUser,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)] 
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct ProjectInfoInternal {
     pub params: ProjectInfo,
     pub uid: String,
@@ -653,6 +653,7 @@ pub async fn create_project(info: ProjectInfo) -> String {
         is_verified: false,
         creation_date: time(),
     };
+    
 
     PROJECT_AWAITS_RESPONSE.with(
         |awaiters: &RefCell<HashMap<Principal, ProjectInfoInternal>>| {
@@ -661,6 +662,7 @@ pub async fn create_project(info: ProjectInfo) -> String {
             await_ers.insert(caller, new_project.clone());
         },
     );
+
     let res = send_approval_request(
         info.user_data.profile_picture.unwrap_or_else(|| Vec::new()),
         info.user_data.full_name,
@@ -745,6 +747,7 @@ pub fn get_project_id() -> String {
     })
 }
 
+//this should only be for admin
 pub fn find_project_by_id(project_id: &str) -> Option<ProjectInfoInternal> {
     APPLICATION_FORM.with(|storage| {
         for projects in storage.borrow().values() {
@@ -808,23 +811,76 @@ pub fn get_project_details_for_mentor_and_investor(
     project_internal
 }
 
-// pub fn list_all_projects() -> HashMap<Principal, ProjectVecWithRoles> {
-//     let project_awaiters = APPLICATION_FORM.with(|awaiters| awaiters.borrow().clone());
 
-//     let mut project_with_roles_map: HashMap<Principal, ProjectVecWithRoles> = HashMap::new();
+#[query]
+pub fn get_project_public_information_using_id(
+    project_id: String,
+) -> ProjectPublicInfoInternal {
+    let project_details = find_project_by_id(project_id.as_str()).expect("project not found");
+    let project_id = project_id.to_string().clone();
 
-//     for (principal, vc_internal) in project_awaiters.iter() {
-//         let roles = get_roles_for_principal(*principal);
-//         let project_with_roles = ProjectVecWithRoles {
-//             project_profile: vc_internal.clone(),
-//             roles,
-//         };
+    let project = ProjectPublicInfo {
+        project_id,
+        project_name: project_details.params.project_name,
+        project_logo: project_details.params.project_logo,
+        preferred_icp_hub: project_details.params.preferred_icp_hub,
+        live_on_icp_mainnet: project_details.params.live_on_icp_mainnet,
+        money_raised_till_now: project_details.params.money_raised_till_now,
+        supports_multichain: project_details.params.supports_multichain,
+        project_elevator_pitch: project_details.params.project_elevator_pitch,
+        project_area_of_focus: project_details.params.project_area_of_focus,
+        promotional_video: project_details.params.promotional_video,
+        github_link: project_details.params.github_link,
+        reason_to_join_incubator: project_details.params.reason_to_join_incubator,
+        project_description: project_details.params.project_description,
+        project_cover: project_details.params.project_cover,
+        project_team: project_details.params.project_team,
+        token_economics: project_details.params.token_economics,
+        technical_docs: project_details.params.technical_docs,
+        long_term_goals: project_details.params.long_term_goals,
+        target_market: project_details.params.target_market,
+        self_rating_of_project: project_details.params.self_rating_of_project,
+        user_data: project_details.params.user_data,
+        mentors_assigned: project_details.params.mentors_assigned,
+        vc_assigned: project_details.params.vc_assigned,
+        project_twitter: project_details.params.project_twitter,
+        project_linkedin: project_details.params.project_linkedin,
+        project_website: project_details.params.project_website,
+        project_discord: project_details.params.project_discord,
+        upload_private_documents: project_details.params.upload_private_documents,
+        public_docs: project_details.params.public_docs,
+        dapp_link: project_details.params.dapp_link,
+    };
 
-//         project_with_roles_map.insert(*principal, project_with_roles);
-//     }
+    let project_internal = ProjectPublicInfoInternal {
+        params: project,
+        uid: project_details.uid,
+        is_active: project_details.is_active,
+        is_verified: project_details.is_verified,
+        creation_date: project_details.creation_date
+    };
 
-//     project_with_roles_map
-// }
+    project_internal
+}
+
+#[query]
+pub fn list_all_projects_for_admin() -> HashMap<Principal, ProjectVecWithRoles> {
+    let project_awaiters = APPLICATION_FORM.with(|awaiters| awaiters.borrow().clone());
+
+    let mut project_with_roles_map: HashMap<Principal, ProjectVecWithRoles> = HashMap::new();
+
+    for (principal, vc_internal) in project_awaiters.iter() {
+        let roles = get_roles_for_principal(*principal);
+        let project_with_roles = ProjectVecWithRoles {
+            project_profile: vc_internal.clone(),
+            roles,
+        };
+
+        project_with_roles_map.insert(*principal, project_with_roles);
+    }
+
+    project_with_roles_map
+}
 
 #[derive(CandidType)]
 pub struct ListAllProjects {

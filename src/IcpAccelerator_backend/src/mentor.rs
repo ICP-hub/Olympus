@@ -37,16 +37,17 @@ impl MentorProfile {
             }
         }
 
-        if let Some(ref exisitng_icp_project_porfolio) = self.existing_icp_project_porfolio {
-            if exisitng_icp_project_porfolio.trim().is_empty() {
-                return Err("Field cannot be empty".into());
-            }
-        }
-        if let Some(ref multichain) = self.multichain {
-            if multichain.trim().is_empty() {
-                return Err("Field cannot be empty".into());
-            }
-        }
+        // if let Some(ref exisitng_icp_project_porfolio) = self.existing_icp_project_porfolio {
+        //     if exisitng_icp_project_porfolio.trim().is_empty() {
+        //         return Err("Field cannot be empty".into());
+        //     }
+        // }
+        
+        // if let Some(ref multichain) = self.multichain {
+        //     if multichain.trim().is_empty() {
+        //         return Err("Field cannot be empty".into());
+        //     }
+        // }
 
         Ok(())
     }
@@ -111,7 +112,7 @@ pub async fn register_mentor(profile: MentorProfile) -> String {
 
     if already_registered {
         ic_cdk::println!("This Principal is already registered");
-        return "This Principal is already registered.".to_string();
+        return "you are a mentor already".to_string();
     }
 
     ROLE_STATUS_ARRAY.with(|role_status| {

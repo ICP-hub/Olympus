@@ -277,9 +277,8 @@ fn get_all_roles() -> RolesResponse {
 
 #[update]
 async fn register_mentor_candid(profile: MentorProfile) -> String {
-    mentor::register_mentor(profile).await;
-
-    "request has been made to admin".to_string()
+    mentor::register_mentor(profile).await
+    //"request has been made to admin".to_string()
 }
 
 // #[query]

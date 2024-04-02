@@ -90,7 +90,7 @@ impl VentureCapitalist {
     }
 }
 
-#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct VentureCapitalistInternal {
     pub params: VentureCapitalist,
     pub uid: String,
