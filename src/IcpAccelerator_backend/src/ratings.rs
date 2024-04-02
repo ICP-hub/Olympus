@@ -62,11 +62,11 @@ pub struct MainLevelRatings {
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct RatingAverages {
-    pub mentor_average: Option<f64>,
-    pub vc_average: Option<f64>,
-    pub peer_average: Option<f64>,
-    pub own_average: Option<f64>,
-    pub overall_average: Option<f64>,
+    pub mentor_average: Vec<f64>,
+    pub vc_average: Vec<f64>,
+    pub peer_average: Vec<f64>,
+    pub own_average: Vec<f64>,
+    pub overall_average: Vec<f64>,
 }
 
 pub type ProjectRatings = HashMap<Principal, HashMap<String, Level>>;
@@ -132,23 +132,54 @@ impl fmt::Display for ParseMainLevelError {
 
 fn can_rate_again(system: &RatingSystem, project_id: &String, user_id: &Principal, current_timestamp: u64, interval: u64) -> bool {
     let last_rating_time = LAST_RATING_TIMESTAMPS.with(|timestamps| {
-        timestamps.borrow()
+        let timestamps_borrowed = timestamps.borrow();
+        if !timestamps_borrowed.contains_key(project_id) {
+            ic_cdk::println!("Debug: No previous ratings found for project_id: {}", project_id);
+        }
+        timestamps_borrowed
             .get(project_id)
-            .and_then(|project_map| project_map.get(user_id))
+            .and_then(|project_map| {
+                if !project_map.contains_key(user_id) {
+                    ic_cdk::println!("Debug: No previous ratings found for user_id: {:?} in project_id: {}", user_id, project_id);
+                }
+                project_map.get(user_id)
+            })
             .cloned()
     });
 
     match last_rating_time {
-        Some(last_time) => current_timestamp - last_time >= interval,
-        None => true, 
+        Some(last_time) => {
+            let can_rate_again = current_timestamp - last_time >= interval;
+            ic_cdk::println!("Debug: Last rating time for user_id: {:?} in project_id: {} was at {}. Can rate again: {}", user_id, project_id, last_time, can_rate_again);
+            can_rate_again
+        },
+        None => {
+            ic_cdk::println!("Debug: No previous rating time found for user_id: {:?} in project_id: {}. User can rate.", user_id, project_id);
+            true
+        },
     }
 }
 
 fn update_last_rating_time(project_id: &String, user_id: &Principal, timestamp: u64) {
     LAST_RATING_TIMESTAMPS.with(|timestamps| {
         let mut timestamps = timestamps.borrow_mut();
+        if timestamps.contains_key(project_id) {
+            ic_cdk::println!("Debug: Found existing project map for project_id: {}", project_id);
+        } else {
+            ic_cdk::println!("Debug: Creating new project map for project_id: {}", project_id);
+        }
+
         let project_map = timestamps.entry(project_id.clone()).or_insert_with(HashMap::new);
+
+        if let Some(existing_timestamp) = project_map.get(user_id) {
+            ic_cdk::println!("Debug: Updating existing timestamp for user_id: {:?} in project_id: {} from {} to {}", user_id, project_id, existing_timestamp, timestamp);
+        } else {
+            ic_cdk::println!("Debug: Inserting new timestamp for user_id: {:?} in project_id: {} as {}", user_id, project_id, timestamp);
+        }
+
         project_map.insert(*user_id, timestamp);
+
+        ic_cdk::println!("Debug: Updated timestamp for user_id: {:?} in project_id: {}. New timestamp: {}", user_id, project_id, timestamp);
     });
 }
 
@@ -170,17 +201,19 @@ pub fn update_rating_api(rating_data: RatingUpdate) -> String {
     ic_cdk::println!("Debug: Starting updates for Principal ID: {} with {} ratings for project ID: {}", principal_id, rating_data.ratings.len(), rating_data.project_id);
 
     let current_timestamp = time();
-    let thirteen_days_in_seconds: u64 = 13 * 24 * 60 * 60;
+    let thirteen_days_in_seconds: u64 = /*13 * 24 * 60 * */ 60 * 1000000000;
     let mut response_message = "No ratings updated.".to_string();
+    let can_rate = RATING_SYSTEM.with(|system| {
+        can_rate_again(&system.borrow(), &rating_data.project_id, &principal_id, current_timestamp, thirteen_days_in_seconds)
+    });
+    ic_cdk::println!("CAN RATE AGAIN FUNTION RETURNED {}", can_rate);
+
+    if !can_rate {
+        ic_cdk::println!("Debug: User cannot rate again due to the 13-day rule.");
+        return "You cannot rate this project again yet.".to_string();
+    }
 
     RATING_SYSTEM.with(|system| {
-        let can_rate = can_rate_again(&system.borrow(), &rating_data.project_id, &principal_id, current_timestamp, thirteen_days_in_seconds);
-
-        if !can_rate {
-            println!("Debug: User cannot rate again due to the 13-day rule.");
-            response_message = "You cannot rate this project again yet.".to_string();
-            return; 
-        }
         let mut system = system.borrow_mut();
         let project_ratings = system.entry(rating_data.project_id.clone()).or_insert_with(HashMap::new);
         ic_cdk::println!("Debug Line 193: Retrieved or inserted project ratings for project ID: {}", rating_data.project_id);
@@ -225,6 +258,14 @@ fn round_one_decimal(value: Option<f64>) -> Option<f64> {
 
 
 pub fn calculate_average_api(project_id: &str) -> RatingAverages {
+    let mut averages = RatingAverages {
+        mentor_average: Vec::new(),
+        vc_average: Vec::new(),
+        peer_average: Vec::new(),
+        own_average: Vec::new(),
+        overall_average: Vec::new(),
+    };
+
     let total_levels = 8;
     RATING_SYSTEM.with(|system| {
         let system = system.borrow();
@@ -266,8 +307,17 @@ pub fn calculate_average_api(project_id: &str) -> RatingAverages {
                 ic_cdk::println!("Counts - Mentor: {}, VC: {}, Own: {}", mentor_count, vc_count, own_count);
 
                 let mentor_average = if mentor_count > 0 { mentor_sub_level_sum as f64 / total_levels as f64 } else { 0.0 };
+                if mentor_count > 0 {
+                    averages.mentor_average.push(mentor_sub_level_sum as f64 / total_levels as f64);
+                }
                 let vc_average = if vc_count > 0 { vc_sub_level_sum as f64 / total_levels as f64 } else { 0.0 };
+                if vc_count > 0 {
+                    averages.vc_average.push(vc_sub_level_sum as f64 / total_levels as f64 );
+                }
                 let own_average = if own_count > 0 { own_sub_level_sum as f64 / total_levels as f64 } else { 0.0 };
+                if own_count > 0 {
+                    averages.own_average.push(own_sub_level_sum as f64 / total_levels as f64 );
+                }
                 ic_cdk::println!("Calculated averages - Mentor: {:?}, VC: {:?}, Own: {:?}", mentor_average, vc_average, own_average);
                 let combined_vc_mentor_average = if vc_count + mentor_count > 0 {
                     (vc_sub_level_sum + mentor_sub_level_sum) as f64 / (total_levels) as f64
@@ -276,17 +326,12 @@ pub fn calculate_average_api(project_id: &str) -> RatingAverages {
                 };
                 ic_cdk::println!("Combined VC And Mentor Average Is: {:?}", combined_vc_mentor_average);
 
-                let overall_average = (combined_vc_mentor_average * 0.6) + (own_average * 0.4);
+                let overall_average_as_f64 = (combined_vc_mentor_average * 0.6) + (own_average * 0.4);
+                averages.overall_average.push(overall_average_as_f64);
 
-                ic_cdk::println!("Overall average calculated: {:?}", overall_average);
+                ic_cdk::println!("Overall average calculated: {:?}", overall_average_as_f64);
 
-                return RatingAverages {
-                    mentor_average: round_one_decimal(Some(mentor_average)),
-                    vc_average: round_one_decimal(Some(vc_average)),
-                    peer_average: None, // Assuming peer ratings are not part of this calculation
-                    own_average: round_one_decimal(Some(own_average)),
-                    overall_average: round_one_decimal(Some(overall_average)),
-                };
+                return averages
             } else {
                 ic_cdk::println!("No recent timestamp found for project ID: {}", project_id);
             }
@@ -294,13 +339,7 @@ pub fn calculate_average_api(project_id: &str) -> RatingAverages {
             ic_cdk::println!("No ratings found for project ID: {}", project_id);
         }
 
-        RatingAverages {
-            mentor_average: None,
-            vc_average: None,
-            peer_average: None,
-            own_average: None,
-            overall_average: None,
-        }
+        averages
     })
 }
 
