@@ -54,11 +54,11 @@ impl VentureCapitalist {
         //     return Err("Invalid input for funds size".into());
         // }
 
-        if let Some(money_invested) = self.money_invested {
-            if money_invested == 0.0 || money_invested.is_nan() {
-                return Err("Field cannot be empty".into());
-            }
-        }
+        // if let Some(money_invested) = self.money_invested {
+        //     if money_invested == 0.0 || money_invested.is_nan() {
+        //         return Err("Field cannot be empty".into());
+        //     }
+        // }
 
         // if self.average_check_size == 0.0 || self.average_check_size.is_nan() {
         //     return Err("Invalid input for funds size".into());
@@ -80,11 +80,11 @@ impl VentureCapitalist {
         //     }
         // }
 
-        if self.number_of_portfolio_companies <= u16::MIN
-            || self.number_of_portfolio_companies > u16::MAX
-        {
-            return Err("Invalid Value".into());
-        }
+        // if self.number_of_portfolio_companies <= u16::MIN
+        //     || self.number_of_portfolio_companies > u16::MAX
+        // {
+        //     return Err("Invalid Value".into());
+        // }
 
         Ok(())
     }
