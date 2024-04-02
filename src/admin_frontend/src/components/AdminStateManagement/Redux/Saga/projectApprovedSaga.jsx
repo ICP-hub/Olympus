@@ -17,7 +17,7 @@ function* fetchProjectApprovedHandler() {
     const actor = yield select(selectActor);
     const allProjectApprovedStatus = yield call([
       actor,
-      actor.list_all_projects,
+      actor.list_all_projects_for_admin,
     ]);
 
     console.log("allProjectApprovedStatus  => ", allProjectApprovedStatus);
@@ -25,13 +25,6 @@ function* fetchProjectApprovedHandler() {
       ([principal, { project_profile, roles }]) => {
         const principalText = principalToText(principal);
       
-      
-        // const profilePictureBase64 = project_profile[0].params.user_data
-        //   .profile_picture
-        //   ? uint8ArrayToBase64(project_profile[0].params.user_data.profile_picture)
-        //   : null;
-
-
           const profilePictureBase64 = project_profile[0].params.user_data
           .profile_picture[0] && project_profile[0].params.user_data
           .profile_picture[0] instanceof Uint8Array && project_profile[0].params.user_data
