@@ -444,11 +444,11 @@ type Rating = record {
   rating : float64;
 };
 type RatingAverages = record {
-  peer_average : opt float64;
-  own_average : opt float64;
-  overall_average : opt float64;
-  vc_average : opt float64;
-  mentor_average : opt float64;
+  peer_average : vec float64;
+  own_average : vec float64;
+  overall_average : vec float64;
+  vc_average : vec float64;
+  mentor_average : vec float64;
 };
 type RatingUpdate = record {
   ratings : vec Rating;
@@ -525,7 +525,7 @@ type SeventyInfoFounder = record {
   employee_count : opt text;
 };
 type SpotlightDetails = record {
-  project_details : ProjectInfo;
+  project_details : ProjectInfoInternal;
   added_by : principal;
   project_id : text;
   approval_time : nat64;
@@ -850,6 +850,7 @@ service : {
   get_self_declined_requests_for_mentor : () -> (vec OfferToSendToMentor) query;
   get_self_declined_requests_for_project : () -> (vec OfferToMentor) query;
   get_self_declined_requests_of_project : (text) -> (vec OfferToInvestor) query;
+  get_spotlight_project_uids : () -> (vec text) query;
   get_spotlight_projects : () -> (vec SpotlightDetails) query;
   get_suggestions_by_parent_id_caller : (text, nat64) -> (vec Suggestion) query;
   get_suggestions_by_status_caller : (text, text) -> (vec Suggestion) query;

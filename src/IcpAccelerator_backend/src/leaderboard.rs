@@ -68,11 +68,12 @@ pub fn get_leaderboard_by_ratings() -> Vec<LeaderboardEntryForRatings> {
         let system = system.borrow();
 
         for (project_id, _) in system.iter() {
-            if let Some(average_ratings) = calculate_average_api(project_id).overall_average {
-                // Here, average_ratings is successfully unwrapped from the Option
+            let averages = calculate_average_api(project_id);
+            if let Some(overall_average) = averages.overall_average.get(0) {
+                // Assuming you want the first (or most recent) overall average rating
                 leaderboard.push(LeaderboardEntryForRatings {
                     project_id: Some(project_id.clone()),
-                    average_rating: Some(average_ratings), // Assuming .overall is a field on RatingAverages
+                    average_rating: Some(*overall_average), // Directly using the f64 value
                 });
             }
         }

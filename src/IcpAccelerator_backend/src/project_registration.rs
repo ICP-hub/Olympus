@@ -302,7 +302,7 @@ pub struct ProjectVecWithRoles {
 pub struct SpotlightDetails {
     pub added_by: Principal,
     pub project_id: String,
-    pub project_details: ProjectInfo,
+    pub project_details: ProjectInfoInternal,
     pub approval_time: u64,
 }
 
@@ -903,7 +903,7 @@ pub fn list_all_projects() -> Vec<ListAllProjects> {
                 let project_info = ListAllProjects {
                     principal: principal.clone(),
                     params: project.clone(),
-                    overall_average: get_rating.overall_average,
+                    overall_average: Some(get_rating.overall_average[0]),
                 };
 
                 list_all_projects.push(project_info)

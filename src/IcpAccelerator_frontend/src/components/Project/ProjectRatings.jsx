@@ -46,6 +46,66 @@ const ProjectRatings = ({ data }) => {
       level_number: 1,
       level_name: 'Team',
       rating: 35,
+      sub_level_number: 4,
+      sub_level: 'Validating an Investable Market',
+    },
+    {
+      level_number: 2,
+      level_name: 'Problem and Vision',
+      rating: 35,
+      sub_level_number: 3,
+      sub_level: 'Setting the Vision',
+    },
+    {
+      level_number: 3,
+      level_name: 'Value Prop',
+      rating: 35,
+      sub_level_number: 1,
+      sub_level: 'Solidifying the Value Proposition',
+    },
+    {
+      level_number: 4,
+      level_name: 'Product',
+      rating: 35,
+      sub_level_number: 6,
+      sub_level: 'Moving Beyond Early Adopters',
+    },
+    {
+      level_number: 5,
+      level_name: 'Market',
+      rating: 35,
+      sub_level_number: 2,
+      sub_level: 'Exit in Sight',
+    },
+    {
+      level_number: 6,
+      level_name: 'Business Model',
+      rating: 35,
+      sub_level_number: 8,
+      sub_level: 'Establishing the Founding Team',
+    },
+    {
+      level_number: 7,
+      level_name: 'Scale',
+      rating: 35,
+      sub_level_number: 7,
+      sub_level: 'Moving Beyond Early Adopters',
+    },
+    {
+      level_number: 8,
+      level_name: 'Exit',
+      rating: 35,
+      sub_level_number: 3,
+      sub_level: 'Validating an Investable Market',
+    },
+  ]);
+
+  
+  const [sendingDataTwo, setSendingDataTwo] = useState([
+    {
+      level_number: 1,
+      level_name: 'Team',
+      rating: 35,
       sub_level_number: 5,
       sub_level: 'Validating an Investable Market',
     },
@@ -100,6 +160,66 @@ const ProjectRatings = ({ data }) => {
     },
   ]);
 
+  // const [sendingData, setSendingData] = useState([
+  //   {
+  //     level_number: 1,
+  //     level_name: 'Team',
+  //     rating: 0,
+  //     sub_level_number: 0,
+  //     sub_level: '',
+  //   },
+  //   {
+  //     level_number: 2,
+  //     level_name: 'Problem and Vision',
+  //     rating: 0,
+  //     sub_level_number: 0,
+  //     sub_level: '',
+  //   },
+  //   {
+  //     level_number: 3,
+  //     level_name: 'Value Prop',
+  //     rating: 0,
+  //     sub_level_number: 0,
+  //     sub_level: '',
+  //   },
+  //   {
+  //     level_number: 4,
+  //     level_name: 'Product',
+  //     rating: 0,
+  //     sub_level_number: 0,
+  //     sub_level: '',
+  //   },
+  //   {
+  //     level_number: 5,
+  //     level_name: 'Market',
+  //     rating: 0,
+  //     sub_level_number: 0,
+  //     sub_level: '',
+  //   },
+  //   {
+  //     level_number: 6,
+  //     level_name: 'Business Model',
+  //     rating: 0,
+  //     sub_level_number: 0,
+  //     sub_level: '',
+  //   },
+  //   {
+  //     level_number: 7,
+  //     level_name: 'Scale',
+  //     rating: 0,
+  //     sub_level_number: 0,
+  //     sub_level: '',
+  //   },
+  //   {
+  //     level_number: 8,
+  //     level_name: 'Exit',
+  //     rating: 0,
+  //     sub_level_number: 0,
+  //     sub_level: '',
+  //   },
+  // ]);
+
+
   const actor = useSelector((currState) => currState.actors.actor);
 
   // useEffect(() => {
@@ -143,25 +263,25 @@ const ProjectRatings = ({ data }) => {
       //   message: ratingDescription,
       //   project_id: data?.uid,
       // current_role: "project",
-        // }
+      // }
 
 
-        await actor.update_rating(params)
-          .then((result) => {
-            console.log('result-in-update_rating', result)
-            // if (result) {
-            //   handleRatingCloseModal();
-            //   toast.success('review added successfully')
-            // } else {
-            //   handleRatingCloseModal();
-            //   toast.error('something got wrong')
-            // }
-          })
-          .catch((error) => {
-            console.log('error-in-update_rating', error)
-            // toast.error('something got wrong')
-            // handleRatingCloseModal();
-          })
+      await actor.update_rating(params)
+        .then((result) => {
+          console.log('result-in-update_rating', result)
+          // if (result) {
+          //   handleRatingCloseModal();
+          //   toast.success('review added successfully')
+          // } else {
+          //   handleRatingCloseModal();
+          //   toast.error('something got wrong')
+          // }
+        })
+        .catch((error) => {
+          console.log('error-in-update_rating', error)
+          // toast.error('something got wrong')
+          // handleRatingCloseModal();
+        })
     }
   }
 
@@ -183,7 +303,20 @@ const ProjectRatings = ({ data }) => {
       current_role: "project",
       ratings: sendingData
     }
-    // handleAddRating(argument)
+    handleAddRating(argument)
+    // Reset form or navigate to next page
+    // setCurrentStep(0);
+  };
+
+  const handleSubmitTwo = () => {
+    // Your submission logic here
+    console.log("Form submitted:", sendingData);
+    let argument = {
+      project_id: data?.uid,
+      current_role: "project",
+      ratings: sendingDataTwo
+    }
+    handleAddRating(argument)
     // Reset form or navigate to next page
     // setCurrentStep(0);
   };
@@ -229,14 +362,18 @@ const ProjectRatings = ({ data }) => {
   const appendSendDataFunc = (name, step) => {
     console.log('name', name);
     console.log('step', step);
-    setCurrentStep((prevStep) => prevStep + 1);
+    console.log('currentStep', currentStep)
     // let sendingArray = [...sendingData]
     // const foundObject = sendingArray.find(item => item.level_name === name);
     // const foundIndex = sendingArray.findIndex(item => item.level_name === name);
     // if (foundObject && foundIndex !== -1) {
-    //   sendingArray[foundIndex - 1].sub_level = rubric_table_data[currentStep].levels[step].title;
+    //   sendingArray[foundIndex].sub_level = rubric_table_data[currentStep].levels[step].title;
+    //   sendingArray[foundIndex].sub_level_number = step + 1;
     // }
+
+    // console.log('sendingArray ====>>>>>', sendingArray)
     // setSendingData(sendingArray);
+    setCurrentStep((prevStep) => prevStep + 1);
     setShowConsentForm(false);
     setSelectedValue(0);
   };
@@ -250,14 +387,14 @@ const ProjectRatings = ({ data }) => {
   // }
   // console.log('sliderValues[sliderKeys[currentStep]]', sliderValues[sliderKeys[currentStep]])
   // console.log('sliderValuesProgress[sliderKeys[currentStep]]================>>>>>>>>>>', sliderValuesProgress[sliderKeys[currentStep]])
-  
+
   // console.log('sliderValues[sliderKeys[currentStep]]', sliderValues[sliderKeys[currentStep]] + 1)
   // console.log('sliderValues[sliderKeys[currentStep]]', Math.round((sliderValues[sliderKeys[currentStep]] + 1) * 100 / 9))
   return (
     <section className="bg-gray-100 w-full h-full lg1:px-[4%] py-[2%] px-[5%]">
       <div className="container">
         {/* Render only the current step */}
-        {currentStep < totalSteps && (
+        {/* {currentStep < totalSteps && ( */}
           <div className="mix-blend-darken bg-[#B9C0F3] text-gray-800 my-4 rounded shadow-md w-full mx-auto p-8">
             <div className="flex items-center justify-between p-4 cursor-pointer">
               <h2 className="text-lg font-semibold text-white text-nowrap">
@@ -314,29 +451,29 @@ const ProjectRatings = ({ data }) => {
                         <div key={key}
                           className="slider-mark bg-transparent rounded-md h-1 w-1"
                           // style={{ ...style, left: `${(500/8) * (key + 1) }px`, top: "0px" }}>
-                          style={{ ...style, left: `${(93.5/8) * key}%`, top: "0px" }}>
+                          style={{ ...style, left: `${(93.5 / 8) * key}%`, top: "0px" }}>
                           {/* // style={key === 7 ? { ...style, right: "6%", top: "0px" } : { ...style, top: "0px" }}>  */}
                           {/* {key > 0 ? */}
-                            <div className="flex flex-row text-white items-center space-x-1 relative -top-8 justify-between">
-                              <span>Level</span>
-                              <span>{key + 1}</span>
-                              <div className="relative group">
-                                <span className="cursor-pointer">{alertCircle}</span>
-                                <div className="absolute hidden group-hover:block bg-transparent text-white p-2 rounded-lg shadow-lg min-w-[250px] -left-14 -top-[6.95rem] z-20 h-32 drop-shadow-sm backdrop-blur-lg border-white border-2 overflow-hidden">
-                                  <div className="relative z-10 p-2">
-                                    <div className="font-bold text-black text-sm">
-                                      {level_title}
-                                    </div>
-                                    <div className="py-1">
-                                      <div className="line-clamp-3 overflow-y-scroll">
-                                        {level_desc}
-                                      </div>
+                          <div className="flex flex-row text-white items-center space-x-1 relative -top-8 justify-between">
+                            <span>Level</span>
+                            <span>{key + 1}</span>
+                            <div className="relative group">
+                              <span className="cursor-pointer">{alertCircle}</span>
+                              <div className="absolute hidden group-hover:block bg-transparent text-white p-2 rounded-lg shadow-lg min-w-[250px] -left-14 -top-[6.95rem] z-20 h-32 drop-shadow-sm backdrop-blur-lg border-white border-2 overflow-hidden">
+                                <div className="relative z-10 p-2">
+                                  <div className="font-bold text-black text-sm">
+                                    {level_title}
+                                  </div>
+                                  <div className="py-1">
+                                    <div className="line-clamp-3 overflow-y-scroll">
+                                      {level_desc}
                                     </div>
                                   </div>
                                 </div>
                               </div>
                             </div>
-                            {/* : ''} */}
+                          </div>
+                          {/* : ''} */}
                         </div>
                       )
                     }}
@@ -345,8 +482,11 @@ const ProjectRatings = ({ data }) => {
               </div>
             </div>
           </div>
-        )}
-        <div className="flex justify-end mt-4">
+        {/* )} */}
+
+
+
+        {/* <div className="flex justify-end mt-4">
           {currentStep > 0 && (
             <button onClick={handlePrevious}
               type="button"
@@ -354,22 +494,26 @@ const ProjectRatings = ({ data }) => {
               Back
             </button>
           )}
-          {currentStep < totalSteps - 1 && (
-            <button onClick={handleNext}
-            // <button onClick={handleSubmit}
+          {currentStep < totalSteps && (
+            // <button onClick={handleNext}
+              <button onClick={handleSubmit}
               type="button"
               className="ml-3 font-bold text-white bg-blue-500 hover:bg-blue-600  focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md w-auto sm:w-auto px-5 py-2 text-center mb-4">
               Next
             </button>
           )}
-          {currentStep === totalSteps - 1 && (
-            <button onClick={handleSubmit}
+          {currentStep < totalSteps && (
+            <button onClick={handleSubmitTwo}
               type="button"
               className="ml-3  font-bold text-white bg-blue-500 hover:bg-blue-600  focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md w-auto sm:w-auto px-5 py-2 text-center mb-4">
               Submit
             </button>
           )}
-        </div>
+        </div> */}
+
+
+
+        
       </div>
       {showConsentForm && (
         <ConsentForm
