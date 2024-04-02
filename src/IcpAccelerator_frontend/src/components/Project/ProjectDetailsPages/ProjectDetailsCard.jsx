@@ -12,13 +12,14 @@ function ProjectDetailsCard({ data, image, title, rubric, tags, socials, doj, co
         return null;
     }
     const navigate = useNavigate();
+    
     let logo = data?.params?.project_logo ? uint8ArrayToBase64(data?.params?.project_logo) : girl;
     let name = data?.params?.project_name ?? '';
     let area_tags = data?.params?.project_area_of_focus ?? '';
     let linkenin_link = data?.params?.project_linkedin[0] ?? '';
     let twitter_link = data?.params?.project_twitter[0] ?? '';
     let website_link = data?.params?.project_website[0] ?? '';
-    let dapp_link = data?.params?.dapp_link?.[0].trim() !== '' ? data?.params?.dapp_link?.[0] : null;
+    let dapp_link = data?.params?.dapp_link[0] && data?.params?.dapp_link[0].trim() !== '' ? data?.params?.dapp_link[0] : null;
     let pro_country = data?.params?.user_data?.country ?? "";
     let joined_on = data?.creation_date ? formatFullDateFromBigInt(data?.creation_date) : "";
 

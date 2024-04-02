@@ -49,7 +49,7 @@ const ProjectRatings = ({ data }) => {
       sub_level_number: 4,
       sub_level: 'Validating an Investable Market',
       project_id: data?.uid,
-      current_role: "Mentor"
+      current_role: "project"
     },
     {
       level_number: 2,
@@ -58,7 +58,7 @@ const ProjectRatings = ({ data }) => {
       sub_level_number: 2,
       sub_level: 'Setting the Vision',
       project_id: data?.uid,
-      current_role: "Mentor"
+      current_role: "project"
     },
     {
       level_number: 3,
@@ -67,7 +67,7 @@ const ProjectRatings = ({ data }) => {
       sub_level_number: 3,
       sub_level: 'Solidifying the Value Proposition',
       project_id: data?.uid,
-      current_role: "Mentor"
+      current_role: "project"
     },
     {
       level_number: 4,
@@ -76,7 +76,7 @@ const ProjectRatings = ({ data }) => {
       sub_level_number: 6,
       sub_level: 'Moving Beyond Early Adopters',
       project_id: data?.uid,
-      current_role: "Mentor"
+      current_role: "project"
     },
     {
       level_number: 5,
@@ -85,7 +85,7 @@ const ProjectRatings = ({ data }) => {
       sub_level_number: 9,
       sub_level: 'Exit in Sight',
       project_id: data?.uid,
-      current_role: "Mentor"
+      current_role: "project"
     },
     {
       level_number: 6,
@@ -94,7 +94,7 @@ const ProjectRatings = ({ data }) => {
       sub_level_number: 1,
       sub_level: 'Establishing the Founding Team',
       project_id: data?.uid,
-      current_role: "Mentor"
+      current_role: "project"
     },
     {
       level_number: 7,
@@ -103,7 +103,7 @@ const ProjectRatings = ({ data }) => {
       sub_level_number: 6,
       sub_level: 'Moving Beyond Early Adopters',
       project_id: data?.uid,
-      current_role: "Mentor"
+      current_role: "project"
     },
     {
       level_number: 8,
@@ -112,7 +112,7 @@ const ProjectRatings = ({ data }) => {
       sub_level_number: 4,
       sub_level: 'Validating an Investable Market',
       project_id: data?.uid,
-      current_role: "Mentor"
+      current_role: "project"
     },
   ]);
 
@@ -158,7 +158,7 @@ const ProjectRatings = ({ data }) => {
       //   rating,
       //   message: ratingDescription,
       //   project_id: data?.uid,
-      current_role: "Mentor",
+      current_role: "project",
         // }
 
 
@@ -185,7 +185,7 @@ const ProjectRatings = ({ data }) => {
   const handleSubmit = () => {
     // Your submission logic here
     console.log("Form submitted:", sendingData);
-    handleAddRating(sendingData)
+    // handleAddRating(sendingData)
     // Reset form or navigate to next page
     // setCurrentStep(0);
   };

@@ -317,6 +317,8 @@ pub type DeclinedDetails = HashMap<String, ProjectUpdateRequest>;
 pub type ProjectDetails = HashMap<Principal, ProjectInfoInternal>;
 pub type JobDetails = HashMap<Principal, Vec<JobsInternal>>;
 pub type SpotlightProjects = Vec<SpotlightDetails>;
+pub type MoneyAccess = HashMap<Principal, Vec<AccessRequest>>;
+pub type PrivateDocsAccess = HashMap<Principal, Vec<AccessRequest>>;
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct AccessRequest {
@@ -389,8 +391,6 @@ impl ProjectReview {
     }
 }
 
-pub type MoneyAccess = HashMap<Principal, Vec<AccessRequest>>;
-pub type PrivateDocsAccess = HashMap<Principal, Vec<AccessRequest>>;
 thread_local! {
     pub static PROJECT_ACCESS_NOTIFICATIONS : RefCell<HashMap<String, Vec<ProjectNotification>>> = RefCell::new(HashMap::new());
     pub static  APPLICATION_FORM: RefCell<ApplicationDetails> = RefCell::new(ApplicationDetails::new());
@@ -419,167 +419,162 @@ thread_local! {
 
 }
 
-pub fn pre_upgrade() {
-    // Serialize and write data to stable storage
-    APPLICATION_FORM.with(|registry| {
-        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
-
-        let mut writer = StableWriter::default();
-        writer
-            .write(&serialized)
-            .expect("Failed to write to stable storage");
+pub fn pre_upgrade_project_registration() {
+    PROJECT_ACCESS_NOTIFICATIONS.with(|data| {
+        let cloned_data = data.borrow().clone();
+        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save PROJECT_ACCESS_NOTIFICATIONS");
     });
-    PROJECT_ACCESS_NOTIFICATIONS.with(|registry| {
-        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
-
-        let mut writer = StableWriter::default();
-        writer
-            .write(&serialized)
-            .expect("Failed to write to stable storage");
+    APPLICATION_FORM.with(|data| {
+        let cloned_data = data.borrow().clone();
+        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save APPLICATION_FORM");
     });
-    PROJECT_DETAILS.with(|registry| {
-        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
-
-        let mut writer = StableWriter::default();
-        writer
-            .write(&serialized)
-            .expect("Failed to write to stable storage");
+    PROJECT_DETAILS.with(|data| {
+        let cloned_data = data.borrow().clone();
+        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save PROJECT_DETAILS");
     });
-    NOTIFICATIONS.with(|registry| {
-        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
-
-        let mut writer = StableWriter::default();
-        writer
-            .write(&serialized)
-            .expect("Failed to write to stable storage");
+    NOTIFICATIONS.with(|data| {
+        let cloned_data = data.borrow().clone();
+        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save NOTIFICATIONS");
     });
-    OWNER_NOTIFICATIONS.with(|registry| {
-        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
-
-        let mut writer = StableWriter::default();
-        writer
-            .write(&serialized)
-            .expect("Failed to write to stable storage");
+    OWNER_NOTIFICATIONS.with(|data| {
+        let cloned_data = data.borrow().clone();
+        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save OWNER_NOTIFICATIONS");
     });
-    PROJECT_ANNOUNCEMENTS.with(|registry| {
-        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
-
-        let mut writer = StableWriter::default();
-        writer
-            .write(&serialized)
-            .expect("Failed to write to stable storage");
+    PROJECT_ANNOUNCEMENTS.with(|data| {
+        let cloned_data = data.borrow().clone();
+        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save PROJECT_ANNOUNCEMENTS");
     });
-    BLOG_POST.with(|registry| {
-        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
-
-        let mut writer = StableWriter::default();
-        writer
-            .write(&serialized)
-            .expect("Failed to write to stable storage");
+    BLOG_POST.with(|data| {
+        let cloned_data = data.borrow().clone();
+        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save BLOG_POST");
     });
-    PROJECT_AWAITS_RESPONSE.with(|registry| {
-        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
-
-        let mut writer = StableWriter::default();
-        writer
-            .write(&serialized)
-            .expect("Failed to write to stable storage");
+    PROJECT_AWAITS_RESPONSE.with(|data| {
+        let cloned_data = data.borrow().clone();
+        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save PROJECT_AWAITS_RESPONSE");
     });
-    DECLINED_PROJECT_REQUESTS.with(|registry| {
-        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
-
-        let mut writer = StableWriter::default();
-        writer
-            .write(&serialized)
-            .expect("Failed to write to stable storage");
+    DECLINED_PROJECT_REQUESTS.with(|data| {
+        let cloned_data = data.borrow().clone();
+        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save DECLINED_PROJECT_REQUESTS");
     });
-    PENDING_PROJECT_UPDATES.with(|registry| {
-        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
-
-        let mut writer = StableWriter::default();
-        writer
-            .write(&serialized)
-            .expect("Failed to write to stable storage");
+    PENDING_PROJECT_UPDATES.with(|data| {
+        let cloned_data = data.borrow().clone();
+        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save PENDING_PROJECT_UPDATES");
     });
-    DECLINED_PROJECT_UPDATES.with(|registry| {
-        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
-
-        let mut writer = StableWriter::default();
-        writer
-            .write(&serialized)
-            .expect("Failed to write to stable storage");
+    DECLINED_PROJECT_UPDATES.with(|data| {
+        let cloned_data = data.borrow().clone();
+        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save DECLINED_PROJECT_UPDATES");
     });
-    POST_JOB.with(|registry| {
-        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
-
-        let mut writer = StableWriter::default();
-        writer
-            .write(&serialized)
-            .expect("Failed to write to stable storage");
+    POST_JOB.with(|data| {
+        let cloned_data = data.borrow().clone();
+        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save POST_JOB");
     });
-    JOB_TYPE.with(|registry| {
-        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
-
-        let mut writer = StableWriter::default();
-        writer
-            .write(&serialized)
-            .expect("Failed to write to stable storage");
+    JOB_TYPE.with(|data| {
+        let cloned_data = data.borrow().clone();
+        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save JOB_TYPE");
     });
-    SPOTLIGHT_PROJECTS.with(|registry| {
-        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
-
-        let mut writer = StableWriter::default();
-        writer
-            .write(&serialized)
-            .expect("Failed to write to stable storage");
+    SPOTLIGHT_PROJECTS.with(|data| {
+        let cloned_data = data.borrow().clone();
+        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save SPOTLIGHT_PROJECTS");
     });
-    MONEY_ACCESS.with(|registry| {
-        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
-
-        let mut writer = StableWriter::default();
-        writer
-            .write(&serialized)
-            .expect("Failed to write to stable storage");
+    MONEY_ACCESS.with(|data| {
+        let cloned_data = data.borrow().clone();
+        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save MONEY_ACCESS");
     });
-    PRIVATE_DOCS_ACCESS.with(|registry| {
-        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
-
-        let mut writer = StableWriter::default();
-        writer
-            .write(&serialized)
-            .expect("Failed to write to stable storage");
+    PRIVATE_DOCS_ACCESS.with(|data| {
+        let cloned_data = data.borrow().clone();
+        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save PRIVATE_DOCS_ACCESS");
     });
-    MONEY_ACCESS_REQUESTS.with(|registry| {
-        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
-
-        let mut writer = StableWriter::default();
-        writer
-            .write(&serialized)
-            .expect("Failed to write to stable storage");
+    PROJECT_RATING.with(|data| {
+        let cloned_data = data.borrow().clone();
+        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save PROJECT_RATING");
     });
-    PRIVATE_DOCS_ACCESS_REQUESTS.with(|registry| {
-        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
-
-        let mut writer = StableWriter::default();
-        writer
-            .write(&serialized)
-            .expect("Failed to write to stable storage");
+    MONEY_ACCESS_REQUESTS.with(|data| {
+        let cloned_data = data.borrow().clone();
+        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save MONEY_ACCESS_REQUESTS");
+    });
+    PRIVATE_DOCS_ACCESS_REQUESTS.with(|data| {
+        let cloned_data = data.borrow().clone();
+        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save PRIVATE_DOCS_ACCESS_REQUESTS");
     });
 }
 
-pub fn post_upgrade() {
-    // Read and deserialize data from stable storage
-    let mut reader = StableReader::default();
-    let mut data = Vec::new();
-    reader
-        .read_to_end(&mut data)
-        .expect("Failed to read from stable storage");
-    let project_registry: ApplicationDetails =
-        bincode::deserialize(&data).expect("Deserialization failed");
-    // Restore data
-    APPLICATION_FORM.with(|registry| {
-        *registry.borrow_mut() = project_registry;
-    });
+pub fn post_upgrade_project_registration() {
+    let (project_access_notifications,): (HashMap<String, Vec<ProjectNotification>>, ) =
+        ic_cdk::storage::stable_restore().expect("Failed to restore PROJECT_ACCESS_NOTIFICATIONS");
+    PROJECT_ACCESS_NOTIFICATIONS.with(|data| *data.borrow_mut() = project_access_notifications);
+
+    let (application_form,): (ApplicationDetails, ) =
+        ic_cdk::storage::stable_restore().expect("Failed to restore APPLICATION_FORM");
+    APPLICATION_FORM.with(|data| *data.borrow_mut() = application_form);
+
+    let (project_details,): (ProjectDetails, ) =
+        ic_cdk::storage::stable_restore().expect("Failed to restore PROJECT_DETAILS");
+    PROJECT_DETAILS.with(|data| *data.borrow_mut() = project_details);
+
+    let (notifications,): (Notifications, ) =
+        ic_cdk::storage::stable_restore().expect("Failed to restore NOTIFICATIONS");
+    NOTIFICATIONS.with(|data| *data.borrow_mut() = notifications);
+
+    let (owner_notifications,): (HashMap<Principal, Vec<NotificationForOwner>>, ) =
+        ic_cdk::storage::stable_restore().expect("Failed to restore OWNER_NOTIFICATIONS");
+    OWNER_NOTIFICATIONS.with(|data| *data.borrow_mut() = owner_notifications);
+
+    let (project_announcements,): (ProjectAnnouncements, ) =
+        ic_cdk::storage::stable_restore().expect("Failed to restore PROJECT_ANNOUNCEMENTS");
+    PROJECT_ANNOUNCEMENTS.with(|data| *data.borrow_mut() = project_announcements);
+
+    let (blog_post,): (BlogPost, ) =
+        ic_cdk::storage::stable_restore().expect("Failed to restore BLOG_POST");
+    BLOG_POST.with(|data| *data.borrow_mut() = blog_post);
+
+    let (project_awaits_response,): (ProjectDetails, ) =
+        ic_cdk::storage::stable_restore().expect("Failed to restore PROJECT_AWAITS_RESPONSE");
+    PROJECT_AWAITS_RESPONSE.with(|data| *data.borrow_mut() = project_awaits_response);
+
+    let (declined_project_requests,): (ProjectDetails, ) =
+        ic_cdk::storage::stable_restore().expect("Failed to restore DECLINED_PROJECT_REQUESTS");
+    DECLINED_PROJECT_REQUESTS.with(|data| *data.borrow_mut() = declined_project_requests);
+
+    let (pending_project_updates,): (PendingDetails, ) =
+        ic_cdk::storage::stable_restore().expect("Failed to restore PENDING_PROJECT_UPDATES");
+    PENDING_PROJECT_UPDATES.with(|data| *data.borrow_mut() = pending_project_updates);
+
+    let (declined_project_updates,): (DeclinedDetails, ) =
+        ic_cdk::storage::stable_restore().expect("Failed to restore DECLINED_PROJECT_UPDATES");
+    DECLINED_PROJECT_UPDATES.with(|data| *data.borrow_mut() = declined_project_updates);
+
+    let (post_job,): (JobDetails, ) =
+        ic_cdk::storage::stable_restore().expect("Failed to restore POST_JOB");
+    POST_JOB.with(|data| *data.borrow_mut() = post_job);
+
+    let (job_type,): (Vec<String>, ) =
+        ic_cdk::storage::stable_restore().expect("Failed to restore JOB_TYPE");
+    JOB_TYPE.with(|data| *data.borrow_mut() = job_type);
+
+    let (spotlight_projects,): (SpotlightProjects, ) =
+        ic_cdk::storage::stable_restore().expect("Failed to restore SPOTLIGHT_PROJECTS");
+    SPOTLIGHT_PROJECTS.with(|data| *data.borrow_mut() = spotlight_projects);
+
+    let (money_access,): (HashMap<String, Vec<Principal>>, ) =
+        ic_cdk::storage::stable_restore().expect("Failed to restore MONEY_ACCESS");
+    MONEY_ACCESS.with(|data| *data.borrow_mut() = money_access);
+
+    let (private_docs_access,): (HashMap<String, Vec<Principal>>, ) =
+        ic_cdk::storage::stable_restore().expect("Failed to restore PRIVATE_DOCS_ACCESS");
+    PRIVATE_DOCS_ACCESS.with(|data| *data.borrow_mut() = private_docs_access);
+
+    let (project_rating,): (HashMap<String, Vec<(Principal, ProjectReview)>>, ) =
+        ic_cdk::storage::stable_restore().expect("Failed to restore PROJECT_RATING");
+    PROJECT_RATING.with(|data| *data.borrow_mut() = project_rating);
+
+    let (money_access_requests,): (MoneyAccess, ) =
+        ic_cdk::storage::stable_restore().expect("Failed to restore MONEY_ACCESS_REQUESTS");
+    MONEY_ACCESS_REQUESTS.with(|data| *data.borrow_mut() = money_access_requests);
+
+    let (private_docs_access_requests,): (PrivateDocsAccess, ) =
+        ic_cdk::storage::stable_restore().expect("Failed to restore PRIVATE_DOCS_ACCESS_REQUESTS");
+    PRIVATE_DOCS_ACCESS_REQUESTS.with(|data| *data.borrow_mut() = private_docs_access_requests);
+
 }
 
 pub async fn create_project(info: ProjectInfo) -> String {
@@ -689,6 +684,11 @@ pub fn get_project_info_using_principal(caller: Principal) -> Option<ProjectInfo
 #[query]
 pub fn get_project_awaiting_info_using_principal(caller: Principal) -> Option<ProjectInfoInternal> {
     PROJECT_AWAITS_RESPONSE.with(|registry| registry.borrow().get(&caller).cloned())
+}
+
+#[query]
+pub fn get_project_declined_info_using_principal(caller: Principal) -> Option<ProjectInfoInternal> {
+    DECLINED_PROJECT_REQUESTS.with(|registry| registry.borrow().get(&caller).cloned())
 }
 
 // all created projects but without ProjectInternal

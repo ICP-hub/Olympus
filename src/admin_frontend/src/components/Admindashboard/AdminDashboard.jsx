@@ -29,6 +29,8 @@ const AdminDashboard = () => {
   const allNotification = useSelector(
     (currState) => currState.notification.data
   );
+  const totalLive = useSelector((currState)=> currState.totalLive.total_Live)
+
 
   const [isAcceptModalOpen, setIsAcceptModalOpen] = useState(false);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
@@ -66,7 +68,7 @@ const AdminDashboard = () => {
               <div className="flex flex-col items-center justify-start font-bold text-lg text-white z-10">
                 <p className="flex justify-start">Live Projects</p>
                 <p className="font-extrabold -[59px] h-[62px] text-white flex justify-center xl:md:text-5xl text-2xl">
-                  0
+                  {totalLive}
                 </p>
               </div>
             </div>
@@ -107,7 +109,9 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          <div onClick={()=>navigate('/allProject')} className="rounded-[1rem] space-x-2 flex  my-2  justify-center cursor-pointer flex-col  w-full  bg-white drop-shadow-xl border-2 ">
+          <div 
+          onClick={()=>navigate('/allProject')}
+           className="rounded-[1rem] space-x-2 flex  my-2  justify-center cursor-pointer flex-col  w-full  bg-white drop-shadow-xl border-2 ">
             <div className="flex  flex-row  flex-wrap justify-around font-bold text-lg text-black items-center ">
               <div className="gap-2 flex-row flex items-center">
                 <img src={founder} alt="founder" />

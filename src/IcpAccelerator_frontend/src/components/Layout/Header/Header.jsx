@@ -90,7 +90,7 @@ const Header = ({ setModalOpen, gradient }) => {
                   ? '/project-association-requests'
                   : userCurrentRoleStatusActiveRole === 'mentor'
                     ? '/mentor-association-requests'
-                    : userCurrentRoleStatusActiveRole === 'investor'
+                    : userCurrentRoleStatusActiveRole === 'vc'
                       ? "/investor-association-requests"
                       : ''
               )}

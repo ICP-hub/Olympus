@@ -25,6 +25,7 @@ import ListedProjects from "../ListedProjects";
 import LiveProjectBar from "../liveProjectBar";
 import LiveProjects from "../LiveProjects";
 import CurrentlyRaising from "../CurrentlyRaising";
+import MentorAssociated from "../../AssociatedProjects/MentorAssociated";
 // import ProjectJobCard from "../../Project/ProjectDetails/ProjectJobCard";
 // import Announcement from "../../Project/ProjectDetails/Announcement";
 
@@ -77,9 +78,10 @@ const MentorDashboard = () => {
             Associated Projects
           </h1>
         </div>
-        <div className="flex flex-wrap md:flex-nowrap gap-4  mt-4 md:mb-8">
-          <AssociatedProjects />
-          <AssociatedProjects />
+        <div className="flex flex-wrap md:flex-nowrap gap-4 justify-center items-center mt-4 md:mb-8">
+          {/* <AssociatedProjects />
+          <AssociatedProjects /> */}
+          <MentorAssociated />
         </div>
         {/* <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
           <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">

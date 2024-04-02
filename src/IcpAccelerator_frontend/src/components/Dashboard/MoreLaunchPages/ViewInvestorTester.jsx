@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import image from "../../../../assets/images/samya.jpg";
-import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { IcpAccelerator_backend } from "../../../../../declarations/IcpAccelerator_backend/index";
-import NoDataCard from "../../Mentors/Event/NoDataCard";
+
+// Importing images
+import image from "../../../../assets/images/samya.jpg";
+import girl from "../../../../assets/images/girl.jpeg";
 const investors = [
   {
     id: 1,
@@ -16,28 +17,28 @@ const investors = [
   {
     id: 2,
     image: image,
-    name: "SamyKarim",
+    name: "QuadB",
     role: "Toshi, Managing Partner. Ex-Binance",
     company: "Reliability Engineer and DevOps",
   },
   {
     id: 2,
     image: image,
-    name: "SamyKarim",
+    name: "pcte",
     role: "Toshi, Managing Partner. Ex-Binance",
     company: "Reliability Engineer and DevOps",
   },
   {
     id: 2,
     image: image,
-    name: "SamyKarim",
+    name: "sahil",
     role: "Toshi, Managing Partner. Ex-Binance",
     company: "Tech Growth Fund",
   },
   {
     id: 2,
     image: image,
-    name: "SamyKarim",
+    name: "djjhi",
     role: "Toshi, Managing Partner. Ex-Binance",
     company: "Innovate Ventures",
   },
@@ -47,7 +48,6 @@ const ViewInvestor = () => {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [noData, setNoData] = useState(null);
-
   const actor = useSelector((currState) => currState.actors.actor);
 
   const getAllInvestors = async (caller) => {
@@ -55,7 +55,7 @@ const ViewInvestor = () => {
       .list_all_vcs()
       .then((result) => {
         console.log("result-in-get-all-investors", result);
-        if (!result || result.length == 0) {
+        if (!result || result.length === 0) {
           setNoData(true);
           setData([]);
         } else {
@@ -65,7 +65,7 @@ const ViewInvestor = () => {
       })
       .catch((error) => {
         setNoData(true);
-          setData([]);
+        setData([]);
         console.log("error-in-get-all-investors", error);
       });
   };
@@ -77,9 +77,10 @@ const ViewInvestor = () => {
       getAllInvestors(IcpAccelerator_backend);
     }
   }, [actor]);
+
   return (
     <div className="px-[4%] w-full bg-gray-100 h-screen overflow-y-scroll">
-    <div className="flex flex-col text-center items-center justify-center">
+      <div className="flex flex-col text-center items-center justify-center">
         <div className="py-8">
           <h2 className="text-[40px] font-black leading-10 bg-gradient-to-r from-[#7283EA] to-[#4087BF] bg-clip-text text-transparent transform">
             Our{" "}
@@ -116,59 +117,57 @@ const ViewInvestor = () => {
           </button>
         </div>
       </div>
-    <div className="flex flex-wrap justify-center">
-      {noData ? <NoDataCard /> :
-      data.map((investor, index) => {
-        let id = "";
-        let img = "";
-        let name = "";
-        let company = "";
-        let role = "";
-        if(noData){
-            id = investor.id;
-            img = investor.image;
-            name = investor.name;
-            // company = investor.company;
-            company = "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nesciunt cumque saepe laborum, quis error harum ad quo, nobis alias explicabo tempora. Error voluptates laudantium assumenda eum ipsum non ullam veritatis.";
-            role = investor.role;
-        }else{
-            id = investor[1]?.vc_profile?.uid;
-            img = uint8ArrayToBase64(
-              investor[1]?.vc_profile?.params?.user_data?.profile_picture[0]
-            );
-            name = investor[1]?.vc_profile?.params?.user_data?.full_name;
-            // company = investor[1]?.vc_profile?.params?.name_of_fund;
-            company = investor[1]?.vc_profile?.params?.user_data?.bio[0];
-            role = "Investor";
-        }
+      <div className="flex flex-wrap justify-center">
+        {investors.map((investor) => (
+          <div className="w-full p-4" key={investor.id}>
+            <div className="shadow-md rounded-lg overflow-hidden border-2 drop-shadow-2xl gap-4 bg-white">
+              <img
+                className="h-26 w-[20px] mx-auto rounded-3xl p-4"
+                src={investor.image}
+                alt="not found"
+              />
+              <div className="flex justify-end mr-2">
+                <p className="text-gray-300 font-bold text-md">
+                  {investor.company}
+                </p>
+              </div>
 
-        return (
-            <div className="" key={index}>
-            <div className="w-full sm:w-full md:w-full lg:w-full xl:w-full p-4">
-                <div className="shadow-md rounded-lg overflow-hidden  drop-shadow-2xl gap-2 bg-[#C1CAFF]">
-                    <div className='flex flex-col sm:flex-row gap-6 p-2'>
-                        <img className='w-full sm:w-[300.53px] rounded-md h-auto sm:h-[200.45px] flex lg:items-center lg:justify-center  ' src={img} alt="alt" />
-                        <div className='flex flex-col w-full'>
-                            <h1 className="text-black text-2xl font-extrabold">{name}</h1>
-                            <p className="text-[#737373]">{role}</p>
-                            <div className='flex flex-wrap rounded-full mt-6 text-[#737373] justify-center'>
-                                <p className=''>{company}</p>
-                            </div>
-
-                            <div className='w-100px border-2 text-gray-900 mt-2'></div>
-                            <div className='flex justify-end mt-6 xl:mr-8'>
-                                <button className=' font-bold py-2 px-4 bg-white text-[#7283EA] rounded-md'>
-                                    Reach Out
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+              <div className="ml-2">
+                <div className="text-2xl text-black flex flex-row space-x-2">
+                  <div></div>
+                  <img
+                    className="w-14 h-14 rounded-md"
+                    src={investor.image}
+                    alt="No img"
+                  />
+                  <div className="flex flex-col text-[15px]">
+                    <h3 className="font-bold">{investor.name}</h3>
+                    <p className="mt-[-2px]">{investor.role}</p>
+                  </div>
                 </div>
+                <div className="p-4">
+                  <p className="text-[#6B7280] mt-2 ">
+                    Description of the investor...
+                  </p>
+                </div>
+                <div className="flex justify-center mb-2">
+                  <p className="font-extrabold text-black text-xl">
+                    Amount Invested
+                  </p>
+                </div>
+                <div className="bg-[#B8B8B8] rounded-md flex justify-center mr-2">
+                  <button className="text-extrabold flex justify-center px-2 py-2 text-[#4E5999] font-bold ">
+                    $ 10000 USD
+                  </button>
+                </div>
+                <div className="flex mt-4 text-sm bg-[#3505B2] rounded-md justify-center mr-2 ">
+                  {/* <button className=" flex justify-center items-center text-white px-4 py-2 font-bold ">See projects</button> */}
+                </div>
+              </div>
             </div>
-        </div>
-        );
-      })}
-    </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

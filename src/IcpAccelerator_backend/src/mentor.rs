@@ -84,17 +84,19 @@ thread_local! {
 
 }
 
-
 #[query]
 pub fn get_mentor_info_using_principal(caller: Principal) -> Option<MentorInternal> {
     MENTOR_REGISTRY.with(|registry| registry.borrow().get(&caller).cloned())
 }
 
 #[query]
-pub fn get_mentor_awaiting_info_using_principal(
-    caller: Principal,
-) -> Option<MentorInternal> {
+pub fn get_mentor_awaiting_info_using_principal(caller: Principal) -> Option<MentorInternal> {
     MENTOR_AWAITS_RESPONSE.with(|registry| registry.borrow().get(&caller).cloned())
+}
+
+#[query]
+pub fn get_mentor_declined_info_using_principal(caller: Principal) -> Option<MentorInternal> {
+    DECLINED_MENTOR_REQUESTS.with(|registry| registry.borrow().get(&caller).cloned())
 }
 
 pub async fn register_mentor(profile: MentorProfile) -> String {

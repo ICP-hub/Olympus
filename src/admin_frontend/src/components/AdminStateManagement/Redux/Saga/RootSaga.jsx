@@ -13,6 +13,7 @@ import { CountSaga } from './countSaga';
 import { cycleSaga } from './cycleSaga';
 import { totalPendingSaga } from './totalPendingSaga';
 import { notificationSaga } from './notification';
+import { totalLiveSaga } from './LiveCount';
 
 export default function* rootSaga() {
     yield all([
@@ -29,6 +30,7 @@ export default function* rootSaga() {
         notificationSaga(),
         CountSaga(),
         cycleSaga(),
-        totalPendingSaga()
+        totalPendingSaga(),
+        totalLiveSaga()
     ]);
 }

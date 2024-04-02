@@ -215,6 +215,8 @@ const ProjectDetailsForInvestor = () => {
             } else {
                 fetchRubricRating(projectData);
             }
+        }else{
+            navigate('/');
         }
     }, [actor, principal, projectData]);
 
