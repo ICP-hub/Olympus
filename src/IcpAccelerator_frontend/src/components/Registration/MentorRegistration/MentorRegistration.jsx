@@ -136,8 +136,9 @@ const MentorRegistration = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
   const specificRole = useSelector(
-    (currState) => currState.current.specificRole
+    (currState) => currState.currentRoleStatus.activeRole
   );
+  console.log("specificRole is Here===>", specificRole);
   const mentorFullData = useSelector((currState) => currState.mentorData.data);
   const areaOfExpertise = useSelector(
     (currState) => currState.expertiseIn.expertise
@@ -362,17 +363,25 @@ const MentorRegistration = () => {
     let result;
 
     try {
-      // if (specificRole !== null || undefined) {
-      // console.log("update mentor functn k pass reached");
-      // result = await actor.update_mentor_profile(val);
-      // } else if (specificRole === null || specificRole === undefined) {
-      console.log("register mentor functn k pass reached");
-      await actor.register_mentor_candid(val).then((result) => {
-        toast.success(result);
-        // navigate("/")
-        window.location.href = "/";
-      });
-      // }
+      if (specificRole === "mentor") {
+        console.log("update mentor functn k pass reached");
+        result = await actor.update_mentor(val).then((result) => {
+          toast.success(result);
+          // navigate("/")
+          window.location.href = "/";
+        });
+      } else if (specificRole === null ||
+        specificRole === "user" ||
+        specificRole === "project" ||
+        specificRole === "vc"
+      ){
+        console.log("register mentor functn k pass reached");
+        await actor.register_mentor_candid(val).then((result) => {
+          toast.success(result);
+          // navigate("/")
+          window.location.href = "/";
+        });
+      }
       // await dispatch(userRoleHandler());
       // await navigate("/");
     } catch (error) {
@@ -586,13 +595,13 @@ const MentorRegistration = () => {
                       } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     >
                       <option className="text-lg font-bold" value="">
-                        Area of Intrest ⌄
+                        Area of Interest
                       </option>
                       {areaOfExpertise?.map((intrest) => (
                         <option
                           key={intrest.id}
                           value={`${intrest.name}`}
-                          className="text-lg font-bold"
+                          className="text-lg font-bold capitalize"
                         >
                           {intrest.name}
                         </option>
@@ -620,7 +629,7 @@ const MentorRegistration = () => {
                       } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     >
                       <option className="text-lg font-bold" value="">
-                        select your Country ⌄
+                        Select your Country
                       </option>
                       {countries?.map((expert) => (
                         <option
@@ -661,7 +670,7 @@ const MentorRegistration = () => {
                     } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="">
-                      Select your ICP Hub⌄
+                      Select your ICP Hub
                     </option>
                     {getAllIcpHubs?.map((hub) => (
                       <option
@@ -689,6 +698,7 @@ const MentorRegistration = () => {
                     </label>
                     <select
                       {...register("multi_chain")}
+                      value={this.value}
                       className={`bg-gray-50 border-2 ${
                         errors.multi_chain
                           ? "border-red-500 placeholder:text-red-500"
@@ -725,7 +735,7 @@ const MentorRegistration = () => {
                         } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                       >
                         <option className="text-lg font-bold" value="">
-                          Select ⌄
+                          Select
                         </option>
                         {multiChain?.map((chain, i) => (
                           <option
@@ -814,7 +824,7 @@ const MentorRegistration = () => {
                       } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     >
                       <option className="text-lg font-bold" value="">
-                        Area_of_expertise ⌄
+                        Area of expertise
                       </option>
                       {areaOfExpertise?.map((expert) => (
                         <option
@@ -849,7 +859,7 @@ const MentorRegistration = () => {
                       } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     >
                       <option className="text-lg font-bold" value="">
-                        Select your option⌄
+                        Select your option
                       </option>
                       <option className="text-lg font-bold">Incubation</option>
                       <option className="text-lg font-bold">Tokenomics</option>
@@ -868,7 +878,7 @@ const MentorRegistration = () => {
                       htmlFor="icop_hub_or_spoke"
                       className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                     >
-                      Are you icop hub/spoke
+                      Are you ICP hub/spoke
                     </label>
                     <select
                       {...register("icop_hub_or_spoke")}
@@ -908,7 +918,7 @@ const MentorRegistration = () => {
                         } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                       >
                         <option className="text-lg font-bold" value="">
-                          Select your ICP Hub⌄
+                          Select your ICP Hub
                         </option>
                         {getAllIcpHubs?.map((hub) => (
                           <option

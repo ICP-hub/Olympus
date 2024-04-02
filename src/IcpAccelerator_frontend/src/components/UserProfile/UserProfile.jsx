@@ -19,6 +19,7 @@ import { useSelector } from "react-redux";
 import MentorRegistration from "../Registration/MentorRegistration/MentorRegistration";
 import HubRegistration from "../Registration/IcpHubRegistration/HubRegistration";
 import InvestorRegistration from "../Registration/InvestorRegistration/InvestorRegistration";
+import CreateProjectRegistration from "../Project/CreateProject/CreateProjectRegistration";
 
 const UserProfile = () => {
   const userCurrentRoleStatusActiveRole = useSelector(
@@ -196,9 +197,8 @@ const UserProfile = () => {
               </ul>
             </div> */}
             {userCurrentRoleStatusActiveRole === "mentor" && <MentorRegistration />}
-            {userCurrentRoleStatusActiveRole === "Project" && <FounderInfo />}
-            {userCurrentRoleStatusActiveRole === "VC" && <InvestorRegistration />}
-            {userCurrentRoleStatusActiveRole === "ICPHubOrganizer" && <HubRegistration />}
+            {userCurrentRoleStatusActiveRole === "project" && <CreateProjectRegistration />}
+            {userCurrentRoleStatusActiveRole === "vc" && <InvestorRegistration />}
           </div>
         </div>
       </section>

@@ -306,7 +306,7 @@ const NormalUser = () => {
                     } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="">
-                      select your Country ⌄
+                      Select your Country 
                     </option>
                     {countries?.map((expert) => (
                       <option
@@ -334,20 +334,20 @@ const NormalUser = () => {
                   </label>
                   <select
                     {...register("areas_of_expertise")}
-                    className={`bg-gray-50 border-2 ${
+                    className={`bg-gray-50 border-2 capitalize ${
                       errors.areas_of_expertise
                         ? "border-red-500 placeholder:text-red-500"
                         : "border-[#737373]"
                     } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="">
-                      interests ⌄
+                      Interests 
                     </option>
                     {areaOfExpertise?.map((expert) => (
                       <option
                         key={expert.id}
                         value={`${expert.name}`}
-                        className="text-lg font-bold"
+                        className="text-lg font-bold capitalize"
                       >
                         {expert.name}
                       </option>

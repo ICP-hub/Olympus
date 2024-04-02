@@ -300,11 +300,11 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
               {userData[0].params.user_data.country}
             </span>
             <span className="w-1 h-1 rounded-full bg-gray-500"></span>
-            <p>
+            <div>
               <div className="flex text-xs md:text-sm text-[#737373]">
                 <p>{date}</p>
               </div>
-            </p>
+            </div>
           </div>
         </div>
       </div>

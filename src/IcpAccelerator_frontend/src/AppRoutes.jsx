@@ -91,6 +91,7 @@ const AppRoutes = () => {
     { path: "/create-project", element: <CreateProject /> },
     { path: "/create-investor", element: <InvestorRegistration /> },
     { path: "/event-form", element: <EventForm /> },
+    { path: "/update-project", element: <CreateProject /> },
     // { path: "/details", element: <AllDetailsForm /> ,label:'Home'},
     { path: "/project-details", element: <ProjectDetails /> },
     { path: "/profile", element: <UserProfile /> },
