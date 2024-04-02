@@ -757,7 +757,7 @@ const InvestorRegistration = () => {
                       } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     >
                       <option className="text-lg font-bold" value="">
-                        select your country
+                        Select your Country
                       </option>
                       {countries?.map((expert) => (
                         <option
@@ -793,7 +793,7 @@ const InvestorRegistration = () => {
                       } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     >
                       <option className="text-lg font-bold" value="">
-                        select your interest
+                        Select your interest
                       </option>
                       {areaOfExpertise?.map((intrest) => (
                         <option
@@ -930,7 +930,7 @@ const InvestorRegistration = () => {
                         } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                       >
                         <option className="text-lg font-bold" value="">
-                          select your Registered Country
+                          Select your registered country
                         </option>
                         {countries?.map((expert) => (
                           <option
@@ -966,7 +966,7 @@ const InvestorRegistration = () => {
                       } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     >
                       <option className="text-lg font-bold" value="">
-                        Select ⌄
+                        Select 
                       </option>
                       {getAllIcpHubs?.map((hub) => (
                         <option
@@ -1150,7 +1150,7 @@ const InvestorRegistration = () => {
                     } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="">
-                      Select reason ⌄
+                      Select reason 
                     </option>
                     <option
                       className="text-lg font-bold"
@@ -1226,7 +1226,7 @@ const InvestorRegistration = () => {
                       disabled={!isMulti_Chain}
                     >
                       <option className="text-lg font-bold" value="">
-                        Select ⌄
+                        Select 
                       </option>
                       {multiChain?.map((chain, i) => (
                         <option

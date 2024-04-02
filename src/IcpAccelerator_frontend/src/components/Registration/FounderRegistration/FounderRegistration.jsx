@@ -729,7 +729,7 @@ const FounderRegistration = () => {
                 } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
               >
                 <option className="text-lg font-bold" value="">
-                  Select your ICP Hub⌄
+                  Select your ICP Hub
                 </option>
                 {getAllIcpHubs?.map((hub) => (
                   <option
@@ -767,7 +767,7 @@ const FounderRegistration = () => {
               } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
             >
               <option className="text-lg font-bold" value="">
-                Areas_of_expertise ⌄
+                Areas_of_expertise 
               </option>
               {areaOfExpertise?.map((expert) => (
                 <option

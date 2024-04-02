@@ -975,7 +975,7 @@ const CreateProjectRegistration = () => {
                     required
                   >
                     <option className="text-lg font-bold" value="">
-                      select your Country ⌄
+                      Select your country
                     </option>
                     {countries?.map((expert) => (
                       <option
@@ -1010,7 +1010,7 @@ const CreateProjectRegistration = () => {
                     } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="">
-                      Area of Intrest ⌄
+                      Area of Intrest
                     </option>
                     {areaOfExpertise?.map((intrest) => (
                       <option
@@ -1127,7 +1127,7 @@ const CreateProjectRegistration = () => {
                   required
                 >
                   <option className="text-lg font-bold" value="">
-                    Select reason ⌄
+                    Select reason 
                   </option>
                   <option
                     className="text-lg font-bold"
@@ -1174,7 +1174,7 @@ const CreateProjectRegistration = () => {
                     } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="">
-                      Select your ICP Hub⌄
+                      Select your ICP Hub
                     </option>
                     {getAllIcpHubs?.map((hub) => (
                       <option
@@ -1383,7 +1383,7 @@ const CreateProjectRegistration = () => {
                       } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     >
                       <option className="text-lg font-bold" value="">
-                        Select ⌄
+                        Select 
                       </option>
                       {multiChain?.map((chain, i) => (
                         <option
