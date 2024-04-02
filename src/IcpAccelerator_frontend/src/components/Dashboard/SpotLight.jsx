@@ -8,11 +8,18 @@ import { useSelector } from "react-redux";
 import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import NoDataCard from "../Mentors/Event/NoDataCard";
+import toast, { Toaster } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const SpotLight = () => {
   const actor = useSelector((currState) => currState.actors.actor);
+  const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
+  const userCurrentRoleStatusActiveRole = useSelector(
+    (currState) => currState.currentRoleStatus.activeRole
+  );
   const [noData, setNoData] = useState(null);
   const [spotLightData, setSpotLightData] = useState([]);
+  const navigate = useNavigate();
 
   const fetchSpotLight = async (caller) => {
     await caller
@@ -41,6 +48,35 @@ const SpotLight = () => {
       fetchSpotLight(IcpAccelerator_backend);
     }
   }, [actor]);
+
+  const handleNavigate = (projectId, projectData) => {
+    // if (isAuthenticated) {
+    //   switch (userCurrentRoleStatusActiveRole) {
+    //     case 'user':
+    //       navigate(`/individual-project-details-user/${projectId}`, {
+    //         state: projectData
+    //       });
+    //       break;
+    //     case 'project':
+    //       toast.error("Only Access if you are in a same cohort!!");
+    //       window.scrollTo({ top: 0, behavior: "smooth" });
+    //       break;
+    //     case 'mentor':
+    //       navigate(`/individual-project-details-project-mentor/${projectId}`);
+    //       break;
+    //     case 'investor':
+    //       navigate(`/individual-project-details-project-investor/${projectId}`);
+    //       break;
+    //     default:
+    //       toast.error("No Role Found, Please Sign Up !!!");
+    //       window.scrollTo({ top: 0, behavior: "smooth" });
+    //       break;
+    //   }
+    // } else {
+    //   toast.error("Please Sign Up !!!");
+    //   window.scrollTo({ top: 0, behavior: "smooth" });
+    // }
+  };
 
   return (
     <div className="py-4">
@@ -77,8 +113,9 @@ const SpotLight = () => {
             {spotLightData &&
               spotLightData.map((data, index) => {
                 console.log("spotlight", data);
-                let addedBy = data?.added_by?.toText();
-                let userImage = data?.user_data?.profile_picture[0];
+                // let addedBy = data?.added_by?.toText();
+                let addedBy = data?.project_details?.user_data?.full_name ? data?.project_details?.user_data?.full_name :data?.added_by?.toText() ;
+                let userImage = data?.project_details?.user_data?.profile_picture[0] ? uint8ArrayToBase64(data?.project_details?.user_data?.profile_picture[0]) : "";
                 let projectName = data?.project_details?.project_name;
                 let projectImage = uint8ArrayToBase64(
                   data?.project_details?.project_logo
@@ -90,7 +127,7 @@ const SpotLight = () => {
                 return (
                   <SwiperSlide key={index}>
                     <div className="mb-2 shadow-md rounded-3xl overflow-hidden border-2 spotlight-card-image w-full">
-                      <div className="p-6">
+                      <div className="p-6 cursor-pointer" onClick={() => handleNavigate(data?.project_id, data)}>
                         <div className="flex flex-row gap-2">
                           <img
                             className="rounded-lg w-12 h-12"
@@ -108,7 +145,7 @@ const SpotLight = () => {
                                 src={userImage}
                                 alt="User Profile"
                               />
-                              <div className="text-xs truncate w-56 lg:w-56 sxs:w-36 md:w-56">
+                              <div className="text-xs truncate w-56 lg:w-56 sxs:w-36 md:w-56 capitalize">
                                 {addedBy}
                               </div>
                             </div>

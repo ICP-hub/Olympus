@@ -23,7 +23,7 @@ function* fetchMentorHandler() {
     const actor = yield select(selectActor);
     // console.log('mentorFullData actor => => => ', actor)
 
-    const mentorData = yield call([actor, actor.get_mentor_candid]);
+    const mentorData = yield call([actor, actor.get_mentor]);
 
     // console.log('mentorData functn run hua => ', mentorData)
 

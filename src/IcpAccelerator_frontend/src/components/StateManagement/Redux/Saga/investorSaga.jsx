@@ -12,7 +12,7 @@ function* fetchInvestorHandler() {
     const actor = yield select(selectActor);
     console.log("actor in investor => => => ", actor);
 
-    const investorData = yield call([actor, actor.get_venture_capitalist_info]);
+    const investorData = yield call([actor, actor.get_vc_info]);
 
     console.log("investorData in investorsaga  => ", investorData);
 

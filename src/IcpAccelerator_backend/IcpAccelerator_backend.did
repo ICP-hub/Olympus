@@ -44,7 +44,6 @@ type Cohort = record {
   no_of_seats : nat8;
   cohort_launch_date : text;
 };
-<<<<<<< HEAD
 type CohortDetails = record {
   cohort_created_at : nat64;
   cohort_creator_role : vec text;
@@ -52,8 +51,6 @@ type CohortDetails = record {
   cohort_creator : principal;
   cohort : Cohort;
 };
-=======
->>>>>>> 6c25db992fc9fe1577c6da3f70439cb9c899b5f1
 type Counts = record {
   user_count : nat64;
   only_user_count : nat64;
@@ -431,6 +428,10 @@ type ProjectUpdateRequest = record {
   updated_info : ProjectInfo;
   project_id : text;
 };
+type ProjectVecWithRoles = record {
+  project_profile : vec ProjectInfoInternal;
+  roles : vec Role;
+};
 type ProjectWithRoles = record {
   project_profile : ProjectInfoInternal;
   roles : vec Role;
@@ -653,12 +654,8 @@ service : {
   calculate_average : (text) -> (RatingAverages) query;
   change_live_status : (principal, text, bool, opt text) -> (Result_2) query;
   connect_to_team_member : (text, text) -> (text);
-<<<<<<< HEAD
-  create_cohort : (Cohort) -> (Result_2);
-=======
   count_live_projects : () -> (nat64) query;
-  create_cohort : (Cohort) -> (text);
->>>>>>> 6c25db992fc9fe1577c6da3f70439cb9c899b5f1
+  create_cohort : (Cohort) -> (Result_2);
   decline_mentor_creation_request_candid : (principal, bool) -> (text);
   decline_mentor_profile_update_request : (principal, bool) -> (text);
   decline_money_access_request : (text, principal) -> (text);
@@ -759,10 +756,7 @@ service : {
   get_announcements_by_project_id : (text) -> (vec AnnouncementsInternal) query;
   get_area_focus_expertise : () -> (vec Role_1) query;
   get_blog_post : () -> (vec record { principal; vec Blog }) query;
-<<<<<<< HEAD
   get_cohort : (text) -> (CohortDetails) query;
-=======
->>>>>>> 6c25db992fc9fe1577c6da3f70439cb9c899b5f1
   get_dapp_link : (text) -> (text) query;
   get_declined_request_for_investor : () -> (vec OfferToSendToMentor) query;
   get_declined_request_for_mentor : (principal) -> (
@@ -905,12 +899,9 @@ service : {
   like_project : (text) -> (text);
   list_all_founders : () -> (vec FounderInfo) query;
   list_all_projects : () -> (vec ListAllProjects) query;
-<<<<<<< HEAD
   list_all_projects_for_admin : () -> (
       vec record { principal; ProjectVecWithRoles },
     ) query;
-=======
->>>>>>> 6c25db992fc9fe1577c6da3f70439cb9c899b5f1
   list_all_vcs : () -> (vec record { principal; VcWithRoles }) query;
   make_active_inactive_mentor : (principal) -> (text);
   make_project_active_inactive : (principal, text) -> (text);

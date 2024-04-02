@@ -19,9 +19,10 @@ const LogoutModal = () => {
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
   const principal = useSelector((currState) => currState.internet.principal);
   const actor = useSelector((currState) => currState.actors.actor);
-  // const specificRole = useSelector(
-  //   (currState) => currState.current.specificRole
-  // );
+  const specificRole = useSelector(
+    (currState) => currState.currentRoleStatus.activeRole
+  );
+  console.log("specificRole is Here===>", specificRole);
 
   const { logout } = useAuth();
   const [customSvg, setCustomSvg] = useState(beforeCopySvg);
@@ -47,34 +48,29 @@ const LogoutModal = () => {
     // setDropdownOpen(false)
   };
 
-  // const profileHandler = async (specificRole) => {
-  //   console.log(
-  //     "specific role inside profilehandler logout component ",
-  //     specificRole
-  //   );
-  //   switch (specificRole) {
-  //     case "Project":
-  //       dispatch(founderRegisteredHandlerRequest());
-  //       setDropdownOpen(false);
-  //       break;
-  //     case "Mentor":
-  //       dispatch(mentorRegisteredHandlerRequest());
-  //       setDropdownOpen(false);
-  //       break;
-  //     case "ICPHubOrganizer":
-  //       dispatch(hubRegisteredHandlerRequest());
-  //       setDropdownOpen(false);
-  //       break;
-  //     case "VC":
-  //       console.log("vc =>", specificRole);
-  //       dispatch(investorRegisteredHandlerRequest());
-  //       setDropdownOpen(false);
-  //       break;
-  //     default:
-  //       return null;
-  //   }
-  //   navigate("/profile");
-  // };
+  const profileHandler = async (specificRole) => {
+    console.log(
+      "specific role inside profilehandler logout component ",
+      specificRole
+    );
+    switch (specificRole) {
+      case "project":
+        dispatch(founderRegisteredHandlerRequest());
+        setDropdownOpen(false);
+        break;
+      case "mentor":
+        dispatch(mentorRegisteredHandlerRequest());
+        setDropdownOpen(false);
+        break;
+      case "vc":
+        dispatch(investorRegisteredHandlerRequest());
+        setDropdownOpen(false);
+        break;
+      default:
+        return null;
+    }
+    navigate("/profile");
+  };
 
   const copyToClipboard = useCallback(() => {
     navigator.clipboard.writeText(principal).then(
@@ -168,14 +164,14 @@ const LogoutModal = () => {
               </ul>
             )}
             <div className="text-sm text-black font-bold">
-              {/* {specificRole && (
+              {specificRole !== "user" && specificRole !== null && (
                 <p
                   onClick={() => profileHandler(specificRole)}
                   className="py-2 px-4 hover:bg-gray-200"
                 >
                   My Profile
                 </p>
-              )} */}
+              )}
               <p
                 className="py-2 px-4 hover:bg-gray-200 cursor-pointer"
                 onClick={logoutHandler}

@@ -48,7 +48,7 @@ export const projectDetails = [
   },
   {
     id: "promotional_video",
-    label: "Promotion video link *",
+    label: "Promotion video link",
     type: "text",
     name: "promotional_video",
     placeholder: "https://",

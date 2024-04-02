@@ -67,7 +67,7 @@ const DetailHeroSection = () => {
               {closeSwitchBlackModalSvg}
             </span>
             <div className="flex justify-center  lg:flex-row lg:justify-between items-center md:flex-col-reverse sxs:flex-col-reverse ">
-              <div className="relative lg:static sxs:top-20 sxs:left-8 md:-left-24 md:top-20 lg:top-24 lg:-left-32 sm:-left-12">
+              <div className="relative lg:static sxs:top-20 md:-left-24 md:top-20 lg:top-24 lg:-left-32 sm:-left-12">
                 {/* <div className="w-[500px] xl2:w-[900px] xl:w-[700px] dxl:w-[630px] lgx:w-[600px] lg1:w-[550px] dlg:w-[525px] lg:w-[500px] md3:w-[470px] md2:w-[460px] md1:w-[450px]  md:w-[440px] sm:w-[430px] sm3:w-[400px] sm2:w-[390px] sm4:w-[380px] sm1:w-[360px] xxs1:w-[340px] xxs:w-[310px] dxs:w-[290px] ss4:w-[280px] ss3:w-[270px] ss2:w-[260px] ss1:w-[250px] ss:w-[240px] sxs3:w-[230px] sxs2:w-[220px] sxs1:w-[210px] sxs:w-[200px] sxxs:w-[190px]  h-[380px] left-[400px] top-[100px] absolute bg-fuchsia-800 rounded-full blur-[169px] xl2:left-[260px] xl:left-[280px] dxl:left-[230px] lgx:left-[200px] lg1:left-[180px] dlg:left-[170px] lg:left-[160px] md3:left-[150px] md2:left-[140px] md1:left-[130px] md:left-[120px] sm:left-[110px] sm3:left-[70px] sm2:left-[60px] sm4:left-[50px] sm1:left-[50px] xxs1:left-[45px] xxs:left-[40px] dxs:left-[35px] ss4:left-[30px] ss3:left-[25px] ss2:left-[20px] ss1:left-[15px] ss:left-[15px] sxs3:left-[15px] sxs2:left-[10px] sxs1:left-[10px] sxs:left-[5px] sxxs:left-[5px]"></div> */}
                 <h1 className="left-[19px] pb-2 bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-2xl sm:text-3xl md:text-3xl lg:text-5xl xl:text-7xl 2xl:text-8xl font-fontUse font-bold">
                   {text}

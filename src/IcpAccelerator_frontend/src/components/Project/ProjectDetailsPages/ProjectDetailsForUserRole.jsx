@@ -14,6 +14,7 @@ const ProjectDetailsForUserRole = () => {
 
     const stateData = useLocation();
     const projectData = stateData.state
+    const navigate = useNavigate();
 
     if (!projectData) {
         navigate('/');
@@ -21,7 +22,7 @@ const ProjectDetailsForUserRole = () => {
     }
 
     console.log("projectData ================>>>>>>", projectData)
-    const navigate = useNavigate();
+    
     const { id } = useParams()
     const actor = useSelector((currState) => currState.actors.actor)
     const principal = useSelector((currState) => currState.internet.principal);
