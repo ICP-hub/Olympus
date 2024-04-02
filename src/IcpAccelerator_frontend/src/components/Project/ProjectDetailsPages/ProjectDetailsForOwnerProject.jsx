@@ -25,6 +25,7 @@ const ProjectDetailsForOwnerProject = () => {
     const navigate = useNavigate();
     const actor = useSelector((currState) => currState.actors.actor)
     const [projectData, setProjectData] = useState(null);
+    const [isProjectLive, setIsProjectLive] = useState(null);
 
     const fetchProjectData = async () => {
         await actor.get_my_project()
@@ -32,13 +33,16 @@ const ProjectDetailsForOwnerProject = () => {
                 console.log('result-in-get_my_project', result)
                 if (result && Object.keys(result).length > 0) {
                     setProjectData(result)
+                    setIsProjectLive(result?.params?.dapp_link[0] && result?.params?.dapp_link[0].trim() !== '' ? result?.params?.dapp_link[0] : null)
                 } else {
                     setProjectData(null)
+                    setIsProjectLive(null)
                 }
             })
             .catch((error) => {
                 console.log('error-in-get_my_project', error)
                 setProjectData(null)
+                setIsProjectLive(null)
             })
     };
 
@@ -85,6 +89,7 @@ const ProjectDetailsForOwnerProject = () => {
     const handleTabClick = (tab) => {
         setActiveTab(tab);
     };
+
     const getTabClassName = (tab) => {
         return `inline-block p-1 ${activeTab === tab
             ? "border-b-2 border-[#3505B2]"
@@ -98,6 +103,7 @@ const ProjectDetailsForOwnerProject = () => {
                 return (
                     <MembersProfileDetailsCard
                         data={projectData}
+                        isProjectLive={isProjectLive}
                         profile={true}
                         type={!true}
                         name={true}
@@ -111,6 +117,7 @@ const ProjectDetailsForOwnerProject = () => {
                 return (
                     <MentorsProfileDetailsCard
                         data={projectData}
+                        isProjectLive={isProjectLive}
                         profile={true}
                         type={!true}
                         name={true}
@@ -124,6 +131,7 @@ const ProjectDetailsForOwnerProject = () => {
                 return (
                     <InvestorProfileDetailsCard
                         data={projectData}
+                        isProjectLive={isProjectLive}
                         profile={true}
                         type={!true}
                         name={true}
@@ -137,6 +145,7 @@ const ProjectDetailsForOwnerProject = () => {
                 return (
                     <ProjectDetailsCommunityRatings
                         data={projectData}
+                        isProjectLive={isProjectLive}
                         profile={true}
                         type={!true}
                         name={true}
@@ -150,6 +159,7 @@ const ProjectDetailsForOwnerProject = () => {
                 return (
                     <ProjectRatings
                         data={projectData}
+                        isProjectLive={isProjectLive}
                         profile={true}
                         type={!true}
                         name={true}
@@ -162,6 +172,7 @@ const ProjectDetailsForOwnerProject = () => {
                 return (
                     <ProjectDocuments
                         data={projectData}
+                        isProjectLive={isProjectLive}
                         profile={true}
                         type={!true}
                         name={true}
@@ -174,7 +185,6 @@ const ProjectDetailsForOwnerProject = () => {
                 return null;
         }
     };
-
 
     const handleAddAnnouncement = async ({ announcementTitle, announcementDescription }) => {
         console.log('add announcement')
@@ -239,7 +249,6 @@ const ProjectDetailsForOwnerProject = () => {
         }
     }
 
-
     const fetchRubricRating = async (val) => {
         await actor.calculate_average(val?.uid)
             .then((result) => {
@@ -250,9 +259,6 @@ const ProjectDetailsForOwnerProject = () => {
             })
     }
 
-
-
-
     useEffect(() => {
         if (actor) {
             if (!projectData) {
@@ -260,7 +266,7 @@ const ProjectDetailsForOwnerProject = () => {
             } else {
                 fetchRubricRating(projectData);
             }
-        }else{
+        } else {
             navigate('/');
         }
     }, [actor, projectData]);
@@ -327,10 +333,12 @@ const ProjectDetailsForOwnerProject = () => {
                             <h1 className="font-[950] text-lg md:text-2xl  text-blue-700">
                                 Announcement
                             </h1>
-                            <button className="font-[950] border bg-[#3505B2] py-[7px] px-[9px] rounded-md text-white text-nowrap capitalize"
-                                onClick={handleOpenModal}>
-                                Add Announcement
-                            </button>
+                            {isProjectLive &&
+                                (<button className="font-[950] border bg-[#3505B2] py-[7px] px-[9px] rounded-md text-white text-nowrap capitalize"
+                                    onClick={handleOpenModal}>
+                                    Add Announcement
+                                </button>
+                                )}
                         </div>
                         <AnnouncementDetailsCard data={projectData} />
                     </div>
@@ -339,10 +347,12 @@ const ProjectDetailsForOwnerProject = () => {
                             <h1 className="font-[950] text-lg md:text-2xl  text-blue-700">
                                 jobs/opportunity
                             </h1>
-                            <button className="font-[950] border bg-[#3505B2] px-4 py-2 rounded-md text-white text-nowrap capitalize"
-                                onClick={handleJobsOpenModal}>
-                                Add Jobs
-                            </button>
+                            {isProjectLive &&
+                                (<button className="font-[950] border bg-[#3505B2] px-4 py-2 rounded-md text-white text-nowrap capitalize"
+                                    onClick={handleJobsOpenModal}>
+                                    Add Jobs
+                                </button>
+                                )}
                         </div>
                         <ProjectJobDetailsCard
                             data={projectData}

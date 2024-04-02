@@ -285,8 +285,8 @@ pub fn accept_offer_of_investor(
                                                     .entry(offer.sender_principal)
                                                     .or_insert_with(Vec::new);
 
-                                                if !projects.contains(&project.params) {
-                                                    projects.push(project.params.clone());
+                                                if !projects.contains(&project) {
+                                                    projects.push(project.clone());
                                                 }
                                             });
                                         }

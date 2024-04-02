@@ -199,21 +199,26 @@ pub async fn send_offer_to_investor(
 #[update]
 pub fn accept_offer_of_project_by_investor(offer_id: String, response_message: String) -> String {
     let investor_id = caller();
-    
-     let mut already_accepted = false;
 
-     INVESTOR_ALERTS.with(|state : &RefCell<HashMap<Principal, Vec<OfferToSendToInvestor>>>| {
-         if let Some(offers) = state.borrow_mut().get_mut(&investor_id) {
-             if let Some(offer) = offers.iter().find(|o| o.offer_id == offer_id && o.request_status == "accepted") {
-                 already_accepted = true; 
-                 return; 
-             }
-         }
-     });
- 
-     if already_accepted {
-         return "Offer has already been accepted.".to_string();
-     }
+    let mut already_accepted = false;
+
+    INVESTOR_ALERTS.with(
+        |state: &RefCell<HashMap<Principal, Vec<OfferToSendToInvestor>>>| {
+            if let Some(offers) = state.borrow_mut().get_mut(&investor_id) {
+                if let Some(offer) = offers
+                    .iter()
+                    .find(|o| o.offer_id == offer_id && o.request_status == "accepted")
+                {
+                    already_accepted = true;
+                    return;
+                }
+            }
+        },
+    );
+
+    if already_accepted {
+        return "Offer has already been accepted.".to_string();
+    }
 
     INVESTOR_ALERTS.with(
         |state: &RefCell<HashMap<Principal, Vec<OfferToSendToInvestor>>>| {
@@ -250,16 +255,13 @@ pub fn accept_offer_of_project_by_investor(offer_id: String, response_message: S
                                         //     .unwrap()
                                         //     .push(investor_profile.params.clone());
 
-                                       
                                         if project.params.vc_assigned.is_none() {
                                             project.params.vc_assigned = Some(Vec::new());
                                         }
 
-                                        
                                         let vc_assigned =
                                             project.params.vc_assigned.as_mut().unwrap();
 
-                                        
                                         if !vc_assigned.contains(&investor_profile.params) {
                                             vc_assigned.push(investor_profile.params.clone());
                                         }
@@ -267,12 +269,16 @@ pub fn accept_offer_of_project_by_investor(offer_id: String, response_message: S
                                         PROJECTS_ASSOCIATED_WITH_INVESTOR.with(|storage| {
                                             let mut associate_project = storage.borrow_mut();
 
+                                            // let projects = associate_project
+                                            //     .entry(offer.sender_principal)
+                                            //     .or_insert_with(Vec::new);
+
                                             let projects = associate_project
-                                                .entry(offer.sender_principal)
+                                                .entry(investor_id)
                                                 .or_insert_with(Vec::new);
 
-                                            if !projects.contains(&project.params) {
-                                                projects.push(project.params.clone());
+                                            if !projects.contains(&project) {
+                                                projects.push(project.clone());
                                             }
                                         })
                                     }

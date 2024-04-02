@@ -64,7 +64,7 @@ const SpotLight = () => {
     //     case 'mentor':
     //       navigate(`/individual-project-details-project-mentor/${projectId}`);
     //       break;
-    //     case 'investor':
+    //     case 'vc':
     //       navigate(`/individual-project-details-project-investor/${projectId}`);
     //       break;
     //     default:

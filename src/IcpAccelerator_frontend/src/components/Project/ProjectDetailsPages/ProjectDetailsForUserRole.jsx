@@ -119,6 +119,7 @@ const ProjectDetailsForUserRole = () => {
                 return (
                     <ProjectDetailsCommunityRatings
                         data={projectData}
+                        isProjectLive={true}
                         profile={true}
                         type={!true}
                         name={true}

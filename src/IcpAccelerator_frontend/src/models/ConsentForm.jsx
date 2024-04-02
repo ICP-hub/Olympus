@@ -57,14 +57,14 @@ const ConsentForm = ({ isModalOpen, onClose, main_level, selected_level, onSubmi
                             <div className="relative bg-white rounded-lg shadow">
                                 <div className="flex p-4 md:p-5 rounded-t">
                                     <h3 className="text-lg font-bold text-gray-900 grow uppercase  border-b">
-                                        {main_level.title} ({selected_level}/9)
+                                        {main_level.title} ({selected_level + 1}/9)
                                     </h3>
                                 </div>
                                 <div className="px-4 mb-2 pt-0">
                                     <ul className="mb-4 space-y-1 cursor-pointer h-64 overflow-y-scroll">
                                         {main_level.levels.map((val, index) => {
-                                            let li_css = ((index) <= (selected_level - 1)) ? 'text-green-700' : 'text-gray-500';
-                                            let li_svg = ((index) <= (selected_level - 1)) ? green_tick_svg : grey_tick_svg;
+                                            let li_css = ((index) <= (selected_level)) ? 'text-green-700' : 'text-gray-500';
+                                            let li_svg = ((index) <= (selected_level)) ? green_tick_svg : grey_tick_svg;
                                             return (
                                                 <li className="flex items-center" key={index}>
                                                     <div className="w-11/12">
@@ -94,7 +94,7 @@ const ConsentForm = ({ isModalOpen, onClose, main_level, selected_level, onSubmi
                                         <button
                                             type="button"
                                             className="font-bold rounded-md my-2 bg-indigo-600 font-fontUse text-center text-white uppercase text-[0.625rem] md:text-[0.64375rem] lg:text-[0.65625rem] xl:text-[0.78125rem] px-6 py-2 top-[6.5rem] sm4:top-[10.5rem] xxs1:top-[8.5rem] ss2:top-[7.5rem] text-wrap"
-                                            onClick={onSubmit}>Agree ({selected_level}/9)</button>
+                                            onClick={onSubmit}>Agree ({selected_level + 1}/9)</button>
                                     </div>
                                 </div>
                             </div>
