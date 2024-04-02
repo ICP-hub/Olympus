@@ -277,8 +277,8 @@ pub fn accept_offer_of_project_by_investor(offer_id: String, response_message: S
                                                 .entry(investor_id)
                                                 .or_insert_with(Vec::new);
 
-                                            if !projects.contains(&project.params) {
-                                                projects.push(project.params.clone());
+                                            if !projects.contains(&project) {
+                                                projects.push(project.clone());
                                             }
                                         })
                                     }
