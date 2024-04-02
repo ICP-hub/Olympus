@@ -16,7 +16,6 @@ import SubmitSection from "../../Footer/SubmitSection";
 import { getCurrentRoleStatusRequestHandler } from "../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 import SpotLight from "../SpotLight";
 import ImpactTool from "../ImpactTool";
-import LaunchedProjects from "../LaunchedProjects";
 import EventCard from "../EventCard";
 import ProjectJobs from "../../Project/ProjectDetails/ProjectJobs";
 import Announcement from "../../Project/ProjectDetails/Announcement";

@@ -16,7 +16,6 @@ import SubmitSection from "../../Footer/SubmitSection";
 import { getCurrentRoleStatusRequestHandler } from "../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 import SpotLight from "../SpotLight";
 import ImpactTool from "../ImpactTool";
-import LaunchedProjects from "../LaunchedProjects";
 import EventCard from "../EventCard";
 import ProjectJobs from "../../Project/ProjectDetails/ProjectJobs";
 import InvestedProjects from "../InvestedProjects";
@@ -75,7 +74,7 @@ const InvestorDashboard = () => {
             Associated Projects
           </h1>
         </div>
-        <div className="flex flex-wrap flex-row justify-center items-center  md:flex-nowrap mb-4">
+        <div className="flex flex-wrap flex-row items-center mb-4">
           {/* <InvestedProjects />
           <InvestedProjects />
           <InvestedProjects /> */}
@@ -109,7 +108,6 @@ const InvestorDashboard = () => {
             Explore more
           </button>
         </div>
-        {/* <LaunchedProjects /> */}
         <div className="mb-4">
           <LiveProjects progress={true} />
         </div>

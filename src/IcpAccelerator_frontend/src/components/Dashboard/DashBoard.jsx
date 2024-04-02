@@ -11,7 +11,6 @@ import {
 } from "../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 import SpotLight from "./SpotLight";
 import ImpactTool from "./ImpactTool";
-import LaunchedProjects from "./LaunchedProjects";
 import EventCard from "./EventCard";
 import ProjectJobCard from "../Project/ProjectDetails/ProjectJobCard";
 import SecondEventCard from "./SecondEventCard";
@@ -26,7 +25,7 @@ import MentorDashboard from "./RoleDashboard/MentorDashboard";
 import InvestorDashboard from "./RoleDashboard/InvestorDashboard";
 import AnnouncementCard from "./AnnouncementCard";
 import LiveProjects from "./LiveProjects";
-
+import { founderRegisteredHandlerRequest } from "../StateManagement/Redux/Reducers/founderRegisteredData"; 
 const DashBoard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -62,6 +61,7 @@ const DashBoard = () => {
 
   useEffect(() => {
     if (actor) {
+      // dispatch(founderRegisteredHandlerRequest());
       if (!userCurrentRoleStatus.length) {
         initialApi();
       } else if (
@@ -144,7 +144,6 @@ const DashBoard = () => {
                 </button>
               </div>
               <div className="mb-4">
-                {/* <LaunchedProjects /> */}
                 <LiveProjects progress={false}/>
               </div>
              

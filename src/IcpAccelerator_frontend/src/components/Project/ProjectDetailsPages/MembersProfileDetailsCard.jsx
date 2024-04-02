@@ -9,16 +9,16 @@ import AddTeamMember from "../../../models/AddTeamMember";
 import toast, { Toaster } from "react-hot-toast";
 
 
-const MembersProfileDetailsCard = ({ data, profile, type, name, role, socials, addButton, filter }) => {
+const MembersProfileDetailsCard = ({ data,  isProjectLive, profile, type, name, role, socials, addButton, filter }) => {
     if (!data) {
         return null;
     }
+    
     const actor = useSelector((currState) => currState.actors.actor)
     const [isAddTeamModalOpen, setIsAddTeamModalOpen] = useState(false);
 
     const handleTeamMemberCloseModal = () => setIsAddTeamModalOpen(false);
     const handleTeamMemberOpenModal = () => setIsAddTeamModalOpen(true);
-
 
     const handleAddTeamMember = async ({ user_id }) => {
         console.log('add team member')
@@ -46,10 +46,9 @@ const MembersProfileDetailsCard = ({ data, profile, type, name, role, socials, a
         }
     }
 
-
     return (
         <>
-            {addButton && (
+            {addButton && isProjectLive && (
                 <div className="flex w-full justify-end mb-4">
                     <button onClick={handleTeamMemberOpenModal} className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900">Add Team Member</button>
                 </div>)}
