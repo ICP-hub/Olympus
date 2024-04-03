@@ -889,29 +889,64 @@ pub struct ListAllProjects {
     overall_average: Option<f64>,
 }
 
+// #[query]
+// pub fn list_all_projects() -> Vec<ListAllProjects> {
+//     APPLICATION_FORM.with(|projects: &RefCell<ApplicationDetails>| {
+//         let projects = projects.borrow();
+
+//         let mut list_all_projects: Vec<ListAllProjects> = vec![];
+
+//         for (principal, projects) in projects.iter() {
+//             for project in projects {
+//                 let get_rating = calculate_average_api(&project.uid);
+
+//                 let project_info = ListAllProjects {
+//                     principal: principal.clone(),
+//                     params: project.clone(),
+//                     overall_average: get_rating.overall_average,
+//                 };
+
+//                 list_all_projects.push(project_info)
+//             }
+//         }
+//         list_all_projects
+//     })
+// }
+
 #[query]
 pub fn list_all_projects() -> Vec<ListAllProjects> {
     APPLICATION_FORM.with(|projects: &RefCell<ApplicationDetails>| {
         let projects = projects.borrow();
 
-        let mut list_all_projects: Vec<ListAllProjects> = vec![];
+        if projects.is_empty() {
+            return Vec::new();
+        }
 
-        for (principal, projects) in projects.iter() {
-            for project in projects {
-                let get_rating = calculate_average_api(&project.uid);
+        let mut list_all_projects: Vec<ListAllProjects> = Vec::new();
 
-                let project_info = ListAllProjects {
-                    principal: principal.clone(),
-                    params: project.clone(),
-                    overall_average: get_rating.overall_average,
-                };
+        for (principal, project_list) in projects.iter() {
+            if project_list.is_empty() {
+                continue; 
+            }
 
-                list_all_projects.push(project_info)
+            for project in project_list {
+                let rating_averages = calculate_average_api(&project.uid);
+
+                    let project_info = ListAllProjects {
+                        principal: principal.clone(),
+                        params: project.clone(),
+                        overall_average: rating_averages.overall_average,
+                    };
+
+                    list_all_projects.push(project_info);
             }
         }
+
         list_all_projects
     })
 }
+
+
 
 pub async fn update_project(project_id: String, updated_project: ProjectInfo) -> String {
     let caller = caller();
