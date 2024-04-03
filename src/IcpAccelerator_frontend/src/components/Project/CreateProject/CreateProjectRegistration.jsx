@@ -209,6 +209,7 @@ const CreateProjectRegistration = () => {
   const projectFullData = useSelector(
     (currState) => currState.projectData.data
   );
+  console.log("projectFullData", projectFullData);
   const dispatch = useDispatch();
   const { countries } = useCountries();
   const [activeTab, setActiveTab] = useState(projectRegistration[0].id);
@@ -525,7 +526,12 @@ const CreateProjectRegistration = () => {
       setActiveTab(projectRegistration[step + 1]?.id);
     }
   };
-
+  const imageUrlToByteArray = async (imageUrl) => {
+    const response = await fetch(imageUrl);
+    const blob = await response.blob();
+    const arrayBuffer = await blob.arrayBuffer();
+    return Array.from(new Uint8Array(arrayBuffer));
+  };
   const handlePrevious = () => {
     if (step > 0) {
       setStep((prevStep) => prevStep - 1);
@@ -546,20 +552,22 @@ const CreateProjectRegistration = () => {
     };
   }, []);
   useEffect(() => {
-    if (projectFullData && projectFullData.length > 0) {
-      const data = projectFullData[0];
+    if (projectFullData && projectFullData.params) {
+      const data = projectFullData.params;
       const formattedData = Object.keys(data).reduce((acc, key) => {
         acc[key] = Array.isArray(data[key]) ? data[key][0] : data[key];
         return acc;
       }, {});
       reset(formattedData);
       setFormData(formattedData);
-      // console.log("formattedData341", formattedData);
-      // console.log("342 data", data);
-      if (formattedData.imageData) {
-        bufferToImageBlob(formattedData.imageData)
+      console.log("formattedData341", formattedData);
+      console.log("342 data", data);
+      if (formattedData.user_data.profile_picture) {
+        imageUrlToByteArray(formattedData.user_data.profile_picture[0])
           .then((imageUrl) => {
             setImageData(imageUrl);
+
+            console.log("i am here Working ===>", imageUrl);
           })
           .catch((error) => console.error("Error converting image:", error));
       }
@@ -610,10 +618,11 @@ const CreateProjectRegistration = () => {
     // console.log("sendingProjectData ==>> ", val);
 
     let result;
+    let id = projectFullData?.uid;
     try {
       if (specificRole === "project") {
         console.log("update project functn k pass reached");
-        result = await actor.update_project(projectId, val).then((result) => {
+        result = await actor.update_project(id, val).then((result) => {
           console.log("register register_project functn ka result ", result);
           if (result) {
             toast.success(result);
@@ -658,7 +667,7 @@ const CreateProjectRegistration = () => {
     if (step < steps.length - 1) {
       handleNext();
     } else if (
-      specificRole !== null ||
+      specificRole === "project" ||
       (undefined && step > steps.length - 1)
     ) {
       // console.log("exisiting user visit ");
@@ -692,7 +701,7 @@ const CreateProjectRegistration = () => {
       };
       let tempObj2 = {
         user_data: {
-          profile_picture: [updatedFormData.imageData] || [],
+          profile_picture: [imageData] || [],
           full_name: updatedFormData.full_name || "",
           country: updatedFormData.country || "",
           email: [updatedFormData.email] || [],
@@ -749,7 +758,10 @@ const CreateProjectRegistration = () => {
       await sendingProjectData(tempObj2);
     } else if (
       specificRole === null ||
-      (specificRole === undefined && step > steps.length - 1)
+      specificRole === "user" ||
+      specificRole === "vc" ||
+      specificRole === "mentor" ||
+      step > steps.length - 1
     ) {
       // console.log("first time visit ");
       const updateMoneyRaisedTillNow =
@@ -1142,7 +1154,7 @@ const CreateProjectRegistration = () => {
                   required={true}
                 >
                   <option className="text-lg font-bold" value="">
-                    Select reason 
+                    Select reason
                   </option>
                   <option
                     className="text-lg font-bold"
@@ -1409,7 +1421,7 @@ const CreateProjectRegistration = () => {
                       } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     >
                       <option className="text-lg font-bold" value="">
-                        Select 
+                        Select
                       </option>
                       {multiChain?.map((chain, i) => (
                         <option
@@ -1583,62 +1595,6 @@ const CreateProjectRegistration = () => {
                         </p>
                       )}
                     </div>
-                    <div>
-                      <h2 className="block mb-2 px-4 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
-                        Public Docs
-                      </h2>
-                      {fields.map((item, index) => (
-                        <div key={item.id}>
-                          <div className="z-0 w-full mb-3 group px-4">
-                            <label
-                              htmlFor="title"
-                              className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                            >
-                              Title
-                            </label>
-                            <input
-                              {...register(`public_docs.${index}.title`)}
-                              className={`bg-gray-50 border-2 ${
-                                errors.title1
-                                  ? "border-red-500 placeholder:text-red-500"
-                                  : "border-[#737373]"
-                              } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                            />
-                            {errors.public_docs &&
-                              errors.public_docs[index]?.title && (
-                                <p>{errors.public_docs[index].title.message}</p>
-                              )}
-                            <label
-                              htmlFor="link"
-                              className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                            >
-                              Link
-                            </label>
-                            <input
-                              {...register(`public_docs.${index}.link`)}
-                              className={`bg-gray-50 border-2 ${
-                                errors.link
-                                  ? "border-red-500 placeholder:text-red-500"
-                                  : "border-[#737373]"
-                              } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                            />
-                            {errors.public_docs &&
-                              errors.public_docs[index]?.link && (
-                                <p>{errors.public_docs[index].link.message}</p>
-                              )}
-                          </div>
-                        </div>
-                      ))}
-                      <div>
-                        <button
-                          type="button"
-                          className="bg-blue-500 rounded-lg text-white p-2"
-                          onClick={() => append({ title: "", link: "" })}
-                        >
-                          Add More
-                        </button>
-                      </div>
-                    </div>
                     <div className="z-0 w-full mb-3 group">
                       <label
                         htmlFor="upload_private_documents"
@@ -1725,6 +1681,62 @@ const CreateProjectRegistration = () => {
                   </div>
                 </>
               )}
+              <div>
+                <h2 className="block mb-2 px-4 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
+                  Public Docs
+                </h2>
+                {fields.map((item, index) => (
+                  <div key={item.id}>
+                    <div className="z-0 w-full mb-3 group px-4">
+                      <label
+                        htmlFor="title"
+                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                      >
+                        Title
+                      </label>
+                      <input
+                        {...register(`public_docs.${index}.title`)}
+                        className={`bg-gray-50 border-2 ${
+                          errors.title1
+                            ? "border-red-500 placeholder:text-red-500"
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      />
+                      {errors.public_docs &&
+                        errors.public_docs[index]?.title && (
+                          <p>{errors.public_docs[index].title.message}</p>
+                        )}
+                      <label
+                        htmlFor="link"
+                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                      >
+                        Link
+                      </label>
+                      <input
+                        {...register(`public_docs.${index}.link`)}
+                        className={`bg-gray-50 border-2 ${
+                          errors.link
+                            ? "border-red-500 placeholder:text-red-500"
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      />
+                      {errors.public_docs &&
+                        errors.public_docs[index]?.link && (
+                          <p>{errors.public_docs[index].link.message}</p>
+                        )}
+                    </div>
+                  </div>
+                ))}
+                <div>
+                  <button
+                    type="button"
+                    className="bg-blue-500 rounded-lg text-white p-2"
+                    onClick={() => append({ title: "", link: "" })}
+                  >
+                    Add More
+                  </button>
+                </div>
+              </div>
             </>
           )}
           {step === 2 && (
