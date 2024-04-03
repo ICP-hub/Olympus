@@ -57,7 +57,7 @@ const Testimonial = () => {
     },
   ];
   return (
-    <div className="flex flex-col sm:flex-row space-x-0 sm:space-x-8 mt-3">
+    <div className="flex flex-row gap-4 mt-3">
       {testimonialData &&
         testimonialData.slice(0, 2).map((card, index) => {
           let testimonialImage = uint8ArrayToBase64(card?.profile_pic);
@@ -68,7 +68,7 @@ const Testimonial = () => {
           return (
             <div
               key={index}
-              className="bg-white rounded-lg shadow-lg w-full max-w-md sm:max-w-sm p-11 mb-4:"
+              className="bg-white rounded-lg shadow-lg w-full max-w-md sm:max-w-sm p-8 mb-4:"
             >
               <div className="flex items-center space-x-4">
                 <img
@@ -76,13 +76,12 @@ const Testimonial = () => {
                   alt="profile picture"
                   className="w-14 h-14 rounded-full"
                 />
-
                 <div>
-                  <div className="text-xl font-semibold">{testimonialName}</div>
+                  <div className="font-semibold text-xl truncate w-20">{testimonialName}</div>
                   <div className="text-gray-500">{testimoniaDate}</div>
                 </div>
               </div>
-              <div className="mt-4 text-gray-800 min-h-56 line-clamp-6">{testimoniaDescription}</div>
+              <div className="mt-4 text-gray-800 h-60 overflow-y-scroll w-[270px] sm:w-[320px]">{testimoniaDescription}</div>
             </div>
           );
         })}

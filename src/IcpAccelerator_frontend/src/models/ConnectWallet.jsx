@@ -86,14 +86,14 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
                     {closeModalSvg}
                   </button>
                   <h3 className="text-lg font-semibold text-gray-900 grow text-center">
-                    Log in or Sign up
+                    Signup / Login
                   </h3>
                 </div>
                 <div className="p-4 md:p-5">
-                  <p className="text-[16px] font-normal text-gray-500 text-center">
+                  {/* <p className="text-[16px] font-normal text-gray-500 text-center">
                     If you already have - continue with method you have used
                     previously.
-                  </p>
+                  </p> */}
                   <ul className="my-4 space-y-3 cursor-pointer">
                     {walletModalSvg.map((wallet, index) => (
                       <div key={index} onClick={loginHandler}>

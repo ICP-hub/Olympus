@@ -204,7 +204,7 @@ const ProjectDetailsForUserRole = () => {
                     </div>
                     <div className="flex flex-col py-4">
                         <div className="flex justify-between items-center mb-4">
-                            <h1 className="font-[950] text-lg md:text-2xl  text-blue-700">
+                            <h1 className="text-lg md:text-2xl  text-blue-700">
                                 Announcement
                             </h1>
                         </div>
@@ -212,7 +212,7 @@ const ProjectDetailsForUserRole = () => {
                     </div>
                     <div className="flex flex-col py-4">
                         <div className="flex justify-between">
-                            <h1 className="font-[950] text-lg md:text-2xl  text-blue-700">
+                            <h1 className="text-lg md:text-2xl  text-blue-700">
                                 jobs/opportunity
                             </h1>
                         </div>

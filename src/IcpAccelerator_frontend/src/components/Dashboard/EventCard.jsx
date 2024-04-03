@@ -24,7 +24,7 @@ const EventCard = () => {
                 RWA Projects. Part 2
               </h1>
               <p className="text-xs font-light whitespace-nowrap">
-                22 Apr 2024 17:30 -22 Apr 2024 19:30
+                22 Apr 2024 17:30 -22 Apr 2024 19:30
               </p>
             </div>
             <p className="text-[#7283EA] font-semibold text-xl">
