@@ -14,6 +14,7 @@ import DetailHeroSection from "../Common/DetailHeroSection";
 // import { userRoleHandler } from "../../StateManagement/Redux/Reducers/userRoleReducer";
 import Founder from "../../../assets/images/founderRegistration.png";
 import { useCountries } from "react-countries";
+import ReactSelect from "react-select";
 import { getCurrentRoleStatusRequestHandler } from "../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 
 const today = new Date();
@@ -83,6 +84,7 @@ const NormalUser = () => {
     trigger,
     setError,
     clearErrors,
+    setValue,
     control,
     reset,
   } = useForm({
@@ -97,8 +99,8 @@ const NormalUser = () => {
           type: "manual",
           message: "Unsupported file format",
         });
-      if (file.size > 1024 * 1024)
-        // 1MB
+      if (file.size > 10240 * 10240)
+        // 10MB
         return setError("imageData", {
           type: "manual",
           message: "The file is too large",
@@ -179,6 +181,17 @@ const NormalUser = () => {
       className={`z-20 w-[500px] md:w-[300px] sm:w-[250px] sxs:w-[260px] md:h-56 relative  sxs:-right-3 right-16 md:right-0 sm:right-0 top-10`}
     />
   );
+  const options = [
+    { value: "listing_and_promotion", label: "Project listing and promotion" },
+    { value: "Funding", label: "Funding" },
+    { value: "Mentoring", label: "Mentoring" },
+    { value: "Incubation", label: "Incubation" },
+    {
+      value: "Engaging_and_building_community",
+      label: "Engaging and building community",
+    },
+    { value: "Jobs", label: "Jobs" },
+  ];
   return (
     <>
       <DetailHeroSection HeroImage={HeroImage} />
@@ -245,7 +258,7 @@ const NormalUser = () => {
                           htmlFor="images"
                           className="p-2 border-2 border-blue-800 items-center rounded-md text-md bg-transparent text-blue-800 cursor-pointer font-extrabold"
                         >
-                          Upload Image
+                          Upload Profile Picture
                         </label>
                       </>
                     )}
@@ -289,13 +302,100 @@ const NormalUser = () => {
                     )}
                   </div>
                 ))}
-
+                <div className="z-0 w-full mb-3 group">
+                  <label
+                    htmlFor="type_of_profile"
+                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    Type of profile
+                  </label>
+                  <select
+                    {...register("type_of_profile")}
+                    className={`bg-gray-50 border-2 ${
+                      errors.type_of_profile
+                        ? "border-red-500 placeholder:text-red-500"
+                        : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  >
+                    <option className="text-lg font-bold" value="">
+                      options
+                    </option>
+                    <option className="text-lg font-bold" value="Individual">
+                      Individual
+                    </option>
+                    <option className="text-lg font-bold" value="DAO">
+                      DAO
+                    </option>
+                    <option className="text-lg font-bold" value="Company">
+                      Company
+                    </option>
+                  </select>
+                  {errors.type_of_profile && (
+                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                      {errors.type_of_profile.message}
+                    </p>
+                  )}
+                </div>
+                <div className="z-0 w-full group">
+                  <label
+                    htmlFor="reason_to_join_incubator"
+                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    Why do you want to join this platform
+                  </label>
+                  <ReactSelect
+                    isMulti
+                    options={options}
+                    menuPortalTarget={document.body}
+                    menuPosition={"fixed"}
+                    styles={{
+                      menuPortal: (base) => ({
+                        ...base,
+                        zIndex: 9999, // Set the desired z-index value
+                      }),
+                      control: (provided, state) => ({
+                        ...provided,
+                        color: "black", // Initial color of the label
+                        // Add other control styles if needed
+                        paddingBlock: "2px",
+                        borderRadius: "8px",
+                        border: errors.reason_to_join_incubator
+                          ? "2px solid #ef4444"
+                          : "2px solid #737373",
+                        backgroundColor: "rgb(249 250 251)",
+                        // Additional conditional placeholder color if needed
+                        "&::placeholder": {
+                          color: errors.reason_to_join_incubator
+                            ? "#ef4444"
+                            : "currentColor", // Adjust the placeholder color conditionally
+                        },
+                      }),
+                    }}
+                    classNamePrefix="select"
+                    className="basic-multi-select"
+                    placeholder="Select reason"
+                    name="reason_to_join_incubator"
+                    {...register("reason_to_join_incubator")}
+                    onChange={(selectedOptions) => {
+                      // You might need to adapt this part to fit how you handle form data
+                      const selectedValues = selectedOptions
+                        .map((option) => option.value)
+                        .join(", ");
+                      setValue("reason_to_join_incubator", selectedValues);
+                    }}
+                  />
+                  {errors.reason_to_join_incubator && (
+                    <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                      {errors.reason_to_join_incubator.message}
+                    </span>
+                  )}
+                </div>
                 <div className="z-0 w-full group">
                   <label
                     htmlFor="country"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Please select your Country.
+                    Country
                   </label>
                   <select
                     {...register("country")}
@@ -306,7 +406,7 @@ const NormalUser = () => {
                     } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="">
-                      Select your Country 
+                      Select your Country
                     </option>
                     {countries?.map((expert) => (
                       <option
@@ -330,29 +430,52 @@ const NormalUser = () => {
                     htmlFor="areas_of_expertise"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    What are your interests?
+                    Domains you are interested in?
                   </label>
-                  <select
+                  <ReactSelect
+                    isMulti
+                    options={areaOfExpertise.map((expert) => ({
+                      value: expert.name,
+                      label: expert.name,
+                    }))}
+                    menuPortalTarget={document.body}
+                    menuPosition={"fixed"}
+                    styles={{
+                      menuPortal: (base) => ({
+                        ...base,
+                        zIndex: 9999, // Set the desired z-index value
+                      }),
+                      control: (provided, state) => ({
+                        ...provided,
+                        color: "black", // Initial color of the label
+                        // Add other control styles if needed
+                        paddingBlock: "2px",
+                        borderRadius: "8px",
+                        border: errors.areas_of_expertise
+                          ? "2px solid #ef4444"
+                          : "2px solid #737373",
+                        backgroundColor: "rgb(249 250 251)",
+                        // Additional conditional placeholder color if needed
+                        "&::placeholder": {
+                          color: errors.areas_of_expertise
+                            ? "#ef4444"
+                            : "currentColor", // Adjust the placeholder color conditionally
+                        },
+                      }),
+                    }}
+                    classNamePrefix="select"
+                    className="basic-multi-select"
+                    placeholder="Interests"
+                    name="areas_of_expertise"
                     {...register("areas_of_expertise")}
-                    className={`bg-gray-50 border-2 capitalize ${
-                      errors.areas_of_expertise
-                        ? "border-red-500 placeholder:text-red-500"
-                        : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                  >
-                    <option className="text-lg font-bold" value="">
-                      Interests 
-                    </option>
-                    {areaOfExpertise?.map((expert) => (
-                      <option
-                        key={expert.id}
-                        value={`${expert.name}`}
-                        className="text-lg font-bold capitalize"
-                      >
-                        {expert.name}
-                      </option>
-                    ))}
-                  </select>
+                    onChange={(selectedOptions) => {
+                      // You might need to adapt this part to fit how you handle form data
+                      const selectedValues = selectedOptions
+                        .map((option) => option.value)
+                        .join(", ");
+                      setValue("areas_of_expertise", selectedValues);
+                    }}
+                  />
                   {errors.areas_of_expertise && (
                     <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
                       {errors.areas_of_expertise.message}

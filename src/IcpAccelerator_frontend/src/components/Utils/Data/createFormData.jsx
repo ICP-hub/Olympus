@@ -41,7 +41,7 @@ export const projectPersonalInformation = [
 export const projectDetails = [
   {
     id: "project_name",
-    label: "Project Name *",
+    label: "Project name *",
     required: true,
     type: "text",
     name: "project_name",
@@ -59,6 +59,12 @@ export const projectDetails = [
     required: true,
     type: "text",
     name: "project_elevator_pitch",
+  },
+  {
+    id: "project_pitch_deck",
+    label: "Project pitch deck",
+    type: "text",
+    name: "project_pitch_deck",
     placeholder: "https://",
   },
   {
@@ -66,6 +72,13 @@ export const projectDetails = [
     label: "Project Website",
     type: "text",
     name: "project_website",
+    placeholder: "https://",
+  },
+  {
+    id: "project_telegram",
+    label: "Project Telegram",
+    type: "text",
+    name: "project_telegram",
     placeholder: "https://",
   },
   {
@@ -91,7 +104,7 @@ export const projectDetails = [
   },
   {
     id: "github_link",
-    label: "Project Github",
+    label: "Project GitHub",
     type: "text",
     name: "github_link",
     placeholder: "https://",
@@ -115,14 +128,14 @@ export const additionalDetails = [
   },  
   {
     id: "token_economics",
-    label: "Token Economics",
+    label: "Tokenomics",
     type: "text",
     name: "token_economics",
     placeholder: "https://",
   },
   {
     id: "long_term_goals",
-    label: "Long Term Goals",
+    label: "Whitepaper",
     type: "text",
     name: "long_term_goals",
     placeholder: "https://",
