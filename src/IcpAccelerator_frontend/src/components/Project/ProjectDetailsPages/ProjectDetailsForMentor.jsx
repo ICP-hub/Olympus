@@ -16,7 +16,7 @@ import { Principal } from '@dfinity/principal';
 
 const ProjectDetailsForMentor = () => {
     const navigate = useNavigate();
-    const {id} = useParams()
+    const { id } = useParams()
     const actor = useSelector((currState) => currState.actors.actor)
     const principal = useSelector((currState) => currState.internet.principal);
     const [projectData, setProjectData] = useState(null);
@@ -142,6 +142,8 @@ const ProjectDetailsForMentor = () => {
             case "project-ratings":
                 return (
                     <ProjectRatings
+                        data={projectData}
+                        isProjectLive={true}
                         profile={true}
                         type={!true}
                         name={true}
@@ -161,7 +163,7 @@ const ProjectDetailsForMentor = () => {
                         socials={true}
                         filter={"documents"}
                     />
-                ); 
+                );
             default:
                 return null;
         }
@@ -213,7 +215,7 @@ const ProjectDetailsForMentor = () => {
             } else {
                 fetchRubricRating(projectData);
             }
-        }else{
+        } else {
             navigate('/');
         }
     }, [actor, principal, projectData]);
