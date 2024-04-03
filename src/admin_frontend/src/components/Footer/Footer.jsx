@@ -5,19 +5,18 @@ import logo from "../../../../IcpAccelerator_frontend/assets/Logo/topLogoWhitepn
 const Footer = () => {
   return (
     <footer className="text-white bg-custumPurple py-8 z-10 bottom">
-      <div className="container mx-auto px-4 lg:px-10">
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-20">
-          <div className="mb-4">
-            <h4 className="text-xl font-bold mb-3">
-              <img src={logo} alt="logo" className="text-white" />
-            </h4>
-            <ul className="list-none text-sm p-0 m-0 flex items-center space-x-4">
-              <li className="text-white">
-                <a href="#">© ICP. All Rights Reserved.</a>
-              </li>
-            </ul>
-          </div>
-          <div className="mb-4">
+      <div className="container flex justify-center sm:justify-between w-full mx-auto px-4 lg:px-10">
+        <div className="flex flex-col sm:flex-row w-full justify-between items-center">
+          <h4 className="text-xl font-bold mb-3">
+            <img src={logo} alt="logo" className="text-white" />
+          </h4>
+          <ul className="list-none text-sm p-0 m-0 flex items-center space-x-4">
+            <li className="text-white">
+              <a href="#">© {new Date().getFullYear()} All Rights Reserved</a>
+            </li>
+          </ul>
+        </div>
+        {/* <div className="mb-4">
             <h4 className="text-xl font-bold mb-2 text-white">Services</h4>
             <ul className="list-none text-sm p-0 m-0 text-white underline">
               <li className="mb-2">
@@ -67,8 +66,8 @@ const Footer = () => {
                 <a href="#">Terms & Conditions</a>
               </li>
             </ul>
-          </div>
-        </div>
+          </div> */}
+        {/* </div> */}
       </div>
     </footer>
   );

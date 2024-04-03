@@ -249,22 +249,22 @@ const ProjectDetailsForOwnerProject = () => {
         }
     }
 
-    const fetchRubricRating = async (val) => {
-        await actor.calculate_average(val?.uid)
-            .then((result) => {
-                console.log('result-in-calculate_average', result)
-            })
-            .catch((error) => {
-                console.log('error-in-calculate_average', error)
-            })
-    }
+    // const fetchRubricRating = async (val) => {
+    //     await actor.calculate_average(val?.uid)
+    //         .then((result) => {
+    //             console.log('result-in-calculate_average', result)
+    //         })
+    //         .catch((error) => {
+    //             console.log('error-in-calculate_average', error)
+    //         })
+    // }
 
     useEffect(() => {
         if (actor) {
             if (!projectData) {
                 fetchProjectData();
             } else {
-                fetchRubricRating(projectData);
+                // fetchRubricRating(projectData);
             }
         } else {
             navigate('/');
@@ -334,13 +334,15 @@ const ProjectDetailsForOwnerProject = () => {
                                 Announcement
                             </h1>
                             {isProjectLive &&
-                                (<button className="border bg-[#3505B2] py-[7px] px-[9px] rounded-md text-white text-nowrap capitalize"
+                                (<button className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900"
                                     onClick={handleOpenModal}>
                                     Add Announcement
                                 </button>
                                 )}
                         </div>
-                        <AnnouncementDetailsCard data={projectData} />
+                        <AnnouncementDetailsCard
+                            data={projectData}
+                        />
                     </div>
                     <div className="flex flex-col py-4">
                         <div className="flex justify-between">
@@ -348,7 +350,7 @@ const ProjectDetailsForOwnerProject = () => {
                                 jobs/opportunity
                             </h1>
                             {isProjectLive &&
-                                (<button className="border bg-[#3505B2] px-4 py-2 rounded-md text-white text-nowrap capitalize"
+                                (<button className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900"
                                     onClick={handleJobsOpenModal}>
                                     Add Jobs
                                 </button>

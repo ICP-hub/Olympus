@@ -72,7 +72,7 @@ const DashBoard = () => {
       } else {
       }
     }
-    console.log("userCurrentRoleStatus--in--dashboard", userCurrentRoleStatus);
+    // console.log("userCurrentRoleStatus--in--dashboard", userCurrentRoleStatus);
   }, [actor, dispatch, userCurrentRoleStatus, userCurrentRoleStatusActiveRole]);
 
   const investorCategories = [

@@ -10,8 +10,8 @@ use sha2::{Digest, Sha256};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::io::Read;
-use ic_cdk::storage;
-
+// use ic_cdk::storage;
+use ic_cdk::storage::{self, stable_save, stable_restore};
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
 pub struct UserInformation {
@@ -515,27 +515,53 @@ pub async fn update_user(info: UserInformation) -> std::string::String {
     })
 }
 
+// pub fn pre_upgrade_user_modules() {
+//     USER_STORAGE.with(|user_storage| {
+//         ROLE_STATUS_ARRAY.with(|role_status_array| {
+//             storage::stable_save((user_storage.borrow().clone(), role_status_array.borrow().clone()))
+//                 .expect("Failed to save to stable storage");
+//         });
+//     });
+// } 
+
 pub fn pre_upgrade_user_modules() {
     USER_STORAGE.with(|user_storage| {
         ROLE_STATUS_ARRAY.with(|role_status_array| {
-            storage::stable_save((user_storage.borrow().clone(), role_status_array.borrow().clone()))
-                .expect("Failed to save to stable storage");
+            match stable_save((user_storage.borrow().clone(), role_status_array.borrow().clone())) {
+                Ok(_) => ic_cdk::println!("User modules saved successfully."),
+                Err(e) => ic_cdk::println!("{}", format!("Failed to save user modules: {:?}", e)),
+            }
         });
     });
 } 
 
 pub fn post_upgrade_user_modules() {
-    let (restored_user_storage, restored_role_status_array): 
-        (HashMap<Principal, UserInfoInternal>, HashMap<Principal, Vec<Role>>) = 
-        storage::stable_restore().expect("Failed to restore from stable storage");
-
-    USER_STORAGE.with(|user_storage_ref| {
-        *user_storage_ref.borrow_mut() = restored_user_storage;
-    });
-    ROLE_STATUS_ARRAY.with(|role_status_array_ref| {
-        *role_status_array_ref.borrow_mut() = restored_role_status_array;
-    });
+    match stable_restore() {
+        Ok((restored_user_storage, restored_role_status_array)) => {
+            USER_STORAGE.with(|user_storage_ref| {
+                *user_storage_ref.borrow_mut() = restored_user_storage;
+            });
+            ROLE_STATUS_ARRAY.with(|role_status_array_ref| {
+                *role_status_array_ref.borrow_mut() = restored_role_status_array;
+            });
+            ic_cdk::println!("User modules restored successfully.");
+        },
+        Err(e) => ic_cdk::println!("{}", format!("Failed to restore user modules: {:?}", e)),
+    }
 }
+
+// pub fn post_upgrade_user_modules() {
+//     let (restored_user_storage, restored_role_status_array): 
+//         (HashMap<Principal, UserInfoInternal>, HashMap<Principal, Vec<Role>>) = 
+//         storage::stable_restore().expect("Failed to restore from stable storage");
+
+//     USER_STORAGE.with(|user_storage_ref| {
+//         *user_storage_ref.borrow_mut() = restored_user_storage;
+//     });
+//     ROLE_STATUS_ARRAY.with(|role_status_array_ref| {
+//         *role_status_array_ref.borrow_mut() = restored_role_status_array;
+//     });
+// }
 
 pub fn get_user_info_by_principal(caller: Principal) -> Result<UserInformation, &'static str> {
     USER_STORAGE.with(|registry| {
