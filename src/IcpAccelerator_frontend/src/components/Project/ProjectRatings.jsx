@@ -48,26 +48,20 @@ const ProjectRatings = ({ data }) => {
       rating: 35,
       sub_level_number: 4,
       sub_level: 'Validating an Investable Market',
-      project_id: data?.uid,
-      current_role: "project"
     },
     {
       level_number: 2,
       level_name: 'Problem and Vision',
       rating: 35,
-      sub_level_number: 2,
+      sub_level_number: 3,
       sub_level: 'Setting the Vision',
-      project_id: data?.uid,
-      current_role: "project"
     },
     {
       level_number: 3,
       level_name: 'Value Prop',
       rating: 35,
-      sub_level_number: 3,
+      sub_level_number: 1,
       sub_level: 'Solidifying the Value Proposition',
-      project_id: data?.uid,
-      current_role: "project"
     },
     {
       level_number: 4,
@@ -75,46 +69,156 @@ const ProjectRatings = ({ data }) => {
       rating: 35,
       sub_level_number: 6,
       sub_level: 'Moving Beyond Early Adopters',
-      project_id: data?.uid,
-      current_role: "project"
     },
     {
       level_number: 5,
       level_name: 'Market',
       rating: 35,
-      sub_level_number: 9,
+      sub_level_number: 2,
       sub_level: 'Exit in Sight',
-      project_id: data?.uid,
-      current_role: "project"
     },
     {
       level_number: 6,
       level_name: 'Business Model',
       rating: 35,
-      sub_level_number: 1,
+      sub_level_number: 8,
       sub_level: 'Establishing the Founding Team',
-      project_id: data?.uid,
-      current_role: "project"
     },
     {
       level_number: 7,
       level_name: 'Scale',
       rating: 35,
-      sub_level_number: 6,
+      sub_level_number: 7,
       sub_level: 'Moving Beyond Early Adopters',
-      project_id: data?.uid,
-      current_role: "project"
     },
     {
       level_number: 8,
       level_name: 'Exit',
       rating: 35,
-      sub_level_number: 4,
+      sub_level_number: 3,
       sub_level: 'Validating an Investable Market',
-      project_id: data?.uid,
-      current_role: "project"
     },
   ]);
+
+  
+  const [sendingDataTwo, setSendingDataTwo] = useState([
+    {
+      level_number: 1,
+      level_name: 'Team',
+      rating: 35,
+      sub_level_number: 5,
+      sub_level: 'Validating an Investable Market',
+    },
+    {
+      level_number: 2,
+      level_name: 'Problem and Vision',
+      rating: 35,
+      sub_level_number: 5,
+      sub_level: 'Setting the Vision',
+    },
+    {
+      level_number: 3,
+      level_name: 'Value Prop',
+      rating: 35,
+      sub_level_number: 5,
+      sub_level: 'Solidifying the Value Proposition',
+    },
+    {
+      level_number: 4,
+      level_name: 'Product',
+      rating: 35,
+      sub_level_number: 5,
+      sub_level: 'Moving Beyond Early Adopters',
+    },
+    {
+      level_number: 5,
+      level_name: 'Market',
+      rating: 35,
+      sub_level_number: 5,
+      sub_level: 'Exit in Sight',
+    },
+    {
+      level_number: 6,
+      level_name: 'Business Model',
+      rating: 35,
+      sub_level_number: 5,
+      sub_level: 'Establishing the Founding Team',
+    },
+    {
+      level_number: 7,
+      level_name: 'Scale',
+      rating: 35,
+      sub_level_number: 5,
+      sub_level: 'Moving Beyond Early Adopters',
+    },
+    {
+      level_number: 8,
+      level_name: 'Exit',
+      rating: 35,
+      sub_level_number: 5,
+      sub_level: 'Validating an Investable Market',
+    },
+  ]);
+
+  // const [sendingData, setSendingData] = useState([
+  //   {
+  //     level_number: 1,
+  //     level_name: 'Team',
+  //     rating: 0,
+  //     sub_level_number: 0,
+  //     sub_level: '',
+  //   },
+  //   {
+  //     level_number: 2,
+  //     level_name: 'Problem and Vision',
+  //     rating: 0,
+  //     sub_level_number: 0,
+  //     sub_level: '',
+  //   },
+  //   {
+  //     level_number: 3,
+  //     level_name: 'Value Prop',
+  //     rating: 0,
+  //     sub_level_number: 0,
+  //     sub_level: '',
+  //   },
+  //   {
+  //     level_number: 4,
+  //     level_name: 'Product',
+  //     rating: 0,
+  //     sub_level_number: 0,
+  //     sub_level: '',
+  //   },
+  //   {
+  //     level_number: 5,
+  //     level_name: 'Market',
+  //     rating: 0,
+  //     sub_level_number: 0,
+  //     sub_level: '',
+  //   },
+  //   {
+  //     level_number: 6,
+  //     level_name: 'Business Model',
+  //     rating: 0,
+  //     sub_level_number: 0,
+  //     sub_level: '',
+  //   },
+  //   {
+  //     level_number: 7,
+  //     level_name: 'Scale',
+  //     rating: 0,
+  //     sub_level_number: 0,
+  //     sub_level: '',
+  //   },
+  //   {
+  //     level_number: 8,
+  //     level_name: 'Exit',
+  //     rating: 0,
+  //     sub_level_number: 0,
+  //     sub_level: '',
+  //   },
+  // ]);
+
 
   const actor = useSelector((currState) => currState.actors.actor);
 
@@ -158,34 +262,61 @@ const ProjectRatings = ({ data }) => {
       //   rating,
       //   message: ratingDescription,
       //   project_id: data?.uid,
-      current_role: "project",
-        // }
+      // current_role: "project",
+      // }
 
 
-        await actor.update_rating(params)
-          .then((result) => {
-            console.log('result-in-update_rating', result)
-            // if (result) {
-            //   handleRatingCloseModal();
-            //   toast.success('review added successfully')
-            // } else {
-            //   handleRatingCloseModal();
-            //   toast.error('something got wrong')
-            // }
-          })
-          .catch((error) => {
-            console.log('error-in-update_rating', error)
-            // toast.error('something got wrong')
-            // handleRatingCloseModal();
-          })
+      await actor.update_rating(params)
+        .then((result) => {
+          console.log('result-in-update_rating', result)
+          // if (result) {
+          //   handleRatingCloseModal();
+          //   toast.success('review added successfully')
+          // } else {
+          //   handleRatingCloseModal();
+          //   toast.error('something got wrong')
+          // }
+        })
+        .catch((error) => {
+          console.log('error-in-update_rating', error)
+          // toast.error('something got wrong')
+          // handleRatingCloseModal();
+        })
     }
   }
 
+  // level_name: String,
+  // level_number: u32,
+  // sub_level: String,
+  // sub_level_number: u32,
+  // rating: f64,
+
+  // project_id: String, 
+  // current_role: String, 
+  // ratings: Vec<Rating>,
 
   const handleSubmit = () => {
     // Your submission logic here
     console.log("Form submitted:", sendingData);
-    // handleAddRating(sendingData)
+    let argument = {
+      project_id: data?.uid,
+      current_role: "project",
+      ratings: sendingData
+    }
+    handleAddRating(argument)
+    // Reset form or navigate to next page
+    // setCurrentStep(0);
+  };
+
+  const handleSubmitTwo = () => {
+    // Your submission logic here
+    console.log("Form submitted:", sendingData);
+    let argument = {
+      project_id: data?.uid,
+      current_role: "project",
+      ratings: sendingDataTwo
+    }
+    handleAddRating(argument)
     // Reset form or navigate to next page
     // setCurrentStep(0);
   };
@@ -210,7 +341,7 @@ const ProjectRatings = ({ data }) => {
   const [showConsentForm, setShowConsentForm] = useState(false);
   const handleNext = () => {
     setShowConsentForm(true);
-    setCurrentStep((prevStep) => prevStep + 1);
+    // setCurrentStep((prevStep) => prevStep + 1);
   };
 
   const handlePrevious = () => {
@@ -231,13 +362,18 @@ const ProjectRatings = ({ data }) => {
   const appendSendDataFunc = (name, step) => {
     console.log('name', name);
     console.log('step', step);
+    console.log('currentStep', currentStep)
     // let sendingArray = [...sendingData]
     // const foundObject = sendingArray.find(item => item.level_name === name);
     // const foundIndex = sendingArray.findIndex(item => item.level_name === name);
     // if (foundObject && foundIndex !== -1) {
-    //   sendingArray[foundIndex - 1].sub_level = rubric_table_data[currentStep].levels[step].title;
+    //   sendingArray[foundIndex].sub_level = rubric_table_data[currentStep].levels[step].title;
+    //   sendingArray[foundIndex].sub_level_number = step + 1;
     // }
+
+    // console.log('sendingArray ====>>>>>', sendingArray)
     // setSendingData(sendingArray);
+    setCurrentStep((prevStep) => prevStep + 1);
     setShowConsentForm(false);
     setSelectedValue(0);
   };
@@ -249,11 +385,16 @@ const ProjectRatings = ({ data }) => {
 
   //   console.log("foundIndex", foundIndex)
   // }
+  // console.log('sliderValues[sliderKeys[currentStep]]', sliderValues[sliderKeys[currentStep]])
+  // console.log('sliderValuesProgress[sliderKeys[currentStep]]================>>>>>>>>>>', sliderValuesProgress[sliderKeys[currentStep]])
+
+  // console.log('sliderValues[sliderKeys[currentStep]]', sliderValues[sliderKeys[currentStep]] + 1)
+  // console.log('sliderValues[sliderKeys[currentStep]]', Math.round((sliderValues[sliderKeys[currentStep]] + 1) * 100 / 9))
   return (
     <section className="bg-gray-100 w-full h-full lg1:px-[4%] py-[2%] px-[5%]">
       <div className="container">
         {/* Render only the current step */}
-        {currentStep < totalSteps && (
+        {/* {currentStep < totalSteps && ( */}
           <div className="mix-blend-darken bg-[#B9C0F3] text-gray-800 my-4 rounded shadow-md w-full mx-auto p-8">
             <div className="flex items-center justify-between p-4 cursor-pointer">
               <h2 className="text-lg font-semibold text-white text-nowrap">
@@ -262,12 +403,14 @@ const ProjectRatings = ({ data }) => {
               <div className="mx-4 flex items-center w-full">
                 <Line
                   strokeWidth={0.5}
-                  percent={Number(sliderValuesProgress[sliderKeys[currentStep]])}
+                  // percent={Number(sliderValuesProgress[sliderKeys[currentStep]] === 0 ? 11 : sliderValuesProgress[sliderKeys[currentStep]])}
+                  percent={Number(Math.round((sliderValues[sliderKeys[currentStep]] + 1) * 100 / 9))}
                   strokeColor="white"
                   className="line-horizontal"
                 />
                 <div className="text-white text-[15px] font-normal font-fontUse ml-2">
-                  {sliderValuesProgress[sliderKeys[currentStep]]}%
+                  {Math.round((sliderValues[sliderKeys[currentStep]] + 1) * 100 / 9)}%
+                  {/* {sliderValuesProgress[sliderKeys[currentStep]] === 0 ? 11 : sliderValuesProgress[sliderKeys[currentStep]]}% */}
                 </div>
                 {star}
               </div>
@@ -287,11 +430,13 @@ const ProjectRatings = ({ data }) => {
                     className="bg-gradient-to-r from-white to-blue-500 h-1 rounded-md w-full"
                     marks
                     markClassName="slider-mark bg-purple-800 rounded-md h-1 w-1"
-                    min={1}
-                    max={9}
+                    min={0}
+                    max={8}
                     thumbClassName="absolute bg-white w-12 h-12 flex items-center justify-center rounded-full shadow-md -top-2"
                     trackClassName="h-1 rounded"
                     value={sliderValues[sliderKeys[currentStep]]}
+                    // value={1}
+                    // value={11}
                     onChange={(value) => handleSliderChange(currentStep, value)}
                     renderThumb={(props, state) => (
                       <div {...props} className="-top-2 rounded-full">
@@ -303,30 +448,32 @@ const ProjectRatings = ({ data }) => {
                       let level_title = rubric_table_data[currentStep].levels[key ? key - 1 : 0].title;
                       let level_desc = rubric_table_data[currentStep].levels[key ? key - 1 : 0].desc;
                       return (
-                        <div key={key > 0 ? key : ''}
+                        <div key={key}
                           className="slider-mark bg-transparent rounded-md h-1 w-1"
-                          style={{ ...style, top: "0px" }}>
-                          {key > 0 ?
-                            <div className="flex flex-row text-white items-center space-x-1 relative -top-8 justify-between">
-                              <span>Level</span>
-                              <span>{key}</span>
-                              <div className="relative group">
-                                <span className="cursor-pointer">{alertCircle}</span>
-                                <div className="absolute hidden group-hover:block bg-transparent text-white p-2 rounded-lg shadow-lg min-w-[250px] -left-14 -top-[6.95rem] z-20 h-32 drop-shadow-sm backdrop-blur-lg border-white border-2 overflow-hidden">
-                                  <div className="relative z-10 p-2">
-                                    <div className="font-bold text-black text-sm">
-                                      {level_title}
-                                    </div>
-                                    <div className="py-1">
-                                      <div className="line-clamp-3 overflow-y-scroll">
-                                        {level_desc}
-                                      </div>
+                          // style={{ ...style, left: `${(500/8) * (key + 1) }px`, top: "0px" }}>
+                          style={{ ...style, left: `${(93.5 / 8) * key}%`, top: "0px" }}>
+                          {/* // style={key === 7 ? { ...style, right: "6%", top: "0px" } : { ...style, top: "0px" }}>  */}
+                          {/* {key > 0 ? */}
+                          <div className="flex flex-row text-white items-center space-x-1 relative -top-8 justify-between">
+                            <span>Level</span>
+                            <span>{key + 1}</span>
+                            <div className="relative group">
+                              <span className="cursor-pointer">{alertCircle}</span>
+                              <div className="absolute hidden group-hover:block bg-transparent text-white p-2 rounded-lg shadow-lg min-w-[250px] -left-14 -top-[6.95rem] z-20 h-32 drop-shadow-sm backdrop-blur-lg border-white border-2 overflow-hidden">
+                                <div className="relative z-10 p-2">
+                                  <div className="font-bold text-black text-sm">
+                                    {level_title}
+                                  </div>
+                                  <div className="py-1">
+                                    <div className="line-clamp-3 overflow-y-scroll">
+                                      {level_desc}
                                     </div>
                                   </div>
                                 </div>
                               </div>
                             </div>
-                            : ''}
+                          </div>
+                          {/* : ''} */}
                         </div>
                       )
                     }}
@@ -335,8 +482,11 @@ const ProjectRatings = ({ data }) => {
               </div>
             </div>
           </div>
-        )}
-        <div className="flex justify-end mt-4">
+        {/* )} */}
+
+
+
+        {/* <div className="flex justify-end mt-4">
           {currentStep > 0 && (
             <button onClick={handlePrevious}
               type="button"
@@ -344,29 +494,33 @@ const ProjectRatings = ({ data }) => {
               Back
             </button>
           )}
-          {currentStep < totalSteps - 1 && (
-            <button onClick={handleNext}
-            // <button onClick={handleSubmit}
+          {currentStep < totalSteps && (
+            // <button onClick={handleNext}
+              <button onClick={handleSubmit}
               type="button"
               className="ml-3 font-bold text-white bg-blue-500 hover:bg-blue-600  focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md w-auto sm:w-auto px-5 py-2 text-center mb-4">
               Next
             </button>
           )}
-          {currentStep === totalSteps - 1 && (
-            <button onClick={handleSubmit}
+          {currentStep < totalSteps && (
+            <button onClick={handleSubmitTwo}
               type="button"
               className="ml-3  font-bold text-white bg-blue-500 hover:bg-blue-600  focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md w-auto sm:w-auto px-5 py-2 text-center mb-4">
               Submit
             </button>
           )}
-        </div>
+        </div> */}
+
+
+
+        
       </div>
       {showConsentForm && (
         <ConsentForm
           isModalOpen={showConsentForm}
           onClose={() => setShowConsentForm(false)}
           onSubmitHandler={(name, step) => appendSendDataFunc(name, step)}
-          main_level={rubric_table_data[currentStep - 1]}
+          main_level={rubric_table_data[currentStep]}
           selected_level={selectedValue}
         />
       )}

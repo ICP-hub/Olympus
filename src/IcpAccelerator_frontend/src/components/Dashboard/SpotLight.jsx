@@ -10,6 +10,8 @@ import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import NoDataCard from "../Mentors/Event/NoDataCard";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import ment from "../../../assets/images/ment.jpg";
+import girl from "../../../assets/images/girl.jpeg";
 
 const SpotLight = () => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -50,37 +52,37 @@ const SpotLight = () => {
   }, [actor]);
 
   const handleNavigate = (projectId, projectData) => {
-    // if (isAuthenticated) {
-    //   switch (userCurrentRoleStatusActiveRole) {
-    //     case 'user':
-    //       navigate(`/individual-project-details-user/${projectId}`, {
-    //         state: projectData
-    //       });
-    //       break;
-    //     case 'project':
-    //       toast.error("Only Access if you are in a same cohort!!");
-    //       window.scrollTo({ top: 0, behavior: "smooth" });
-    //       break;
-    //     case 'mentor':
-    //       navigate(`/individual-project-details-project-mentor/${projectId}`);
-    //       break;
-    //     case 'investor':
-    //       navigate(`/individual-project-details-project-investor/${projectId}`);
-    //       break;
-    //     default:
-    //       toast.error("No Role Found, Please Sign Up !!!");
-    //       window.scrollTo({ top: 0, behavior: "smooth" });
-    //       break;
-    //   }
-    // } else {
-    //   toast.error("Please Sign Up !!!");
-    //   window.scrollTo({ top: 0, behavior: "smooth" });
-    // }
+    if (isAuthenticated) {
+      switch (userCurrentRoleStatusActiveRole) {
+        case 'user':
+          navigate(`/individual-project-details-user/${projectId}`, {
+            state: projectData
+          });
+          break;
+        case 'project':
+          toast.error("Only Access if you are in a same cohort!!");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          break;
+        case 'mentor':
+          navigate(`/individual-project-details-project-mentor/${projectId}`);
+          break;
+        case 'vc':
+          navigate(`/individual-project-details-project-investor/${projectId}`);
+          break;
+        default:
+          toast.error("No Role Found, Please Sign Up !!!");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          break;
+      }
+    } else {
+      toast.error("Please Sign Up !!!");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   return (
     <div className="py-4">
-      <div className="flex justify-between  gap-4 overflow-x-auto">
+      <div className="gap-4 overflow-x-auto">
         {noData ? (
           <NoDataCard />
         ) : (
@@ -113,21 +115,20 @@ const SpotLight = () => {
             {spotLightData &&
               spotLightData.map((data, index) => {
                 console.log("spotlight", data);
-                // let addedBy = data?.added_by?.toText();
-                let addedBy = data?.project_details?.user_data?.full_name ? data?.project_details?.user_data?.full_name :data?.added_by?.toText() ;
-                let userImage = data?.project_details?.user_data?.profile_picture[0] ? uint8ArrayToBase64(data?.project_details?.user_data?.profile_picture[0]) : "";
-                let projectName = data?.project_details?.project_name;
-                let projectImage = uint8ArrayToBase64(
-                  data?.project_details?.project_logo
-                );
-                let projectDescription =
-                  data?.project_details?.project_description;
-                let projectAreaOfFocus =
-                  data?.project_details?.project_area_of_focus;
+
+                let projectId =  data?.project_details?.uid ?? null;
+                let projectData = data?.project_details ?? null;
+                let addedBy = data?.project_details?.user_data?.full_name ?? ""; 
+                let projectName = data?.project_details?.params?.project_name ??"";
+                let projectImage = data?.project_details?.params?.project_logo ? uint8ArrayToBase64(data?.project_details?.params?.project_logo) : ment;
+                let userImage = data?.project_details?.params?.user_data?.profile_picture[0] ? uint8ArrayToBase64(data?.project_details?.params?.user_data?.profile_picture[0]) : girl;
+                let projectDescription = data?.project_details?.params?.project_description ?? "";
+                let projectAreaOfFocus = data?.project_details?.params?.project_area_of_focus ?? "";
+           
                 return (
                   <SwiperSlide key={index}>
                     <div className="mb-2 shadow-md rounded-3xl overflow-hidden border-2 spotlight-card-image w-full">
-                      <div className="p-6 cursor-pointer" onClick={() => handleNavigate(data?.project_id, data)}>
+                      <div className="p-6 cursor-pointer" onClick={() => handleNavigate(projectId, projectData)}>
                         <div className="flex flex-row gap-2">
                           <img
                             className="rounded-lg w-12 h-12"
@@ -143,7 +144,7 @@ const SpotLight = () => {
                               <img
                                 className="h-6 w-6 rounded-full"
                                 src={userImage}
-                                alt="User Profile"
+                                alt="User"
                               />
                               <div className="text-xs truncate w-56 lg:w-56 sxs:w-36 md:w-56 capitalize">
                                 {addedBy}

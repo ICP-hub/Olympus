@@ -302,7 +302,7 @@ pub struct ProjectVecWithRoles {
 pub struct SpotlightDetails {
     pub added_by: Principal,
     pub project_id: String,
-    pub project_details: ProjectInfo,
+    pub project_details: ProjectInfoInternal,
     pub approval_time: u64,
 }
 
@@ -913,6 +913,7 @@ pub struct ListAllProjects {
 //     })
 // }
 
+
 #[query]
 pub fn list_all_projects() -> Vec<ListAllProjects> {
     APPLICATION_FORM.with(|projects: &RefCell<ApplicationDetails>| {
@@ -922,30 +923,41 @@ pub fn list_all_projects() -> Vec<ListAllProjects> {
             return Vec::new();
         }
 
-        let mut list_all_projects: Vec<ListAllProjects> = Vec::new();
+        let mut list_all_projects: Vec<ListAllProjects> = vec![];
 
-        for (principal, project_list) in projects.iter() {
-            if project_list.is_empty() {
+        for (principal, projects) in projects.iter() {
+
+            if projects.is_empty() {
                 continue; 
             }
 
-            for project in project_list {
-                let rating_averages = calculate_average_api(&project.uid);
+            for project in projects {
+                let get_rating = calculate_average_api(&project.uid);
+
+            
+                if !get_rating.overall_average.is_empty() {
+                    let project_info = ListAllProjects {
+                        principal: principal.clone(),
+                        params: project.clone(),
+                        overall_average: Some(get_rating.overall_average[0]),
+                    };
+
+                    list_all_projects.push(project_info);
+                } else {
 
                     let project_info = ListAllProjects {
                         principal: principal.clone(),
                         params: project.clone(),
-                        overall_average: rating_averages.overall_average,
+                        overall_average: None, 
                     };
 
                     list_all_projects.push(project_info);
+                }
             }
         }
-
         list_all_projects
     })
 }
-
 
 
 pub async fn update_project(project_id: String, updated_project: ProjectInfo) -> String {

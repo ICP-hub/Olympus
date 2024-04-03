@@ -140,6 +140,7 @@ const MentorRegistration = () => {
   );
   console.log("specificRole is Here===>", specificRole);
   const mentorFullData = useSelector((currState) => currState.mentorData.data);
+  console.log("specificRole is Here===>", mentorFullData);
   const areaOfExpertise = useSelector(
     (currState) => currState.expertiseIn.expertise
   );
@@ -256,6 +257,12 @@ const MentorRegistration = () => {
     }
   };
 
+  const imageUrlToByteArray = async (imageUrl) => {
+    const response = await fetch(imageUrl);
+    const blob = await response.blob();
+    const arrayBuffer = await blob.arrayBuffer();
+    return Array.from(new Uint8Array(arrayBuffer));
+  };
   const handlePrevious = () => {
     if (step > 0) {
       setStep((prevStep) => prevStep - 1);
@@ -288,12 +295,6 @@ const MentorRegistration = () => {
     }
   };
 
-  const imageUrlToByteArray = async (imageUrl) => {
-    const response = await fetch(imageUrl);
-    const blob = await response.blob();
-    const arrayBuffer = await blob.arrayBuffer();
-    return Array.from(new Uint8Array(arrayBuffer));
-  };
   useEffect(() => {
     const preventScroll = (e) => {
       if (e.target.type === "number") {
@@ -318,10 +319,11 @@ const MentorRegistration = () => {
       setFormData(formattedData);
       console.log("formattedData341", formattedData);
       console.log("342 data", data);
-      if (formattedData.mentor_image) {
-        bufferToImageBlob(formattedData.mentor_image)
+      if (formattedData.user_data.profile_picture) {
+        imageUrlToByteArray(formattedData.user_data.profile_picture[0])
           .then((imageUrl) => {
             setmentor_image(imageUrl);
+            console.log("i am here Working ===>", imageUrl);
           })
           .catch((error) => console.error("Error converting image:", error));
       }
@@ -370,11 +372,12 @@ const MentorRegistration = () => {
           // navigate("/")
           window.location.href = "/";
         });
-      } else if (specificRole === null ||
+      } else if (
+        specificRole === null ||
         specificRole === "user" ||
         specificRole === "project" ||
         specificRole === "vc"
-      ){
+      ) {
         console.log("register mentor functn k pass reached");
         await actor.register_mentor_candid(val).then((result) => {
           toast.success(result);
@@ -402,7 +405,7 @@ const MentorRegistration = () => {
     if (step < steps.length - 1) {
       handleNext();
     } else if (
-      specificRole !== null ||
+      specificRole === "mentor" ||
       (undefined && step > steps.length - 1)
     ) {
       // console.log("exisiting user visit ");
@@ -412,7 +415,7 @@ const MentorRegistration = () => {
         updatedFormData.icop_hub_or_spoke === "true" ? true : false;
       let tempObj2 = {
         user_data: {
-          profile_picture: [updatedFormData.mentor_image] || [],
+          profile_picture: [mentor_image] || [],
           full_name: updatedFormData.full_name || "",
           country: updatedFormData.country || "",
           email: [updatedFormData.email] || [],
@@ -444,20 +447,27 @@ const MentorRegistration = () => {
       await sendingMentorData(tempObj2);
     } else if (
       specificRole === null ||
-      (specificRole === undefined && step > steps.length - 1)
+      specificRole === "user" ||
+      specificRole === "project" ||
+      specificRole === "vc" ||
+      step > steps.length - 1
     ) {
-      console.log("first time visit ");
+      console.log("existing visit ");
+      const updatedexisting_icp_mentor =
+        ExistingICPMentor === "true" ? true : false;
+      const IcopHubOrSpoke =
+        updatedFormData.icop_hub_or_spoke === "true" ? true : false;
       let tempObj = {
         user_data: {
           profile_picture: [updatedFormData.mentor_image] || [],
-          full_name: updatedFormData.full_name,
-          country: updatedFormData.country,
-          email: [updatedFormData.email],
+          full_name: updatedFormData.full_name || "",
+          country: updatedFormData.country || "",
+          email: [updatedFormData.email] || [],
           telegram_id: [updatedFormData.telegram_id],
           twitter_id: [updatedFormData.twitter_id],
-          openchat_username: [updatedFormData.openchat_username],
-          bio: [updatedFormData.bio],
-          area_of_intrest: updatedFormData.area_of_intrest,
+          openchat_username: [updatedFormData.openchat_username] || [],
+          bio: [updatedFormData.bio] || [],
+          area_of_intrest: updatedFormData.area_of_intrest || [],
         },
         existing_icp_mentor: updatedexisting_icp_mentor,
         reason_for_joining: updatedFormData.reason_for_joining || "",
@@ -473,7 +483,7 @@ const MentorRegistration = () => {
         ],
         years_of_mentoring: updatedFormData.years_of_mentoring.toString(),
         icop_hub_or_spoke: IcopHubOrSpoke,
-        linkedin_link: updatedFormData.linkedin_link,
+        linkedin_link: updatedFormData.linkedin_link || "",
       };
       console.log("tempObj kaam kia ????? ", tempObj); // work kia
 
@@ -698,7 +708,6 @@ const MentorRegistration = () => {
                     </label>
                     <select
                       {...register("multi_chain")}
-                      value={this.value}
                       className={`bg-gray-50 border-2 ${
                         errors.multi_chain
                           ? "border-red-500 placeholder:text-red-500"

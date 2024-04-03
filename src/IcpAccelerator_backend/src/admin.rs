@@ -1061,7 +1061,7 @@ pub async fn add_project_to_spotlight(project_id: String) -> Result<(), String> 
             let spotlight_details = SpotlightDetails {
                 added_by: project_creator,
                 project_id: project_id,
-                project_details: project_info.params,
+                project_details: project_info,
                 approval_time: time(),
             };
 
@@ -1094,6 +1094,16 @@ pub fn get_spotlight_projects() -> Vec<SpotlightDetails> {
     projects.sort_by(|a, b| b.approval_time.cmp(&a.approval_time));
 
     projects
+}
+
+#[query]
+pub fn get_spotlight_project_uids() -> Vec<String> {
+    SPOTLIGHT_PROJECTS.with(|spotlight| {
+        spotlight.borrow()
+            .iter()
+            .map(|details| details.project_id.clone())
+            .collect()
+    })
 }
 
 pub fn pre_upgrade_admin() {

@@ -22,7 +22,7 @@ const InvestorProjects = () => {
       } else {
         setData([]);
       }
-    } catch(err) {
+    } catch (err) {
       setData([]);
       console.error('Error:', err);
     }
@@ -36,17 +36,19 @@ const InvestorProjects = () => {
     }
   }, [actor, principal]);
   return (
-    <div className='md:mx-6 mx-0'>
-      <div className="flex flex-row space-x-4 overflow-x-auto">
-        {data && data.length === 0 ? (
-          <NoDataCard />
-        ) : (
-          data.map((data, index) => (
-            <InvestedProjects data={data} key={index} />
-          ))
-        )}
-      </div>
-    </div>
+    <>
+      {data && data.length === 0 ? (
+        <NoDataCard />
+      ) : (
+        data.map((data, index) => {
+          return (
+            <div key={index} className='w-full sm:w-1/2 lg:w-1/3 p-2'>
+              <InvestedProjects data={data} />
+            </div>
+          )
+        })
+      )}
+    </>
   );
 };
 
