@@ -8,6 +8,7 @@ const CreateProjectsAdditionalDetails = ({
   goToPrevious,
   isSubmitting,
   fields,
+  toSave
 }) => {
   return (
     <div>
@@ -64,6 +65,13 @@ const CreateProjectsAdditionalDetails = ({
             onClick={goToPrevious}
           >
             Previous
+          </button>
+          <button
+            type="button"
+            className="text-white font-bold bg-blue-800 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md w-auto sm:w-auto px-5 py-2 text-center mb-4 ml-4"
+            onClick={toSave}
+          >
+            Save
           </button>
           <button
             type="submit"

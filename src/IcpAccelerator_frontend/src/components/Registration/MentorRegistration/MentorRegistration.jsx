@@ -95,6 +95,19 @@ const validationSchema = {
         /\S/.test(value)
       )
       .required("linkedin link is required"),
+    twitter_link: yup.string().url("Invalid twitter link"),
+    telegram_link: yup.string().url("Invalid telegram link"),
+    documents_link: yup.string().url("Invalid documents link"),
+    bio_mentor: yup
+      .string()
+      .test("wordCount", "Bio must be 50 words or fewer", (value) => {
+        if (typeof value === "string") {
+          const words = value.trim().split(/\s+/); // Split by any whitespace
+          return words.length <= 50;
+        }
+        return false; // Fails validation if not a string
+      })
+      .required("Bio is Required"),
     hub_owner: yup.string().optional(),
     multichain: yup.string().optional(),
     preferred_icp_hub: yup
@@ -179,7 +192,7 @@ const MentorRegistration = () => {
   };
 
   const steps = [
-    { id: "personalDetails", fields: mentorRegistrationPersonalDetails },
+    // { id: "personalDetails", fields: mentorRegistrationPersonalDetails },
     { id: "mentorDetails", fields: mentorRegistrationDetails },
   ];
 
@@ -494,9 +507,10 @@ const MentorRegistration = () => {
 
   const stepFields = steps[step].fields;
   let StepComponent;
+  // if (step === 0) {
+  //   StepComponent = <MentorPersonalInformation />;
+  // } else
   if (step === 0) {
-    StepComponent = <MentorPersonalInformation />;
-  } else if (step === 1) {
     StepComponent = <MentorDetails isSubmitting={isSubmitting} />;
   }
 
@@ -541,7 +555,7 @@ const MentorRegistration = () => {
               ))}
             </ul>
 
-            {step === 0 && (
+            {/* {step === 0 && (
               <div className="flex flex-col">
                 <div className="flex-row w-full flex justify-start gap-4 items-center">
                   <div className="mb-3 ml-6 h-24 w-24 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
@@ -660,51 +674,51 @@ const MentorRegistration = () => {
                   </div>
                 </div>
               </div>
-            )}
+            )} */}
 
-            {step === 1 && (
+            {step === 0 && (
               <>
-                <div className="z-0 w-full my-3 group px-4">
-                  <label
-                    htmlFor="preferred_icp_hub"
-                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                  >
-                    Preferred ICP Hub
-                  </label>
-                  <select
-                    {...register("preferred_icp_hub")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.preferred_icp_hub
-                        ? "border-red-500 placeholder:text-red-500"
-                        : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                  >
-                    <option className="text-lg font-bold" value="">
-                      Select your ICP Hub
-                    </option>
-                    {getAllIcpHubs?.map((hub) => (
-                      <option
-                        key={hub.id}
-                        value={`${hub.name} ,${hub.region}`}
-                        className="text-lg font-bold"
-                      >
-                        {hub.name} , {hub.region}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.preferred_icp_hub && (
-                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                      {errors.preferred_icp_hub.message}
-                    </p>
-                  )}
-                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 px-4 gap-6">
+                  <div className="z-0 w-full mb-3 group">
+                    <label
+                      htmlFor="preferred_icp_hub"
+                      className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                    >
+                      Preferred ICP Hub you would like to be associated with
+                    </label>
+                    <select
+                      {...register("preferred_icp_hub")}
+                      className={`bg-gray-50 border-2 ${
+                        errors.preferred_icp_hub
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    >
+                      <option className="text-lg font-bold" value="">
+                        Select your ICP Hub
+                      </option>
+                      {getAllIcpHubs?.map((hub) => (
+                        <option
+                          key={hub.id}
+                          value={`${hub.name} ,${hub.region}`}
+                          className="text-lg font-bold"
+                        >
+                          {hub.name} , {hub.region}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.preferred_icp_hub && (
+                      <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                        {errors.preferred_icp_hub.message}
+                      </p>
+                    )}
+                  </div>
                   <div className="z-0 w-full mb-3 group">
                     <label
                       htmlFor="multi_chain"
                       className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                     >
-                      Are you on multi-chain
+                      Are you also multi-chain
                     </label>
                     <select
                       {...register("multi_chain")}
@@ -733,7 +747,7 @@ const MentorRegistration = () => {
                         htmlFor="multichain"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        Multi-chain options
+                        Please select the chains
                       </label>
                       <select
                         {...register("multichain")}
@@ -822,7 +836,7 @@ const MentorRegistration = () => {
                       htmlFor="area_of_expertise"
                       className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                     >
-                      What are your areas of expertise? *
+                      Areas of expertise? *
                     </label>
                     <select
                       {...register("area_of_expertise")}
@@ -833,7 +847,7 @@ const MentorRegistration = () => {
                       } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     >
                       <option className="text-lg font-bold" value="">
-                        Area of expertise
+                        Areas of expertise
                       </option>
                       {areaOfExpertise?.map((expert) => (
                         <option
@@ -887,7 +901,7 @@ const MentorRegistration = () => {
                       htmlFor="icop_hub_or_spoke"
                       className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                     >
-                      Are you ICP hub/spoke
+                      Are you ICP Hub/Spoke
                     </label>
                     <select
                       {...register("icop_hub_or_spoke")}

@@ -25,7 +25,7 @@ const ProjectDetailsForInvestor = () => {
 
     const handleProjectCloseModalAsInvestor = () => setIsAddProjectModalOpenAsInvestor(false);
     const handleProjectOpenModalAsInvestor = () => setIsAddProjectModalOpenAsInvestor(true);
-  
+
     const fetchProjectData = async () => {
         await actor.get_project_details_for_mentor_and_investor(id)
             .then((result) => {
@@ -143,6 +143,8 @@ const ProjectDetailsForInvestor = () => {
             case "project-ratings":
                 return (
                     <ProjectRatings
+                        data={projectData}
+                        isProjectLive={true}
                         profile={true}
                         type={!true}
                         name={true}
@@ -162,7 +164,7 @@ const ProjectDetailsForInvestor = () => {
                         socials={true}
                         filter={"documents"}
                     />
-                ); 
+                );
             default:
                 return null;
         }
@@ -180,33 +182,33 @@ const ProjectDetailsForInvestor = () => {
     }
 
 
-    
-  // ASSOCIATE IN A PROJECT HANDLER AS A MENTOR
-  const handleAddProjectAsInvestor = async ({ message }) => {
-    console.log('add into a project AS INVESTOR')
-    if (actor && principal) {
-      let project_id = id;
-      let msg = message
 
-      await actor.send_offer_to_project_by_investor(project_id, msg)
-        .then((result) => {
-          console.log('result-in-send_offer_to_project_by_investor', result)
-          if (result) {
-            handleProjectCloseModalAsInvestor();
-            toast.success('offer sent to project successfully')
-          } else {
-            handleProjectCloseModalAsInvestor();
-            toast.error('something got wrong')
-          }
-        })
-        .catch((error) => {
-          console.log('error-in-send_offer_to_project_by_investor', error)
-          handleProjectCloseModalAsInvestor();
-          toast.error('something got wrong')
+    // ASSOCIATE IN A PROJECT HANDLER AS A MENTOR
+    const handleAddProjectAsInvestor = async ({ message }) => {
+        console.log('add into a project AS INVESTOR')
+        if (actor && principal) {
+            let project_id = id;
+            let msg = message
 
-        })
+            await actor.send_offer_to_project_by_investor(project_id, msg)
+                .then((result) => {
+                    console.log('result-in-send_offer_to_project_by_investor', result)
+                    if (result) {
+                        handleProjectCloseModalAsInvestor();
+                        toast.success('offer sent to project successfully')
+                    } else {
+                        handleProjectCloseModalAsInvestor();
+                        toast.error('something got wrong')
+                    }
+                })
+                .catch((error) => {
+                    console.log('error-in-send_offer_to_project_by_investor', error)
+                    handleProjectCloseModalAsInvestor();
+                    toast.error('something got wrong')
+
+                })
+        }
     }
-  }
 
 
     useEffect(() => {
@@ -216,7 +218,7 @@ const ProjectDetailsForInvestor = () => {
             } else {
                 fetchRubricRating(projectData);
             }
-        }else{
+        } else {
             navigate('/');
         }
     }, [actor, principal, projectData]);

@@ -63,7 +63,13 @@ const validationSchema = {
   projectDetails: yup.object().shape({
     project_elevator_pitch: yup
       .string()
-      .url("Must be a valid URL")
+      .test("wordCount", "Project Pitch must be 50 words or fewer", (value) => {
+        if (typeof value === "string") {
+          const words = value.trim().split(/\s+/); // Split by any whitespace
+          return words.length <= 50;
+        }
+        return false; // Fails validation if not a string
+      })
       .required("Project elevator pitch is Required"),
     reason_to_join_incubator: yup
       .string()
@@ -227,6 +233,7 @@ const CreateProjectRegistration = () => {
   const [projectDataObject, setProjectDataObject] = useState({});
   // Form Updates Changes in enable and diabled
   const [isLiveOnICP, setIsLiveOnICP] = useState(false);
+  const [isProjectRegistered, setIsProjectRegistered] = useState(false);
   const [isMoneyRaised, setIsMoneyRaised] = useState(false);
   const [isMulti_Chain, setIsMulti_Chain] = useState(false);
   const [isPrivateDocument, setIsPrivateDocuments] = useState(false);
@@ -252,7 +259,7 @@ const CreateProjectRegistration = () => {
     dispatch(allHubHandlerRequest());
   }, [actor, dispatch]);
   const steps = [
-    { id: "personalDetails", fields: projectPersonalInformation },
+    // { id: "personalDetails", fields: projectPersonalInformation },
     { id: "projectDetails", fields: projectDetails },
     { id: "additionalDetails", fields: additionalDetails },
   ];
@@ -305,6 +312,7 @@ const CreateProjectRegistration = () => {
   };
 
   const liveOnICPMainnetValue = watch("live_on_icp_mainnet");
+  const isyourProjectRegistered = watch("is_your_project_registered");
   const MoneyRaisedTillNow = watch("money_raised_till_now");
   const IsMultiChain = watch("multi_chain");
   const IsPrivateDocument = watch("upload_private_documents");
@@ -340,6 +348,11 @@ const CreateProjectRegistration = () => {
       setValue("weekly_active_users", "");
       setValue("revenue", "");
     }
+    setIsProjectRegistered(isyourProjectRegistered === "true");
+    if (isyourProjectRegistered !== "true") {
+      setValue("type_of_registration", "");
+      setValue("country_of_registration", "");
+    }
     setIsMoneyRaised(MoneyRaisedTillNow === "true");
     // if(MoneyRaisedTillNow === "true"){
     //   checkTotal();
@@ -359,6 +372,7 @@ const CreateProjectRegistration = () => {
   }, [
     liveOnICPMainnetValue,
     MoneyRaisedTillNow,
+    isyourProjectRegistered,
     IsMultiChain,
     IsPrivateDocument,
     setValue,
@@ -525,6 +539,13 @@ const CreateProjectRegistration = () => {
       setStep((prevStep) => prevStep + 1);
       setActiveTab(projectRegistration[step + 1]?.id);
     }
+  };
+  const saveFormData = (val) => {
+    localStorage.setItem("formData", JSON.stringify(val));
+  };
+  const handleSaveStep = () => {
+    const updatedFormData = { ...formData };
+    saveFormData(updatedFormData);
   };
   const imageUrlToByteArray = async (imageUrl) => {
     const response = await fetch(imageUrl);
@@ -856,13 +877,15 @@ const CreateProjectRegistration = () => {
   //   onDrop: addMultipleImageHandler,
   //   multiple: true,
   // });
+
   const stepFields = steps[step].fields;
   let StepComponent;
+  // if (step === 0) {
+  //   StepComponent = <CreateProjectPersonalInformation />;
+  // } else
   if (step === 0) {
-    StepComponent = <CreateProjectPersonalInformation />;
-  } else if (step === 1) {
     StepComponent = <CreateProjectsDetails />;
-  } else if (step === 2) {
+  } else if (step === 1) {
     StepComponent = (
       <CreateProjectsAdditionalDetails isSubmitting={isSubmitting} />
     );
@@ -905,7 +928,7 @@ const CreateProjectRegistration = () => {
               </li>
             ))}
           </ul>
-          {step === 0 && (
+          {/* {step === 0 && (
             <>
               <div className="flex flex-col">
                 <div className="flex-row w-full flex justify-start gap-4 items-center">
@@ -1021,44 +1044,67 @@ const CreateProjectRegistration = () => {
                     </p>
                   )}
                 </div>
-                <div className="z-0 w-full mb-3 group">
+                <div className="z-0 w-full group">
                   <label
                     htmlFor="area_of_intrest"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Area of Intrest *
+                    Domains you are interested in?
                   </label>
-                  <select
+                  <ReactSelect
+                    isMulti
+                    options={areaOfExpertise.map((expert) => ({
+                      value: expert.name,
+                      label: expert.name,
+                    }))}
+                    menuPortalTarget={document.body}
+                    menuPosition={"fixed"}
+                    styles={{
+                      menuPortal: (base) => ({
+                        ...base,
+                        zIndex: 9999, // Set the desired z-index value
+                      }),
+                      control: (provided, state) => ({
+                        ...provided,
+                        color: "black", // Initial color of the label
+                        // Add other control styles if needed
+                        paddingBlock: "2px",
+                        borderRadius: "8px",
+                        border: errors.area_of_intrest
+                          ? "2px solid #ef4444"
+                          : "2px solid #737373",
+                        backgroundColor: "rgb(249 250 251)",
+                        // Additional conditional placeholder color if needed
+                        "&::placeholder": {
+                          color: errors.area_of_intrest
+                            ? "#ef4444"
+                            : "currentColor", // Adjust the placeholder color conditionally
+                        },
+                      }),
+                    }}
+                    classNamePrefix="select"
+                    className="basic-multi-select"
+                    placeholder="Interests"
+                    name="area_of_intrest"
                     {...register("area_of_intrest")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.area_of_intrest
-                        ? "border-red-500 placeholder:text-red-500"
-                        : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                  >
-                    <option className="text-lg font-bold" value="">
-                      Area of Intrest
-                    </option>
-                    {areaOfExpertise?.map((intrest) => (
-                      <option
-                        key={intrest.id}
-                        value={`${intrest.name}`}
-                        className="text-lg font-bold capitalize"
-                      >
-                        {intrest.name}
-                      </option>
-                    ))}
-                  </select>
+                    onChange={(selectedOptions) => {
+                      // You might need to adapt this part to fit how you handle form data
+                      const selectedValues = selectedOptions
+                        .map((option) => option.value)
+                        .join(", ");
+                      setValue("area_of_intrest", selectedValues);
+                    }}
+                  />
                   {errors.area_of_intrest && (
-                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                    <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
                       {errors.area_of_intrest.message}
-                    </p>
+                    </span>
                   )}
                 </div>
               </div>
             </>
-          )}
-          {step === 1 && (
+          )} */}
+          {step === 0 && (
             <>
               <div className="flex flex-col">
                 <div className="flex-row w-full flex justify-start gap-4 items-center">
@@ -1142,7 +1188,7 @@ const CreateProjectRegistration = () => {
                   htmlFor="reason_to_join_incubator"
                   className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                 >
-                  Why you want to join ? *
+                  Why do you want to join? *
                 </label>
                 <select
                   {...register("reason_to_join_incubator")}
@@ -1190,7 +1236,7 @@ const CreateProjectRegistration = () => {
                     htmlFor="preferred_icp_hub"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    ICP Hub *
+                    Are you associated with a ICP HUB *
                   </label>
                   <select
                     {...register("preferred_icp_hub")}
@@ -1305,7 +1351,7 @@ const CreateProjectRegistration = () => {
                         htmlFor="dapp_link"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        Dapp Link
+                        dApp Link
                       </label>
                       <input
                         type="text"
@@ -1330,7 +1376,7 @@ const CreateProjectRegistration = () => {
                         htmlFor="weekly_active_users"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        weekly Active Users
+                        Weekly active users
                       </label>
                       <input
                         type="number"
@@ -1354,7 +1400,7 @@ const CreateProjectRegistration = () => {
                         htmlFor="revenue"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        Revenue ($)
+                        Revenue (USD)
                       </label>
                       <input
                         type="number"
@@ -1381,7 +1427,7 @@ const CreateProjectRegistration = () => {
                     htmlFor="multi_chain"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Are you on multi-chain
+                    Are you also multi-chain
                   </label>
                   <select
                     {...register("multi_chain")}
@@ -1410,7 +1456,7 @@ const CreateProjectRegistration = () => {
                       htmlFor="supports_multichain"
                       className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                     >
-                      Multi-chain options
+                      Please select the chains
                     </label>
                     <select
                       {...register("supports_multichain")}
@@ -1445,7 +1491,7 @@ const CreateProjectRegistration = () => {
                     htmlFor="money_raised_till_now"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Money raised till now
+                    Have you raised any funds in past
                   </label>
                   <select
                     {...register("money_raised_till_now")}
@@ -1475,7 +1521,7 @@ const CreateProjectRegistration = () => {
                         htmlFor="icp_grants"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        ICP Grants ($)
+                        Grants
                       </label>
                       <input
                         type="number"
@@ -1500,7 +1546,7 @@ const CreateProjectRegistration = () => {
                         htmlFor="investors"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        Investors ($)
+                        Investors
                       </label>
                       <input
                         type="number"
@@ -1525,7 +1571,7 @@ const CreateProjectRegistration = () => {
                         htmlFor="sns"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        Sns ($)
+                        Launchpad
                       </label>
                       <input
                         type="number"
@@ -1547,26 +1593,29 @@ const CreateProjectRegistration = () => {
                     </div>
                     <div className="z-0 w-full mb-3 group">
                       <label
-                        htmlFor="raised_from_other_ecosystem"
+                        htmlFor="money_raised_now"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        Raised from other ecosystem ($)
+                        Are you currently raising money
                       </label>
-                      <input
-                        type="number"
-                        name="raised_from_other_ecosystem"
-                        id="raised_from_other_ecosystem"
-                        {...register("raised_from_other_ecosystem")}
+                      <select
+                        {...register("money_raised_now")}
                         className={`bg-gray-50 border-2 ${
-                          errors.raised_from_other_ecosystem
+                          errors.money_raised_now
                             ? "border-red-500 placeholder:text-red-500"
                             : "border-[#737373]"
                         } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                        placeholder="$"
-                      />
-                      {errors.raised_from_other_ecosystem && (
+                      >
+                        <option className="text-lg font-bold" value="false">
+                          No
+                        </option>
+                        <option className="text-lg font-bold" value="true">
+                          Yes
+                        </option>
+                      </select>
+                      {errors.money_raised_now && (
                         <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                          {errors.raised_from_other_ecosystem.message}
+                          {errors.money_raised_now.message}
                         </p>
                       )}
                     </div>
@@ -1575,7 +1624,7 @@ const CreateProjectRegistration = () => {
                         htmlFor="target_amount"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        Target Amount ($)
+                        Target Amount (USD)
                       </label>
                       <input
                         type="number"
@@ -1597,10 +1646,35 @@ const CreateProjectRegistration = () => {
                     </div>
                     <div className="z-0 w-full mb-3 group">
                       <label
+                        htmlFor="raised_from_other_ecosystem"
+                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                      >
+                        Valuation (USD)
+                      </label>
+                      <input
+                        type="number"
+                        name="raised_from_other_ecosystem"
+                        id="raised_from_other_ecosystem"
+                        {...register("raised_from_other_ecosystem")}
+                        className={`bg-gray-50 border-2 ${
+                          errors.raised_from_other_ecosystem
+                            ? "border-red-500 placeholder:text-red-500"
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        placeholder="$"
+                      />
+                      {errors.raised_from_other_ecosystem && (
+                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                          {errors.raised_from_other_ecosystem.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="z-0 w-full mb-3 group">
+                      <label
                         htmlFor="upload_private_documents"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        Upload Private Documents
+                        Upload due diligence documents
                       </label>
                       <select
                         {...register("upload_private_documents")}
@@ -1635,7 +1709,7 @@ const CreateProjectRegistration = () => {
                           htmlFor="title"
                           className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                         >
-                          Title
+                          Doc title
                         </label>
                         <input
                           {...register(`private_docs.${index}.title`)}
@@ -1739,84 +1813,185 @@ const CreateProjectRegistration = () => {
               </div>
             </>
           )}
-          {step === 2 && (
-            <div className="flex flex-col">
-              <div className="flex-row w-full flex justify-start gap-4 items-center">
-                <div className="mb-3 ml-6 h-24 w-24 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
-                  {isLoading ? (
-                    <svg
-                      width="35"
-                      height="37"
-                      viewBox="0 0 35 37"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="bg-no-repeat animate-pulse"
-                    >
-                      <path
-                        d="M8.53049 8.62583C8.5304 13.3783 12.3575 17.2449 17.0605 17.2438C21.7634 17.2428 25.5907 13.3744 25.5908 8.62196C25.5909 3.8695 21.7638 0.00287764 17.0608 0.00394405C12.3579 0.00501045 8.53058 3.87336 8.53049 8.62583ZM32.2249 36.3959L34.1204 36.3954L34.1205 34.4799C34.1206 27.0878 28.1667 21.0724 20.8516 21.0741L13.2692 21.0758C5.95224 21.0775 -3.41468e-05 27.0955 -0.000176714 34.4876L-0.000213659 36.4032L32.2249 36.3959Z"
-                        fill="#BBBBBB"
-                      />
-                    </svg>
-                  ) : coverPreview ? (
-                    <img
-                      src={coverPreview}
-                      alt="CoverImage"
-                      className="h-full w-full object-cover"
-                    />
-                  ) : additionalDetails.coverData ? (
-                    <img
-                      src={additionalDetails?.coverData}
-                      alt="User"
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <svg
-                      width="35"
-                      height="37"
-                      viewBox="0 0 35 37"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="bg-no-repeat"
-                    >
-                      <path
-                        d="M8.53049 8.62583C8.5304 13.3783 12.3575 17.2449 17.0605 17.2438C21.7634 17.2428 25.5907 13.3744 25.5908 8.62196C25.5909 3.8695 21.7638 0.00287764 17.0608 0.00394405C12.3579 0.00501045 8.53058 3.87336 8.53049 8.62583ZM32.2249 36.3959L34.1204 36.3954L34.1205 34.4799C34.1206 27.0878 28.1667 21.0724 20.8516 21.0741L13.2692 21.0758C5.95224 21.0775 -3.41468e-05 27.0955 -0.000176714 34.4876L-0.000213659 36.4032L32.2249 36.3959Z"
-                        fill="#BBBBBB"
-                      />
-                    </svg>
-                  )}
-                </div>
-
-                <Controller
-                  name="coverData"
-                  control={control}
-                  render={({ field }) => (
-                    <>
-                      <input
-                        id="cover"
-                        type="file"
-                        name="cover"
-                        className="hidden"
-                        onChange={(e) => {
-                          const file = e.target.files[0];
-                          addImageCoverHandler(file);
-                        }}
-                      />
-                      <label
-                        htmlFor="cover"
-                        className="p-2 border-2 border-blue-800 items-center rounded-md text-md bg-transparent text-blue-800 cursor-pointer font-extrabold"
+          {step === 1 && (
+            <>
+              <div className="flex flex-col">
+                <div className="flex-row w-full flex justify-start gap-4 items-center">
+                  <div className="mb-3 ml-6 h-24 w-24 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
+                    {isLoading ? (
+                      <svg
+                        width="35"
+                        height="37"
+                        viewBox="0 0 35 37"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="bg-no-repeat animate-pulse"
                       >
-                        Upload Cover
-                      </label>
-                    </>
-                  )}
-                />
+                        <path
+                          d="M8.53049 8.62583C8.5304 13.3783 12.3575 17.2449 17.0605 17.2438C21.7634 17.2428 25.5907 13.3744 25.5908 8.62196C25.5909 3.8695 21.7638 0.00287764 17.0608 0.00394405C12.3579 0.00501045 8.53058 3.87336 8.53049 8.62583ZM32.2249 36.3959L34.1204 36.3954L34.1205 34.4799C34.1206 27.0878 28.1667 21.0724 20.8516 21.0741L13.2692 21.0758C5.95224 21.0775 -3.41468e-05 27.0955 -0.000176714 34.4876L-0.000213659 36.4032L32.2249 36.3959Z"
+                          fill="#BBBBBB"
+                        />
+                      </svg>
+                    ) : coverPreview ? (
+                      <img
+                        src={coverPreview}
+                        alt="CoverImage"
+                        className="h-full w-full object-cover"
+                      />
+                    ) : additionalDetails.coverData ? (
+                      <img
+                        src={additionalDetails?.coverData}
+                        alt="User"
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <svg
+                        width="35"
+                        height="37"
+                        viewBox="0 0 35 37"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="bg-no-repeat"
+                      >
+                        <path
+                          d="M8.53049 8.62583C8.5304 13.3783 12.3575 17.2449 17.0605 17.2438C21.7634 17.2428 25.5907 13.3744 25.5908 8.62196C25.5909 3.8695 21.7638 0.00287764 17.0608 0.00394405C12.3579 0.00501045 8.53058 3.87336 8.53049 8.62583ZM32.2249 36.3959L34.1204 36.3954L34.1205 34.4799C34.1206 27.0878 28.1667 21.0724 20.8516 21.0741L13.2692 21.0758C5.95224 21.0775 -3.41468e-05 27.0955 -0.000176714 34.4876L-0.000213659 36.4032L32.2249 36.3959Z"
+                          fill="#BBBBBB"
+                        />
+                      </svg>
+                    )}
+                  </div>
+
+                  <Controller
+                    name="coverData"
+                    control={control}
+                    render={({ field }) => (
+                      <>
+                        <input
+                          id="cover"
+                          type="file"
+                          name="cover"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            addImageCoverHandler(file);
+                          }}
+                        />
+                        <label
+                          htmlFor="cover"
+                          className="p-2 border-2 border-blue-800 items-center rounded-md text-md bg-transparent text-blue-800 cursor-pointer font-extrabold"
+                        >
+                          Upload Cover
+                        </label>
+                      </>
+                    )}
+                  />
+                </div>
+                {errors.coverData && (
+                  <span className="mt-1 text-sm text-red-500 font-bold text-start px-4">
+                    {errors.coverData.message}
+                  </span>
+                )}
               </div>
-              {errors.coverData && (
-                <span className="mt-1 text-sm text-red-500 font-bold text-start px-4">
-                  {errors.coverData.message}
-                </span>
-              )}
-            </div>
+              <div className="z-0 w-full mb-3 group px-4">
+                <label
+                  htmlFor="is_your_project_registered"
+                  className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                >
+                  Is your project registered
+                </label>
+                <select
+                  {...register("is_your_project_registered")}
+                  className={`bg-gray-50 border-2 ${
+                    errors.is_your_project_registered
+                      ? "border-red-500 placeholder:text-red-500"
+                      : "border-[#737373]"
+                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                >
+                  <option className="text-lg font-bold" value="false">
+                    No
+                  </option>
+                  <option className="text-lg font-bold" value="true">
+                    Yes
+                  </option>
+                </select>
+                {errors.is_your_project_registered && (
+                  <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                    {errors.is_your_project_registered.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-3 px-4">
+                {isProjectRegistered && (
+                  <>
+                    <div className="z-0 w-full mb-3 group">
+                      <label
+                        htmlFor="type_of_registration"
+                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                      >
+                        Type of registration
+                      </label>
+                      <select
+                        {...register("type_of_registration")}
+                        className={`bg-gray-50 border-2 ${
+                          errors.type_of_registration
+                            ? "border-red-500 placeholder:text-red-500"
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      >
+                        <option className="text-lg font-bold" value="Comapany">
+                          Comapany
+                        </option>
+                        <option className="text-lg font-bold" value="DAO">
+                          DAO
+                        </option>
+                      </select>
+                      {errors.type_of_registration && (
+                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                          {errors.type_of_registration.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="z-0 w-full mb-3 group">
+                      <label
+                        htmlFor="country_of_registration"
+                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                      >
+                        Country of registration
+                      </label>
+                      <select
+                        {...register("country_of_registration")}
+                        className={`bg-gray-50 border-2 ${
+                          errors.country_of_registration
+                            ? "border-red-500 placeholder:text-red-500"
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        required
+                      >
+                        <option className="text-lg font-bold" value="">
+                          Select your registered country
+                        </option>
+                        {countries?.map((expert) => (
+                          <option
+                            key={expert.name}
+                            value={`${expert.name}`}
+                            className="text-lg font-bold"
+                          >
+                            {expert.name}
+                          </option>
+                        ))}
+                      </select>
+
+                      {errors.country_of_registration && (
+                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                          {errors.country_of_registration.message}
+                        </p>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+            </>
           )}
           {StepComponent &&
             React.cloneElement(StepComponent, {
@@ -1824,6 +1999,7 @@ const CreateProjectRegistration = () => {
               register,
               errors,
               fields: stepFields,
+              toSave: handleSaveStep,
               goToPrevious: handlePrevious,
               goToNext: handleNext,
             })}
