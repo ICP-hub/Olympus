@@ -25,14 +25,14 @@ function* fetchMentorHandler() {
 
     const mentorData = yield call([actor, actor.get_mentor]);
 
-    // console.log('mentorData functn run hua => ', mentorData)
+    console.log('mentorData functn run hua => ', mentorData)
 
-    const updatedMentorData = mentorData.map((mentor) => ({
-      ...mentor,
-      mentor_image: uint8ArrayToBase64(mentor.mentor_image),
-    }));
+    // const updatedMentorData = mentorData.map((mentor) => ({
+    //   ...mentor,
+    //   mentor_image: uint8ArrayToBase64(mentor.mentor_image),
+    // }));
 
-    yield put(mentorRegisteredHandlerSuccess(updatedMentorData));
+    yield put(mentorRegisteredHandlerSuccess(mentorData));
   } catch (error) {
     yield put(mentorRegisteredHandlerFailure(error.toString()));
   }

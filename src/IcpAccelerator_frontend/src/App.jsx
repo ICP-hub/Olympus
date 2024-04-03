@@ -36,7 +36,12 @@ import HubDeclined from "./components/HubDeclined/HubDeclined";
 import { areaOfExpertiseHandlerRequest } from "./components/StateManagement/Redux/Reducers/getAreaOfExpertise";
 import NormalUser from "./components/RoleSelector/NormalUser";
 import MentorRegistration from "./components/Registration/MentorRegistration/MentorRegistration";
-import { getCurrentRoleStatusFailureHandler, getCurrentRoleStatusRequestHandler, setCurrentActiveRole, setCurrentRoleStatus } from "./components/StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
+import {
+  getCurrentRoleStatusFailureHandler,
+  getCurrentRoleStatusRequestHandler,
+  setCurrentActiveRole,
+  setCurrentRoleStatus,
+} from "./components/StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 import { userRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/userRegisteredData";
 import InvestorRegistration from "./components/Registration/InvestorRegistration/InvestorRegistration";
 import CreateProjectRegistration from "./components/Project/CreateProject/CreateProjectRegistration";
@@ -67,6 +72,9 @@ const App = () => {
 
   useEffect(() => {
     // dispatch(checkLoginOnStart());
+    if (actor) {
+      dispatch(mentorRegisteredHandlerRequest());
+    }
     reloadLogin();
   }, []);
 
@@ -81,7 +89,6 @@ const App = () => {
   //   }
   // }, [isAuthenticated, identity, dispatch]);
 
-
   // useEffect(() => {
   //   dispatch(userRoleHandler());
   // }, [isAuthenticated, identity, dispatch]);
@@ -94,29 +101,34 @@ const App = () => {
   //   dispatch(userRegisteredHandlerRequest());
   // }, [isAuthenticated, dispatch]);
 
-
-  // check if any role have status current ?? 
+  // check if any role have status current ??
   function getNameOfCurrentStatus(rolesStatusArray) {
-    const currentStatus = rolesStatusArray.find(role => role.status === 'active');
+    const currentStatus = rolesStatusArray.find(
+      (role) => role.status === "active"
+    );
     return currentStatus ? currentStatus.name : null;
   }
 
   const initialApi = async () => {
     try {
-      const currentRoleArray = await actor.get_role_status()
+      const currentRoleArray = await actor.get_role_status();
       if (currentRoleArray && currentRoleArray.length !== 0) {
-        const currentActiveRole = getNameOfCurrentStatus(currentRoleArray)
+        const currentActiveRole = getNameOfCurrentStatus(currentRoleArray);
         dispatch(setCurrentRoleStatus(currentRoleArray));
         dispatch(setCurrentActiveRole(currentActiveRole));
       } else {
-        dispatch(getCurrentRoleStatusFailureHandler('error-in-fetching-role-at-dashboard'));
+        dispatch(
+          getCurrentRoleStatusFailureHandler(
+            "error-in-fetching-role-at-dashboard"
+          )
+        );
         dispatch(setCurrentActiveRole(null));
       }
     } catch (error) {
       dispatch(getCurrentRoleStatusFailureHandler(error.toString()));
       dispatch(setCurrentActiveRole(null));
     }
-  }
+  };
 
   useEffect(() => {
     if (actor && isAuthenticated && identity) {
@@ -124,7 +136,7 @@ const App = () => {
     }
   }, [actor, isAuthenticated, identity, dispatch]);
 
-  console.log('actor---in---dashboard', actor)
+  console.log("actor---in---dashboard", actor);
 
   // useEffect(() => {
   //   // console.log("specific role inside effect of app 1", specificRole);
