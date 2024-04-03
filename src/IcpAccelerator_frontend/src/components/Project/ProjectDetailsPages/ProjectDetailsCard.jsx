@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom'
 import { globesvg, linkedInSvg, twitterSvg } from "../../Utils/Data/SvgData";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
@@ -6,12 +6,14 @@ import girl from "../../../../assets/images/girl.jpeg";
 import { formatDateFromBigInt, formatFullDateFromBigInt } from "../../Utils/formatter/formatDateFromBigInt";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import 'react-circular-progressbar/dist/styles.css';
+import { useSelector } from "react-redux";
 
 function ProjectDetailsCard({ data, image, title, rubric, tags, socials, doj, country, website, dapp }) {
     if (!data) {
         return null;
     }
     const navigate = useNavigate();
+    const actor = useSelector((currState) => currState.actors.actor)
     
     let logo = data?.params?.project_logo ? uint8ArrayToBase64(data?.params?.project_logo) : girl;
     let name = data?.params?.project_name ?? '';
@@ -23,7 +25,29 @@ function ProjectDetailsCard({ data, image, title, rubric, tags, socials, doj, co
     let pro_country = data?.params?.user_data?.country ?? "";
     let joined_on = data?.creation_date ? formatFullDateFromBigInt(data?.creation_date) : "";
 
+    const [rubRating, setRubRating] = useState([]);
 
+    const fetchRubricRating = async (val) => {
+        await actor.calculate_average(val?.uid)
+            .then((result) => {
+                console.log('result-in-calculate_average', result)
+                if (result && Object.keys(result).length > 0) {
+                    setRubRating(result)
+                } else {
+                    setRubRating([]);
+                }
+            })
+            .catch((error) => {
+                console.log('error-in-calculate_average', error)
+                setRubRating([]);
+            })
+    }
+
+    useEffect(() => {
+        if (rubric && data) {
+            fetchRubricRating(data)
+        }
+    }, [rubric])
 
     return (
         <>
@@ -44,19 +68,28 @@ function ProjectDetailsCard({ data, image, title, rubric, tags, socials, doj, co
                                     (
                                         <div className="flex items-center">
                                             <p className="font-bold text-lg pr-2">{name}</p>
-                                            {rubric && (<CircularProgressbar
-                                                value={(4 / 9) * 100}
-                                                text={`4/9`}
-                                                className="w-10 h-10 font-extrabold text-lg"
-                                                strokeWidth={8}
-                                                styles={buildStyles({
-                                                    strokeLinecap: "round",
-                                                    pathTransitionDuration: 0.5,
-                                                    pathColor: `#2247AF`,
-                                                    trailColor: "#d6d6d6",
-                                                    textColor: "#3505B2",
-                                                })}
-                                            />)}
+                                            {rubric &&
+                                                (<CircularProgressbar
+                                                    value={
+                                                        rubRating?.overall_average
+                                                            && rubRating?.overall_average.length > 0
+                                                            ? (rubRating?.overall_average[rubRating?.overall_average.length - 1] / 8) * 100
+                                                            : (0 / 8) * 100}
+                                                    text={rubRating?.overall_average
+                                                        && rubRating?.overall_average.length > 0
+                                                        ? `${rubRating?.overall_average[rubRating?.overall_average.length - 1]}/8`
+                                                        : `0/8`}
+                                                    className="w-14 h-14 font-extrabold"
+                                                    strokeWidth={8}
+                                                    styles={buildStyles({
+                                                        strokeLinecap: "round",
+                                                        pathTransitionDuration: 0.5,
+                                                        pathColor: `#2247AF`,
+                                                        trailColor: "#d6d6d6",
+                                                        textColor: "#3505B2",
+                                                        textSize: '24px'
+                                                    })}
+                                                />)}
                                         </div>
                                     )}
                             </div>
