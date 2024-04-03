@@ -11,8 +11,13 @@ import Event from "../../../assets/images/Event.png";
 import Investor from "../../../assets/images/investorRegistration.png";
 import { useNavigate } from "react-router-dom";
 import { closeSwitchBlackModalSvg } from "../Utils/Data/SvgData";
+import { useAuth } from "../StateManagement/useContext/useAuth";
+import { useDispatch } from "react-redux";
+import { removeActor } from "../StateManagement/Redux/Reducers/actorBindReducer";
 
 const DetailHeroSection = () => {
+  const { logout } = useAuth();
+  const dispatch = useDispatch();
   const routeSettings = {
     "/create-project": {
       src: Project,
@@ -58,12 +63,20 @@ const DetailHeroSection = () => {
 
   const navigate = useNavigate();
   const { src, alt, className, text } = currentRouteSettings;
+
+  const handleNavigate = () => {
+    if (window.location.pathname.includes('/create-user')) {
+      logout();
+      dispatch(removeActor());
+    }
+    navigate(-1)
+  }
   return (
     <>
       <section className="text-black bg-gray-100">
         <div className="w-full px-[4%] lg1:px-[5%]">
           <div className="flex flex-col space-y-4">
-            <span className="p-2 cursor-pointer" onClick={() => navigate(-1)}>
+            <span className="p-2 cursor-pointer" onClick={() => handleNavigate()}>
               {closeSwitchBlackModalSvg}
             </span>
             <div className="flex justify-center  lg:flex-row lg:justify-between items-center md:flex-col-reverse sxs:flex-col-reverse ">

@@ -14,6 +14,10 @@ const actorSlice = createSlice({
       state.actor = action.payload;
       state.error = null;
     },
+    removeActor: (state) => {
+      state.actor = null;
+      state.error = null;
+    },
     actorError: (state, action) => {
       state.error = action.payload;
     },
@@ -21,5 +25,5 @@ const actorSlice = createSlice({
   },
 });
 
-export const { setActor, actorError, handleActorRequest } = actorSlice.actions;
+export const { setActor, actorError, removeActor, handleActorRequest } = actorSlice.actions;
 export default actorSlice.reducer;

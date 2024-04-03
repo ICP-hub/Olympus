@@ -24,6 +24,7 @@ const SpotLight = () => {
   const navigate = useNavigate();
 
   const fetchSpotLight = async (caller) => {
+    console.log('caller', caller)
     await caller
       .get_spotlight_projects()
       .then((result) => {

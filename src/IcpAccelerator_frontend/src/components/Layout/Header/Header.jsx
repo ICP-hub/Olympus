@@ -54,13 +54,16 @@ const Header = ({ setModalOpen, gradient }) => {
 
 
   useEffect(() => {
-    if (actor) {
+    if (actor && principal && isAuthenticated) {
       if (!userCurrentRoleStatus.length) {
         initialApi();
       }
     }
     console.log('userCurrentRoleStatus--in--header', userCurrentRoleStatus)
-  }, [actor, dispatch, userCurrentRoleStatus, userCurrentRoleStatusActiveRole]);
+  }, [actor, principal, isAuthenticated, dispatch, userCurrentRoleStatus, userCurrentRoleStatusActiveRole]);
+  
+  console.log('userCurrentRoleStatusActiveRole--in--header', userCurrentRoleStatusActiveRole)
+
 
   return (
     <header className={`text-gray-700 body-font ${gradient}`}>
@@ -68,10 +71,6 @@ const Header = ({ setModalOpen, gradient }) => {
         <div onClick={() => navigate("/")}>
           <img className="sxs:scale-75 sxs:-ml-5 md:scale-100" src={logoWithText} alt="IcpLogo" loading="lazy" />
         </div>
-        {/* <div>
-          {logoSvg}
-        </div> */}
-
         {isAuthenticated && (
           <div className="space-x-3 text-xs md:block hidden">
             {/* <a href="" className={`${underline}`}>
@@ -104,23 +103,10 @@ const Header = ({ setModalOpen, gradient }) => {
           </div>
         )}
 
-        {principal && isAuthenticated == true ? (
+        {principal && isAuthenticated ? (
           <>
             {userCurrentRoleStatus && userCurrentRoleStatusActiveRole ? (
               <div className="flex items-center flex-row gap-2">
-                {/* {userCurrentRoleStatusActiveRole !== 'user' ?
-                  <button
-                    onClick={() => navigate(
-                      userCurrentRoleStatusActiveRole === 'project'
-                        ? '/project-association-requests'
-                        : userCurrentRoleStatusActiveRole === 'mentor'
-                          ? '/mentor-association-requests'
-                          : userCurrentRoleStatusActiveRole === 'investor'
-                            ? "/investor-association-requests"
-                            : ''
-                    )}
-                    className="border border-violet-800 md:p-1 font-bold rounded-md text-violet-800 md:px-2 px-1 text-base md:text-lg  uppercase"
-                  >associations</button> : ''} */}
                 <button
                   onClick={() => setShowSwitchRole(true)}
                   className="border border-violet-800 md:p-1 font-bold rounded-md text-violet-800 md:px-2 px-1 text-base md:text-lg  uppercase"
@@ -136,12 +122,6 @@ const Header = ({ setModalOpen, gradient }) => {
                 <LogoutModal />
               </div>
             ) : (
-              // <div className="flex items-center flex-row gap-2">
-              //   <button onClick={() => { dispatch(getCurrentRoleStatusRequestHandler()) }} className="border border-violet-800 p-1 font-bold rounded-md text-violet-800">
-              //     Sign Up User
-              //   </button>
-              //   <LogoutModal />
-              // </div>
               <LogoutModal />
             )}
           </>
@@ -151,7 +131,7 @@ const Header = ({ setModalOpen, gradient }) => {
             className="font-bold rounded-md my-2 bg-indigo-600 font-fontUse text-center text-white uppercase text-[0.625rem] md:text-[0.64375rem] lg:text-[0.65625rem] xl:text-[0.78125rem] px-6 py-2 top-[6.5rem] sm4:top-[10.5rem] xxs1:top-[8.5rem] ss2:top-[7.5rem] text-wrap"
             onClick={manageHandler}
           >
-            SIGN UP NOW
+            SIGN UP / LOGIN
           </button>
         )}
       </div>
