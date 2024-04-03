@@ -23,6 +23,7 @@ import CompressedImage from "../../ImageCompressed/CompressedImage";
 import DetailHeroSection from "../../Common/DetailHeroSection";
 import Mentor from "../../../../assets/images/mentorRegistration.png";
 import { bufferToImageBlob } from "../../Utils/formatter/bufferToImageBlob";
+import ReactSelect from "react-select";
 
 const validationSchema = {
   userDetails: yup.object().shape({
@@ -184,16 +185,20 @@ const validationSchema = {
     announcement_details: yup.string().optional(),
     website_link: yup
       .string()
+      .url("Invalid website link")
       .required("Portfolio required")
       .test("is-non-empty", "portfolio is required", (value) =>
         /\S/.test(value)
       ),
     linkedin_link: yup
       .string()
-      .required("LinkedIn required")
-      .test("is-non-empty", "portfolio is required", (value) =>
+      .url("Invalid linkedin link")
+      .test("is-non-empty", "linkedin link is required", (value) =>
         /\S/.test(value)
-      ),
+      )
+      .required("linkedin link is required"),
+    twitter_link: yup.string().url("Invalid twitter link"),
+    telegram_link: yup.string().url("Invalid telegram link"),
   }),
 };
 
@@ -250,7 +255,7 @@ const InvestorRegistration = () => {
     } rounded-t-lg`;
   };
   const steps = [
-    { id: "userDetails", fields: investorRegistrationUserDetailsDetails },
+    // { id: "userDetails", fields: investorRegistrationUserDetailsDetails },
     { id: "investorDetails", fields: investorRegistrationDetails },
     { id: "additionalInfo", fields: investorRegistrationAdditionalInfo },
   ];
@@ -530,7 +535,7 @@ const InvestorRegistration = () => {
 
     const updatedFormData = { ...formData, ...data };
     setFormData(updatedFormData);
-console.log("updatedFormData ================>", updatedFormData)
+    console.log("updatedFormData ================>", updatedFormData);
     if (step < steps.length - 1) {
       handleNext();
     } else if (
@@ -659,11 +664,12 @@ console.log("updatedFormData ================>", updatedFormData)
     }
   };
 
+  // if (step === 0) {
+  //   StepComponent = <InvestorPersonalInformation />;
+  // } else
   if (step === 0) {
-    StepComponent = <InvestorPersonalInformation />;
-  } else if (step === 1) {
     StepComponent = <InvestorDetails />;
-  } else if (step === 2) {
+  } else if (step === 1) {
     StepComponent = (
       <InvestorAdditionalInformation isSubmitting={isSubmitting} />
     );
@@ -675,6 +681,16 @@ console.log("updatedFormData ================>", updatedFormData)
       className={`z-20 w-[500px] md:w-[300px] sm:w-[250px] sxs:w-[260px] md:h-56 relative  sxs:-right-3 right-16 md:right-0 sm:right-0 top-10`}
     />
   );
+  const typeOfInvest = [
+    { value: "Direct", label: "Direct" },
+    { value: "SNS", label: "SNS" },
+    { value: "both", label: "both" },
+  ];
+  const categoryOfInvestment = [
+    { value: "Defi", label: "Defi" },
+    { value: "NFT", label: "NFT" },
+    { value: "RWA", label: "RWA" },
+  ];
   return (
     <>
       <DetailHeroSection HeroImage={HeroImage} />
@@ -716,7 +732,7 @@ console.log("updatedFormData ================>", updatedFormData)
               ))}
             </ul>
 
-            {step == 0 && (
+            {/* {step == 0 && (
               <div className="flex flex-col">
                 <div className="flex-row w-full flex justify-start gap-4 items-center">
                   <div className="mb-3 ml-6 h-24 w-24 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
@@ -836,9 +852,9 @@ console.log("updatedFormData ================>", updatedFormData)
                   </div>
                 </div>
               </div>
-            )}
+            )} */}
 
-            {step == 1 && (
+            {step == 0 && (
               <div className="flex flex-col">
                 <div className="flex-row w-full flex justify-start gap-4 items-center">
                   <div className="mb-3 ml-6 h-24 w-24 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
@@ -978,7 +994,7 @@ console.log("updatedFormData ================>", updatedFormData)
                       htmlFor="preferred_icp_hub"
                       className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                     >
-                      Preferred ICP Hub *
+                      Which ICP hub you will like to be associated *
                     </label>
                     <select
                       {...register("preferred_icp_hub")}
@@ -989,7 +1005,7 @@ console.log("updatedFormData ================>", updatedFormData)
                       } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     >
                       <option className="text-lg font-bold" value="">
-                        Select 
+                        Select
                       </option>
                       {getAllIcpHubs?.map((hub) => (
                         <option
@@ -1012,7 +1028,7 @@ console.log("updatedFormData ================>", updatedFormData)
                       htmlFor="existing_icp_investor"
                       className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                     >
-                      Are you an existing ICP Investor ?*
+                      Are you an existing ICP investor ?*
                     </label>
                     <select
                       {...register("existing_icp_investor")}
@@ -1044,34 +1060,54 @@ console.log("updatedFormData ================>", updatedFormData)
                         >
                           Type of investment*
                         </label>
-                        <select
+                        <ReactSelect
+                          isMulti
+                          options={typeOfInvest}
+                          menuPortalTarget={document.body}
+                          menuPosition={"fixed"}
+                          styles={{
+                            menuPortal: (base) => ({
+                              ...base,
+                              zIndex: 9999, // Set the desired z-index value
+                            }),
+                            control: (provided, state) => ({
+                              ...provided,
+                              color: "black", // Initial color of the label
+                              // Add other control styles if needed
+                              paddingBlock: "2px",
+                              borderRadius: "8px",
+                              border: errors.investor_type
+                                ? "2px solid #ef4444"
+                                : "2px solid #737373",
+                              backgroundColor: "rgb(249 250 251)",
+                              // Additional conditional placeholder color if needed
+                              "&::placeholder": {
+                                color: errors.investor_type
+                                  ? "#ef4444"
+                                  : "currentColor", // Adjust the placeholder color conditionally
+                              },
+                            }),
+                          }}
+                          classNamePrefix="select"
+                          className="basic-multi-select"
+                          placeholder="Interests"
+                          name="investor_type"
                           {...register("investor_type")}
-                          className={`bg-gray-50 border-2 ${
-                            errors.investor_type
-                              ? "border-red-500 placeholder:text-red-500"
-                              : "border-[#737373]"
-                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                        >
-                          <option className="text-lg font-bold" value="">
-                            Select
-                          </option>
-                          <option className="text-lg font-bold" value="Direct">
-                            Direct
-                          </option>
-                          <option className="text-lg font-bold" value="SNS">
-                            SNS
-                          </option>
-                          <option className="text-lg font-bold" value="both">
-                            both
-                          </option>
-                        </select>
+                          onChange={(selectedOptions) => {
+                            // You might need to adapt this part to fit how you handle form data
+                            const selectedValues = selectedOptions
+                              .map((option) => option.value)
+                              .join(", ");
+                            setValue("investor_type", selectedValues);
+                          }}
+                        />
                         {errors.investor_type && (
                           <p className="mt-1 text-sm text-red-500 font-bold text-left">
                             {errors.investor_type.message}
                           </p>
                         )}
                       </div>
-                      <div className="z-0 w-full mb-3 group">
+                      {/* <div className="z-0 w-full mb-3 group">
                         <label
                           htmlFor="money_invested"
                           className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
@@ -1119,7 +1155,7 @@ console.log("updatedFormData ================>", updatedFormData)
                             {errors.existing_icp_portfolio.message}
                           </p>
                         )}
-                      </div>
+                      </div> */}
                     </>
                   )}
                   <div className="z-0 w-full mb-3 group">
@@ -1155,7 +1191,7 @@ console.log("updatedFormData ================>", updatedFormData)
               </div>
             )}
 
-            {step == 2 && (
+            {step == 1 && (
               <div className="flex flex-col">
                 <div className="z-0 w-full mb-3 group px-4">
                   <label
@@ -1173,7 +1209,7 @@ console.log("updatedFormData ================>", updatedFormData)
                     } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="">
-                      Select reason 
+                      Select reason
                     </option>
                     <option
                       className="text-lg font-bold"
@@ -1209,7 +1245,7 @@ console.log("updatedFormData ================>", updatedFormData)
                       htmlFor="multi_chain"
                       className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                     >
-                      Are you on multi-chain
+                      Are you also multi-chain
                     </label>
                     <select
                       {...register("multi_chain")}
@@ -1232,38 +1268,114 @@ console.log("updatedFormData ================>", updatedFormData)
                       </p>
                     )}
                   </div>
+                  {isMulti_Chain && (
+                    <div className="z-0 w-full mb-3 group">
+                      <label
+                        htmlFor="project_on_multichain"
+                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                      >
+                        Please select the chains
+                      </label>
+                      <ReactSelect
+                        isMulti
+                        options={multiChain?.map((chain) => ({
+                          value: chain,
+                          label: chain,
+                        }))}
+                        menuPortalTarget={document.body}
+                        menuPosition={"fixed"}
+                        styles={{
+                          menuPortal: (base) => ({
+                            ...base,
+                            zIndex: 9999, // Set the desired z-index value
+                          }),
+                          control: (provided, state) => ({
+                            ...provided,
+                            color: "black", // Initial color of the label
+                            // Add other control styles if needed
+                            paddingBlock: "2px",
+                            border: errors.project_on_multichain
+                              ? "2px solid #ef4444"
+                              : "2px solid #737373",
+                            backgroundColor: "rgb(249 250 251)",
+                            // Additional conditional placeholder color if needed
+                            "&::placeholder": {
+                              color: errors.project_on_multichain
+                                ? "#ef4444"
+                                : "currentColor", // Adjust the placeholder color conditionally
+                            },
+                          }),
+                        }}
+                        classNamePrefix="select"
+                        className="basic-multi-select"
+                        placeholder="Select your areas of expertise"
+                        name="project_on_multichain"
+                        {...register("project_on_multichain")}
+                        onChange={(selectedOptions) => {
+                          // You might need to adapt this part to fit how you handle form data
+                          const selectedValues = selectedOptions
+                            .map((option) => option.value)
+                            .join(", ");
+                          setValue("project_on_multichain", selectedValues);
+                        }}
+                      />
+                      {errors.project_on_multichain && (
+                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                          {errors.project_on_multichain.message}
+                        </p>
+                      )}
+                    </div>
+                  )}
                   <div className="z-0 w-full mb-3 group">
                     <label
-                      htmlFor="project_on_multichain"
+                      htmlFor="category_of_investment"
                       className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                     >
-                      Multi-chain options
+                      Category of investment *
                     </label>
-                    <select
-                      {...register("project_on_multichain")}
-                      className={`bg-gray-50 border-2 ${
-                        errors.project_on_multichain
-                          ? "border-red-500 placeholder:text-red-500"
-                          : "border-[#737373]"
-                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                      disabled={!isMulti_Chain}
-                    >
-                      <option className="text-lg font-bold" value="">
-                        Select 
-                      </option>
-                      {multiChain?.map((chain, i) => (
-                        <option
-                          key={i}
-                          value={`${chain}`}
-                          className="text-lg font-bold"
-                        >
-                          {chain}
-                        </option>
-                      ))}
-                    </select>
-                    {errors.project_on_multichain && (
+                    <ReactSelect
+                      isMulti
+                      options={categoryOfInvestment}
+                      menuPortalTarget={document.body}
+                      menuPosition={"fixed"}
+                      styles={{
+                        menuPortal: (base) => ({
+                          ...base,
+                          zIndex: 9999, // Set the desired z-index value
+                        }),
+                        control: (provided, state) => ({
+                          ...provided,
+                          color: "black", // Initial color of the label
+                          // Add other control styles if needed
+                          paddingBlock: "2px",
+                          border: errors.category_of_investment
+                            ? "2px solid #ef4444"
+                            : "2px solid #737373",
+                          backgroundColor: "rgb(249 250 251)",
+                          // Additional conditional placeholder color if needed
+                          "&::placeholder": {
+                            color: errors.category_of_investment
+                              ? "#ef4444"
+                              : "currentColor", // Adjust the placeholder color conditionally
+                          },
+                        }),
+                      }}
+                      classNamePrefix="select"
+                      className="basic-multi-select"
+                      placeholder="Select your areas of expertise"
+                      name="category_of_investment"
+                      {...register("category_of_investment")}
+                      onChange={(selectedOptions) => {
+                        // You might need to adapt this part to fit how you handle form data
+                        const selectedValues = selectedOptions
+                          .map((option) => option.value)
+                          .join(", ");
+                        setValue("category_of_investment", selectedValues);
+                      }}
+                    />
+                    {errors.category_of_investment && (
                       <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                        {errors.project_on_multichain.message}
+                        {errors.category_of_investment.message}
                       </p>
                     )}
                   </div>

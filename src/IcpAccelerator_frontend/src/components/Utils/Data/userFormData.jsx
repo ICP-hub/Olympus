@@ -28,7 +28,7 @@ export const formFields = [
       id: "bio",
       type: "text",
       name: "bio",
-      label: "Bio",
+      label: "Bio (50 words)",
       onFocus: null,
       onBlur: null,
     },
