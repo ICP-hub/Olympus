@@ -1,8 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import ment from "../../../../IcpAccelerator_frontend/assets/images/ment.jpg";
-import girl from "../../../../IcpAccelerator_frontend/assets/images/girl.jpeg";
-import hover from "../../../../IcpAccelerator_frontend/assets/images/hover.png";
-import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
+// import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
 import uint8ArrayToBase64 from "../../../../IcpAccelerator_frontend/src/components/Utils/uint8ArrayToBase64";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -12,16 +9,94 @@ const AllProject = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
 
-  const [isHovered, setIsHovered] = useState(false);
-  const [percent, setPercent] = useState(0);
   const [showLine, setShowLine] = useState({});
+  const [noData, setNoData] = useState(false);
+  const [allProjectData, setAllProjectData] = useState([]);
+  const [spotlightProjectIds, setSpotlightProjectIds] = useState(new Set());
+  const [filterOption, setFilterOption] = useState("All");
+  const [displayedProjects, setDisplayedProjects] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const projectsPerPage = 9;
+
+  const indexOfLastProject = currentPage * projectsPerPage;
+  const indexOfFirstProject = indexOfLastProject - projectsPerPage;
+  const currentProjects = displayedProjects.slice(
+    indexOfFirstProject,
+    indexOfLastProject
+  );
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterOption, displayedProjects.length]);
+
+  useEffect(() => {
+    fetchSpotlightProjects();
+    fetchAllProjects();
+  }, [actor]);
+
+  const fetchSpotlightProjects = async () => {
+    try {
+      const spotlightProjects = await actor.get_spotlight_projects();
+      const spotlightIds = new Set(spotlightProjects.map((p) => p.project_id));
+      setSpotlightProjectIds(spotlightIds);
+    } catch (error) {
+      console.error("Error fetching spotlight projects:", error);
+    }
+  };
+
+  const fetchAllProjects = async () => {
+    try {
+      const result = await actor.list_all_projects();
+      const projectsWithSpotlightStatus = result.map((project) => ({
+        ...project,
+        isInSpotlight: spotlightProjectIds.has(project.params.uid),
+      }));
+      setAllProjectData(projectsWithSpotlightStatus);
+    } catch (error) {
+      console.error("Error fetching all projects:", error);
+    }
+  };
+
+  useEffect(() => {
+    const newDisplayedProjects = allProjectData.filter((project) => {
+      switch (filterOption) {
+        case "Added":
+          return project.isInSpotlight;
+        case "Not Added":
+          return !project.isInSpotlight;
+        default:
+          return true;
+      }
+    });
+    setDisplayedProjects(newDisplayedProjects);
+  }, [allProjectData, filterOption]);
+
+  // Pagination calculation
+  const pageNumbers = [];
+  for (
+    let i = 1;
+    i <= Math.ceil(displayedProjects.length / projectsPerPage);
+    i++
+  ) {
+    pageNumbers.push(i);
+  }
+
+  // Ensure pagination controls are updated or hidden based on the current number of projects.
+
+  useEffect(() => {
+    setCurrentPage(1); // Reset to the first page when filter changes
+  }, [filterOption, displayedProjects]);
+
+  // Pagination Controls
+  // const pageNumbers = [];
+  // for (let i = 1; i <= Math.ceil(displayedProjects.length / projectsPerPage); i++) {
+  //   pageNumbers.push(i);
+  // }
+
   const tm = useRef(null);
   const navigate = useNavigate();
-  // Gradient color stops, changes when hovered
-  // const gradientStops = isHovered
-  //   ? { stop1: "#4087BF", stop2: "#3C04BA" }
-  //   : { stop1: "#B5B5B5", stop2: "#5B5B5B" };
-
 
   const handleClickPlusOne = (id) => {
     setShowLine((prevShowLine) => ({
@@ -30,153 +105,138 @@ const AllProject = () => {
     }));
   };
 
-  // const defaultArray = [
-  //   {
-  //     projectName: "Awesome Project",
-  //     projectId: "ABC123",
-  //     projectImage: ment,
-  //     userImage: girl,
-  //     principalId: "user123",
-  //     projectDescription: "This is an amazing project focused on innovation.",
-  //     projectAreaOfFocus: "Technology",
-  //   },
-  //   {
-  //     projectName: "Creative Initiative",
-  //     projectId: "DEF456",
-  //     projectImage: ment,
-  //     userImage: girl,
-  //     principalId: "user456",
-  //     projectDescription:
-  //       "A creative initiative aiming to bring positive change.",
-  //     projectAreaOfFocus: "Art and Design",
-  //   },
-  //   {
-  //     projectName: "Community Outreach",
-  //     projectId: "GHI789",
-  //     projectImage: ment,
-  //     userImage: girl,
-  //     principalId: "user789",
-  //     projectDescription:
-  //       "Engaging community outreach program fostering collaboration.",
-  //     projectAreaOfFocus: "Social Impact",
-  //   },
-  //   {
-  //     projectName: "Community Outreach",
-  //     projectId: "GHI789",
-  //     projectImage: ment,
-  //     userImage: girl,
-  //     principalId: "user789",
-  //     projectDescription:
-  //       "Engaging community outreach program fostering collaboration.",
-  //     projectAreaOfFocus: "Social Impact",
-  //   },
-  //   {
-  //     projectName: "Community Outreach",
-  //     projectId: "GHI789",
-  //     projectImage: ment,
-  //     userImage: girl,
-  //     principalId: "user789",
-  //     projectDescription:
-  //       "Engaging community outreach program fostering collaboration.",
-  //     projectAreaOfFocus: "Social Impact",
-  //   },
-  //   {
-  //     projectName: "Community Outreach",
-  //     projectId: "GHI789",
-  //     projectImage: ment,
-  //     userImage: girl,
-  //     principalId: "user789",
-  //     projectDescription:
-  //       "Engaging community outreach program fostering collaboration.",
-  //     projectAreaOfFocus: "Social Impact",
-  //   },
-  //   {
-  //     projectName: "Community Outreach",
-  //     projectId: "GHI789",
-  //     projectImage: ment,
-  //     userImage: girl,
-  //     principalId: "user789",
-  //     projectDescription:
-  //       "Engaging community outreach program fostering collaboration.",
-  //     projectAreaOfFocus: "Social Impact",
-  //   },
-  // ];
-
-  const [noData, setNoData] = useState(null);
-  const [allProjectData, setAllProjectData] = useState([]);
-
-  const getAllProject = async (caller) => {
-    await caller
-      .list_all_projects()
-      .then((result) => {
-        console.log("result-in-get-all-projects", result);
-
-        if (!result || result.length == 0) {
-          setNoData(true);
-          setAllProjectData([]);
-        } else {
-          setAllProjectData(result);
-          setNoData(false);
-        }
-      })
-      .catch((error) => {
-        setNoData(true);
-        setAllProjectData([]);
-        console.log("error-in-get-all-projects", error);
-      });
-  };
-
   useEffect(() => {
-    if (actor) {
-      getAllProject(actor);
-    } else {
-      getAllProject(IcpAccelerator_backend);
-    }
+    const fetchSpotlightProjects = async () => {
+      try {
+        const spotlightProjects = await actor.get_spotlight_projects();
+        console.log("spotlightProjects =>", spotlightProjects);
+        const spotlightIds = new Set(
+          spotlightProjects.map((p) => p.project_id)
+        );
+        setSpotlightProjectIds(spotlightIds);
+      } catch (error) {
+        console.error("Error fetching spotlight projects:", error);
+      }
+    };
+
+    fetchSpotlightProjects();
   }, [actor]);
 
-  const handleNavigate = (projectId, projectData) => {
-    if (isAuthenticated) {
-      navigate(`/individual-project-details-user/${projectId}`, {
-        state: projectData
-      });
-    }
-  };
+  useEffect(() => {
+    const getAllProject = async () => {
+      try {
+        const result = await actor.list_all_projects();
+        console.log("all project =>", result);
+        const projectsWithSpotlightStatus = result.map((project) => ({
+          ...project,
+          isInSpotlight: spotlightProjectIds.has(project.params.uid),
+        }));
+        setAllProjectData(projectsWithSpotlightStatus);
+        setNoData(projectsWithSpotlightStatus.length === 0);
+      } catch (error) {
+        console.error("Error fetching all projects:", error);
+        setNoData(true);
+      }
+    };
 
+    if (actor) {
+      getAllProject();
+    }
+  }, [actor, spotlightProjectIds]);
+
+  useEffect(() => {
+    setDisplayedProjects(
+      allProjectData.filter((project) => {
+        switch (filterOption) {
+          case "Added":
+            return project.isInSpotlight;
+          case "Not Added":
+            return !project.isInSpotlight;
+          default:
+            return true;
+        }
+      })
+    );
+  }, [allProjectData, filterOption]);
 
   const addToSpotLightHandler = async (id) => {
     try {
-      const allowForSpotlight = await actor.add_project_to_spotlight(id);
-      console.log(allowForSpotlight);
+      await actor.add_project_to_spotlight(id);
+      setSpotlightProjectIds(new Set([...spotlightProjectIds, id]));
+      // Optionally refetch projects or adjust UI based on successful addition
     } catch (err) {
-      console.log(err);
+      console.error("Error adding to spotlight:", err);
     }
   };
 
-
-
+  const removeFromSpotLightHandler = async (id) => {
+    try {
+      await actor.remove_project_from_spotlight(id);
+      spotlightProjectIds.delete(id);
+      setSpotlightProjectIds(new Set([...spotlightProjectIds]));
+      // Optionally refetch projects or adjust UI based on successful removal
+    } catch (err) {
+      console.error("Error removing from spotlight:", err);
+    }
+  };
 
   return (
-    <div className="flex justify-center" style={{ minHeight: "60vh" }}>
-      {noData ?
-        <NoDataCard />
-        :
-        <div className="flex-wrap flex flex-row">
-          {allProjectData &&
-            allProjectData.map((data, index) => {
-              
+    <>
+      <div className="flex justify-end mb-4 items-center w-full px-4 md:px-[4%]">
+        <label
+          htmlFor="spotlightFilter"
+          className="text-xs md:text-sm lg:text-md font-medium text-gray-700"
+        >
+          Filter Projects:
+        </label>
+        <select
+          id="spotlightFilter"
+          value={filterOption}
+          onChange={(e) => setFilterOption(e.target.value)}
+          className="ml-2 border-gray-300 border bg-white rounded-md p-1 md:p-2 shadow-sm hover:border-gray-400 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm lg:text-md"
+        >
+          <option value="All">All</option>
+          <option value="Added">Added to Spotlight</option>
+          <option value="Not Added">Not in Spotlight</option>
+        </select>
+      </div>
+
+      <div
+        className="flex justify-start w-full px-4 md:px-[4%] space-x-2"
+        style={{ minHeight: "60vh" }}
+      >
+        {noData ? (
+          <NoDataCard />
+        ) : (
+          <div className="flex-wrap flex flex-row">
+            {currentProjects.map((data, index) => {
               let projectName = data?.params?.params?.project_name ?? "";
               let projectId = data?.params?.uid ?? "";
-              let projectImage = data?.params?.params?.project_logo ? uint8ArrayToBase64(data?.params?.params?.project_logo) : "";
-              let userImage = data?.params?.params?.user_data?.profile_picture[0] ? uint8ArrayToBase64(data?.params?.params?.user_data?.profile_picture[0]) : "";
+              let projectImage = data?.params?.params?.project_logo
+                ? uint8ArrayToBase64(data?.params?.params?.project_logo)
+                : "";
+              let userImage = data?.params?.params?.user_data
+                ?.profile_picture[0]
+                ? uint8ArrayToBase64(
+                    data?.params?.params?.user_data?.profile_picture[0]
+                  )
+                : "";
               let principalId = data?.principal ? data?.principal.toText() : "";
-              let projectDescription = data?.params?.params?.project_description ?? "";
-              let projectAreaOfFocus = data?.params?.params?.project_area_of_focus ?? "";
+              let projectDescription =
+                data?.params?.params?.project_description ?? "";
+              let projectAreaOfFocus =
+                data?.params?.params?.project_area_of_focus ?? "";
               let projectData = data?.params ? data?.params : null;
-              let projectRubricStatus = data?.overall_average.length > 0 ? data?.overall_average[data?.overall_average.length - 1] : 0;
+              let projectRubricStatus =
+                data?.overall_average.length > 0
+                  ? data?.overall_average[data?.overall_average.length - 1]
+                  : 0;
+
+              const isInSpotlight = spotlightProjectIds.has(projectId);
 
               return (
                 <div className="w-full sm:w-1/2 md:w-1/3 mb-2 px-3" key={index}>
-                  <div className="justify-between items-baseline mb-4 flex-wrap bg-white m-2 overflow-hidden rounded-lg shadow-lg w-fit">
+                  <div className="justify-between items-baseline mb-4 flex-wrap bg-white overflow-hidden rounded-lg shadow-lg w-fit">
                     <div className="p-4">
                       <div className="flex justify-between items-baseline mb-4 flex-wrap w-[265px]">
                         <div className="flex items-baseline w-1/2">
@@ -203,8 +263,8 @@ const AllProject = () => {
                           width="100%"
                           height="8"
                           className="bg-[#B2B1B6] rounded-lg"
-                        // onMouseEnter={() => setIsHovered(true)}
-                        // onMouseLeave={() => setIsHovered(false)}
+                          // onMouseEnter={() => setIsHovered(true)}
+                          // onMouseLeave={() => setIsHovered(false)}
                         >
                           <defs>
                             <linearGradient
@@ -234,7 +294,10 @@ const AllProject = () => {
                             fill={`url(#gradient-${projectId})`}
                           />
                         </svg>
-                        <div className="ml-2 text-nowrap text-sm"> {`${projectRubricStatus}/8`}</div>
+                        <div className="ml-2 text-nowrap text-sm">
+                          {" "}
+                          {`${projectRubricStatus}/8`}
+                        </div>
                       </div>
                       <p className="text-gray-700 text-sm md:line-clamp-8 sxs:line-clamp-4 sm:line-clamp-6 line-clamp-8 h-36">
                         {projectDescription}
@@ -255,9 +318,12 @@ const AllProject = () => {
                           {projectAreaOfFocus.split(",").length > 3 && (
                             <p
                               onClick={() =>
-                                projectId ? handleNavigate(projectId, projectData) : ""
+                                projectId
+                                  ? handleNavigate(projectId, projectData)
+                                  : ""
                               }
-                              className="cursor-pointer">
+                              className="cursor-pointer"
+                            >
                               +1 more
                             </p>
                           )}
@@ -266,28 +332,69 @@ const AllProject = () => {
                         ""
                       )}
 
-
                       <button
                         className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"
-                        onClick={() =>
-                          handleNavigate(projectId, projectData)
-                        }
+                        // onClick={() => handleNavigate(projectId, projectData)}
                       >
                         KNOW MORE
                       </button>
-                      <button
-                        className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"
-                        onClick={() => addToSpotLightHandler(projectId)}
-                      >
-                        Add to Spotlight
-                      </button>
+                      {!isInSpotlight ? (
+                        <button
+                          className="mt-4 bg-green-600 text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-green-800 hover:text-white transition-colors duration-200 ease-in-out"
+                          onClick={() => addToSpotLightHandler(projectId)}
+                        >
+                          Add to Spotlight
+                        </button>
+                      ) : (
+                        <button
+                          className="mt-4 bg-red-600 text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-red-800  hover:text-white  transition-colors duration-200 ease-in-out"
+                          onClick={() => removeFromSpotLightHandler(projectId)}
+                        >
+                          Remove from Spotlight
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
               );
             })}
-        </div>}
-    </div>
+          </div>
+        )}
+      </div>
+      <div className="flex flex-wrap justify-center my-8">
+        {pageNumbers.length > 1 && (
+          <div className="flex items-center space-x-1">
+            {currentPage > 1 && (
+              <button
+                onClick={() => paginate(currentPage - 1)}
+                className="px-4 py-2 text-gray-700 bg-white rounded-md shadow hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              >
+                Prev
+              </button>
+            )}
+            {pageNumbers.map((number) => (
+              <button
+                key={number}
+                onClick={() => paginate(number)}
+                className={`px-4 py-2 text-gray-700 bg-white rounded-md shadow hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                  currentPage === number ? "bg-gray-200" : ""
+                }`}
+              >
+                {number}
+              </button>
+            ))}
+            {currentPage < pageNumbers.length && (
+              <button
+                onClick={() => paginate(currentPage + 1)}
+                className="px-4 py-2 text-gray-700 bg-white rounded-md shadow hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              >
+                Next
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 

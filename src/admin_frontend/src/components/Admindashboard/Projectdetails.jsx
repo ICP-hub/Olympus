@@ -42,7 +42,6 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
   // console.log("Allrole =>>>>>>> ", Allrole);
   // console.log("principal =>>>>>>> ", principal);
 
-  // const totalSteps = 80;
   const [sliderValuesProgress, setSliderValuesProgress] = useState({
     Team: 0,
     ProblemAndVision: 0,
@@ -91,9 +90,6 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
 `;
 
   const handleSliderChange = (index, value) => {
-    // console.log('index',index)
-    // console.log('index',value)
-
     const key = sliderKeys[index];
     const newSliderValues = { ...sliderValues, [key]: value };
     setSliderValues(newSliderValues);
@@ -145,13 +141,9 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
     state,
     category
   ) => {
-    // console.log(principal, boolean, state, category);
-
     setIsDeclining(true);
     try {
       const covertedPrincipal = await Principal.fromText(principal);
-      // console.log("Converted Principal ", covertedPrincipal);
-
       switch (category) {
         case "project":
           if (state === "Pending") {
@@ -166,18 +158,14 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
       console.error("Error processing request:", error);
     } finally {
       setIsDeclining(false);
-      // toggleModelPopUp(false);
       window.location.reload();
     }
   };
 
   const allowUserRoleHandler = async (principal, boolean, state, category) => {
     setIsAccepting(true);
-
-    // console.log(principal, boolean, state, category);
     try {
       const covertedPrincipal = await Principal.fromText(principal);
-      // console.log("Converted Principal ", covertedPrincipal);
       switch (category) {
         case "project":
           if (state === "Pending") {
@@ -192,7 +180,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
       console.error("Error processing request:", error);
     } finally {
       setIsAccepting(false);
-      // window.location.reload();
+      window.location.reload();
     }
   };
 
@@ -548,13 +536,13 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                             dangerouslySetInnerHTML={{ __html: customStyles }}
                           />
                           <ReactSlider
-                            className="bg-gradient-to-r from-blue-200 to-blue-600 h-3 rounded-md flex-grow" // Increased height to 3
+                            className="bg-gradient-to-r from-blue-200 to-blue-600 h-3 rounded-md flex-grow" 
                             marks
                             markClassName="slider-mark bg-purple-800 rounded-md h-1 w-1"
                             min={2}
                             max={10}
-                            thumbClassName="absolute bg-white w-16 h-16 flex items-center justify-center rounded-full shadow-md -top-7" // Increased width and height
-                            trackClassName="h-3 rounded" // Adjusted height to match the slider height
+                            thumbClassName="absolute bg-white w-16 h-16 flex items-center justify-center rounded-full shadow-md -top-7" 
+                            trackClassName="h-3 rounded" 
                             value={sliderValues[sliderKeys[currentStep]]}
                             onChange={(value) =>
                               handleSliderChange(currentStep, value)
@@ -602,13 +590,13 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                             dangerouslySetInnerHTML={{ __html: customStyles }}
                           />
                           <ReactSlider
-                            className="bg-gradient-to-r from-blue-200 to-blue-600 h-3 rounded-md flex-grow" // Increased height to 3
+                            className="bg-gradient-to-r from-blue-200 to-blue-600 h-3 rounded-md flex-grow" 
                             marks
                             markClassName="slider-mark bg-purple-800 rounded-md h-1 w-1"
                             min={2}
                             max={10}
-                            thumbClassName="absolute bg-white w-16 h-16 flex items-center justify-center rounded-full shadow-md -top-7" // Increased width and height
-                            trackClassName="h-3 rounded" // Adjusted height to match the slider height
+                            thumbClassName="absolute bg-white w-16 h-16 flex items-center justify-center rounded-full shadow-md -top-7" 
+                            trackClassName="h-3 rounded" 
                             value={sliderValues[sliderKeys[currentStep]]}
                             onChange={(value) =>
                               handleSliderChange(currentStep, value)
@@ -656,13 +644,13 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                             dangerouslySetInnerHTML={{ __html: customStyles }}
                           />
                           <ReactSlider
-                            className="bg-gradient-to-r from-blue-200 to-blue-600 h-3 rounded-md flex-grow" // Increased height to 3
+                            className="bg-gradient-to-r from-blue-200 to-blue-600 h-3 rounded-md flex-grow" 
                             marks
                             markClassName="slider-mark bg-purple-800 rounded-md h-1 w-1"
                             min={2}
                             max={10}
-                            thumbClassName="absolute bg-white w-16 h-16 flex items-center justify-center rounded-full shadow-md -top-7" // Increased width and height
-                            trackClassName="h-3 rounded" // Adjusted height to match the slider height
+                            thumbClassName="absolute bg-white w-16 h-16 flex items-center justify-center rounded-full shadow-md -top-7" 
+                            trackClassName="h-3 rounded" 
                             value={sliderValues[sliderKeys[currentStep]]}
                             onChange={(value) =>
                               handleSliderChange(currentStep, value)

@@ -8,6 +8,10 @@ import UserProfile from "./UserProfile";
 import MentorProfile from "./MentorProfile";
 import InvestorProfile from "./InvestorProfile";
 import Projectdetails from "../Projectdetails";
+import founder from "../../../../../IcpAccelerator_frontend/assets/images/founder.png";
+import proj from "../../../../../IcpAccelerator_frontend/assets/images/hub.png";
+import vc from "../../../../../IcpAccelerator_frontend/assets/images/vc.png";
+import mentor from "../../../../../IcpAccelerator_frontend/assets/images/mentor.png";
 
 const UserAllProfile = () => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -15,6 +19,13 @@ const UserAllProfile = () => {
   const CurrentUserPrincipal = location.state;
   const [currentRole, setCurrentRole] = useState("user");
   const [userData, setUserData] = useState(null);
+
+  const roleImages = {
+    user: proj,
+    investor: vc,
+    mentor: mentor,
+    project: founder,
+  };
 
   useEffect(() => {
     if (CurrentUserPrincipal) {
@@ -52,12 +63,10 @@ const UserAllProfile = () => {
         <h1 className="md:text-3xl text-[20px] font-bold bg-black text-transparent bg-clip-text">
           {currentRole.charAt(0).toUpperCase() + currentRole.slice(1)} Profile
         </h1>
-        <div className="flex text-white md:text-md text-xs flex-row font-bold h-auto md:w-[24rem] w-[9.5rem] mr-2 items-center bg-customBlue rounded-lg py-2 px-3 justify-between">
+        <div className="flex text-white text-xs flex-row font-bold h-auto md:w-[24rem] w-[9.5rem] mr-2 items-center bg-customBlue rounded-lg py-2 px-3 justify-between">
           <div className="md:block hidden">{Profile2}</div>
-          <p className="md:text-md text-xs font-bold md:block hidden">
-            Change Profile
-          </p>
-          {["user", "investor", "mentor", "project"].map((role) => {
+          <p className="md:block hidden">Change Profile</p>
+          {["user", "project", "mentor", "investor"].map((role) => {
             const index = roleToIndexMap[role];
             const isRoleActive =
               userData && userData[index] && userData[index].length > 0;
@@ -73,12 +82,25 @@ const UserAllProfile = () => {
                   isRoleActive ? () => handleRoleChange(role) : undefined
                 }
               >
-                {role.charAt(0).toUpperCase() + role.slice(1)}
+                {/* {role.charAt(0).toUpperCase() + role.slice(1)} */}
+                <img
+                  src={roleImages[role]}
+                  alt={role}
+                  className="w-5 h-5 md:hidden"
+                />
+                <span
+                  className={`text-xs ${
+                    currentRole === role ? "underline" : ""
+                  } hidden md:block`}
+                >
+                  {role.charAt(0).toUpperCase() + role.slice(1)}
+                </span>
               </div>
             );
           })}
         </div>
       </div>
+
       {currentRole === "user" && userData && (
         <UserProfile userData={userData[0]} Allrole={userData[4]} />
       )}

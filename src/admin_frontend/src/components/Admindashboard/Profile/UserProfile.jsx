@@ -30,8 +30,10 @@ const UserProfile = ({ userData, Allrole }) => {
   const getButtonClass = (status) => {
     switch (status) {
       case "active":
-        return "bg-[#F28F1E]";
+        return "bg-[#A7943A]";
       case "requested":
+        return "bg-[#e55711]";
+      case "approved":
         return "bg-[#0071FF]";
       default:
         return "bg-[#FF3A41]";
@@ -80,7 +82,7 @@ const UserProfile = ({ userData, Allrole }) => {
   const profile = uint8ArrayToBase64(userData[0].params.profile_picture[0]);
   // console.log(profile);
   return (
-    <div className="w-full">
+    <div className="w-full px-[4%]">
       <div className="  bg-white  shadow-md shadow-gray-400 pb-6 pt-4 rounded-lg w-full">
         <div className="w-full flex flex-wrap flex-row items-start justify-start py-4">
           <div className="relative">
@@ -151,7 +153,7 @@ const UserProfile = ({ userData, Allrole }) => {
             </div> */}
           </div>
 
-          <div className="flex flex-col gap-2 h-[300px] bg-gray-300 rounded-md mt-2 px-2 overflow-y-auto py-2">
+          <div className="flex flex-col gap-2 h-[300px] bg-gray-100 px-[1%] rounded-md mt-2  overflow-y-auto py-2">
             {Allrole &&
               Allrole.length > 0 &&
               Allrole.filter(
@@ -162,9 +164,9 @@ const UserProfile = ({ userData, Allrole }) => {
               ).map((role, index) => (
                 <div key={index} className="flex justify-around items-center">
                   <button
-                    className={`flex items-center md:w-[310px] w-full h-[90px] ${getButtonClass(
+                    className={`flex px-2 items-center md:w-[310px] w-full h-[90px] ${getButtonClass(
                       role.status
-                    )} rounded-md px-4`}
+                    )} rounded-md `}
                   >
                     <div className="xl:lg:ml-4">{Profile2}</div>
                     <p className="flex justify-center items-center text-white p-2 text-sm">

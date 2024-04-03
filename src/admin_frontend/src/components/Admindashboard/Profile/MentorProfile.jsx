@@ -42,8 +42,10 @@ const MentorProfile = ({ userData, Allrole, principal }) => {
   const getButtonClass = (status) => {
     switch (status) {
       case "active":
-        return "bg-[#F28F1E]";
+        return "bg-[#A7943A]";
       case "requested":
+        return "bg-[#e55711]";
+      case "approved":
         return "bg-[#0071FF]";
       default:
         return "bg-[#FF3A41]";

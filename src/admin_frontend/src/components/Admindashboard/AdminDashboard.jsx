@@ -29,8 +29,10 @@ const AdminDashboard = () => {
   const allNotification = useSelector(
     (currState) => currState.notification.data
   );
-  const totalLive = useSelector((currState)=> currState.totalLive.total_Live)
-
+  const totalLive = useSelector((currState) => currState.totalLive.total_Live);
+  const totalUpdate = useSelector(
+    (currState) => currState.totalLive.total_Live
+  );
 
   const [isAcceptModalOpen, setIsAcceptModalOpen] = useState(false);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
@@ -61,7 +63,10 @@ const AdminDashboard = () => {
                 </p>
               </div>
             </div>
-            <div className="rounded-[2rem] flex justify-center  flex-col h-[200px] w-full bg-[#B9C0F2] drop-shadow-xl border-2">
+            <div
+              onClick={() => navigate("/live")}
+              className="rounded-[2rem] cursor-pointer flex justify-center  flex-col h-[200px] w-full bg-[#B9C0F2] drop-shadow-xl border-2"
+            >
               <div className="absolute bottom-0 left-0 w-36 h-40 bg-gradient-to-r from-purple-300 via-purple-500 to-purple-800 ellipse-quarter-left rounded-[2rem]"></div>
               <div className="absolute top-0 right-0 bg-gradient-to-br from-indigo-100 to-purple-700 w-28 h-28 ellipse-quarter-right rounded-[2rem]"></div>
 
@@ -91,7 +96,10 @@ const AdminDashboard = () => {
           </div>
           <div className="rounded-[1rem]  space-x-2 flex my-2 justify-center cursor-pointer  flex-col  w-full  bg-white drop-shadow-xl border-2">
             <div className="flex  flex-row  flex-wrap justify-around font-bold text-lg text-black items-center ">
-              <div  onClick={()=> navigate('/alluser')} className="gap-2 flex flex-row items-center">
+              <div
+                onClick={() => navigate("/alluser")}
+                className="gap-2 flex flex-row items-center"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 20 20"
@@ -109,9 +117,10 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          <div 
-          onClick={()=>navigate('/allProject')}
-           className="rounded-[1rem] space-x-2 flex  my-2  justify-center cursor-pointer flex-col  w-full  bg-white drop-shadow-xl border-2 ">
+          <div
+            onClick={() => navigate("/allProject")}
+            className="rounded-[1rem] space-x-2 flex  my-2  justify-center cursor-pointer flex-col  w-full  bg-white drop-shadow-xl border-2 "
+          >
             <div className="flex  flex-row  flex-wrap justify-around font-bold text-lg text-black items-center ">
               <div className="gap-2 flex-row flex items-center">
                 <img src={founder} alt="founder" />
@@ -140,7 +149,7 @@ const AdminDashboard = () => {
         </div>
         <div className="flex md:flex-row flex-col  w-full  mt-2 justify-between ">
           <div
-            className="rounded-[1rem] space-x-2 flex  my-2  justify-center cursor-pointer flex-col  w-full  bg-white drop-shadow-xl border-2 "
+            className="rounded-[1rem] space-x-2 flex px-2   my-2  justify-center cursor-pointer flex-col  w-full  bg-white drop-shadow-xl border-2 "
             // onClick={() => navigate("/request")}
           >
             <div className="flex  flex-row  flex-wrap justify-around font-bold text-lg text-black items-center ">
@@ -153,9 +162,19 @@ const AdminDashboard = () => {
               </p>
             </div>
           </div>
-
           <div
-            className="rounded-[1rem] space-x-2 flex  my-2  justify-center  flex-col  w-full  bg-[#0071FF]  drop-shadow-xl border-2 "
+            className="rounded-[1rem] space-x-2 flex  my-2 px-2 justify-center  flex-col  w-full  bg-[#619670]  drop-shadow-xl border-2 "
+            // onClick={() => navigate("/notification")}
+          >
+            <div className="flex  flex-row  flex-wrap justify-around font-bold text-lg text-black items-center ">
+              <p className="flex justify-between text-sm">Profile Update</p>
+              <p className="font-extrabold w-[59px]  text-2xl h-[62px] flex  justify-center items-center">
+                {totalUpdate}
+              </p>
+            </div>
+          </div>
+          <div
+            className="rounded-[1rem] space-x-2 flex px-2   my-2  justify-center  flex-col  w-full  bg-[#0071FF]  drop-shadow-xl border-2 "
             // onClick={() => navigate("/notification")}
           >
             <div className="flex  flex-row  flex-wrap justify-around font-bold text-lg text-black items-center ">
@@ -166,7 +185,7 @@ const AdminDashboard = () => {
             </div>
           </div>
           <div
-            className="rounded-[1rem] space-x-2 flex  my-2  justify-center cursor-pointer flex-col  w-full  bg-[#F28F1E] drop-shadow-xl border-2 "
+            className="rounded-[1rem] space-x-2 flex px-2  my-2  justify-center cursor-pointer flex-col  w-full  bg-[#F28F1E] drop-shadow-xl border-2 "
             onClick={() => navigate("/request")}
           >
             <div className="flex  flex-row  flex-wrap justify-around font-bold text-lg text-black items-center ">
