@@ -26,6 +26,7 @@ import InvestorDashboard from "./RoleDashboard/InvestorDashboard";
 import AnnouncementCard from "./AnnouncementCard";
 import LiveProjects from "./LiveProjects";
 import { founderRegisteredHandlerRequest } from "../StateManagement/Redux/Reducers/founderRegisteredData";
+import MainCards from "./MainCards";
 const DashBoard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -99,7 +100,7 @@ const DashBoard = () => {
       id: "addTestimonial",
       title: "Add your testimonial",
       description: "Share your experience and insights with our community.",
-      buttonText: "Add now",
+      buttonText: "Add Now",
       imgSrc: hover,
     },
   ];
@@ -116,6 +117,14 @@ const DashBoard = () => {
         <>
           <section className="overflow-hidden relative bg-gray-100">
             <div className="font-fontUse flex flex-col w-full h-fit px-[5%] lg1:px-[4%] py-[4%]">
+              {/* <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
+                <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent inline-block bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
+                  What do you get
+                </h1>
+              </div>
+              <div className="mb-4">
+                <MainCards />
+              </div> */}
               <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
                 <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent inline-block bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
                   Spotlight of the month
@@ -146,7 +155,6 @@ const DashBoard = () => {
               <div className="mb-4">
                 <LiveProjects progress={false} />
               </div>
-
               <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
                 <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
                   Ongoing Accelerators
@@ -156,18 +164,18 @@ const DashBoard = () => {
               </button> */}
               </div>
               <EventCard />
-              <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
+              {/* <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
                 <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
                   Event Announcement
-                </h1>
+                </h1> */}
                 {/* <button className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
                 Explore more
               </button> */}
-              </div>
-              <div className="flex flex-wrap md:flex-nowrap gap-4 mb-4">
+              {/* </div> */}
+              {/* <div className="flex flex-wrap md:flex-nowrap gap-4 mb-4">
                 <SecondEventCard />
                 <SecondEventCard />
-              </div>
+              </div> */}
 
               <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
                 <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
@@ -221,19 +229,24 @@ const DashBoard = () => {
                 </h1>
               </div>
               <div className="mb-4">
-                <ProjectJobCard />
+                <ProjectJobCard
+                  image={true}
+                  tags={true}
+                  country={true}
+                  website={true}
+                />
               </div>
               <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
                 <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
-                  Testimonial
+                  Testimonials
                 </h1>
               </div>
-              <div className="flex flex-col sm:flex-row flex-wrap -mx-4 mb-4 justify-center items-start bg-[#DBDDF3] rounded-lg p-4">
-                <div className="w-full md:w-3/4 px-4 mb-4">
+              <div className="flex flex-col sm:flex-row flex-wrap mb-4 justify-center items-start bg-[#B9C0F2] rounded-lg p-4">
+                <div className="w-full sm:w-1/2 lg:w-3/4 mb-4 overflow-x-auto px-2">
                   <Testimonial />
                 </div>
-                <div className="w-full md:w-1/4 px-4">
-                  <RegisterCard categories={testimonialCategories} />
+                <div className="w-full sm:w-1/2 lg:w-1/4 px-2">
+                  <RegisterCard categories={testimonialCategories} border={true} />
                 </div>
               </div>
               {/* <div className="flex- flex-col mb-10">

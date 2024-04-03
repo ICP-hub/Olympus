@@ -32,7 +32,12 @@ const LogoutModal = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isDropdownOpen, setDropdownOpen] = useState(false);
-
+  const userCurrentRoleStatus = useSelector(
+    (currState) => currState.currentRoleStatus.rolesStatusArray
+  );
+  const userCurrentRoleStatusActiveRole = useSelector(
+    (currState) => currState.currentRoleStatus.activeRole
+  );
   const toggleDropdown = () => {
     setDropdownOpen(!isDropdownOpen);
   };
@@ -83,6 +88,10 @@ const LogoutModal = () => {
       }
     );
   }, [principal]);
+
+  // const handleNavigate = () => {
+
+  // }
 
   return (
     <>
@@ -149,10 +158,28 @@ const LogoutModal = () => {
                 className="text-sm text-black font-bold md:hidden "
                 aria-labelledby="avatarButton"
               >
-                <li className="block px-4 py-2 hover:bg-gray-200 hover:text-black">
+                <li onClick={() => navigate('/')} className="block px-4 py-2 hover:bg-gray-200 hover:text-black">
                   Home
                 </li>
-                <li className="block px-4 py-2 hover:bg-gray-200 hover:text-black">
+                {/* <li onClick={() => handleNavigate()} className="block px-4 py-2 hover:bg-gray-200 hover:text-black">
+                  Associations
+                </li> */}
+                {userCurrentRoleStatus && userCurrentRoleStatusActiveRole && userCurrentRoleStatusActiveRole !== 'user' ?
+                  <li onClick={() => navigate(
+                    userCurrentRoleStatusActiveRole === 'project'
+                      ? '/project-association-requests'
+                      : userCurrentRoleStatusActiveRole === 'mentor'
+                        ? '/mentor-association-requests'
+                        : userCurrentRoleStatusActiveRole === 'vc'
+                          ? "/investor-association-requests"
+                          : ''
+                  )}
+                    className="block px-4 py-2 hover:bg-gray-200 hover:text-black"
+                  >
+                    Associations
+                  </li>
+                  : ''}
+                {/* <li className="block px-4 py-2 hover:bg-gray-200 hover:text-black">
                   Event
                 </li>
                 <li className="block px-4 py-2 hover:bg-gray-200 hover:text-black">
@@ -160,7 +187,7 @@ const LogoutModal = () => {
                 </li>
                 <li className="block px-4 py-2 hover:bg-gray-200 hover:text-black">
                   Projects
-                </li>
+                </li> */}
               </ul>
             )}
             <div className="text-sm text-black font-bold">

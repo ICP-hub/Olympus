@@ -106,7 +106,7 @@ function SearchMentorsByProjectId() {
             Mentorship
           </h2>
         </div>
-        <div className="flex items-center relative md1:w-1/2 sm1:w-3/4 w-full p-2 mb-8 border border-[#737373] rounded-lg shadow-md">
+        {/* <div className="flex items-center relative md1:w-1/2 sm1:w-3/4 w-full p-2 mb-8 border border-[#737373] rounded-lg shadow-md">
           <input
             type="text"
             placeholder="Search by company, skills or role"
@@ -132,37 +132,21 @@ function SearchMentorsByProjectId() {
               />
             </svg>
           </button>
-        </div>
+        </div> */}
       </div>
 
       <div className="flex flex-wrap justify-center">
         {noData ? <NoDataCard /> :
           data.map((mentor, index) => {
-            let id = "";
-            let img = "";
-            let name = "";
-            let skills = "";
-            let role = "";
-            let mentor_id = null;
-            // console.log('mentor[0]', Principal.toText(mentor[0]))
-            if (noData) {
-              id = mentor?.id;
-              img = mentor?.imageUrl;
-              name = mentor?.name;
-              // skills = mentor?.skills;
-              skills = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis error recusandae ad quo sit repellat quod dicta numquam labore deleniti. Nemo nostrum dolorem debitis soluta eligendi temporibus esse et officiis";
-              role = mentor?.role;
-            } else {
-              id = mentor[1]?.mentor_profile?.uid;
-              img = uint8ArrayToBase64(
+          
+              let  id = mentor[0] ? mentor[0].toText() : '';
+              let  img = uint8ArrayToBase64(
                 mentor[1]?.mentor_profile?.profile?.user_data?.profile_picture[0]
               );
-              name = mentor[1]?.mentor_profile?.profile?.user_data?.full_name;
-              // skills = mentor[1]?.mentor_profile?.profile?.area_of_expertise;
-              skills = mentor[1]?.mentor_profile?.profile?.user_data?.bio[0];
-              role = "Mentor";
-              mentor_id = mentor[0].toText();
-            }
+              let  name = mentor[1]?.mentor_profile?.profile?.user_data?.full_name;
+              let  skills = mentor[1]?.mentor_profile?.profile?.user_data?.bio[0];
+              let  role = "Mentor";
+              let mentor_id = mentor[0].toText();
             return (
               <div className="">
                 <div className="w-full sm:w-full md:w-full lg:w-full xl:w-full p-4">
@@ -173,7 +157,7 @@ function SearchMentorsByProjectId() {
                         src={img}
                         alt="alt"
                       />
-                      <div className="flex flex-col w-full mt-4">
+                      <div className="flex flex-col justify-around w-full mt-4">
                         <h1 className="text-black text-2xl font-extrabold">
                           {name}
                         </h1>

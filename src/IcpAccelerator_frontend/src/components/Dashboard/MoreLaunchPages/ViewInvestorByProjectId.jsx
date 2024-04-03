@@ -96,7 +96,7 @@ const ViewInvestorByProjectId = () => {
             </span>
           </h2>
         </div>
-        <div className="flex items-center relative md1:w-1/2 sm1:w-3/4 w-full p-2 mb-8 border border-[#737373] rounded-lg shadow-md">
+        {/* <div className="flex items-center relative md1:w-1/2 sm1:w-3/4 w-full p-2 mb-8 border border-[#737373] rounded-lg shadow-md">
           <input
             type="text"
             placeholder="Search by company, skills or role"
@@ -122,36 +122,21 @@ const ViewInvestorByProjectId = () => {
               />
             </svg>
           </button>
-        </div>
+        </div> */}
       </div>
       <div className="flex flex-wrap justify-center">
         {noData ? <NoDataCard /> :
           data.map((investor, index) => {
-            let id = "";
-            let img = "";
-            let name = "";
-            let company = "";
-            let role = "";
-            let investor_id = null
-            if (noData) {
-              id = investor.id;
-              img = investor.image;
-              name = investor.name;
-              // company = investor.company;
-              company = "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nesciunt cumque saepe laborum, quis error harum ad quo, nobis alias explicabo tempora. Error voluptates laudantium assumenda eum ipsum non ullam veritatis.";
-              role = investor.role;
-            } else {
-              id = investor[1]?.vc_profile?.uid;
-              img = uint8ArrayToBase64(
+           
+              let id = investor[0] ? investor[0].toText() : '';
+              let img = uint8ArrayToBase64(
                 investor[1]?.vc_profile?.params?.user_data?.profile_picture[0]
               );
-              name = investor[1]?.vc_profile?.params?.user_data?.full_name;
-              // company = investor[1]?.vc_profile?.params?.name_of_fund;
-              company = investor[1]?.vc_profile?.params?.user_data?.bio[0];
-              role = "Investor";
-              investor_id = investor[0].toText();
+              let name = investor[1]?.vc_profile?.params?.user_data?.full_name;
+              let company = investor[1]?.vc_profile?.params?.user_data?.bio[0];
+              let role = "Investor";
+              let investor_id = investor[0].toText();
 
-            }
 
             return (
               <div className="" key={index}>
@@ -159,7 +144,7 @@ const ViewInvestorByProjectId = () => {
                   <div className="shadow-md rounded-lg overflow-hidden  drop-shadow-2xl gap-2 bg-[#C1CAFF]">
                     <div className='flex flex-col sm:flex-row gap-6 p-2'>
                       <img className='w-full sm:w-[300.53px] rounded-md h-auto sm:h-[200.45px] flex lg:items-center lg:justify-center  ' src={img} alt="alt" />
-                      <div className='flex flex-col w-full'>
+                      <div className='flex flex-col justify-around w-full'>
                         <h1 className="text-black text-2xl font-extrabold">{name}</h1>
                         <p className="text-[#737373]">{role}</p>
                         <div className='flex flex-wrap rounded-full mt-6 text-[#737373] justify-center'>

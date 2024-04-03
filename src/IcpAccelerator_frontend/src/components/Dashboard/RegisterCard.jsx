@@ -4,7 +4,7 @@ import TestimonialModal from "../../models/TestimonialModal";
 import toast, { Toaster } from "react-hot-toast";
 import { useSelector } from "react-redux";
 
-const RegisterCard = ({ categories }) => {
+const RegisterCard = ({ categories, border }) => {
   const navigate = useNavigate();
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
   const [isTestimonialModalOpen, setTestimonialModalOpen] = useState(false);
@@ -22,7 +22,7 @@ const RegisterCard = ({ categories }) => {
   return (
     <>
       <div
-        className={`flex flex-wrap w-full justify-between sxs:mt-2 -mt-2 ${
+        className={`flex flex-wrap w-full justify-between sxs:mt-2 -mt-2 ${border === true ? 'border-2 rounded-lg' : ''} ${
           categories.map(
             (category) => category.title === "Add your testimonial"
           )
@@ -52,11 +52,11 @@ const RegisterCard = ({ categories }) => {
                   src={category.imgSrc}
                   alt="not found"
                 />
-                <div className="flex-col space-y-5 ">
+                <div className={`flex-col space-y-5 ${border === true ? "py-3" : "" }`}>
                   <div className="text-xl sm:text-2xl text-white font-bold line-clamp-2">
                     <h1>{category.title}</h1>
                   </div>
-                  <p className="text-white line-clamp-2">
+                  <p className="text-white line-clamp-2 w-10/12">
                     {category.description}
                   </p>
 
