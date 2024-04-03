@@ -1,8 +1,13 @@
 import React, { useMemo } from "react";
-import { useLocation } from "react-router-dom";
-
+import { useNavigate, useLocation } from "react-router-dom";
+import { removeActor } from "../../StateManagement/Redux/Reducers/actorBindReducer";
+import { useDispatch } from "react-redux";
+import { useAuth } from "../../StateManagement/useContext/useAuth";
 const Breadcrumbs = () => {
   const { pathname } = useLocation();
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const getLabelForPathSegment = (segment) => {
     if (segment.match(/^\d+$/)) {
@@ -26,12 +31,20 @@ const Breadcrumbs = () => {
     return null; // or any other suitable element/component for your design
   }
 
+  const handleNavigate = () => {
+    if (window.location.pathname.includes('/create-user')) {
+      logout()
+      dispatch(removeActor())
+    }
+    navigate('/');
+  }
+
   return (
     <nav className="flex px-10 py-4" aria-label="Breadcrumb">
       <ol className="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
-        <li className="inline-flex items-center">
+        <li className="inline-flex items-center" onClick={() => handleNavigate()}>
           <a
-            href="/"
+            // href="/"
             className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white"
           >
             <svg

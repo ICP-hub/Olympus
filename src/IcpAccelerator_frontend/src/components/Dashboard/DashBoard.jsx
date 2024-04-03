@@ -25,7 +25,7 @@ import MentorDashboard from "./RoleDashboard/MentorDashboard";
 import InvestorDashboard from "./RoleDashboard/InvestorDashboard";
 import AnnouncementCard from "./AnnouncementCard";
 import LiveProjects from "./LiveProjects";
-import { founderRegisteredHandlerRequest } from "../StateManagement/Redux/Reducers/founderRegisteredData"; 
+import { founderRegisteredHandlerRequest } from "../StateManagement/Redux/Reducers/founderRegisteredData";
 const DashBoard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -61,7 +61,6 @@ const DashBoard = () => {
 
   useEffect(() => {
     if (actor) {
-      // dispatch(founderRegisteredHandlerRequest());
       if (!userCurrentRoleStatus.length) {
         initialApi();
       } else if (
@@ -84,6 +83,7 @@ const DashBoard = () => {
       imgSrc: hover,
     },
   ];
+
   const mentorCategories = [
     {
       id: "registerMentor",
@@ -118,7 +118,7 @@ const DashBoard = () => {
             <div className="font-fontUse flex flex-col w-full h-fit px-[5%] lg1:px-[4%] py-[4%]">
               <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
                 <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent inline-block bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
-                  Spotlight on the month
+                  Spotlight of the month
                 </h1>
               </div>
               <div className="mb-4">
@@ -126,7 +126,7 @@ const DashBoard = () => {
               </div>
               <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
                 <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
-                  Impact of the tool
+                  Goals for 2024
                 </h1>
               </div>
               <div className="mb-4">
@@ -144,9 +144,9 @@ const DashBoard = () => {
                 </button>
               </div>
               <div className="mb-4">
-                <LiveProjects progress={false}/>
+                <LiveProjects progress={false} />
               </div>
-             
+
               <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
                 <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
                   Ongoing Accelerators
@@ -168,18 +168,7 @@ const DashBoard = () => {
                 <SecondEventCard />
                 <SecondEventCard />
               </div>
-              {/* <div className="flex md:w-[calc(100%/2-10px)] dxl:w-[calc(100%/3-10px)] justify-between w-full gap-4 flex-row">
-              <div className="grid grid-col-2 gap-4">
-                {[...Array(2)].map((_, index) => (
-                  <SecondEventCard key={index} />
-                ))}
-              </div>
-            </div> */}
 
-              <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl pb-3 font-bold">
-                Jobs / Opportunity
-              </h1>
-              <ProjectJobCard />
               <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
                 <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
                   Investors
@@ -227,6 +216,14 @@ const DashBoard = () => {
                 <AnnouncementCard />
               </div>
               <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
+                <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl pb-3 font-bold">
+                  Jobs / Opportunity
+                </h1>
+              </div>
+              <div className="mb-4">
+                <ProjectJobCard />
+              </div>
+              <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
                 <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
                   Testimonial
                 </h1>
@@ -239,7 +236,7 @@ const DashBoard = () => {
                   <RegisterCard categories={testimonialCategories} />
                 </div>
               </div>
-              <div className="flex- flex-col mb-10">
+              {/* <div className="flex- flex-col mb-10">
                 <div className="flex items-center justify-between flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
                   <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
                     Get Started
@@ -319,7 +316,7 @@ const DashBoard = () => {
                   </div>
                 </div>
               </div>
-              <SubmitSection />
+              <SubmitSection /> */}
             </div>
           </section>
         </>
