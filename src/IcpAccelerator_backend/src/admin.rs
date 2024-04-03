@@ -8,6 +8,8 @@ use ic_cdk::api::management_canister::main::{canister_info, CanisterInfoRequest}
 use ic_cdk::api::stable::{StableReader, StableWriter};
 use ic_cdk::api::{caller, id};
 use ic_cdk::api::{canister_balance128, time};
+use ic_cdk::storage;
+use ic_cdk::storage::stable_restore;
 use ic_cdk_macros::*;
 use serde::{Deserialize, Serialize};
 use std::cell::RefCell;
@@ -46,6 +48,25 @@ enum MyError {
 
 thread_local! {
     static ADMIN_NOTIFICATIONS : RefCell<HashMap<Principal, Vec<Notification>>> = RefCell::new(HashMap::new())
+}
+
+pub fn pre_upgrade_admin(){
+    ADMIN_NOTIFICATIONS.with(|data| {
+        match storage::stable_save((data.borrow().clone(),)) {
+            Ok(_) => ic_cdk::println!("ADMIN_NOTIFICATIONS saved successfully."),
+            Err(e) => ic_cdk::println!("Failed to save ADMIN_NOTIFICATIONS: {:?}", e),
+        }
+    });
+}
+
+pub fn post_upgrade_admin(){
+    match stable_restore::<(HashMap<Principal, Vec<Notification>>,)>() {
+        Ok((restored_admin_notifications,)) => {
+            ADMIN_NOTIFICATIONS.with(|data| *data.borrow_mut() = restored_admin_notifications);
+            ic_cdk::println!("ADMIN_NOTIFICATIONS restored successfully.");
+        },
+        Err(e) => ic_cdk::println!("Failed to restore ADMIN_NOTIFICATIONS: {:?}", e),
+    }
 }
 
 fn change_notification_status(requester: Principal, requested_for: String, changed_status: String) {
@@ -1106,29 +1127,6 @@ pub fn get_spotlight_project_uids() -> Vec<String> {
     })
 }
 
-pub fn pre_upgrade_admin() {
-    ADMIN_NOTIFICATIONS.with(|notifications| {
-        let serialized =
-            bincode::serialize(&*notifications.borrow()).expect("Serialization failed");
-        let mut writer = StableWriter::default();
-        writer
-            .write(&serialized)
-            .expect("Failed to write to stable storage");
-    });
-}
-
-pub fn post_upgrade_admin() {
-    let mut reader = StableReader::default();
-    let mut data = Vec::new();
-    reader
-        .read_to_end(&mut data)
-        .expect("Failed to read from stable storage");
-    let upvotes: HashMap<Principal, Vec<Notification>> =
-        bincode::deserialize(&data).expect("Deserialization failed of notification");
-    ADMIN_NOTIFICATIONS.with(|notifications_ref| {
-        *notifications_ref.borrow_mut() = upvotes;
-    });
-}
 
 #[query]
 fn get_pending_cycles() -> u128 {

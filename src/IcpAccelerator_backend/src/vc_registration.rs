@@ -7,6 +7,8 @@ use ic_cdk::api::caller;
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::api::stable::{StableReader, StableWriter};
 use ic_cdk::api::time;
+use ic_cdk::storage;
+use ic_cdk::storage::stable_restore;
 use ic_cdk_macros::*;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
@@ -119,99 +121,65 @@ thread_local! {
     pub static VC_ANNOUNCEMENTS:RefCell<VcAnnouncements> = RefCell::new(VcAnnouncements::new());
 }
 
-pub fn pre_upgrade_vc() {
-    VENTURECAPITALIST_STORAGE.with(|registry| {
-        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
-
-        let mut writer = StableWriter::default();
-        writer
-            .write(&serialized)
-            .expect("Failed to write to stable storage");
+pub fn pre_upgrade_venture_capitalist() {
+    VENTURECAPITALIST_STORAGE.with(|data| {
+        match storage::stable_save((data.borrow().clone(),)) {
+            Ok(_) => ic_cdk::println!("VENTURECAPITALIST_STORAGE saved successfully."),
+            Err(e) => ic_cdk::println!("Failed to save VENTURECAPITALIST_STORAGE: {:?}", e),
+        }
     });
 
-    VC_AWAITS_RESPONSE.with(|registry| {
-        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
-
-        let mut writer = StableWriter::default();
-        writer
-            .write(&serialized)
-            .expect("Failed to write to stable storage");
+    VC_AWAITS_RESPONSE.with(|data| {
+        match storage::stable_save((data.borrow().clone(),)) {
+            Ok(_) => ic_cdk::println!("VC_AWAITS_RESPONSE saved successfully."),
+            Err(e) => ic_cdk::println!("Failed to save VC_AWAITS_RESPONSE: {:?}", e),
+        }
     });
 
-    DECLINED_VC_REQUESTS.with(|registry| {
-        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
-
-        let mut writer = StableWriter::default();
-        writer
-            .write(&serialized)
-            .expect("Failed to write to stable storage");
+    DECLINED_VC_REQUESTS.with(|data| {
+        match storage::stable_save((data.borrow().clone(),)) {
+            Ok(_) => ic_cdk::println!("DECLINED_VC_REQUESTS saved successfully."),
+            Err(e) => ic_cdk::println!("Failed to save DECLINED_VC_REQUESTS: {:?}", e),
+        }
     });
-    VC_PROFILE_EDIT_AWAITS.with(|registry| {
-        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
 
-        let mut writer = StableWriter::default();
-        writer
-            .write(&serialized)
-            .expect("Failed to write to stable storage");
+    VC_PROFILE_EDIT_AWAITS.with(|data| {
+        match storage::stable_save((data.borrow().clone(),)) {
+            Ok(_) => ic_cdk::println!("VC_PROFILE_EDIT_AWAITS saved successfully."),
+            Err(e) => ic_cdk::println!("Failed to save VC_PROFILE_EDIT_AWAITS: {:?}", e),
+        }
     });
-    DECLINED_VC_PROFILE_EDIT_REQUEST.with(|registry| {
-        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
 
-        let mut writer = StableWriter::default();
-        writer
-            .write(&serialized)
-            .expect("Failed to write to stable storage");
+    DECLINED_VC_PROFILE_EDIT_REQUEST.with(|data| {
+        match storage::stable_save((data.borrow().clone(),)) {
+            Ok(_) => ic_cdk::println!("DECLINED_VC_PROFILE_EDIT_REQUEST saved successfully."),
+            Err(e) => ic_cdk::println!("Failed to save DECLINED_VC_PROFILE_EDIT_REQUEST: {:?}", e),
+        }
     });
-    VC_ANNOUNCEMENTS.with(|registry| {
-        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
 
-        let mut writer = StableWriter::default();
-        writer
-            .write(&serialized)
-            .expect("Failed to write to stable storage");
+    VC_ANNOUNCEMENTS.with(|data| {
+        match storage::stable_save((data.borrow().clone(),)) {
+            Ok(_) => ic_cdk::println!("VC_ANNOUNCEMENTS saved successfully."),
+            Err(e) => ic_cdk::println!("Failed to save VC_ANNOUNCEMENTS: {:?}", e),
+        }
     });
 }
 
-pub fn post_upgrade_vc() {
-    let mut reader = StableReader::default();
-    let mut data = Vec::new();
-    reader
-        .read_to_end(&mut data)
-        .expect("Failed to read from stable storage");
-    let notifications: HashMap<Principal, Vec<Announcements>> =
-        bincode::deserialize(&data).expect("Deserialization failed of notification");
-    VC_ANNOUNCEMENTS.with(|notifications_ref| {
-        *notifications_ref.borrow_mut() = notifications;
-    });
-    let vc_storage: HashMap<Principal, VentureCapitalistInternal> =
-        bincode::deserialize(&data).expect("Deserialization failed of notification");
-    VENTURECAPITALIST_STORAGE.with(|notifications_ref| {
-        *notifications_ref.borrow_mut() = vc_storage;
-    });
 
-    let vc_awaits: HashMap<Principal, VentureCapitalistInternal> =
-        bincode::deserialize(&data).expect("Deserialization failed of notification");
-    VC_AWAITS_RESPONSE.with(|notifications_ref| {
-        *notifications_ref.borrow_mut() = vc_awaits;
-    });
+pub fn post_upgrade_venture_capitalist() {
+    match stable_restore::<(VentureCapitalistStorage, VentureCapitalistStorage, VentureCapitalistStorage, VentureCapitalistParams, VentureCapitalistParams, VcAnnouncements)>() {
+        Ok((restored_vc_storage, restored_vc_awaits_response, restored_declined_vc_requests, restored_vc_profile_edit_awaits, restored_declined_vc_profile_edit_request, restored_vc_announcements)) => {
+            VENTURECAPITALIST_STORAGE.with(|data| *data.borrow_mut() = restored_vc_storage);
+            VC_AWAITS_RESPONSE.with(|data| *data.borrow_mut() = restored_vc_awaits_response);
+            DECLINED_VC_REQUESTS.with(|data| *data.borrow_mut() = restored_declined_vc_requests);
+            VC_PROFILE_EDIT_AWAITS.with(|data| *data.borrow_mut() = restored_vc_profile_edit_awaits);
+            DECLINED_VC_PROFILE_EDIT_REQUEST.with(|data| *data.borrow_mut() = restored_declined_vc_profile_edit_request);
+            VC_ANNOUNCEMENTS.with(|data| *data.borrow_mut() = restored_vc_announcements);
 
-    let declined_vc: HashMap<Principal, VentureCapitalistInternal> =
-        bincode::deserialize(&data).expect("Deserialization failed of notification");
-    DECLINED_VC_REQUESTS.with(|notifications_ref| {
-        *notifications_ref.borrow_mut() = declined_vc;
-    });
-
-    let vc_profile_await: HashMap<Principal, VentureCapitalist> =
-        bincode::deserialize(&data).expect("Deserialization failed of notification");
-    VC_PROFILE_EDIT_AWAITS.with(|notifications_ref| {
-        *notifications_ref.borrow_mut() = vc_profile_await;
-    });
-
-    let vc_profile_edit_declined: HashMap<Principal, VentureCapitalist> =
-        bincode::deserialize(&data).expect("Deserialization failed of notification");
-    DECLINED_VC_PROFILE_EDIT_REQUEST.with(|notifications_ref| {
-        *notifications_ref.borrow_mut() = vc_profile_edit_declined;
-    });
+            ic_cdk::println!("VC modules restored successfully.");
+        },
+        Err(e) => ic_cdk::println!("Failed to restore VC modules: {:?}", e),
+    }
 }
 
 #[update]
