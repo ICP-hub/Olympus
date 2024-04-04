@@ -1171,7 +1171,7 @@ const CreateProjectRegistration = () => {
                           htmlFor="logo"
                           className="p-2 border-2 border-blue-800 items-center rounded-md text-md bg-transparent text-blue-800 cursor-pointer font-extrabold"
                         >
-                          Upload Logo
+                          Upload logo
                         </label>
                       </>
                     )}
@@ -1351,7 +1351,7 @@ const CreateProjectRegistration = () => {
                         htmlFor="dapp_link"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        dApp Link
+                        dApp Link *
                       </label>
                       <input
                         type="text"
@@ -1376,7 +1376,7 @@ const CreateProjectRegistration = () => {
                         htmlFor="weekly_active_users"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        Weekly active users
+                        Weekly active users *
                       </label>
                       <input
                         type="number"
@@ -1400,7 +1400,7 @@ const CreateProjectRegistration = () => {
                         htmlFor="revenue"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        Revenue (USD)
+                        Revenue (USD) *
                       </label>
                       <input
                         type="number"
@@ -1456,7 +1456,7 @@ const CreateProjectRegistration = () => {
                       htmlFor="supports_multichain"
                       className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                     >
-                      Please select the chains
+                      Please select the chains *
                     </label>
                     <select
                       {...register("supports_multichain")}
@@ -1521,7 +1521,7 @@ const CreateProjectRegistration = () => {
                         htmlFor="icp_grants"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        Grants
+                        Grants *
                       </label>
                       <input
                         type="number"
@@ -1546,7 +1546,7 @@ const CreateProjectRegistration = () => {
                         htmlFor="investors"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        Investors
+                        Investors *
                       </label>
                       <input
                         type="number"
@@ -1571,7 +1571,7 @@ const CreateProjectRegistration = () => {
                         htmlFor="sns"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        Launchpad
+                        Launchpad *
                       </label>
                       <input
                         type="number"
@@ -1624,7 +1624,7 @@ const CreateProjectRegistration = () => {
                         htmlFor="target_amount"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        Target Amount (USD)
+                        Target Amount (USD) *
                       </label>
                       <input
                         type="number"
@@ -1649,7 +1649,7 @@ const CreateProjectRegistration = () => {
                         htmlFor="raised_from_other_ecosystem"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        Valuation (USD)
+                        Valuation (USD) *
                       </label>
                       <input
                         type="number"
@@ -1661,7 +1661,7 @@ const CreateProjectRegistration = () => {
                             ? "border-red-500 placeholder:text-red-500"
                             : "border-[#737373]"
                         } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                        placeholder="$"
+                        placeholder="Million"
                       />
                       {errors.raised_from_other_ecosystem && (
                         <p className="mt-1 text-sm text-red-500 font-bold text-left">
@@ -1674,7 +1674,7 @@ const CreateProjectRegistration = () => {
                         htmlFor="upload_private_documents"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        Upload due diligence documents
+                        Upload due diligence documents *
                       </label>
                       <select
                         {...register("upload_private_documents")}
@@ -1709,7 +1709,7 @@ const CreateProjectRegistration = () => {
                           htmlFor="title"
                           className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                         >
-                          Doc title
+                          Doc title *
                         </label>
                         <input
                           {...register(`private_docs.${index}.title`)}
@@ -1727,7 +1727,7 @@ const CreateProjectRegistration = () => {
                           htmlFor="link"
                           className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                         >
-                          Link
+                          Link *
                         </label>
                         <input
                           {...register(`private_docs.${index}.link`)}
@@ -1766,7 +1766,7 @@ const CreateProjectRegistration = () => {
                         htmlFor="title"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        Title
+                        Title *
                       </label>
                       <input
                         {...register(`public_docs.${index}.title`)}
@@ -1784,7 +1784,7 @@ const CreateProjectRegistration = () => {
                         htmlFor="link"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        Link
+                        Link *
                       </label>
                       <input
                         {...register(`public_docs.${index}.link`)}
@@ -1880,7 +1880,7 @@ const CreateProjectRegistration = () => {
                           htmlFor="cover"
                           className="p-2 border-2 border-blue-800 items-center rounded-md text-md bg-transparent text-blue-800 cursor-pointer font-extrabold"
                         >
-                          Upload Cover
+                          Upload cover image
                         </label>
                       </>
                     )}
@@ -1897,7 +1897,7 @@ const CreateProjectRegistration = () => {
                   htmlFor="is_your_project_registered"
                   className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                 >
-                  Is your project registered
+                  Is your project registered *
                 </label>
                 <select
                   {...register("is_your_project_registered")}
@@ -1929,7 +1929,7 @@ const CreateProjectRegistration = () => {
                         htmlFor="type_of_registration"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        Type of registration
+                        Type of registration *
                       </label>
                       <select
                         {...register("type_of_registration")}
@@ -1957,7 +1957,7 @@ const CreateProjectRegistration = () => {
                         htmlFor="country_of_registration"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        Country of registration
+                        Country of registration *
                       </label>
                       <select
                         {...register("country_of_registration")}
