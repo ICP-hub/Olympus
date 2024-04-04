@@ -151,6 +151,7 @@ const validationSchema = {
   }),
   additionalInfo: yup.object().shape({
     project_on_multichain: yup.string().optional(),
+    
     reason_for_joining: yup
       .string()
       .required("Reason for joining is required")
@@ -314,7 +315,10 @@ const InvestorRegistration = () => {
     }
     setIsMulti_Chain(IsMultiChain === "true");
     if (IsMultiChain !== "true") {
-      setValue("project_on_multichain", "");
+      // setValue("project_on_multichain", "");
+      clearErrors("project_on_multichain")
+    }else{
+      setError("project_on_multichain", {message: 'Required'})
     }
   }, [ExistingICPInvestor, IsMultiChain, IsRegistered, setValue]);
 
@@ -350,6 +354,7 @@ const InvestorRegistration = () => {
       setActiveTab(investorRegistration[step + 1]?.id);
     }
   };
+
 
   const addImageHandler = async (e) => {
     const selectedImages = e.target.files[0];
@@ -543,7 +548,7 @@ const InvestorRegistration = () => {
 
   const onSubmit = async (data) => {
     console.log("data of investor =>", data);
-
+    console.log()
     const updatedFormData = { ...formData, ...data };
     setFormData(updatedFormData);
     console.log("updatedFormData ================>", updatedFormData);
@@ -1101,11 +1106,16 @@ const InvestorRegistration = () => {
                           {...register("investor_type")}
                           onChange={(selectedOptions) => {
                             // You might need to adapt this part to fit how you handle form data
-                            const selectedValues = selectedOptions
-                              .map((option) => option.value)
-                              .join(", ");
-                            setValue("investor_type", selectedValues);
-                          }}
+
+                            if (selectedOptions && selectedOptions.length > 0) {
+                              clearErrors("investor_type");
+                              setValue("investor_type", selectedOptions
+                                .map((option) => option.value)
+                                .join(", "));
+                            } else {
+                              setError("investor_type", { type: 'required', message: "Investor type is required" });
+                            }
+                          }}                       
                         />
                         {errors.investor_type && (
                           <p className="mt-1 text-sm text-red-500 font-bold text-left">
