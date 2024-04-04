@@ -291,6 +291,7 @@ type OfferToSendToProjectByInvestor = record {
   sender_principal : principal;
   self_declined_at : nat64;
 };
+type PaginationParam = record { page_size : nat64; page : nat64 };
 type ProjectInf = record {
   project_description : text;
   project_id : text;
@@ -717,6 +718,9 @@ service : {
   get_all_mentors_candid : () -> (
       vec record { principal; MentorWithRoles },
     ) query;
+  get_all_mentors_with_pagination : (PaginationParam) -> (
+      vec record { principal; MentorWithRoles },
+    ) query;
   get_all_offers_which_are_pending_for_investor : () -> (
       vec OfferToProjectByInvestor,
     ) query;
@@ -937,7 +941,13 @@ service : {
   list_all_projects_for_admin : () -> (
       vec record { principal; ProjectVecWithRoles },
     ) query;
+  list_all_projects_with_pagination : (PaginationParam) -> (
+      vec ListAllProjects,
+    ) query;
   list_all_vcs : () -> (vec record { principal; VcWithRoles }) query;
+  list_all_vcs_with_pagination : (PaginationParam) -> (
+      vec record { principal; VcWithRoles },
+    ) query;
   make_active_inactive_mentor : (principal) -> (text);
   make_project_active_inactive : (principal, text) -> (text);
   make_user_inactive : () -> (text);

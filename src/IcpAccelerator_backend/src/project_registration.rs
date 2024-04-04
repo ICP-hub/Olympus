@@ -351,6 +351,7 @@ pub struct ProjectReview {
     rating: u32,
 }
 
+
 #[derive(CandidType, Clone, Serialize, Deserialize)]
 pub struct ProjectRatingStruct {
     rating: u32,
@@ -885,7 +886,7 @@ pub fn list_all_projects_for_admin() -> HashMap<Principal, ProjectVecWithRoles> 
     project_with_roles_map
 }
 
-#[derive(CandidType)]
+#[derive(CandidType, Clone)]
 pub struct ListAllProjects {
     principal: Principal,
     params: ProjectInfoInternal,
@@ -969,6 +970,57 @@ pub fn list_all_projects() -> Vec<ListAllProjects> {
     })
 }
 
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+pub struct PaginationParams {
+    page: usize,
+    page_size: usize,
+}
+
+#[query]
+pub fn list_all_projects_with_pagination(pagination_params: PaginationParams) -> Vec<ListAllProjects> {
+    APPLICATION_FORM.with(|projects: &RefCell<ApplicationDetails>| {
+        let projects = projects.borrow();
+
+        if projects.is_empty() {
+            return Vec::new();
+        }
+
+        let mut list_all_projects: Vec<ListAllProjects> = Vec::new();
+
+        for (principal, projects) in projects.iter() {
+            if projects.is_empty() {
+                continue;
+            }
+
+            for project in projects {
+                let get_rating = calculate_average_api(&project.uid);
+
+                let project_info = ListAllProjects {
+                    principal: principal.clone(),
+                    params: project.clone(),
+                    overall_average: if !get_rating.overall_average.is_empty() {
+                        Some(get_rating.overall_average[0])
+                    } else {
+                        None
+                    },
+                };
+
+                if project.is_active {
+                    list_all_projects.push(project_info);
+                }
+            }
+        }
+
+        // Calculate the start index based on the page number and page size. Ensure it does not exceed the list's bounds.
+        let start = std::cmp::min((pagination_params.page - 1) * pagination_params.page_size, list_all_projects.len());
+
+        // Calculate the end index based on the start index and page size. Ensure it does not exceed the list's bounds.
+        let end = std::cmp::min(start + pagination_params.page_size, list_all_projects.len());
+
+        // Using the safe start and end indices, slice the vector and return a new vector containing just the paginated items.
+        list_all_projects[start..end].to_vec()
+    })
+}
 
 pub async fn update_project(project_id: String, updated_project: ProjectInfo) -> String {
     let caller = caller();
