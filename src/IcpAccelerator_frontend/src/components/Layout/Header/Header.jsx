@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import logoWithText from "../../../../assets/Logo/topLogo.png";
+import topLogoWhitepng from "../../../../assets/Logo/topLogoWhitepng.png";
+
 import LogoutModal from "../../../models/LogoutModal";
 import SwitchRole from "../../../models/SwitchRole";
-import { OutSideClickHandler } from "../../hooks/OutSideClickHandler";
-import { getCurrentRoleStatusFailureHandler, getCurrentRoleStatusRequestHandler, setCurrentActiveRole, setCurrentRoleStatus } from "../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
-import { logoSvg } from "../../Utils/Data/SvgData";
+import { getCurrentRoleStatusFailureHandler, setCurrentActiveRole, setCurrentRoleStatus } from "../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 import { useNavigate } from "react-router-dom";
 
 const Header = ({ setModalOpen, gradient }) => {
@@ -61,21 +61,27 @@ const Header = ({ setModalOpen, gradient }) => {
     }
     console.log('userCurrentRoleStatus--in--header', userCurrentRoleStatus)
   }, [actor, principal, isAuthenticated, dispatch, userCurrentRoleStatus, userCurrentRoleStatusActiveRole]);
-  
+
   console.log('userCurrentRoleStatusActiveRole--in--header', userCurrentRoleStatusActiveRole)
 
 
   return (
-    <header className={`text-gray-700 body-font ${gradient}`}>
+    <header className={`text-gray-700 body-font ${(!userCurrentRoleStatusActiveRole || userCurrentRoleStatusActiveRole === 'user') && window.location.pathname === "/" ?
+      "bg-gradient-to-r from-purple-900 via-purple-500 to-purple-400" : "bg-gray-100"}`}>
       <div className="flex items-center justify-between px-[5%] lg1:px-[4%] py-[3%]">
         <div onClick={() => navigate("/")}>
-          <img className="sxs:scale-75 sxs:-ml-5 md:scale-100" src={logoWithText} alt="IcpLogo" loading="lazy" />
+          <img className="sxs:scale-75 sxs:-ml-5 md:scale-100"
+            src={(!userCurrentRoleStatusActiveRole || userCurrentRoleStatusActiveRole === 'user') && window.location.pathname === "/" ? topLogoWhitepng : logoWithText} alt="IcpLogo" loading="lazy" />
         </div>
         {isAuthenticated && (
-          <div className="space-x-3 text-xs md:block hidden">
-            <a href="/" className={`${underline}`}>
+          <div className="md:flex hidden cursor-pointer">
+            {/* <a href="/" className={`${underline}`}>
               Home
-            </a>
+            </a> */}
+            <div onClick={() => window.location.href = "/"}
+              className={`rounded-full px-8 py-[2px] group-hover:bg-[#6E52AA] group-hover:text-white ${(!userCurrentRoleStatusActiveRole || userCurrentRoleStatusActiveRole === 'user') && window.location.pathname === "/" ? 'text-white' : 'text-blue-800'}`}>
+              Home
+            </div>
             {/* <a href="#" className={`${underline}`}>
               Event
             </a>
@@ -84,20 +90,19 @@ const Header = ({ setModalOpen, gradient }) => {
             </a> */}
 
             {userCurrentRoleStatus && userCurrentRoleStatusActiveRole && userCurrentRoleStatusActiveRole !== 'user' ?
-              <span onClick={() => navigate(
-                userCurrentRoleStatusActiveRole === 'project'
-                  ? '/project-association-requests'
-                  : userCurrentRoleStatusActiveRole === 'mentor'
-                    ? '/mentor-association-requests'
-                    : userCurrentRoleStatusActiveRole === 'vc'
-                      ? "/investor-association-requests"
-                      : ''
-              )}
-                // className={`${underline}`}
-                className="cursor-pointer focus:after:absolute focus:after:bg-blue-800 focus:after:block focus:after:bottom-[-4px] focus:after:content-[''] focus:after:h-[2px] focus:after:left-0 focus:after:w-full relative "
+              <div className={`rounded-full px-8 py-[2px] group-hover:bg-[#6E52AA] group-hover:text-white ${(!userCurrentRoleStatusActiveRole || userCurrentRoleStatusActiveRole === 'user') && window.location.pathname === "/" ? 'text-white' : 'text-blue-800'}`}
+                onClick={() => navigate(
+                  userCurrentRoleStatusActiveRole === 'project'
+                    ? '/project-association-requests'
+                    : userCurrentRoleStatusActiveRole === 'mentor'
+                      ? '/mentor-association-requests'
+                      : userCurrentRoleStatusActiveRole === 'vc'
+                        ? "/investor-association-requests"
+                        : ''
+                )}
               >
                 Associations
-              </span>
+              </div>
               : ''}
 
           </div>
@@ -109,7 +114,10 @@ const Header = ({ setModalOpen, gradient }) => {
               <div className="flex items-center flex-row gap-2">
                 <button
                   onClick={() => setShowSwitchRole(true)}
-                  className="border border-violet-800 md:p-1 font-bold rounded-md text-violet-800 md:px-2 px-1 text-base md:text-lg  uppercase"
+                  className={
+                    (!userCurrentRoleStatusActiveRole || userCurrentRoleStatusActiveRole === 'user') && window.location.pathname === "/"
+                      ? "border border-white md:p-1 font-bold rounded-md text-white md:px-2 px-1 text-base md:text-lg  uppercase"
+                      : "border border-violet-800 md:p-1 font-bold rounded-md text-violet-800 md:px-2 px-1 text-base md:text-lg  uppercase"}
                 >
                   {userCurrentRoleStatusActiveRole == "vc"
                     ? "investor"
@@ -126,12 +134,19 @@ const Header = ({ setModalOpen, gradient }) => {
             )}
           </>
         ) : (
+          // <button
+          //   type="button"
+          //   className="font-bold rounded-md my-2 bg-indigo-600 font-fontUse text-center text-white uppercase text-[0.625rem] md:text-[0.64375rem] lg:text-[0.65625rem] xl:text-[0.78125rem] px-6 py-2 top-[6.5rem] sm4:top-[10.5rem] xxs1:top-[8.5rem] ss2:top-[7.5rem] text-wrap"
+          //   onClick={manageHandler}
+          // >
+          //   SIGNUP / LOGIN
+          // </button>
           <button
             type="button"
-            className="font-bold rounded-md my-2 bg-indigo-600 font-fontUse text-center text-white uppercase text-[0.625rem] md:text-[0.64375rem] lg:text-[0.65625rem] xl:text-[0.78125rem] px-6 py-2 top-[6.5rem] sm4:top-[10.5rem] xxs1:top-[8.5rem] ss2:top-[7.5rem] text-wrap"
+            className="font-bold rounded-xl my-2 bg-transparent border-2 border-white/50 font-fontUse text-center text-white uppercase text-[0.625rem] md:text-[0.64375rem] lg:text-[0.65625rem] xl:text-[0.78125rem] px-6 py-2 top-[6.5rem] sm4:top-[10.5rem] xxs1:top-[8.5rem] ss2:top-[7.5rem] text-wrap group-hover:bg-white group-hover:text-[#BA77FB]"
             onClick={manageHandler}
           >
-            SIGNUP / LOGIN
+            <span className="">SIGNUP / LOGIN</span>
           </button>
         )}
       </div>
