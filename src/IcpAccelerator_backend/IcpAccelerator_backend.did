@@ -473,7 +473,6 @@ type Request = record { mentor : opt MentorInternal; "text" : text };
 type Result = variant { Ok : MoneyRaised; Err : CustomError };
 type Result_1 = variant { Ok : vec Docs; Err : CustomError };
 type Result_10 = variant { Ok : UserInformation; Err : text };
-type Result_11 = variant { Ok : text; Err : text };
 type Result_2 = variant { Ok : text; Err : text };
 type Result_3 = variant { Ok; Err : text };
 type Result_4 = variant { Ok : nat8; Err : text };
