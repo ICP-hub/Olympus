@@ -182,12 +182,12 @@ const AnnouncementCard = () => {
           let ann_project_desc = card?.project_desc ?? "";
           return (
             <SwiperSlide key={index}>
-              <div className="border-2 mb-4 mx-1 overflow-hidden rounded-3xl shadow-md">
+              <div className="border-2 mb-4 mx-1 overflow-hidden rounded-3xl shadow-md hover:scale-105 transition-transform duration-300 ease-in-out">
                 <div className="p-6">
                   <div className="flex flex-col gap-2">
-                    <div className="flex flex-row justify-between">
+                    <div className="flex-row justify-between">
                       <p className="text-black font-bold">{ann_name}</p>
-                      <p className="text-black font-bold">{ann_time}</p>
+                      <p className="text-black text-gray-500 text-right">{ann_time}</p>
                     </div>
                     <p className="h-32 overflow-y-scroll text-gray-500 text-sm">
                       {ann_desc}

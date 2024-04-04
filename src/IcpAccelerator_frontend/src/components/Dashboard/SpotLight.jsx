@@ -91,10 +91,10 @@ const SpotLight = () => {
             modules={[Pagination, Autoplay]}
             centeredSlides={true}
             loop={true}
-            autoplay={{
-              delay: 2500,
-              disableOnInteraction: false,
-            }}
+            // autoplay={{
+            //   delay: 2500,
+            //   disableOnInteraction: false,
+            // }}
             pagination={{
               clickable: true,
             }}
@@ -119,7 +119,7 @@ const SpotLight = () => {
 
                 let projectId =  data?.project_details?.uid ?? null;
                 let projectData = data?.project_details ?? null;
-                let addedBy = data?.project_details?.user_data?.full_name ?? ""; 
+                let addedBy = data?.project_details?.params?.user_data?.full_name ?? ""; 
                 let projectName = data?.project_details?.params?.project_name ??"";
                 let projectImage = data?.project_details?.params?.project_logo ? uint8ArrayToBase64(data?.project_details?.params?.project_logo) : ment;
                 let userImage = data?.project_details?.params?.user_data?.profile_picture[0] ? uint8ArrayToBase64(data?.project_details?.params?.user_data?.profile_picture[0]) : girl;

@@ -68,7 +68,7 @@ const Testimonial = () => {
           return (
             <div
               key={index}
-              className="bg-white rounded-lg shadow-lg w-full max-w-md sm:max-w-sm p-8 mb-4:"
+              className="bg-white rounded-lg shadow-lg w-full max-w-md sm:max-w-sm p-8 mb-4 hover:scale-105 transition-transform duration-300 ease-in-out"
             >
               <div className="flex items-center space-x-4">
                 <img

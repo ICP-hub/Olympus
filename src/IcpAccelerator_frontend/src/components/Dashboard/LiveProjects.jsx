@@ -62,7 +62,7 @@ const LiveProjects = ({ progress }) => {
     {
       id: "registerProject",
       title: "Register your Projects",
-      description: "See a project missing? Submit your projects to participate in the acceleration.",
+      description: "Submit your project now to participate in the acceleration.",
       buttonText: "Register Now",
       imgSrc: hover,
     },
@@ -145,6 +145,7 @@ const LiveProjects = ({ progress }) => {
                   let projectName = data?.params?.params?.project_name ??"";
                   let projectId = data?.params?.uid ?? "";
                   let projectImage = data?.params?.params?.project_logo ? uint8ArrayToBase64(data?.params?.params?.project_logo) : "";
+                  let userName = data?.params?.params?.user_data?.full_name ? data?.params?.params?.user_data?.full_name : "";
                   let userImage = data?.params?.params?.user_data?.profile_picture[0] ? uint8ArrayToBase64(data?.params?.params?.user_data?.profile_picture[0]) : "";
                   let principalId = data?.principal ? data?.principal.toText() : "";
                   let projectDescription = data?.params?.params?.project_description ?? "";
@@ -159,8 +160,8 @@ const LiveProjects = ({ progress }) => {
                     >
                       <div className="w-fit flex justify-between items-baseline flex-wrap bg-white overflow-hidden rounded-lg shadow-lg">
                         <div className="p-4">
-                          <div className="flex justify-between items-baseline mb-2 flex-col flex-wrap w-fit">
-                            <div className="flex items-baseline w-1/2">
+                          <div className="flex justify-between items-baseline flex-wrap w-fit">
+                            <div className="flex items-center w-full">
                               <img
                                 className="rounded-full w-12 h-12 object-cover"
                                 src={projectImage}
@@ -170,14 +171,14 @@ const LiveProjects = ({ progress }) => {
                                 {projectName}
                               </h1>
                             </div>
-                            <div className="flex items-baseline w-1/2">
+                            <div className="flex items-center m-2 w-full">
                               <img
-                                className="h-5 w-5 rounded-full mx-2 mt-2"
+                                className="h-5 w-5 rounded-full mr-2"
                                 src={userImage}
                                 alt="not found"
                               />
-                              <p className="text-xs truncate w-20">
-                                {principalId}
+                              <p className="text-xs truncate">
+                                {userName}
                               </p>
                             </div>
                           </div>
@@ -221,7 +222,10 @@ const LiveProjects = ({ progress }) => {
                               {`${projectRubricStatus}/8`}
                             </div>
                           </div>)}
-                          <p className="text-gray-700 text-sm p-2 h-36 overflow-hidden line-clamp-8">
+                          <p className="text-gray-700 text-sm p-2 overflow-hidden line-clamp-8 truncate text-wrap" style={{overflow: "scroll", 
+                          display: "-webkit-box",
+                          WebkitBoxOrient: "vertical",
+                          WebkitLineClamp: 8}}>
                             {projectDescription}
                           </p>
 

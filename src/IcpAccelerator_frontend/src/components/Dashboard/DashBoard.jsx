@@ -121,16 +121,17 @@ const DashBoard = () => {
         <>
           <section
             className="flex items-center w-full bg-gradient-to-r from-purple-900 via-purple-500 to-purple-400 pl-[9%] pr-[9%] py-[8%]">
-            <div className="container mx-auto">
+            <div className="container mx-auto py-0 md:py-16">
               <div className="flex flex-wrap">
                 <div className="flex flex-col justify-center md:w-1/2 pt-8 sm:pt-0 sm:px-4 w-full">
                   <h1 className="text-4xl font-bold mb-4 lg:text-5xl text-white font-fontUse">
-                    OLYMPUS <br /> The peak of web3 acceleration
+                    OLYMPUS
+                  </h1>
+                  <h1 className="text-3xl font-bold mb-4 lg:text-4xl text-white font-fontUse">
+                    Peak of Web3 acceleration
                   </h1>
                   <p className="text-lg mb-6 md:text-xl lg:text-2xl text-white font-fontUse">
-                    Olympus is a multichain startup acceleration platform, fostering
-                    collaboration among key stakeholders and leveraging blockchain
-                    technology to increase transparency.
+                    Trustless Web3 acceleration platform for founders, investors , mentors, talent and users.
                   </p>
                   {/* <div className="relative group">
                     <a
@@ -157,7 +158,7 @@ const DashBoard = () => {
                 </div>
                 <div className="w-full px-4 md:w-1/2 md:flex hidden">
                   <img
-                    className="object-contain h-fit w-fit absolute z-10 right-0 top-0"
+                    className="object-contain h-fit w-fit absolute z-10 top-0"
                     src={Banner}
                     alt="Illustration"
                     loading="lazy"
@@ -181,7 +182,7 @@ const DashBoard = () => {
                   Spotlight of the month
                 </h1>
               </div>
-              <div className="mb-4">
+              <div className="mb-4 z-20">
                 <SpotLight />
               </div>
               <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
@@ -194,7 +195,7 @@ const DashBoard = () => {
               </div>
               <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
                 <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
-                  Live Projects
+                  Upcoming Projects
                 </h1>
                 <button
                   onClick={() => navigate("/live-projects")}
@@ -239,7 +240,7 @@ const DashBoard = () => {
                   View More
                 </button>
               </div>
-              <div className="flex flex-wrap mx-2 lg:-mx-4 mb-4 flex-col lg:flex-row items-center">
+              <div className="flex flex-wrap mx-2 lg:-mx-4 mb-4 flex-col lg:flex-row items-center" style={{justifyContent: "space-evenly"}}>
                 <div className="flex w-full lg:w-3/4 mb-4 lg:mb-0">
                   <InvestorCard />
                 </div>
@@ -258,7 +259,7 @@ const DashBoard = () => {
                   View More
                 </button>
               </div>
-              <div className="flex flex-wrap mx-2 lg:-mx-4 mb-4 flex-col lg:flex-row items-center">
+              <div className="flex flex-wrap mx-2 lg:-mx-4 mb-4 flex-col lg:flex-row items-center" style={{justifyContent: "space-evenly"}}>
                 <div className="flex w-full lg:w-3/4 mb-4 lg:mb-0">
                   <MentorCard />
                 </div>
@@ -276,7 +277,7 @@ const DashBoard = () => {
               </div>
               <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
                 <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl pb-3 font-bold">
-                  Jobs / Opportunity
+                  Jobs / Bounties
                 </h1>
               </div>
               <div className="mb-4">
@@ -289,7 +290,7 @@ const DashBoard = () => {
               </div>
               <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
                 <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
-                  Testimonials
+                  User Testimonials
                 </h1>
               </div>
               <div className="flex flex-col sm:flex-row flex-wrap mb-4 justify-center items-start bg-[#B9C0F2] rounded-lg p-4">
