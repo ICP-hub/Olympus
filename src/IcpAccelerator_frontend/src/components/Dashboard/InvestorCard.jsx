@@ -44,7 +44,7 @@ const InvestorsList = () => {
     </div>
   }
   return (
-    <div className="flex flex-col lg:flex-row items-center w-full lg:w-11/12 mb-3">
+    <div className="flex flex-col lg:flex-row items-center w-full lg:w-11/12">
       {data && data.slice(0, 3).map((investor, index) => {
         let id = investor[0].toText();
         let img = uint8ArrayToBase64(investor[1]?.vc_profile?.params?.user_data?.profile_picture[0]);
@@ -57,7 +57,7 @@ const InvestorsList = () => {
         });;
 
         return (
-          <div key={index} className="flex-shrink-0 overflow-hidden bg-white rounded-lg max-w-xs shadow-lg p-5 w-full lg:w-1/3 mx-2 hover:scale-105 transition-transform duration-300 ease-in-out h-full">
+          <div key={index} className="flex-shrink-0 overflow-hidden bg-white rounded-lg max-w-xs shadow-lg p-5 w-full lg:w-1/3 mx-2 mb-3">
             <div className=" flex items-center justify-center px-8">
               <img className="w-full h-40 object-cover rounded-md" src={img} alt="" />
             </div>
