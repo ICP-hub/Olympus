@@ -1,5 +1,6 @@
 use candid::{CandidType, Principal};
 use ic_cdk::api::time;
+use ic_cdk::storage::{stable_save, self, stable_restore};
 use serde::{Deserialize, Serialize};
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -79,6 +80,33 @@ type LastRatingTimestamps = HashMap<String, HashMap<Principal, u64>>;
 thread_local! {
     pub static RATING_SYSTEM: RefCell<RatingSystem> = RefCell::new(RatingSystem::new());
     pub static LAST_RATING_TIMESTAMPS: RefCell<LastRatingTimestamps> = RefCell::new(LastRatingTimestamps::new());
+}
+
+pub fn pre_upgrade_rating_system() {
+    RATING_SYSTEM.with(|data| {
+        match storage::stable_save((data.borrow().clone(),)) {
+            Ok(_) => ic_cdk::println!("RATING_SYSTEM saved successfully."),
+            Err(e) => ic_cdk::println!("Failed to save RATING_SYSTEM: {:?}", e),
+        }
+    });
+    
+    LAST_RATING_TIMESTAMPS.with(|data| {
+        match storage::stable_save((data.borrow().clone(),)) {
+            Ok(_) => ic_cdk::println!("LAST_RATING_TIMESTAMPS saved successfully."),
+            Err(e) => ic_cdk::println!("Failed to save LAST_RATING_TIMESTAMPS: {:?}", e),
+        }
+    });
+}
+
+pub fn post_upgrade_rating_system() {
+    match stable_restore::<(RatingSystem, LastRatingTimestamps)>() {
+        Ok((restored_rating_system, restored_last_rating_timestamps)) => {
+            RATING_SYSTEM.with(|data| *data.borrow_mut() = restored_rating_system);
+            LAST_RATING_TIMESTAMPS.with(|data| *data.borrow_mut() = restored_last_rating_timestamps);
+            ic_cdk::println!("Rating system modules restored successfully.");
+        },
+        Err(e) => ic_cdk::println!("Failed to restore rating system modules: {:?}", e),
+    }
 }
 
 impl Level {

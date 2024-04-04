@@ -44,6 +44,10 @@ use project_like::LikeRecord;
 use project_registration::FilterCriteria;
 use ratings::RatingAverages;
 use ratings::RatingUpdate;
+use ratings::post_upgrade_rating_system;
+use ratings::pre_upgrade_rating_system;
+// use ratings::post_upgrade_rating_system;
+// use ratings::pre_upgrade_rating_system;
 use requests::Request;
 use roles::{get_roles, RolesResponse};
 use std::collections::HashMap;
@@ -485,22 +489,24 @@ fn get_admin_notifications() -> Vec<admin::Notification> {
 
 #[pre_upgrade]
 fn pre_upgrade() {
-    // pre_upgrade_vc();
+    pre_upgrade_venture_capitalist();
     pre_upgrade_user_modules();
-    // pre_upgrade_project_registration();
+    pre_upgrade_project_registration();
     // pre_upgrade_upvotes();
-    // pre_upgrade_mentor();
-    // pre_upgrade_admin();
+    pre_upgrade_mentor();
+    pre_upgrade_admin();
+    pre_upgrade_rating_system();
 }
 
 #[post_upgrade]
 fn post_upgrade() {
-    // post_upgrade_vc();
+    post_upgrade_venture_capitalist();
     post_upgrade_user_modules();
-    // post_upgrade_project_registration();
-    // post_upgrade_upvotes();
-    // post_upgrade_mentor();
-    // post_upgrade_admin();
+    post_upgrade_project_registration();
+    //post_upgrade_upvotes();
+    post_upgrade_mentor();
+    post_upgrade_admin();
+    post_upgrade_rating_system();
 }
 
 export_candid!();
