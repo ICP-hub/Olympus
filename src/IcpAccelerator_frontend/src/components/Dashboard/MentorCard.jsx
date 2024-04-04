@@ -43,12 +43,13 @@ const MentorCard = () => {
     </div>
   }
   return (
-    <div className="flex flex-col lg:flex-row items-center my-8 gap-4 w-full">
+    <div className="flex flex-col lg:flex-row items-center w-full lg:w-11/12">
       {data && data.slice(0,3).map((mentor, index) => {
         let id = null
         let img = ""
         let name = ""
         let skills = ""
+        let category_of_mentoring_service = ""
         let role = 'Mentor';
         if (noData === false) {
 
@@ -56,6 +57,7 @@ const MentorCard = () => {
           img = uint8ArrayToBase64(mentor[1]?.mentor_profile?.profile?.user_data?.profile_picture[0]);
           name = mentor[1]?.mentor_profile?.profile?.user_data?.full_name;
           skills = mentor[1]?.mentor_profile?.profile?.area_of_expertise;
+          category_of_mentoring_service = mentor[1]?.mentor_profile?.profile?.category_of_mentoring_service;
           role = 'Mentor';
         } else {
           id = mentor.id
@@ -65,7 +67,7 @@ const MentorCard = () => {
           role = mentor.role;
         }
         return (
-          <div key={index} className="flex-shrink-0 overflow-hidden bg-white rounded-lg max-w-xs shadow-lg p-5 w-full lg:w-1/3">
+          <div key={index} className="flex-shrink-0 overflow-hidden bg-white rounded-lg max-w-xs shadow-lg p-5 w-full lg:w-1/3 mx-2 mb-3 hover:scale-105 transition-transform duration-300 ease-in-out">
             <div className=" flex items-center justify-center px-8">
               <img className="w-full h-40 object-cover rounded-md" src={img} alt="" />
             </div>
@@ -73,10 +75,10 @@ const MentorCard = () => {
               <span className="font-semibold text-lg line-clamp-1">
                 {name}
               </span>
-              <span className="block font-semibold line-clamp-2 h-10 overflow-y-scroll">
-                {role}
+              <span className="block text-gray-500">
+                {category_of_mentoring_service}
               </span>
-              <div className="flex flex-wrap gap-2 border-t-2 py-3">
+              <div className="flex flex-wrap gap-2 border-t-2 mt-3 py-3">
                 {/* {mentor.areaOfFocus.map((investment, index) => ( */}
                 <span className="bg-[#E7E7E8] rounded-full text-gray-600 text-xs font-bold px-3 py-2 leading-none flex items-center mt-2">
                   {skills}

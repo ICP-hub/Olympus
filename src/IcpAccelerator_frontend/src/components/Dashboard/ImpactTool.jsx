@@ -1,11 +1,12 @@
 import React from "react";
 const data = [
   { count: "10K+", label: "USERS", position: "left-0 top-[50px]" },
-  { count: "100+", label: "PROJECTS LISTED", position: "-left-[20px] top-[50px]" },
-  { count: "5+", label: "TOKENS LAUNCHED", position: "-left-[5px] top-[50px]" },
+  { count: "100+", label: "PROJECTS INCUBATED", position: "-left-[20px] top-[50px]" },
+  { count: "10+", label: "TOKENS LAUNCHED", position: "-left-[5px] top-[50px]" },
   { count: "25+", label: "INVESTORS", position: " top-[50px]" },
   { count: "50+", label: "MENTORS", position: " top-[50px]" },
   { count: "$10M+", label: "INVESTMENT RAISED", position: " top-[50px]" },
+  { count: "40+", label: "COUNTRIES", position: " top-[50px]" },
 ];
 const ImpactTool = () => {
   return (
