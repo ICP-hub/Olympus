@@ -59,6 +59,7 @@ export const projectDetails = [
     required: true,
     type: "text",
     name: "project_elevator_pitch",
+    placeholder: "Max 50 words"
   },
   {
     id: "project_pitch_deck",
