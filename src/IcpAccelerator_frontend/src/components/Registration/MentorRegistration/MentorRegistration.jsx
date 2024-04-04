@@ -205,6 +205,9 @@ const MentorRegistration = () => {
     trigger,
     setValue,
     control,
+    getValues,
+    clearErrors,
+    setError,
     reset,
     watch,
   } = useForm({
@@ -237,9 +240,18 @@ const MentorRegistration = () => {
     if (ExistingICPMentor !== "true") {
       setValue("existing_icp_project_porfolio", "");
     }
-    setIsMulti_Chain(IsMultiChain === "true");
-    if (IsMultiChain !== "true") {
-      setValue("multichain", "");
+    if (IsMultiChain === "true") {
+      setIsMulti_Chain(true);
+      const multichainValue = getValues("multichain"); // Get current value of "multichain"
+      if (multichainValue) {
+        clearErrors("multichain");
+      } else {
+        setError("multichain", { type: "required", message: "Required" });
+      }
+    } else {
+      setIsMulti_Chain(false);
+      setValue("multichain", "", { shouldValidate: true });
+      clearErrors("multichain");
     }
     setIcopHuborSpoke(IcopHuborSpoke === "true");
     if (IcopHuborSpoke !== "true") {
@@ -757,9 +769,6 @@ const MentorRegistration = () => {
                             : "border-[#737373]"
                         } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                       >
-                        <option className="text-lg font-bold" value="">
-                          Select
-                        </option>
                         {multiChain?.map((chain, i) => (
                           <option
                             key={i}

@@ -188,7 +188,9 @@ const NormalUser = () => {
     <img
       src={Founder}
       alt="Astronaut"
-      className={"z-20 w-[500px] md:w-[300px] sm:w-[250px] sxs:w-[260px] md:h-56 relative  sxs:-right-3 right-16 md:right-0 sm:right-0 top-10"}
+      className={
+        "z-20 w-[500px] md:w-[300px] sm:w-[250px] sxs:w-[260px] md:h-56 relative  sxs:-right-3 right-16 md:right-0 sm:right-0 top-10"
+      }
     />
   );
   const options = [
@@ -296,10 +298,11 @@ const NormalUser = () => {
                       name={field.name}
                       id={field.id}
                       {...register(field.name)}
-                      className={`bg-gray-50 border-2 ${errors[field.name]
+                      className={`bg-gray-50 border-2 ${
+                        errors[field.name]
                           ? "border-red-500 placeholder:text-red-500"
                           : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                       placeholder={field.placeholder}
                       onFocus={() => handleFocus(field)}
                       onBlur={() => handleBlur(field)}
@@ -320,10 +323,11 @@ const NormalUser = () => {
                   </label>
                   <select
                     {...register("type_of_profile")}
-                    className={`bg-gray-50 border-2 ${errors.type_of_profile
+                    className={`bg-gray-50 border-2 ${
+                      errors.type_of_profile
                         ? "border-red-500 placeholder:text-red-500"
                         : "border-[#737373]"
-                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="">
                       select
@@ -383,18 +387,26 @@ const NormalUser = () => {
                     name="reason_to_join_incubator"
                     onChange={(selectedOptions) => {
                       if (selectedOptions && selectedOptions.length > 0) {
+                        // Clear any errors for reason_to_join_incubator if selections are made
                         clearErrors("reason_to_join_incubator");
-                        setValue(
-                          "reason_to_join_incubator",
-                          selectedOptions
-                            .map((option) => option.value)
-                            .join(", "),
-                          { shouldValidate: true }
-                        );
+
+                        // Update the form state with the selected values, joined by commas
+                        const selectedValues = selectedOptions
+                          .map((option) => option.value)
+                          .join(", ");
+                        setValue("reason_to_join_incubator", selectedValues, {
+                          shouldValidate: true,
+                        });
                       } else {
+                        // Explicitly handle the case where all selections are cleared by setting the field value to an empty string
+                        setValue("reason_to_join_incubator", "", {
+                          shouldValidate: true,
+                        });
+
+                        // Set an error for reason_to_join_incubator indicating that the selection is required
                         setError("reason_to_join_incubator", {
                           type: "required",
-                          message: "Selecting a reason is required.",
+                          message: "Please select at least one Interest",
                         });
                       }
                     }}
@@ -415,10 +427,11 @@ const NormalUser = () => {
                   </label>
                   <select
                     {...register("country")}
-                    className={`bg-gray-50 border-2 ${errors.country
+                    className={`bg-gray-50 border-2 ${
+                      errors.country
                         ? "border-red-500 placeholder:text-red-500"
                         : "border-[#737373]"
-                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="">
                       Select your Country
@@ -538,19 +551,26 @@ const NormalUser = () => {
                     name="areas_of_expertise"
                     onChange={(selectedOptions) => {
                       if (selectedOptions && selectedOptions.length > 0) {
+                        // Clear any errors for areas_of_expertise if selections are made
                         clearErrors("areas_of_expertise");
-                        setValue(
-                          "areas_of_expertise",
-                          selectedOptions
-                            .map((option) => option.value)
-                            .join(", "),
-                          { shouldValidate: true }
-                        );
+
+                        // Update the form state with the selected values, joined by commas
+                        const selectedValues = selectedOptions
+                          .map((option) => option.value)
+                          .join(", ");
+                        setValue("areas_of_expertise", selectedValues, {
+                          shouldValidate: true,
+                        });
                       } else {
+                        // Explicitly handle the case where all selections are cleared by setting the field value to an empty string
+                        setValue("areas_of_expertise", "", {
+                          shouldValidate: true,
+                        });
+
+                        // Set an error for areas_of_expertise indicating that the selection is required
                         setError("areas_of_expertise", {
                           type: "required",
-                          message:
-                            "Selecting an area of expertise is required.",
+                          message: "Please select at least one Interest",
                         });
                       }
                     }}
