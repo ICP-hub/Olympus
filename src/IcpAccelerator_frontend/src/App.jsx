@@ -112,8 +112,10 @@ const App = () => {
   const initialApi = async () => {
     try {
       const currentRoleArray = await actor.get_role_status();
+      console.log('currentRoleArray',currentRoleArray)
       if (currentRoleArray && currentRoleArray.length !== 0) {
         const currentActiveRole = getNameOfCurrentStatus(currentRoleArray);
+        console.log('currentActiveRole', currentActiveRole)
         dispatch(setCurrentRoleStatus(currentRoleArray));
         dispatch(setCurrentActiveRole(currentActiveRole));
       } else {
