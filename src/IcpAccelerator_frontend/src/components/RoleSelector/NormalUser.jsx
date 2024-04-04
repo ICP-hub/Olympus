@@ -43,11 +43,21 @@ const schema = yup.object({
         return isValidLength && hasValidChars;
       }
     ),
-  bio: yup.string().optional(),
+  bio: yup
+    .string()
+    .optional()
+    .test("maxWords", "Bio must not exceed 50 words", (value) =>
+      value ? value.split(/\s+/).filter(Boolean).length <= 50 : true
+    ),
   email: yup.string().email().optional(),
   telegram_id: yup.string().optional().url(),
   twitter_id: yup.string().optional().url(),
   country: yup.string().required("Country is required."),
+  // areas_of_expertise: yup
+  //   .string()
+  //   .required("Selecting an interest is required."),
+  type_of_profile: yup.string().required("Type of profile is required."),
+  reason_to_join_incubator: yup.string().required("This field is required."),
   areas_of_expertise: yup
     .string()
     .required("Selecting an interest is required."),
@@ -178,7 +188,7 @@ const NormalUser = () => {
     <img
       src={Founder}
       alt="Astronaut"
-      className={`z-20 w-[500px] md:w-[300px] sm:w-[250px] sxs:w-[260px] md:h-56 relative  sxs:-right-3 right-16 md:right-0 sm:right-0 top-10`}
+      className={"z-20 w-[500px] md:w-[300px] sm:w-[250px] sxs:w-[260px] md:h-56 relative  sxs:-right-3 right-16 md:right-0 sm:right-0 top-10"}
     />
   );
   const options = [
@@ -286,11 +296,10 @@ const NormalUser = () => {
                       name={field.name}
                       id={field.id}
                       {...register(field.name)}
-                      className={`bg-gray-50 border-2 ${
-                        errors[field.name]
+                      className={`bg-gray-50 border-2 ${errors[field.name]
                           ? "border-red-500 placeholder:text-red-500"
                           : "border-[#737373]"
-                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                       placeholder={field.placeholder}
                       onFocus={() => handleFocus(field)}
                       onBlur={() => handleBlur(field)}
@@ -311,11 +320,10 @@ const NormalUser = () => {
                   </label>
                   <select
                     {...register("type_of_profile")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.type_of_profile
+                    className={`bg-gray-50 border-2 ${errors.type_of_profile
                         ? "border-red-500 placeholder:text-red-500"
                         : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="">
                       select
@@ -336,6 +344,7 @@ const NormalUser = () => {
                     </p>
                   )}
                 </div>
+
                 <div className="z-0 w-full group">
                   <label
                     htmlFor="reason_to_join_incubator"
@@ -355,19 +364,16 @@ const NormalUser = () => {
                       }),
                       control: (provided, state) => ({
                         ...provided,
-                        color: "black", // Initial color of the label
-                        // Add other control styles if needed
                         paddingBlock: "2px",
                         borderRadius: "8px",
                         border: errors.reason_to_join_incubator
                           ? "2px solid #ef4444"
                           : "2px solid #737373",
                         backgroundColor: "rgb(249 250 251)",
-                        // Additional conditional placeholder color if needed
                         "&::placeholder": {
                           color: errors.reason_to_join_incubator
                             ? "#ef4444"
-                            : "currentColor", // Adjust the placeholder color conditionally
+                            : "currentColor",
                         },
                       }),
                     }}
@@ -375,13 +381,22 @@ const NormalUser = () => {
                     className="basic-multi-select"
                     placeholder="Select reason"
                     name="reason_to_join_incubator"
-                    {...register("reason_to_join_incubator")}
                     onChange={(selectedOptions) => {
-                      // You might need to adapt this part to fit how you handle form data
-                      const selectedValues = selectedOptions
-                        .map((option) => option.value)
-                        .join(", ");
-                      setValue("reason_to_join_incubator", selectedValues);
+                      if (selectedOptions && selectedOptions.length > 0) {
+                        clearErrors("reason_to_join_incubator");
+                        setValue(
+                          "reason_to_join_incubator",
+                          selectedOptions
+                            .map((option) => option.value)
+                            .join(", "),
+                          { shouldValidate: true }
+                        );
+                      } else {
+                        setError("reason_to_join_incubator", {
+                          type: "required",
+                          message: "Selecting a reason is required.",
+                        });
+                      }
                     }}
                   />
                   {errors.reason_to_join_incubator && (
@@ -390,6 +405,7 @@ const NormalUser = () => {
                     </span>
                   )}
                 </div>
+
                 <div className="z-0 w-full group">
                   <label
                     htmlFor="country"
@@ -399,11 +415,10 @@ const NormalUser = () => {
                   </label>
                   <select
                     {...register("country")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.country
+                    className={`bg-gray-50 border-2 ${errors.country
                         ? "border-red-500 placeholder:text-red-500"
                         : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="">
                       Select your Country
@@ -411,7 +426,7 @@ const NormalUser = () => {
                     {countries?.map((expert) => (
                       <option
                         key={expert.name}
-                        value={`${expert.name}`}
+                        value={expert.name}
                         className="text-lg font-bold"
                       >
                         {expert.name}
@@ -425,7 +440,7 @@ const NormalUser = () => {
                     </p>
                   )}
                 </div>
-                <div className="z-0 w-full group">
+                {/* <div className="z-0 w-full group">
                   <label
                     htmlFor="areas_of_expertise"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
@@ -474,6 +489,70 @@ const NormalUser = () => {
                         .map((option) => option.value)
                         .join(", ");
                       setValue("areas_of_expertise", selectedValues);
+                    }}
+                  />
+                  {errors.areas_of_expertise && (
+                    <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                      {errors.areas_of_expertise.message}
+                    </span>
+                  )}
+                </div> */}
+                <div className="z-0 w-full group">
+                  <label
+                    htmlFor="areas_of_expertise"
+                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    Domains you are interested in? *
+                  </label>
+                  <ReactSelect
+                    isMulti
+                    options={areaOfExpertise.map((expert) => ({
+                      value: expert.name,
+                      label: expert.name,
+                    }))}
+                    menuPortalTarget={document.body}
+                    menuPosition={"fixed"}
+                    styles={{
+                      menuPortal: (base) => ({
+                        ...base,
+                        zIndex: 9999, // Set the desired z-index value
+                      }),
+                      control: (provided, state) => ({
+                        ...provided,
+                        paddingBlock: "2px",
+                        borderRadius: "8px",
+                        border: errors.areas_of_expertise
+                          ? "2px solid #ef4444"
+                          : "2px solid #737373",
+                        backgroundColor: "rgb(249 250 251)",
+                        "&::placeholder": {
+                          color: errors.areas_of_expertise
+                            ? "#ef4444"
+                            : "currentColor",
+                        },
+                      }),
+                    }}
+                    classNamePrefix="select"
+                    className="basic-multi-select"
+                    placeholder="Interests"
+                    name="areas_of_expertise"
+                    onChange={(selectedOptions) => {
+                      if (selectedOptions && selectedOptions.length > 0) {
+                        clearErrors("areas_of_expertise");
+                        setValue(
+                          "areas_of_expertise",
+                          selectedOptions
+                            .map((option) => option.value)
+                            .join(", "),
+                          { shouldValidate: true }
+                        );
+                      } else {
+                        setError("areas_of_expertise", {
+                          type: "required",
+                          message:
+                            "Selecting an area of expertise is required.",
+                        });
+                      }
                     }}
                   />
                   {errors.areas_of_expertise && (
