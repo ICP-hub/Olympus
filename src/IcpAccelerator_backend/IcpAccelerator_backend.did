@@ -658,6 +658,7 @@ service : {
   add_review : (float32, text) -> (text);
   add_testimonial : (text) -> (text);
   add_vc_announcement : (text, text) -> (text);
+  admin_update_project : (text, bool, opt text) -> (Result_3);
   apply_for_a_cohort_as_a_mentor_or_investor : (text) -> (text);
   apply_for_a_cohort_as_a_project : (text, text) -> (Result_2);
   approve_mentor_creation_request_candid : (principal, bool) -> (text);
@@ -706,7 +707,9 @@ service : {
   get_all_approved_requests : () -> (vec ProjectNotification) query;
   get_all_cohorts : () -> (vec CohortDetails) query;
   get_all_declined_requests : () -> (vec ProjectNotification) query;
+  get_all_incubated_projects : () -> (vec ProjectInfoInternal) query;
   get_all_jobs : () -> (vec JobsInternal) query;
+  get_all_live_projects : () -> (vec ProjectInfoInternal) query;
   get_all_mentor_notification : (principal) -> (vec OfferToSendToMentor) query;
   get_all_mentors : () -> (vec record { principal; MentorWithRoles }) query;
   get_all_mentors_candid : () -> (
@@ -797,8 +800,6 @@ service : {
   get_latest_announcements : () -> (
       vec record { principal; vec AnnouncementsInternal },
     ) query;
-  get_latest_listed_project : () -> (vec ProjectInfoInternal) query;
-  get_latest_live_proposal : () -> (vec ProjectInfoInternal) query;
   get_latest_testimonials : () -> (vec Testimonial) query;
   get_leaderboard_using_likes : () -> (vec LeaderboardEntryForLikes) query;
   get_leaderboard_using_ratings : () -> (vec LeaderboardEntryForRatings) query;
@@ -839,8 +840,6 @@ service : {
       vec OfferToSendToMentor,
     ) query;
   get_pending_request_sent_by_investor : () -> (vec OfferToSendToMentor) query;
-  get_popular_listed_project : () -> (vec ProjectInfoInternal) query;
-  get_popular_live_proposal : () -> (vec ProjectInfoInternal) query;
   get_project_awaiting_info_using_principal : (principal) -> (
       opt ProjectInfoInternal,
     ) query;
@@ -979,6 +978,7 @@ service : {
   update_mentor : (MentorProfile) -> (text);
   update_mentor_profile : (principal, MentorProfile) -> (text);
   update_project : (text, ProjectInfo) -> (text);
+  update_project_status_live_incubated : (ProjectInfoInternal) -> (Result_11);
   update_rating : (RatingUpdate) -> (text);
   update_suggestion_status_caller : (nat64, text, text) -> ();
   update_team_member : (text, principal) -> (text);

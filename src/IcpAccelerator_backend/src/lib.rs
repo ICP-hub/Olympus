@@ -328,29 +328,6 @@ fn get_project_upvotes(project_id: String) -> Option<UpvoteRecord> {
     upvotes::get_upvote_record(project_id)
 }
 
-#[query]
-
-fn get_latest_live_proposal() -> Vec<ProjectInfoInternal> {
-    latest_popular_projects::get_live_proposals_latest()
-}
-
-#[query]
-
-fn get_latest_listed_project() -> Vec<ProjectInfoInternal> {
-    latest_popular_projects::get_listed_projects_latest()
-}
-
-#[query]
-
-fn get_popular_live_proposal() -> Vec<ProjectInfoInternal> {
-    latest_popular_projects::get_live_proposals_popular()
-}
-
-#[query]
-
-fn get_popular_listed_project() -> Vec<ProjectInfoInternal> {
-    latest_popular_projects::get_listed_projects_popular()
-}
 
 #[query]
 
