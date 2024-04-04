@@ -58,8 +58,8 @@ const validationSchema = {
       .test("is-non-empty", "ICP Hub selection is required", (value) =>
         /\S/.test(value)
       )
-      .required("Selecting a interest is required."),
-    area_of_intrest: yup.string().required("Selecting a interest is required."),
+      .required("Selecting an interest is required."),
+    area_of_intrest: yup.string().required("Selecting an interest is required."),
   }),
   investorDetails: yup.object().shape({
     registered: yup.string().required().required("Field is required"),

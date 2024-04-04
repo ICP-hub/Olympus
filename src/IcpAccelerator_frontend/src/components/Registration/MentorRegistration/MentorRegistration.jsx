@@ -59,7 +59,7 @@ const validationSchema = {
       .test("is-non-empty", "ICP Hub selection is required", (value) =>
         /\S/.test(value)
       )
-      .required("Selecting a interest is required."),
+      .required("Selecting an interest is required."),
     area_of_intrest: yup
       .string()
       .test("is-non-empty", "Areas of Intrest are required", (value) =>

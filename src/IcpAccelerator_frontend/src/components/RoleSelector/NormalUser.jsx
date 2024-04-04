@@ -23,7 +23,7 @@ const startDate = new Date("1900-01-01");
 const schema = yup.object({
   full_name: yup
     .string()
-    .required()
+    .required("Full name is required")
     .test("is-non-empty", null, (value) => value && value.trim().length > 0),
   user_name: yup
     .string()
@@ -50,7 +50,7 @@ const schema = yup.object({
   country: yup.string().required("Country is required."),
   areas_of_expertise: yup
     .string()
-    .required("Selecting a interest is required."),
+    .required("Selecting an interest is required."),
 });
 
 const NormalUser = () => {
@@ -258,7 +258,7 @@ const NormalUser = () => {
                           htmlFor="images"
                           className="p-2 border-2 border-blue-800 items-center rounded-md text-md bg-transparent text-blue-800 cursor-pointer font-extrabold"
                         >
-                          Upload Profile Picture
+                          Upload profile picture
                         </label>
                       </>
                     )}
@@ -307,7 +307,7 @@ const NormalUser = () => {
                     htmlFor="type_of_profile"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Type of profile
+                    Type of profile *
                   </label>
                   <select
                     {...register("type_of_profile")}
@@ -318,7 +318,7 @@ const NormalUser = () => {
                     } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="">
-                      options
+                      select
                     </option>
                     <option className="text-lg font-bold" value="Individual">
                       Individual
@@ -341,7 +341,7 @@ const NormalUser = () => {
                     htmlFor="reason_to_join_incubator"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Why do you want to join this platform
+                    Why do you want to join this platform *
                   </label>
                   <ReactSelect
                     isMulti
@@ -395,7 +395,7 @@ const NormalUser = () => {
                     htmlFor="country"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Country
+                    Country *
                   </label>
                   <select
                     {...register("country")}
@@ -430,7 +430,7 @@ const NormalUser = () => {
                     htmlFor="areas_of_expertise"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Domains you are interested in?
+                    Domains you are interested in? *
                   </label>
                   <ReactSelect
                     isMulti
