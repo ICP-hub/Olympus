@@ -34,7 +34,7 @@ export const projectPersonalInformation = [
     id: "openchat_username",
     type: "text",
     name: "openchat_username",
-    label: "Open Chat Username",
+    label: "OpenChat username",
   },
 ];
 

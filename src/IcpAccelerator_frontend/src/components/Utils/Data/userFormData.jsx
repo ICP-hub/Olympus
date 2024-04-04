@@ -44,7 +44,7 @@ export const formFields = [
       id: "user_name",
       type: "text",
       name: "user_name",
-      label: "Open Chat Username",
+      label: "OpenChat username",
       onFocus: null,
       onBlur: null,
     }
