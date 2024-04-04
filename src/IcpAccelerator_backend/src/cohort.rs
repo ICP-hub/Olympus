@@ -111,44 +111,44 @@ pub async fn create_cohort(params: Cohort) -> Result<String, String>{
         cohort_creator_role: roles_assigned,
     };
 
-    let cohort_request = CohortRequest {
-        cohort_details,
-        accepted_at : 0,
-        rejected_at : 0,
-        sent_at : time(),
-        request_status : "pending".to_string()
-    };
+    // let cohort_request = CohortRequest {
+    //     cohort_details,
+    //     accepted_at : 0,
+    //     rejected_at : 0,
+    //     sent_at : time(),
+    //     request_status : "pending".to_string()
+    // };
 
     //store my cohort creation request
 
-    store_cohort_creation_pending_request(cohort_request.clone());
+    // store_cohort_creation_pending_request(cohort_request.clone());
     
 
-    Ok(send_cohort_request_to_admin(cohort_request.clone()).await)
+    // Ok(send_cohort_request_to_admin(cohort_request.clone()).await)
 
-    // COHORT.with(|storage| {
-    //     let mut storage = storage.borrow_mut();
-    //     storage.insert(cohort_id.clone(), cohort_details)
-    // });
+    COHORT.with(|storage| {
+        let mut storage = storage.borrow_mut();
+        storage.insert(cohort_id.clone(), cohort_details)
+    });
 
-    // Ok(format!(
-    //     "accelerator is successfully created by {} with cohort id {}",
-    //     caller(),
-    //     cohort_id.clone()
-    // ))
+    Ok(format!(
+        "accelerator is successfully created by {} with cohort id {}",
+        caller(),
+        cohort_id.clone()
+    ))
 }
 
 //admin should be notified about cohort creation 
 
-pub fn store_cohort_creation_pending_request(request: CohortRequest) {
-    MY_SENT_COHORT_REQUEST.with(|store| {
-        store
-            .borrow_mut()
-            .entry(caller())
-            .or_insert_with(Vec::new)
-            .push(request);
-    });
-}
+// pub fn store_cohort_creation_pending_request(request: CohortRequest) {
+//     MY_SENT_COHORT_REQUEST.with(|store| {
+//         store
+//             .borrow_mut()
+//             .entry(caller())
+//             .or_insert_with(Vec::new)
+//             .push(request);
+//     });
+// }
 
 #[query]
 pub fn get_my_pending_cohort_creation_requests() -> Vec<CohortRequest> {
