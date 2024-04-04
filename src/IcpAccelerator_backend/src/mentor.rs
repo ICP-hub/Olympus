@@ -330,6 +330,54 @@ pub fn get_all_mentors() -> HashMap<Principal, MentorWithRoles> {
     mentor_with_roles_map
 }
 
+
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+pub struct PaginationParam {
+    pub page: usize,
+    pub page_size: usize,
+}
+
+#[query]
+pub fn get_all_mentors_with_pagination(pagination_params: PaginationParam) -> HashMap<Principal, MentorWithRoles> {
+    let mentor_awaiters = MENTOR_REGISTRY.with(|awaiters| awaiters.borrow().clone());
+
+    let mut mentor_list: Vec<(Principal, MentorWithRoles)> = Vec::new();
+
+    for (principal, mentor_internal) in mentor_awaiters.iter() {
+        if mentor_internal.active {
+            let roles = get_roles_for_principal(*principal);
+            let mentor_with_roles = MentorWithRoles {
+                mentor_profile: mentor_internal.clone(),
+                roles,
+            };
+
+            mentor_list.push((*principal, mentor_with_roles));
+        }
+    }
+
+    // Sort the list to ensure consistent pagination
+    mentor_list.sort_by_key(|(principal, _)| *principal);
+
+    // Calculate start and end indices for pagination, ensuring they're within the bounds of the vector
+    let start = std::cmp::min((pagination_params.page - 1) * pagination_params.page_size, mentor_list.len());
+    let end = std::cmp::min(start + pagination_params.page_size, mentor_list.len());
+
+    // If start is greater than or equal to mentor_list's length, it means the requested page is beyond the available data
+    // In such cases, return an empty HashMap instead of attempting to slice the vector
+    if start >= mentor_list.len() {
+        return HashMap::new();
+    }
+
+    // Now safe to slice because we've ensured start is within bounds and end is either within bounds or equal to the length of the vector
+    let paginated_mentor_list = mentor_list[start..end].to_vec();
+
+    // Correctly initialize and assign the variable for the paginated HashMap
+    let paginated_mentor_map: HashMap<Principal, MentorWithRoles> = paginated_mentor_list.into_iter().collect();
+
+    paginated_mentor_map
+}
+
+
 pub fn make_active_inactive(p_id: Principal) -> String {
     let principal_id = caller();
     if p_id == principal_id || ic_cdk::api::is_controller(&principal_id) {

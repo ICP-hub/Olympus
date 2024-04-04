@@ -15,6 +15,7 @@ use sha2::{Digest, Sha256};
 use std::cell::RefCell;
 use std::io::Read;
 use std::{collections::HashMap, io::Write};
+use crate::PaginationParam;
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct VentureCapitalist {
@@ -354,6 +355,43 @@ pub fn list_all_vcs() -> HashMap<Principal, VcWithRoles> {
 
     vc_with_roles_map
 }
+#[query]
+pub fn list_all_vcs_with_pagination(pagination_params: PaginationParam) -> HashMap<Principal, VcWithRoles> {
+    let vc_awaiters = VENTURECAPITALIST_STORAGE.with(|awaiters: &RefCell<VentureCapitalistStorage>| awaiters.borrow().clone());
+
+    let mut vc_list: Vec<(Principal, VcWithRoles)> = Vec::new();
+
+    for (principal, vc_internal) in vc_awaiters.iter() {
+        if vc_internal.is_active {
+            let roles = get_roles_for_principal(*principal);
+            let vc_with_roles = VcWithRoles {
+                vc_profile: vc_internal.clone(),
+                roles,
+            };
+
+            vc_list.push((*principal, vc_with_roles));
+        }
+    }
+
+    // Ensure the list is sorted for consistent pagination
+    vc_list.sort_by_key(|(principal, _)| *principal);
+
+    // Calculate the start and end indices for the pagination, ensuring the indices are within the bounds of the list
+    let start = (pagination_params.page - 1) * pagination_params.page_size;
+    let end = std::cmp::min(start + pagination_params.page_size, vc_list.len());
+
+    // Guard against cases where the pagination request exceeds the list bounds
+    if start >= vc_list.len() {
+        return HashMap::new();
+    }
+
+    // Convert the appropriately sliced list segment to a HashMap
+    let paginated_vc_list = vc_list[start..end].to_vec();
+    let paginated_vc_map: HashMap<Principal, VcWithRoles> = paginated_vc_list.into_iter().collect();
+
+    paginated_vc_map
+}
+
 
 #[update]
 pub fn delete_venture_capitalist() -> std::string::String {
