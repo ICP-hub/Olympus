@@ -59,7 +59,9 @@ const validationSchema = {
         /\S/.test(value)
       )
       .required("Selecting an interest is required."),
-    area_of_intrest: yup.string().required("Selecting an interest is required."),
+    area_of_intrest: yup
+      .string()
+      .required("Selecting an interest is required."),
   }),
   investorDetails: yup.object().shape({
     registered: yup.string().required().required("Field is required"),
@@ -151,7 +153,7 @@ const validationSchema = {
   }),
   additionalInfo: yup.object().shape({
     project_on_multichain: yup.string().optional(),
-    
+
     reason_for_joining: yup
       .string()
       .required("Reason for joining is required")
@@ -249,10 +251,11 @@ const InvestorRegistration = () => {
   const userData = useSelector((currState) => currState.userData.data.Ok);
 
   const getTabClassName = (tab) => {
-    return `inline-block p-2 font-bold ${activeTab === tab
-      ? "text-black border-b-2 border-black"
-      : "text-gray-400  border-transparent hover:text-black"
-      } rounded-t-lg`;
+    return `inline-block p-2 font-bold ${
+      activeTab === tab
+        ? "text-black border-b-2 border-black"
+        : "text-gray-400  border-transparent hover:text-black"
+    } rounded-t-lg`;
   };
   const steps = [
     // { id: "userDetails", fields: investorRegistrationUserDetailsDetails },
@@ -309,16 +312,16 @@ const InvestorRegistration = () => {
     setIsRegistered(IsRegistered === "true");
     if (IsRegistered == "true") {
       // setValue("registered_country", "");
-      setError("registered_country", { message: 'Required' })
+      setError("registered_country", { message: "Required" });
     } else {
-      clearErrors("registered_country")
+      clearErrors("registered_country");
     }
     setIsMulti_Chain(IsMultiChain === "true");
-    if (IsMultiChain !== "true") {
+    if (IsMultiChain === "true") {
       // setValue("project_on_multichain", "");
-      clearErrors("project_on_multichain")
-    }else{
-      setError("project_on_multichain", {message: 'Required'})
+      setError("project_on_multichain", { message: "Required" });
+    } else {
+      clearErrors("project_on_multichain");
     }
   }, [ExistingICPInvestor, IsMultiChain, IsRegistered, setValue]);
 
@@ -339,22 +342,28 @@ const InvestorRegistration = () => {
 
   const handleNext = async () => {
     let fieldsToValidate = steps[step].fields.map((field) => field.name);
-    const result =
-      await trigger(
-        watch("registered") === "true"
-          ? watch('existing_icp_investor') === "true"
-            ? [...fieldsToValidate, 'registered_country', 'preferred_icp_hub', 'investor_type']
-            : [...fieldsToValidate, 'registered_country', 'preferred_icp_hub']
-          : watch('existing_icp_investor') === "true"
-            ? [...fieldsToValidate, 'preferred_icp_hub', 'investor_type']
-            : [...fieldsToValidate, 'preferred_icp_hub']
-      );
+    const result = await trigger(
+      watch("registered") === "true"
+        ? watch("existing_icp_investor") === "true"
+          ? [
+              ...fieldsToValidate,
+              "registered_country",
+              "preferred_icp_hub",
+              "investor_type",
+            ]
+          : [...fieldsToValidate, "registered_country", "preferred_icp_hub"]
+        : watch("existing_icp_investor") === "true"
+        ? [...fieldsToValidate, "preferred_icp_hub", "investor_type"]
+        : [...fieldsToValidate, "preferred_icp_hub"],
+
+        watch("multi_chain") === "true" &&
+        [...fieldsToValidate, "project_on_multichain"] 
+    );
     if (result) {
       setStep((prevStep) => prevStep + 1);
       setActiveTab(investorRegistration[step + 1]?.id);
     }
   };
-
 
   const addImageHandler = async (e) => {
     const selectedImages = e.target.files[0];
@@ -548,7 +557,7 @@ const InvestorRegistration = () => {
 
   const onSubmit = async (data) => {
     console.log("data of investor =>", data);
-    console.log()
+    console.log();
     const updatedFormData = { ...formData, ...data };
     setFormData(updatedFormData);
     console.log("updatedFormData ================>", updatedFormData);
@@ -720,10 +729,11 @@ const InvestorRegistration = () => {
               {investorRegistration.map((header, index) => (
                 <li key={header.id} className="me-2 relative group">
                   <button
-                    className={`${getTabClassName(header.id)} ${index > step && !isCurrentStepValid
-                      ? "cursor-not-allowed opacity-50"
-                      : "cursor-pointer"
-                      }`}
+                    className={`${getTabClassName(header.id)} ${
+                      index > step && !isCurrentStepValid
+                        ? "cursor-not-allowed opacity-50"
+                        : "cursor-pointer"
+                    }`}
                     onClick={() => handleTabClick(header.id)}
                     disabled={index > step && !isCurrentStepValid}
                   >
@@ -948,10 +958,11 @@ const InvestorRegistration = () => {
                     </label>
                     <select
                       {...register("registered")}
-                      className={`bg-gray-50 border-2 ${errors.registered
-                        ? "border-red-500 placeholder:text-red-500"
-                        : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      className={`bg-gray-50 border-2 ${
+                        errors.registered
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     >
                       <option className="text-lg font-bold" value="false">
                         No
@@ -976,10 +987,11 @@ const InvestorRegistration = () => {
                       </label>
                       <select
                         {...register("registered_country")}
-                        className={`bg-gray-50 border-2 ${errors.registered_country
-                          ? "border-red-500 placeholder:text-red-500"
-                          : "border-[#737373]"
-                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        className={`bg-gray-50 border-2 ${
+                          errors.registered_country
+                            ? "border-red-500 placeholder:text-red-500"
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                       >
                         <option className="text-lg font-bold" value="">
                           Select your registered country
@@ -1011,10 +1023,11 @@ const InvestorRegistration = () => {
                     </label>
                     <select
                       {...register("preferred_icp_hub")}
-                      className={`bg-gray-50 border-2 ${errors.preferred_icp_hub
-                        ? "border-red-500 placeholder:text-red-500"
-                        : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      className={`bg-gray-50 border-2 ${
+                        errors.preferred_icp_hub
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     >
                       <option className="text-lg font-bold" value="">
                         Select
@@ -1044,10 +1057,11 @@ const InvestorRegistration = () => {
                     </label>
                     <select
                       {...register("existing_icp_investor")}
-                      className={`bg-gray-50 border-2 ${errors.existing_icp_investor
-                        ? "border-red-500 placeholder:text-red-500"
-                        : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      className={`bg-gray-50 border-2 ${
+                        errors.existing_icp_investor
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     >
                       <option className="text-lg font-bold" value="false">
                         No
@@ -1109,13 +1123,24 @@ const InvestorRegistration = () => {
 
                             if (selectedOptions && selectedOptions.length > 0) {
                               clearErrors("investor_type");
-                              setValue("investor_type", selectedOptions
-                                .map((option) => option.value)
-                                .join(", "));
+                              setValue(
+                                "investor_type",
+                                selectedOptions
+                                  .map((option) => option.value)
+                                  .join(", "),
+                                { shouldValidate: true }
+                              );
                             } else {
-                              setError("investor_type", { type: 'required', message: "Investor type is required" });
+                              // Explicitly handle the case where all selections are cleared
+                              setValue("investor_type", "", {
+                                shouldValidate: true,
+                              }); // Clear the value
+                              setError("investor_type", {
+                                type: "required",
+                                message: "Investor type is required",
+                              });
                             }
-                          }}                       
+                          }}
                         />
                         {errors.investor_type && (
                           <p className="mt-1 text-sm text-red-500 font-bold text-left">
@@ -1183,10 +1208,11 @@ const InvestorRegistration = () => {
                     </label>
                     <select
                       {...register("registered_under_any_hub")}
-                      className={`bg-gray-50 border-2 ${errors.registered_under_any_hub
-                        ? "border-red-500 placeholder:text-red-500"
-                        : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      className={`bg-gray-50 border-2 ${
+                        errors.registered_under_any_hub
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     >
                       <option className="text-lg font-bold" value="false">
                         No
@@ -1217,10 +1243,11 @@ const InvestorRegistration = () => {
                   </label>
                   <select
                     {...register("reason_for_joining")}
-                    className={`bg-gray-50 border-2 ${errors.reason_for_joining
-                      ? "border-red-500 placeholder:text-red-500"
-                      : "border-[#737373]"
-                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    className={`bg-gray-50 border-2 ${
+                      errors.reason_for_joining
+                        ? "border-red-500 placeholder:text-red-500"
+                        : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="">
                       Select reason
@@ -1263,10 +1290,11 @@ const InvestorRegistration = () => {
                     </label>
                     <select
                       {...register("multi_chain")}
-                      className={`bg-gray-50 border-2 ${errors.multi_chain
-                        ? "border-red-500 placeholder:text-red-500"
-                        : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      className={`bg-gray-50 border-2 ${
+                        errors.multi_chain
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     >
                       <option className="text-lg font-bold" value="false">
                         No
@@ -1321,15 +1349,33 @@ const InvestorRegistration = () => {
                         }}
                         classNamePrefix="select"
                         className="basic-multi-select"
-                        placeholder="Select your areas of expertise"
+                        placeholder="Select"
                         name="project_on_multichain"
                         {...register("project_on_multichain")}
                         onChange={(selectedOptions) => {
-                          // You might need to adapt this part to fit how you handle form data
-                          const selectedValues = selectedOptions
-                            .map((option) => option.value)
-                            .join(", ");
-                          setValue("project_on_multichain", selectedValues);
+                          if (selectedOptions && selectedOptions.length > 0) {
+                            // Clear any errors for project_on_multichain if selections are made
+                            clearErrors("project_on_multichain");
+
+                            // Update the form state with the selected values, joined by commas
+                            const selectedValues = selectedOptions
+                              .map((option) => option.value)
+                              .join(", ");
+                            setValue("project_on_multichain", selectedValues, {
+                              shouldValidate: true,
+                            });
+                          } else {
+                            // Explicitly handle the case where all selections are cleared by setting the field value to an empty string
+                            setValue("project_on_multichain", "", {
+                              shouldValidate: true,
+                            });
+
+                            // Set an error for project_on_multichain indicating that the selection is required
+                            setError("project_on_multichain", {
+                              type: "required",
+                              message: "Please select at least one chain",
+                            });
+                          }
                         }}
                       />
                       {errors.project_on_multichain && (
@@ -1381,13 +1427,23 @@ const InvestorRegistration = () => {
                       onChange={(selectedOptions) => {
                         if (selectedOptions && selectedOptions.length > 0) {
                           clearErrors("category_of_investment");
-                          setValue("category_of_investment", selectedOptions
+                          const selectedValues = selectedOptions
                             .map((option) => option.value)
-                            .join(", "));
+                            .join(", ");
+                          setValue("category_of_investment", selectedValues, {
+                            shouldValidate: true,
+                          });
                         } else {
-                          setError("category_of_investment", { message: "Category of investment is required" })
-                        }
+                          setValue("category_of_investment", "", {
+                            shouldValidate: true,
+                          });
 
+                          // Set an error for category_of_investment indicating that the selection is required
+                          setError("category_of_investment", {
+                            type: "required",
+                            message: "Please select at least one chain",
+                          });
+                        }
                       }}
                     />
                     {errors.category_of_investment && (
