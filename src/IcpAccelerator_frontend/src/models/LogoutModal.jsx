@@ -155,12 +155,12 @@ const LogoutModal = () => {
             </div>
             {isAuthenticated && (
               <ul
-                className="text-sm text-black font-bold md:hidden "
+                className="text-sm text-black font-bold"
                 aria-labelledby="avatarButton"
               >
-                <li onClick={() => navigate('/')} className="block px-4 py-2 hover:bg-gray-200 hover:text-black">
+                {/* <li onClick={() => navigate('/')} className="block px-4 py-2 hover:bg-gray-200 hover:text-black">
                   Home
-                </li>
+                </li> */}
                 {/* <li onClick={() => handleNavigate()} className="block px-4 py-2 hover:bg-gray-200 hover:text-black">
                   Associations
                 </li> */}

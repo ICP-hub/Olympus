@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import ment from "../../../assets/images/ment.jpg";
 import girl from "../../../assets/images/girl.jpeg";
-import hover from "../../../assets/images/hover.png";
+import hover from "../../../assets/images/1.png";
 import RegisterCard from "./RegisterCard";
 import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";

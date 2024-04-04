@@ -1,5 +1,5 @@
 import React from "react";
-import hover from "../../../assets/images/hover.png";
+import hover from "../../../assets/images/1.png";
 import { winner } from "../Utils/Data/SvgData";
 import girl from "../../../assets/images/girl.jpeg";
 
@@ -41,7 +41,7 @@ const EventCard = () => {
               <div className="flex lg:justify-start gap-4 ">
                 <div className="flex flex-col font-bold">
                   <p className="text-[#7283EA]">Date</p>
-                  <p className="text-black whitespace-nowrap">25 Oct 2021</p>
+                  <p className="text-black whitespace-nowrap">25 Apr 2024</p>
                 </div>
                 <div className="flex flex-col font-bold">
                   <p className="text-[#7283EA]">Time</p>
