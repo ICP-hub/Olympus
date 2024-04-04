@@ -24,7 +24,7 @@ const DetailHeroSection = () => {
       alt: "Astronaut",
       className:
         "z-20 w-[500px] md:w-[275px] sm:w-[200px] sxs:w-[200px] sxs:h-[180px] md:h-64 relative  sxs:-right-3 right-16 md:right-8 sm:right-4 top-10 object-contain",
-      text: "Sign Up As Project",
+      text: "Signup as a project",
     },
     "/create-mentor": {
       src: Mentor,
