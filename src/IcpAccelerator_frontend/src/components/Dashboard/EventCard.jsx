@@ -21,13 +21,13 @@ const EventCard = () => {
           <div className="w-full mt-4">
             <div className="w-1/2 flex-col text-[#737373] flex  ">
               <h1 className="text-black font-bold text-xl text-nowrap">
-                RWA Projects. Part 2
+                Fully On-Chain with ICP
               </h1>
               <p className="text-xs font-light whitespace-nowrap">
-                22 Apr 2024 17:30 -22 Apr 2024 19:30
+                22 Apr 2024, 05:30pm - 25 Apr 2024, 7:30pm
               </p>
             </div>
-            <p className="text-[#7283EA] font-semibold text-xl">
+            <p className="text-[#7283EA] font-semibold mt-2">
               This event includes
             </p>
             <ul className="text-sm font-extralight list-disc list-outside pl-4">

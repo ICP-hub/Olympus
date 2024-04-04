@@ -149,7 +149,7 @@ const DashBoard = () => {
                   onClick={() => navigate("/live-projects")}
                   className="border border-violet-800 px-4 py-2 rounded-md text-violet-800"
                 >
-                  View all
+                  View More
                 </button>
               </div>
               <div className="mb-4">
@@ -185,7 +185,7 @@ const DashBoard = () => {
                   onClick={() => navigate("/view-investor")}
                   className="border border-violet-800 px-4 py-2 rounded-md text-violet-800"
                 >
-                  See all Investors
+                  View More
                 </button>
               </div>
               <div className="flex flex-wrap mx-2 lg:-mx-4 mb-4 flex-col lg:flex-row items-center">
@@ -204,7 +204,7 @@ const DashBoard = () => {
                   onClick={() => navigate("/view-mentors")}
                   className="border border-violet-800 px-4 py-2 rounded-md text-violet-800"
                 >
-                  See all Mentors
+                  View More
                 </button>
               </div>
               <div className="flex flex-wrap mx-2 lg:-mx-4 mb-4 flex-col lg:flex-row items-center">

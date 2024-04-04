@@ -80,12 +80,12 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
                 <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
                   <button
                     type="button"
-                    className="text-gray-400 bg-transparent hover:text-gray-900 rounded-lg text-sm h-8 w-8 inline-flex justify-center items-center"
+                    className="text-gray-400 bg-transparent hover:text-gray-900 rounded-lg text-sm h-8 w-8 inline-flex justify-center items-center z-10"
                     onClick={onClose}
                   >
                     {closeModalSvg}
                   </button>
-                  <h3 className="text-lg font-semibold text-gray-900 grow text-center">
+                  <h3 className="text-lg font-semibold text-gray-900 grow text-center absolute left-0 right-0">
                     Signup / Login
                   </h3>
                 </div>
