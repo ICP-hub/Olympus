@@ -82,9 +82,9 @@ const UserProfile = ({ userData, Allrole }) => {
   const profile = uint8ArrayToBase64(userData[0].params.profile_picture[0]);
   // console.log(profile);
   return (
-    <div className="w-full px-[4%]">
+    <div className="w-full py-[2%]">
       <div className="  bg-white  shadow-md shadow-gray-400 pb-6 pt-4 rounded-lg w-full">
-        <div className="w-full flex flex-wrap flex-row items-start justify-start py-4">
+        <div className="w-full flex  md:flex-row flex-col md:items-start items-center md:justify-start justify-center py-4">
           <div className="relative">
             <div className="object-fill">
               <img
@@ -112,7 +112,7 @@ const UserProfile = ({ userData, Allrole }) => {
               </svg>
             </div>
           </div>
-          <div className="flex flex-col ml-4  mt-2 w-auto md:mr-80">
+          <div className="flex flex-col ml-4  mt-2 w-auto md:mr-80 justify-start">
             <div className="flex flex-row  gap-4 items-center">
               <h1 className="md:text-3xl text-xl md:font-extrabold font-bold  bg-black text-transparent bg-clip-text">
                 {userData[0].params.full_name}
@@ -145,15 +145,17 @@ const UserProfile = ({ userData, Allrole }) => {
               </div>
             </div>
 
-            {/* {userData[0].area_of_expertise && <p className="mt-8 text-black mb-2">Skills</p>} */}
-            {/* <div className="flex text-gray-700 flex-row gap-2 flex-wrap text-xs">
+            {userData[0].area_of_expertise && (
+              <p className="mt-8 text-black mb-2">Skills</p>
+            )}
+            <div className="flex text-gray-700 flex-row gap-2 flex-wrap text-xs">
               <p className="bg-[#c9c5c5] underline rounded-full px-3">
                 {userData[0].area_of_expertise}
               </p>
-            </div> */}
+            </div>
           </div>
 
-          <div className="flex flex-col gap-2 h-[300px] bg-gray-100 px-[1%] rounded-md mt-2  overflow-y-auto py-2">
+          <div className="flex flex-col gap-2 h-[275px] bg-gray-100 px-[1%] rounded-md mt-2  overflow-y-auto py-2">
             {Allrole &&
               Allrole.length > 0 &&
               Allrole.filter(
@@ -164,7 +166,7 @@ const UserProfile = ({ userData, Allrole }) => {
               ).map((role, index) => (
                 <div key={index} className="flex justify-around items-center">
                   <button
-                    className={`flex px-2 items-center md:w-[310px] w-full h-[90px] ${getButtonClass(
+                    className={`flex px-4 items-center md:w-[310px] w-full h-[90px] ${getButtonClass(
                       role.status
                     )} rounded-md `}
                   >
