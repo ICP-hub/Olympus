@@ -18,7 +18,9 @@ import ment from "../../../assets/images/ment.jpg";
 import InvestorCard from "./InvestorCard";
 import MentorCard from "./MentorCard";
 import RegisterCard from "./RegisterCard";
-import hover from "../../../assets/images/hover.png";
+import investor from "../../../assets/images/investors.png";
+import mentor from "../../../assets/images/mentors.png";
+import testimonial from "../../../assets/images/testimonial.png";
 import Testimonial from "./Testimonial";
 import ProjectDashboard from "./RoleDashboard/ProjectDashboard";
 import MentorDashboard from "./RoleDashboard/MentorDashboard";
@@ -83,7 +85,7 @@ const DashBoard = () => {
       title: "Register as an Investor",
       description: "Discover innovative projects to invest in.",
       buttonText: "Register Now",
-      imgSrc: hover,
+      imgSrc: investor,
     },
   ];
 
@@ -93,7 +95,7 @@ const DashBoard = () => {
       title: "Register as a Mentor",
       description: "Join our community as a mentor to guide projects.",
       buttonText: "Register Now",
-      imgSrc: hover,
+      imgSrc: mentor,
     },
   ];
 
@@ -103,7 +105,7 @@ const DashBoard = () => {
       title: "Add your testimonial",
       description: "Share your experience and insights with our community.",
       buttonText: "Add Now",
-      imgSrc: hover,
+      imgSrc: testimonial,
     },
   ];
 
@@ -118,44 +120,44 @@ const DashBoard = () => {
       return (
         <>
           <section
-            class="flex items-center w-full bg-gradient-to-r from-purple-900 via-purple-500 to-purple-400 pl-[9%] pr-[3%]">
-            <div class="container mx-auto">
-              <div class="flex flex-wrap -mx-4">
-                <div class="flex flex-col justify-center md:w-1/2 pt-8 sm:pt-0 sm:px-4 w-full">
-                  <h1 class="text-4xl font-bold mb-4 lg:text-6xl text-white">
-                    OLYMPUS - <br /> THE PEAK OF WEB3 ACCELERATION
+            className="flex items-center w-full bg-gradient-to-r from-purple-900 via-purple-500 to-purple-400 pl-[9%] pr-[9%] py-[8%]">
+            <div className="container mx-auto">
+              <div className="flex flex-wrap">
+                <div className="flex flex-col justify-center md:w-1/2 pt-8 sm:pt-0 sm:px-4 w-full">
+                  <h1 className="text-4xl font-bold mb-4 lg:text-5xl text-white font-fontUse">
+                    OLYMPUS <br /> The peak of web3 acceleration
                   </h1>
-                  <p class="text-lg mb-6 md:text-xl lg:text-2xl text-white">
+                  <p className="text-lg mb-6 md:text-xl lg:text-2xl text-white font-fontUse">
                     Olympus is a multichain startup acceleration platform, fostering
                     collaboration among key stakeholders and leveraging blockchain
                     technology to increase transparency.
                   </p>
-                  <div class="relative group">
+                  {/* <div className="relative group">
                     <a
                       href="#"
-                      class="inline-block bg-white text-[#9B68EC] font-bold py-2 px-4 rounded-lg transition-colors duration-300"
+                      className="inline-block bg-white text-[#9B68EC] font-bold py-2 px-4 rounded-lg transition-colors duration-300"
                     >
                       Get Early Access
                     </a>
-                    <div class="absolute -top-10 ml-2 py-3 px-4 bg-blue-600 rounded-br-3xl rounded-tr-3xl rounded-tl-3xl text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-default ease-in-out duration-200 hidden group-hover:block">
+                    <div className="absolute -top-10 ml-2 py-3 px-4 bg-blue-600 rounded-br-3xl rounded-tr-3xl rounded-tl-3xl text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-default ease-in-out duration-200 hidden group-hover:block">
                       <div className="flex">
                         <img
                           src={Banner}
                           alt="Profile"
-                          class="w-6 h-6 rounded-full mr-2"
+                          className="w-6 h-6 rounded-full mr-2"
                         />
                         <img
                           src={Banner}
                           alt="Profile"
-                          class="w-6 h-6 rounded-full mr-2"
+                          className="w-6 h-6 rounded-full mr-2"
                         />
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
-                <div class="w-full px-4 md:w-1/2">
+                <div className="w-full px-4 md:w-1/2 md:flex hidden">
                   <img
-                    class="object-contain h-fit w-fit relative"
+                    className="object-contain h-fit w-fit absolute z-10 right-0 top-0"
                     src={Banner}
                     alt="Illustration"
                     loading="lazy"

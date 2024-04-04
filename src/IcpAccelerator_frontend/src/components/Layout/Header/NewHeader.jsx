@@ -139,7 +139,7 @@ const NewHeader = ({ setModalOpen, gradient }) => {
   return (
     <>
       <nav
-        className="z-50 px-[5%] lg1:px-[3%] py-[3%] text-black bg-transparent backdrop-blur-sm sticky top-0 transition-transform"
+        className="z-50 px-[5%] lg1:px-[3%] py-[3%] text-black bg-transparent sticky top-0 transition-transform"
         style={{ transform: "unset" }}>
         <div className="container-12 w-full flex items-center justify-between">
           <a className="self-center flex items-center" href="/">
@@ -218,7 +218,7 @@ const NewHeader = ({ setModalOpen, gradient }) => {
           <div className="flex gap-4 items-center group">
             <button
               type="button"
-              className="font-bold rounded-xl my-2 bg-transparent border-2 border-white/50 font-fontUse text-center text-white uppercase text-[0.625rem] md:text-[0.64375rem] lg:text-[0.65625rem] xl:text-[0.78125rem] px-6 py-2 top-[6.5rem] sm4:top-[10.5rem] xxs1:top-[8.5rem] ss2:top-[7.5rem] text-wrap group-hover:bg-white group-hover:text-[#BA77FB]"
+              className="font-bold rounded-xl my-2 bg-transparent border-2 border-white/50 font-fontUse text-center text-white uppercase text-[0.625rem] md:text-[0.64375rem] lg:text-[0.65625rem] xl:text-[0.78125rem] px-6 py-2 top-[6.5rem] sm4:top-[10.5rem] xxs1:top-[8.5rem] ss2:top-[7.5rem] text-wrap group-hover:bg-white group-hover:text-[#BA77FB] z-20"
               onClick={manageHandler}
             >
               <span className="">SIGNUP / LOGIN</span>
@@ -357,44 +357,44 @@ const NewHeader = ({ setModalOpen, gradient }) => {
       <div className="md:hidden overflow-auto fixed inset-0 bg-white z-[1000] px-6 py-4 transition-transform -translate-x-full pointer-events-none"></div> */}
 
       {/* <section
-        class="flex items-center w-full bg-gradient-to-r from-purple-900 via-purple-500 to-purple-400 pl-[9%] pr-[3%]">
-        <div class="container mx-auto">
-          <div class="flex flex-wrap -mx-4">
-            <div class="flex flex-col justify-center md:w-1/2 pt-8 sm:pt-0 sm:px-4 w-full">
-              <h1 class="text-4xl font-bold mb-4 md:text-5xl lg:text-6xl text-white">
+        className="flex items-center w-full bg-gradient-to-r from-purple-900 via-purple-500 to-purple-400 pl-[9%] pr-[3%]">
+        <div className="container mx-auto">
+          <div className="flex flex-wrap -mx-4">
+            <div className="flex flex-col justify-center md:w-1/2 pt-8 sm:pt-0 sm:px-4 w-full">
+              <h1 className="text-4xl font-bold mb-4 md:text-5xl lg:text-6xl text-white">
                 OLYMPUS - <br /> THE PEAK OF WEB3 ACCELERATION
               </h1>
-              <p class="text-lg mb-6 md:text-xl lg:text-2xl text-white">
+              <p className="text-lg mb-6 md:text-xl lg:text-2xl text-white">
                 Olympus is a multichain startup acceleration platform, fostering
                 collaboration among key stakeholders and leveraging blockchain
                 technology to increase transparency.
               </p>
-              <div class="relative group">
+              <div className="relative group">
                 <a
                   href="#"
-                  class="inline-block bg-white text-[#9B68EC] font-bold py-2 px-4 rounded-lg transition-colors duration-300"
+                  className="inline-block bg-white text-[#9B68EC] font-bold py-2 px-4 rounded-lg transition-colors duration-300"
                 >
                   Get Early Access
                 </a>
-                <div class="absolute -top-10 ml-2 py-3 px-4 bg-blue-600 rounded-br-3xl rounded-tr-3xl rounded-tl-3xl text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-default ease-in-out duration-200 hidden group-hover:block">
+                <div className="absolute -top-10 ml-2 py-3 px-4 bg-blue-600 rounded-br-3xl rounded-tr-3xl rounded-tl-3xl text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-default ease-in-out duration-200 hidden group-hover:block">
                     <div className="flex">
                   <img
                     src={Banner}
                     alt="Profile"
-                    class="w-6 h-6 rounded-full mr-2"
+                    className="w-6 h-6 rounded-full mr-2"
                   />
                   <img
                      src={Banner}
                     alt="Profile"
-                    class="w-6 h-6 rounded-full mr-2"
+                    className="w-6 h-6 rounded-full mr-2"
                   />
                   </div>
                 </div>
               </div>
             </div>
-            <div class="w-full px-4 md:w-1/2">
+            <div className="w-full px-4 md:w-1/2">
               <img
-                class="object-contain h-fit w-fit relative"
+                className="object-contain h-fit w-fit relative"
                 src={Banner}
                 alt="Illustration"
                 loading="lazy"

@@ -70,7 +70,7 @@ const Header = ({ setModalOpen, gradient }) => {
       "bg-gradient-to-r from-purple-900 via-purple-500 to-purple-400" : "bg-gray-100"}`}>
       <div className="flex items-center justify-between px-[5%] lg1:px-[4%] py-[3%]">
         <div onClick={() => navigate("/")}>
-          <img className="sxs:scale-75 sxs:-ml-5 md:scale-100"
+          <img className="sxs:scale-75 sxs:-ml-5 md:scale-100 cursor-pointer" onClick={() => window.location.href = "/"}
             src={(!userCurrentRoleStatusActiveRole || userCurrentRoleStatusActiveRole === 'user') && window.location.pathname === "/" ? topLogoWhitepng : logoWithText} alt="IcpLogo" loading="lazy" />
         </div>
         {isAuthenticated && (
@@ -78,10 +78,11 @@ const Header = ({ setModalOpen, gradient }) => {
             {/* <a href="/" className={`${underline}`}>
               Home
             </a> */}
-            <div onClick={() => window.location.href = "/"}
-              className={`rounded-full px-8 py-[2px] group-hover:bg-[#6E52AA] group-hover:text-white ${(!userCurrentRoleStatusActiveRole || userCurrentRoleStatusActiveRole === 'user') && window.location.pathname === "/" ? 'text-white' : 'text-blue-800'}`}>
+            {/* home disabled */}
+            {/* <div onClick={() => window.location.href = "/"}
+              className={`rounded-full px-8 py-[2px] group-hover:bg-[#6E52AA] group-hover:text-white font-fontUse ${(!userCurrentRoleStatusActiveRole || userCurrentRoleStatusActiveRole === 'user') && window.location.pathname === "/" ? 'text-white' : 'text-blue-800'}`}>
               Home
-            </div>
+            </div> */}
             {/* <a href="#" className={`${underline}`}>
               Event
             </a>
@@ -89,7 +90,7 @@ const Header = ({ setModalOpen, gradient }) => {
               Mentor
             </a> */}
 
-            {userCurrentRoleStatus && userCurrentRoleStatusActiveRole && userCurrentRoleStatusActiveRole !== 'user' ?
+            {/* {userCurrentRoleStatus && userCurrentRoleStatusActiveRole && userCurrentRoleStatusActiveRole !== 'user' ?
               <div className={`rounded-full px-8 py-[2px] group-hover:bg-[#6E52AA] group-hover:text-white ${(!userCurrentRoleStatusActiveRole || userCurrentRoleStatusActiveRole === 'user') && window.location.pathname === "/" ? 'text-white' : 'text-blue-800'}`}
                 onClick={() => navigate(
                   userCurrentRoleStatusActiveRole === 'project'
@@ -103,7 +104,7 @@ const Header = ({ setModalOpen, gradient }) => {
               >
                 Associations
               </div>
-              : ''}
+              : ''} */}
 
           </div>
         )}
@@ -111,7 +112,7 @@ const Header = ({ setModalOpen, gradient }) => {
         {principal && isAuthenticated ? (
           <>
             {userCurrentRoleStatus && userCurrentRoleStatusActiveRole ? (
-              <div className="flex items-center flex-row gap-2">
+              <div className="flex items-center flex-row gap-2 z-20">
                 <button
                   onClick={() => setShowSwitchRole(true)}
                   className={
@@ -143,7 +144,7 @@ const Header = ({ setModalOpen, gradient }) => {
           // </button>
           <button
             type="button"
-            className="font-bold rounded-xl my-2 bg-transparent border-2 border-white/50 font-fontUse text-center text-white uppercase text-[0.625rem] md:text-[0.64375rem] lg:text-[0.65625rem] xl:text-[0.78125rem] px-6 py-2 top-[6.5rem] sm4:top-[10.5rem] xxs1:top-[8.5rem] ss2:top-[7.5rem] text-wrap group-hover:bg-white group-hover:text-[#BA77FB]"
+            className="font-bold rounded-xl my-2 bg-transparent border-2 border-white/50 font-fontUse text-center text-white uppercase text-[0.625rem] md:text-[0.64375rem] lg:text-[0.65625rem] xl:text-[0.78125rem] px-6 py-2 top-[6.5rem] sm4:top-[10.5rem] xxs1:top-[8.5rem] ss2:top-[7.5rem] text-wrap group-hover:bg-white group-hover:text-[#BA77FB] z-20"
             onClick={manageHandler}
           >
             <span className="">SIGNUP / LOGIN</span>

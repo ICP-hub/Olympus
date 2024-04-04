@@ -1,94 +1,44 @@
 use crate::{project_registration, upvotes};
 use candid::Nat;
+use ic_cdk_macros::{update, query};
 use project_registration::{ProjectInfoInternal, list_all_projects, APPLICATION_FORM};
 use upvotes::{get_upvote_record,UPVOTES};
-use std::cell::RefCell;
+use std::{cell::RefCell, borrow::BorrowMut};
 use num_traits::ToPrimitive;
 
 
-// #[derive(Debug, Clone, Default)]
-// pub struct CategorizedProjects {
-//     pub live_proposals_latest: Vec<ProjectInfoInternal>,
-//     pub listed_projects_latest: Vec<ProjectInfoInternal>,
-//     pub live_proposals_popular: Vec<ProjectInfoInternal>,
-//     pub listed_projects_popular: Vec<ProjectInfoInternal>,
-// }
-
 thread_local! {
-    pub static LIVE_PROPOSALS_LATEST: RefCell<Vec<ProjectInfoInternal>> = RefCell::new(Vec::new());
-    pub static LISTED_PROJECTS_LATEST: RefCell<Vec<ProjectInfoInternal>> = RefCell::new(Vec::new());
-    pub static LIVE_PROPOSALS_POPULAR: RefCell<Vec<ProjectInfoInternal>> = RefCell::new(Vec::new());
-    pub static LISTED_PROJECTS_POPULAR: RefCell<Vec<ProjectInfoInternal>> = RefCell::new(Vec::new());
-    // pub static CATEGORIZED_PROJECTS: RefCell<CategorizedProjects> = RefCell::new(CategorizedProjects::default());
+    pub static LIVE_PROJECTS: RefCell<Vec<ProjectInfoInternal>> = RefCell::new(Vec::new());
+    pub static INCUBATED_PROJECTS: RefCell<Vec<ProjectInfoInternal>> = RefCell::new(Vec::new());   
 }
 
+#[update]
+pub fn update_project_status_live_incubated(project: ProjectInfoInternal) -> Result<&'static str, &'static str> {
+    let is_live = project.params.live_on_icp_mainnet.unwrap_or(false);
+    let has_dapp_link = project.params.dapp_link.is_some();
 
-pub fn update_project_categories() {
-     let threshold: usize = 50;
-    let mut live_proposals_latest = Vec::new();
-    let mut listed_projects_latest = Vec::new();
-    let mut live_proposals_popular = Vec::new();
-    let mut listed_projects_popular = Vec::new();
-
-    APPLICATION_FORM.with(|app_forms| {
-        let app_forms = app_forms.borrow();
-        UPVOTES.with(|upvotes_storage| {
-            let upvotes_storage = upvotes_storage.borrow();
-
-            for projects in app_forms.values() {
-                for project in projects {
-                    let upvote_count = upvotes_storage.projects.get(&project.uid)
-                        .map_or(0, |record| 
-                            record.count.0.to_usize().unwrap_or_default()
-                        );
-
-                    if upvote_count < threshold {
-                        live_proposals_latest.push(project.clone());
-                        live_proposals_popular.push(project.clone());
-                    } else {
-                        listed_projects_latest.push(project.clone());
-                        listed_projects_popular.push(project.clone());
-                    }
-                }
-            }
-        });
-    });
-
-    live_proposals_popular.sort_by(|a, b| {
-        UPVOTES.with(|upvotes| {
-            let upvotes = upvotes.borrow();
-            upvotes.projects.get(&b.uid).unwrap().count.0.cmp(&upvotes.projects.get(&a.uid).unwrap().count.0)
+    if is_live && has_dapp_link {
+        LIVE_PROJECTS.with(|projects| {
+            let mut projects = projects.borrow_mut();
+            projects.push(project);
+            Ok("Project successfully classified as live.")
         })
-    });
-    listed_projects_popular.sort_by(|a, b| {
-        UPVOTES.with(|upvotes| {
-            let upvotes = upvotes.borrow();
-            upvotes.projects.get(&b.uid).unwrap().count.0.cmp(&upvotes.projects.get(&a.uid).unwrap().count.0)
+    } else {
+        INCUBATED_PROJECTS.with(|projects| {
+            let mut projects = projects.borrow_mut();
+            projects.push(project);
+            Ok("Project classified as incubated.")
         })
-    });
-
-    LIVE_PROPOSALS_LATEST.with(|v| *v.borrow_mut() = live_proposals_latest);
-    LISTED_PROJECTS_LATEST.with(|v| *v.borrow_mut() = listed_projects_latest);
-    LIVE_PROPOSALS_POPULAR.with(|v| *v.borrow_mut() = live_proposals_popular);
-    LISTED_PROJECTS_POPULAR.with(|v| *v.borrow_mut() = listed_projects_popular);
+    }
 }
 
-pub fn get_live_proposals_latest() -> Vec<ProjectInfoInternal> {
-    update_project_categories();
-    LIVE_PROPOSALS_LATEST.with(|c| c.borrow().clone())
+#[query]
+pub fn get_all_live_projects() -> Vec<ProjectInfoInternal> {
+    LIVE_PROJECTS.with(|projects| projects.borrow().clone())
 }
 
-pub fn get_listed_projects_latest() -> Vec<ProjectInfoInternal> {
-    update_project_categories();
-    LISTED_PROJECTS_LATEST.with(|c| c.borrow().clone())
+#[query]
+pub fn get_all_incubated_projects() -> Vec<ProjectInfoInternal> {
+    INCUBATED_PROJECTS.with(|projects| projects.borrow().clone())
 }
 
-pub fn get_live_proposals_popular() -> Vec<ProjectInfoInternal> {
-    update_project_categories();
-    LIVE_PROPOSALS_POPULAR.with(|c| c.borrow().clone())
-}
-
-pub fn get_listed_projects_popular() -> Vec<ProjectInfoInternal> {
-    update_project_categories();
-    LISTED_PROJECTS_POPULAR.with(|c| c.borrow().clone())
-}
