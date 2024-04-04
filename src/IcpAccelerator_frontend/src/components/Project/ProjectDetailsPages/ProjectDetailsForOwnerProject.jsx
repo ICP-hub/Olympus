@@ -21,6 +21,7 @@ import AddAMentorRequestModal from '../../../models/AddAMentorRequestModal';
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from 'react-router-dom';
 import ProjectDocuments from '../../Resources/ProjectDocuments';
+import ProjectMoneyRaising from '../../Resources/ProjectMoneyRaising';
 const ProjectDetailsForOwnerProject = () => {
     const navigate = useNavigate();
     const actor = useSelector((currState) => currState.actors.actor)
@@ -179,6 +180,18 @@ const ProjectDetailsForOwnerProject = () => {
                         role={true}
                         socials={true}
                         filter={"documents"}
+                    />
+                );
+                case "project-money-raising":
+                return (
+                    <ProjectMoneyRaising
+                    data={projectData}
+                    profile={true}
+                    type={!true}
+                    name={true}
+                    role={true}
+                    socials={true}
+                    filter={"raising"}
                     />
                 );
             default:

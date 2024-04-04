@@ -4,86 +4,108 @@ import { OutSideClickHandler } from "../../hooks/OutSideClickHandler";
 import { useSelector } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
+import { Principal } from "@dfinity/principal";
+import NoDataCard from "../../Mentors/Event/NoDataCard";
 
 const RequestsPrivateDocument = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState("");
+  const [selectedOption, setSelectedOption] = useState("Pending");
   const [requestedData, setRequestedData] = useState([]);
+  const [noData, setNoData] = useState(null);
+
   const dropdownRef = useRef(null);
   OutSideClickHandler(dropdownRef, () => setIsPopupOpen(false));
 
-  const fetchPrivateDocumentsRequests = async (status) => {
-    setSelectedOption(status);
-    try {
-      let result;
-      switch (status) {
-        case "Pending":
-          result = await actor.get_all_pending_requests();
-          break;
-        case "Accepted":
-          result = await actor.get_all_approved_requests();
-          break;
-        case "Declined":
-          result = await actor.get_all_declined_requests();
-          break;
-        default:
-          console.log("Unknown status");
-      }
-
-      console.log("result-private-docs", result);
-      if (result) {
-        toast.success(result);
-        setRequestedData(result);
-      } else {
-        toast.error(result);
-        setRequestedData([]);
-      }
-    } catch (error) {
-      console.log("error-private-docs", error);
-      toast.error("An error occurred");
+  const fetchPrivateDocumentsRequests = (status) => {
+    if (!actor) {
+      console.log("Actor not found");
+      return null;
     }
+    setSelectedOption(status);
+    let result;
+    switch (status) {
+      case "Pending":
+        result = actor.get_all_pending_requests();
+        break;
+      case "Accepted":
+        result = actor.get_all_approved_requests();
+        break;
+      case "Declined":
+        result = actor.get_all_declined_requests();
+        break;
+      default:
+        console.log("Unknown status");
+        toast.error("Unknown status");
+        return;
+    }
+    result
+      .then((result) => {
+        if (result && result.length>0) {
+          setNoData(false);
+          setRequestedData(result);
+          setIsPopupOpen(false);
+        } else {
+          setNoData(true);
+          setRequestedData([]);
+          setIsPopupOpen(false);
+          throw new Error("Invalid response format");
+        }
+      })
+      .catch((error) => {
+        setNoData(true);
+        setRequestedData([]);
+        setIsPopupOpen(false);
+        console.error("Error fetching document requests:", error);
+      });
   };
 
   useEffect(() => {
-    if (actor) {
-      fetchPrivateDocumentsRequests("Pending");
-    }
-  }, [actor]);
+    fetchPrivateDocumentsRequests(selectedOption);
+  }, [actor, selectedOption]);
 
   const approveAndRejectPrivateDocument = async (
     value,
     projectId,
     principal
   ) => {
+    if (!actor) {
+      console.log("Actor not found");
+      return null;
+    }
     try {
-      if (actor) {
-        let result;
-        let argument = {
-          project_id: projectId,
-          sender_id: principal,
-        };
-        switch (value) {
-          case "Approve":
-            result = await actor.Approve_private_docs_access_request(argument);
-            break;
-          case "Decline":
-            result = await actor.Decline_private_docs_access_request(argument);
-            break;
-          default:
-            console.log("Unknown status");
-        }
-        if (result) {
-           toast.success(result);
-        } else {
-          toast.error(result);
-        }
+      let result;
+      switch (value) {
+        case "Approve":
+          result = await actor.approve_private_docs_access_request(
+            projectId,
+            Principal.fromText(principal)
+          );
+          break;
+        case "Decline":
+          result = await actor.decline_private_docs_access_request(
+            projectId,
+            Principal.fromText(principal)
+          );
+          break;
+        default:
+          console.log("Unknown action");
+          return;
+      }
+
+      if (result) {
+        // Assuming result contains some success indication
+        toast.success(`Request ${value.toLowerCase()}ed successfully.`);
+      } else {
+        toast.error(`Failed to ${value.toLowerCase()} the request.`);
       }
     } catch (error) {
-      console.log("error-error-in-docs", error);
-      toast.error("An error occurred");
+      console.error("Error processing document request action:", error);
+      toast.error("An error occurred during processing.");
     }
   };
+
+  console.log(noData)
   return (
     <>
       <div className="px-[4%] py-[4%] w-full bg-gray-100 h-screen overflow-y-scroll">
@@ -138,19 +160,21 @@ const RequestsPrivateDocument = () => {
             </div>
           </div>
         </div>
-        {requestedData &&
+        {noData ? (
+          <NoDataCard />
+        ) : (
+          requestedData &&
           requestedData.map((data, index) => {
-            let image = uint8ArrayToBase64(
-              data?.notification_type?.AccessRequest?.image
-            );
-            let name = data?.notification_type?.AccessRequest?.name;
-            let principal =
-              data?.notification_type?.AccessRequest?.sender.toText();
-            let status = data?.notification_type?.AccessRequest?.status;
-            let projectId = data?.notification_type?.AccessRequest?.project_id;
+            const request = data?.notification_type?.AccessRequest;
+            if (!request) return null;
+            const image = uint8ArrayToBase64(request.image);
+            const name = request?.name;
+            const principal = request?.sender.toText();
+            const status = request?.status;
+            const projectId = request?.project_id;
             return (
               <div
-                className="flex w-auto items-center flex-wrap justify-between bg-gray-200 rounded-lg  text-lg p-4"
+                className="flex w-auto items-center flex-wrap justify-between bg-gray-200 rounded-lg  text-lg p-4 my-4"
                 key={index}
               >
                 <div className="flex items-center">
@@ -205,7 +229,8 @@ const RequestsPrivateDocument = () => {
                 </div>
               </div>
             );
-          })}
+          })
+        )}
       </div>
 
       <Toaster />
