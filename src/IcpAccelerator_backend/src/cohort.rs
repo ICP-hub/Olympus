@@ -10,18 +10,17 @@ use ic_cdk::caller;
 use ic_cdk_macros::{query, update};
 use serde::Deserialize;
 use sha2::{Digest, Sha256};
-use std::borrow::BorrowMut;
 use std::cell::RefCell;
 use std::collections::HashMap;
-use std::fmt::format;
+use crate::send_cohort_request_to_admin;
 
-#[derive(Clone, CandidType, Deserialize)]
+#[derive(Clone, CandidType, Deserialize, Debug)]
 pub struct Eligibility {
     level_on_rubric: f64,
     eligibility: Option<String>,
 }
 
-#[derive(Clone, CandidType, Deserialize)]
+#[derive(Clone, CandidType, Deserialize, Debug)]
 pub struct Cohort {
     title: String,
     description: String,
@@ -33,13 +32,22 @@ pub struct Cohort {
     cohort_end_date: String,
 }
 
-#[derive(Clone, CandidType, Deserialize)]
+#[derive(Clone, CandidType, Deserialize, Debug)]
 pub struct CohortDetails {
-    cohort_id: String,
-    cohort: Cohort,
-    cohort_created_at: u64,
-    cohort_creator: Principal,
-    cohort_creator_role: Vec<String>,
+    pub cohort_id: String,
+    pub cohort: Cohort,
+    pub cohort_created_at: u64,
+    pub cohort_creator: Principal,
+    pub cohort_creator_role: Vec<String>,
+}
+
+#[derive(Clone, CandidType, Deserialize, Debug)]
+pub struct CohortRequest {
+    pub cohort_details : CohortDetails,
+    pub sent_at : u64,
+    pub accepted_at : u64,
+    pub rejected_at : u64,
+    pub request_status : String
 }
 
 pub type MentorsAppliedForCohort = HashMap<String, Vec<MentorInternal>>;
@@ -56,8 +64,12 @@ thread_local! {
     pub static CAPITALIST_APPLIED_FOR_COHORT : RefCell<CapitalistAppliedForCohort> = RefCell::new(CapitalistAppliedForCohort::new());
     pub static APPLIER_COUNT : RefCell<ApplierCount> = RefCell::new(ApplierCount::new());
     pub static ASSOCIATED_COHORTS_WITH_PROJECT : RefCell<CohortsAssociated> = RefCell::new(CohortsAssociated::new());
+
+    pub static MY_SENT_COHORT_REQUEST : RefCell<HashMap<Principal, Vec<CohortRequest>>> = RefCell::new(HashMap::new());
 }
 
+
+//a. create_cohort
 #[update]
 pub async fn create_cohort(params: Cohort) -> Result<String, String>{
     let is_he_mentor = MENTOR_REGISTRY.with(|storage: &RefCell<MentorRegistry>| {
@@ -99,16 +111,91 @@ pub async fn create_cohort(params: Cohort) -> Result<String, String>{
         cohort_creator_role: roles_assigned,
     };
 
-    COHORT.with(|storage| {
-        let mut storage = storage.borrow_mut();
-        storage.insert(cohort_id.clone(), cohort_details)
-    });
+    let cohort_request = CohortRequest {
+        cohort_details,
+        accepted_at : 0,
+        rejected_at : 0,
+        sent_at : time(),
+        request_status : "pending".to_string()
+    };
 
-    Ok(format!(
-        "accelerator is successfully created by {} with cohort id {}",
-        caller(),
-        cohort_id.clone()
-    ))
+    //store my cohort creation request
+
+    store_cohort_creation_pending_request(cohort_request.clone());
+    
+
+    Ok(send_cohort_request_to_admin(cohort_request.clone()).await)
+
+    // COHORT.with(|storage| {
+    //     let mut storage = storage.borrow_mut();
+    //     storage.insert(cohort_id.clone(), cohort_details)
+    // });
+
+    // Ok(format!(
+    //     "accelerator is successfully created by {} with cohort id {}",
+    //     caller(),
+    //     cohort_id.clone()
+    // ))
+}
+
+//admin should be notified about cohort creation 
+
+pub fn store_cohort_creation_pending_request(request: CohortRequest) {
+    MY_SENT_COHORT_REQUEST.with(|store| {
+        store
+            .borrow_mut()
+            .entry(caller())
+            .or_insert_with(Vec::new)
+            .push(request);
+    });
+}
+
+#[query]
+pub fn get_my_pending_cohort_creation_requests() -> Vec<CohortRequest> {
+    MY_SENT_COHORT_REQUEST.with(|pending_alerts| {
+        pending_alerts
+            .borrow()
+            .get(&caller())
+            .map_or_else(Vec::new, |requests| {
+                requests
+                    .iter()
+                    .filter(|request| request.request_status == "pending")
+                    .cloned()
+                    .collect()
+            })
+    })
+}
+
+#[query]
+pub fn get_my_accepted_cohort_creation_request() -> Vec<CohortRequest> {
+    MY_SENT_COHORT_REQUEST.with(|pending_alerts| {
+        pending_alerts
+            .borrow()
+            .get(&caller())
+            .map_or_else(Vec::new, |requests| {
+                requests
+                    .iter()
+                    .filter(|request| request.request_status == "accepted")
+                    .cloned()
+                    .collect()
+            })
+    })
+}
+
+#[query]
+pub fn get_my_declined_cohort_creation_requests() -> Vec<CohortRequest> {
+    MY_SENT_COHORT_REQUEST.with(|pending_alerts| {
+        pending_alerts
+            .borrow()
+            .get(&caller())
+            .map_or_else(Vec::new, |requests| {
+                requests
+                    .iter()
+                    .filter(|request| request.request_status == "declined")
+                    .cloned()
+                    .collect()
+            })
+    })
 }
 
 #[query]
@@ -123,19 +210,22 @@ pub fn get_cohort(cohort_id: String) -> CohortDetails {
     })
 }
 
-// #[query]
-// pub fn get_all_cohorts() -> Vec<CohortDetails> {
-//     COHORT.with(|storage| {
-//         storage
-//             .borrow()
-//             .values()
-//             .flat_map(|v| v.iter().cloned())
-//             .collect()
-//     })
-// }
+
+#[query]
+pub fn get_all_cohorts() -> Vec<CohortDetails> {
+    COHORT.with(|storage| {
+        storage
+            .borrow()
+            .values()
+            .map(|v| v.clone())
+            .collect()
+    })
+
+}
 
 
 //needs to be made good in terms of error handling
+
 #[update]
 pub fn apply_for_a_cohort_as_a_mentor_or_investor(cohort_id: String) -> String {
     let caller = caller();
@@ -148,7 +238,7 @@ pub fn apply_for_a_cohort_as_a_mentor_or_investor(cohort_id: String) -> String {
         VENTURECAPITALIST_STORAGE.with(|capitalist| capitalist.borrow().contains_key(&caller));
 
     if is_he_mentor {
-        MENTOR_REGISTRY.with(|mentors: &RefCell<MentorRegistry>| {
+        MENTOR_REGISTRY.with(|mentors: &RefCell<MentorRegistry>| {  
             let mentor_up_for_cohort = mentors.borrow().get(&caller).unwrap().clone();
 
             MENTORS_APPLIED_FOR_COHORT.with(|mentors_applied: &RefCell<MentorsAppliedForCohort>| {
@@ -244,6 +334,8 @@ pub fn get_no_of_individuals_applied_for_cohort_using_id(cohort_id: String) -> R
     Ok(project_count_in_cohort)
 }
 
+
+
 #[update]
 pub fn apply_for_a_cohort_as_a_project(
     cohort_id: String,
@@ -296,7 +388,9 @@ pub fn apply_for_a_cohort_as_a_project(
         ))
     })
 }
-//
+
+
+#[query]
 pub fn get_projects_applied_for_cohort(
     cohort_id: String,
 ) -> Result<Vec<ProjectInfoInternal>, String> {
