@@ -1,5 +1,4 @@
 import React from "react";
-// import Header from '../Layout/Header/Header'
 import HomeHeroSection from "../Common/HomeHeroSection";
 import HomeSection2 from "./HomeSection2";
 import HomeSection3 from "./HomeSection3";

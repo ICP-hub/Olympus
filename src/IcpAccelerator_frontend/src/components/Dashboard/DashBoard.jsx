@@ -27,6 +27,8 @@ import AnnouncementCard from "./AnnouncementCard";
 import LiveProjects from "./LiveProjects";
 import { founderRegisteredHandlerRequest } from "../StateManagement/Redux/Reducers/founderRegisteredData";
 import MainCards from "./MainCards";
+import Banner from "../../../assets/images/banner.png";
+
 const DashBoard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -115,6 +117,53 @@ const DashBoard = () => {
     default:
       return (
         <>
+          <section
+            class="flex items-center w-full bg-gradient-to-r from-purple-900 via-purple-500 to-purple-400 pl-[9%] pr-[3%]">
+            <div class="container mx-auto">
+              <div class="flex flex-wrap -mx-4">
+                <div class="flex flex-col justify-center md:w-1/2 pt-8 sm:pt-0 sm:px-4 w-full">
+                  <h1 class="text-4xl font-bold mb-4 lg:text-6xl text-white">
+                    OLYMPUS - <br /> THE PEAK OF WEB3 ACCELERATION
+                  </h1>
+                  <p class="text-lg mb-6 md:text-xl lg:text-2xl text-white">
+                    Olympus is a multichain startup acceleration platform, fostering
+                    collaboration among key stakeholders and leveraging blockchain
+                    technology to increase transparency.
+                  </p>
+                  <div class="relative group">
+                    <a
+                      href="#"
+                      class="inline-block bg-white text-[#9B68EC] font-bold py-2 px-4 rounded-lg transition-colors duration-300"
+                    >
+                      Get Early Access
+                    </a>
+                    <div class="absolute -top-10 ml-2 py-3 px-4 bg-blue-600 rounded-br-3xl rounded-tr-3xl rounded-tl-3xl text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-default ease-in-out duration-200 hidden group-hover:block">
+                      <div className="flex">
+                        <img
+                          src={Banner}
+                          alt="Profile"
+                          class="w-6 h-6 rounded-full mr-2"
+                        />
+                        <img
+                          src={Banner}
+                          alt="Profile"
+                          class="w-6 h-6 rounded-full mr-2"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="w-full px-4 md:w-1/2">
+                  <img
+                    class="object-contain h-fit w-fit relative"
+                    src={Banner}
+                    alt="Illustration"
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
           <section className="overflow-hidden relative bg-gray-100">
             <div className="font-fontUse flex flex-col w-full h-fit px-[5%] lg1:px-[4%] py-[4%]">
               {/* <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
@@ -168,7 +217,7 @@ const DashBoard = () => {
                 <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
                   Event Announcement
                 </h1> */}
-                {/* <button className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
+              {/* <button className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
                 Explore more
               </button> */}
               {/* </div> */}

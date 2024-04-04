@@ -113,7 +113,7 @@ const App = () => {
   const initialApi = async () => {
     try {
       const currentRoleArray = await actor.get_role_status();
-      console.log('currentRoleArray',currentRoleArray)
+      console.log('currentRoleArray', currentRoleArray)
       if (currentRoleArray && currentRoleArray.length !== 0) {
         const currentActiveRole = getNameOfCurrentStatus(currentRoleArray);
         console.log('currentActiveRole', currentActiveRole)
@@ -178,44 +178,48 @@ const App = () => {
   return (
     <>
       <div className="bg-gray-100">
-        <div className="container mx-auto">
-      <div className="bg-gradient-to-r from-purple-900 via-purple-500 to-purple-400">
-    <NewHeader/>
-    </div>
-          {/* {isModalOpen && (
+        {/* <div className="container mx-auto "> */}
+        {actor ?
+          // <div className="bg-gradient-to-r from-purple-900 via-purple-500 to-purple-400">
+            <Header setModalOpen={setModalOpen} gradient={"bg-gray-100"} />
+          // </div> 
+          :
+          <div className="bg-gradient-to-r from-purple-900 via-purple-500 to-purple-400">
+            <NewHeader setModalOpen={setModalOpen} gradient={"bg-gray-100"} />
+          </div>}
+        {/* {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-50"></div>
       )} */}
-          <Header setModalOpen={setModalOpen} gradient={"bg-gray-100"} />
-          <ConnectWallet
-            isModalOpen={isModalOpen}
-            onClose={() => setModalOpen(false)}
-          />
-          {/* <DashBoard/> */}
-          {/* <ProgressCard/> */}
-          {/* <AllDetailsForm/> */}
-          {/* <ProjectDetails/> */}
-          {/* <Home/> */}
-          {/* <Adminoption /> */}
-          {/* <Admingraph /> */}
-          {/* <AdminDashboard /> */}
-          {/* <Hubcards /> */}
-          {/* <Hubdashboard /> */}
-          {/* <Hubdashboard /> */}
-          {/* <Hubapproved /> */}
-          {/* <HubDeclined /> */}
-          {/* <Mentors /> */}
-          {/* <Hublisten /> */}
-          {/* <ListedProjects /> */}
-          {/* <Hubdashboardlive /> */}
-          {/* <DashBoard /> */}
-          {/* <UserProfile/> */}
-          {/* <RoleSelector /> */}
-          {/* <NormalUser /> */}
-          {/* <InvestorRegistration/> */}
-          {/* <CreateProjectRegistration /> */}
-          <AppRoutes />
-        </div>
+        <ConnectWallet
+          isModalOpen={isModalOpen}
+          onClose={() => setModalOpen(false)}
+        />
+        {/* <DashBoard/> */}
+        {/* <ProgressCard/> */}
+        {/* <AllDetailsForm/> */}
+        {/* <ProjectDetails/> */}
+        {/* <Home/> */}
+        {/* <Adminoption /> */}
+        {/* <Admingraph /> */}
+        {/* <AdminDashboard /> */}
+        {/* <Hubcards /> */}
+        {/* <Hubdashboard /> */}
+        {/* <Hubdashboard /> */}
+        {/* <Hubapproved /> */}
+        {/* <HubDeclined /> */}
+        {/* <Mentors /> */}
+        {/* <Hublisten /> */}
+        {/* <ListedProjects /> */}
+        {/* <Hubdashboardlive /> */}
+        {/* <DashBoard /> */}
+        {/* <UserProfile/> */}
+        {/* <RoleSelector /> */}
+        {/* <NormalUser /> */}
+        {/* <InvestorRegistration/> */}
+        {/* <CreateProjectRegistration /> */}
+        <AppRoutes />
       </div>
+      {/* </div> */}
       {/* <MentorRegistration /> */}
       <Footer />
     </>

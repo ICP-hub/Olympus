@@ -266,7 +266,7 @@ const LiveProjects = ({ progress }) => {
             </>
           )}
         </div>
-        <div className="w-full md:w-1/4 pr-4 md:flex md:gap-4">
+        <div className="w-full md:w-1/4 sm:pr-4 md:flex md:gap-4">
           <RegisterCard categories={projectCategories} />
         </div>
       </div>

@@ -1,122 +1,146 @@
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
 import logoWithText from "../../../../assets/Logo/topLogoWhitepng.png";
 import Banner from "../../../../assets/images/banner.png";
+import { useSelector, useDispatch } from "react-redux";
+import LogoutModal from "../../../models/LogoutModal";
+import SwitchRole from "../../../models/SwitchRole";
+import { getCurrentRoleStatusFailureHandler, setCurrentActiveRole, setCurrentRoleStatus } from "../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
+import { useNavigate } from "react-router-dom";
+const NewHeader = ({ setModalOpen, gradient }) => {
+  // const navItems = [
+  //   {
+  //     title: "Learn",
+  //     links: [
+  //       {
+  //         title: "Start Here",
+  //         url: "/start-here",
+  //         description: "Get to know the basics",
+  //         featuredImage: "/img/nav/learn/start-here.webp",
+  //       },
+  //       {
+  //         title: "Capabilities",
+  //         url: "/capabilities",
+  //         description: "Explore the platform's capabilities",
+  //         featuredImage: "/img/nav/learn/capabilities.webp",
+  //       },
+  //       // More links can be added here
+  //     ],
+  //     bottomLinks: [
+  //       {
+  //         title: "ICP Dashboard",
+  //         url: "https://dashboard.internetcomputer.org/",
+  //       },
+  //       { title: "ICP Wiki", url: "https://wiki.internetcomputer.org/" },
+  //       // More bottom links for this section
+  //     ],
+  //   },
+  //   {
+  //     title: "Use",
+  //     links: [
+  //       {
+  //         title: "Step into Web3",
+  //         url: "/web3",
+  //         description: "Enter the world of Web3",
+  //         featuredImage: "/img/nav/use/web3.webp",
+  //       },
+  //       {
+  //         title: "Use Cases",
+  //         url: "/use-cases",
+  //         description: "Discover how to use the platform",
+  //         featuredImage: "/img/nav/use/use-cases.webp",
+  //       },
+  //       // More links can be added here
+  //     ],
+  //     bottomLinks: [
+  //       {
+  //         title: "Create an Internet Identity",
+  //         url: "https://identity.ic0.app/",
+  //       },
+  //       { title: "NNS and Staking", url: "https://nns.ic0.app/" },
+  //       // More bottom links for this section
+  //     ],
+  //   },
+  //   {
+  //     title: "Use2",
+  //     links: [
+  //       {
+  //         title: "Step into Web3",
+  //         url: "/web3",
+  //         description: "Enter the world of Web3",
+  //         featuredImage: "/img/nav/use/web3.webp",
+  //       },
+  //       {
+  //         title: "Use Cases",
+  //         url: "/use-cases",
+  //         description: "Discover how to use the platform",
+  //         featuredImage: "/img/nav/use/use-cases.webp",
+  //       },
+  //       // More links can be added here
+  //     ],
+  //     bottomLinks: [
+  //       {
+  //         title: "Create an Internet Identity",
+  //         url: "https://identity.ic0.app/",
+  //       },
+  //       { title: "NNS and Staking", url: "https://nns.ic0.app/" },
+  //       // More bottom links for this section
+  //     ],
+  //   },
+  //   {
+  //     title: "Use3",
+  //     links: [
+  //       {
+  //         title: "Step into Web3",
+  //         url: "/web3",
+  //         description: "Enter the world of Web3",
+  //         featuredImage: "/img/nav/use/web3.webp",
+  //       },
+  //       {
+  //         title: "Use Cases",
+  //         url: "/use-cases",
+  //         description: "Discover how to use the platform",
+  //         featuredImage: "/img/nav/use/use-cases.webp",
+  //       },
+  //       // More links can be added here
+  //     ],
+  //     bottomLinks: [
+  //       {
+  //         title: "Create an Internet Identity",
+  //         url: "https://identity.ic0.app/",
+  //       },
+  //       { title: "NNS and Staking", url: "https://nns.ic0.app/" },
+  //       // More bottom links for this section
+  //     ],
+  //   },
+  //   // Additional sections (Develop, Participate) can be similarly defined
+  // ];
 
-const NewHeader = () => {
-  const navItems = [
-    {
-      title: "Learn",
-      links: [
-        {
-          title: "Start Here",
-          url: "/start-here",
-          description: "Get to know the basics",
-          featuredImage: "/img/nav/learn/start-here.webp",
-        },
-        {
-          title: "Capabilities",
-          url: "/capabilities",
-          description: "Explore the platform's capabilities",
-          featuredImage: "/img/nav/learn/capabilities.webp",
-        },
-        // More links can be added here
-      ],
-      bottomLinks: [
-        {
-          title: "ICP Dashboard",
-          url: "https://dashboard.internetcomputer.org/",
-        },
-        { title: "ICP Wiki", url: "https://wiki.internetcomputer.org/" },
-        // More bottom links for this section
-      ],
-    },
-    {
-      title: "Use",
-      links: [
-        {
-          title: "Step into Web3",
-          url: "/web3",
-          description: "Enter the world of Web3",
-          featuredImage: "/img/nav/use/web3.webp",
-        },
-        {
-          title: "Use Cases",
-          url: "/use-cases",
-          description: "Discover how to use the platform",
-          featuredImage: "/img/nav/use/use-cases.webp",
-        },
-        // More links can be added here
-      ],
-      bottomLinks: [
-        {
-          title: "Create an Internet Identity",
-          url: "https://identity.ic0.app/",
-        },
-        { title: "NNS and Staking", url: "https://nns.ic0.app/" },
-        // More bottom links for this section
-      ],
-    },
-    {
-      title: "Use2",
-      links: [
-        {
-          title: "Step into Web3",
-          url: "/web3",
-          description: "Enter the world of Web3",
-          featuredImage: "/img/nav/use/web3.webp",
-        },
-        {
-          title: "Use Cases",
-          url: "/use-cases",
-          description: "Discover how to use the platform",
-          featuredImage: "/img/nav/use/use-cases.webp",
-        },
-        // More links can be added here
-      ],
-      bottomLinks: [
-        {
-          title: "Create an Internet Identity",
-          url: "https://identity.ic0.app/",
-        },
-        { title: "NNS and Staking", url: "https://nns.ic0.app/" },
-        // More bottom links for this section
-      ],
-    },
-    {
-      title: "Use3",
-      links: [
-        {
-          title: "Step into Web3",
-          url: "/web3",
-          description: "Enter the world of Web3",
-          featuredImage: "/img/nav/use/web3.webp",
-        },
-        {
-          title: "Use Cases",
-          url: "/use-cases",
-          description: "Discover how to use the platform",
-          featuredImage: "/img/nav/use/use-cases.webp",
-        },
-        // More links can be added here
-      ],
-      bottomLinks: [
-        {
-          title: "Create an Internet Identity",
-          url: "https://identity.ic0.app/",
-        },
-        { title: "NNS and Staking", url: "https://nns.ic0.app/" },
-        // More bottom links for this section
-      ],
-    },
-    // Additional sections (Develop, Participate) can be similarly defined
-  ];
+  const navigate = useNavigate();
 
+  const dispatch = useDispatch();
+  const actor = useSelector((currState) => currState.actors.actor);
+  const principal = useSelector((currState) => currState.internet.principal);
+  const isAuthenticated = useSelector(
+    (currState) => currState.internet.isAuthenticated
+  );
+  const userCurrentRoleStatus = useSelector(
+    (currState) => currState.currentRoleStatus.rolesStatusArray
+  );
+  const userCurrentRoleStatusActiveRole = useSelector(
+    (currState) => currState.currentRoleStatus.activeRole
+  );
+
+  const [showSwitchRole, setShowSwitchRole] = useState(false);
+  // console.log("principal in header", connectedWalletPrincipal);
+
+  const manageHandler = () => {
+    !principal ? setModalOpen(true) : setModalOpen(false);
+  };
   return (
     <>
       <nav
         className="z-50 px-[5%] lg1:px-[3%] py-[3%] text-black bg-transparent backdrop-blur-sm sticky top-0 transition-transform"
-        style={{ transform: "unset" }}
-      >
+        style={{ transform: "unset" }}>
         <div className="container-12 w-full flex items-center justify-between">
           <a className="self-center flex items-center" href="/">
             <img
@@ -127,7 +151,7 @@ const NewHeader = () => {
             <img src={logoWithText} alt="Olympus" className="h-8 md:h-10" />
           </a>
           <div className="hidden md:flex gap-0 items-center">
-            {navItems.map((navItem, navIndex) => (
+            {/* {navItems.map((navItem, navIndex) => (
               <div
                 key={navIndex}
                 className="relative group cursor-pointer text-lg font-extrabold"
@@ -189,26 +213,26 @@ const NewHeader = () => {
                   </div>
                 </div>
               </div>
-            ))}
+            ))} */}
           </div>
           <div className="flex gap-4 items-center group">
             <button
               type="button"
               className="font-bold rounded-xl my-2 bg-transparent border-2 border-white/50 font-fontUse text-center text-white uppercase text-[0.625rem] md:text-[0.64375rem] lg:text-[0.65625rem] xl:text-[0.78125rem] px-6 py-2 top-[6.5rem] sm4:top-[10.5rem] xxs1:top-[8.5rem] ss2:top-[7.5rem] text-wrap group-hover:bg-white group-hover:text-[#BA77FB]"
-              // onClick={manageHandler}
+              onClick={manageHandler}
             >
-              <span className=" ">SIGNUP / LOGIN</span>
+              <span className="">SIGNUP / LOGIN</span>
             </button>
 
-            <button className="md:hidden flex flex-col gap-[6px] border-none bg-transparent px-[4px] h-8 w-8 p-0 justify-center">
+            {/* <button className="md:hidden flex flex-col gap-[6px] border-none bg-transparent px-[4px] h-8 w-8 p-0 justify-center">
               <span className="bg-black dark-hero:bg-white h-[2px] w-full shrink-0"></span>
               <span className="bg-black dark-hero:bg-white h-[2px] w-full shrink-0"></span>
               <span className="bg-black dark-hero:bg-white h-[2px] w-full shrink-0"></span>
-            </button>
+            </button> */}
           </div>
         </div>
       </nav>
-      <div className=" overflow-auto fixed inset-0 bg-white z-[1000] px-6 pt-4 pb-12 transition-transform -translate-x-full pointer-events-none">
+      {/* <div className=" overflow-auto fixed inset-0 bg-white z-[1000] px-6 pt-4 pb-12 transition-transform -translate-x-full pointer-events-none">
         <div className="flex items-center justify-between ">
           <a className="flex items-center" href="/">
             <img src="/img/logo-notext.svg" alt="" className="h-5" />
@@ -330,17 +354,15 @@ const NewHeader = () => {
           </li>
         </ul>
       </div>
-      <div className="md:hidden overflow-auto fixed inset-0 bg-white z-[1000] px-6 py-4 transition-transform -translate-x-full pointer-events-none"></div>
+      <div className="md:hidden overflow-auto fixed inset-0 bg-white z-[1000] px-6 py-4 transition-transform -translate-x-full pointer-events-none"></div> */}
 
-      <section
-        class="flex items-center w-full bg-gradient-to-r from-purple-900 via-purple-500 to-purple-400 pl-[9%] pr-[3%] pb-[6%]
-      pt-[2%]"
-      >
+      {/* <section
+        class="flex items-center w-full bg-gradient-to-r from-purple-900 via-purple-500 to-purple-400 pl-[9%] pr-[3%]">
         <div class="container mx-auto">
           <div class="flex flex-wrap -mx-4">
-            <div class="w-full px-4 md:w-1/2">
+            <div class="flex flex-col justify-center md:w-1/2 pt-8 sm:pt-0 sm:px-4 w-full">
               <h1 class="text-4xl font-bold mb-4 md:text-5xl lg:text-6xl text-white">
-                Olympus - a permissionless Web3 acceleration platform
+                OLYMPUS - <br /> THE PEAK OF WEB3 ACCELERATION
               </h1>
               <p class="text-lg mb-6 md:text-xl lg:text-2xl text-white">
                 Olympus is a multichain startup acceleration platform, fostering
@@ -370,9 +392,9 @@ const NewHeader = () => {
                 </div>
               </div>
             </div>
-            <div class="w-full px-4 md:w-1/2 overflow-hidden h-[400px]">
+            <div class="w-full px-4 md:w-1/2">
               <img
-                class="object-contain h-fit w-fit relative -top-48"
+                class="object-contain h-fit w-fit relative"
                 src={Banner}
                 alt="Illustration"
                 loading="lazy"
@@ -380,7 +402,7 @@ const NewHeader = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
     </>
   );
 };
