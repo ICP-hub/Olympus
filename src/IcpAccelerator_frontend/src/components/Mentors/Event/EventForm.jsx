@@ -21,7 +21,7 @@ const startDate = new Date("1900-01-01");
 const schema = yup.object({
   title: yup
     .string()
-    .required()
+    .required("Required")
     .test("is-non-empty", null, (value) => value && value.trim().length > 0),
   description: yup
     .string()
@@ -32,14 +32,14 @@ const schema = yup.object({
   cohort_end_date: yup.date().required(),
   tags: yup
     .string()
-    .required()
+    .required("Required")
     .test("is-non-empty", null, (value) => value && value.trim().length > 0),
   deadline: yup.date().required(),
   eligibility: yup.string(),
   rubric_eligibility: yup
     .number()
     .typeError("You must enter a number")
-    .required(),
+    .required("Required"),
   no_of_seats: yup.number().typeError("You must enter a number").required(),
 });
 
@@ -100,6 +100,14 @@ const EventForm = () => {
   // );
   const onSubmitHandler = async (data) => {
     // console.log("data aaya data aaya ", data);
+    // title: String,
+    // description: String,
+    // tags: String,
+    // criteria: Eligibility,
+    // no_of_seats: u8,
+    // deadline: String,
+    // cohort_launch_date: String,
+    // cohort_end_date: String,
     const eventData = {
       title: data.title,
       description: data.description,
@@ -117,18 +125,13 @@ const EventForm = () => {
       no_of_seats: parseInt(data.no_of_seats),
     };
 
-    console.log("eventData => ", eventData);
 
     try {
       await actor.create_cohort(eventData).then((result) => {
         toast.success("Event Created");
         console.log("Event Created", result);
-        // navigate("/");
-        // window.location.href = "/";
+        navigate("/");
       });
-      console.log("data passed to backend");
-      // await dispatch(getCurrentRoleStatusRequestHandler());
-      // await dispatch(userRoleHandler());
     } catch (error) {
       toast.error(error);
       console.error("Error sending data to the backend:", error);
@@ -166,6 +169,11 @@ const EventForm = () => {
       className={`z-20 w-[500px] md:w-[300px] sm:w-[250px] sxs:w-[260px] md:h-56 relative  sxs:-right-3 right-16 md:right-0 sm:right-0 top-10`}
     />
   );
+
+
+  const errorsFunc = (val) => {
+    console.log('val', val)
+  }
   return (
     <>
       <DetailHeroSection HeroImage={HeroImage} />
@@ -176,7 +184,7 @@ const EventForm = () => {
           </div>
           <div className="text-sm font-medium text-center text-gray-200 ">
             <form
-              onSubmit={handleSubmit(onSubmitHandler)}
+              onSubmit={handleSubmit(onSubmitHandler, errorsFunc)}
               className="w-full px-4"
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">

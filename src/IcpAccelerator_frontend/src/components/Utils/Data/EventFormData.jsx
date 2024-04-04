@@ -48,5 +48,19 @@ export const formFields = [
       name: "no_of_seats",
       required: true,
       label: "No of seats",
-    }
+    },
+    {
+      id: "tags",
+      type: "text",
+      name: "tags",
+      required: true,
+      label: "Tags",
+    },
+    {
+      id: "deadline",
+      type: "date",
+      name: "deadline",
+      required: true,
+      label: "Cohort deadline date",
+    },
   ];
