@@ -20,16 +20,9 @@ import { checkCountStart } from "./components/AdminStateManagement/Redux/Reducer
 import { checkCycleStart } from "./components/AdminStateManagement/Redux/Reducers/cyclePendingReducer";
 import { checkTotalPendingStart } from "./components/AdminStateManagement/Redux/Reducers/totalPendingRequestReducer";
 import { notificationHandlerRequest } from "./components/AdminStateManagement/Redux/Reducers/notificationReducer";
-import AdminProjectdetails from "./components/Admindashboard/AdminProjectdetails";
-import Projectdetails from "./components/Admindashboard/Projectdetails";
-import Projectprofile from "./components/Admindashboard/Profile/Projectprofile";
-import AllProject from "./components/Admindashboard/AllProject";
-import Projectrequest from "./components/Admindashboard/Projectrequest";
-import Allusers from "./components/Admindashboard/Allusers";
-import Adminalluser from "./components/Admindashboard/Adminalluser";
-import UserProfile from "./components/Admindashboard/Profile/UserProfile";
-import UserAllProfile from "./components/Admindashboard/Profile/UserAllProfile";
 import { checkTotalLiveStart } from "./components/AdminStateManagement/Redux/Reducers/TotalLiveReducer";
+import { checkUpdateUserProfileStart } from "./components/AdminStateManagement/Redux/Reducers/UpdateUserProfile";
+
 const App = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const isAuthenticated = useSelector(
@@ -58,9 +51,10 @@ const App = () => {
       dispatch(projectPendingRequest());
       dispatch(checkCountStart());
       dispatch(checkCycleStart());
-      dispatch(checkTotalPendingStart())
-      dispatch(notificationHandlerRequest())
-      dispatch(checkTotalLiveStart())
+      dispatch(checkTotalPendingStart());
+      dispatch(notificationHandlerRequest());
+      dispatch(checkTotalLiveStart());
+      dispatch(checkUpdateUserProfileStart());
     }
   }, [isAuthenticated, actor, dispatch]);
 
@@ -74,14 +68,6 @@ const App = () => {
             onClose={() => setModalOpen(false)}
           />
           <AdminRoute setModalOpen={setModalOpen} />
-          {/* <Projectdetails/> */}
-          {/* <Projectprofile/> */}
-         {/* <AllProject/> */}
-          {/* <Projectrequest/> */}
-          {/* <Allusers/> */}
-          {/* <Adminalluser/> */}
-          {/* <CommonUserProfile/> */}
-          {/* <AllProfile/> */}
         </div>
       </div>
 

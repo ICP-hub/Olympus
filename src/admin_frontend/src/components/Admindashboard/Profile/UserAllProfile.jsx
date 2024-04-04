@@ -75,9 +75,9 @@ const UserAllProfile = () => {
                 key={role}
                 className={`${
                   isRoleActive
-                    ? "cursor-pointer text-white"
+                    ? "cursor-pointer text-blue-500"
                     : "cursor-not-allowed text-gray-400"
-                } ${currentRole === role ? "underline" : ""}`}
+                } ${currentRole === role ? "underline text-white" : ""}`}
                 onClick={
                   isRoleActive ? () => handleRoleChange(role) : undefined
                 }

@@ -90,51 +90,6 @@ const MentorProfile = ({ userData, Allrole, principal }) => {
     return baseMessage;
   }
 
-  // const declineUserRoleHandler = async (
-  //   principal,
-  //   boolean,
-  //   state,
-  //   category
-  // ) => {
-  //   setIsDeclining(true);
-  //   try {
-  //     const convertedPrincipal = await Principal.fromText(principal);
-  //     switch (category) {
-  //       case "mentor":
-  //         if (state === "Pending") {
-  //           await actor.decline_mentor_creation_request_candid(
-  //             convertedPrincipal,
-  //             boolean
-  //           );
-  //           // Dispatch decline action here and wait for it to complete
-  //           await dispatch(mentorDeclinedRequest());
-  //         }
-  //         break;
-  //       case "vc":
-  //         if (state === "Pending") {
-  //           await actor.decline_vc_creation_request(convertedPrincipal, boolean);
-  //           // Dispatch decline action here and wait for it to complete
-  //           await dispatch(investorDeclinedRequest());
-  //         }
-  //         break;
-  //       case "project":
-  //         if (state === "Pending") {
-  //           await actor.decline_project_creation_request(convertedPrincipal);
-  //           // Dispatch decline action here and wait for it to complete
-  //           await dispatch(projectDeclinedRequest());
-  //         }
-  //         break;
-  //       default:
-  //         console.warn("Unhandled category:", category);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error processing decline request:", error);
-  //   } finally {
-  //     setIsDeclining(false);
-  //     // window.location.reload();
-  //   }
-  // };
-
   const declineUserRoleHandler = async (
     principal,
     boolean,
@@ -206,13 +161,13 @@ const MentorProfile = ({ userData, Allrole, principal }) => {
   return (
     <div className="w-full px-[4%]">
       <div className="  bg-white  shadow-md shadow-gray-400 pb-6 pt-4 rounded-lg w-full">
-        <div className="w-full pl-4 pr-2 flex flex-wrap flex-row items-start justify-start py-4">
+        <div className="w-full flex  md:flex-row flex-col md:items-start items-center md:justify-start justify-center py-4">
           <div className="relative">
             <div className="object-fill">
               <img
-                className="md:w-36 md:h-36 w-28 h-28  mx-4 justify-start rounded-full"
+                className="md:w-36 md:h-36 w-28 h-28 mx-4 justify-start rounded-full"
                 src={profile}
-                alt="profile"
+                alt="description"
               />
             </div>
 
@@ -234,13 +189,20 @@ const MentorProfile = ({ userData, Allrole, principal }) => {
               </svg>
             </div>
           </div>
-          <div className="flex flex-col ml-4  mt-2 w-auto md:mr-80">
+          <div className="flex flex-col ml-4  mt-2 w-auto md:mr-80 justify-start">
             <div className="flex flex-row  gap-4 items-center">
               <h1 className="md:text-3xl text-xl md:font-extrabold font-bold  bg-black text-transparent bg-clip-text">
                 {userData[0].profile.user_data.full_name}
               </h1>
+              {/* <div>
+                <p className="bg-[#2A353D] text-xs rounded-full text-white py-1 px-2">
+                  {userData[0].category.activeCategory}
+                </p>
+              </div> */}
             </div>
-
+            {/* <p className="font-normal text-black  md:text-md text-sm mt-2  mb-1 underline ">
+              {userData[0].category_of_mentoring_service}
+            </p> */}
             <p className="text-gray-500 md:text-md text-sm font-normal mb-4">
               {userData[0].profile.user_data.email}
             </p>
@@ -276,7 +238,7 @@ const MentorProfile = ({ userData, Allrole, principal }) => {
             </div>
           </div>
 
-          <div className="flex flex-col gap-2 h-[300px] bg-gray-300 rounded-md mt-2 px-2 overflow-y-auto py-2">
+          <div className="flex flex-col gap-2 h-[275px] bg-gray-100 px-[1%] rounded-md mt-2 shadow-2xl overflow-y-auto py-2">
             {Allrole &&
               Allrole.length > 0 &&
               Allrole.filter(
@@ -287,9 +249,9 @@ const MentorProfile = ({ userData, Allrole, principal }) => {
               ).map((role, index) => (
                 <div key={index} className="flex justify-around items-center">
                   <button
-                    className={`flex items-center md:w-[310px] w-full h-[90px] ${getButtonClass(
+                    className={`flex px-4 items-center md:w-[310px] w-full h-[90px] ${getButtonClass(
                       role.status
-                    )} rounded-md px-4`}
+                    )} rounded-md `}
                   >
                     <div className="xl:lg:ml-4">{Profile2}</div>
                     <p className="flex justify-center items-center text-white p-2 text-sm">

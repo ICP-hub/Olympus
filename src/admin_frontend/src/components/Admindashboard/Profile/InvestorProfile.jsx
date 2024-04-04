@@ -10,12 +10,8 @@ import { Principal } from "@dfinity/principal";
 import { ThreeDots } from "react-loader-spinner";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { mentorApprovedRequest } from "../../AdminStateManagement/Redux/Reducers/mentorApproved";
 import { investorApprovedRequest } from "../../AdminStateManagement/Redux/Reducers/investorApproved";
-import { projectApprovedRequest } from "../../AdminStateManagement/Redux/Reducers/projectApproved";
-import { mentorDeclinedRequest } from "../../AdminStateManagement/Redux/Reducers/mentorDeclined";
 import { investorDeclinedRequest } from "../../AdminStateManagement/Redux/Reducers/investorDecline";
-import { projectDeclinedRequest } from "../../AdminStateManagement/Redux/Reducers/projectDeclined";
 
 const InvestorProfile = ({ userData, Allrole, principal }) => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -156,11 +152,11 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
   return (
     <div className="w-full">
       <div className="  bg-white  shadow-md shadow-gray-400 pb-6 pt-4 rounded-lg w-full">
-        <div className="w-full pl-4 pr-2 flex flex-wrap flex-row items-start justify-start py-4">
+        <div className="w-full flex  md:flex-row flex-col md:items-start items-center md:justify-start justify-center py-4">
           <div className="relative">
             <div className="object-fill">
               <img
-                className="md:w-36 md:h-36 w-28 h-28  mx-4 justify-start rounded-full"
+                className="md:w-36 md:h-36 w-28 h-28 mx-4 justify-start rounded-full"
                 src={profile}
                 alt="description"
               />
@@ -184,19 +180,29 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
               </svg>
             </div>
           </div>
-          <div className="flex flex-col ml-4  mt-2 w-auto md:mr-80">
+          <div className="flex flex-col ml-4  mt-2 w-auto md:mr-80 justify-start">
             <div className="flex flex-row  gap-4 items-center">
               <h1 className="md:text-3xl text-xl md:font-extrabold font-bold  bg-black text-transparent bg-clip-text">
                 {userData[0].params.user_data.full_name}
               </h1>
+              {/* <div>
+                <p className="bg-[#2A353D] text-xs rounded-full text-white py-1 px-2">
+                  {userData[0].category.activeCategory}
+                </p>
+              </div> */}
             </div>
+            {/* <p className="font-normal text-black  md:text-md text-sm mt-2  mb-1 underline ">
+              {userData[0].category_of_mentoring_service}
+            </p> */}
             <p className="text-gray-500 md:text-md text-sm font-normal mb-4">
               {userData[0].params.user_data.email}
             </p>
+
             <div className="flex flex-col items-start gap-3 text-sm">
               <div className="flex flex-row  text-gray-600 space-x-2">
                 {place}
                 <p className="underline ">
+                  {" "}
                   {userData[0].params.user_data.country}
                 </p>
               </div>
@@ -220,7 +226,7 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
             </div>
           </div>
 
-          <div className="flex flex-col gap-2 h-[300px] bg-gray-300 rounded-md mt-2 px-2 overflow-y-auto py-2">
+          <div className="flex flex-col gap-2 h-[275px] bg-gray-100 px-[1%] rounded-md mt-2  overflow-y-auto py-2">
             {Allrole &&
               Allrole.length > 0 &&
               Allrole.filter(
@@ -231,9 +237,9 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
               ).map((role, index) => (
                 <div key={index} className="flex justify-around items-center">
                   <button
-                    className={`flex items-center md:w-[310px] w-full h-[90px] ${getButtonClass(
+                    className={`flex px-4 items-center md:w-[310px] w-full h-[90px] ${getButtonClass(
                       role.status
-                    )} rounded-md px-4`}
+                    )} rounded-md `}
                   >
                     <div className="xl:lg:ml-4">{Profile2}</div>
                     <p className="flex justify-center items-center text-white p-2 text-sm">
@@ -400,27 +406,6 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
             </div>
           )}
         </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         {Allrole?.map((role, index) => {
           const roleName = role.name === "vc" ? "vc" : role.name;
