@@ -23,6 +23,7 @@ import AddAMentorRequestModal from '../../../models/AddAMentorRequestModal';
 import toast, { Toaster } from "react-hot-toast";
 import Details from '../../Resources/ProjectDocuments';
 import ProjectDocuments from '../../Resources/ProjectDocuments';
+import ProjectMoneyRaising from '../../Resources/ProjectMoneyRaising';
 
 const ProjectDetailsForMentorProject = () => {
     // Add your component logic here
@@ -176,6 +177,18 @@ const ProjectDetailsForMentorProject = () => {
                     role={true}
                     socials={true}
                     filter={"documents"}
+                    />
+                );
+                case "project-money-raising":
+                return (
+                    <ProjectMoneyRaising
+                    data={projectData}
+                    profile={true}
+                    type={!true}
+                    name={true}
+                    role={true}
+                    socials={true}
+                    filter={"raising"}
                     />
                 );
             default:
