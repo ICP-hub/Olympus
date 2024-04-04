@@ -3,7 +3,12 @@ use crate::mentor::*;
 use crate::project_registration::*;
 use crate::user_module::*;
 use crate::vc_registration::*;
+use crate::CohortDetails;
+use crate::CohortRequest;
+use crate::COHORT;
+use crate::MY_SENT_COHORT_REQUEST;
 use candid::{CandidType, Principal};
+use ic_cdk::api::is_controller;
 use ic_cdk::api::management_canister::main::{canister_info, CanisterInfoRequest};
 use ic_cdk::api::stable::{StableReader, StableWriter};
 use ic_cdk::api::{caller, id};
@@ -45,7 +50,8 @@ enum MyError {
 }
 
 thread_local! {
-    static ADMIN_NOTIFICATIONS : RefCell<HashMap<Principal, Vec<Notification>>> = RefCell::new(HashMap::new())
+    static ADMIN_NOTIFICATIONS : RefCell<HashMap<Principal, Vec<Notification>>> = RefCell::new(HashMap::new());
+    static COHORT_REQUEST : RefCell<HashMap<Principal, Vec<CohortRequest>>> = RefCell::new(HashMap::new());
 }
 
 fn change_notification_status(requester: Principal, requested_for: String, changed_status: String) {
@@ -1099,7 +1105,8 @@ pub fn get_spotlight_projects() -> Vec<SpotlightDetails> {
 #[query]
 pub fn get_spotlight_project_uids() -> Vec<String> {
     SPOTLIGHT_PROJECTS.with(|spotlight| {
-        spotlight.borrow()
+        spotlight
+            .borrow()
             .iter()
             .map(|details| details.project_id.clone())
             .collect()
@@ -1678,3 +1685,201 @@ pub fn update_mentor_profile(requester: Principal, updated_profile: MentorProfil
         }
     })
 }
+
+//cohort admin operations
+
+pub async fn send_cohort_request_to_admin(cohort_request: CohortRequest) -> String {
+    //access controllers
+    match get_info().await {
+        Ok(res) => {
+            let controllers = res;
+
+            for c in controllers {
+                let i: i8 = 1;
+
+                ic_cdk::println!("no = {} c = {}", i, c);
+
+                COHORT_REQUEST.with(|cohort_requests| {
+                    let mut cohort_requests = cohort_requests.borrow_mut();
+                    cohort_requests
+                        .entry(c)
+                        .or_default()
+                        .push(cohort_request.clone())
+                });
+            }
+            format!("cohort creation request has been sent to admin")
+        }
+        Err(e) => {
+            format!("unable to get canister information {:?}", e)
+        }
+    }
+}
+
+#[query]
+pub fn get_pending_cohort_requests_for_admin() -> Vec<CohortRequest> {
+    COHORT_REQUEST.with(|pending_alerts| {
+        pending_alerts
+            .borrow()
+            .get(&caller())
+            .map_or_else(Vec::new, |requests| {
+                requests
+                    .iter()
+                    .filter(|request| request.request_status == "pending")
+                    .cloned()
+                    .collect()
+            })
+    })
+}
+
+#[update]
+pub fn accept_cohort_creation_request(cohort_id: String) -> String {
+    let caller = caller();
+
+    if !is_controller(&caller) {
+        return format!("only canister controller can call this function");
+    }
+
+    let mut already_accepted = false;
+
+    // Check if the offer has already been accepted
+    COHORT_REQUEST.with(|state: &RefCell<HashMap<Principal, Vec<CohortRequest>>>| {
+        if let Some(reqs) = state.borrow().get(&caller) {
+            if reqs
+                .iter()
+                .any(|r| r.cohort_details.cohort_id == cohort_id && r.request_status == "accepted")
+            {
+                already_accepted = true;
+            }
+        }
+    });
+
+    // If the offer has already been accepted, return early with a message
+    if already_accepted {
+        return format!(
+            "cohort request with id: {} has already been accepted.",
+            cohort_id
+        );
+    }
+
+    let mut request_found_and_updated = false;
+
+    COHORT_REQUEST.with(|state: &RefCell<HashMap<Principal, Vec<CohortRequest>>>| {
+        if let Some(requests) = state.borrow_mut().get_mut(&caller) {
+            if let Some(request) = requests
+                .iter_mut()
+                .find(|r| r.cohort_details.cohort_id == cohort_id)
+            {
+                //ic_cdk::println!("FOUND REQUEST -> {:?}", request);
+
+                request.request_status = "accepted".to_string();
+                request.accepted_at = time();
+
+                //ic_cdk::println!("UPDATED THE FOUND REQUEST FOR ADMIN-> {:?}", request);
+
+                MY_SENT_COHORT_REQUEST.with(
+                    |sent_state: &RefCell<HashMap<Principal, Vec<CohortRequest>>>| {
+                        if let Some(sent_status_vector) = sent_state
+                            .borrow_mut()
+                            .get_mut(&request.cohort_details.cohort_creator)
+                        {
+                            if let Some(request) = sent_status_vector
+                                .iter_mut()
+                                .find(|r| r.cohort_details.cohort_id == cohort_id)
+                            {
+                                request.request_status = "accepted".to_string();
+                                request.accepted_at = time();
+
+                                //ic_cdk::println!("UPDATED THE FOUND REQUEST FOR COHORT CREATOR-> {:?}", request);
+                            }
+                        }
+                    },
+                );
+
+                COHORT.with(|storage| {
+                    let mut storage = storage.borrow_mut();
+
+                    storage.insert(cohort_id.clone(), request.cohort_details.clone());
+
+                    //ic_cdk::println!("GOT INSERTED IN COHORT -> {:?}", request);
+                });
+            }
+        }
+    });
+
+    format!(
+        "You have accepted the cohort creation with cohort id: {}",
+        cohort_id
+    )
+}
+
+#[update]
+pub fn decline_cohort_creation_request(cohort_id: String) -> String {
+    let caller = caller();
+
+    COHORT_REQUEST.with(|state: &RefCell<HashMap<Principal, Vec<CohortRequest>>>| {
+        if let Some(requests) = state.borrow_mut().get_mut(&caller) {
+            if let Some(request) = requests
+                .iter_mut()
+                .find(|r| r.cohort_details.cohort_id == cohort_id)
+            {
+                request.request_status = "declined".to_string();
+                request.accepted_at = time();
+
+                MY_SENT_COHORT_REQUEST.with(|sent_state| {
+                    if let Some(sent_status_vector) = sent_state
+                        .borrow_mut()
+                        .get_mut(&request.cohort_details.cohort_creator)
+                    {
+                        if let Some(request) = sent_status_vector
+                            .iter_mut()
+                            .find(|r| r.cohort_details.cohort_id == cohort_id)
+                        {
+                            request.request_status = "declined".to_string();
+                            request.rejected_at = time();
+                        }
+                    }
+                });
+            }
+        }
+    });
+
+    format!(
+        "you have declined the cohort creation request: {}",
+        cohort_id
+    )
+}
+
+#[query]
+pub fn get_accepted_cohort_creation_request_for_admin() -> Vec<CohortRequest> {
+    COHORT_REQUEST.with(|pending_alerts| {
+        pending_alerts
+            .borrow()
+            .get(&caller())
+            .map_or_else(Vec::new, |requests| {
+                requests
+                    .iter()
+                    .filter(|request| request.request_status == "accepted")
+                    .cloned()
+                    .collect()
+            })
+    })
+}
+
+#[query]
+pub fn get_declined_cohort_creation_request_for_admin() -> Vec<CohortRequest> {
+    COHORT_REQUEST.with(|pending_alerts| {
+        pending_alerts
+            .borrow()
+            .get(&caller())
+            .map_or_else(Vec::new, |requests| {
+                requests
+                    .iter()
+                    .filter(|request| request.request_status == "declined")
+                    .cloned()
+                    .collect()
+            })
+    })
+}
+
+
+//b5pqo-yef5a-lut3t-kmrpc-h7dnp-v3d2t-ls6di-y33wa-clrtb-xdhl4-dae

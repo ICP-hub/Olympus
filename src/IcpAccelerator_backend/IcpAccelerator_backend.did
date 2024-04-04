@@ -51,6 +51,13 @@ type CohortDetails = record {
   cohort_creator : principal;
   cohort : Cohort;
 };
+type CohortRequest = record {
+  rejected_at : nat64;
+  request_status : text;
+  cohort_details : CohortDetails;
+  accepted_at : nat64;
+  sent_at : nat64;
+};
 type Counts = record {
   user_count : nat64;
   only_user_count : nat64;
@@ -626,6 +633,7 @@ type VentureCapitalistInternal = record {
   params : VentureCapitalist;
 };
 service : {
+  accept_cohort_creation_request : (text) -> (text);
   accept_offer_of_investor : (text, text, text) -> (text);
   accept_offer_of_mentor : (text, text, text) -> (text);
   accept_offer_of_project : (text, text) -> (text);
@@ -656,6 +664,7 @@ service : {
   connect_to_team_member : (text, text) -> (text);
   count_live_projects : () -> (nat64) query;
   create_cohort : (Cohort) -> (Result_2);
+  decline_cohort_creation_request : (text) -> (text);
   decline_mentor_creation_request_candid : (principal, bool) -> (text);
   decline_mentor_profile_update_request : (principal, bool) -> (text);
   decline_money_access_request : (text, principal) -> (text);
@@ -673,6 +682,9 @@ service : {
   delete_venture_capitalist : () -> (text);
   delete_venture_capitalist_caller : () -> (text);
   filter_out_projects : (FilterCriteria) -> (vec ProjectInfo) query;
+  get_accepted_cohort_creation_request_for_admin : () -> (
+      vec CohortRequest,
+    ) query;
   get_accepted_request_for_investor : () -> (vec OfferToSendToInvestor) query;
   get_accepted_request_for_mentor : (principal) -> (
       vec OfferToSendToMentor,
@@ -758,6 +770,9 @@ service : {
   get_blog_post : () -> (vec record { principal; vec Blog }) query;
   get_cohort : (text) -> (CohortDetails) query;
   get_dapp_link : (text) -> (text) query;
+  get_declined_cohort_creation_request_for_admin : () -> (
+      vec CohortRequest,
+    ) query;
   get_declined_request_for_investor : () -> (vec OfferToSendToMentor) query;
   get_declined_request_for_mentor : (principal) -> (
       vec OfferToSendToMentor,
@@ -794,13 +809,17 @@ service : {
   get_mentor_info_combined : (principal) -> (opt MentorInternal) query;
   get_mentor_info_using_principal : (principal) -> (opt MentorInternal) query;
   get_multichain_list : () -> (vec text) query;
+  get_my_accepted_cohort_creation_request : () -> (vec CohortRequest) query;
+  get_my_declined_cohort_creation_requests : () -> (vec CohortRequest) query;
   get_my_id : () -> (principal) query;
+  get_my_pending_cohort_creation_requests : () -> (vec CohortRequest) query;
   get_my_project : () -> (ProjectInfoInternal) query;
   get_no_of_individuals_applied_for_cohort_using_id : (text) -> (
       Result_4,
     ) query;
   get_notifications_for_hubs : () -> (vec NotificationProject) query;
   get_pending_admin_notifications : () -> (vec Notification) query;
+  get_pending_cohort_requests_for_admin : () -> (vec CohortRequest) query;
   get_pending_cycles : () -> (nat) query;
   get_pending_money_requestes : (text) -> (vec ProjectNotification) query;
   get_pending_offers_received_from_investor : (text) -> (
