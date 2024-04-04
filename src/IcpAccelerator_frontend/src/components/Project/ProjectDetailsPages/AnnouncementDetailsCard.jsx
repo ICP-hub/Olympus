@@ -8,9 +8,13 @@ import { useSelector } from "react-redux";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import { formatFullDateFromBigInt } from "../../Utils/formatter/formatDateFromBigInt";
 import NoDataCard from "../../Mentors/Event/NoDataCard";
+import ment from "../../../../assets/images/ment.jpg"
 
 const AnnouncementDetailsCard = ({ data }) => {
   // console.log('data', data?.uid)
+  if(!data){
+    return null
+  }
   const actor = useSelector((currState) => currState.actors.actor);
   const [noData, setNoData] = useState(null);
   const [latestAnnouncementData, setLatestAnnouncementData] = useState([]);
@@ -41,12 +45,7 @@ const AnnouncementDetailsCard = ({ data }) => {
     }
   }, [actor, data]);
 
-
- if (!data) {
-        return null;
-    }
   return (
-    // <div className="">
     <div className="gap-2 overflow-x-auto">
       <Swiper
         modules={[Pagination, Autoplay]}
@@ -81,31 +80,31 @@ const AnnouncementDetailsCard = ({ data }) => {
             let ann_name = card?.announcement_data?.announcement_title ?? "";
             let ann_time = card?.timestamp ? formatFullDateFromBigInt(card?.timestamp) : "";
             let ann_desc = card?.announcement_data?.announcement_description ?? "";
-            let ann_project_logo = card?.project_logo ? uint8ArrayToBase64(card?.project_logo) : "";
+            let ann_project_logo = card?.project_logo ? uint8ArrayToBase64(card?.project_logo) : ment;
+            // let ann_project_logo = ment;
             let ann_project_name = card?.project_name ?? "";
             let ann_project_desc = card?.project_desc ?? "";
             return (
               <SwiperSlide key={index}>
-                <div className="shadow-md rounded-3xl overflow-hidden border-2 ">
+                <div className="border-2 mb-4 mx-1 overflow-hidden rounded-3xl shadow-md">
                   <div className="p-6">
-                    {/* <h1 className="text-[#7283EA] font-bold">Announcement</h1> */}
                     <div className="flex flex-col gap-2">
-                      <div className="flex flex-row justify-between mt-3">
+                      <div className="flex flex-row justify-between">
                         <p className="text-black font-bold">{ann_name}</p>
                         <p className="text-black font-bold">{ann_time}</p>
                       </div>
-                      <p className="text-gray-500 text-sm mt-3">
+                      <p className="h-32 overflow-y-scroll text-gray-500 text-sm">
                         {ann_desc}
                       </p>
                       <div className="flex flex-row gap-2 items-center">
                         <img
-                          className="h-20 w-20 rounded-xl"
+                          className="h-14 w-14 rounded-xl object-cover"
                           src={ann_project_logo}
                           alt="img"
                         />
                         <div className="flex flex-col justify-around gap-2">
-                          <p className="text-md font-bold">{ann_project_name}</p>
-                          <p className="font-semibold text-gray-500  text-xs">
+                          <p className="font-bold text-md truncate w-20">{ann_project_name}</p>
+                          <p className="font-semibold text-gray-500  text-xs line-clamp-2">
                             {ann_project_desc}</p>
                         </div>
                       </div>
@@ -117,7 +116,6 @@ const AnnouncementDetailsCard = ({ data }) => {
           })}
       </Swiper>
     </div>
-    // </div>
   );
 };
 

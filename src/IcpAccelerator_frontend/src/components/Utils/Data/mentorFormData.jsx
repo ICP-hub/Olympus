@@ -38,46 +38,69 @@ export const mentorRegistrationPersonalDetails = [
     name: "bio",
     label: "Bio.",
   },
-  
 ];
 
-
-  export const mentorRegistrationDetails = [
-    {
-      id: "reason_for_joining",
-      type: "text",
-      name: "reason_for_joining",
-      required: true,
-      label: "Reason for joining *",
-    },
-    {
-      id: "website",
-      type: "text",
-      name: "website",
-      required: true,
-      label: "Website link *",
-    },
-    {
-      id: "years_of_mentoring",
-      type: "number",
-      name: "years_of_mentoring",
-      required: true,
-      label: "Years of mentoring *",
-    },
-    // {
-    //   id: "existing_icp_project_porfolio",
-    //   type: "text",
-    //   name: "existing_icp_project_porfolio",
-    //   required: false,
-    //   label: "Exisitng Icp project porfolio",
-    //   onFocus: null,
-    //   onBlur: null,
-    // },
-    {
-      id: "linkedin_link",
-      type: "text",
-      name: "linkedin_link",
-      required: true,
-      label: "LinkedIn link *",
-    },
-  ];
+export const mentorRegistrationDetails = [
+  {
+    id: "reason_for_joining",
+    type: "text",
+    name: "reason_for_joining",
+    required: true,
+    label: "Reason for joining *",
+  },
+  {
+    id: "website",
+    type: "text",
+    name: "website",
+    required: true,
+    label: "Website link *",
+  },
+  {
+    id: "years_of_mentoring",
+    type: "number",
+    name: "years_of_mentoring",
+    required: true,
+    label: "Years of mentoring *",
+  },
+  // {
+  //   id: "existing_icp_project_porfolio",
+  //   type: "text",
+  //   name: "existing_icp_project_porfolio",
+  //   required: false,
+  //   label: "Exisitng Icp project porfolio",
+  //   onFocus: null,
+  //   onBlur: null,
+  // },
+  {
+    id: "linkedin_link",
+    type: "text",
+    name: "linkedin_link",
+    required: true,
+    label: "LinkedIn link *",
+  },
+  {
+    id: "twitter_link",
+    type: "text",
+    name: "twitter_link",
+    label: "Twitter",
+  },
+  {
+    id: "telegram_link",
+    type: "text",
+    name: "telegram_link",
+    label: "Telegram",
+  },
+  {
+    id: "bio_mentor",
+    type: "text",
+    name: "bio_mentor",
+    required: true,
+    label: "Bio *",
+  },
+  {
+    id: "documents_link",
+    type: "text",
+    name: "documents_link",
+    label: "Documents",
+  },
+];

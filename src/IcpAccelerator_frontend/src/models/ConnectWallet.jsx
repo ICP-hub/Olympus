@@ -80,20 +80,20 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
                 <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
                   <button
                     type="button"
-                    className="text-gray-400 bg-transparent hover:text-gray-900 rounded-lg text-sm h-8 w-8 inline-flex justify-center items-center"
+                    className="text-gray-400 bg-transparent hover:text-gray-900 rounded-lg text-sm h-8 w-8 inline-flex justify-center items-center z-10"
                     onClick={onClose}
                   >
                     {closeModalSvg}
                   </button>
-                  <h3 className="text-lg font-semibold text-gray-900 grow text-center">
-                    Log in or Sign up
+                  <h3 className="text-lg font-semibold text-gray-900 grow text-center absolute left-0 right-0">
+                    Signup / Login
                   </h3>
                 </div>
                 <div className="p-4 md:p-5">
-                  <p className="text-[16px] font-normal text-gray-500 text-center">
+                  {/* <p className="text-[16px] font-normal text-gray-500 text-center">
                     If you already have - continue with method you have used
                     previously.
-                  </p>
+                  </p> */}
                   <ul className="my-4 space-y-3 cursor-pointer">
                     {walletModalSvg.map((wallet, index) => (
                       <div key={index} onClick={loginHandler}>

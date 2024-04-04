@@ -73,9 +73,9 @@ const Header = ({ setModalOpen, gradient }) => {
         </div>
         {isAuthenticated && (
           <div className="space-x-3 text-xs md:block hidden">
-            {/* <a href="" className={`${underline}`}>
+            <a href="/" className={`${underline}`}>
               Home
-            </a> */}
+            </a>
             {/* <a href="#" className={`${underline}`}>
               Event
             </a>
@@ -94,7 +94,7 @@ const Header = ({ setModalOpen, gradient }) => {
                       : ''
               )}
                 // className={`${underline}`}
-                className="cursor-pointer focus:after:absolute focus:after:bg-blue-800 focus:after:block focus:after:bottom-[-4px] focus:after:content-[''] focus:after:h-[2px] focus:after:left-0 focus:after:w-full relative text-lg"
+                className="cursor-pointer focus:after:absolute focus:after:bg-blue-800 focus:after:block focus:after:bottom-[-4px] focus:after:content-[''] focus:after:h-[2px] focus:after:left-0 focus:after:w-full relative "
               >
                 Associations
               </span>
@@ -131,7 +131,7 @@ const Header = ({ setModalOpen, gradient }) => {
             className="font-bold rounded-md my-2 bg-indigo-600 font-fontUse text-center text-white uppercase text-[0.625rem] md:text-[0.64375rem] lg:text-[0.65625rem] xl:text-[0.78125rem] px-6 py-2 top-[6.5rem] sm4:top-[10.5rem] xxs1:top-[8.5rem] ss2:top-[7.5rem] text-wrap"
             onClick={manageHandler}
           >
-            SIGN UP / LOGIN
+            SIGNUP / LOGIN
           </button>
         )}
       </div>

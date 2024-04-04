@@ -62,7 +62,7 @@ const LiveProjects = ({ progress }) => {
     {
       id: "registerProject",
       title: "Register your Projects",
-      description: "See a project missing? Submit your projects to this page.",
+      description: "See a project missing? Submit your projects to participate in the acceleration.",
       buttonText: "Register Now",
       imgSrc: hover,
     },

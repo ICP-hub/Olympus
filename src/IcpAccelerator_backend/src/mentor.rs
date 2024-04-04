@@ -1,5 +1,6 @@
 use candid::{CandidType, Principal};
 use ic_cdk::api::{caller, management_canister::main::raw_rand};
+use ic_cdk::storage::{self, stable_restore};
 use ic_cdk_macros::{query, update};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
@@ -399,96 +400,61 @@ pub fn get_mentor_announcements() -> HashMap<Principal, Vec<MAnnouncements>> {
 }
 
 pub fn pre_upgrade_mentor() {
-    MENTOR_REGISTRY.with(|registry| {
-        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
-
-        let mut writer = StableWriter::default();
-        writer
-            .write(&serialized)
-            .expect("Failed to write to stable storage");
+    MENTOR_REGISTRY.with(|data| {
+        match storage::stable_save((data.borrow().clone(),)) {
+            Ok(_) => ic_cdk::println!("MENTOR_REGISTRY saved successfully."),
+            Err(e) => ic_cdk::println!("Failed to save MENTOR_REGISTRY: {:?}", e),
+        }
     });
 
-    MENTOR_AWAITS_RESPONSE.with(|registry| {
-        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
-
-        let mut writer = StableWriter::default();
-        writer
-            .write(&serialized)
-            .expect("Failed to write to stable storage");
+    MENTOR_AWAITS_RESPONSE.with(|data| {
+        match storage::stable_save((data.borrow().clone(),)) {
+            Ok(_) => ic_cdk::println!("MENTOR_AWAITS_RESPONSE saved successfully."),
+            Err(e) => ic_cdk::println!("Failed to save MENTOR_AWAITS_RESPONSE: {:?}", e),
+        }
     });
 
-    DECLINED_MENTOR_REQUESTS.with(|registry| {
-        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
-
-        let mut writer = StableWriter::default();
-        writer
-            .write(&serialized)
-            .expect("Failed to write to stable storage");
+    DECLINED_MENTOR_REQUESTS.with(|data| {
+        match storage::stable_save((data.borrow().clone(),)) {
+            Ok(_) => ic_cdk::println!("DECLINED_MENTOR_REQUESTS saved successfully."),
+            Err(e) => ic_cdk::println!("Failed to save DECLINED_MENTOR_REQUESTS: {:?}", e),
+        }
     });
-    MENTOR_PROFILE_EDIT_AWAITS.with(|registry| {
-        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
 
-        let mut writer = StableWriter::default();
-        writer
-            .write(&serialized)
-            .expect("Failed to write to stable storage");
+    MENTOR_PROFILE_EDIT_AWAITS.with(|data| {
+        match storage::stable_save((data.borrow().clone(),)) {
+            Ok(_) => ic_cdk::println!("MENTOR_PROFILE_EDIT_AWAITS saved successfully."),
+            Err(e) => ic_cdk::println!("Failed to save MENTOR_PROFILE_EDIT_AWAITS: {:?}", e),
+        }
     });
-    DECLINED_MENTOR_PROFILE_EDIT_REQUEST.with(|registry| {
-        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
 
-        let mut writer = StableWriter::default();
-        writer
-            .write(&serialized)
-            .expect("Failed to write to stable storage");
+    DECLINED_MENTOR_PROFILE_EDIT_REQUEST.with(|data| {
+        match storage::stable_save((data.borrow().clone(),)) {
+            Ok(_) => ic_cdk::println!("DECLINED_MENTOR_PROFILE_EDIT_REQUEST saved successfully."),
+            Err(e) => ic_cdk::println!("Failed to save DECLINED_MENTOR_PROFILE_EDIT_REQUEST: {:?}", e),
+        }
     });
-    MENTOR_ANNOUNCEMENTS.with(|registry| {
-        let serialized = bincode::serialize(&*registry.borrow()).expect("Serialization failed");
 
-        let mut writer = StableWriter::default();
-        writer
-            .write(&serialized)
-            .expect("Failed to write to stable storage");
+    MENTOR_ANNOUNCEMENTS.with(|data| {
+        match storage::stable_save((data.borrow().clone(),)) {
+            Ok(_) => ic_cdk::println!("MENTOR_ANNOUNCEMENTS saved successfully."),
+            Err(e) => ic_cdk::println!("Failed to save MENTOR_ANNOUNCEMENTS: {:?}", e),
+        }
     });
 }
 
 pub fn post_upgrade_mentor() {
-    let mut reader = StableReader::default();
-    let mut data = Vec::new();
-    reader
-        .read_to_end(&mut data)
-        .expect("Failed to read from stable storage");
-    let notifications: HashMap<Principal, Vec<MAnnouncements>> =
-        bincode::deserialize(&data).expect("Deserialization failed of notification");
-    MENTOR_ANNOUNCEMENTS.with(|notifications_ref| {
-        *notifications_ref.borrow_mut() = notifications;
-    });
-    let vc_storage: HashMap<Principal, MentorInternal> =
-        bincode::deserialize(&data).expect("Deserialization failed of notification");
-    MENTOR_REGISTRY.with(|notifications_ref| {
-        *notifications_ref.borrow_mut() = vc_storage;
-    });
+    match stable_restore::<(MentorRegistry, MentorRegistry, MentorRegistry, MentorParams, MentorParams, MentorAnnouncements)>() {
+        Ok((restored_mentor_registry, restored_mentor_awaits_response, restored_declined_mentor_requests, restored_mentor_profile_edit_awaits, restored_declined_mentor_profile_edit_request, restored_mentor_announcements)) => {
+            MENTOR_REGISTRY.with(|data| *data.borrow_mut() = restored_mentor_registry);
+            MENTOR_AWAITS_RESPONSE.with(|data| *data.borrow_mut() = restored_mentor_awaits_response);
+            DECLINED_MENTOR_REQUESTS.with(|data| *data.borrow_mut() = restored_declined_mentor_requests);
+            MENTOR_PROFILE_EDIT_AWAITS.with(|data| *data.borrow_mut() = restored_mentor_profile_edit_awaits);
+            DECLINED_MENTOR_PROFILE_EDIT_REQUEST.with(|data| *data.borrow_mut() = restored_declined_mentor_profile_edit_request);
+            MENTOR_ANNOUNCEMENTS.with(|data| *data.borrow_mut() = restored_mentor_announcements);
 
-    let vc_awaits: HashMap<Principal, MentorInternal> =
-        bincode::deserialize(&data).expect("Deserialization failed of notification");
-    MENTOR_AWAITS_RESPONSE.with(|notifications_ref| {
-        *notifications_ref.borrow_mut() = vc_awaits;
-    });
-
-    let declined_vc: HashMap<Principal, MentorInternal> =
-        bincode::deserialize(&data).expect("Deserialization failed of notification");
-    DECLINED_MENTOR_REQUESTS.with(|notifications_ref| {
-        *notifications_ref.borrow_mut() = declined_vc;
-    });
-
-    let vc_profile_await: HashMap<Principal, MentorProfile> =
-        bincode::deserialize(&data).expect("Deserialization failed of notification");
-    MENTOR_PROFILE_EDIT_AWAITS.with(|notifications_ref| {
-        *notifications_ref.borrow_mut() = vc_profile_await;
-    });
-
-    let vc_profile_edit_declined: HashMap<Principal, MentorProfile> =
-        bincode::deserialize(&data).expect("Deserialization failed of notification");
-    DECLINED_MENTOR_PROFILE_EDIT_REQUEST.with(|notifications_ref| {
-        *notifications_ref.borrow_mut() = vc_profile_edit_declined;
-    });
+            ic_cdk::println!("Mentor modules restored successfully.");
+        },
+        Err(e) => ic_cdk::println!("Failed to restore mentor modules: {:?}", e),
+    }
 }

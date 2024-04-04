@@ -45,6 +45,8 @@ const ConsentForm = ({ isModalOpen, onClose, main_level, selected_level, onSubmi
         </svg>
     )
 
+    console.log("main_level===============>>>>>", main_level)
+    console.log("selected_level===========>>>>>", selected_level)
     const onSubmit = () => {
         onSubmitHandler(main_level.title, selected_level)
     }

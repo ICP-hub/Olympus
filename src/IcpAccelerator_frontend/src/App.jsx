@@ -46,6 +46,7 @@ import { userRegisteredHandlerRequest } from "./components/StateManagement/Redux
 import InvestorRegistration from "./components/Registration/InvestorRegistration/InvestorRegistration";
 import CreateProjectRegistration from "./components/Project/CreateProject/CreateProjectRegistration";
 import { multiChainHandlerRequest } from "./components/StateManagement/Redux/Reducers/getMultiChainList";
+import NewHeader from "./components/Layout/Header/NewHeader";
 
 const App = () => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -112,8 +113,10 @@ const App = () => {
   const initialApi = async () => {
     try {
       const currentRoleArray = await actor.get_role_status();
+      console.log('currentRoleArray',currentRoleArray)
       if (currentRoleArray && currentRoleArray.length !== 0) {
         const currentActiveRole = getNameOfCurrentStatus(currentRoleArray);
+        console.log('currentActiveRole', currentActiveRole)
         dispatch(setCurrentRoleStatus(currentRoleArray));
         dispatch(setCurrentActiveRole(currentActiveRole));
       } else {
@@ -176,6 +179,9 @@ const App = () => {
     <>
       <div className="bg-gray-100">
         <div className="container mx-auto">
+      <div className="bg-gradient-to-r from-purple-900 via-purple-500 to-purple-400">
+    <NewHeader/>
+    </div>
           {/* {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-50"></div>
       )} */}

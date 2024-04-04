@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import ment from "../../../assets/images/ment.jpg";
+import girl from "../../../assets/images/girl.jpeg";
 import p1 from "../../../assets/Founders/p1.png";
 import p2 from "../../../assets/Founders/p2.png";
 import p3 from "../../../assets/Founders/p3.png";
@@ -62,18 +63,16 @@ const LiveProjectBar = ({ data }) => {
     return null
   }
   const navigate = useNavigate();
-  const projectProgress = 50;
-  let logo = data?.params?.project_logo ? uint8ArrayToBase64(data?.params?.project_logo) : girl;
+  // const projectProgress = 50;
+  let logo = data?.params?.project_logo ? uint8ArrayToBase64(data?.params?.project_logo) : ment;
   let name = data?.params?.project_name ?? '';
   let area_tags = data?.params?.project_area_of_focus ?? '';
-  let linkenin_link = data?.params?.project_linkedin[0] ?? '';
-  let twitter_link = data?.params?.project_twitter[0] ?? '';
-  let website_link = data?.params?.project_website[0] ?? '';
+  // let linkenin_link = data?.params?.project_linkedin[0] ?? '';
+  // let twitter_link = data?.params?.project_twitter[0] ?? '';
+  // let website_link = data?.params?.project_website[0] ?? '';
   let dapp_link = data?.params?.dapp_link[0] && data?.params?.dapp_link[0].trim() !== '' ? data?.params?.dapp_link[0] : null;
-  let pro_country = data?.params?.user_data?.country ?? "";
-  let joined_on = data?.creation_date ?? "";
-
-
+  // let pro_country = data?.params?.user_data?.country ?? "";
+  // let joined_on = data?.creation_date ?? "";
 
   return (
     <div className="bg-gradient-to-r from-gray-100 to-white border rounded-xl shadow-lg p-4 w-full">
@@ -84,11 +83,11 @@ const LiveProjectBar = ({ data }) => {
             src={logo}
             alt="logo"
           />
-          <div className="ml-4">
+          <div className="ml-0">
             <div className="flex items-center gap-4">
               <h3 className="text-lg font-semibold">{name}</h3>
               {/* <CircularProgressBar progress={projectProgress} /> */}
-              <CircularProgressbar
+              {/* <CircularProgressbar
                 value={(4 / 9) * 100}
                 text={`4/9`}
                 className="w-10 h-10 font-extrabold text-lg"
@@ -100,7 +99,7 @@ const LiveProjectBar = ({ data }) => {
                   trailColor: "#d6d6d6",
                   textColor: "#3505B2",
                 })}
-              />
+              /> */}
             </div>
             <div className="flex space-x-2 mt-2">
               {area_tags && area_tags.trim() !== "" ?
@@ -133,7 +132,7 @@ const LiveProjectBar = ({ data }) => {
         <div className="flex space-x-2 overflow-hidden">
           <img
             className="inline-block h-8 w-8 rounded-full ring-2 ring-white"
-            src={data?.params?.user_data?.profile_picture[0]}
+            src={data?.params?.user_data?.profile_picture[0] ? uint8ArrayToBase64(data?.params?.user_data?.profile_picture[0]) : girl}
             alt={`Author`}
           />
           {data?.params?.project_team && data?.params?.project_team.length > 0 ?
@@ -143,7 +142,7 @@ const LiveProjectBar = ({ data }) => {
                 <img
                   key={index}
                   className="inline-block h-8 w-8 rounded-full ring-2 ring-white"
-                  src={data?.profile_picture}
+                  src={data?.profile_picture ? uint8ArrayToBase64(data?.profile_picture) : girl}
                   alt={`Team`}
                 />
               )

@@ -8,7 +8,7 @@ import "swiper/css/autoplay";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import { formatFullDateFromBigInt } from "../../Utils/formatter/formatDateFromBigInt";
 import NoDataCard from "../../Mentors/Event/NoDataCard";
-
+import ment from "../../../../assets/images/ment.jpg"
 const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
   if (!data) {
     return null;
@@ -67,7 +67,7 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
             slidesPerView: 2,
           },
           1024: {
-            slidesPerView: 3,
+            slidesPerView: 2,
           },
         }}
       >
@@ -82,7 +82,7 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
             let job_link = card?.job_data?.link ?? "";
             let job_project_logo = card?.project_logo
               ? uint8ArrayToBase64(card?.project_logo)
-              : "";
+              : ment;
             let job_project_name = card?.project_name ?? "";
             let job_project_desc = card?.project_desc ?? "";
             let job_post_time = card?.timestamp
@@ -90,10 +90,9 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
               : "";
             return (
               <SwiperSlide >
-                <div >
-                  <div className="border-2 shadow-lg rounded-2xl" key={index}>
+                  <div className="border-2 mb-5 mx-1 rounded-2xl shadow-lg" key={index}>
                     <div className="md:p-4 p-2">
-                      <h3 className="text-lg font-[950]">{job_name}</h3>
+                      <h3 className="text-lg font-[950] truncate w-1/2">{job_name}</h3>
                       <div className="sm:flex">
                         <div className="sm:w-1/2">
                           <div className="pt-2 flex">
@@ -103,10 +102,10 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
                               className="w-16 aspect-square object-cover rounded-md"
                             />
                             <div className="mt-auto pl-2">
-                              <p className="text-base font-[950]">
+                              <p className="font-[950] text-base truncate w-20">
                                 {job_project_name}
                               </p>
-                              <p className="text-xs font-[450]">
+                              <p className="font-[450] line-clamp-2 text-xs w-48">
                                 {job_project_desc}
                               </p>
                             </div>
@@ -116,24 +115,20 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
                               Responsibilities
                             </p>
                             <ul className="text-xs md:pl-4 font-[450] list-disc list-outside">
-                              <li>{job_description}</li>
+                              <li className="h-40 overflow-y-scroll">{job_description}</li>
                             </ul>
                           </div>
                         </div>
-                        <div className="sm:w-1/2">
+                        <div className="flex flex-col justify-between sm:w-1/2">
                           <div className="flex justify-center items-center">
                             <p className="text-base font-[950] px-2">TAGS</p>
                             {tags && (
                               <p className="flex items-center flex-wrap py-2 gap-2">
-                                {/* {job_category.map((val, index) => ( */}
                                 <span
                                   className="bg-transparent text-xs font-semibold px-3 py-1 rounded-2xl border-2 border-black"
-                                // key={index}
                                 >
-                                  {/* {val} */}
                                   {job_category}
                                 </span>
-                                {/* ))} */}
                               </p>
                             )}
                           </div>
@@ -148,7 +143,7 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
                             <p className="text-base font-[950] py-1">Location</p>
                             <span className="capitalize">{job_location}</span>
                           </div>
-                          <div className="mt-2 sm:flex">
+                          <div className="mt-2 flex items-end">
                             <div className="w-full">
                               <span>Register your interest here:</span>
                             </div>
@@ -167,7 +162,6 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
                       </div>
                     </div>
                   </div>
-                </div>
               </SwiperSlide>
             );
           })}

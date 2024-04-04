@@ -65,7 +65,7 @@ const ViewInvestor = () => {
       })
       .catch((error) => {
         setNoData(true);
-          setData([]);
+        setData([]);
         console.log("error-in-get-all-investors", error);
       });
   };
@@ -79,7 +79,7 @@ const ViewInvestor = () => {
   }, [actor]);
   return (
     <div className="px-[4%] w-full bg-gray-100 h-screen overflow-y-scroll">
-    <div className="flex flex-col text-center items-center justify-center">
+      <div className="flex flex-col text-center items-center justify-center">
         <div className="py-8">
           <h2 className="text-[40px] font-black leading-10 bg-gradient-to-r from-[#7283EA] to-[#4087BF] bg-clip-text text-transparent transform">
             Our{" "}
@@ -88,7 +88,7 @@ const ViewInvestor = () => {
             </span>
           </h2>
         </div>
-        <div className="flex items-center relative md1:w-1/2 sm1:w-3/4 w-full p-2 mb-8 border border-[#737373] rounded-lg shadow-md">
+        {/* <div className="flex items-center relative md1:w-1/2 sm1:w-3/4 w-full p-2 mb-8 border border-[#737373] rounded-lg shadow-md">
           <input
             type="text"
             placeholder="Search by company, skills or role"
@@ -114,61 +114,47 @@ const ViewInvestor = () => {
               />
             </svg>
           </button>
-        </div>
+        </div> */}
       </div>
-    <div className="flex flex-wrap justify-center">
-      {noData ? <NoDataCard /> :
-      data.map((investor, index) => {
-        let id = "";
-        let img = "";
-        let name = "";
-        let company = "";
-        let role = "";
-        if(noData){
-            id = investor.id;
-            img = investor.image;
-            name = investor.name;
-            // company = investor.company;
-            company = "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nesciunt cumque saepe laborum, quis error harum ad quo, nobis alias explicabo tempora. Error voluptates laudantium assumenda eum ipsum non ullam veritatis.";
-            role = investor.role;
-        }else{
-            id = investor[1]?.vc_profile?.uid;
-            img = uint8ArrayToBase64(
+      <div className="flex flex-wrap justify-center">
+        {noData ? <NoDataCard /> :
+          data.map((investor, index) => {
+
+            let id = investor[0] ? investor[0].toText() : '';
+            let img = uint8ArrayToBase64(
               investor[1]?.vc_profile?.params?.user_data?.profile_picture[0]
             );
-            name = investor[1]?.vc_profile?.params?.user_data?.full_name;
-            // company = investor[1]?.vc_profile?.params?.name_of_fund;
-            company = investor[1]?.vc_profile?.params?.user_data?.bio[0];
-            role = "Investor";
-        }
+            let name = investor[1]?.vc_profile?.params?.user_data?.full_name;
+            let company = investor[1]?.vc_profile?.params?.user_data?.bio[0];
+            let role = "Investor";
 
-        return (
-            <div className="" key={index}>
-            <div className="w-full sm:w-full md:w-full lg:w-full xl:w-full p-4">
-                <div className="shadow-md rounded-lg overflow-hidden  drop-shadow-2xl gap-2 bg-[#C1CAFF]">
+            return (
+              <div className="" key={index}>
+                <div className="w-full sm:w-full md:w-full lg:w-full xl:w-full p-4">
+                  <div className="shadow-md rounded-lg overflow-hidden  drop-shadow-2xl gap-2 bg-[#C1CAFF]">
                     <div className='flex flex-col sm:flex-row gap-6 p-2'>
-                        <img className='w-full sm:w-[300.53px] rounded-md h-auto sm:h-[200.45px] flex lg:items-center lg:justify-center  ' src={img} alt="alt" />
-                        <div className='flex flex-col w-full'>
-                            <h1 className="text-black text-2xl font-extrabold">{name}</h1>
-                            <p className="text-[#737373]">{role}</p>
-                            <div className='flex flex-wrap rounded-full mt-6 text-[#737373] justify-center'>
-                                <p className=''>{company}</p>
-                            </div>
-
-                            <div className='w-100px border-2 text-gray-900 mt-2'></div>
-                            <div className='flex justify-end mt-6 xl:mr-8'>
-                                <button className=' font-bold py-2 px-4 bg-white text-[#7283EA] rounded-md'>
-                                    Reach Out
-                                </button>
-                            </div>
+                      <img className='w-full sm:w-[300.53px] rounded-md h-auto sm:h-[200.45px] flex lg:items-center lg:justify-center  ' src={img} alt="alt" />
+                      <div className='flex flex-col justify-around w-full'>
+                        <h1 className="text-black text-2xl font-extrabold">{name}</h1>
+                        <p className="text-[#737373]">{role}</p>
+                        <div className='flex flex-wrap rounded-full mt-6 text-[#737373] justify-center'>
+                          <p className=''>{company}</p>
                         </div>
+
+                        <div className='w-100px border-2 text-gray-900 mt-2'></div>
+                        <div className='flex justify-end mt-6 xl:mr-8'>
+                          <button onClick={() => id ? navigate(`/view-investor-details/${id}`) : ''} className=' font-bold py-2 px-4 bg-white text-[#7283EA] rounded-md'>
+                            View Profile
+                          </button>
+                        </div>
+                      </div>
                     </div>
+                  </div>
                 </div>
-            </div>
-        </div>
-        );
-      })}
-    </div>
+              </div>
+            );
+          })}
+      </div>
     </div>
   );
 };

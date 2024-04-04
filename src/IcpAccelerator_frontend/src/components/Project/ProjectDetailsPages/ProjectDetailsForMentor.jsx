@@ -16,7 +16,7 @@ import { Principal } from '@dfinity/principal';
 
 const ProjectDetailsForMentor = () => {
     const navigate = useNavigate();
-    const {id} = useParams()
+    const { id } = useParams()
     const actor = useSelector((currState) => currState.actors.actor)
     const principal = useSelector((currState) => currState.internet.principal);
     const [projectData, setProjectData] = useState(null);
@@ -142,6 +142,8 @@ const ProjectDetailsForMentor = () => {
             case "project-ratings":
                 return (
                     <ProjectRatings
+                        data={projectData}
+                        isProjectLive={true}
                         profile={true}
                         type={!true}
                         name={true}
@@ -161,7 +163,7 @@ const ProjectDetailsForMentor = () => {
                         socials={true}
                         filter={"documents"}
                     />
-                ); 
+                );
             default:
                 return null;
         }
@@ -213,7 +215,7 @@ const ProjectDetailsForMentor = () => {
             } else {
                 fetchRubricRating(projectData);
             }
-        }else{
+        } else {
             navigate('/');
         }
     }, [actor, principal, projectData]);
@@ -277,7 +279,7 @@ const ProjectDetailsForMentor = () => {
                     </div>
                     <div className="flex flex-col py-4">
                         <div className="flex justify-between items-center mb-4">
-                            <h1 className="font-[950] text-lg md:text-2xl  text-blue-700">
+                            <h1 className="text-lg md:text-2xl  text-blue-700">
                                 Announcement
                             </h1>
 
@@ -286,7 +288,7 @@ const ProjectDetailsForMentor = () => {
                     </div>
                     <div className="flex flex-col py-4">
                         <div className="flex justify-between">
-                            <h1 className="font-[950] text-lg md:text-2xl  text-blue-700">
+                            <h1 className="text-lg md:text-2xl  text-blue-700">
                                 jobs/opportunity
                             </h1>
                         </div>

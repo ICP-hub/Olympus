@@ -15,42 +15,48 @@ const ProjectDocuments = ({ data }) => {
   const [documents, setDocuments] = useState([]);
   const [allowAccess, setAllowAccess] = useState(null);
 
+  const handleToggleChange = () => setIsChecked(!isChecked);
+
   useEffect(() => {
     const fetchAccessPrivateData = async () => {
-      if (!projectId) return;
+      if (!projectId) return false;
+
       try {
         const result = await actor.access_private_docs(projectId);
-        console.log("result-in-access", result);
+        console.log('result ====>',result)
         if ("Ok" in result) {
-          setDocuments(result.Ok);
-          // setNoData(false);
-          setAllowAccess(true);
+          setDocuments(Array.isArray(result.Ok) ? result.Ok : [result.Ok]);
+          setAllowAccess(result.Ok.is_owner);
         } else if ("Err" in result) {
-          setAllowAccess(false);
-          toast.error(result.Err || "An unexpected error occurred");
+          toast.error(result.Err.message);
+          setAllowAccess(result.Err.is_owner);
           setDocuments([]);
-          // setNoData(true);
         }
       } catch (error) {
-        console.error("error-in-access", error);
-        toast.error("An unexpected error occurred");
-        setDocuments([]);
-        // setNoData(true);
+        toast.error(
+          "An unexpected error occurred while fetching private documents"
+        );
         setAllowAccess(false);
+        setDocuments([]);
       }
     };
 
     if (isChecked) {
       fetchAccessPrivateData();
     } else {
-      setDocuments(data?.params?.public_docs || []);
-      setAllowAccess(true);
-      // setNoData(data?.params?.public_docs?.length === 0);
+      setDocuments(
+        Array.isArray(data?.params?.public_docs[0])
+          ? data.params.public_docs[0]
+          : []
+      );
     }
   }, [isChecked, actor, projectId, data?.params?.public_docs]);
 
   const sendPrivateDocumentRequest = async () => {
-    if (!projectId) return;
+    if (!projectId) {
+      setDocuments([]);
+      return;
+    }
     try {
       const result = await actor.send_private_docs_access_request(projectId);
       console.log("result-in-send-access-private-docs", result);
@@ -63,43 +69,55 @@ const ProjectDocuments = ({ data }) => {
       console.log("error-in-send-access-private-docs", error);
     }
   };
-
-  console.log("documents", documents);
   console.log("allowAccess", allowAccess);
 
   return (
     <div>
-      <div className="flex flex-wrap">
-        <div className="flex items-center justify-end w-full">
-        {!allowAccess === true ?'':
-          <button
-            className="text-white bg-blue-700 font-bold py-2 px-4 rounded-xl"
-            onClick={sendPrivateDocumentRequest}
+      <div className="flex flex-wrap mt-4">
+        <div className="flex-col items-end justify-end w-full">
+          {allowAccess === true ? (
+            <button
+              className="text-white bg-blue-700 font-bold py-2 px-4 rounded-xl float-right"
+              onClick={() => navigate(`/project-private-document-requests`)}
+            >
+              View
+            </button>
+          ) : allowAccess === null ? (
+            ""
+          ) : (
+            <button
+              className="text-white bg-blue-700 font-bold py-2 px-4 rounded-xl float-right"
+              onClick={sendPrivateDocumentRequest}
+            >
+              Ask for permission
+            </button>
+          )}
+          <label
+            htmlFor="toggle"
+            className={`flex items-center cursor-pointer ${
+              allowAccess === null ? "float-right" : ""
+            }`}
           >
-            Ask for permission
-          </button>}
-          <button
-            className="text-white bg-blue-700 font-bold py-2 px-4 rounded-xl"
-            onClick={()=> navigate(`/project-private-document-requests`)}
-          >
-            View
-          </button>
-          <label htmlFor="toggle" className="flex items-center cursor-pointer">
             <div className="relative">
               <input
                 type="checkbox"
                 id="toggle"
                 className="sr-only"
                 checked={isChecked}
-                onChange={() => setIsChecked(!isChecked)}
+                onChange={handleToggleChange}
               />
-              <div className="block bg-gray-600 w-14 h-8 rounded-full"></div>
+              <div className="block bg-gray-600 w-14 h-8 rounded-full">
+                <span
+                  className={` text-[#737373] absolute -top-7 ${
+                    allowAccess === null ? "right-0" : "left-0"
+                  } font-bold text-base mb-2 text-nowrap`}
+                >
+                  {isChecked ? "Switch to Public" : "Switch to Private"}
+                </span>
+              </div>
+
               <div
-                className={`dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full  flex items-center justify-center ${
-                  isChecked
-                    ? "transform translate-x-full "
-                    : "transition-transform"
-                }`}
+                className={`dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full flex items-center justify-center transition-transform duration-300 ease-in-out`}
               >
                 {isChecked ? (
                   <svg
@@ -122,20 +140,45 @@ const ProjectDocuments = ({ data }) => {
             </div>
           </label>
         </div>
-        {
-          documents.length === 0  ? (
-            <NoDataCard />
-          ) : (
+        {documents.length === 0 ? (
+          <NoDataCard />
+        ) : (
           documents?.map(
             (doc, index) => (
-              console.log("doc", doc),
               (
                 <div
                   className="group w-[100%] md1:w-[calc(100%/2-10px)] dlg:w-[calc(100%/3-10px)]"
                   key={index}
                 >
-                  {allowAccess === true ? (
-                    <div className=" md:m-1 p-4 mb-4 bg-gradient-to-b overflow-hidden from-[#B9C0F2] to-[#B9C0F23B] border-2 border-blue-400 rounded-2xl shadow">
+                  {allowAccess === null ? (
+                    <div className=" md:m-1 p-4 mb-4 overflow-hidden bg-gradient-to-b from-[#B9C0F2] to-[#B9C0F23B] border-2 border-blue-400 rounded-2xl shadow">
+                      <div className="relative">
+                        <div className="relative z-10 p-2">
+                          <h5 className="mb-2 text-2xl font-bold tracking-tight text-white">
+                            {doc.title}
+                            <br></br>
+                          </h5>
+                          <p className="font-[450] text-xs text-[#4E5999] py-4">
+                            Give your weekend projects, side projects, hobby
+                            projects, serious ventures a place to breathe,
+                            invite collaborators and inspire other builders.
+                          </p>
+                          <div>
+                            <a
+                              href={doc.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {task}
+                            </a>
+                          </div>
+                        </div>
+                        <div className="absolute opacity-25 w-40 h-40 -left-[85px] -top-[28px] rounded-full bg-gradient-to-b from-[#3C04BA] to-[#4087BF]"></div>
+                        <div className="absolute opacity-25 w-40 h-40 -right-[50px] -bottom-[52px] rounded-full bg-gradient-to-r from-[#3C04BA] to-[#4087BF]"></div>
+                      </div>
+                    </div>
+                  ) : allowAccess === true ? (
+                    <div className=" md:m-1 p-4 mb-4 overflow-hidden bg-gradient-to-b from-[#B9C0F2] to-[#B9C0F23B] border-2 border-blue-400 rounded-2xl shadow">
                       <div className="relative">
                         <div className="relative z-10 p-2">
                           <h5 className="mb-2 text-2xl font-bold tracking-tight text-white">
@@ -186,8 +229,7 @@ const ProjectDocuments = ({ data }) => {
               )
             )
           )
-          )
-        }
+        )}
       </div>
       <Toaster />
     </div>

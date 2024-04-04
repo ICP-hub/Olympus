@@ -21,6 +21,7 @@ import AddAMentorRequestModal from '../../../models/AddAMentorRequestModal';
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from 'react-router-dom';
 import ProjectDocuments from '../../Resources/ProjectDocuments';
+import ProjectMoneyRaising from '../../Resources/ProjectMoneyRaising';
 const ProjectDetailsForOwnerProject = () => {
     const navigate = useNavigate();
     const actor = useSelector((currState) => currState.actors.actor)
@@ -181,6 +182,18 @@ const ProjectDetailsForOwnerProject = () => {
                         filter={"documents"}
                     />
                 );
+                case "project-money-raising":
+                return (
+                    <ProjectMoneyRaising
+                    data={projectData}
+                    profile={true}
+                    type={!true}
+                    name={true}
+                    role={true}
+                    socials={true}
+                    filter={"raising"}
+                    />
+                );
             default:
                 return null;
         }
@@ -249,22 +262,22 @@ const ProjectDetailsForOwnerProject = () => {
         }
     }
 
-    const fetchRubricRating = async (val) => {
-        await actor.calculate_average(val?.uid)
-            .then((result) => {
-                console.log('result-in-calculate_average', result)
-            })
-            .catch((error) => {
-                console.log('error-in-calculate_average', error)
-            })
-    }
+    // const fetchRubricRating = async (val) => {
+    //     await actor.calculate_average(val?.uid)
+    //         .then((result) => {
+    //             console.log('result-in-calculate_average', result)
+    //         })
+    //         .catch((error) => {
+    //             console.log('error-in-calculate_average', error)
+    //         })
+    // }
 
     useEffect(() => {
         if (actor) {
             if (!projectData) {
                 fetchProjectData();
             } else {
-                fetchRubricRating(projectData);
+                // fetchRubricRating(projectData);
             }
         } else {
             navigate('/');
@@ -330,25 +343,27 @@ const ProjectDetailsForOwnerProject = () => {
                     </div>
                     <div className="flex flex-col py-4">
                         <div className="flex justify-between items-center mb-4">
-                            <h1 className="font-[950] text-lg md:text-2xl  text-blue-700">
+                            <h1 className="text-lg md:text-2xl  text-blue-700">
                                 Announcement
                             </h1>
                             {isProjectLive &&
-                                (<button className="font-[950] border bg-[#3505B2] py-[7px] px-[9px] rounded-md text-white text-nowrap capitalize"
+                                (<button className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900"
                                     onClick={handleOpenModal}>
                                     Add Announcement
                                 </button>
                                 )}
                         </div>
-                        <AnnouncementDetailsCard data={projectData} />
+                        <AnnouncementDetailsCard
+                            data={projectData}
+                        />
                     </div>
                     <div className="flex flex-col py-4">
                         <div className="flex justify-between">
-                            <h1 className="font-[950] text-lg md:text-2xl  text-blue-700">
+                            <h1 className="text-lg md:text-2xl  text-blue-700">
                                 jobs/opportunity
                             </h1>
                             {isProjectLive &&
-                                (<button className="font-[950] border bg-[#3505B2] px-4 py-2 rounded-md text-white text-nowrap capitalize"
+                                (<button className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900"
                                     onClick={handleJobsOpenModal}>
                                     Add Jobs
                                 </button>

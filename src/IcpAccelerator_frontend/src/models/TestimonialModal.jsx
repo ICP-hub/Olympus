@@ -24,6 +24,9 @@ const TestimonialModal = ({ onClose, categories }) => {
           toast.success(
             "Your Insights are Valuable to us. Thank you for sharing your Testimonial it will br Added Shorlty!"
           );
+          setTimeout(() => {
+            window.location.reload();
+          }, [2000])
         })
         .catch((error) => {
           console.log("error-in-add_testimonial", error);
@@ -68,10 +71,8 @@ const TestimonialModal = ({ onClose, categories }) => {
               </button>
             </div>
 
-            <form
-              className="p-4 md:p-5"
-              onSubmit={() => handleSubmit(categories[0])}
-            >
+            <form className="p-4 md:p-5"
+              onSubmit={() => handleSubmit(categories[0])}>
               <div className="grid gap-4 mb-4 grid-cols-2">
                 {categories[0].id === "addTestimonial" ? (
                   <div className="col-span-2">
@@ -87,7 +88,7 @@ const TestimonialModal = ({ onClose, categories }) => {
               </div>
               <button
                 type="submit"
-                className="text-white flex items-center justify-center font-bold bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300  rounded-lg text-sm px-5 py-2.5 text-center"
+                className="text-white flex w-full items-center justify-center font-bold bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300  rounded-lg text-sm px-5 py-2.5 text-center"
               >
                 {categories[0].buttonText}
               </button>
