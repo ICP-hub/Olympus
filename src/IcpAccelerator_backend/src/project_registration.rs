@@ -924,6 +924,8 @@ pub fn list_all_projects() -> Vec<ListAllProjects> {
             return Vec::new();
         }
 
+    
+
         let mut list_all_projects: Vec<ListAllProjects> = vec![];
 
         for (principal, projects) in projects.iter() {
@@ -943,7 +945,10 @@ pub fn list_all_projects() -> Vec<ListAllProjects> {
                         overall_average: Some(get_rating.overall_average[0]),
                     };
 
-                    list_all_projects.push(project_info);
+                    if project.is_active == true{
+                        list_all_projects.push(project_info);
+                    }
+                   
                 } else {
 
                     let project_info = ListAllProjects {
@@ -952,7 +957,9 @@ pub fn list_all_projects() -> Vec<ListAllProjects> {
                         overall_average: None, 
                     };
 
-                    list_all_projects.push(project_info);
+                    if project.is_active == true{
+                        list_all_projects.push(project_info);
+                    }
                 }
             }
         }

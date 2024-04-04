@@ -322,11 +322,14 @@ pub fn get_all_mentors() -> HashMap<Principal, MentorWithRoles> {
             roles,
         };
 
-        mentor_with_roles_map.insert(*principal, mentor_with_roles);
+        if mentor_internal.active == true{
+            mentor_with_roles_map.insert(*principal, mentor_with_roles);
+        }
     }
 
     mentor_with_roles_map
 }
+
 pub fn make_active_inactive(p_id: Principal) -> String {
     let principal_id = caller();
     if p_id == principal_id || ic_cdk::api::is_controller(&principal_id) {
