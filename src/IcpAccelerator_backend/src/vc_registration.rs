@@ -335,7 +335,7 @@ pub fn get_vc_declined_info_using_principal(
 
 #[query]
 pub fn list_all_vcs() -> HashMap<Principal, VcWithRoles> {
-    let vc_awaiters = VENTURECAPITALIST_STORAGE.with(|awaiters| awaiters.borrow().clone());
+    let vc_awaiters = VENTURECAPITALIST_STORAGE.with(|awaiters : &RefCell<VentureCapitalistStorage> | awaiters.borrow().clone());
 
     let mut vc_with_roles_map: HashMap<Principal, VcWithRoles> = HashMap::new();
 
@@ -346,7 +346,10 @@ pub fn list_all_vcs() -> HashMap<Principal, VcWithRoles> {
             roles,
         };
 
-        vc_with_roles_map.insert(*principal, vc_with_roles);
+        if vc_internal.is_active == true{
+            vc_with_roles_map.insert(*principal, vc_with_roles);
+        }
+        
     }
 
     vc_with_roles_map
