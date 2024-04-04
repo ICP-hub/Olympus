@@ -1,4 +1,6 @@
 use crate::associations::*;
+use crate::latest_popular_projects::INCUBATED_PROJECTS;
+use crate::latest_popular_projects::LIVE_PROJECTS;
 use crate::mentor::*;
 use crate::project_registration::*;
 use crate::user_module::*;
@@ -1909,6 +1911,56 @@ pub fn admin_update_project(uid: String, is_live: bool, dapp_link: Option<String
     } else {
         Err("Unexpected error during project reclassification.".to_string())
     }
+}
+
+#[update]
+pub fn deactivate_and_remove_project(project_id: String) -> Result<&'static str, &'static str> {
+    let mut found_and_updated_in_application = false;
+    let mut found_in_live_projects = false;
+
+    APPLICATION_FORM.with(|app_forms| {
+        let mut app_forms = app_forms.borrow_mut();
+        for projects in app_forms.values_mut() {
+            if let Some(project) = projects.iter_mut().find(|p| p.uid == project_id) {
+                project.params.live_on_icp_mainnet = Some(false);
+                project.params.dapp_link = None;
+                found_and_updated_in_application = true;
+                break;
+            }
+        }
+    });
+
+    if !found_and_updated_in_application {
+        return Err("Project not found in main application storage.");
+    }
+
+    LIVE_PROJECTS.with(|live_projects| {
+        let mut live_projects = live_projects.borrow_mut();
+        if let Some(position) = live_projects.iter().position(|p| p.uid == project_id) {
+            live_projects.remove(position);
+            found_in_live_projects = true; // Mark as found and removed
+        }
+    });
+
+    if found_in_live_projects {
+        Ok("Project successfully deactivated and removed from live projects.")
+    } else {
+        Err("Project was updated in main storage but not found in live projects.")
+    }
+}
+
+
+#[update]
+pub fn remove_project_from_incubated(project_id: String) -> Result<&'static str, &'static str> {
+    INCUBATED_PROJECTS.with(|projects| {
+        let mut projects = projects.borrow_mut();
+        if let Some(pos) = projects.iter().position(|p| p.uid == project_id) {
+            projects.remove(pos); 
+            Ok("Project successfully removed from incubated projects.")
+        } else {
+            Err("Project not found in incubated projects.")
+        }
+    })
 }
 
 //b5pqo-yef5a-lut3t-kmrpc-h7dnp-v3d2t-ls6di-y33wa-clrtb-xdhl4-dae

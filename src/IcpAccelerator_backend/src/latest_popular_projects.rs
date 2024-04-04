@@ -3,7 +3,7 @@ use candid::Nat;
 use ic_cdk_macros::{update, query};
 use project_registration::{ProjectInfoInternal, list_all_projects, APPLICATION_FORM};
 use upvotes::{get_upvote_record,UPVOTES};
-use std::cell::RefCell;
+use std::{cell::RefCell, borrow::BorrowMut};
 use num_traits::ToPrimitive;
 
 
@@ -41,3 +41,4 @@ pub fn get_all_live_projects() -> Vec<ProjectInfoInternal> {
 pub fn get_all_incubated_projects() -> Vec<ProjectInfoInternal> {
     INCUBATED_PROJECTS.with(|projects| projects.borrow().clone())
 }
+
