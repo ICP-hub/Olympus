@@ -110,6 +110,35 @@ const App = () => {
     return currentStatus ? currentStatus.name : null;
   }
 
+  function formatFullDateFromBigInt(bigIntDate) {
+    const date = new Date(Number(bigIntDate / 1000000n));
+    const dateString = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    return `${dateString}`;
+}
+
+  function cloneArrayWithModifiedValues(arr) {
+    return arr.map(obj => {
+      const modifiedObj = {};
+
+      Object.keys(obj).forEach(key => {
+        if (Array.isArray(obj[key]) && obj[key].length > 0) {
+          if (key === 'approved_on' || key === "rejected_on" || key === "requested_on") {
+            // const date = new Date(Number(obj[key][0])).toLocaleDateString('en-US');
+            const date = formatFullDateFromBigInt(obj[key][0]);
+            modifiedObj[key] = date; // Convert bigint to string date
+          } else {
+            modifiedObj[key] = obj[key][0]; // Keep the first element of other arrays unchanged
+          }
+        } else {
+          modifiedObj[key] = obj[key]; // Keep other keys unchanged
+        }
+      });
+
+      return modifiedObj;
+    });
+  }
+
+
   const initialApi = async () => {
     try {
       const currentRoleArray = await actor.get_role_status();
@@ -117,7 +146,7 @@ const App = () => {
       if (currentRoleArray && currentRoleArray.length !== 0) {
         const currentActiveRole = getNameOfCurrentStatus(currentRoleArray);
         console.log('currentActiveRole', currentActiveRole)
-        dispatch(setCurrentRoleStatus(currentRoleArray));
+        dispatch(setCurrentRoleStatus(cloneArrayWithModifiedValues(currentRoleArray)));
         dispatch(setCurrentActiveRole(currentActiveRole));
       } else {
         dispatch(
@@ -171,7 +200,7 @@ const App = () => {
       dispatch(handleActorRequest());
       dispatch(multiChainHandlerRequest());
       dispatch(areaOfExpertiseHandlerRequest());
-      dispatch(userRegisteredHandlerRequest());
+      // dispatch(userRegisteredHandlerRequest());
     }
   }, [isAuthenticated, identity, dispatch]);
 
@@ -181,7 +210,7 @@ const App = () => {
         {/* <div className="container mx-auto "> */}
         {actor ?
           // <div className="bg-gradient-to-r from-purple-900 via-purple-500 to-purple-400">
-            <Header setModalOpen={setModalOpen} gradient={"bg-gray-100"} />
+          <Header setModalOpen={setModalOpen} gradient={"bg-gray-100"} />
           // </div> 
           :
           <div className="bg-gradient-to-r from-purple-900 via-purple-500 to-purple-400">

@@ -46,8 +46,8 @@ const LiveEventsCards = ({ wrap, register }) => {
                         {allLiveEventsData &&
                             allLiveEventsData.map((val, index) => {
                                 return (
-                                    <div className="px-2 w-full sm:min-w-[50%] lg:min-w-[33.33%] sm:max-w-[50%] lg:max-w-[33.33%]">
-                                        <SecondEventCard data={val} key={index} register={register}/>
+                                    <div key={index} className="px-2 w-full sm:min-w-[50%] lg:min-w-[33.33%] sm:max-w-[50%] lg:max-w-[33.33%]">
+                                        <SecondEventCard data={val} register={register}/>
                                     </div>
                                 );
                             })}
