@@ -138,8 +138,8 @@ const validationSchema = {
     project_area_of_focus: yup.string().required("Area of focus is required"),
     self_rating_of_project: yup.string().optional(),
     weekly_active_users: yup
-      .string()
-      .test(
+      // .string().required("Weekly active users is required"),
+      .string().test(
         "is-integer",
         "ICP Grants value must be an integer",
         (value) =>
@@ -147,8 +147,8 @@ const validationSchema = {
           (!isNaN(value) && parseInt(value, 10).toString() === value)
       ),
     revenue: yup
-      .string()
-      .test(
+      // .string().required("Revenue is required"),
+      .string().test(
         "is-integer",
         "ICP Grants value must be an integer",
         (value) =>
@@ -1183,7 +1183,7 @@ const CreateProjectRegistration = () => {
                   </span>
                 )}
               </div>
-              <div className="z-0 w-full mb-3 group px-4">
+              <div className="z-0 w-full mb-5 group px-4">
                 <label
                   htmlFor="reason_to_join_incubator"
                   className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
@@ -1230,7 +1230,7 @@ const CreateProjectRegistration = () => {
                   </p>
                 )}
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-3 px-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3 px-4">
                 <div className="z-0 w-full mb-3 group">
                   <label
                     htmlFor="preferred_icp_hub"
@@ -1280,6 +1280,7 @@ const CreateProjectRegistration = () => {
                     }))}
                     menuPortalTarget={document.body}
                     menuPosition={"fixed"}
+                    required={"true"}
                     styles={{
                       menuPortal: (base) => ({
                         ...base,
@@ -1303,7 +1304,7 @@ const CreateProjectRegistration = () => {
                       }),
                     }}
                     classNamePrefix="select"
-                    className="basic-multi-select"
+                    className="basic-multi-select text-left"
                     placeholder="Select your areas of expertise"
                     name="project_area_of_focus"
                     {...register("project_area_of_focus")}
@@ -1921,7 +1922,7 @@ const CreateProjectRegistration = () => {
                 )}
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-3 px-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3 px-4">
                 {isProjectRegistered && (
                   <>
                     <div className="z-0 w-full mb-3 group">
