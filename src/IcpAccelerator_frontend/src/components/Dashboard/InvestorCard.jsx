@@ -15,7 +15,6 @@ const InvestorsList = () => {
 
   const getAllInvestors = async (caller) => {
     await caller.list_all_vcs().then((result) => {
-      console.log('result-in-get-all-investors', result)
       if (!result || result.length == 0) {
         setNoData(true)
         setData([]);
@@ -26,7 +25,6 @@ const InvestorsList = () => {
     }).catch((error) => {
       setData([]);
       setNoData(true)
-      console.log('error-in-get-all-investors', error)
     })
   }
 
@@ -67,13 +65,9 @@ const InvestorsList = () => {
                 {company}
               </span>
               <div className="flex flex-wrap gap-2 border-t-2 mt-3 py-3">
-                {/* {investor_type?.map(function(item, index) { */}
-                  {/* return  */}
-                  <span className="bg-[#E7E7E8] rounded-full text-gray-600 text-xs font-bold px-3 py-2 leading-none flex items-center mt-2">
+                <span className="bg-[#E7E7E8] rounded-full text-gray-600 text-xs font-bold px-3 py-2 leading-none flex items-center mt-2">
                   {category_of_investment}
-                  </span>
-                {/* })} */}
-                
+                  </span>               
               </div>
               <button onClick={() => id ? navigate(`/view-investor-details/${id}`) : ''} className="mt-4  text-white px-4 py-1 rounded-lg uppercase w-full text-center border border-gray-300 font-bold bg-[#3505B2] transition-colors duration-200 ease-in-out">
                 View Profile

@@ -24,22 +24,11 @@ const LiveProjects = ({ progress }) => {
   const [showLine, setShowLine] = useState({});
   const tm = useRef(null);
   const navigate = useNavigate();
-  // Gradient color stops, changes when hovered
-  // const gradientStops = isHovered
-  //   ? { stop1: "#4087BF", stop2: "#3C04BA" }
-  //   : { stop1: "#B5B5B5", stop2: "#5B5B5B" };
-
   const [ref, inView] = useInView({
     triggerOnce: true, // Trigger the animation once
     threshold: 0.1, // Trigger when 10% of the element is in view
   });
 
-  // Define the fade-in animation
-  const fadeIn = useSpring({
-    opacity: inView ? 1 : 0,
-    transform: inView ? 'translateY(0)' : 'translateY(20px)',
-    config: { duration: 1000 }, // Customize duration as needed
-  });
 
   useEffect(() => {
     if (percent < 100) {
@@ -75,8 +64,6 @@ const LiveProjects = ({ progress }) => {
     await caller
       .list_all_projects()
       .then((result) => {
-        console.log("result-in-get-all-projects", result);
-
         if (!result || result.length === 0) {
           setNoData(true);
           setAllProjectData([]);
@@ -88,7 +75,6 @@ const LiveProjects = ({ progress }) => {
       .catch((error) => {
         setNoData(true);
         setAllProjectData([]);
-        console.log("error-in-get-all-projects", error);
       });
   };
 
@@ -187,8 +173,6 @@ const LiveProjects = ({ progress }) => {
                               width="100%"
                               height="8"
                               className="bg-[#B2B1B6] rounded-lg"
-                              // onMouseEnter={() => setIsHovered(true)}
-                              // onMouseLeave={() => setIsHovered(false)}
                             >
                               <defs>
                                 <linearGradient

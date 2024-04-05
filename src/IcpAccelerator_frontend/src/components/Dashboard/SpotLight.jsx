@@ -24,11 +24,9 @@ const SpotLight = () => {
   const navigate = useNavigate();
 
   const fetchSpotLight = async (caller) => {
-    console.log('caller', caller)
     await caller
       .get_spotlight_projects()
       .then((result) => {
-        console.log("result-in-spotlight", result);
         if (result && result.length > 0) {
           setSpotLightData(result);
           setNoData(false);
@@ -40,7 +38,6 @@ const SpotLight = () => {
       .catch((error) => {
         setNoData(true);
         setSpotLightData([]);
-        console.log("error-in-spotlight", error);
       });
   };
 
@@ -115,7 +112,6 @@ const SpotLight = () => {
           >
             {spotLightData &&
               spotLightData.map((data, index) => {
-                console.log("spotlight", data);
 
                 let projectId =  data?.project_details?.uid ?? null;
                 let projectData = data?.project_details ?? null;
