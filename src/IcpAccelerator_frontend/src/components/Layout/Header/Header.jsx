@@ -117,8 +117,8 @@ const Header = ({ setModalOpen, gradient }) => {
                   onClick={() => setShowSwitchRole(true)}
                   className={
                     (!userCurrentRoleStatusActiveRole || userCurrentRoleStatusActiveRole === 'user') && window.location.pathname === "/"
-                      ? "border border-white md:p-1 font-bold rounded-md text-white md:px-2 px-1 text-base md:text-lg  uppercase"
-                      : "border border-violet-800 md:p-1 font-bold rounded-md text-violet-800 md:px-2 px-1 text-base md:text-lg  uppercase"}
+                      ? " hover:bg-white hover:text-violet-800 border border-white md:p-1 font-bold rounded-md text-white md:px-2 px-1 text-base md:text-lg  uppercase"
+                      : "hover:bg-violet-800 hover:text-white border border-violet-800 md:p-1 font-bold rounded-md text-violet-800 md:px-2 px-1 text-base md:text-lg  uppercase"}
                 >
                   {userCurrentRoleStatusActiveRole == "vc"
                     ? "investor"
@@ -131,7 +131,23 @@ const Header = ({ setModalOpen, gradient }) => {
                 <LogoutModal />
               </div>
             ) : (
-              <LogoutModal />
+              <div className="flex items-center flex-row gap-2 z-20">
+
+                <button
+                  // onClick={() => setShowSwitchRole(true)}
+                  onClick={() => window.location.reload()}
+                  className={
+                    (!userCurrentRoleStatusActiveRole || userCurrentRoleStatusActiveRole === 'user') && window.location.pathname === "/"
+                      ? "hover:bg-white hover:text-violet-800 border border-white md:p-1 font-bold rounded-md text-white md:px-2 px-1 text-base md:text-lg  uppercase"
+                      : "hover:bg-violet-800 hover:text-white border border-violet-800 md:p-1 font-bold rounded-md text-violet-800 md:px-2 px-1 text-base md:text-lg  uppercase"}
+                >
+                  {/* {userCurrentRoleStatusActiveRole == "vc"
+                    ? "investor"
+                    : userCurrentRoleStatusActiveRole} */}
+                    get role
+                </button>
+                <LogoutModal />
+              </div>
             )}
           </>
         ) : (

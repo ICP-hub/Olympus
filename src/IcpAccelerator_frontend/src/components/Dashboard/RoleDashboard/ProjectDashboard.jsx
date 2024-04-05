@@ -93,7 +93,7 @@ const ProjectDashboard = () => {
           </button>
         </div>
         <div className="mb-4">
-          <LiveEventsCards wrap={true}/>
+          <LiveEventsCards wrap={true} register={true}/>
         </div>
       </div>
     </section>
