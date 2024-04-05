@@ -49,11 +49,11 @@ const InvestorProfile = () => {
   let existingIcpInvestor = investorProfileData?.existing_icp_investor;
   let existingIcpProjectPorfolio = investorProfileData?.existing_icp_portfolio;
   let typeOfInvestment = investorProfileData?.type_of_investment;
-  let projectOnMultichain = investorProfileData?.project_on_multichain;
-  let fundSize =investorProfileData?.fund_size
-let averageCheckSize =investorProfileData?.average_check_size
-let moneyInvested =investorProfileData?.money_invested
-let nameOfFund =investorProfileData?.name_of_fund
+  let projectOnMultichain = investorProfileData?.project_on_multichain && investorProfileData?.project_on_multichain.length > 0 && investorProfileData?.project_on_multichain[0] &&  investorProfileData?.project_on_multichain[0].trim() !== "" ? investorProfileData?.project_on_multichain[0].trim() : null;
+  let fundSize = investorProfileData?.fund_size
+  let averageCheckSize = investorProfileData?.average_check_size
+  let moneyInvested = investorProfileData?.money_invested &&  investorProfileData?.money_invested.length > 0 && typeof investorProfileData?.money_invested[0] === "number" ? investorProfileData?.money_invested[0] : null
+  let nameOfFund = investorProfileData?.name_of_fund
   return (
     <div className="px-[4%] w-full bg-gray-100 overflow-y-scroll">
       <div className="border-b border-[#DCDCDC] pb-4">
@@ -92,11 +92,11 @@ let nameOfFund =investorProfileData?.name_of_fund
               <spna>Top Investor</spna>
             </div>
           </div>
-          <div>
+          {/* <div>
             <button className="bg-transparent border border-[#3505B2] text-[#3505B2] text-xs font-[950] px-2 py-1 rounded-md">
               Get in touch
             </button>
-          </div>
+          </div> */}
         </div>
         <div className="md:flex block w-full md:w-[60%]">
           <div className="w-full md:w-1/2">
@@ -105,8 +105,8 @@ let nameOfFund =investorProfileData?.name_of_fund
               <p className="text-[#737373]">{nameOfFund}</p>
             </div>
           </div>
-          <div className="w-full md:w-1/2">
-            <h6 className="text-[15px] font-[450]">Category of Investment</h6>
+          <div className="flex flex-row gap-4 items-center md:w-1/2 w-full">
+            <h6 className="text-[15px] font-[450]">Category of Investment : </h6>
             <div className="text-[15px] leading-4 flex items-center ">
               <spna className="bg-gradient-to-r from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 underline ">
                 {categoryOfInvestment}
@@ -151,9 +151,9 @@ let nameOfFund =investorProfileData?.name_of_fund
               <h6 className="ml-2">{mentorWebsite}</h6>
             </div>
             <div className="flex items-center m-2">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"  width="15"
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="15"
                 height="15"
-                fill="currentColor"><path d="M64 64C28.7 64 0 92.7 0 128V384c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V128c0-35.3-28.7-64-64-64H64zm48 160H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16zM96 336c0-8.8 7.2-16 16-16H464c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16zM376 160h80c13.3 0 24 10.7 24 24v48c0 13.3-10.7 24-24 24H376c-13.3 0-24-10.7-24-24V184c0-13.3 10.7-24 24-24z"/></svg>
+                fill="currentColor"><path d="M64 64C28.7 64 0 92.7 0 128V384c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V128c0-35.3-28.7-64-64-64H64zm48 160H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16zM96 336c0-8.8 7.2-16 16-16H464c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16zM376 160h80c13.3 0 24 10.7 24 24v48c0 13.3-10.7 24-24 24H376c-13.3 0-24-10.7-24-24V184c0-13.3 10.7-24 24-24z" /></svg>
               <h6 className="ml-2"> <span className="font-bold">Average Check Size:</span>
                 <span className="ml-2">$ {averageCheckSize}</span></h6>
             </div>
@@ -184,7 +184,7 @@ let nameOfFund =investorProfileData?.name_of_fund
                 </svg>
                 <h6 className="ml-2" title="Existing Icp Project Porfolio">
                   <span className="font-bold">
-                  Existing Icp Project Porfolio:
+                    Existing Icp Project Porfolio:
                   </span>
                   <span className="ml-2">{existingIcpProjectPorfolio}</span>
                 </h6>
@@ -203,11 +203,11 @@ let nameOfFund =investorProfileData?.name_of_fund
                 <path d="M320 96H192L144.6 24.9C137.5 14.2 145.1 0 157.9 0H354.1c12.8 0 20.4 14.2 13.3 24.9L320 96zM192 128H320c3.8 2.5 8.1 5.3 13 8.4C389.7 172.7 512 250.9 512 416c0 53-43 96-96 96H96c-53 0-96-43-96-96C0 250.9 122.3 172.7 179 136.4l0 0 0 0c4.8-3.1 9.2-5.9 13-8.4zm84 88c0-11-9-20-20-20s-20 9-20 20v14c-7.6 1.7-15.2 4.4-22.2 8.5c-13.9 8.3-25.9 22.8-25.8 43.9c.1 20.3 12 33.1 24.7 40.7c11 6.6 24.7 10.8 35.6 14l1.7 .5c12.6 3.8 21.8 6.8 28 10.7c5.1 3.2 5.8 5.4 5.9 8.2c.1 5-1.8 8-5.9 10.5c-5 3.1-12.9 5-21.4 4.7c-11.1-.4-21.5-3.9-35.1-8.5c-2.3-.8-4.7-1.6-7.2-2.4c-10.5-3.5-21.8 2.2-25.3 12.6s2.2 21.8 12.6 25.3c1.9 .6 4 1.3 6.1 2.1l0 0 0 0c8.3 2.9 17.9 6.2 28.2 8.4V424c0 11 9 20 20 20s20-9 20-20V410.2c8-1.7 16-4.5 23.2-9c14.3-8.9 25.1-24.1 24.8-45c-.3-20.3-11.7-33.4-24.6-41.6c-11.5-7.2-25.9-11.6-37.1-15l0 0-.7-.2c-12.8-3.9-21.9-6.7-28.3-10.5c-5.2-3.1-5.3-4.9-5.3-6.7c0-3.7 1.4-6.5 6.2-9.3c5.4-3.2 13.6-5.1 21.5-5c9.6 .1 20.2 2.2 31.2 5.2c10.7 2.8 21.6-3.5 24.5-14.2s-3.5-21.6-14.2-24.5c-6.5-1.7-13.7-3.4-21.1-4.7V216z" />
               </svg>
               <h6 className="ml-2"><span className="font-bold">
-                    Fund Size:
-                  </span>
-                  <span className="ml-2">$ {fundSize}</span></h6>
+                Fund Size:
+              </span>
+                <span className="ml-2">$ {fundSize}</span></h6>
             </div>
-            <div className="flex items-center m-2">
+            {/* {moneyInvested && (<div className="flex items-center m-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 512 512"
@@ -218,44 +218,49 @@ let nameOfFund =investorProfileData?.name_of_fund
                 <path d="M320 96H192L144.6 24.9C137.5 14.2 145.1 0 157.9 0H354.1c12.8 0 20.4 14.2 13.3 24.9L320 96zM192 128H320c3.8 2.5 8.1 5.3 13 8.4C389.7 172.7 512 250.9 512 416c0 53-43 96-96 96H96c-53 0-96-43-96-96C0 250.9 122.3 172.7 179 136.4l0 0 0 0c4.8-3.1 9.2-5.9 13-8.4zm84 88c0-11-9-20-20-20s-20 9-20 20v14c-7.6 1.7-15.2 4.4-22.2 8.5c-13.9 8.3-25.9 22.8-25.8 43.9c.1 20.3 12 33.1 24.7 40.7c11 6.6 24.7 10.8 35.6 14l1.7 .5c12.6 3.8 21.8 6.8 28 10.7c5.1 3.2 5.8 5.4 5.9 8.2c.1 5-1.8 8-5.9 10.5c-5 3.1-12.9 5-21.4 4.7c-11.1-.4-21.5-3.9-35.1-8.5c-2.3-.8-4.7-1.6-7.2-2.4c-10.5-3.5-21.8 2.2-25.3 12.6s2.2 21.8 12.6 25.3c1.9 .6 4 1.3 6.1 2.1l0 0 0 0c8.3 2.9 17.9 6.2 28.2 8.4V424c0 11 9 20 20 20s20-9 20-20V410.2c8-1.7 16-4.5 23.2-9c14.3-8.9 25.1-24.1 24.8-45c-.3-20.3-11.7-33.4-24.6-41.6c-11.5-7.2-25.9-11.6-37.1-15l0 0-.7-.2c-12.8-3.9-21.9-6.7-28.3-10.5c-5.2-3.1-5.3-4.9-5.3-6.7c0-3.7 1.4-6.5 6.2-9.3c5.4-3.2 13.6-5.1 21.5-5c9.6 .1 20.2 2.2 31.2 5.2c10.7 2.8 21.6-3.5 24.5-14.2s-3.5-21.6-14.2-24.5c-6.5-1.7-13.7-3.4-21.1-4.7V216z" />
               </svg>
               <h6 className="ml-2"><span className="font-bold">
-                    Money Invested:
-                  </span>
-                  <span className="ml-2">$ {moneyInvested}</span></h6>
-            </div>
+                Money Invested:
+              </span>
+                <span className="ml-2">$ {moneyInvested}</span>
+                </h6>
+            </div>)} */}
           </div>
         </div>
-        <div className="border-b border-[#DCDCDC] pb-4">
+        {typeOfInvestment && (<div className="border-b border-[#DCDCDC] pb-4">
           <h4 className="text-xl font-[950]">Type of Investment</h4>
           <div className="text-[15px] leading-4 flex items-center flex-wrap">
             <spna className="bg-gradient-to-r from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 underline my-1 ml-2">
               {typeOfInvestment}
             </spna>
           </div>
-        </div>
-        <div className="border-b border-[#DCDCDC] pb-4">
+        </div>)}
+
+        {projectOnMultichain && (<div className="border-b border-[#DCDCDC] pb-4">
           <h4 className="text-xl font-[950]">Multi-Chain</h4>
           <div className="text-[15px] leading-4 flex items-center flex-wrap">
             <spna className="bg-gradient-to-r from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 underline my-1 ml-2">
               {projectOnMultichain}
             </spna>
           </div>
-        </div>
+        </div>)}
       </div>
       <div>
-        <div className="border-b border-[#DCDCDC] pb-4">
+        {/* <div className="border-b border-[#DCDCDC] pb-4">
+          <h4 className="text-xl font-[950]">Category of Investment</h4>
+          <div className="text-[15px] leading-4 flex items-center flex-wrap">
+            <spna className="bg-gradient-to-r from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 underline my-1 ml-2">
+              {categoryOfInvestment}
+            </spna>
+          </div>
+        </div> */}
+        {investorBio && (<div className="border-b border-[#DCDCDC] pb-4">
           <h4 className="text-xl font-[950]">About</h4>
           <div className="text-[#737373] text-[15px] leading-4">
             <p className="line-clamp-2 sm:line-clamp-none">{investorBio}</p>
-            <p>
-              he is also a speaker in many global events such as conf42,
-              chaosCarnival, Devoxx france ...
-            </p>
-            <p className="text-[#000] underline">Read more</p>
           </div>
-        </div>
-        <div className="border-b border-[#DCDCDC] pb-4">
-          <h4 className="text-xl font-[950]">What mentees say</h4>
-          <div className="space-y-4">
+        </div>)}
+        {/* <div className="border-b border-[#DCDCDC] pb-4"> */}
+        {/* <h4 className="text-xl font-[950]">What mentees say</h4> */}
+        {/* <div className="space-y-4">
             <div className="flex relative -left-5 -top-2">
               <div className="flex-1 rounded-lg px-4 py-2 sm:px-6 sm:py-4 leading-relaxed">
                 <div className="space-y-4 ">
@@ -328,16 +333,9 @@ let nameOfFund =investorProfileData?.name_of_fund
           </div>
           <button className="border-[#3505B2] border text-[#3505B2] py-[7px] rounded-md px-[9px] text-xs font-[950]">
             Load more
-          </button>
-        </div>
-        <div className="border-b border-[#DCDCDC] pb-4">
-          <h4 className="text-xl font-[950]">Category of Investment</h4>
-          <div className="text-[15px] leading-4 flex items-center flex-wrap">
-            <spna className="bg-gradient-to-r from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 underline my-1 ml-2">
-              {categoryOfInvestment}
-            </spna>
-          </div>
-        </div>
+          </button> */}
+        {/* </div> */}
+
         {/* <div className="my-8">
           <h4 className="text-xl font-[950]">Similar mentors</h4>
           <MentorCard />

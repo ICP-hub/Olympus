@@ -42,7 +42,7 @@ function SearchMentors() {
 
   return (
     <div className="px-[4%] w-full bg-gray-100 h-screen overflow-y-scroll">
-      <div className="flex flex-col text-center items-center justify-center">
+      {/* <div className="flex flex-col text-center items-center justify-center">
         <h5 className="text-xl py-4">
           Learn a new skill, launch a project, land your dream career.
         </h5>
@@ -57,7 +57,7 @@ function SearchMentors() {
             Mentorship
           </h2>
         </div>
-        {/* <div className="flex items-center relative md1:w-1/2 sm1:w-3/4 w-full p-2 mb-8 border border-[#737373] rounded-lg shadow-md">
+        <div className="flex items-center relative md1:w-1/2 sm1:w-3/4 w-full p-2 mb-8 border border-[#737373] rounded-lg shadow-md">
           <input
             type="text"
             placeholder="Search by company, skills or role"
@@ -83,8 +83,8 @@ function SearchMentors() {
               />
             </svg>
           </button>
-        </div> */}
-      </div>
+        </div>
+      </div> */}
 
       <div className="flex flex-wrap justify-center">
         {noData ? <NoDataCard /> :

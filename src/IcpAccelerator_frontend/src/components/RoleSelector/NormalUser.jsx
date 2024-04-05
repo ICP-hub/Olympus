@@ -50,7 +50,7 @@ const schema = yup.object({
       value ? value.split(/\s+/).filter(Boolean).length <= 50 : true
     ),
   email: yup.string().email().optional(),
-  telegram_id: yup.string().optional().url(),
+  telegram_id: yup.string().optional(),
   twitter_id: yup.string().optional().url(),
   country: yup.string().required("Country is required."),
   // areas_of_expertise: yup
