@@ -289,7 +289,7 @@ const NormalUser = () => {
                       htmlFor={field.id}
                       className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                     >
-                      {field.label}
+                      {field.label.includes("*") ? <>{field.label.split("*")[0]} <span className="text-red-600">*</span> </> : field.label}
                     </label>
                     <input
                       type={
@@ -298,11 +298,10 @@ const NormalUser = () => {
                       name={field.name}
                       id={field.id}
                       {...register(field.name)}
-                      className={`bg-gray-50 border-2 ${
-                        errors[field.name]
-                          ? "border-red-500 placeholder:text-red-500"
-                          : "border-[#737373]"
-                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      className={`bg-gray-50 border-2 ${errors[field.name]
+                        ? "border-red-500 placeholder:text-red-500"
+                        : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                       placeholder={field.placeholder}
                       onFocus={() => handleFocus(field)}
                       onBlur={() => handleBlur(field)}
@@ -319,15 +318,14 @@ const NormalUser = () => {
                     htmlFor="type_of_profile"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Type of profile *
+                    Type of profile <span className="text-red-700">*</span>
                   </label>
                   <select
                     {...register("type_of_profile")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.type_of_profile
-                        ? "border-red-500 placeholder:text-red-500"
-                        : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    className={`bg-gray-50 border-2 ${errors.type_of_profile
+                      ? "border-red-500 placeholder:text-red-500"
+                      : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="">
                       select
@@ -354,7 +352,7 @@ const NormalUser = () => {
                     htmlFor="reason_to_join_incubator"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Why do you want to join this platform *
+                    Why do you want to join this platform <span className="text-red-700">*</span>
                   </label>
                   <ReactSelect
                     isMulti
@@ -423,15 +421,14 @@ const NormalUser = () => {
                     htmlFor="country"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Country *
+                    Country <span className="text-red-700">*</span>
                   </label>
                   <select
                     {...register("country")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.country
-                        ? "border-red-500 placeholder:text-red-500"
-                        : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    className={`bg-gray-50 border-2 ${errors.country
+                      ? "border-red-500 placeholder:text-red-500"
+                      : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="">
                       Select your Country
@@ -458,7 +455,7 @@ const NormalUser = () => {
                     htmlFor="areas_of_expertise"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Domains you are interested in? *
+                    Domains you are interested in? <span className="text-red-700">*</span>
                   </label>
                   <ReactSelect
                     isMulti
@@ -515,7 +512,7 @@ const NormalUser = () => {
                     htmlFor="areas_of_expertise"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Domains you are interested in? *
+                    Domains you are interested in? <span className="text-red-700">*</span>
                   </label>
                   <ReactSelect
                     isMulti

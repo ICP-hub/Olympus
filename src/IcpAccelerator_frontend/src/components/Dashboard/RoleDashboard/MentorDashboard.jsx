@@ -139,15 +139,24 @@ const MentorDashboard = () => {
           <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
             Ongoing Accelerator
           </h1>
+          <div className="flex gap-2">
+          <button
+            onClick={() => navigate(`/all-live-events`)}
+            className="border border-violet-800 px-4 py-2 rounded-md text-violet-800"
+          >
+            View More
+          </button>
           <button
             onClick={() => navigate(`/event-form`)}
             className="border border-violet-800 px-4 py-2 rounded-md text-violet-800"
           >
             Create event
           </button>
+          </div>
+         
         </div>
         <div className="mb-4">
-          <LiveEventsCards />
+          <LiveEventsCards wrap={true}/>
         </div>
       </div>
     </section>

@@ -36,6 +36,7 @@ import ProjectDetailsForMentor from "./components/Project/ProjectDetailsPages/Pr
 import ProjectDetailsForInvestor from "./components/Project/ProjectDetailsPages/ProjectDetailsForInvestor";
 import ProjectDetailsForUserRole from "./components/Project/ProjectDetailsPages/ProjectDetailsForUserRole";
 import MoreLiveProjects from "./components/Dashboard/MoreLivePages/MoreLiveProjects";
+import LiveEventsCards from "./components/Dashboard/LiveEventsCards";
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
 
@@ -76,6 +77,7 @@ const AppRoutes = () => {
 
   const publicRoutes = [
     { path: "/", element: <DashBoard /> },
+    // { path: "/", element: <CreateProject /> },
     // { path: "/", element: <ProjectDashboard /> },
     // { path: "/", element: <MentorDashboard /> },
     // { path: "/", element: <InvestorDashboard /> },
@@ -109,6 +111,8 @@ const AppRoutes = () => {
     { path: "/mentor-association-requests", element: <MentorSideAssociation /> },
     { path: "/investor-association-requests", element: <InvestorSideAssociation /> },
     { path: "/project-private-document-requests", element: <RequestsPrivateDocument /> },
+    { path: "/all-live-events", element: <LiveEventsCards /> },
+   
   ];
 
   const protectedRoutes = [
