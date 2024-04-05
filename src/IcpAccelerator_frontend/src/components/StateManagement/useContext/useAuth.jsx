@@ -115,14 +115,12 @@ export const useAuthClient = (options = defaultOptions) => {
       agent,
     });
 
-    console.log("actor in useauth -<<<<", actor);
     if (isAuthenticated === true) {
       dispatch(
         loginSuccess({
           isAuthenticated: true,
           identity,
           principal,
-          // navi: "roleSelect",
         })
       );
       dispatch(setActor(actor));

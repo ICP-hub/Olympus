@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import logoWithText from "../../../../assets/Logo/topLogo.png";
 import topLogoWhitepng from "../../../../assets/Logo/topLogoWhitepng.png";
-
 import LogoutModal from "../../../models/LogoutModal";
 import SwitchRole from "../../../models/SwitchRole";
 import { getCurrentRoleStatusFailureHandler, setCurrentActiveRole, setCurrentRoleStatus } from "../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
@@ -25,7 +24,6 @@ const Header = ({ setModalOpen, gradient }) => {
   );
 
   const [showSwitchRole, setShowSwitchRole] = useState(false);
-  // console.log("principal in header", connectedWalletPrincipal);
 
   const manageHandler = () => {
     !principal ? setModalOpen(true) : setModalOpen(false);
@@ -71,7 +69,6 @@ function cloneArrayWithModifiedValues(arr) {
 
 
   const initialApi = async () => {
-    console.log('triggered')
     try {
       const currentRoleArray = await actor.get_role_status()
       if (currentRoleArray && currentRoleArray.length !== 0) {
@@ -82,9 +79,7 @@ function cloneArrayWithModifiedValues(arr) {
         dispatch(getCurrentRoleStatusFailureHandler('error-in-fetching-role-at-header'));
         dispatch(setCurrentActiveRole(null));
       }
-      console.log('currentRoleArray======>>>>>', currentRoleArray)
     } catch (error) {
-      console.log('currentRoleArray=>>>>>>Error=>>>>>>', error)
       dispatch(getCurrentRoleStatusFailureHandler(error.toString()));
       dispatch(setCurrentActiveRole(null));
     }
@@ -97,9 +92,6 @@ function cloneArrayWithModifiedValues(arr) {
         initialApi();
       }
     }
-    console.log('userCurrentRoleStatus--in--header', userCurrentRoleStatus)
-  console.log('userCurrentRoleStatusActiveRole--in--header', userCurrentRoleStatusActiveRole)
-
   }, [actor, principal, isAuthenticated, dispatch, userCurrentRoleStatus, userCurrentRoleStatusActiveRole]);
 
 
@@ -114,37 +106,7 @@ function cloneArrayWithModifiedValues(arr) {
             src={(!userCurrentRoleStatusActiveRole || userCurrentRoleStatusActiveRole === 'user') && window.location.pathname === "/" ? topLogoWhitepng : logoWithText} alt="IcpLogo" loading="lazy" />
         </div>
         {isAuthenticated && (
-          <div className="md:flex hidden cursor-pointer">
-            {/* <a href="/" className={`${underline}`}>
-              Home
-            </a> */}
-            {/* home disabled */}
-            {/* <div onClick={() => window.location.href = "/"}
-              className={`rounded-full px-8 py-[2px] group-hover:bg-[#6E52AA] group-hover:text-white font-fontUse ${(!userCurrentRoleStatusActiveRole || userCurrentRoleStatusActiveRole === 'user') && window.location.pathname === "/" ? 'text-white' : 'text-blue-800'}`}>
-              Home
-            </div> */}
-            {/* <a href="#" className={`${underline}`}>
-              Event
-            </a>
-            <a href="#" className={`${underline}`}>
-              Mentor
-            </a> */}
-
-            {/* {userCurrentRoleStatus && userCurrentRoleStatusActiveRole && userCurrentRoleStatusActiveRole !== 'user' ?
-              <div className={`rounded-full px-8 py-[2px] group-hover:bg-[#6E52AA] group-hover:text-white ${(!userCurrentRoleStatusActiveRole || userCurrentRoleStatusActiveRole === 'user') && window.location.pathname === "/" ? 'text-white' : 'text-blue-800'}`}
-                onClick={() => navigate(
-                  userCurrentRoleStatusActiveRole === 'project'
-                    ? '/project-association-requests'
-                    : userCurrentRoleStatusActiveRole === 'mentor'
-                      ? '/mentor-association-requests'
-                      : userCurrentRoleStatusActiveRole === 'vc'
-                        ? "/investor-association-requests"
-                        : ''
-                )}
-              >
-                Associations
-              </div>
-              : ''} */}
+          <div className="md:flex hidden cursor-pointer">    
 
           </div>
         )}
@@ -175,13 +137,6 @@ function cloneArrayWithModifiedValues(arr) {
             )}
           </>
         ) : (
-          // <button
-          //   type="button"
-          //   className="font-bold rounded-md my-2 bg-indigo-600 font-fontUse text-center text-white uppercase text-[0.625rem] md:text-[0.64375rem] lg:text-[0.65625rem] xl:text-[0.78125rem] px-6 py-2 top-[6.5rem] sm4:top-[10.5rem] xxs1:top-[8.5rem] ss2:top-[7.5rem] text-wrap"
-          //   onClick={manageHandler}
-          // >
-          //   SIGNUP / LOGIN
-          // </button>
           <button
             type="button"
             className="font-bold rounded-xl my-2 bg-transparent border-2 border-white/50 font-fontUse text-center text-white uppercase text-[0.625rem] md:text-[0.64375rem] lg:text-[14.5px] xl:text-[0.78125rem] px-6 py-2 top-[6.5rem] sm4:top-[10.5rem] xxs1:top-[8.5rem] ss2:top-[7.5rem] text-wrap group-hover:bg-white group-hover:text-[#BA77FB] z-20"

@@ -619,7 +619,7 @@ const CreateProjectRegistration = () => {
         };
 
         // If there is a mentor_image, handle its conversion and set it separately if needed
-        if (userData.profile_picture) {
+        if (userData?.profile_picture) {
           bufferToImageBlob(userData?.profile_picture)
             .then((imageUrl) => {
               setImagePreview(imageUrl);

@@ -23,7 +23,6 @@ const ProjectJobCard = ({ image, website, tags, country }) => {
     await caller
       .get_all_jobs()
       .then((result) => {
-        console.log("result-in-latest-Jobs", result);
         if (!result || result.length == 0) {
           setNoData(true);
           setLatestJobs([]);
@@ -35,7 +34,6 @@ const ProjectJobCard = ({ image, website, tags, country }) => {
       .catch((error) => {
         setNoData(true);
         setLatestJobs([]);
-        console.log("result-in-latest-Jobs", error);
       });
   };
 
@@ -54,84 +52,6 @@ const ProjectJobCard = ({ image, website, tags, country }) => {
     );
   }
   return (
-    // <div className="flex flex-col md:flex-row  gap-4 mb-8">
-    //   {latestJobs &&
-    //     latestJobs.slice(0, 2).map((data, index) => {
-    //       const {
-    //         project_name: projectName,
-    //         project_logo: projectLogo,
-    //         project_desc: projectDescription,
-    //         job_data: {
-    //           title: jobName,
-    //           description: jobDescription,
-    //           category: jobCategory,
-    //           link: jobLink,
-    //           location: jobLocation,
-    //         },
-    //         timestamp,
-    //       } = data;
-    //       const projectImage = uint8ArrayToBase64(projectLogo);
-    //       const JobPosted = timeAgo(timestamp);
-
-    //       return (
-    //         <div
-    //           className="border-2 shadow-lg rounded-2xl w-full md:flex"
-    //           key={index}
-    //         >
-    //           <div className="p-4 flex flex-col">
-    //             <div className="flex flex-col lg:flex-row">
-    //               <div className="w-full lg:w-1/2">
-    //                 <div className="flex">
-    //                   <img
-    //                     src={projectImage}
-    //                     alt="project logo"
-    //                     className="w-16 h-16 object-cover rounded-md"
-    //                   />
-    //                   <div className="ml-2">
-    //                     <p className="text-base font-bold">{projectName}</p>
-    //                     <p className="text-xs font-medium">{JobPosted}</p>
-    //                   </div>
-    //                 </div>
-    //                 <div className="mt-2 sm:hidden flex justify-center items-center">
-    //                   <span className="bg-transparent text-xs font-semibold px-3 py-1 rounded-2xl border-2 border-black">
-    //                     {jobCategory}
-    //                   </span>
-    //                 </div>
-    //                 <p className="text-base font-medium py-2">
-    //                   {projectDescription}
-    //                 </p>
-    //               </div>
-    //               <div className="w-full lg:w-1/2 mt-4 sm:mt-0">
-    //                 <div className="hidden sm:flex justify-center items-center mb-2">
-    //                   <span className="bg-transparent text-xs font-semibold px-3 py-1 rounded-2xl border-2 border-black">
-    //                     {jobCategory}
-    //                   </span>
-    //                 </div>
-    //                 <p className="text-base font-medium py-2 h-36 overflow-y-scroll">
-    //                   {jobDescription}
-    //                 </p>
-    //                 <p className="text-base font-bold py-1">Location</p>
-    //                 <span className="capitalize">{jobLocation}</span>
-    //                 <div className="flex flex-col gap-1 items-center lg:items-end justify-end mt-2 sm:flex-row">
-    //                   <span className="text-sm text-start">Register your interest here:</span>
-    //                   <a
-    //                     href={jobLink}
-    //                     target="_blank"
-    //                     className="mt-2 sm:mt-0"
-    //                   >
-    //                     <button className="bg-blue-800 border border-transparent flex px-2 py-2 rounded-md text-sm text-white">
-    //                       I'm interested!
-    //                     </button>
-    //                   </a>
-    //                 </div>
-    //               </div>
-    //             </div>
-    //           </div>
-    //         </div>
-    //       );
-    //     })}
-    // </div>
-
     <div className="py-4 gap-2 overflow-x-auto">
       <Swiper
         modules={[Pagination, Autoplay]}
@@ -162,7 +82,6 @@ const ProjectJobCard = ({ image, website, tags, country }) => {
         {latestJobs.length == 0 ?
           <NoDataCard />
           : latestJobs.map((card, index) => {
-            console.log("card", card);
             let job_name = card?.job_data?.title ?? "";
             let job_category = card?.job_data?.category ?? "";
             let job_description = card?.job_data?.description ?? "";

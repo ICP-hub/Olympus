@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import internetIdentity from "../../assets/WalletLogo/IcpWallet1.png";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-// import { logoutStart } from "../components/StateManagement/Redux/Reducers/InternetIdentityReducer";
 import { changeHasSelectedRoleHandler } from "../components/StateManagement/Redux/Reducers/userRoleReducer";
 import { useNavigate } from "react-router-dom";
 import { mentorRegisteredHandlerRequest } from "../components/StateManagement/Redux/Reducers/mentorRegisteredData";
@@ -22,12 +21,10 @@ const LogoutModal = () => {
   const specificRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
-  console.log("specificRole is Here===>", specificRole);
 
   const { logout } = useAuth();
   const [customSvg, setCustomSvg] = useState(beforeCopySvg);
 
-  // console.log('specific role in logout handler => ', specificRole )
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -42,22 +39,14 @@ const LogoutModal = () => {
     setDropdownOpen(!isDropdownOpen);
   };
 
-  // useEffect(() => {
-  //   dispatch(userRoleHandler());
-  // }, [isAuthenticated, dispatch, actor]);
 
   const logoutHandler = async () => {
     dispatch(changeHasSelectedRoleHandler(false));
     await logout();
     navigate("/");
-    // setDropdownOpen(false)
   };
 
   const profileHandler = async (specificRole) => {
-    console.log(
-      "specific role inside profilehandler logout component ",
-      specificRole
-    );
     switch (specificRole) {
       case "project":
         dispatch(founderRegisteredHandlerRequest());
@@ -88,11 +77,6 @@ const LogoutModal = () => {
       }
     );
   }, [principal]);
-
-  // const handleNavigate = () => {
-
-  // }
-
   return (
     <>
       <Toaster />

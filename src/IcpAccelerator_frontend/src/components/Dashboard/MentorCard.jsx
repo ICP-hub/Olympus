@@ -15,7 +15,6 @@ const MentorCard = () => {
   
   const getAllMentors = async (caller) => {
     await caller.get_all_mentors_candid().then((result) => {
-      console.log('result-in-get-all-mentors', result)
       if (!result || result.length == 0) {
         setNoData(true)
         setData([])
@@ -26,7 +25,6 @@ const MentorCard = () => {
     }).catch((error) => {
       setNoData(true)
       setData([])
-      console.log('error-in-get-all-mentors', error)
     })
   }
 
@@ -79,11 +77,9 @@ const MentorCard = () => {
                 {category_of_mentoring_service}
               </span>
               <div className="flex flex-wrap gap-2 border-t-2 mt-3 py-3">
-                {/* {mentor.areaOfFocus.map((investment, index) => ( */}
                 <span className="bg-[#E7E7E8] rounded-full text-gray-600 text-xs font-bold px-3 py-2 leading-none flex items-center mt-2">
                   {skills}
                 </span>
-                {/* ))} */}
               </div>
               <button onClick={() => id ? navigate(`/view-mentor-details/${id}`) : ''} className="mt-4 text-white px-4 py-1 rounded-lg uppercase w-full text-center border border-gray-300 font-bold bg-[#3505B2] transition-colors duration-200 ease-in-out">
                 View Profile

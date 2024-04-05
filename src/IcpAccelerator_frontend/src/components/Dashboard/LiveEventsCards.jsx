@@ -13,7 +13,6 @@ const LiveEventsCards = ({ wrap, register }) => {
         await caller
             .get_all_cohorts()
             .then((result) => {
-                console.log("result-in-get_all_cohorts", result);
                 if (!result || result.length == 0) {
                     setNoData(true);
                     setAllLiveEventsData([]);
@@ -25,7 +24,6 @@ const LiveEventsCards = ({ wrap, register }) => {
             .catch((error) => {
                 setNoData(true);
                 setAllLiveEventsData([]);
-                console.log("error-in-get_all_cohorts", error);
             });
     };
 
