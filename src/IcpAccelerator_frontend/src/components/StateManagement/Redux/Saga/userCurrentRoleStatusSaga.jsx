@@ -55,7 +55,62 @@ function* switchRoleRequestHandlerFunc(action) {
     }
 }
 
+// function formatFullDateFromBigInt(bigIntDate) {
+//     const date = new Date(Number(bigIntDate / 1000000n));
+//     const dateString = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+//     return `${dateString}`;
+// }
+
+
+// function cloneArrayWithModifiedValues(arr) {
+//     return arr.map(obj => {
+//         const modifiedObj = {};
+
+//         Object.keys(obj).forEach(key => {
+//             if (Array.isArray(obj[key]) && obj[key].length > 0) {
+//                 if (key === 'approved_on' || key === "rejected_on" || key === "requested_on") {
+//                     // const date = new Date(Number(obj[key][0])).toLocaleDateString('en-US');
+//                     const date = formatFullDateFromBigInt(obj[key][0]);
+//                     modifiedObj[key] = date; // Convert bigint to string date
+//                 } else {
+//                     modifiedObj[key] = obj[key][0]; // Keep the first element of other arrays unchanged
+//                 }
+//             } else {
+//                 modifiedObj[key] = obj[key]; // Keep other keys unchanged
+//             }
+//         });
+
+//         return modifiedObj;
+//     });
+// }
+
+
+
+// function* setCurrentRoleStatusHandlerFunc(action) {
+//     const roleArray = action.payload;
+//     console.log('roleArray ======>>>>>', roleArray)
+//     const clonedArray = cloneArrayWithModifiedValues(roleArray)
+//     console.log('clonedArray ======>>>>>', clonedArray)
+//     // let clonedRoleArray = roleArray.map((val, index) => {
+//     //     return ({ val?.name, val?.status })
+//     // })
+
+//     // for (let i = 0; i < clonedRoleArray.length; i++) {
+//     //     const element = array[i];
+
+//     // }
+//     // try {
+//     //     const actor = yield select(selectActor);
+//     //     yield call([actor, actor.switch_role], roleName, newStatus);
+//     //     // yield call(fetchCurrentRoleStatus());
+//     // } catch (error) {
+//     //     yield put(switchRoleRequestFailureHandler(error.toString()));
+//     // }
+// }
+
 export function* userCurrentRoleSaga() {
     yield takeLatest(getCurrentRoleStatusRequestHandler().type, fetchCurrentRoleStatus);
     yield takeLatest(switchRoleRequestHandler().type, switchRoleRequestHandlerFunc);
+    // yield takeLatest(setCurrentRoleStatus().type, setCurrentRoleStatusHandlerFunc);
+
 }

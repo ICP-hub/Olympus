@@ -34,19 +34,57 @@ const Header = ({ setModalOpen, gradient }) => {
   const underline =
     "relative focus:after:content-[''] focus:after:block focus:after:w-full focus:after:h-[2px] focus:after:bg-blue-800 focus:after:absolute focus:after:left-0 focus:after:bottom-[-4px]";
 
+    function getNameOfCurrentStatus(rolesStatusArray) {
+      const currentStatus = rolesStatusArray.find(
+        (role) => role.status === "active"
+      );
+      return currentStatus ? currentStatus.name : null;
+    }
+
+    function formatFullDateFromBigInt(bigIntDate) {
+      const date = new Date(Number(bigIntDate / 1000000n));
+      const dateString = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+      return `${dateString}`;
+  }
+      
+function cloneArrayWithModifiedValues(arr) {
+  return arr.map(obj => {
+      const modifiedObj = {};
+
+      Object.keys(obj).forEach(key => {
+          if (Array.isArray(obj[key]) && obj[key].length > 0) {
+              if (key === 'approved_on' || key === "rejected_on" || key === "requested_on") {
+                  // const date = new Date(Number(obj[key][0])).toLocaleDateString('en-US');
+                  const date = formatFullDateFromBigInt(obj[key][0]);
+                  modifiedObj[key] = date; // Convert bigint to string date
+              } else {
+                  modifiedObj[key] = obj[key][0]; // Keep the first element of other arrays unchanged
+              }
+          } else {
+              modifiedObj[key] = obj[key]; // Keep other keys unchanged
+          }
+      });
+
+      return modifiedObj;
+  });
+}
+
 
   const initialApi = async () => {
+    console.log('triggered')
     try {
       const currentRoleArray = await actor.get_role_status()
       if (currentRoleArray && currentRoleArray.length !== 0) {
         const currentActiveRole = getNameOfCurrentStatus(currentRoleArray)
-        dispatch(setCurrentRoleStatus(currentRoleArray));
+        dispatch(setCurrentRoleStatus(cloneArrayWithModifiedValues(currentRoleArray)));
         dispatch(setCurrentActiveRole(currentActiveRole));
       } else {
         dispatch(getCurrentRoleStatusFailureHandler('error-in-fetching-role-at-header'));
         dispatch(setCurrentActiveRole(null));
       }
+      console.log('currentRoleArray======>>>>>', currentRoleArray)
     } catch (error) {
+      console.log('currentRoleArray=>>>>>>Error=>>>>>>', error)
       dispatch(getCurrentRoleStatusFailureHandler(error.toString()));
       dispatch(setCurrentActiveRole(null));
     }
@@ -60,10 +98,12 @@ const Header = ({ setModalOpen, gradient }) => {
       }
     }
     console.log('userCurrentRoleStatus--in--header', userCurrentRoleStatus)
-  }, [actor, principal, isAuthenticated, dispatch, userCurrentRoleStatus, userCurrentRoleStatusActiveRole]);
-
   console.log('userCurrentRoleStatusActiveRole--in--header', userCurrentRoleStatusActiveRole)
 
+  }, [actor, principal, isAuthenticated, dispatch, userCurrentRoleStatus, userCurrentRoleStatusActiveRole]);
+
+
+  
 
   return (
     <header className={`text-gray-700 body-font ${(!userCurrentRoleStatusActiveRole || userCurrentRoleStatusActiveRole === 'user') && window.location.pathname === "/" ?
@@ -131,23 +171,7 @@ const Header = ({ setModalOpen, gradient }) => {
                 <LogoutModal />
               </div>
             ) : (
-              <div className="flex items-center flex-row gap-2 z-20">
-
-                <button
-                  // onClick={() => setShowSwitchRole(true)}
-                  onClick={() => window.location.reload()}
-                  className={
-                    (!userCurrentRoleStatusActiveRole || userCurrentRoleStatusActiveRole === 'user') && window.location.pathname === "/"
-                      ? "hover:bg-white hover:text-violet-800 border border-white md:p-1 font-bold rounded-md text-white md:px-2 px-1 text-base md:text-lg  uppercase"
-                      : "hover:bg-violet-800 hover:text-white border border-violet-800 md:p-1 font-bold rounded-md text-violet-800 md:px-2 px-1 text-base md:text-lg  uppercase"}
-                >
-                  {/* {userCurrentRoleStatusActiveRole == "vc"
-                    ? "investor"
-                    : userCurrentRoleStatusActiveRole} */}
-                    get role
-                </button>
                 <LogoutModal />
-              </div>
             )}
           </>
         ) : (

@@ -52,7 +52,7 @@ const SecondEventCard = ({ data, register }) => {
               <ul className="text-sm font-extralight list-disc list-outside pl-4">
                 {tags && tags.split(",").map((val, index) => {
                   return (
-                    <li>{val.trim()}</li>
+                    <li key={index} >{val.trim()}</li>
                   )
                 })}
               </ul>
