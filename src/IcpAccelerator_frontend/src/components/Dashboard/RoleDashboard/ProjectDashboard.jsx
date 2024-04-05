@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import { useSelector } from "react-redux";
 import SpotLight from "../SpotLight";
 import EventCard from "../EventCard";
@@ -8,6 +9,7 @@ import LiveProjectBar from "../liveProjectBar";
 import LiveEventsCards from "../LiveEventsCards";
 
 const ProjectDashboard = () => {
+  const navigate = useNavigate();
   const actor = useSelector((currState) => currState.actors.actor);
   const [projectData, setProjectData] = useState(null);
 
@@ -83,15 +85,15 @@ const ProjectDashboard = () => {
           <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
             Ongoing Accelerator
           </h1>
-          {/* <button
-            onClick={() => navigate(`/event-form`)}
+          <button
+            onClick={() => navigate(`/all-live-events`)}
             className="border border-violet-800 px-4 py-2 rounded-md text-violet-800"
           >
-            Create event
-          </button> */}
+            View More
+          </button>
         </div>
         <div className="mb-4">
-          <LiveEventsCards />
+          <LiveEventsCards wrap={true}/>
         </div>
       </div>
     </section>

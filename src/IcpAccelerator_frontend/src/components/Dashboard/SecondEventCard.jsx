@@ -27,7 +27,7 @@ const SecondEventCard = ({ data }) => {
       <div className="block w-full drop-shadow-xl rounded-lg bg-gray-200 mb-8">
         <div className="w-full relative">
           <img
-            className="w-full object-cover h-[280px] rounded-lg "
+            className="w-full object-cover rounded-lg "
             src={hover}
             alt="not found"
           />
@@ -58,7 +58,7 @@ const SecondEventCard = ({ data }) => {
 
               </ul>
               <div className="flex w-full py-2">
-                <p className="line-clamp-3">{desc}</p>
+                <p className="line-clamp-3 min-h-4">{desc}</p>
               </div>
               <div className="flex flex-row flex-wrap space-x-8 mt-2">
                 <div className="flex gap-4 justify-between w-full">

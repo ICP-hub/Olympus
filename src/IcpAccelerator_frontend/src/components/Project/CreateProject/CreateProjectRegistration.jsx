@@ -158,7 +158,10 @@ const validationSchema = {
     preferred_icp_hub: yup.string().required("ICP hub is required"),
     supports_multichain: yup.string(),
     promotional_video: yup.string().url("Must be a valid URL").optional(),
-    dapp_link: yup.string().url("Must be a valid URL").optional(),
+    dapp_link: yup.string().url("Must be a valid URL").when('live_on_icp_mainnet', (val, schema) => val && val === 'true' ? schema.test('is-non-empty', 'Required', (value) => /\S/.test(value)).required("Required") : schema),
+
+    // location: yup.string().when('hackathon_mode', (val, schema) => val && (val[0] === 'offline' || val[0] === 'hybrid') ? schema.test('is-non-empty', 'Required', (value) => /\S/.test(value)).required("Required") : schema),
+
     project_website: yup.string().url("Must be a valid URL").optional(),
     project_twitter: yup.string().url("Must be a valid URL").optional(),
     project_discord: yup.string().url("Must be a valid URL").optional(),
@@ -245,11 +248,10 @@ const CreateProjectRegistration = () => {
   }
 
   const getTabClassName = (tab) => {
-    return `inline-block p-2 font-bold ${
-      activeTab === tab
-        ? "text-black border-b-2 border-black"
-        : "text-gray-400  border-transparent hover:text-black"
-    } rounded-t-lg`;
+    return `inline-block p-2 font-bold ${activeTab === tab
+      ? "text-black border-b-2 border-black"
+      : "text-gray-400  border-transparent hover:text-black"
+      } rounded-t-lg`;
   };
 
   // useEffect(() => {
@@ -312,6 +314,10 @@ const CreateProjectRegistration = () => {
   };
 
   const liveOnICPMainnetValue = watch("live_on_icp_mainnet");
+  // console.log('liveOnICPMainnetValue=========>>>', liveOnICPMainnetValue)
+  // console.log('liveOnICPMainnetValue=========>>>', typeof liveOnICPMainnetValue)
+  // console.log('liveOnICPMainnetValue=========>>>', watch('dapp_link'))
+  // console.log('liveOnICPMainnetValue=========>>>', typeof watch('dapp_link'))
   const isyourProjectRegistered = watch("is_your_project_registered");
   const MoneyRaisedTillNow = watch("money_raised_till_now");
   const IsMultiChain = watch("multi_chain");
@@ -534,7 +540,13 @@ const CreateProjectRegistration = () => {
   );
   const handleNext = async () => {
     const fieldsToValidate = steps[step].fields.map((field) => field.name);
-    const result = await trigger(fieldsToValidate);
+    // console.log('fieldsToValidate', fieldsToValidate)
+    // console.log('watch===live_on_icp_mainnet===>>', watch('live_on_icp_mainnet'))
+    const result = await trigger(
+      watch('live_on_icp_mainnet') === "true"
+        ? [...fieldsToValidate, 'reason_to_join_incubator', 'preferred_icp_hub', 'project_area_of_focus', 'dapp_link']
+        : [...fieldsToValidate, 'reason_to_join_incubator', 'preferred_icp_hub', 'project_area_of_focus']
+    );
     if (result) {
       setStep((prevStep) => prevStep + 1);
       setActiveTab(projectRegistration[step + 1]?.id);
@@ -630,7 +642,7 @@ const CreateProjectRegistration = () => {
   }, [projectFullData, reset, setValue, userData]);
 
   const errorFunc = (val) => {
-    // console.log("val", val);
+    console.log("val", val);
   };
   const sendingProjectData = async (val) => {
     // console.log("run sendingProjectData =========");
@@ -901,11 +913,10 @@ const CreateProjectRegistration = () => {
             {projectRegistration?.map((header, index) => (
               <li key={header.id} className="me-2 relative group">
                 <button
-                  className={`${getTabClassName(header.id)} ${
-                    index > step && !isCurrentStepValid
-                      ? "cursor-not-allowed opacity-50"
-                      : "cursor-pointer"
-                  }`}
+                  className={`${getTabClassName(header.id)} ${index > step && !isCurrentStepValid
+                    ? "cursor-not-allowed opacity-50"
+                    : "cursor-pointer"
+                    }`}
                   onClick={() => handleTabClick(header.id)}
                   disabled={index > step && !isCurrentStepValid}
                 >
@@ -1188,15 +1199,14 @@ const CreateProjectRegistration = () => {
                   htmlFor="reason_to_join_incubator"
                   className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                 >
-                  Why do you want to join? *
+                  Why do you want to join? <span className="text-red-600">*</span>
                 </label>
                 <select
                   {...register("reason_to_join_incubator")}
-                  className={`bg-gray-50 border-2 ${
-                    errors.reason_to_join_incubator
-                      ? "border-red-500 placeholder:text-red-500"
-                      : "border-[#737373]"
-                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  className={`bg-gray-50 border-2 ${errors.reason_to_join_incubator
+                    ? "border-red-500 placeholder:text-red-500"
+                    : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   required={true}
                 >
                   <option className="text-lg font-bold" value="">
@@ -1236,15 +1246,14 @@ const CreateProjectRegistration = () => {
                     htmlFor="preferred_icp_hub"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Are you associated with a ICP HUB *
+                    Are you associated with a ICP HUB <span className="text-red-600">*</span>
                   </label>
                   <select
                     {...register("preferred_icp_hub")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.preferred_icp_hub
-                        ? "border-red-500 placeholder:text-red-500"
-                        : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    className={`bg-gray-50 border-2 ${errors.preferred_icp_hub
+                      ? "border-red-500 placeholder:text-red-500"
+                      : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="">
                       Select your ICP Hub
@@ -1270,7 +1279,7 @@ const CreateProjectRegistration = () => {
                     htmlFor="project_area_of_focus"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Area of focus *
+                    Area of focus <span className="text-red-600">*</span>
                   </label>
                   <ReactSelect
                     isMulti
@@ -1310,27 +1319,35 @@ const CreateProjectRegistration = () => {
                     {...register("project_area_of_focus")}
                     onChange={(selectedOptions) => {
                       // You might need to adapt this part to fit how you handle form data
-                      const selectedValues = selectedOptions
-                        .map((option) => option.value)
-                        .join(", ");
-                      setValue("project_area_of_focus", selectedValues);
+                      if (selectedOptions && selectedOptions.length > 0) {
+                        clearErrors('project_area_of_focus');
+                        setValue('project_area_of_focus', selectedOptions
+                          .map((option) => option.value)
+                          .join(", "))
+                      } else {
+                        setError('project_area_of_focus', { type: 'required', message: 'Area of focus is required' })
+                      }
                     }}
                   />
+                  {errors.project_area_of_focus && (
+                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                      {errors.project_area_of_focus.message}
+                    </p>
+                  )}
                 </div>
                 <div className="z-0 w-full mb-3 group">
                   <label
                     htmlFor="live_on_icp_mainnet"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Live on ICP *
+                    Live on ICP <span className="text-red-600">*</span>
                   </label>
                   <select
                     {...register("live_on_icp_mainnet")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.live_on_icp_mainnet
-                        ? "border-red-500 placeholder:text-red-500"
-                        : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    className={`bg-gray-50 border-2 ${errors.live_on_icp_mainnet
+                      ? "border-red-500 placeholder:text-red-500"
+                      : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="false">
                       No
@@ -1352,18 +1369,17 @@ const CreateProjectRegistration = () => {
                         htmlFor="dapp_link"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        dApp Link *
+                        dApp Link <span className="text-red-600">*</span>
                       </label>
                       <input
                         type="text"
                         name="dapp_link"
                         id="dapp_link"
                         {...register("dapp_link")}
-                        className={`bg-gray-50 border-2 ${
-                          errors.dapp_link
-                            ? "border-red-500 placeholder:text-red-500"
-                            : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        className={`bg-gray-50 border-2 ${errors.dapp_link
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                         placeholder="https://"
                       />
                       {errors.dapp_link && (
@@ -1377,18 +1393,17 @@ const CreateProjectRegistration = () => {
                         htmlFor="weekly_active_users"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        Weekly active users *
+                        Weekly active users <span className="text-red-600">*</span>
                       </label>
                       <input
                         type="number"
                         name="weekly_active_users"
                         id="weekly_active_users"
                         {...register("weekly_active_users")}
-                        className={`bg-gray-50 border-2 ${
-                          errors.weekly_active_users
-                            ? "border-red-500 placeholder:text-red-500"
-                            : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        className={`bg-gray-50 border-2 ${errors.weekly_active_users
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                       />
                       {errors.weekly_active_users && (
                         <p className="mt-1 text-sm text-red-500 font-bold text-left">
@@ -1401,18 +1416,17 @@ const CreateProjectRegistration = () => {
                         htmlFor="revenue"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        Revenue (USD) *
+                        Revenue (USD) <span className="text-red-600">*</span>
                       </label>
                       <input
                         type="number"
                         name="revenue"
                         id="revenue"
                         {...register("revenue")}
-                        className={`bg-gray-50 border-2 ${
-                          errors.revenue
-                            ? "border-red-500 placeholder:text-red-500"
-                            : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        className={`bg-gray-50 border-2 ${errors.revenue
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                         placeholder="$"
                       />
                       {errors.revenue && (
@@ -1432,11 +1446,10 @@ const CreateProjectRegistration = () => {
                   </label>
                   <select
                     {...register("multi_chain")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.multi_chain
-                        ? "border-red-500 placeholder:text-red-500"
-                        : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    className={`bg-gray-50 border-2 ${errors.multi_chain
+                      ? "border-red-500 placeholder:text-red-500"
+                      : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="false">
                       No
@@ -1461,11 +1474,10 @@ const CreateProjectRegistration = () => {
                     </label>
                     <select
                       {...register("supports_multichain")}
-                      className={`bg-gray-50 border-2 ${
-                        errors.supports_multichain
-                          ? "border-red-500 placeholder:text-red-500"
-                          : "border-[#737373]"
-                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      className={`bg-gray-50 border-2 ${errors.supports_multichain
+                        ? "border-red-500 placeholder:text-red-500"
+                        : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     >
                       <option className="text-lg font-bold" value="">
                         Select
@@ -1496,11 +1508,10 @@ const CreateProjectRegistration = () => {
                   </label>
                   <select
                     {...register("money_raised_till_now")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.money_raised_till_now
-                        ? "border-red-500 placeholder:text-red-500"
-                        : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    className={`bg-gray-50 border-2 ${errors.money_raised_till_now
+                      ? "border-red-500 placeholder:text-red-500"
+                      : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="false">
                       No
@@ -1529,11 +1540,10 @@ const CreateProjectRegistration = () => {
                         name="icp_grants"
                         id="icp_grants"
                         {...register("icp_grants")}
-                        className={`bg-gray-50 border-2 ${
-                          errors.icp_grants
-                            ? "border-red-500 placeholder:text-red-500"
-                            : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        className={`bg-gray-50 border-2 ${errors.icp_grants
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                         placeholder="$"
                       />
                       {errors.icp_grants && (
@@ -1554,11 +1564,10 @@ const CreateProjectRegistration = () => {
                         name="investors"
                         id="investors"
                         {...register("investors")}
-                        className={`bg-gray-50 border-2 ${
-                          errors.investors
-                            ? "border-red-500 placeholder:text-red-500"
-                            : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        className={`bg-gray-50 border-2 ${errors.investors
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                         placeholder="$"
                       />
                       {errors.investors && (
@@ -1579,11 +1588,10 @@ const CreateProjectRegistration = () => {
                         name="sns"
                         id="sns"
                         {...register("sns")}
-                        className={`bg-gray-50 border-2 ${
-                          errors.sns
-                            ? "border-red-500 placeholder:text-red-500"
-                            : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        className={`bg-gray-50 border-2 ${errors.sns
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                         placeholder="$"
                       />
                       {errors.sns && (
@@ -1601,11 +1609,10 @@ const CreateProjectRegistration = () => {
                       </label>
                       <select
                         {...register("money_raised_now")}
-                        className={`bg-gray-50 border-2 ${
-                          errors.money_raised_now
-                            ? "border-red-500 placeholder:text-red-500"
-                            : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        className={`bg-gray-50 border-2 ${errors.money_raised_now
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                       >
                         <option className="text-lg font-bold" value="false">
                           No
@@ -1632,11 +1639,10 @@ const CreateProjectRegistration = () => {
                         name="target_amount"
                         id="target_amount"
                         {...register("target_amount")}
-                        className={`bg-gray-50 border-2 ${
-                          errors.target_amount
-                            ? "border-red-500 placeholder:text-red-500"
-                            : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        className={`bg-gray-50 border-2 ${errors.target_amount
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                         placeholder="$"
                       />
                       {errors.target_amount && (
@@ -1657,11 +1663,10 @@ const CreateProjectRegistration = () => {
                         name="raised_from_other_ecosystem"
                         id="raised_from_other_ecosystem"
                         {...register("raised_from_other_ecosystem")}
-                        className={`bg-gray-50 border-2 ${
-                          errors.raised_from_other_ecosystem
-                            ? "border-red-500 placeholder:text-red-500"
-                            : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        className={`bg-gray-50 border-2 ${errors.raised_from_other_ecosystem
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                         placeholder="Million"
                       />
                       {errors.raised_from_other_ecosystem && (
@@ -1679,11 +1684,10 @@ const CreateProjectRegistration = () => {
                       </label>
                       <select
                         {...register("upload_private_documents")}
-                        className={`bg-gray-50 border-2 ${
-                          errors.upload_private_documents
-                            ? "border-red-500 placeholder:text-red-500"
-                            : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        className={`bg-gray-50 border-2 ${errors.upload_private_documents
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                       >
                         <option className="text-lg font-bold" value="false">
                           No
@@ -1714,11 +1718,10 @@ const CreateProjectRegistration = () => {
                         </label>
                         <input
                           {...register(`private_docs.${index}.title`)}
-                          className={`bg-gray-50 border-2 ${
-                            errors.title1
-                              ? "border-red-500 placeholder:text-red-500"
-                              : "border-[#737373]"
-                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                          className={`bg-gray-50 border-2 ${errors.title1
+                            ? "border-red-500 placeholder:text-red-500"
+                            : "border-[#737373]"
+                            } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                         />
                         {errors.private_docs &&
                           errors.private_docs[index]?.title && (
@@ -1732,11 +1735,10 @@ const CreateProjectRegistration = () => {
                         </label>
                         <input
                           {...register(`private_docs.${index}.link`)}
-                          className={`bg-gray-50 border-2 ${
-                            errors.link
-                              ? "border-red-500 placeholder:text-red-500"
-                              : "border-[#737373]"
-                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                          className={`bg-gray-50 border-2 ${errors.link
+                            ? "border-red-500 placeholder:text-red-500"
+                            : "border-[#737373]"
+                            } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                         />
                         {errors.private_docs &&
                           errors.private_docs[index]?.link && (
@@ -1771,11 +1773,10 @@ const CreateProjectRegistration = () => {
                       </label>
                       <input
                         {...register(`public_docs.${index}.title`)}
-                        className={`bg-gray-50 border-2 ${
-                          errors.title1
-                            ? "border-red-500 placeholder:text-red-500"
-                            : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        className={`bg-gray-50 border-2 ${errors.title1
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                       />
                       {errors.public_docs &&
                         errors.public_docs[index]?.title && (
@@ -1789,11 +1790,10 @@ const CreateProjectRegistration = () => {
                       </label>
                       <input
                         {...register(`public_docs.${index}.link`)}
-                        className={`bg-gray-50 border-2 ${
-                          errors.link
-                            ? "border-red-500 placeholder:text-red-500"
-                            : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        className={`bg-gray-50 border-2 ${errors.link
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                       />
                       {errors.public_docs &&
                         errors.public_docs[index]?.link && (
@@ -1902,11 +1902,10 @@ const CreateProjectRegistration = () => {
                 </label>
                 <select
                   {...register("is_your_project_registered")}
-                  className={`bg-gray-50 border-2 ${
-                    errors.is_your_project_registered
-                      ? "border-red-500 placeholder:text-red-500"
-                      : "border-[#737373]"
-                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  className={`bg-gray-50 border-2 ${errors.is_your_project_registered
+                    ? "border-red-500 placeholder:text-red-500"
+                    : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                 >
                   <option className="text-lg font-bold" value="false">
                     No
@@ -1934,11 +1933,10 @@ const CreateProjectRegistration = () => {
                       </label>
                       <select
                         {...register("type_of_registration")}
-                        className={`bg-gray-50 border-2 ${
-                          errors.type_of_registration
-                            ? "border-red-500 placeholder:text-red-500"
-                            : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        className={`bg-gray-50 border-2 ${errors.type_of_registration
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                       >
                         <option className="text-lg font-bold" value="Comapany">
                           Comapany
@@ -1962,11 +1960,10 @@ const CreateProjectRegistration = () => {
                       </label>
                       <select
                         {...register("country_of_registration")}
-                        className={`bg-gray-50 border-2 ${
-                          errors.country_of_registration
-                            ? "border-red-500 placeholder:text-red-500"
-                            : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        className={`bg-gray-50 border-2 ${errors.country_of_registration
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                         required
                       >
                         <option className="text-lg font-bold" value="">

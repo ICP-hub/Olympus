@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import NoDataCard from "../Mentors/Event/NoDataCard";
 import SecondEventCard from "./SecondEventCard";
 
-const LiveEventsCards = () => {
+const LiveEventsCards = ({ wrap }) => {
     const actor = useSelector((currState) => currState.actors.actor);
     const [noData, setNoData] = useState(null);
     const [allLiveEventsData, setAllLiveEventsData] = useState([]);
@@ -42,11 +42,11 @@ const LiveEventsCards = () => {
             {noData ?
                 (<NoDataCard />
                 ) : (
-                    <div className="flex flex-row overflow-x-auto w-full">
+                    <div className={`${wrap === true ? 'flex flex-row overflow-x-auto w-full' : 'flex flex-row flex-wrap w-full px-8'}`}>
                         {allLiveEventsData &&
                             allLiveEventsData.map((val, index) => {
                                 return (
-                                    <div className="px-2 w-full lg:w-1/3 sm:w-1/2">
+                                    <div className="px-2 w-full sm:min-w-[50%] lg:min-w-[33.33%] sm:max-w-[50%] lg:max-w-[33.33%]">
                                         <SecondEventCard data={val} key={index} />
                                     </div>
                                 );

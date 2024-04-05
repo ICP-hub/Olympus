@@ -696,7 +696,7 @@ const MentorRegistration = () => {
                       htmlFor="preferred_icp_hub"
                       className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                     >
-                      Preferred ICP Hub you would like to be associated with
+                      Preferred ICP Hub you would like to be associated with <span className="text-red-600">*</span>
                     </label>
                     <select
                       {...register("preferred_icp_hub")}
@@ -730,7 +730,7 @@ const MentorRegistration = () => {
                       htmlFor="multi_chain"
                       className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                     >
-                      Are you also multi-chain *
+                      Are you also multi-chain <span className="text-red-600">*</span>
                     </label>
                     <select
                       {...register("multi_chain")}
