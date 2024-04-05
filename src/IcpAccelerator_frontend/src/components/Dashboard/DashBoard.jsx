@@ -121,7 +121,7 @@ const DashBoard = () => {
         <>
           <section
             className="flex items-center w-full bg-gradient-to-r from-purple-900 via-purple-500 to-purple-400 pl-[9%] pr-[9%] py-[8%]">
-            <div className="container mx-auto py-0 md:py-16">
+            <div className="container mx-auto py-0 md:py-4">
               <div className="flex flex-wrap">
                 <div className="flex flex-col justify-center md:w-1/2 pt-8 sm:pt-0 sm:px-4 w-full">
                   <h1 className="text-4xl font-bold mb-4 lg:text-5xl text-white font-fontUse">
@@ -131,8 +131,11 @@ const DashBoard = () => {
                     Peak of Web3 acceleration
                   </h1>
                   <p className="text-lg mb-6 md:text-xl lg:text-2xl text-white font-fontUse">
-                    Trustless Web3 acceleration platform for founders, investors , mentors, talent and users.
+                    Trustless Web3 acceleration platform for founders, investors , mentors, talent and users
                   </p>
+                  <a className="mt-6 mb-6 text-white font-fontUse" href="https://internetcomputer.org/olympus">
+                    Learn more about the beta version. Use with caution.
+                  </a>
                   {/* <div className="relative group">
                     <a
                       href="#"
