@@ -13,78 +13,78 @@ pub fn get_icp_hubs() -> Vec<IcpHub> {
     vec![
         IcpHub {
             id: 1,
-            name: "ICP.HUB India".to_string(),
+            name: "ICP Hub, India".to_string(),
             region: "India".to_string(),
         },
         IcpHub {
             id: 2,
-            name: "ICP.Hub Malaysia".to_string(),
+            name: "ICP Hub, Malaysia".to_string(),
             region: "Malaysia".to_string(),
         },
         IcpHub {
             id: 3,
-            name: "ICP.Hub Italia".to_string(),
+            name: "ICP Hub, Italia".to_string(),
             region: "Italia".to_string(),
         },
         IcpHub {
             id: 4,
-            name: "ICP.Hub North America".to_string(),
+            name: "ICP Hub, North America".to_string(),
             region: "North America".to_string(),
         },
         IcpHub {
             id: 5,
-            name: "ICP.Hub Philippines".to_string(),
+            name: "ICP Hub, Philippines".to_string(),
             region: "Philippines".to_string(),
         },
         IcpHub {
             id: 6,
-            name: "ICP.Hub Turkey".to_string(),
+            name: "ICP Hub, Turkey".to_string(),
             region: "Turkey".to_string(),
         },
         IcpHub {
             id: 7,
-            name: "ICP.Hub Indonesia".to_string(),
+            name: "ICP Hub, Indonesia".to_string(),
             region: "Indonesia".to_string(),
         },
         IcpHub {
             id: 8,
-            name: "ICP.Hub Korea".to_string(),
+            name: "ICP Hub, Korea".to_string(),
             region: "Korea".to_string(),
         },
         // ... Continue for the second image
         IcpHub {
             id: 9,
-            name: "ICP.Hub East Africa".to_string(),
+            name: "ICP Hub, East Africa".to_string(),
             region: "East Africa".to_string(),
         },
         IcpHub {
             id: 10,
-            name: "ICP.Hub West Africa".to_string(),
+            name: "ICP Hub, West Africa".to_string(),
             region: "West Africa".to_string(),
         },
         IcpHub {
             id: 11,
-            name: "ICP.Hub GCC".to_string(),
+            name: "ICP Hub, GCC".to_string(),
             region: "GCC".to_string(),
         },
         IcpHub {
             id: 12,
-            name: "ICP.Hub Germany".to_string(),
+            name: "ICP Hub, Germany".to_string(),
             region: "Germany".to_string(),
         },
         IcpHub {
             id: 13,
-            name: "ICP.Hub Singapore".to_string(),
+            name: "ICP Hub, Singapore".to_string(),
             region: "Singapore".to_string(),
         },
         IcpHub {
             id: 14,
-            name: "ICP.Hub Bulgaria".to_string(),
+            name: "ICP Hub, Bulgaria".to_string(),
             region: "Bulgaria".to_string(),
         },
         IcpHub {
             id: 15,
-            name: "ICP.Hub LATAM".to_string(),
+            name: "ICP Hub, LATAM".to_string(),
             region: "LATAM".to_string(),
         },
         // Add any other Hubs from the images provided
