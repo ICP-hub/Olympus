@@ -42,7 +42,7 @@ const InvestorsList = () => {
     </div>
   }
   return (
-    <div className="flex items-center justify-between lg:flex-row md:gap-4 w-fit w-full pr-2 max-md:flex-col">
+    <div className="flex items-stretch justify-between lg:flex-row md:gap-4 w-fit w-full pr-2 max-md:flex-col">
       {data && data.slice(0, 3).map((investor, index) => {
         let id = investor[0].toText();
         let img = uint8ArrayToBase64(investor[1]?.vc_profile?.params?.user_data?.profile_picture[0]);
@@ -53,7 +53,7 @@ const InvestorsList = () => {
         let category_of_investment = investor[1]?.vc_profile?.params?.category_of_investment ?? ""
 
         return (
-          <div key={index} className="bg-white duration-300 ease-in-out hover:scale-105 md:mb-0 mb-5 p-5 rounded-lg shadow-lg transition-transform flex-grow max-md:w-full">
+          <div key={index} className="bg-white duration-300 ease-in-out hover:scale-105 md:mb-0 mb-5 p-5 rounded-lg shadow-lg transition-transform flex-grow max-md:w-full md:w-1/3">
             <div className=" flex items-center justify-center w-1/2" style={{margin: "auto"}}>
               <img className="w-full object-cover" src={img} alt="" style={{borderRadius: '50%'}} />
             </div>
