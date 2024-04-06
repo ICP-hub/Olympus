@@ -19,7 +19,6 @@ const InvestorRegForm = () => {
     const typeOfProfile = useSelector((currState) => currState.profileTypes.profiles);
     const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
     const multiChainNames = useSelector((currState) => currState.chains.chains);
-
     const userFullData = useSelector((currState) => currState.userData.data.Ok);
 
     // STATES
@@ -33,6 +32,7 @@ const InvestorRegForm = () => {
     const [interestedDomainsOptions, setInterestedDomainsOptions] = useState([]);
     const [interestedDomainsSelectedOptions, setInterestedDomainsSelectedOptions] = useState([]);
     const [typeOfProfileOptions, setTypeOfProfileOptions] = useState([]);
+    const [reasonOfJoiningSelectedOptions, setReasonOfJoiningSelectedOptions] = useState([]);
     const [reasonOfJoiningOptions, setReasonOfJoiningOptions] = useState([
         { value: "listing_and_promotion", label: "Project listing and promotion" },
         { value: "Funding", label: "Funding" },
@@ -41,22 +41,25 @@ const InvestorRegForm = () => {
         { value: "Engaging_and_building_community", label: "Engaging and building community" },
         { value: "Jobs", label: "Jobs" },
     ]);
-    const [reasonOfJoiningSelectedOptions, setReasonOfJoiningSelectedOptions] = useState([]);
 
-    // Mentor from states
-    const [multiChainOptions, setMultiChainOptions] = useState([]);
-    const [multiChainSelectedOptions, setMultiChainSelectedOptions] = useState([]);
-
-    const [categoryOfMentoringServiceOptions, setCategoryOfMentoringServiceOptions] = useState([
-        { value: "Incubation", label: "Incubation" },
-        { value: "Tokenomics", label: "Tokenomics" },
-        { value: "Branding", label: "Branding" },
-        { value: "Listing", label: "Listing" },
-        { value: "Raise", label: "Raise" },
+    // INVESTOR FORM STATES
+    const [typeOfInvestSelectedOptions, setTypeOfInvestSelectedOptions] = useState([]);
+    const [typeOfInvestOptions, setTypeOfInvestOptions] = useState([
+        { value: "Direct", label: "Direct" },
+        { value: "SNS", label: "SNS" },
+        { value: "both", label: "both" },
     ]);
-    const [categoryOfMentoringServiceSelectedOptions, setCategoryOfMentoringServiceSelectedOptions] = useState([]);
+    const [investedInmultiChainOptions, setInvestedInMultiChainOptions] = useState([]);
+    const [investedInMultiChainSelectedOptions, setInvestedInMultiChainSelectedOptions] = useState([]);
+    const [investmentCategoriesOptions, setInvestmentCategoriesOptions] = useState([]);
+    const [investmentCategoriesSelectedOptions, setInvestmentCategoriesSelectedOptions] = useState([]);
 
-    // user reg form validation schema
+    const [investStageOptions, setInvestStageOptions] = useState([]);
+    const [investStageSelectedOptions, setInvestStageSelectedOptions] = useState([]);
+    const [investStageRangeOptions, setInvestStageRangeOptions] = useState([]);
+    const [investStageRangeSelectedOptions, setInvestStageRangeSelectedOptions] = useState([]);
+
+    //  USER & MENTOR reg form validation schema
     const validationSchema = yup.object().shape(
         {
             full_name: yup.string().test('is-non-empty', 'Full name is required',
@@ -92,27 +95,46 @@ const InvestorRegForm = () => {
                 .test('fileType', 'Only jpeg, jpg & png file format allowed', (value) => {
                     return !value || (value && ['image/jpeg', 'image/jpg', 'image/png'].includes(value.type));
                 }),
+
+            ////////////////////////////////////////////////////////////////////
+
+            investor_registered: yup.string().required("Required").oneOf(['true', 'false'], 'Invalid value'),
+            registered_country: yup.string().when('investor_registered',
+                (val, schema) => val && (val[0] === 'true')
+                    ? schema.test('is-non-empty', 'Registered country name required',
+                        (value) => /\S/.test(value)).required("Registered country name required") : schema),
+
             preferred_icp_hub: yup.string().test("is-non-empty", "ICP Hub selection is required",
                 (value) => /\S/.test(value)).required("ICP Hub selection is required"),
-            multi_chain: yup.string().required("Required").oneOf(['true', 'false'], 'Invalid value'),
-            multi_chain_names: yup.string().when('multi_chain',
+            existing_icp_investor: yup.string().oneOf(['true', 'false'], 'Invalid value'),
+            investment_type: yup.string().when('existing_icp_investor',
+                (val, schema) => val && (val[0] === 'true')
+                    ? schema.test('is-non-empty', 'Atleast one investment type required',
+                        (value) => /\S/.test(value)).required("Atleast one investment type required") : schema),
+            investor_portfolio_link: yup.string().test('is-non-empty', 'Portfolio url is required',
+                (value) => /\S/.test(value)).url("Invalid url").required("Portfolio url is required"),
+            investor_fund_name: yup.string().test('is-non-empty', 'Fund name is required',
+                (value) => /\S/.test(value)).required("Fund name is required"),
+            investor_fund_size: yup.number().optional().typeError("You must enter a number").positive("Must be a positive number"),
+            fund_average_check_size: yup.number().typeError("You must enter a number").positive("Must be a positive number")
+                .required("Average check size is required"),
+            invested_in_multi_chain: yup.string().required("Required").oneOf(['true', 'false'], 'Invalid value'),
+            invested_in_multi_chain_names: yup.string().when('invested_in_multi_chain',
                 (val, schema) => val && (val[0] === 'true')
                     ? schema.test('is-non-empty', 'Atleast one chain name required',
                         (value) => /\S/.test(value)).required("Atleast one chain name required") : schema),
-            category_of_mentoring_service: yup.string().test('is-non-empty', 'Selecting a service is required',
-                (value) => /\S/.test(value)).required("Selecting a service is required"),
-            icp_hub_or_spoke: yup.string().required("Required").oneOf(['true', 'false'], 'Invalid value'),
-            hub_owner: yup.string().when('icp_hub_or_spoke',
-                (val, schema) => val && (val[0] === 'true')
-                    ? schema.test('is-non-empty', 'ICP Hub selection is required',
-                        (value) => /\S/.test(value)).required("ICP Hub selection is required") : schema),
-            mentor_website_url: yup.string().nullable(true).optional().url("Invalid url"),
-            years_of_mentoring: yup.number().typeError("You must enter a number").positive("Must be a positive number")
-                .required("Years of experience mentoring startups is required"),
-            mentor_linkedin_url: yup.string().test('is-non-empty', 'LinkedIn url is required',
+            investment_categories: yup.string().test('is-non-empty', 'Selecting a category is required',
+                (value) => /\S/.test(value)).required("Selecting an category is required"),
+            investor_website_url: yup.string().nullable(true).optional().url("Invalid url"),
+            investor_linkedin_url: yup.string().test('is-non-empty', 'LinkedIn url is required',
                 (value) => /\S/.test(value)).url("Invalid url").required("LinkedIn url is required"),
-            mentor_documents_url: yup.string().nullable(true).optional().url("Invalid url"),
-
+            investment_stage: yup.string().test('is-non-empty', 'Investment stage is required',
+                (value) => /\S/.test(value)).required("Investment stage is required"),
+            investment_stage_range: yup.string().when('investment_stage',
+                (val, schema) => val && (val[0] && val[0].trim() !== "" && val[0] !== 'we do not currently invest')
+                    ? schema.test('is-non-empty', 'Atleast one range required',
+                        (value) => /\S/.test(value)).required("Atleast one range required") : schema),
+            ////////////////////////////////////////////////////////////////////
 
         }).required();
 
@@ -175,46 +197,40 @@ const InvestorRegForm = () => {
                     profile_picture: imageData ? [imageData] : [],
                 },
                 // investor data
-
-                // name_of_fund: String,
-                // fund_size: Option<f64>,
-                // assets_under_management: Option<String>,
-                // logo: Option<Vec<u8>>,
-                // registered_under_any_hub: Option<bool>,
-                // average_check_size: f64,
-                // existing_icp_investor: bool,
-                // money_invested: Option<f64>,
-                // existing_icp_portfolio: Option<String>,
-                // type_of_investment: String,
-                // project_on_multichain: Option<String>,
-                // category_of_investment: String,
-                // reason_for_joining: Option<String>,
-                // preferred_icp_hub: String,
-                // investor_type: Option<String>,
-                // number_of_portfolio_companies: u16,
-                // portfolio_link: String,
-                // announcement_details: Option<String>,
-                // user_data: UserInformation,
-                // website_link: Option<String>,
-                // linkedin_link: String,
-                // registered: bool,
-                // registered_country: Option<String>, 
-                // stage: String,
-                // range_of_check_size : String
-
+                name_of_fund: data?.investor_fund_name,
+                fund_size: [data?.investor_fund_size && typeof data?.investor_fund_size === "number" ? data?.investor_fund_size : 0],
+                average_check_size: data?.fund_average_check_size,
+                existing_icp_investor: data?.existing_icp_investor === "true" ? true : false,
+                type_of_investment: data?.existing_icp_investor === "true" && data?.investment_type ? data?.investment_type : "",
+                project_on_multichain: [data?.investment_type === "true" && data?.invested_in_multi_chain_names ? data?.invested_in_multi_chain_names : ""],
+                category_of_investment: data?.investment_categories,
+                preferred_icp_hub: data?.preferred_icp_hub,
+                portfolio_link: data?.investor_portfolio_link,
+                website_link: [data?.investor_website_url || ""],
+                registered: data?.investor_registered === "true" ? true : false,
+                registered_country: [data?.investor_registered === "true" && data?.registered_country ? data?.registered_country : ""],
+                linkedin_link: data?.investor_linkedin_url,
+                stage: [data?.investment_stage || ""],
+                range_of_check_size: [data?.investment_stage !== "" && data?.investment_stage !== "we do not currently invest" && data?.investment_stage_range ? data?.investment_stage_range : ""],
                 // investor data not exiting on frontend or raw variables
-
+                assets_under_management: [""],
+                registered_under_any_hub: [false],
+                logo: [[]],
+                money_invested: [0],
+                existing_icp_portfolio: [""],
+                reason_for_joining: [""],
+                investor_type: [""],
+                number_of_portfolio_companies: 0,
+                announcement_details: [""],
             };
-            console.log('data--onSubmitHandler', data)
             try {
                 await actor.register_venture_capitalist(userData).then((result) => {
-                    console.log('result', result)
-                    // if (result && result.includes('User registered successfully')) {
-                    //     toast.success("Registered as a User");
-                    //     window.location.href = "/";
-                    // } else {
-                    //     toast.error('something got wrong')
-                    // }
+                    if (result && result.includes('approval request is sent')) {
+                        toast.success("Approval request is sent");
+                        window.location.href = "/";
+                    } else {
+                        toast.error('something got wrong')
+                    }
                 });
             } catch (error) {
                 toast.error(error);
@@ -229,7 +245,6 @@ const InvestorRegForm = () => {
     // form error handler func
     const onErrorHandler = (val) => {
         toast.error('Empty fields or invalid values, please recheck the form');
-        console.log('ERROR-onErrorHandler', val)
     }
 
     // default interests set function 
@@ -264,14 +279,7 @@ const InvestorRegForm = () => {
             setValue('domains_interested_in', val?.area_of_interest ?? "");
             setInterestedDomainsSelectedOptionsHandler(val?.area_of_interest ?? null)
             setImagePreview(val?.profile_picture?.[0] ?? "");
-            setValue('type_of_profile', val?.type_of_profile === "individual"
-                ? "Individual"
-                : val?.type_of_profile === "dao"
-                    ? "DAO"
-                    : val?.type_of_profile === "company"
-                        ? "Company"
-                        : ""
-            )
+            setValue('type_of_profile', val?.type_of_profile[0])
             setValue('reasons_to_join_platform', val?.reason_to_join ? val?.reason_to_join.join(" ") : "");
             setReasonOfJoiningSelectedOptionsHandler(val?.reason_to_join);
         }
@@ -292,7 +300,8 @@ const InvestorRegForm = () => {
     useEffect(() => {
         if (typeOfProfile) {
             setTypeOfProfileOptions(typeOfProfile.map((type) => ({
-                value: type.role_type,
+                value: type.role_type.toLowerCase(),
+                label: type.role_type
             })))
         } else {
             setTypeOfProfileOptions([]);
@@ -302,27 +311,83 @@ const InvestorRegForm = () => {
     useEffect(() => {
         if (userFullData) {
             setValuesHandler(userFullData)
-            // setEditMode(true)
         }
 
     }, [userFullData])
 
-    // Mentor form states
-    useEffect(() => {
-        if (multiChainNames) {
-            setMultiChainOptions(multiChainNames.map((chain) => ({
-                value: chain,
-                label: chain,
-            })))
-        } else {
-            setMultiChainOptions([]);
-        }
-        console.log('multiChainNames', multiChainNames)
-    }, [multiChainNames])
+    // INVESTOR SIDE USEEFFECTS
 
     useEffect(() => {
         dispatch(allHubHandlerRequest());
     }, [actor, dispatch]);
+
+    useEffect(() => {
+        if (multiChainNames) {
+            setInvestedInMultiChainOptions(multiChainNames.map((chain) => ({
+                value: chain,
+                label: chain,
+            })))
+        } else {
+            setInvestedInMultiChainOptions([]);
+        }
+
+    }, [multiChainNames])
+
+    useEffect(() => {
+        if (areaOfExpertise) {
+            setInvestmentCategoriesOptions(areaOfExpertise.map((expert) => ({
+                value: expert.name,
+                label: expert.name,
+            })))
+        } else {
+            setInvestmentCategoriesOptions([]);
+        }
+    }, [areaOfExpertise]);
+
+    useEffect(() => {
+        if (actor) {
+            (async () => {
+                try {
+                    const result = await actor.get_investment_stage()
+                    if (result && result.length > 0) {
+                        let mapped_arr = result.map((val, index) => ({
+                            value: val.toLowerCase(),
+                            label: val
+                        }))
+                        setInvestStageOptions(mapped_arr)
+                    } else {
+                        setInvestStageOptions([])
+                    }
+
+                } catch (error) {
+                    setInvestStageOptions([])
+                }
+            })()
+        }
+    }, [actor])
+
+    useEffect(() => {
+        if (actor) {
+            (async () => {
+                try {
+                    const result = await actor.get_range_of_check_size()
+                    if (result && result.length > 0) {
+                        let mapped_arr = result.map((val, index) => ({
+                            value: val.toLowerCase(),
+                            label: val
+                        }))
+                        setInvestStageRangeOptions(mapped_arr)
+                    } else {
+                        setInvestStageRangeOptions([])
+                    }
+
+                } catch (error) {
+                    setInvestStageRangeOptions([])
+                }
+            })()
+
+        }
+    }, [actor])
 
     return (
         <>
@@ -330,7 +395,7 @@ const InvestorRegForm = () => {
             <section className="w-full h-fit px-[6%] lg1:px-[4%] py-[6%] lg1:py-[4%] bg-gray-100">
                 <div className="w-full h-full bg-gray-100 pt-8">
                     <div className="bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-[30px]  sm:text-[25px] md1:text-[30px] md2:text-[35px] font-black font-fontUse dxl:text-[40px] p-8">
-                        Mentor Information
+                        Investor Information
                     </div>
                     <div className="text-sm font-medium text-center text-gray-200 ">
                         {/* START OF USER REGISTRATION FORM */}
@@ -631,7 +696,6 @@ const InvestorRegForm = () => {
                                             ? "border-red-500 "
                                             : "border-[#737373]"
                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                                        value={watch('type_of_profile')}
                                     >
 
                                         <option className="text-lg font-bold" value="">
@@ -640,7 +704,7 @@ const InvestorRegForm = () => {
                                         {typeOfProfileOptions && typeOfProfileOptions.map((val, index) => {
                                             return (
                                                 <option className="text-lg font-bold" key={index} value={val?.value}>
-                                                    {val?.value}
+                                                    {val?.label}
                                                 </option>
                                             )
                                         })}
@@ -712,19 +776,80 @@ const InvestorRegForm = () => {
                                 {/* START OF INVESTOR REGISTRATION FORM */}
 
                                 <div className="relative z-0 group mb-6">
+                                    <label htmlFor="investor_registered"
+                                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start" >
+                                        Are you Registered ? <span className="text-red-500">*</span>
+                                    </label>
+                                    <select
+                                        {...register("investor_registered")}
+                                        className={`bg-gray-50 border-2 ${errors.investor_registered
+                                            ? "border-red-500"
+                                            : "border-[#737373]"
+                                            } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                    >
+                                        <option className="text-lg font-bold" value="false">
+                                            No
+                                        </option>
+                                        <option className="text-lg font-bold" value="true">
+                                            Yes
+                                        </option>
+                                    </select>
+                                    {errors.investor_registered && (
+                                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                                            {errors.investor_registered.message}
+                                        </p>
+                                    )}
+                                </div>
+                                {watch('investor_registered') === "true" ?
+                                    <div className="relative z-0 group mb-6">
+                                        <label
+                                            htmlFor="registered_country"
+                                            className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                                        >
+                                            Registered Country <span className="text-red-500">*</span>
+                                        </label>
+                                        <select
+                                            {...register("registered_country")}
+                                            className={`bg-gray-50 border-2 ${errors.registered_country
+                                                ? "border-red-500 placeholder:text-red-500"
+                                                : "border-[#737373]"
+                                                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                        >
+                                            <option className="text-lg font-bold" value="">
+                                                Select your registered country
+                                            </option>
+                                            {countries?.map((country) => (
+                                                <option
+                                                    key={country.name}
+                                                    value={`${country.name}`}
+                                                    className="text-lg font-bold"
+                                                >
+                                                    {country.name}
+                                                </option>
+                                            ))}
+                                        </select>
+
+                                        {errors.registered_country && (
+                                            <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                                                {errors.registered_country.message}
+                                            </p>
+                                        )}
+                                    </div>
+                                    : <></>}
+                                <div className="relative z-0 group mb-6">
                                     <label htmlFor="preferred_icp_hub"
                                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
-                                        Preferred ICP Hub you would like to be associated with <span className="text-red-500">*</span>
+                                        Which ICP hub you will like to be associated <span className="text-red-500">*</span>
                                     </label>
                                     <select
                                         {...register("preferred_icp_hub")}
                                         className={`bg-gray-50 border-2 ${errors.preferred_icp_hub
-                                            ? "border-red-500 "
+                                            ? "border-red-500"
                                             : "border-[#737373]"
                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                                     >
                                         <option className="text-lg font-bold" value="">
-                                            Select your ICP Hub
+                                            Select
                                         </option>
                                         {getAllIcpHubs?.map((hub) => (
                                             <option
@@ -743,13 +868,183 @@ const InvestorRegForm = () => {
                                     )}
                                 </div>
                                 <div className="relative z-0 group mb-6">
-                                    <label htmlFor="multi_chain"
+                                    <label htmlFor="existing_icp_investor"
                                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
-                                        Do you mentor multiple ecosystems <span className="text-red-500">*</span>
+                                        Are you an existing ICP investor ?
                                     </label>
                                     <select
-                                        {...register("multi_chain")}
-                                        className={`bg-gray-50 border-2 ${errors.multi_chain
+                                        {...register("existing_icp_investor")}
+                                        className={`bg-gray-50 border-2 ${errors.existing_icp_investor
+                                            ? "border-red-500 placeholder:text-red-500"
+                                            : "border-[#737373]"
+                                            } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                    >
+                                        <option className="text-lg font-bold" value="false">
+                                            No
+                                        </option>
+                                        <option className="text-lg font-bold" value="true">
+                                            Yes
+                                        </option>
+                                    </select>
+                                    {errors.existing_icp_investor && (
+                                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                                            {errors.existing_icp_investor.message}
+                                        </p>
+                                    )}
+                                </div>
+                                {watch('existing_icp_investor') === "true" ?
+                                    <div className="relative z-0 group mb-6">
+                                        <label htmlFor="investment_type"
+                                            className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
+                                            Type of investment *
+                                        </label>
+                                        <ReactSelect
+                                            isMulti
+                                            menuPortalTarget={document.body}
+                                            menuPosition={"fixed"}
+                                            styles={{
+                                                menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                                                control: (provided, state) => ({
+                                                    ...provided,
+                                                    paddingBlock: "2px",
+                                                    borderRadius: "8px",
+                                                    border: errors.investment_type
+                                                        ? "2px solid #ef4444"
+                                                        : "2px solid #737373",
+                                                    backgroundColor: "rgb(249 250 251)",
+                                                    "&::placeholder": {
+                                                        color: errors.investment_type
+                                                            ? "#ef4444"
+                                                            : "currentColor",
+                                                    },
+                                                }),
+                                            }}
+                                            value={typeOfInvestSelectedOptions}
+                                            options={typeOfInvestOptions}
+                                            classNamePrefix="select"
+                                            className="basic-multi-select w-full text-start"
+                                            placeholder="Select a investment type"
+                                            name="multi_chain_names"
+                                            onChange={(selectedOptions) => {
+                                                if (selectedOptions && selectedOptions.length > 0) {
+                                                    setTypeOfInvestSelectedOptions(selectedOptions)
+                                                    clearErrors("investment_type");
+                                                    setValue("investment_type", selectedOptions.map((option) => option.value).join(", "),
+                                                        { shouldValidate: true });
+                                                } else {
+                                                    setTypeOfInvestSelectedOptions([]);
+                                                    setValue("investment_type", "",
+                                                        { shouldValidate: true });
+                                                    setError("investment_type", {
+                                                        type: "required",
+                                                        message: "Atleast one investment type required",
+                                                    });
+                                                }
+                                            }}
+                                        />
+                                        {errors.investment_type && (
+                                            <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                                                {errors.investment_type.message}
+                                            </p>
+                                        )}
+                                    </div>
+                                    : <></>}
+                                <div className="relative z-0 group mb-6">
+                                    <label htmlFor="investor_portfolio_link"
+                                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
+                                        Portfolio link <span className="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        {...register("investor_portfolio_link")}
+                                        className={`bg-gray-50 border-2 
+                                                ${errors?.investor_portfolio_link
+                                                ? "border-red-500 "
+                                                : "border-[#737373]"
+                                            } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                        placeholder="Enter your portfolio url"
+                                    />
+                                    {errors?.investor_portfolio_link && (
+                                        <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                            {errors?.investor_portfolio_link?.message}
+                                        </span>
+                                    )}
+                                </div>
+                                <div className="relative z-0 group mb-6">
+                                    <label htmlFor="investor_fund_name"
+                                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
+                                        Fund name <span className="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        {...register("investor_fund_name")}
+                                        className={`bg-gray-50 border-2 
+                                                ${errors?.investor_fund_name
+                                                ? "border-red-500 "
+                                                : "border-[#737373]"
+                                            } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                        placeholder="Enter your fund name"
+                                    />
+                                    {errors?.investor_fund_name && (
+                                        <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                            {errors?.investor_fund_name?.message}
+                                        </span>
+                                    )}
+                                </div>
+                                <div className="relative z-0 group mb-6">
+                                    <label htmlFor="investor_fund_size"
+                                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
+                                        Fund size
+                                    </label>
+                                    <input
+                                        type="number"
+                                        {...register("investor_fund_size")}
+                                        className={`bg-gray-50 border-2 
+                                                ${errors?.investor_fund_size
+                                                ? "border-red-500 "
+                                                : "border-[#737373]"
+                                            } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                        placeholder="Enter fund size"
+                                        onWheel={(e) => e.target.blur()}
+                                        min={0}
+                                    />
+                                    {errors?.investor_fund_size && (
+                                        <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                            {errors?.investor_fund_size?.message}
+                                        </span>
+                                    )}
+                                </div>
+                                <div className="relative z-0 group mb-6">
+                                    <label htmlFor="fund_average_check_size"
+                                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
+                                        Average check size <span className="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        type="number"
+                                        {...register("fund_average_check_size")}
+                                        className={`bg-gray-50 border-2 
+                                                ${errors?.fund_average_check_size
+                                                ? "border-red-500 "
+                                                : "border-[#737373]"
+                                            } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                        placeholder="Enter fund size"
+                                        onWheel={(e) => e.target.blur()}
+                                        min={0}
+                                    />
+                                    {errors?.fund_average_check_size && (
+                                        <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                            {errors?.fund_average_check_size?.message}
+                                        </span>
+                                    )}
+                                </div>
+                                <div className="relative z-0 group mb-6">
+                                    <label htmlFor="invested_in_multi_chain"
+                                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
+                                        Do you invest in multiple ecosystems <span className="text-red-500">*</span>
+                                    </label>
+                                    <select
+                                        {...register("invested_in_multi_chain")}
+                                        className={`bg-gray-50 border-2 ${errors.invested_in_multi_chain
                                             ? "border-red-500"
                                             : "border-[#737373]"
                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
@@ -761,15 +1056,15 @@ const InvestorRegForm = () => {
                                             Yes
                                         </option>
                                     </select>
-                                    {errors.multi_chain && (
+                                    {errors.invested_in_multi_chain && (
                                         <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                                            {errors.multi_chain.message}
+                                            {errors.invested_in_multi_chain.message}
                                         </p>
                                     )}
                                 </div>
-                                {watch('multi_chain') === "true" ?
+                                {watch('invested_in_multi_chain') === "true" ?
                                     <div className="relative z-0 group mb-6">
-                                        <label htmlFor="multi_chain_names"
+                                        <label htmlFor="invested_in_multi_chain_names"
                                             className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
                                             Please select the chains <span className="text-red-500">*</span>
                                         </label>
@@ -783,34 +1078,34 @@ const InvestorRegForm = () => {
                                                     ...provided,
                                                     paddingBlock: "2px",
                                                     borderRadius: "8px",
-                                                    border: errors.multi_chain_names
+                                                    border: errors.invested_in_multi_chain_names
                                                         ? "2px solid #ef4444"
                                                         : "2px solid #737373",
                                                     backgroundColor: "rgb(249 250 251)",
                                                     "&::placeholder": {
-                                                        color: errors.multi_chain_names
+                                                        color: errors.invested_in_multi_chain_names
                                                             ? "#ef4444"
                                                             : "currentColor",
                                                     },
                                                 }),
                                             }}
-                                            value={multiChainSelectedOptions}
-                                            options={multiChainOptions}
+                                            value={investedInMultiChainSelectedOptions}
+                                            options={investedInmultiChainOptions}
                                             classNamePrefix="select"
                                             className="basic-multi-select w-full text-start"
                                             placeholder="Select a chain"
-                                            name="multi_chain_names"
+                                            name="invested_in_multi_chain_names"
                                             onChange={(selectedOptions) => {
                                                 if (selectedOptions && selectedOptions.length > 0) {
-                                                    setMultiChainSelectedOptions(selectedOptions)
-                                                    clearErrors("multi_chain_names");
-                                                    setValue("multi_chain_names", selectedOptions.map((option) => option.value).join(", "),
+                                                    setInvestedInMultiChainSelectedOptions(selectedOptions)
+                                                    clearErrors("invested_in_multi_chain_names");
+                                                    setValue("invested_in_multi_chain_names", selectedOptions.map((option) => option.value).join(", "),
                                                         { shouldValidate: true });
                                                 } else {
-                                                    setMultiChainSelectedOptions([]);
-                                                    setValue("multi_chain_names", "",
+                                                    setInvestedInMultiChainSelectedOptions([]);
+                                                    setValue("invested_in_multi_chain_names", "",
                                                         { shouldValidate: true });
-                                                    setError("multi_chain_names", {
+                                                    setError("invested_in_multi_chain_names", {
                                                         type: "required",
                                                         message: "Atleast one chain name required",
                                                     });
@@ -822,12 +1117,11 @@ const InvestorRegForm = () => {
                                                 {errors.multi_chain_names.message}
                                             </p>
                                         )}
-                                    </div> : <></>
-                                }
+                                    </div> : <></>}
                                 <div className="relative z-0 group mb-6">
-                                    <label htmlFor="category_of_mentoring_service"
+                                    <label htmlFor="investment_categories"
                                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
-                                        Categories of mentoring services <span className="text-red-500">*</span>
+                                        Category of investment <span className="text-red-500">*</span>
                                     </label>
                                     <ReactSelect
                                         isMulti
@@ -839,196 +1133,201 @@ const InvestorRegForm = () => {
                                                 ...provided,
                                                 paddingBlock: "2px",
                                                 borderRadius: "8px",
-                                                border: errors.category_of_mentoring_service
+                                                border: errors.investment_categories
                                                     ? "2px solid #ef4444"
                                                     : "2px solid #737373",
                                                 backgroundColor: "rgb(249 250 251)",
                                                 "&::placeholder": {
-                                                    color: errors.category_of_mentoring_service
+                                                    color: errors.investment_categories
                                                         ? "#ef4444"
                                                         : "currentColor",
                                                 },
                                             }),
                                         }}
-                                        value={categoryOfMentoringServiceSelectedOptions}
-                                        options={categoryOfMentoringServiceOptions}
+                                        value={investmentCategoriesSelectedOptions}
+                                        options={investmentCategoriesOptions}
                                         classNamePrefix="select"
                                         className="basic-multi-select w-full text-start"
-                                        placeholder="Select a service"
-                                        name="category_of_mentoring_service"
+                                        placeholder="Select categories of investment"
+                                        name="investment_categories"
                                         onChange={(selectedOptions) => {
                                             if (selectedOptions && selectedOptions.length > 0) {
-                                                setCategoryOfMentoringServiceSelectedOptions(selectedOptions)
-                                                clearErrors("category_of_mentoring_service");
-                                                setValue("category_of_mentoring_service", selectedOptions.map((option) => option.value).join(", "),
+                                                setInvestmentCategoriesSelectedOptions(selectedOptions)
+                                                clearErrors("investment_categories");
+                                                setValue("investment_categories",
+                                                    selectedOptions.map((option) => option.value).join(", "),
                                                     { shouldValidate: true });
                                             } else {
-                                                setCategoryOfMentoringServiceSelectedOptions([]);
-                                                setValue("category_of_mentoring_service", "",
+                                                setInvestmentCategoriesSelectedOptions([])
+                                                setValue("investment_categories", "",
                                                     { shouldValidate: true });
-                                                setError("category_of_mentoring_service", {
+                                                setError("investment_categories", {
                                                     type: "required",
-                                                    message: "Atleast one service name required",
+                                                    message: "Selecting a category is required",
                                                 });
                                             }
                                         }}
                                     />
-                                    {errors.category_of_mentoring_service && (
-                                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                                            {errors.category_of_mentoring_service.message}
-                                        </p>
+                                    {errors.investment_categories && (
+                                        <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                            {errors.investment_categories.message}
+                                        </span>
                                     )}
                                 </div>
                                 <div className="relative z-0 group mb-6">
-                                    <label htmlFor="icp_hub_or_spoke"
-                                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
-                                        Are you ICP Hub/Spoke <span className="text-red-500">*</span>
-                                    </label>
-                                    <select
-                                        {...register("icp_hub_or_spoke")}
-                                        className={`bg-gray-50 border-2 ${errors.icp_hub_or_spoke
-                                            ? "border-red-500"
-                                            : "border-[#737373]"
-                                            } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                                    >
-                                        <option className="text-lg font-bold" value="false">
-                                            No
-                                        </option>
-                                        <option className="text-lg font-bold" value="true">
-                                            Yes
-                                        </option>
-                                    </select>
-                                    {errors.icp_hub_or_spoke && (
-                                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                                            {errors.icp_hub_or_spoke.message}
-                                        </p>
-                                    )}
-                                </div>
-                                {watch("icp_hub_or_spoke") === "true" ?
-                                    <div className="z-0 w-full mb-3 group">
-                                        <label
-                                            htmlFor="hub_owner"
-                                            className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                                        >
-                                            Hub Owner <span className="text-red-500">*</span>
-                                        </label>
-                                        <select
-                                            {...register("hub_owner")}
-                                            className={`bg-gray-50 border-2 ${errors.hub_owner
-                                                ? "border-red-500 placeholder:text-red-500"
-                                                : "border-[#737373]"
-                                                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                                        >
-                                            <option className="text-lg font-bold" value="">
-                                                Select your ICP Hub
-                                            </option>
-                                            {getAllIcpHubs?.map((hub) => (
-                                                <option
-                                                    key={hub.id}
-                                                    value={`${hub.name} ,${hub.region}`}
-                                                    className="text-lg font-bold"
-                                                >
-                                                    {hub.name}
-                                                </option>
-                                            ))}
-                                        </select>
-                                        {errors.hub_owner && (
-                                            <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                                                {errors.hub_owner.message}
-                                            </p>
-                                        )}
-                                    </div> : <></>}
-                                <div className="relative z-0 group mb-6">
-                                    <label htmlFor="mentor_website_url"
+                                    <label htmlFor="investor_website_url"
                                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
                                         Website link
                                     </label>
                                     <input
                                         type="text"
-                                        {...register("mentor_website_url")}
+                                        {...register("investor_website_url")}
                                         className={`bg-gray-50 border-2 
-                                                ${errors?.mentor_website_url
+                                                ${errors?.investor_website_url
                                                 ? "border-red-500 "
                                                 : "border-[#737373]"
                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                                         placeholder="Enter your website url"
                                     />
-                                    {errors?.mentor_website_url && (
+                                    {errors?.investor_website_url && (
                                         <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                                            {errors?.mentor_website_url?.message}
+                                            {errors?.investor_website_url?.message}
                                         </span>
                                     )}
                                 </div>
                                 <div className="relative z-0 group mb-6">
-                                    <label htmlFor="years_of_mentoring"
-                                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
-                                        Years of mentoring <span className="text-red-500">*</span>
-                                    </label>
-                                    <input
-                                        type="number"
-                                        {...register("years_of_mentoring")}
-                                        className={`bg-gray-50 border-2 
-                                                ${errors?.years_of_mentoring
-                                                ? "border-red-500 "
-                                                : "border-[#737373]"
-                                            } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                                        placeholder="Enter your mentoring experience years"
-                                        onWheel={(e) => e.target.blur()}
-                                        min={0}
-                                    />
-                                    {errors?.years_of_mentoring && (
-                                        <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                                            {errors?.years_of_mentoring?.message}
-                                        </span>
-                                    )}
-                                </div>
-                                <div className="relative z-0 group mb-6">
-                                    <label htmlFor="mentor_linkedin_url"
+                                    <label htmlFor="investor_linkedin_url"
                                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
                                         LinkedIn link <span className="text-red-500">*</span>
                                     </label>
                                     <input
                                         type="text"
-                                        {...register("mentor_linkedin_url")}
+                                        {...register("investor_linkedin_url")}
                                         className={`bg-gray-50 border-2 
-                                                ${errors?.mentor_linkedin_url
-                                                ? "border-red-500 "
+                                                ${errors?.investor_linkedin_url
+                                                ? "border-red-500"
                                                 : "border-[#737373]"
                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                                         placeholder="Enter your linkedin url"
                                     />
-                                    {errors?.mentor_linkedin_url && (
+                                    {errors?.investor_linkedin_url && (
                                         <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                                            {errors?.mentor_linkedin_url?.message}
+                                            {errors?.investor_linkedin_url?.message}
                                         </span>
                                     )}
                                 </div>
                                 <div className="relative z-0 group mb-6">
-                                    <label htmlFor="mentor_documents_url"
+                                    <label htmlFor="investment_stage"
                                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
-                                        Documents
+                                        Which stage(s) do you invest at ? <span className="text-red-500">*</span>
                                     </label>
-                                    <input
-                                        type="text"
-                                        {...register("mentor_documents_url")}
-                                        className={`bg-gray-50 border-2 
-                                                ${errors?.mentor_documents_url
-                                                ? "border-red-500 "
-                                                : "border-[#737373]"
-                                            } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                                        placeholder="Documents url"
+                                    <ReactSelect
+                                        isMulti
+                                        menuPortalTarget={document.body}
+                                        menuPosition={"fixed"}
+                                        styles={{
+                                            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                                            control: (provided, state) => ({
+                                                ...provided,
+                                                paddingBlock: "2px",
+                                                borderRadius: "8px",
+                                                border: errors.investment_stage
+                                                    ? "2px solid #ef4444"
+                                                    : "2px solid #737373",
+                                                backgroundColor: "rgb(249 250 251)",
+                                                "&::placeholder": {
+                                                    color: errors.investment_stage
+                                                        ? "#ef4444"
+                                                        : "currentColor",
+                                                },
+                                            }),
+                                        }}
+                                        value={investStageSelectedOptions}
+                                        options={investStageOptions}
+                                        classNamePrefix="select"
+                                        className="basic-multi-select w-full text-start"
+                                        placeholder="Select a stage"
+                                        name="investment_stage"
+                                        onChange={(selectedOptions) => {
+                                            if (selectedOptions && selectedOptions.length > 0) {
+                                                setInvestStageSelectedOptions(selectedOptions)
+                                                clearErrors("investment_stage");
+                                                setValue("investment_stage", selectedOptions.map((option) => option.value).join(", "),
+                                                    { shouldValidate: true });
+                                            } else {
+                                                setInvestStageSelectedOptions([]);
+                                                setValue("investment_stage", "",
+                                                    { shouldValidate: true });
+                                                setError("investment_stage", {
+                                                    type: "required",
+                                                    message: "Atleast one stage required",
+                                                });
+                                            }
+                                        }}
                                     />
-                                    {errors?.mentor_documents_url && (
-                                        <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                                            {errors?.mentor_documents_url?.message}
-                                        </span>
+                                    {errors.investment_stage && (
+                                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                                            {errors.investment_stage.message}
+                                        </p>
                                     )}
                                 </div>
+                                {(watch('investment_stage') !== "" && watch('investment_stage') === "we do not currently invest") ? <></> :
+                                    <div className="relative z-0 group mb-6">
+                                        <label htmlFor="investment_stage_range"
+                                            className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
+                                            What is the range of your check size ? <span className="text-red-500">*</span>
+                                        </label>
+                                        <ReactSelect
+                                            isMulti
+                                            menuPortalTarget={document.body}
+                                            menuPosition={"fixed"}
+                                            styles={{
+                                                menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                                                control: (provided, state) => ({
+                                                    ...provided,
+                                                    paddingBlock: "2px",
+                                                    borderRadius: "8px",
+                                                    border: errors.investment_stage_range
+                                                        ? "2px solid #ef4444"
+                                                        : "2px solid #737373",
+                                                    backgroundColor: "rgb(249 250 251)",
+                                                    "&::placeholder": {
+                                                        color: errors.investment_stage_range
+                                                            ? "#ef4444"
+                                                            : "currentColor",
+                                                    },
+                                                }),
+                                            }}
+                                            value={investStageRangeSelectedOptions}
+                                            options={investStageRangeOptions}
+                                            classNamePrefix="select"
+                                            className="basic-multi-select w-full text-start"
+                                            placeholder="Select a range"
+                                            name="investment_stage_range"
+                                            onChange={(selectedOptions) => {
+                                                if (selectedOptions && selectedOptions.length > 0) {
+                                                    setInvestStageRangeSelectedOptions(selectedOptions)
+                                                    clearErrors("investment_stage_range");
+                                                    setValue("investment_stage_range", selectedOptions.map((option) => option.value).join(", "),
+                                                        { shouldValidate: true });
+                                                } else {
+                                                    setInvestStageRangeSelectedOptions([]);
+                                                    setValue("investment_stage_range", "",
+                                                        { shouldValidate: true });
+                                                    setError("investment_stage_range", {
+                                                        type: "required",
+                                                        message: "Atleast one stage required",
+                                                    });
+                                                }
+                                            }}
+                                        />
+                                        {errors.investment_stage_range && (
+                                            <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                                                {errors.investment_stage_range.message}
+                                            </p>
+                                        )}
+                                    </div>}
                             </div>
-
-
-
-
                             <div className="flex justify-end mt-4">
                                 <button
                                     disabled={isSubmitting}

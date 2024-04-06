@@ -171,8 +171,8 @@ const MentorRegForm = () => {
                     bio: [data?.bio],
                     country: data?.country,
                     area_of_interest: data?.domains_interested_in,
-                    type_of_profile: [data?.type_of_profile] ||[ ""],
-                    reason_to_join: [data?.reasons_to_join_platform.split(", ")] || [""],
+                    type_of_profile: [data?.type_of_profile || ""],
+                    reason_to_join: [data?.reasons_to_join_platform.split(", ") || [""]],
                     profile_picture: imageData ? [imageData] : [],
                 },
                 // mentor data
