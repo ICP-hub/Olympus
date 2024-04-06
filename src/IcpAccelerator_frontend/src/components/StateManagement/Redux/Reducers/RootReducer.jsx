@@ -9,6 +9,7 @@ import hubReducer from "./hubRegisteredData";
 import investorReducer from "./investorRegisteredData";
 import projectReducer from "./founderRegisteredData";
 import areaOfExpertiseReducer from "./getAreaOfExpertise";
+import typeOfProfileSlice from "./getTypeOfProfile";
 import multiChainReducer from "./getMultiChainList";
 import latestListedReducer from "./latestListed";
 import latestLiveReducer from "./latestLive";
@@ -28,6 +29,7 @@ const rootReducer = combineReducers({
   hubData: hubReducer,
   investorData: investorReducer,
   expertiseIn: areaOfExpertiseReducer,
+  profileTypes: typeOfProfileSlice,
   chains: multiChainReducer,
   latestListed: latestListedReducer,
   latestLive: latestLiveReducer,

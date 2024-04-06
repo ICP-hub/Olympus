@@ -6,6 +6,7 @@ import { handleActorRequest } from "./components/StateManagement/Redux/Reducers/
 import { mentorRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/mentorRegisteredData";
 import { useAuth } from "./components/StateManagement/useContext/useAuth";
 import { areaOfExpertiseHandlerRequest } from "./components/StateManagement/Redux/Reducers/getAreaOfExpertise";
+import { typeOfProfileSliceHandlerRequest } from "./components/StateManagement/Redux/Reducers/getTypeOfProfile";
 import { getCurrentRoleStatusFailureHandler, setCurrentActiveRole, setCurrentRoleStatus } from "./components/StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 import { userRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/userRegisteredData";
 import { multiChainHandlerRequest } from "./components/StateManagement/Redux/Reducers/getMultiChainList";
@@ -100,6 +101,7 @@ const App = () => {
       dispatch(handleActorRequest());
       dispatch(multiChainHandlerRequest());
       dispatch(areaOfExpertiseHandlerRequest());
+      dispatch(typeOfProfileSliceHandlerRequest());
       dispatch(userRegisteredHandlerRequest());
     }
   }, [isAuthenticated, identity, dispatch]);
