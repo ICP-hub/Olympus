@@ -27,7 +27,7 @@ pub struct MentorProfile {
     pub years_of_mentoring: String,
     pub website: Option<String>,
     pub area_of_expertise: String,
-    pub reason_for_joining: String,
+    pub reason_for_joining: Option<String>,
     pub hub_owner: Option<String>,
 }
 impl MentorProfile {
