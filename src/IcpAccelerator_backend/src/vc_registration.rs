@@ -20,8 +20,8 @@ use crate::PaginationParam;
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct VentureCapitalist {
     pub name_of_fund: String,
-    pub fund_size: f64,
-    pub assets_under_management: String,
+    pub fund_size: Option<f64>,
+    pub assets_under_management: Option<String>,
     pub logo: Option<Vec<u8>>,
     pub registered_under_any_hub: Option<bool>,
     pub average_check_size: f64,
@@ -38,10 +38,12 @@ pub struct VentureCapitalist {
     pub portfolio_link: String,
     pub announcement_details: Option<String>,
     pub user_data: UserInformation,
-    pub website_link: String,
+    pub website_link: Option<String>,
     pub linkedin_link: String,
     pub registered: bool,
-    pub registered_country: Option<String>,
+    pub registered_country: Option<String>, 
+    pub stage: String,
+    pub range_of_check_size : String
 }
 
 #[derive(Clone, CandidType)]
@@ -222,15 +224,18 @@ pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::
     match params.validate() {
         Ok(_) => {
             println!("Validation passed!");
-            let fund_size = (params.fund_size * 100.0).round() / 100.0;
-            params.fund_size = fund_size;
-            let average_check_size = (params.average_check_size * 100.0).round() / 100.0;
-            params.average_check_size = average_check_size;
-            let money_invested = params
-                .money_invested
-                .map(|money| (money * 100.0).round() / 100.0);
+            // let fund_size = (params.fund_size * 100.0).round() / 100.0;
+            // params.fund_size = fund_size;
 
-            params.money_invested = money_invested;
+            // let average_check_size = (params.average_check_size * 100.0).round() / 100.0;
+            // params.average_check_size = average_check_size;
+
+            // let money_invested = params
+            //     .money_invested
+            //     .map(|money| (money * 100.0).round() / 100.0);
+
+            // params.money_invested = money_invested;
+
             let profile_for_pushing = params.clone();
 
             let new_vc = VentureCapitalistInternal {
@@ -555,4 +560,29 @@ pub fn make_vc_active_inactive(p_id: Principal) -> String {
     } else {
         "you are not authorised to run this function".to_string()
     }
+}
+
+
+//backside_additions
+
+
+#[query]
+pub fn get_investment_stage() -> Vec<String> {
+    vec![
+        "Pre-MVP".to_string(),
+        "MVP to initial traction".to_string(),
+        "Growing traction".to_string(),
+        "We do NOT currently invest".to_string()
+    ]
+}
+
+#[query]
+pub fn get_range_of_check_size() -> Vec<String>{
+    vec![
+        "<$500k".to_string(),
+        "$500k-$2M".to_string(),
+        "$2-5M".to_string(),
+        "$5-10M".to_string(),
+        "Above $10M".to_string()
+    ]
 }
