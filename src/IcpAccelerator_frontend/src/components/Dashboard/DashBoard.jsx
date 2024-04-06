@@ -254,11 +254,11 @@ function cloneArrayWithModifiedValues(arr) {
                   View More
                 </button>
               </div>
-              <div className="flex flex-wrap mx-2 lg:-mx-4 mb-4 flex-col lg:flex-row items-center" style={{ justifyContent: "space-evenly" }}>
-                <div className="flex w-full lg:w-3/4 mb-4 lg:mb-0">
+              <div className="flex mb-4 items-stretch max-md:flex-col">
+                <div className="flex lg:mb-0 lg:w-3/4 mb-4 w-full">
                   <MentorCard />
                 </div>
-                <div className="lg:w-1/4 py-1 lg:py-3">
+                <div className="lg:w-1/4 md:pl-2">
                   <RegisterCard categories={mentorCategories} />
                 </div>
               </div>

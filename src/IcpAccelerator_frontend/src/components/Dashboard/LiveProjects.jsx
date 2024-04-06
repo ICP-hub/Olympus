@@ -206,7 +206,7 @@ const LiveProjects = ({ progress }) => {
                               {`${projectRubricStatus}/8`}
                             </div>
                           </div>)}
-                          <p className="text-gray-700 text-sm p-2 overflow-hidden line-clamp-8 truncate text-wrap" style={{overflow: "scroll", 
+                          <p className="text-gray-700 text-sm p-2 overflow-hidden line-clamp-8 truncate text-wrap h-48" style={{overflow: "scroll", 
                           display: "-webkit-box",
                           WebkitBoxOrient: "vertical",
                           WebkitLineClamp: 8}}>
