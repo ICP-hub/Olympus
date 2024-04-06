@@ -36,7 +36,7 @@ user_data[default]='record {
   country = "Wonderland";
   telegram_id = opt "default_telegram";
   bio = opt "An enthusiastic learner and explorer.";
-  area_of_intrest = "Technology";
+  area_of_interest = "Technology";
   twitter_id = opt "default_twitter";
   openchat_username = opt "default_openchat"
 }'
@@ -48,7 +48,7 @@ user_data[principal2]='record {
   country = "Neverland";
   telegram_id = opt "two_telegram";
   bio = opt "A curious wanderer of digital realms.";
-  area_of_intrest = "Artificial Intelligence";
+  area_of_interest = "Artificial Intelligence";
   twitter_id = opt "two_twitter";
   openchat_username = opt "two_openchat"
 }'
@@ -60,7 +60,7 @@ user_data[principal3]='record {
   country = "Neverland";
   telegram_id = opt "two_telegram";
   bio = opt "hello";
-  area_of_intrest = "ML";
+  area_of_interest = "ML";
   twitter_id = opt "two_twitter";
   openchat_username = opt "two_openchat"
 }'
@@ -72,7 +72,7 @@ user_data[principal4]='record {
   country = "Neverland";
   telegram_id = opt "two_telegram";
   bio = opt "A curious wanderer of digital realms.";
-  area_of_intrest = "Full Stack";
+  area_of_interest = "Full Stack";
   twitter_id = opt "two_twitter";
   openchat_username = opt "two_openchat"
 }'
@@ -84,7 +84,7 @@ user_data[principal5]='record {
   country = "Neverland";
   telegram_id = opt "two_telegram";
   bio = opt "A curious wanderer of digital realms.";
-  area_of_intrest = "Artificial Intelligence";
+  area_of_interest = "Artificial Intelligence";
   twitter_id = opt "two_twitter";
   openchat_username = opt "two_openchat"
 }'

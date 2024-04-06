@@ -60,7 +60,7 @@ const validationSchema = {
         /\S/.test(value)
       )
       .required("Selecting an interest is required."),
-    area_of_intrest: yup
+    area_of_interest: yup
       .string()
       .test("is-non-empty", "Areas of Intrest are required", (value) =>
         /\S/.test(value)
@@ -363,7 +363,7 @@ const MentorRegistration = () => {
           openchat_username: userData.openchat_username?.[0] || "",
           bio: userData.bio?.[0] || "",
           country: userData.country || "",
-          area_of_intrest: userData.area_of_intrest || "",
+          area_of_interest: userData.area_of_interest || "",
         };
 
         // If there is a mentor_image, handle its conversion and set it separately if needed
@@ -448,7 +448,7 @@ const MentorRegistration = () => {
           twitter_id: [updatedFormData.twitter_id],
           openchat_username: [updatedFormData.openchat_username] || [],
           bio: [updatedFormData.bio] || [],
-          area_of_intrest: updatedFormData.area_of_intrest || [],
+          area_of_interest: updatedFormData.area_of_interest || [],
         },
         existing_icp_mentor: updatedexisting_icp_mentor,
         reason_for_joining: updatedFormData.reason_for_joining || "",
@@ -492,7 +492,7 @@ const MentorRegistration = () => {
           twitter_id: [updatedFormData.twitter_id],
           openchat_username: [updatedFormData.openchat_username] || [],
           bio: [updatedFormData.bio] || [],
-          area_of_intrest: updatedFormData.area_of_intrest || [],
+          area_of_interest: updatedFormData.area_of_interest || [],
         },
         existing_icp_mentor: updatedexisting_icp_mentor,
         reason_for_joining: updatedFormData.reason_for_joining || "",
@@ -617,15 +617,15 @@ const MentorRegistration = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 px-4 gap-6">
                   <div className="z-0 w-full my-3 group">
                     <label
-                      htmlFor="area_of_intrest"
+                      htmlFor="area_of_interest"
                       className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                     >
                       Area of Intrest
                     </label>
                     <select
-                      {...register("area_of_intrest")}
+                      {...register("area_of_interest")}
                       className={`bg-gray-50 border-2 ${
-                        errors.area_of_intrest
+                        errors.area_of_interest
                           ? "border-red-500 placeholder:text-red-500"
                           : "border-[#737373]"
                       } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
@@ -643,9 +643,9 @@ const MentorRegistration = () => {
                         </option>
                       ))}
                     </select>
-                    {errors.area_of_intrest && (
+                    {errors.area_of_interest && (
                       <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                        {errors.area_of_intrest.message}
+                        {errors.area_of_interest.message}
                       </p>
                     )}
                   </div>

@@ -151,7 +151,7 @@ const NormalUser = () => {
       telegram_id: [data.telegram_id.toString()],
       twitter_id: [data.twitter_id.toString()],
       country: data.country,
-      area_of_intrest: data.areas_of_expertise,
+      area_of_interest: data.areas_of_expertise,
       profile_picture: imageData ? [imageData] : [],
     };
 
