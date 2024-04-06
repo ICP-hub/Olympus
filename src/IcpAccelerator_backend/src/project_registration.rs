@@ -22,6 +22,7 @@ use ic_cdk::api::stable::{StableReader, StableWriter};
 use ic_cdk::api::time;
 use ic_cdk::storage;
 use ic_cdk_macros::*;
+use ic_stable_structures::vec;
 use serde::{Deserialize, Serialize};
 use serde_cbor::Value::Null;
 use sha2::{Digest, Sha256};
@@ -49,7 +50,7 @@ pub struct JobsInternal {
     job_data: Jobs,
     timestamp: u64,
     project_name: String,
-    project_desc: String,
+    project_desc: Option<String>,
     project_logo: Vec<u8>,
 }
 
@@ -65,7 +66,7 @@ pub struct AnnouncementsInternal {
     announcement_data: Announcements,
     timestamp: u64,
     project_name: String,
-    project_desc: String,
+    project_desc: Option<String>,
     project_logo: Vec<u8>,
 }
 
@@ -82,13 +83,13 @@ pub struct ProjectInfo {
     pub promotional_video: Option<String>,
     pub github_link: Option<String>,
     pub reason_to_join_incubator: String,
-    pub project_description: String,
+    pub project_description: Option<String>, //
     pub project_cover: Vec<u8>,
     pub project_team: Option<Vec<TeamMember>>,
     pub token_economics: Option<String>,
     pub technical_docs: Option<String>,
     pub long_term_goals: Option<String>,
-    pub target_market: Option<String>,
+    pub target_market: Option<String>, //
     pub self_rating_of_project: f64,
     pub user_data: UserInformation,
     pub mentors_assigned: Option<Vec<MentorProfile>>,
@@ -104,6 +105,9 @@ pub struct ProjectInfo {
     pub dapp_link: Option<String>,
     pub weekly_active_users: Option<u64>,
     pub revenue: Option<u64>,
+    pub is_your_project_registered : Option<bool>,
+    pub type_of_registration : Option<String>,
+    pub country_of_registration : Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
@@ -120,7 +124,7 @@ pub struct ProjectPublicInfo {
     pub promotional_video: Option<String>,
     pub github_link: Option<String>,
     pub reason_to_join_incubator: String,
-    pub project_description: String,
+    pub project_description: Option<String>,
     pub project_cover: Vec<u8>,
     pub project_team: Option<Vec<TeamMember>>,
     pub token_economics: Option<String>,
@@ -1499,7 +1503,7 @@ pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUse
                 params: ProjectInfoForUser {
                     project_name: Some(project_internal.params.project_name.clone()),
                     project_logo: Some(project_internal.params.project_logo.clone()),
-                    project_description: Some(project_internal.params.project_description.clone()),
+                    project_description: project_internal.params.project_description.clone(),
                     community_rating: Some(community_ratings),
                     project_cover: project_internal.params.project_cover.clone(),
                     project_twitter: project_internal.params.project_twitter.clone(),
@@ -2400,4 +2404,11 @@ fn get_project_ratings(
             None => Err("No ratings found for the specified project ID.".to_string()),
         }
     })
+}
+
+pub fn get_type_of_registration() -> Vec<String>{
+    vec![
+        "Company".to_string(),
+        "DAO".to_string()
+    ]
 }
