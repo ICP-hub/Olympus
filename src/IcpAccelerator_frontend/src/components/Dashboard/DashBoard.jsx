@@ -22,7 +22,7 @@ import MentorDashboard from "./RoleDashboard/MentorDashboard";
 import InvestorDashboard from "./RoleDashboard/InvestorDashboard";
 import AnnouncementCard from "./AnnouncementCard";
 import LiveProjects from "./LiveProjects";
-import Banner from "../../../assets/images/banner.png";
+import { Banner } from "../Utils/Data/SvgData";
 import LiveEventsCards from "./LiveEventsCards";
 
 const DashBoard = () => {
@@ -46,40 +46,48 @@ const DashBoard = () => {
 
   function formatFullDateFromBigInt(bigIntDate) {
     const date = new Date(Number(bigIntDate / 1000000n));
-    const dateString = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    const dateString = date.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
     return `${dateString}`;
-}
+  }
 
-    
-function cloneArrayWithModifiedValues(arr) {
-  return arr.map(obj => {
+  function cloneArrayWithModifiedValues(arr) {
+    return arr.map((obj) => {
       const modifiedObj = {};
 
-      Object.keys(obj).forEach(key => {
-          if (Array.isArray(obj[key]) && obj[key].length > 0) {
-              if (key === 'approved_on' || key === "rejected_on" || key === "requested_on") {
-                  // const date = new Date(Number(obj[key][0])).toLocaleDateString('en-US');
-                  const date = formatFullDateFromBigInt(obj[key][0]);
-                  modifiedObj[key] = date; // Convert bigint to string date
-              } else {
-                  modifiedObj[key] = obj[key][0]; // Keep the first element of other arrays unchanged
-              }
+      Object.keys(obj).forEach((key) => {
+        if (Array.isArray(obj[key]) && obj[key].length > 0) {
+          if (
+            key === "approved_on" ||
+            key === "rejected_on" ||
+            key === "requested_on"
+          ) {
+            // const date = new Date(Number(obj[key][0])).toLocaleDateString('en-US');
+            const date = formatFullDateFromBigInt(obj[key][0]);
+            modifiedObj[key] = date; // Convert bigint to string date
           } else {
-              modifiedObj[key] = obj[key]; // Keep other keys unchanged
+            modifiedObj[key] = obj[key][0]; // Keep the first element of other arrays unchanged
           }
+        } else {
+          modifiedObj[key] = obj[key]; // Keep other keys unchanged
+        }
       });
 
       return modifiedObj;
-  });
-}
+    });
+  }
 
-  
   const initialApi = async () => {
     try {
       const currentRoleArray = await actor.get_role_status();
       if (currentRoleArray && currentRoleArray.length !== 0) {
         const currentActiveRole = getNameOfCurrentStatus(currentRoleArray);
-        dispatch(setCurrentRoleStatus(cloneArrayWithModifiedValues(currentRoleArray)));
+        dispatch(
+          setCurrentRoleStatus(cloneArrayWithModifiedValues(currentRoleArray))
+        );
         dispatch(setCurrentActiveRole(currentActiveRole));
       } else {
         dispatch(
@@ -150,150 +158,167 @@ function cloneArrayWithModifiedValues(arr) {
       return (
         <>
           <section
-            className="flex items-center w-full bg-gradient-to-r from-purple-900 via-purple-500 to-purple-400 pl-[9%] pr-[9%] py-[8%]">
-            <div className="container mx-auto py-0 md:py-4">
+            className="flex items-center w-full pl-[9%] pr-[9%] py-[2%] max-h-screen"
+            style={{
+              background: " linear-gradient(63deg, #3B00B9 0%, #D38ED7 100%)",
+            }}
+          >
+            <div className="container mx-auto">
               <div className="flex flex-wrap">
-                <div className="flex flex-col justify-center md:w-1/2 pt-8 sm:pt-0 sm:px-4 w-full">
-                  <h1 className="text-4xl font-bold mb-4 lg:text-5xl text-white font-fontUse">
+                <div className="flex flex-col justify-center md:w-1/2 sm:px-4 w-full">
+                  <h1 className="text-4xl font-bold mb-4 lg:text-7xl text-white font-fontUse">
                     OLYMPUS
                   </h1>
-                  <h1 className="text-3xl font-bold mb-4 lg:text-4xl text-white font-fontUse">
-                    Peak of Web3 acceleration
+                  <h1 className="text-3xl font-bold mb-4 lg:text-6xl text-white font-fontUse">
+                    Peak of Web3 Acceleration
                   </h1>
                   <p className="text-lg mb-6 md:text-xl lg:text-2xl text-white font-fontUse">
-                    Trustless Web3 acceleration platform for founders, investors , mentors, talent and users
+                    Trustless Web3 Acceleration Platform for Founders, Investors
+                    , Mentors, Talent and Users
                   </p>
-                  <a className="mt-6 mb-6 text-white font-fontUse" href="https://internetcomputer.org/olympus">
-                    Learn more about the beta version. Use with caution.
+                  <a
+                    className="mt-6 mb-6 text-white font-fontUse hover:text-black text-lg"
+                    href="https://internetcomputer.org/olympus"
+                  >
+                    Learn more about the beta version.<br></br> Use with
+                    caution.
                   </a>
                 </div>
                 <div className="w-full px-4 md:w-1/2 md:flex hidden">
-                  <img
+                  {/* <img
                     className="object-contain h-fit w-fit absolute z-10 top-0"
                     src={Banner}
                     alt="Illustration"
                     loading="lazy"
-                  />
+                  /> */}
+                  <div className="h-fit w-fit">
+                    <div className="relative z-10">{Banner}</div>
+                  </div>
                 </div>
               </div>
             </div>
           </section>
           <section className="overflow-hidden relative bg-gray-100">
-            <div className="font-fontUse flex flex-col w-full h-fit px-[5%] lg1:px-[4%] py-[4%]">
-              <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
-                <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent inline-block bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
-                  Hot right now
-                </h1>
-              </div>
-              <div className="mb-4 z-20">
-                <SpotLight />
-              </div>
-              <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
-                <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
-                  Goals for 2024
-                </h1>
-              </div>
-              <div className="mb-4">
-                <ImpactTool />
-              </div>
-              <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
-                <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
-                  Live Projects
-                </h1>
-                <button
-                  onClick={() => navigate("/live-projects")}
-                  className="border border-violet-800 px-4 py-2 rounded-md text-violet-800"
-                >
-                  View More
-                </button>
-              </div>
-              <div className="mb-4">
-                <LiveProjects progress={false} />
-              </div>
-              <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
-                <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
-                  Ongoing Accelerator
-                </h1>
-                <button
-                  onClick={() => navigate(`/all-live-events`)}
-                  className="border border-violet-800 px-4 py-2 rounded-md text-violet-800"
-                >
-                  View More
-                </button>
-              </div>
-              <div className="mb-4">
-                <LiveEventsCards wrap={true} register={false} />
-              </div>
-              <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
-                <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
-                  Investors
-                </h1>
-                <button
-                  onClick={() => navigate("/view-investor")}
-                  className="border border-violet-800 px-4 py-2 rounded-md text-violet-800"
-                >
-                  View More
-                </button>
-              </div>
-              <div className="flex mb-4 items-stretch max-md:flex-col" >
-                <div className="flex lg:mb-0 lg:w-3/4 mb-4 w-full">
-                  <InvestorCard />
+            <div className="container mx-auto">
+              <div className="font-fontUse flex flex-col w-full h-fit px-[5%] lg1:px-[4%] py-[4%]">
+                <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
+                  <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent inline-block bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
+                    Hot right now
+                  </h1>
                 </div>
-                <div className="lg:w-1/4 md:pl-2">
-                  <RegisterCard categories={investorCategories} />
+                <div className="mb-4 z-20">
+                  <SpotLight />
                 </div>
-              </div>
-              <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
-                <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
-                  Mentors
-                </h1>
-                <button
-                  onClick={() => navigate("/view-mentors")}
-                  className="border border-violet-800 px-4 py-2 rounded-md text-violet-800"
-                >
-                  View More
-                </button>
-              </div>
-              <div className="flex mb-4 items-stretch max-md:flex-col">
-                <div className="flex lg:mb-0 lg:w-3/4 mb-4 w-full">
-                  <MentorCard />
+                <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
+                  <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
+                    Goals for 2024
+                  </h1>
                 </div>
-                <div className="lg:w-1/4 md:pl-2">
-                  <RegisterCard categories={mentorCategories} />
+                <div className="mb-4">
+                  <ImpactTool />
                 </div>
-              </div>
-              <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
-                <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
-                  Announcements
-                </h1>
-              </div>
-              <div className="mb-4">
-                <AnnouncementCard />
-              </div>
-              <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
-                <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl pb-3 font-bold">
-                  Jobs / Bounties
-                </h1>
-              </div>
-              <div className="mb-4">
-                <ProjectJobCard
-                  image={true}
-                  tags={true}
-                  country={true}
-                  website={true}
-                />
-              </div>
-              <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
-                <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
-                  User Testimonials
-                </h1>
-              </div>
-              <div className="flex flex-col sm:flex-row flex-wrap mb-4 justify-center items-start bg-[#B9C0F2] rounded-lg p-4">
-                <div className="w-full sm:w-1/2 lg:w-3/4 mb-4 overflow-x-auto px-2">
-                  <Testimonial />
+                <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
+                  <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
+                    Live Projects
+                  </h1>
+                  <button
+                    onClick={() => navigate("/live-projects")}
+                    className="border border-violet-800 px-4 py-2 rounded-md text-violet-800"
+                  >
+                    View More
+                  </button>
                 </div>
-                <div className="w-full sm:w-1/2 lg:w-1/4 px-2">
-                  <RegisterCard categories={testimonialCategories} border={true} />
+                <div className="mb-4">
+                  <LiveProjects progress={false} />
+                </div>
+                <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
+                  <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
+                    Ongoing Accelerator
+                  </h1>
+                  <button
+                    onClick={() => navigate(`/all-live-events`)}
+                    className="border border-violet-800 px-4 py-2 rounded-md text-violet-800"
+                  >
+                    View More
+                  </button>
+                </div>
+                <div className="mb-4">
+                  <LiveEventsCards wrap={true} register={false} />
+                </div>
+                <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
+                  <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
+                    Investors
+                  </h1>
+                  <button
+                    onClick={() => navigate("/view-investor")}
+                    className="border border-violet-800 px-4 py-2 rounded-md text-violet-800"
+                  >
+                    View More
+                  </button>
+                </div>
+                <div className="flex mb-4 items-stretch max-md:flex-col">
+                  <div className="flex lg:mb-0 lg:w-3/4 mb-4 w-full">
+                    <InvestorCard />
+                  </div>
+                  <div className="lg:w-1/4 md:pl-2">
+                    <RegisterCard categories={investorCategories} />
+                  </div>
+                </div>
+                <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
+                  <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
+                    Mentors
+                  </h1>
+                  <button
+                    onClick={() => navigate("/view-mentors")}
+                    className="border border-violet-800 px-4 py-2 rounded-md text-violet-800"
+                  >
+                    View More
+                  </button>
+                </div>
+                <div className="flex mb-4 items-stretch max-md:flex-col">
+                  <div className="flex lg:mb-0 lg:w-3/4 mb-4 w-full">
+                    <MentorCard />
+                  </div>
+                  <div className="lg:w-1/4 md:pl-2">
+                    <RegisterCard categories={mentorCategories} />
+                  </div>
+                </div>
+                <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
+                  <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
+                    Announcements
+                  </h1>
+                </div>
+                <div className="mb-4">
+                  <AnnouncementCard />
+                </div>
+                <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
+                  <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl pb-3 font-bold">
+                    Jobs / Bounties
+                  </h1>
+                </div>
+                <div className="mb-4">
+                  <ProjectJobCard
+                    image={true}
+                    tags={true}
+                    country={true}
+                    website={true}
+                  />
+                </div>
+                <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
+                  <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
+                    User Testimonials
+                  </h1>
+                </div>
+                <div className="flex flex-col sm:flex-row flex-wrap mb-4 justify-center items-start bg-[#B9C0F2] rounded-lg p-4">
+                  <div className="w-full sm:w-1/2 lg:w-3/4 mb-4 overflow-x-auto px-2">
+                    <Testimonial />
+                  </div>
+                  <div className="w-full sm:w-1/2 lg:w-1/4 px-2">
+                    <RegisterCard
+                      categories={testimonialCategories}
+                      border={true}
+                    />
+                  </div>
                 </div>
               </div>
             </div>

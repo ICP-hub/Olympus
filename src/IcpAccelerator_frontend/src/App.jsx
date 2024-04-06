@@ -108,20 +108,24 @@ const App = () => {
 
   return (
     <>
-      <div className="bg-gray-100">
-        {actor
-          ? <Header setModalOpen={setModalOpen} gradient={"bg-gray-100"} />
-          : <div className="bg-gradient-to-r from-purple-900 via-purple-500 to-purple-400">
-            <NewHeader setModalOpen={setModalOpen} gradient={"bg-gray-100"} />
-          </div>}
-        <ConnectWallet
-          isModalOpen={isModalOpen}
-          onClose={() => setModalOpen(false)}
-        />
-        <AppRoutes />
+    {actor ? (
+        <Header setModalOpen={setModalOpen} gradient={"bg-gray-100"} />
+    ) : (
+      <div>
+        <NewHeader setModalOpen={setModalOpen} gradient={"bg-gray-100"} />
       </div>
-      <Footer />
-    </>
+    )}
+  <div className="bg-gray-100">
+    <div className="container-xl mx-auto">
+      <ConnectWallet
+        isModalOpen={isModalOpen}
+        onClose={() => setModalOpen(false)}
+      />
+      <AppRoutes />
+    </div>
+  </div>
+  <Footer />
+</>
   );
 };
 
