@@ -24,8 +24,8 @@ pub struct UserInformation {
     pub area_of_interest: String,
     pub twitter_id: Option<String>,
     pub openchat_username: Option<String>,
-    pub type_of_profile: String,
-    pub reason_to_join : Vec<String>
+    pub type_of_profile: Option<String>,
+    pub reason_to_join : Option<Vec<String>>
 }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
@@ -192,7 +192,8 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
     }
 
     //convert_to_lowercase
-    info_with_default.type_of_profile = info_with_default.type_of_profile.to_lowercase();
+    info_with_default.type_of_profile = info_with_default.type_of_profile.map(|s| s.to_lowercase());
+
 
     let user_info_internal = UserInfoInternal {
         uid: new_id.clone(),
