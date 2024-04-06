@@ -6,6 +6,7 @@ import { handleActorRequest } from "./components/StateManagement/Redux/Reducers/
 import { mentorRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/mentorRegisteredData";
 import { useAuth } from "./components/StateManagement/useContext/useAuth";
 import { areaOfExpertiseHandlerRequest } from "./components/StateManagement/Redux/Reducers/getAreaOfExpertise";
+import { typeOfProfileSliceHandlerRequest } from "./components/StateManagement/Redux/Reducers/getTypeOfProfile";
 import { getCurrentRoleStatusFailureHandler, setCurrentActiveRole, setCurrentRoleStatus } from "./components/StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 import { userRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/userRegisteredData";
 import { multiChainHandlerRequest } from "./components/StateManagement/Redux/Reducers/getMultiChainList";
@@ -100,26 +101,31 @@ const App = () => {
       dispatch(handleActorRequest());
       dispatch(multiChainHandlerRequest());
       dispatch(areaOfExpertiseHandlerRequest());
+      dispatch(typeOfProfileSliceHandlerRequest());
       dispatch(userRegisteredHandlerRequest());
     }
   }, [isAuthenticated, identity, dispatch]);
 
   return (
     <>
-      <div className="bg-gray-100">
-        {actor
-          ? <Header setModalOpen={setModalOpen} gradient={"bg-gray-100"} />
-          : <div className="bg-gradient-to-r from-purple-900 via-purple-500 to-purple-400">
-            <NewHeader setModalOpen={setModalOpen} gradient={"bg-gray-100"} />
-          </div>}
-        <ConnectWallet
-          isModalOpen={isModalOpen}
-          onClose={() => setModalOpen(false)}
-        />
-        <AppRoutes />
+    {actor ? (
+        <Header setModalOpen={setModalOpen} gradient={"bg-gray-100"} />
+    ) : (
+      <div>
+        <NewHeader setModalOpen={setModalOpen} gradient={"bg-gray-100"} />
       </div>
-      <Footer />
-    </>
+    )}
+  <div className="bg-gray-100">
+    <div className="container-xl mx-auto">
+      <ConnectWallet
+        isModalOpen={isModalOpen}
+        onClose={() => setModalOpen(false)}
+      />
+      <AppRoutes />
+    </div>
+  </div>
+  <Footer />
+</>
   );
 };
 

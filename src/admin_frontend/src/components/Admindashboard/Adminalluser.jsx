@@ -108,7 +108,6 @@ const Adminalluser = () => {
               <thead className="border-b-2 border-gray-300">
                 <tr className="text-left text-xl font-fontUse uppercase">
                   <th className="w-24 pb-2">S.No</th>
-                  <th className="w-1/4 pb-2">Profile</th>
                   <th className="w-1/4 pb-2">Name</th>
                   <th className="w-1/4 pb-2">Role</th>
                   <th className="w-1/4 pb-2">Country</th>
@@ -120,13 +119,15 @@ const Adminalluser = () => {
                   <tr key={`${user.fullName}-${user.country}-${index}`}>
                     <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                     <td className="py-2 pl-4">
+                      <div className="flex items-center">
                       <img
                         className="w-10 h-10 rounded-full border-black border-2 p-1"
                         src={user.profilePicture}
                         alt="profile"
                       />
+                      <div className="ml-2">{user.fullName}</div>
+                      </div>
                     </td>
-                    <td>{user.fullName}</td>
                     <td>{user.approvedType}</td>
                     <td>{user.country}</td>
                     <td className="truncate max-w-xs">

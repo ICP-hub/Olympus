@@ -44,13 +44,14 @@ const AppRoutes = () => {
 
   const publicRoutes = [
     { path: "/", element: <DashBoard /> },
-    // { path: "/", element: <UserRegForm /> },
     { path: "/individual-project-details-user/:id", element: <ProjectDetailsForUserRole /> },
     { path: "/individual-project-details-project-owner", element: <ProjectDetailsForOwnerProject /> },
     { path: "/individual-project-details-project-mentor/:id", element: <ProjectDetailsForMentor /> },
     { path: "/individual-project-details-project-investor/:id", element: <ProjectDetailsForInvestor /> },
     { path: "/association", element: <ProjectAssociation /> },
-    { path: "/create-user", element: <NormalUser /> },
+    { path: "/create-user", element: <UserRegForm /> },
+    // { path: "/create-user", element: <NormalUser /> },
+    { path: "/create-user", element: <UserRegForm /> },
     { path: "/create-project", element: <CreateProject /> },
     { path: "/create-investor", element: <InvestorRegistration /> },
     { path: "/event-form", element: <EventForm /> },

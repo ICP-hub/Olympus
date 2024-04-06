@@ -212,7 +212,7 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
               </div>
               <div className="pl-1 flex flex-row space-x-2 text-gray-600">
                 {tick}
-                <p>{userData[0].params.user_data.area_of_intrest}</p>
+                <p>{userData[0].params.user_data.area_of_interest}</p>
               </div>
             </div>
 

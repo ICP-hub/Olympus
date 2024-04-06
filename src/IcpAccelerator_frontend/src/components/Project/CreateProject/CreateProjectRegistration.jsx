@@ -57,7 +57,7 @@ const validationSchema = {
         /\S/.test(value)
       )
       .required("Selecting an interest is required."),
-    area_of_intrest: yup.string().required("Selecting an interest is required."),
+    area_of_interest: yup.string().required("Selecting an interest is required."),
     imageData: yup.mixed(),
   }),
   projectDetails: yup.object().shape({
@@ -615,7 +615,7 @@ const CreateProjectRegistration = () => {
           openchat_username: userData.openchat_username?.[0] || "",
           bio: userData.bio?.[0] || "",
           country: userData.country || "",
-          area_of_intrest: userData.area_of_intrest || "",
+          area_of_interest: userData.area_of_interest || "",
         };
 
         // If there is a mentor_image, handle its conversion and set it separately if needed
@@ -742,7 +742,7 @@ const CreateProjectRegistration = () => {
           twitter_id: [updatedFormData.twitter_id],
           openchat_username: [updatedFormData.openchat_username] || [],
           bio: [updatedFormData.bio] || [],
-          area_of_intrest: updatedFormData.area_of_intrest || [],
+          area_of_interest: updatedFormData.area_of_interest || [],
         },
         upload_private_documents: [updateIsPrivateDocument],
         project_elevator_pitch: [updatedFormData.project_elevator_pitch],
@@ -834,7 +834,7 @@ const CreateProjectRegistration = () => {
           twitter_id: [updatedFormData.twitter_id],
           openchat_username: [updatedFormData.openchat_username] || [],
           bio: [updatedFormData.bio] || [],
-          area_of_intrest: updatedFormData.area_of_intrest || [],
+          area_of_interest: updatedFormData.area_of_interest || [],
         },
         upload_private_documents: [updateIsPrivateDocument],
         project_elevator_pitch: [updatedFormData.project_elevator_pitch],
@@ -1057,7 +1057,7 @@ const CreateProjectRegistration = () => {
                 </div>
                 <div className="z-0 w-full group">
                   <label
-                    htmlFor="area_of_intrest"
+                    htmlFor="area_of_interest"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
                     Domains you are interested in?
@@ -1081,13 +1081,13 @@ const CreateProjectRegistration = () => {
                         // Add other control styles if needed
                         paddingBlock: "2px",
                         borderRadius: "8px",
-                        border: errors.area_of_intrest
+                        border: errors.area_of_interest
                           ? "2px solid #ef4444"
                           : "2px solid #737373",
                         backgroundColor: "rgb(249 250 251)",
                         // Additional conditional placeholder color if needed
                         "&::placeholder": {
-                          color: errors.area_of_intrest
+                          color: errors.area_of_interest
                             ? "#ef4444"
                             : "currentColor", // Adjust the placeholder color conditionally
                         },
@@ -1096,19 +1096,19 @@ const CreateProjectRegistration = () => {
                     classNamePrefix="select"
                     className="basic-multi-select"
                     placeholder="Interests"
-                    name="area_of_intrest"
-                    {...register("area_of_intrest")}
+                    name="area_of_interest"
+                    {...register("area_of_interest")}
                     onChange={(selectedOptions) => {
                       // You might need to adapt this part to fit how you handle form data
                       const selectedValues = selectedOptions
                         .map((option) => option.value)
                         .join(", ");
-                      setValue("area_of_intrest", selectedValues);
+                      setValue("area_of_interest", selectedValues);
                     }}
                   />
-                  {errors.area_of_intrest && (
+                  {errors.area_of_interest && (
                     <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                      {errors.area_of_intrest.message}
+                      {errors.area_of_interest.message}
                     </span>
                   )}
                 </div>

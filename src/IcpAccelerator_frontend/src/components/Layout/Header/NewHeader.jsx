@@ -139,9 +139,9 @@ const NewHeader = ({ setModalOpen, gradient }) => {
   return (
     <>
       <nav
-        className="z-50 px-[5%] lg1:px-[3%] py-[3%] text-black bg-transparent sticky top-0 transition-transform"
-        style={{ transform: "unset" }}>
-        <div className="container-12 w-full flex items-center justify-between">
+        className="z-50 px-[5%] lg1:px-[3%] py-[2%] text-black bg-transparent sticky top-0 transition-transform"
+        style={{ transform: "unset" ,background:' linear-gradient(163deg, #3B00B9 0%, #D38ED7 100%)'}}>
+        <div className="container mx-auto w-full flex items-center justify-between">
           <a className="self-center flex items-center" href="/">
             <img
               src={logoWithText}
