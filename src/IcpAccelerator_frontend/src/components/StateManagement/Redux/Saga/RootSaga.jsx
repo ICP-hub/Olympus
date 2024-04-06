@@ -10,6 +10,7 @@ import { fetchHubSaga } from './hubSaga';
 import { fetchInvestorSaga } from './investorSaga';
 import { fetchMentorSaga } from './mentorSaga';
 import { expertiseInSaga } from './areaOfExpertiseSaga';
+import { typeOfProfileSaga } from './typeOfProfileSaga';
 import { latestLiveProjectSaga } from './latestLiveSaga';
 import { latestListedProjectSaga } from './latestListedSaga';
 import { popularListedProjectSaga } from './popularListedSaga';
@@ -36,6 +37,7 @@ export default function* rootSaga() {
         fetchInvestorSaga(),
         fetchMentorSaga(),
         expertiseInSaga(),
+        typeOfProfileSaga(),
         chainsSaga(),
         latestListedProjectSaga(),
         latestLiveProjectSaga(),
