@@ -249,14 +249,14 @@ const NewHeader = ({ setModalOpen, gradient }) => {
               <path
                 d="M2 2L18 18"
                 stroke="black"
-                stroke-width="2"
-                stroke-linecap="square"
+                strokeWidth="2"
+                strokeLinecap="square"
               ></path>
               <path
                 d="M18.5 2L2.5 18"
                 stroke="black"
-                stroke-width="2"
-                stroke-linecap="square"
+                strokeWidth="2"
+                strokeLinecap="square"
               ></path>
             </svg>
           </button>

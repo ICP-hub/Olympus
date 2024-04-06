@@ -768,8 +768,8 @@ export const dashboard = (
         y2="92.5599"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#7283EA" stop-opacity="0.4" />
-        <stop offset="1" stop-color="#BD78EA" />
+        <stop stopColor="#7283EA" stopOpacity="0.4" />
+        <stop offset="1" stopColor="#BD78EA" />
       </linearGradient>
     </defs>
   </svg>

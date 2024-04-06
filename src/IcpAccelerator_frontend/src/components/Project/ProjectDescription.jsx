@@ -80,8 +80,8 @@ function ProjectDescription() {
                     y2="143.482"
                     gradientUnits="userSpaceOnUse"
                   >
-                    <stop stop-color="#7283EA" stop-opacity="0.4" />
-                    <stop offset="1" stop-color="#BD78EA" />
+                    <stop stopColor="#7283EA" stopOpacity="0.4" />
+                    <stop offset="1" stopColor="#BD78EA" />
                   </linearGradient>
                 </defs>
               </svg>
@@ -107,8 +107,8 @@ function ProjectDescription() {
                     y2="-4.03093e-05"
                     gradientUnits="userSpaceOnUse"
                   >
-                    <stop stop-color="#7283EA" stop-opacity="0.4" />
-                    <stop offset="1" stop-color="#BD78EA" />
+                    <stop stopColor="#7283EA" stopOpacity="0.4" />
+                    <stop offset="1" stopColor="#BD78EA" />
                   </linearGradient>
                 </defs>
               </svg>

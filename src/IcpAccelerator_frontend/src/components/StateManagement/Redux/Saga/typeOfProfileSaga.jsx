@@ -8,10 +8,7 @@ function* fetchTypeOfProfileHandler() {
   try {
 
     const actor = yield select(selectActor);
-
     const typeOfProfile = yield call([actor, actor.type_of_user_profile]);
-    console.log('typeOfProfile', typeOfProfile)
-
     yield put(typeOfProfileSliceHandlerSuccess(typeOfProfile));
   } catch (error) {
     yield put(typeOfProfileSliceHandlerFailure(error.toString()));
