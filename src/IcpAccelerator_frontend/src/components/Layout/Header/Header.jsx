@@ -158,8 +158,8 @@ const Header = ({ setModalOpen, gradient }) => {
                       (!userCurrentRoleStatusActiveRole ||
                         userCurrentRoleStatusActiveRole === "user") &&
                       window.location.pathname === "/"
-                        ? " hover:bg-white hover:text-violet-800 border border-white md:p-1 font-bold rounded-md text-white md:px-2 px-1 text-base md:text-lg  uppercase"
-                        : "hover:bg-violet-800 hover:text-white border border-violet-800 md:p-1 font-bold rounded-md text-violet-800 md:px-2 px-1 text-base md:text-lg  uppercase"
+                        ? " hover:bg-white hover:text-violet-800 border border-white md:p-1 font-bold rounded-md text-white md:px-2 px-1 text-base md:text-lg  uppercase backdrop-blur-xl"
+                        : "hover:bg-violet-800 hover:text-white border border-violet-800 md:p-1 font-bold rounded-md text-violet-800 md:px-2 px-1 text-base md:text-lg  uppercase backdrop-blur-xl"
                     }
                   >
                     {userCurrentRoleStatusActiveRole == "vc"
