@@ -9,12 +9,16 @@ import { ThreeDots } from "react-loader-spinner";
 import { useCountries } from "react-countries";
 import ReactSelect from "react-select";
 import CompressedImage from '../ImageCompressed/CompressedImage';
-
-const UserRegForm = () => {
+import { allHubHandlerRequest } from '../StateManagement/Redux/Reducers/All_IcpHubReducer';
+const MentorRegForm = () => {
     const { countries } = useCountries();
+    const dispatch = useDispatch();
     const actor = useSelector((currState) => currState.actors.actor);
     const areaOfExpertise = useSelector((currState) => currState.expertiseIn.expertise);
     const typeOfProfile = useSelector((currState) => currState.profileTypes.profiles);
+    const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
+    const multiChainNames = useSelector((currState) => currState.chains.chains);
+
     const userFullData = useSelector((currState) => currState.userData.data.Ok);
 
     // STATES
@@ -28,6 +32,8 @@ const UserRegForm = () => {
     const [interestedDomainsOptions, setInterestedDomainsOptions] = useState([]);
     const [interestedDomainsSelectedOptions, setInterestedDomainsSelectedOptions] = useState([]);
     const [typeOfProfileOptions, setTypeOfProfileOptions] = useState([]);
+
+
     const [reasonOfJoiningOptions, setReasonOfJoiningOptions] = useState([
         { value: "listing_and_promotion", label: "Project listing and promotion" },
         { value: "Funding", label: "Funding" },
@@ -37,6 +43,18 @@ const UserRegForm = () => {
         { value: "Jobs", label: "Jobs" },
     ]);
     const [reasonOfJoiningSelectedOptions, setReasonOfJoiningSelectedOptions] = useState([]);
+    // Mentor from states
+    const [multiChainOptions, setMultiChainOptions] = useState([]);
+    const [multiChainSelectedOptions, setMultiChainSelectedOptions] = useState([]);
+
+    const [categoryOfMentoringServiceOptions, setCategoryOfMentoringServiceOptions] = useState([
+        { value: "Incubation", label: "Incubation" },
+        { value: "Tokenomics", label: "Tokenomics" },
+        { value: "Branding", label: "Branding" },
+        { value: "Listing", label: "Listing" },
+        { value: "Raise", label: "Raise" },
+    ]);
+    const [categoryOfMentoringServiceSelectedOptions, setCategoryOfMentoringServiceSelectedOptions] = useState([]);
 
     // user reg form validation schema
     const validationSchema = yup.object().shape(
@@ -74,6 +92,27 @@ const UserRegForm = () => {
                 .test('fileType', 'Only jpeg, jpg & png file format allowed', (value) => {
                     return !value || (value && ['image/jpeg', 'image/jpg', 'image/png'].includes(value.type));
                 }),
+            preferred_icp_hub: yup.string().test("is-non-empty", "ICP Hub selection is required",
+                (value) => /\S/.test(value)).required("ICP Hub selection is required"),
+            multi_chain: yup.string().required("Required").oneOf(['true', 'false'], 'Invalid value'),
+            multi_chain_names: yup.string().when('multi_chain',
+                (val, schema) => val && (val[0] === 'true')
+                    ? schema.test('is-non-empty', 'Atleast one chain name required',
+                        (value) => /\S/.test(value)).required("Atleast one chain name required") : schema),
+            category_of_mentoring_service: yup.string().test('is-non-empty', 'Selecting a service is required',
+                (value) => /\S/.test(value)).required("Selecting a service is required"),
+            icp_hub_or_spoke: yup.string().required("Required").oneOf(['true', 'false'], 'Invalid value'),
+            hub_owner: yup.string().when('icp_hub_or_spoke',
+                (val, schema) => val && (val[0] === 'true')
+                    ? schema.test('is-non-empty', 'ICP Hub selection is required',
+                        (value) => /\S/.test(value)).required("ICP Hub selection is required") : schema),
+            mentor_website_url: yup.string().nullable(true).optional().url("Invalid url"),
+            years_of_mentoring: yup.number().typeError("You must enter a number").positive("Must be a positive number")
+                .required("Years of experience mentoring startups is required"),
+            mentor_linkedin_url: yup.string().test('is-non-empty', 'LinkedIn url is required',
+                (value) => /\S/.test(value)).url("Invalid url").required("LinkedIn url is required"),
+            mentor_documents_url: yup.string().nullable(true).optional().url("Invalid url"),
+
 
         }).required();
 
@@ -82,6 +121,7 @@ const UserRegForm = () => {
         resolver: yupResolver(validationSchema),
         mode: "all",
     });
+    const [selectedTypeOfProfile, setSelectedTypeOfProfile] = useState(watch('type_of_profile'));
 
     // image creation function compression and uintarray creator
     const imageCreationFunc = async (file) => {
@@ -121,22 +161,48 @@ const UserRegForm = () => {
     const onSubmitHandler = async (data) => {
         if (actor) {
             const userData = {
-                full_name: data?.full_name,
-                email: [data?.email],
-                telegram_id: [data?.telegram_id.toString()],
-                twitter_id: [data?.twitter_url.toString()],
-                openchat_username: [data?.openchat_user_name],
-                bio: [data?.bio],
-                country: data?.country,
-                area_of_interest: data?.domains_interested_in,
-                type_of_profile: [data?.type_of_profile || ""],
-                reason_to_join: [data?.reasons_to_join_platform.split(", ") || [""]],
-                profile_picture: imageData ? [imageData] : [],
+                // user data
+                user_data: {
+                    full_name: data?.full_name,
+                    email: [data?.email],
+                    telegram_id: [data?.telegram_id.toString()],
+                    twitter_id: [data?.twitter_url.toString()],
+                    openchat_username: [data?.openchat_user_name],
+                    bio: [data?.bio],
+                    country: data?.country,
+                    area_of_interest: data?.domains_interested_in,
+                    type_of_profile: [data?.type_of_profile || ""],
+                    reason_to_join: [data?.reasons_to_join_platform.split(", ") || [""]],
+                    profile_picture: imageData ? [imageData] : [],
+                },
+                // mentor data
+                preferred_icp_hub: [data?.preferred_icp_hub || ""],
+                icp_hub_or_spoke: data?.icp_hub_or_spoke === "true" ? true : false,
+                hub_owner: [data?.icp_hub_or_spoke === "true"
+                    && data?.icp_hub_or_spoke
+                    ? data?.icp_hub_or_spoke
+                    : ""
+                ],
+                hub_owner: [data?.hub_owner || ""],
+                category_of_mentoring_service: data?.category_of_mentoring_service,
+                years_of_mentoring: data.years_of_mentoring.toString(),
+                linkedin_link: data?.mentor_linkedin_url,
+                multichain: [data?.multi_chain === "true"
+                    && data?.multi_chain_names
+                    ? data?.multi_chain_names
+                    : ""
+                ],
+                website: [data?.mentor_website_url || ""],
+                // mentor data not exiting on frontend or raw variables
+                existing_icp_mentor: false,
+                existing_icp_project_porfolio: [data?.existing_icp_project_porfolio || ""],
+                area_of_expertise: "",
+                reason_for_joining: [""]
             };
             try {
-                await actor.register_user(userData).then((result) => {
-                    if (result && result.includes('User registered successfully')) {
-                        toast.success("Registered as a User");
+                await actor.register_mentor_candid(userData).then((result) => {
+                    if (result && result.includes('approval request is sent')) {
+                        toast.success("Approval request is sent");
                         window.location.href = "/";
                     } else {
                         toast.error('Something got wrong')
@@ -221,10 +287,25 @@ const UserRegForm = () => {
     useEffect(() => {
         if (userFullData) {
             setValuesHandler(userFullData)
-            setEditMode(true)
         }
 
     }, [userFullData])
+
+    // Mentor form states
+    useEffect(() => {
+        if (multiChainNames) {
+            setMultiChainOptions(multiChainNames.map((chain) => ({
+                value: chain,
+                label: chain,
+            })))
+        } else {
+            setMultiChainOptions([]);
+        }
+    }, [multiChainNames])
+
+    useEffect(() => {
+        dispatch(allHubHandlerRequest());
+    }, [actor, dispatch]);
 
     return (
         <>
@@ -232,11 +313,10 @@ const UserRegForm = () => {
             <section className="w-full h-fit px-[6%] lg1:px-[4%] py-[6%] lg1:py-[4%] bg-gray-100">
                 <div className="w-full h-full bg-gray-100 pt-8">
                     <div className="bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-[30px]  sm:text-[25px] md1:text-[30px] md2:text-[35px] font-black font-fontUse dxl:text-[40px] p-8">
-                        User Information
+                        Mentor Information
                     </div>
                     <div className="text-sm font-medium text-center text-gray-200 ">
                         {/* START OF USER REGISTRATION FORM */}
-
                         <form
                             onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}
                             className="w-full px-4" >
@@ -308,6 +388,8 @@ const UserRegForm = () => {
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                {/* User Details */}
+
                                 <div className="relative z-0 group mb-6">
                                     <label htmlFor="full_name"
                                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
@@ -606,7 +688,330 @@ const UserRegForm = () => {
                                         </span>
                                     )}
                                 </div>
+
+                                {/* END OF USER REGISTRATION FORM */}
+
+
+                                {/* START OF MENTOR REGISTRATION FORM */}
+
+                                <div className="relative z-0 group mb-6">
+                                    <label htmlFor="preferred_icp_hub"
+                                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
+                                        Preferred ICP Hub you would like to be associated with <span className="text-red-500">*</span>
+                                    </label>
+                                    <select
+                                        {...register("preferred_icp_hub")}
+                                        className={`bg-gray-50 border-2 ${errors.preferred_icp_hub
+                                            ? "border-red-500 "
+                                            : "border-[#737373]"
+                                            } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                    >
+                                        <option className="text-lg font-bold" value="">
+                                            Select your ICP Hub
+                                        </option>
+                                        {getAllIcpHubs?.map((hub) => (
+                                            <option
+                                                key={hub.id}
+                                                value={`${hub.name} ,${hub.region}`}
+                                                className="text-lg font-bold"
+                                            >
+                                                {hub.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    {errors.preferred_icp_hub && (
+                                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                                            {errors.preferred_icp_hub.message}
+                                        </p>
+                                    )}
+                                </div>
+                                <div className="relative z-0 group mb-6">
+                                    <label htmlFor="multi_chain"
+                                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
+                                        Do you mentor multiple ecosystems <span className="text-red-500">*</span>
+                                    </label>
+                                    <select
+                                        {...register("multi_chain")}
+                                        className={`bg-gray-50 border-2 ${errors.multi_chain
+                                            ? "border-red-500"
+                                            : "border-[#737373]"
+                                            } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                    >
+                                        <option className="text-lg font-bold" value="false">
+                                            No
+                                        </option>
+                                        <option className="text-lg font-bold" value="true">
+                                            Yes
+                                        </option>
+                                    </select>
+                                    {errors.multi_chain && (
+                                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                                            {errors.multi_chain.message}
+                                        </p>
+                                    )}
+                                </div>
+                                {watch('multi_chain') === "true" ?
+                                    <div className="relative z-0 group mb-6">
+                                        <label htmlFor="multi_chain_names"
+                                            className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
+                                            Please select the chains <span className="text-red-500">*</span>
+                                        </label>
+                                        <ReactSelect
+                                            isMulti
+                                            menuPortalTarget={document.body}
+                                            menuPosition={"fixed"}
+                                            styles={{
+                                                menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                                                control: (provided, state) => ({
+                                                    ...provided,
+                                                    paddingBlock: "2px",
+                                                    borderRadius: "8px",
+                                                    border: errors.multi_chain_names
+                                                        ? "2px solid #ef4444"
+                                                        : "2px solid #737373",
+                                                    backgroundColor: "rgb(249 250 251)",
+                                                    "&::placeholder": {
+                                                        color: errors.multi_chain_names
+                                                            ? "#ef4444"
+                                                            : "currentColor",
+                                                    },
+                                                }),
+                                            }}
+                                            value={multiChainSelectedOptions}
+                                            options={multiChainOptions}
+                                            classNamePrefix="select"
+                                            className="basic-multi-select w-full text-start"
+                                            placeholder="Select a chain"
+                                            name="multi_chain_names"
+                                            onChange={(selectedOptions) => {
+                                                if (selectedOptions && selectedOptions.length > 0) {
+                                                    setMultiChainSelectedOptions(selectedOptions)
+                                                    clearErrors("multi_chain_names");
+                                                    setValue("multi_chain_names", selectedOptions.map((option) => option.value).join(", "),
+                                                        { shouldValidate: true });
+                                                } else {
+                                                    setMultiChainSelectedOptions([]);
+                                                    setValue("multi_chain_names", "",
+                                                        { shouldValidate: true });
+                                                    setError("multi_chain_names", {
+                                                        type: "required",
+                                                        message: "Atleast one chain name required",
+                                                    });
+                                                }
+                                            }}
+                                        />
+                                        {errors.multi_chain_names && (
+                                            <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                                                {errors.multi_chain_names.message}
+                                            </p>
+                                        )}
+                                    </div> : <></>
+                                }
+                                <div className="relative z-0 group mb-6">
+                                    <label htmlFor="category_of_mentoring_service"
+                                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
+                                        Categories of mentoring services <span className="text-red-500">*</span>
+                                    </label>
+                                    <ReactSelect
+                                        isMulti
+                                        menuPortalTarget={document.body}
+                                        menuPosition={"fixed"}
+                                        styles={{
+                                            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                                            control: (provided, state) => ({
+                                                ...provided,
+                                                paddingBlock: "2px",
+                                                borderRadius: "8px",
+                                                border: errors.category_of_mentoring_service
+                                                    ? "2px solid #ef4444"
+                                                    : "2px solid #737373",
+                                                backgroundColor: "rgb(249 250 251)",
+                                                "&::placeholder": {
+                                                    color: errors.category_of_mentoring_service
+                                                        ? "#ef4444"
+                                                        : "currentColor",
+                                                },
+                                            }),
+                                        }}
+                                        value={categoryOfMentoringServiceSelectedOptions}
+                                        options={categoryOfMentoringServiceOptions}
+                                        classNamePrefix="select"
+                                        className="basic-multi-select w-full text-start"
+                                        placeholder="Select a service"
+                                        name="category_of_mentoring_service"
+                                        onChange={(selectedOptions) => {
+                                            if (selectedOptions && selectedOptions.length > 0) {
+                                                setCategoryOfMentoringServiceSelectedOptions(selectedOptions)
+                                                clearErrors("category_of_mentoring_service");
+                                                setValue("category_of_mentoring_service", selectedOptions.map((option) => option.value).join(", "),
+                                                    { shouldValidate: true });
+                                            } else {
+                                                setCategoryOfMentoringServiceSelectedOptions([]);
+                                                setValue("category_of_mentoring_service", "",
+                                                    { shouldValidate: true });
+                                                setError("category_of_mentoring_service", {
+                                                    type: "required",
+                                                    message: "Atleast one service name required",
+                                                });
+                                            }
+                                        }}
+                                    />
+                                    {errors.category_of_mentoring_service && (
+                                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                                            {errors.category_of_mentoring_service.message}
+                                        </p>
+                                    )}
+                                </div>
+                                <div className="relative z-0 group mb-6">
+                                    <label htmlFor="icp_hub_or_spoke"
+                                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
+                                        Are you ICP Hub/Spoke <span className="text-red-500">*</span>
+                                    </label>
+                                    <select
+                                        {...register("icp_hub_or_spoke")}
+                                        className={`bg-gray-50 border-2 ${errors.icp_hub_or_spoke
+                                            ? "border-red-500"
+                                            : "border-[#737373]"
+                                            } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                    >
+                                        <option className="text-lg font-bold" value="false">
+                                            No
+                                        </option>
+                                        <option className="text-lg font-bold" value="true">
+                                            Yes
+                                        </option>
+                                    </select>
+                                    {errors.icp_hub_or_spoke && (
+                                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                                            {errors.icp_hub_or_spoke.message}
+                                        </p>
+                                    )}
+                                </div>
+                                {watch("icp_hub_or_spoke") === "true" ?
+                                    <div className="z-0 w-full mb-3 group">
+                                        <label
+                                            htmlFor="hub_owner"
+                                            className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                                        >
+                                            Hub Owner <span className="text-red-500">*</span>
+                                        </label>
+                                        <select
+                                            {...register("hub_owner")}
+                                            className={`bg-gray-50 border-2 ${errors.hub_owner
+                                                ? "border-red-500 placeholder:text-red-500"
+                                                : "border-[#737373]"
+                                                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                        >
+                                            <option className="text-lg font-bold" value="">
+                                                Select your ICP Hub
+                                            </option>
+                                            {getAllIcpHubs?.map((hub) => (
+                                                <option
+                                                    key={hub.id}
+                                                    value={`${hub.name} ,${hub.region}`}
+                                                    className="text-lg font-bold"
+                                                >
+                                                    {hub.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        {errors.hub_owner && (
+                                            <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                                                {errors.hub_owner.message}
+                                            </p>
+                                        )}
+                                    </div> : <></>}
+                                <div className="relative z-0 group mb-6">
+                                    <label htmlFor="mentor_website_url"
+                                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
+                                        Website link
+                                    </label>
+                                    <input
+                                        type="text"
+                                        {...register("mentor_website_url")}
+                                        className={`bg-gray-50 border-2 
+                                                ${errors?.mentor_website_url
+                                                ? "border-red-500 "
+                                                : "border-[#737373]"
+                                            } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                        placeholder="Enter your website url"
+                                    />
+                                    {errors?.mentor_website_url && (
+                                        <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                            {errors?.mentor_website_url?.message}
+                                        </span>
+                                    )}
+                                </div>
+                                <div className="relative z-0 group mb-6">
+                                    <label htmlFor="years_of_mentoring"
+                                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
+                                        Years of mentoring <span className="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        type="number"
+                                        {...register("years_of_mentoring")}
+                                        className={`bg-gray-50 border-2 
+                                                ${errors?.years_of_mentoring
+                                                ? "border-red-500 "
+                                                : "border-[#737373]"
+                                            } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                        placeholder="Enter your mentoring experience years"
+                                        onWheel={(e) => e.target.blur()}
+                                        min={0}
+                                    />
+                                    {errors?.years_of_mentoring && (
+                                        <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                            {errors?.years_of_mentoring?.message}
+                                        </span>
+                                    )}
+                                </div>
+                                <div className="relative z-0 group mb-6">
+                                    <label htmlFor="mentor_linkedin_url"
+                                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
+                                        LinkedIn link <span className="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        {...register("mentor_linkedin_url")}
+                                        className={`bg-gray-50 border-2 
+                                                ${errors?.mentor_linkedin_url
+                                                ? "border-red-500 "
+                                                : "border-[#737373]"
+                                            } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                        placeholder="Enter your linkedin url"
+                                    />
+                                    {errors?.mentor_linkedin_url && (
+                                        <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                            {errors?.mentor_linkedin_url?.message}
+                                        </span>
+                                    )}
+                                </div>
+                                <div className="relative z-0 group mb-6">
+                                    <label htmlFor="mentor_documents_url"
+                                        className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
+                                        Documents
+                                    </label>
+                                    <input
+                                        type="text"
+                                        {...register("mentor_documents_url")}
+                                        className={`bg-gray-50 border-2 
+                                                ${errors?.mentor_documents_url
+                                                ? "border-red-500 "
+                                                : "border-[#737373]"
+                                            } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                        placeholder="Documents url"
+                                    />
+                                    {errors?.mentor_documents_url && (
+                                        <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                            {errors?.mentor_documents_url?.message}
+                                        </span>
+                                    )}
+                                </div>
                             </div>
+
+
+
+
                             <div className="flex justify-end mt-4">
                                 <button
                                     disabled={isSubmitting}
@@ -631,7 +1036,7 @@ const UserRegForm = () => {
                             </div>
                         </form>
 
-                        {/* END OF USER REGISTRATION FORM */}
+                        {/* END OF MENTOR REGISTRATION FORM */}
                     </div>
                 </div >
             </section >
@@ -640,4 +1045,4 @@ const UserRegForm = () => {
     );
 }
 
-export default UserRegForm;
+export default MentorRegForm;

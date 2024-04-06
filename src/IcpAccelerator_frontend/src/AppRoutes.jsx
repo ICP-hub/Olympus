@@ -28,6 +28,8 @@ import ProjectDetailsForUserRole from "./components/Project/ProjectDetailsPages/
 import MoreLiveProjects from "./components/Dashboard/MoreLivePages/MoreLiveProjects";
 import LiveEventsCards from "./components/Dashboard/LiveEventsCards";
 import UserRegForm from "./components/RegForms.jsx/UserRegForm";
+import MentorRegForm from "./components/RegForms.jsx/MentorRegForm";
+import InvestorRegForm from "./components/RegForms.jsx/InvestorRegForm";
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
 const ProjectDetails = lazy(() => import("./components/Project/ProjectDetails"));
@@ -54,11 +56,13 @@ const AppRoutes = () => {
     { path: "/create-user", element: <UserRegForm /> },
     { path: "/create-project", element: <CreateProject /> },
     { path: "/create-investor", element: <InvestorRegistration /> },
+    // { path: "/create-investor", element: <InvestorRegForm /> },
     { path: "/event-form", element: <EventForm /> },
     { path: "/update-project", element: <CreateProject /> },
     { path: "/project-details", element: <ProjectDetails /> },
     { path: "/profile", element: <UserProfile /> },
-    { path: "/create-mentor", element: <MentorRegistration /> },
+    // { path: "/create-mentor", element: <MentorRegistration /> },
+    { path: "/create-mentor", element: <MentorRegForm /> },
     { path: "/view-mentor-details/:id", element: <MentorsProfile /> },
     { path: "/view-investor-details/:id", element: <InvestorProfile /> },
     { path: "/view-mentors", element: <SearchMentors /> },
