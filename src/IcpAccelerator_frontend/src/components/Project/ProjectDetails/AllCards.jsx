@@ -252,7 +252,7 @@ const Projectdashboard = () => {
 
 
                                     <div className='w-full'>
-                                        <p className="text-[#7283EA] text-xl">This event includes</p>
+                                        <p className="text-[#7283EA] text-xl">Overview</p>
                                         <div className='flex flex-row gap-2 text-lg'>
                                             <div className="h-2 w-2 rounded-full bg-black item-center mt-2"></div>
                                             <p className="">Direct interaction with the instructor</p>
@@ -321,7 +321,7 @@ const Projectdashboard = () => {
                                     <h1 className='text-black font-bold text-[15px]'>RWA Projects. Part 2</h1>
                                     <p>22 Apr 2024 17:30</p>
                                 </div>
-                                <p className="text-[#7283EA] text-xl">This event includes</p>
+                                <p className="text-[#7283EA] text-xl">Overview</p>
                                 <div className='flex flex-row gap-2'>
                                     <div className="h-2 w-2 rounded-full bg-black item-center mt-2"></div>
                                     <p className="">Direct interaction with the instructor</p>

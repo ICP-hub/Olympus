@@ -30,7 +30,7 @@ const EventCard = () => {
                 </p>
               </div>
               <p className="text-[#7283EA] font-semibold mt-2">
-                This event includes
+                Overview
               </p>
               <ul className="text-sm font-extralight list-disc list-outside pl-4">
                 <li>Direct interaction with the instructor</li>
@@ -87,7 +87,7 @@ const EventCard = () => {
                 </p>
               </div>
               <p className="text-[#7283EA] font-semibold mt-2">
-                This event includes
+                Overview
               </p>
               <ul className="text-sm font-extralight list-disc list-outside pl-4">
                 <li>Direct interaction with the instructor</li>
@@ -144,7 +144,7 @@ const EventCard = () => {
                 </p>
               </div>
               <p className="text-[#7283EA] font-semibold mt-2">
-                This event includes
+                Overview
               </p>
               <ul className="text-sm font-extralight list-disc list-outside pl-4">
                 <li>Direct interaction with the instructor</li>
@@ -209,7 +209,7 @@ const EventCard = () => {
 //               </p>
 //             </div>
 //             <p className="text-[#7283EA] font-semibold mt-2">
-//               This event includes
+//               Overview
 //             </p>
 //             <ul className="text-sm font-extralight list-disc list-outside pl-4">
 //               <li>Direct interaction with the instructor</li>
