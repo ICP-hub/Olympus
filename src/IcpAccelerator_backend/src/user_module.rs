@@ -11,7 +11,7 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::io::Read;
 // use ic_cdk::storage;
-use ic_cdk::storage::{self, stable_save, stable_restore};
+use ic_cdk::storage::{self, stable_restore, stable_save};
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
 pub struct UserInformation {
@@ -21,9 +21,11 @@ pub struct UserInformation {
     pub country: String,
     pub telegram_id: Option<String>,
     pub bio: Option<String>,
-    pub area_of_intrest: String,
+    pub area_of_interest: String,
     pub twitter_id: Option<String>,
     pub openchat_username: Option<String>,
+    pub type_of_profile: String,
+    pub reason_to_join : Vec<String>
 }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
@@ -172,13 +174,15 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
     //     return "Please provide input for required fields: full_name and email.".to_string();
     // }
 
+    
+
     let caller = caller();
     let uuids = raw_rand().await.unwrap().0;
     let uid = format!("{:x}", Sha256::digest(&uuids));
     let new_id = uid.clone().to_string();
 
     fn default_profile_picture() -> Vec<u8> {
-        base64::decode(DEFAULT_PROFILE_PICTURE_BASE64).expect("Failed to decode base64 image")
+        base64::decode(DEFAULT_USER_AVATAR_BASE64).expect("Failed to decode base64 image")
     }
 
     let mut info_with_default = info.clone();
@@ -186,6 +190,9 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
     if info_with_default.profile_picture.is_none() {
         info_with_default.profile_picture = Some(default_profile_picture());
     }
+
+    //convert_to_lowercase
+    info_with_default.type_of_profile = info_with_default.type_of_profile.to_lowercase();
 
     let user_info_internal = UserInfoInternal {
         uid: new_id.clone(),
@@ -522,18 +529,21 @@ pub async fn update_user(info: UserInformation) -> std::string::String {
 //                 .expect("Failed to save to stable storage");
 //         });
 //     });
-// } 
+// }
 
 pub fn pre_upgrade_user_modules() {
     USER_STORAGE.with(|user_storage| {
         ROLE_STATUS_ARRAY.with(|role_status_array| {
-            match stable_save((user_storage.borrow().clone(), role_status_array.borrow().clone())) {
+            match stable_save((
+                user_storage.borrow().clone(),
+                role_status_array.borrow().clone(),
+            )) {
                 Ok(_) => ic_cdk::println!("User modules saved successfully."),
                 Err(e) => ic_cdk::println!("{}", format!("Failed to save user modules: {:?}", e)),
             }
         });
     });
-} 
+}
 
 pub fn post_upgrade_user_modules() {
     match stable_restore() {
@@ -545,14 +555,14 @@ pub fn post_upgrade_user_modules() {
                 *role_status_array_ref.borrow_mut() = restored_role_status_array;
             });
             ic_cdk::println!("User modules restored successfully.");
-        },
+        }
         Err(e) => ic_cdk::println!("{}", format!("Failed to restore user modules: {:?}", e)),
     }
 }
 
 // pub fn post_upgrade_user_modules() {
-//     let (restored_user_storage, restored_role_status_array): 
-//         (HashMap<Principal, UserInfoInternal>, HashMap<Principal, Vec<Role>>) = 
+//     let (restored_user_storage, restored_role_status_array):
+//         (HashMap<Principal, UserInfoInternal>, HashMap<Principal, Vec<Role>>) =
 //         storage::stable_restore().expect("Failed to restore from stable storage");
 
 //     USER_STORAGE.with(|user_storage_ref| {
@@ -670,4 +680,29 @@ fn add_review(rating: f32, message: String) -> String {
             Err(e) => format!("Error creating review: {}", e),
         }
     })
+}
+
+//new_additions
+
+
+#[derive(CandidType)]
+pub struct UserType {
+    pub id: i32,
+    pub role_type: String,
+}
+
+#[query]
+pub fn type_of_user_profile() -> Vec<UserType> {
+
+    vec![UserType {
+        id: 1,
+        role_type: "Individual".to_string(),
+    },UserType{
+        id :2,
+        role_type : "DAO".to_string()
+    },UserType{
+        id :2,
+        role_type : "Company".to_string()
+    }
+    ]
 }

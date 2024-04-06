@@ -650,7 +650,7 @@ pub async fn create_project(info: ProjectInfo) -> String {
         is_verified: false,
         creation_date: time(),
     };
-    
+
 
     PROJECT_AWAITS_RESPONSE.with(
         |awaiters: &RefCell<HashMap<Principal, ProjectInfoInternal>>| {
@@ -927,20 +927,20 @@ pub fn list_all_projects() -> Vec<ListAllProjects> {
             return Vec::new();
         }
 
-    
+
 
         let mut list_all_projects: Vec<ListAllProjects> = vec![];
 
         for (principal, projects) in projects.iter() {
 
             if projects.is_empty() {
-                continue; 
+                continue;
             }
 
             for project in projects {
                 let get_rating = calculate_average_api(&project.uid);
 
-            
+
                 if !get_rating.overall_average.is_empty() {
                     let project_info = ListAllProjects {
                         principal: principal.clone(),
@@ -951,13 +951,13 @@ pub fn list_all_projects() -> Vec<ListAllProjects> {
                     if project.is_active == true{
                         list_all_projects.push(project_info);
                     }
-                   
+
                 } else {
 
                     let project_info = ListAllProjects {
                         principal: principal.clone(),
                         params: project.clone(),
-                        overall_average: None, 
+                        overall_average: None,
                     };
 
                     if project.is_active == true{
@@ -1560,74 +1560,74 @@ pub fn make_project_active_inactive(p_id: Principal, project_id: String) -> Stri
     }
 }
 
-pub fn get_dummy_team_member() -> TeamMember {
-    TeamMember {
-        member_uid: "TM123456".to_string(),
-        member_data: get_dummy_user_information(),
-    }
-}
+// pub fn get_dummy_team_member() -> TeamMember {
+//     TeamMember {
+//         member_uid: "TM123456".to_string(),
+//         member_data: get_dummy_user_information(),
+//     }
+// }
 
-fn get_dummy_user_information() -> UserInformation {
-    UserInformation {
-        full_name: "Jane Doe".to_string(),
-        profile_picture: Some(vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9]), // Example binary data for an image
-        email: Some("janedoe@example.com".to_string()),
-        country: "Nowhereland".to_string(),
-        telegram_id: Some("janedoe_telegram".to_string()),
-        bio: Some("An enthusiastic explorer of new technologies.".to_string()),
-        area_of_intrest: "Artificial Intelligence".to_string(),
-        twitter_id: Some("@janedoeAI".to_string()),
-        openchat_username: Some("janedoeChat".to_string()),
-        // joining_date: 0,
-    }
-}
+// fn get_dummy_user_information() -> UserInformation {
+//     UserInformation {
+//         full_name: "Jane Doe".to_string(),
+//         profile_picture: Some(vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9]), // Example binary data for an image
+//         email: Some("janedoe@example.com".to_string()),
+//         country: "Nowhereland".to_string(),
+//         telegram_id: Some("janedoe_telegram".to_string()),
+//         bio: Some("An enthusiastic explorer of new technologies.".to_string()),
+//         area_of_intrest: "Artificial Intelligence".to_string(),
+//         twitter_id: Some("@janedoeAI".to_string()),
+//         openchat_username: Some("janedoeChat".to_string()),
+//         // joining_date: 0,
+//     }
+// }
 
-pub fn get_dummy_mentor_profile() -> MentorProfile {
-    MentorProfile {
-        preferred_icp_hub: Some("Example Hub".to_string()),
-        user_data: get_dummy_user_information(), // This function should be defined as previously shown
-        existing_icp_mentor: true,
-        existing_icp_project_porfolio: Some("Example Portfolio".to_string()),
-        icop_hub_or_spoke: false,
-        category_of_mentoring_service: "Technology and Innovation".to_string(),
-        linkedin_link: "https://example-social-link.com".to_string(),
-        multichain: Some("Example Multichain".to_string()),
-        years_of_mentoring: "5 years".to_string(),
-        website: "https://example-mentor-website.com".to_string(),
-        area_of_expertise: "Blockchain Technology".to_string(),
-        reason_for_joining: "To share knowledge and experiences with budding entrepreneurs"
-            .to_string(),
-        hub_owner: Some("icp india".to_string()),
-    }
-}
+// pub fn get_dummy_mentor_profile() -> MentorProfile {
+//     MentorProfile {
+//         preferred_icp_hub: Some("Example Hub".to_string()),
+//         user_data: get_dummy_user_information(), // This function should be defined as previously shown
+//         existing_icp_mentor: true,
+//         existing_icp_project_porfolio: Some("Example Portfolio".to_string()),
+//         icop_hub_or_spoke: false,
+//         category_of_mentoring_service: "Technology and Innovation".to_string(),
+//         linkedin_link: "https://example-social-link.com".to_string(),
+//         multichain: Some("Example Multichain".to_string()),
+//         years_of_mentoring: "5 years".to_string(),
+//         website: "https://example-mentor-website.com".to_string(),
+//         area_of_expertise: "Blockchain Technology".to_string(),
+//         reason_for_joining: "To share knowledge and experiences with budding entrepreneurs"
+//             .to_string(),
+//         hub_owner: Some("icp india".to_string()),
+//     }
+// }
 
-pub fn get_dummy_venture_capitalist() -> VentureCapitalist {
-    VentureCapitalist {
-        name_of_fund: "Example VC Fund".to_string(),
-        fund_size: 100_000_000.0, // Example fund size in USD
-        assets_under_management: "500_000_000 USD".to_string(),
-        logo: Some(vec![0, 1, 2, 3, 4, 5]), // Simulated binary data for a logo
-        registered_under_any_hub: Some(true),
-        average_check_size: 1_000_000.0, // Example check size in USD
-        existing_icp_investor: true,
-        money_invested: Some(50_000_000.0), // Example money invested in USD
-        existing_icp_portfolio: Some("Example Portfolio".to_string()),
-        type_of_investment: "Equity".to_string(),
-        project_on_multichain: Some("Yes".to_string()),
-        category_of_investment: "Technology".to_string(),
-        reason_for_joining: "To find promising startups".to_string(),
-        preferred_icp_hub: "Example Hub".to_string(),
-        investor_type: "Angel Investor".to_string(),
-        number_of_portfolio_companies: 10,
-        portfolio_link: "https://example-portfolio-link.com".to_string(),
-        announcement_details: Some("New funding round opened".to_string()),
-        user_data: get_dummy_user_information(),
-        website_link: "hfdfdfdf".to_string(),
-        linkedin_link: "dfdfdfdf".to_string(),
-        registered_country: Some("india".to_string()),
-        registered: true, // Generate dummy user information
-    }
-}
+// pub fn get_dummy_venture_capitalist() -> VentureCapitalist {
+//     VentureCapitalist {
+//         name_of_fund: "Example VC Fund".to_string(),
+//         fund_size: 100_000_000.0, // Example fund size in USD
+//         assets_under_management: "500_000_000 USD".to_string(),
+//         logo: Some(vec![0, 1, 2, 3, 4, 5]), // Simulated binary data for a logo
+//         registered_under_any_hub: Some(true),
+//         average_check_size: 1_000_000.0, // Example check size in USD
+//         existing_icp_investor: true,
+//         money_invested: Some(50_000_000.0), // Example money invested in USD
+//         existing_icp_portfolio: Some("Example Portfolio".to_string()),
+//         type_of_investment: "Equity".to_string(),
+//         project_on_multichain: Some("Yes".to_string()),
+//         category_of_investment: "Technology".to_string(),
+//         reason_for_joining: "To find promising startups".to_string(),
+//         preferred_icp_hub: "Example Hub".to_string(),
+//         investor_type: "Angel Investor".to_string(),
+//         number_of_portfolio_companies: 10,
+//         portfolio_link: "https://example-portfolio-link.com".to_string(),
+//         announcement_details: Some("New funding round opened".to_string()),
+//         user_data: get_dummy_user_information(),
+//         website_link: "hfdfdfdf".to_string(),
+//         linkedin_link: "dfdfdfdf".to_string(),
+//         registered_country: Some("india".to_string()),
+//         registered: true, // Generate dummy user information
+//     }
+// }
 
 // pub fn get_dummy_announcements() -> Announcements {
 //     Announcements {
