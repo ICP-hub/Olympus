@@ -149,13 +149,13 @@ type MentorProfile = record {
   reason_for_joining : text;
   existing_icp_mentor : bool;
   preferred_icp_hub : opt text;
-  website : text;
+  website : opt text;
   multichain : opt text;
   area_of_expertise : text;
   category_of_mentoring_service : text;
   years_of_mentoring : text;
   existing_icp_project_porfolio : opt text;
-  icop_hub_or_spoke : bool;
+  icp_hub_or_spoke : bool;
   linkedin_link : text;
   hub_owner : opt text;
 };
@@ -611,7 +611,7 @@ type VcWithRoles = record {
   roles : vec Role;
 };
 type VentureCapitalist = record {
-  fund_size : float64;
+  fund_size : opt float64;
   user_data : UserInformation;
   registered_country : opt text;
   existing_icp_portfolio : opt text;
@@ -623,12 +623,14 @@ type VentureCapitalist = record {
   money_invested : opt float64;
   existing_icp_investor : bool;
   preferred_icp_hub : text;
+  range_of_check_size : text;
   project_on_multichain : opt text;
   investor_type : text;
-  website_link : text;
+  website_link : opt text;
   announcement_details : opt text;
+  stage : text;
   number_of_portfolio_companies : nat16;
-  assets_under_management : text;
+  assets_under_management : opt text;
   portfolio_link : text;
   linkedin_link : text;
   category_of_investment : text;
@@ -673,7 +675,6 @@ service : {
   approve_project_creation_request : (principal) -> (text);
   approve_project_details_updation_request : (principal, text, bool) -> (text);
   approve_vc_creation_request : (principal, bool) -> (text);
-  approve_vc_profile_update : (principal, bool) -> (text);
   calculate_average : (text) -> (RatingAverages) query;
   change_live_status : (principal, text, bool, opt text) -> (Result_2) query;
   connect_to_team_member : (text, text) -> (text);
@@ -804,6 +805,7 @@ service : {
       vec OfferToInvestor,
     ) query;
   get_icp_hubs_candid : () -> (vec IcpHub) query;
+  get_investment_stage : () -> (vec text) query;
   get_job_category : () -> (vec Role_1) query;
   get_jobs_posted_by_project : (text) -> (vec JobsInternal) query;
   get_latest_announcements : () -> (
@@ -880,6 +882,7 @@ service : {
       vec ProjectInfoInternal,
     ) query;
   get_projects_with_all_info : () -> (vec ProjectInfoInternal) query;
+  get_range_of_check_size : () -> (vec text) query;
   get_ratings_by_principal : (text) -> (Result_8) query;
   get_review : (principal) -> (Result_9) query;
   get_role : () -> (RolesResponse) query;
@@ -999,7 +1002,6 @@ service : {
   update_rating : (RatingUpdate) -> (text);
   update_suggestion_status_caller : (nat64, text, text) -> ();
   update_team_member : (text, principal) -> (text);
-  update_vc_profile : (principal, VentureCapitalist) -> (text);
   update_venture_capitalist : (VentureCapitalist) -> (text);
   update_venture_capitalist_caller : (VentureCapitalist) -> (text);
   upvote_project : (text) -> (text);
