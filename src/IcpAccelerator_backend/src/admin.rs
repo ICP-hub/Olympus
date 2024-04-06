@@ -53,6 +53,13 @@ enum MyError {
     CanisterInfoError(String),
 }
 
+#[derive(Clone, CandidType, Deserialize, Serialize)]
+pub struct UpdateCounts{
+    project_update: Option<u32>,
+    mentor_update: Option<u32>,
+    vc_update: Option<u32>
+}
+
 thread_local! {
     static ADMIN_NOTIFICATIONS : RefCell<HashMap<Principal, Vec<Notification>>> = RefCell::new(HashMap::new());
     static COHORT_REQUEST : RefCell<HashMap<Principal, Vec<CohortRequest>>> = RefCell::new(HashMap::new());
@@ -488,6 +495,7 @@ fn vc_profile_edit_awaiting_approval() -> HashMap<Principal, VentureCapitalist> 
 fn project_update_awaiting_approval() -> HashMap<String, ProjectUpdateRequest> {
     PENDING_PROJECT_UPDATES.with(|awaiters| awaiters.borrow().clone())
 }
+
 
 #[update]
 pub fn decline_vc_creation_request(requester: Principal, decline: bool) -> String {
@@ -1962,5 +1970,19 @@ pub fn remove_project_from_incubated(project_id: String) -> Result<&'static str,
         }
     })
 }
+
+#[query]
+pub fn get_update_request_count() -> UpdateCounts{
+    let project_update_count = PENDING_PROJECT_UPDATES.with(|awaiters| awaiters.borrow().len() as u32);
+    let mentor_update_count = MENTOR_PROFILE_EDIT_AWAITS.with(|awaiters| awaiters.borrow().len() as u32);
+    let vc_update_count = VC_PROFILE_EDIT_AWAITS.with(|awaiters| awaiters.borrow().len() as u32);
+
+    UpdateCounts {
+        project_update: Some(project_update_count),
+        mentor_update: Some(mentor_update_count),
+        vc_update: Some(vc_update_count),
+    }
+}
+
 
 //b5pqo-yef5a-lut3t-kmrpc-h7dnp-v3d2t-ls6di-y33wa-clrtb-xdhl4-dae

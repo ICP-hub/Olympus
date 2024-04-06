@@ -471,8 +471,8 @@ fn pre_upgrade() {
     pre_upgrade_project_registration();
     // pre_upgrade_upvotes();
     pre_upgrade_mentor();
-    pre_upgrade_admin();
-    pre_upgrade_rating_system();
+    //pre_upgrade_admin();
+    //pre_upgrade_rating_system();
 }
 
 #[post_upgrade]
@@ -482,8 +482,8 @@ fn post_upgrade() {
     post_upgrade_project_registration();
     //post_upgrade_upvotes();
     post_upgrade_mentor();
-    post_upgrade_admin();
-    post_upgrade_rating_system();
+    //post_upgrade_admin();
+    //post_upgrade_rating_system();
 }
 
 export_candid!();
