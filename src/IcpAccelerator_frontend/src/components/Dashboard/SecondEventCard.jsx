@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import hover from "../../../assets/images/hover.png";
+import hover from "../../../assets/images/1.png";
 import { winner } from "../Utils/Data/SvgData";
 import girl from "../../../assets/images/girl.jpeg";
 import { useSelector } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
-const SecondEventCard = ({ data }) => {
+const SecondEventCard = ({ data, register }) => {
   if (!data) {
     return null
   }
@@ -39,7 +39,7 @@ const SecondEventCard = ({ data }) => {
           <div className="p-8">
             <div className="w-full mt-4">
               <div className="w-1/2 flex-col text-[#737373] flex  ">
-                <h1 className="font-bold text-black text-xl truncate">
+                <h1 className="font-bold text-black text-xl truncate capitalize">
                   {name}
                 </h1>
                 <p className="text-lg whitespace-nowrap">
@@ -52,13 +52,12 @@ const SecondEventCard = ({ data }) => {
               <ul className="text-sm font-extralight list-disc list-outside pl-4">
                 {tags && tags.split(",").map((val, index) => {
                   return (
-                    <li>{val.trim()}</li>
+                    <li key={index} >{val.trim()}</li>
                   )
                 })}
-
               </ul>
               <div className="flex w-full py-2">
-                <p className="line-clamp-3 min-h-4">{desc}</p>
+                <p className="line-clamp-3 h-12">{desc}</p>
               </div>
               <div className="flex flex-row flex-wrap space-x-8 mt-2">
                 <div className="flex gap-4 justify-between w-full">
@@ -77,9 +76,11 @@ const SecondEventCard = ({ data }) => {
                 </div>
               </div>
               <div className="flex justify-center items-center ">
-                <button onClick={toastHandler} className="mb-2 uppercase w-full bg-[#3505B2] mr-2 text-white  px-4 py-2 rounded-md  items-center font-extrabold text-sm mt-2 ">
+               
+               {register && ( <button onClick={toastHandler} className="mb-2 uppercase w-full bg-[#3505B2] mr-2 text-white  px-4 py-2 rounded-md  items-center font-extrabold text-sm mt-2 ">
                   Register now
                 </button>
+               )}
               </div>
             </div>
           </div>

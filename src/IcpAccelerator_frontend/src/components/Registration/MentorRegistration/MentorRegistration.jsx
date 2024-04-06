@@ -791,7 +791,7 @@ const MentorRegistration = () => {
                       htmlFor="existing_icp_mentor"
                       className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                     >
-                      Are you an exiting ICP Mentors ?*
+                      Are you an existing ICP Mentors ?*
                     </label>
                     <select
                       {...register("existing_icp_mentor")}
@@ -896,7 +896,7 @@ const MentorRegistration = () => {
                       <option className="text-lg font-bold">Incubation</option>
                       <option className="text-lg font-bold">Tokenomics</option>
                       <option className="text-lg font-bold">Branding</option>
-                      <option className="text-lg font-bold">Lisitng</option>
+                      <option className="text-lg font-bold">Listing</option>
                       <option className="text-lg font-bold">Raise</option>
                     </select>
                     {errors.category_of_mentoring_service && (

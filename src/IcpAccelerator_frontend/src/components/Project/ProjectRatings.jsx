@@ -25,7 +25,7 @@ const ProjectRatings = ({ data }) => {
 
   const [currentStep, setCurrentStep] = useState(0);
   const totalSteps = 8;
-
+  const [showSubmit, setShowSubmit] = useState(null);
   const [sliderValues, setSliderValues] = useState({
     Team: 0,
     ProblemAndVision: 0,
@@ -371,6 +371,8 @@ const ProjectRatings = ({ data }) => {
     setSendingData(sendingArray);
     if (currentStep < totalSteps - 1) {
       setCurrentStep((prevStep) => prevStep + 1);
+    }else{
+      setShowSubmit(true)
     }
     setShowConsentForm(false);
     setSelectedValue(0);
@@ -384,13 +386,16 @@ const ProjectRatings = ({ data }) => {
         console.log('result-in-get_ratings_by_principal', result)
         if (result && result?.Ok.length > 0) {
           setRatingDone(true);
+          navigate('/')
         } else {
           setRatingDone(false);
+          navigate('/')
         }
       })
       .catch((error) => {
         console.log('error-in-get_ratings_by_principal', error)
         setRatingDone(false);
+        navigate('/')
       })
   }
   useEffect(() => {
@@ -498,14 +503,14 @@ const ProjectRatings = ({ data }) => {
               Back
             </button>
           )} */}
-            {currentStep < totalSteps - 1 && (
+            {!showSubmit  && (
               <button onClick={handleNext}
                 type="button"
                 className="ml-3 font-bold text-white bg-blue-500 hover:bg-blue-600  focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md w-auto sm:w-auto px-5 py-2 text-center mb-4">
                 Next
               </button>
             )}
-            {currentStep == totalSteps - 1 && (
+            {showSubmit && (
               <button onClick={handleSubmit}
                 type="button"
                 className="ml-3  font-bold text-white bg-blue-500 hover:bg-blue-600  focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md w-auto sm:w-auto px-5 py-2 text-center mb-4">

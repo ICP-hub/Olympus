@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import NoDataCard from "../Mentors/Event/NoDataCard";
 import SecondEventCard from "./SecondEventCard";
 
-const LiveEventsCards = ({ wrap }) => {
+const LiveEventsCards = ({ wrap, register }) => {
     const actor = useSelector((currState) => currState.actors.actor);
     const [noData, setNoData] = useState(null);
     const [allLiveEventsData, setAllLiveEventsData] = useState([]);
@@ -13,7 +13,6 @@ const LiveEventsCards = ({ wrap }) => {
         await caller
             .get_all_cohorts()
             .then((result) => {
-                console.log("result-in-get_all_cohorts", result);
                 if (!result || result.length == 0) {
                     setNoData(true);
                     setAllLiveEventsData([]);
@@ -25,7 +24,6 @@ const LiveEventsCards = ({ wrap }) => {
             .catch((error) => {
                 setNoData(true);
                 setAllLiveEventsData([]);
-                console.log("error-in-get_all_cohorts", error);
             });
     };
 
@@ -46,8 +44,8 @@ const LiveEventsCards = ({ wrap }) => {
                         {allLiveEventsData &&
                             allLiveEventsData.map((val, index) => {
                                 return (
-                                    <div className="px-2 w-full sm:min-w-[50%] lg:min-w-[33.33%] sm:max-w-[50%] lg:max-w-[33.33%]">
-                                        <SecondEventCard data={val} key={index} />
+                                    <div key={index} className="px-2 w-full sm:min-w-[50%] lg:min-w-[33.33%] sm:max-w-[50%] lg:max-w-[33.33%]">
+                                        <SecondEventCard data={val} register={register}/>
                                     </div>
                                 );
                             })}

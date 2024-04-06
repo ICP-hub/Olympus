@@ -15,7 +15,6 @@ const Testimonial = () => {
     await caller
       .get_latest_testimonials()
       .then((result) => {
-        console.log("result-in-Testimonial", result);
         if (result && result.length > 0) {
           setTestimonialData(result);
           setNoData(false);
@@ -27,7 +26,6 @@ const Testimonial = () => {
       .catch((error) => {
         setNoData(true);
         setTestimonialData([]);
-        console.log("error-in-Testimonial", error);
       });
   };
 
@@ -38,24 +36,6 @@ const Testimonial = () => {
       fetchTestimonial(IcpAccelerator_backend);
     }
   }, [actor]);
-  const data = [
-    {
-      id: 1,
-      name: "James Dani",
-      date: "15 Mar 2022",
-      content:
-        "Araa and I talked about career field decisions and my portfolio. I really appreciated his feedback and advice. :)",
-      imageUrl: user,
-    },
-    {
-      id: 2,
-      name: "James Dani",
-      date: "15 Mar 2022",
-      content:
-        "Araa and I talked about career field decisions and my portfolio. I really appreciated his feedback and advice. :)",
-      imageUrl: user,
-    },
-  ];
   return (
     <div className="flex flex-row gap-4 mt-3">
       {testimonialData &&

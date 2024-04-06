@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import logoWithText from "../../../../assets/Logo/topLogo.png";
 import topLogoWhitepng from "../../../../assets/Logo/topLogoWhitepng.png";
-
 import LogoutModal from "../../../models/LogoutModal";
 import SwitchRole from "../../../models/SwitchRole";
 import { getCurrentRoleStatusFailureHandler, setCurrentActiveRole, setCurrentRoleStatus } from "../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
@@ -25,7 +24,6 @@ const Header = ({ setModalOpen, gradient }) => {
   );
 
   const [showSwitchRole, setShowSwitchRole] = useState(false);
-  // console.log("principal in header", connectedWalletPrincipal);
 
   const manageHandler = () => {
     !principal ? setModalOpen(true) : setModalOpen(false);
@@ -34,13 +32,48 @@ const Header = ({ setModalOpen, gradient }) => {
   const underline =
     "relative focus:after:content-[''] focus:after:block focus:after:w-full focus:after:h-[2px] focus:after:bg-blue-800 focus:after:absolute focus:after:left-0 focus:after:bottom-[-4px]";
 
+    function getNameOfCurrentStatus(rolesStatusArray) {
+      const currentStatus = rolesStatusArray.find(
+        (role) => role.status === "active"
+      );
+      return currentStatus ? currentStatus.name : null;
+    }
+
+    function formatFullDateFromBigInt(bigIntDate) {
+      const date = new Date(Number(bigIntDate / 1000000n));
+      const dateString = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+      return `${dateString}`;
+  }
+      
+function cloneArrayWithModifiedValues(arr) {
+  return arr.map(obj => {
+      const modifiedObj = {};
+
+      Object.keys(obj).forEach(key => {
+          if (Array.isArray(obj[key]) && obj[key].length > 0) {
+              if (key === 'approved_on' || key === "rejected_on" || key === "requested_on") {
+                  // const date = new Date(Number(obj[key][0])).toLocaleDateString('en-US');
+                  const date = formatFullDateFromBigInt(obj[key][0]);
+                  modifiedObj[key] = date; // Convert bigint to string date
+              } else {
+                  modifiedObj[key] = obj[key][0]; // Keep the first element of other arrays unchanged
+              }
+          } else {
+              modifiedObj[key] = obj[key]; // Keep other keys unchanged
+          }
+      });
+
+      return modifiedObj;
+  });
+}
+
 
   const initialApi = async () => {
     try {
       const currentRoleArray = await actor.get_role_status()
       if (currentRoleArray && currentRoleArray.length !== 0) {
         const currentActiveRole = getNameOfCurrentStatus(currentRoleArray)
-        dispatch(setCurrentRoleStatus(currentRoleArray));
+        dispatch(setCurrentRoleStatus(cloneArrayWithModifiedValues(currentRoleArray)));
         dispatch(setCurrentActiveRole(currentActiveRole));
       } else {
         dispatch(getCurrentRoleStatusFailureHandler('error-in-fetching-role-at-header'));
@@ -59,11 +92,10 @@ const Header = ({ setModalOpen, gradient }) => {
         initialApi();
       }
     }
-    console.log('userCurrentRoleStatus--in--header', userCurrentRoleStatus)
   }, [actor, principal, isAuthenticated, dispatch, userCurrentRoleStatus, userCurrentRoleStatusActiveRole]);
 
-  console.log('userCurrentRoleStatusActiveRole--in--header', userCurrentRoleStatusActiveRole)
 
+  
 
   return (
     <header className={`text-gray-700 body-font ${(!userCurrentRoleStatusActiveRole || userCurrentRoleStatusActiveRole === 'user') && window.location.pathname === "/" ?
@@ -74,37 +106,7 @@ const Header = ({ setModalOpen, gradient }) => {
             src={(!userCurrentRoleStatusActiveRole || userCurrentRoleStatusActiveRole === 'user') && window.location.pathname === "/" ? topLogoWhitepng : logoWithText} alt="IcpLogo" loading="lazy" />
         </div>
         {isAuthenticated && (
-          <div className="md:flex hidden cursor-pointer">
-            {/* <a href="/" className={`${underline}`}>
-              Home
-            </a> */}
-            {/* home disabled */}
-            {/* <div onClick={() => window.location.href = "/"}
-              className={`rounded-full px-8 py-[2px] group-hover:bg-[#6E52AA] group-hover:text-white font-fontUse ${(!userCurrentRoleStatusActiveRole || userCurrentRoleStatusActiveRole === 'user') && window.location.pathname === "/" ? 'text-white' : 'text-blue-800'}`}>
-              Home
-            </div> */}
-            {/* <a href="#" className={`${underline}`}>
-              Event
-            </a>
-            <a href="#" className={`${underline}`}>
-              Mentor
-            </a> */}
-
-            {/* {userCurrentRoleStatus && userCurrentRoleStatusActiveRole && userCurrentRoleStatusActiveRole !== 'user' ?
-              <div className={`rounded-full px-8 py-[2px] group-hover:bg-[#6E52AA] group-hover:text-white ${(!userCurrentRoleStatusActiveRole || userCurrentRoleStatusActiveRole === 'user') && window.location.pathname === "/" ? 'text-white' : 'text-blue-800'}`}
-                onClick={() => navigate(
-                  userCurrentRoleStatusActiveRole === 'project'
-                    ? '/project-association-requests'
-                    : userCurrentRoleStatusActiveRole === 'mentor'
-                      ? '/mentor-association-requests'
-                      : userCurrentRoleStatusActiveRole === 'vc'
-                        ? "/investor-association-requests"
-                        : ''
-                )}
-              >
-                Associations
-              </div>
-              : ''} */}
+          <div className="md:flex hidden cursor-pointer">    
 
           </div>
         )}
@@ -117,8 +119,8 @@ const Header = ({ setModalOpen, gradient }) => {
                   onClick={() => setShowSwitchRole(true)}
                   className={
                     (!userCurrentRoleStatusActiveRole || userCurrentRoleStatusActiveRole === 'user') && window.location.pathname === "/"
-                      ? "border border-white md:p-1 font-bold rounded-md text-white md:px-2 px-1 text-base md:text-lg  uppercase"
-                      : "border border-violet-800 md:p-1 font-bold rounded-md text-violet-800 md:px-2 px-1 text-base md:text-lg  uppercase"}
+                      ? " hover:bg-white hover:text-violet-800 border border-white md:p-1 font-bold rounded-md text-white md:px-2 px-1 text-base md:text-lg  uppercase"
+                      : "hover:bg-violet-800 hover:text-white border border-violet-800 md:p-1 font-bold rounded-md text-violet-800 md:px-2 px-1 text-base md:text-lg  uppercase"}
                 >
                   {userCurrentRoleStatusActiveRole == "vc"
                     ? "investor"
@@ -131,17 +133,10 @@ const Header = ({ setModalOpen, gradient }) => {
                 <LogoutModal />
               </div>
             ) : (
-              <LogoutModal />
+                <LogoutModal />
             )}
           </>
         ) : (
-          // <button
-          //   type="button"
-          //   className="font-bold rounded-md my-2 bg-indigo-600 font-fontUse text-center text-white uppercase text-[0.625rem] md:text-[0.64375rem] lg:text-[0.65625rem] xl:text-[0.78125rem] px-6 py-2 top-[6.5rem] sm4:top-[10.5rem] xxs1:top-[8.5rem] ss2:top-[7.5rem] text-wrap"
-          //   onClick={manageHandler}
-          // >
-          //   SIGNUP / LOGIN
-          // </button>
           <button
             type="button"
             className="font-bold rounded-xl my-2 bg-transparent border-2 border-white/50 font-fontUse text-center text-white uppercase text-[0.625rem] md:text-[0.64375rem] lg:text-[14.5px] xl:text-[0.78125rem] px-6 py-2 top-[6.5rem] sm4:top-[10.5rem] xxs1:top-[8.5rem] ss2:top-[7.5rem] text-wrap group-hover:bg-white group-hover:text-[#BA77FB] z-20"

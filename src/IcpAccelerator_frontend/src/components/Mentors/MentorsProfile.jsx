@@ -91,11 +91,11 @@ const MentorsProfile = () => {
               <spna>Top mentor</spna>
             </div>
           </div>
-          <div>
+          {/* <div>
             <button className="bg-transparent border border-[#3505B2] text-[#3505B2] text-xs font-[950] px-2 py-1 rounded-md">
               Get in touch
             </button>
-          </div>
+          </div> */}
         </div>
         <div className="md:flex block w-full md:w-[60%]">
           <div className="w-full md:w-1/2">
@@ -104,15 +104,13 @@ const MentorsProfile = () => {
               <p className="text-[#737373]">{categoryOfMentoringService}</p>
             </div>
           </div>
-          <div className="w-full md:w-1/2">
-            <h6 className="text-[15px] font-[450]">Skills</h6>
+          <div className="flex flex-row gap-4 items-center md:w-1/2 w-full">
+            <h6 className="text-[15px] font-[450]">Area of expertise : </h6>
             <div className="text-[15px] leading-4 flex items-center ">
-              <spna className="bg-gradient-to-r from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 underline ">
-              {areaOfExpertise}
-              </spna>
-              
+              <span className="bg-gradient-to-r from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 underline">
+                {areaOfExpertise}
+              </span>
             </div>
-          
           </div>
         </div>
         <div className="text-[#737373] text-xs my-4 grid grid-cols-2">
@@ -164,23 +162,24 @@ const MentorsProfile = () => {
               <h6 className="undeline ml-2">{linkedinLink}</h6>
             </div>
 
-            <div className="flex items-center m-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 512 512"
-                width="15"
-                height="15"
-                fill="currentColor"
-              >
-                <path d="M57.7 193l9.4 16.4c8.3 14.5 21.9 25.2 38 29.8L163 255.7c17.2 4.9 29 20.6 29 38.5v39.9c0 11 6.2 21 16 25.9s16 14.9 16 25.9v39c0 15.6 14.9 26.9 29.9 22.6c16.1-4.6 28.6-17.5 32.7-33.8l2.8-11.2c4.2-16.9 15.2-31.4 30.3-40l8.1-4.6c15-8.5 24.2-24.5 24.2-41.7v-8.3c0-12.7-5.1-24.9-14.1-33.9l-3.9-3.9c-9-9-21.2-14.1-33.9-14.1H257c-11.1 0-22.1-2.9-31.8-8.4l-34.5-19.7c-4.3-2.5-7.6-6.5-9.2-11.2c-3.2-9.6 1.1-20 10.2-24.5l5.9-3c6.6-3.3 14.3-3.9 21.3-1.5l23.2 7.7c8.2 2.7 17.2-.4 21.9-7.5c4.7-7 4.2-16.3-1.2-22.8l-13.6-16.3c-10-12-9.9-29.5 .3-41.3l15.7-18.3c8.8-10.3 10.2-25 3.5-36.7l-2.4-4.2c-3.5-.2-6.9-.3-10.4-.3C163.1 48 84.4 108.9 57.7 193zM464 256c0-36.8-9.6-71.4-26.4-101.5L412 164.8c-15.7 6.3-23.8 23.8-18.5 39.8l16.9 50.7c3.5 10.4 12 18.3 22.6 20.9l29.1 7.3c1.2-9 1.8-18.2 1.8-27.5zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z" />
-              </svg>
-              <h6 className="ml-2" title="Existing Icp Project Porfolio">
-                <span className="font-bold">
-                  Existing Icp Project Porfolio:
-                </span>
-                <span className="ml-2">{existingIcpProjectPorfolio}</span>
-              </h6>
-            </div>
+            {existingIcpProjectPorfolio && existingIcpProjectPorfolio[0] && existingIcpProjectPorfolio[0].trim() !== "" && (
+              <div className="flex items-center m-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 512 512"
+                  width="15"
+                  height="15"
+                  fill="currentColor"
+                >
+                  <path d="M57.7 193l9.4 16.4c8.3 14.5 21.9 25.2 38 29.8L163 255.7c17.2 4.9 29 20.6 29 38.5v39.9c0 11 6.2 21 16 25.9s16 14.9 16 25.9v39c0 15.6 14.9 26.9 29.9 22.6c16.1-4.6 28.6-17.5 32.7-33.8l2.8-11.2c4.2-16.9 15.2-31.4 30.3-40l8.1-4.6c15-8.5 24.2-24.5 24.2-41.7v-8.3c0-12.7-5.1-24.9-14.1-33.9l-3.9-3.9c-9-9-21.2-14.1-33.9-14.1H257c-11.1 0-22.1-2.9-31.8-8.4l-34.5-19.7c-4.3-2.5-7.6-6.5-9.2-11.2c-3.2-9.6 1.1-20 10.2-24.5l5.9-3c6.6-3.3 14.3-3.9 21.3-1.5l23.2 7.7c8.2 2.7 17.2-.4 21.9-7.5c4.7-7 4.2-16.3-1.2-22.8l-13.6-16.3c-10-12-9.9-29.5 .3-41.3l15.7-18.3c8.8-10.3 10.2-25 3.5-36.7l-2.4-4.2c-3.5-.2-6.9-.3-10.4-.3C163.1 48 84.4 108.9 57.7 193zM464 256c0-36.8-9.6-71.4-26.4-101.5L412 164.8c-15.7 6.3-23.8 23.8-18.5 39.8l16.9 50.7c3.5 10.4 12 18.3 22.6 20.9l29.1 7.3c1.2-9 1.8-18.2 1.8-27.5zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z" />
+                </svg>
+                <h6 className="ml-2" title="Existing Icp Project Porfolio">
+                  <span className="font-bold">
+                    Existing Icp Project Porfolio:
+                  </span>
+                  <span className="ml-2">{existingIcpProjectPorfolio}</span>
+                </h6>
+              </div>)}
             <div className="flex items-center m-2">
               <svg
                 width="15"
@@ -215,28 +214,48 @@ const MentorsProfile = () => {
             </div>
           </div>
         </div>
-        <div className="border-b border-[#DCDCDC] pb-4">
-          <h4 className="text-xl font-[950]">Multi-Chain</h4>
-          <div className="text-[15px] leading-4 flex items-center flex-wrap">
+        {multiChain && multiChain[0] && multiChain[0].trim() !== "" &&
+          (<div className="border-b border-[#DCDCDC] pb-4">
+            <h4 className="text-xl font-[950]">Multi-Chain</h4>
+            <div className="text-[15px] leading-4 flex items-center flex-wrap">
               <spna className="bg-gradient-to-r from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 underline my-1 ml-2">
                 {multiChain}
               </spna>;
-          </div>
-        </div>
+            </div>
+          </div>)}
       </div>
       <div>
-        <div className="border-b border-[#DCDCDC] pb-4">
+        {/* <div className="w-full md:w-1/2">
+          <h6 className="text-[15px] font-[450]">Skills</h6>
+          <div className="text-[15px] leading-4 flex items-center ">
+            <span className="bg-gradient-to-r from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 underline">
+              {areaOfExpertise}
+            </span>
+          </div>
+        </div> */}
+        {/* {areaOfExpertise && (<div className="border-b border-[#DCDCDC] pb-4">
+          <h4 className="text-xl font-[950]">Area of expertise</h4>
+          <div className="text-[#737373] text-[15px] leading-4">
+            <p className="line-clamp-2 sm:line-clamp-none">{areaOfExpertise}</p> */}
+            {/* <p>
+              he is also a speaker in many global events such as conf42,
+              chaosCarnival, Devoxx france ...
+            </p> */}
+            {/* <p className="text-[#000] underline">Read more</p> */}
+          {/* </div>
+        </div>)} */}
+        {mentorBio && (<div className="border-b border-[#DCDCDC] pb-4">
           <h4 className="text-xl font-[950]">About</h4>
           <div className="text-[#737373] text-[15px] leading-4">
             <p className="line-clamp-2 sm:line-clamp-none">{mentorBio}</p>
-            <p>
+            {/* <p>
               he is also a speaker in many global events such as conf42,
               chaosCarnival, Devoxx france ...
-            </p>
-            <p className="text-[#000] underline">Read more</p>
+            </p> */}
+            {/* <p className="text-[#000] underline">Read more</p> */}
           </div>
-        </div>
-        <div className="border-b border-[#DCDCDC] pb-4">
+        </div>)}
+        {/* <div className="border-b border-[#DCDCDC] pb-4">
           <h4 className="text-xl font-[950]">What mentees say</h4>
           <div className="space-y-4">
             <div className="flex relative -left-5 -top-2">
@@ -320,14 +339,14 @@ const MentorsProfile = () => {
               {areaOfExpertise}
             </spna>
           </div>
-        </div>
+        </div> */}
         {/* <div className="my-8">
           <h4 className="text-xl font-[950]">Similar mentors</h4>
           <MentorCard />
           <MentorCard />
         </div> */}
       </div>
-    </div>
+    </div >
   );
 };
 
