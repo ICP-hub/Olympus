@@ -31,7 +31,7 @@ pub struct OfferToMentor {
 pub struct ProjectInfoo {
     project_id: String,
     project_name: String,
-    project_description: String,
+    project_description: Option<String>,
     project_logo: Vec<u8>,
 }
 
