@@ -171,16 +171,16 @@ const MentorRegForm = () => {
                     bio: [data?.bio],
                     country: data?.country,
                     area_of_interest: data?.domains_interested_in,
-                    type_of_profile: [data?.type_of_profile || ""],
-                    reason_to_join: [data?.reasons_to_join_platform.split(", ") || [""]],
+                    type_of_profile: [data?.type_of_profile] ||[ ""],
+                    reason_to_join: [data?.reasons_to_join_platform.split(", ")] || [""],
                     profile_picture: imageData ? [imageData] : [],
                 },
                 // mentor data
                 preferred_icp_hub: [data?.preferred_icp_hub || ""],
                 icp_hub_or_spoke: data?.icp_hub_or_spoke === "true" ? true : false,
                 hub_owner: [data?.icp_hub_or_spoke === "true"
-                    && data?.icp_hub_or_spoke
-                    ? data?.icp_hub_or_spoke
+                    && data?.hub_owner
+                    ? data?.hub_owner
                     : ""
                 ],
                 hub_owner: [data?.hub_owner || ""],
