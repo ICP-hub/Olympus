@@ -280,7 +280,7 @@
 //               </div>
 //               <div className="pl-1 flex flex-row space-x-2 text-gray-600">
 //                 {tick}
-//                 <p>{notificationDetails.user_data.area_of_intrest}</p>
+//                 <p>{notificationDetails.user_data.area_of_interest}</p>
 //               </div>
 //             </div>
 

@@ -1575,7 +1575,7 @@ pub fn make_project_active_inactive(p_id: Principal, project_id: String) -> Stri
 //         country: "Nowhereland".to_string(),
 //         telegram_id: Some("janedoe_telegram".to_string()),
 //         bio: Some("An enthusiastic explorer of new technologies.".to_string()),
-//         area_of_intrest: "Artificial Intelligence".to_string(),
+//         area_of_interest: "Artificial Intelligence".to_string(),
 //         twitter_id: Some("@janedoeAI".to_string()),
 //         openchat_username: Some("janedoeChat".to_string()),
 //         // joining_date: 0,

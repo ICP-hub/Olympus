@@ -224,8 +224,8 @@ const ConfirmationModal = ({
                   </p>
                 )}
                 <p className="text-gray-500">
-                  area_of_intrest:{" "}
-                  {notificationDetails.user_data.area_of_intrest}
+                  area_of_interest:{" "}
+                  {notificationDetails.user_data.area_of_interest}
                 </p>
               </div>
             </div>

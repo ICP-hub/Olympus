@@ -53,7 +53,7 @@ venture_capitalist_data[default]='(record {
     country = "Wonderland";
     telegram_id = opt "vc_telegram";
     bio = opt "A brief bio of the VC representative.";
-    area_of_intrest = "Blockchain";
+    area_of_interest = "Blockchain";
     twitter_id = opt "vc_twitter";
     openchat_username = opt "vc_openchat";
   };
@@ -86,7 +86,7 @@ venture_capitalist_data[principal2]='(record {
     country = "Wonderland";
     telegram_id = opt "vc_telegram";
     bio = opt "A brief bio of the VC representative.";
-    area_of_intrest = "Blockchain";
+    area_of_interest = "Blockchain";
     twitter_id = opt "vc_twitter";
     openchat_username = opt "vc_openchat";
   };
@@ -119,7 +119,7 @@ venture_capitalist_data[principal3]='(record {
     country = "Wonderland";
     telegram_id = opt "vc_telegram";
     bio = opt "A brief bio of the VC representative.";
-    area_of_intrest = "Blockchain";
+    area_of_interest = "Blockchain";
     twitter_id = opt "vc_twitter";
     openchat_username = opt "vc_openchat";
   };
@@ -152,7 +152,7 @@ venture_capitalist_data[principal4]='(record {
     country = "Wonderland";
     telegram_id = opt "vc_telegram";
     bio = opt "A brief bio of the VC representative.";
-    area_of_intrest = "Blockchain";
+    area_of_interest = "Blockchain";
     twitter_id = opt "vc_twitter";
     openchat_username = opt "vc_openchat";
   };
@@ -185,7 +185,7 @@ venture_capitalist_data[principal5]='(record {
     country = "Wonderland";
     telegram_id = opt "vc_telegram";
     bio = opt "A brief bio of the VC representative.";
-    area_of_intrest = "Blockchain";
+    area_of_interest = "Blockchain";
     twitter_id = opt "vc_twitter";
     openchat_username = opt "vc_openchat";
   };

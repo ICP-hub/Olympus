@@ -59,7 +59,7 @@ const validationSchema = {
         /\S/.test(value)
       )
       .required("Selecting an interest is required."),
-    area_of_intrest: yup
+    area_of_interest: yup
       .string()
       .required("Selecting an interest is required."),
   }),
@@ -494,7 +494,7 @@ const InvestorRegistration = () => {
           openchat_username: userData.openchat_username?.[0] || "",
           bio: userData.bio?.[0] || "",
           country: userData.country || "",
-          area_of_intrest: userData.area_of_intrest || "",
+          area_of_interest: userData.area_of_interest || "",
         };
 
         // If there is a mentor_image, handle its conversion and set it separately if needed
@@ -581,7 +581,7 @@ const InvestorRegistration = () => {
         user_data: {
           bio: [updatedFormData.bio],
           country: updatedFormData.country,
-          area_of_intrest: updatedFormData.area_of_intrest,
+          area_of_interest: updatedFormData.area_of_interest,
           telegram_id: [updatedFormData.telegram_id],
           twitter_id: [updatedFormData.twitter_id],
           openchat_username: [updatedFormData.openchat_username],
@@ -644,7 +644,7 @@ const InvestorRegistration = () => {
         user_data: {
           bio: [updatedFormData.bio],
           country: updatedFormData.country,
-          area_of_intrest: updatedFormData.area_of_intrest,
+          area_of_interest: updatedFormData.area_of_interest,
           telegram_id: [updatedFormData.telegram_id],
           twitter_id: [updatedFormData.twitter_id],
           openchat_username: [updatedFormData.openchat_username],
@@ -842,16 +842,16 @@ const InvestorRegistration = () => {
                   </div>
                   <div className="z-0 w-full mb-3 group">
                     <label
-                      htmlFor="area_of_intrest"
+                      htmlFor="area_of_interest"
                       className="block mb-2 text-lg font-medium  text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                     >
                       interest*
                     </label>
                     <select
-                      {...register("area_of_intrest")}
-                      // id="area_of_intrest"
+                      {...register("area_of_interest")}
+                      // id="area_of_interest"
                       className={`bg-gray-50 border-2 ${
-                        errors.area_of_intrest
+                        errors.area_of_interest
                           ? "border-red-500 placeholder:text-red-500"
                           : "border-[#737373]"
                       } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
@@ -869,9 +869,9 @@ const InvestorRegistration = () => {
                         </option>
                       ))}
                     </select>
-                    {errors.area_of_intrest && (
+                    {errors.area_of_interest && (
                       <span className="mt-1 text-sm text-red-500 font-bold">
-                        {errors.area_of_intrest.message}
+                        {errors.area_of_interest.message}
                       </span>
                     )}
                   </div>
