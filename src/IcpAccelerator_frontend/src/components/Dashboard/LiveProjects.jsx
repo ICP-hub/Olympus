@@ -118,7 +118,7 @@ const LiveProjects = ({ progress }) => {
 
   return (
     <>
-      <div className="flex flex-wrap -mx-4 mb-4 items-center">
+      <div className="flex max-md:flex-col -mx-4 mb-4 items-stretch">
         <div className="w-full md:w-3/4 px-4 md:flex md:gap-4">
           {noData 
           || (allProjectData &&
@@ -141,10 +141,10 @@ const LiveProjects = ({ progress }) => {
              
                   return (
                     <animated.div
-                      className="w-full sm:w-1/2 md:w-1/3 mb-2  hover:scale-105 transition-transform duration-300 ease-in-out"
+                      className="w-full sm:w-1/2 md:w-1/3  hover:scale-105 transition-transform duration-300 ease-in-out"
                       key={index}
                     >
-                      <div className="w-fit flex justify-between items-baseline flex-wrap bg-white overflow-hidden rounded-lg shadow-lg">
+                      <div className="w-fit flex justify-between items-baseline flex-wrap bg-white overflow-hidden rounded-lg shadow-lg mb-5 md:mb-0">
                         <div className="p-4">
                           <div className="flex justify-between items-baseline flex-wrap w-fit">
                             <div className="flex items-center w-full">

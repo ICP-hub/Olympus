@@ -47,7 +47,7 @@ const SecondEventCard = ({ data, register }) => {
                 </p>
               </div>
               <p className="text-[#7283EA] font-semibold text-xl">
-                This event includes
+                Overview
               </p>
               <ul className="text-sm font-extralight list-disc list-outside pl-4">
                 {tags && tags.split(",").map((val, index) => {
