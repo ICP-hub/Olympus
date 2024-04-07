@@ -75,7 +75,7 @@ const Breadcrumbs = () => {
           </a>
         </li>
         {breadcrumbs.map((crumb, index) => (
-          console.log('crumb',crumb),
+          // console.log('crumb',crumb),
           <React.Fragment key={index}>
             <li>
               <div className="flex items-center">
