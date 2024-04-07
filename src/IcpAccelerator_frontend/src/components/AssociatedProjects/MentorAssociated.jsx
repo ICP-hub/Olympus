@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import AssociatedProjects from '../Dashboard/MentorAssociatedCards';
 import { useNavigate } from 'react-router-dom';
-import NoDataCard from '../../../../IcpAccelerator_frontend/src/components/Mentors/Event/NoDataCard';
+import NoDataCard from '../../components/Mentors/Event/MentorAssociatedNoDataCard';
 import { Principal } from "@dfinity/principal";
 
 const MentorAssociated = () => {

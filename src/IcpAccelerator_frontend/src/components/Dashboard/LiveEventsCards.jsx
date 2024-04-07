@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
 import { useSelector } from "react-redux";
-import NoDataCard from "../Mentors/Event/NoDataCard";
+import NoDataCard from "../Mentors/Event/LiveEventsNoDataCard";
 import SecondEventCard from "./SecondEventCard";
 
 const LiveEventsCards = ({ wrap, register }) => {

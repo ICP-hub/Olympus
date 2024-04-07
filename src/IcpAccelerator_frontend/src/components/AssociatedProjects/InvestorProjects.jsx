@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import NoDataCard from '../../../../IcpAccelerator_frontend/src/components/Mentors/Event/NoDataCard';
+import NoDataCard from '../../components/Mentors/Event/InvestorAssociatedNoDataCard';
 import InvestedProjects from '../Dashboard/InvestedCards';
 import { Principal } from "@dfinity/principal";
 import { useNavigate } from 'react-router-dom';

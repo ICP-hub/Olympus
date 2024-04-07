@@ -8,6 +8,7 @@ import fetchRequestFromUtils from '../Utils/apiNames/getAssociationApiName';
 import viewProfileHandlerFromUtils from '../Utils/navigationHelper/navigationFromAssociation';
 import uint8ArrayToBase64 from '../Utils/uint8ArrayToBase64';
 import { formatFullDateFromBigInt } from '../Utils/formatter/formatDateFromBigInt';
+import NoDataCard from '../Mentors/Event/ProjectAssocReqNoDataCard';
 
 const ProjectAssociation = () => {
     const navigate = useNavigate();
@@ -308,7 +309,7 @@ const ProjectAssociation = () => {
                         )
                     })
                     : <>
-                        <h1>No Data</h1>
+                        <NoDataCard/>
                     </>
                 }
             </div>

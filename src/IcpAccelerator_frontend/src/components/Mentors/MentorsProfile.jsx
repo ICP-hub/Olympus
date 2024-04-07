@@ -284,10 +284,10 @@ const MentorsProfile = () => {
           (<div className="border-b border-[#DCDCDC] my-5 pb-12 p-5">
             <h4 className="text-xl font-[950]">Looking for</h4>
             <div className="text-[15px] leading-4 flex items-center flex-wrap pt-2">
-            {reason_to_join[0].map((item, index) => {
+            {reason_to_join[0][0].split(',').map((item, index) => {
               // console.log('item', item)
               return (<span key={index} className="bg-gradient-to-r from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 underline my-1 ml-2">
-                {item}
+                {item.trim()}
               </span>)
             })}
               

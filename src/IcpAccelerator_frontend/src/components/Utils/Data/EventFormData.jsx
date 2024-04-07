@@ -26,14 +26,14 @@ export const formFields = [
       type: "date",
       name: "cohort_end_date",
       required: true,
-      label: "Cohort End date",
+      label: "Cohort end date",
     },
     {
       id: "eligibility",
       type: "text",
       name: "eligibility",
       required: true,
-      label: "Eligibility Cirteria",
+      label: "Eligibility criteria",
     },
      {
       id: "rubric_eligibility",

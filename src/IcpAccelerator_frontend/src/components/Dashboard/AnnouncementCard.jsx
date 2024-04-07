@@ -9,7 +9,7 @@ import { useSelector } from "react-redux";
 import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import useFormatDateFromBigInt from "../hooks/useFormatDateFromBigInt";
-import NoDataCard from "../Mentors/Event/NoDataCard";
+import NoDataCard from "../Mentors/Event/AnnouncementsNoDataCard";
 import { formatFullDateFromBigInt } from "../Utils/formatter/formatDateFromBigInt";
 
 const AnnouncementCard = () => {

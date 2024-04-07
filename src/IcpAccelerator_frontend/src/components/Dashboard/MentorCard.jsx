@@ -4,7 +4,7 @@ import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_
 import { useSelector } from "react-redux";
 import { useNavigate } from 'react-router-dom';
 import uint8ArrayToBase64 from '../Utils/uint8ArrayToBase64';
-import NoDataCard from "../Mentors/Event/NoDataCard";
+import NoDataCard from "../Mentors/Event/MentorsNoDataCard";
 
 const MentorCard = () => {
   const navigate = useNavigate();
@@ -37,7 +37,7 @@ const MentorCard = () => {
     }
   }, [actor]);
   if (noData) {
-    return <div className="items-center w-full">
+    return <div className="items-center w-full flex justify-center">
       <NoDataCard />
     </div>
   }
