@@ -116,43 +116,52 @@ const ViewInvestor = () => {
           </button>
         </div> */}
       </div>
-      <div className="flex flex-wrap justify-center">
+      <div className="md:gap-4 md:grid md:grid-cols-4 max-md:flex max-md:flex-col justify-center mb-5">
         {noData ? <NoDataCard /> :
           data.map((investor, index) => {
 
-            let id = investor[0] ? investor[0].toText() : '';
-            let img = uint8ArrayToBase64(
-              investor[1]?.vc_profile?.params?.user_data?.profile_picture[0]
-            );
+            
+            let id = investor[0].toText();
+            let img = uint8ArrayToBase64(investor[1]?.vc_profile?.params?.user_data?.profile_picture[0]);
             let name = investor[1]?.vc_profile?.params?.user_data?.full_name;
-            let company = investor[1]?.vc_profile?.params?.user_data?.bio[0];
-            let role = "Investor";
+            let company = investor[1]?.vc_profile?.params?.name_of_fund;
+            let role = 'Investor';
+            let website_link = investor[1]?.vc_profile?.params?.website_link;
+            let category_of_investment = investor[1]?.vc_profile?.params?.category_of_investment ?? ""
 
             return (
-              <div className="" key={index}>
-                <div className="w-full sm:w-full md:w-full lg:w-full xl:w-full p-4">
-                  <div className="shadow-md rounded-lg overflow-hidden  drop-shadow-2xl gap-2 bg-[#C1CAFF]">
-                    <div className='flex flex-col sm:flex-row gap-6 p-2'>
-                      <img className='w-full sm:w-[300.53px] rounded-md h-auto sm:h-[200.45px] flex lg:items-center lg:justify-center  ' src={img} alt="alt" />
-                      <div className='flex flex-col justify-around w-full'>
-                        <h1 className="text-black text-2xl font-extrabold">{name}</h1>
-                        <p className="text-[#737373]">{role}</p>
-                        <div className='flex flex-wrap rounded-full mt-6 text-[#737373] justify-center'>
-                          <p className=''>{company}</p>
-                        </div>
-
-                        <div className='w-100px border-2 text-gray-900 mt-2'></div>
-                        <div className='flex justify-end mt-6 xl:mr-8'>
-                          <button onClick={() => id ? navigate(`/view-investor-details/${id}`) : ''} className=' font-bold py-2 px-4 bg-white text-[#7283EA] rounded-md'>
-                            View Profile
-                          </button>
-                        </div>
-                      </div>
-                    </div>
+              <div key={index} className="bg-white duration-300 ease-in-out hover:scale-105 mb-5 md:mb-0 p-5 rounded-lg shadow-lg transition-transform w-full">
+                <div className=" flex items-center justify-center w-1/2" style={{margin: "auto"}}>
+                  <img className="w-full object-cover" src={img} alt="" style={{borderRadius: '50%'}} />
+                </div>
+                <div className="text-black mt-4 text-center">
+                  <span className="font-semibold text-lg line-clamp-1">
+                    {name}
+                  </span>
+                  <span className="block text-gray-500">
+                    {company}
+                  </span>
+                  <div className="flex flex-wrap gap-2 border-t-2 mt-5 py-4 max-md:justify-center">
+                  {category_of_investment && category_of_investment !== '' ? 
+                  category_of_investment.split(',').map(function(item) {
+                    return (<span className="bg-[#E7E7E8] rounded-full text-gray-600 text-xs font-bold px-3 py-2 leading-none flex items-center mt-2">
+                    {item.trim()}
+                    </span>  )
+                  })
+                  : 
+                  
+                  ""} 
+                   {/* <span className="bg-[#E7E7E8] rounded-full text-gray-600 text-xs font-bold px-3 py-2 leading-none flex items-center mt-2">
+                      {category_of_investment}
+                      </span>       */}
+                          
                   </div>
+                  <button onClick={() => id ? navigate(`/view-investor-details/${id}`) : ''} className="mt-4  text-white px-4 py-1 rounded-lg uppercase w-full text-center border border-gray-300 font-bold bg-[#3505B2] transition-colors duration-200 ease-in-out">
+                    View Profile
+                  </button>
                 </div>
               </div>
-            );
+            )
           })}
       </div>
     </div>
