@@ -44,7 +44,7 @@ const InvestorProfile = () => {
   let investorLocation = investorProfileData?.user_data?.country;
   let announcementDetails = investorProfileData?.announcement_details;
   let categoryOfInvestment = investorProfileData?.category_of_investment;
-  let mentorWebsite = investorProfileData?.website_link;
+  let investorWebsite = investorProfileData?.website_link;
   let linkedinLink = investorProfileData?.linkedin_link;
   let existingIcpInvestor = investorProfileData?.existing_icp_investor;
   let existingIcpProjectPorfolio = investorProfileData?.existing_icp_portfolio;
@@ -54,9 +54,23 @@ const InvestorProfile = () => {
   let averageCheckSize = investorProfileData?.average_check_size
   let moneyInvested = investorProfileData?.money_invested &&  investorProfileData?.money_invested.length > 0 && typeof investorProfileData?.money_invested[0] === "number" ? investorProfileData?.money_invested[0] : null
   let nameOfFund = investorProfileData?.name_of_fund
+  let openchat_username = investorProfileData?.user_data?.openchat_username;
+  let twitter_id = investorProfileData?.user_data?.twitter_id;
+  let telegram_id = investorProfileData?.user_data?.telegram_id;
+  let email = investorProfileData?.user_data?.email[0];
+  let reason_to_join = investorProfileData?.user_data?.reason_to_join;
+  let range_of_check_size = investorProfileData?.range_of_check_size
+  let stage = investorProfileData?.stage
+  let preferred_icp_hub = investorProfileData?.preferred_icp_hub
+
+
+
+  // let reason_to_join = investorProfileData?.reason_to_join;
+  // let multiChain = investorProfileData?.multichain;
+
   return (
-    <div className="px-[4%] w-full bg-gray-100 overflow-y-scroll">
-      <div className="border-b border-[#DCDCDC] pb-4">
+    <div className="px-[4%] w-full bg-gray-100 overflow-y-scroll font-fontUse">
+      <div className="border-[#DCDCDC] border-b p-5 pb-4 rounded-2xl">
         <div className="flex justify-between">
           <div className="flex items-center">
             <div
@@ -70,7 +84,7 @@ const InvestorProfile = () => {
               <img
                 className="rounded-full object-cover w-20 h-20"
                 src={investorprofile}
-                alt="img"
+                alt=""
               />
             </div>
             {/* <div className="text-[15px] leading-4 flex items-center bg-gradient-to-r from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 ml-2">
@@ -92,32 +106,41 @@ const InvestorProfile = () => {
               <span>Top Investor</span>
             </div> */}
           </div>
-          {/* <div>
-            <button className="bg-transparent border border-[#3505B2] text-[#3505B2] text-xs font-[950] px-2 py-1 rounded-md">
+          {email && email!=='' && 
+          (<div>
+            <a className="bg-transparent border border-[#3505B2] text-[#3505B2] text-sm font-[950] px-2 py-1 rounded-md" href={"mailto:" + email}>
               Get in touch
-            </button>
-          </div> */}
+            </a>
+          </div>)}
         </div>
         <div className="md:flex block w-full md:w-[60%]">
           <div className="w-full md:w-1/2">
-            <h3 className="text-2xl font-[950]">{investorName}</h3>
+            <h3 className="text-3xl font-[950]">{investorName}</h3>
             <div>
-              <p className="text-[#737373]">{nameOfFund}</p>
+              <p className="text-[#737373] pt-2">{nameOfFund}</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {categoryOfInvestment?.split(',').map((item, index) => {
+                return (<span key= {index} className="bg-[#E7E7E8] rounded-full text-gray-600 text-xs font-bold px-3 py-2 leading-none flex items-center mt-2">
+                  {item.trim()}
+                </span>)
+              })}
+              
             </div>
           </div>
-          <div className="flex flex-row gap-4 items-center md:w-1/2 w-full">
+          {/* <div className="flex flex-row gap-4 items-center md:w-1/2 w-full">
             <h6 className="text-[15px] font-[450]">Category of Investment : </h6>
             <div className="text-[15px] leading-4 flex items-center ">
-              {categoryOfInvestment?.split(',').map(function(item){
+              {categoryOfInvestment?.split(',').map((item, index) => {
                 return (
-                  <span className="bg-gradient-to-r mr-2 from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 underline ">
+                  <span key={index} className="bg-gradient-to-r mr-2 from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 underline ">
                     {item.trim()}
                   </span>
                 )
               })}
               
             </div>
-          </div>
+          </div> */}
         </div>
         <div className="text-[#737373] text-xs my-4 grid grid-cols-2">
           <div className="col">
@@ -128,21 +151,41 @@ const InvestorProfile = () => {
                 <span className="ml-2">{investorLocation}</span>
               </h6>
             </div>
-            <div className="flex items-center m-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 512 512"
-                width="15"
-                height="15"
-                fill="currentColor"
-              >
-                <path d="M57.7 193l9.4 16.4c8.3 14.5 21.9 25.2 38 29.8L163 255.7c17.2 4.9 29 20.6 29 38.5v39.9c0 11 6.2 21 16 25.9s16 14.9 16 25.9v39c0 15.6 14.9 26.9 29.9 22.6c16.1-4.6 28.6-17.5 32.7-33.8l2.8-11.2c4.2-16.9 15.2-31.4 30.3-40l8.1-4.6c15-8.5 24.2-24.5 24.2-41.7v-8.3c0-12.7-5.1-24.9-14.1-33.9l-3.9-3.9c-9-9-21.2-14.1-33.9-14.1H257c-11.1 0-22.1-2.9-31.8-8.4l-34.5-19.7c-4.3-2.5-7.6-6.5-9.2-11.2c-3.2-9.6 1.1-20 10.2-24.5l5.9-3c6.6-3.3 14.3-3.9 21.3-1.5l23.2 7.7c8.2 2.7 17.2-.4 21.9-7.5c4.7-7 4.2-16.3-1.2-22.8l-13.6-16.3c-10-12-9.9-29.5 .3-41.3l15.7-18.3c8.8-10.3 10.2-25 3.5-36.7l-2.4-4.2c-3.5-.2-6.9-.3-10.4-.3C163.1 48 84.4 108.9 57.7 193zM464 256c0-36.8-9.6-71.4-26.4-101.5L412 164.8c-15.7 6.3-23.8 23.8-18.5 39.8l16.9 50.7c3.5 10.4 12 18.3 22.6 20.9l29.1 7.3c1.2-9 1.8-18.2 1.8-27.5zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z" />
-              </svg>
-              <h6 className="ml-2">
-                <span className="font-bold">Announcement Details:</span>
-                <span className="ml-2">{announcementDetails}</span>
-              </h6>
-            </div>
+            {announcementDetails && announcementDetails[0] && announcementDetails[0]!=='' && (
+              <div className="flex items-center m-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 512 512"
+                  width="15"
+                  height="15"
+                  fill="currentColor"
+                >
+                  <path d="M57.7 193l9.4 16.4c8.3 14.5 21.9 25.2 38 29.8L163 255.7c17.2 4.9 29 20.6 29 38.5v39.9c0 11 6.2 21 16 25.9s16 14.9 16 25.9v39c0 15.6 14.9 26.9 29.9 22.6c16.1-4.6 28.6-17.5 32.7-33.8l2.8-11.2c4.2-16.9 15.2-31.4 30.3-40l8.1-4.6c15-8.5 24.2-24.5 24.2-41.7v-8.3c0-12.7-5.1-24.9-14.1-33.9l-3.9-3.9c-9-9-21.2-14.1-33.9-14.1H257c-11.1 0-22.1-2.9-31.8-8.4l-34.5-19.7c-4.3-2.5-7.6-6.5-9.2-11.2c-3.2-9.6 1.1-20 10.2-24.5l5.9-3c6.6-3.3 14.3-3.9 21.3-1.5l23.2 7.7c8.2 2.7 17.2-.4 21.9-7.5c4.7-7 4.2-16.3-1.2-22.8l-13.6-16.3c-10-12-9.9-29.5 .3-41.3l15.7-18.3c8.8-10.3 10.2-25 3.5-36.7l-2.4-4.2c-3.5-.2-6.9-.3-10.4-.3C163.1 48 84.4 108.9 57.7 193zM464 256c0-36.8-9.6-71.4-26.4-101.5L412 164.8c-15.7 6.3-23.8 23.8-18.5 39.8l16.9 50.7c3.5 10.4 12 18.3 22.6 20.9l29.1 7.3c1.2-9 1.8-18.2 1.8-27.5zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z" />
+                </svg>
+                <h6 className="ml-2">
+                  <span className="font-bold">Announcement Details:</span>
+                  <span className="ml-2">{announcementDetails}</span>
+                </h6>
+              </div>
+            )}
+            {preferred_icp_hub && preferred_icp_hub !=='' && (
+              <div className="flex items-center m-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 512 512"
+                  width="15"
+                  height="15"
+                  fill="currentColor"
+                >
+                  <path d="M57.7 193l9.4 16.4c8.3 14.5 21.9 25.2 38 29.8L163 255.7c17.2 4.9 29 20.6 29 38.5v39.9c0 11 6.2 21 16 25.9s16 14.9 16 25.9v39c0 15.6 14.9 26.9 29.9 22.6c16.1-4.6 28.6-17.5 32.7-33.8l2.8-11.2c4.2-16.9 15.2-31.4 30.3-40l8.1-4.6c15-8.5 24.2-24.5 24.2-41.7v-8.3c0-12.7-5.1-24.9-14.1-33.9l-3.9-3.9c-9-9-21.2-14.1-33.9-14.1H257c-11.1 0-22.1-2.9-31.8-8.4l-34.5-19.7c-4.3-2.5-7.6-6.5-9.2-11.2c-3.2-9.6 1.1-20 10.2-24.5l5.9-3c6.6-3.3 14.3-3.9 21.3-1.5l23.2 7.7c8.2 2.7 17.2-.4 21.9-7.5c4.7-7 4.2-16.3-1.2-22.8l-13.6-16.3c-10-12-9.9-29.5 .3-41.3l15.7-18.3c8.8-10.3 10.2-25 3.5-36.7l-2.4-4.2c-3.5-.2-6.9-.3-10.4-.3C163.1 48 84.4 108.9 57.7 193zM464 256c0-36.8-9.6-71.4-26.4-101.5L412 164.8c-15.7 6.3-23.8 23.8-18.5 39.8l16.9 50.7c3.5 10.4 12 18.3 22.6 20.9l29.1 7.3c1.2-9 1.8-18.2 1.8-27.5zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z" />
+                </svg>
+                <h6 className="ml-2">
+                  {/* <span className="font-bold">Announcement Details:</span> */}
+                  <span className="">{preferred_icp_hub}</span>
+                </h6>
+              </div>
+            )}
+            
             <div className="flex items-center m-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -153,14 +196,21 @@ const InvestorProfile = () => {
               >
                 <path d="M352 256c0 22.2-1.2 43.6-3.3 64H163.3c-2.2-20.4-3.3-41.8-3.3-64s1.2-43.6 3.3-64H348.7c2.2 20.4 3.3 41.8 3.3 64zm28.8-64H503.9c5.3 20.5 8.1 41.9 8.1 64s-2.8 43.5-8.1 64H380.8c2.1-20.6 3.2-42 3.2-64s-1.1-43.4-3.2-64zm112.6-32H376.7c-10-63.9-29.8-117.4-55.3-151.6c78.3 20.7 142 77.5 171.9 151.6zm-149.1 0H167.7c6.1-36.4 15.5-68.6 27-94.7c10.5-23.6 22.2-40.7 33.5-51.5C239.4 3.2 248.7 0 256 0s16.6 3.2 27.8 13.8c11.3 10.8 23 27.9 33.5 51.5c11.6 26 20.9 58.2 27 94.7zm-209 0H18.6C48.6 85.9 112.2 29.1 190.6 8.4C165.1 42.6 145.3 96.1 135.3 160zM8.1 192H131.2c-2.1 20.6-3.2 42-3.2 64s1.1 43.4 3.2 64H8.1C2.8 299.5 0 278.1 0 256s2.8-43.5 8.1-64zM194.7 446.6c-11.6-26-20.9-58.2-27-94.6H344.3c-6.1 36.4-15.5 68.6-27 94.6c-10.5 23.6-22.2 40.7-33.5 51.5C272.6 508.8 263.3 512 256 512s-16.6-3.2-27.8-13.8c-11.3-10.8-23-27.9-33.5-51.5zM135.3 352c10 63.9 29.8 117.4 55.3 151.6C112.2 482.9 48.6 426.1 18.6 352H135.3zm358.1 0c-30 74.1-93.6 130.9-171.9 151.6c25.5-34.2 45.2-87.7 55.3-151.6H493.4z" />
               </svg>
-              <h6 className="ml-2">{mentorWebsite}</h6>
+              {investorWebsite&&(<a href={investorWebsite} target="_blank" className="hover:text-blue-600 ml-2">{investorWebsite}</a>)}
             </div>
-            <div className="flex items-center m-2">
+            {/* <div className="flex items-center m-2">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="15"
                 height="15"
                 fill="currentColor"><path d="M64 64C28.7 64 0 92.7 0 128V384c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V128c0-35.3-28.7-64-64-64H64zm48 160H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16zM96 336c0-8.8 7.2-16 16-16H464c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16zM376 160h80c13.3 0 24 10.7 24 24v48c0 13.3-10.7 24-24 24H376c-13.3 0-24-10.7-24-24V184c0-13.3 10.7-24 24-24z" /></svg>
               <h6 className="ml-2"> <span className="font-bold">Average Check Size:</span>
                 <span className="ml-2">$ {averageCheckSize}</span></h6>
+            </div> */}
+            <div className="flex items-center m-2">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="15"
+                height="15"
+                fill="currentColor"><path d="M64 64C28.7 64 0 92.7 0 128V384c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V128c0-35.3-28.7-64-64-64H64zm48 160H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16zM96 336c0-8.8 7.2-16 16-16H464c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16zM376 160h80c13.3 0 24 10.7 24 24v48c0 13.3-10.7 24-24 24H376c-13.3 0-24-10.7-24-24V184c0-13.3 10.7-24 24-24z" /></svg>
+              <h6 className="ml-2"> <span className="font-bold">Range of check size:</span>
+                <span className="ml-2">{range_of_check_size}</span></h6>
             </div>
           </div>
           <div className="col">
@@ -174,9 +224,9 @@ const InvestorProfile = () => {
               >
                 <path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z" />
               </svg>
-              <h6 className="undeline ml-2">{linkedinLink}</h6>
+              {linkedinLink && (<a href={linkedinLink} target="_blank" className="hover:text-blue-600 ml-2">{linkedinLink}</a>)}
             </div>
-            {existingIcpInvestor === true ? (
+            {existingIcpProjectPorfolio && existingIcpProjectPorfolio[0] && existingIcpProjectPorfolio[0].trim() !== "" && (
               <div className="flex items-center m-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -193,10 +243,7 @@ const InvestorProfile = () => {
                   </span>
                   <span className="ml-2">{existingIcpProjectPorfolio}</span>
                 </h6>
-              </div>
-            ) : (
-              ""
-            )}
+              </div>)}
             <div className="flex items-center m-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -210,7 +257,7 @@ const InvestorProfile = () => {
               <h6 className="ml-2"><span className="font-bold">
                 Fund Size:
               </span>
-                <span className="ml-2">$ {fundSize}</span></h6>
+                <span className="ml-2">${fundSize} Million</span></h6>
             </div>
             {/* {moneyInvested && (<div className="flex items-center m-2">
               <svg
@@ -230,23 +277,23 @@ const InvestorProfile = () => {
             </div>)} */}
           </div>
         </div>
-        {typeOfInvestment && (<div className="border-b border-[#DCDCDC] pb-4">
+        {/* {typeOfInvestment && (<div className="border-b border-[#DCDCDC] pb-4">
           <h4 className="text-xl font-[950]">Type of Investment</h4>
           <div className="text-[15px] leading-4 flex items-center flex-wrap">
             <span className="bg-gradient-to-r from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 underline my-1 ml-2">
               {typeOfInvestment}
             </span>
           </div>
-        </div>)}
+        </div>)} */}
 
-        {projectOnMultichain && (<div className="border-b border-[#DCDCDC] pb-4">
+        {/* {projectOnMultichain && (<div className="border-b border-[#DCDCDC] pb-4">
           <h4 className="text-xl font-[950]">Multi-Chain</h4>
           <div className="text-[15px] leading-4 flex items-center flex-wrap">
             <span className="bg-gradient-to-r from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 underline my-1 ml-2">
               {projectOnMultichain}
             </span>
           </div>
-        </div>)}
+        </div>)} */}
       </div>
       <div>
         {/* <div className="border-b border-[#DCDCDC] pb-4">
@@ -257,12 +304,69 @@ const InvestorProfile = () => {
             </span>
           </div>
         </div> */}
-        {investorBio && (<div className="border-b border-[#DCDCDC] pb-4">
-          <h4 className="text-xl font-[950]">About</h4>
-          <div className="text-[#737373] text-[15px] leading-4">
-            <p className="line-clamp-2 sm:line-clamp-none">{investorBio}</p>
+        {investorBio && (<div className="border-b border-[#DCDCDC] my-5 pb-12 p-5">
+          <h4 className="text-xl font-[950] capitalize">About {investorName}</h4>
+          <div className="text-[#737373] text-[15px] leading-4 pt-2">
+            <p className="sm:line-clamp-none" style={{lineHeight: 'normal'}}>{investorBio}</p>
+            {/* <p>
+              he is also a speaker in many global events such as conf42,
+              chaosCarnival, Devoxx france ...
+            </p> */}
+            {/* <p className="text-[#000] underline">Read more</p> */}
           </div>
         </div>)}
+        {typeOfInvestment && typeOfInvestment!=='' &&
+          (<div className="border-b border-[#DCDCDC] my-5 pb-12 p-5">
+            <h4 className="text-xl font-[950]">Types of Investments preferred</h4>
+            <div className="text-[15px] leading-4 flex items-center flex-wrap pt-2">
+            {typeOfInvestment.split(',').map((item, index) =>{
+              // console.log('item', item)
+              return (<span key={index} className="bg-gradient-to-r from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 underline my-1 ml-2">
+                {item.trim()}
+              </span>)
+            })}
+              
+            </div>
+          </div>)}
+          {stage && stage[0] && stage[0].trim() !== "" &&
+          (<div className="border-b border-[#DCDCDC] my-5 pb-12 p-5">
+            <h4 className="text-xl font-[950]">Stages of Investment preferred</h4>
+            <div className="text-[15px] leading-4 flex items-center flex-wrap pt-2">
+            {stage[0].split(',').map((item, index) =>{
+              // console.log('item', item)
+              return (<span key={index} className="bg-gradient-to-r from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 underline my-1 ml-2 capitalize">
+                {item.trim()}
+              </span>)
+            })}
+              
+            </div>
+          </div>)}
+          {projectOnMultichain && projectOnMultichain[0] && projectOnMultichain[0].trim() !== "" &&
+          (<div className="border-b border-[#DCDCDC] my-5 pb-12 p-5">
+            <h4 className="text-xl font-[950]">Ecosystems {investorName?.split(' ')[0]} has worked with</h4>
+            <div className="text-[15px] leading-4 flex items-center flex-wrap pt-2">
+            {projectOnMultichain[0].split(',').map((item, index) =>{
+              // console.log('item', item)
+              return (<span key={index} className="bg-gradient-to-r from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 underline my-1 ml-2">
+                {item.trim()}
+              </span>)
+            })}
+              
+            </div>
+          </div>)}
+          {reason_to_join && reason_to_join[0].length > 0 &&
+          (<div className="border-b border-[#DCDCDC] my-5 pb-12 p-5">
+            <h4 className="text-xl font-[950]">Looking for</h4>
+            <div className="text-[15px] leading-4 flex items-center flex-wrap pt-2">
+            {reason_to_join[0].map((item, index) => {
+              // console.log('item', item)
+              return (<span key={index} className="bg-gradient-to-r from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 underline my-1 ml-2">
+                {item}
+              </span>)
+            })}
+              
+            </div>
+          </div>)}
         {/* <div className="border-b border-[#DCDCDC] pb-4"> */}
         {/* <h4 className="text-xl font-[950]">What mentees say</h4> */}
         {/* <div className="space-y-4">
