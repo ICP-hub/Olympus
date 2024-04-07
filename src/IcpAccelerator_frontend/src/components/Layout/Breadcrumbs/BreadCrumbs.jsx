@@ -52,7 +52,7 @@ const Breadcrumbs = () => {
     }
     navigate('/');
   }
-
+  console.log(breadcrumbs)
   return (
     <div className="container mx-auto">
     <nav className="flex px-10 py-4" aria-label="Breadcrumb">
@@ -94,14 +94,16 @@ const Breadcrumbs = () => {
                     d="m1 9 4-4-4-4"
                   />
                 </svg>
-                {index === breadcrumbs.length - 1 ? (
-                  <span className="ms-1 text-sm font-medium text-gray-500 md:ms-2 dark:text-gray-400">
+                {(index === breadcrumbs.length - 1 ) && !crumb.path.includes("/view-mentor-details") ? (
+                  <span className="ms-1 text-sm font-medium text-gray-500 md:ms-2 dark:text-gray-400">{crumb.label == "View mentor details"}
                     {crumb.label.charAt(0).toUpperCase() + crumb.label.slice(1)}
                   </span>
-                ) : (
+                ) : 
+                crumb.path.includes("/view-mentor-details") && (index === breadcrumbs.length - 1 ) ? "" :
+                (
                   <a
                     href={crumb.path}
-                    className="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white"
+                    className="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 hover:text-blue-800"
                   >
                     {crumb.label.charAt(0).toUpperCase() + crumb.label.slice(1)}
                   </a>

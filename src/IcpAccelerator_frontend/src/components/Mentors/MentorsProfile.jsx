@@ -9,6 +9,7 @@ import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_
 
 const MentorsProfile = () => {
   let { id } = useParams();
+  console.log("id", id)
 
   const actor = useSelector((currState) => currState.actors.actor);
 
@@ -72,7 +73,7 @@ const MentorsProfile = () => {
                 alt="img"
               />
             </div>
-            <div className="text-[15px] leading-4 flex items-center bg-gradient-to-r from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 ml-2">
+            {/* <div className="text-[15px] leading-4 flex items-center bg-gradient-to-r from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 ml-2">
               <svg
                 width="12"
                 height="12"
@@ -88,8 +89,8 @@ const MentorsProfile = () => {
                   strokeLinejoin="round"
                 />
               </svg>
-              <spna>Top mentor</spna>
-            </div>
+              <span>Top mentor</span>
+            </div> */}
           </div>
           {/* <div>
             <button className="bg-transparent border border-[#3505B2] text-[#3505B2] text-xs font-[950] px-2 py-1 rounded-md">
@@ -218,9 +219,13 @@ const MentorsProfile = () => {
           (<div className="border-b border-[#DCDCDC] pb-4">
             <h4 className="text-xl font-[950]">Multi-Chain</h4>
             <div className="text-[15px] leading-4 flex items-center flex-wrap">
-              <spna className="bg-gradient-to-r from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 underline my-1 ml-2">
-                {multiChain}
-              </spna>;
+            {multiChain[0].split(',').map(function(item){
+              console.log('item', item)
+              return (<span className="bg-gradient-to-r from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 underline my-1 ml-2">
+                {item.trim()}
+              </span>)
+            })}
+              
             </div>
           </div>)}
       </div>
@@ -335,9 +340,9 @@ const MentorsProfile = () => {
         <div className="border-b border-[#DCDCDC] pb-4">
           <h4 className="text-xl font-[950]">Skills</h4>
           <div className="text-[15px] leading-4 flex items-center flex-wrap">
-            <spna className="bg-gradient-to-r from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 underline my-1 ml-2">
+            <span className="bg-gradient-to-r from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 underline my-1 ml-2">
               {areaOfExpertise}
-            </spna>
+            </span>
           </div>
         </div> */}
         {/* <div className="my-8">
