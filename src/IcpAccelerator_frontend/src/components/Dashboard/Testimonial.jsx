@@ -37,9 +37,9 @@ const Testimonial = () => {
     }
   }, [actor]);
   return (
-    <div className="flex flex-row gap-4 mt-3">
+    <div className="flex flex-row gap-4 mt-3 max-md:flex-col">
       {testimonialData &&
-        testimonialData.slice(0, 2).map((card, index) => {
+        testimonialData.slice(0, 3).map((card, index) => {
           let testimonialImage = uint8ArrayToBase64(card?.profile_pic);
           let testimonialName = card?.name;
           let testimoniaDescription = card?.message;
@@ -48,7 +48,7 @@ const Testimonial = () => {
           return (
             <div
               key={index}
-              className="bg-white rounded-lg shadow-lg w-full max-w-md sm:max-w-sm p-8 mb-4 hover:scale-105 transition-transform duration-300 ease-in-out"
+              className="bg-white duration-300 ease-in-out hover:scale-105 max-w-md mb-4 p-5 rounded-lg shadow-lg sm:max-w-sm transition-transform md:w-1/3"
             >
               <div className="flex items-center space-x-4">
                 <img

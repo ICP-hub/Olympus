@@ -4,7 +4,8 @@ import uint8ArrayToBase64 from "../../../../IcpAccelerator_frontend/src/componen
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import NoDataCard from "../../../../IcpAccelerator_frontend/src/components/Mentors/Event/NoDataCard";
-
+import { projectFilterSvg } from "../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
+import { OutSideClickHandler } from "../../../../IcpAccelerator_frontend/src/components/hooks/OutSideClickHandler";
 const AllProject = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
@@ -16,6 +17,9 @@ const AllProject = () => {
   const [filterOption, setFilterOption] = useState("All");
   const [displayedProjects, setDisplayedProjects] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  OutSideClickHandler(dropdownRef, () => setIsPopupOpen(false));
   const projectsPerPage = 9;
 
   const indexOfLastProject = currentPage * projectsPerPage;
@@ -178,23 +182,53 @@ const AllProject = () => {
 
   return (
     <div className="w-full flex flex-col px-[5%] py-[5%]">
-      <div className="flex justify-end mb-4 items-center w-full">
-        <label
-          htmlFor="spotlightFilter"
-          className="text-xs md:text-sm lg:text-md font-medium text-gray-700"
+      <div className="flex justify-between mb-4 items-center w-full">
+        <div
+          className="w-full bg-gradient-to-r from-purple-900 to-blue-500 text-transparent bg-clip-text text-3xl font-extrabold py-4 
+       font-fontUse"
         >
-          Filter Projects:
-        </label>
-        <select
-          id="spotlightFilter"
-          value={filterOption}
-          onChange={(e) => setFilterOption(e.target.value)}
-          className="ml-2 border-gray-300 border bg-white rounded-md p-1 md:p-2 shadow-sm hover:border-gray-400 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm lg:text-md"
-        >
-          <option value="All">All</option>
-          <option value="Added">Added to Spotlight</option>
-          <option value="Not Added">Not in Spotlight</option>
-        </select>
+          All Projects
+        </div>
+        <div className="flex items-center justify-between">
+          <div className="flex justify-end gap-4 relative " ref={dropdownRef}>
+            <div
+              className="cursor-pointer"
+              onClick={() => setIsPopupOpen(true)}
+            >
+              {projectFilterSvg}
+              {isPopupOpen && (
+                <div className="absolute w-[250px] top-full right-0 bg-white shadow-md rounded-lg border border-gray-200 p-3 z-10">
+                  <ul className="flex flex-col">
+                    <li>
+                      <button
+                        className="border-[#9C9C9C]  border-b-2 w-[230px] py-2 px-4 focus:outline-none text-base flex justify-start font-fontUse"
+                        onClick={() => setFilterOption("All")}
+                      >
+                        All
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        className="border-[#9C9C9C] w-[230px] border-b-2 py-2 px-4 focus:outline-none text-base flex justify-start font-fontUse"
+                        onClick={() => setFilterOption("Added")}
+                      >
+                        Added to Spotlight
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        className="border-[#9C9C9C] w-[230px] py-2 px-4 focus:outline-none text-base flex justify-start font-fontUse"
+                        onClick={() => setFilterOption("Not Added")}
+                      >
+                        Not in Spotlight
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
 
       <div
@@ -236,25 +270,25 @@ const AllProject = () => {
                   key={index}
                 >
                   <div className="justify-between items-baseline mb-4 flex-wrap bg-white overflow-hidden rounded-lg shadow-lg w-auto">
-                    <div className="p-4">
-                      <div className="flex justify-between items-baseline mb-4 flex-wrap w-full px-4">
-                        <div className="flex items-baseline w-1/2">
+                    <div className="p-6">
+                      <div className="flex justify-between items-baseline flex-wrap w-fit">
+                        <div className="flex items-center w-full">
                           <img
                             className="rounded-full w-12 h-12 object-cover"
                             src={projectImage}
                             alt="profile"
                           />
-                          <h1 className="font-bold text-nowrap truncate md:w-[220px]">
+                          <h1 className="ms-2 font-bold text-nowrap truncate w-[220px]">
                             {projectName}
                           </h1>
                         </div>
-                        <div className="flex items-baseline w-1/2">
+                        <div className="flex items-center m-2 w-full">
                           <img
                             className="h-5 w-5 rounded-full mr-2"
                             src={userImage}
                             alt="not found"
                           />
-                          <p className="text-xs truncate w-20">{principalId}</p>
+                         <p className="text-xs truncate w-20">{principalId}</p>
                         </div>
                       </div>
                       <div className="mb-4 flex items-baseline">

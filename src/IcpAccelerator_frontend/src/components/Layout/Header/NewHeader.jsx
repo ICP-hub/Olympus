@@ -218,7 +218,8 @@ const NewHeader = ({ setModalOpen, gradient }) => {
           <div className="flex gap-4 items-center group">
             <button
               type="button"
-              className="font-bold rounded-xl my-2 bg-transparent border-2 border-white/50 font-fontUse text-center text-white uppercase text-[0.625rem] md:text-[0.64375rem] lg:text-[14.5px] xl:text-[0.78125rem] px-6 py-2 top-[6.5rem] sm4:top-[10.5rem] xxs1:top-[8.5rem] ss2:top-[7.5rem] text-wrap group-hover:bg-white group-hover:text-[#BA77FB] z-20"
+              className="font-bold rounded-xl my-2 bg-transparent border-2 border-white/50 font-fontUse text-center text-white uppercase text-[0.625rem] md:text-[0.64375rem] lg:text-[14.5px] xl:text-[0.78125rem] px-6 py-2 top-[6.5rem] sm4:top-[10.5rem] xxs1:top-[8.5rem] ss2:top-[7.5rem] text-wrap group-hover:bg-white group-hover:text-[#BA77FB] z-20
+              backdrop-blur-xl"
               onClick={manageHandler}
             >
               <span className="">SIGNUP / SIGNIN</span>
@@ -248,14 +249,14 @@ const NewHeader = ({ setModalOpen, gradient }) => {
               <path
                 d="M2 2L18 18"
                 stroke="black"
-                stroke-width="2"
-                stroke-linecap="square"
+                strokeWidth="2"
+                strokeLinecap="square"
               ></path>
               <path
                 d="M18.5 2L2.5 18"
                 stroke="black"
-                stroke-width="2"
-                stroke-linecap="square"
+                strokeWidth="2"
+                strokeLinecap="square"
               ></path>
             </svg>
           </button>

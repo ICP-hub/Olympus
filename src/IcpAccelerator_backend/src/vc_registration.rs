@@ -42,8 +42,8 @@ pub struct VentureCapitalist {
     pub linkedin_link: String,
     pub registered: bool,
     pub registered_country: Option<String>, 
-    pub stage: String,
-    pub range_of_check_size : String
+    pub stage: Option<String>,
+    pub range_of_check_size : Option<String>
 }
 
 #[derive(Clone, CandidType)]

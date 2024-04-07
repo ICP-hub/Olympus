@@ -73,7 +73,7 @@ const InvestorProfile = () => {
                 alt="img"
               />
             </div>
-            <div className="text-[15px] leading-4 flex items-center bg-gradient-to-r from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 ml-2">
+            {/* <div className="text-[15px] leading-4 flex items-center bg-gradient-to-r from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 ml-2">
               <svg
                 width="12"
                 height="12"
@@ -89,8 +89,8 @@ const InvestorProfile = () => {
                   strokeLinejoin="round"
                 />
               </svg>
-              <spna>Top Investor</spna>
-            </div>
+              <span>Top Investor</span>
+            </div> */}
           </div>
           {/* <div>
             <button className="bg-transparent border border-[#3505B2] text-[#3505B2] text-xs font-[950] px-2 py-1 rounded-md">
@@ -108,9 +108,14 @@ const InvestorProfile = () => {
           <div className="flex flex-row gap-4 items-center md:w-1/2 w-full">
             <h6 className="text-[15px] font-[450]">Category of Investment : </h6>
             <div className="text-[15px] leading-4 flex items-center ">
-              <spna className="bg-gradient-to-r from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 underline ">
-                {categoryOfInvestment}
-              </spna>
+              {categoryOfInvestment?.split(',').map(function(item){
+                return (
+                  <span className="bg-gradient-to-r mr-2 from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 underline ">
+                    {item.trim()}
+                  </span>
+                )
+              })}
+              
             </div>
           </div>
         </div>
@@ -228,18 +233,18 @@ const InvestorProfile = () => {
         {typeOfInvestment && (<div className="border-b border-[#DCDCDC] pb-4">
           <h4 className="text-xl font-[950]">Type of Investment</h4>
           <div className="text-[15px] leading-4 flex items-center flex-wrap">
-            <spna className="bg-gradient-to-r from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 underline my-1 ml-2">
+            <span className="bg-gradient-to-r from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 underline my-1 ml-2">
               {typeOfInvestment}
-            </spna>
+            </span>
           </div>
         </div>)}
 
         {projectOnMultichain && (<div className="border-b border-[#DCDCDC] pb-4">
           <h4 className="text-xl font-[950]">Multi-Chain</h4>
           <div className="text-[15px] leading-4 flex items-center flex-wrap">
-            <spna className="bg-gradient-to-r from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 underline my-1 ml-2">
+            <span className="bg-gradient-to-r from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 underline my-1 ml-2">
               {projectOnMultichain}
-            </spna>
+            </span>
           </div>
         </div>)}
       </div>
@@ -247,9 +252,9 @@ const InvestorProfile = () => {
         {/* <div className="border-b border-[#DCDCDC] pb-4">
           <h4 className="text-xl font-[950]">Category of Investment</h4>
           <div className="text-[15px] leading-4 flex items-center flex-wrap">
-            <spna className="bg-gradient-to-r from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 underline my-1 ml-2">
+            <span className="bg-gradient-to-r from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 underline my-1 ml-2">
               {categoryOfInvestment}
-            </spna>
+            </span>
           </div>
         </div> */}
         {investorBio && (<div className="border-b border-[#DCDCDC] pb-4">

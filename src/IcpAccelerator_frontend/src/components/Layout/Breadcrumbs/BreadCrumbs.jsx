@@ -9,26 +9,40 @@ const Breadcrumbs = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+
+  const isHexId = (segment) => {
+    return /^[0-9a-fA-F]{64}$/.test(segment);
+  };
+  const isCustomId = (segment) => {
+    return /^([a-z0-9]{5}-){10}[a-z0-9]{5}$/.test(segment);
+  };
+  const isSpecificCustomId = (segment) => {
+    return /^[a-z0-9]{5}(?:-[a-z0-9]{5}){10}$/i.test(segment);
+  };
   const getLabelForPathSegment = (segment) => {
-    if (segment.match(/^\d+$/)) {
-      return `Item ${segment}`;
+    if (isHexId(segment) || isCustomId(segment) || isSpecificCustomId(segment)){
+      return 'Detail';
     }
     return segment.replace(/-/g, " ").replace(/_/g, " ");
   };
-
   const breadcrumbs = useMemo(() => {
     const pathSegments = pathname.split("/").filter(Boolean);
-
+  
     return pathSegments.map((segment, index) => {
+      const isId = segment.length === 64 ? isHexId(segment) : 
+      isCustomId(segment) || isSpecificCustomId(segment);
+  
+      if (isId) {
+        return null;
+      }
       const pathToPart = "/" + pathSegments.slice(0, index + 1).join("/");
       const label = getLabelForPathSegment(segment);
       return { label, path: pathToPart };
-    });
+    }).filter(crumb => crumb); 
   }, [pathname]);
-
-  // Do not show breadcrumbs if on Home page
+ 
   if (pathname === '/') {
-    return null; // or any other suitable element/component for your design
+    return null; 
   }
 
   const handleNavigate = () => {
@@ -38,8 +52,9 @@ const Breadcrumbs = () => {
     }
     navigate('/');
   }
-
+  console.log(breadcrumbs)
   return (
+    <div className="container mx-auto">
     <nav className="flex px-10 py-4" aria-label="Breadcrumb">
       <ol className="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
         <li className="inline-flex items-center" onClick={() => handleNavigate()}>
@@ -60,6 +75,7 @@ const Breadcrumbs = () => {
           </a>
         </li>
         {breadcrumbs.map((crumb, index) => (
+          console.log('crumb',crumb),
           <React.Fragment key={index}>
             <li>
               <div className="flex items-center">
@@ -78,14 +94,16 @@ const Breadcrumbs = () => {
                     d="m1 9 4-4-4-4"
                   />
                 </svg>
-                {index === breadcrumbs.length - 1 ? (
-                  <span className="ms-1 text-sm font-medium text-gray-500 md:ms-2 dark:text-gray-400">
+                {(index === breadcrumbs.length - 1 ) && !crumb.path.includes("/view-mentor-details") ? (
+                  <span className="ms-1 text-sm font-medium text-gray-500 md:ms-2 dark:text-gray-400">{crumb.label == "View mentor details"}
                     {crumb.label.charAt(0).toUpperCase() + crumb.label.slice(1)}
                   </span>
-                ) : (
+                ) : 
+                crumb.path.includes("/view-mentor-details") && (index === breadcrumbs.length - 1 ) ? "" :
+                (
                   <a
                     href={crumb.path}
-                    className="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white"
+                    className="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 hover:text-blue-800"
                   >
                     {crumb.label.charAt(0).toUpperCase() + crumb.label.slice(1)}
                   </a>
@@ -96,6 +114,7 @@ const Breadcrumbs = () => {
         ))}
       </ol>
     </nav>
+    </div>
   );
 };
 

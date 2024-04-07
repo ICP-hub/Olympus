@@ -14,7 +14,7 @@ type Announcements = record {
 type AnnouncementsInternal = record {
   announcement_data : Announcements;
   timestamp : nat64;
-  project_desc : text;
+  project_desc : opt text;
   project_logo : vec nat8;
   project_name : text;
 };
@@ -98,7 +98,7 @@ type Jobs = record {
 type JobsInternal = record {
   timestamp : nat64;
   job_data : Jobs;
-  project_desc : text;
+  project_desc : opt text;
   project_logo : vec nat8;
   project_name : text;
 };
@@ -293,7 +293,7 @@ type OfferToSendToProjectByInvestor = record {
 };
 type PaginationParam = record { page_size : nat64; page : nat64 };
 type ProjectInf = record {
-  project_description : text;
+  project_description : opt text;
   project_id : text;
   project_logo : vec nat8;
   project_name : text;
@@ -307,7 +307,7 @@ type ProjectInfo = record {
   project_discord : opt text;
   upload_private_documents : opt bool;
   weekly_active_users : opt nat64;
-  project_description : text;
+  project_description : opt text;
   vc_assigned : opt vec VentureCapitalist;
   revenue : opt nat64;
   private_docs : opt vec Docs;
@@ -315,6 +315,7 @@ type ProjectInfo = record {
   self_rating_of_project : float64;
   preferred_icp_hub : opt text;
   mentors_assigned : opt vec MentorProfile;
+  country_of_registration : opt text;
   project_twitter : opt text;
   target_market : opt text;
   long_term_goals : opt text;
@@ -322,6 +323,7 @@ type ProjectInfo = record {
   live_on_icp_mainnet : opt bool;
   technical_docs : opt text;
   github_link : opt text;
+  type_of_registration : opt text;
   public_docs : opt vec Docs;
   project_cover : vec nat8;
   project_website : opt text;
@@ -330,6 +332,7 @@ type ProjectInfo = record {
   supports_multichain : opt text;
   project_logo : vec nat8;
   project_name : text;
+  is_your_project_registered : opt bool;
   money_raised : opt MoneyRaised;
   project_team : opt vec TeamMember;
 };
@@ -370,7 +373,7 @@ type ProjectInfoInternal = record {
   creation_date : nat64;
 };
 type ProjectInfoo = record {
-  project_description : text;
+  project_description : opt text;
   project_id : text;
   project_logo : vec nat8;
   project_name : text;
@@ -388,7 +391,7 @@ type ProjectPublicInfo = record {
   user_data : UserInformation;
   project_discord : opt text;
   upload_private_documents : opt bool;
-  project_description : text;
+  project_description : opt text;
   vc_assigned : opt vec VentureCapitalist;
   token_economics : opt text;
   self_rating_of_project : float64;
