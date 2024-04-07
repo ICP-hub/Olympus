@@ -307,6 +307,19 @@ const MentorRegForm = () => {
         dispatch(allHubHandlerRequest());
     }, [actor, dispatch]);
 
+    useEffect(() => {
+        if(actor){
+          (async() => {
+            const result = await actor.get_user_information()
+            if(result){
+              setImageData(result?.Ok?.profile_picture?.[0] ?? null)
+            }else{
+              setImageData(null);
+            }
+          })();
+        }
+      },[actor])
+
     return (
         <>
             <DetailHeroSection />
