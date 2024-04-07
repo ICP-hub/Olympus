@@ -61,7 +61,7 @@ function SearchMentors() {
             );
             let name = mentor[1]?.mentor_profile?.profile?.user_data?.full_name;
             let bio = mentor[1]?.mentor_profile?.profile?.user_data?.bio[0];
-            let skills = mentor[1]?.mentor_profile?.profile?.area_of_expertise
+            let skills = mentor[1]?.mentor_profile?.profile?.user_data?.area_of_interest;
             let role = "Mentor";
             let category_of_mentoring_service = mentor[1]?.mentor_profile?.profile?.category_of_mentoring_service;
             return (

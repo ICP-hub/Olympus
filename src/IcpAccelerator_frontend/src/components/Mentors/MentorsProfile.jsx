@@ -45,7 +45,7 @@ const MentorsProfile = () => {
   let mentorLocation = mentorProfileData?.user_data?.country;
   let categoryOfMentoringService =
     mentorProfileData?.category_of_mentoring_service;
-  let areaOfExpertise = mentorProfileData?.area_of_expertise;
+  let areaOfExpertise = mentorProfileData?.user_data?.area_of_interest;
   let icopHubOrSpoke = mentorProfileData?.icop_hub_or_spoke;
   let hubOwner = mentorProfileData?.hub_owner;
   let mentorWebsite = mentorProfileData?.website;
@@ -106,7 +106,7 @@ const MentorsProfile = () => {
             </div>
           </div>
           <div className="flex flex-row gap-4 items-center md:w-1/2 w-full">
-            <h6 className="text-[15px] font-[450]">Area of expertise : </h6>
+            <h6 className="text-[15px] font-[450]">Area of interest : </h6>
             <div className="text-[15px] leading-4 flex items-center ">
               <span className="bg-gradient-to-r from-[#B5B5B54D] to-[#B8B8B84D] w-fit rounded-2xl py-1 px-2 underline">
                 {areaOfExpertise}

@@ -36,6 +36,13 @@ const Testimonial = () => {
       fetchTestimonial(IcpAccelerator_backend);
     }
   }, [actor]);
+
+  if (noData) {
+    return <div className="items-center w-full">
+      <NoDataCard />
+    </div>
+  }
+
   return (
     <div className="flex flex-row gap-4 mt-3 max-md:flex-col">
       {testimonialData &&
