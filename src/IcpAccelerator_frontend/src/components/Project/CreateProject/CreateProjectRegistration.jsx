@@ -598,7 +598,7 @@ const CreateProjectRegistration = () => {
       if (formattedData.user_data.profile_picture) {
         imageUrlToByteArray(formattedData.user_data.profile_picture[0])
           .then((imageUrl) => {
-            setImageData(imageUrl);
+            // setImageData(imageUrl);
 
             console.log("i am here Working ===>", imageUrl);
           })
@@ -734,7 +734,7 @@ const CreateProjectRegistration = () => {
       };
       let tempObj2 = {
         user_data: {
-          profile_picture: [imageData] || [],
+          profile_picture: imageData ? [imageData] : [],
           full_name: updatedFormData.full_name || "",
           country: updatedFormData.country || "",
           email: [updatedFormData.email] || [],
@@ -743,6 +743,8 @@ const CreateProjectRegistration = () => {
           openchat_username: [updatedFormData.openchat_username] || [],
           bio: [updatedFormData.bio] || [],
           area_of_interest: updatedFormData.area_of_interest || [],
+          type_of_profile: updatedFormData.type_of_profile || [],
+          reason_to_join:updatedFormData.type_of_profile || []
         },
         upload_private_documents: [updateIsPrivateDocument],
         project_elevator_pitch: [updatedFormData.project_elevator_pitch],
@@ -826,7 +828,7 @@ const CreateProjectRegistration = () => {
       };
       let tempObj = {
         user_data: {
-          profile_picture: [updatedFormData.imageData] || [],
+          profile_picture: imageData ? [imageData] : [],
           full_name: updatedFormData.full_name || "",
           country: updatedFormData.country || "",
           email: [updatedFormData.email] || [],
@@ -835,6 +837,8 @@ const CreateProjectRegistration = () => {
           openchat_username: [updatedFormData.openchat_username] || [],
           bio: [updatedFormData.bio] || [],
           area_of_interest: updatedFormData.area_of_interest || [],
+          type_of_profile: updatedFormData.type_of_profile || [],
+          reason_to_join: updatedFormData.type_of_profile || []
         },
         upload_private_documents: [updateIsPrivateDocument],
         project_elevator_pitch: [updatedFormData.project_elevator_pitch],
