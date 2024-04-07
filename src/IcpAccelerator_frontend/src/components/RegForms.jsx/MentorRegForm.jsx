@@ -111,7 +111,7 @@ const MentorRegForm = () => {
                 .required("Years of experience mentoring startups is required"),
             mentor_linkedin_url: yup.string().test('is-non-empty', 'LinkedIn url is required',
                 (value) => /\S/.test(value)).url("Invalid url").required("LinkedIn url is required"),
-            mentor_documents_url: yup.string().nullable(true).optional().url("Invalid url"),
+            // mentor_documents_url: yup.string().nullable(true).optional().url("Invalid url"),
 
 
         }).required();
@@ -234,8 +234,8 @@ const MentorRegForm = () => {
     // default reasons set function 
     const setReasonOfJoiningSelectedOptionsHandler = (val) => {
         setReasonOfJoiningSelectedOptions(
-            val && val.length > 0
-                ? val.map((reason) =>
+            val && val.length > 0 && val[0].length > 0
+                ? val[0].map((reason) =>
                     ({ value: reason, label: reason }))
                 :
                 [])
@@ -256,7 +256,7 @@ const MentorRegForm = () => {
             setInterestedDomainsSelectedOptionsHandler(val?.area_of_interest ?? null)
             setImagePreview(val?.profile_picture?.[0] ?? "");
             setValue('type_of_profile', val?.type_of_profile?.[0])
-            setValue('reasons_to_join_platform', val?.reason_to_join ? val?.reason_to_join.join(" ") : "");
+            setValue('reasons_to_join_platform', val?.reason_to_join ? val?.reason_to_join.join(", ") : "");
             setReasonOfJoiningSelectedOptionsHandler(val?.reason_to_join);
         }
     }
@@ -999,7 +999,7 @@ const MentorRegForm = () => {
                                         </span>
                                     )}
                                 </div>
-                                <div className="relative z-0 group mb-6">
+                                {/* <div className="relative z-0 group mb-6">
                                     <label htmlFor="mentor_documents_url"
                                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
                                         Documents
@@ -1019,7 +1019,7 @@ const MentorRegForm = () => {
                                             {errors?.mentor_documents_url?.message}
                                         </span>
                                     )}
-                                </div>
+                                </div> */}
                             </div>
 
 
