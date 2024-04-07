@@ -450,8 +450,8 @@ type ProjectWithRoles = record {
 type Rating = record {
   sub_level : text;
   level_name : text;
-  sub_level_number : nat32;
-  level_number : nat32;
+  sub_level_number : float64;
+  level_number : float64;
   rating : float64;
 };
 type RatingAverages = record {
@@ -468,7 +468,6 @@ type RatingUpdate = record {
 };
 type RatingView = record {
   level_name : text;
-  role : text;
   sub_level_name : text;
   timestamp : nat64;
   rating : nat32;

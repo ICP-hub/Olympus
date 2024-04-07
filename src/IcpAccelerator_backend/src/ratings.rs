@@ -9,14 +9,6 @@ use std::fmt;
 use ic_cdk_macros::query;
 
 
-
-#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
-pub struct Level {
-    name: String,
-    sub_levels: HashMap<String, RatingTypes>,
-    timestamp: u64,
-}
-
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct RatingTypes {
     peer: Vec<TimestampedRating>,
@@ -25,20 +17,13 @@ pub struct RatingTypes {
     vc: Vec<TimestampedRating>,
 }
 
-// #[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq)]
-// pub enum RatingType {
-//     Peer,
-//     Own,
-//     Mentor,
-// }
-
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct Rating {
     level_name: String,
-    level_number: u32,
+    level_number: f64,
     sub_level: String,
-    sub_level_number: u32,
+    sub_level_number: f64,
     rating: f64,
 }
 
@@ -52,17 +37,12 @@ pub struct RatingInternal{
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct TimestampedRating {
-    sub_level_number: u32,
+    rating: Rating,
     timestamp: u64,
 }
 
-#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
-pub struct MainLevelRatings {
-    level: String,
-    ratings: Vec<f64>,
-}
 
-#[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq)]
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq, Default)]
 pub struct RatingAverages {
     pub mentor_average: Vec<f64>,
     pub vc_average: Vec<f64>,
@@ -71,15 +51,28 @@ pub struct RatingAverages {
     pub overall_average: Vec<f64>,
 }
 
-pub type ProjectRatings = HashMap<Principal, HashMap<String, Level>>;
+impl RatingAverages {
+    pub fn new() -> Self {
+        RatingAverages {
+            mentor_average: Vec::new(),
+            vc_average: Vec::new(),
+            peer_average: Vec::new(),
+            own_average: Vec::new(),
+            overall_average: Vec::new(),
+        }
+    }
+}
 
-pub type RatingSystem = HashMap<String, ProjectRatings>;
+pub type RatingAverageStorage = HashMap<String, RatingAverages>;
+
+pub type RatingSystem = HashMap<String, HashMap<Principal, Vec<(String, TimestampedRating)>>>;
 
 type LastRatingTimestamps = HashMap<String, HashMap<Principal, u64>>;
 
 thread_local! {
     pub static RATING_SYSTEM: RefCell<RatingSystem> = RefCell::new(RatingSystem::new());
     pub static LAST_RATING_TIMESTAMPS: RefCell<LastRatingTimestamps> = RefCell::new(LastRatingTimestamps::new());
+    pub static AVERAGE_STORAGE: RefCell<RatingAverageStorage> = RefCell::new(RatingAverageStorage::new());
 }
 
 pub fn pre_upgrade_rating_system() {
@@ -109,15 +102,6 @@ pub fn post_upgrade_rating_system() {
     }
 }
 
-impl Level {
-    fn new(name: &str) -> Self {
-        Level {
-            name: name.to_string(),
-            sub_levels: HashMap::new(),
-            timestamp: time(),
-        }
-    }
-}
 
 impl RatingTypes {
     fn new() -> Self {
@@ -230,7 +214,7 @@ pub fn update_rating_api(rating_data: RatingUpdate) -> String {
     ic_cdk::println!("Debug: Starting updates for Principal ID: {} with {} ratings for project ID: {}", principal_id, rating_data.ratings.len(), rating_data.project_id);
 
     let current_timestamp = time();
-    let thirteen_days_in_seconds: u64 = 13 * 24 * 60 *  60 * 1000000000;
+    let thirteen_days_in_seconds: u64 = 13 * 24 * 60 * 60 * 1000000000;
     let mut response_message = "No ratings updated.".to_string();
     let can_rate = RATING_SYSTEM.with(|system| {
         can_rate_again(&system.borrow(), &rating_data.project_id, &principal_id, current_timestamp, thirteen_days_in_seconds)
@@ -239,41 +223,29 @@ pub fn update_rating_api(rating_data: RatingUpdate) -> String {
 
     if !can_rate {
         ic_cdk::println!("Debug: User cannot rate again due to the 13-day rule.");
-        return "You cannot rate this project again yet.".to_string();
+        return "You cannot rate this project for the next 13 days".to_string();
     }
 
     RATING_SYSTEM.with(|system| {
         let mut system = system.borrow_mut();
         let project_ratings = system.entry(rating_data.project_id.clone()).or_insert_with(HashMap::new);
-        ic_cdk::println!("Debug Line 193: Retrieved or inserted project ratings for project ID: {}", rating_data.project_id);
-
-        let user_ratings = project_ratings.entry(principal_id).or_insert_with(HashMap::new);
-        ic_cdk::println!("Debug Line 196: Retrieved or inserted user ratings for Principal ID: {}", principal_id);
-
-        for rating in &rating_data.ratings {
-            ic_cdk::println!("Debug Line 199: Processing rating for level: {}, sub_level: {}", rating.level_name, rating.sub_level);
-            let level = user_ratings.entry(rating.level_name.clone())
-                                    .or_insert_with(|| {
-                                        ic_cdk::println!("Debug Line 201: Creating new Level entry for {}", rating.level_name);
-                                        Level::new(&rating.level_name)
-                                    });
-            let rating_types = level.sub_levels.entry(rating.sub_level.clone())
-                                               .or_insert_with(|| {
-                                                   ic_cdk::println!("Debug line 206: Creating new RatingTypes entry for sub_level {}", rating.sub_level);
-                                                   RatingTypes::new()
-                                               });
-
-            let timestamped_rating = TimestampedRating { sub_level_number: rating.sub_level_number, timestamp: current_timestamp };
-            ic_cdk::println!("Debug: Created TimestampedRating with rating: {}, timestamp: {}", rating.rating, current_timestamp);
+        let role_ratings = project_ratings.entry(principal_id).or_insert_with(Vec::new);
+        
+        for rating in rating_data.ratings {
+            let new_rating = (rating_data.current_role.clone(), TimestampedRating {
+                rating,
+                timestamp: current_timestamp,
+            });
 
             match rating_data.current_role.as_str() {
-                "vc" => rating_types.vc.push(timestamped_rating),
-                "mentor" => rating_types.mentor.push(timestamped_rating),
-                "project" => rating_types.own.push(timestamped_rating),
-                _ => ic_cdk::println!("Debug: Encountered unknown role: '{}'.", rating_data.current_role),
+                "vc" => role_ratings.push(new_rating),
+                "mentor" => role_ratings.push(new_rating),
+                "project" => role_ratings.push(new_rating),
+                _ => println!("Debug: Encountered unknown role: '{}'.", rating_data.current_role),
             }
             response_message = "Ratings updated successfully".to_string();
         }
+
         update_last_rating_time(&rating_data.project_id, &principal_id, current_timestamp);
     });
 
@@ -286,138 +258,117 @@ fn round_to_one_decimal(value: f64) -> f64 {
 }
 
 
-pub fn calculate_average_api(project_id: &str) -> RatingAverages {
-    let mut averages = RatingAverages {
-        mentor_average: Vec::new(),
-        vc_average: Vec::new(),
-        peer_average: Vec::new(),
-        own_average: Vec::new(),
-        overall_average: Vec::new(),
-    };
+pub fn calculate_average_api_storage(project_id: &str){
 
     let total_levels = 8;
+    
+    let mut averages = AVERAGE_STORAGE.with(|storage| {
+        storage.borrow().get(project_id).cloned().unwrap_or_default()
+    });
+
     RATING_SYSTEM.with(|system| {
         let system = system.borrow();
-        ic_cdk::println!("Calculating averages for project ID: {}", project_id);
-
         if let Some(project_ratings) = system.get(project_id) {
-            ic_cdk::println!("Found ratings for project ID.");
+            for (_, ratings) in project_ratings {
+                let mut mentor_sum = 0.0;
+                let mut mentor_count = 0;
+                let mut vc_sum = 0.0;
+                let mut vc_count = 0;
+                let mut own_sum = 0.0;
+                let mut own_count = 0;
 
-            // Determine the most recent timestamp across all ratings
-            let most_recent_timestamp = project_ratings.values()
-                .flat_map(|levels| levels.values())
-                .flat_map(|level| level.sub_levels.values())
-                .flat_map(|rating_types| rating_types.mentor.iter().chain(&rating_types.vc).chain(&rating_types.own))
-                .map(|timestamped_rating| timestamped_rating.timestamp)
-                .max();
+                // Calculate cumulative sums and counts for each role
+                for (role, timestamped_rating) in ratings {
+                    let sub_level_num = timestamped_rating.rating.sub_level_number as f64;
 
-            if let Some(timestamp) = most_recent_timestamp {
-                ic_cdk::println!("Most recent timestamp found: {}", timestamp);
-
-                let (mut mentor_sub_level_sum, mut mentor_count, mut vc_sub_level_sum, mut vc_count, mut own_sub_level_sum, mut own_count) = (0.0, 0, 0.0, 0, 0.0, 0);
-
-                // Filter and accumulate ratings that match the most recent timestamp
-                for levels in project_ratings.values() {
-                    for level in levels.values() {
-                        for rating_types in level.sub_levels.values() {
-                            mentor_sub_level_sum += rating_types.mentor.iter().filter(|r| r.timestamp == timestamp).map(|r| r.sub_level_number as f64).sum::<f64>();
-                            mentor_count += rating_types.mentor.iter().filter(|r| r.timestamp == timestamp).count();
-
-                            vc_sub_level_sum += rating_types.vc.iter().filter(|r| r.timestamp == timestamp).map(|r| r.sub_level_number as f64).sum::<f64>();
-                            vc_count += rating_types.vc.iter().filter(|r| r.timestamp == timestamp).count();
-
-                            own_sub_level_sum += rating_types.own.iter().filter(|r| r.timestamp == timestamp).map(|r| r.sub_level_number as f64).sum::<f64>();
-                            own_count += rating_types.own.iter().filter(|r| r.timestamp == timestamp).count();
-                        }
+                    match role.as_str() {
+                        "mentor" => {
+                            mentor_sum += sub_level_num;
+                            mentor_count += 1;
+                        },
+                        "vc" => {
+                            vc_sum += sub_level_num;
+                            vc_count += 1;
+                        },
+                        "project" => {
+                            own_sum += sub_level_num;
+                            own_count += 1;
+                        },
+                        _ => (),
                     }
                 }
 
-                ic_cdk::println!("Accumulated sums - Mentor: {}, VC: {}, Own: {}", mentor_sub_level_sum, vc_sub_level_sum, own_sub_level_sum);
-                ic_cdk::println!("Counts - Mentor: {}, VC: {}, Own: {}", mentor_count, vc_count, own_count);
-
-                let mentor_average = if mentor_count > 0 { mentor_sub_level_sum as f64 / total_levels as f64 } else { 0.0 };
+                // Calculate and store new averages, appending to the history
                 if mentor_count > 0 {
-                    averages.mentor_average.push(round_to_one_decimal(mentor_sub_level_sum / total_levels as f64));
+                    let new_mentor_average = mentor_sum / total_levels as f64;
+                    averages.mentor_average.push(round_to_one_decimal(new_mentor_average));
                 }
-                let vc_average = if vc_count > 0 { vc_sub_level_sum as f64 / total_levels as f64 } else { 0.0 };
                 if vc_count > 0 {
-                    averages.vc_average.push(round_to_one_decimal(vc_sub_level_sum as f64 / total_levels as f64 ));
+                    let new_vc_average = vc_sum / total_levels as f64;
+                    averages.vc_average.push(round_to_one_decimal(new_vc_average));
                 }
-                let own_average = if own_count > 0 { own_sub_level_sum as f64 / total_levels as f64 } else { 0.0 };
                 if own_count > 0 {
-                    averages.own_average.push(round_to_one_decimal(own_sub_level_sum as f64 / total_levels as f64 ));
+                    let new_own_average = own_sum / total_levels as f64;
+                    averages.own_average.push(round_to_one_decimal(new_own_average));
                 }
-                ic_cdk::println!("Calculated averages - Mentor: {:?}, VC: {:?}, Own: {:?}", mentor_average, vc_average, own_average);
-                let combined_vc_mentor_average = if vc_count + mentor_count > 0 {
-                    (vc_sub_level_sum + mentor_sub_level_sum) as f64 / (total_levels) as f64
-                } else {
-                    0.0
-                };
-                ic_cdk::println!("Combined VC And Mentor Average Is: {:?}", combined_vc_mentor_average);
-
-                let overall_average_as_f64 = (combined_vc_mentor_average * 0.6) + (own_average * 0.4);
-                averages.overall_average.push(round_to_one_decimal(overall_average_as_f64));
-
-                ic_cdk::println!("Overall average calculated: {:?}", overall_average_as_f64);
-
-                return averages
-            } else {
-                ic_cdk::println!("No recent timestamp found for project ID: {}", project_id);
             }
-        } else {
-            ic_cdk::println!("No ratings found for project ID: {}", project_id);
-        }
 
-        averages
+            // Calculate the overall weighted average from the latest values
+            let latest_mentor = averages.mentor_average.last().unwrap_or(&0.0);
+            let latest_vc = averages.vc_average.last().unwrap_or(&0.0);
+            let latest_own = averages.own_average.last().unwrap_or(&0.0);
+            let combined_mentor_vc = (latest_mentor + latest_vc) / 2.0;
+            let new_overall_average = 0.6 * combined_mentor_vc + 0.4 * latest_own;
+            averages.overall_average.push(round_to_one_decimal(new_overall_average));
+        }
+    });
+
+    AVERAGE_STORAGE.with(|storage| {
+        storage.borrow_mut().insert(project_id.to_string(), averages);
+    });
+}
+
+
+
+pub fn calculate_average_api(project_id: &str) -> RatingAverages{
+    calculate_average_api_storage(project_id);
+    AVERAGE_STORAGE.with(|storage| {
+        let storage = storage.borrow();
+        storage.get(project_id).cloned().unwrap_or_default()
     })
 }
 
+
 #[query]
 pub fn get_ratings_by_principal(project_id: String) -> Result<Vec<RatingView>, String> {
-    let caller = caller();
-    ic_cdk::println!("Retrieving ratings for Principal ID: {} on project ID: {}", caller, project_id);
+    let caller_id = caller();
+    println!("Retrieving ratings for Principal ID: {} on project ID: {}", caller_id, project_id);
 
     let mut ratings_by_principal: Vec<RatingView> = Vec::new();
 
-    let _ = RATING_SYSTEM.with(|system| {
+    let result = RATING_SYSTEM.with(|system| {
         let system = system.borrow();
-
-        Ok(if let Some(project_ratings) = system.get(&project_id) {
-            if let Some(user_ratings) = project_ratings.get(&caller) {
-                for (level_name, level) in user_ratings {
-                    for (sub_level_name, rating_types) in &level.sub_levels {
-                        ratings_by_principal.extend(rating_types.mentor.iter().map(|rating| RatingView {
-                            level_name: level_name.clone(),
-                            sub_level_name: sub_level_name.clone(),
-                            rating: rating.sub_level_number,
-                            timestamp: rating.timestamp,
-                            role: "mentor".to_string(),
-                        }));
-                        ratings_by_principal.extend(rating_types.vc.iter().map(|rating| RatingView {
-                            level_name: level_name.clone(),
-                            sub_level_name: sub_level_name.clone(),
-                            rating: rating.sub_level_number,
-                            timestamp: rating.timestamp,
-                            role: "vc".to_string(),
-                        }));
-                        ratings_by_principal.extend(rating_types.own.iter().map(|rating| RatingView {
-                            level_name: level_name.clone(),
-                            sub_level_name: sub_level_name.clone(),
-                            rating: rating.sub_level_number,
-                            timestamp: rating.timestamp,
-                            role: "project".to_string(),
-                        }));
-                    }
+        if let Some(project_ratings) = system.get(&project_id) {
+            if let Some(role_ratings) = project_ratings.get(&caller_id) {
+                for (role, timestamped_rating) in role_ratings {
+                    let view = RatingView {
+                        level_name: timestamped_rating.rating.level_name.clone(),
+                        sub_level_name: timestamped_rating.rating.sub_level.clone(),
+                        rating: timestamped_rating.rating.sub_level_number as u32,
+                        timestamp: timestamped_rating.timestamp,
+                    };
+                    ratings_by_principal.push(view);
                 }
+                Ok(())
             } else {
-                return Err("No ratings found by this Principal ID for the specified project.".to_string());
+                Err("No ratings found by this Principal ID for the specified project.".to_string())
             }
         } else {
-            return Err("Project ID not found in the rating system.".to_string());
-        })
+            Err("Project ID not found in the rating system.".to_string())
+        }
     });
 
-    Ok(ratings_by_principal)
+    result.map(|_| ratings_by_principal)
 }
 
 #[derive(Debug, Serialize, Deserialize, CandidType)]
@@ -426,7 +377,6 @@ pub struct RatingView {
     pub sub_level_name: String,
     pub rating: u32,
     pub timestamp: u64,
-    pub role: String,
 }
 
 
