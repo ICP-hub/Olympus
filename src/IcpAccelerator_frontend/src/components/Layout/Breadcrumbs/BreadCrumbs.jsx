@@ -52,7 +52,6 @@ const Breadcrumbs = () => {
     }
     navigate('/');
   }
-  console.log(breadcrumbs)
   return (
     <div className="container mx-auto">
     <nav className="flex px-10 py-4" aria-label="Breadcrumb">
@@ -75,7 +74,6 @@ const Breadcrumbs = () => {
           </a>
         </li>
         {breadcrumbs.map((crumb, index) => (
-          // console.log('crumb',crumb),
           <React.Fragment key={index}>
             <li>
               <div className="flex items-center">

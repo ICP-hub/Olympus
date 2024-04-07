@@ -13,16 +13,20 @@ function uint8ArrayToBase64(uint8Arr) {
 }
 
 function* fetchUserHandler() {
-  const actor = yield select(selectActor);
-  
+
   try {
+    const actor = yield select(selectActor);
     let userData = yield call([actor, actor.get_user_information]);
-   const updatedProfileData = uint8ArrayToBase64(userData?.Ok?.profile_picture)
-    userData?.Ok?.profile_picture[0] = updatedProfileData
+    // console.log("userData====>>>", userData)
+    if (userData?.Ok?.profile_picture.length > 0) {
+      const updatedProfileData = uint8ArrayToBase64(userData?.Ok?.profile_picture)
+      userData?.Ok?.profile_picture[0] = updatedProfileData
+    }
     yield put(userRegisteredHandlerSuccess(userData));
   } catch (error) {
     yield put(userRegisteredHandlerFailure(error.toString()));
   }
+
 }
 
 
