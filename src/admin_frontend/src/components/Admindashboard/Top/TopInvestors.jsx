@@ -10,6 +10,8 @@ import {
   uint8ArrayToBase64,
 } from "../../Utils/AdminData/saga_function/blobImageToUrl";
 import NoDataCard from "../../../../../IcpAccelerator_frontend/src/components/Mentors/Event/NoDataCard";
+import { useNavigate } from "react-router-dom";
+
 const dummyData = [
   {
     id: 1,
@@ -44,7 +46,7 @@ const TopInvestors = () => {
   const actor = useSelector((currState) => currState.actors.actor);
 
   const [data, setData] = useState([]);
-
+  const navigate = useNavigate();
   function truncateWithEllipsis(str, startLen = 3, endLen = 3) {
     if (str.length <= startLen + endLen) {
       return str;
@@ -99,7 +101,11 @@ const TopInvestors = () => {
           <h1 className="font-bold mb-2">Top Investors</h1>
           {data.length > 0 ? (
             data.map((item, index) => (
-              <div key={index} className="w-full mb-2 flex flex-col">
+              <div
+                onClick={() => navigate("/all", { state: item.principal })}
+                key={index}
+                className="w-full cursor-pointer mb-2 flex flex-col"
+              >
                 <div className="flex flex-col justify-between border border-gray-200 rounded-xl pt-3 px-[2%]">
                   <div className="flex justify-between items-start ">
                     <div className="flex items-center">
@@ -139,7 +145,10 @@ const TopInvestors = () => {
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 20 20"
                       fill="#5B21B6"
-                      className="w-5 h-5"
+                      className="w-5 h-5 cursor-pointer"
+                      onClick={() =>
+                        navigate("/all", { state: item.principal })
+                      }
                     >
                       <path
                         fillRule="evenodd"

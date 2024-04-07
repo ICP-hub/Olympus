@@ -5,7 +5,7 @@ import BigLogo from "../../../assets/Logo/topLogoWhitepng.png";
 
 const SubmitSection = () => {
   return (
-    <div className="w-full h-fit bg-indigo-300 rounded-md shadow top-[-130px]">
+    <div className="w-full h-fit bg-indigo-300 rounded-md shadow">
       <div className="relative">
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-r from-purple-300 via-purple-400 to-purple-600 ellipse-quarter-left rounded-md"></div>
         <div className="absolute top-0 right-0 bg-gradient-to-br from-indigo-100 to-purple-600 w-36 h-36  ellipse-quarter-right rounded-md"></div>

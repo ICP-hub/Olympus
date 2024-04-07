@@ -19,6 +19,9 @@ function* fetchProjectPendingHandler() {
       actor,
       actor.project_awaiting_approval,
     ]);
+
+    // console.log("allProjectPendingStatus>>>>>>>>>>>>", allProjectPendingStatus);
+
     const updatedProjectProfiles = allProjectPendingStatus.map(
       ([principal, { project_profile, roles }]) => {
         const principalText = principalToText(principal);
