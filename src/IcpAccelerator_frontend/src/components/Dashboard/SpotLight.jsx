@@ -7,7 +7,7 @@ import "swiper/css/autoplay";
 import { useSelector } from "react-redux";
 import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
-import NoDataCard from "../Mentors/Event/NoDataCard";
+import NoDataCard from "../Mentors/Event/SpotlightNoDataCard";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import ment from "../../../assets/images/ment.jpg";

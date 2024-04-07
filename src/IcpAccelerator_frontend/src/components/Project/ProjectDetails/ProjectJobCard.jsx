@@ -4,7 +4,7 @@ import { IcpAccelerator_backend } from "../../../../../declarations/IcpAccelerat
 import ment from "../../../../assets/images/ment.jpg";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import useFormatDateFromBigInt from "../../hooks/useFormatDateFromBigInt";
-import NoDataCard from "../../Mentors/Event/NoDataCard";
+import NoDataCard from "../../Mentors/Event/JobsNoDataCard";
 import { Pagination, Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";

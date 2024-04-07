@@ -10,6 +10,7 @@ import uint8ArrayToBase64 from '../Utils/uint8ArrayToBase64';
 import { formatFullDateFromBigInt } from '../Utils/formatter/formatDateFromBigInt';
 import DeclineOfferModal from '../../models/DeclineOfferModal';
 import AcceptOfferModal from '../../models/AcceptOfferModal';
+import NoDataCard from '../Mentors/Event/MentorAssocReqNoDataCard';
 
 const MentorSideAssociation = () => {
     const navigate = useNavigate();
@@ -556,7 +557,7 @@ const MentorSideAssociation = () => {
                         )
                     })
                     : <>
-                        <h1>No Data</h1>
+                        <NoDataCard/>
                     </>
                 }
             </div>

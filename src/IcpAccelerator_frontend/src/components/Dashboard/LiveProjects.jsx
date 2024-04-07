@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
 import { useInView } from "react-intersection-observer";
 import { useSpring, animated, useTrail } from "react-spring";
-import NoDataCard from "../Mentors/Event/NoDataCard";
+import NoDataCard from "../Mentors/Event/LiveNoDataCard";
 
 const LiveProjects = ({ progress }) => {
   const actor = useSelector((currState) => currState.actors.actor);

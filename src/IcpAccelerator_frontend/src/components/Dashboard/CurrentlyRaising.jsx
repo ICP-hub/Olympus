@@ -5,7 +5,8 @@ import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import NoDataCard from "../Mentors/Event/NoDataCard";
+import NoDataCard from "../Mentors/Event/RaisingNoDataCard";
+
 const CurrentlyRaising = ({ progress }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
