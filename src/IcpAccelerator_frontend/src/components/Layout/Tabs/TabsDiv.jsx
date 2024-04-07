@@ -34,7 +34,7 @@ export default function TabsDiv({ role, onClose }) {
         })
       );
       onClose();
-      window.location.href = "/";
+      // window.location.href = "/";
     } else {
     }
   };

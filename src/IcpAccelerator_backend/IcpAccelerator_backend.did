@@ -581,6 +581,14 @@ type TopData = record {
   joined_on : nat64;
   full_name : text;
 };
+type TopDataProject = record {
+  "principal" : text;
+  country : text;
+  profile_picture : opt vec nat8;
+  area_of_interest : text;
+  joined_on : nat64;
+  full_name : text;
+};
 type UpdateCounts = record {
   mentor_update : opt nat32;
   vc_update : opt nat32;
@@ -907,7 +915,7 @@ service : {
   get_suggestions_by_status_caller : (text, text) -> (vec Suggestion) query;
   get_testimonials : (principal) -> (Result_10) query;
   get_top_5_mentors : () -> (vec record { principal; TopData; nat64 }) query;
-  get_top_5_projects : () -> (vec record { text; TopData; nat64 }) query;
+  get_top_5_projects : () -> (vec record { text; TopDataProject; nat64 }) query;
   get_top_5_vcs : () -> (vec record { principal; TopData; nat64 }) query;
   get_total_approved_list_with_user_data : () -> (
       vec record { principal; ApprovedList },
