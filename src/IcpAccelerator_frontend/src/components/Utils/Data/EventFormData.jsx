@@ -4,7 +4,7 @@ export const formFields = [
       type: "text",
       name: "title",
       required: true,
-      label: "Title *",
+      label: "Cohort name",
     },
     {
       id: "description",
@@ -33,14 +33,14 @@ export const formFields = [
       type: "text",
       name: "eligibility",
       required: true,
-      label: "Eligibility Cirteria *",
+      label: "Eligibility Cirteria",
     },
      {
       id: "rubric_eligibility",
       type: "number",
       name: "rubric_eligibility",
       required: true,
-      label: "Level on rubric required for eligibility *",
+      label: "Level on rubric required for eligibility",
     },
     {
       id: "no_of_seats",
@@ -49,13 +49,13 @@ export const formFields = [
       required: true,
       label: "No of seats",
     },
-    {
-      id: "tags",
-      type: "text",
-      name: "tags",
-      required: true,
-      label: "Tags",
-    },
+    // {
+    //   id: "tags",
+    //   type: "text",
+    //   name: "tags",
+    //   required: true,
+    //   label: "Tags",
+    // },
     {
       id: "deadline",
       type: "date",

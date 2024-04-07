@@ -386,16 +386,16 @@ const ProjectRatings = ({ data }) => {
         console.log('result-in-get_ratings_by_principal', result)
         if (result && result?.Ok.length > 0) {
           setRatingDone(true);
-          navigate('/')
+          // navigate('/')
         } else {
           setRatingDone(false);
-          navigate('/')
+          // navigate('/')
         }
       })
       .catch((error) => {
         console.log('error-in-get_ratings_by_principal', error)
         setRatingDone(false);
-        navigate('/')
+        // navigate('/')
       })
   }
   useEffect(() => {
