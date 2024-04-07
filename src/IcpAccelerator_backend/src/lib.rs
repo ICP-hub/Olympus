@@ -70,8 +70,6 @@ mod trie;
 // use crate::notification::Notification;
 use crate::project_registration::Announcements;
 use crate::project_registration::Blog;
-use crate::ratings::MainLevelRatings;
-use crate::ratings::Rating;
 use admin::*;
 use candid::Principal;
 

@@ -146,7 +146,7 @@ type MentorInternal = record {
 };
 type MentorProfile = record {
   user_data : UserInformation;
-  reason_for_joining : text;
+  reason_for_joining : opt text;
   existing_icp_mentor : bool;
   preferred_icp_hub : opt text;
   website : opt text;
@@ -447,8 +447,8 @@ type ProjectWithRoles = record {
 type Rating = record {
   sub_level : text;
   level_name : text;
-  sub_level_number : nat32;
-  level_number : nat32;
+  sub_level_number : float64;
+  level_number : float64;
   rating : float64;
 };
 type RatingAverages = record {
@@ -465,7 +465,6 @@ type RatingUpdate = record {
 };
 type RatingView = record {
   level_name : text;
-  role : text;
   sub_level_name : text;
   timestamp : nat64;
   rating : nat32;
@@ -604,10 +603,10 @@ type UserInformation = record {
   telegram_id : opt text;
   twitter_id : opt text;
   area_of_interest : text;
-  type_of_profile : text;
+  type_of_profile : opt text;
   openchat_username : opt text;
   email : opt text;
-  reason_to_join : vec text;
+  reason_to_join : opt vec text;
   full_name : text;
 };
 type UserType = record { id : int32; role_type : text };
@@ -622,7 +621,7 @@ type VentureCapitalist = record {
   existing_icp_portfolio : opt text;
   registered_under_any_hub : opt bool;
   name_of_fund : text;
-  reason_for_joining : text;
+  reason_for_joining : opt text;
   logo : opt vec nat8;
   average_check_size : float64;
   money_invested : opt float64;
@@ -630,7 +629,7 @@ type VentureCapitalist = record {
   preferred_icp_hub : text;
   range_of_check_size : text;
   project_on_multichain : opt text;
-  investor_type : text;
+  investor_type : opt text;
   website_link : opt text;
   announcement_details : opt text;
   stage : text;
