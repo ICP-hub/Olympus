@@ -15,6 +15,8 @@ import DetailHeroSection from "../../Common/DetailHeroSection";
 import Founder from "../../../../assets/images/founderRegistration.png";
 // import { getCurrentRoleStatusRequestHandler } from "../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 import { format } from "date-fns";
+import ReactSelect from "react-select";
+
 const today = new Date();
 const startDate = new Date("1900-01-01");
 
@@ -28,16 +30,17 @@ const schema = yup.object({
     .trim()
     .required("Description is required")
     .matches(/^[^\s].*$/, "Cannot start with a space"),
-  cohort_launch_date: yup.date().required(),
-  cohort_end_date: yup.date().required(),
-  tags: yup
-    .string()
-    .required("Required")
-    .test("is-non-empty", null, (value) => value && value.trim().length > 0),
-  deadline: yup.date().required(),
+  cohort_launch_date: yup.date().required().typeError("Must be a date"),
+  cohort_end_date: yup.date().required().typeError("Must be a date"),
+  tags: yup.string().test('is-non-empty', 'Selecting an interest is required',
+  (value) => /\S/.test(value)).required("Selecting an interest is required"),
+
+  deadline: yup.date().required().typeError("Must be a date"),
   eligibility: yup.string(),
   rubric_eligibility: yup
     .number()
+    .min(0, "level 0 - 8 allowed only")
+    .max(8, "level 0 - 8 allowed only")
     .typeError("You must enter a number")
     .required("Required"),
   no_of_seats: yup.number().typeError("You must enter a number").required(),
@@ -45,20 +48,33 @@ const schema = yup.object({
 
 const EventForm = () => {
   const actor = useSelector((currState) => currState.actors.actor);
+  const areaOfExpertise = useSelector((currState) => currState.expertiseIn.expertise);
 
   const [inputType, setInputType] = useState("date");
 
+
+  const [interestedDomainsOptions, setInterestedDomainsOptions] = useState([]);
+  const [interestedDomainsSelectedOptions, setInterestedDomainsSelectedOptions] = useState([]);
+  
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm({
+  // const {
+  //   register,
+  //   handleSubmit,
+  //   clearErrors,
+
+  //   formState: { errors, isSubmitting },
+  // } = useForm({
+  //   resolver: yupResolver(schema),
+  //   mode: "all",
+  // });
+
+  const { register, handleSubmit, reset, clearErrors, setValue, getValues, setError, watch, control, trigger, formState: { errors, isSubmitting } } = useForm({
     resolver: yupResolver(schema),
     mode: "all",
-  });
+});
+
   //   async (file) => {
   //     clearErrors("imageData");
   //     if (!["image/jpeg", "image/png", "image/gif"].includes(file.type))
@@ -170,7 +186,16 @@ const EventForm = () => {
     />
   );
 
-
+  useEffect(() => {
+    if (areaOfExpertise) {
+        setInterestedDomainsOptions(areaOfExpertise.map((expert) => ({
+            value: expert.name,
+            label: expert.name,
+        })))
+    } else {
+        setInterestedDomainsOptions([]);
+    }
+}, [areaOfExpertise])
   const errorsFunc = (val) => {
     console.log('val', val)
   }
@@ -192,20 +217,19 @@ const EventForm = () => {
                   <div key={field.id} className="relative z-0 group mb-6">
                     <label
                       htmlFor={field.id}
-                      className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                      className="flex gap-2 mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                     >
-                      {field.label}
+                      {field.label} <span className={`${field.label === "Eligibility Cirteria" ? 'hidden' : 'flex'} text-red-500`}>*</span>
                     </label>
                     {field.type === "textarea" ? (
                       <textarea
                         name={field.name}
                         id={field.id}
                         {...register(field.name)}
-                        className={`bg-gray-50 border-2 ${
-                          errors[field.name]
+                        className={`bg-gray-50 border-2 ${errors[field.name]
                             ? "border-red-500 placeholder:text-red-500"
                             : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                         placeholder={field.placeholder}
                         onFocus={() => handleFocus(field)}
                         onBlur={() => handleBlur(field)}
@@ -218,11 +242,10 @@ const EventForm = () => {
                         name={field.name}
                         id={field.id}
                         {...register(field.name)}
-                        className={`bg-gray-50 border-2 ${
-                          errors[field.name]
+                        className={`bg-gray-50 border-2 ${errors[field.name]
                             ? "border-red-500 placeholder:text-red-500"
                             : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                         placeholder={field.placeholder}
                         onFocus={() => handleFocus(field)}
                         onBlur={() => handleBlur(field)}
@@ -235,6 +258,62 @@ const EventForm = () => {
                     )}
                   </div>
                 ))}
+                <div className="relative z-0 group mb-6">
+                  <label htmlFor="tags"
+                    className="flex gap-2 mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
+                    Tags <span className="text-red-500">*</span>
+                  </label>
+                  <ReactSelect
+                    isMulti
+                    menuPortalTarget={document.body}
+                    menuPosition={"fixed"}
+                    styles={{
+                      menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                      control: (provided, state) => ({
+                        ...provided,
+                        paddingBlock: "2px",
+                        borderRadius: "8px",
+                        border: errors.tags
+                          ? "2px solid #ef4444"
+                          : "2px solid #737373",
+                        backgroundColor: "rgb(249 250 251)",
+                        "&::placeholder": {
+                          color: errors.tags
+                            ? "#ef4444"
+                            : "currentColor",
+                        },
+                      }),
+                    }}
+                    value={interestedDomainsSelectedOptions}
+                    options={interestedDomainsOptions}
+                    classNamePrefix="select"
+                    className="basic-multi-select w-full text-start"
+                    placeholder="Select a tag"
+                    name="tags"
+                    onChange={(selectedOptions) => {
+                      if (selectedOptions && selectedOptions.length > 0) {
+                        setInterestedDomainsSelectedOptions(selectedOptions)
+                        clearErrors("tags");
+                        setValue("tags",
+                          selectedOptions.map((option) => option.value).join(", "),
+                          { shouldValidate: true });
+                      } else {
+                        setInterestedDomainsSelectedOptions([])
+                        setValue("tags", "",
+                          { shouldValidate: true });
+                        setError("tags", {
+                          type: "required",
+                          message: "Selecting a tag is required",
+                        });
+                      }
+                    }}
+                  />
+                  {errors.tags && (
+                    <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                      {errors.tags.message}
+                    </span>
+                  )}
+                </div>
               </div>
               <div className="flex justify-end mt-4">
                 <button

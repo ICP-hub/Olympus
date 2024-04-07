@@ -10,3 +10,10 @@ export function formatFullDateFromBigInt(bigIntDate) {
     const dateString = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
     return `${dateString}`;
 }
+
+
+export function formatFullDateFromSimpleDate(val) {
+    const date = new Date(val);
+    const dateString = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    return `${dateString}`;
+}
