@@ -17,6 +17,8 @@ const UserAllProfile = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const location = useLocation();
   const CurrentUserPrincipal = location.state;
+
+  // console.log("CurrentUserPrincipal", CurrentUserPrincipal);
   const [currentRole, setCurrentRole] = useState("user");
   const [userData, setUserData] = useState(null);
 

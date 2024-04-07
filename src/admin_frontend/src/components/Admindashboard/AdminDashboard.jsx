@@ -31,9 +31,9 @@ const AdminDashboard = () => {
   );
   const totalLive = useSelector((currState) => currState.totalLive.total_Live);
   const totalUpdate = useSelector(
-    (currState) => currState.totalLive.total_Live
+    (currState) => currState.updateProfile.update_Profile
   );
-
+  // console.log("totalUpdate >>>>>>>>>>>>>>>", totalUpdate);
   const [isAcceptModalOpen, setIsAcceptModalOpen] = useState(false);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
 

@@ -1388,10 +1388,65 @@ fn get_top_5_vcs() -> Vec<(Principal, TopData, usize)> {
     mentor_project_counts.into_iter().take(5).collect()
 }
 
+// #[query]
+// fn get_top_5_projects() -> Vec<(String, TopData, usize)> {
+//     // Temporarily holding the projects to sort and filter
+//     let mut project_counts: Vec<(String, TopData, usize)> = Vec::new();
+
+//     // Properly accessing the APPLICATION_FORM RefCell
+//     APPLICATION_FORM.with(|application_form| {
+//         let application_form = application_form.borrow(); // Access the RefCell for reading
+
+//         for (_principal, projects) in application_form.iter() {
+            
+//             for project_internal in projects {
+
+//                 let project_info = &project_internal.params;
+
+//                 let mentor_count = project_info
+//                     .mentors_assigned
+//                     .as_ref()
+//                     .map_or(0, |v| v.len());
+//                 let vc_count = project_info.vc_assigned.as_ref().map_or(0, |v| v.len());
+//                 let total_count = mentor_count + vc_count;
+
+//                 // Placeholder for TopData - adjust according to actual data retrieval method
+                
+//                 let top_data = TopData {
+//                     full_name: project_info.user_data.full_name.clone(),
+//                     profile_picture: Some(project_info.project_logo.clone()),
+//                     area_of_interest: project_info.project_area_of_focus.clone(),
+//                     country: project_info.user_data.country.clone(),
+//                     joined_on: project_internal.creation_date.clone(),
+//                 };
+
+//                 project_counts.push((project_internal.uid.clone(), top_data, total_count));
+//             }
+//         }
+//     });
+
+//     // Sorting by the total count of mentors and VCs in descending order
+//     project_counts.sort_by(|a, b| b.2.cmp(&a.2));
+
+//     // Taking the top 5 projects based on total counts
+//     project_counts.into_iter().take(5).collect()
+// }
+
+
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default)]
+pub struct TopDataProject {
+    full_name: String,
+    profile_picture: Option<Vec<u8>>, // Assuming profile_picture is optional
+    area_of_interest: String,
+    country: String,
+    joined_on: u64,
+    principal: String,
+}
+
 #[query]
-fn get_top_5_projects() -> Vec<(String, TopData, usize)> {
+fn get_top_5_projects() -> Vec<(String, TopDataProject, usize)> {
     // Temporarily holding the projects to sort and filter
-    let mut project_counts: Vec<(String, TopData, usize)> = Vec::new();
+    let mut project_counts: Vec<(String, TopDataProject, usize)> = Vec::new();
 
     // Properly accessing the APPLICATION_FORM RefCell
     APPLICATION_FORM.with(|application_form| {
@@ -1412,12 +1467,13 @@ fn get_top_5_projects() -> Vec<(String, TopData, usize)> {
 
                 // Placeholder for TopData - adjust according to actual data retrieval method
                 
-                let top_data = TopData {
+                let top_data = TopDataProject {
                     full_name: project_info.user_data.full_name.clone(),
                     profile_picture: Some(project_info.project_logo.clone()),
                     area_of_interest: project_info.project_area_of_focus.clone(),
                     country: project_info.user_data.country.clone(),
                     joined_on: project_internal.creation_date.clone(),
+                    principal: _principal.to_string(),
                 };
 
                 project_counts.push((project_internal.uid.clone(), top_data, total_count));
@@ -1431,6 +1487,9 @@ fn get_top_5_projects() -> Vec<(String, TopData, usize)> {
     // Taking the top 5 projects based on total counts
     project_counts.into_iter().take(5).collect()
 }
+
+
+
 
 // #[query]
 // fn get_top_5_projects() -> Vec<(String, TopData, usize)> {

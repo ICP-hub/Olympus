@@ -8,41 +8,16 @@ import {
   uint8ArrayToBase64,
 } from "../../Utils/AdminData/saga_function/blobImageToUrl";
 import NoDataCard from "../../../../../IcpAccelerator_frontend/src/components/Mentors/Event/NoDataCard";
-const dummyData = [
-  {
-    id: 1,
-    logo: project,
-    name: "Builder.fi",
-    description: "Q&A marketplace built on...",
-    code: "0x2085...016B",
-  },
-  {
-    id: 2,
-    logo: project,
-    name: "Project 2",
-    description: "Description for project 2",
-    code: "0x2085...016C",
-  },
-  {
-    id: 3,
-    logo: project,
-    name: "Project 3",
-    description: "Description for project 33333333333333333333333",
-    code: "0x2085...016Cbbbbbbbbbbbbbbbbbbbb",
-  },
-  {
-    id: 4,
-    logo: project,
-    name: "Project 4",
-    description: "Description for project 4",
-    code: "0x2085...016C",
-  },
-];
+import { useNavigate } from "react-router-dom";
+
+
 const TopProjects = () => {
   const actor = useSelector((currState) => currState.actors.actor);
 
-  const [data, setData] = useState([]);
+  const navigate = useNavigate();
 
+  const [data, setData] = useState([]);
+  // console.log("dataaaaaaaaaaaaaa =>", data);
   useEffect(() => {
     const getTopProjects = async () => {
       try {
@@ -50,6 +25,7 @@ const TopProjects = () => {
         // console.log("getTop5proj", getTop5proj);
 
         const formattedTopProjects = getTop5proj.map((item) => ({
+          principal: item[1].principal,
           code: item[0],
           area_of_interest: item[1].area_of_interest,
           country: item[1].country,
@@ -89,7 +65,11 @@ const TopProjects = () => {
         <h1 className="font-bold mb-2">Top Projects</h1>
         {data.length > 0 ? (
           data.map((item, index) => (
-            <div key={index} className="w-full mb-2 flex flex-col">
+            <div
+              onClick={() => navigate("/all", { state: item.principal })}
+              key={index}
+              className="w-full cursor-pointer mb-2 flex flex-col"
+            >
               <div className="flex flex-col justify-between border border-gray-200 rounded-xl pt-3 px-[2%]">
                 <div className="flex justify-between items-start ">
                   <div className="flex items-center">
@@ -130,7 +110,8 @@ const TopProjects = () => {
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 20 20"
                     fill="#5B21B6"
-                    className="w-5 h-5"
+                    className="w-5 h-5 cursor-pointer"
+                    onClick={() => navigate("/all", { state: item.principal })}
                   >
                     <path
                       fillRule="evenodd"
