@@ -215,6 +215,8 @@ const CreateProjectRegistration = () => {
   const multiChain = useSelector((currState) => currState.chains.chains);
 
   const userData = useSelector((currState) => currState.userData.data.Ok);
+  const userActualFullData = useSelector((currState) => currState.userData.data.Ok);
+  
   const projectFullData = useSelector(
     (currState) => currState.projectData.data
   );
@@ -745,6 +747,7 @@ const CreateProjectRegistration = () => {
           area_of_interest: updatedFormData.area_of_interest || [],
           type_of_profile: updatedFormData.type_of_profile || [],
           reason_to_join:updatedFormData.type_of_profile || []
+
         },
         upload_private_documents: [updateIsPrivateDocument],
         project_elevator_pitch: [updatedFormData.project_elevator_pitch],
@@ -829,16 +832,16 @@ const CreateProjectRegistration = () => {
       let tempObj = {
         user_data: {
           profile_picture: imageData ? [imageData] : [],
-          full_name: updatedFormData.full_name || "",
-          country: updatedFormData.country || "",
-          email: [updatedFormData.email] || [],
-          telegram_id: [updatedFormData.telegram_id],
-          twitter_id: [updatedFormData.twitter_id],
-          openchat_username: [updatedFormData.openchat_username] || [],
-          bio: [updatedFormData.bio] || [],
-          area_of_interest: updatedFormData.area_of_interest || [],
-          type_of_profile: updatedFormData.type_of_profile || [],
-          reason_to_join: updatedFormData.type_of_profile || []
+          full_name: userActualFullData.full_name || "",
+          country: userActualFullData.country || "",
+          email: [userActualFullData.email?.[0] || ""],
+          telegram_id: [userActualFullData.telegram_id?.[0] || ""],
+          twitter_id: [userActualFullData.twitter_id?.[0] || ""],
+          openchat_username: [userActualFullData.openchat_username?.[0] || ""],
+          bio: [userActualFullData?.bio?.[0] || ""],
+          area_of_interest: userActualFullData.area_of_interest || "",
+          type_of_profile: [userActualFullData.type_of_profile?.[0] || ""],
+          reason_to_join: [userActualFullData?.reason_to_join?.[0] || [""]]
         },
         upload_private_documents: [updateIsPrivateDocument],
         project_elevator_pitch: [updatedFormData.project_elevator_pitch],
@@ -864,7 +867,7 @@ const CreateProjectRegistration = () => {
         vc_assigned: [],
         mentors_assigned: [],
         project_team: [],
-        project_description: updatedFormData.project_description || "",
+        project_description: [updatedFormData.project_description || ""],
         token_economics: [updatedFormData.token_economics || ""],
         self_rating_of_project: updatedFormData.self_rating_of_project
           ? parseFloat(updatedFormData.self_rating_of_project)
@@ -880,6 +883,9 @@ const CreateProjectRegistration = () => {
         technical_docs: [updatedFormData.technical_docs || ""],
         github_link: [updatedFormData.github_link],
         project_cover: [updatedFormData.coverData],
+        country_of_registration: [updatedFormData?.country_of_registration || ""],
+        is_your_project_registered: [updatedFormData?.is_your_project_registered === "true" ? true : false],
+        type_of_registration: [updatedFormData?.type_of_registration || ""]
       };
 
       // console.log("tempObj kaam kia ????? ", tempObj); // work kia

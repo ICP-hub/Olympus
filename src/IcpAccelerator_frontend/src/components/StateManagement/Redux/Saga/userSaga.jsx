@@ -13,10 +13,11 @@ function uint8ArrayToBase64(uint8Arr) {
 }
 
 function* fetchUserHandler() {
+  const actor = yield select(selectActor);
+  
   try {
-    const actor = yield select(selectActor);
     let userData = yield call([actor, actor.get_user_information]);
-    const updatedProfileData = uint8ArrayToBase64(userData?.Ok?.profile_picture)
+   const updatedProfileData = uint8ArrayToBase64(userData?.Ok?.profile_picture)
     userData?.Ok?.profile_picture[0] = updatedProfileData
     yield put(userRegisteredHandlerSuccess(userData));
   } catch (error) {
