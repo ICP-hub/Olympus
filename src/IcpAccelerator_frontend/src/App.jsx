@@ -15,6 +15,7 @@ import Header from "./components/Layout/Header/Header";
 import AppRoutes from "./AppRoutes";
 import Footer from "./components/Footer/Footer";
 import ConnectWallet from "./models/ConnectWallet";
+import Loader from "./components/Loader/Loader";
 
 const App = () => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -24,6 +25,8 @@ const App = () => {
   const { reloadLogin } = useAuth();
   const [isModalOpen, setModalOpen] = useState(false);
   const dispatch = useDispatch();
+
+
 
 
   function getNameOfCurrentStatus(rolesStatusArray) {
@@ -106,6 +109,13 @@ const App = () => {
     }
   }, [isAuthenticated, identity, dispatch]);
 
+  const loading = useSelector(
+    (currState) => currState.currentRoleStatus.loading
+  );
+
+  if (loading) {
+    return <Loader />
+  }
   return (
     <>
     {actor ? (

@@ -158,7 +158,7 @@ const LogoutModal = () => {
                           ? "/investor-association-requests"
                           : ''
                   )}
-                    className="block px-4 py-2 hover:bg-gray-200 hover:text-black"
+                    className="block px-4 py-2 cursor-pointer hover:bg-gray-200 hover:text-black"
                   >
                     Associations
                   </li>
@@ -175,14 +175,14 @@ const LogoutModal = () => {
               </ul>
             )}
             <div className="text-sm text-black font-bold">
-              {specificRole !== "user" && specificRole !== null && (
+              {/* {specificRole !== "user" && specificRole !== null && (
                 <p
                   onClick={() => profileHandler(specificRole)}
                   className="py-2 px-4 hover:bg-gray-200"
                 >
                   My Profile
                 </p>
-              )}
+              )} */}
               <p
                 className="py-2 px-4 hover:bg-gray-200 cursor-pointer"
                 onClick={logoutHandler}

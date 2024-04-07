@@ -36,7 +36,7 @@ const userCurrentRoleStatusSlice = createSlice({
         },
 
         switchRoleRequestHandler: (state, action) => {
-            state.loading = false,
+            state.loading = true,
                 state.error = null
         },
 
