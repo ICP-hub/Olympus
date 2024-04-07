@@ -96,7 +96,7 @@ const ProjectJobCard = ({ image, website, tags, country }) => {
               ? formatFullDateFromBigInt(card?.timestamp)
               : "";
             return (
-              <SwiperSlide >
+              <SwiperSlide key={index} >
                   <div className="border-2 mb-5 mx-1 rounded-2xl shadow-lg" key={index}>
                     <div className="md:p-4 p-2">
                       <h3 className="text-lg font-[950] truncate w-1/2">{job_name}</h3>

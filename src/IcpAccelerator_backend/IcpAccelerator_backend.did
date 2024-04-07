@@ -630,12 +630,12 @@ type VentureCapitalist = record {
   money_invested : opt float64;
   existing_icp_investor : bool;
   preferred_icp_hub : text;
-  range_of_check_size : text;
+  range_of_check_size : opt text;
   project_on_multichain : opt text;
   investor_type : opt text;
   website_link : opt text;
   announcement_details : opt text;
-  stage : text;
+  stage : opt text;
   number_of_portfolio_companies : nat16;
   assets_under_management : opt text;
   portfolio_link : text;

@@ -61,6 +61,6 @@ export const formFields = [
       type: "date",
       name: "deadline",
       required: true,
-      label: "Cohort deadline date",
+      label: "Application deadline",
     },
   ];

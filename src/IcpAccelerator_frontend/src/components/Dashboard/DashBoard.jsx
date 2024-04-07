@@ -169,7 +169,7 @@ const DashBoard = () => {
                   <h1 className="text-4xl font-bold mb-4 lg:text-7xl text-white font-fontUse">
                     OLYMPUS
                   </h1>
-                  <h1 className="text-3xl font-bold mb-4 lg:text-6xl text-white font-fontUse">
+                  <h1 className="text-3xl font-bold mb-4 text-white font-fontUse">
                     Peak of Web3 Acceleration
                   </h1>
                   <p className="text-lg mb-6 md:text-xl lg:text-2xl text-white font-fontUse">
@@ -177,7 +177,7 @@ const DashBoard = () => {
                     , Mentors, Talent and Users
                   </p>
                   <a
-                    className="mt-6 mb-6 text-white font-fontUse hover:text-black text-lg"
+                    className="mt-6 mb-6 text-white font-fontUse hover:text-black"
                     href="https://internetcomputer.org/olympus"
                   >
                     Learn more about the beta version.<br></br> Use with

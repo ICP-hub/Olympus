@@ -150,7 +150,7 @@ const MentorDashboard = () => {
             onClick={() => navigate(`/event-form`)}
             className="border border-violet-800 px-4 py-2 rounded-md text-violet-800"
           >
-            Create event
+            Start Your Cohort
           </button>
           </div>
          

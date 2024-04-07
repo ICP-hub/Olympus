@@ -1004,7 +1004,7 @@ const InvestorRegForm = () => {
                                                 ? "border-red-500 "
                                                 : "border-[#737373]"
                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                                        placeholder="Enter fund size"
+                                        placeholder="Enter fund size in Millions"
                                         onWheel={(e) => e.target.blur()}
                                         min={0}
                                     />
@@ -1027,7 +1027,7 @@ const InvestorRegForm = () => {
                                                 ? "border-red-500 "
                                                 : "border-[#737373]"
                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                                        placeholder="Enter fund size"
+                                        placeholder="Enter fund size in Millions"
                                         onWheel={(e) => e.target.blur()}
                                         min={0}
                                     />

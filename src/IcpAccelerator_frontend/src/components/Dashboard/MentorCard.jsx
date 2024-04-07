@@ -19,6 +19,7 @@ const MentorCard = () => {
         setNoData(true)
         setData([])
       } else {
+        console.log('all mentors', result)
         setData(result);
         setNoData(false)
       }
@@ -54,7 +55,7 @@ const MentorCard = () => {
           id = mentor[0].toText();
           img = uint8ArrayToBase64(mentor[1]?.mentor_profile?.profile?.user_data?.profile_picture[0]);
           name = mentor[1]?.mentor_profile?.profile?.user_data?.full_name;
-          skills = mentor[1]?.mentor_profile?.profile?.area_of_expertise;
+          skills = mentor[1]?.mentor_profile?.profile?.user_data?.area_of_interest;
           category_of_mentoring_service = mentor[1]?.mentor_profile?.profile?.category_of_mentoring_service;
           role = 'Mentor';
         } else {
