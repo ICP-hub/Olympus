@@ -258,13 +258,12 @@ const InvestorRegForm = () => {
     // default reasons set function 
     const setReasonOfJoiningSelectedOptionsHandler = (val) => {
         setReasonOfJoiningSelectedOptions(
-            val && val.length > 0
-                ? val.map((reason) =>
+            val && val.length > 0 && val[0].length > 0
+                ? val[0].map((reason) =>
                     ({ value: reason, label: reason }))
                 :
                 [])
     }
-
 
     // set values handler
     const setValuesHandler = (val) => {
@@ -280,7 +279,7 @@ const InvestorRegForm = () => {
             setInterestedDomainsSelectedOptionsHandler(val?.area_of_interest ?? null)
             setImagePreview(val?.profile_picture?.[0] ?? "");
             setValue('type_of_profile', val?.type_of_profile[0])
-            setValue('reasons_to_join_platform', val?.reason_to_join ? val?.reason_to_join.join(" ") : "");
+            setValue('reasons_to_join_platform', val?.reason_to_join ? val?.reason_to_join.join(", ") : "");
             setReasonOfJoiningSelectedOptionsHandler(val?.reason_to_join);
         }
     }
