@@ -55,7 +55,7 @@ const InvestorsList = () => {
         return (
           <div key={index} className="bg-white duration-300 ease-in-out hover:scale-105 md:mb-0 mb-5 p-5 rounded-lg shadow-lg transition-transform flex-grow max-md:w-full md:w-1/3">
             <div className=" flex items-center justify-center w-1/2" style={{margin: "auto"}}>
-              <img className="w-full object-cover" src={img} alt="" style={{borderRadius: '50%'}} />
+              <img className="object-cover w-14 h-14" src={img} alt="" style={{borderRadius: '50%'}} />
             </div>
             <div className="text-black mt-4 text-center">
               <span className="font-semibold text-lg line-clamp-1">

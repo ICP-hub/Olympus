@@ -116,8 +116,8 @@ const InvestorRegForm = () => {
             investor_fund_name: yup.string().test('is-non-empty', 'Fund name is required',
                 (value) => /\S/.test(value)).required("Fund name is required"),
             investor_fund_size: yup.number().optional().typeError("You must enter a number").positive("Must be a positive number"),
-            fund_average_check_size: yup.number().typeError("You must enter a number").positive("Must be a positive number")
-                .required("Average check size is required"),
+            // fund_average_check_size: yup.number().typeError("You must enter a number").positive("Must be a positive number")
+            //     .required("Average check size is required"),
             invested_in_multi_chain: yup.string().required("Required").oneOf(['true', 'false'], 'Invalid value'),
             invested_in_multi_chain_names: yup.string().when('invested_in_multi_chain',
                 (val, schema) => val && (val[0] === 'true')
@@ -199,7 +199,6 @@ const InvestorRegForm = () => {
                 // investor data
                 name_of_fund: data?.investor_fund_name,
                 fund_size: [data?.investor_fund_size && typeof data?.investor_fund_size === "number" ? data?.investor_fund_size : 0],
-                average_check_size: data?.fund_average_check_size,
                 existing_icp_investor: data?.existing_icp_investor === "true" ? true : false,
                 type_of_investment: data?.existing_icp_investor === "true" && data?.investment_type ? data?.investment_type : "",
                 project_on_multichain: [data?.investment_type === "true" && data?.invested_in_multi_chain_names ? data?.invested_in_multi_chain_names : ""],
@@ -213,6 +212,7 @@ const InvestorRegForm = () => {
                 stage: [data?.investment_stage || ""],
                 range_of_check_size: [data?.investment_stage !== "" && data?.investment_stage !== "we do not currently invest" && data?.investment_stage_range ? data?.investment_stage_range : ""],
                 // investor data not exiting on frontend or raw variables
+                average_check_size: 0,
                 assets_under_management: [""],
                 registered_under_any_hub: [false],
                 logo: [[]],
@@ -366,6 +366,7 @@ const InvestorRegForm = () => {
         }
     }, [actor])
 
+
     useEffect(() => {
         if (actor) {
             (async () => {
@@ -388,6 +389,19 @@ const InvestorRegForm = () => {
 
         }
     }, [actor])
+
+    useEffect(() => {
+        if(actor){
+          (async() => {
+            const result = await actor.get_user_information()
+            if(result){
+              setImageData(result?.Ok?.profile_picture?.[0] ?? null)
+            }else{
+              setImageData(null);
+            }
+          })();
+        }
+      },[actor])
 
     return (
         <>
@@ -1014,7 +1028,7 @@ const InvestorRegForm = () => {
                                         </span>
                                     )}
                                 </div>
-                                <div className="relative z-0 group mb-6">
+                                {/* <div className="relative z-0 group mb-6">
                                     <label htmlFor="fund_average_check_size"
                                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
                                         Average check size <span className="text-red-500">*</span>
@@ -1036,7 +1050,7 @@ const InvestorRegForm = () => {
                                             {errors?.fund_average_check_size?.message}
                                         </span>
                                     )}
-                                </div>
+                                </div> */}
                                 <div className="relative z-0 group mb-6">
                                     <label htmlFor="invested_in_multi_chain"
                                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">

@@ -201,7 +201,7 @@ const CreateProjectRegistration = () => {
 
   const location = useLocation();
   const projectId = location.state?.projectId;
-  console.log("id is here ===>", projectId);
+  // console.log("id is here ===>", projectId);
 
   const actor = useSelector((currState) => currState.actors.actor);
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
@@ -679,8 +679,8 @@ const CreateProjectRegistration = () => {
           console.log("register register_project functn ka result ", result);
           if (result === "approval request is sent") {
             toast.success(result);
-            // navigate("/");
-            // window.location.href = "/";
+            navigate("/");
+            window.location.href = "/";
           } else {
             toast.error(result);
           }
@@ -920,7 +920,6 @@ const CreateProjectRegistration = () => {
     if(actor){
       (async() => {
         const result = await actor.get_user_information()
-        console.log("result===>>>", result)
         if(result){
           setImageActualData(result?.Ok?.profile_picture?.[0] ?? null)
         }else{
