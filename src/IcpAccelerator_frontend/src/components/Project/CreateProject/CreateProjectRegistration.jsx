@@ -1290,7 +1290,7 @@ const CreateProjectRegistration = () => {
                         value={`${hub.name} ,${hub.region}`}
                         className="text-lg font-bold"
                       >
-                        {hub.name} , {hub.region}
+                        {hub.name}, {hub.region}
                       </option>
                     ))}
                   </select>
@@ -1964,8 +1964,8 @@ const CreateProjectRegistration = () => {
                           : "border-[#737373]"
                           } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                       >
-                        <option className="text-lg font-bold" value="Comapany">
-                          Comapany
+                        <option className="text-lg font-bold" value="Company">
+                          Company
                         </option>
                         <option className="text-lg font-bold" value="DAO">
                           DAO

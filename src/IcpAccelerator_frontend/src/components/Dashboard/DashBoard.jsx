@@ -173,7 +173,7 @@ const DashBoard = () => {
                     Peak of Web3 Acceleration
                   </h1>
                   <p className="text-lg mb-6 md:text-xl lg:text-2xl text-white font-fontUse">
-                    Trustless Web3 Acceleration Platform for Founders, Investors
+                    Web3 Acceleration Platform for Founders, Investors
                     , Mentors, Talent and Users
                   </p>
                   <a

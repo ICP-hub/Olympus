@@ -16,7 +16,7 @@ const MentorAssociated = () => {
     let mentor_id = Principal.fromText(principal)
     try {
       const result = await actor.get_projects_associated_with_mentor(mentor_id);
-      console.log('Mentor Associated Projects: ', result);
+      // console.log('Mentor Associated Projects: ', result);
       if (result && result.length > 0) {
         setData(result);
       } else {

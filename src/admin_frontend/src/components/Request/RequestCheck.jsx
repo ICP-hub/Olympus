@@ -104,7 +104,7 @@ const RequestCheck = () => {
     };
 
     const currentData = categoryMapping[activeCategory][selectedStatus];
-    console.log("currentData =>", currentData);
+    // console.log("currentData =>", currentData);
     setFilteredNotifications(currentData);
   }, [
     activeCategory,

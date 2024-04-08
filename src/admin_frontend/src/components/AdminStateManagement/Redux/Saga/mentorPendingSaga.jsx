@@ -21,7 +21,7 @@ function* fetchMentorPendingHandler() {
     ]);
 
 
-    console.log("allMentorPendingStatus =>", allMentorPendingStatus);
+    // console.log("allMentorPendingStatus =>", allMentorPendingStatus);
 
     
     const updatedMentorProfiles = allMentorPendingStatus.map(
@@ -66,7 +66,7 @@ function* fetchMentorPendingHandler() {
       }
     );
 
-    console.log("updatedMentorProfiles ,,,,,,,,,,,,,,,,", updatedMentorProfiles);
+    // console.log("updatedMentorProfiles ,,,,,,,,,,,,,,,,", updatedMentorProfiles);
     yield put(mentorPendingSuccess(updatedMentorProfiles));
   } catch (error) {
     console.error(error);

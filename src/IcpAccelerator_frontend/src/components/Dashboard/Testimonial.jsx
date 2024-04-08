@@ -64,7 +64,7 @@ const Testimonial = () => {
                   className="w-14 h-14 rounded-full"
                 />
                 <div>
-                  <div className="font-semibold text-xl truncate w-20">{testimonialName}</div>
+                  <div className="font-semibold text-xl truncate w-28">{testimonialName}</div>
                   <div className="text-gray-500">{testimoniaDate}</div>
                 </div>
               </div>

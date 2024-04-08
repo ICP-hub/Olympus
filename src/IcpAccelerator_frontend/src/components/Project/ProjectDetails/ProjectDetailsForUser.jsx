@@ -262,7 +262,7 @@ const ProjectDetailsForUser = () => {
           <div className="flex flex-col py-4">
             <div className="flex justify-between">
               <h1 className="font-[950] text-lg md:text-2xl  text-blue-700">
-                jobs/opportunity
+                Jobs / Bounties
               </h1>
             </div>
             <div className="flex flex-wrap md:flex-nowrap gap-4">

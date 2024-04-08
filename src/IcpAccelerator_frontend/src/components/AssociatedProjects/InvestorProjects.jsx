@@ -16,7 +16,7 @@ const InvestorProjects = () => {
     let investor_id = Principal.fromText(principal)
     try {
       const result = await actor.get_projects_associated_with_investor(investor_id);
-      console.log('Investor Associated Projects: ', result);
+      // console.log('Investor Associated Projects: ', result);
       if (result && result.length > 0) {
         setData(result);
       } else {

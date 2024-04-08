@@ -7,7 +7,7 @@ import "swiper/css/pagination";
 import "swiper/css/autoplay";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import { formatFullDateFromBigInt } from "../../Utils/formatter/formatDateFromBigInt";
-import NoDataCard from "../../Mentors/Event/NoDataCard";
+import NoDataCard from "../../Mentors/Event/JobsNoDataCard";
 import ment from "../../../../assets/images/ment.jpg"
 const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
   if (!data) {
@@ -102,7 +102,7 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
                               className="w-16 aspect-square object-cover rounded-md"
                             />
                             <div className="mt-auto pl-2">
-                              <p className="font-[950] text-base truncate w-20">
+                              <p className="font-[950] text-base truncate w-28">
                                 {job_project_name}
                               </p>
                               <p className="font-[450] line-clamp-2 text-xs w-48">

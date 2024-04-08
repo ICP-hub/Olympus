@@ -61,7 +61,7 @@ const ProjectDashboard = () => {
             Jobs / Opportunities
           </h1>
         </div>
-        <div className="flex flex-wrap md:flex-nowrap gap-4 mb-4">
+        <div className="flex-wrap md:flex-nowrap gap-4 mb-4">
           <ProjectJobCard
             image={true}
             tags={true}

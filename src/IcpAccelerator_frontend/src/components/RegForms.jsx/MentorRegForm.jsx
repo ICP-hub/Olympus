@@ -728,7 +728,7 @@ const MentorRegForm = () => {
                                                 value={`${hub.name} ,${hub.region}`}
                                                 className="text-lg font-bold"
                                             >
-                                                {hub.name}
+                                                {hub.name}, {hub.region}
                                             </option>
                                         ))}
                                     </select>
@@ -924,7 +924,7 @@ const MentorRegForm = () => {
                                                     value={`${hub.name} ,${hub.region}`}
                                                     className="text-lg font-bold"
                                                 >
-                                                    {hub.name}
+                                                    {hub.name}, {hub.region}
                                                 </option>
                                             ))}
                                         </select>

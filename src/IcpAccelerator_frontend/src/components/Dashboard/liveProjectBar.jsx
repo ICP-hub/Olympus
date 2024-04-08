@@ -184,7 +184,7 @@ const LiveProjectBar = ({ data }) => {
                 <img
                   key={index}
                   className="inline-block h-8 w-8 rounded-full ring-2 ring-white"
-                  src={data?.profile_picture ? uint8ArrayToBase64(data?.profile_picture) : girl}
+                  src={data?.profile_picture[0] ? uint8ArrayToBase64(data?.profile_picture[0]) : girl}
                   alt={`Team`}
                 />
               )

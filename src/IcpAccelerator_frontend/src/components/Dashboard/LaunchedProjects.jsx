@@ -193,7 +193,7 @@ const LaunchedProjects = () => {
                                 src={userImage}
                                 alt="not found"
                               />
-                              <p className="text-xs truncate w-20">
+                              <p className="text-xs truncate w-28">
                                 {principalId}
                               </p>
                             </div>

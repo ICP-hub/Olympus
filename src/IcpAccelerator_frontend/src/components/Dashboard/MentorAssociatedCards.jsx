@@ -23,27 +23,27 @@ const AssociatedProjects = ({ data }) => {
       <div className="flex gap-4 flex-wrap">
         <div className="relative shadow-md rounded-lg overflow-hidden w-full gap-2 bg-white ">
           <div className="flex flex-col md:flex-row gap-2">
-            <div className="w-full max-w-xs min-h-40 md:min-h-56">
+            {/* <div className="w-full max-w-xs min-h-40 md:min-h-56">
               <img
                 className="w-full h-full rounded-md sm:rounded-l-none sm:rounded-r-none md:rounded-r-none lg:rounded-r-none object-cover"
                 src={projectCover}
                 alt="cover"
               />
-            </div>
+            </div> */}
             <div className="flex flex-col justify-between w-full p-4 overflow-x-auto">
               <div className="flex flex-col">
                 <div className="flex flex-col lg:flex-row justify-between lg:items-end">
                   <img className="w-14 h-14 rounded-lg object-cover" src={projectImage} alt="logo" />
+                  <p className="font-bold truncate w-full">{projectName}</p>
                 </div>
                 <div className="flex flex-col sm:flex-row py-2 justify-between">
-                  <p className="font-bold truncate w-20">{projectName}</p>
                   <div className="flex items-center">
                     <img
-                      className="h-5 w-5 rounded-full mx-2"
+                      className="h-8 w-8 rounded-full mx-2"
                       src={userImage}
                       alt="img"
                     />
-                    <p className="text-xs truncate w-20">
+                    <p className="text-xs">
                       {userName}
                     </p>
                   </div>

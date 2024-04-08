@@ -109,7 +109,7 @@ const ProjectJobCard = ({ image, website, tags, country }) => {
                               className="w-16 aspect-square object-cover rounded-md"
                             />
                             <div className="mt-auto pl-2">
-                              <p className="font-[950] text-base truncate w-20">
+                              <p className="font-[950] text-base truncate w-28">
                                 {job_project_name}
                               </p>
                               <p className="font-[450] line-clamp-2 text-xs w-48">

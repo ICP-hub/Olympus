@@ -207,9 +207,9 @@ const ConfirmationModal = ({
                   category_of_mentoring_service:{" "}
                   {notificationDetails.category_of_mentoring_service}
                 </p>
-                {/* {notificationDetails.icop_hub_or_spoke && (
+                {/* {notificationDetails.icp_hub_or_spoke && (
                   <p>
-                    icop_hub_or_spoke: {notificationDetails.icop_hub_or_spoke}
+                    icp_hub_or_spoke: {notificationDetails.icp_hub_or_spoke}
                   </p>
                 )} */}
                 <p className="text-gray-500">

@@ -409,7 +409,7 @@ const ProjectDetailsForInvestorProject = () => {
                     <div className="flex flex-col py-4">
                         <div className="flex justify-between">
                             <h1 className="font-[950] text-lg md:text-2xl  text-blue-700">
-                                jobs/opportunity
+                                Jobs / Bounties
                             </h1>
                             <button className="font-[950] border bg-[#3505B2] px-4 py-2 rounded-md text-white text-nowrap capitalize"
                                 onClick={handleJobsOpenModal}>

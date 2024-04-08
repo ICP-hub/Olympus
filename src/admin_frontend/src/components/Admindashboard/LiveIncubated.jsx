@@ -40,7 +40,7 @@ const LiveIncubated = () => {
     const fetchAllProjects = async () => {
       try {
         const result = await actor.list_all_projects();
-        console.log("resultttttt => =>", result);
+        // console.log("resultttttt => =>", result);
         const enhancedProjects = result.map((project) => ({
           ...project,
           isLive: project.params.params.live_on_icp_mainnet[0],

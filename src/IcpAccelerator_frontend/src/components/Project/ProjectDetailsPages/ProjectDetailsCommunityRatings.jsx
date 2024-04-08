@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import { formatFullDateFromBigInt } from "../../Utils/formatter/formatDateFromBigInt";
-import NoDataCard from "../../Mentors/Event/NoDataCard";
+import NoDataCard from "../../Mentors/Event/RatingNoDataCard";
 
 
 const ProjectDetailsCommunityRatings = ({ data, isProjectLive, profile, type, name, role, socials, filter }) => {

@@ -53,7 +53,7 @@ const Breadcrumbs = () => {
     navigate('/');
   }
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto font-fontUse">
     <nav className="flex px-10 py-4" aria-label="Breadcrumb">
       <ol className="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
         <li className="inline-flex items-center" onClick={() => handleNavigate()}>
@@ -92,12 +92,14 @@ const Breadcrumbs = () => {
                     d="m1 9 4-4-4-4"
                   />
                 </svg>
-                {(index === breadcrumbs.length - 1 ) && !crumb.path.includes("/view-mentor-details") ? (
-                  <span className="ms-1 text-sm font-medium text-gray-500 md:ms-2 dark:text-gray-400">{crumb.label == "View mentor details"}
+                {(index === breadcrumbs.length - 1 )  ? (
+                  <span className={`ms-1 text-sm font-medium text-gray-500 md:ms-2 dark:text-gray-400 ${
+                    crumb.path.includes("/view-mentor-details") || crumb.path.includes("/view-investor-details") ? 'hidden' : ''
+                  }`}>{crumb.label == "View mentor details"}
                     {crumb.label.charAt(0).toUpperCase() + crumb.label.slice(1)}
                   </span>
                 ) : 
-                crumb.path.includes("/view-mentor-details") && (index === breadcrumbs.length - 1 ) ? "" :
+                (index === breadcrumbs.length - 1 ) ? "" :
                 (
                   <a
                     href={crumb.path}

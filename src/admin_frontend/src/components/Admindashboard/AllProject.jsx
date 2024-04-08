@@ -112,7 +112,7 @@ const AllProject = () => {
     const fetchSpotlightProjects = async () => {
       try {
         const spotlightProjects = await actor.get_spotlight_projects();
-        console.log("spotlightProjects =>", spotlightProjects);
+        // console.log("spotlightProjects =>", spotlightProjects);
         const spotlightIds = new Set(
           spotlightProjects.map((p) => p.project_id)
         );
@@ -129,7 +129,7 @@ const AllProject = () => {
     const getAllProject = async () => {
       try {
         const result = await actor.list_all_projects();
-        console.log("all project =>", result);
+        // console.log("all project =>", result);
         const projectsWithSpotlightStatus = result.map((project) => ({
           ...project,
           isInSpotlight: spotlightProjectIds.has(project.params.uid),

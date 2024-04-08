@@ -5,6 +5,7 @@ import {
 } from "../../Utils/Data/SvgData";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import { useNavigate } from 'react-router-dom';
+import NoDataCard from "../../Mentors/Event/MentorAssociatedNoDataCard";
 
 const MentorsProfileDetailsCard = ({ data, isProjectLive, profile, type, name, role, socials, addButton, filter }) => {
     const navigate = useNavigate();
@@ -71,8 +72,8 @@ const MentorsProfileDetailsCard = ({ data, isProjectLive, profile, type, name, r
                         )
                     })
                     :
-                    <div>
-                        <h1>No Data</h1>
+                    <div className="w-full">
+                        <NoDataCard/>
                     </div>}
             </div>
         </>

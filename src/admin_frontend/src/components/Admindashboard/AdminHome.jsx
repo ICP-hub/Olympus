@@ -101,7 +101,7 @@ function AdminDashboard({ setModalOpen }) {
                   Learn more about our Olympus program
                 </p>
                 <p className="text-white text-left mt-2 ml-2">
-                  Trustless Web3 acceleration platform for founders, investors ,
+                  Web3 acceleration platform for founders, investors ,
                   mentors, talent and users{" "}
                 </p>
               </div>

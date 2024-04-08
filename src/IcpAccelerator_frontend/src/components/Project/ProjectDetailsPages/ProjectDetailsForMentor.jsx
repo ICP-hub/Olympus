@@ -221,7 +221,7 @@ const ProjectDetailsForMentor = () => {
     }, [actor, principal, projectData]);
 
     return (
-        <section className="text-black bg-gray-100 pb-4">
+        <section className="text-black bg-gray-100 pb-4 font-fontUse">
             <div className="w-full px-[4%] lg1:px-[5%]">
                 <div className="flex-col">
                     <div className="pt-4 mb-4">
@@ -257,7 +257,7 @@ const ProjectDetailsForMentor = () => {
 
                     <div className="mb-4">
                         {/* <ProjectRank dayRank={true} weekRank={true} /> */}
-                        <div className="text-sm font-bold text-center text-[#737373] mt-2">
+                        <div className="text-sm font-bold text-center text-[#737373] mt-5 pt-4">
                             <ul className="flex flex-wrap -mb-px text-[10px] ss2:text-[10.5px] ss3:text-[11px]  cursor-pointer">
                                 {headerData.map((header) => (
                                     <li key={header.id} className="me-6 relative group">
@@ -279,7 +279,7 @@ const ProjectDetailsForMentor = () => {
                     </div>
                     <div className="flex flex-col py-4">
                         <div className="flex justify-between items-center mb-4">
-                            <h1 className="text-lg md:text-2xl  text-blue-700">
+                            <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold">
                                 Announcement
                             </h1>
 
@@ -288,8 +288,8 @@ const ProjectDetailsForMentor = () => {
                     </div>
                     <div className="flex flex-col py-4">
                         <div className="flex justify-between">
-                            <h1 className="text-lg md:text-2xl  text-blue-700">
-                                jobs/opportunity
+                            <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold">
+                                Jobs / Bounties
                             </h1>
                         </div>
                         <ProjectJobDetailsCard

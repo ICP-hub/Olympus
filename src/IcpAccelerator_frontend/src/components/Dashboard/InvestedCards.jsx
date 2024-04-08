@@ -20,7 +20,7 @@ const InvestedProjects = ({ data }) => {
     return (
         <div className="flex gap-4 flex-wrap">
             <div className="shadow-md rounded-lg overflow-hidden w-full border-2 bg-white p-4 mb-4">
-                <img className='h-56 w-full mx-auto rounded-3xl object-cover' src={projectCover} alt='cover' />
+                {/* <img className='h-56 w-full mx-auto rounded-3xl object-cover' src={projectCover} alt='cover' /> */}
                 <div className='pt-6'>
                     <div className='flex flex-row items-baseline space-x-2 text-black text-lg'>
                         <img className="w-14 h-14 rounded-lg object-cover" src={projectImage} alt="logo" />

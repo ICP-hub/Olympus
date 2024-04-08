@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import { Principal } from '@dfinity/principal';
 import AddTeamMember from "../../../models/AddTeamMember";
 import toast, { Toaster } from "react-hot-toast";
+import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 
 
 const MembersProfileDetailsCard = ({ data,  isProjectLive, profile, type, name, role, socials, addButton, filter }) => {
@@ -59,11 +60,11 @@ const MembersProfileDetailsCard = ({ data,  isProjectLive, profile, type, name, 
                             <div className="p-[3px] rounded-full flex bg-blend-overlay "
                                 style={{
                                     boxSizing: "border-box",
-                                    background: `url(${data?.params?.user_data?.profile_picture[0]}) center / cover, linear-gradient(168deg, rgba(255, 255, 255, 0.25) -0.86%, rgba(255, 255, 255, 0) 103.57%)`,
+                                    background: `url(${uint8ArrayToBase64(data?.params?.user_data?.profile_picture[0])}) center / cover, linear-gradient(168deg, rgba(255, 255, 255, 0.25) -0.86%, rgba(255, 255, 255, 0) 103.57%)`,
                                     backdropFilter: "blur(20px)"
                                 }}>
                                 <img className="rounded-full object-cover w-20 h-20"
-                                    src={data?.params?.user_data?.profile_picture[0]} alt={'img'} />
+                                    src={uint8ArrayToBase64(data?.params?.user_data?.profile_picture[0])} alt={'img'} />
                             </div>)}
                         {socials && (
                             <div className="flex gap-3">
@@ -101,11 +102,11 @@ const MembersProfileDetailsCard = ({ data,  isProjectLive, profile, type, name, 
                                         <div className="p-[3px] rounded-full flex bg-blend-overlay "
                                             style={{
                                                 boxSizing: "border-box",
-                                                background: `url(${data?.profile_picture}) center / cover, linear-gradient(168deg, rgba(255, 255, 255, 0.25) -0.86%, rgba(255, 255, 255, 0) 103.57%)`,
+                                                background: `url(${uint8ArrayToBase64(data?.profile_picture[0])}) center / cover, linear-gradient(168deg, rgba(255, 255, 255, 0.25) -0.86%, rgba(255, 255, 255, 0) 103.57%)`,
                                                 backdropFilter: "blur(20px)"
                                             }}>
                                             <img className="rounded-full object-cover w-20 h-20"
-                                                src={data?.profile_picture} alt={'img'} />
+                                                src={uint8ArrayToBase64(data?.profile_picture[0])} alt={'img'} />
                                         </div>)}
                                     {socials && (
                                         <div className="flex gap-3">

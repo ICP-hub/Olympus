@@ -103,7 +103,7 @@ const ProjectAssociation = () => {
         let response_message = "Accepted";
         try {
             const result = await actor.accept_offer_of_project(offer_id, response_message);
-            console.log(`result-in-accept_offer_of_project`, result);
+            // console.log(`result-in-accept_offer_of_project`, result);
 
             // setData(result)
         } catch (error) {

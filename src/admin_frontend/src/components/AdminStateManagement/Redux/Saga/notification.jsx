@@ -17,7 +17,7 @@ function* fetchNotificationHandler() {
     const actor = yield select(selectActor);
     const allNotifications = yield call([actor, actor.get_pending_admin_notifications]);
 
-    console.log("get_pending_admin_notifications =>", allNotifications)
+    // console.log("get_pending_admin_notifications =>", allNotifications)
     const formattedNotifications = allNotifications.map((notification) => {
       const {
         notification_type: { ApprovalRequest: details },
@@ -42,7 +42,7 @@ function* fetchNotificationHandler() {
       };
     });
 
-    console.log("Formatted notifications:", formattedNotifications);
+    // console.log("Formatted notifications:", formattedNotifications);
     yield put(notificationHandlerSuccess(formattedNotifications));
   } catch (error) {
     console.error("Failed to fetch notifications:", error);

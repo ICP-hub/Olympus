@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { task } from "../Utils/Data/SvgData";
 import { useSelector } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
-import NoDataCard from "../Mentors/Event/NoDataCard";
+import NoDataCard from "../Mentors/Event/DocumentNoDataCard";
 import { useNavigate } from "react-router-dom";
 
 const ProjectDocuments = ({ data }) => {
-  console.log(data);
+  console.log('data',data);
   const navigate = useNavigate();
   const actor = useSelector((currState) => currState.actors.actor);
   const projectId = data?.uid;
@@ -44,11 +44,25 @@ const ProjectDocuments = ({ data }) => {
     if (isChecked) {
       fetchAccessPrivateData();
     } else {
-      setDocuments(
-        Array.isArray(data?.params?.public_docs[0])
-          ? data.params.public_docs[0]
-          : []
-      );
+      if(Array.isArray(data?.params?.public_docs[0])){
+        if(data?.params?.public_docs[0][0].title !== ''){
+          setDocuments(data.params.public_docs[0])
+        }
+        else{
+          setDocuments([])
+        }
+      }
+      else{
+        setDocuments([])
+      }
+
+      // ? data.params.public_docs[0]
+      // : []
+      // setDocuments(
+      //   Array.isArray(data?.params?.public_docs[0])
+      //     ? data.params.public_docs[0]
+      //     : []
+      // );
     }
   }, [isChecked, actor, projectId, data?.params?.public_docs]);
 

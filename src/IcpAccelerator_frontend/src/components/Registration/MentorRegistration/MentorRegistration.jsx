@@ -116,7 +116,7 @@ const validationSchema = {
         /\S/.test(value)
       )
       .required("ICP Hub selection is required"),
-    icop_hub_or_spoke: yup
+    icp_hub_or_spoke: yup
       .string()
       .test("is-non-empty", "ICP Hub selection is required", (value) =>
         /\S/.test(value)
@@ -181,7 +181,7 @@ const MentorRegistration = () => {
   // Form Updates Changes in enable and diabled
   const [isExistingICPMentor, setExistingICPMentor] = useState(false);
   const [isMulti_Chain, setIsMulti_Chain] = useState(false);
-  const [isicopHuborSpoke, setIcopHuborSpoke] = useState(false);
+  const [isicpHuborSpoke, seticpHuborSpoke] = useState(false);
 
   const getTabClassName = (tab) => {
     return `inline-block p-2 font-bold ${
@@ -233,7 +233,7 @@ const MentorRegistration = () => {
   // Watch the value of existing_icp_mentor to update ExistingICPMentor state
   const ExistingICPMentor = watch("existing_icp_mentor");
   const IsMultiChain = watch("multi_chain");
-  const IcopHuborSpoke = watch("icop_hub_or_spoke");
+  const icpHuborSpoke = watch("icp_hub_or_spoke");
   useEffect(() => {
     // Update ExistingICPMentor based on existing_icp_mentor field value
     setExistingICPMentor(ExistingICPMentor === "true");
@@ -253,11 +253,11 @@ const MentorRegistration = () => {
       setValue("multichain", "", { shouldValidate: true });
       clearErrors("multichain");
     }
-    setIcopHuborSpoke(IcopHuborSpoke === "true");
-    if (IcopHuborSpoke !== "true") {
+    seticpHuborSpoke(icpHuborSpoke === "true");
+    if (icpHuborSpoke !== "true") {
       setValue("hub_owner", "");
     }
-  }, [ExistingICPMentor, IsMultiChain, IcopHuborSpoke, setValue]);
+  }, [ExistingICPMentor, IsMultiChain, icpHuborSpoke, setValue]);
   useEffect(() => {
     if (!userHasInteracted) return;
     const validateStep = async () => {
@@ -436,8 +436,8 @@ const MentorRegistration = () => {
       // console.log("exisiting user visit ");
       const updatedexisting_icp_mentor =
         ExistingICPMentor === "true" ? true : false;
-      const IcopHubOrSpoke =
-        updatedFormData.icop_hub_or_spoke === "true" ? true : false;
+      const icpHubOrSpoke =
+        updatedFormData.icp_hub_or_spoke === "true" ? true : false;
       let tempObj2 = {
         user_data: {
           profile_picture: [mentor_image] || [],
@@ -463,7 +463,7 @@ const MentorRegistration = () => {
           updatedFormData.existing_icp_project_porfolio || "",
         ],
         years_of_mentoring: updatedFormData.years_of_mentoring.toString(),
-        icop_hub_or_spoke: IcopHubOrSpoke,
+        icp_hub_or_spoke: icpHubOrSpoke,
         linkedin_link: updatedFormData.linkedin_link || "",
       };
 
@@ -480,8 +480,8 @@ const MentorRegistration = () => {
       console.log("existing visit ");
       const updatedexisting_icp_mentor =
         ExistingICPMentor === "true" ? true : false;
-      const IcopHubOrSpoke =
-        updatedFormData.icop_hub_or_spoke === "true" ? true : false;
+      const icpHubOrSpoke =
+        updatedFormData.icp_hub_or_spoke === "true" ? true : false;
       let tempObj = {
         user_data: {
           profile_picture: [updatedFormData.mentor_image] || [],
@@ -507,7 +507,7 @@ const MentorRegistration = () => {
           updatedFormData.existing_icp_project_porfolio || "",
         ],
         years_of_mentoring: updatedFormData.years_of_mentoring.toString(),
-        icop_hub_or_spoke: IcopHubOrSpoke,
+        icp_hub_or_spoke: icpHubOrSpoke,
         linkedin_link: updatedFormData.linkedin_link || "",
       };
       console.log("tempObj kaam kia ????? ", tempObj); // work kia
@@ -907,15 +907,15 @@ const MentorRegistration = () => {
                   </div>
                   <div className="z-0 w-full mb-3 group">
                     <label
-                      htmlFor="icop_hub_or_spoke"
+                      htmlFor="icp_hub_or_spoke"
                       className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                     >
                       Are you ICP Hub/Spoke
                     </label>
                     <select
-                      {...register("icop_hub_or_spoke")}
+                      {...register("icp_hub_or_spoke")}
                       className={`bg-gray-50 border-2 ${
-                        errors.icop_hub_or_spoke
+                        errors.icp_hub_or_spoke
                           ? "border-red-500 placeholder:text-red-500"
                           : "border-[#737373]"
                       } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
@@ -927,13 +927,13 @@ const MentorRegistration = () => {
                         Yes
                       </option>
                     </select>
-                    {errors.icop_hub_or_spoke && (
+                    {errors.icp_hub_or_spoke && (
                       <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                        {errors.icop_hub_or_spoke.message}
+                        {errors.icp_hub_or_spoke.message}
                       </p>
                     )}
                   </div>
-                  {isicopHuborSpoke && (
+                  {isicpHuborSpoke && (
                     <div className="z-0 w-full mb-3 group">
                       <label
                         htmlFor="hub_owner"

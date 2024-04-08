@@ -9,13 +9,13 @@ const IncubatedModal = ({ onClose, id }) => {
 
   const [isDeclining, setIsDeclining] = useState(false);
 
-  console.log("id aaya in IncubatedModal ", id);
+  // console.log("id aaya in IncubatedModal ", id);
 
   const liveToIncubateHandler = async (projectId) => {
     setIsDeclining(true);
     try {
       await actor.deactivate_and_remove_project(projectId);
-      console.log("Project removed from live status successfully.");
+      // console.log("Project removed from live status successfully.");
 
       onClose();
     } catch (error) {

@@ -7,7 +7,7 @@ import "swiper/css/autoplay";
 import { useSelector } from "react-redux";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import { formatFullDateFromBigInt } from "../../Utils/formatter/formatDateFromBigInt";
-import NoDataCard from "../../Mentors/Event/NoDataCard";
+import NoDataCard from "../../Mentors/Event/AnnouncementsNoDataCard";
 import ment from "../../../../assets/images/ment.jpg"
 
 const AnnouncementDetailsCard = ({ data }) => {
@@ -103,7 +103,7 @@ const AnnouncementDetailsCard = ({ data }) => {
                           alt="img"
                         />
                         <div className="flex flex-col justify-around gap-2">
-                          <p className="font-bold text-md truncate w-20">{ann_project_name}</p>
+                          <p className="font-bold text-md truncate w-28">{ann_project_name}</p>
                           <p className="font-semibold text-gray-500  text-xs line-clamp-2">
                             {ann_project_desc}</p>
                         </div>

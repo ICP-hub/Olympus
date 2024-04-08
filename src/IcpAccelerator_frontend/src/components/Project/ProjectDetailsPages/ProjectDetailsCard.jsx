@@ -51,7 +51,7 @@ function ProjectDetailsCard({ data, image, title, rubric, tags, socials, doj, co
 
     return (
         <>
-            <div className="p-6 shadow-lg pb-1 bg-[#FFFFFF4D] border-[#E9E9E9] border-1 drop-shadow-[#0000000D] rounded-[10px]">
+            <div className="p-6 shadow-2xl bg-[#FFFFFF4D] border-[#E9E9E9] border-1 drop-shadow-[#0000000D] rounded-[10px]">
                 <div className="flex items-center">
                     <div className="flex">
                         {image &&
@@ -86,7 +86,7 @@ function ProjectDetailsCard({ data, image, title, rubric, tags, socials, doj, co
                                                         pathTransitionDuration: 0.5,
                                                         pathColor: `#2247AF`,
                                                         trailColor: "#d6d6d6",
-                                                        textColor: "#3505B2",
+                                                        textColor: "#6E7291",
                                                         textSize: '24px'
                                                     })}
                                                 />)}
@@ -105,7 +105,7 @@ function ProjectDetailsCard({ data, image, title, rubric, tags, socials, doj, co
                                 )}
                             </div>
                         </div>
-                        <div className="flex flex-row flex-wrap gap-2 text-xs md:text-sm text-right pr-4">
+                        <div className="flex flex-row flex-wrap gap-2 text-xs md:text-sm text-right">
                             {socials && (
                                 <div className="flex gap-2.5 mr-2 mt-1.5">
                                     {linkedin_link && (

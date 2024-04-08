@@ -42,7 +42,7 @@ mentor_data[default]='(record {
   };
   existing_icp_mentor = false;
   exisitng_icp_project_porfolio = opt "Portfolio Link";
-  icop_hub_or_spoke = false;
+  icp_hub_or_spoke = false;
   category_of_mentoring_service = "Category Name";
   social_link = "Social Media Link";
   multichain = opt "Multichain Info";
@@ -68,7 +68,7 @@ mentor_data[principal2]='(record {
   };
   existing_icp_mentor = false;
   exisitng_icp_project_porfolio = opt "Portfolio Link";
-  icop_hub_or_spoke = false;
+  icp_hub_or_spoke = false;
   category_of_mentoring_service = "Category Name";
   social_link = "Social Media Link";
   multichain = opt "Multichain Info";
@@ -94,7 +94,7 @@ mentor_data[principal3]='(record {
   };
   existing_icp_mentor = false;
   exisitng_icp_project_porfolio = opt "Portfolio Link";
-  icop_hub_or_spoke = false;
+  icp_hub_or_spoke = false;
   category_of_mentoring_service = "Category Name";
   social_link = "Social Media Link";
   multichain = opt "Multichain Info";
@@ -120,7 +120,7 @@ mentor_data[principal4]='(record {
   };
   existing_icp_mentor = false;
   exisitng_icp_project_porfolio = opt "Portfolio Link";
-  icop_hub_or_spoke = false;
+  icp_hub_or_spoke = false;
   category_of_mentoring_service = "Category Name";
   social_link = "Social Media Link";
   multichain = opt "Multichain Info";
@@ -145,7 +145,7 @@ mentor_data[principal5]='(record {
   };
   existing_icp_mentor = false;
   exisitng_icp_project_porfolio = opt "Portfolio Link";
-  icop_hub_or_spoke = false;
+  icp_hub_or_spoke = false;
   category_of_mentoring_service = "Category Name";
   social_link = "Social Media Link";
   multichain = opt "Multichain Info";
