@@ -64,7 +64,7 @@ const InvestorsList = () => {
               <span className="block text-gray-500">
                 {company}
               </span>
-              <div className="flex flex-wrap gap-2 border-t-2 mt-5 py-4 max-md:justify-center">
+              <div className="flex overflow-x-scroll gap-2 border-t-2 mt-5 py-4 max-md:justify-center">
               {category_of_investment && category_of_investment !== '' ? 
               category_of_investment.split(',').map((item, index) => {
                 return (<span key={index} className="bg-[#E7E7E8] rounded-full text-gray-600 text-xs font-bold px-3 py-2 leading-none flex items-center mt-2">

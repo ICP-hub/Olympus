@@ -78,7 +78,7 @@ const MentorCard = () => {
                 {category_of_mentoring_service}
               </span>
               <div>
-                <div className="flex flex-wrap gap-2 border-t-2 mt-3 py-3">
+                <div className="flex overflow-x-scroll gap-2 border-t-2 mt-3 py-3">
                   {skills?.split(',').map((item, index) => {
                     return (<span key= {index} className="bg-[#E7E7E8] rounded-full text-gray-600 text-xs font-bold px-3 py-2 leading-none flex items-center mt-2">
                       {item.trim()}
