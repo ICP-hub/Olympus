@@ -60,7 +60,7 @@ const App = () => {
 
   return (
     <>
-      <div className="bg-gray-100">
+      <div className="bg-gray-100 font-fontUse">
         <div className="container mx-auto">
           <Header setModalOpen={setModalOpen} gradient={"bg-gray-100"} />
           <ConnectWallet

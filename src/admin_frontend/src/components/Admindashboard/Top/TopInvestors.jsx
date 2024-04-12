@@ -9,9 +9,8 @@ import {
   principalToText,
   uint8ArrayToBase64,
 } from "../../Utils/AdminData/saga_function/blobImageToUrl";
-import NoDataCard from "../../../../../IcpAccelerator_frontend/src/components/Mentors/Event/NoDataCard";
 import { useNavigate } from "react-router-dom";
-
+import NoData from "../../../../../IcpAccelerator_frontend/assets/images/search_not_found.png";
 const dummyData = [
   {
     id: 1,
@@ -66,25 +65,27 @@ const TopInvestors = () => {
   useEffect(() => {
     const getTopInvestor = async () => {
       try {
-        const getTop5Vc = await actor.get_top_5_vcs();
-        // console.log("get", getTop5Vc);
+        if (actor) {
+          const getTop5Vc = await actor.get_top_5_vcs();
+          // console.log("get", getTop5Vc);
 
-        const formattedTop5 = await Promise.all(
-          getTop5Vc.map(async (item) => {
-            const image = uint8ArrayToBase64(item[1].profile_picture[0]);
-            const StringPrincipal = await principalToText(item[0]);
-            return {
-              principal: StringPrincipal,
-              area_of_interest: item[1].area_of_interest,
-              country: item[1].country,
-              full_name: item[1].full_name,
-              joined_on: item[1].joined_on,
-              profile_picture: image,
-            };
-          })
-        );
-        // console.log("getTop5Vc", formattedTop5);
-        setData(formattedTop5);
+          const formattedTop5 = await Promise.all(
+            getTop5Vc.map(async (item) => {
+              const image = uint8ArrayToBase64(item[1].profile_picture[0]);
+              const StringPrincipal = await principalToText(item[0]);
+              return {
+                principal: StringPrincipal,
+                area_of_interest: item[1].area_of_interest,
+                country: item[1].country,
+                full_name: item[1].full_name,
+                joined_on: item[1].joined_on,
+                profile_picture: image,
+              };
+            })
+          );
+          // console.log("getTop5Vc", formattedTop5);
+          setData(formattedTop5);
+        }
       } catch (error) {
         console.error("Error fetching top mentors:", error);
       }
@@ -104,7 +105,7 @@ const TopInvestors = () => {
               <div
                 onClick={() => navigate("/all", { state: item.principal })}
                 key={index}
-                className="w-full cursor-pointer mb-2 flex flex-col"
+                className="w-full cursor-pointer mb-4 flex flex-col"
               >
                 <div className="flex flex-col justify-between border border-gray-200 rounded-xl pt-3 px-[2%]">
                   <div className="flex justify-between items-start ">
@@ -167,7 +168,13 @@ const TopInvestors = () => {
               </div>
             ))
           ) : (
-            <NoDataCard />
+            <div className="flex justify-center items-center h-full w-full">
+              <img
+                src={NoData}
+                className="object-cover object-center w-[50%] pt-[2.5rem]"
+                alt="No data found"
+              />
+            </div>
           )}
         </div>
       </div>
