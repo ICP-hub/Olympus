@@ -414,19 +414,6 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
               <div key={index} className="flex justify-end gap-2 mt-6">
                 <button
                   onClick={() =>
-                    allowUserRoleHandler(principal, true, "Pending", role.name)
-                  }
-                  disabled={isAccepting}
-                  className="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300"
-                >
-                  {isAccepting ? (
-                    <ThreeDots color="#FFF" height={13} width={51} />
-                  ) : (
-                    "Accept"
-                  )}
-                </button>
-                <button
-                  onClick={() =>
                     declineUserRoleHandler(
                       principal,
                       true,
@@ -441,6 +428,19 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
                     <ThreeDots color="#FFF" height={13} width={51} />
                   ) : (
                     "Decline"
+                  )}
+                </button>
+                <button
+                  onClick={() =>
+                    allowUserRoleHandler(principal, true, "Pending", role.name)
+                  }
+                  disabled={isAccepting}
+                  className="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300"
+                >
+                  {isAccepting ? (
+                    <ThreeDots color="#FFF" height={13} width={51} />
+                  ) : (
+                    "Accept"
                   )}
                 </button>
               </div>

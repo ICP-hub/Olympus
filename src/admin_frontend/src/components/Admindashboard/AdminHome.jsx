@@ -58,7 +58,7 @@ function AdminDashboard({ setModalOpen }) {
             </h6>
             <button
               onClick={manageHandler}
-              className="bg-[#3505B2] text-white uppercase text-xs font-black p-3 rounded-md"
+              className="rounded-md my-2  bg-[#3505B2] text-white uppercase text-xs md:text-xs lg:text-xs xl:text-xs px-6 py-2 font-black p-3 text-wrap border-2 border-transparent z-20 hover:bg-transparent hover:text-[#3505B2] hover:border-[#3505B2] font-fontUse text-center"
             >
               Login as admin
             </button>
@@ -101,8 +101,8 @@ function AdminDashboard({ setModalOpen }) {
                   Learn more about our Olympus program
                 </p>
                 <p className="text-white text-left mt-2 ml-2">
-                  Web3 acceleration platform for founders, investors ,
-                  mentors, talent and users{" "}
+                  Web3 acceleration platform for founders, investors , mentors,
+                  talent and users{" "}
                 </p>
               </div>
               <div className="text-center md:text-right md:w-full md:max-w-[300px] md:pl-4">

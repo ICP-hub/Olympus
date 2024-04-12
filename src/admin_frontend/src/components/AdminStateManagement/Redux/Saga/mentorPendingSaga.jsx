@@ -20,28 +20,43 @@ function* fetchMentorPendingHandler() {
       actor.mentors_awaiting_approval,
     ]);
 
-
     // console.log("allMentorPendingStatus =>", allMentorPendingStatus);
 
-    
     const updatedMentorProfiles = allMentorPendingStatus.map(
       ([principal, { mentor_profile, roles }]) => {
-
         // const profilePictureBase64 = uint8ArrayToBase64(
         //   mentor_profile.profile.user_data.profile_picture
         // );
 
-        const profilePictureBase64 = mentor_profile.profile.user_data.profile_picture[0] && mentor_profile.profile.user_data.profile_picture[0] instanceof Uint8Array && mentor_profile.profile.user_data.profile_picture[0].length > 0
-          ? uint8ArrayToBase64(mentor_profile.profile.user_data.profile_picture[0])
-          : null;
+        const profilePictureBase64 =
+          mentor_profile.profile.user_data.profile_picture[0] &&
+          mentor_profile.profile.user_data.profile_picture[0] instanceof
+            Uint8Array &&
+          mentor_profile.profile.user_data.profile_picture[0].length > 0
+            ? uint8ArrayToBase64(
+                mentor_profile.profile.user_data.profile_picture[0]
+              )
+            : null;
 
-          
-          // console.log("profilePictureBase64 in allMentorPendingStatus =>", mentor_profile.profile.user_data.profile_picture[0]);
+        // console.log("profilePictureBase64 in allMentorPendingStatus =>", mentor_profile.profile.user_data.profile_picture[0]);
 
         const principalText = principalToText(principal);
 
         const mentorRole = roles.find((role) => role.name === "mentor");
         // const mentorRole = roles;
+
+        const updatedRoles = roles.map((role) => ({
+          ...role,
+          approved_on: role.approved_on.map((time) =>
+            formatDateFromBigInt(time)
+          ),
+          requested_on: role.requested_on.map((time) =>
+            formatDateFromBigInt(time)
+          ),
+          rejected_on: role.rejected_on.map((time) =>
+            formatDateFromBigInt(time)
+          ),
+        }));
 
         let requestedTimeFormatted = "";
         if (mentorRole && mentorRole.requested_on.length > 0) {
@@ -61,7 +76,7 @@ function* fetchMentorPendingHandler() {
             },
           },
           requestedTime: requestedTimeFormatted,
-          role :roles
+          role: updatedRoles,
         };
       }
     );
