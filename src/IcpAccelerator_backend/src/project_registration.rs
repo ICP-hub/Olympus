@@ -589,22 +589,22 @@ pub async fn create_project(info: ProjectInfo) -> String {
             .to_string();
     }
 
-    if info.money_raised.is_some() && info.money_raised_till_now != Some(true) {
-        return "Cannot populate MoneyRaised unless money_raised_till_now is true.".to_string();
-    }
+    // if info.money_raised.is_some() && info.money_raised_till_now != Some(true) {
+    //     return "Cannot populate MoneyRaised unless money_raised_till_now is true.".to_string();
+    // }
 
-    if let Some(money_raised) = &info.money_raised {
-        let total_raised = money_raised.total_amount();
-        if total_raised <= 0.0 {
-            return "The total amount raised must be greater than zero.".to_string();
-        } else if total_raised
-            > money_raised
-                .target_amount
-                .expect("Target amount must be set.")
-        {
-            return "The sum of funding sources exceeds the target amount.".to_string();
-        }
-    }
+    // if let Some(money_raised) = &info.money_raised {
+    //     let total_raised = money_raised.total_amount();
+    //     if total_raised <= 0.0 {
+    //         return "The total amount raised must be greater than zero.".to_string();
+    //     } else if total_raised
+    //         > money_raised
+    //             .target_amount
+    //             .expect("Target amount must be set.")
+    //     {
+    //         return "The sum of funding sources exceeds the target amount.".to_string();
+    //     }
+    // }
     // Validate the project info
 
     // Validation succeeded, continue with creating the project

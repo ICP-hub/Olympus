@@ -25,7 +25,6 @@ const LogoutModal = () => {
   const { logout } = useAuth();
   const [customSvg, setCustomSvg] = useState(beforeCopySvg);
 
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isDropdownOpen, setDropdownOpen] = useState(false);
@@ -39,15 +38,14 @@ const LogoutModal = () => {
     setDropdownOpen(!isDropdownOpen);
   };
 
-
   const logoutHandler = async () => {
     dispatch(changeHasSelectedRoleHandler(false));
     await logout();
     navigate("/");
   };
 
-  const profileHandler = async (specificRole) => {
-    switch (specificRole) {
+  const profileHandler = async (userCurrentRoleStatusActiveRole) => {
+    switch (userCurrentRoleStatusActiveRole) {
       case "project":
         dispatch(founderRegisteredHandlerRequest());
         setDropdownOpen(false);
@@ -148,21 +146,28 @@ const LogoutModal = () => {
                 {/* <li onClick={() => handleNavigate()} className="block px-4 py-2 hover:bg-gray-200 hover:text-black">
                   Associations
                 </li> */}
-                {userCurrentRoleStatus && userCurrentRoleStatusActiveRole && userCurrentRoleStatusActiveRole !== 'user' ?
-                  <li onClick={() => navigate(
-                    userCurrentRoleStatusActiveRole === 'project'
-                      ? '/project-association-requests'
-                      : userCurrentRoleStatusActiveRole === 'mentor'
-                        ? '/mentor-association-requests'
-                        : userCurrentRoleStatusActiveRole === 'vc'
+                {userCurrentRoleStatus &&
+                userCurrentRoleStatusActiveRole &&
+                userCurrentRoleStatusActiveRole !== "user" ? (
+                  <li
+                    onClick={() =>
+                      navigate(
+                        userCurrentRoleStatusActiveRole === "project"
+                          ? "/project-association-requests"
+                          : userCurrentRoleStatusActiveRole === "mentor"
+                          ? "/mentor-association-requests"
+                          : userCurrentRoleStatusActiveRole === "vc"
                           ? "/investor-association-requests"
-                          : ''
-                  )}
+                          : ""
+                      )
+                    }
                     className="block px-4 py-2 cursor-pointer hover:bg-gray-200 hover:text-black"
                   >
                     Associations
                   </li>
-                  : ''}
+                ) : (
+                  ""
+                )}
                 {/* <li className="block px-4 py-2 hover:bg-gray-200 hover:text-black">
                   Event
                 </li>
@@ -175,14 +180,20 @@ const LogoutModal = () => {
               </ul>
             )}
             <div className="text-sm text-black font-bold">
-              {/* {specificRole !== "user" && specificRole !== null && (
-                <p
-                  onClick={() => profileHandler(specificRole)}
-                  className="py-2 px-4 hover:bg-gray-200"
-                >
-                  My Profile
-                </p>
-              )} */}
+              {userCurrentRoleStatus &&
+                userCurrentRoleStatusActiveRole !== "user" &&
+                userCurrentRoleStatusActiveRole !== null && (
+                  <p
+                    onClick={() =>
+                      profileHandler(
+                        userCurrentRoleStatus && userCurrentRoleStatusActiveRole
+                      )
+                    }
+                    className="py-2 px-4 cursor-pointer hover:bg-gray-200"
+                  >
+                    My Profile
+                  </p>
+                )}
               <p
                 className="py-2 px-4 hover:bg-gray-200 cursor-pointer"
                 onClick={logoutHandler}

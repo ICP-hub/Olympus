@@ -679,8 +679,8 @@ const CreateProjectRegistration = () => {
           console.log("register register_project functn ka result ", result);
           if (result === "approval request is sent") {
             toast.success(result);
-            navigate("/");
-            window.location.href = "/";
+            // navigate("/");
+            // window.location.href = "/";
           } else {
             toast.error(result);
           }

@@ -30,6 +30,7 @@ import LiveEventsCards from "./components/Dashboard/LiveEventsCards";
 import UserRegForm from "./components/RegForms.jsx/UserRegForm";
 import MentorRegForm from "./components/RegForms.jsx/MentorRegForm";
 import InvestorRegForm from "./components/RegForms.jsx/InvestorRegForm";
+import ProjectRegForm from "./components/RegForms.jsx/ProjectRegForm";
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
 const ProjectDetails = lazy(() => import("./components/Project/ProjectDetails"));
@@ -54,11 +55,11 @@ const AppRoutes = () => {
     { path: "/create-user", element: <UserRegForm /> },
     // { path: "/create-user", element: <NormalUser /> },
     { path: "/create-user", element: <UserRegForm /> },
-    { path: "/create-project", element: <CreateProject /> },
+    { path: "/create-project", element: <ProjectRegForm /> },
     // { path: "/create-investor", element: <InvestorRegistration /> },
     { path: "/create-investor", element: <InvestorRegForm /> },
     { path: "/event-form", element: <EventForm /> },
-    { path: "/update-project", element: <CreateProject /> },
+    { path: "/update-project", element: <ProjectRegForm /> },
     { path: "/project-details", element: <ProjectDetails /> },
     { path: "/profile", element: <UserProfile /> },
     // { path: "/create-mentor", element: <MentorRegistration /> },

@@ -110,7 +110,7 @@ export const useAuthClient = (options = defaultOptions) => {
     const principal = identity.getPrincipal().toText();
     setPrincipal(principal);
     setAuthClient(client);
-    const agent = new HttpAgent({ identity });
+    const agent = new HttpAgent({ identity, verifyQuerySignatures: false });
     const actor = createActor(process.env.CANISTER_ID_ICPACCELERATOR_BACKEND, {
       agent,
     });
