@@ -1,19 +1,19 @@
 import imageCompression from "browser-image-compression";
 
-const CompressedImage = async (file) => {
+const compressImage = async (file) => {
   try {
     const options = {
-      maxSizeMB: 0.6,
-      maxWidthOrHeight: 1024,
-      useWebWorker: false,
+      maxSizeMB: 0.6, // Maximum file size you want after compression
+      maxWidthOrHeight: 1024, // Maximum size of the width or height of the image
+      useWebWorker: true, // Utilize Web Worker for performance improvement
     };
     const compressedBlob = await imageCompression(file, options);
-    // console.log('compressed blob', compressedBlob)
+    console.log('Compressed blob:', compressedBlob); // Debugging line, can be commented out
 
     const compressedFile = new File([compressedBlob], file.name, {
       type: file.type,
     });
-    // console.log("Compressed File:", compressedFile);
+    console.log("Compressed File:", compressedFile); // Debugging line, can be commented out
 
     return compressedFile;
   } catch (error) {
@@ -22,7 +22,7 @@ const CompressedImage = async (file) => {
   }
 };
 
-export default CompressedImage;
+export default compressImage;
 
 export const blobToVecNat8 = async (blob) => {
   const arrayBuffer = await blob.arrayBuffer();

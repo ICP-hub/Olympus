@@ -17,9 +17,10 @@ import g3 from "../../../assets/ProfIleEdit/g3.png";
 import g4 from "../../../assets/ProfIleEdit/g4.png";
 import { useSelector } from "react-redux";
 import MentorRegistration from "../Registration/MentorRegistration/MentorRegistration";
-import HubRegistration from "../Registration/IcpHubRegistration/HubRegistration";
-import InvestorRegistration from "../Registration/InvestorRegistration/InvestorRegistration";
+import MentorRegForm from "../RegForms.jsx/MentorRegForm";
+import InvestorRegForm from "../RegForms.jsx/InvestorRegForm";
 import CreateProjectRegistration from "../Project/CreateProject/CreateProjectRegistration";
+import ProjectRegForm from "../RegForms.jsx/ProjectRegForm";
 
 const UserProfile = () => {
   const userCurrentRoleStatusActiveRole = useSelector(
@@ -52,7 +53,7 @@ const UserProfile = () => {
   return (
     <div className="font-fontUse bg-gray-100 w-full">
       <div className="  bg-white  shadow-md shadow-gray-300 pb-6 text-black pt-4 rounded-lg md:mx-[6%] mx-[6%]">
-        <div className="flex flex-row items-end px-10">
+        <div className="flex flex-row items-end px-10 space-y-4">
           <h1 className="md:text-4xl text-[20px] font-bold bg-gradient-to-r from-violet-900 to-sky-500 text-transparent bg-clip-text">
             My Profile
           </h1>
@@ -154,7 +155,7 @@ const UserProfile = () => {
             </p>
           </div>
 
-          <div className="hidden md:block z-20 absolute right-40 top-20">
+          <div className="hidden md:block z-10 absolute right-40 top-20">
             <div className="relative flex justify-center items-center">
               <div className="z-50 top-[40%] left-[45%]">
                 <img src={g1} alt="g1" className="w-40 h-60" />
@@ -196,9 +197,9 @@ const UserProfile = () => {
                 ))}
               </ul>
             </div> */}
-            {userCurrentRoleStatusActiveRole === "mentor" && <MentorRegistration />}
-            {userCurrentRoleStatusActiveRole === "project" && <CreateProjectRegistration />}
-            {userCurrentRoleStatusActiveRole === "vc" && <InvestorRegistration />}
+            {userCurrentRoleStatusActiveRole === "mentor" && <MentorRegForm />}
+            {userCurrentRoleStatusActiveRole === "project" && <ProjectRegForm />}
+            {userCurrentRoleStatusActiveRole === "vc" && <InvestorRegForm />}
           </div>
         </div>
       </section>
