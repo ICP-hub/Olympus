@@ -763,6 +763,7 @@ function ProjectRegForm() {
       };
 
       console.log("projectData ==>", projectData);
+      console.log("projectData ==>", logoData);
       try {
         if (userCurrentRoleStatusActiveRole === "project") {
           let id = projectFullData?.uid;

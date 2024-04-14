@@ -272,9 +272,10 @@ const InvestorRegForm = () => {
         .string()
         .when("investment_stage", (val, schema) =>
           val &&
-          val[0] &&
-          val[0].trim() !== "" &&
-          val[0] !== "we do not currently invest"
+          // val[0] &&
+          // val[0].trim() !== "" &&
+          // val[0] !== "we do not currently invest"
+          val !== "we do not currently invest"
             ? schema
                 .test("is-non-empty", "Atleast one range required", (value) =>
                   /\S/.test(value)
@@ -368,12 +369,12 @@ const InvestorRegForm = () => {
         ],
         existing_icp_investor:
           data?.existing_icp_investor === "true" ? true : false,
-        type_of_investment:
-          data?.existing_icp_investor === "true" && data?.investment_type
+        investor_type: 
+          [data?.existing_icp_investor === "true" && data?.investment_type
             ? data?.investment_type
-            : "",
+            : ""],
         project_on_multichain: [
-          data?.investment_type === "true" &&
+          data?.invested_in_multi_chain === "true" &&
           data?.invested_in_multi_chain_names
             ? data?.invested_in_multi_chain_names
             : "",
@@ -405,10 +406,11 @@ const InvestorRegForm = () => {
         money_invested: [0],
         existing_icp_portfolio: [""],
         reason_for_joining: [""],
-        investor_type: [""],
+        type_of_investment: "",
         number_of_portfolio_companies: 0,
         announcement_details: [""],
       };
+      console.log(investorData);
       try {
         if (userCurrentRoleStatusActiveRole === "vc") {
           await actor.update_venture_capitalist(investorData).then((result) => {
@@ -430,7 +432,7 @@ const InvestorRegForm = () => {
             .then((result) => {
               if (result && result.includes("approval request is sent")) {
                 toast.success("Approval request is sent");
-                window.location.href = "/";
+                // window.location.href = "/";
               } else {
                 toast.error("something got wrong");
               }
@@ -473,14 +475,18 @@ const InvestorRegForm = () => {
   // default Interest set function
   const setTypeOfInvestSelectedOptionsHandler = (val) => {
     setTypeOfInvestSelectedOptions(
-      val && val.length > 0 && val[0].length > 0
-        ? val[0].map((interest) => ({ value: interest, label: interest }))
+      val && val.length > 0
+        ? val?.[0]
+            .split(", ")
+            .map((interest) => ({ value: interest, label: interest }))
         : []
     );
   };
   const setInvestedInMultiChainSelectedOptionsHandler = (val) => {
     setInvestedInMultiChainSelectedOptions(
-      val ? val.map((chain) => ({ value: chain, label: chain })) : []
+      val
+        ? val?.[0].split(", ").map((chain) => ({ value: chain, label: chain }))
+        : []
     );
   };
 
@@ -538,6 +544,7 @@ const InvestorRegForm = () => {
   };
   // set investor values handler
   const setInvestorValuesHandler = (val) => {
+    console.log("val==========>>>>>>>>>>>>>>>", val)
     if (val) {
       setValue("full_name", val?.user_data?.full_name ?? "");
       setValue("email", val?.user_data?.email?.[0] ?? "");
@@ -577,7 +584,7 @@ const InvestorRegForm = () => {
       } else {
         setValue("existing_icp_investor", "false");
       }
-      setValue("investment_type", val?.investor_type ?? "");
+      setValue("investment_type", val?.investor_type?.[0] ?? "");
       setTypeOfInvestSelectedOptionsHandler(val?.investor_type);
       setValue("investor_portfolio_link", val?.portfolio_link ?? "");
       setValue("investor_fund_name", val?.name_of_fund ?? "");
@@ -589,7 +596,7 @@ const InvestorRegForm = () => {
       }
       setValue(
         "invested_in_multi_chain_names",
-        val?.project_on_multichain ?? ""
+        val?.project_on_multichain?.[0] ?? ""
       );
       setInvestedInMultiChainSelectedOptionsHandler(val?.project_on_multichain);
       setValue("investment_categories", val?.category_of_investment ?? "");
@@ -598,9 +605,9 @@ const InvestorRegForm = () => {
       );
       setValue("investor_website_url", val?.website_link?.[0] ?? "");
       setValue("investor_linkedin_url", val?.linkedin_link ?? "");
-      setValue("investment_stage", val?.stage ?? "");
+      setValue("investment_stage", val?.stage?.[0] ?? "");
       setInvestStageSelectedOptionsHandler(val?.stage);
-      setValue("investment_stage_range", val?.range_of_check_size ?? "");
+      setValue("investment_stage_range", val?.range_of_check_size?.[0] ?? "");
       setInvestStageRangeSelectedOptionsHandler(val?.range_of_check_size);
     }
   };
