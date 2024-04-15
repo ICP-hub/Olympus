@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-// import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
 import uint8ArrayToBase64 from "../../../../IcpAccelerator_frontend/src/components/Utils/uint8ArrayToBase64";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -89,14 +88,8 @@ const AllProject = () => {
   }
 
   useEffect(() => {
-    setCurrentPage(1); // Reset to the first page when filter changes
+    setCurrentPage(1);
   }, [filterOption, displayedProjects]);
-
-  // Pagination Controls
-  // const pageNumbers = [];
-  // for (let i = 1; i <= Math.ceil(displayedProjects.length / projectsPerPage); i++) {
-  //   pageNumbers.push(i);
-  // }
 
   const tm = useRef(null);
   const navigate = useNavigate();
@@ -230,7 +223,7 @@ const AllProject = () => {
                           className="border-[#9C9C9C] w-[230px]  hover:text-indigo-800 border-b-2 py-2 px-4 focus:outline-none text-base flex justify-start font-fontUse"
                           onClick={() => setFilterOption("Added")}
                         >
-                          Added to Spotlight
+                          Featured in Spotlight
                         </button>
                       </li>
                       <li>
@@ -238,7 +231,7 @@ const AllProject = () => {
                           className="border-[#9C9C9C] w-[230px] py-2 px-4  hover:text-indigo-800 focus:outline-none text-base flex justify-start font-fontUse"
                           onClick={() => setFilterOption("Not Added")}
                         >
-                          Not in Spotlight
+                          Excluded from Spotlight
                         </button>
                       </li>
                     </ul>

@@ -20,6 +20,7 @@ function* fetchProjectPendingHandler() {
       actor.project_awaiting_approval,
     ]);
 
+    // console.log("allProjectPendingStatus =>",allProjectPendingStatus);
     const updatedProjectProfiles = allProjectPendingStatus.map(
       ([principal, { project_profile, roles }]) => {
         const principalText = principalToText(principal);
@@ -39,6 +40,12 @@ function* fetchProjectPendingHandler() {
             ? uint8ArrayToBase64(project_profile.params.project_logo)
             : null;
 
+        const weeklyUsers = formatDateFromBigInt(
+          project_profile.params.weekly_active_users[0]
+        );
+        const updatedRevenue = formatDateFromBigInt(
+          project_profile.params.revenue[0]
+        );
         const projectRole = roles.find((role) => role.name === "project");
         let requestedTimeFormatted =
           projectRole?.requested_on
@@ -62,6 +69,8 @@ function* fetchProjectPendingHandler() {
           principal: principalText,
           profile: {
             ...project_profile.params,
+            weekly_active_users: weeklyUsers,
+            revenue: updatedRevenue,
             user_data: {
               ...project_profile.params.user_data,
               profile_picture: profilePictureURL,

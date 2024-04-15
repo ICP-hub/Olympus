@@ -122,10 +122,33 @@ const TopProjects = () => {
                     />
                   </svg>
                 </div>
-
-                <div className="flex rounded-b-xl flex-row justify-between items-center mt-2 px-2 py-1 bg-gray-200">
-                  <div className="flex flex-row space-x-2 text-[10px] text-black">
-                    <p>{item.area_of_interest}</p>
+                <div className="flex rounded-b-xl flex-row justify-between items-center mt-2 px-2 py-1 mb-[2px]">
+                  <div
+                    className="flex flex-row space-x-2 text-[10px] text-black overflow-x-auto"
+                    style={{
+                      marginBottom:
+                        item.area_of_interest.split(",").length > 1
+                          ? "-0.8rem"
+                          : "0",
+                    }}
+                  >
+                    {item.area_of_interest && (
+                      <div className="flex rounded-2xl flex-row justify-between items-center space-x-2 mb-[16px]">
+                        {item.area_of_interest.split(",").map((area, i) => (
+                          <p
+                            key={i}
+                            className={
+                              "bg-gray-200 px-2 py-0.5 rounded-2xl mb-0" +
+                              (i === item.area_of_interest.split(",").length - 1
+                                ? " mb-0"
+                                : "")
+                            }
+                          >
+                            {area.trim()}
+                          </p>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

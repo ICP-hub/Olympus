@@ -25,7 +25,7 @@ const ConfirmationModal = lazy(() =>
 const UserAllProfile = lazy(() =>
   import("./components/Admindashboard/Profile/UserAllProfile")
 );
-const AllProject = lazy(() => import("./components/Admindashboard/AllProject"));
+// const AllProject = lazy(() => import("./components/Admindashboard/AllProject"));
 const LiveIncubated = lazy(() =>
   import("./components/Admindashboard/LiveIncubated")
 );
@@ -45,7 +45,7 @@ const AdminRoute = ({ setModalOpen }) => {
     { path: "/reject", element: <RejectModal /> },
     { path: "/accept", element: <AcceptModal /> },
     { path: "/profile", element: <Projectprofile /> },
-    { path: "/allProject", element: <AllProject /> },
+    // { path: "/allProject", element: <AllProject /> },
     { path: "/project_details", element: <Projectdetails /> },
     { path: "/all", element: <UserAllProfile /> },
     { path: "/live", element: <LiveIncubated /> },

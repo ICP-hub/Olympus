@@ -44,37 +44,39 @@ const LiveModal = ({ onClose, id }) => {
   };
 
   return (
-    <div className="fixed inset-0 w-full bg-black bg-opacity-50 z-50 flex justify-center items-center px-4 sm:px-6 lg:px-8">
-      <div className="bg-white/30 backdrop-blur-sm border border-gray-200 rounded-lg p-4 sm:p-6 md:p-8 max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl w-full space-y-2">
-        <h2 className="text-sm md:text-xl text-black font-semibold">
-          Do you want to make this project live?
-        </h2>
-        {error && <p className="text-red-500">{error}</p>}
-        <input
-          type="text"
-          placeholder="Enter project URL"
-          value={projectUrl}
-          onChange={(e) => setProjectUrl(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded-md"
-        />
-        <div className="flex justify-end space-x-2 sm:space-x-4">
-          <button
-            onClick={onClose}
-            className="px-3 sm:px-4 py-1 sm:py-2 rounded-lg text-blue-700 bg-white font-bold text-xs sm:text-sm focus:outline-none"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={() => incubateToLiveHandler(id, true, projectUrl)}
-            disabled={isAccepting || !projectUrl}
-            className="px-3 sm:px-4 py-1 sm:py-2 rounded-lg text-white bg-blue-700 font-bold text-xs sm:text-sm hover:bg-blue-900 focus:outline-none"
-          >
-            {isAccepting ? (
-              <ThreeDots color="#FFF" height={10} width={40} />
-            ) : (
-              "Make Live"
-            )}
-          </button>
+    <div className="fixed inset-0 flex items-center justify-center px-4 py-6 bg-black bg-opacity-60 sm:px-6 lg:px-8 z-50">
+      <div className="max-w-lg w-full bg-white bg-opacity-80 backdrop-blur-lg shadow-xl rounded-2xl border border-gray-100">
+        <div className="p-6 sm:p-8 space-y-4">
+          <h2 className="text-xl font-semibold text-gray-800">
+            Do you want to make this project live?
+          </h2>
+          {error && <p className="text-red-500 font-medium">{error}</p>}
+          <input
+            type="text"
+            placeholder="Enter project URL"
+            value={projectUrl}
+            onChange={(e) => setProjectUrl(e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition duration-200"
+          />
+          <div className="flex justify-end space-x-4">
+            <button
+              onClick={onClose}
+              className="px-4 py-2 text-sm md:text-md font-medium text-blue-600 bg-white rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50 transition duration-150"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => incubateToLiveHandler(id, true, projectUrl)}
+              disabled={isAccepting || !projectUrl}
+              className="px-4 py-2 text-sm md:text-md font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50 transition duration-150"
+            >
+              {isAccepting ? (
+                <ThreeDots color="#FFF" height={10} width={40} />
+              ) : (
+                "Make Live"
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -144,7 +144,7 @@ const LogoutModal = () => {
                 </li>
                 <li
                   onClick={() => {
-                    navigate("/allProject");
+                    navigate("/live");
                     toggleDropdown();
                   }}
                   className="block px-4 py-2 hover:bg-gray-200 hover:text-black"
