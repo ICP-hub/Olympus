@@ -47,7 +47,7 @@ const AdminDashboard = () => {
   const [currentNotificationForReject, setCurrentNotificationForReject] =
     useState(null);
 
-  console.log("allNotification in dahboard", allNotification);
+  // console.log("allNotification in dahboard", allNotification);
   const navigate = useNavigate();
 
   return (
@@ -161,7 +161,7 @@ const AdminDashboard = () => {
           </div>
 
           <div
-            onClick={() => navigate("/allProject")}
+            onClick={() => navigate("/live")}
             className="rounded-[1rem] space-x-2 flex px-4   justify-center cursor-pointer flex-col  w-full  bg-white drop-shadow-xl border-2 "
           >
             <div className="flex  flex-row  flex-wrap justify-around font-bold text-lg text-black items-center ">
@@ -341,7 +341,7 @@ const AdminDashboard = () => {
                     >
                       View
                     </button>
-                    <button
+                    {/* <button
                       onClick={() => {
                         setCurrentNotificationForReject(item);
                         toggleRejectModal();
@@ -358,7 +358,7 @@ const AdminDashboard = () => {
                       }}
                     >
                       Accept
-                    </button>
+                    </button> */}
                   </div>
                 </div>
               ))}

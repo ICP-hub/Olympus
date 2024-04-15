@@ -34,6 +34,13 @@ function* fetchProjectDeclinedHandler() {
         //   ? uint8ArrayToBase64(project_profile.params.user_data.profile_picture)
         //   : null;
 
+        const weeklyUsers = formatDateFromBigInt(
+          project_profile.params?.weekly_active_users[0]
+        );
+        const updatedRevenue = formatDateFromBigInt(
+          project_profile.params?.revenue[0]
+        );
+
         const profilePictureBase64 =
           project_profile.params.user_data.profile_picture[0] &&
           project_profile.params.user_data.profile_picture[0] instanceof
@@ -77,6 +84,8 @@ function* fetchProjectDeclinedHandler() {
           principal: principalText,
           profile: {
             ...project_profile.params,
+            weekly_active_users: weeklyUsers,
+            revenue: updatedRevenue,
             user_data: {
               ...project_profile.params.user_data,
               profile_picture: profilePictureBase64,

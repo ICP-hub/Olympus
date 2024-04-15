@@ -1,11 +1,19 @@
 import React, { useState, useEffect } from "react";
 import "react-circular-progressbar/dist/styles.css";
-import { place, tick, star, Profile2 } from "../../Utils/AdminData/SvgData";
+import {
+  place,
+  tick,
+  star,
+  Profile2,
+  telegramSVg,
+} from "../../Utils/AdminData/SvgData";
 import {
   numberToDate,
   uint8ArrayToBase64,
 } from "../../Utils/AdminData/saga_function/blobImageToUrl";
-
+import { openchat_username } from "../../Utils/AdminData/SvgData";
+import { linkedInSvg } from "../../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
+import { twitterSvg } from "../../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
 const UserProfile = ({ userData, Allrole }) => {
   // const actor = useSelector((currState) => currState.actors.actor);
 
@@ -82,76 +90,79 @@ const UserProfile = ({ userData, Allrole }) => {
   const profile = uint8ArrayToBase64(userData[0].params.profile_picture[0]);
   // console.log(profile);
   return (
-    <div className="w-full py-[2%]">
-      <div className="  bg-white  shadow-md shadow-gray-400 pb-6 pt-4 rounded-lg w-full">
-        <div className="w-full flex  md:flex-row flex-col md:items-start items-center md:justify-start justify-center py-4">
-          <div className="relative">
-            <div className="object-fill">
+    <div className="w-full">
+      <div className=" bg-white  shadow-md shadow-gray-400 pb-6 pt-4 rounded-lg w-full">
+        <div className="w-full flex  md:flex-row flex-col md:items-start items-center justify-around px-[4%] py-4">
+          <div className="flex md:flex-row flex-col w-full ">
+            <div className="relative">
+              {/* <div className=""> */}
               <img
-                className="md:w-36 md:h-36 w-28 h-28 mx-4 justify-start rounded-full"
+                className="md:w-36 object-fill md:h-36 w-28 h-28 mx-4 justify-center rounded-full"
                 src={profile}
                 alt="description"
               />
-            </div>
+              {/* </div> */}
 
-            <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center">
-              <svg className="absolute invisible">
-                <defs>
-                  <linearGradient
-                    id="progressGradient"
-                    x1="0%"
-                    y1="0%"
-                    x2="100%"
-                    y2="0%"
-                    className="rounded"
-                  >
-                    <stop offset="0%" stopColor="#e2e8f0" />
-                    <stop offset="100%" stopColor="#3b82f6" />
-                  </linearGradient>
-                </defs>
-              </svg>
-            </div>
-          </div>
-          <div className="flex flex-col ml-4  mt-2 w-auto md:mr-80 justify-start">
-            <div className="flex flex-row  gap-4 items-center">
-              <h1 className="md:text-3xl text-xl md:font-extrabold font-bold  bg-black text-transparent bg-clip-text">
-                {userData[0].params.full_name}
-              </h1>
-              {/* <div>
-                <p className="bg-[#2A353D] text-xs rounded-full text-white py-1 px-2">
-                  {userData[0].category.activeCategory}
-                </p>
-              </div> */}
-            </div>
-            {/* <p className="font-normal text-black  md:text-md text-sm mt-2  mb-1 underline ">
-              {userData[0].category_of_mentoring_service}
-            </p> */}
-            <p className="text-gray-500 md:text-md text-sm font-normal mb-4">
-              {userData[0].params.email}
-            </p>
-
-            <div className="flex flex-col items-start gap-3 text-sm">
-              <div className="flex flex-row  text-gray-600 space-x-2">
-                {place}
-                <p className="underline ">{userData[0].params.country}</p>
-              </div>
-              <div className=" flex flex-row space-x-2 text-gray-600">
-                {star}
-                <p>{date}</p>
-              </div>
-              <div className="pl-1 flex flex-row space-x-2 text-gray-600">
-                {tick}
-                <p>{userData[0].params.area_of_interest}</p>
+              <div className=" top-0 left-0 w-full h-full flex justify-center items-center">
+                <svg className="absolute invisible">
+                  <defs>
+                    <linearGradient
+                      id="progressGradient"
+                      x1="0%"
+                      y1="0%"
+                      x2="100%"
+                      y2="0%"
+                      className="rounded"
+                    >
+                      <stop offset="0%" stopColor="#e2e8f0" />
+                      <stop offset="100%" stopColor="#3b82f6" />
+                    </linearGradient>
+                  </defs>
+                </svg>
               </div>
             </div>
-
-            {userData[0].area_of_expertise && (
-              <p className="mt-8 text-black mb-2">Skills</p>
-            )}
-            <div className="flex text-gray-700 flex-row gap-2 flex-wrap text-xs">
-              <p className="bg-[#c9c5c5] underline rounded-full px-3">
-                {userData[0].area_of_expertise}
+            <div className="flex flex-col ml-4  mt-2 w-auto justify-start md:mb-0 mb-6">
+              <div className="flex flex-row  gap-4 items-center">
+                <h1 className="md:text-3xl text-xl md:font-extrabold font-bold  bg-black text-transparent bg-clip-text">
+                  {userData[0].params.full_name}
+                </h1>
+              </div>
+              <p className="text-gray-500 md:text-md text-sm font-normal mb-4">
+                {userData[0].params.email}
               </p>
+
+              <div className="flex flex-col items-start gap-3 text-sm">
+                <div className="flex flex-row  text-gray-600 space-x-2">
+                  {place}
+                  <p className="underline ">{userData[0].params.country}</p>
+                </div>
+                <div className=" flex flex-row space-x-2 text-gray-600">
+                  {star}
+                  <p>{date}</p>
+                </div>
+                <div className="pl-1 flex flex-row space-x-2 text-gray-600">
+                  {tick}
+                  <p>{userData[0].params.area_of_interest}</p>
+                </div>
+                <div className="pl-1 flex flex-row space-x-2 text-gray-600">
+                  {openchat_username}
+                  <p>{userData[0].params.openchat_username[0]}</p>
+                </div>
+              </div>
+
+              {userData[0].params.reason_to_join[0] && (
+                <p className="mt-8 text-black mb-2">Reason to join</p>
+              )}
+              <div className="flex text-gray-700 flex-row gap-2 flex-wrap text-xs">
+                {userData[0].params.reason_to_join[0].map((reason, index) => (
+                  <p
+                    key={index}
+                    className="bg-[#c9c5c5] py-0.5 rounded-full px-3"
+                  >
+                    {reason.replace(/_/g, " ")}
+                  </p>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -166,7 +177,7 @@ const UserProfile = ({ userData, Allrole }) => {
               ).map((role, index) => (
                 <div key={index} className="flex justify-around items-center">
                   <button
-                    className={`flex px-4 items-center md:w-[310px] w-full h-[90px] ${getButtonClass(
+                    className={`flex px-4 items-center md:w-[400px] w-full h-[90px] ${getButtonClass(
                       role.status
                     )} rounded-md `}
                   >
@@ -181,46 +192,51 @@ const UserProfile = ({ userData, Allrole }) => {
         </div>
       </div>
 
-      <div className="w-full mt-12">
-        <div className="flex  font-bold text-black text-3xl ">
-          <h1 className="mb-2">
-            About {current.charAt(0).toUpperCase() + current.slice(1)}
-          </h1>
-        </div>
-        <div>
-          <p>{userData[0].params.bio}</p>
-          {/* <button className="underline text-black" onClick={handleReadMoreClick}>
-            {showMore ? 'Read less' : 'Read more'}
-          </button> */}
-        </div>
-      </div>
-      <div className="w-full mt-12">
-        <div className="flex  font-bold text-black text-3xl ">
-          <h1 className="mb-2">Telegram</h1>
-        </div>
-        <div>
-          <p>{userData[0].params.telegram_id}</p>
-        </div>
-      </div>
-      <div className="w-full mt-12">
-        <div className="flex  font-bold text-black text-3xl ">
-          <h1 className="mb-2">Twitter</h1>
-        </div>
-        <div>
-          <p>{userData[0].params.twitter_id}</p>
-        </div>
-      </div>
+      <div className="mx-auto mt-12">
+        <h1 className="text-3xl font-bold text-gray-800 mb-4">
+          About {current.charAt(0).toUpperCase() + current.slice(1)}
+        </h1>
+        <p className="text-gray-600 text-lg mb-10">{userData[0].params.bio}</p>
 
-      <div className="mt-12 pb-8">
         <p className="w-full mb-4 border border-[#DCDCDC]"></p>
-        <div className="text-black text-3xl font-bold">
-          {userData[0].area_of_expertise && <h1 className="">Skills</h1>}
-        </div>
-        <div className="flex flex-col gap-2 ">
-          <div className="flex flex-row gap-2 flex-wrap mt-2 ">
-            <p className="bg-gray-300 underline rounded-full px-2">
-              {userData[0].area_of_expertise}
-            </p>
+
+        <div className="flex md:flex-row flex-col justify-between md:items-center items-start w-full mb-10">
+          <div className="md:w-1/2 w-3/4 flex flex-row items-center justify-start sm:text-left pr-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
+              Telegram:
+            </h2>
+            <div className="flex flex-grow items-center truncate">
+              <p className="text-gray-600 text-sm md:text-md truncate px-4">
+                {userData[0].params.telegram_id}
+              </p>
+              <a
+                href={userData[0].params.telegram_id}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="pl-2"
+              >
+                {telegramSVg}
+              </a>{" "}
+            </div>
+          </div>
+
+          <div className="flex md:w-1/2 w-3/4 items-center text-center sm:text-left md:pl-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2 mr-2">
+              Twitter:
+            </h2>
+            <div className="flex flex-grow items-center truncate">
+              <p className="text-gray-600 text-sm md:text-md truncate">
+                {userData[0].params.twitter_id}
+              </p>
+              <a
+                href={userData[0].params.twitter_id}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="shrink-0 pl-2"
+              >
+                {twitterSvg}
+              </a>
+            </div>
           </div>
         </div>
       </div>

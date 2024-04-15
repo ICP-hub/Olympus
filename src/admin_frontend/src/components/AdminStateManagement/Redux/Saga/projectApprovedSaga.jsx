@@ -43,6 +43,13 @@ function* fetchProjectApprovedHandler() {
             ? uint8ArrayToBase64(project_profile[0].params.project_logo)
             : null;
 
+        const weeklyUsers = formatDateFromBigInt(
+          project_profile[0]?.params?.weekly_active_users[0]
+        );
+        const updatedRevenue = formatDateFromBigInt(
+          project_profile[0]?.params?.revenue[0]
+        );
+
         const updatedRoles = roles.map((role) => ({
           ...role,
           approved_on: role.approved_on.map((time) =>
@@ -68,6 +75,8 @@ function* fetchProjectApprovedHandler() {
             ...project_profile[0].params,
             project_cover: projectCoverURL,
             project_logo: projectLogoURL,
+            weekly_active_users: weeklyUsers,
+            revenue: updatedRevenue,
             user_data: {
               ...project_profile[0].params.user_data,
               profile_picture: profilePictureBase64,

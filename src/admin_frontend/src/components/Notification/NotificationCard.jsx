@@ -10,7 +10,7 @@ const NotificationCard = ({ notificationDetails }) => {
     setModalPopUp((prev) => !prev);
   };
 
-  console.log("notificationDetails =======================================>=> ", notificationDetails);
+  // console.log("notificationDetails =======================================>=> ", notificationDetails);
 
   const dataSendToProfileHandler = () => {
     navigate("/all", { state: notificationDetails.principal });
@@ -18,7 +18,7 @@ const NotificationCard = ({ notificationDetails }) => {
 
   return (
     <>
-      <div className="px-[4%]  py-[2%] w-full flex flex-col bg-white rounded-lg shadow border border-gray-200">
+      <div className="px-[4%]  py-[2%] w-full flex flex-col mb-6 bg-white rounded-lg shadow border border-gray-200">
         <div className="w-full mb-2 md:justify-between justify-start md:items-center  flex flex-col md:flex-row">
           <div className="space-x-3 flex flex-row items-center">
             <img

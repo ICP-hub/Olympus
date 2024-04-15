@@ -27,32 +27,34 @@ const IncubatedModal = ({ onClose, id }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center px-4 sm:px-6 lg:px-8">
-      <div className="bg-white/30 backdrop-blur-sm border border-gray-200 rounded-lg p-4 sm:p-6 md:p-8 max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl w-full space-y-2">
-        <h2 className="text-sm md:text-xl text-black font-semibold">
-          Do you want to remove this project from live?
-        </h2>
-        <p className="text-black text-sm md:text-xl font-semibold mb-4">
-          Confirm removal?
-        </p>
-        <div className="flex justify-end space-x-2 sm:space-x-4">
-          <button
-            onClick={onClose}
-            className="px-3 sm:px-4 py-1 sm:py-2 rounded-lg text-blue-600 bg-white font-bold text-xs sm:text-sm focus:outline-none"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={() => liveToIncubateHandler(id)}
-            disabled={isDeclining}
-            className="px-3 sm:px-4 py-1 sm:py-2 rounded-lg text-white bg-blue-600 font-bold text-xs sm:text-sm hover:bg-blue-800 focus:outline-none"
-          >
-            {isDeclining ? (
-              <ThreeDots color="#FFF" height={10} width={40} />
-            ) : (
-              "Remove"
-            )}
-          </button>
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 px-4 py-6 sm:px-6 lg:px-8 z-50">
+      <div className="max-w-xl w-full bg-white bg-opacity-90 backdrop-blur-md shadow-xl rounded-xl border border-gray-200">
+        <div className="p-6 sm:p-8 md:p-10 space-y-4">
+          <h2 className="text-lg md:text-2xl font-semibold text-gray-800">
+            Do you want to remove this project from live?
+          </h2>
+          <p className="text-md md:text-lg text-gray-700 font-medium">
+            Confirm removal?
+          </p>
+          <div className="flex justify-end space-x-3 sm:space-x-4">
+            <button
+              onClick={onClose}
+              className="px-4 py-2 text-sm md:text-md font-medium text-blue-600 bg-white rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50 transition duration-150"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => liveToIncubateHandler(id)}
+              disabled={isDeclining}
+              className="px-4 py-2 text-sm md:text-md font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50 transition duration-150"
+            >
+              {isDeclining ? (
+                <ThreeDots color="#FFF" height={10} width={40} />
+              ) : (
+                "Remove"
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </div>
