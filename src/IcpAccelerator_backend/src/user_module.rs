@@ -1,4 +1,7 @@
 use crate::default_images::*;
+use crate::mentor::MENTOR_REGISTRY;
+use crate::project_registration::APPLICATION_FORM;
+use crate::vc_registration::VENTURECAPITALIST_STORAGE;
 use candid::{CandidType, Principal};
 use ic_cdk::api::caller;
 use ic_cdk::api::management_canister::main::raw_rand;
@@ -247,6 +250,71 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
 
 //  )
 // }
+
+pub async fn update_data_for_roles(principal_id: Principal, user_data: UserInformation) -> Result<(), String> {
+    let roles = get_roles_for_principal(principal_id);
+    for role in roles {
+        match role.name.as_str() {
+            "user" => update_user_data(principal_id, user_data.clone()).await?,
+            "project" => update_project_data(principal_id, user_data.clone()).await?,
+            "mentor" => update_mentor_data(principal_id, user_data.clone()).await?,
+            "vc" => update_vc_data(principal_id, user_data.clone()).await?,
+            _ => (),
+        }
+    }
+    Ok(())
+}
+
+async fn update_user_data(user_id: Principal, user_data: UserInformation) -> Result<(), String> {
+    USER_STORAGE.with(|storage| {
+        let mut storage = storage.borrow_mut();
+
+        if let Some(user_info_internal) = storage.get_mut(&user_id) {
+            user_info_internal.params = user_data;  
+            Ok(()) 
+        } else {
+            Err("User not found. Please register before updating.".to_string())
+        }
+    })
+}
+
+async fn update_project_data(principal: Principal, user_data: UserInformation) -> Result<(), String> {
+    APPLICATION_FORM.with(|app_form| {
+        let mut app_form = app_form.borrow_mut();
+        if let Some(projects) = app_form.get_mut(&principal) {
+            for project in projects.iter_mut() {
+                project.params.user_data = user_data.clone();
+            }
+            Ok(())
+        } else {
+            Err("No project found for the specified project ID.".to_string())
+        }
+    })
+}
+
+async fn update_mentor_data(user_id: Principal, user_data: UserInformation) -> Result<(), String> {
+    MENTOR_REGISTRY.with(|registry| {
+        let mut registry = registry.borrow_mut();
+        if let Some(mentor) = registry.get_mut(&user_id) {
+            mentor.profile.user_data = user_data;
+            Ok(())
+        } else {
+            Err("No mentor found for the specified ID.".to_string())
+        }
+    })
+}
+
+async fn update_vc_data(user_id: Principal, user_data: UserInformation) -> Result<(), String> {
+    VENTURECAPITALIST_STORAGE.with(|storage| {
+        let mut storage = storage.borrow_mut();
+        if let Some(vc) = storage.get_mut(&user_id) {
+            vc.params.user_data = user_data;
+            Ok(())
+        } else {
+            Err("No venture capitalist found for the specified ID.".to_string())
+        }
+    })
+}
 
 #[query]
 pub fn get_roles_for_principal(principal_id: Principal) -> Vec<Role> {
@@ -522,6 +590,7 @@ pub async fn update_user(info: UserInformation) -> std::string::String {
         }
     })
 }
+
 
 // pub fn pre_upgrade_user_modules() {
 //     USER_STORAGE.with(|user_storage| {

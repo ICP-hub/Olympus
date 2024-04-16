@@ -666,6 +666,9 @@ pub async fn create_project(info: ProjectInfo) -> String {
 
     crate::latest_popular_projects::update_project_status_live_incubated(new_project);
 
+    let user_data_for_updation = info.clone();
+    crate::user_module::update_data_for_roles(caller, user_data_for_updation.user_data);
+
     let res = send_approval_request(
         info.user_data.profile_picture.unwrap_or_else(|| Vec::new()),
         info.user_data.full_name,

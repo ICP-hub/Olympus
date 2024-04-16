@@ -221,6 +221,9 @@ pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::
         }
     });
 
+    let user_data_for_updation = params.clone();
+    crate::user_module::update_data_for_roles(caller, user_data_for_updation.user_data);
+
     match params.validate() {
         Ok(_) => {
             println!("Validation passed!");
