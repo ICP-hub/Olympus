@@ -1081,3 +1081,110 @@ export const Profile2 = (
     />
   </svg>
 );
+
+export const bellSvg = (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="#619670"
+    viewBox="0 0 24 24"
+    strokeWidth="1.5"
+    stroke="currentColor"
+    className="w-10 h-10"
+    // stroke="#619670"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0M10.5 8.25h3l-3 4.5h3"
+    />
+  </svg>
+);
+
+export const userSvg = (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="#FFD700"
+    viewBox="0 0 24 24"
+    strokeWidth="1.5"
+    stroke="#FFD700"
+    className="w-10 h-10"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z"
+    />
+  </svg>
+);
+
+export const openchat_username = (
+  <svg
+    width="15"
+    height="18"
+    viewBox="0 0 15 18"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M2 9L6 13L13 4"
+      stroke="#2A353D"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+export const telegramSVg = (
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    role="img"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    {/* <title>Telegram icon</title> */}
+    <path d="M23.91 3.79L20.3 20.84c-.25 1.21-.98 1.5-2 .94l-5.5-4.07-2.66 2.57c-.3.3-.55.56-1.1.56-.72 0-.6-.27-.84-.95L6.3 13.7l-5.45-1.7c-1.18-.35-1.19-1.16.26-1.75l21.26-8.2c.97-.43 1.9.24 1.53 1.73z" />
+  </svg>
+);
+
+export const openWebsiteIcon = (
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM4 12C4 7.58 7.58 4 12 4C13.85 4 15.55 4.63 16.9 5.69L5.69 16.9C4.63 15.55 4 13.85 4 12ZM12 20C10.15 20 8.45 19.37 7.1 18.31L18.31 7.1C19.37 8.45 20 10.15 20 12C20 16.42 16.42 20 12 20Z"
+      fill="#4F4F4F"
+    />
+    <path
+      d="M22 2L11 13"
+      stroke="#4F4F4F"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M15 2H22V9"
+      stroke="#4F4F4F"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+export const noDataPresentSvg = (
+  <svg
+    className="w-4 h-4 mr-2 fill-current text-gray-500"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 20 20"
+  >
+    <path d="M10 20a10 10 0 110-20 10 10 0 010 20zm0-18a8 8 0 100 16 8 8 0 000-16zm.5 13V7h-1v8h1zm0-9V5h-1v2h1z" />
+  </svg>
+);

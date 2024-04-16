@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-// import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
 import uint8ArrayToBase64 from "../../../../IcpAccelerator_frontend/src/components/Utils/uint8ArrayToBase64";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -89,14 +88,8 @@ const AllProject = () => {
   }
 
   useEffect(() => {
-    setCurrentPage(1); // Reset to the first page when filter changes
+    setCurrentPage(1);
   }, [filterOption, displayedProjects]);
-
-  // Pagination Controls
-  // const pageNumbers = [];
-  // for (let i = 1; i <= Math.ceil(displayedProjects.length / projectsPerPage); i++) {
-  //   pageNumbers.push(i);
-  // }
 
   const tm = useRef(null);
   const navigate = useNavigate();
@@ -107,7 +100,6 @@ const AllProject = () => {
       [id]: !prevShowLine[id],
     }));
   };
-
   useEffect(() => {
     const fetchSpotlightProjects = async () => {
       try {
@@ -171,7 +163,9 @@ const AllProject = () => {
         console.error("Error adding to spotlight:", err);
       }
     } else {
-      toast.error("This project is not live yet, only live projects can add in spotlight")
+      toast.error(
+        "This project is not live yet, only live projects can add in spotlight"
+      );
     }
   };
 
@@ -185,6 +179,13 @@ const AllProject = () => {
     }
   };
 
+  const handleNavigate = (projectId, projectData) => {
+    setShowExtra((prev) => ({
+      ...prev,
+      [projectId]: !prev[projectId],
+    }));
+  };
+
   return (
     <>
       <div className="w-full flex flex-col px-[5%] py-[5%]">
@@ -193,13 +194,14 @@ const AllProject = () => {
             className="w-full bg-gradient-to-r from-purple-900 to-blue-500 text-transparent bg-clip-text text-3xl font-extrabold py-4 
        font-fontUse"
           >
-            All Projects
+            {filterOption}
           </div>
+
           <div className="flex items-center justify-between">
             <div className="flex justify-end gap-4 relative " ref={dropdownRef}>
               <div
                 className="cursor-pointer"
-                onClick={() => setIsPopupOpen(true)}
+                onClick={() => setIsPopupOpen((curr) => !curr)}
               >
                 {projectFilterSvg}
                 {isPopupOpen && (
@@ -207,26 +209,29 @@ const AllProject = () => {
                     <ul className="flex flex-col">
                       <li>
                         <button
-                          className="border-[#9C9C9C]  border-b-2 w-[230px] py-2 px-4 focus:outline-none text-base flex justify-start font-fontUse"
-                          onClick={() => setFilterOption("All")}
+                          className="border-[#9C9C9C] hover:text-indigo-800  border-b-2 w-[230px] py-2 px-4 focus:outline-none text-base flex justify-start font-fontUse"
+                          onClick={() => {
+                            setFilterOption("All");
+                            setIsPopupOpen(false);
+                          }}
                         >
                           All
                         </button>
                       </li>
                       <li>
                         <button
-                          className="border-[#9C9C9C] w-[230px] border-b-2 py-2 px-4 focus:outline-none text-base flex justify-start font-fontUse"
+                          className="border-[#9C9C9C] w-[230px]  hover:text-indigo-800 border-b-2 py-2 px-4 focus:outline-none text-base flex justify-start font-fontUse"
                           onClick={() => setFilterOption("Added")}
                         >
-                          Added to Spotlight
+                          Featured in Spotlight
                         </button>
                       </li>
                       <li>
                         <button
-                          className="border-[#9C9C9C] w-[230px] py-2 px-4 focus:outline-none text-base flex justify-start font-fontUse"
+                          className="border-[#9C9C9C] w-[230px] py-2 px-4  hover:text-indigo-800 focus:outline-none text-base flex justify-start font-fontUse"
                           onClick={() => setFilterOption("Not Added")}
                         >
-                          Not in Spotlight
+                          Excluded from Spotlight
                         </button>
                       </li>
                     </ul>
@@ -254,10 +259,12 @@ const AllProject = () => {
                 let userImage = data?.params?.params?.user_data
                   ?.profile_picture[0]
                   ? uint8ArrayToBase64(
-                    data?.params?.params?.user_data?.profile_picture[0]
-                  )
+                      data?.params?.params?.user_data?.profile_picture[0]
+                    )
                   : "";
-                let principalId = data?.principal ? data?.principal.toText() : "";
+                let principalId = data?.principal
+                  ? data?.principal.toText()
+                  : "";
                 let projectDescription =
                   data?.params?.params?.project_description ?? "";
                 let projectAreaOfFocus =
@@ -267,7 +274,7 @@ const AllProject = () => {
                   data?.overall_average.length > 0
                     ? data?.overall_average[data?.overall_average.length - 1]
                     : 0;
-                let isLive = data?.params?.params?.live_on_icp_mainnet[0]
+                let isLive = data?.params?.params?.live_on_icp_mainnet[0];
                 const isInSpotlight = spotlightProjectIds.has(projectId);
 
                 return (
@@ -294,7 +301,9 @@ const AllProject = () => {
                               src={userImage}
                               alt="not found"
                             />
-                            <p className="text-xs truncate w-20">{principalId}</p>
+                            <p className="text-xs truncate w-20">
+                              {principalId}
+                            </p>
                           </div>
                         </div>
                         <div className="mb-4 flex items-baseline">
@@ -302,8 +311,8 @@ const AllProject = () => {
                             width="100%"
                             height="8"
                             className="bg-[#B2B1B6] rounded-lg"
-                          // onMouseEnter={() => setIsHovered(true)}
-                          // onMouseLeave={() => setIsHovered(false)}
+                            // onMouseEnter={() => setIsHovered(true)}
+                            // onMouseLeave={() => setIsHovered(false)}
                           >
                             <defs>
                               <linearGradient
@@ -342,28 +351,46 @@ const AllProject = () => {
                           {projectDescription}
                         </p>
                         {projectAreaOfFocus ? (
-                          <div className="flex gap-2 mt-2 text-xs items-center">
+                          <div
+                            className="flex gap-2 mt-2 text-xs items-center overflow-x-auto"
+                            style={{ minHeight: "50px" }}
+                          >
+                            {/* Always visible data */}
                             {projectAreaOfFocus
                               .split(",")
                               .slice(0, 3)
-                              .map((tag, index) => (
+                              .map((focus, index) => (
                                 <div
                                   key={index}
                                   className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-gray-100"
                                 >
-                                  {tag.trim()}
+                                  {focus.trim()}
                                 </div>
                               ))}
+
+                            {/* Conditionally visible data */}
+                            {showLine[projectId] &&
+                              projectAreaOfFocus
+                                .split(",")
+                                .slice(3)
+                                .map((tag, index) => (
+                                  <div
+                                    key={index}
+                                    className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-gray-100"
+                                  >
+                                    {tag.trim()}
+                                  </div>
+                                ))}
+
+                            {/* Toggle button */}
                             {projectAreaOfFocus.split(",").length > 3 && (
                               <p
-                                onClick={() =>
-                                  projectId
-                                    ? handleNavigate(projectId, projectData)
-                                    : ""
-                                }
-                                className="cursor-pointer"
+                                onClick={() => handleClickPlusOne(projectId)}
+                                className="cursor-pointer flex-shrink-0 px-2"
                               >
-                                +1 more
+                                {showLine[projectId]
+                                  ? "View less"
+                                  : "view more"}
                               </p>
                             )}
                           </div>
@@ -373,21 +400,27 @@ const AllProject = () => {
 
                         <button
                           className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"
-                          onClick={() => navigate("/all", { state: principalId })}
+                          onClick={() =>
+                            navigate("/all", { state: principalId })
+                          }
                         >
                           KNOW MORE
                         </button>
                         {!isInSpotlight ? (
                           <button
                             className="mt-4 bg-green-600 text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-green-800 hover:text-white transition-colors duration-200 ease-in-out"
-                            onClick={() => addToSpotLightHandler(projectId, isLive)}
+                            onClick={() =>
+                              addToSpotLightHandler(projectId, isLive)
+                            }
                           >
                             Add to Spotlight
                           </button>
                         ) : (
                           <button
                             className="mt-4 bg-red-600 text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-red-800  hover:text-white  transition-colors duration-200 ease-in-out"
-                            onClick={() => removeFromSpotLightHandler(projectId)}
+                            onClick={() =>
+                              removeFromSpotLightHandler(projectId)
+                            }
                           >
                             Remove Spotlight
                           </button>
@@ -400,38 +433,76 @@ const AllProject = () => {
             </div>
           )}
         </div>
-        <div className="flex flex-wrap justify-center my-8">
-          {pageNumbers.length > 1 && (
-            <div className="flex items-center space-x-1">
-              {currentPage > 1 && (
-                <button
-                  onClick={() => paginate(currentPage - 1)}
-                  className="px-4 py-2 text-gray-700 bg-white rounded-md shadow hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        {pageNumbers.length > 1 && (
+          <div className="flex items-center gap-4 justify-center">
+            {currentPage > 1 && (
+              <button
+                onClick={() => paginate(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                type="button"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                  className="w-4 h-4"
                 >
-                  Prev
-                </button>
-              )}
-              {pageNumbers.map((number) => (
-                <button
-                  key={number}
-                  onClick={() => paginate(number)}
-                  className={`px-4 py-2 text-gray-700 bg-white rounded-md shadow hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${currentPage === number ? "bg-gray-200" : ""
-                    }`}
-                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+                  ></path>
+                </svg>
+                Prev
+              </button>
+            )}
+            {pageNumbers.map((number) => (
+              <button
+                key={number}
+                onClick={() => paginate(number)}
+                className={`relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-full text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all ${
+                  currentPage === number
+                    ? "bg-gray-900 text-white"
+                    : "hover:bg-gray-900/10 active:bg-gray-900/20"
+                }`}
+                type="button"
+              >
+                <span className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
                   {number}
-                </button>
-              ))}
-              {currentPage < pageNumbers.length && (
-                <button
-                  onClick={() => paginate(currentPage + 1)}
-                  className="px-4 py-2 text-gray-700 bg-white rounded-md shadow hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                </span>
+              </button>
+            ))}
+            {currentPage < pageNumbers.length && (
+              <button
+                onClick={() => paginate(currentPage + 1)}
+                disabled={currentPage === pageNumbers.length}
+                className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                type="button"
+              >
+                Next
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                  className="w-4 h-4"
                 >
-                  Next
-                </button>
-              )}
-            </div>
-          )}
-        </div>
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                  ></path>
+                </svg>
+              </button>
+            )}
+          </div>
+        )}
       </div>
       <Toaster />
     </>

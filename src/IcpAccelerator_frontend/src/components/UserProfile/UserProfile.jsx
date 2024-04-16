@@ -17,19 +17,23 @@ import g3 from "../../../assets/ProfIleEdit/g3.png";
 import g4 from "../../../assets/ProfIleEdit/g4.png";
 import { useSelector } from "react-redux";
 import MentorRegistration from "../Registration/MentorRegistration/MentorRegistration";
-import HubRegistration from "../Registration/IcpHubRegistration/HubRegistration";
-import InvestorRegistration from "../Registration/InvestorRegistration/InvestorRegistration";
+import MentorRegForm from "../RegForms.jsx/MentorRegForm";
+import InvestorRegForm from "../RegForms.jsx/InvestorRegForm";
 import CreateProjectRegistration from "../Project/CreateProject/CreateProjectRegistration";
+import ProjectRegForm from "../RegForms.jsx/ProjectRegForm";
 
 const UserProfile = () => {
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
-
+  const userFullData = useSelector((currState) => currState.userData.data.Ok);
   const [activeTab, setActiveTab] = useState(headerData[0].id);
   const [percentage, setPercentage] = useState(80);
-
-  console.log('userCurrentRoleStatusActiveRole in userprofile !!!!!!!  ', userCurrentRoleStatusActiveRole)
+  console.log("userFullData in profile page ===>", userFullData);
+  console.log(
+    "userCurrentRoleStatusActiveRole in userprofile !!!!!!!  ",
+    userCurrentRoleStatusActiveRole
+  );
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -50,61 +54,25 @@ const UserProfile = () => {
   };
 
   return (
-    <div className="font-fontUse bg-gray-100 w-full">
+    <div className="font-fontUse bg-gray-100 w-full mt-16">
       <div className="  bg-white  shadow-md shadow-gray-300 pb-6 text-black pt-4 rounded-lg md:mx-[6%] mx-[6%]">
-        <div className="flex flex-row items-end px-10">
+        <div className="flex flex-row items-end px-10 space-y-4">
           <h1 className="md:text-4xl text-[20px] font-bold bg-gradient-to-r from-violet-900 to-sky-500 text-transparent bg-clip-text">
             My Profile
           </h1>
-          <p className="ml-2 mr-1  text-gray-400 md:text-xs text-[10px] pb-1 ">
-            Complete your profile!
-          </p>
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 22 22"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="pb-1"
-          >
-            <g id="Alert 01">
-              <circle
-                id="Ellipse 1112"
-                cx="11"
-                cy="11"
-                r="10"
-                stroke="gray"
-                strokeWidth="1.5"
-              />
-              <path
-                id="Vector"
-                d="M10.992 14H11.001"
-                stroke="gray"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                id="Vector 2610"
-                d="M11 11L11 7"
-                stroke="gray"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </g>
-          </svg>
         </div>
 
-        <div className="w-full px-10 flex md:flex-row flex-col md:items-center items-start  justify-start py-4">
-          <div className="relative">
+        <div className="w-full px-10 flex md:flex-row flex-col items-center  justify-start py-4">
+          <div
+            className={`${userFullData?.bio?.[0] ? "md:w-44 w-36" : "w-36"}`}
+          >
             <img
               className="w-full h-full justify-center rounded-full"
-              src={p5}
+              src={userFullData?.profile_picture?.[0]}
               alt="description"
             />
 
-            <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center">
+            {/* <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center">
               <svg className="absolute invisible">
                 <defs>
                   <linearGradient
@@ -142,26 +110,28 @@ const UserProfile = () => {
                   {`${percentage}%`}
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
           <div className="flex flex-col ml-4 flex-wrap mt-2 w-auto">
             <h1 className="md:text-3xl text-xl md:font-extrabold font-bold pb-2 bg-gradient-to-r from-blue-900 to-sky-400 text-transparent bg-clip-text">
-              Selena Gomez
+              {userFullData?.full_name}
             </h1>
-            <p className="font-extralight text-xs text-black md:z-40 ">
-              PANONY was established in March 2018 with operations in Greater
-              China, South Korea.
+            <p className="font-extralight text-xs md:w-3/6 text-black md:z-40 ">
+              {userFullData?.bio?.[0]}
+            </p>
+            <p className="font-extralight text-xs md:w-3/6 text-black md:z-40 ">
+              {userFullData?.country}
             </p>
           </div>
 
-          <div className="hidden md:block z-20 absolute right-40 top-20">
+          <div className="hidden md:block z-10 absolute right-40 top-44">
             <div className="relative flex justify-center items-center">
               <div className="z-50 top-[40%] left-[45%]">
-                <img src={g1} alt="g1" className="w-40 h-60" />
+                <img src={g1} alt="g1" className="z-20 w-[500px] md:w-[270px] sm:w-[250px] sxs:w-[160px] md:h-56 relative  sxs:-right-3 right-16 md:right-0 sm:right-0 top-10 object-contain" />
               </div>
-              <div className="absolute  -left-[10%] sm:-left-[18%] md:-left-[41%] sxs:left-[6%] w-[300px] h-[300px] md:w-[295px] md:h-[295px] sm:w-[230px] sm:h-[230px] sxs:w-[160px] sxs:h-[160px] rounded-full bg-gradient-to-r from-purple-300/40 to-purple-600"></div>
-              <div className="absolute md:z-30 top-[61%]  left-[95%] sxs:left-[96%%] w-[164px] h-[164px] md:w-[145px] md:h-[145px] sm:w-[94px] sm:h-[94px] sxs:w-[80px] sxs:h-[80px] rounded-full bg-gradient-to-r from-purple-900 to-blue-500 opacity-30"></div>
-              <div className="absolute z-24 top-[28%] left-[45%] sxs:left-[56%] w-[190px] h-[200px] md:w-[200px] md:h-[220px] sm:w-[100px] sm:h-[110px] sxs:w-[80px] sxs:h-[80px] bg-gradient-to-b from-white/30 to-transparent rounded-lg backdrop-blur-md "></div>
+              <div className="absolute top-[43px] -left-[10%] sm:-left-[18%] md:left-[9%] sxs:left-[6%] w-[320px] h-[320px] md:w-[220px] md:h-[220px] sm:w-[230px] sm:h-[230px] sxs:w-[200px] sxs:h-[200px] rounded-full bg-gradient-to-r from-purple-300/40 to-purple-600"></div>
+              <div className="absolute top-[200px]  sxs:top-[130px] left-[65%] sxs:left-[65%] w-[164px] h-[164px] md:w-[124px] md:h-[124px] sm:w-[94px] sm:h-[94px] sxs:w-[120px] sxs:h-[120px] rounded-full bg-gradient-to-r from-purple-900 to-blue-500 opacity-30"></div>
+              <div className="absolute top-[120px] left-[45%] sxs:left-[53%] w-[190px] h-[200px] md:w-[140px] md:h-[150px] sm:w-[100px] sm:h-[110px] sxs:w-[120px] sxs:h-[120px] bg-gradient-to-b from-white/30 to-transparent rounded-lg backdrop-blur-sm"></div>
             </div>
           </div>
         </div>
@@ -196,9 +166,11 @@ const UserProfile = () => {
                 ))}
               </ul>
             </div> */}
-            {userCurrentRoleStatusActiveRole === "mentor" && <MentorRegistration />}
-            {userCurrentRoleStatusActiveRole === "project" && <CreateProjectRegistration />}
-            {userCurrentRoleStatusActiveRole === "vc" && <InvestorRegistration />}
+            {userCurrentRoleStatusActiveRole === "mentor" && <MentorRegForm />}
+            {userCurrentRoleStatusActiveRole === "project" && (
+              <ProjectRegForm />
+            )}
+            {userCurrentRoleStatusActiveRole === "vc" && <InvestorRegForm />}
           </div>
         </div>
       </section>

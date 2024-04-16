@@ -60,8 +60,8 @@ const App = () => {
 
   return (
     <>
-      <div className="bg-gray-100">
-        <div className="container mx-auto">
+      <div className="bg-gray-100 font-fontUse min-h-screen flex flex-col">
+        <div className="container mx-auto flex-grow">
           <Header setModalOpen={setModalOpen} gradient={"bg-gray-100"} />
           <ConnectWallet
             isModalOpen={isModalOpen}
@@ -69,9 +69,8 @@ const App = () => {
           />
           <AdminRoute setModalOpen={setModalOpen} />
         </div>
+        <Footer />
       </div>
-
-      <Footer />
     </>
   );
 };

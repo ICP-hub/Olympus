@@ -20,45 +20,71 @@ function* fetchProjectPendingHandler() {
       actor.project_awaiting_approval,
     ]);
 
-    // console.log("allProjectPendingStatus>>>>>>>>>>>>", allProjectPendingStatus);
-
+    // console.log("allProjectPendingStatus =>",allProjectPendingStatus);
     const updatedProjectProfiles = allProjectPendingStatus.map(
       ([principal, { project_profile, roles }]) => {
         const principalText = principalToText(principal);
-        const profilePictureBase64 =
-          project_profile.params.user_data.profile_picture[0] &&
+        const profilePictureURL =
           project_profile.params.user_data.profile_picture[0] instanceof
-            Uint8Array &&
-          project_profile.params.user_data.profile_picture[0].length > 0
+          Uint8Array
             ? uint8ArrayToBase64(
                 project_profile.params.user_data.profile_picture[0]
               )
             : null;
+        const projectCoverURL =
+          project_profile.params.project_cover instanceof Uint8Array
+            ? uint8ArrayToBase64(project_profile.params.project_cover)
+            : null;
+        const projectLogoURL =
+          project_profile.params.project_logo instanceof Uint8Array
+            ? uint8ArrayToBase64(project_profile.params.project_logo)
+            : null;
 
+        const weeklyUsers = formatDateFromBigInt(
+          project_profile.params.weekly_active_users[0]
+        );
+        const updatedRevenue = formatDateFromBigInt(
+          project_profile.params.revenue[0]
+        );
         const projectRole = roles.find((role) => role.name === "project");
-        let requestedTimeFormatted = "";
-        if (projectRole && projectRole.requested_on.length > 0) {
-          requestedTimeFormatted = formatDateFromBigInt(
-            projectRole.requested_on[0]
-          );
-        }
+        let requestedTimeFormatted =
+          projectRole?.requested_on
+            ?.map((time) => formatDateFromBigInt(time))
+            .join(", ") || "";
+
+        const updatedRoles = roles.map((role) => ({
+          ...role,
+          approved_on: role.approved_on.map((time) =>
+            formatDateFromBigInt(time)
+          ),
+          requested_on: role.requested_on.map((time) =>
+            formatDateFromBigInt(time)
+          ),
+          rejected_on: role.rejected_on.map((time) =>
+            formatDateFromBigInt(time)
+          ),
+        }));
 
         return {
           principal: principalText,
-          ...project_profile,
           profile: {
             ...project_profile.params,
+            weekly_active_users: weeklyUsers,
+            revenue: updatedRevenue,
             user_data: {
               ...project_profile.params.user_data,
-              profile_picture: profilePictureBase64,
+              profile_picture: profilePictureURL,
             },
+            project_cover: projectCoverURL,
+            project_logo: projectLogoURL,
           },
           requestedTime: requestedTimeFormatted,
-          role: roles,
+          role: updatedRoles,
         };
       }
     );
 
+    // console.log("updatedProjectProfiles =>>>>>", updatedProjectProfiles);
     yield put(projectPendingSuccess(updatedProjectProfiles));
   } catch (error) {
     console.error("Error in fetchProjectPendingHandler:", error);

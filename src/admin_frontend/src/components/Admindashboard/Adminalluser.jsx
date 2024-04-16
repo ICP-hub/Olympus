@@ -9,7 +9,7 @@ const Adminalluser = () => {
   const [allData, setAllData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [filter, setFilter] = useState("");
-  const itemsPerPage = 10
+  const itemsPerPage = 10;
 
   useEffect(() => {
     const getAlluser = async () => {
@@ -120,12 +120,12 @@ const Adminalluser = () => {
                     <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                     <td className="py-2 pl-4">
                       <div className="flex items-center">
-                      <img
-                        className="w-10 h-10 rounded-full border-black border-2 p-1"
-                        src={user.profilePicture}
-                        alt="profile"
-                      />
-                      <div className="ml-2">{user.fullName}</div>
+                        <img
+                          className="w-10 h-10 rounded-full border-black border-2 p-1"
+                          src={user.profilePicture}
+                          alt="profile"
+                        />
+                        <div className="ml-2">{user.fullName}</div>
                       </div>
                     </td>
                     <td>{user.approvedType}</td>
@@ -151,11 +151,11 @@ const Adminalluser = () => {
       )}
 
       {currentUsers.length > 0 && (
-        <div class="flex items-center gap-4 justify-center mb-4">
+        <div className="flex items-center gap-4 justify-center mb-4">
           <button
             onClick={handlePrevious}
             disabled={currentPage === 1}
-            class="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+            className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
             type="button"
           >
             <svg
@@ -165,7 +165,7 @@ const Adminalluser = () => {
               strokeWidth="2"
               stroke="currentColor"
               aria-hidden="true"
-              class="w-4 h-4"
+              className="w-4 h-4"
             >
               <path
                 strokeLinecap="round"
@@ -182,14 +182,14 @@ const Adminalluser = () => {
             <button
               key={number}
               onClick={() => paginate(number)}
-              class={`relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-full text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all ${
+              className={`relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-full text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all ${
                 currentPage === number
                   ? "bg-gray-900 text-white"
                   : "hover:bg-gray-900/10 active:bg-gray-900/20"
               }`}
               type="button"
             >
-              <span class="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+              <span className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
                 {number}
               </span>
             </button>
@@ -199,7 +199,7 @@ const Adminalluser = () => {
             disabled={
               currentPage === Math.ceil(filteredUsers.length / itemsPerPage)
             }
-            class="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+            className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
             type="button"
           >
             Next
@@ -210,7 +210,7 @@ const Adminalluser = () => {
               strokeWidth="2"
               stroke="currentColor"
               aria-hidden="true"
-              class="w-4 h-4"
+              className="w-4 h-4"
             >
               <path
                 strokeLinecap="round"

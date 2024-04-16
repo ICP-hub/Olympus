@@ -12,6 +12,9 @@ import TopInvestors from "./Top/TopInvestors";
 import { useNavigate } from "react-router-dom";
 import RejectModal from "../models/RejectModal";
 import AcceptModal from "../models/AcceptModal";
+import { bellSvg } from "../Utils/AdminData/SvgData";
+import pending from "../../../assets/image/pending.png";
+import { userSvg } from "../Utils/AdminData/SvgData";
 
 const AdminDashboard = () => {
   const principal = useSelector((currState) => currState.internet.principal);
@@ -79,133 +82,155 @@ const AdminDashboard = () => {
             </div>
           </div>
         </div>
-        <div className="flex md:flex-row flex-col  w-full  mt-2 justify-between ">
+
+        <div className="flex md:flex-row flex-col  w-full md:mt-6  mt-2 justify-between gap-2 md:gap-0 md:space-x-4">
           <div
-            className="rounded-[1rem]  space-x-2 flex my-2 justify-center  flex-col  w-full  bg-white drop-shadow-xl border-2"
-            // onClick={() => navigate("/request")}
+            className="rounded-[1rem] space-x-2 flex px-4   justify-center  flex-col  w-full  bg-white  drop-shadow-xl border-2 "
+            onClick={() => navigate("/request")}
           >
-            <div className="flex  flex-row  flex-wrap justify-around  font-bold text-lg text-black items-center ">
-              <div className="gap-2 flex flex-row items-center">
-                <img src={proj} alt="only-user" />
-                <p className="flex justify-start text-sm">Only User</p>
+            <div className="flex  flex-row  flex-wrap justify-around font-bold text-lg text-black items-center ">
+              <div className="gap-2 flex-row flex items-center w-2/3">
+                <img src={pending} alt="pending" className="h-10 w-10" />
+                <p className="flex font-semibold justify-between text-sm">
+                  Registration Requests
+                </p>
               </div>
-              <p className="font-extrabold -[59px] h-[62px] flex  text-2xl justify-center items-center">
-                {onlyUser}
+              <p className="font-extrabold  w-1/3 text-2xl h-[62px] flex  justify-center items-center">
+                {totalPending}
               </p>
             </div>
           </div>
-          <div className="rounded-[1rem]  space-x-2 flex my-2 justify-center cursor-pointer  flex-col  w-full  bg-white drop-shadow-xl border-2">
+
+          <div
+            className="rounded-[1rem] space-x-2 flex px-4   justify-center  flex-col  w-full  bg-white  drop-shadow-xl border-2 "
+            // onClick={() => navigate("/notification")}
+          >
+            <div className="flex  flex-row  flex-wrap justify-around font-bold text-lg text-black items-center ">
+              <div className="gap-2 flex-row flex items-center w-2/3">
+                {bellSvg}
+                <p className="flex font-semibold justify-between text-sm">
+                  Updation Requests
+                </p>
+              </div>
+              <p className="font-extrabold  w-1/3 text-2xl h-[62px] flex  justify-center items-center">
+                {totalUpdate}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex md:flex-row flex-col  w-full mt-2 justify-between gap-2 md:gap-0 md:space-x-4">
+          <div className="rounded-[1rem] px-4 space-x-2 flex  justify-center cursor-pointer  flex-col  w-full  bg-white drop-shadow-xl border-2">
             <div className="flex  flex-row  flex-wrap justify-around font-bold text-lg text-black items-center ">
               <div
                 onClick={() => navigate("/alluser")}
-                className="gap-2 flex flex-row items-center"
+                className="gap-2 flex flex-row items-center w-2/3"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 20 20"
                   fill="#007BFF"
-                  className="w-8 h-8"
+                  className="w-10 h-10"
                 >
                   <path d="M10 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM6 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM1.49 15.326a.78.78 0 0 1-.358-.442 3 3 0 0 1 4.308-3.516 6.484 6.484 0 0 0-1.905 3.959c-.023.222-.014.442.025.654a4.97 4.97 0 0 1-2.07-.655ZM16.44 15.98a4.97 4.97 0 0 0 2.07-.654.78.78 0 0 0 .357-.442 3 3 0 0 0-4.308-3.517 6.484 6.484 0 0 1 1.907 3.96 2.32 2.32 0 0 1-.026.654ZM18 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM5.304 16.19a.844.844 0 0 1-.277-.71 5 5 0 0 1 9.947 0 .843.843 0 0 1-.277.71A6.975 6.975 0 0 1 10 18a6.974 6.974 0 0 1-4.696-1.81Z" />
                 </svg>
 
-                <p className="flex justify-start text-sm">All Users</p>
+                <p className="flex font-semibold justify-start text-sm">
+                  All Users
+                </p>
               </div>
-              <p className="font-extrabold -[59px] h-[62px] flex  text-2xl justify-center items-center">
+              <p className="font-extrabold -[59px] w-1/3 h-[62px] flex  text-2xl justify-center items-center">
                 {totalUser}
               </p>
             </div>
           </div>
 
           <div
-            onClick={() => navigate("/allProject")}
-            className="rounded-[1rem] space-x-2 flex  my-2  justify-center cursor-pointer flex-col  w-full  bg-white drop-shadow-xl border-2 "
+            className="rounded-[1rem] px-4 space-x-2 flex justify-center  flex-col  w-full  bg-white drop-shadow-xl border-2"
+            // onClick={() => navigate("/request")}
+          >
+            <div className="flex  flex-row  flex-wrap justify-around  font-bold text-lg text-black items-center ">
+              <div className="gap-2 flex flex-row items-center w-2/3">
+                {userSvg}
+                <p className="flex justify-start text-sm">Users</p>
+              </div>
+              <p className="w-1/3 font-extrabold -[59px] h-[62px] flex  text-2xl justify-center items-center">
+                {onlyUser}
+              </p>
+            </div>
+          </div>
+
+          <div
+            onClick={() => navigate("/live")}
+            className="rounded-[1rem] space-x-2 flex px-4   justify-center cursor-pointer flex-col  w-full  bg-white drop-shadow-xl border-2 "
           >
             <div className="flex  flex-row  flex-wrap justify-around font-bold text-lg text-black items-center ">
-              <div className="gap-2 flex-row flex items-center">
-                <img src={founder} alt="founder" />
-                <p className="flex justify-start text-sm">Projects</p>
+              <div className="gap-2 flex-row flex items-center w-2/3">
+                <img src={founder} alt="founder" className="h-10 w-10" />
+                <p className="flex font-semibold justify-start text-sm">
+                  Projects
+                </p>
               </div>
-              <p className="font-extrabold -[59px] h-[62px] flex  text-2xl justify-center items-center">
+              <p className="font-extrabold -[59px] h-[62px] flex  text-2xl justify-center w-1/3 items-center">
                 {projectCount}
               </p>
             </div>
           </div>
+        </div>
 
-          <div
-            className="rounded-[1rem]  space-x-2 flex my-2 justify-center  flex-col  w-full  bg-white drop-shadow-xl border-2"
-            // onClick={() => navigate("/request")}
-          >
+        <div className="flex md:flex-row flex-col  w-full md:mb-6 mb-2  mt-2 justify-between gap-2 md:gap-0 md:space-x-4 ">
+          <div className="rounded-[1rem]  space-x-2 flex px-4  justify-center  flex-col  w-full  bg-white drop-shadow-xl border-2">
             <div className="flex  flex-row  flex-wrap justify-around font-bold text-lg text-black items-center ">
-              <div className="gap-2 flex flex-row items-center">
-                <img src={mentor} alt="mentors" />
-                <p className="flex justify-start text-sm">Mentors</p>
+              <div className="gap-2 flex flex-row items-center w-2/3">
+                <img src={mentor} alt="mentors" className="h-10 w-10" />
+                <p className="flex font-semibold justify-start text-sm">
+                  Mentors
+                </p>
               </div>
-              <p className="font-extrabold -[59px] h-[62px] flex  text-2xl justify-center items-center">
+              <p className="w-1/3 font-extrabold h-[62px] flex  text-2xl justify-center items-center">
                 {mentorCount}
               </p>
             </div>
           </div>
-        </div>
-        <div className="flex md:flex-row flex-col  w-full  mt-2 justify-between ">
-          <div
-            className="rounded-[1rem] space-x-2 flex px-2   my-2  justify-center cursor-pointer flex-col  w-full  bg-white drop-shadow-xl border-2 "
-            // onClick={() => navigate("/request")}
-          >
+
+          <div className="rounded-[1rem] space-x-2 flex  px-4    justify-center cursor-pointer flex-col  w-full  bg-white drop-shadow-xl border-2 ">
             <div className="flex  flex-row  flex-wrap justify-around font-bold text-lg text-black items-center ">
-              <div className="gap-2 flex-row flex items-center">
-                <img src={vc} alt="founder" />
-                <p className="flex justify-start text-sm">Investor</p>
+              <div className="gap-2 flex-row flex items-center w-2/3">
+                <img src={vc} alt="founder" className="h-10 w-10" />
+                <p className="flex font-semibold justify-start text-sm">
+                  Investors
+                </p>
               </div>
-              <p className="font-extrabold -[59px] h-[62px] flex  text-2xl justify-center items-center">
+              <p className="font-extrabold w-1/3 h-[62px] flex  text-2xl justify-center items-center">
                 {vcCount}
               </p>
             </div>
           </div>
-          <div
-            className="rounded-[1rem] space-x-2 flex  my-2 px-2 justify-center  flex-col  w-full  bg-[#619670]  drop-shadow-xl border-2 "
-            // onClick={() => navigate("/notification")}
-          >
+
+          <div className="rounded-[1rem] space-x-2 flex px-4   justify-center  flex-col  w-full  bg-white  drop-shadow-xl border-2 ">
             <div className="flex  flex-row  flex-wrap justify-around font-bold text-lg text-black items-center ">
-              <p className="flex justify-between text-sm">Profile Update</p>
-              <p className="font-extrabold w-[59px]  text-2xl h-[62px] flex  justify-center items-center">
-                {totalUpdate}
-              </p>
-            </div>
-          </div>
-          <div
-            className="rounded-[1rem] space-x-2 flex px-2   my-2  justify-center  flex-col  w-full  bg-[#0071FF]  drop-shadow-xl border-2 "
-            // onClick={() => navigate("/notification")}
-          >
-            <div className="flex  flex-row  flex-wrap justify-around font-bold text-lg text-black items-center ">
-              <p className="flex justify-between text-sm">Active Cohorts</p>
-              <p className="font-extrabold w-[59px]  text-2xl h-[62px] flex  justify-center items-center">
+              <div className="gap-2 flex-row flex items-center w-2/3">
+                <img src={proj} alt="proj" className="h-10 w-10" />
+                <p className="flex font-semibold justify-between text-sm">
+                  Cohorts
+                </p>
+              </div>
+              <p className="font-extrabold  w-1/3 text-2xl h-[62px] flex  justify-center items-center">
                 0
-              </p>
-            </div>
-          </div>
-          <div
-            className="rounded-[1rem] space-x-2 flex px-2  my-2  justify-center cursor-pointer flex-col  w-full  bg-[#F28F1E] drop-shadow-xl border-2 "
-            onClick={() => navigate("/request")}
-          >
-            <div className="flex  flex-row  flex-wrap justify-around font-bold text-lg text-black items-center ">
-              <p className="flex justify-between text-sm"> Pending Requests</p>
-              <p className="font-extrabold w-[59px]  text-2xl h-[62px] flex  justify-center items-center">
-                {totalPending}
               </p>
             </div>
           </div>
         </div>
 
-        <div className="flex bg-white shadow-md w-full mt-2 rounded-[1rem] px-[4%] md:h-[560px] h-auto">
+        {/* <div className="flex bg-white shadow-md w-full mt-2 rounded-[1rem] px-[4%] md:h-[478px] h-auto">
           <div className="flex flex-col w-full">
             <div className="flex flex-row items-center justify-between w-full my-3">
               <h2 className="text-lg font-extrabold text-transparent bg-gradient-to-r from-purple-900 to-blue-500 bg-clip-text">
-                Pendings
+                Pendings Requests
               </h2>
               <button
                 onClick={() => navigate("/request")}
-                className="bg-[#7283EA] px-4 text-white text-xs font-bold rounded-md flex-shrink-0 py-2"
+                className="bg-[#7283EA] hover:bg-transparent hover:text-[#7283EA] border-2 hover:border-[#293162] px-4 text-white text-xs font-bold rounded-md flex-shrink-0 py-2"
               >
                 View More
               </button>
@@ -224,11 +249,11 @@ const AdminDashboard = () => {
                     />
                     <div className="flex flex-col justify-around items-start">
                       <p className="font-extrabold text-sm">{item.name}</p>
-                      <p className="text-xs text-gray-500 font-semibold">
+                      <p className="text-xs text-gray-400 font-normal">
                         {item.requestedFor}
                       </p>
                     </div>
-                    <p className="truncate w-24 text-xs overflow-hidden text-ellipsis   group-hover:text-left ">
+                    <p className="truncate w-[15rem] text-xs overflow-hidden text-ellipsis   group-hover:text-left ">
                       {item.sender}
                     </p>
                     <p className="text-blue-600 text-xs">
@@ -237,17 +262,24 @@ const AdminDashboard = () => {
                     </p>
                   </div>
                   <div className="flex flex-wrap space-x-2 items-center justify-center">
+                  <button
+                      onClick={() => navigate("/all", { state: item.sender })}
+                      className="px-3 py-1 bg-[#7283EA] hover:bg-[#4755af] text-white font-bold rounded-md"
+                    >
+                      View
+                    </button>
+                    
                     <button
                       onClick={() => {
                         setCurrentNotificationForReject(item);
                         toggleRejectModal();
                       }}
-                      className="px-3 py-1 bg-[#C60404] text-white font-bold rounded-md"
+                      className="px-3 py-1 bg-[#C60404] hover:bg-red-700 text-white font-bold rounded-md"
                     >
                       Reject
                     </button>
                     <button
-                      className="px-3 py-1 bg-[#3505B2] text-white font-bold rounded-md"
+                      className="px-3 py-1 bg-[#3505B2] hover:bg-indigo-900 text-white font-bold rounded-md"
                       onClick={() => {
                         setCurrentNotificationForAccept(item);
                         toggleAcceptModal();
@@ -255,8 +287,77 @@ const AdminDashboard = () => {
                     >
                       Accept
                     </button>
-                    {/* <button className="px-3 py-1 bg-[#7283EA] text-white font-bold rounded-md">
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div> */}
+
+        <div className="flex bg-white shadow-md w-full mt-2 rounded-[1rem] px-[4%] md:h-[478px] h-auto">
+          <div className="flex flex-col w-full">
+            <div className="flex flex-row items-center justify-between w-full my-3">
+              <h2 className="text-lg font-extrabold text-transparent bg-gradient-to-r from-purple-900 to-blue-500 bg-clip-text">
+                Pending Requests
+              </h2>
+              <button
+                onClick={() => navigate("/request")}
+                className="bg-[#7283EA] hover:bg-transparent hover:text-[#7283EA] border-2 hover:border-[#293162] px-4 text-white text-xs font-bold rounded-md flex-shrink-0 py-2"
+              >
+                View More
+              </button>
+            </div>
+            <div className="overflow-y-auto">
+              {allNotification?.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex flex-row flex-wrap w-full items-center justify-between mb-2 text-sm gap-2 border p-2 rounded-lg border-gray-200"
+                >
+                  <div className="md:space-x-4 flex-wrap flex flex-row items-center md:justify-around justify-start w-full">
+                    <img
+                      src={item.photo}
+                      alt="photo"
+                      className="w-[3rem] h-[3rem] object-cover rounded-lg"
+                    />
+                    <div className="flex flex-col md:ml-0 ml-4 justify-around items-start">
+                      <p className="font-extrabold text-sm">{item.name}</p>
+                      <p className="text-xs text-gray-400 font-normal">
+                        {item.requestedFor}
+                      </p>
+                    </div>
+                    <p className="truncate md:mt-0 mt-2 text-xs overflow-hidden text-ellipsis group-hover:text-left ">
+                      {item.sender}
+                    </p>
+                    <p className="text-blue-600 text-xs">
+                      Requested:{" "}
+                      <span className="font-bold ">{item.timestamp}</span>
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap space-x-2 items-center justify-end w-full md:mt-0 mt-[4px] md:mr-[7px]">
+                    <button
+                      onClick={() => navigate("/all", { state: item.sender })}
+                      className="px-3 py-1 bg-[#7283EA] hover:bg-[#4755af] text-white font-bold rounded-md"
+                    >
                       View
+                    </button>
+                    {/* <button
+                      onClick={() => {
+                        setCurrentNotificationForReject(item);
+                        toggleRejectModal();
+                      }}
+                      className="px-3 py-1 bg-[#C60404] hover:bg-red-700 text-white font-bold rounded-md"
+                    >
+                      Reject
+                    </button>
+                    <button
+                      className="px-3 py-1 bg-[#3505B2] hover:bg-indigo-900 text-white font-bold rounded-md"
+                      onClick={() => {
+                        setCurrentNotificationForAccept(item);
+                        toggleAcceptModal();
+                      }}
+                    >
+                      Accept
                     </button> */}
                   </div>
                 </div>

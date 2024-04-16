@@ -359,7 +359,7 @@ const InvestorProfile = () => {
           (<div className="border-b border-[#DCDCDC] my-5 pb-12 p-5">
             <h4 className="text-xl font-[950]">Looking for</h4>
             <div className="text-[15px] leading-4 flex items-center flex-wrap pt-2 gap-2">
-              {reason_to_join[0][0]?.split(',').map((item, index) => {
+              {reason_to_join[0].map((item, index) => {
                 // console.log('item', item)
                 return (<span key={index} className="capitalize bg-[#E7E7E8] flex font-bold items-center leading-none mt-2 px-3 py-2 rounded-full text-gray-600 text-sm">
                   {item.trim().replace(/_/g, " ")}

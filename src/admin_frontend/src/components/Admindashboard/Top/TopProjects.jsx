@@ -7,9 +7,9 @@ import {
   numberToDate,
   uint8ArrayToBase64,
 } from "../../Utils/AdminData/saga_function/blobImageToUrl";
-import NoDataCard from "../../../../../IcpAccelerator_frontend/src/components/Mentors/Event/NoDataCard";
-import { useNavigate } from "react-router-dom";
+import NoData from "../../../../../IcpAccelerator_frontend/assets/images/search_not_found.png";
 
+import { useNavigate } from "react-router-dom";
 
 const TopProjects = () => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -21,20 +21,22 @@ const TopProjects = () => {
   useEffect(() => {
     const getTopProjects = async () => {
       try {
-        const getTop5proj = await actor.get_top_5_projects();
-        // console.log("getTop5proj", getTop5proj);
+        if (actor) {
+          const getTop5proj = await actor.get_top_5_projects();
+          // console.log("getTop5proj", getTop5proj);
 
-        const formattedTopProjects = getTop5proj.map((item) => ({
-          principal: item[1].principal,
-          code: item[0],
-          area_of_interest: item[1].area_of_interest,
-          country: item[1].country,
-          full_name: item[1].full_name,
-          joined_on: numberToDate(item[1].joined_on),
-          profile_picture: uint8ArrayToBase64(item[1].profile_picture[0]),
-        }));
-        // console.log("formattedTopProjects", formattedTopProjects);
-        setData(formattedTopProjects);
+          const formattedTopProjects = getTop5proj.map((item) => ({
+            principal: item[1].principal,
+            code: item[0],
+            area_of_interest: item[1].area_of_interest,
+            country: item[1].country,
+            full_name: item[1].full_name,
+            joined_on: numberToDate(item[1].joined_on),
+            profile_picture: uint8ArrayToBase64(item[1].profile_picture[0]),
+          }));
+          // console.log("formattedTopProjects", formattedTopProjects);
+          setData(formattedTopProjects);
+        }
       } catch (error) {
         console.error("Error fetching top projects:", error);
       }
@@ -68,7 +70,7 @@ const TopProjects = () => {
             <div
               onClick={() => navigate("/all", { state: item.principal })}
               key={index}
-              className="w-full cursor-pointer mb-2 flex flex-col"
+              className="w-full cursor-pointer mb-4 flex flex-col "
             >
               <div className="flex flex-col justify-between border border-gray-200 rounded-xl pt-3 px-[2%]">
                 <div className="flex justify-between items-start ">
@@ -120,17 +122,46 @@ const TopProjects = () => {
                     />
                   </svg>
                 </div>
-
-                <div className="flex rounded-b-xl flex-row justify-between items-center mt-2 px-2 py-1 bg-gray-200">
-                  <div className="flex flex-row space-x-2 text-[10px] text-black">
-                    <p>{item.area_of_interest}</p>
+                <div className="flex rounded-b-xl flex-row justify-between items-center mt-2 px-2 py-1 mb-[2px]">
+                  <div
+                    className="flex flex-row space-x-2 text-[10px] text-black overflow-x-auto"
+                    style={{
+                      marginBottom:
+                        item.area_of_interest.split(",").length > 1
+                          ? "-0.8rem"
+                          : "0",
+                    }}
+                  >
+                    {item.area_of_interest && (
+                      <div className="flex rounded-2xl flex-row justify-between items-center space-x-2 mb-[16px]">
+                        {item.area_of_interest.split(",").map((area, i) => (
+                          <p
+                            key={i}
+                            className={
+                              "bg-gray-200 px-2 py-0.5 rounded-2xl mb-0" +
+                              (i === item.area_of_interest.split(",").length - 1
+                                ? " mb-0"
+                                : "")
+                            }
+                          >
+                            {area.trim()}
+                          </p>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
             </div>
           ))
         ) : (
-          <NoDataCard />
+          <div className="flex justify-center items-center h-full w-full">
+            <img
+              src={NoData}
+              className="object-cover object-center w-[50%] pt-[2.5rem]"
+              alt="No data found"
+            />
+          </div>
         )}
       </div>
     </div>

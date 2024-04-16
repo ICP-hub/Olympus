@@ -344,11 +344,11 @@ const MoreLiveProjects = () => {
           )}
         </div>
         {currentProjects.length > 0 && (
-          <div class="flex items-center gap-4 justify-center mt-8">
+          <div className="flex items-center gap-4 justify-center mt-8">
             <button
               onClick={handlePrevious}
               disabled={currentPage === 1}
-              class="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+              className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
               type="button"
             >
               <svg
@@ -358,7 +358,7 @@ const MoreLiveProjects = () => {
                 strokeWidth="2"
                 stroke="currentColor"
                 aria-hidden="true"
-                class="w-4 h-4"
+                className="w-4 h-4"
               >
                 <path
                   strokeLinecap="round"
@@ -375,14 +375,14 @@ const MoreLiveProjects = () => {
               <button
                 key={number}
                 onClick={() => paginate(number)}
-                class={`relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-full text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all ${
+                className={`relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-full text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all ${
                   currentPage === number
                     ? "bg-gray-900 text-white"
                     : "hover:bg-gray-900/10 active:bg-gray-900/20"
                 }`}
                 type="button"
               >
-                <span class="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+                <span className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
                   {number}
                 </span>
               </button>
@@ -392,7 +392,7 @@ const MoreLiveProjects = () => {
               disabled={
                 currentPage === Math.ceil(filteredUsers.length / itemsPerPage)
               }
-              class="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+              className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
               type="button"
             >
               Next
@@ -403,7 +403,7 @@ const MoreLiveProjects = () => {
                 strokeWidth="2"
                 stroke="currentColor"
                 aria-hidden="true"
-                class="w-4 h-4"
+                className="w-4 h-4"
               >
                 <path
                   strokeLinecap="round"
