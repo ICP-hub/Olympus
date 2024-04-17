@@ -11,27 +11,12 @@ import NoDataCard from "../../Mentors/Event/NoDataCard";
 const MoreLiveProjects = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
-
-  const [isHovered, setIsHovered] = useState(false);
-  const [progress, setProgress] = useState(false);
-  const [showLine, setShowLine] = useState({});
-  const tm = useRef(null);
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
 
   const navigate = useNavigate();
-  // Gradient color stops, changes when hovered
-  // const gradientStops = isHovered
-  //     ? { stop1: "#4087BF", stop2: "#3C04BA" }
-  //     : { stop1: "#B5B5B5", stop2: "#5B5B5B" };
 
-  const handleClickPlusOne = (id) => {
-    setShowLine((prevShowLine) => ({
-      ...prevShowLine,
-      [id]: !prevShowLine[id],
-    }));
-  };
 
   const [noData, setNoData] = useState(null);
   const [allProjectData, setAllProjectData] = useState([]);
@@ -41,7 +26,10 @@ const MoreLiveProjects = () => {
 
   const getAllProject = async (caller) => {
     await caller
-      .list_all_projects()
+      .list_all_projects_with_pagination({
+        page_size: itemsPerPage,
+        page: currentPage
+      })
       .then((result) => {
         console.log("result-in-get-all-projects", result);
 
@@ -66,7 +54,7 @@ const MoreLiveProjects = () => {
     } else {
       getAllProject(IcpAccelerator_backend);
     }
-  }, [actor, userCurrentRoleStatusActiveRole]);
+  }, [actor, userCurrentRoleStatusActiveRole,currentPage]);
 
   const handleNavigate = (projectId, projectData) => {
     if (isAuthenticated) {
@@ -96,6 +84,7 @@ const MoreLiveProjects = () => {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
+
 
   const filteredUsers = React.useMemo(
     () =>
@@ -133,6 +122,11 @@ const MoreLiveProjects = () => {
       prev < Math.ceil(filteredUsers.length / itemsPerPage) ? prev + 1 : prev
     );
   };
+  
+  const currentProjectsData = filteredUsers.filter(val => {
+    const liveStatus = val?.params?.params?.live_on_icp_mainnet;
+    return Array.isArray(liveStatus) && liveStatus[0] === true;
+  });
   return (
     <div className="container mx-auto">
       <div className="px-[4%] pb-[4%] pt-[2%]">
@@ -144,7 +138,7 @@ const MoreLiveProjects = () => {
             All Live Projects
           </div>
 
-          <div className="relative flex items-center max-w-xs">
+          <div className="relative flex items-center max-w-xs bg-white rounded-xl">
             <input
               type="text"
               value={filter}
@@ -152,7 +146,7 @@ const MoreLiveProjects = () => {
                 setFilter(e.target.value);
                 setCurrentPage(1);
               }}
-              className="form-input rounded-xl px-4 py-2 bg-white text-gray-600 placeholder-gray-600 placeholder-ml-4 max-w-md"
+              className="form-input rounded-xl px-4 py-2 bg-white text-gray-600 placeholder-gray-600 placeholder-ml-4 max-w-md w-full"
               placeholder="Search..."
             />
             <svg
@@ -166,25 +160,15 @@ const MoreLiveProjects = () => {
         </div>
         <div className="flex justify-center mt-4">
           {noData ||
-          (currentProjects &&
-            currentProjects.filter(
-              (val) =>
-                val?.params?.params?.live_on_icp_mainnet[0] &&
-                val?.params?.params?.live_on_icp_mainnet[0] === true
-            ).length === 0) ? (
+          (currentProjectsData &&
+            currentProjectsData.length === 0) ? (
             <div className="h-screen">
               <NoDataCard />
             </div>
           ) : (
             <div className="flex flex-row  w-full gap-4  flex-wrap">
-              {currentProjects &&
-                currentProjects
-                  .filter(
-                    (val) =>
-                      val?.params?.params?.live_on_icp_mainnet[0] &&
-                      val?.params?.params?.live_on_icp_mainnet[0] === true
-                  )
-                  .map((data, index) => {
+              {currentProjectsData &&
+               currentProjectsData.map((data, index) => { console.log('data,')
                     let projectName = data?.params?.params?.project_name ?? "";
                     let projectId = data?.params?.uid ?? "";
                     let projectImage = data?.params?.params?.project_logo
@@ -241,7 +225,7 @@ const MoreLiveProjects = () => {
                                 <p className="text-xs truncate">{userName}</p>
                               </div>
                             </div>
-                            {progress && (
+                            {projectRubricStatus && (
                               <div className="mb-4 flex items-baseline">
                                 <svg
                                   width="100%"

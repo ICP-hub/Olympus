@@ -80,7 +80,7 @@ const Adminalluser = () => {
           All Users
         </div>
 
-        <div className="relative flex items-center max-w-xs">
+        <div className="relative flex items-center max-w-xs bg-white rounded-xl">
           <input
             type="text"
             value={filter}

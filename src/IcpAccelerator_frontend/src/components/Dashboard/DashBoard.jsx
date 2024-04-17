@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect ,useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
@@ -24,6 +24,8 @@ import AnnouncementCard from "./AnnouncementCard";
 import LiveProjects from "./LiveProjects";
 import { Banner } from "../Utils/Data/SvgData";
 import LiveEventsCards from "./LiveEventsCards";
+import useFadeInScrollAnimation from "../hooks/useFadeInScrollAnimation";
+
 
 const DashBoard = () => {
   const dispatch = useDispatch();
@@ -43,6 +45,21 @@ const DashBoard = () => {
     );
     return currentStatus ? currentStatus.name : null;
   }
+
+    const SpotLightRef = useRef(null);
+    useFadeInScrollAnimation(SpotLightRef, 0, 120);
+    const ProjectRef = useRef(null);
+    useFadeInScrollAnimation(ProjectRef, 170, 345);
+    const CohorotRef = useRef(null);
+    useFadeInScrollAnimation(CohorotRef, 390, 930);
+    const InvestorRef = useRef(null);
+    useFadeInScrollAnimation(InvestorRef, 955, 1137);
+    const MentorRef = useRef(null);
+    useFadeInScrollAnimation(MentorRef, 1140, 1322);
+    const AnnouncementRef = useRef(null);
+    useFadeInScrollAnimation(AnnouncementRef, 1327, 1557);
+    const JobRef = useRef(null);
+    useFadeInScrollAnimation(JobRef, 1590, 1840);
 
   function formatFullDateFromBigInt(bigIntDate) {
     const date = new Date(Number(bigIntDate / 1000000n));
@@ -165,32 +182,26 @@ const DashBoard = () => {
           >
             <div className="container mx-auto">
               <div className="flex flex-wrap">
-                <div className="flex flex-col justify-center md:w-1/2 sm:px-4 w-full">
-                  <h1 className="text-4xl font-bold mb-4 lg:text-7xl text-white font-fontUse">
+                <div className="flex flex-col justify-center md:w-1/2 sm:px-4 w-full relative lg:-top-8">
+                  <h1 className="text-4xl font-semibold mb-4 lg:text-8xl text-white font-fontUse">
                     OLYMPUS
                   </h1>
-                  <h1 className="text-3xl font-bold mb-4 text-white font-fontUse">
+                  <h1 className="lg:text-4xl text-3xl font-semibold mb-4 text-white font-fontUse">
                     Peak of Web3 Acceleration
                   </h1>
-                  <p className="text-lg mb-6 md:text-xl lg:text-2xl text-white font-fontUse">
-                    Web3 Acceleration Platform for Founders, Investors
-                    , Mentors, Talent and Users
+                  <p className="text-lg mb-6 md:text-xl lg:text-2xl font-normal text-white font-fontUse">
+                    Web3 Acceleration Platform for Founders, Investors, Mentors, Talent and Users
                   </p>
                   <a
-                    className="mt-6 mb-6 text-white font-fontUse hover:text-black"
+                    className="mb-4 text-white font-fontUse hover:text-black"
                     href="https://internetcomputer.org/olympus"
                   >
-                    Learn more about the beta version.<br></br> Use with
-                    caution.
+                    Learn more about the beta version.
                   </a>
+                  <button className="bg-white rounded-lg capitalize px-4 py-3 hover:bg-[#fffc] text-[#6752C0] mr-auto font-semibold flex justify-start">Use with
+                    caution.</button> 
                 </div>
                 <div className="w-full px-4 md:w-1/2 md:flex hidden">
-                  {/* <img
-                    className="object-contain h-fit w-fit absolute z-10 top-0"
-                    src={Banner}
-                    alt="Illustration"
-                    loading="lazy"
-                  /> */}
                   <div className="h-fit w-fit">
                     <div className="relative z-10">{Banner}</div>
                   </div>
@@ -201,13 +212,15 @@ const DashBoard = () => {
           <section className="overflow-hidden relative bg-gray-100">
             <div className="container mx-auto">
               <div className="font-fontUse flex flex-col w-full h-fit px-[5%] lg1:px-[4%] py-[4%]">
+                <div>
                 <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
                   <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent inline-block bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
                     Hot right now
                   </h1>
                 </div>
-                <div className="mb-4 z-20">
+                <div className="mb-4 z-20 fade-in" ref={SpotLightRef}>
                   <SpotLight />
+                </div>
                 </div>
                 <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
                   <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
@@ -228,7 +241,7 @@ const DashBoard = () => {
                     View More
                   </button>
                 </div>
-                <div className="mb-4">
+                <div className="mb-4 fade-in" ref={ProjectRef}>
                   <LiveProjects progress={false} />
                 </div>
                 <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px] mt-3">
@@ -242,7 +255,7 @@ const DashBoard = () => {
                     View More
                   </button>
                 </div>
-                <div className="mb-4">
+                <div className="mb-4 fade-in" ref={CohorotRef}>
                   <LiveEventsCards wrap={true} register={false} />
                 </div>
                 <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px] mt-3">
@@ -256,7 +269,7 @@ const DashBoard = () => {
                     View More
                   </button>
                 </div>
-                <div className="flex mb-4 items-stretch max-md:flex-col">
+                <div className="flex mb-4 items-stretch max-md:flex-col fade-in" ref={InvestorRef}>
                   <div className="flex lg:mb-0 lg:w-3/4 mb-4 w-full">
                     <InvestorCard />
                   </div>
@@ -275,7 +288,7 @@ const DashBoard = () => {
                     View More
                   </button>
                 </div>
-                <div className="flex mb-4 items-stretch max-md:flex-col">
+                <div className="flex mb-4 items-stretch max-md:flex-col fade-in" ref={MentorRef} >
                   <div className="flex lg:mb-0 lg:w-3/4 mb-4 w-full">
                     <MentorCard />
                   </div>
@@ -288,7 +301,7 @@ const DashBoard = () => {
                     Announcements
                   </h1>
                 </div>
-                <div className="mb-4">
+                <div className="mb-4 fade-in" ref={AnnouncementRef}>
                   <AnnouncementCard />
                 </div>
                 <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px] mt-3">
@@ -296,7 +309,7 @@ const DashBoard = () => {
                     Jobs / Bounties
                   </h1>
                 </div>
-                <div className="mb-2">
+                <div className="mb-2 fade-in" ref={JobRef}>
                   <ProjectJobCard
                     image={true}
                     tags={true}
@@ -304,6 +317,7 @@ const DashBoard = () => {
                     website={true}
                   />
                 </div>
+                
                 {/* <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px] mt-3">
                   <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
                     User Testimonials

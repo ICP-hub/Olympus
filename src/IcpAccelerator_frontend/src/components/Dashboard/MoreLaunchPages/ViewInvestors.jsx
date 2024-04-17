@@ -5,49 +5,14 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { IcpAccelerator_backend } from "../../../../../declarations/IcpAccelerator_backend/index";
 import NoDataCard from "../../Mentors/Event/NoDataCard";
-const investors = [
-  {
-    id: 1,
-    image: image,
-    name: "SamyKarim",
-    role: "Toshi, Managing Partner. Ex-Binance",
-    company: ["SRE", "Observability ", "Kubernetes"],
-  },
-  {
-    id: 2,
-    image: image,
-    name: "SamyKarim",
-    role: "Toshi, Managing Partner. Ex-Binance",
-    company: "Reliability Engineer and DevOps",
-  },
-  {
-    id: 2,
-    image: image,
-    name: "SamyKarim",
-    role: "Toshi, Managing Partner. Ex-Binance",
-    company: "Reliability Engineer and DevOps",
-  },
-  {
-    id: 2,
-    image: image,
-    name: "SamyKarim",
-    role: "Toshi, Managing Partner. Ex-Binance",
-    company: "Tech Growth Fund",
-  },
-  {
-    id: 2,
-    image: image,
-    name: "SamyKarim",
-    role: "Toshi, Managing Partner. Ex-Binance",
-    company: "Innovate Ventures",
-  },
-];
 
 const ViewInvestor = () => {
   const navigate = useNavigate();
-  const [data, setData] = useState([]);
+  const [allInvestorData, setAllInvestorData] = useState([]);
   const [noData, setNoData] = useState(null);
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const [filter, setFilter] = useState("");
+  const itemsPerPage = 12;
   const actor = useSelector((currState) => currState.actors.actor);
 
   const getAllInvestors = async (caller) => {
@@ -57,15 +22,15 @@ const ViewInvestor = () => {
         console.log("result-in-get-all-investors", result);
         if (!result || result.length == 0) {
           setNoData(true);
-          setData([]);
+          setAllInvestorData([]);
         } else {
           setNoData(false);
-          setData(result);
+          setAllInvestorData(result);
         }
       })
       .catch((error) => {
         setNoData(true);
-        setData([]);
+        setAllInvestorData([]);
         console.log("error-in-get-all-investors", error);
       });
   };
@@ -77,92 +42,221 @@ const ViewInvestor = () => {
       getAllInvestors(IcpAccelerator_backend);
     }
   }, [actor]);
+
+ 
+  const filteredInvestors = React.useMemo(() => {
+    return allInvestorData.filter(user => {
+      const fullName = user[1]?.vc_profile?.params?.user_data?.full_name?.toLowerCase() || "";
+      const companyName =
+        user[1]?.vc_profile?.params?.name_of_fund?.toLowerCase() || "";
+      return fullName.includes(filter.toLowerCase()) || companyName.includes(filter.toLowerCase());
+    });
+  }, [filter, allInvestorData]);
+
+  const indexOfLastUser = currentPage * itemsPerPage;
+  const indexOfFirstUser = indexOfLastUser - itemsPerPage;
+  const currentInvestors = filteredInvestors.slice(
+    indexOfFirstUser,
+    indexOfLastUser
+  );
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  const handlePrevious = () => {
+    setCurrentPage((prev) => (prev > 1 ? prev - 1 : prev));
+  };
+
+  const handleNext = () => {
+    setCurrentPage((prev) =>
+      prev < Math.ceil(filteredInvestors.length / itemsPerPage)
+        ? prev + 1
+        : prev
+    );
+  };
+
+ 
   return (
-    <div className="px-[4%] w-full bg-gray-100 h-screen overflow-y-scroll">
-      <div className="flex flex-col text-center items-center justify-center">
-        <div className="py-8">
-          <h2 className="text-[40px] font-black leading-10 bg-gradient-to-r from-[#7283EA] to-[#4087BF] bg-clip-text text-transparent transform">
-            Our{" "}
-            <span className=" bg-gradient-to-r from-[#3C04BA] to-[#4087BF] bg-clip-text text-transparent transform">
-              Investors
-            </span>
-          </h2>
-        </div>
-        {/* <div className="flex items-center relative md1:w-1/2 sm1:w-3/4 w-full p-2 mb-8 border border-[#737373] rounded-lg shadow-md">
-          <input
-            type="text"
-            placeholder="Search by company, skills or role"
-            className="flex-grow bg-transparent rounded focus:outline-none"
-          />
-          <button className="md1:block absolute hidden right-0 bg-[#3505B2] font-black text-xs text-white px-4 py-2 mr-1 rounded-md focus:outline-none">
-            Search Investor
-          </button>
-          <button className="block absolute md1:hidden right-0 bg-transparent font-black text-xs text-[#3505B2] px-4 py-2 mr-1 rounded-md focus:outline-none">
+    <div className="container mx-auto min-h-screen">
+      <div className="px-[4%] pb-[4%] pt-[1%]">
+        <div className="flex items-center justify-between">
+          <div
+            className="w-full bg-gradient-to-r from-purple-900 to-blue-500 text-transparent bg-clip-text text-3xl font-extrabold py-4 
+       font-fontUse"
+          >
+            Our Investors
+          </div>
+
+          <div className="relative flex items-center max-w-xs bg-white rounded-xl">
+            <input
+              type="text"
+              value={filter}
+              onChange={(e) => {
+                setFilter(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="form-input rounded-xl px-4 py-2 bg-white text-gray-600 placeholder-gray-600 placeholder-ml-4 max-w-md"
+              placeholder="Search Investor..."
+            />
             <svg
-              className="w-4 h-4"
-              aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 20 20"
+              viewBox="0 0 512 512"
+              className="w-5 h-5 absolute right-2 text-gray-600"
             >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-              />
+              <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
             </svg>
-          </button>
-        </div> */}
-      </div>
-      <div className="md:gap-4 md:grid md:grid-cols-4 max-md:flex max-md:flex-col justify-center mb-5">
-        {noData ? <NoDataCard /> :
-          data.map((investor, index) => {
+          </div>
+        </div>
+        {noData || filter === null ? (
+          <div className="flex justify-center items-center">
+            <NoDataCard />
+          </div>
+        ) : (
+          <>
+            <div className="md:gap-4 md:grid md:grid-cols-4 max-md:flex max-md:flex-col justify-center my-5">
+              {currentInvestors.map((investor, index) => {
+                let id = investor[0].toText();
+                let img = uint8ArrayToBase64(
+                  investor[1]?.vc_profile?.params?.user_data?.profile_picture[0]
+                );
+                let name =
+                  investor[1]?.vc_profile?.params?.user_data?.full_name;
+                let company = investor[1]?.vc_profile?.params?.name_of_fund;
+                let role = "Investor";
+                let website_link =
+                  investor[1]?.vc_profile?.params?.website_link;
+                let category_of_investment =
+                  investor[1]?.vc_profile?.params?.category_of_investment ?? "";
 
-            
-            let id = investor[0].toText();
-            let img = uint8ArrayToBase64(investor[1]?.vc_profile?.params?.user_data?.profile_picture[0]);
-            let name = investor[1]?.vc_profile?.params?.user_data?.full_name;
-            let company = investor[1]?.vc_profile?.params?.name_of_fund;
-            let role = 'Investor';
-            let website_link = investor[1]?.vc_profile?.params?.website_link;
-            let category_of_investment = investor[1]?.vc_profile?.params?.category_of_investment ?? ""
-
-            return (
-              <div key={index} className="bg-white duration-300 ease-in-out hover:scale-105 mb-5 md:mb-0 p-5 rounded-lg shadow-lg transition-transform w-full">
-                <div className=" flex items-center justify-center w-1/2" style={{margin: "auto"}}>
-                  <img className="w-full object-cover" src={img} alt="" style={{borderRadius: '50%'}} />
-                </div>
-                <div className="text-black mt-4 text-center">
-                  <span className="font-semibold text-lg line-clamp-1">
-                    {name}
-                  </span>
-                  <span className="block text-gray-500">
-                    {company}
-                  </span>
-                  <div className="flex flex-wrap gap-2 border-t-2 mt-5 py-4 max-md:justify-center">
-                  {category_of_investment && category_of_investment !== '' ? 
-                  category_of_investment.split(',').map(function(item) {
-                    return (<span className="bg-[#E7E7E8] rounded-full text-gray-600 text-xs font-bold px-3 py-2 leading-none flex items-center mt-2">
-                    {item.trim()}
-                    </span>  )
-                  })
-                  : 
-                  
-                  ""} 
-                   {/* <span className="bg-[#E7E7E8] rounded-full text-gray-600 text-xs font-bold px-3 py-2 leading-none flex items-center mt-2">
+                return (
+                  <div
+                    key={index}
+                    className="bg-white duration-300 ease-in-out hover:scale-105 mb-5 md:mb-0 p-5 rounded-lg shadow-lg transition-transform w-full"
+                  >
+                    <div
+                      className=" flex items-center justify-center w-1/2"
+                      style={{ margin: "auto" }}
+                    >
+                      <img
+                        className="w-full object-cover"
+                        src={img}
+                        alt=""
+                        style={{ borderRadius: "50%" }}
+                      />
+                    </div>
+                    <div className="text-black mt-4 text-center">
+                      <span className="font-semibold text-lg line-clamp-1">
+                        {name}
+                      </span>
+                      <span className="block text-gray-500">{company}</span>
+                      <div className="flex flex-wrap gap-2 border-t-2 mt-5 py-4 max-md:justify-center">
+                        {category_of_investment && category_of_investment !== ""
+                          ? category_of_investment
+                              .split(",")
+                              .map(function (item ,index) {
+                                return (
+                                  <span className="bg-[#E7E7E8] rounded-full text-gray-600 text-xs font-bold px-3 py-2 leading-none flex items-center mt-2" key={index}>
+                                    {item.trim()}
+                                  </span>
+                                );
+                              })
+                          : ""}
+                        {/* <span className="bg-[#E7E7E8] rounded-full text-gray-600 text-xs font-bold px-3 py-2 leading-none flex items-center mt-2">
                       {category_of_investment}
                       </span>       */}
-                          
+                      </div>
+                      <button
+                        onClick={() =>
+                          id ? navigate(`/view-investor-details/${id}`) : ""
+                        }
+                        className="mt-4  text-white px-4 py-1 rounded-lg uppercase w-full text-center border border-gray-300 font-bold bg-[#3505B2] transition-colors duration-200 ease-in-out"
+                      >
+                        View Profile
+                      </button>
+                    </div>
                   </div>
-                  <button onClick={() => id ? navigate(`/view-investor-details/${id}`) : ''} className="mt-4  text-white px-4 py-1 rounded-lg uppercase w-full text-center border border-gray-300 font-bold bg-[#3505B2] transition-colors duration-200 ease-in-out">
-                    View Profile
+                );
+              })}
+            </div>
+            <div className="flex flex-row  w-full gap-4 justify-center">
+              {currentInvestors.length > 0 && (
+                <div className="flex items-center gap-4 justify-center">
+                  <button
+                    onClick={handlePrevious}
+                    disabled={currentPage === 1}
+                    className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                    type="button"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth="2"
+                      stroke="currentColor"
+                      aria-hidden="true"
+                      className="w-4 h-4"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+                      ></path>
+                    </svg>
+                    Previous
+                  </button>
+                  {Array.from(
+                    {
+                      length: Math.ceil(
+                        filteredInvestors.length / itemsPerPage
+                      ),
+                    },
+                    (_, i) => i + 1
+                  ).map((number) => (
+                    <button
+                      key={number}
+                      onClick={() => paginate(number)}
+                      className={`relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-full text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all ${
+                        currentPage === number
+                          ? "bg-gray-900 text-white"
+                          : "hover:bg-gray-900/10 active:bg-gray-900/20"
+                      }`}
+                      type="button"
+                    >
+                      <span className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+                        {number}
+                      </span>
+                    </button>
+                  ))}
+                  <button
+                    onClick={handleNext}
+                    disabled={
+                      currentPage ===
+                      Math.ceil(filteredInvestors.length / itemsPerPage)
+                    }
+                    className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                    type="button"
+                  >
+                    Next
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth="2"
+                      stroke="currentColor"
+                      aria-hidden="true"
+                      className="w-4 h-4"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                      ></path>
+                    </svg>
                   </button>
                 </div>
-              </div>
-            )
-          })}
+              )}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

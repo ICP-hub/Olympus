@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, useFieldArray } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
 import { useSelector, useDispatch } from "react-redux";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -34,8 +34,8 @@ function ProjectRegForm() {
   );
   // STATES
 
-  const [privateDocs, setPrivateDocs] = useState(0);
-  const [publicDocs, setPublicDocs] = useState(0);
+  const [privateDocs, setPrivateDocs] = useState([]);
+  const [publicDocs, setPublicDocs] = useState([]);
   const [disableButton, setDisableButton] = useState(false);
   // user image states
   const [imagePreview, setImagePreview] = useState(null);
@@ -73,36 +73,36 @@ function ProjectRegForm() {
     []
   );
   // Function to generate dynamic fields based on count
-  const generateDynamicFields = (count) => {
-    const dynamicFields = {};
+  // const generateDynamicFields = (count) => {
+  //   const dynamicFields = {};
 
-    for (let i = 0; i < count; i++) {
-      dynamicFields[`private_title${i + 1}`] = yup
-        .string("Invalid")
-        .test("is-non-empty", "Required", (value) => /\S/.test(value))
-        .required("Title isRequied");
-      dynamicFields[`private_link${i + 1}`] = yup
-        .string("Invalid")
-        .url("Invalid url")
-        .required("Link is Requied");
-    }
-    return yup.object().shape(dynamicFields);
-  };
-  const generateDynamicPublicFields = (count) => {
-    const dynamicFields = {};
+  //   for (let i = 0; i < count; i++) {
+  //     dynamicFields[`private_title${i + 1}`] = yup
+  //       .string("Invalid")
+  //       .test("is-non-empty", "Required", (value) => /\S/.test(value))
+  //       .required("Title isRequied");
+  //     dynamicFields[`private_link${i + 1}`] = yup
+  //       .string("Invalid")
+  //       .url("Invalid url")
+  //       .required("Link is Requied");
+  //   }
+  //   return yup.object().shape(dynamicFields);
+  // };
+  // const generateDynamicPublicFields = (count) => {
+  //   const dynamicFields = {};
 
-    for (let i = 0; i < count; i++) {
-      dynamicFields[`public_title${i + 1}`] = yup
-        .string("Invalid")
-        .test("is-non-empty", "Required", (value) => /\S/.test(value))
-        .required("Title isRequied");
-      dynamicFields[`public_link${i + 1}`] = yup
-        .string("Invalid")
-        .url("Invalid url")
-        .required("Link is Requied");
-    }
-    return yup.object().shape(dynamicFields);
-  };
+  //   for (let i = 0; i < count; i++) {
+  //     dynamicFields[`public_title${i + 1}`] = yup
+  //       .string("Invalid")
+  //       .test("is-non-empty", "Required", (value) => /\S/.test(value))
+  //       .required("Title isRequied");
+  //     dynamicFields[`public_link${i + 1}`] = yup
+  //       .string("Invalid")
+  //       .url("Invalid url")
+  //       .required("Link is Requied");
+  //   }
+  //   return yup.object().shape(dynamicFields);
+  // };
 
   // user reg form validation schema
   const validationSchema = yup
@@ -409,15 +409,40 @@ function ProjectRegForm() {
         .optional()
         .url("Invalid url"),
       white_paper: yup.string().nullable(true).optional().url("Invalid url"),
+      upload_public_documents: yup
+        .string()
+        .required("Required")
+        .oneOf(["true", "false"], "Invalid value"),
+      publicDocs: yup.array().of(
+        yup.object().shape({
+          title: yup.string().required("Title is required"),
+          link: yup
+            .string()
+            .url("Must be a valid URL")
+            .required("Link is required"),
+        })
+      ),
       upload_private_documents: yup
         .string()
         .required("Required")
         .oneOf(["true", "false"], "Invalid value"),
-
-      ...generateDynamicFields(privateDocs).fields,
-      ...generateDynamicPublicFields(publicDocs).fields,
+      privateDocs: yup.array().of(
+        yup.object().shape({
+          title: yup.string().required("Title is required"),
+          link: yup
+            .string()
+            .url("Must be a valid URL")
+            .required("Link is required"),
+        })
+      ),
     })
     .required();
+  const defaultValues = {
+    upload_public_documents: "false",
+    publicDocs: [],
+    upload_private_documents: "false",
+    privateDocs: [],
+  };
 
   const {
     register,
@@ -434,57 +459,52 @@ function ProjectRegForm() {
   } = useForm({
     resolver: yupResolver(validationSchema),
     mode: "all",
+    defaultValues,
   });
   const [selectedTypeOfProfile, setSelectedTypeOfProfile] = useState(
     watch("type_of_profile")
   );
 
   // Add Private Docs
-  const uploadDocuments = watch("upload_private_documents");
-  // Function to handle change in the dropdown
-  const handleSelectChange = (event) => {
-    if (event.target.value === "true") {
-      setPrivateDocs(1); // Set privateDocs to 1 if "Yes" is selected
-    } else {
-      setPrivateDocs(0); // Optionally reset if "No" is selected
-    }
-  };
-  const handleSelectPublicChange = (event) => {
-    if (event.target.value === "true") {
-      setPublicDocs(1); // Set publicDocs to 1 if "Yes" is selected
-    } else {
-      setPublicDocs(0); // Optionally reset if "No" is selected
-    }
-  };
 
-  // Monitor privateDocs and set upload_private_documents accordingly
-  useEffect(() => {
-    if (privateDocs === 0) {
-      setValue("upload_private_documents", "false");
-    }
-    if (publicDocs === 0) {
-      setValue("upload_public_documents", "false");
-    }
-  }, [privateDocs, publicDocs, setValue]);
+  const {
+    fields: fieldsPrivate,
+    append: appendPrivate,
+    remove: removePrivate,
+  } = useFieldArray({
+    control,
+    name: "privateDocs",
+  });
 
-  // Remove Public Docs
-  const removePublicDocs = (e, lastNum) => {
-    e.preventDefault();
-    setPublicDocs((previous) => previous - 1);
-    setValue(`public_title${lastNum}`, "");
-    setValue(`public_link${lastNum}`, "");
-    delete validationSchema.fields[`public_title${lastNum}`];
-    delete validationSchema.fields[`public_link${lastNum}`];
-  };
-  // Remove Private Docs
-  const removePrivateDocs = (e, lastNum) => {
-    e.preventDefault();
-    setPrivateDocs((previous) => previous - 1);
-    setValue(`private_title${lastNum}`, "");
-    setValue(`private_link${lastNum}`, "");
-    delete validationSchema.fields[`private_title${lastNum}`];
-    delete validationSchema.fields[`private_link${lastNum}`];
-  };
+  const uploadPrivateDocuments = watch("upload_private_documents");
+  React.useEffect(() => {
+    if (uploadPrivateDocuments === "true" && fieldsPrivate.length === 0) {
+      appendPrivate({ title: "", link: "" });
+    } else if (uploadPrivateDocuments === "false") {
+      reset({ ...defaultValues, upload_private_documents: "false" });
+    }
+  }, [
+    uploadPrivateDocuments,
+    appendPrivate,
+    removePrivate,
+    fieldsPrivate.length,
+    reset,
+  ]);
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "publicDocs",
+  });
+
+  const uploadPublicDocuments = watch("upload_public_documents");
+
+  React.useEffect(() => {
+    if (uploadPublicDocuments === "true" && fields.length === 0) {
+      append({ title: "", link: "" });
+    } else if (uploadPublicDocuments === "false") {
+      reset({ ...defaultValues, upload_public_documents: "false" });
+    }
+  }, [uploadPublicDocuments, append, remove, fields.length, reset]);
 
   // image creation function compression and uintarray creator
   const imageCreationFunc = async (file) => {
@@ -600,44 +620,6 @@ function ProjectRegForm() {
 
   // form submit handler func
   const onSubmitHandler = async (data) => {
-    // Handling Private Docs and link
-    const filteredKeys = Object.keys(validationSchema.fields).filter((key) => {
-      if (key.startsWith("private_title")) {
-        return key;
-      }
-    });
-
-    const privateDocs = filteredKeys.reverse().map((val) => {
-      const num = val.split("title")[1];
-      return {
-        title: data[val] && data[val].trim() !== "" ? data[val] : "",
-        link:
-          data[`private_link${num}`] && data[`private_link${num}`].trim() !== ""
-            ? data[`private_link${num}`]
-            : "",
-      };
-    });
-
-    // Handling Public Docs and link
-    const filteredPublicKeys = Object.keys(validationSchema.fields).filter(
-      (key) => {
-        if (key.startsWith("public_title")) {
-          return key;
-        }
-      }
-    );
-
-    const publicDocs = filteredPublicKeys.reverse().map((val) => {
-      const num = val.split("title")[1];
-      return {
-        title: data[val] && data[val].trim() !== "" ? data[val] : "",
-        link:
-          data[`public_link${num}`] && data[`public_link${num}`].trim() !== ""
-            ? data[`public_link${num}`]
-            : "",
-      };
-    });
-
     if (actor) {
       const projectData = {
         // user data
@@ -744,9 +726,9 @@ function ProjectRegForm() {
         token_economics: [data?.token_economics || ""],
         long_term_goals: [data?.white_paper || ""],
         private_docs:
-          data?.upload_private_documents === "true" ? [privateDocs] : [],
+          data?.upload_private_documents === "true" ? [data?.privateDocs] : [],
         public_docs:
-          data?.upload_public_documents === "true" ? [publicDocs] : [],
+          data?.upload_public_documents === "true" ? [data?.publicDocs] : [],
         upload_private_documents: [
           data?.upload_private_documents === "true" ? true : false,
         ],
@@ -771,7 +753,7 @@ function ProjectRegForm() {
             console.log("result in project to check update call==>", result);
             if (result && result.includes("approval request is sent")) {
               toast.success("Approval request is sent");
-              // window.location.href = "/";
+              window.location.href = "/";
             } else {
               toast.error(result);
             }
@@ -803,6 +785,7 @@ function ProjectRegForm() {
 
   // form error handler func
   const onErrorHandler = (val) => {
+    console.log("error", val);
     toast.error("Empty fields or invalid values, please recheck the form");
   };
 
@@ -2443,23 +2426,17 @@ function ProjectRegForm() {
                 </div>
 
                 {/* Uploading Private Document */}
-
                 <div className="relative z-0 group mb-6">
                   <label
                     htmlFor="upload_private_documents"
-                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black text-start"
                   >
                     Upload due diligence documents{" "}
                     <span className="text-red-500">*</span>
                   </label>
                   <select
                     {...register("upload_private_documents")}
-                    onChange={handleSelectChange}
-                    className={`bg-gray-50 border-2 ${
-                      errors.upload_private_documents
-                        ? "border-red-500"
-                        : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    className="bg-gray-50 border-2 border-[#737373] text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                   >
                     <option className="text-lg font-bold" value="false">
                       No
@@ -2474,113 +2451,82 @@ function ProjectRegForm() {
                     </p>
                   )}
                 </div>
-                {privateDocs > 0
-                  ? Array.from({ length: privateDocs }, (_, index) => {
-                      const val = index + 1;
-                      return (
-                        <React.Fragment key={index}>
-                          <div className="relative z-0 group mb-6">
-                            <label
-                              htmlFor={`private_title${val}`}
-                              className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                            >
-                              Doc title {val}
-                            </label>
-                            <input
-                              type="text"
-                              id={`private_title${val}`}
-                              name={`private_title${val}`}
-                              {...register(`private_title${val}`)}
-                              className={`bg-gray-50 border-2 
-                                                   ${
-                                                     errors?.[
-                                                       `private_title${val}`
-                                                     ]
-                                                       ? "border-red-500 "
-                                                       : "border-[#737373]"
-                                                   } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                            />
-                            {errors?.[`private_title${val}`] && (
-                              <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                                {errors?.[`private_title${val}`]?.message}
-                              </span>
-                            )}
-                          </div>
-                          <div className="relative z-0 group mb-6">
-                            <label
-                              htmlFor={`private_link${val}`}
-                              className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                            >
-                              Link {val}
-                            </label>
-                            <input
-                              type="text"
-                              id={`private_link${val}`}
-                              name={`private_link${val}`}
-                              {...register(`private_link${val}`)}
-                              className={`bg-gray-50 border-2 
-                                                   ${
-                                                     errors?.[
-                                                       `private_link${val}`
-                                                     ]
-                                                       ? "border-red-500 "
-                                                       : "border-[#737373]"
-                                                   } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                            />
-                            {errors?.[`private_link${val}`] && (
-                              <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                                {errors?.[`private_link${val}`]?.message}
-                              </span>
-                            )}
-                          </div>
-                        </React.Fragment>
-                      );
-                    })
-                  : ""}
-                {privateDocs > 0 ? (
-                  <div className="flex justify-content-end w-100">
-                    <div className="flex gap-4">
+                <div>
+                  {fieldsPrivate.map((field, index) => (
+                    <React.Fragment key={field.id}>
+                      <div className="flex flex-row mt-2">
+                        <div className="w-full">
+                          <label className="block mb-2 text-lg font-medium text-gray-500 text-start">
+                            Title {index + 1}
+                          </label>
+                          <input
+                            {...register(`privateDocs.${index}.title`)}
+                            className="bg-gray-50 border-2 border-black rounded-lg block w-full p-2.5 text-black"
+                            type="text"
+                          />
+                          {errors.privateDocs?.[index]?.title && (
+                            <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                              {errors.privateDocs[index].title.message}
+                            </p>
+                          )}
+                        </div>
+                        <div className="w-full ml-2">
+                          <label className="block mb-2 text-lg font-medium text-gray-500 text-start">
+                            Link {index + 1}
+                          </label>
+                          <input
+                            {...register(`privateDocs.${index}.link`)}
+                            className="bg-gray-50 border-2 border-black rounded-lg block w-full p-2.5 text-black"
+                            type="text"
+                          />
+                          {errors.privateDocs?.[index]?.link && (
+                            <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                              {errors.privateDocs[index].link.message}
+                            </p>
+                          )}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => removePrivate(index)}
+                          className="self-end bg-red-600 hover:bg-red-700 text-white rounded-lg px-4 py-2 my-7 ml-2"
+                        >
+                          <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 384 512"
+                          fill="white"
+                          className="w-5 h-5"
+                        >
+                          <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
+                        </svg>
+                        </button>
+                      </div>
+                    </React.Fragment>
+                  ))}
+
+                  {uploadPrivateDocuments === "true" && (
+                    <div className="flex justify-end items-center">
                       <button
-                        className="text-white font-bold bg-blue-800 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md w-auto sm:w-auto px-5 py-2 text-center m-12"
-                        disabled={disableButton}
-                        onClick={(e) => removePrivateDocs(e, privateDocs)}
-                      >
-                        Remove Last Docs
-                      </button>
-                      <button
-                        className="text-white font-bold bg-blue-800 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md w-auto sm:w-auto px-5 py-2 text-center m-12"
-                        disabled={disableButton}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setPrivateDocs((previous) => previous + 1);
-                        }}
+                        type="button"
+                        onClick={() => appendPrivate({ title: "", link: "" })}
+                        className="text-white bg-blue-800 rounded-md px-5 py-2 mt-4"
                       >
                         Add Private Docs
                       </button>
                     </div>
-                  </div>
-                ) : (
-                  ""
-                )}
-
+                  )}
+                </div>
                 {/* Uploading Public Document */}
-
-                <div className="relative z-0 group mb-6">
+                <div className="relative z-0 mb-6">
                   <label
                     htmlFor="upload_public_documents"
-                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                    className="block mb-2 text-lg font-medium text-gray-500 text-start"
                   >
                     Upload Public documents{" "}
-                    <span className="text-red-500">*</span>
+                    <span className="text-red-600">*</span>
                   </label>
                   <select
                     {...register("upload_public_documents")}
-                    onChange={handleSelectPublicChange}
-                    className={`bg-gray-50 border-2 ${
-                      errors.upload_public_documents
-                        ? "border-red-500"
-                        : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    className="bg-gray-50  border-2 border-[#737373] text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3"
                   >
                     <option className="text-lg font-bold" value="false">
                       No
@@ -2590,99 +2536,73 @@ function ProjectRegForm() {
                     </option>
                   </select>
                   {errors.upload_public_documents && (
-                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                    <p className="mt-1 text-sm text-red-600 font-medium">
                       {errors.upload_public_documents.message}
                     </p>
                   )}
                 </div>
-                {publicDocs > 0
-                  ? Array.from({ length: publicDocs }, (_, index) => {
-                      const val = index + 1;
-                      return (
-                        <React.Fragment key={index}>
-                          <div className="relative z-0 group mb-6">
-                            <label
-                              htmlFor={`public_title${val}`}
-                              className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                            >
-                              Title {val}
-                            </label>
-                            <input
-                              type="text"
-                              id={`public_title${val}`}
-                              name={`public_title${val}`}
-                              {...register(`public_title${val}`)}
-                              className={`bg-gray-50 border-2 
-                                                   ${
-                                                     errors?.[
-                                                       `public_title${val}`
-                                                     ]
-                                                       ? "border-red-500 "
-                                                       : "border-[#737373]"
-                                                   } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                            />
-                            {errors?.[`public_title${val}`] && (
-                              <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                                {errors?.[`public_title${val}`]?.message}
-                              </span>
-                            )}
-                          </div>
-                          <div className="relative z-0 group mb-6">
-                            <label
-                              htmlFor={`public_link${val}`}
-                              className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                            >
-                              Link {val}
-                            </label>
-                            <input
-                              type="text"
-                              id={`public_link${val}`}
-                              name={`public_link${val}`}
-                              {...register(`public_link${val}`)}
-                              className={`bg-gray-50 border-2 
-                                                   ${
-                                                     errors?.[
-                                                       `public_link${val}`
-                                                     ]
-                                                       ? "border-red-500 "
-                                                       : "border-[#737373]"
-                                                   } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                            />
-                            {errors?.[`public_link${val}`] && (
-                              <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                                {errors?.[`public_link${val}`]?.message}
-                              </span>
-                            )}
-                          </div>
-                        </React.Fragment>
-                      );
-                    })
-                  : ""}
-                {publicDocs > 0 ? (
-                  <div className="flex justify-content-end w-100">
-                    <div className="flex gap-4">
+                <div>
+                  {fields.map((field, index) => (
+                    <div className="flex flex-row gap-4 mt-4 items-baseline" key={field.id}>
+                      <div className="flex-1">
+                        <label className="block mb-2 text-lg font-medium text-gray-700 text-start">
+                          Title {index + 1}
+                        </label>
+                        <input
+                          {...register(`publicDocs.${index}.title`)}
+                          className="bg-gray-50 border-2 border-[#737373] rounded-lg block w-full p-3"
+                          type="text"
+                        />
+                        {errors.publicDocs?.[index]?.title && (
+                          <p className="mt-1 text-sm text-red-600 font-medium">
+                            {errors.publicDocs[index].title.message}
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <label className="block mb-2 text-lg font-medium text-gray-700 text-start">
+                          Link {index + 1}
+                        </label>
+                        <input
+                          {...register(`publicDocs.${index}.link`)}
+                          className="bg-gray-50 border-2 border-[#737373] rounded-lg block w-full p-3"
+                          type="text"
+                        />
+                        {errors.publicDocs?.[index]?.link && (
+                          <p className="mt-1 text-sm text-red-600 font-medium">
+                            {errors.publicDocs[index].link.message}
+                          </p>
+                        )}
+                      </div>
                       <button
-                        className="text-white font-bold bg-blue-800 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md w-auto sm:w-auto px-5 py-2 text-center m-12"
-                        disabled={disableButton}
-                        onClick={(e) => removePublicDocs(e, publicDocs)}
+                        type="button"
+                        onClick={() => remove(index)}
+                        className="self-end bg-red-600 hover:bg-red-700 text-white rounded-lg px-4 py-2 my-7 ml-2"
                       >
-                        Remove Last Docs
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 384 512"
+                          fill="white"
+                          className="w-5 h-5"
+                        >
+                          <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
+                        </svg>
                       </button>
+                    </div>
+                  ))}
+
+                  {uploadPublicDocuments === "true" && (
+                    <div className="flex justify-end items-center mt-4">
                       <button
-                        className="text-white font-bold bg-blue-800 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md w-auto sm:w-auto px-5 py-2 text-center m-12"
-                        disabled={disableButton}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setPublicDocs((previous) => previous + 1);
-                        }}
+                        type="button"
+                        onClick={() => append({ title: "", link: "" })}
+                        className="bg-blue-800 hover:bg-blue-900 text-white rounded-lg px-5 py-2"
                       >
                         Add Public Docs
                       </button>
                     </div>
-                  </div>
-                ) : (
-                  ""
-                )}
+                  )}
+                </div>
               </div>
 
               <div className="flex justify-end mt-4">

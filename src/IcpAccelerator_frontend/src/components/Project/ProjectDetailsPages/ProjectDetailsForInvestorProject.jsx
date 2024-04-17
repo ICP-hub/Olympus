@@ -70,6 +70,10 @@ const ProjectDetailsForInvestorProject = () => {
             id: "project-documents",
             label: "Documents",
         },
+        {
+            id: "project-money-raising",
+            label: "Money Raised",
+        },
     ];
 
     const [activeTab, setActiveTab] = useState(headerData[0].id);
@@ -172,8 +176,24 @@ const ProjectDetailsForInvestorProject = () => {
                     role={true}
                     socials={true}
                     filter={"documents"}
+                    allowAccess={!true}
+
                     />
                 );
+                case "project-money-raising":
+                    return (
+                        <ProjectMoneyRaising
+                        data={projectData}
+                        profile={true}
+                        type={!true}
+                        name={true}
+                        role={true}
+                        socials={true}
+                        filter={"raising"}
+                        allowAccess={!true}
+
+                        />
+                    );
             default:
                 return null;
         }

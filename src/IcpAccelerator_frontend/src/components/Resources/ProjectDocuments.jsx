@@ -5,7 +5,7 @@ import toast, { Toaster } from "react-hot-toast";
 import NoDataCard from "../Mentors/Event/DocumentNoDataCard";
 import { useNavigate } from "react-router-dom";
 
-const ProjectDocuments = ({ data }) => {
+const ProjectDocuments = ({ data ,allowAccess}) => {
   console.log('data',data);
   const navigate = useNavigate();
   const actor = useSelector((currState) => currState.actors.actor);
@@ -13,7 +13,7 @@ const ProjectDocuments = ({ data }) => {
   const [noData, setNoData] = useState(null);
   const [isChecked, setIsChecked] = useState(false);
   const [documents, setDocuments] = useState([]);
-  const [allowAccess, setAllowAccess] = useState(null);
+  // const [allowAccess, setAllowAccess] = useState(null);
 
   const handleToggleChange = () => setIsChecked(!isChecked);
 
@@ -26,17 +26,17 @@ const ProjectDocuments = ({ data }) => {
         console.log('result ====>',result)
         if ("Ok" in result) {
           setDocuments(Array.isArray(result.Ok) ? result.Ok : [result.Ok]);
-          setAllowAccess(result.Ok.is_owner);
+          // setAllowAccess(result.Ok.is_owner);
         } else if ("Err" in result) {
           toast.error(result.Err.message);
-          setAllowAccess(result.Err.is_owner);
+          // setAllowAccess(result.Err.is_owner);
           setDocuments([]);
         }
       } catch (error) {
         toast.error(
           "An unexpected error occurred while fetching private documents"
         );
-        setAllowAccess(false);
+        // setAllowAccess(false);
         setDocuments([]);
       }
     };
@@ -94,11 +94,9 @@ const ProjectDocuments = ({ data }) => {
               className="text-white bg-blue-700 font-bold py-2 px-4 rounded-xl float-right"
               onClick={() => navigate(`/project-private-document-requests`)}
             >
-              View
+              View Documents Requsets
             </button>
-          ) : allowAccess === null ? (
-            ""
-          ) : (
+          )  : (
             <button
               className="text-white bg-blue-700 font-bold py-2 px-4 rounded-xl float-right"
               onClick={sendPrivateDocumentRequest}
@@ -164,8 +162,8 @@ const ProjectDocuments = ({ data }) => {
                   className="group w-[100%] md1:w-[calc(100%/2-10px)] dlg:w-[calc(100%/3-10px)]"
                   key={index}
                 >
-                  {allowAccess === null ? (
-                    <div className=" md:m-1 p-4 mb-4 overflow-hidden bg-gradient-to-b from-[#B9C0F2] to-[#B9C0F23B] border-2 border-blue-400 rounded-2xl shadow">
+                  
+                    {/* <div className=" md:m-1 p-4 mb-4 overflow-hidden bg-gradient-to-b from-[#B9C0F2] to-[#B9C0F23B] border-2 border-blue-400 rounded-2xl shadow">
                       <div className="relative">
                         <div className="relative z-10 p-2">
                           <h5 className="mb-2 text-2xl font-bold tracking-tight text-white">
@@ -190,8 +188,8 @@ const ProjectDocuments = ({ data }) => {
                         <div className="absolute opacity-25 w-40 h-40 -left-[85px] -top-[28px] rounded-full bg-gradient-to-b from-[#3C04BA] to-[#4087BF]"></div>
                         <div className="absolute opacity-25 w-40 h-40 -right-[50px] -bottom-[52px] rounded-full bg-gradient-to-r from-[#3C04BA] to-[#4087BF]"></div>
                       </div>
-                    </div>
-                  ) : allowAccess === true ? (
+                    </div> */}
+                  { allowAccess === true ? (
                     <div className=" md:m-1 p-4 mb-4 overflow-hidden bg-gradient-to-b from-[#B9C0F2] to-[#B9C0F23B] border-2 border-blue-400 rounded-2xl shadow">
                       <div className="relative">
                         <div className="relative z-10 p-2">
