@@ -437,6 +437,7 @@ type ProjectReview = record {
 };
 type ProjectUpdateRequest = record {
   updated_info : ProjectInfo;
+  original_info : ProjectInfo;
   project_id : text;
 };
 type ProjectVecWithRoles = record {
@@ -690,6 +691,7 @@ service : {
   approve_project_creation_request : (principal) -> (text);
   approve_project_details_updation_request : (principal, text, bool) -> (text);
   approve_vc_creation_request : (principal, bool) -> (text);
+  approve_vc_profile_update : (principal, bool) -> (text);
   calculate_average : (text) -> (RatingAverages) query;
   change_live_status : (principal, text, bool, opt text) -> (Result_2) query;
   connect_to_team_member : (text, text) -> (text);
@@ -706,6 +708,7 @@ service : {
   decline_offer_of_project_by_investor : (text, text) -> (text);
   decline_private_docs_access_request : (text, principal) -> (text);
   decline_project_creation_request : (principal) -> (text);
+  decline_project_profile_update_request : (text, bool) -> (text);
   decline_vc_creation_request : (principal, bool) -> (text);
   decline_vc_profile_update_request : (principal, bool) -> (text);
   delete_founder_caller : () -> (text);
@@ -845,6 +848,9 @@ service : {
     ) query;
   get_mentor_info_combined : (principal) -> (opt MentorInternal) query;
   get_mentor_info_using_principal : (principal) -> (opt MentorInternal) query;
+  get_mentor_update_declined_request : () -> (
+      vec record { principal; MentorProfile },
+    ) query;
   get_multichain_list : () -> (vec text) query;
   get_my_accepted_cohort_creation_request : () -> (vec CohortRequest) query;
   get_my_declined_cohort_creation_requests : () -> (vec CohortRequest) query;
@@ -887,6 +893,9 @@ service : {
     ) query;
   get_project_ratings : (text) -> (Result_6) query;
   get_project_requests : (text) -> (vec Request) query;
+  get_project_update_declined_request : () -> (
+      vec record { text; ProjectUpdateRequest },
+    ) query;
   get_project_upvotes : (text) -> (opt UpvoteRecord) query;
   get_project_using_id : (text) -> (opt ProjectInfoInternal) query;
   get_projects_applied_for_cohort : (text) -> (Result_7) query;
@@ -954,6 +963,9 @@ service : {
   get_vc_info_using_principal : (principal) -> (
       opt VentureCapitalistInternal,
     ) query;
+  get_vc_update_declined_request : () -> (
+      vec record { principal; VentureCapitalist },
+    ) query;
   get_venture_capitalist_info : () -> (opt VentureCapitalist) query;
   get_your_project_notifications : () -> (vec NotificationForOwner) query;
   greet : (text) -> (text) query;
@@ -1018,6 +1030,7 @@ service : {
   update_rating : (RatingUpdate) -> (text);
   update_suggestion_status_caller : (nat64, text, text) -> ();
   update_team_member : (text, principal) -> (text);
+  update_vc_profile : (principal, VentureCapitalist) -> (text);
   update_venture_capitalist : (VentureCapitalist) -> (text);
   update_venture_capitalist_caller : (VentureCapitalist) -> (text);
   upvote_project : (text) -> (text);
