@@ -31,6 +31,7 @@ import UserRegForm from "./components/RegForms.jsx/UserRegForm";
 import MentorRegForm from "./components/RegForms.jsx/MentorRegForm";
 import InvestorRegForm from "./components/RegForms.jsx/InvestorRegForm";
 import ProjectRegForm from "./components/RegForms.jsx/ProjectRegForm";
+import RequestMoneyRaising from "./components/Project/ProjectDetailsPages/RequestMoneyRaising";
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
 const ProjectDetails = lazy(() => import("./components/Project/ProjectDetails"));
@@ -77,6 +78,7 @@ const AppRoutes = () => {
     { path: "/mentor-association-requests", element: <MentorSideAssociation /> },
     { path: "/investor-association-requests", element: <InvestorSideAssociation /> },
     { path: "/project-private-document-requests", element: <RequestsPrivateDocument /> },
+    { path: "/project-money-raising-requests/:id", element: <RequestMoneyRaising /> },
     { path: "/all-live-events", element: <LiveEventsCards /> },
    
   ];

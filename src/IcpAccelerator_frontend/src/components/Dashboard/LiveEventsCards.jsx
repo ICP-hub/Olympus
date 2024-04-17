@@ -13,6 +13,7 @@ const LiveEventsCards = ({ wrap, register }) => {
         await caller
             .get_all_cohorts()
             .then((result) => {
+                console.log('cohort result',result)
                 if (!result || result.length == 0) {
                     setNoData(true);
                     setAllLiveEventsData([]);
@@ -36,7 +37,7 @@ const LiveEventsCards = ({ wrap, register }) => {
     }, [actor]);
 
     return (
-        <div className="flex mb-4 items-start">
+        <div className={`flex mb-4 items-start ${wrap === true?'':'min-h-screen'}`}>
             {noData ?
                 (<NoDataCard />
                 ) : (
