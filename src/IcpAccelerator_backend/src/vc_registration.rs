@@ -110,10 +110,17 @@ pub struct Announcements {
     timestamp: u64,
 }
 
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+pub struct UpdateInfoStruct{
+    pub original_info: VentureCapitalist,
+    pub updated_info: VentureCapitalist,
+}
+
 pub type VcAnnouncements = HashMap<Principal, Vec<Announcements>>;
 
 pub type VentureCapitalistStorage = HashMap<Principal, VentureCapitalistInternal>;
 pub type VentureCapitalistParams = HashMap<Principal, VentureCapitalist>;
+pub type VentureCapitalistEditParams = HashMap<Principal, UpdateInfoStruct>;
 
 thread_local! {
     pub static VENTURECAPITALIST_STORAGE: RefCell<VentureCapitalistStorage> = RefCell::new(VentureCapitalistStorage::new());
@@ -220,6 +227,9 @@ pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::
             }
         }
     });
+
+    let user_data_for_updation = params.clone();
+    crate::user_module::update_data_for_roles(caller, user_data_for_updation.user_data);
 
     match params.validate() {
         Ok(_) => {

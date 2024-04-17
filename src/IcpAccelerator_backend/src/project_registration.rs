@@ -287,6 +287,7 @@ pub struct FilterCriteria {
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType)]
 pub struct ProjectUpdateRequest {
     project_id: String,
+    pub original_info: ProjectInfo,
     pub updated_info: ProjectInfo,
 }
 
@@ -665,6 +666,9 @@ pub async fn create_project(info: ProjectInfo) -> String {
     );
 
     crate::latest_popular_projects::update_project_status_live_incubated(new_project);
+
+    let user_data_for_updation = info.clone();
+    crate::user_module::update_data_for_roles(caller, user_data_for_updation.user_data);
 
     let res = send_approval_request(
         info.user_data.profile_picture.unwrap_or_else(|| Vec::new()),
@@ -1057,18 +1061,26 @@ pub async fn update_project(project_id: String, updated_project: ProjectInfo) ->
         return "Error: Only the project owner can request updates.".to_string();
     }
 
-    let update_request = ProjectUpdateRequest {
-        updated_info: updated_project.clone(),
-        project_id: project_id.clone(),
-    };
-
-    PENDING_PROJECT_UPDATES.with(
-        |awaiters: &RefCell<HashMap<String, ProjectUpdateRequest>>| {
-            let mut await_ers: std::cell::RefMut<'_, HashMap<String, ProjectUpdateRequest>> =
-                awaiters.borrow_mut();
-            await_ers.insert(project_id, update_request.clone());
+    let original_info_cloned = APPLICATION_FORM.with(|app_form| {
+        app_form.borrow().get(&caller).cloned()
+    });
+    match original_info_cloned {
+        Some(orig_infos) => {
+            // Attempt to find the specific ProjectInfoInternal by project_id
+            if let Some(orig_info) = orig_infos.iter().find(|p| p.uid == project_id) {
+                // Now we have the original project info, proceed to create the update request
+                PENDING_PROJECT_UPDATES.with(|updates| {
+                    let mut updates = updates.borrow_mut();
+                    updates.insert(project_id.clone(), ProjectUpdateRequest {
+                        project_id: project_id.clone(),
+                        original_info: orig_info.params.clone(),  // Assuming `params` is of type `ProjectInfo`
+                        updated_info: updated_project.clone(),
+                    });
+                });
+            }
         },
-    );
+        None => todo!(),
+    }
 
     let res = send_approval_request(
         updated_project

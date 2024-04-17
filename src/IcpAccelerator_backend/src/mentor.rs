@@ -133,6 +133,9 @@ pub async fn register_mentor(profile: MentorProfile) -> String {
         }
     });
 
+    let user_data_for_updation = profile.clone();
+    crate::user_module::update_data_for_roles(caller, user_data_for_updation.user_data);
+
     match profile.validate() {
         Ok(_) => {
             let random_bytes = raw_rand().await.expect("Failed to generate random bytes").0;
