@@ -1887,9 +1887,9 @@ pub fn get_pending_cohort_requests_for_admin() -> Vec<CohortRequest> {
 pub fn accept_cohort_creation_request(cohort_id: String) -> String {
     let caller = caller();
 
-    if !is_controller(&caller) {
-        return format!("only canister controller can call this function");
-    }
+    // if !is_controller(&caller) {
+    //     return format!("only canister controller can call this function");
+    // }
 
     let mut already_accepted = false;
 
