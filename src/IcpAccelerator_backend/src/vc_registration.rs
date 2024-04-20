@@ -112,8 +112,8 @@ pub struct Announcements {
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct UpdateInfoStruct{
-    pub original_info: VentureCapitalist,
-    pub updated_info: VentureCapitalist,
+    pub original_info: Option<VentureCapitalist>,
+    pub updated_info: Option<VentureCapitalist>,
 }
 
 pub type VcAnnouncements = HashMap<Principal, Vec<Announcements>>;
@@ -126,8 +126,8 @@ thread_local! {
     pub static VENTURECAPITALIST_STORAGE: RefCell<VentureCapitalistStorage> = RefCell::new(VentureCapitalistStorage::new());
     pub static VC_AWAITS_RESPONSE: RefCell<VentureCapitalistStorage> = RefCell::new(VentureCapitalistStorage::new());
     pub static DECLINED_VC_REQUESTS: RefCell<VentureCapitalistStorage> = RefCell::new(VentureCapitalistStorage::new());
-    pub static VC_PROFILE_EDIT_AWAITS :RefCell<VentureCapitalistParams> = RefCell::new(VentureCapitalistParams::new());
-    pub static DECLINED_VC_PROFILE_EDIT_REQUEST :RefCell<VentureCapitalistParams> = RefCell::new(VentureCapitalistParams::new());
+    pub static VC_PROFILE_EDIT_AWAITS :RefCell<VentureCapitalistEditParams> = RefCell::new(VentureCapitalistEditParams::new());
+    pub static DECLINED_VC_PROFILE_EDIT_REQUEST :RefCell<VentureCapitalistEditParams> = RefCell::new(VentureCapitalistEditParams::new());
     pub static VC_ANNOUNCEMENTS:RefCell<VcAnnouncements> = RefCell::new(VcAnnouncements::new());
 }
 
@@ -177,7 +177,7 @@ pub fn pre_upgrade_venture_capitalist() {
 
 
 pub fn post_upgrade_venture_capitalist() {
-    match stable_restore::<(VentureCapitalistStorage, VentureCapitalistStorage, VentureCapitalistStorage, VentureCapitalistParams, VentureCapitalistParams, VcAnnouncements)>() {
+    match stable_restore::<(VentureCapitalistStorage, VentureCapitalistStorage, VentureCapitalistStorage, VentureCapitalistEditParams, VentureCapitalistEditParams, VcAnnouncements)>() {
         Ok((restored_vc_storage, restored_vc_awaits_response, restored_declined_vc_requests, restored_vc_profile_edit_awaits, restored_declined_vc_profile_edit_request, restored_vc_announcements)) => {
             VENTURECAPITALIST_STORAGE.with(|data| *data.borrow_mut() = restored_vc_storage);
             VC_AWAITS_RESPONSE.with(|data| *data.borrow_mut() = restored_vc_awaits_response);
@@ -449,11 +449,20 @@ pub async fn update_venture_capitalist(params: VentureCapitalist) -> String {
         ic_cdk::println!("Wait for your previous request to get approved");
         return "Wait for your previous request to get approved. ".to_string();
     }
+
+    let previous_profile = VENTURECAPITALIST_STORAGE.with(|app_form| {
+        app_form.borrow().get(&caller)
+            .map(|mentor_internal| mentor_internal.params.clone())
+    });
+
     VC_PROFILE_EDIT_AWAITS.with(
-        |awaiters: &RefCell<HashMap<Principal, VentureCapitalist>>| {
-            let mut await_ers: std::cell::RefMut<'_, HashMap<Principal, VentureCapitalist>> =
-                awaiters.borrow_mut();
-            await_ers.insert(caller, params.clone());
+        |awaiters| {
+            let mut await_ers =awaiters.borrow_mut();
+            let update_data_to_store = UpdateInfoStruct{
+                original_info: previous_profile,
+                updated_info: Some(params.clone()),
+            };
+            await_ers.insert(caller, update_data_to_store.clone());
         },
     );
 
