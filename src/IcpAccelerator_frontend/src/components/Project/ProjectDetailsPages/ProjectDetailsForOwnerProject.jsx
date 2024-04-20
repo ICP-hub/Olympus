@@ -180,6 +180,7 @@ const ProjectDetailsForOwnerProject = () => {
                         role={true}
                         socials={true}
                         filter={"documents"}
+                        allowAccess={true}
                     />
                 );
                 case "project-money-raising":
@@ -192,6 +193,7 @@ const ProjectDetailsForOwnerProject = () => {
                     role={true}
                     socials={true}
                     filter={"raising"}
+                    allowAccess={true}
                     />
                 );
             default:

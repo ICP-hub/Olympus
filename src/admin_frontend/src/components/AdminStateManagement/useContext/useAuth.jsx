@@ -25,11 +25,21 @@ const defaultOptions = {
   /**
    * @type {import("@dfinity/auth-client").AuthClientLoginOptions}
    */
-  loginOptions: {
+  loginOptionsii: {
     identityProvider:
       process.env.DFX_NETWORK === "ic"
         ? "https://identity.ic0.app/#authorize"
         : `http://rdmx6-jaaaa-aaaaa-aaadq-cai.localhost:4943`,
+        // : `https://nfid.one/authenticate/?applicationName=my-ic-app#authorize`,
+        // :`https://nfid.one/authenticate/?applicationName=my-ic-app#authorize`
+  },
+  loginOptionsnfid: {
+    identityProvider:
+      process.env.DFX_NETWORK === "ic"
+        // ? "https://identity.ic0.app/#authorize"
+        // : `http://rdmx6-jaaaa-aaaaa-aaadq-cai.localhost:4943`,
+        ? `https://nfid.one/authenticate/?applicationName=my-ic-app#authorize`
+        : `https://nfid.one/authenticate/?applicationName=my-ic-app#authorize`
   },
 };
 
@@ -54,7 +64,7 @@ export const useAuthClient = (options = defaultOptions) => {
     });
   }, []);
 
-  const login = () => {
+  const login = (val) => {
     return new Promise(async (resolve, reject) => {
       try {
         if (
@@ -65,8 +75,9 @@ export const useAuthClient = (options = defaultOptions) => {
           updateClient(authClient);
           resolve(AuthClient);
         } else {
+          let opt = val === "ii" ? "loginOptionsii" : "loginOptionsnfid"
           authClient.login({
-            ...options.loginOptions,
+            ...options[opt],
             onError: (error) => reject(error),
             onSuccess: () => {
               updateClient(authClient);
@@ -98,20 +109,29 @@ export const useAuthClient = (options = defaultOptions) => {
   };
 
   async function updateClient(client) {
+    console.log("client-use-Auth", client)
     const isAuthenticated = await client.isAuthenticated();
     setIsAuthenticated(isAuthenticated);
+    console.log("isAuthenticated-use-Auth", isAuthenticated)
+
    
     const identity = client.getIdentity();
     setIdentity(identity);
+    console.log("identity-use-Auth", identity)
+
     const principal = identity.getPrincipal().toText();
     setPrincipal(principal);
+
+    console.log("principal-use-Auth", principal)
+
     setAuthClient(client);
-    const agent = new HttpAgent({ identity });
+    const agent = new HttpAgent({ identity, verifyQuerySignatures: false } );
     const actor = createActor(process.env.CANISTER_ID_ICPACCELERATOR_BACKEND, {
       agent,
     });
+    console.log("actor-use-Auth", actor)
 
-    // console.log("actor in useauth -<<<<", actor);
+
     if (isAuthenticated === true) {
       dispatch(
         loginSuccess({
@@ -138,10 +158,11 @@ export const useAuthClient = (options = defaultOptions) => {
   }
 
   const canisterId =
-  process.env.CANISTER_ID_ICPACCELERATOR_BACKEND ||
-  process.env.ICPACCELERATOR_BACKEND_CANISTER_ID;
+    process.env.CANISTER_ID_ICPACCELERATOR_BACKEND ||
+    process.env.ICPACCELERATOR_BACKEND_CANISTER_ID;
 
   const actor = createActor(canisterId, { agentOptions: { identity, verifyQuerySignatures: false } });
+  
 
   return {
     isAuthenticated,

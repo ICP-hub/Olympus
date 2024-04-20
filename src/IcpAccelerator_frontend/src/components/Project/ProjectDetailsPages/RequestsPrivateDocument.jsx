@@ -41,6 +41,7 @@ const RequestsPrivateDocument = () => {
     }
     result
       .then((result) => {
+        console.log('request',result)
         if (result && result.length>0) {
           setNoData(false);
           setRequestedData(result);
@@ -107,8 +108,8 @@ const RequestsPrivateDocument = () => {
 
   console.log(noData)
   return (
-    <>
-      <div className="px-[4%] py-[4%] w-full bg-gray-100 h-screen overflow-y-scroll">
+    <div className="container mx-auto">
+      <div className="px-[3%] py-[4%] w-full bg-gray-100 h-screen overflow-y-scroll">
         <div className="flex items-center justify-between mb-8">
           {selectedOption && (
             <div className="left-4 lg:left-auto bg-gradient-to-r from-purple-900 to-blue-500 text-transparent bg-clip-text text-2xl font-extrabold">
@@ -129,7 +130,7 @@ const RequestsPrivateDocument = () => {
                     <li>
                       <button
                         onClick={() => fetchPrivateDocumentsRequests("Pending")}
-                        className="px-4 font-bold py-[18px] focus:outline-none text-xl flex justify-start"
+                        className="px-4 font-bold py-3 focus:outline-none text-xl flex justify-start"
                       >
                         Pending
                       </button>
@@ -139,7 +140,7 @@ const RequestsPrivateDocument = () => {
                         onClick={() =>
                           fetchPrivateDocumentsRequests("Accepted")
                         }
-                        className="border-[#9C9C9C] py-[18px] w-[230px] font-bold px-4 focus:outline-none text-xl flex justify-start"
+                        className="border-[#9C9C9C] py-3 w-[230px] font-bold px-4 focus:outline-none text-xl flex justify-start"
                       >
                         Accepted
                       </button>
@@ -149,7 +150,7 @@ const RequestsPrivateDocument = () => {
                         onClick={() =>
                           fetchPrivateDocumentsRequests("Declined")
                         }
-                        className="border-[#9C9C9C] py-[18px] w-[230px] px-4 font-bold focus:outline-none text-xl flex justify-start"
+                        className="border-[#9C9C9C] py-3 w-[230px] px-4 font-bold focus:outline-none text-xl flex justify-start"
                       >
                         Declined
                       </button>
@@ -234,7 +235,7 @@ const RequestsPrivateDocument = () => {
       </div>
 
       <Toaster />
-    </>
+    </div>
   );
 };
 

@@ -15,8 +15,8 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
   // const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const loginHandler = async () => {
-    await login();
+  const loginHandler = async (val) => {
+    await login(val);
     onClose();
     window.location.reload();
   };
@@ -53,7 +53,7 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
                 </p> */}
                 <ul className="my-4 space-y-3 cursor-pointer">
                   {walletModalSvg.map((wallet, index) => (
-                    <div key={index} onClick={loginHandler}>
+                    <div key={index} onClick={()=>loginHandler(wallet.id)}>
                       {wallet.content}
                     </div>
                   ))}

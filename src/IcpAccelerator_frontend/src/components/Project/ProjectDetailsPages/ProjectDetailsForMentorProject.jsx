@@ -189,6 +189,7 @@ const ProjectDetailsForMentorProject = () => {
                     role={true}
                     socials={true}
                     filter={"raising"}
+                    allowAccess={!true}
                     />
                 );
             default:

@@ -162,6 +162,8 @@ const ProjectDetailsForMentor = () => {
                         role={true}
                         socials={true}
                         filter={"documents"}
+                        allowAccess={!true}
+
                     />
                 );
             default:

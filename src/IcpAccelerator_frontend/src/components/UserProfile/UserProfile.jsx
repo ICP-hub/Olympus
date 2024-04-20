@@ -1,25 +1,11 @@
 import React, { useState } from "react";
-import { Tooltip as ReactTooltip } from "react-tooltip";
-import FounderInfo from "../Registration/FounderRegistration/FounderInfo";
-import CompanyInfo from "../Registration/FounderRegistration/CompanyInfo";
-import CompanyMetrics from "../Registration/FounderRegistration/CompanyMetrics";
-import AdditionalInfo from "../Registration/FounderRegistration/AdditionalInfo";
-import TeamDetails from "../Registration/FounderRegistration/TeamDetails";
 import { headerData } from "../Utils/Data/AllDetailFormData";
-// import Footer from "../Footer/Footer";
-import p5 from "../../../assets/Founders/p5.png";
-import astro1 from "../../../assets/images/astro1.png";
-import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import g1 from "../../../assets/ProfIleEdit/g1.png";
-import g2 from "../../../assets/ProfIleEdit/g2.png";
-import g3 from "../../../assets/ProfIleEdit/g3.png";
-import g4 from "../../../assets/ProfIleEdit/g4.png";
+
 import { useSelector } from "react-redux";
-import MentorRegistration from "../Registration/MentorRegistration/MentorRegistration";
 import MentorRegForm from "../RegForms.jsx/MentorRegForm";
 import InvestorRegForm from "../RegForms.jsx/InvestorRegForm";
-import CreateProjectRegistration from "../Project/CreateProject/CreateProjectRegistration";
 import ProjectRegForm from "../RegForms.jsx/ProjectRegForm";
 
 const UserProfile = () => {
