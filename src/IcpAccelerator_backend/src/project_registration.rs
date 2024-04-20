@@ -289,6 +289,7 @@ pub struct ProjectUpdateRequest {
     project_id: String,
     pub original_info: ProjectInfo,
     pub updated_info: ProjectInfo,
+    pub principal: Principal,
 }
 
 #[derive(Serialize, Deserialize, Clone, CandidType)]
@@ -1075,6 +1076,7 @@ pub async fn update_project(project_id: String, updated_project: ProjectInfo) ->
                         project_id: project_id.clone(),
                         original_info: orig_info.params.clone(),  // Assuming `params` is of type `ProjectInfo`
                         updated_info: updated_project.clone(),
+                        principal: caller,
                     });
                 });
             }
