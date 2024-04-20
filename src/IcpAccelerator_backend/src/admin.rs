@@ -482,7 +482,7 @@ pub fn mentor_declined() -> HashMap<Principal, MentorWithRoles> {
 }
 
 #[query]
-fn mentor_profile_edit_awaiting_approval() -> HashMap<Principal, MentorProfile> {
+fn mentor_profile_edit_awaiting_approval() -> HashMap<Principal, MentorUpdateRequest> {
     MENTOR_PROFILE_EDIT_AWAITS.with(|awaiters| awaiters.borrow().clone())
 }
 
@@ -799,45 +799,40 @@ pub fn approve_mentor_profile_update(requester: Principal, approve: bool) -> Str
                 MENTOR_REGISTRY.with(|vc_registry| {
                     let mut mentor = vc_registry.borrow_mut();
                     if let Some(mentor_internal) = mentor.get_mut(&requester) {
-                        // existing_vc_internal.params = vc_internal.clone();
-                        mentor_internal.profile.preferred_icp_hub = updated_profile
-                            .preferred_icp_hub
-                            .clone()
-                            .or(mentor_internal.profile.preferred_icp_hub.clone());
+                        if let Some(ref updated_info) = updated_profile.updated_info {
+                            mentor_internal.profile.preferred_icp_hub = updated_info.preferred_icp_hub
+                                .clone()
+                                .or(mentor_internal.profile.preferred_icp_hub.clone());
 
-                        mentor_internal.profile.multichain = updated_profile
-                            .multichain
-                            .clone()
-                            .or(mentor_internal.profile.multichain.clone());
-                        mentor_internal.profile.existing_icp_project_porfolio = updated_profile
-                            .existing_icp_project_porfolio
-                            .clone()
-                            .or(mentor_internal
-                                .profile
+                            mentor_internal.profile.multichain = updated_info.multichain
+                                .clone()
+                                .or(mentor_internal.profile.multichain.clone());
+                            mentor_internal.profile.existing_icp_project_porfolio = updated_info
                                 .existing_icp_project_porfolio
-                                .clone());
+                                .clone()
+                                .or(mentor_internal.profile.existing_icp_project_porfolio.clone());
 
-                        mentor_internal.profile.area_of_expertise =
-                            updated_profile.area_of_expertise.clone();
-                        mentor_internal.profile.category_of_mentoring_service =
-                            updated_profile.category_of_mentoring_service.clone();
+                            mentor_internal.profile.area_of_expertise =
+                                updated_info.area_of_expertise.clone();
+                            mentor_internal.profile.category_of_mentoring_service =
+                                updated_info.category_of_mentoring_service.clone();
 
-                        mentor_internal.profile.existing_icp_mentor =
-                            updated_profile.existing_icp_mentor.clone();
-                        mentor_internal.profile.icp_hub_or_spoke =
-                            updated_profile.icp_hub_or_spoke;
-                        mentor_internal.profile.linkedin_link =
-                            updated_profile.linkedin_link.clone();
-                        mentor_internal.profile.website = updated_profile.website.clone();
-                        mentor_internal.profile.years_of_mentoring =
-                            updated_profile.years_of_mentoring.clone();
-                        mentor_internal.profile.reason_for_joining =
-                            updated_profile.reason_for_joining.clone();
-                        mentor_internal.profile.user_data = updated_profile.user_data.clone();
-                        mentor_internal.profile.hub_owner = updated_profile
-                            .hub_owner
-                            .clone()
-                            .or(mentor_internal.profile.hub_owner.clone());
+                            mentor_internal.profile.existing_icp_mentor =
+                                updated_info.existing_icp_mentor;
+                            mentor_internal.profile.icp_hub_or_spoke =
+                                updated_info.icp_hub_or_spoke;
+                            mentor_internal.profile.linkedin_link =
+                                updated_info.linkedin_link.clone();
+                            mentor_internal.profile.website = updated_info.website.clone();
+                            mentor_internal.profile.years_of_mentoring =
+                                updated_info.years_of_mentoring.clone();
+                            mentor_internal.profile.reason_for_joining =
+                                updated_info.reason_for_joining.clone();
+                            mentor_internal.profile.user_data = updated_info.user_data.clone();
+                            mentor_internal.profile.hub_owner = updated_info.hub_owner
+                                .clone()
+                                .or(mentor_internal.profile.hub_owner.clone());
+                        }
                     }
                 });
 
@@ -861,32 +856,35 @@ pub fn approve_mentor_profile_update(requester: Principal, approve: bool) -> Str
 
 #[update]
 pub fn decline_mentor_profile_update_request(requester: Principal, decline: bool) -> String {
+    let previous_profile = MENTOR_REGISTRY.with(|app_form| {
+        app_form.borrow().get(&requester)
+            .map(|mentor_internal| mentor_internal.profile.clone())
+    });
     MENTOR_PROFILE_EDIT_AWAITS.with(|awaiters| {
         let mut awaiters = awaiters.borrow_mut();
 
         if let Some(vc_internal) = awaiters.get(&requester) {
+            let declined_data = MentorUpdateRequest{
+                original_info: previous_profile,
+                updated_info: vc_internal.updated_info.clone(),
+            };
             if decline {
                 DECLINED_MENTOR_PROFILE_EDIT_REQUEST.with(|d_vc_registry| {
                     let mut d_vc = d_vc_registry.borrow_mut();
-                    // Clone and insert the vc_internal into the declined registry
-                    d_vc.insert(requester, vc_internal.clone());
+                    d_vc.insert(requester, declined_data.clone());
                 });
 
-                // Remove the requester from the awaiters
                 awaiters.remove(&requester);
                 change_notification_status(requester, "mentor".to_string(), "declined".to_string());
 
-                // Return a success message for declining the request
                 format!("Requester with principal id {} is declined", requester)
             } else {
-                // Return a message indicating the request could not be declined (because decline is false)
                 format!(
                     "Requester with principal id {} could not be declined",
                     requester
                 )
             }
         } else {
-            // Return a message indicating the requester has not registered
             format!(
                 "Requester with principal id {} has not registered",
                 requester
@@ -2136,7 +2134,7 @@ pub fn get_project_update_declined_request()->HashMap<String, ProjectUpdateReque
 }
 
 #[query]
-pub fn get_mentor_update_declined_request()->HashMap<Principal, MentorProfile>{
+pub fn get_mentor_update_declined_request() -> HashMap<Principal, MentorUpdateRequest> {
     DECLINED_MENTOR_PROFILE_EDIT_REQUEST.with(|requests| {
         let requests_borrow = requests.borrow();
         requests_borrow.clone()

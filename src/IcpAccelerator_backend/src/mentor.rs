@@ -54,8 +54,15 @@ impl MentorProfile {
     }
 }
 
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, Default, PartialEq)]
+pub struct MentorUpdateRequest {
+    pub original_info: Option<MentorProfile>,
+    pub updated_info: Option<MentorProfile>,
+}
+
 pub type MentorRegistry = HashMap<Principal, MentorInternal>;
 pub type MentorParams = HashMap<Principal, MentorProfile>;
+pub type MentorUpdateParams = HashMap<Principal, MentorUpdateRequest>;
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, Default, PartialEq)]
 pub struct MentorInternal {
@@ -79,8 +86,8 @@ thread_local! {
     pub static MENTOR_REGISTRY: RefCell<MentorRegistry> = RefCell::new(MentorRegistry::new());
     pub static MENTOR_AWAITS_RESPONSE: RefCell<MentorRegistry> = RefCell::new(MentorRegistry::new());
     pub static DECLINED_MENTOR_REQUESTS: RefCell<MentorRegistry> = RefCell::new(MentorRegistry::new());
-    pub static MENTOR_PROFILE_EDIT_AWAITS :RefCell<MentorParams> = RefCell::new(MentorParams::new());
-    pub static DECLINED_MENTOR_PROFILE_EDIT_REQUEST :RefCell<MentorParams> = RefCell::new(MentorParams::new());
+    pub static MENTOR_PROFILE_EDIT_AWAITS :RefCell<MentorUpdateParams> = RefCell::new(MentorUpdateParams::new());
+    pub static DECLINED_MENTOR_PROFILE_EDIT_REQUEST :RefCell<MentorUpdateParams> = RefCell::new(MentorUpdateParams::new());
     pub static MENTOR_ANNOUNCEMENTS:RefCell<MentorAnnouncements> = RefCell::new(MentorAnnouncements::new());
 
 }
@@ -241,10 +248,19 @@ pub async fn update_mentor(updated_profile: MentorProfile) -> String {
         return "Wait for your previous request to get approved. ".to_string();
     }
 
-    MENTOR_PROFILE_EDIT_AWAITS.with(|awaiters: &RefCell<HashMap<Principal, MentorProfile>>| {
-        let mut await_ers: std::cell::RefMut<'_, HashMap<Principal, MentorProfile>> =
-            awaiters.borrow_mut();
-        await_ers.insert(caller, updated_profile.clone());
+    let previous_profile = MENTOR_REGISTRY.with(|app_form| {
+        app_form.borrow().get(&caller)
+            .map(|mentor_internal| mentor_internal.profile.clone())
+    });
+
+
+    MENTOR_PROFILE_EDIT_AWAITS.with(|awaiters| {
+        let mut await_ers= awaiters.borrow_mut();
+        let update_data_tp_store = MentorUpdateRequest{
+            original_info: previous_profile,
+            updated_info: Some(updated_profile.clone()),
+        };
+        await_ers.insert(caller, update_data_tp_store.clone());
     });
 
     let res = send_approval_request(
@@ -498,7 +514,7 @@ pub fn pre_upgrade_mentor() {
 }
 
 pub fn post_upgrade_mentor() {
-    match stable_restore::<(MentorRegistry, MentorRegistry, MentorRegistry, MentorParams, MentorParams, MentorAnnouncements)>() {
+    match stable_restore::<(MentorRegistry, MentorRegistry, MentorRegistry, MentorUpdateParams, MentorUpdateParams, MentorAnnouncements)>() {
         Ok((restored_mentor_registry, restored_mentor_awaits_response, restored_declined_mentor_requests, restored_mentor_profile_edit_awaits, restored_declined_mentor_profile_edit_request, restored_mentor_announcements)) => {
             MENTOR_REGISTRY.with(|data| *data.borrow_mut() = restored_mentor_registry);
             MENTOR_AWAITS_RESPONSE.with(|data| *data.borrow_mut() = restored_mentor_awaits_response);
