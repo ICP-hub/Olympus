@@ -230,7 +230,7 @@ const UserRegForm = () => {
         <>
             <DetailHeroSection />
             <section className="w-full h-fit px-[6%] lg1:px-[4%] py-[6%] lg1:py-[4%] bg-gray-100">
-                <div className="w-full h-full bg-gray-100 pt-8">
+                <div className="w-full h-full bg-gray-100 pt-8 sm:text-left text-center">
                     <div className="bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-[30px]  sm:text-[25px] md1:text-[30px] md2:text-[35px] font-black font-fontUse dxl:text-[40px] p-8">
                         User Information
                     </div>
@@ -240,9 +240,9 @@ const UserRegForm = () => {
                         <form
                             onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}
                             className="w-full px-4" >
-                            <div className="flex flex-col">
-                                <div className="flex-row w-full flex justify-start gap-4 items-center">
-                                    <div className="mb-3 ml-6 h-24 w-24 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
+                            <div className="flex flex-col mb-10 xxs:mb-0">
+                                <div className="flex-row w-full xxs:flex xxs:left-text center-text justify-start gap-4 items-center">
+                                    <div className="xxs:mb-3 mb-5 xxs:ml-6 h-24 w-24 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
                                         {imagePreview && !errors.image ? (
                                             <img
                                                 src={imagePreview}
