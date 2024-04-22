@@ -482,12 +482,12 @@ pub fn mentor_declined() -> HashMap<Principal, MentorWithRoles> {
 }
 
 #[query]
-fn mentor_profile_edit_awaiting_approval() -> HashMap<Principal, MentorProfile> {
+fn mentor_profile_edit_awaiting_approval() -> HashMap<Principal, MentorUpdateRequest> {
     MENTOR_PROFILE_EDIT_AWAITS.with(|awaiters| awaiters.borrow().clone())
 }
 
 #[query]
-fn vc_profile_edit_awaiting_approval() -> HashMap<Principal, VentureCapitalist> {
+fn vc_profile_edit_awaiting_approval() -> HashMap<Principal, UpdateInfoStruct> {
     VC_PROFILE_EDIT_AWAITS.with(|awaiters| awaiters.borrow().clone())
 }
 
@@ -632,71 +632,88 @@ pub fn approve_vc_profile_update(requester: Principal, approve: bool) -> String 
                 VENTURECAPITALIST_STORAGE.with(|vc_registry| {
                     let mut vc = vc_registry.borrow_mut();
                     if let Some(existing_vc_internal) = vc.get_mut(&requester) {
-                        // existing_vc_internal.params = vc_internal.clone();
-                        existing_vc_internal.params.registered_under_any_hub = vc_internal
-                            .registered_under_any_hub
-                            .clone()
-                            .or(existing_vc_internal.params.registered_under_any_hub.clone());
+                        if let Some(update) = &vc_internal.updated_info {
+                            existing_vc_internal.params.registered_under_any_hub = update
+                                .registered_under_any_hub
+                                .clone()
+                                .or(existing_vc_internal.params.registered_under_any_hub.clone());
 
-                        existing_vc_internal.params.project_on_multichain = vc_internal
-                            .project_on_multichain
-                            .clone()
-                            .or(existing_vc_internal.params.project_on_multichain.clone());
+                            existing_vc_internal.params.project_on_multichain = update
+                                .project_on_multichain
+                                .clone()
+                                .or(existing_vc_internal.params.project_on_multichain.clone());
 
-                        existing_vc_internal.params.money_invested = vc_internal
-                            .money_invested
-                            .clone()
-                            .or(existing_vc_internal.params.money_invested.clone());
+                            existing_vc_internal.params.money_invested = update
+                                .money_invested
+                                .clone()
+                                .or(existing_vc_internal.params.money_invested.clone());
 
-                        existing_vc_internal.params.existing_icp_portfolio = vc_internal
-                            .existing_icp_portfolio
-                            .clone()
-                            .or(existing_vc_internal.params.existing_icp_portfolio.clone());
-                        existing_vc_internal.params.announcement_details = vc_internal
-                            .announcement_details
-                            .clone()
-                            .or(existing_vc_internal.params.announcement_details.clone());
+                            existing_vc_internal.params.existing_icp_portfolio = update
+                                .existing_icp_portfolio
+                                .clone()
+                                .or(existing_vc_internal.params.existing_icp_portfolio.clone());
 
-                        existing_vc_internal.params.registered_country = vc_internal
-                            .registered_country
-                            .clone()
-                            .or(existing_vc_internal.params.registered_country.clone());
+                            existing_vc_internal.params.announcement_details = update
+                                .announcement_details
+                                .clone()
+                                .or(existing_vc_internal.params.announcement_details.clone());
 
-                        existing_vc_internal.params.fund_size =
-                            Some(vc_internal.fund_size.map(|size| (size * 100.0).round() / 100.0)
+                            existing_vc_internal.params.registered_country = update
+                                .registered_country
+                                .clone()
+                                .or(existing_vc_internal.params.registered_country.clone());
+
+                            existing_vc_internal.params.fund_size = 
+                                Some(update.fund_size.map(|size| (size * 100.0).round() / 100.0)
                                   .unwrap_or(0.0));
 
-                        existing_vc_internal.params.assets_under_management =
-                            vc_internal.assets_under_management.clone();
+                            existing_vc_internal.params.assets_under_management =
+                                update.assets_under_management.clone();
 
-                        existing_vc_internal.params.category_of_investment =
-                            vc_internal.category_of_investment.clone();
+                            existing_vc_internal.params.category_of_investment =
+                                update.category_of_investment.clone();
 
-                        existing_vc_internal.params.logo = vc_internal.logo.clone();
+                            existing_vc_internal.params.logo = update.logo.clone();
 
-                        existing_vc_internal.params.average_check_size =
-                            (vc_internal.average_check_size * 100.0).round() / 100.0;
-                        existing_vc_internal.params.existing_icp_investor =
-                            vc_internal.existing_icp_investor;
-                        existing_vc_internal.params.investor_type =
-                            vc_internal.investor_type.clone();
-                        existing_vc_internal.params.number_of_portfolio_companies =
-                            vc_internal.number_of_portfolio_companies;
-                        existing_vc_internal.params.portfolio_link =
-                            vc_internal.portfolio_link.clone();
-                        existing_vc_internal.params.reason_for_joining =
-                            vc_internal.reason_for_joining.clone();
-                        existing_vc_internal.params.name_of_fund = vc_internal.name_of_fund.clone();
+                            existing_vc_internal.params.average_check_size =
+                                (update.average_check_size * 100.0).round() / 100.0;
 
-                        existing_vc_internal.params.preferred_icp_hub =
-                            vc_internal.preferred_icp_hub.clone();
-                        existing_vc_internal.params.type_of_investment =
-                            vc_internal.type_of_investment.clone();
-                        existing_vc_internal.params.user_data = vc_internal.user_data.clone();
-                        existing_vc_internal.params.linkedin_link =
-                            vc_internal.linkedin_link.clone();
-                        existing_vc_internal.params.website_link = vc_internal.website_link.clone();
-                        existing_vc_internal.params.registered = vc_internal.registered.clone();
+                            existing_vc_internal.params.existing_icp_investor =
+                                update.existing_icp_investor;
+
+                            existing_vc_internal.params.investor_type =
+                                update.investor_type.clone();
+
+                            existing_vc_internal.params.number_of_portfolio_companies =
+                                update.number_of_portfolio_companies;
+
+                            existing_vc_internal.params.portfolio_link =
+                                update.portfolio_link.clone();
+
+                            existing_vc_internal.params.reason_for_joining =
+                                update.reason_for_joining.clone();
+
+                            existing_vc_internal.params.name_of_fund = 
+                                update.name_of_fund.clone();
+
+                            existing_vc_internal.params.preferred_icp_hub =
+                                update.preferred_icp_hub.clone();
+
+                            existing_vc_internal.params.type_of_investment =
+                                update.type_of_investment.clone();
+
+                            existing_vc_internal.params.user_data = 
+                                update.user_data.clone();
+
+                            existing_vc_internal.params.linkedin_link =
+                                update.linkedin_link.clone();
+
+                            existing_vc_internal.params.website_link = 
+                                update.website_link.clone();
+
+                            existing_vc_internal.params.registered = 
+                                update.registered.clone();
+                        }
                     }
                 });
 
@@ -718,17 +735,26 @@ pub fn approve_vc_profile_update(requester: Principal, approve: bool) -> String 
     })
 }
 
+
 #[update]
 pub fn decline_vc_profile_update_request(requester: Principal, decline: bool) -> String {
+    let previous_profile = VENTURECAPITALIST_STORAGE.with(|app_form| {
+        app_form.borrow().get(&requester)
+            .map(|mentor_internal| mentor_internal.params.clone())
+    });
     VC_PROFILE_EDIT_AWAITS.with(|awaiters| {
         let mut awaiters = awaiters.borrow_mut();
 
         if let Some(vc_internal) = awaiters.get(&requester) {
+            let declined_data = UpdateInfoStruct{
+                original_info: previous_profile,
+                updated_info: vc_internal.updated_info.clone(),
+            };
             if decline {
                 DECLINED_VC_PROFILE_EDIT_REQUEST.with(|d_vc_registry| {
                     let mut d_vc = d_vc_registry.borrow_mut();
                     // Clone and insert the vc_internal into the declined registry
-                    d_vc.insert(requester, vc_internal.clone());
+                    d_vc.insert(requester, declined_data.clone());
                 });
 
                 // Remove the requester from the awaiters
@@ -799,45 +825,40 @@ pub fn approve_mentor_profile_update(requester: Principal, approve: bool) -> Str
                 MENTOR_REGISTRY.with(|vc_registry| {
                     let mut mentor = vc_registry.borrow_mut();
                     if let Some(mentor_internal) = mentor.get_mut(&requester) {
-                        // existing_vc_internal.params = vc_internal.clone();
-                        mentor_internal.profile.preferred_icp_hub = updated_profile
-                            .preferred_icp_hub
-                            .clone()
-                            .or(mentor_internal.profile.preferred_icp_hub.clone());
+                        if let Some(ref updated_info) = updated_profile.updated_info {
+                            mentor_internal.profile.preferred_icp_hub = updated_info.preferred_icp_hub
+                                .clone()
+                                .or(mentor_internal.profile.preferred_icp_hub.clone());
 
-                        mentor_internal.profile.multichain = updated_profile
-                            .multichain
-                            .clone()
-                            .or(mentor_internal.profile.multichain.clone());
-                        mentor_internal.profile.existing_icp_project_porfolio = updated_profile
-                            .existing_icp_project_porfolio
-                            .clone()
-                            .or(mentor_internal
-                                .profile
+                            mentor_internal.profile.multichain = updated_info.multichain
+                                .clone()
+                                .or(mentor_internal.profile.multichain.clone());
+                            mentor_internal.profile.existing_icp_project_porfolio = updated_info
                                 .existing_icp_project_porfolio
-                                .clone());
+                                .clone()
+                                .or(mentor_internal.profile.existing_icp_project_porfolio.clone());
 
-                        mentor_internal.profile.area_of_expertise =
-                            updated_profile.area_of_expertise.clone();
-                        mentor_internal.profile.category_of_mentoring_service =
-                            updated_profile.category_of_mentoring_service.clone();
+                            mentor_internal.profile.area_of_expertise =
+                                updated_info.area_of_expertise.clone();
+                            mentor_internal.profile.category_of_mentoring_service =
+                                updated_info.category_of_mentoring_service.clone();
 
-                        mentor_internal.profile.existing_icp_mentor =
-                            updated_profile.existing_icp_mentor.clone();
-                        mentor_internal.profile.icp_hub_or_spoke =
-                            updated_profile.icp_hub_or_spoke;
-                        mentor_internal.profile.linkedin_link =
-                            updated_profile.linkedin_link.clone();
-                        mentor_internal.profile.website = updated_profile.website.clone();
-                        mentor_internal.profile.years_of_mentoring =
-                            updated_profile.years_of_mentoring.clone();
-                        mentor_internal.profile.reason_for_joining =
-                            updated_profile.reason_for_joining.clone();
-                        mentor_internal.profile.user_data = updated_profile.user_data.clone();
-                        mentor_internal.profile.hub_owner = updated_profile
-                            .hub_owner
-                            .clone()
-                            .or(mentor_internal.profile.hub_owner.clone());
+                            mentor_internal.profile.existing_icp_mentor =
+                                updated_info.existing_icp_mentor;
+                            mentor_internal.profile.icp_hub_or_spoke =
+                                updated_info.icp_hub_or_spoke;
+                            mentor_internal.profile.linkedin_link =
+                                updated_info.linkedin_link.clone();
+                            mentor_internal.profile.website = updated_info.website.clone();
+                            mentor_internal.profile.years_of_mentoring =
+                                updated_info.years_of_mentoring.clone();
+                            mentor_internal.profile.reason_for_joining =
+                                updated_info.reason_for_joining.clone();
+                            mentor_internal.profile.user_data = updated_info.user_data.clone();
+                            mentor_internal.profile.hub_owner = updated_info.hub_owner
+                                .clone()
+                                .or(mentor_internal.profile.hub_owner.clone());
+                        }
                     }
                 });
 
@@ -861,32 +882,35 @@ pub fn approve_mentor_profile_update(requester: Principal, approve: bool) -> Str
 
 #[update]
 pub fn decline_mentor_profile_update_request(requester: Principal, decline: bool) -> String {
+    let previous_profile = MENTOR_REGISTRY.with(|app_form| {
+        app_form.borrow().get(&requester)
+            .map(|mentor_internal| mentor_internal.profile.clone())
+    });
     MENTOR_PROFILE_EDIT_AWAITS.with(|awaiters| {
         let mut awaiters = awaiters.borrow_mut();
 
         if let Some(vc_internal) = awaiters.get(&requester) {
+            let declined_data = MentorUpdateRequest{
+                original_info: previous_profile,
+                updated_info: vc_internal.updated_info.clone(),
+            };
             if decline {
                 DECLINED_MENTOR_PROFILE_EDIT_REQUEST.with(|d_vc_registry| {
                     let mut d_vc = d_vc_registry.borrow_mut();
-                    // Clone and insert the vc_internal into the declined registry
-                    d_vc.insert(requester, vc_internal.clone());
+                    d_vc.insert(requester, declined_data.clone());
                 });
 
-                // Remove the requester from the awaiters
                 awaiters.remove(&requester);
                 change_notification_status(requester, "mentor".to_string(), "declined".to_string());
 
-                // Return a success message for declining the request
                 format!("Requester with principal id {} is declined", requester)
             } else {
-                // Return a message indicating the request could not be declined (because decline is false)
                 format!(
                     "Requester with principal id {} could not be declined",
                     requester
                 )
             }
         } else {
-            // Return a message indicating the requester has not registered
             format!(
                 "Requester with principal id {} has not registered",
                 requester
@@ -2136,7 +2160,7 @@ pub fn get_project_update_declined_request()->HashMap<String, ProjectUpdateReque
 }
 
 #[query]
-pub fn get_mentor_update_declined_request()->HashMap<Principal, MentorProfile>{
+pub fn get_mentor_update_declined_request() -> HashMap<Principal, MentorUpdateRequest> {
     DECLINED_MENTOR_PROFILE_EDIT_REQUEST.with(|requests| {
         let requests_borrow = requests.borrow();
         requests_borrow.clone()
@@ -2144,7 +2168,7 @@ pub fn get_mentor_update_declined_request()->HashMap<Principal, MentorProfile>{
 }
 
 #[query]
-pub fn get_vc_update_declined_request()->HashMap<Principal, VentureCapitalist>{
+pub fn get_vc_update_declined_request()->HashMap<Principal, UpdateInfoStruct>{
     DECLINED_VC_PROFILE_EDIT_REQUEST.with(|requests| {
         let requests_borrow = requests.borrow();
         requests_borrow.clone()
