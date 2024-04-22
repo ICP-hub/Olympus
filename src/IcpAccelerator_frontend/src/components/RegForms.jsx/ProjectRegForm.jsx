@@ -925,16 +925,16 @@ function ProjectRegForm() {
       } else {
         setValue("money_raising", "false");
       }
-      setValue("icp_grants", val?.money_raised?.[0]?.icp_grants?.[0] ?? "");
-      setValue("investors", val?.money_raised?.[0]?.investors?.[0] ?? "");
+      setValue("icp_grants", val?.money_raised?.[0]?.icp_grants?.[0] || 0);
+      setValue("investors", val?.money_raised?.[0]?.investors?.[0] || 0);
       setValue(
         "raised_from_other_ecosystem",
-        val?.money_raised?.[0]?.raised_from_other_ecosystem?.[0] ?? ""
+        val?.money_raised?.[0]?.raised_from_other_ecosystem?.[0] || 0
       );
       setValue("sns", val?.money_raised?.[0]?.sns?.[0] ?? "");
       setValue(
         "target_amount",
-        val?.money_raised?.[0]?.target_amount?.[0] ?? ""
+        val?.money_raised?.[0]?.target_amount?.[0] ?? 0
       );
       setValue("promotional_video", val?.promotional_video?.[0] ?? "");
       setValue("project_discord", val?.project_discord?.[0] ?? "");
@@ -951,13 +951,13 @@ function ProjectRegForm() {
       } else {
         setValue("upload_private_documents", "false");
       }
-      if (public_docs.length) {
+      if (public_docs?.length) {
         setValue("upload_public_documents", "true");
       } else {
         setValue("upload_public_documents", "false");
       }
-      setPrivateDocs(private_docs.length);
-      for (let i = 0; i < private_docs.length; i++) {
+      setPrivateDocs(private_docs?.length);
+      for (let i = 0; i < private_docs?.length; i++) {
         private_docs.forEach((doc, index) => {
           if (typeof doc === "string") {
             doc = JSON.parse(doc);
@@ -971,8 +971,8 @@ function ProjectRegForm() {
           setValue(`private_link${index + 1}`, link);
         });
       }
-      setPublicDocs(public_docs.length);
-      for (let i = 0; i < public_docs.length; i++) {
+      setPublicDocs(public_docs?.length);
+      for (let i = 0; i < public_docs?.length; i++) {
         public_docs.forEach((doc, index) => {
           if (typeof doc === "string") {
             doc = JSON.parse(doc);

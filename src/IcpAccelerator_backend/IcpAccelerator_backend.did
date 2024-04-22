@@ -159,6 +159,10 @@ type MentorProfile = record {
   linkedin_link : text;
   hub_owner : opt text;
 };
+type MentorUpdateRequest = record {
+  updated_info : opt MentorProfile;
+  original_info : opt MentorProfile;
+};
 type MentorWithRoles = record {
   mentor_profile : MentorInternal;
   roles : vec Role;
@@ -436,6 +440,7 @@ type ProjectReview = record {
   profile_pic : vec nat8;
 };
 type ProjectUpdateRequest = record {
+  "principal" : principal;
   updated_info : ProjectInfo;
   original_info : ProjectInfo;
   project_id : text;
@@ -594,6 +599,10 @@ type UpdateCounts = record {
   mentor_update : opt nat32;
   vc_update : opt nat32;
   project_update : opt nat32;
+};
+type UpdateInfoStruct = record {
+  updated_info : opt VentureCapitalist;
+  original_info : opt VentureCapitalist;
 };
 type UpvoteRecord = record { count : nat; upvoters : vec UpvoterInfo };
 type UpvoterInfo = record {
@@ -849,7 +858,7 @@ service : {
   get_mentor_info_combined : (principal) -> (opt MentorInternal) query;
   get_mentor_info_using_principal : (principal) -> (opt MentorInternal) query;
   get_mentor_update_declined_request : () -> (
-      vec record { principal; MentorProfile },
+      vec record { principal; MentorUpdateRequest },
     ) query;
   get_multichain_list : () -> (vec text) query;
   get_my_accepted_cohort_creation_request : () -> (vec CohortRequest) query;
@@ -964,7 +973,7 @@ service : {
       opt VentureCapitalistInternal,
     ) query;
   get_vc_update_declined_request : () -> (
-      vec record { principal; VentureCapitalist },
+      vec record { principal; UpdateInfoStruct },
     ) query;
   get_venture_capitalist_info : () -> (opt VentureCapitalist) query;
   get_your_project_notifications : () -> (vec NotificationForOwner) query;
@@ -988,7 +997,7 @@ service : {
   make_vc_active_inactive : (principal) -> (text);
   mentor_declined : () -> (vec record { principal; MentorWithRoles }) query;
   mentor_profile_edit_awaiting_approval : () -> (
-      vec record { principal; MentorProfile },
+      vec record { principal; MentorUpdateRequest },
     ) query;
   mentors_awaiting_approval : () -> (
       vec record { principal; MentorWithRoles },
@@ -1037,6 +1046,6 @@ service : {
   vc_awaiting_approval : () -> (vec record { principal; VcWithRoles }) query;
   vc_declined : () -> (vec record { principal; VcWithRoles }) query;
   vc_profile_edit_awaiting_approval : () -> (
-      vec record { principal; VentureCapitalist },
+      vec record { principal; UpdateInfoStruct },
     ) query;
 }

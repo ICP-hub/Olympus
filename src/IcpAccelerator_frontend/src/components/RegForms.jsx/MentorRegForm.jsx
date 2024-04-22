@@ -389,7 +389,9 @@ const MentorRegForm = () => {
   };
   const setMultiChainSelectedOptionsHandler = (val) => {
     setMultiChainSelectedOptions(
-      val ? val.map((chain) => ({ value: chain, label: chain })) : []
+      val
+        ? val?.[0].split(", ").map((chain) => ({ value: chain, label: chain }))
+        : []
     );
   };
 
@@ -461,12 +463,15 @@ const MentorRegForm = () => {
       }
       setValue("hub_owner", val?.hub_owner?.[0] ?? "");
       setValue("mentor_linkedin_url", val?.linkedin_link ?? "");
-      if (val?.multichain) {
+      if (val?.multichain?.[0]) {
         setValue("multi_chain", "true");
       } else {
         setValue("multi_chain", "false");
       }
-      setValue("multi_chain_names", val?.multichain ? val?.multichain.join(", ") : "");
+      setValue(
+        "multi_chain_names",
+        val?.multichain?.[0] ? val?.multichain?.[0] : ""
+      );
       setMultiChainSelectedOptionsHandler(val?.multichain ?? null);
       setValue("preferred_icp_hub", val?.preferred_icp_hub?.[0] ?? "");
       setValue("mentor_website_url", val?.website?.[0] ?? "");

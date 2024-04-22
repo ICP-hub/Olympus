@@ -416,7 +416,7 @@ const InvestorRegForm = () => {
           await actor.update_venture_capitalist(investorData).then((result) => {
             if (result && result.includes("approval request is sent")) {
               toast.success("Approval request is sent");
-              // window.location.href = "/";
+              window.location.href = "/";
             } else {
               toast.error(result);
             }
@@ -432,7 +432,7 @@ const InvestorRegForm = () => {
             .then((result) => {
               if (result && result.includes("approval request is sent")) {
                 toast.success("Approval request is sent");
-                // window.location.href = "/";
+                window.location.href = "/";
               } else {
                 toast.error("something got wrong");
               }
@@ -1416,7 +1416,7 @@ const InvestorRegForm = () => {
                     htmlFor="investor_fund_size"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Fund size
+                    Fund size <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="number"
