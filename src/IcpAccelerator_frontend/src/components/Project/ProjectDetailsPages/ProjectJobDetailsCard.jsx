@@ -7,9 +7,12 @@ import "swiper/css/pagination";
 import "swiper/css/autoplay";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import { formatFullDateFromBigInt } from "../../Utils/formatter/formatDateFromBigInt";
-import NoDataCard from "../../Mentors/Event/JobsNoDataCard";
-import ment from "../../../../assets/images/ment.jpg"
+import NoDataCard from "../../Mentors/Event/NoDataCard";
+import ment from "../../../../assets/images/ment.jpg";
+import NoData from "../../../../assets/images/file_not_found.png";
+
 const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
+  console.log('job',data)
   if (!data) {
     return null;
   }
@@ -72,7 +75,8 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
         }}
       >
         {latestJobs.length == 0 ?
-          <NoDataCard />
+                 <NoDataCard image={NoData} desc={'No jobs are posted yet'}/>
+
           : latestJobs.map((card, index) => {
             console.log("card", card);
             let job_name = card?.job_data?.title ?? "";

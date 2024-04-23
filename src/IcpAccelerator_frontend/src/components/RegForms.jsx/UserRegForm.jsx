@@ -44,8 +44,8 @@ const UserRegForm = () => {
             full_name: yup.string().test('is-non-empty', 'Full name is required',
                 (value) => /\S/.test(value)).required("Full name is required"),
             email: yup.string().email("Invalid email").nullable(true).optional(),
-            telegram_id: yup.string().nullable(true).optional(),
-            twitter_url: yup.string().nullable(true).optional().url("Invalid url"),
+            telegram_id: yup.string().nullable(true).matches(/^[a-zA-Z0-9_]{5,32}$/, "Invalid Telegram ID").optional(),
+            twitter_url: yup.string().nullable(true).optional().matches(/^(https?:\/\/)?(www\.)?twitter\.com\/[a-zA-Z0-9_]{1,15}$/,"Invalid Twitter URL"),
             openchat_user_name: yup.string().nullable(true).test("is-valid-username",
                 "Username must be between 6 and 20 characters and can only contain letters, numbers, and underscores",
                 (value) => {
@@ -54,8 +54,19 @@ const UserRegForm = () => {
                     const hasValidChars = /^(?=.*[A-Z0-9_])[a-zA-Z0-9_]+$/.test(value);
                     return isValidLength && hasValidChars;
                 }),
-            bio: yup.string().optional().test("maxWords", "Bio must not exceed 50 words",
-                (value) => value ? value.split(/\s+/).filter(Boolean).length <= 50 : true),
+                bio: yup
+                .string()
+                .optional()
+                .test(
+                  "maxWords", 
+                  "Bio must not exceed 50 words", 
+                  (value) => !value || value.trim().split(/\s+/).filter(Boolean).length <= 50
+                )
+                .test(
+                  "maxChars",
+                  "Bio must not exceed 500 characters",
+                  (value) => !value || value.length <= 500
+                ),  
             country: yup.string().test('is-non-empty', 'Country is required',
                 (value) => /\S/.test(value)).required("Country is required"),
             domains_interested_in: yup.string().test('is-non-empty', 'Selecting an interest is required',

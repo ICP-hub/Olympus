@@ -4,13 +4,14 @@ import { IcpAccelerator_backend } from "../../../../../declarations/IcpAccelerat
 import ment from "../../../../assets/images/ment.jpg";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import useFormatDateFromBigInt from "../../hooks/useFormatDateFromBigInt";
-import NoDataCard from "../../Mentors/Event/JobsNoDataCard";
+import NoDataCard from "../../Mentors/Event/NoDataCard";
 import { Pagination, Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/autoplay";
 import { formatFullDateFromBigInt } from "../../Utils/formatter/formatDateFromBigInt";
+import NoData from "../../../../assets/images/file_not_found.png";
 
 const ProjectJobCard = ({ image, website, tags, country }) => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -23,6 +24,7 @@ const ProjectJobCard = ({ image, website, tags, country }) => {
     await caller
       .get_all_jobs()
       .then((result) => {
+        console.log('result',result)
         if (!result || result.length == 0) {
           setNoData(true);
           setLatestJobs([]);
@@ -47,7 +49,7 @@ const ProjectJobCard = ({ image, website, tags, country }) => {
   if (noData) {
     return (
       <div className="w-full items-center md:py-4 py-2">
-        <NoDataCard />
+       <NoDataCard image={NoData} desc={'No jobs are posted yet'}/>
       </div>
     );
   }

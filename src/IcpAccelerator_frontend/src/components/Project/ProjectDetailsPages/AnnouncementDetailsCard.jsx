@@ -7,9 +7,9 @@ import "swiper/css/autoplay";
 import { useSelector } from "react-redux";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import { formatFullDateFromBigInt } from "../../Utils/formatter/formatDateFromBigInt";
-import NoDataCard from "../../Mentors/Event/AnnouncementsNoDataCard";
+import NoDataCard from "../../Mentors/Event/NoDataCard";
 import ment from "../../../../assets/images/ment.jpg"
-
+import NoData from "../../../../assets/images/file_not_found.png";
 const AnnouncementDetailsCard = ({ data }) => {
   // console.log('data', data?.uid)
   if(!data){
@@ -74,7 +74,7 @@ const AnnouncementDetailsCard = ({ data }) => {
         }}
       >
         {latestAnnouncementData.length == 0 ?
-          <NoDataCard />
+            <NoDataCard image={NoData} desc={'No active announcement found'}/>
           : latestAnnouncementData.map((card, index) => {
             // console.log('card', card)
             let ann_name = card?.announcement_data?.announcement_title ?? "";
