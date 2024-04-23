@@ -243,6 +243,7 @@ const ProjectDetailsForOwnerProject = () => {
                 project_id: projectData?.uid,
 
             }
+           
             console.log('argument', argument)
             await actor.post_job(argument)
                 .then((result) => {

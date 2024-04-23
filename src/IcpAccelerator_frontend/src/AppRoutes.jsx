@@ -2,10 +2,6 @@ import React, { lazy, Suspense, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import Loader from "./components/Loader/Loader";
-import NormalUser from "./components/RoleSelector/NormalUser";
-import CreateProject from "./components/Project/CreateProject/CreateProject";
-import InvestorRegistration from "./components/Registration/InvestorRegistration/InvestorRegistration";
-import MentorRegistration from "./components/Registration/MentorRegistration/MentorRegistration";
 import MentorsProfile from "./components/Mentors/MentorsProfile";
 import InvestorProfile from "./components/Dashboard/Investor/InvestorProfile";
 import SearchMentors from "./components/Mentors/SearchMentors";
@@ -32,6 +28,7 @@ import MentorRegForm from "./components/RegForms.jsx/MentorRegForm";
 import InvestorRegForm from "./components/RegForms.jsx/InvestorRegForm";
 import ProjectRegForm from "./components/RegForms.jsx/ProjectRegForm";
 import RequestMoneyRaising from "./components/Project/ProjectDetailsPages/RequestMoneyRaising";
+import Home from "./components/Home/Home";
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
 const ProjectDetails = lazy(() => import("./components/Project/ProjectDetails"));
@@ -47,6 +44,7 @@ const AppRoutes = () => {
   const navigate = useNavigate();
 
   const publicRoutes = [
+  
     { path: "/", element: <DashBoard /> },
     { path: "/individual-project-details-user/:id", element: <ProjectDetailsForUserRole /> },
     { path: "/individual-project-details-project-owner", element: <ProjectDetailsForOwnerProject /> },

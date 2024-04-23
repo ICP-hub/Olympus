@@ -10,7 +10,8 @@ import { useSelector } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
 import { useInView } from "react-intersection-observer";
 import { useSpring, animated, useTrail } from "react-spring";
-import NoDataCard from "../Mentors/Event/LiveNoDataCard";
+import NoDataCard from "../Mentors/Event/NoDataCard";
+import NoData from "../../../assets/images/file_not_found.png";
 
 const LiveProjects = ({ progress }) => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -24,11 +25,6 @@ const LiveProjects = ({ progress }) => {
   const [showLine, setShowLine] = useState({});
   const tm = useRef(null);
   const navigate = useNavigate();
-  const [ref, inView] = useInView({
-    triggerOnce: true, // Trigger the animation once
-    threshold: 0.1, // Trigger when 10% of the element is in view
-  });
-
 
   useEffect(() => {
     if (percent < 100) {
@@ -51,7 +47,8 @@ const LiveProjects = ({ progress }) => {
     {
       id: "registerProject",
       title: "Register your Projects",
-      description: "Submit your project now to participate in the acceleration.",
+      description:
+        "Submit your project now to participate in the acceleration.",
       buttonText: "Register Now",
       imgSrc: hover,
     },
@@ -90,19 +87,19 @@ const LiveProjects = ({ progress }) => {
   const handleNavigate = (projectId, projectData) => {
     if (isAuthenticated) {
       switch (userCurrentRoleStatusActiveRole) {
-        case 'user':
+        case "user":
           navigate(`/individual-project-details-user/${projectId}`, {
-            state: projectData
+            state: projectData,
           });
           break;
-        case 'project':
+        case "project":
           toast.error("Only Access if you are in a same cohort!!");
           window.scrollTo({ top: 0, behavior: "smooth" });
           break;
-        case 'mentor':
+        case "mentor":
           navigate(`/individual-project-details-project-mentor/${projectId}`);
           break;
-        case 'vc':
+        case "vc":
           navigate(`/individual-project-details-project-investor/${projectId}`);
           break;
         default:
@@ -119,142 +116,177 @@ const LiveProjects = ({ progress }) => {
   return (
     <>
       <div className="flex max-md:flex-col -mx-4 mb-4 items-stretch">
-        <div className="w-full md:w-3/4 px-4 md:flex md:gap-4">
-          {noData 
-          || (allProjectData &&
-            allProjectData.filter((val) => val?.params?.params?.live_on_icp_mainnet[0] && val?.params?.params?.live_on_icp_mainnet[0] === true).length == 0) ? (
-           <NoDataCard />
+        <div className="w-full md:w-3/4 px-4 md:flex md:gap-4 sm:flex sm:gap-4">
+          {noData ||
+          (allProjectData &&
+            allProjectData.filter(
+              (val) =>
+                val?.params?.params?.live_on_icp_mainnet[0] &&
+                val?.params?.params?.live_on_icp_mainnet[0] === true
+            ).length == 0) ? (
+              <NoDataCard image={NoData} desc={'No featured projects yet'}/>
           ) : (
             <>
               {allProjectData &&
-                allProjectData.filter((val) => val?.params?.params?.live_on_icp_mainnet[0] && val?.params?.params?.live_on_icp_mainnet[0] === true).slice(0, 3).map((data, index) => {
-                  let projectName = data?.params?.params?.project_name ??"";
-                  let projectId = data?.params?.uid ?? "";
-                  let projectImage = data?.params?.params?.project_logo ? uint8ArrayToBase64(data?.params?.params?.project_logo) : "";
-                  let userName = data?.params?.params?.user_data?.full_name ? data?.params?.params?.user_data?.full_name : "";
-                  let userImage = data?.params?.params?.user_data?.profile_picture[0] ? uint8ArrayToBase64(data?.params?.params?.user_data?.profile_picture[0]) : "";
-                  let principalId = data?.principal ? data?.principal.toText() : "";
-                  let projectDescription = data?.params?.params?.project_description ?? "";
-                  let projectAreaOfFocus = data?.params?.params?.project_area_of_focus ?? "";
-                  let projectData = data?.params ? data?.params : null;
-                  let projectRubricStatus = data?.overall_average.length > 0 ? data?.overall_average[data?.overall_average.length - 1] : 0;
-             
-                  return (
-                    <animated.div
-                      className="w-full sm:w-1/2 md:w-1/3  hover:scale-105 transition-transform duration-300 ease-in-out"
-                      key={index}
-                    >
-                      <div className="w-fit flex justify-between items-baseline flex-wrap bg-white overflow-hidden rounded-lg shadow-lg mb-5 md:mb-0">
-                        <div className="p-4">
-                          <div className="flex justify-between items-baseline flex-wrap w-fit">
-                            <div className="flex items-center w-full">
-                              <img
-                                className="rounded-full w-12 h-12 object-cover"
-                                src={projectImage}
-                                alt="profile"
-                              />
-                              <h1 className="ms-2 font-bold text-nowrap truncate w-[220px]">
-                                {projectName}
-                              </h1>
+                allProjectData
+                  .filter(
+                    (val) =>
+                      val?.params?.params?.live_on_icp_mainnet[0] &&
+                      val?.params?.params?.live_on_icp_mainnet[0] === true
+                  )
+                  .slice(0, 3)
+                  .map((data, index) => {
+                    let projectName = data?.params?.params?.project_name ?? "";
+                    let projectId = data?.params?.uid ?? "";
+                    let projectImage = data?.params?.params?.project_logo
+                      ? uint8ArrayToBase64(data?.params?.params?.project_logo)
+                      : "";
+                    let userName = data?.params?.params?.user_data?.full_name
+                      ? data?.params?.params?.user_data?.full_name
+                      : "";
+                    let userImage = data?.params?.params?.user_data
+                      ?.profile_picture[0]
+                      ? uint8ArrayToBase64(
+                          data?.params?.params?.user_data?.profile_picture[0]
+                        )
+                      : "";
+                    let principalId = data?.principal
+                      ? data?.principal.toText()
+                      : "";
+                    let projectDescription =
+                      data?.params?.params?.project_description ?? "";
+                    let projectAreaOfFocus =
+                      data?.params?.params?.project_area_of_focus ?? "";
+                    let projectData = data?.params ? data?.params : null;
+                    let projectRubricStatus =
+                      data?.overall_average.length > 0
+                        ? data?.overall_average[
+                            data?.overall_average.length - 1
+                          ]
+                        : 0;
+
+                    return (
+                      <div
+                        className="w-full sm:w-1/2 md:w-1/3  hover:scale-105 transition-transform duration-300 ease-in-out"
+                        key={index}
+                      >
+                        <div className="sm:w-fit flex justify-between items-baseline flex-wrap bg-white overflow-hidden rounded-lg shadow-lg mb-5 md:mb-0">
+                          <div className="p-4">
+                            <div className="flex justify-between items-baseline flex-wrap w-fit">
+                              <div className="flex items-center w-full">
+                                <img
+                                  className="rounded-full w-12 h-12 object-cover border-black border-2 p-1"
+                                  src={projectImage}
+                                  alt="profile"
+                                />
+                                <h1 className="ms-2 font-bold text-nowrap truncate w-[220px]">
+                                  {projectName}
+                                </h1>
+                              </div>
+                              <div className="flex items-center m-2 w-full">
+                                <img
+                                  className="h-7 w-7 rounded-full mr-2 object-cover"
+                                  src={userImage}
+                                  alt="not found"
+                                />
+                                <p className="text-base truncate">{userName}</p>
+                              </div>
                             </div>
-                            <div className="flex items-center m-2 w-full">
-                              <img
-                                className="h-5 w-5 rounded-full mr-2"
-                                src={userImage}
-                                alt="not found"
-                              />
-                              <p className="text-xs truncate">
-                                {userName}
-                              </p>
-                            </div>
-                          </div>
-                          {progress && (<div className="mb-4 flex items-baseline">
-                            <svg
-                              width="100%"
-                              height="8"
-                              className="bg-[#B2B1B6] rounded-lg"
-                            >
-                              <defs>
-                                <linearGradient
-                                  id={`gradient-${index}`}
-                                  x1="0%"
-                                  y1="0%"
-                                  x2="100%"
-                                  y2="0%"
+                            {progress && (
+                              <div className="mb-4 flex items-baseline w-fit">
+                                <svg
+                                  width="100%"
+                                  height="8"
+                                  className="bg-[#B2B1B6] rounded-lg" 
                                 >
-                                  <stop
-                                    offset="0%"
-                                    stopColor={"#4087BF"}
-                                    stopOpacity="1"
+                                  <defs>
+                                    <linearGradient
+                                      id={`gradient-${index}`}
+                                      x1="0%"
+                                      y1="0%"
+                                      x2="100%"
+                                      y2="0%"
+                                    >
+                                      <stop
+                                        offset="0%"
+                                        stopColor={"#4087BF"}
+                                        stopOpacity="1"
+                                      />
+                                      <stop
+                                        offset={`${
+                                          (projectRubricStatus * 100) / 8
+                                        }%`}
+                                        stopColor={"#3C04BA"}
+                                        stopOpacity="1"
+                                      />
+                                    </linearGradient>
+                                  </defs>
+                                  <rect
+                                    x="0"
+                                    y="0"
+                                    width={`${
+                                      (projectRubricStatus * 100) / 8
+                                    }%`}
+                                    height="10"
+                                    fill={`url(#gradient-${index})`}
                                   />
-                                  <stop
-                                    offset={`${(projectRubricStatus * 100) / 8}%`}
-                                    stopColor={"#3C04BA"}
-                                    stopOpacity="1"
-                                  />
-                                </linearGradient>
-                              </defs>
-                              <rect
-                                x="0"
-                                y="0"
-                                width={`${(projectRubricStatus * 100) / 8}%`}
-                                height="10"
-                                fill={`url(#gradient-${index})`}
-                              />
-                            </svg>
-                            <div className="ml-2 text-nowrap text-sm">
-                              {`${projectRubricStatus}/8`}
-                            </div>
-                          </div>)}
-                          <p className="text-gray-700 text-sm p-2 overflow-hidden line-clamp-8 truncate text-wrap h-48" style={{overflow: "scroll", 
-                          display: "-webkit-box",
-                          WebkitBoxOrient: "vertical",
-                          WebkitLineClamp: 8}}>
-                            {projectDescription}
-                          </p>
+                                </svg>
+                                <div className="ml-2 text-nowrap text-sm">
+                                  {`${projectRubricStatus}/8`}
+                                </div>
+                              </div>
+                            )}
+                            <p className="text-gray-700 text-sm p-2  min-h-48 break-all min-w-16 line-clamp-6 sxxs:w-11/12">
+                              {projectDescription}
+                            </p>
 
-                          {projectAreaOfFocus ? (
-                            <div className="flex gap-2 mt-2 text-xs items-center">
-                              {projectAreaOfFocus
-                                .split(",")
-                                .slice(0, 3)
-                                .map((tag, index) => (
-                                  <div
-                                    key={index}
-                                    className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-gray-100"
+                            {projectAreaOfFocus ? (
+                              <div className="flex gap-2 mt-2 text-xs items-center">
+                                {projectAreaOfFocus
+                                  .split(",")
+                                  .slice(0, 3)
+                                  .map((tag, index) => (
+                                    <div
+                                      key={index}
+                                      className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-gray-100"
+                                    >
+                                      {tag.trim()}
+                                    </div>
+                                  ))}
+                                {projectAreaOfFocus.split(",").length > 3 && (
+                                  <p
+                                    onClick={() =>
+                                      projectId
+                                        ? handleNavigate(projectId, projectData)
+                                        : ""
+                                    }
+                                    className="cursor-pointer"
                                   >
-                                    {tag.trim()}
-                                  </div>
-                                ))}
-                              {projectAreaOfFocus.split(",").length > 3 && (
-                                <p
-                                  onClick={() =>
-                                    projectId ? handleNavigate(projectId, projectData) : ""
-                                  }
-                                  className="cursor-pointer">
-                                  +1 more
-                                </p>
-                              )}
-                            </div>
-                          ) : (
-                            ""
-                          )}
+                                    +1 more
+                                  </p>
+                                )}
+                              </div>
+                            ) : (
+                              ""
+                            )}
 
-                          <button
-                            className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"
-                            onClick={() => handleNavigate(projectId, projectData)}
-                          >
-                            KNOW MORE
-                          </button>
+                            <button
+                              className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full sxxs:w-11/12 text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"
+                              onClick={() =>
+                                handleNavigate(projectId, projectData)
+                              }
+                            >
+                              KNOW MORE
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </animated.div>
-                  );
-                })}
+                    );
+                  })}
             </>
           )}
         </div>
-        <div className="w-full md:w-1/4 sm:pr-4 md:flex md:gap-4">
+        <div className="w-full md:w-1/4 md:flex md:gap-4">
           <RegisterCard categories={projectCategories} />
         </div>
       </div>

@@ -9,8 +9,9 @@ import { useSelector } from "react-redux";
 import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import useFormatDateFromBigInt from "../hooks/useFormatDateFromBigInt";
-import NoDataCard from "../Mentors/Event/AnnouncementsNoDataCard";
+import NoDataCard from "../Mentors/Event/NoDataCard";
 import { formatFullDateFromBigInt } from "../Utils/formatter/formatDateFromBigInt";
+import NoData from "../../../assets/images/file_not_found.png";
 
 const AnnouncementCard = () => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -73,7 +74,7 @@ const AnnouncementCard = () => {
       }}
     >
       {latestAnnouncementData.length == 0 ?
-        <NoDataCard />
+       <NoDataCard image={NoData} desc={'No active announcement found'}/>
         : latestAnnouncementData[0][1].map((card, index) => {
           let ann_name = card?.announcement_data?.announcement_title ?? "";
           let ann_time = card?.timestamp ? formatFullDateFromBigInt(card?.timestamp) : "";
@@ -82,15 +83,16 @@ const AnnouncementCard = () => {
           let ann_project_name = card?.project_name ?? "";
           let ann_project_desc = card?.project_desc ?? "";
           return (
+            
             <SwiperSlide key={index}>
               <div className="border-2 mb-4 mx-1 overflow-hidden rounded-3xl shadow-md hover:scale-105 transition-transform duration-300 ease-in-out">
                 <div className="p-6">
                   <div className="flex flex-col gap-2">
                     <div className="flex-row justify-between">
                       <p className="text-black font-bold">{ann_name}</p>
-                      <p className="text-black text-right">{ann_time}</p>
+                      <p className="text-gray-500 flex justify-end text-sm my-2 items-center"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"className="size-4 mr-2" fill="currentColor"><path d="M96 32V64H48C21.5 64 0 85.5 0 112v48H448V112c0-26.5-21.5-48-48-48H352V32c0-17.7-14.3-32-32-32s-32 14.3-32 32V64H160V32c0-17.7-14.3-32-32-32S96 14.3 96 32zM448 192H0V464c0 26.5 21.5 48 48 48H400c26.5 0 48-21.5 48-48V192z"/></svg>{ann_time}</p>
                     </div>
-                    <p className="h-32 overflow-y-scroll text-gray-500 text-sm">
+                    <p className="max-h-48 text-gray-500 text-sm line-clamp-6 break-all">
                       {ann_desc}
                     </p>
                     <div className="flex flex-row gap-2 items-center">
@@ -99,15 +101,15 @@ const AnnouncementCard = () => {
                         src={ann_project_logo}
                         alt="img"
                       />
-                      <div className="flex flex-col justify-around gap-2">
-                        <p className="font-bold text-md truncate w-28">{ann_project_name}</p>
-                        <p className="font-semibold text-gray-500  text-xs line-clamp-2">
+                      <div className="flex flex-col justify-around w-fit">
+                        <p className="font-bold text-md truncate">{ann_project_name}</p>
+                        <p className="font-semibold text-gray-500  text-xs truncate break-all sxxs:w-[130px] w-full">
                           {ann_project_desc}</p>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> 
             </SwiperSlide>
           )
         })}

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
 import { useSelector } from "react-redux";
-import NoDataCard from "../Mentors/Event/LiveEventsNoDataCard";
+import NoDataCard from "../Mentors/Event/NoDataCard";
 import SecondEventCard from "./SecondEventCard";
+import NoData from "../../../assets/images/file_not_found.png";
 
 const LiveEventsCards = ({ wrap, register }) => {
     const actor = useSelector((currState) => currState.actors.actor);
@@ -39,7 +40,7 @@ const LiveEventsCards = ({ wrap, register }) => {
     return (
         <div className={`flex mb-4 items-start ${wrap === true?'':'min-h-screen'}`}>
             {noData ?
-                (<NoDataCard />
+                (<NoDataCard image={NoData} desc={'There is no ongoing accelerator'}/>
                 ) : (
                     <div className={`${wrap === true ? 'flex flex-row overflow-x-auto w-full' : 'flex flex-row flex-wrap w-full px-8'}`}>
                         {allLiveEventsData &&
