@@ -7,11 +7,13 @@ import "swiper/css/autoplay";
 import { useSelector } from "react-redux";
 import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
-import NoDataCard from "../Mentors/Event/SpotlightNoDataCard";
+import NoDataCard from "../Mentors/Event/NoDataCard";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import ment from "../../../assets/images/ment.jpg";
 import girl from "../../../assets/images/girl.jpeg";
+import NoData from "../../../assets/images/file_not_found.png";
+
 
 const SpotLight = () => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -52,19 +54,19 @@ const SpotLight = () => {
   const handleNavigate = (projectId, projectData) => {
     if (isAuthenticated) {
       switch (userCurrentRoleStatusActiveRole) {
-        case 'user':
+        case "user":
           navigate(`/individual-project-details-user/${projectId}`, {
-            state: projectData
+            state: projectData,
           });
           break;
-        case 'project':
+        case "project":
           toast.error("Only Access if you are in a same cohort!!");
           window.scrollTo({ top: 0, behavior: "smooth" });
           break;
-        case 'mentor':
+        case "mentor":
           navigate(`/individual-project-details-project-mentor/${projectId}`);
           break;
-        case 'vc':
+        case "vc":
           navigate(`/individual-project-details-project-investor/${projectId}`);
           break;
         default:
@@ -82,12 +84,14 @@ const SpotLight = () => {
     <div className="py-4">
       <div className="gap-4 overflow-x-auto">
         {noData ? (
-          <NoDataCard />
+          <NoDataCard image={NoData} desc={'No featured projects yet'}/>
         ) : (
           <Swiper
             modules={[Pagination, Autoplay]}
-            centeredSlides={true}
-            loop={true}
+            centeredSlides={
+              spotLightData.length > 1 || spotLightData.length > 2
+            }
+            loop={spotLightData.length > 1 || spotLightData.length > 2}
             // autoplay={{
             //   delay: 2500,
             //   disableOnInteraction: false,
@@ -112,20 +116,36 @@ const SpotLight = () => {
           >
             {spotLightData &&
               spotLightData.map((data, index) => {
-
-                let projectId =  data?.project_details?.uid ?? null;
+                let projectId = data?.project_details?.uid ?? null;
                 let projectData = data?.project_details ?? null;
-                let addedBy = data?.project_details?.params?.user_data?.full_name ?? ""; 
-                let projectName = data?.project_details?.params?.project_name ??"";
-                let projectImage = data?.project_details?.params?.project_logo ? uint8ArrayToBase64(data?.project_details?.params?.project_logo) : ment;
-                let userImage = data?.project_details?.params?.user_data?.profile_picture[0] ? uint8ArrayToBase64(data?.project_details?.params?.user_data?.profile_picture[0]) : girl;
-                let projectDescription = data?.project_details?.params?.project_description ?? "";
-                let projectAreaOfFocus = data?.project_details?.params?.project_area_of_focus ?? "";
-           
+                let addedBy =
+                  data?.project_details?.params?.user_data?.full_name ?? "";
+                let projectName =
+                  data?.project_details?.params?.project_name ?? "";
+                let projectImage = data?.project_details?.params?.project_logo
+                  ? uint8ArrayToBase64(
+                      data?.project_details?.params?.project_logo
+                    )
+                  : ment;
+                let userImage = data?.project_details?.params?.user_data
+                  ?.profile_picture[0]
+                  ? uint8ArrayToBase64(
+                      data?.project_details?.params?.user_data
+                        ?.profile_picture[0]
+                    )
+                  : girl;
+                let projectDescription =
+                  data?.project_details?.params?.project_description ?? "";
+                let projectAreaOfFocus =
+                  data?.project_details?.params?.project_area_of_focus ?? "";
+
                 return (
                   <SwiperSlide key={index}>
                     <div className="mb-2 shadow-md rounded-3xl overflow-hidden border-2 spotlight-card-image w-full">
-                      <div className="p-6 cursor-pointer" onClick={() => handleNavigate(projectId, projectData)}>
+                      <div
+                        className="p-6 cursor-pointer"
+                        onClick={() => handleNavigate(projectId, projectData)}
+                      >
                         <div className="flex flex-row gap-2">
                           <img
                             className="rounded-lg w-12 h-12"
@@ -149,23 +169,25 @@ const SpotLight = () => {
                             </div>
                           </div>
                         </div>
-                        <div className="text-sm my-2 line-clamp-3 min-h-16">
+                        <div className="text-sm my-2 line-clamp-3 min-h-20 min-w-16">
                           {projectDescription}
                         </div>
                         <div className="flex flex-row gap-4 mt-2">
-                          <div className="flex gap-2 mt-2 text-xs items-center">
-                            {projectAreaOfFocus
-                              .split(",")
-                              .slice(0, 3)
-                              .map((tag, index) => (
-                                <div
-                                  key={index}
-                                  className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-gray-100"
-                                >
-                                  {tag.trim()}
-                                </div>
-                              ))}
-                          </div>
+                          {projectAreaOfFocus && (
+                            <div className="flex gap-2 mt-2 text-xs items-center">
+                              {projectAreaOfFocus
+                                .split(",")
+                                .slice(0, 3)
+                                .map((tag, index) => (
+                                  <div
+                                    key={index}
+                                    className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-gray-100"
+                                  >
+                                    {tag.trim()}
+                                  </div>
+                                ))}
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>

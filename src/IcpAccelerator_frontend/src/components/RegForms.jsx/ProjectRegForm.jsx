@@ -10,6 +10,7 @@ import { useCountries } from "react-countries";
 import ReactSelect from "react-select";
 import CompressedImage from "../ImageCompressed/CompressedImage";
 import { allHubHandlerRequest } from "../StateManagement/Redux/Reducers/All_IcpHubReducer";
+import {bufferToImageBlob }from "../Utils/formatter/bufferToImageBlob"
 
 function ProjectRegForm() {
   const { countries } = useCountries();
@@ -115,8 +116,8 @@ function ProjectRegForm() {
         )
         .required("Full name is required"),
       email: yup.string().email("Invalid email").nullable(true).optional(),
-      telegram_id: yup.string().nullable(true).optional(),
-      twitter_url: yup.string().nullable(true).optional().url("Invalid url"),
+      telegram_id:  yup.string().nullable(true).matches(/^[a-zA-Z0-9_]{5,32}$/, "Invalid Telegram ID").optional(),
+      twitter_url: yup.string().nullable(true).optional().matches(/^(https?:\/\/)?(www\.)?twitter\.com\/[a-zA-Z0-9_]{1,15}$/,"Invalid Twitter URL"),
       openchat_user_name: yup
         .string()
         .nullable(true)
@@ -130,12 +131,19 @@ function ProjectRegForm() {
             return isValidLength && hasValidChars;
           }
         ),
-      bio: yup
+        bio: yup
         .string()
         .optional()
-        .test("maxWords", "Bio must not exceed 50 words", (value) =>
-          value ? value.split(/\s+/).filter(Boolean).length <= 50 : true
-        ),
+        .test(
+          "maxWords", 
+          "Bio must not exceed 50 words", 
+          (value) => !value || value.trim().split(/\s+/).filter(Boolean).length <= 50
+        )
+        .test(
+          "maxChars",
+          "Bio must not exceed 500 characters",
+          (value) => !value || value.length <= 500
+        ),  
       country: yup
         .string()
         .test("is-non-empty", "Country is required", (value) =>
@@ -227,11 +235,15 @@ function ProjectRegForm() {
       project_description: yup
         .string()
         .test(
-          "maxWords",
-          "Project Description must not exceed 50 words",
-          (value) =>
-            value ? value.split(/\s+/).filter(Boolean).length <= 50 : true
+          "maxWords", 
+          "Project Description must not exceed 50 words", 
+          (value) => !value || value.trim().split(/\s+/).filter(Boolean).length <= 50
         )
+        .test(
+          "maxChars",
+          "Project Description must not exceed 500 characters",
+          (value) => !value || value.length <= 500
+        )  
         .required("Project Description is required"),
       project_elevator_pitch: yup
         .string()
@@ -392,17 +404,28 @@ function ProjectRegForm() {
         .nullable(true)
         .optional()
         .url("Invalid url"),
-      project_discord: yup
-        .string()
+        project_discord: yup.string()
         .nullable(true)
         .optional()
-        .url("Invalid url"),
-      project_linkedin: yup
-        .string()
+        .matches(
+          /^(https?:\/\/)?(www\.)?(discord\.(gg|com)\/(invite\/)?[a-zA-Z0-9\-_]+|discordapp\.com\/invite\/[a-zA-Z0-9\-_]+)$/,
+          "Invalid Discord URL"
+        ),
+        project_linkedin: yup.string()
         .nullable(true)
         .optional()
-        .url("Invalid url"),
-      github_link: yup.string().nullable(true).optional().url("Invalid url"),
+        .matches(
+          /^(https?:\/\/)?(www\.)?linkedin\.com\/(in\/[a-zA-Z0-9_-]+|company\/[a-zA-Z0-9_-]+|groups\/[a-zA-Z0-9_-]+)$/,
+          "Invalid LinkedIn URL"
+        ),
+        github_link: yup.string()
+        .nullable(true)
+        .optional()
+        .matches(
+          /^(https?:\/\/)?(www\.)?github\.com\/[a-zA-Z0-9_\-]+(\/[a-zA-Z0-9_\-]+)?(\/)?$/
+          ,
+          "Invalid GitHub URL"
+        ),
       token_economics: yup
         .string()
         .nullable(true)
@@ -481,14 +504,13 @@ function ProjectRegForm() {
     if (uploadPrivateDocuments === "true" && fieldsPrivate.length === 0) {
       appendPrivate({ title: "", link: "" });
     } else if (uploadPrivateDocuments === "false") {
-      reset({ ...defaultValues, upload_private_documents: "false" });
+      removePrivate({title: "", link: ""})
     }
   }, [
     uploadPrivateDocuments,
     appendPrivate,
     removePrivate,
     fieldsPrivate.length,
-    reset,
   ]);
 
   const { fields, append, remove } = useFieldArray({
@@ -502,10 +524,30 @@ function ProjectRegForm() {
     if (uploadPublicDocuments === "true" && fields.length === 0) {
       append({ title: "", link: "" });
     } else if (uploadPublicDocuments === "false") {
-      reset({ ...defaultValues, upload_public_documents: "false" });
+       remove({ title: "", link: ""})
     }
-  }, [uploadPublicDocuments, append, remove, fields.length, reset]);
+  }, [uploadPublicDocuments, append, remove, fields.length]);
 
+  const removePublic = (index) => {
+    if (index === 0){
+      setValue('upload_public_documents','false')
+      remove(index)
+    }
+    else{
+    remove(index);
+    }
+  };
+  const handleremovePrivate = (index) => {
+    if (index === 0){
+      setValue('upload_private_documents','false')
+      removePrivate(index)
+    }
+    else{
+      removePrivate(index);
+    }
+  };
+  
+ 
   // image creation function compression and uintarray creator
   const imageCreationFunc = async (file) => {
     const result = await trigger("image");
@@ -813,6 +855,28 @@ function ProjectRegForm() {
       val ? val.map((chain) => ({ value: chain, label: chain })) : []
     );
   };
+ 
+  async function convertBufferToImageBlob(buffer) {
+    try {
+      // Assuming bufferToImageBlob returns a Promise
+      const blob = await bufferToImageBlob(buffer);
+      return blob;
+    } catch (error) {
+      console.error('Error converting buffer to image blob:', error);
+      throw error; // Re-throw the error to be handled by the caller
+    }
+  }
+  
+  // Usage:
+  async function handleProfilePicture(profilePicture) {
+    try {
+      const blob = await convertBufferToImageBlob(profilePicture);
+      setImagePreview(blob);
+    } catch (error) {
+      // Handle any errors
+      console.error('Error handling profile picture:', error);
+    }
+  }
 
   // set users values handler
   const setValuesHandler = (val) => {
@@ -837,10 +901,8 @@ function ProjectRegForm() {
   };
   // set project values handler
   const setProjectValuesHandler = (val) => {
+    console.log('val',val)
     if (val) {
-      const private_docs = val?.private_docs ? val?.private_docs?.[0] : [];
-      const public_docs = val?.public_docs ? val?.public_docs?.[0] : [];
-
       setValue("full_name", val?.user_data?.full_name ?? "");
       setValue("email", val?.user_data?.email?.[0] ?? "");
       setValue("telegram_id", val?.user_data?.telegram_id?.[0] ?? "");
@@ -855,7 +917,7 @@ function ProjectRegForm() {
       setInterestedDomainsSelectedOptionsHandler(
         val?.user_data?.area_of_interest ?? null
       );
-      setImagePreview(val?.user_data?.profile_picture?.[0] ?? "");
+      setImagePreview(handleProfilePicture(val?.user_data?.profile_picture?.[0]) ?? "");
       setValue("type_of_profile", val?.user_data?.type_of_profile?.[0]);
       setValue(
         "reasons_to_join_platform",
@@ -867,7 +929,7 @@ function ProjectRegForm() {
       //Project Data
       setLogoPreview(val?.project_logo ?? "");
       setCoverPreview(val?.project_cover ?? "");
-      setValue("preferred_icp_hub", val?.preferred_icp_hub?.[0] ?? "");
+      setValue("preferred_icp_hub", val?.preferred_icp_hub?.[0]);
       setValue("project_name", val?.project_name ?? "");
       setValue("project_description", val?.project_description?.[0] ?? "");
       setValue(
@@ -925,17 +987,22 @@ function ProjectRegForm() {
       } else {
         setValue("money_raising", "false");
       }
-      setValue("icp_grants", val?.money_raised?.[0]?.icp_grants?.[0] ?? "");
-      setValue("investors", val?.money_raised?.[0]?.investors?.[0] ?? "");
+      setValue("icp_grants", val?.money_raised?.[0]?.icp_grants?.[0] || 0);
+      setValue("investors", val?.money_raised?.[0]?.investors?.[0] || 0);
       setValue(
         "raised_from_other_ecosystem",
-        val?.money_raised?.[0]?.raised_from_other_ecosystem?.[0] ?? ""
+        val?.money_raised?.[0]?.raised_from_other_ecosystem?.[0] || 0
       );
-      setValue("sns", val?.money_raised?.[0]?.sns?.[0] ?? "");
+      setValue("valuation", val?.money_raised?.[0]?.sns?.[0] ?? "");
       setValue(
         "target_amount",
-        val?.money_raised?.[0]?.target_amount?.[0] ?? ""
+        val?.money_raised?.[0]?.target_amount?.[0] ?? 0
       );
+      setValue(
+        "target_amount",
+        val?.money_raised?.[0]?.target_amount?.[0] ?? 0
+      );
+      
       setValue("promotional_video", val?.promotional_video?.[0] ?? "");
       setValue("project_discord", val?.project_discord?.[0] ?? "");
       setValue("project_linkedin", val?.project_linkedin?.[0] ?? "");
@@ -951,43 +1018,16 @@ function ProjectRegForm() {
       } else {
         setValue("upload_private_documents", "false");
       }
-      if (public_docs.length) {
+      if (val?.public_docs?.[0].length) {
         setValue("upload_public_documents", "true");
       } else {
         setValue("upload_public_documents", "false");
       }
-      setPrivateDocs(private_docs.length);
-      for (let i = 0; i < private_docs.length; i++) {
-        private_docs.forEach((doc, index) => {
-          if (typeof doc === "string") {
-            doc = JSON.parse(doc);
-          }
-          // const element = JSON.parse(private_docs[i]);
-          // let title = Object.keys(element)[0];
-          // let link = element[`${title}`];
-          const title = doc.title;
-          const link = doc.link;
-          setValue(`private_title${index + 1}`, title);
-          setValue(`private_link${index + 1}`, link);
-        });
-      }
-      setPublicDocs(public_docs.length);
-      for (let i = 0; i < public_docs.length; i++) {
-        public_docs.forEach((doc, index) => {
-          if (typeof doc === "string") {
-            doc = JSON.parse(doc);
-          }
-          // const element = JSON.parse(public_docs[i]);
-          // let title = Object.keys(element)[0];
-          // let link = element[`${title}`];
-          const title = doc.title;
-          const link = doc.link;
-          setValue(`public_title${index + 1}`, title);
-          setValue(`public_link${index + 1}`, link);
-        });
-      }
+      setValue('privateDocs',val?.private_docs?.[0] ?? '');
+      setValue('publicDocs',val?.public_docs?.[0] ??'')
     }
   };
+  console.log('imagePreview',imagePreview)
 
   // Get data from redux useEffect
   useEffect(() => {
@@ -1638,13 +1678,14 @@ function ProjectRegForm() {
                   </label>
                   <select
                     {...register("preferred_icp_hub")}
+                    defaultValue={getValues('preferred_icp_hub')}
                     className={`bg-gray-50 border-2 ${
                       errors.preferred_icp_hub
                         ? "border-red-500 "
                         : "border-[#737373]"
                     } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
-                    <option className="text-lg font-bold" value="">
+                    <option className="text-lg font-bold" value=''>
                       Select your ICP Hub
                     </option>
                     {getAllIcpHubs?.map((hub) => (
@@ -2451,10 +2492,11 @@ function ProjectRegForm() {
                     </p>
                   )}
                 </div>
-                <div>
-                  {fieldsPrivate.map((field, index) => (
+                <div className="relative z-0 group mb-6">
+                {uploadPrivateDocuments === "true" && (
+                  fieldsPrivate.map((field, index) => (
                     <React.Fragment key={field.id}>
-                      <div className="flex flex-row mt-2">
+                      <div className="flex flex-row mt-2 items-center">
                         <div className="w-full">
                           <label className="block mb-2 text-lg font-medium text-gray-500 text-start">
                             Title {index + 1}
@@ -2487,8 +2529,8 @@ function ProjectRegForm() {
                         </div>
                         <button
                           type="button"
-                          onClick={() => removePrivate(index)}
-                          className="self-end bg-red-600 hover:bg-red-700 text-white rounded-lg px-4 py-2 my-7 ml-2"
+                          onClick={() => handleremovePrivate(index)}
+                          className="self-end bg-red-600 hover:bg-red-700 text-white rounded-lg px-4 py-3 ml-2"
                         >
                           <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -2501,7 +2543,7 @@ function ProjectRegForm() {
                         </button>
                       </div>
                     </React.Fragment>
-                  ))}
+                  )))}
 
                   {uploadPrivateDocuments === "true" && (
                     <div className="flex justify-end items-center">
@@ -2541,16 +2583,17 @@ function ProjectRegForm() {
                     </p>
                   )}
                 </div>
-                <div>
-                  {fields.map((field, index) => (
-                    <div className="flex flex-row gap-4 mt-4 items-baseline" key={field.id}>
+                <div className="relative z-0 group mb-6">
+                {uploadPublicDocuments === "true" && (
+                  fields.map((field, index) => (
+                    <div className="flex flex-row gap-4 mt-4 items-center" key={field.id}>
                       <div className="flex-1">
                         <label className="block mb-2 text-lg font-medium text-gray-700 text-start">
                           Title {index + 1}
                         </label>
                         <input
                           {...register(`publicDocs.${index}.title`)}
-                          className="bg-gray-50 border-2 border-[#737373] rounded-lg block w-full p-3"
+                          className="bg-gray-50 border-2 border-[#737373] rounded-lg block w-full p-3 text-black"
                           type="text"
                         />
                         {errors.publicDocs?.[index]?.title && (
@@ -2565,7 +2608,7 @@ function ProjectRegForm() {
                         </label>
                         <input
                           {...register(`publicDocs.${index}.link`)}
-                          className="bg-gray-50 border-2 border-[#737373] rounded-lg block w-full p-3"
+                          className="bg-gray-50 border-2 border-[#737373] rounded-lg block w-full p-3 text-black"
                           type="text"
                         />
                         {errors.publicDocs?.[index]?.link && (
@@ -2576,8 +2619,8 @@ function ProjectRegForm() {
                       </div>
                       <button
                         type="button"
-                        onClick={() => remove(index)}
-                        className="self-end bg-red-600 hover:bg-red-700 text-white rounded-lg px-4 py-2 my-7 ml-2"
+                        onClick={() => removePublic(index)}
+                        className="self-end bg-red-600 hover:bg-red-700 text-white rounded-lg px-4 py-3 ml-2"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -2589,14 +2632,13 @@ function ProjectRegForm() {
                         </svg>
                       </button>
                     </div>
-                  ))}
-
+                  )))}
                   {uploadPublicDocuments === "true" && (
                     <div className="flex justify-end items-center mt-4">
                       <button
                         type="button"
                         onClick={() => append({ title: "", link: "" })}
-                        className="bg-blue-800 hover:bg-blue-900 text-white rounded-lg px-5 py-2"
+                        className="bg-blue-800 hover:bg-blue-900 text-white rounded-lg px-5 py-3"
                       >
                         Add Public Docs
                       </button>

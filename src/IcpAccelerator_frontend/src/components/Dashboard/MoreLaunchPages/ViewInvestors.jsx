@@ -78,7 +78,7 @@ const ViewInvestor = () => {
   return (
     <div className="container mx-auto min-h-screen">
       <div className="px-[4%] pb-[4%] pt-[1%]">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between sm:flex-col sxxs:flex-col md:flex-row">
           <div
             className="w-full bg-gradient-to-r from-purple-900 to-blue-500 text-transparent bg-clip-text text-3xl font-extrabold py-4 
        font-fontUse"
@@ -86,7 +86,7 @@ const ViewInvestor = () => {
             Our Investors
           </div>
 
-          <div className="relative flex items-center max-w-xs bg-white rounded-xl">
+          <div className="relative flex items-center md:max-w-xs bg-white rounded-xl sxxs:w-full">
             <input
               type="text"
               value={filter}
@@ -112,7 +112,7 @@ const ViewInvestor = () => {
           </div>
         ) : (
           <>
-            <div className="md:gap-4 md:grid md:grid-cols-4 max-md:flex max-md:flex-col justify-center my-5">
+            <div className="flex space-x-4 my-4 items-center flex-wrap ">
               {currentInvestors.map((investor, index) => {
                 let id = investor[0].toText();
                 let img = uint8ArrayToBase64(
@@ -129,51 +129,54 @@ const ViewInvestor = () => {
 
                 return (
                   <div
-                    key={index}
-                    className="bg-white duration-300 ease-in-out hover:scale-105 mb-5 md:mb-0 p-5 rounded-lg shadow-lg transition-transform w-full"
+                  key={index}
+                  className="bg-white  hover:scale-105 w-full sm:w-1/2 md:w-1/4 rounded-lg mb-5 md:mb-0 p-6"
+                >
+                  <div className="justify-center flex items-center">
+                  <div className="size-fit  rounded-full bg-no-repeat bg-center bg-cover relative p-1 bg-blend-overlay border-2 border-gray-300"
+                   style={{
+                    backgroundImage: `url(${img}), linear-gradient(168deg, rgba(255, 255, 255, 0.25) -0.86%, rgba(255, 255, 255, 0) 103.57%)`,
+                    backdropFilter: "blur(20px)",
+                  }}
                   >
-                    <div
-                      className=" flex items-center justify-center w-1/2"
-                      style={{ margin: "auto" }}
-                    >
-                      <img
-                        className="w-full object-cover"
-                        src={img}
-                        alt=""
-                        style={{ borderRadius: "50%" }}
-                      />
-                    </div>
-                    <div className="text-black mt-4 text-center">
-                      <span className="font-semibold text-lg line-clamp-1">
+                    <img
+                      className="object-cover size-fit max-h-44 rounded-full"
+                      src={img}
+                      alt=""
+                    />
+                  </div>
+                  </div>
+                  <div className="text-black text-start">
+                    <div className="text-start my-3">
+                      <span className="font-semibold text-lg truncate">
                         {name}
                       </span>
-                      <span className="block text-gray-500">{company}</span>
-                      <div className="flex flex-wrap gap-2 border-t-2 mt-5 py-4 max-md:justify-center">
-                        {category_of_investment && category_of_investment !== ""
-                          ? category_of_investment
-                              .split(",")
-                              .map(function (item ,index) {
-                                return (
-                                  <span className="bg-[#E7E7E8] rounded-full text-gray-600 text-xs font-bold px-3 py-2 leading-none flex items-center mt-2" key={index}>
-                                    {item.trim()}
-                                  </span>
-                                );
-                              })
-                          : ""}
-                        {/* <span className="bg-[#E7E7E8] rounded-full text-gray-600 text-xs font-bold px-3 py-2 leading-none flex items-center mt-2">
-                      {category_of_investment}
-                      </span>       */}
-                      </div>
-                      <button
-                        onClick={() =>
-                          id ? navigate(`/view-investor-details/${id}`) : ""
-                        }
-                        className="mt-4  text-white px-4 py-1 rounded-lg uppercase w-full text-center border border-gray-300 font-bold bg-[#3505B2] transition-colors duration-200 ease-in-out"
-                      >
-                        View Profile
-                      </button>
+                      <span className="block text-gray-500 truncate">{company}</span>
                     </div>
+                    <div className="flex overflow-x-auto gap-2 pb-4 max-md:justify-center">
+                      {category_of_investment && category_of_investment !== ""
+                        ? category_of_investment.split(",").map((item, index) => {
+                            return (
+                              <span
+                                key={index}
+                                className="bg-[#E7E7E8] rounded-full text-gray-600 text-xs font-bold px-3 py-1 leading-none flex items-center"
+                              >
+                                {item.trim()}
+                              </span>
+                            );
+                          })
+                        : ""}
+                    </div>
+                    <button
+                      onClick={() =>
+                        id ? navigate(`/view-investor-details/${id}`) : ""
+                      }
+                      className="text-white px-4 py-1 rounded-lg uppercase w-full text-center border border-gray-300 font-bold bg-[#3505B2] transition-colors duration-200 ease-in-out"
+                    >
+                      View Profile
+                    </button>
                   </div>
+                </div>
                 );
               })}
             </div>

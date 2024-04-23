@@ -14,7 +14,7 @@ const useFadeInScrollAnimation = (ref, startOffset, endOffset) => {
                 trigger: element,
                 start: `top+=${startOffset} center`,
                 end: `bottom+=${endOffset} center`,
-                toggleActions: "restart none none reverse",
+                toggleActions: "restart none none none",
                 markers: false
             },
             opacity: 0,
@@ -22,7 +22,6 @@ const useFadeInScrollAnimation = (ref, startOffset, endOffset) => {
             duration: 2,
             ease: "power3.out",
         });
-
         return () => {
             ScrollTrigger.getAll().forEach(st => {
                 if (st.trigger === element) {

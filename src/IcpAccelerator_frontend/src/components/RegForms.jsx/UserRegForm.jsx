@@ -44,8 +44,8 @@ const UserRegForm = () => {
             full_name: yup.string().test('is-non-empty', 'Full name is required',
                 (value) => /\S/.test(value)).required("Full name is required"),
             email: yup.string().email("Invalid email").nullable(true).optional(),
-            telegram_id: yup.string().nullable(true).optional(),
-            twitter_url: yup.string().nullable(true).optional().url("Invalid url"),
+            telegram_id: yup.string().nullable(true).matches(/^[a-zA-Z0-9_]{5,32}$/, "Invalid Telegram ID").optional(),
+            twitter_url: yup.string().nullable(true).optional().matches(/^(https?:\/\/)?(www\.)?twitter\.com\/[a-zA-Z0-9_]{1,15}$/,"Invalid Twitter URL"),
             openchat_user_name: yup.string().nullable(true).test("is-valid-username",
                 "Username must be between 6 and 20 characters and can only contain letters, numbers, and underscores",
                 (value) => {
@@ -54,8 +54,19 @@ const UserRegForm = () => {
                     const hasValidChars = /^(?=.*[A-Z0-9_])[a-zA-Z0-9_]+$/.test(value);
                     return isValidLength && hasValidChars;
                 }),
-            bio: yup.string().optional().test("maxWords", "Bio must not exceed 50 words",
-                (value) => value ? value.split(/\s+/).filter(Boolean).length <= 50 : true),
+                bio: yup
+                .string()
+                .optional()
+                .test(
+                  "maxWords", 
+                  "Bio must not exceed 50 words", 
+                  (value) => !value || value.trim().split(/\s+/).filter(Boolean).length <= 50
+                )
+                .test(
+                  "maxChars",
+                  "Bio must not exceed 500 characters",
+                  (value) => !value || value.length <= 500
+                ),  
             country: yup.string().test('is-non-empty', 'Country is required',
                 (value) => /\S/.test(value)).required("Country is required"),
             domains_interested_in: yup.string().test('is-non-empty', 'Selecting an interest is required',
@@ -230,7 +241,7 @@ const UserRegForm = () => {
         <>
             <DetailHeroSection />
             <section className="w-full h-fit px-[6%] lg1:px-[4%] py-[6%] lg1:py-[4%] bg-gray-100">
-                <div className="w-full h-full bg-gray-100 pt-8">
+                <div className="w-full h-full bg-gray-100 pt-8 sm:text-left text-center">
                     <div className="bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-[30px]  sm:text-[25px] md1:text-[30px] md2:text-[35px] font-black font-fontUse dxl:text-[40px] p-8">
                         User Information
                     </div>
@@ -240,9 +251,9 @@ const UserRegForm = () => {
                         <form
                             onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}
                             className="w-full px-4" >
-                            <div className="flex flex-col">
-                                <div className="flex-row w-full flex justify-start gap-4 items-center">
-                                    <div className="mb-3 ml-6 h-24 w-24 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
+                            <div className="flex flex-col mb-10 xxs:mb-0">
+                                <div className="flex-row w-full xxs:flex xxs:left-text center-text justify-start gap-4 items-center">
+                                    <div className="xxs:mb-3 mb-5 xxs:ml-6 h-24 w-24 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
                                         {imagePreview && !errors.image ? (
                                             <img
                                                 src={imagePreview}

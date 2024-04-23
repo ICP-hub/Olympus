@@ -100,8 +100,8 @@ const InvestorRegForm = () => {
         )
         .required("Full name is required"),
       email: yup.string().email("Invalid email").nullable(true).optional(),
-      telegram_id: yup.string().nullable(true).optional(),
-      twitter_url: yup.string().nullable(true).optional().url("Invalid url"),
+      telegram_id: yup.string().nullable(true).matches(/^[a-zA-Z0-9_]{5,32}$/, "Invalid Telegram ID").optional(),
+            twitter_url: yup.string().nullable(true).optional().matches(/^(https?:\/\/)?(www\.)?twitter\.com\/[a-zA-Z0-9_]{1,15}$/,"Invalid Twitter URL"),
       openchat_user_name: yup
         .string()
         .nullable(true)
@@ -115,12 +115,19 @@ const InvestorRegForm = () => {
             return isValidLength && hasValidChars;
           }
         ),
-      bio: yup
+        bio: yup
         .string()
         .optional()
-        .test("maxWords", "Bio must not exceed 50 words", (value) =>
-          value ? value.split(/\s+/).filter(Boolean).length <= 50 : true
-        ),
+        .test(
+          "maxWords", 
+          "Bio must not exceed 50 words", 
+          (value) => !value || value.trim().split(/\s+/).filter(Boolean).length <= 50
+        )
+        .test(
+          "maxChars",
+          "Bio must not exceed 500 characters",
+          (value) => !value || value.length <= 500
+        ),  
       country: yup
         .string()
         .test("is-non-empty", "Country is required", (value) =>
@@ -163,9 +170,6 @@ const InvestorRegForm = () => {
             );
           }
         ),
-
-      ////////////////////////////////////////////////////////////////////
-
       investor_registered: yup
         .string()
         .required("Required")
@@ -225,8 +229,7 @@ const InvestorRegForm = () => {
         .nullable(true)
         .typeError("You must enter a number")
         .positive("Must be a positive number"),
-      // fund_average_check_size: yup.number().typeError("You must enter a number").positive("Must be a positive number")
-      //     .required("Average check size is required"),
+      
       invested_in_multi_chain: yup
         .string()
         .required("Required")
@@ -255,12 +258,16 @@ const InvestorRegForm = () => {
         .nullable(true)
         .optional()
         .url("Invalid url"),
-      investor_linkedin_url: yup
+        investor_linkedin_url: yup
         .string()
-        .test("is-non-empty", "LinkedIn url is required", (value) =>
+        .required("LinkedIn URL is required")
+        .test("is-non-empty", "LinkedIn URL is required", (value) =>
           /\S/.test(value)
         )
-        .url("Invalid url")
+        .matches(
+          /^(https?:\/\/)?(www\.)?linkedin\.com\/(in\/[a-zA-Z0-9_-]+|company\/[a-zA-Z0-9_-]+|groups\/[a-zA-Z0-9_-]+)\/?$/,
+          "Invalid LinkedIn URL"
+        )      
         .required("LinkedIn url is required"),
       investment_stage: yup
         .string()
@@ -272,9 +279,6 @@ const InvestorRegForm = () => {
         .string()
         .when("investment_stage", (val, schema) =>
           val &&
-          // val[0] &&
-          // val[0].trim() !== "" &&
-          // val[0] !== "we do not currently invest"
           val !== "we do not currently invest"
             ? schema
                 .test("is-non-empty", "Atleast one range required", (value) =>
@@ -283,7 +287,6 @@ const InvestorRegForm = () => {
                 .required("Atleast one range required")
             : schema
         ),
-      ////////////////////////////////////////////////////////////////////
     })
     .required();
 
@@ -416,7 +419,7 @@ const InvestorRegForm = () => {
           await actor.update_venture_capitalist(investorData).then((result) => {
             if (result && result.includes("approval request is sent")) {
               toast.success("Approval request is sent");
-              // window.location.href = "/";
+              window.location.href = "/";
             } else {
               toast.error(result);
             }
@@ -432,7 +435,7 @@ const InvestorRegForm = () => {
             .then((result) => {
               if (result && result.includes("approval request is sent")) {
                 toast.success("Approval request is sent");
-                // window.location.href = "/";
+                window.location.href = "/";
               } else {
                 toast.error("something got wrong");
               }
@@ -1416,7 +1419,7 @@ const InvestorRegForm = () => {
                     htmlFor="investor_fund_size"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Fund size
+                    Fund size <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="number"

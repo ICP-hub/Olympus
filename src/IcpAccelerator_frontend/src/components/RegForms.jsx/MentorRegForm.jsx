@@ -10,6 +10,7 @@ import { useCountries } from "react-countries";
 import ReactSelect from "react-select";
 import CompressedImage from "../ImageCompressed/CompressedImage";
 import { allHubHandlerRequest } from "../StateManagement/Redux/Reducers/All_IcpHubReducer";
+
 const MentorRegForm = () => {
   const { countries } = useCountries();
   const dispatch = useDispatch();
@@ -90,8 +91,8 @@ const MentorRegForm = () => {
         )
         .required("Full name is required"),
       email: yup.string().email("Invalid email").nullable(true).optional(),
-      telegram_id: yup.string().nullable(true).optional(),
-      twitter_url: yup.string().nullable(true).optional().url("Invalid url"),
+      telegram_id: yup.string().nullable(true).matches(/^[a-zA-Z0-9_]{5,32}$/, "Invalid Telegram ID").optional(),
+      twitter_url: yup.string().nullable(true).optional().matches(/^(https?:\/\/)?(www\.)?twitter\.com\/[a-zA-Z0-9_]{1,15}$/,"Invalid Twitter URL"),
       openchat_user_name: yup
         .string()
         .nullable(true)
@@ -105,12 +106,19 @@ const MentorRegForm = () => {
             return isValidLength && hasValidChars;
           }
         ),
-      bio: yup
+        bio: yup
         .string()
         .optional()
-        .test("maxWords", "Bio must not exceed 50 words", (value) =>
-          value ? value.split(/\s+/).filter(Boolean).length <= 50 : true
-        ),
+        .test(
+          "maxWords", 
+          "Bio must not exceed 50 words", 
+          (value) => !value || value.trim().split(/\s+/).filter(Boolean).length <= 50
+        )
+        .test(
+          "maxChars",
+          "Bio must not exceed 500 characters",
+          (value) => !value || value.length <= 500
+        ),  
       country: yup
         .string()
         .test("is-non-empty", "Country is required", (value) =>
@@ -214,9 +222,12 @@ const MentorRegForm = () => {
         .test("is-non-empty", "LinkedIn url is required", (value) =>
           /\S/.test(value)
         )
-        .url("Invalid url")
+        .matches(
+          /^(https?:\/\/)?(www\.)?linkedin\.com\/(in\/[a-zA-Z0-9_-]+|company\/[a-zA-Z0-9_-]+|groups\/[a-zA-Z0-9_-]+)$/,
+          "Invalid LinkedIn URL"
+        )
         .required("LinkedIn url is required"),
-      // mentor_documents_url: yup.string().nullable(true).optional().url("Invalid url"),
+      
     })
     .required();
 
@@ -389,7 +400,9 @@ const MentorRegForm = () => {
   };
   const setMultiChainSelectedOptionsHandler = (val) => {
     setMultiChainSelectedOptions(
-      val ? val.map((chain) => ({ value: chain, label: chain })) : []
+      val
+        ? val?.[0].split(", ").map((chain) => ({ value: chain, label: chain }))
+        : []
     );
   };
 
@@ -461,12 +474,15 @@ const MentorRegForm = () => {
       }
       setValue("hub_owner", val?.hub_owner?.[0] ?? "");
       setValue("mentor_linkedin_url", val?.linkedin_link ?? "");
-      if (val?.multichain) {
+      if (val?.multichain?.[0]) {
         setValue("multi_chain", "true");
       } else {
         setValue("multi_chain", "false");
       }
-      setValue("multi_chain_names", val?.multichain ? val?.multichain.join(", ") : "");
+      setValue(
+        "multi_chain_names",
+        val?.multichain?.[0] ? val?.multichain?.[0] : ""
+      );
       setMultiChainSelectedOptionsHandler(val?.multichain ?? null);
       setValue("preferred_icp_hub", val?.preferred_icp_hub?.[0] ?? "");
       setValue("mentor_website_url", val?.website?.[0] ?? "");

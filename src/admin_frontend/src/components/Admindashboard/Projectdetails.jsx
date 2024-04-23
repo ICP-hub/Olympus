@@ -244,31 +244,31 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
     return baseMessage;
   }
 
-  const date = numberToDate(userData[0].creation_date);
+  const date = numberToDate(userData[0]?.creation_date);
 
-  const weeklyUsers = Number(userData[0].params.weekly_active_users[0]);
-  const revenueNum = Number(userData[0].params.revenue[0]);
-  const icpGrants = Number(userData[0].params.money_raised[0].icp_grants[0]);
+  const weeklyUsers = Number(userData[0]?.params.weekly_active_users[0]);
+  const revenueNum = Number(userData[0]?.params.revenue[0]);
+  const icpGrants = Number(userData[0]?.params.money_raised[0]?.icp_grants[0]);
   const investorInvest = Number(
-    userData[0].params.money_raised[0].investors[0]
+    userData[0]?.params.money_raised[0]?.investors[0]
   );
   const otherEcosystem = Number(
-    userData[0].params.money_raised[0].raised_from_other_ecosystem[0]
+    userData[0]?.params.money_raised[0]?.raised_from_other_ecosystem[0]
   );
-  const snsGrants = Number(userData[0].params.money_raised[0].sns[0]);
-  const targetAmount = userData[0].params.money_raised[0].target_amount[0]
-    ? Number(userData[0].params.money_raised[0].target_amount[0])
+  const snsGrants = Number(userData[0]?.params.money_raised[0]?.sns[0]);
+  const targetAmount = userData[0]?.params.money_raised[0]?.target_amount[0]
+    ? Number(userData[0]?.params.money_raised[0]?.target_amount[0])
     : 0;
 
   const profile = uint8ArrayToBase64(
-    userData[0].params.user_data.profile_picture[0]
+    userData[0]?.params?.user_data?.profile_picture[0]
   );
   const logo =
-    userData && userData[0].params.project_logo.length > 0
-      ? uint8ArrayToBase64(userData[0].params.project_logo)
+    userData && userData[0]?.params?.project_logo.length > 0
+      ? uint8ArrayToBase64(userData[0]?.params?.project_logo)
       : null;
 
-  const Project_cover = uint8ArrayToBase64(userData[0].params.project_cover);
+  const Project_cover = uint8ArrayToBase64(userData[0]?.params?.project_cover);
   return (
     <div>
       <div className="w-full">
@@ -404,7 +404,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
               <div className="flex flex-col pl-4  mt-2 w-auto justify-start md:mb-0 mb-6">
                 <div className="flex flex-row gap-4 items-center w-full md:w-[248px] lg:w-[500px]">
                   <h1 className="text-xl md:text-3xl font-bold bg-black text-transparent bg-clip-text truncate">
-                    {userData[0].params.project_name}
+                    {userData[0]?.params?.project_name}
                   </h1>
                 </div>
 
@@ -412,7 +412,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                   <div className="flex flex-row md:items-center mt-2">
                     <p className="pt-1">{openchat_username}</p>
                     <div className="flex flex-row flex-wrap items-center space-x-2 ml-3 space-y-1">
-                      {userData[0].params.user_data.reason_to_join[0].map(
+                      {userData[0]?.params?.user_data?.reason_to_join?.[0].map(
                         (reason, index) => (
                           <p
                             key={index}
@@ -429,7 +429,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
             </div>
           </div>
           <div className="w-full  flex flex-row items-start justify-start px-[4%]  text-gray-600 md:text-md text-sm">
-            <p className="mr-4">{userData[0].params.user_data.country}</p>
+            <p className="mr-4">{userData[0]?.params?.user_data?.country}</p>
             <ul className="list-disc pl-5">
               <li>Platform joined on {date}</li>
             </ul>
@@ -455,11 +455,11 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                       <div className="flex flex-wrap flex-row justify-between items-center w-full">
                         <div className="flex flex-row items-center w-full md:w-[200px] lg:w-[250px]">
                           <h1 className="text-2xl md:text-3xl font-bold bg-black text-transparent bg-clip-text truncate">
-                            {userData[0].params.project_name}
+                            {userData[0]?.params?.project_name}
                           </h1>
                         </div>
                         <div className="justify-end flex flex-col">
-                          <p>{userData[0].params.preferred_icp_hub[0]}</p>
+                          <p>{userData[0]?.params?.preferred_icp_hub?.[0]}</p>
                           <p>{date}</p>
                         </div>
                       </div>
@@ -467,18 +467,18 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                       <div className="border border-gray-400 w-full"></div>
                       <div className="flex flex-row justify-between mt-2">
                         <p className="font-bold">
-                          {userData[0].params.user_data.full_name}
+                          {userData[0]?.params?.user_data?.full_name}
                         </p>
                         <div className="flex flex-row space-x-1">
                           <a
-                            href={userData[0].params.project_linkedin[0]}
+                            href={userData[0]?.params?.project_linkedin?.[0]}
                             target="_blank"
                             rel="noopener noreferrer"
                           >
                             {linkedInSvgBig}
                           </a>
                           <a
-                            href={userData[0].params.project_twitter[0]}
+                            href={userData[0]?.params?.project_twitter?.[0]}
                             target="_blank"
                             rel="noopener noreferrer"
                           >
@@ -486,22 +486,22 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                           </a>
                         </div>
                       </div>
-                      <p>{userData[0].params.user_data.email}</p>
+                      <p>{userData[0]?.params?.user_data?.email}</p>
                       <div className="border border-gray-400 w-full"></div>
                       <div className="flex flex-row justify-between mt-2">
                         <p className="">
-                          {userData[0].params.user_data.country}
+                          {userData[0]?.params?.user_data?.country}
                         </p>
                         <div className="flex flex-row space-x-1">
                           <a
-                            href={userData[0].params.github_link[0]}
+                            href={userData[0]?.params?.github_link?.[0]}
                             target="_blank"
                             rel="noopener noreferrer"
                           >
                             {githubSvgBig}
                           </a>
                           <a
-                            href={userData[0].params.project_discord[0]}
+                            href={userData[0]?.params?.project_discord?.[0]}
                             target="_blank"
                             rel="noopener noreferrer"
                           >
@@ -606,7 +606,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                   About Project
                 </h1>
                 <p className="text-gray-600 text-lg mb-10">
-                  {userData[0].params.project_description[0]}
+                  {userData[0]?.params?.project_description?.[0]}
                 </p>
 
                 <div className="flex md:flex-row flex-col justify-between md:items-center items-start w-full">
@@ -616,10 +616,10 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                     </h2>
                     <div className="flex flex-grow items-center truncate">
                       <p className="text-gray-600 text-sm md:text-md truncate px-4">
-                        {userData[0].params.dapp_link[0]}
+                        {userData[0]?.params?.dapp_link?.[0]}
                       </p>
                       <a
-                        href={userData[0].params.dapp_link[0]}
+                        href={userData[0]?.params?.dapp_link?.[0]}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="pl-2"
@@ -635,10 +635,10 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                     </h2>
                     <div className="flex flex-grow items-center truncate  z-10">
                       <p className="text-gray-600 text-sm md:text-md truncate">
-                        {userData[0].params.project_website[0]}
+                        {userData[0]?.params?.project_website?.[0]}
                       </p>
                       <a
-                        href={userData[0].params.project_website[0]}
+                        href={userData[0]?.params?.project_website?.[0]}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="shrink-0 pl-2"
@@ -656,10 +656,10 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                     </h2>
                     <div className="flex flex-grow items-center truncate">
                       <p className="text-gray-600 text-sm md:text-md truncate px-4">
-                        {userData[0].params.project_elevator_pitch[0]}
+                        {userData[0]?.params?.project_elevator_pitch?.[0]}
                       </p>
                       <a
-                        href={userData[0].params.project_elevator_pitch[0]}
+                        href={userData[0]?.params?.project_elevator_pitch?.[0]}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="pl-2"
@@ -675,10 +675,10 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                     </h2>
                     <div className="flex flex-grow items-center truncate  z-10">
                       <p className="text-gray-600 text-sm md:text-md truncate">
-                        {userData[0].params.long_term_goals[0]}
+                        {userData[0]?.params?.long_term_goals?.[0]}
                       </p>
                       <a
-                        href={userData[0].params.long_term_goals[0]}
+                        href={userData[0]?.params?.long_term_goals?.[0]}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="shrink-0 pl-2"
@@ -696,10 +696,10 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                     </h2>
                     <div className="flex flex-grow items-center truncate">
                       <p className="text-gray-600 text-sm md:text-md truncate px-4">
-                        {userData[0].params.promotional_video[0]}
+                        {userData[0]?.params?.promotional_video?.[0]}
                       </p>
                       <a
-                        href={userData[0].params.promotional_video[0]}
+                        href={userData[0]?.params?.promotional_video?.[0]}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="pl-2"
@@ -715,10 +715,10 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                     </h2>
                     <div className="flex flex-grow items-center truncate  z-10">
                       <p className="text-gray-600 text-sm md:text-md truncate">
-                        {userData[0].params.token_economics[0]}
+                        {userData[0]?.params?.token_economics?.[0]}
                       </p>
                       <a
-                        href={userData[0].params.token_economics[0]}
+                        href={userData[0]?.params?.token_economics?.[0]}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="shrink-0 pl-2"
@@ -729,14 +729,14 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                   </div>
                 </div>
 
-                {userData[0].params.private_docs[0].length > 0 && (
+                {userData[0]?.params?.private_docs?.[0] && userData[0]?.params?.private_docs?.[0].length > 0 && (
                   <div className="bg-white shadow-md shadow-gray-400 pb-6 pt-4 rounded-lg w-full mt-4">
                     <div className="px-6 py-4">
                       <h2 className="text-xl font-bold text-gray-800 mb-4">
                         Private Documents
                       </h2>
                       <div className="space-y-4">
-                        {userData[0].params.private_docs[0].map(
+                        {userData[0]?.params?.private_docs?.[0].map(
                           (doc, index) => (
                             <div
                               key={index}
@@ -769,39 +769,41 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                   </div>
                 )}
 
-                {userData[0].params.public_docs[0].length > 0 && (
+                {userData[0]?.params?.public_docs?.[0] && userData[0]?.params?.public_docs?.[0].length > 0 && (
                   <div className="bg-white shadow-md shadow-gray-400 pb-6 pt-4 rounded-lg w-full mt-4">
                     <div className="px-6 py-4">
                       <h2 className="text-xl font-bold text-gray-800 mb-4">
                         Public Documents
                       </h2>
                       <div className="space-y-4">
-                        {userData[0].params.public_docs[0].map((doc, index) => (
-                          <div
-                            key={index}
-                            className="bg-gray-100 rounded p-3 hover:bg-gray-200 transition duration-150 ease-in-out"
-                          >
-                            <a
-                              href={doc.link}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-gray-800 font-medium hover:underline"
+                        {userData[0]?.params?.public_docs?.[0].map(
+                          (doc, index) => (
+                            <div
+                              key={index}
+                              className="bg-gray-100 rounded p-3 hover:bg-gray-200 transition duration-150 ease-in-out"
                             >
-                              {doc.title}
-                            </a>
-                            <p className="text-gray-600 text-sm mt-2 break-words">
-                              URL:{" "}
                               <a
                                 href={doc.link}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-blue-500 hover:underline"
+                                className="text-gray-800 font-medium hover:underline"
                               >
-                                {doc.link}
+                                {doc.title}
                               </a>
-                            </p>
-                          </div>
-                        ))}
+                              <p className="text-gray-600 text-sm mt-2 break-words">
+                                URL:{" "}
+                                <a
+                                  href={doc.link}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-blue-500 hover:underline"
+                                >
+                                  {doc.link}
+                                </a>
+                              </p>
+                            </div>
+                          )
+                        )}
                       </div>
                     </div>
                   </div>
@@ -813,9 +815,9 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                       Country of Registration :
                     </h1>
                     <p className="text-lg font-bold text-gray-800 pl-6">
-                      {userData[0].params.country_of_registration[0] ? (
+                      {userData[0]?.params?.country_of_registration?.[0] ? (
                         <span>
-                          {userData[0].params.country_of_registration[0]}
+                          {userData[0]?.params?.country_of_registration?.[0]}
                         </span>
                       ) : (
                         <span className="flex items-center">
@@ -832,11 +834,11 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                     </h1>
                     <p className="text-lg font-bold text-gray-800 pl-6">
                       {" "}
-                      {userData[0].params.is_your_project_registered[0] ? (
+                      {userData[0]?.params?.is_your_project_registered?.[0] ? (
                         "Yes"
                       ) : "No" ? (
                         <span>
-                          {userData[0].params.is_your_project_registered[0]
+                          {userData[0]?.params?.is_your_project_registered?.[0]
                             ? "Yes"
                             : "No"}
                         </span>
@@ -857,11 +859,11 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                     </h1>
                     <p className="text-lg font-bold text-gray-800 pl-6">
                       {" "}
-                      {userData[0].params.upload_private_documents[0] ? (
+                      {userData[0]?.params?.upload_private_documents?.[0] ? (
                         "Yes"
                       ) : "No" ? (
                         <span>
-                          {userData[0].params.upload_private_documents[0]
+                          {userData[0]?.params?.upload_private_documents?.[0]
                             ? "Yes"
                             : "No"}
                         </span>
@@ -879,8 +881,8 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                       Support Multichain :
                     </h1>
                     <p className="text-lg font-bold text-gray-800 pl-6">
-                      {userData[0].params.supports_multichain[0] ? (
-                        <span>{userData[0].params.supports_multichain[0]}</span>
+                      {userData[0]?.params?.supports_multichain?.[0] ? (
+                        <span>{userData[0]?.params?.supports_multichain?.[0]}</span>
                       ) : (
                         <span className="flex items-center">
                           {noDataPresentSvg}
@@ -898,11 +900,11 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                     </h1>
                     <p className="text-lg font-bold text-gray-800 pl-6">
                       {" "}
-                      {userData[0].params.money_raised_till_now[0] ? (
+                      {userData[0]?.params?.money_raised_till_now?.[0] ? (
                         "Yes"
                       ) : "No" ? (
                         <span>
-                          {userData[0].params.money_raised_till_now[0]
+                          {userData[0]?.params?.money_raised_till_now?.[0]
                             ? "Yes"
                             : "No"}
                         </span>
