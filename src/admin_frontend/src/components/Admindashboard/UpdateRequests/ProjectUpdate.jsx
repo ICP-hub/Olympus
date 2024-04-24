@@ -1,43 +1,27 @@
 import React, { useState, useRef, useEffect } from "react";
-import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
-import { library, ColorStar, Profile } from "../Utils/AdminData/SvgData";
-import ReactSlider from "react-slider";
 import { useNavigate, useLocation } from "react-router-dom";
-import {
-  numberToDate,
-  uint8ArrayToBase64,
-} from "../Utils/AdminData/saga_function/blobImageToUrl";
-import { projectApprovedRequest } from "../AdminStateManagement/Redux/Reducers/projectApproved";
-import { projectDeclinedRequest } from "../AdminStateManagement/Redux/Reducers/projectDeclined";
+import { numberToDate, uint8ArrayToBase64 } from "../../Utils/AdminData/saga_function/blobImageToUrl";
+import { projectApprovedRequest } from "../../AdminStateManagement/Redux/Reducers/projectApproved";
+import { projectDeclinedRequest } from "../../AdminStateManagement/Redux/Reducers/projectDeclined";
 import { Principal } from "@dfinity/principal";
 import { ThreeDots } from "react-loader-spinner";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { discordSvg } from "../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
-import { githubSvgBig } from "../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
-import { discordSvgBig } from "../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
-import {
-  place,
-  tick,
-  star,
-  Profile2,
-  openWebsiteIcon,
-  telegramSVg,
-  noDataPresentSvg,
-} from "../Utils/AdminData/SvgData";
-import { linkedInSvgBig } from "../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
-import { twitterSvgBig } from "../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
-import { openchat_username } from "../Utils/AdminData/SvgData";
 
-const Projectdetails = ({ userData, Allrole, principal }) => {
+import { discordSvg , githubSvgBig, discordSvgBig, linkedInSvgBig, twitterSvgBig} from "../../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
+import { openWebsiteIcon, noDataPresentSvg, openchat_username } from "../../Utils/AdminData/SvgData";
+
+const ProjectUpdate = () => {
   const actor = useSelector((currState) => currState.actors.actor);
 
-  const [details, setDetails] = useState();
+  const [orignalData, setOrignalData] = useState(null);
+  const [updatedData, setUpdatedData] = useState(null);
   const [isHovered, setIsHovered] = useState(false);
   const [percent, setPercent] = useState(0);
   const [current, setCurrent] = useState("user");
   const [isAccepting, setIsAccepting] = useState(false);
   const [isDeclining, setIsDeclining] = useState(false);
+  const [userData,setUserData] = useState([])
 
   const tm = useRef(null);
   const percentage = 0;
@@ -48,9 +32,139 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
   const dispatch = useDispatch();
   // const projectData = location.state?.projectData;
 
-  console.log("userdata =>>>>>>> ", userData[0]);
+  // console.log("userdata =>>>>>>> ", orignalData);
   // console.log("Allrole =>>>>>>> ", Allrole);
   // console.log("principal =>>>>>>> ", principal);
+
+
+  useEffect(() => {
+    const fetchProjectData = async () => {
+      try {
+        const data = await actor.project_update_awaiting_approval();
+        console.log("Received data from actor:", data);
+        if (data && data.length > 0 && data[0].length > 1 && data[0][1].original_info) {
+          const originalInfo = data[0][1].original_info;
+          const updatedInfo = data[0][1].updated_info;
+
+          console.log("Original Info:", originalInfo);
+          console.log("updated Info:", updatedInfo);
+
+          setOrignalData({
+            projectName: originalInfo?.project_name || "No Name",
+            projectLogo: originalInfo?.project_logo.length > 0 ? uint8ArrayToBase64(originalInfo.project_logo) : null,
+            projectCover: originalInfo?.project_cover.length > 0  ? uint8ArrayToBase64(originalInfo.project_cover) : null,
+            projectDescription: originalInfo?.project_description?.[0] || "No Description",
+            projectWebsite: originalInfo?.project_website?.[0],
+            projectDiscord: originalInfo?.project_discord?.[0],
+            projectLinkedin: originalInfo?.project_linkedin?.[0],
+            projectTwitter: originalInfo?.project_twitter?.[0],
+            dappLink: originalInfo?.dapp_link?.[0],
+            privateDocs: originalInfo?.private_docs?.[0] || [],
+            publicDocs: originalInfo?.public_docs?.[0] || [],
+            countryOfRegistration: originalInfo?.country_of_registration?.[0],
+            promotionalVideo: originalInfo?.promotional_video?.[0],
+            tokenEconomics: originalInfo?.token_economics?.[0],
+            projectTeams: originalInfo?.project_team?.[0],
+            technicalDocs: originalInfo?.technical_docs?.[0] || [],
+            projectElevatorPitch: originalInfo?.project_elevator_pitch?.[0],
+            longTermGoals: originalInfo?.long_term_goals?.[0],
+            revenue: originalInfo?.revenue?.[0],
+            weeklyActiveUsers: originalInfo?.weekly_active_users?.[0],
+            icpGrants: originalInfo?.money_raised?.[0]?.icp_grants?.[0],
+            investors: originalInfo?.money_raised?.[0]?.investors?.[0],
+            raisedFromOtherEcosystem: originalInfo?.money_raised?.[0]?.raised_from_other_ecosystem?.[0],
+            snsGrants: originalInfo?.money_raised?.[0]?.sns?.[0],
+            targetAmount: originalInfo.money_raised?.[0]?.target_amount?.[0],
+            moneyRaisedTillNow: originalInfo?.money_raised_till_now?.[0],
+            preferredIcpHub: originalInfo?.preferred_icp_hub?.[0],
+            supportsMultichain: originalInfo?.supports_multichain?.[0],
+            typeOfRegistration: originalInfo?.type_of_registration?.[0],
+            uploadPrivateDocuments: originalInfo?.upload_private_documents?.[0],
+            projectAreaOfFocus: originalInfo?.project_area_of_focus,
+            mentorsAssigned: originalInfo?.mentors_assigned[0],
+            vcsAssigned: originalInfo?.vc_assigned[0],
+            targetMarket: originalInfo?.target_market[0],
+            reasonToJoinIncubator: originalInfo?.reason_to_join_incubator,
+            reasonToJoin: originalInfo?.user_data.reason_to_join,
+            liveOnIcpMainnet: originalInfo?.live_on_icp_mainnet?.[0],
+            areaOfInterest: originalInfo?.user_data?.area_of_interest,
+            userCountry: originalInfo?.user_data?.country,
+            userFullName: originalInfo?.user_data?.full_name,
+            userEmail: originalInfo?.user_data?.email,
+            userProfilePicture: originalInfo?.user_data.profile_picture[0].length > 0 ? uint8ArrayToBase64(originalInfo.user_data.profile_picture[0]) : null,
+            openchatUsername: originalInfo?.user_data.openchat_username?.[0],
+          });
+          
+          setUpdatedData({
+            projectName: updatedInfo?.project_name || "No Name",
+            projectLogo: updatedInfo?.project_logo.length > 0 ? uint8ArrayToBase64(updatedInfo.project_logo) : null,
+            projectCover: updatedInfo?.project_cover.length > 0  ? uint8ArrayToBase64(updatedInfo.project_cover) : null,
+            projectDescription: updatedInfo?.project_description?.[0] || "No Description",
+            projectWebsite: updatedInfo?.project_website?.[0],
+            projectDiscord: updatedInfo?.project_discord?.[0],
+            projectLinkedin: updatedInfo?.project_linkedin?.[0],
+            projectTwitter: updatedInfo?.project_twitter?.[0],
+            dappLink: updatedInfo?.dapp_link?.[0],
+            privateDocs: updatedInfo?.private_docs?.[0] || [],
+            publicDocs: updatedInfo?.public_docs?.[0] || [],
+            countryOfRegistration: updatedInfo?.country_of_registration?.[0],
+            promotionalVideo: updatedInfo?.promotional_video?.[0],
+            tokenEconomics: updatedInfo?.token_economics?.[0],
+            projectTeams: updatedInfo?.project_team?.[0],
+            technicalDocs: updatedInfo?.technical_docs?.[0] || [],
+            projectElevatorPitch: updatedInfo?.project_elevator_pitch?.[0],
+            longTermGoals: updatedInfo?.long_term_goals?.[0],
+            revenue: updatedInfo?.revenue?.[0],
+            weeklyActiveUsers: updatedInfo?.weekly_active_users?.[0],
+            icpGrants: updatedInfo?.money_raised?.[0]?.icp_grants?.[0],
+            investors: updatedInfo?.money_raised?.[0]?.investors?.[0],
+            raisedFromOtherEcosystem: updatedInfo?.money_raised?.[0]?.raised_from_other_ecosystem?.[0],
+            snsGrants: updatedInfo?.money_raised?.[0]?.sns?.[0],
+            targetAmount: updatedInfo.money_raised?.[0]?.target_amount?.[0],
+            moneyRaisedTillNow: updatedInfo?.money_raised_till_now?.[0],
+            preferredIcpHub: updatedInfo?.preferred_icp_hub?.[0],
+            supportsMultichain: updatedInfo?.supports_multichain?.[0],
+            typeOfRegistration: updatedInfo?.type_of_registration?.[0],
+            uploadPrivateDocuments: updatedInfo?.upload_private_documents?.[0],
+            projectAreaOfFocus: updatedInfo?.project_area_of_focus,
+            mentorsAssigned: updatedInfo?.mentors_assigned[0],
+            vcsAssigned: updatedInfo?.vc_assigned[0],
+            targetMarket: updatedInfo?.target_market[0],
+            reasonToJoinIncubator: updatedInfo?.reason_to_join_incubator,
+            reasonToJoin: updatedInfo?.user_data.reason_to_join,
+            liveOnIcpMainnet: updatedInfo?.live_on_icp_mainnet?.[0],
+            areaOfInterest: updatedInfo?.user_data?.area_of_interest,
+            userCountry: updatedInfo?.user_data?.country,
+            userFullName: updatedInfo?.user_data?.full_name,
+            userEmail: updatedInfo?.user_data?.email,
+            userProfilePicture: updatedInfo?.user_data.profile_picture[0].length > 0 ? uint8ArrayToBase64(updatedInfo.user_data.profile_picture[0]) : null,
+            openchatUsername: updatedInfo?.user_data.openchat_username?.[0],
+          });
+
+        } else {
+          console.error("Unexpected data structure:", data);
+          setOrignalData({});
+          setUpdatedData({})
+        }
+      } catch (error) {
+        console.error('Error fetching project data:', error);
+      }
+    };
+  
+    fetchProjectData();
+  }, [actor]);
+  
+  
+  function compareValues(key) {
+    if (JSON.stringify(orignalData[key]) === JSON.stringify(updatedData[key])) {
+      return "text-green-500";  // Data matches, use green
+    } else {
+      return "text-red-500";    // Data differs, use red
+    }
+  }
+  
+  
+
 
   const [sliderValuesProgress, setSliderValuesProgress] = useState({
     Team: 0,
@@ -73,42 +187,42 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
     Scale: 0,
     Exit: 0,
   });
-  const sliderKeys = [
-    "Team",
-    "ProblemAndVision",
-    "ValueProp",
-    "Product",
-    "Market",
-    "BusinessModel",
-    "Scale",
-    "Exit",
-  ];
-  const customStyles = `
-  .slider-mark::after {
-    content: attr(data-label);
-    position: absolute;
-    top: -2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
-    white-space: nowrap;
-    font-size: 0.75rem;
-    color: #fff;
-    padding: 0.2rem 0.4rem; 
-    border-radius: 0.25rem;
-  }
-`;
+  // const sliderKeys = [
+  //   "Team",
+  //   "ProblemAndVision",
+  //   "ValueProp",
+  //   "Product",
+  //   "Market",
+  //   "BusinessModel",
+  //   "Scale",
+  //   "Exit",
+  // ];
+//   const customStyles = `
+//   .slider-mark::after {
+//     content: attr(data-label);
+//     position: absolute;
+//     top: -2rem;
+//     left: 50%;
+//     transform: translateX(-50%);
+//     text-align: center;
+//     white-space: nowrap;
+//     font-size: 0.75rem;
+//     color: #fff;
+//     padding: 0.2rem 0.4rem; 
+//     border-radius: 0.25rem;
+//   }
+// `;
 
-  const handleSliderChange = (index, value) => {
-    const key = sliderKeys[index];
-    const newSliderValues = { ...sliderValues, [key]: value };
-    setSliderValues(newSliderValues);
-    const newSliderValuesProgress = {
-      ...sliderValuesProgress,
-      [key]: value === 9 ? 100 : Math.floor((value / 9) * 100),
-    };
-    setSliderValuesProgress(newSliderValuesProgress);
-  };
+  // const handleSliderChange = (index, value) => {
+  //   const key = sliderKeys[index];
+  //   const newSliderValues = { ...sliderValues, [key]: value };
+  //   setSliderValues(newSliderValues);
+  //   const newSliderValuesProgress = {
+  //     ...sliderValuesProgress,
+  //     [key]: value === 9 ? 100 : Math.floor((value / 9) * 100),
+  //   };
+  //   setSliderValuesProgress(newSliderValuesProgress);
+  // };
 
   const increase = () => {
     setPercent((prevPercent) => {
@@ -133,16 +247,16 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
     return () => clearTimeout(tm.current);
   }, [percent]);
 
-  useEffect(() => {
-    const requestedRole = Allrole?.role?.find(
-      (role) => role.status === "requested"
-    );
-    if (requestedRole) {
-      setCurrent(requestedRole.name.toLowerCase());
-    } else {
-      setCurrent("user");
-    }
-  }, [Allrole.role]);
+  // useEffect(() => {
+  //   const requestedRole = Allrole?.role?.find(
+  //     (role) => role.status === "requested"
+  //   );
+  //   if (requestedRole) {
+  //     setCurrent(requestedRole.name.toLowerCase());
+  //   } else {
+  //     setCurrent("user");
+  //   }
+  // }, [Allrole.role]);
 
   const declineUserRoleHandler = async (
     principal,
@@ -193,82 +307,90 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
     }
   };
 
-  const getButtonClass = (status) => {
-    switch (status) {
-      case "active":
-        return "bg-[#A7943A]";
-      case "requested":
-        return "bg-[#e55711]";
-      case "approved":
-        return "bg-[#0071FF]";
-      default:
-        return "bg-[#FF3A41]";
-    }
-  };
+  // const getButtonClass = (status) => {
+  //   switch (status) {
+  //     case "active":
+  //       return "bg-[#A7943A]";
+  //     case "requested":
+  //       return "bg-[#e55711]";
+  //     case "approved":
+  //       return "bg-[#0071FF]";
+  //     default:
+  //       return "bg-[#FF3A41]";
+  //   }
+  // };
 
-  function constructMessage(role) {
-    let baseMessage = `This User's ${
-      role.name.charAt(0).toUpperCase() + role.name.slice(1)
-    } Profile `;
+  // function constructMessage(role) {
+  //   let baseMessage = `This User's ${
+  //     role.name.charAt(0).toUpperCase() + role.name.slice(1)
+  //   } Profile `;
 
-    if (
-      role.status === "active" &&
-      role.approved_on &&
-      role.approved_on.length > 0
-    ) {
-      baseMessage += `was approved on ${numberToDate(role.approved_on[0])}`;
-    } else if (
-      role.status === "approved" &&
-      role.approved_on &&
-      role.approved_on.length > 0
-    ) {
-      baseMessage += `was approved on ${numberToDate(role.approved_on[0])}`;
-    } else if (
-      role.status === "requested" &&
-      role.requested_on &&
-      role.requested_on.length > 0
-    ) {
-      baseMessage += `request was made on ${numberToDate(
-        role.requested_on[0]
-      )}`;
-    } else if (
-      role.status === "rejected" &&
-      role.rejected_on &&
-      role.rejected_on.length > 0
-    ) {
-      baseMessage += `was rejected on ${numberToDate(role.rejected_on[0])}`;
-    } else {
-      baseMessage += `is currently in the '${role.status}' status without a specific date.`;
-    }
+  //   if (
+  //     role.status === "active" &&
+  //     role.approved_on &&
+  //     role.approved_on.length > 0
+  //   ) {
+  //     baseMessage += `was approved on ${numberToDate(role.approved_on[0])}`;
+  //   } else if (
+  //     role.status === "approved" &&
+  //     role.approved_on &&
+  //     role.approved_on.length > 0
+  //   ) {
+  //     baseMessage += `was approved on ${numberToDate(role.approved_on[0])}`;
+  //   } else if (
+  //     role.status === "requested" &&
+  //     role.requested_on &&
+  //     role.requested_on.length > 0
+  //   ) {
+  //     baseMessage += `request was made on ${numberToDate(
+  //       role.requested_on[0]
+  //     )}`;
+  //   } else if (
+  //     role.status === "rejected" &&
+  //     role.rejected_on &&
+  //     role.rejected_on.length > 0
+  //   ) {
+  //     baseMessage += `was rejected on ${numberToDate(role.rejected_on[0])}`;
+  //   } else {
+  //     baseMessage += `is currently in the '${role.status}' status without a specific date.`;
+  //   }
 
-    return baseMessage;
-  }
+  //   return baseMessage;
+  // }
 
-  const date = numberToDate(userData[0]?.creation_date);
+  const date = numberToDate(orignalData?.creation_date);
 
-  const weeklyUsers = Number(userData[0]?.params.weekly_active_users[0]);
-  const revenueNum = Number(userData[0]?.params.revenue[0]);
-  const icpGrants = Number(userData[0]?.params.money_raised[0]?.icp_grants[0]);
+  const weeklyUsers = Number(orignalData?.weeklyActiveUsers);
+  const revenueNum = Number(orignalData?.revenue);
+  const icpGrants = Number(orignalData?.icpGrants);
   const investorInvest = Number(
-    userData[0]?.params.money_raised[0]?.investors[0]
+    orignalData?.investors
   );
   const otherEcosystem = Number(
-    userData[0]?.params.money_raised[0]?.raised_from_other_ecosystem[0]
+    orignalData?.raisedFromOtherEcosystem
   );
-  const snsGrants = Number(userData[0]?.params.money_raised[0]?.sns[0]);
-  const targetAmount = userData[0]?.params.money_raised[0]?.target_amount[0]
-    ? Number(userData[0]?.params.money_raised[0]?.target_amount[0])
+  const snsGrants = Number(orignalData?.snsGrants);
+  const targetAmount = orignalData?.targetAmount
+    ? Number(orignalData?.targetAmount)
     : 0;
 
-  const profile = uint8ArrayToBase64(
-    userData[0]?.params?.user_data?.profile_picture[0]
-  );
-  const logo =
-    userData && userData[0]?.params?.project_logo.length > 0
-      ? uint8ArrayToBase64(userData[0]?.params?.project_logo)
-      : null;
+  // const profile = uint8ArrayToBase64(
+  //   orignalData?.userProfilePicture
+  // );
+  // const logo =
+  //   orignalData && orignalData?.projectLogo.length > 0
+  //     ? uint8ArrayToBase64(orignalData?.projectLogo)
+  //     : null;
 
-  const Project_cover = uint8ArrayToBase64(userData[0]?.params?.project_cover);
+  const Project_cover = uint8ArrayToBase64(orignalData?.projectCover);
+
+
+
+  if (!orignalData) {
+    return <div>Loading...</div>;
+  }
+
+
   return (
     <div>
       <div className="w-full">
@@ -278,14 +400,14 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
               <div className="relative">
                 <img
                   className="md:w-[6rem] object-fill md:h-[6rem] w-[4rem] h-[4rem]  justify-center aspect-square rounded-md"
-                  src={Project_cover}
+                  src={orignalData.projectCover}
                   alt="description"
                 />
               </div>
               <div className="flex flex-col pl-4  mt-2 w-auto justify-start md:mb-0 mb-6">
                 <div className="flex flex-row gap-4 items-center w-full md:w-[248px] lg:w-[500px]">
-                  <h1 className="text-xl md:text-3xl font-bold bg-black text-transparent bg-clip-text truncate">
-                    {userData[0]?.params?.project_name}
+                  <h1 className="text-xl  md:text-3xl font-bold bg-black text-transparent bg-clip-text truncate">
+                    {orignalData.userFullName}
                   </h1>
                 </div>
 
@@ -293,7 +415,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                   <div className="flex flex-row md:items-center mt-2">
                     <p className="pt-1">{openchat_username}</p>
                     <div className="flex flex-row flex-wrap items-center space-x-2 ml-3 space-y-1">
-                      {userData[0]?.params?.user_data?.reason_to_join?.[0].map(
+                      {orignalData?.reasonToJoin?.[0].map(
                         (reason, index) => (
                           <p
                             key={index}
@@ -310,7 +432,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
             </div>
           </div>
           <div className="w-full  flex flex-row items-start justify-start px-[4%]  text-gray-600 md:text-md text-sm">
-            <p className="mr-4">{userData[0]?.params?.user_data?.country}</p>
+            <p className="mr-4">{orignalData?.userCountry}</p>
             <ul className="list-disc pl-5">
               <li>Platform joined on {date}</li>
             </ul>
@@ -336,11 +458,11 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                       <div className="flex flex-wrap flex-row justify-between items-center w-full">
                         <div className="flex flex-row items-center w-full md:w-[200px] lg:w-[250px]">
                           <h1 className="text-2xl md:text-3xl font-bold bg-black text-transparent bg-clip-text truncate">
-                            {userData[0]?.params?.project_name}
+                            {orignalData?.projectName}
                           </h1>
                         </div>
                         <div className="justify-end flex flex-col">
-                          <p>{userData[0]?.params?.preferred_icp_hub?.[0]}</p>
+                          <p>{orignalData?.preferredIcpHub}</p>
                           <p>{date}</p>
                         </div>
                       </div>
@@ -348,18 +470,18 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                       <div className="border border-gray-400 w-full"></div>
                       <div className="flex flex-row justify-between mt-2">
                         <p className="font-bold">
-                          {userData[0]?.params?.user_data?.full_name}
+                          {orignalData?.params?.user_data?.full_name}
                         </p>
                         <div className="flex flex-row space-x-1">
                           <a
-                            href={userData[0]?.params?.project_linkedin?.[0]}
+                            href={orignalData?.projectLinkedin}
                             target="_blank"
                             rel="noopener noreferrer"
                           >
                             {linkedInSvgBig}
                           </a>
                           <a
-                            href={userData[0]?.params?.project_twitter?.[0]}
+                            href={orignalData?.projectTwitter}
                             target="_blank"
                             rel="noopener noreferrer"
                           >
@@ -367,22 +489,22 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                           </a>
                         </div>
                       </div>
-                      <p>{userData[0]?.params?.user_data?.email}</p>
+                      <p>{orignalData?.userEmail}</p>
                       <div className="border border-gray-400 w-full"></div>
                       <div className="flex flex-row justify-between mt-2">
                         <p className="">
-                          {userData[0]?.params?.user_data?.country}
+                          {orignalData?.userCountry}
                         </p>
                         <div className="flex flex-row space-x-1">
                           <a
-                            href={userData[0]?.params?.github_link?.[0]}
+                            href={orignalData?.params?.github_link?.[0]}
                             target="_blank"
                             rel="noopener noreferrer"
                           >
                             {githubSvgBig}
                           </a>
                           <a
-                            href={userData[0]?.params?.project_discord?.[0]}
+                            href={orignalData?.projectDiscord}
                             target="_blank"
                             rel="noopener noreferrer"
                           >
@@ -443,13 +565,13 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
 
                 <div className="absolute xl:lg:top-[500px] md:top-[700px] top-[700px] right-[-95px] flex  bg-blue-100 w-[190.63px] h-[190px]  border rounded-full  "></div>
 
-                {logo && (
+                {orignalData.projectLogo && (
                   <div className="flex flex-col md:flex-row items-center justify-around w-full mt-4">
                     <div className="md:w-1/2 w-full md:flex md:items-center">
                       <div className="flex flex-col items-start md:flex-row md:items-center w-full p-4">
                         <img
                           className="w-28 h-28 md:w-36 md:h-36 lg:w-44 lg:h-44 xl:w-48 xl:h-48 md:mx-0 rounded-full"
-                          src={profile}
+                          src={orignalData.userProfilePicture}
                           alt="profile picture"
                         />
                         <div className="mt-4 md:mt-0 md:ml-4 text-start md:text-left">
@@ -467,12 +589,12 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                       <div className="flex flex-col items-start md:flex-row md:items-center w-full p-4">
                         <img
                           className="w-28 h-28 md:w-36 md:h-36 lg:w-44 lg:h-44 xl:w-48 xl:h-48 md:mx-0 rounded-full"
-                          src={logo}
-                          alt="company logo"
+                          src={orignalData.projectLogo}
+                          alt="project-logo"
                         />
                         <div className="mt-4 md:mt-0 md:ml-4 text-start md:text-left">
                           <h2 className="text-lg md:text-xl lg:text-2xl font-semibold text-gray-800">
-                            Company Logo
+                            Project Logo
                           </h2>
                           <p className="text-sm md:text-base text-gray-600">
                             Representative logo of the organization.
@@ -484,10 +606,10 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                 )}
 
                 <h1 className="text-3xl font-bold text-gray-800 mb-2 mt-6">
-                  About Project
+                  Update Project
                 </h1>
                 <p className="text-gray-600 text-lg mb-10 break-all">
-                  {userData[0]?.params?.project_description?.[0]}
+                  {orignalData?.projectDescription}
                 </p>
 
                 <div className="flex md:flex-row flex-col justify-between md:items-center items-start w-full">
@@ -497,10 +619,10 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                     </h2>
                     <div className="flex flex-grow items-center truncate">
                       <p className="text-gray-600 text-sm md:text-md truncate px-4">
-                        {userData[0]?.params?.dapp_link?.[0]}
+                        {orignalData?.dappLink}
                       </p>
                       <a
-                        href={userData[0]?.params?.dapp_link?.[0]}
+                        href={orignalData?.dappLink}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="pl-2"
@@ -516,10 +638,10 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                     </h2>
                     <div className="flex flex-grow items-center truncate  z-10">
                       <p className="text-gray-600 text-sm md:text-md truncate">
-                        {userData[0]?.params?.project_website?.[0]}
+                        {orignalData?.projectWebsite}
                       </p>
                       <a
-                        href={userData[0]?.params?.project_website?.[0]}
+                        href={orignalData?.projectWebsite}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="shrink-0 pl-2"
@@ -537,10 +659,10 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                     </h2>
                     <div className="flex flex-grow items-center truncate">
                       <p className="text-gray-600 text-sm md:text-md truncate px-4">
-                        {userData[0]?.params?.project_elevator_pitch?.[0]}
+                        {orignalData?.projectElevatorPitch}
                       </p>
                       <a
-                        href={userData[0]?.params?.project_elevator_pitch?.[0]}
+                        href={orignalData?.projectElevatorPitch}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="pl-2"
@@ -556,10 +678,10 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                     </h2>
                     <div className="flex flex-grow items-center truncate  z-10">
                       <p className="text-gray-600 text-sm md:text-md truncate">
-                        {userData[0]?.params?.long_term_goals?.[0]}
+                        {orignalData?.longTermGoals}
                       </p>
                       <a
-                        href={userData[0]?.params?.long_term_goals?.[0]}
+                        href={orignalData?.longTermGoals}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="shrink-0 pl-2"
@@ -577,10 +699,10 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                     </h2>
                     <div className="flex flex-grow items-center truncate">
                       <p className="text-gray-600 text-sm md:text-md truncate px-4">
-                        {userData[0]?.params?.promotional_video?.[0]}
+                        {orignalData?.promotionalVideo}
                       </p>
                       <a
-                        href={userData[0]?.params?.promotional_video?.[0]}
+                        href={orignalData?.promotionalVideo}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="pl-2"
@@ -596,10 +718,10 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                     </h2>
                     <div className="flex flex-grow items-center truncate  z-10">
                       <p className="text-gray-600 text-sm md:text-md truncate">
-                        {userData[0]?.params?.token_economics?.[0]}
+                        {orignalData?.tokenEconomics}
                       </p>
                       <a
-                        href={userData[0]?.params?.token_economics?.[0]}
+                        href={orignalData?.tokenEconomics}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="shrink-0 pl-2"
@@ -610,15 +732,15 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                   </div>
                 </div>
 
-                {userData[0]?.params?.private_docs?.[0] &&
-                  userData[0]?.params?.private_docs?.[0].length > 0 && (
+                {orignalData?.privateDocs &&
+                  orignalData?.privateDocs.length > 0 && (
                     <div className="bg-white shadow-md shadow-gray-400 pb-6 pt-4 rounded-lg w-full mt-4">
                       <div className="px-6 py-4">
                         <h2 className="text-xl font-bold text-gray-800 mb-4">
                           Private Documents
                         </h2>
                         <div className="space-y-4">
-                          {userData[0]?.params?.private_docs?.[0].map(
+                          {orignalData?.privateDocs.map(
                             (doc, index) => (
                               <div
                                 key={index}
@@ -651,15 +773,15 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                     </div>
                   )}
 
-                {userData[0]?.params?.public_docs?.[0] &&
-                  userData[0]?.params?.public_docs?.[0].length > 0 && (
+                {orignalData?.publicDocs &&
+                  orignalData?.publicDocs.length > 0 && (
                     <div className="bg-white shadow-md shadow-gray-400 pb-6 pt-4 rounded-lg w-full mt-4">
                       <div className="px-6 py-4">
                         <h2 className="text-xl font-bold text-gray-800 mb-4">
                           Public Documents
                         </h2>
                         <div className="space-y-4">
-                          {userData[0]?.params?.public_docs?.[0].map(
+                          {orignalData?.publicDocs.map(
                             (doc, index) => (
                               <div
                                 key={index}
@@ -698,9 +820,9 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                       Country of Registration :
                     </h1>
                     <p className="text-lg font-bold text-gray-800 pl-6">
-                      {userData[0]?.params?.country_of_registration?.[0] ? (
+                      {orignalData?.countryOfRegistration ? (
                         <span>
-                          {userData[0]?.params?.country_of_registration?.[0]}
+                          {orignalData?.countryOfRegistration}
                         </span>
                       ) : (
                         <span className="flex items-center">
@@ -717,11 +839,11 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                     </h1>
                     <p className="text-lg font-bold text-gray-800 pl-6">
                       {" "}
-                      {userData[0]?.params?.is_your_project_registered?.[0] ? (
+                      {orignalData?.params?.is_your_project_registered?.[0] ? (
                         "Yes"
                       ) : "No" ? (
                         <span>
-                          {userData[0]?.params?.is_your_project_registered?.[0]
+                          {orignalData?.params?.is_your_project_registered?.[0]
                             ? "Yes"
                             : "No"}
                         </span>
@@ -742,11 +864,11 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                     </h1>
                     <p className="text-lg font-bold text-gray-800 pl-6">
                       {" "}
-                      {userData[0]?.params?.upload_private_documents?.[0] ? (
+                      {orignalData?.uploadPrivateDocuments ? (
                         "Yes"
                       ) : "No" ? (
                         <span>
-                          {userData[0]?.params?.upload_private_documents?.[0]
+                          {orignalData?.uploadPrivateDocuments
                             ? "Yes"
                             : "No"}
                         </span>
@@ -764,9 +886,9 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                       Support Multichain :
                     </h1>
                     <p className="text-lg font-bold text-gray-800 pl-6">
-                      {userData[0]?.params?.supports_multichain?.[0] ? (
+                      {orignalData?.supportsMultichain ? (
                         <span>
-                          {userData[0]?.params?.supports_multichain?.[0]}
+                          {orignalData?.supportsMultichain}
                         </span>
                       ) : (
                         <span className="flex items-center">
@@ -785,11 +907,11 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                     </h1>
                     <p className="text-lg font-bold text-gray-800 pl-6">
                       {" "}
-                      {userData[0]?.params?.money_raised_till_now?.[0] ? (
+                      {orignalData?.moneyRaisedTillNow ? (
                         "Yes"
                       ) : "No" ? (
                         <span>
-                          {userData[0]?.params?.money_raised_till_now?.[0]
+                          {orignalData?.moneyRaisedTillNow
                             ? "Yes"
                             : "No"}
                         </span>
@@ -807,8 +929,8 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                       Preferred ICP Hub :
                     </h1>
                     <p className="text-lg font-bold text-gray-800 pl-6">
-                      {userData[0].params.preferred_icp_hub[0] ? (
-                        <span>{userData[0].params.preferred_icp_hub[0]}</span>
+                      {orignalData.preferredIcpHub ? (
+                        <span>{orignalData.preferredIcpHub}</span>
                       ) : (
                         <span className="flex items-center">
                           {noDataPresentSvg}
@@ -825,8 +947,8 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                       Project Area Of Focus :
                     </h1>
                     <p className="text-lg font-bold text-gray-800 pl-6">
-                      {userData[0].params.project_area_of_focus ? (
-                        <span>{userData[0].params.project_area_of_focus}</span>
+                      {orignalData.projectAreaOfFocus ? (
+                        <span>{orignalData.projectAreaOfFocus}</span>
                       ) : (
                         <span className="flex items-center">
                           {noDataPresentSvg}
@@ -841,8 +963,8 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                       Mentor Assigned :
                     </h1>
                     <p className="text-lg font-bold text-gray-800 pl-6">
-                      {userData[0].params.mentors_assigned[0] ? (
-                        <span>{userData[0].params.mentors_assigned[0]}</span>
+                      {orignalData?.mentorsAssigned ? (
+                        <span>{orignalData?.mentorsAssigned}</span>
                       ) : (
                         <span className="flex items-center">
                           {noDataPresentSvg}
@@ -859,9 +981,9 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                       Area Of Interest :
                     </h1>
                     <p className="text-lg font-bold text-gray-800 pl-6 overflow-x-auto">
-                      {userData[0].params.user_data.area_of_interest ? (
+                      {orignalData.areaOfInterest ? (
                         <span>
-                          {userData[0].params.user_data.area_of_interest}
+                          {orignalData.areaOfInterest}
                         </span>
                       ) : (
                         <span className="flex items-center">
@@ -878,11 +1000,11 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                     </h1>
                     <p className="text-lg font-bold text-gray-800 pl-6">
                       {" "}
-                      {userData[0].params.project_team[0] ? (
+                      {orignalData.projectTeams ? (
                         "Yes"
                       ) : "No" ? (
                         <span>
-                          {userData[0].params.project_team[0] ? "Yes" : "No"}
+                          {orignalData.projectTeams ? "Yes" : "No"}
                         </span>
                       ) : (
                         <span className="flex items-center">
@@ -901,11 +1023,11 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                     </h1>
                     <p className="text-lg font-bold text-gray-800 pl-6">
                       {" "}
-                      {userData[0].params.live_on_icp_mainnet[0] ? (
+                      {orignalData.liveOnIcpMainnet ? (
                         "Yes"
                       ) : "No" ? (
                         <span>
-                          {userData[0].params.live_on_icp_mainnet[0]
+                          {orignalData.liveOnIcpMainnet
                             ? "Yes"
                             : "No"}
                         </span>
@@ -922,8 +1044,8 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                       Target Market :
                     </h1>
                     <p className="text-lg font-bold text-gray-800 pl-6">
-                      {userData[0].params.target_market[0] ? (
-                        <span>{userData[0].params.target_market[0]}</span>
+                      {orignalData?.targetMarket ? (
+                        <span>{orignalData?.targetMarket}</span>
                       ) : (
                         <span className="flex items-center">
                           {noDataPresentSvg}
@@ -940,9 +1062,9 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                       Type of Registration :
                     </h1>
                     <p className="text-lg font-bold text-gray-800 pl-6">
-                      {userData[0].params.type_of_registration[0] ? (
+                      {orignalData.typeOfRegistration ? (
                         <span>
-                          {userData[0].params.type_of_registration[0]}
+                          {orignalData.typeOfRegistration}
                         </span>
                       ) : (
                         <span className="flex items-center">
@@ -957,8 +1079,8 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                       VC's assigned :
                     </h1>
                     <p className="text-lg font-bold text-gray-800 pl-6">
-                      {userData[0].params.vc_assigned[0] ? (
-                        <span>{userData[0].params.vc_assigned[0]}</span>
+                      {orignalData?.vcsAssigned ? (
+                        <span>{orignalData?.vcsAssigned}</span>
                       ) : (
                         <span className="flex items-center">
                           {noDataPresentSvg}
@@ -975,9 +1097,9 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                       Reason to join Incubator :
                     </h1>
                     <p className="text-lg font-bold text-gray-800 pl-6 overflow-x-auto">
-                      {userData[0].params.reason_to_join_incubator ? (
+                      {orignalData?.reasonToJoinIncubator ? (
                         <span>
-                          {userData[0].params.reason_to_join_incubator}
+                          {orignalData?.reasonToJoinIncubator}
                         </span>
                       ) : (
                         <span className="flex items-center">
@@ -994,7 +1116,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
         </div>
       </div>
 
-      <div className="mb-6">
+      {/* <div className="mb-6">
         {Allrole?.map((role, index) => {
           const roleName = role.name === "vc" ? "investor" : role.name;
           if (role.status === "requested" && roleName === "project") {
@@ -1036,9 +1158,9 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
           }
           return null;
         })}
-      </div>
+      </div> */}
     </div>
   );
 };
 
-export default Projectdetails;
+export default ProjectUpdate;

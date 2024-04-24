@@ -2,9 +2,7 @@ import React, { lazy, Suspense, useEffect } from "react";
 // import { useSelector, useDispatch } from "react-redux";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Loader from "./components/Loader/Loader";
-const Projectprofile = lazy(() =>
-  import("./components/Admindashboard/Profile/Projectprofile")
-);
+
 const Adminalluser = lazy(() =>
   import("./components/Admindashboard/Adminalluser")
 );
@@ -29,6 +27,18 @@ const UserAllProfile = lazy(() =>
 const LiveIncubated = lazy(() =>
   import("./components/Admindashboard/LiveIncubated")
 );
+const UpdateAllRequest = lazy(() =>
+  import("./components/Admindashboard/UpdateRequests/UpdateAllRequest")
+);
+const MentorUpdate = lazy(() =>
+  import("./components/Admindashboard/UpdateRequests/MentorUpdate")
+);
+const ProjectUpdate = lazy(() =>
+  import("./components/Admindashboard/UpdateRequests/ProjectUpdate")
+);
+const InvestorUpdate = lazy(() =>
+  import("./components/Admindashboard/UpdateRequests/InvestorUpdate")
+);
 
 const AdminRoute = ({ setModalOpen }) => {
   // const actor = useSelector((currState) => currState.actors.actor);
@@ -44,11 +54,13 @@ const AdminRoute = ({ setModalOpen }) => {
     { path: "/modal", element: <ConfirmationModal /> },
     { path: "/reject", element: <RejectModal /> },
     { path: "/accept", element: <AcceptModal /> },
-    { path: "/profile", element: <Projectprofile /> },
-    // { path: "/allProject", element: <AllProject /> },
     { path: "/project_details", element: <Projectdetails /> },
     { path: "/all", element: <UserAllProfile /> },
     { path: "/live", element: <LiveIncubated /> },
+    { path: "/allUpdateRequest", element: <UpdateAllRequest /> },
+    { path: "/projectupdate", element: <ProjectUpdate /> },
+    { path: "/mentorupdate", element: <MentorUpdate /> },
+    { path: "/investorupdate", element: <InvestorUpdate /> },
   ];
 
   // const dispatch = useDispatch();

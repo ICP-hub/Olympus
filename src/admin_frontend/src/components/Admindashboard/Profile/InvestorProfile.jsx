@@ -276,7 +276,7 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
         <h1 className="text-3xl font-bold text-gray-800 mb-4">
           About Investor
         </h1>
-        <p className="text-gray-600 text-lg mb-10">
+        <p className="text-gray-600 text-lg mb-10 break-all">
           {userData[0].params.user_data.bio}
         </p>
       </div>

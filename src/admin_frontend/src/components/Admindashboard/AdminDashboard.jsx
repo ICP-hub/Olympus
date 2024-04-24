@@ -85,7 +85,7 @@ const AdminDashboard = () => {
 
         <div className="flex md:flex-row flex-col  w-full md:mt-6  mt-2 justify-between gap-2 md:gap-0 md:space-x-4">
           <div
-            className="rounded-[1rem] space-x-2 flex px-4   justify-center  flex-col  w-full  bg-white  drop-shadow-xl border-2 "
+            className="rounded-[1rem] space-x-2 cursor-pointer flex px-4   justify-center  flex-col  w-full  bg-white  drop-shadow-xl border-2 "
             onClick={() => navigate("/request")}
           >
             <div className="flex  flex-row  flex-wrap justify-around font-bold text-lg text-black items-center ">
@@ -102,8 +102,8 @@ const AdminDashboard = () => {
           </div>
 
           <div
-            className="rounded-[1rem] space-x-2 flex px-4   justify-center  flex-col  w-full  bg-white  drop-shadow-xl border-2 "
-            // onClick={() => navigate("/notification")}
+            className="rounded-[1rem] space-x-2 flex px-4   justify-center cursor-pointer  flex-col  w-full  bg-white  drop-shadow-xl border-2 "
+            onClick={() => navigate("/allUpdateRequest")}
           >
             <div className="flex  flex-row  flex-wrap justify-around font-bold text-lg text-black items-center ">
               <div className="gap-2 flex-row flex items-center w-2/3">

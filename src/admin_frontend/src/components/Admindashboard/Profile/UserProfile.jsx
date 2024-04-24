@@ -91,17 +91,23 @@ const UserProfile = ({ userData, Allrole }) => {
   // console.log(profile);
   return (
     <div className="w-full">
-      <div className=" bg-white  shadow-md shadow-gray-400 pb-6 pt-4 rounded-lg w-full">
+  
+  
+  
+  
+  
+  
+  
+  
+      {/* <div className=" bg-white  shadow-md shadow-gray-400 pb-6 pt-4 rounded-lg w-full">
         <div className="w-full flex  md:flex-row flex-col md:items-start items-center justify-around px-[4%] py-4">
           <div className="flex md:flex-row flex-col w-full ">
             <div className="relative">
-              {/* <div className=""> */}
               <img
                 className="md:w-36 object-fill md:h-36 w-28 h-28 mx-4 justify-center rounded-full"
                 src={profile}
                 alt="description"
               />
-              {/* </div> */}
 
               <div className=" top-0 left-0 w-full h-full flex justify-center items-center">
                 <svg className="absolute invisible">
@@ -190,13 +196,37 @@ const UserProfile = ({ userData, Allrole }) => {
               ))}
           </div>
         </div>
-      </div>
+      </div> */}
+
+ <div className=" w-full flex md:flex-row flex-col h-[400px]">
+   <div className="w-1/3 flex flex-col bg-gray-300" ></div>
+   <div className="w-2/3 bg-gray-300"></div>
+ </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
       <div className="mx-auto mt-12">
         <h1 className="text-3xl font-bold text-gray-800 mb-4">
           About {current.charAt(0).toUpperCase() + current.slice(1)}
         </h1>
-        <p className="text-gray-600 text-lg mb-10">{userData[0].params.bio}</p>
+        <p className="text-gray-600 text-lg mb-10 break-all">{userData[0].params.bio}</p>
 
         <p className="w-full mb-4 border border-[#DCDCDC]"></p>
 
@@ -206,7 +236,7 @@ const UserProfile = ({ userData, Allrole }) => {
               Telegram:
             </h2>
             <div className="flex flex-grow items-center truncate">
-              <p className="text-gray-600 text-sm md:text-md truncate px-4">
+              <p className="text-gray-600 text-sm md:text-md truncate px-4 min-w-[200px]">
                 {userData[0].params.telegram_id}
               </p>
               <a
@@ -221,11 +251,11 @@ const UserProfile = ({ userData, Allrole }) => {
           </div>
 
           <div className="flex md:w-1/2 w-3/4 items-center text-center sm:text-left md:pl-4">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2 mr-2">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2 mr-2 ">
               Twitter:
             </h2>
             <div className="flex flex-grow items-center truncate">
-              <p className="text-gray-600 text-sm md:text-md truncate">
+              <p className="text-gray-600 text-sm md:text-md truncate min-w-[200px]">
                 {userData[0].params.twitter_id}
               </p>
               <a
