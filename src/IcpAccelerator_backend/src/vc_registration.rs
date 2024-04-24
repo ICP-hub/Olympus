@@ -114,6 +114,8 @@ pub struct Announcements {
 pub struct UpdateInfoStruct{
     pub original_info: Option<VentureCapitalist>,
     pub updated_info: Option<VentureCapitalist>,
+    pub approved_at: u64,
+    pub rejected_at: u64,
 }
 
 pub type VcAnnouncements = HashMap<Principal, Vec<Announcements>>;
@@ -455,12 +457,31 @@ pub async fn update_venture_capitalist(params: VentureCapitalist) -> String {
             .map(|mentor_internal| mentor_internal.params.clone())
     });
 
+    let mut approved_timestamp = 0;
+    let mut rejected_timestamp = 0;
+    ROLE_STATUS_ARRAY.with(|role_status| {
+        let mut role_status_ref = role_status.borrow_mut();
+        if let Some(roles) = role_status_ref.get_mut(&caller) {
+            if let Some(role) = roles.iter_mut().find(|r| r.name == "mentor") {
+                if role.status == "approved" {
+                    approved_timestamp = time();
+                    role.approved_on = Some(approved_timestamp);
+                } else if role.status == "rejected" {
+                    rejected_timestamp = time();
+                    role.rejected_on = Some(rejected_timestamp);
+                }
+            }
+        }
+    });
+
     VC_PROFILE_EDIT_AWAITS.with(
         |awaiters| {
             let mut await_ers =awaiters.borrow_mut();
             let update_data_to_store = UpdateInfoStruct{
                 original_info: previous_profile,
                 updated_info: Some(params.clone()),
+                approved_at: approved_timestamp,
+                rejected_at: rejected_timestamp,
             };
             await_ers.insert(caller, update_data_to_store.clone());
         },
