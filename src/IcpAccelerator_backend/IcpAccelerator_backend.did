@@ -160,6 +160,8 @@ type MentorProfile = record {
   hub_owner : opt text;
 };
 type MentorUpdateRequest = record {
+  rejected_at : nat64;
+  approved_at : nat64;
   updated_info : opt MentorProfile;
   original_info : opt MentorProfile;
 };
@@ -440,7 +442,9 @@ type ProjectReview = record {
   profile_pic : vec nat8;
 };
 type ProjectUpdateRequest = record {
+  rejected_at : nat64;
   "principal" : principal;
+  accepted_at : nat64;
   updated_info : ProjectInfo;
   original_info : ProjectInfo;
   project_id : text;
@@ -601,6 +605,8 @@ type UpdateCounts = record {
   project_update : opt nat32;
 };
 type UpdateInfoStruct = record {
+  rejected_at : nat64;
+  approved_at : nat64;
   updated_info : opt VentureCapitalist;
   original_info : opt VentureCapitalist;
 };

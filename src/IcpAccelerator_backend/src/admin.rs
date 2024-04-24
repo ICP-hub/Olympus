@@ -749,6 +749,8 @@ pub fn decline_vc_profile_update_request(requester: Principal, decline: bool) ->
             let declined_data = UpdateInfoStruct{
                 original_info: previous_profile,
                 updated_info: vc_internal.updated_info.clone(),
+                approved_at: 0,
+                rejected_at: time(),
             };
             if decline {
                 DECLINED_VC_PROFILE_EDIT_REQUEST.with(|d_vc_registry| {
@@ -893,6 +895,8 @@ pub fn decline_mentor_profile_update_request(requester: Principal, decline: bool
             let declined_data = MentorUpdateRequest{
                 original_info: previous_profile,
                 updated_info: vc_internal.updated_info.clone(),
+                approved_at: 0,
+                rejected_at: time(),
             };
             if decline {
                 DECLINED_MENTOR_PROFILE_EDIT_REQUEST.with(|d_vc_registry| {

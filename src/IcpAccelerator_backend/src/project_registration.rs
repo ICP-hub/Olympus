@@ -290,6 +290,8 @@ pub struct ProjectUpdateRequest {
     pub original_info: ProjectInfo,
     pub updated_info: ProjectInfo,
     pub principal: Principal,
+    pub accepted_at: u64,
+    pub rejected_at: u64,
 }
 
 #[derive(Serialize, Deserialize, Clone, CandidType)]
@@ -1065,6 +1067,22 @@ pub async fn update_project(project_id: String, updated_project: ProjectInfo) ->
     let original_info_cloned = APPLICATION_FORM.with(|app_form| {
         app_form.borrow().get(&caller).cloned()
     });
+    let mut approved_timestamp = 0;
+    let mut rejected_timestamp = 0;
+    ROLE_STATUS_ARRAY.with(|role_status| {
+        let mut role_status_ref = role_status.borrow_mut();
+        if let Some(roles) = role_status_ref.get_mut(&caller) {
+            if let Some(role) = roles.iter_mut().find(|r| r.name == "project") {
+                if role.status == "approved" {
+                    approved_timestamp = time();
+                    role.approved_on = Some(approved_timestamp);
+                } else if role.status == "rejected" {
+                    rejected_timestamp = time();
+                    role.rejected_on = Some(rejected_timestamp);
+                }
+            }
+        }
+    });
     match original_info_cloned {
         Some(orig_infos) => {
             // Attempt to find the specific ProjectInfoInternal by project_id
@@ -1077,6 +1095,8 @@ pub async fn update_project(project_id: String, updated_project: ProjectInfo) ->
                         original_info: orig_info.params.clone(),  // Assuming `params` is of type `ProjectInfo`
                         updated_info: updated_project.clone(),
                         principal: caller,
+                        accepted_at: approved_timestamp,
+                        rejected_at: rejected_timestamp,
                     });
                 });
             }
@@ -2016,14 +2036,19 @@ pub fn get_all_approved_requests() -> Vec<ProjectNotification> {
 
 #[query]
 pub fn get_pending_money_requestes(project_id: String) -> Vec<ProjectNotification> {
-    PROJECT_ACCESS_NOTIFICATIONS.with(|storage| {
+    let project_info = PROJECT_ACCESS_NOTIFICATIONS.with(|storage| {
         let projects = storage.borrow();
-        let project_info = projects.get(&project_id);
-        let projects = project_info
-            .expect("couldn't get project information")
-            .clone();
-        projects
-    })
+        projects.get(&project_id).cloned()
+    });
+
+    // Print debug information
+    match &project_info {
+        Some(info) => ic_cdk::println!("Project information found: {:?}", info),
+        None => ic_cdk::println!("No project information found for project ID: {}", project_id),
+    }
+
+    // Return project information if found, otherwise return an empty vector
+    project_info.unwrap_or_default()
 }
 
 #[query]
