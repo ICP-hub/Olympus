@@ -113,27 +113,27 @@ export const useAuthClient = (options = defaultOptions) => {
   };
 
   async function updateClient(client) {
-    console.log("client-use-Auth", client)
+    // console.log("client-use-Auth", client)
     const isAuthenticated = await client.isAuthenticated();
     setIsAuthenticated(isAuthenticated);
-    console.log("isAuthenticated-use-Auth", isAuthenticated)
+    // console.log("isAuthenticated-use-Auth", isAuthenticated)
 
    
     const identity = client.getIdentity();
     setIdentity(identity);
-    console.log("identity-use-Auth", identity)
+    // console.log("identity-use-Auth", identity)
 
     const principal = identity.getPrincipal().toText();
     setPrincipal(principal);
 
-    console.log("principal-use-Auth", principal)
+    // console.log("principal-use-Auth", principal)
 
     setAuthClient(client);
     const agent = new HttpAgent({ identity, verifyQuerySignatures: false });
     const actor = createActor(process.env.CANISTER_ID_ICPACCELERATOR_BACKEND, {
       agent,
     });
-    console.log("actor-use-Auth", actor)
+    // console.log("actor-use-Auth", actor)
 
 
     if (isAuthenticated === true) {
