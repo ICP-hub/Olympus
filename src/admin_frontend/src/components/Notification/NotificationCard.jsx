@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import ConfirmationModal from "../models/ConfirmationModal";
 import { useNavigate } from "react-router-dom";
+import { BioSvg, DateSvg, place } from "../Utils/AdminData/SvgData";
 
 const NotificationCard = ({ notificationDetails }) => {
   const [modalPopUp, setModalPopUp] = useState(false);
@@ -16,10 +17,14 @@ const NotificationCard = ({ notificationDetails }) => {
     navigate("/all", { state: notificationDetails.principal });
   };
 
+  // console.log(
+  //   "notificationDetails.project_description =>",
+  //   notificationDetails
+  // );
   return (
     <>
-      <div className="px-[4%]  py-[2%] w-full flex flex-col mb-6 bg-white rounded-lg shadow border border-gray-200">
-        <div className="w-full mb-2 md:justify-between justify-start md:items-center  flex flex-col md:flex-row">
+      <div className="px-[2%]  py-[1.5%] w-full flex flex-col mb-6 bg-white rounded-lg shadow border border-gray-200">
+        <div className="w-full mb-2 justify-between items-center  flex flex-row flex-wrap">
           <div className="space-x-3 flex flex-row items-center">
             <img
               src={notificationDetails.user_data.profile_picture}
@@ -38,45 +43,81 @@ const NotificationCard = ({ notificationDetails }) => {
             </div>
           </div>
 
-          <p className="text-[#3505B2] text-sm">
-            {notificationDetails.requestedTime}
-          </p>
-        </div>
-
-        <div className="flex items-start">
-          <div className="flex flex-col space-y-1 w-full mb-3">
-            {notificationDetails.user_data.country && (
-              <p className="text-sm font-medium flex flex-row text-gray-600">
-                <span className="text-gray-500">
-                  {notificationDetails.user_data.country}
-                </span>
-              </p>
-            )}
-            {notificationDetails.project_description && (
-              <div className="text-sm font-medium flex flex-row text-gray-600">
-                <span className="text-gray-500">
-                  {<p>{notificationDetails.project_description}</p>}
-                </span>
-              </div>
-            )}
-            {notificationDetails.rejectedTime && (
-              <p className="text-sm font-medium flex flex-row text-gray-600">
-                <span className="text-gray-500">
-                  {notificationDetails.rejectedTime}
-                </span>
-              </p>
-            )}
+          <div className=" hidden md:flex md:flex-row">
+            <span className="text-gray-500 mr-2">
+              {" "}
+              <DateSvg />{" "}
+            </span>
+            <p className="md:text-sm text-xs md:text-md text-[#3505B2]">
+              {notificationDetails.requestedTime}
+            </p>
           </div>
         </div>
 
-        <div className="flex justify-end space-x-2">
-          <button
-            // onClick={toggleModelPopUp}
-            onClick={dataSendToProfileHandler}
-            className="capitalize border-2 font-semibold bg-[#3505B2] border-[#3505B2] md:text-sm text-[8px] text-white px-2 py-1 rounded-md  hover:text-[#3505B2] hover:bg-white"
-          >
-            View User Profile
-          </button>
+        <div className="flex md:flex-row flex-col w-full">
+          <div className="flex flex-col md:w-3/4 w-full mb-3 md:mb-0">
+            <div className="md:hidden block">
+              {notificationDetails.requestedTime && (
+                <div className="flex flex-row items-center text-sm mb-1 font-medium text-gray-600">
+                  <span className="text-gray-500 min-w-[40px] ml-3">
+                    <DateSvg />
+                  </span>
+                  <span className="truncate md:text-sm text-xs">
+                    {notificationDetails.requestedTime}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {notificationDetails.user_data.country && (
+              <div className="flex flex-row items-center text-sm mb-1 font-medium text-gray-600">
+                <span className="text-gray-500 min-w-[40px] ml-3">{place}</span>
+                <span className="truncate">
+                  {notificationDetails.user_data.country}
+                </span>
+              </div>
+            )}
+            {notificationDetails.project_description ? (
+              <div className="flex flex-row items-center text-sm font-medium text-gray-600 break-words">
+                <span className="text-gray-500 min-w-[40px] ml-3">
+                  <BioSvg />
+                </span>
+                <span className="truncate md:text-sm text-xs">
+                  {notificationDetails.project_description}
+                </span>
+              </div>
+            ) : (
+              notificationDetails.user_data.bio && (
+                <div className="flex flex-row items-center text-sm font-medium text-gray-600 break-words">
+                  <span className="text-gray-500 min-w-[40px] ml-3">
+                    <BioSvg />
+                  </span>
+                  <span className="truncate md:text-sm text-xs">
+                    {notificationDetails.user_data.bio}
+                  </span>
+                </div>
+              )
+            )}
+            {/* {notificationDetails.rejectedTime && (
+              <div className="flex flex-row items-center text-sm font-medium text-gray-600">
+                <span className="text-gray-500 min-w-[100px]">
+                  Rejected Time:
+                </span>
+                <span className="truncate">
+                  {notificationDetails.rejectedTime}
+                </span>
+              </div>
+            )} */}
+          </div>
+          <div className="md:w-1/4 w-full flex justify-end items-end space-x-2 md:h-10">
+            <button
+              // onClick={toggleModelPopUp}
+              onClick={dataSendToProfileHandler}
+              className="capitalize border-2 font-semibold bg-[#3505B2] border-[#3505B2] md:text-xs text-[9px]  text-white md:px-1 px-2 rounded-md md:h-8 h-7 hover:text-[#3505B2] hover:bg-white"
+            >
+              View User Profile
+            </button>
+          </div>
         </div>
 
         {/* <ConfirmationModal

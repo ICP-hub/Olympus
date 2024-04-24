@@ -138,7 +138,7 @@ const RequestCheck = () => {
             <button
               key={item.name}
               onClick={() => setActiveCategory(item.name)}
-              className={`mr-2 px-4 py-2 text-sm font-medium transition-colors duration-300 ease-in-out ${
+              className={`mr-4 text-sm font-medium transition-colors duration-300 ease-in-out ${
                 activeCategory === item.name
                   ? "pb-1 border-b-2 border-gray-700 font-bold text-gray-700"
                   : "text-gray-500"
@@ -148,7 +148,7 @@ const RequestCheck = () => {
               <img
                 src={item.icon}
                 alt={item.icon}
-                className="inline md:hidden w-8 h-8"
+                className="inline md:hidden w-7 h-7"
               />
             </button>
           ))}
@@ -162,7 +162,7 @@ const RequestCheck = () => {
         </div>
 
         {isPopupOpen && (
-          <div className="absolute  w-[143px]  md:top-[14rem] top-[13rem] right-[1rem] md:right-[7.5rem] bg-white shadow-xl rounded-lg border border-gray-300 md:p-4 z-50">
+          <div className="absolute w-[192px] top-[22%] md:top-[66%] md:right-[100px] right-[22px] bg-white shadow-md rounded-lg border border-gray-200 p-3 z-10">
             {["Pending", "Approved", "Declined"].map((status) => (
               <button
                 key={status}
@@ -170,7 +170,7 @@ const RequestCheck = () => {
                   setSelectedStatus(status);
                   setIsPopupOpen(false);
                 }}
-                className="block w-full text-left px-4 py-2 md:text-lg text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-md transition-colors duration-150 ease-in-out"
+                className="border-[#9C9C9C] w-[170px]  hover:text-indigo-800 border-b-2 py-2 px-4 focus:outline-none text-base flex justify-start font-fontUse"
               >
                 {status}
               </button>
