@@ -13,6 +13,7 @@ const Error404 = lazy(() => import("./components/Error404/Error404"));
 const AcceptModal = lazy(() => import("./components/models/AcceptModal"));
 const RejectModal = lazy(() => import("./components/models/RejectModal"));
 const RequestCheck = lazy(() => import("./components/Request/RequestCheck"));
+const RequestCohort = lazy(() => import("./components/Request/RequestCohort"));
 const AdminHome = lazy(() => import("./components/Admindashboard/AdminHome"));
 const AdminDashboard = lazy(() =>
   import("./components/Admindashboard/AdminDashboard")
@@ -55,6 +56,7 @@ const AdminRoute = ({ setModalOpen }) => {
     { path: "/reject", element: <RejectModal /> },
     { path: "/accept", element: <AcceptModal /> },
     { path: "/project_details", element: <Projectdetails /> },
+    { path: "/cohortRequest", element: <RequestCohort /> },
     { path: "/all", element: <UserAllProfile /> },
     { path: "/live", element: <LiveIncubated /> },
     { path: "/allUpdateRequest", element: <UpdateAllRequest /> },

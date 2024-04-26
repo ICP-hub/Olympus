@@ -100,8 +100,26 @@ const InvestorRegForm = () => {
         )
         .required("Full name is required"),
       email: yup.string().email("Invalid email").nullable(true).optional(),
-      telegram_id: yup.string().nullable(true).matches(/^[a-zA-Z0-9_]{5,32}$/, "Invalid Telegram ID").optional(),
-            twitter_url: yup.string().nullable(true).optional().matches(/^(https?:\/\/)?(www\.)?twitter\.com\/[a-zA-Z0-9_]{1,15}$/,"Invalid Twitter URL"),
+      telegram_id: yup
+        .string()
+        .nullable(true)
+        .test("is-valid-telegram", "Invalid Telegram ID", (value) => {
+          if (!value) return true;
+          const hasValidChars = /^[a-zA-Z0-9_]{5,32}$/.test(value);
+          return hasValidChars;
+        }),
+      twitter_url: yup
+        .string()
+        .nullable(true)
+        .optional()
+        .test("is-valid-twitter", "Invalid Twitter ID", (value) => {
+          if (!value) return true;
+          const hasValidChars =
+            /^(https?:\/\/)?(www\.)?twitter\.com\/[a-zA-Z0-9_]{1,15}$/.test(
+              value
+            );
+          return hasValidChars;
+        }),
       openchat_user_name: yup
         .string()
         .nullable(true)
@@ -115,19 +133,20 @@ const InvestorRegForm = () => {
             return isValidLength && hasValidChars;
           }
         ),
-        bio: yup
+      bio: yup
         .string()
         .optional()
         .test(
-          "maxWords", 
-          "Bio must not exceed 50 words", 
-          (value) => !value || value.trim().split(/\s+/).filter(Boolean).length <= 50
+          "maxWords",
+          "Bio must not exceed 50 words",
+          (value) =>
+            !value || value.trim().split(/\s+/).filter(Boolean).length <= 50
         )
         .test(
           "maxChars",
           "Bio must not exceed 500 characters",
           (value) => !value || value.length <= 500
-        ),  
+        ),
       country: yup
         .string()
         .test("is-non-empty", "Country is required", (value) =>
@@ -229,7 +248,7 @@ const InvestorRegForm = () => {
         .nullable(true)
         .typeError("You must enter a number")
         .positive("Must be a positive number"),
-      
+
       invested_in_multi_chain: yup
         .string()
         .required("Required")
@@ -258,7 +277,7 @@ const InvestorRegForm = () => {
         .nullable(true)
         .optional()
         .url("Invalid url"),
-        investor_linkedin_url: yup
+      investor_linkedin_url: yup
         .string()
         .required("LinkedIn URL is required")
         .test("is-non-empty", "LinkedIn URL is required", (value) =>
@@ -267,7 +286,7 @@ const InvestorRegForm = () => {
         .matches(
           /^(https?:\/\/)?(www\.)?linkedin\.com\/(in\/[a-zA-Z0-9_-]+|company\/[a-zA-Z0-9_-]+|groups\/[a-zA-Z0-9_-]+)\/?$/,
           "Invalid LinkedIn URL"
-        )      
+        )
         .required("LinkedIn url is required"),
       investment_stage: yup
         .string()
@@ -278,8 +297,7 @@ const InvestorRegForm = () => {
       investment_stage_range: yup
         .string()
         .when("investment_stage", (val, schema) =>
-          val &&
-          val !== "we do not currently invest"
+          val && val !== "we do not currently invest"
             ? schema
                 .test("is-non-empty", "Atleast one range required", (value) =>
                   /\S/.test(value)
@@ -372,10 +390,11 @@ const InvestorRegForm = () => {
         ],
         existing_icp_investor:
           data?.existing_icp_investor === "true" ? true : false,
-        investor_type: 
-          [data?.existing_icp_investor === "true" && data?.investment_type
+        investor_type: [
+          data?.existing_icp_investor === "true" && data?.investment_type
             ? data?.investment_type
-            : ""],
+            : "",
+        ],
         project_on_multichain: [
           data?.invested_in_multi_chain === "true" &&
           data?.invested_in_multi_chain_names
@@ -508,7 +527,8 @@ const InvestorRegForm = () => {
   const setInvestStageSelectedOptionsHandler = (val) => {
     setInvestStageSelectedOptions(
       val
-        ? val
+        ? val?.[0]
+            .split(", ")
             .map((investment) => ({ value: investment, label: investment }))
         : []
     );
@@ -518,7 +538,8 @@ const InvestorRegForm = () => {
   const setInvestStageRangeSelectedOptionsHandler = (val) => {
     setInvestStageRangeSelectedOptions(
       val
-        ? val
+        ? val?.[0]
+            .split(", ")
             .map((investment) => ({ value: investment, label: investment }))
         : []
     );
@@ -547,7 +568,7 @@ const InvestorRegForm = () => {
   };
   // set investor values handler
   const setInvestorValuesHandler = (val) => {
-    console.log("val==========>>>>>>>>>>>>>>>", val)
+    console.log("val==========>>>>>>>>>>>>>>>", val);
     if (val) {
       setValue("full_name", val?.user_data?.full_name ?? "");
       setValue("email", val?.user_data?.email?.[0] ?? "");

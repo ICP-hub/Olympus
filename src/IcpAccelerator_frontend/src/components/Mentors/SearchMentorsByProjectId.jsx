@@ -10,8 +10,7 @@ import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_
 import NoDataCard from "./Event/NoDataCard";
 import AddAMentorRequestModal from "../../models/AddAMentorRequestModal";
 import toast, { Toaster } from "react-hot-toast";
-import { Principal } from '@dfinity/principal';
-
+import { Principal } from "@dfinity/principal";
 
 function SearchMentorsByProjectId() {
   const { id } = useParams();
@@ -25,41 +24,40 @@ function SearchMentorsByProjectId() {
   const [mentorId, setMentorId] = useState(null);
 
   const handleMentorCloseModal = () => {
-    setMentorId(null)
+    setMentorId(null);
     setIsAddMentorModalOpen(false);
-  }
+  };
   const handleMentorOpenModal = (val) => {
     setMentorId(val);
     setIsAddMentorModalOpen(true);
-  }
+  };
 
   const handleAddMentor = async ({ message }) => {
-    console.log('add a mentor')
+    console.log("add a mentor");
     if (actor && mentorId) {
-      let mentor_id = Principal.fromText(mentorId)
-      let msg = message
+      let mentor_id = Principal.fromText(mentorId);
+      let msg = message;
       let project_id = id;
 
-      await actor.send_offer_to_mentor(mentor_id, msg, project_id)
+      await actor
+        .send_offer_to_mentor(mentor_id, msg, project_id)
         .then((result) => {
-          console.log('result-in-send_offer_to_mentor', result)
+          console.log("result-in-send_offer_to_mentor", result);
           if (result) {
             handleMentorCloseModal();
-            toast.success('offer sent to mentor successfully')
+            toast.success("offer sent to mentor successfully");
           } else {
             handleMentorCloseModal();
-            toast.error('something got wrong')
-
+            toast.error("something got wrong");
           }
         })
         .catch((error) => {
-          console.log('error-in-send_offer_to_mentor', error)
+          console.log("error-in-send_offer_to_mentor", error);
           handleMentorCloseModal();
-          toast.error('something got wrong')
-
-        })
+          toast.error("something got wrong");
+        });
     }
-  }
+  };
 
   const getAllMentors = async (caller) => {
     await caller
@@ -136,36 +134,35 @@ function SearchMentorsByProjectId() {
       </div> */}
 
       <div className="flex flex-wrap justify-center">
-        {noData ? <NoDataCard /> :
+        {noData ? (
+          <NoDataCard />
+        ) : (
           data.map((mentor, index) => {
-          
-              let  id = mentor[0] ? mentor[0].toText() : '';
-              let  img = uint8ArrayToBase64(
-                mentor[1]?.mentor_profile?.profile?.user_data?.profile_picture[0]
-              );
-              let  name = mentor[1]?.mentor_profile?.profile?.user_data?.full_name;
-              let  skills = mentor[1]?.mentor_profile?.profile?.user_data?.bio[0];
-              let  role = "Mentor";
-              let mentor_id = mentor[0].toText();
+            let id = mentor[0] ? mentor[0].toText() : "";
+            let img = uint8ArrayToBase64(
+              mentor[1]?.mentor_profile?.profile?.user_data?.profile_picture[0]
+            );
+            let name = mentor[1]?.mentor_profile?.profile?.user_data?.full_name;
+            let skills = mentor[1]?.mentor_profile?.profile?.user_data?.bio[0];
+            let role = "Mentor";
+            let mentor_id = mentor[0].toText();
             return (
               <div className="">
-                <div className="w-full sm:w-full md:w-full lg:w-full xl:w-full p-4">
+                <div className="w-full sm:w-full md:w-full lg:w-full xl:w-full py-4 sxs3:p-4">
                   <div className="shadow-md rounded-lg overflow-hidden border-2 drop-shadow-2xl gap-2 bg-white">
-                    <div className="flex flex-col sm:flex-row gap-6 p-2">
+                    <div className="flex flex-col sm:flex-row sm:gap-6 p-2">
                       <img
                         className="w-full sm:w-[300.53px] rounded-md h-auto sm:h-[200.45px] flex lg:items-center lg:justify-center  "
                         src={img}
                         alt="alt"
                       />
-                      <div className="flex flex-col justify-around w-full mt-4">
+                      <div className="flex flex-col justify-around w-full sm:mt-4">
                         <h1 className="text-black text-2xl font-extrabold">
                           {name}
                         </h1>
                         <p className="text-[#737373]">{role}</p>
                         <div className="flex flex-wrap gap-4 mt-6 text-[#737373]">
-                          <p className="rounded-full py-2 px-4">
-                            {skills}
-                          </p>
+                          <p className="rounded-full py-2 px-4">{skills}</p>
                           {/* <p className="bg-gray-200 rounded-full py-2 px-4">
                           observability
                         </p>
@@ -175,15 +172,21 @@ function SearchMentorsByProjectId() {
                         </div>
                         <div className="w-100px border-2 text-gray-100 mt-2"></div>
                         <div className="flex justify-end mt-6 xl:mr-8">
-                          {actor && principal ?
-                            <button onClick={() => handleMentorOpenModal(mentor_id)} className="text-white font-bold py-2 px-4 bg-[#3505B2] rounded-md">
+                          {actor && principal ? (
+                            <button
+                              onClick={() => handleMentorOpenModal(mentor_id)}
+                              className="text-white font-bold py-2 px-4 bg-[#3505B2] rounded-md"
+                            >
                               Reach Out
                             </button>
-                            :
-                            <button disabled={true} className="text-white font-bold py-2 px-4 bg-[#3505B2] rounded-md">
+                          ) : (
+                            <button
+                              disabled={true}
+                              className="text-white font-bold py-2 px-4 bg-[#3505B2] rounded-md"
+                            >
                               Sign Up To Reach Out
                             </button>
-                          }
+                          )}
                         </div>
                       </div>
                     </div>
@@ -191,14 +194,16 @@ function SearchMentorsByProjectId() {
                 </div>
               </div>
             );
-          })}
+          })
+        )}
       </div>
       {isAddMentorModalOpen && (
         <AddAMentorRequestModal
-          title={'Associate Mentor'}
+          title={"Associate Mentor"}
           onClose={handleMentorCloseModal}
           onSubmitHandler={handleAddMentor}
-        />)}
+        />
+      )}
       <Toaster />
     </div>
   );

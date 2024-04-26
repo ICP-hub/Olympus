@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
 
-
 const ProjectMoneyRaising = ({ data, allowAccess }) => {
   const navigate = useNavigate();
   const actor = useSelector((currState) => currState.actors.actor);
@@ -59,27 +58,31 @@ const ProjectMoneyRaising = ({ data, allowAccess }) => {
       {!data?.params?.money_raised_till_now[0] && <NoDataCard />}
       {data?.params?.money_raised_till_now[0] && (
         <div className="flex flex-col">
-          <div className="flex justify-end">
-          {allowAccess === true ? (
-            <button
-              className="text-white bg-blue-700 font-bold py-2 px-4 rounded-xl"
-              onClick={() => navigate(`/project-money-raising-requests/${projectId}`)}
-            >
-              View Money Raising Requsets
-            </button>
-          ) : (
-            <button
-              className="text-white bg-blue-700 font-bold py-2 px-4 rounded-xl"
-              onClick={sendMoneyRaisingRequest}
-            >
-              Ask for permission
-            </button>
-          )}
+          <div className="flex justify-end text-xs xxs:text-base">
+            {allowAccess === true ? (
+              <button
+                className="text-white bg-blue-700 font-bold py-2 px-4 rounded-xl"
+                onClick={() =>
+                  navigate(`/project-money-raising-requests/${projectId}`)
+                }
+              >
+                View Money Raising Requsets
+              </button>
+            ) : (
+              <button
+                className="text-white bg-blue-700 font-bold py-2 px-4 rounded-xl"
+                onClick={sendMoneyRaisingRequest}
+              >
+                Ask for permission
+              </button>
+            )}
           </div>
           <div className="flex flex-col">
             <div className="bg-[#D9DBF3] border my-4 mr-[4%] pt-4 px-10 rounded-3xl w-[80%] mb-12">
               <div className="flex justify-between">
-                <h1 className="font-extrabold text-xl mb-2">Targeted Funds</h1>
+                <h1 className="font-extrabold text-base xxs:text-xl mb-2">
+                  Targeted Funds
+                </h1>
                 <h1 className="font-extrabold text-xl mb-2">
                   ${data?.params?.money_raised[0]?.target_amount[0]}
                 </h1>
@@ -183,7 +186,7 @@ const ProjectMoneyRaising = ({ data, allowAccess }) => {
           </div>
         </div>
       )}
-      <Toaster/>
+      <Toaster />
     </>
   );
 };
