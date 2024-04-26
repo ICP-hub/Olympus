@@ -10,7 +10,7 @@ import { useCountries } from "react-countries";
 import ReactSelect from "react-select";
 import CompressedImage from "../ImageCompressed/CompressedImage";
 import { allHubHandlerRequest } from "../StateManagement/Redux/Reducers/All_IcpHubReducer";
-import {bufferToImageBlob }from "../Utils/formatter/bufferToImageBlob"
+import { bufferToImageBlob } from "../Utils/formatter/bufferToImageBlob";
 
 function ProjectRegForm() {
   const { countries } = useCountries();
@@ -116,8 +116,26 @@ function ProjectRegForm() {
         )
         .required("Full name is required"),
       email: yup.string().email("Invalid email").nullable(true).optional(),
-      telegram_id:  yup.string().nullable(true).matches(/^[a-zA-Z0-9_]{5,32}$/, "Invalid Telegram ID").optional(),
-      twitter_url: yup.string().nullable(true).optional().matches(/^(https?:\/\/)?(www\.)?twitter\.com\/[a-zA-Z0-9_]{1,15}$/,"Invalid Twitter URL"),
+      telegram_id: yup
+        .string()
+        .nullable(true)
+        .test("is-valid-telegram", "Invalid Telegram ID", (value) => {
+          if (!value) return true;
+          const hasValidChars = /^[a-zA-Z0-9_]{5,32}$/.test(value);
+          return hasValidChars;
+        }),
+      twitter_url: yup
+        .string()
+        .nullable(true)
+        .optional()
+        .test("is-valid-twitter", "Invalid Twitter ID", (value) => {
+          if (!value) return true;
+          const hasValidChars =
+            /^(https?:\/\/)?(www\.)?twitter\.com\/[a-zA-Z0-9_]{1,15}$/.test(
+              value
+            );
+          return hasValidChars;
+        }),
       openchat_user_name: yup
         .string()
         .nullable(true)
@@ -131,19 +149,20 @@ function ProjectRegForm() {
             return isValidLength && hasValidChars;
           }
         ),
-        bio: yup
+      bio: yup
         .string()
         .optional()
         .test(
-          "maxWords", 
-          "Bio must not exceed 50 words", 
-          (value) => !value || value.trim().split(/\s+/).filter(Boolean).length <= 50
+          "maxWords",
+          "Bio must not exceed 50 words",
+          (value) =>
+            !value || value.trim().split(/\s+/).filter(Boolean).length <= 50
         )
         .test(
           "maxChars",
           "Bio must not exceed 500 characters",
           (value) => !value || value.length <= 500
-        ),  
+        ),
       country: yup
         .string()
         .test("is-non-empty", "Country is required", (value) =>
@@ -235,15 +254,16 @@ function ProjectRegForm() {
       project_description: yup
         .string()
         .test(
-          "maxWords", 
-          "Project Description must not exceed 50 words", 
-          (value) => !value || value.trim().split(/\s+/).filter(Boolean).length <= 50
+          "maxWords",
+          "Project Description must not exceed 50 words",
+          (value) =>
+            !value || value.trim().split(/\s+/).filter(Boolean).length <= 50
         )
         .test(
           "maxChars",
           "Project Description must not exceed 500 characters",
           (value) => !value || value.length <= 500
-        )  
+        )
         .required("Project Description is required"),
       project_elevator_pitch: yup
         .string()
@@ -404,28 +424,42 @@ function ProjectRegForm() {
         .nullable(true)
         .optional()
         .url("Invalid url"),
-        project_discord: yup.string()
+      project_discord: yup
+        .string()
         .nullable(true)
         .optional()
-        .matches(
-          /^(https?:\/\/)?(www\.)?(discord\.(gg|com)\/(invite\/)?[a-zA-Z0-9\-_]+|discordapp\.com\/invite\/[a-zA-Z0-9\-_]+)$/,
-          "Invalid Discord URL"
-        ),
-        project_linkedin: yup.string()
+        .test("is-valid-discord", "Invalid Discord URL", (value) => {
+          if (!value) return true;
+          const hasValidChars =
+            /^(https?:\/\/)?(www\.)?(discord\.(gg|com)\/(invite\/)?[a-zA-Z0-9\-_]+|discordapp\.com\/invite\/[a-zA-Z0-9\-_]+)$/.test(
+              value
+            );
+          return hasValidChars;
+        }),
+      project_linkedin: yup
+        .string()
         .nullable(true)
         .optional()
-        .matches(
-          /^(https?:\/\/)?(www\.)?linkedin\.com\/(in\/[a-zA-Z0-9_-]+|company\/[a-zA-Z0-9_-]+|groups\/[a-zA-Z0-9_-]+)$/,
-          "Invalid LinkedIn URL"
-        ),
-        github_link: yup.string()
+        .test("is-valid-linkedin", "Invalid LinkedIn URL", (value) => {
+          if (!value) return true;
+          const hasValidChars =
+            /^(https?:\/\/)?(www\.)?linkedin\.com\/(in\/[a-zA-Z0-9_-]+|company\/[a-zA-Z0-9_-]+|groups\/[a-zA-Z0-9_-]+)$/.test(
+              value
+            );
+          return hasValidChars;
+        }),
+      github_link: yup
+        .string()
         .nullable(true)
         .optional()
-        .matches(
-          /^(https?:\/\/)?(www\.)?github\.com\/[a-zA-Z0-9_\-]+(\/[a-zA-Z0-9_\-]+)?(\/)?$/
-          ,
-          "Invalid GitHub URL"
-        ),
+        .test("is-valid-github", "Invalid GitHub URL", (value) => {
+          if (!value) return true;
+          const hasValidChars =
+            /^(https?:\/\/)?(www\.)?github\.com\/[a-zA-Z0-9_\-]+(\/[a-zA-Z0-9_\-]+)?(\/)?$/.test(
+              value
+            );
+          return hasValidChars;
+        }),
       token_economics: yup
         .string()
         .nullable(true)
@@ -504,7 +538,7 @@ function ProjectRegForm() {
     if (uploadPrivateDocuments === "true" && fieldsPrivate.length === 0) {
       appendPrivate({ title: "", link: "" });
     } else if (uploadPrivateDocuments === "false") {
-      removePrivate({title: "", link: ""})
+      removePrivate({ title: "", link: "" });
     }
   }, [
     uploadPrivateDocuments,
@@ -524,30 +558,27 @@ function ProjectRegForm() {
     if (uploadPublicDocuments === "true" && fields.length === 0) {
       append({ title: "", link: "" });
     } else if (uploadPublicDocuments === "false") {
-       remove({ title: "", link: ""})
+      remove({ title: "", link: "" });
     }
   }, [uploadPublicDocuments, append, remove, fields.length]);
 
   const removePublic = (index) => {
-    if (index === 0){
-      setValue('upload_public_documents','false')
-      remove(index)
-    }
-    else{
-    remove(index);
+    if (index === 0) {
+      setValue("upload_public_documents", "false");
+      remove(index);
+    } else {
+      remove(index);
     }
   };
   const handleremovePrivate = (index) => {
-    if (index === 0){
-      setValue('upload_private_documents','false')
-      removePrivate(index)
-    }
-    else{
+    if (index === 0) {
+      setValue("upload_private_documents", "false");
+      removePrivate(index);
+    } else {
       removePrivate(index);
     }
   };
-  
- 
+
   // image creation function compression and uintarray creator
   const imageCreationFunc = async (file) => {
     const result = await trigger("image");
@@ -852,21 +883,23 @@ function ProjectRegForm() {
   };
   const setMultiChainSelectedOptionsHandler = (val) => {
     setMultiChainSelectedOptions(
-      val ? val.map((chain) => ({ value: chain, label: chain })) : []
+      val
+        ? val?.[0].split(", ").map((chain) => ({ value: chain, label: chain }))
+        : []
     );
   };
- 
+
   async function convertBufferToImageBlob(buffer) {
     try {
       // Assuming bufferToImageBlob returns a Promise
       const blob = await bufferToImageBlob(buffer);
       return blob;
     } catch (error) {
-      console.error('Error converting buffer to image blob:', error);
+      console.error("Error converting buffer to image blob:", error);
       throw error; // Re-throw the error to be handled by the caller
     }
   }
-  
+
   // Usage:
   async function handleProfilePicture(profilePicture) {
     try {
@@ -874,7 +907,7 @@ function ProjectRegForm() {
       setImagePreview(blob);
     } catch (error) {
       // Handle any errors
-      console.error('Error handling profile picture:', error);
+      console.error("Error handling profile picture:", error);
     }
   }
 
@@ -901,7 +934,7 @@ function ProjectRegForm() {
   };
   // set project values handler
   const setProjectValuesHandler = (val) => {
-    console.log('val',val)
+    console.log("val", val);
     if (val) {
       setValue("full_name", val?.user_data?.full_name ?? "");
       setValue("email", val?.user_data?.email?.[0] ?? "");
@@ -917,7 +950,9 @@ function ProjectRegForm() {
       setInterestedDomainsSelectedOptionsHandler(
         val?.user_data?.area_of_interest ?? null
       );
-      setImagePreview(handleProfilePicture(val?.user_data?.profile_picture?.[0]) ?? "");
+      setImagePreview(
+        handleProfilePicture(val?.user_data?.profile_picture?.[0]) ?? ""
+      );
       setValue("type_of_profile", val?.user_data?.type_of_profile?.[0]);
       setValue(
         "reasons_to_join_platform",
@@ -1002,7 +1037,7 @@ function ProjectRegForm() {
         "target_amount",
         val?.money_raised?.[0]?.target_amount?.[0] ?? 0
       );
-      
+
       setValue("promotional_video", val?.promotional_video?.[0] ?? "");
       setValue("project_discord", val?.project_discord?.[0] ?? "");
       setValue("project_linkedin", val?.project_linkedin?.[0] ?? "");
@@ -1018,16 +1053,16 @@ function ProjectRegForm() {
       } else {
         setValue("upload_private_documents", "false");
       }
-      if (val?.public_docs?.[0].length) {
+      if (val && val?.public_docs?.[0] && val?.public_docs?.[0].length) {
         setValue("upload_public_documents", "true");
       } else {
         setValue("upload_public_documents", "false");
       }
-      setValue('privateDocs',val?.private_docs?.[0] ?? '');
-      setValue('publicDocs',val?.public_docs?.[0] ??'')
+      setValue("privateDocs", val?.private_docs?.[0] ?? []);
+      setValue("publicDocs", val?.public_docs?.[0] ?? []);
     }
   };
-  console.log('imagePreview',imagePreview)
+  console.log("imagePreview", imagePreview);
 
   // Get data from redux useEffect
   useEffect(() => {
@@ -1678,14 +1713,14 @@ function ProjectRegForm() {
                   </label>
                   <select
                     {...register("preferred_icp_hub")}
-                    defaultValue={getValues('preferred_icp_hub')}
+                    defaultValue={getValues("preferred_icp_hub")}
                     className={`bg-gray-50 border-2 ${
                       errors.preferred_icp_hub
                         ? "border-red-500 "
                         : "border-[#737373]"
                     } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
-                    <option className="text-lg font-bold" value=''>
+                    <option className="text-lg font-bold" value="">
                       Select your ICP Hub
                     </option>
                     {getAllIcpHubs?.map((hub) => (
@@ -2493,57 +2528,57 @@ function ProjectRegForm() {
                   )}
                 </div>
                 <div className="relative z-0 group mb-6">
-                {uploadPrivateDocuments === "true" && (
-                  fieldsPrivate.map((field, index) => (
-                    <React.Fragment key={field.id}>
-                      <div className="flex flex-row mt-2 items-center">
-                        <div className="w-full">
-                          <label className="block mb-2 text-lg font-medium text-gray-500 text-start">
-                            Title {index + 1}
-                          </label>
-                          <input
-                            {...register(`privateDocs.${index}.title`)}
-                            className="bg-gray-50 border-2 border-black rounded-lg block w-full p-2.5 text-black"
-                            type="text"
-                          />
-                          {errors.privateDocs?.[index]?.title && (
-                            <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                              {errors.privateDocs[index].title.message}
-                            </p>
-                          )}
+                  {uploadPrivateDocuments === "true" &&
+                    fieldsPrivate.map((field, index) => (
+                      <React.Fragment key={field.id}>
+                        <div className="flex flex-row mt-2 items-center">
+                          <div className="w-full">
+                            <label className="block mb-2 text-lg font-medium text-gray-500 text-start">
+                              Title {index + 1}
+                            </label>
+                            <input
+                              {...register(`privateDocs.${index}.title`)}
+                              className="bg-gray-50 border-2 border-black rounded-lg block w-full p-2.5 text-black"
+                              type="text"
+                            />
+                            {errors.privateDocs?.[index]?.title && (
+                              <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                                {errors.privateDocs[index].title.message}
+                              </p>
+                            )}
+                          </div>
+                          <div className="w-full ml-2">
+                            <label className="block mb-2 text-lg font-medium text-gray-500 text-start">
+                              Link {index + 1}
+                            </label>
+                            <input
+                              {...register(`privateDocs.${index}.link`)}
+                              className="bg-gray-50 border-2 border-black rounded-lg block w-full p-2.5 text-black"
+                              type="text"
+                            />
+                            {errors.privateDocs?.[index]?.link && (
+                              <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                                {errors.privateDocs[index].link.message}
+                              </p>
+                            )}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleremovePrivate(index)}
+                            className="self-end bg-red-600 hover:bg-red-700 text-white rounded-lg px-4 py-3 ml-2"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 384 512"
+                              fill="white"
+                              className="w-5 h-5"
+                            >
+                              <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
+                            </svg>
+                          </button>
                         </div>
-                        <div className="w-full ml-2">
-                          <label className="block mb-2 text-lg font-medium text-gray-500 text-start">
-                            Link {index + 1}
-                          </label>
-                          <input
-                            {...register(`privateDocs.${index}.link`)}
-                            className="bg-gray-50 border-2 border-black rounded-lg block w-full p-2.5 text-black"
-                            type="text"
-                          />
-                          {errors.privateDocs?.[index]?.link && (
-                            <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                              {errors.privateDocs[index].link.message}
-                            </p>
-                          )}
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => handleremovePrivate(index)}
-                          className="self-end bg-red-600 hover:bg-red-700 text-white rounded-lg px-4 py-3 ml-2"
-                        >
-                          <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 384 512"
-                          fill="white"
-                          className="w-5 h-5"
-                        >
-                          <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
-                        </svg>
-                        </button>
-                      </div>
-                    </React.Fragment>
-                  )))}
+                      </React.Fragment>
+                    ))}
 
                   {uploadPrivateDocuments === "true" && (
                     <div className="flex justify-end items-center">
@@ -2584,55 +2619,58 @@ function ProjectRegForm() {
                   )}
                 </div>
                 <div className="relative z-0 group mb-6">
-                {uploadPublicDocuments === "true" && (
-                  fields.map((field, index) => (
-                    <div className="flex flex-row gap-4 mt-4 items-center" key={field.id}>
-                      <div className="flex-1">
-                        <label className="block mb-2 text-lg font-medium text-gray-700 text-start">
-                          Title {index + 1}
-                        </label>
-                        <input
-                          {...register(`publicDocs.${index}.title`)}
-                          className="bg-gray-50 border-2 border-[#737373] rounded-lg block w-full p-3 text-black"
-                          type="text"
-                        />
-                        {errors.publicDocs?.[index]?.title && (
-                          <p className="mt-1 text-sm text-red-600 font-medium">
-                            {errors.publicDocs[index].title.message}
-                          </p>
-                        )}
-                      </div>
-                      <div className="flex-1">
-                        <label className="block mb-2 text-lg font-medium text-gray-700 text-start">
-                          Link {index + 1}
-                        </label>
-                        <input
-                          {...register(`publicDocs.${index}.link`)}
-                          className="bg-gray-50 border-2 border-[#737373] rounded-lg block w-full p-3 text-black"
-                          type="text"
-                        />
-                        {errors.publicDocs?.[index]?.link && (
-                          <p className="mt-1 text-sm text-red-600 font-medium">
-                            {errors.publicDocs[index].link.message}
-                          </p>
-                        )}
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => removePublic(index)}
-                        className="self-end bg-red-600 hover:bg-red-700 text-white rounded-lg px-4 py-3 ml-2"
+                  {uploadPublicDocuments === "true" &&
+                    fields.map((field, index) => (
+                      <div
+                        className="flex flex-row gap-4 mt-4 items-center"
+                        key={field.id}
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 384 512"
-                          fill="white"
-                          className="w-5 h-5"
+                        <div className="flex-1">
+                          <label className="block mb-2 text-lg font-medium text-gray-700 text-start">
+                            Title {index + 1}
+                          </label>
+                          <input
+                            {...register(`publicDocs.${index}.title`)}
+                            className="bg-gray-50 border-2 border-[#737373] rounded-lg block w-full p-3 text-black"
+                            type="text"
+                          />
+                          {errors.publicDocs?.[index]?.title && (
+                            <p className="mt-1 text-sm text-red-600 font-medium">
+                              {errors.publicDocs[index].title.message}
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <label className="block mb-2 text-lg font-medium text-gray-700 text-start">
+                            Link {index + 1}
+                          </label>
+                          <input
+                            {...register(`publicDocs.${index}.link`)}
+                            className="bg-gray-50 border-2 border-[#737373] rounded-lg block w-full p-3 text-black"
+                            type="text"
+                          />
+                          {errors.publicDocs?.[index]?.link && (
+                            <p className="mt-1 text-sm text-red-600 font-medium">
+                              {errors.publicDocs[index].link.message}
+                            </p>
+                          )}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => removePublic(index)}
+                          className="self-end bg-red-600 hover:bg-red-700 text-white rounded-lg px-4 py-3 ml-2"
                         >
-                          <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
-                        </svg>
-                      </button>
-                    </div>
-                  )))}
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 384 512"
+                            fill="white"
+                            className="w-5 h-5"
+                          >
+                            <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
+                          </svg>
+                        </button>
+                      </div>
+                    ))}
                   {uploadPublicDocuments === "true" && (
                     <div className="flex justify-end items-center mt-4">
                       <button

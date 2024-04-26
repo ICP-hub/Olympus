@@ -207,7 +207,10 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          <div className="rounded-[1rem] space-x-2 flex px-4   justify-center  flex-col  w-full  bg-white  drop-shadow-xl border-2 ">
+          <div
+            onClick={() => navigate("/cohortRequest")}
+            className="rounded-[1rem] space-x-2 flex px-4   justify-center  flex-col  w-full  bg-white  drop-shadow-xl border-2 "
+          >
             <div className="flex  flex-row  flex-wrap justify-around font-bold text-lg text-black items-center ">
               <div className="gap-2 flex-row flex items-center w-2/3">
                 <img src={proj} alt="proj" className="h-10 w-10" />
