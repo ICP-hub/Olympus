@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from "react";
 import "react-circular-progressbar/dist/styles.css";
-import {
-  place,
-  tick,
-  star,
-  Profile2,
-  telegramSVg,
-} from "../../Utils/AdminData/SvgData";
+import { place, Profile2 ,telegramSVg} from "../../Utils/AdminData/SvgData";
 import {
   numberToDate,
   uint8ArrayToBase64,
 } from "../../Utils/AdminData/saga_function/blobImageToUrl";
-import { openchat_username } from "../../Utils/AdminData/SvgData";
-import { linkedInSvg } from "../../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
+import openchat_username from "../../../../assets/image/spinner.png";
 import { twitterSvg } from "../../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
+import { Pagination, Autoplay } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/autoplay";
+
+
 const UserProfile = ({ userData, Allrole }) => {
   // const actor = useSelector((currState) => currState.actors.actor);
 
@@ -90,89 +90,124 @@ const UserProfile = ({ userData, Allrole }) => {
   const profile = uint8ArrayToBase64(userData[0].params.profile_picture[0]);
   // console.log(profile);
   return (
-    <div className="w-full">
-  
-  
-  
-  
-  
-  
-  
-  
-      {/* <div className=" bg-white  shadow-md shadow-gray-400 pb-6 pt-4 rounded-lg w-full">
-        <div className="w-full flex  md:flex-row flex-col md:items-start items-center justify-around px-[4%] py-4">
-          <div className="flex md:flex-row flex-col w-full ">
-            <div className="relative">
-              <img
-                className="md:w-36 object-fill md:h-36 w-28 h-28 mx-4 justify-center rounded-full"
-                src={profile}
-                alt="description"
-              />
-
-              <div className=" top-0 left-0 w-full h-full flex justify-center items-center">
-                <svg className="absolute invisible">
-                  <defs>
-                    <linearGradient
-                      id="progressGradient"
-                      x1="0%"
-                      y1="0%"
-                      x2="100%"
-                      y2="0%"
-                      className="rounded"
-                    >
-                      <stop offset="0%" stopColor="#e2e8f0" />
-                      <stop offset="100%" stopColor="#3b82f6" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-              </div>
+    <div className="w-full flex gap-4 sxxs:flex-col sm:flex-row">
+      <div className=" bg-[#D2D5F2]  shadow-md shadow-gray-400 p-6 rounded-lg md:w-1/4 sxxs:w-full">
+        <div className="justify-center flex items-center">
+          <div
+            className="size-fit  rounded-full bg-no-repeat bg-center bg-cover relative p-1 bg-blend-overlay border-2 border-gray-300"
+            style={{
+              backgroundImage: `url(${profile}), linear-gradient(168deg, rgba(255, 255, 255, 0.25) -0.86%, rgba(255, 255, 255, 0) 103.57%)`,
+              backdropFilter: "blur(20px)",
+            }}
+          >
+            <img
+              className="object-cover size-44 max-h-44 rounded-full"
+              src={profile}
+              alt=""
+            />
+          </div>
+        </div>
+        <div className="flex flex-col ml-4  mt-2 w-auto justify-start md:mb-0 mb-6">
+          <div className="flex flex-row  gap-4 items-center">
+            <h1 className="md:text-2xl text-xl md:font-extrabold font-bold  bg-black text-transparent bg-clip-text">
+              {userData[0].params.full_name}
+            </h1>
+            <div className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]">{current.charAt(0).toUpperCase() + current.slice(1)}</div>
+          </div>
+          <p className="text-gray-500 md:text-md text-sm font-normal flex mb-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 512 512"
+              className="size-4 "
+              fill="currentColor"
+            >
+              <path d="M256 64C150 64 64 150 64 256s86 192 192 192c17.7 0 32 14.3 32 32s-14.3 32-32 32C114.6 512 0 397.4 0 256S114.6 0 256 0S512 114.6 512 256v32c0 53-43 96-96 96c-29.3 0-55.6-13.2-73.2-33.9C320 371.1 289.5 384 256 384c-70.7 0-128-57.3-128-128s57.3-128 128-128c27.9 0 53.7 8.9 74.7 24.1c5.7-5 13.1-8.1 21.3-8.1c17.7 0 32 14.3 32 32v80 32c0 17.7 14.3 32 32 32s32-14.3 32-32V256c0-106-86-192-192-192zm64 192a64 64 0 1 0 -128 0 64 64 0 1 0 128 0z" />
+            </svg>
+            <span className="ml-2">{userData[0].params.email}</span>
+          </p>
+          <div className="flex flex-col items-start gap-3 text-sm">
+            <div className="flex flex-row  text-gray-600 space-x-2">
+              {place}
+              <p className="underline ">{userData[0].params.country}</p>
             </div>
-            <div className="flex flex-col ml-4  mt-2 w-auto justify-start md:mb-0 mb-6">
-              <div className="flex flex-row  gap-4 items-center">
-                <h1 className="md:text-3xl text-xl md:font-extrabold font-bold  bg-black text-transparent bg-clip-text">
-                  {userData[0].params.full_name}
-                </h1>
+            <div className=" flex flex-row space-x-2 text-gray-600">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 448 512"
+                className="size-4"
+                fill="currentColor"
+              >
+                <path d="M152 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H64C28.7 64 0 92.7 0 128v16 48V448c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V192 144 128c0-35.3-28.7-64-64-64H344V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H152V24zM48 192H400V448c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V192z" />
+              </svg>
+              <p className="ml-2">{date}</p>
+            </div>
+            <div className="flex flex-row space-x-2 text-gray-600">
+              <img
+                src={openchat_username}
+                alt="openchat_username"
+                className="size-5"
+              />
+              <p className="ml-2">{userData[0].params.openchat_username[0]}</p>
+            </div>
+            {userData[0].params.area_of_interest && (
+              <div className=" flex flex-col text-gray-600">
+                <p className="text-black font-semibold mb-1">Skill :</p>
+                <div className="flex gap-2 text-xs items-center">
+                  {userData[0].params.area_of_interest
+                    .split(",")
+                    .slice(0, 3)
+                    .map((tag, index) => (
+                      <div
+                        key={index}
+                        className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                      >
+                        {tag.trim()}
+                      </div>
+                    ))}
+                </div>
               </div>
-              <p className="text-gray-500 md:text-md text-sm font-normal mb-4">
-                {userData[0].params.email}
-              </p>
-
-              <div className="flex flex-col items-start gap-3 text-sm">
-                <div className="flex flex-row  text-gray-600 space-x-2">
-                  {place}
-                  <p className="underline ">{userData[0].params.country}</p>
-                </div>
-                <div className=" flex flex-row space-x-2 text-gray-600">
-                  {star}
-                  <p>{date}</p>
-                </div>
-                <div className="pl-1 flex flex-row space-x-2 text-gray-600">
-                  {tick}
-                  <p>{userData[0].params.area_of_interest}</p>
-                </div>
-                <div className="pl-1 flex flex-row space-x-2 text-gray-600">
-                  {openchat_username}
-                  <p>{userData[0].params.openchat_username[0]}</p>
-                </div>
-              </div>
-
-              {userData[0].params.reason_to_join[0] && (
-                <p className="mt-8 text-black mb-2">Reason to join</p>
-              )}
-              <div className="flex text-gray-700 flex-row gap-2 flex-wrap text-xs">
-                {userData[0].params.reason_to_join[0].map((reason, index) => (
-                  <p
-                    key={index}
-                    className="bg-[#c9c5c5] py-0.5 rounded-full px-3"
-                  >
-                    {reason.replace(/_/g, " ")}
-                  </p>
-                ))}
-              </div>
+            )}
+            {userData[0].params.reason_to_join[0] && (
+              <p className="text-black font-semibold ">Reason to join :</p>
+            )}
+            <div className="flex text-gray-700 flex-row gap-2 flex-wrap text-xs">
+              {userData[0].params.reason_to_join[0].map((reason, index) => (
+                <p
+                  key={index}
+                  className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                >
+                  {reason.replace(/_/g, " ")}
+                </p>
+              ))}
             </div>
           </div>
-
-          <div className="flex flex-col gap-2 h-[275px] bg-gray-100 px-[1%] rounded-md mt-2  overflow-y-auto py-2">
+        </div>
+      </div>
+      <div className=" bg-[#D2D5F2] shadow-md shadow-gray-400 p-6 rounded-lg md:w-3/4 sxxs:w-full">
+        <div className="flex w-full mb-4">
+          <Swiper
+            modules={[Pagination, Autoplay]}
+            centeredSlides={true}
+            loop={true}
+            autoplay={{
+              delay: 2500,
+              disableOnInteraction: false,
+            }}
+            spaceBetween={30}
+            slidesPerView="auto"
+            slidesOffsetAfter={100}
+            breakpoints={{
+              640: {
+                slidesPerView: 1,
+              },
+              768: {
+                slidesPerView: 1,
+              },
+              1024: {
+                slidesPerView: 1,
+              },
+            }}
+          >
             {Allrole &&
               Allrole.length > 0 &&
               Allrole.filter(
@@ -181,95 +216,75 @@ const UserProfile = ({ userData, Allrole }) => {
                   role.rejected_on[0] ||
                   role.requested_on[0]
               ).map((role, index) => (
-                <div key={index} className="flex justify-around items-center">
-                  <button
-                    className={`flex px-4 items-center md:w-[400px] w-full h-[90px] ${getButtonClass(
-                      role.status
-                    )} rounded-md `}
+                <SwiperSlide key={index}>
+                  <div
+                    key={index}
+                    className="flex justify-around items-center w-full"
                   >
-                    <div className="xl:lg:ml-4">{Profile2}</div>
-                    <p className="flex justify-center items-center text-white p-2 text-sm">
-                      {constructMessage(role)}
-                    </p>
-                  </button>
-                </div>
+                    <button
+                      className={`flex p-2 items-center w-full ${getButtonClass(
+                        role.status
+                      )} rounded-md `}
+                    >
+                      <div className="xl:lg:ml-4">{Profile2}</div>
+                      <p className="flex justify-center items-center text-white p-2 text-sm ">
+                        {constructMessage(role)}
+                      </p>
+                    </button>
+                  </div>
+                </SwiperSlide>
               ))}
-          </div>
+          </Swiper>
         </div>
-      </div> */}
-
- <div className=" w-full flex md:flex-row flex-col h-[400px]">
-   <div className="w-1/3 flex flex-col bg-gray-300" ></div>
-   <div className="w-2/3 bg-gray-300"></div>
- </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <div className="mx-auto mt-12">
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">
-          About {current.charAt(0).toUpperCase() + current.slice(1)}
-        </h1>
-        <p className="text-gray-600 text-lg mb-10 break-all">{userData[0].params.bio}</p>
-
-        <p className="w-full mb-4 border border-[#DCDCDC]"></p>
-
-        <div className="flex md:flex-row flex-col justify-between md:items-center items-start w-full mb-10">
-          <div className="md:w-1/2 w-3/4 flex flex-row items-center justify-start sm:text-left pr-4">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
-              Telegram:
-            </h2>
-            <div className="flex flex-grow items-center truncate">
-              <p className="text-gray-600 text-sm md:text-md truncate px-4 min-w-[200px]">
-                {userData[0].params.telegram_id}
-              </p>
-              <a
-                href={userData[0].params.telegram_id}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="pl-2"
-              >
-                {telegramSVg}
-              </a>{" "}
-            </div>
+          <h1 className="text-2xl font-bold text-gray-800">
+            About {current.charAt(0).toUpperCase() + current.slice(1)}
+          </h1>
+          <p className="text-gray-600 text-lg break-all line-clamp-6 my-3 px-[4%]">
+            {userData[0].params.bio}
+          </p>
+          <div className="pl-[4%]">
+          <p className="w-full mb-4 border border-[#C5C5C5]"></p>
           </div>
+          <div className="grid md:grid-cols-2 gap-4 w-full px-[3%]">
+            <div className="md:w-1/2 w-3/4 flex flex-col items-start justify-start sm:text-left px-[4%]">
+              <h2 className="text-xl sm:text-xl font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
+                Telegram :
+              </h2>
+              <div className="flex flex-grow items-center truncate">
+              {telegramSVg}
+                <p className="text-gray-600 text-sm md:text-md truncate ml-2">
+                  {userData[0].params.telegram_id}
+                </p>
+                <a
+                  href={userData[0].params.telegram_id}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="pl-2"
+                >
+                </a>{" "}
+              </div>
+            </div>
 
-          <div className="flex md:w-1/2 w-3/4 items-center text-center sm:text-left md:pl-4">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2 mr-2 ">
-              Twitter:
-            </h2>
-            <div className="flex flex-grow items-center truncate">
-              <p className="text-gray-600 text-sm md:text-md truncate min-w-[200px]">
-                {userData[0].params.twitter_id}
-              </p>
-              <a
-                href={userData[0].params.twitter_id}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="shrink-0 pl-2"
-              >
-                {twitterSvg}
-              </a>
+            <div className="flex flex-col md:w-1/2 w-3/4 items-start text-center sm:text-left px-[4%]">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2 mr-2">
+                Twitter :
+              </h2>
+              <div className="flex flex-grow items-center truncate">
+              {twitterSvg}
+                <p className="text-gray-600 text-sm md:text-md truncate ml-2">
+                  {userData[0].params.twitter_id}
+                </p>
+                <a
+                  href={userData[0].params.twitter_id}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="shrink-0 pl-2"
+                >
+                </a>
+              </div>
             </div>
           </div>
         </div>
-      </div>
     </div>
   );
 };

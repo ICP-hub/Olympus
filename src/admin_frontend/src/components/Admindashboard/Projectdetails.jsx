@@ -1,7 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
-import { library, ColorStar, Profile } from "../Utils/AdminData/SvgData";
-import ReactSlider from "react-slider";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   numberToDate,
@@ -18,16 +15,19 @@ import { githubSvgBig } from "../../../../IcpAccelerator_frontend/src/components
 import { discordSvgBig } from "../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
 import {
   place,
-  tick,
-  star,
-  Profile2,
   openWebsiteIcon,
-  telegramSVg,
+  Profile2,
   noDataPresentSvg,
 } from "../Utils/AdminData/SvgData";
 import { linkedInSvgBig } from "../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
 import { twitterSvgBig } from "../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
-import { openchat_username } from "../Utils/AdminData/SvgData";
+import openchat_username from "../../../assets/image/spinner.png";
+import { Pagination, Autoplay } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/autoplay";
+// import { twitterSvg } from "../../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
 
 const Projectdetails = ({ userData, Allrole, principal }) => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -38,7 +38,8 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
   const [current, setCurrent] = useState("user");
   const [isAccepting, setIsAccepting] = useState(false);
   const [isDeclining, setIsDeclining] = useState(false);
-
+  const [showOriginalCover, setShowOriginalCover] = useState(true);
+  const [showOriginalLogo, setShowOriginalLogo] = useState(true);
   const tm = useRef(null);
   const percentage = 0;
   const [currentStep, setCurrentStep] = useState(0);
@@ -270,7 +271,716 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
 
   const Project_cover = uint8ArrayToBase64(userData[0]?.params?.project_cover);
   return (
-    <div>
+    <>
+      <div className="w-full flex gap-4  md:flex-row flex-col mt-4">
+        <div className="md:w-1/4 sxxs:w-full space-y-4">
+          <div className=" bg-[#D2D5F2]  shadow-md shadow-gray-400 p-6 rounded-lg">
+            <div className="justify-center flex items-center">
+              <div
+                className="size-fit  rounded-full bg-no-repeat bg-center bg-cover relative p-1 bg-blend-overlay border-2 border-gray-300"
+                style={{
+                  backgroundImage: `url(${profile}), linear-gradient(168deg, rgba(255, 255, 255, 0.25) -0.86%, rgba(255, 255, 255, 0) 103.57%)`,
+                  backdropFilter: "blur(20px)",
+                }}
+              >
+                <img
+                  className="object-cover size-44 max-h-44 rounded-full"
+                  src={profile}
+                  alt=""
+                />
+              </div>
+            </div>
+            <div className="flex flex-col ml-4  mt-2 w-auto justify-start md:mb-0 mb-6">
+              <div className="flex flex-row  gap-4 items-center">
+                <h1 className="md:text-2xl text-xl md:font-extrabold font-bold  bg-black text-transparent bg-clip-text">
+                  {userData[0].params.user_data.full_name}
+                </h1>
+                <div className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]">
+                  {current.charAt(0).toUpperCase() + current.slice(1)}
+                </div>
+              </div>
+              <div className="text-gray-500 md:text-md text-sm font-normal flex mb-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 512 512"
+                  className="size-4 "
+                  fill="currentColor"
+                >
+                  <path d="M256 64C150 64 64 150 64 256s86 192 192 192c17.7 0 32 14.3 32 32s-14.3 32-32 32C114.6 512 0 397.4 0 256S114.6 0 256 0S512 114.6 512 256v32c0 53-43 96-96 96c-29.3 0-55.6-13.2-73.2-33.9C320 371.1 289.5 384 256 384c-70.7 0-128-57.3-128-128s57.3-128 128-128c27.9 0 53.7 8.9 74.7 24.1c5.7-5 13.1-8.1 21.3-8.1c17.7 0 32 14.3 32 32v80 32c0 17.7 14.3 32 32 32s32-14.3 32-32V256c0-106-86-192-192-192zm64 192a64 64 0 1 0 -128 0 64 64 0 1 0 128 0z" />
+                </svg>
+                <span className="ml-2">
+                  {userData[0].params.user_data.email}
+                </span>
+              </div>
+              <div className="flex flex-col items-start gap-3 text-sm">
+                <div className="flex flex-row  text-gray-600 space-x-2">
+                  {place}
+                  <div className="underline">
+                    {userData[0].params.user_data.country}
+                  </div>
+                </div>
+                <div className=" flex flex-row space-x-2 text-gray-600">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 448 512"
+                    className="size-4"
+                    fill="currentColor"
+                  >
+                    <path d="M152 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H64C28.7 64 0 92.7 0 128v16 48V448c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V192 144 128c0-35.3-28.7-64-64-64H344V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H152V24zM48 192H400V448c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V192z" />
+                  </svg>
+                  <div className="ml-2">
+                    {Allrole[2]?.requested_on?.length > 0
+                      ? date
+                      : "No requested date"}
+                  </div>
+                </div>
+                <div className="flex flex-row space-x-2 text-gray-600">
+                  <img
+                    src={openchat_username}
+                    alt="openchat_username"
+                    className="size-5"
+                  />
+                  <div className="ml-2">
+                    {userData[0].params.user_data.openchat_username[0]}
+                  </div>
+                </div>
+                {userData[0].params.user_data.area_of_interest && (
+                  <div className=" flex flex-col text-gray-600">
+                    <div className="text-black font-semibold mb-1">Skill :</div>
+                    <div className="flex gap-2 text-xs items-center flex-wrap">
+                      {userData[0].params.user_data.area_of_interest
+                        .split(",")
+                        .map((tag, index) => (
+                          <div
+                            key={index}
+                            className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                          >
+                            {tag.trim()}
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                )}
+                {userData[0].params.user_data.reason_to_join[0] && (
+                  <div className="text-black font-semibold ">
+                    Reason to join :
+                  </div>
+                )}
+                <div className="flex text-gray-700 flex-row gap-2 flex-wrap text-xs">
+                  {userData[0].params.user_data.reason_to_join[0].map(
+                    (reason, index) => (
+                      <div
+                        key={index}
+                        className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                      >
+                        {reason.replace(/_/g, " ")}
+                      </div>
+                    )
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className=" bg-[#D2D5F2]  shadow-md shadow-gray-400 pb-6 pt-4 rounded-lg md:w-3/4 w-full">
+          <div className="w-full flex flex-col  justify-around px-[4%] py-4">
+            <div className="flex w-full mb-4">
+              <Swiper
+                modules={[Pagination, Autoplay]}
+                centeredSlides={true}
+                loop={true}
+                autoplay={{
+                  delay: 2500,
+                  disableOnInteraction: false,
+                }}
+                spaceBetween={30}
+                slidesPerView="auto"
+                slidesOffsetAfter={100}
+                breakpoints={{
+                  640: {
+                    slidesPerView: 1,
+                  },
+                  768: {
+                    slidesPerView: 1,
+                  },
+                  1024: {
+                    slidesPerView: 1,
+                  },
+                }}
+              >
+                {Allrole &&
+                  Allrole.length > 0 &&
+                  Allrole.filter(
+                    (role) =>
+                      role.approved_on[0] ||
+                      role.rejected_on[0] ||
+                      role.requested_on[0]
+                  ).map((role, index) => (
+                    <SwiperSlide key={index}>
+                      <div
+                        key={index}
+                        className="flex justify-around items-center w-full"
+                      >
+                        <button
+                          className={`flex p-2 items-center w-full ${getButtonClass(
+                            role.status
+                          )} rounded-md `}
+                        >
+                          <div className="xl:lg:ml-4">{Profile2}</div>
+                          <div className="flex justify-center items-center text-white p-2 text-sm ">
+                            {constructMessage(role)}
+                          </div>
+                        </button>
+                      </div>
+                    </SwiperSlide>
+                  ))}
+              </Swiper>
+            </div>
+            <div className="w-full flex flex-row justify-between">
+              <h1 className="text-xl font-bold text-black mb-2">
+                About Project
+              </h1>
+              {/* <div className="flex flex-row space-x-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className={`dot bg-white w-6 h-6 rounded-full flex items-center justify-center transition-transform duration-300 ease-in-out`}
+                  viewBox="0 0 24 24"
+                  width="24"
+                  height="24"
+                >
+                  <g fill="#FF6B6B">
+                    <circle cx="18" cy="12" r="2" fill="#FF6B6B" />
+                    <path d="M5 12l7-7v4h4v6h-4v4l-7-7z" />
+                  </g>
+                </svg>
+
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className={`dot bg-white w-6 h-6 rounded-full flex items-center justify-center transition-transform duration-300 ease-in-out`}
+                  viewBox="0 0 24 24"
+                  width="24"
+                  height="24"
+                >
+                  <g fill="#4CAF50">
+                    <circle cx="6" cy="12" r="2" fill="#4CAF50" />
+                    <path d="M19 12l-7-7v4H8v6h4v4l7-7z" />
+                  </g>
+                </svg>
+              </div> */}
+            </div>
+
+            <div className="flex md:flex-row flex-col w-full mt-3 items-start">
+              <div className=" md:w-[5.5rem] md:flex-shrink-0 w-full justify-start">
+                <img
+                  className="md:w-20 object-fill md:h-20 w-16 h-16 border border-white bg-gray-300 justify-center rounded-md"
+                  src={showOriginalLogo ? logo : Project_cover}
+                  alt="projectLogo"
+                />
+                  <span className="text-xs font-semibold">
+                    {showOriginalLogo ? "Project Logo" : "Project Cover"}
+                  </span>
+                  <label
+                    htmlFor="toggle"
+                    className="flex items-center cursor-pointer"
+                  >
+                    <div className="relative">
+                      <input
+                        type="checkbox"
+                        id="toggle"
+                        className="sr-only"
+                        checked={!showOriginalLogo}
+                        onChange={() => setShowOriginalLogo(!showOriginalLogo)}
+                      />
+                      <div className="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full flex items-center justify-center transition-transform duration-300 ease-in-out">
+                        {showOriginalLogo ? (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            width="24"
+                            height="24"
+                          >
+                            <g fill="#FF6B6B">
+                              <circle cx="6" cy="12" r="2" />
+                              <path d="M19 12l-7-7v4H8v6h4v4l7-7z" />
+                            </g>
+                          </svg>
+                        ) : (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            width="24"
+                            height="24"
+                          >
+                            <g fill="#4CAF50">
+                              <circle cx="18" cy="12" r="2" />
+                              <path d="M5 12l7-7v4h4v6h-4v4l-7-7z" />
+                            </g>
+                          </svg>
+                        )}
+                      </div>
+                    </div>
+                  </label>
+              </div>
+              <div className="flex flex-col md:flex-grow w-full justify-start md:ml-4 md:mb-0 mb-6">
+                <div className="flex flex-row  gap-4 items-center">
+                  <h1 className="md:text-base md:h-[8rem] h-[12rem] line-clamp-3 flex-wrap text-sm bg-black break-all text-transparent bg-clip-text">
+                    {userData[0].params.user_data.bio[0]}
+                  </h1>
+                </div>
+
+                <div className="border border-gray-400 w-full mt-2 mb-4 relative " />
+
+                <div className="flex flex-col md:flex-row justify-between items-start gap-3 text-sm w-full">
+                  {/* Left Column */}
+                  <div className="flex flex-col md:w-1/2 w-full">
+                    {/* DApp Link */}
+                    <div className="flex flex-col mb-4 md:mb-6">
+                      <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                        Daap Link:
+                      </h2>
+                      <p className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
+                        {/* {orignalData?.dappLink || "Not available"} */}
+                      </p>
+                    </div>
+
+                    {/* Project Elevator Pitch */}
+                    <div className="flex flex-col mb-4 md:mb-6">
+                      <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                        Project Elevator Pitch:
+                      </h2>
+                      <p className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
+                        {/* {orignalData?.projectElevatorPitch || "Not available"} */}
+                      </p>
+                    </div>
+
+                    {/* Promotional Video */}
+                    <div className="flex flex-col mb-4 md:mb-6">
+                      <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                        Promotional Video:
+                      </h2>
+                      <p className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
+                        {/* {orignalData?.promotionalVideo || "Not available"} */}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Right Column */}
+                  <div className="flex flex-col md:w-1/2 w-full">
+                    {/* Website */}
+                    <div className="flex flex-col mb-4 md:mb-6">
+                      <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                        Website:
+                      </h2>
+                      <p className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
+                        {/* {orignalData?.projectWebsite || "Not available"} */}
+                      </p>
+                    </div>
+
+                    {/* Long Term Goal */}
+                    <div className="flex flex-col mb-4 md:mb-6">
+                      <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                        Long Term Goal:
+                      </h2>
+                      <p className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
+                        {/* {orignalData?.longTermGoals || "Not available"} */}
+                      </p>
+                    </div>
+
+                    {/* Token Economics */}
+                    <div className="flex flex-col mb-4 md:mb-6">
+                      <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                        Token Economics:
+                      </h2>
+                      <p className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
+                        {/* {orignalData?.tokenEconomics || "Not available"} */}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 
+          <div className="flex flex-col gap-2 h-[275px] bg-gray-100 px-[1%] rounded-md mt-2  overflow-y-auto py-2">
+            {Allrole &&
+              Allrole.length > 0 &&
+              Allrole.filter(
+                (role) =>
+                  role.approved_on[0] ||
+                  role.rejected_on[0] ||
+                  role.requested_on[0]
+              ).map((role, index) => (
+                <div key={index} className="flex justify-around items-center">
+                  <button
+                    className={`flex px-4 items-center md:w-[400px] w-full h-[90px] ${getButtonClass(
+                      role.status
+                    )} rounded-md `}
+                  >
+                    <div className="xl:lg:ml-4">{Profile2}</div>
+                    <p className="flex justify-center items-center text-white p-2 text-sm">
+                      {constructMessage(role)}
+                    </p>
+                  </button>
+                </div>
+              ))}
+          </div> */}
+          </div>
+        </div>
+      </div>
+
+      {/* <div className="w-full flex gap-4  md:flex-row flex-col mt-4">
+          <div className="flex flex-col md:w-1/4 w-full">
+            <div className=" bg-[#D2D5F2] flex  flex-col shadow-md shadow-gray-400 p-6 rounded-lg  w-full mb-4">
+              <h1 className="text-xl font-bold text-gray-800  mb-2">
+                Private Documents
+              </h1>
+              <div className="flex flex-row gap-2  px-2 py-1 items-center">
+                <img src={pdfSvg} alt="PDF Icon" className="w-10 h-12" />
+                <div className="overflow-hidden">
+                  <div className="space-y-4 w-full">
+                    {orignalData?.privateDocs.map((doc, index) => (
+                      <div
+                        key={index}
+                        className="truncate flex flex-col items-start"
+                      >
+                        <div className="flex-grow">
+                          <a
+                            href={doc.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-gray-800 text-xs truncate font-medium justify-self-end"
+                            title={doc.title}
+                          >
+                            {doc.title}
+                          </a>
+                        </div>
+                        <div className="flex justify-end">
+                          <p className="text-gray-600 text-sm mt-2 break-words">
+                            <a
+                              href={doc.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-500 underline"
+                            >
+                              CLICK HERE
+                            </a>
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className=" bg-[#D2D5F2] flex  flex-col shadow-md shadow-gray-400 p-6 rounded-lg  w-full mb-4">
+              <h1 className="text-xl font-bold text-gray-800  mb-2">
+                Public Documents
+              </h1>
+              <div className="flex flex-row gap-2  px-2 py-1 items-center">
+                <img src={pdfSvg} alt="PDF Icon" className="w-10 h-12" />
+                <div className="overflow-hidden">
+                  <div className="space-y-4 w-full">
+                    {orignalData?.publicDocs.map((doc, index) => (
+                      <div
+                        key={index}
+                        className="truncate flex flex-col items-start"
+                      >
+                        <div className="flex-grow">
+                          <a
+                            href={doc.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-gray-800 text-xs truncate font-medium justify-self-end"
+                            title={doc.title}
+                          >
+                            {doc.title}
+                          </a>
+                        </div>
+                        <div className="flex justify-end">
+                          <p className="text-gray-600 text-sm mt-2 break-words">
+                            <a
+                              href={doc.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-500 underline"
+                            >
+                              CLICK HERE
+                            </a>
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className=" bg-[#D2D5F2] md:px-[4%] flex md:flex-row flex-col shadow-md shadow-gray-400 pb-6 pt-4 rounded-lg md:w-3/4 w-full">
+            <div className="flex flex-col md:w-1/2 w-full">
+              <div className="flex flex-col mb-4 md:mb-6">
+                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                  Country of Registration:
+                </h2>
+                <p className="text-md  font-normal text-gray-600 pl-6">
+                  {orignalData?.countryOfRegistration ? (
+                    <span>{orignalData?.countryOfRegistration}</span>
+                  ) : (
+                    <span className="flex items-center">
+                      {noDataPresentSvg}
+                      Data Not Available
+                    </span>
+                  )}
+                </p>
+              </div>
+
+              <div className="flex flex-col mb-4 md:mb-6">
+                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                  Uploaded Private Docs :
+                </h2>
+                <p className="text-md  font-normal text-gray-600 pl-6">
+                  {orignalData?.uploadPrivateDocuments ? (
+                    "Yes"
+                  ) : "No" ? (
+                    <span>
+                      {orignalData?.uploadPrivateDocuments ? "Yes" : "No"}
+                    </span>
+                  ) : (
+                    <span className="flex items-center">
+                      {noDataPresentSvg}
+                      Data Not Available
+                    </span>
+                  )}
+                </p>
+              </div>
+
+              <div className="flex flex-col mb-4 md:mb-6">
+                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                  Money Raised Till Now :
+                </h2>
+                <p className="text-md  font-normal text-gray-600 pl-6">
+                  {orignalData?.moneyRaisedTillNow ? (
+                    "Yes"
+                  ) : "No" ? (
+                    <span>
+                      {orignalData?.moneyRaisedTillNow ? "Yes" : "No"}
+                    </span>
+                  ) : (
+                    <span className="flex items-center">
+                      {noDataPresentSvg}
+                      Data Not Available
+                    </span>
+                  )}
+                </p>
+              </div>
+
+              <div className="flex flex-col mb-4 md:mb-6">
+                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                  Project Area Of Focus :
+                </h2>
+                <p className="text-md  font-normal text-gray-600 pl-6">
+                  {orignalData.projectAreaOfFocus ? (
+                    <span>{orignalData.projectAreaOfFocus}</span>
+                  ) : (
+                    <span className="flex items-center">
+                      {noDataPresentSvg}
+                      Data Not Available
+                    </span>
+                  )}
+                </p>
+              </div>
+
+              <div className="flex flex-col mb-4 md:mb-6">
+                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                  Area Of Interest :
+                </h2>
+                <p className="text-md  font-normal text-gray-600 pl-6">
+                  {orignalData?.areaOfInterest ? (
+                    <span>{orignalData?.areaOfInterest}</span>
+                  ) : (
+                    <span className="flex items-center">
+                      {noDataPresentSvg}
+                      Data Not Available
+                    </span>
+                  )}
+                </p>
+              </div>
+
+              <div className="flex flex-col mb-4 md:mb-6">
+                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                  Live On Mainnet :
+                </h2>
+                <p className="text-md  font-normal text-gray-600 pl-6">
+                  {orignalData?.liveOnIcpMainnet ? (
+                    "Yes"
+                  ) : "No" ? (
+                    <span>{orignalData?.liveOnIcpMainnet ? "Yes" : "No"}</span>
+                  ) : (
+                    <span className="flex items-center">
+                      {noDataPresentSvg}
+                      Data Not Available
+                    </span>
+                  )}
+                </p>
+              </div>
+
+              <div className="flex flex-col mb-4 md:mb-6">
+                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                  Type of Registration :
+                </h2>
+                <p className="text-md  font-normal text-gray-600 pl-6">
+                  {orignalData?.typeOfRegistration ? (
+                    <span>{orignalData?.typeOfRegistration}</span>
+                  ) : (
+                    <span className="flex items-center">
+                      {noDataPresentSvg}
+                      Data Not Available
+                    </span>
+                  )}
+                </p>
+              </div>
+
+              <div className="flex flex-col mb-4 md:mb-6">
+                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                  Reason to join Incubator :
+                </h2>
+                <p className="text-md  font-normal text-gray-600 pl-6">
+                  {orignalData?.reasonToJoinIncubator ? (
+                    <span>{orignalData?.reasonToJoinIncubator}</span>
+                  ) : (
+                    <span className="flex items-center">
+                      {noDataPresentSvg}
+                      Data Not Available
+                    </span>
+                  )}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-col md:w-1/2 w-full">
+              <div className="flex flex-col mb-4 md:mb-6">
+                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                  Project Registered :
+                </h2>
+                <p className="text-md  font-normal text-gray-600 pl-6">
+                  {orignalData?.isYourProjectRegistered ? (
+                    "Yes"
+                  ) : "No" ? (
+                    <span>
+                      {orignalData?.isYourProjectRegistered ? "Yes" : "No"}
+                    </span>
+                  ) : (
+                    <span className="flex items-center">
+                      {noDataPresentSvg}
+                      Data Not Available
+                    </span>
+                  )}
+                </p>
+              </div>
+
+              <div className="flex flex-col mb-4 md:mb-6">
+                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                  Support Multichain :
+                </h2>
+                <p className="text-md  font-normal text-gray-600 pl-6">
+                  {orignalData?.supportsMultichain ? (
+                    <span>{orignalData?.supportsMultichain}</span>
+                  ) : (
+                    <span className="flex items-center">
+                      {noDataPresentSvg}
+                      Data Not Available
+                    </span>
+                  )}
+                </p>
+              </div>
+
+              <div className="flex flex-col mb-4 md:mb-6">
+                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                  Preferred ICP Hub :
+                </h2>
+                <p className="text-md  font-normal text-gray-600 pl-6">
+                  {orignalData?.preferredIcpHub ? (
+                    <span>{orignalData?.preferredIcpHub}</span>
+                  ) : (
+                    <span className="flex items-center">
+                      {noDataPresentSvg}
+                      Data Not Available
+                    </span>
+                  )}
+                </p>
+              </div>
+
+              <div className="flex flex-col mb-4 md:mb-6">
+                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                  Mentor Assigned :
+                </h2>
+                <p className="text-md  font-normal text-gray-600 pl-6">
+                  {orignalData?.mentorsAssigned ? (
+                    <span>{orignalData?.mentorsAssigned}</span>
+                  ) : (
+                    <span className="flex items-center">
+                      {noDataPresentSvg}
+                      Data Not Available
+                    </span>
+                  )}
+                </p>
+              </div>
+
+              <div className="flex flex-col mb-4 md:mb-6">
+                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                  Project Team :
+                </h2>
+                <p className="text-md  font-normal text-gray-600 pl-6">
+                  {orignalData?.projectTeams ? (
+                    "Yes"
+                  ) : "No" ? (
+                    <span>{orignalData?.projectTeams ? "Yes" : "No"}</span>
+                  ) : (
+                    <span className="flex items-center">
+                      {noDataPresentSvg}
+                      Data Not Available
+                    </span>
+                  )}
+                </p>
+              </div>
+
+              <div className="flex flex-col mb-4 md:mb-6">
+                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                  Target Market :
+                </h2>
+                <p className="text-md  font-normal text-gray-600 pl-6">
+                  {orignalData?.targetMarket ? (
+                    <span>{orignalData?.targetMarket}</span>
+                  ) : (
+                    <span className="flex items-center">
+                      {noDataPresentSvg}
+                      Data Not Available
+                    </span>
+                  )}
+                </p>
+              </div>
+
+              <div className="flex flex-col mb-4 md:mb-6">
+                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                  VC's assigned :
+                </h2>
+                <p className="text-md  font-normal text-gray-600 pl-6">
+                  {orignalData?.vcsAssigned ? (
+                    <span>{orignalData?.vcsAssigned}</span>
+                  ) : (
+                    <span className="flex items-center">
+                      {noDataPresentSvg}
+                      Data Not Available
+                    </span>
+                  )}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div> */}
+
       <div className="w-full">
         <div className=" bg-white  shadow-md shadow-gray-400 pb-6 pt-4 rounded-lg w-full">
           <div className="w-full flex  md:flex-row flex-col md:items-start items-center justify-around px-[4%] py-4">
@@ -1037,7 +1747,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
           return null;
         })}
       </div>
-    </div>
+    </>
   );
 };
 
