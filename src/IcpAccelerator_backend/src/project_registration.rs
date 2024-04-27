@@ -1991,6 +1991,72 @@ pub fn get_all_pending_requests() -> Vec<ProjectNotification> {
 }
 
 #[query]
+pub fn get_all_pending_docs_access_requests() -> Vec<ProjectNotification> {
+    PROJECT_ACCESS_NOTIFICATIONS.with(|storage| {
+        let projects = storage.borrow();
+        projects
+            .values()
+            .flat_map(|notifications| {
+                notifications.iter().filter_map(|notification| {
+                    match &notification.notification_type {
+                        ProjectNotificationType::AccessRequest(access_request)
+                            if access_request.request_type == "private_docs_access" && access_request.status == "pending" =>
+                        {
+                            Some(notification.clone())
+                        }
+                        _ => None,
+                    }
+                })
+            })
+            .collect()
+    })
+}
+
+#[query]
+pub fn get_all_approved_docs_access_requests() -> Vec<ProjectNotification> {
+    PROJECT_ACCESS_NOTIFICATIONS.with(|storage| {
+        let projects = storage.borrow();
+        projects
+            .values()
+            .flat_map(|notifications| {
+                notifications.iter().filter_map(|notification| {
+                    match &notification.notification_type {
+                        ProjectNotificationType::AccessRequest(access_request)
+                            if access_request.request_type == "private_docs_access" && access_request.status == "approved" =>
+                        {
+                            Some(notification.clone())
+                        }
+                        _ => None,
+                    }
+                })
+            })
+            .collect()
+    })
+}
+
+#[query]
+pub fn get_all_declined_docs_access_requests() -> Vec<ProjectNotification> {
+    PROJECT_ACCESS_NOTIFICATIONS.with(|storage| {
+        let projects = storage.borrow();
+        projects
+            .values()
+            .flat_map(|notifications| {
+                notifications.iter().filter_map(|notification| {
+                    match &notification.notification_type {
+                        ProjectNotificationType::AccessRequest(access_request)
+                            if access_request.request_type == "private_docs_access" && access_request.status == "declined" =>
+                        {
+                            Some(notification.clone())
+                        }
+                        _ => None,
+                    }
+                })
+            })
+            .collect()
+    })
+}
+
+#[query]
 pub fn get_all_declined_requests() -> Vec<ProjectNotification> {
     PROJECT_ACCESS_NOTIFICATIONS.with(|storage| {
         let projects = storage.borrow();
