@@ -744,8 +744,10 @@ service : {
       vec OfferToInvestor,
     ) query;
   get_admin_notifications : () -> (vec Notification) query;
+  get_all_approved_docs_access_requests : () -> (vec ProjectNotification) query;
   get_all_approved_requests : () -> (vec ProjectNotification) query;
   get_all_cohorts : () -> (vec CohortDetails) query;
+  get_all_declined_docs_access_requests : () -> (vec ProjectNotification) query;
   get_all_declined_requests : () -> (vec ProjectNotification) query;
   get_all_incubated_projects : () -> (vec ProjectInfoInternal) query;
   get_all_jobs : () -> (vec JobsInternal) query;
@@ -770,6 +772,7 @@ service : {
   get_all_offers_which_are_pending_for_project_from_investor : (text) -> (
       vec OfferToSendToProjectByInvestor,
     ) query;
+  get_all_pending_docs_access_requests : () -> (vec ProjectNotification) query;
   get_all_pending_requests : () -> (vec ProjectNotification) query;
   get_all_project_notification : (text) -> (vec OfferToSendToProject) query;
   get_all_project_notification_sent_by_investor : (text) -> (
