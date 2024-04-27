@@ -15,6 +15,7 @@ import { totalPendingSaga } from "./totalPendingSaga";
 import { notificationSaga } from "./notification";
 import { totalLiveSaga } from "./LiveCount";
 import { updateUserProfileSaga } from "./UpdateUserProfileSaga";
+import { allHubsSaga } from "./AllHub";
 
 export default function* rootSaga() {
   yield all([
@@ -34,5 +35,6 @@ export default function* rootSaga() {
     totalPendingSaga(),
     totalLiveSaga(),
     updateUserProfileSaga(),
+    allHubsSaga()
   ]);
 }

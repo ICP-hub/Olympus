@@ -124,13 +124,13 @@ const ProjectJobCard = ({ image, website, tags, country }) => {
                               Responsibilities
                             </p>
                             <ul className="text-xs md:pl-4 font-[450] list-disc list-outside">
-                              <li className="h-40 overflow-y-scroll">{job_description}</li>
+                              <li className=" overflow-y-scroll">{job_description}</li>
                             </ul>
                           </div>
                         </div>
                         <div className="flex flex-col justify-between sm:w-1/2">
-                          <div className="flex justify-center items-center">
-                            <p className="text-base font-[950] px-2">TAGS</p>
+                          <div className="flex justify -center items-center">
+                            <p className="text-base font-[950] pr-2">TAGS</p>
                             {tags && (
                               <p className="flex items-center flex-wrap py-2 gap-2">
                                 <span
@@ -143,7 +143,7 @@ const ProjectJobCard = ({ image, website, tags, country }) => {
                           </div>
                           <div className="mt-2">
                             <p className="text-base font-[950] py-2">Post Date</p>
-                            <ul className="text-xs md:pl-4 font-[450] list-disc list-outside">
+                            <ul className="text-xs md:pl-4 font-[450] list-disc list-inside">
                               <li>{job_post_time}</li>
                             </ul>
                           </div>
@@ -152,7 +152,7 @@ const ProjectJobCard = ({ image, website, tags, country }) => {
                             <p className="text-base font-[950] py-1">Location</p>
                             <span className="capitalize">{job_location}</span>
                           </div>
-                          <div className="mt-2 flex items-end">
+                          <div className="mt-2 flex md:block md3:flex items-end">
                             <div className="w-full">
                               <span className="text-sm">Register your interest here:</span>
                             </div>

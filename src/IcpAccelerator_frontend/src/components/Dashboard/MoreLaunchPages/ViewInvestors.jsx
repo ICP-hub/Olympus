@@ -133,14 +133,14 @@ const ViewInvestor = () => {
                   className="bg-white  hover:scale-105 w-full sm:w-1/2 md:w-1/4 rounded-lg mb-5 md:mb-0 p-6"
                 >
                   <div className="justify-center flex items-center">
-                  <div className="size-fit  rounded-full bg-no-repeat bg-center bg-cover relative p-1 bg-blend-overlay border-2 border-gray-300"
+                  <div className="size-48  rounded-full bg-no-repeat bg-center bg-cover relative p-1 bg-blend-overlay border-2 border-gray-300"
                    style={{
                     backgroundImage: `url(${img}), linear-gradient(168deg, rgba(255, 255, 255, 0.25) -0.86%, rgba(255, 255, 255, 0) 103.57%)`,
                     backdropFilter: "blur(20px)",
                   }}
                   >
                     <img
-                      className="object-cover size-fit max-h-44 rounded-full"
+                      className="object-cover size-48 max-h-44 rounded-full"
                       src={img}
                       alt=""
                     />

@@ -77,7 +77,7 @@ const LiveProjectBar = ({ data }) => {
 
   return (
     <div className="bg-gradient-to-r from-gray-100 to-white border rounded-xl shadow-lg p-4 w-full">
-      <div className="flex flex-row space-x-2 justify-between">
+      <div className="sm0:flex flex-row space-x-2 justify-between">
         <div className="flex items-center gap-4 mb-4">
           <img
             className="rounded-lg border border-gray-200 shadow-sm w-16 h-16 object-cover"
@@ -112,7 +112,7 @@ const LiveProjectBar = ({ data }) => {
             </div>
           </div>
         </div>
-        <div className="flex flex-row flex-wrap gap-2 text-xs md:text-sm text-right pr-4">
+        <div className="flex flex-row sm0:flex-wrap gap-2 text-xs md:text-sm text-right pr-4">
           <div className="flex gap-2.5 mr-2 mt-1.5">
             {linkedin_link && (
 

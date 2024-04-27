@@ -15,7 +15,7 @@ const useFadeInScrollAnimation = (ref, startOffset, endOffset) => {
                 start: `top+=${startOffset} center`,
                 end: `bottom+=${endOffset} center`,
                 toggleActions: "restart none none none",
-                markers: false
+                markers: true
             },
             opacity: 0,
             y: 35,

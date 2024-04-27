@@ -16,6 +16,7 @@ import totalPendingRequestReducer from "./totalPendingRequestReducer";
 import notificationReducer from "./notificationReducer";
 import TotalLiveReducer from "./TotalLiveReducer";
 import UpdateUserProfileReducer from "./UpdateUserProfile";
+import All_IcpHubReducer from "./All_IcpHubReducer";
 
 const rootReducer = combineReducers({
   actors: actorReducer,
@@ -34,6 +35,7 @@ const rootReducer = combineReducers({
   totpending: totalPendingRequestReducer,
   notification: notificationReducer,
   totalLive: TotalLiveReducer,
+  hubs: All_IcpHubReducer,
   updateProfile: UpdateUserProfileReducer,
 });
 

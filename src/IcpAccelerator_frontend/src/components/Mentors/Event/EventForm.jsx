@@ -14,7 +14,7 @@ import DetailHeroSection from "../../Common/DetailHeroSection";
 // import { userRoleHandler } from "../../StateManagement/Redux/Reducers/userRoleReducer";
 import Founder from "../../../../assets/images/founderRegistration.png";
 // import { getCurrentRoleStatusRequestHandler } from "../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
-import { format } from "date-fns";
+import { format, startOfToday } from "date-fns";
 import ReactSelect from "react-select";
 
 const today = new Date();
@@ -30,17 +30,39 @@ const schema = yup.object({
     .trim()
     .required("Description is required")
     .matches(/^[^\s].*$/, "Cannot start with a space"),
-  cohort_launch_date: yup.date().required().typeError("Must be a date"),
-  cohort_end_date: yup.date().required().typeError("Must be a date"),
-  tags: yup.string().test('is-non-empty', 'Selecting an interest is required',
-  (value) => /\S/.test(value)).required("Selecting an interest is required"),
+  cohort_launch_date: yup
+    .date()
+    .required()
+    .typeError("Must be a date")
+    .min(startOfToday(), "Launch date cannot be before today"),
+  cohort_end_date: yup
+    .date()
+    .required()
+    .typeError("Must be a date")
+    .min(
+      yup.ref("cohort_launch_date"),
+      "End date cannot be before launch date"
+    ),
+  tags: yup
+    .string()
+    .test("is-non-empty", "Selecting an interest is required", (value) =>
+      /\S/.test(value)
+    )
+    .required("Selecting an interest is required"),
 
-  deadline: yup.date().required().typeError("Must be a date"),
-  eligibility: yup.string(),
+  deadline: yup
+    .date()
+    .required()
+    .typeError("Must be a date")
+    .min(yup.ref("cohort_end_date"), "Deadline cannot be before end date"),
+  eligibility: yup
+    .string()
+    .typeError("You must enter a eligibility")
+    .required(),
   rubric_eligibility: yup
     .number()
-    .min(0, "level 0 - 8 allowed only")
-    .max(8, "level 0 - 8 allowed only")
+    .min(1, "level 1 - 9 allowed only")
+    .max(9, "level 1 - 9 allowed only")
     .typeError("You must enter a number")
     .required("Required"),
   no_of_seats: yup.number().typeError("You must enter a number").required(),
@@ -48,14 +70,18 @@ const schema = yup.object({
 
 const EventForm = () => {
   const actor = useSelector((currState) => currState.actors.actor);
-  const areaOfExpertise = useSelector((currState) => currState.expertiseIn.expertise);
+  const areaOfExpertise = useSelector(
+    (currState) => currState.expertiseIn.expertise
+  );
 
   const [inputType, setInputType] = useState("date");
 
-
   const [interestedDomainsOptions, setInterestedDomainsOptions] = useState([]);
-  const [interestedDomainsSelectedOptions, setInterestedDomainsSelectedOptions] = useState([]);
-  
+  const [
+    interestedDomainsSelectedOptions,
+    setInterestedDomainsSelectedOptions,
+  ] = useState([]);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -70,10 +96,22 @@ const EventForm = () => {
   //   mode: "all",
   // });
 
-  const { register, handleSubmit, reset, clearErrors, setValue, getValues, setError, watch, control, trigger, formState: { errors, isSubmitting } } = useForm({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    clearErrors,
+    setValue,
+    getValues,
+    setError,
+    watch,
+    control,
+    trigger,
+    formState: { errors, isSubmitting },
+  } = useForm({
     resolver: yupResolver(schema),
     mode: "all",
-});
+  });
 
   //   async (file) => {
   //     clearErrors("imageData");
@@ -141,7 +179,6 @@ const EventForm = () => {
       no_of_seats: parseInt(data.no_of_seats),
     };
 
-
     try {
       await actor.create_cohort(eventData).then((result) => {
         toast.success("Event Created");
@@ -188,17 +225,19 @@ const EventForm = () => {
 
   useEffect(() => {
     if (areaOfExpertise) {
-        setInterestedDomainsOptions(areaOfExpertise.map((expert) => ({
-            value: expert.name,
-            label: expert.name,
-        })))
+      setInterestedDomainsOptions(
+        areaOfExpertise.map((expert) => ({
+          value: expert.name,
+          label: expert.name,
+        }))
+      );
     } else {
-        setInterestedDomainsOptions([]);
+      setInterestedDomainsOptions([]);
     }
-}, [areaOfExpertise])
+  }, [areaOfExpertise]);
   const errorsFunc = (val) => {
-    console.log('val', val)
-  }
+    console.log("val", val);
+  };
   return (
     <>
       <DetailHeroSection HeroImage={HeroImage} />
@@ -219,17 +258,27 @@ const EventForm = () => {
                       htmlFor={field.id}
                       className="flex gap-2 mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                     >
-                      {field.label} <span className={`${field.label === "Eligibility Cirteria" ? 'hidden' : 'flex'} text-red-500`}>*</span>
+                      {field.label}{" "}
+                      <span
+                        className={`${
+                          field.label === "Eligibility Cirteria"
+                            ? "hidden"
+                            : "flex"
+                        } text-red-500`}
+                      >
+                        *
+                      </span>
                     </label>
                     {field.type === "textarea" ? (
                       <textarea
                         name={field.name}
                         id={field.id}
                         {...register(field.name)}
-                        className={`bg-gray-50 border-2 ${errors[field.name]
+                        className={`bg-gray-50 border-2 ${
+                          errors[field.name]
                             ? "border-red-500 placeholder:text-red-500"
                             : "border-[#737373]"
-                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                         placeholder={field.placeholder}
                         onFocus={() => handleFocus(field)}
                         onBlur={() => handleBlur(field)}
@@ -242,10 +291,11 @@ const EventForm = () => {
                         name={field.name}
                         id={field.id}
                         {...register(field.name)}
-                        className={`bg-gray-50 border-2 ${errors[field.name]
+                        className={`bg-gray-50 border-2 ${
+                          errors[field.name]
                             ? "border-red-500 placeholder:text-red-500"
                             : "border-[#737373]"
-                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                         placeholder={field.placeholder}
                         onFocus={() => handleFocus(field)}
                         onBlur={() => handleBlur(field)}
@@ -259,8 +309,10 @@ const EventForm = () => {
                   </div>
                 ))}
                 <div className="relative z-0 group mb-6">
-                  <label htmlFor="tags"
-                    className="flex gap-2 mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start">
+                  <label
+                    htmlFor="tags"
+                    className="flex gap-2 mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
                     Tags <span className="text-red-500">*</span>
                   </label>
                   <ReactSelect
@@ -278,9 +330,7 @@ const EventForm = () => {
                           : "2px solid #737373",
                         backgroundColor: "rgb(249 250 251)",
                         "&::placeholder": {
-                          color: errors.tags
-                            ? "#ef4444"
-                            : "currentColor",
+                          color: errors.tags ? "#ef4444" : "currentColor",
                         },
                       }),
                     }}
@@ -292,15 +342,18 @@ const EventForm = () => {
                     name="tags"
                     onChange={(selectedOptions) => {
                       if (selectedOptions && selectedOptions.length > 0) {
-                        setInterestedDomainsSelectedOptions(selectedOptions)
+                        setInterestedDomainsSelectedOptions(selectedOptions);
                         clearErrors("tags");
-                        setValue("tags",
-                          selectedOptions.map((option) => option.value).join(", "),
-                          { shouldValidate: true });
+                        setValue(
+                          "tags",
+                          selectedOptions
+                            .map((option) => option.value)
+                            .join(", "),
+                          { shouldValidate: true }
+                        );
                       } else {
-                        setInterestedDomainsSelectedOptions([])
-                        setValue("tags", "",
-                          { shouldValidate: true });
+                        setInterestedDomainsSelectedOptions([]);
+                        setValue("tags", "", { shouldValidate: true });
                         setError("tags", {
                           type: "required",
                           message: "Selecting a tag is required",

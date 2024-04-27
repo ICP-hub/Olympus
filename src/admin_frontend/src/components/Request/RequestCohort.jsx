@@ -12,21 +12,36 @@ const RequestCohort = () => {
   const [selectedOption, setSelectedOption] = useState("Pending");
   const [requestedData, setRequestedData] = useState([]);
 
-  const result = actor.get_pending_cohort_requests_for_admin();
-  const result1 = actor.get_accepted_cohort_creation_request_for_admin();
-  const result2 = actor.get_declined_cohort_creation_request_for_admin();
-  console.log("result get_pending_cohort_requests_for_admin ====>>>> ", result);
-  console.log(
-    "result get_accepted_cohort_creation_request_for_admin====>>>> ",
-    result1
-  );
-  console.log(
-    "result get_declined_cohort_creation_request_for_admin ====>>>> ",
-    result2
-  );
+  const fetchData = async () => {
+    try {
+      const result = await actor.get_pending_cohort_requests_for_admin();
+      const result1 =
+        await actor.get_accepted_cohort_creation_request_for_admin();
+      const result2 =
+        await actor.get_declined_cohort_creation_request_for_admin();
+
+      console.log(
+        "result get_pending_cohort_requests_for_admin ====>>>> ",
+        result
+      );
+      console.log(
+        "result get_accepted_cohort_creation_request_for_admin====>>>> ",
+        result1
+      );
+      console.log(
+        "result get_declined_cohort_creation_request_for_admin ====>>>> ",
+        result2
+      );
+
+      // Handle your data here
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      // Handle errors here
+    }
+  };
   const [noData, setNoData] = useState(null);
 
-  const fetchCohortRequests = (status) => {
+  const fetchCohortRequests = async (status) => {
     if (!actor) {
       console.log("Actor not found");
       return null;
@@ -35,47 +50,45 @@ const RequestCohort = () => {
     let result;
     switch (status) {
       case "Pending":
-        result = actor.get_pending_cohort_requests_for_admin();
+        result = await actor.get_pending_cohort_requests_for_admin();
         break;
       case "Accepted":
-        result = actor.get_accepted_cohort_creation_request_for_admin();
+        result = await actor.get_accepted_cohort_creation_request_for_admin();
         break;
       case "Declined":
-        result = actor.get_declined_cohort_creation_request_for_admin();
+        result = await actor.get_declined_cohort_creation_request_for_admin();
         break;
       default:
         console.log("Unknown status");
         toast.error("Unknown status");
         return;
     }
-    result
-      .then((result) => {
-        console.log(result);
-        console.log(status);
-        if (result && result.length > 0) {
-          setNoData(false);
-          setRequestedData(result);
-          setIsPopupOpen(false);
-        } else {
-          setNoData(true);
-          setRequestedData([]);
-          setIsPopupOpen(false);
-          throw new Error("Invalid response format");
-        }
-      })
-      .catch((error) => {
-        setNoData(true);
-        setRequestedData([]);
-        setIsPopupOpen(false);
-        console.error("Error fetching document requests:", error);
-      });
+    console.log(result);
+    console.log(status);
+    if (result && result.length > 0) {
+      setNoData(false);
+      setRequestedData(result);
+      setIsPopupOpen(false);
+    } else {
+      setNoData(true);
+      setRequestedData([]);
+      setIsPopupOpen(false);
+      throw new Error("Invalid response format");
+    }
+    // .catch((error) => {
+    //   setNoData(true);
+    //   setRequestedData([]);
+    //   setIsPopupOpen(false);
+    //   console.error("Error fetching document requests:", error);
+    // });
   };
 
   useEffect(() => {
     fetchCohortRequests(selectedOption);
+    fetchData();
   }, [actor, selectedOption]);
 
-  const approveAndRejectCohort = async (value, projectId, principal) => {
+  const approveAndRejectCohort = async (value, cohortId) => {
     if (!actor) {
       console.log("Actor not found");
       return null;
@@ -84,24 +97,24 @@ const RequestCohort = () => {
       let result;
       switch (value) {
         case "Approve":
-          result = await actor.approve_private_docs_access_request(
-            projectId,
-            Principal.fromText(principal)
-          );
+          result = await actor.accept_cohort_creation_request(cohortId);
           break;
         case "Decline":
-          result = await actor.decline_private_docs_access_request(
-            projectId,
-            Principal.fromText(principal)
-          );
+          result = await actor.decline_cohort_creation_request(cohortId);
           break;
         default:
           console.log("Unknown action");
           return;
       }
 
-      if (result) {
+      if (
+        result &&
+        result.includes(
+          `You have accepted the cohort creation with cohort id: ${cohortId}`
+        )
+      ) {
         // Assuming result contains some success indication
+        console.log(result);
         toast.success(`Request ${value.toLowerCase()}ed successfully.`);
       } else {
         toast.error(`Failed to ${value.toLowerCase()} the request.`);
@@ -168,13 +181,20 @@ const RequestCohort = () => {
         ) : (
           requestedData &&
           requestedData.map((data, index) => {
-            const request = data?.notification_type?.AccessRequest;
+            const request = data?.cohort_details;
             if (!request) return null;
-            const image = uint8ArrayToBase64(request.image);
-            const name = request?.name;
-            const principal = request?.sender.toText();
-            const status = request?.status;
-            const projectId = request?.project_id;
+            const image = uint8ArrayToBase64(request?.cohort_creator?._arr);
+            const name = request?.cohort?.title;
+            const tags = request?.cohort?.tags;
+            const description = request?.cohort?.description;
+            const no_of_seats = request?.cohort?.no_of_seats;
+            const cohort_launch_date = request?.cohort?.cohort_launch_date;
+            const cohort_end_date = request?.cohort?.cohort_end_date;
+            const eligibility = request?.cohort?.criteria?.eligibility?.[0];
+            const level_on_rubric = request?.cohort?.criteria?.level_on_rubric;
+            // const principal = request?.sender.toText();
+            const status = data?.request_status;
+            const cohortId = request?.cohort_id;
             return (
               <div
                 className="flex w-auto items-center flex-wrap justify-between bg-gray-200 rounded-lg  text-lg p-4 my-4"
@@ -191,7 +211,7 @@ const RequestCohort = () => {
                     className="line-clamp-1 w-48 font-fontUse text-base ml-12
                   "
                   >
-                    {principal}
+                    {description}
                   </p>
                 </div>
 
@@ -206,11 +226,7 @@ const RequestCohort = () => {
                       <button
                         className="px-4 py-1 bg-white text-blue-800 font-bold rounded-lg border-2 border-blue-800 ml-12"
                         onClick={() =>
-                          approveAndRejectCohort(
-                            "Decline",
-                            projectId,
-                            principal
-                          )
+                          approveAndRejectCohort("Decline", cohortId)
                         }
                       >
                         Reject
@@ -218,11 +234,7 @@ const RequestCohort = () => {
                       <button
                         className="px-4 py-1 bg-[#3505B2] text-white font-bold rounded-lg ml-3"
                         onClick={() =>
-                          approveAndRejectCohort(
-                            "Approve",
-                            projectId,
-                            principal
-                          )
+                          approveAndRejectCohort("Approve", cohortId)
                         }
                       >
                         Accept
@@ -230,7 +242,6 @@ const RequestCohort = () => {
                     </>
                   )}
                 </div>
-                
               </div>
             );
           })

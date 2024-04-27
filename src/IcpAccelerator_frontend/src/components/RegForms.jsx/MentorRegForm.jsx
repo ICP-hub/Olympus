@@ -91,8 +91,26 @@ const MentorRegForm = () => {
         )
         .required("Full name is required"),
       email: yup.string().email("Invalid email").nullable(true).optional(),
-      telegram_id: yup.string().nullable(true).matches(/^[a-zA-Z0-9_]{5,32}$/, "Invalid Telegram ID").optional(),
-      twitter_url: yup.string().nullable(true).optional().matches(/^(https?:\/\/)?(www\.)?twitter\.com\/[a-zA-Z0-9_]{1,15}$/,"Invalid Twitter URL"),
+      telegram_id: yup
+        .string()
+        .nullable(true)
+        .test("is-valid-telegram", "Invalid Telegram ID", (value) => {
+          if (!value) return true;
+          const hasValidChars = /^[a-zA-Z0-9_]{5,32}$/.test(value);
+          return hasValidChars;
+        }),
+      twitter_url: yup
+        .string()
+        .nullable(true)
+        .optional()
+        .test("is-valid-twitter", "Invalid Twitter ID", (value) => {
+          if (!value) return true;
+          const hasValidChars =
+            /^(https?:\/\/)?(www\.)?twitter\.com\/[a-zA-Z0-9_]{1,15}$/.test(
+              value
+            );
+          return hasValidChars;
+        }),
       openchat_user_name: yup
         .string()
         .nullable(true)
@@ -106,19 +124,20 @@ const MentorRegForm = () => {
             return isValidLength && hasValidChars;
           }
         ),
-        bio: yup
+      bio: yup
         .string()
         .optional()
         .test(
-          "maxWords", 
-          "Bio must not exceed 50 words", 
-          (value) => !value || value.trim().split(/\s+/).filter(Boolean).length <= 50
+          "maxWords",
+          "Bio must not exceed 50 words",
+          (value) =>
+            !value || value.trim().split(/\s+/).filter(Boolean).length <= 50
         )
         .test(
           "maxChars",
           "Bio must not exceed 500 characters",
           (value) => !value || value.length <= 500
-        ),  
+        ),
       country: yup
         .string()
         .test("is-non-empty", "Country is required", (value) =>
@@ -227,7 +246,6 @@ const MentorRegForm = () => {
           "Invalid LinkedIn URL"
         )
         .required("LinkedIn url is required"),
-      
     })
     .required();
 
