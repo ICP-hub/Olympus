@@ -61,15 +61,12 @@ const UserAllProfile = () => {
 
   return (
     <div className="container mx-auto">
-      <div className="w-full px-[4%] py-[2%]">
+      <div className="w-full px-[4%] py-[4%] md:py-[2%]">
         <div className="flex sm:flex-row justify-between  mb-4 sxxs:flex-col">
           <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-black to-gray-800 text-transparent bg-clip-text">
-            {currentRole.charAt(0).toUpperCase() + currentRole.slice(1)}{" "}
-            Profile
+            {currentRole.charAt(0).toUpperCase() + currentRole.slice(1)} Profile
           </h1>
           <div className="flex text-white text-sm flex-row font-semibold h-auto items-center bg-customBlue rounded-lg p-3 justify-around">
-            {/* <div className="md:block hidden">{Profile2}</div>
-            <p className="hidden md:block">Change Profile</p> */}
             {["user", "project", "mentor", "investor"].map((role) => {
               const index = roleToIndexMap[role];
               const isRoleActive =

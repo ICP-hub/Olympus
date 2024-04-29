@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import ConfirmationModal from "../models/ConfirmationModal";
 import { useNavigate } from "react-router-dom";
 import { BioSvg, DateSvg, place } from "../Utils/AdminData/SvgData";
 
@@ -17,10 +16,6 @@ const NotificationCard = ({ notificationDetails }) => {
     navigate("/all", { state: notificationDetails.principal });
   };
 
-  // console.log(
-  //   "notificationDetails.project_description =>",
-  //   notificationDetails
-  // );
   return (
     <>
       <div className="px-[2%]  py-[1.5%] w-full flex flex-col mb-6 bg-white rounded-lg shadow border border-gray-200">
@@ -98,20 +93,9 @@ const NotificationCard = ({ notificationDetails }) => {
                 </div>
               )
             )}
-            {/* {notificationDetails.rejectedTime && (
-              <div className="flex flex-row items-center text-sm font-medium text-gray-600">
-                <span className="text-gray-500 min-w-[100px]">
-                  Rejected Time:
-                </span>
-                <span className="truncate">
-                  {notificationDetails.rejectedTime}
-                </span>
-              </div>
-            )} */}
           </div>
           <div className="md:w-1/4 w-full flex justify-end items-end space-x-2 md:h-10">
             <button
-              // onClick={toggleModelPopUp}
               onClick={dataSendToProfileHandler}
               className="capitalize border-2 font-semibold bg-[#3505B2] border-[#3505B2] md:text-xs text-[9px]  text-white md:px-1 px-2 rounded-md md:h-8 h-7 hover:text-[#3505B2] hover:bg-white"
             >
@@ -119,12 +103,6 @@ const NotificationCard = ({ notificationDetails }) => {
             </button>
           </div>
         </div>
-
-        {/* <ConfirmationModal
-          notificationDetails={notificationDetails}
-          toggleModelPopUp={toggleModelPopUp}
-          modalPopUp={modalPopUp}
-        /> */}
       </div>
     </>
   );
