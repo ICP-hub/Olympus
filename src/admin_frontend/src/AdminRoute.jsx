@@ -18,9 +18,7 @@ const AdminHome = lazy(() => import("./components/Admindashboard/AdminHome"));
 const AdminDashboard = lazy(() =>
   import("./components/Admindashboard/AdminDashboard")
 );
-const ConfirmationModal = lazy(() =>
-  import("./components/models/ConfirmationModal")
-);
+
 const UserAllProfile = lazy(() =>
   import("./components/Admindashboard/Profile/UserAllProfile")
 );
@@ -52,7 +50,6 @@ const AdminRoute = ({ setModalOpen }) => {
     },
     { path: "/request", element: <RequestCheck /> },
     { path: "/alluser", element: <Adminalluser /> },
-    { path: "/modal", element: <ConfirmationModal /> },
     { path: "/reject", element: <RejectModal /> },
     { path: "/accept", element: <AcceptModal /> },
     { path: "/project_details", element: <Projectdetails /> },

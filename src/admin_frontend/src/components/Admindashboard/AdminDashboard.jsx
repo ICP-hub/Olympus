@@ -15,6 +15,7 @@ import AcceptModal from "../models/AcceptModal";
 import { bellSvg } from "../Utils/AdminData/SvgData";
 import pending from "../../../assets/image/pending.png";
 import { userSvg } from "../Utils/AdminData/SvgData";
+import NoDataCard from "../../../../IcpAccelerator_frontend/src/components/Mentors/Event/NoDataCard";
 
 const AdminDashboard = () => {
   const principal = useSelector((currState) => currState.internet.principal);
@@ -47,7 +48,7 @@ const AdminDashboard = () => {
   const [currentNotificationForReject, setCurrentNotificationForReject] =
     useState(null);
 
-  // console.log("allNotification in dahboard", allNotification);
+  console.log("allNotification in dahboard", allNotification);
   const navigate = useNavigate();
 
   return (
@@ -310,61 +311,70 @@ const AdminDashboard = () => {
                 View More
               </button>
             </div>
-            <div className="overflow-y-auto">
-              {allNotification?.map((item, index) => (
-                <div
-                  key={index}
-                  className="flex flex-row flex-wrap w-full items-center justify-between mb-2 text-sm gap-2 border p-2 rounded-lg border-gray-200"
-                >
-                  <div className="md:space-x-4 flex-wrap flex flex-row items-center md:justify-around justify-start w-full">
-                    <img
-                      src={item.photo}
-                      alt="photo"
-                      className="w-[3rem] h-[3rem] object-cover rounded-lg"
-                    />
-                    <div className="flex flex-col md:ml-0 ml-4 justify-around items-start">
-                      <p className="font-extrabold text-sm">{item.name}</p>
-                      <p className="text-xs text-gray-400 font-normal">
-                        {item.requestedFor}
-                      </p>
-                    </div>
-                    <p className="truncate md:mt-0 mt-2 text-xs overflow-hidden text-ellipsis group-hover:text-left ">
-                      {item.sender}
-                    </p>
-                    <p className="text-blue-600 text-xs">
-                      Requested:{" "}
-                      <span className="font-bold ">{item.timestamp}</span>
-                    </p>
-                  </div>
 
-                  <div className="flex flex-wrap space-x-2 items-center justify-end w-full md:mt-0 mt-[4px] md:mr-[7px]">
-                    <button
-                      onClick={() => navigate("/all", { state: item.sender })}
-                      className="px-3 py-1 bg-[#7283EA] hover:bg-[#4755af] text-white font-bold rounded-md"
+            <div className="overflow-y-auto">
+              <div className="overflow-y-auto">
+                {allNotification?.length > 0 ? (
+                  allNotification.map((item, index) => (
+                    <div
+                      key={index}
+                      className="flex flex-row flex-wrap w-full items-center justify-between mb-2 text-sm gap-2 border p-2 rounded-lg border-gray-200"
                     >
-                      View
-                    </button>
-                    {/* <button
-                      onClick={() => {
-                        setCurrentNotificationForReject(item);
-                        toggleRejectModal();
-                      }}
-                      className="px-3 py-1 bg-[#C60404] hover:bg-red-700 text-white font-bold rounded-md"
-                    >
-                      Reject
-                    </button>
-                    <button
-                      className="px-3 py-1 bg-[#3505B2] hover:bg-indigo-900 text-white font-bold rounded-md"
-                      onClick={() => {
-                        setCurrentNotificationForAccept(item);
-                        toggleAcceptModal();
-                      }}
-                    >
-                      Accept
-                    </button> */}
-                  </div>
-                </div>
-              ))}
+                      <div className="md:space-x-4 flex-wrap flex flex-row items-center md:justify-around justify-start w-full">
+                        <img
+                          src={item.photo}
+                          alt="photo"
+                          className="w-[3rem] h-[3rem] object-cover rounded-lg"
+                        />
+                        <div className="flex flex-col md:ml-0 ml-4 justify-around items-start">
+                          <p className="font-extrabold text-sm">{item.name}</p>
+                          <p className="text-xs text-gray-400 font-normal">
+                            {item.requestedFor}
+                          </p>
+                        </div>
+                        <p className="truncate md:mt-0 mt-2 text-xs overflow-hidden text-ellipsis group-hover:text-left ">
+                          {item.sender}
+                        </p>
+                        <p className="text-blue-600 text-xs">
+                          Requested:{" "}
+                          <span className="font-bold ">{item.timestamp}</span>
+                        </p>
+                      </div>
+
+                      <div className="flex flex-wrap space-x-2 items-center justify-end w-full md:mt-0 mt-[4px] md:mr-[7px]">
+                        <button
+                          onClick={() =>
+                            navigate("/all", { state: item.sender })
+                          }
+                          className="px-3 py-1 bg-[#7283EA] hover:bg-[#4755af] text-white font-bold rounded-md"
+                        >
+                          View
+                        </button>
+                        {/* <button
+            onClick={() => {
+              setCurrentNotificationForReject(item);
+              toggleRejectModal();
+            }}
+            className="px-3 py-1 bg-[#C60404] hover:bg-red-700 text-white font-bold rounded-md"
+          >
+            Reject
+          </button>
+          <button
+            className="px-3 py-1 bg-[#3505B2] hover:bg-indigo-900 text-white font-bold rounded-md"
+            onClick={() => {
+              setCurrentNotificationForAccept(item);
+              toggleAcceptModal();
+            }}
+          >
+            Accept
+          </button> */}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <NoDataCard />
+                )}
+              </div>
             </div>
           </div>
         </div>

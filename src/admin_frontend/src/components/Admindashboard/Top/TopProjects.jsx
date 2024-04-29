@@ -88,7 +88,7 @@ const TopProjects = () => {
                         {truncateEllipsis(item.full_name)}
                       </p>
                       <p
-                        className="truncate overflow-hidden whitespace-nowrap text-[10px] text-gray-400"
+                        className="truncate overflow-hidden w-1/2 whitespace-nowrap text-[10px] text-gray-400"
                         style={{ maxHeight: "4.5rem" }}
                       >
                         {/* {truncateWithEllipsis(item.code)} */}
