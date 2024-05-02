@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from "react";
 import "react-circular-progressbar/dist/styles.css";
-import { place, Profile2 ,telegramSVg} from "../../Utils/AdminData/SvgData";
+import {
+  noDataPresentSvg,
+  place,
+  place1,
+  Profile2,
+  telegramSVg,
+} from "../../Utils/AdminData/SvgData";
 import {
   numberToDate,
   uint8ArrayToBase64,
@@ -12,7 +18,6 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/autoplay";
-
 
 const UserProfile = ({ userData, Allrole }) => {
   // const actor = useSelector((currState) => currState.actors.actor);
@@ -89,6 +94,7 @@ const UserProfile = ({ userData, Allrole }) => {
   const date = numberToDate(userData[0].joining_date);
   const profile = uint8ArrayToBase64(userData[0].params.profile_picture[0]);
   // console.log(profile);
+
   return (
     <div className="w-full flex gap-4 sxxs:flex-col sm:flex-row">
       <div className=" bg-[#D2D5F2]  shadow-md shadow-gray-400 p-6 rounded-lg md:w-1/4 sxxs:w-full">
@@ -108,26 +114,35 @@ const UserProfile = ({ userData, Allrole }) => {
           </div>
         </div>
         <div className="flex flex-col ml-4  mt-2 w-auto justify-start md:mb-0 mb-6">
-          <div className="flex flex-row  gap-4 items-center">
-            <h1 className="md:text-2xl text-xl md:font-extrabold font-bold  bg-black text-transparent bg-clip-text">
+          <div className="flex flex-row  gap-4 items-center justify-between">
+            <h1 className="md:text-[21px] text-xl md:font-extrabold font-bold  bg-black text-transparent bg-clip-text">
               {userData[0].params.full_name}
             </h1>
-            <div className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]">{current.charAt(0).toUpperCase() + current.slice(1)}</div>
+            <div className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]">
+              {current.charAt(0).toUpperCase() + current.slice(1)}
+            </div>
           </div>
-          <p className="text-gray-500 md:text-md text-sm font-normal flex mb-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 512 512"
-              className="size-4 "
-              fill="currentColor"
-            >
-              <path d="M256 64C150 64 64 150 64 256s86 192 192 192c17.7 0 32 14.3 32 32s-14.3 32-32 32C114.6 512 0 397.4 0 256S114.6 0 256 0S512 114.6 512 256v32c0 53-43 96-96 96c-29.3 0-55.6-13.2-73.2-33.9C320 371.1 289.5 384 256 384c-70.7 0-128-57.3-128-128s57.3-128 128-128c27.9 0 53.7 8.9 74.7 24.1c5.7-5 13.1-8.1 21.3-8.1c17.7 0 32 14.3 32 32v80 32c0 17.7 14.3 32 32 32s32-14.3 32-32V256c0-106-86-192-192-192zm64 192a64 64 0 1 0 -128 0 64 64 0 1 0 128 0z" />
-            </svg>
-            <span className="ml-2">{userData[0].params.email}</span>
-          </p>
+          {userData[0].params.email[0] && (
+            <p className="text-gray-500 md:text-md text-sm font-normal flex mb-2">
+              {userData[0].params.email && (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 512 512"
+                  className="size-4 "
+                  fill="currentColor"
+                >
+                  <path d="M256 64C150 64 64 150 64 256s86 192 192 192c17.7 0 32 14.3 32 32s-14.3 32-32 32C114.6 512 0 397.4 0 256S114.6 0 256 0S512 114.6 512 256v32c0 53-43 96-96 96c-29.3 0-55.6-13.2-73.2-33.9C320 371.1 289.5 384 256 384c-70.7 0-128-57.3-128-128s57.3-128 128-128c27.9 0 53.7 8.9 74.7 24.1c5.7-5 13.1-8.1 21.3-8.1c17.7 0 32 14.3 32 32v80 32c0 17.7 14.3 32 32 32s32-14.3 32-32V256c0-106-86-192-192-192zm64 192a64 64 0 1 0 -128 0 64 64 0 1 0 128 0z" />
+                </svg>
+              )}
+              <span className="ml-2 truncate">
+                {userData[0].params.email[0]}
+              </span>
+            </p>
+          )}
+
           <div className="flex flex-col items-start gap-3 text-sm">
             <div className="flex flex-row  text-gray-600 space-x-2">
-              {place}
+              {place1}
               <p className="underline ">{userData[0].params.country}</p>
             </div>
             <div className=" flex flex-row space-x-2 text-gray-600">
@@ -141,14 +156,18 @@ const UserProfile = ({ userData, Allrole }) => {
               </svg>
               <p className="ml-2">{date}</p>
             </div>
-            <div className="flex flex-row space-x-2 text-gray-600">
-              <img
-                src={openchat_username}
-                alt="openchat_username"
-                className="size-5"
-              />
-              <p className="ml-2">{userData[0].params.openchat_username[0]}</p>
-            </div>
+            {userData[0].params.openchat_username[0] && (
+              <div className="flex flex-row space-x-2 text-gray-600">
+                <img
+                  src={openchat_username}
+                  alt="openchat_username"
+                  className="size-4"
+                />
+                <p className="ml-2">
+                  {userData[0].params.openchat_username[0]}
+                </p>
+              </div>
+            )}
             {userData[0].params.area_of_interest && (
               <div className=" flex flex-col text-gray-600">
                 <p className="text-black font-semibold mb-1">Skill :</p>
@@ -183,7 +202,7 @@ const UserProfile = ({ userData, Allrole }) => {
           </div>
         </div>
       </div>
-      <div className=" bg-[#D2D5F2] shadow-md shadow-gray-400 p-6 rounded-lg md:w-3/4 sxxs:w-full">
+      <div className=" bg-[#D2D5F2] shadow-md shadow-gray-400 p-6 rounded-lg md:w-[74%] sxxs:w-full">
         <div className="flex w-full mb-4">
           <Swiper
             modules={[Pagination, Autoplay]}
@@ -236,55 +255,88 @@ const UserProfile = ({ userData, Allrole }) => {
               ))}
           </Swiper>
         </div>
-          <h1 className="text-2xl font-bold text-gray-800">
-            About {current.charAt(0).toUpperCase() + current.slice(1)}
-          </h1>
-          <p className="text-gray-600 text-lg break-all line-clamp-6 my-3 px-[4%]">
-            {userData[0].params.bio}
+        <h1 className="text-2xl font-bold text-gray-800">
+          About {current.charAt(0).toUpperCase() + current.slice(1)}
+        </h1>
+        {userData[0]?.params?.bio[0] ? (
+          <p className="text-gray-600 md:text-sm text-xs break-all line-clamp-6 my-3 px-[4%]">
+            {userData[0].params.bio[0]}
           </p>
-          <div className="pl-[4%]">
-          <p className="w-full mb-4 border border-[#C5C5C5]"></p>
+        ) : (
+          <div className="text-gray-600 flex items-center text-sm md:text-md ml-2 my-4">
+            {noDataPresentSvg}
+            <p>No data available</p>
           </div>
-          <div className="grid md:grid-cols-2 gap-4 w-full px-[3%]">
-            <div className="md:w-1/2 w-3/4 flex flex-col items-start justify-start sm:text-left px-[4%]">
-              <h2 className="text-xl sm:text-xl font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
-                Telegram :
-              </h2>
-              <div className="flex flex-grow items-center truncate">
-              {telegramSVg}
-                <p className="text-gray-600 text-sm md:text-md truncate ml-2">
-                  {userData[0].params.telegram_id}
-                </p>
-                <a
-                  href={userData[0].params.telegram_id}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="pl-2"
-                >
-                </a>{" "}
-              </div>
-            </div>
+        )}
 
-            <div className="flex flex-col md:w-1/2 w-3/4 items-start text-center sm:text-left px-[4%]">
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2 mr-2">
-                Twitter :
-              </h2>
-              <div className="flex flex-grow items-center truncate">
-              {twitterSvg}
-                <p className="text-gray-600 text-sm md:text-md truncate ml-2">
-                  {userData[0].params.twitter_id}
-                </p>
-                <a
-                  href={userData[0].params.twitter_id}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="shrink-0 pl-2"
-                >
-                </a>
+        <div className="pl-[4%]">
+          <p className="w-full mb-4 border border-[#C5C5C5]"></p>
+        </div>
+        <div className="grid md:grid-cols-2 gap-4 w-full px-[3%]">
+          <div className="md:w-1/2 w-3/4 flex flex-col items-start justify-start sm:text-left px-[4%]">
+            <h2 className="font-bold mb-2 mr-2 sm:text-2xl text-gray-800 text-xl">
+              Telegram :
+            </h2>
+            <div className="flex flex-grow items-center truncate">
+              <div
+                onClick={() => {
+                  const telegramUsername = userData[0].params.telegram_id[0];
+                  if (telegramUsername) {
+                    const telegramUrl = `https://t.me/${telegramUsername}`;
+                    window.open(telegramUrl, "_blank");
+                  }
+                }}
+                className={`cursor-pointer ${
+                  userData[0].params.telegram_id[0] ? "" : "hidden"
+                }`}
+              >
+                {telegramSVg}
               </div>
+              {userData[0].params.telegram_id[0] ? (
+                <p className="text-[#7283EA] text-sm md:text-md truncate ml-2">
+                  {userData[0].params.telegram_id[0]}
+                </p>
+              ) : (
+                <p className="text-gray-600 flex items-center text-sm md:text-md ml-2">
+                  {noDataPresentSvg}
+                  No data found
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div className="flex flex-col md:w-1/2 w-3/4 items-start text-center sm:text-left px-[4%]">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2 mr-2">
+              Twitter :
+            </h2>
+            <div className="flex flex-grow items-center truncate">
+              <div
+                onClick={() => {
+                  const twitterUrl = userData[0].params.twitter_id[0];
+                  if (twitterUrl) {
+                    window.open(twitterUrl, "_blank");
+                  }
+                }}
+                className={`cursor-pointer ${
+                  userData[0].params.twitter_id[0] ? "" : "hidden"
+                }`}
+              >
+                {twitterSvg}
+              </div>
+              {userData[0].params.twitter_id[0] ? (
+                <p className="text-[#7283EA] text-sm md:text-md truncate ml-2">
+                  {userData[0].params.twitter_id[0]}
+                </p>
+              ) : (
+                <p className="text-gray-600 flex items-center text-sm md:text-md ml-2">
+                  {noDataPresentSvg}
+                  No data found
+                </p>
+              )}
             </div>
           </div>
         </div>
+      </div>
     </div>
   );
 };
