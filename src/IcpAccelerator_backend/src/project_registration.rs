@@ -292,6 +292,7 @@ pub struct ProjectUpdateRequest {
     pub principal: Principal,
     pub accepted_at: u64,
     pub rejected_at: u64,
+    pub sent_at: u64,
 }
 
 #[derive(Serialize, Deserialize, Clone, CandidType)]
@@ -1097,6 +1098,7 @@ pub async fn update_project(project_id: String, updated_project: ProjectInfo) ->
                         principal: caller,
                         accepted_at: approved_timestamp,
                         rejected_at: rejected_timestamp,
+                        sent_at: time(),
                     });
                 });
             }

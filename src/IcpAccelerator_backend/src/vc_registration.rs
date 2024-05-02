@@ -116,6 +116,7 @@ pub struct UpdateInfoStruct{
     pub updated_info: Option<VentureCapitalist>,
     pub approved_at: u64,
     pub rejected_at: u64,
+    pub sent_at: u64,
 }
 
 pub type VcAnnouncements = HashMap<Principal, Vec<Announcements>>;
@@ -482,6 +483,7 @@ pub async fn update_venture_capitalist(params: VentureCapitalist) -> String {
                 updated_info: Some(params.clone()),
                 approved_at: approved_timestamp,
                 rejected_at: rejected_timestamp,
+                sent_at: time(),
             };
             await_ers.insert(caller, update_data_to_store.clone());
         },

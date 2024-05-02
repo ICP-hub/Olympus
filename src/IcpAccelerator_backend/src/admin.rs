@@ -751,6 +751,7 @@ pub fn decline_vc_profile_update_request(requester: Principal, decline: bool) ->
                 updated_info: vc_internal.updated_info.clone(),
                 approved_at: 0,
                 rejected_at: time(),
+                sent_at: 0,
             };
             if decline {
                 DECLINED_VC_PROFILE_EDIT_REQUEST.with(|d_vc_registry| {
@@ -897,6 +898,7 @@ pub fn decline_mentor_profile_update_request(requester: Principal, decline: bool
                 updated_info: vc_internal.updated_info.clone(),
                 approved_at: 0,
                 rejected_at: time(),
+                sent_at: 0,
             };
             if decline {
                 DECLINED_MENTOR_PROFILE_EDIT_REQUEST.with(|d_vc_registry| {

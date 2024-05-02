@@ -60,6 +60,7 @@ pub struct MentorUpdateRequest {
     pub updated_info: Option<MentorProfile>,
     pub approved_at: u64,
     pub rejected_at: u64,
+    pub sent_at: u64,
 }
 
 pub type MentorRegistry = HashMap<Principal, MentorInternal>;
@@ -280,6 +281,7 @@ pub async fn update_mentor(updated_profile: MentorProfile) -> String {
             updated_info: Some(updated_profile.clone()),
             approved_at: approved_timestamp,
             rejected_at: rejected_timestamp,
+            sent_at: time(),
         };
         await_ers.insert(caller, update_data_tp_store.clone());
     });
