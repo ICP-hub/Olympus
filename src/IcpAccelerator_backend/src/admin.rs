@@ -1873,126 +1873,98 @@ pub fn update_mentor_profile(requester: Principal, updated_profile: MentorProfil
 pub async fn send_cohort_request_to_admin(cohort_request: CohortRequest) -> String {
     //access controllers
     match get_info().await {
-        Ok(res) => {
-            let controllers = res;
+        Ok(controllers) => {
+            let request_ref = &cohort_request;  
 
-            for c in controllers {
-                let i: i8 = 1;
-
-                ic_cdk::println!("no = {} c = {}", i, c);
+            for (index, controller) in controllers.iter().enumerate() {
+                ic_cdk::println!("no = {} controller = {}", index + 1, controller);
 
                 COHORT_REQUEST.with(|cohort_requests| {
                     let mut cohort_requests = cohort_requests.borrow_mut();
                     cohort_requests
-                        .entry(c)
+                        .entry(*controller)
                         .or_default()
-                        .push(cohort_request.clone())
+                        .push(request_ref.clone())  
                 });
             }
             ic_cdk::println!("REQUEST HAS BEEN SENT TO ADMIN");
-            format!("cohort creation request has been sent to admin")
+            "cohort creation request has been sent to admin".to_string()
         }
         Err(e) => {
-            format!("unable to get canister information {:?}", e)
+            ic_cdk::println!("Error retrieving canister information: {:?}", e);
+            format!("unable to get canister information: {:?}", e)
         }
     }
 }
 
 #[query]
 pub fn get_pending_cohort_requests_for_admin() -> Vec<CohortRequest> {
-    COHORT_REQUEST.with(|pending_alerts| {
-        let mut all_requests = Vec::new();
-        let pending_requests = pending_alerts.borrow();
+    let mut seen_ids = HashSet::new();
+    let mut all_requests = Vec::new();
 
-        for (_, requests) in pending_requests.iter() {
-            all_requests.extend(requests.iter().filter(|request| request.request_status == "pending").cloned());
+    COHORT_REQUEST.with(|requests| {
+        let requests = requests.borrow();
+
+        for (_principal, cohort_requests) in requests.iter() {
+            for request in cohort_requests.iter().filter(|r| r.request_status == "pending") {
+                if seen_ids.insert(request.cohort_details.cohort_id.clone()) {
+                    all_requests.push(request.clone());
+                } else {
+                    println!("Duplicate detected for cohort_id: {}", request.cohort_details.cohort_id);
+                }
+            }
         }
+    });
 
-        all_requests
-    })
+    all_requests
 }
 
 #[update]
 pub fn accept_cohort_creation_request(cohort_id: String) -> String {
-    let caller = caller();
+    let mut response_message = String::new();
 
-    ic_cdk::println!("Caller: {:?}", caller);
+    COHORT_REQUEST.with(|state| {
+        let mut state = state.borrow_mut();
+        let mut request_found_and_updated = false;
 
-    // Check if the offer has already been accepted
-    let already_accepted = COHORT_REQUEST.with(|state| {
-        state
-            .borrow()
-            .get(&caller)
-            .map_or(false, |reqs| {
-                reqs.iter().any(|r| {
-                    r.cohort_details.cohort_id == cohort_id && r.request_status == "accepted"
-                })
-            })
-    });
-
-    // If the offer has already been accepted, return early with a message
-    if already_accepted {
-        return format!(
-            "cohort request with id: {} has already been accepted.",
-            cohort_id
-        );
-    }
-
-    let mut request_found_and_updated = false;
-
-    // Get all requests
-    let all_requests = COHORT_REQUEST.with(|state| state.borrow().clone());
-
-    // Find and update the request
-    for (_, requests) in all_requests.iter() {
-        // Find the request with the specified cohort ID
-        if let Some(request) = requests.iter().find(|r| r.cohort_details.cohort_id == cohort_id) {
-            ic_cdk::println!("Found request for update: {:?}", request);
-
-            request_found_and_updated = true;
-
-            // Update the request for admin
-            let mut request = request.clone(); // Clone the request to make it mutable
-            request.request_status = "accepted".to_string();
-            request.accepted_at = time();
-
-            ic_cdk::println!("Updated the request for admin: {:?}", request);
-
-            // Update the request for cohort creator
-            if let Some(sent_status_vector) = all_requests.get(&request.cohort_details.cohort_creator) {
-                if let Some(request) = sent_status_vector.iter().find(|r| r.cohort_details.cohort_id == cohort_id) {
-                    let mut request = request.clone(); // Clone the request to make it mutable
+        // Iterate over all requests across all principals
+        for (_principal, requests) in state.iter_mut() {
+            for request in requests.iter_mut() {
+                if request.cohort_details.cohort_id == cohort_id && request.request_status == "pending" {
                     request.request_status = "accepted".to_string();
                     request.accepted_at = time();
-
-                    ic_cdk::println!("Updated the request for cohort creator: {:?}", request);
+                    request_found_and_updated = true;
                 }
-            }
-
-            // Insert cohort details into COHORT
-            COHORT.with(|storage| {
+                COHORT.with(|storage| {
                 let mut storage = storage.borrow_mut();
                 let cohort_details = request.cohort_details.clone();
                 storage.insert(cohort_id.clone(), cohort_details); // Insert cohort_details directly
                 ic_cdk::println!("Inserted cohort details into COHORT: {:?}", request);
             });
-
-            break; // Stop searching after finding the first request with the cohort ID
+            }
+            if request_found_and_updated {
+                break;
+            }
         }
-    }
 
+        if request_found_and_updated {
+            // Immediately verify the update
+            let status_verified = state.values().any(|requests| {
+                requests.iter().any(|r| r.cohort_details.cohort_id == cohort_id && r.request_status == "accepted")
+            });
+            if status_verified {
+                ic_cdk::println!("Verification successful: Cohort ID {} has been accepted.", cohort_id);
+                response_message = format!("You have accepted the cohort creation with cohort id: {}", cohort_id);
+            } else {
+                ic_cdk::println!("Verification failed: Cohort ID {} status not updated.", cohort_id);
+                response_message = format!("Failed to update status for cohort id: {}", cohort_id);
+            }
+        } else {
+            response_message = format!("No pending cohort request found with cohort id: {}", cohort_id);
+        }
+    });
 
-    if request_found_and_updated {
-        format!(
-            "You have accepted the cohort creation with cohort id: {}",
-            cohort_id
-        )
-    } else {
-        format!(
-            "No pending cohort request found with cohort id: {}",
-            cohort_id
-        )
-    }
+    response_message
 }
 
 #[update]
