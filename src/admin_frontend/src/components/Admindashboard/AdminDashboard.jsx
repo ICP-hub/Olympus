@@ -12,11 +12,11 @@ import TopInvestors from "./Top/TopInvestors";
 import { useNavigate } from "react-router-dom";
 import RejectModal from "../models/RejectModal";
 import AcceptModal from "../models/AcceptModal";
-import { bellSvg } from "../Utils/AdminData/SvgData";
+import { DateSvg, bellSvg } from "../Utils/AdminData/SvgData";
 import pending from "../../../assets/image/pending.png";
 import { userSvg } from "../Utils/AdminData/SvgData";
 import NoDataCard from "../../../../IcpAccelerator_frontend/src/components/Mentors/Event/NoDataCard";
-
+import NoData from "../../../../IcpAccelerator_frontend/assets/images/file_not_found.png";
 const AdminDashboard = () => {
   const principal = useSelector((currState) => currState.internet.principal);
   const mentorCount = useSelector((currState) => currState.count.mentor_count);
@@ -48,7 +48,7 @@ const AdminDashboard = () => {
   const [currentNotificationForReject, setCurrentNotificationForReject] =
     useState(null);
 
-  console.log("allNotification in dahboard", allNotification);
+  // console.log("allNotification in dahboard", allNotification);
   const navigate = useNavigate();
 
   return (
@@ -194,7 +194,7 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          <div className="rounded-[1rem] space-x-2 flex  px-4    justify-center cursor-pointer flex-col  w-full  bg-white drop-shadow-xl border-2 ">
+          <div className="rounded-[1rem] space-x-2 flex  px-4    justify-center  flex-col  w-full  bg-white drop-shadow-xl border-2 ">
             <div className="flex  flex-row  flex-wrap justify-around font-bold text-lg text-black items-center ">
               <div className="gap-2 flex-row flex items-center w-2/3">
                 <img src={vc} alt="founder" className="h-10 w-10" />
@@ -226,78 +226,6 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        {/* <div className="flex bg-white shadow-md w-full mt-2 rounded-[1rem] px-[4%] md:h-[478px] h-auto">
-          <div className="flex flex-col w-full">
-            <div className="flex flex-row items-center justify-between w-full my-3">
-              <h2 className="text-lg font-extrabold text-transparent bg-gradient-to-r from-purple-900 to-blue-500 bg-clip-text">
-                Pendings Requests
-              </h2>
-              <button
-                onClick={() => navigate("/request")}
-                className="bg-[#7283EA] hover:bg-transparent hover:text-[#7283EA] border-2 hover:border-[#293162] px-4 text-white text-xs font-bold rounded-md flex-shrink-0 py-2"
-              >
-                View More
-              </button>
-            </div>
-            <div className="overflow-y-auto">
-              {allNotification?.map((item, index) => (
-                <div
-                  key={index}
-                  className="flex flex-row flex-wrap w-full items-center justify-between mb-2 text-sm gap-2 border p-2 rounded-lg border-gray-200"
-                >
-                  <div className="space-x-4 flex flex-row items-center">
-                    <img
-                      src={item.photo}
-                      alt="photo"
-                      className="w-8 h-8 object-cover rounded-lg"
-                    />
-                    <div className="flex flex-col justify-around items-start">
-                      <p className="font-extrabold text-sm">{item.name}</p>
-                      <p className="text-xs text-gray-400 font-normal">
-                        {item.requestedFor}
-                      </p>
-                    </div>
-                    <p className="truncate w-[15rem] text-xs overflow-hidden text-ellipsis   group-hover:text-left ">
-                      {item.sender}
-                    </p>
-                    <p className="text-blue-600 text-xs">
-                      Requested:{" "}
-                      <span className="font-bold ">{item.timestamp}</span>
-                    </p>
-                  </div>
-                  <div className="flex flex-wrap space-x-2 items-center justify-center">
-                  <button
-                      onClick={() => navigate("/all", { state: item.sender })}
-                      className="px-3 py-1 bg-[#7283EA] hover:bg-[#4755af] text-white font-bold rounded-md"
-                    >
-                      View
-                    </button>
-                    
-                    <button
-                      onClick={() => {
-                        setCurrentNotificationForReject(item);
-                        toggleRejectModal();
-                      }}
-                      className="px-3 py-1 bg-[#C60404] hover:bg-red-700 text-white font-bold rounded-md"
-                    >
-                      Reject
-                    </button>
-                    <button
-                      className="px-3 py-1 bg-[#3505B2] hover:bg-indigo-900 text-white font-bold rounded-md"
-                      onClick={() => {
-                        setCurrentNotificationForAccept(item);
-                        toggleAcceptModal();
-                      }}
-                    >
-                      Accept
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div> */}
-
         <div className="flex bg-white shadow-md w-full mt-2 rounded-[1rem] px-[4%] md:h-[478px] h-auto">
           <div className="flex flex-col w-full">
             <div className="flex flex-row items-center justify-between w-full my-3">
@@ -318,25 +246,27 @@ const AdminDashboard = () => {
                   allNotification.map((item, index) => (
                     <div
                       key={index}
-                      className="flex flex-row flex-wrap w-full items-center justify-between mb-2 text-sm gap-2 border p-2 rounded-lg border-gray-200"
+                      className="flex flex-row flex-wrap w-full items-center justify-between mb-2 text-sm border p-2 rounded-lg border-gray-200"
                     >
-                      <div className="md:space-x-4 flex-wrap flex flex-row items-center md:justify-around justify-start w-full">
+                      <div className="md:space-x-4 md:flex-nowrap flex-wrap flex flex-row items-center md:justify-around justify-start w-full">
                         <img
                           src={item.photo}
                           alt="photo"
                           className="w-[3rem] h-[3rem] object-cover rounded-lg"
                         />
                         <div className="flex flex-col md:ml-0 ml-4 justify-around items-start">
-                          <p className="font-extrabold text-sm">{item.name}</p>
-                          <p className="text-xs text-gray-400 font-normal">
+                          <p className="font-extrabold truncate text-sm">{item.name}</p>
+                          <p className="bg-[#495760] md:text-[9px] text-[8px] items-center  rounded-xl text-white  px-2">
                             {item.requestedFor}
                           </p>
                         </div>
-                        <p className="truncate md:mt-0 mt-2 text-xs overflow-hidden text-ellipsis group-hover:text-left ">
+                        <p className="truncate md:mt-0 md:mb-4 mt-2 text-xs overflow-hidden text-ellipsis group-hover:text-left ">
                           {item.sender}
                         </p>
-                        <p className="text-blue-600 text-xs">
-                          Requested:{" "}
+                        <p className="text-blue-600 text-xs flex flex-row md:mb-4">
+                          <span className="text-gray-500 size-4 mr-2">
+                            <DateSvg />
+                          </span>
                           <span className="font-bold ">{item.timestamp}</span>
                         </p>
                       </div>
@@ -372,7 +302,7 @@ const AdminDashboard = () => {
                     </div>
                   ))
                 ) : (
-                  <NoDataCard />
+                  <NoDataCard image={NoData} desc={"No Pending Requests"} />
                 )}
               </div>
             </div>

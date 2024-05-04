@@ -906,7 +906,7 @@ const ProjectUpdate = () => {
       switch (category) {
         case "project":
           if (state === "Pending") {
-            await actor.decline_project_creation_request(covertedPrincipal);
+            await actor.decline_project_profile_update_request(covertedPrincipal);
             await dispatch(projectDeclinedRequest());
           }
           break;
@@ -925,16 +925,16 @@ const ProjectUpdate = () => {
     setIsAccepting(true);
     try {
       const covertedPrincipal = await Principal.fromText(principal);
-      switch (category) {
-        case "project":
-          if (state === "Pending") {
-            await actor.approve_project_creation_request(covertedPrincipal);
+      // switch (category) {
+      //   case "project":
+      //     if (state === "Pending") {
+            await actor.approve_project_update(covertedPrincipal);
             await dispatch(projectApprovedRequest());
-          }
-          break;
-        default:
+        //   }
+        //   break;
+        // default:
           console.warn("Unhandled category:", category);
-      }
+      
     } catch (error) {
       console.error("Error processing request:", error);
     } finally {

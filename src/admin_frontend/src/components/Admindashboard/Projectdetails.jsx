@@ -12,6 +12,8 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import {
   discordSvg,
+  githubSvg,
+  linkedInSvg,
   twitterSvg,
 } from "../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
 import {
@@ -51,7 +53,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
   const dispatch = useDispatch();
   // const projectData = location.state?.projectData;
 
-  console.log("userdata =>>>>>>> ", userData[0]);
+  // console.log("userdata =>>>>>>> ", userData[0]);
   // console.log("Allrole =>>>>>>> ", Allrole);
   // console.log("principal =>>>>>>> ", principal);
 
@@ -544,18 +546,18 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                     </div>
                   </div>
 
-                  <h1 className="md:text-sm text-gray-600 flex h-[8rem] line-clamp-3 flex-wrap text-xs break-all">
+                  <h1 className="md:text-sm mt-3 text-gray-600 flex h-[8rem] line-clamp-3 flex-wrap text-xs break-all">
                     {showBio
                       ? userData[0]?.params?.project_description?.[0] || (
                           <>
                             {noDataPresentSvg}
-                            No data available
+                            No Data
                           </>
                         )
                       : userData[0]?.params?.user_data?.bio?.[0] || (
                           <>
                             {noDataPresentSvg}
-                            No data available
+                            No Data
                           </>
                         )}
                   </h1>
@@ -568,21 +570,83 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                   <div className="flex flex-col md:w-1/2 w-full">
                     <div className="flex flex-col mb-4 md:mb-6">
                       <h2 className="text-lg font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
+                        Github :
+                      </h2>
+                      <div className="flex flex-grow  mt-1.5 truncate items-start">
+                        {userData[0]?.params?.github_link?.[0] ? (
+                          <div
+                            onClick={() => {
+                              const url = userData[0]?.params?.github_link?.[0];
+                              window.open(url, "_blank");
+                            }}
+                            className="cursor-pointer mr-2"
+                          >
+                            {githubSvg}
+                          </div>
+                        ) : (
+                          <div className="flex-shrink-0 w-6 h-6 mr-1 pt-1">
+                            {noDataPresentSvg}
+                          </div>
+                        )}
+
+                        <p className="text-[#7283EA] text-xs md:text-sm truncate">
+                          {userData[0]?.params?.github_link?.[0] ||
+                            "Not available"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col mb-4 md:mb-6">
+                      <h2 className="text-lg font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
+                        Linkedin :
+                      </h2>
+                      <div className="flex flex-grow  mt-1.5 truncate items-start">
+                        {userData[0]?.params?.project_linkedin?.[0] ? (
+                          <div
+                            onClick={() => {
+                              const url =
+                                userData[0]?.params?.project_linkedin?.[0];
+                              window.open(url, "_blank");
+                            }}
+                            className="cursor-pointer mr-2"
+                          >
+                            {linkedInSvg}
+                          </div>
+                        ) : (
+                          <div className="flex-shrink-0 w-6 h-6 mr-1 pt-1">
+                            {noDataPresentSvg}
+                          </div>
+                        )}
+
+                        <p className="text-[#7283EA] text-xs md:text-sm truncate">
+                          {userData[0]?.params?.project_linkedin?.[0] ||
+                            "Not available"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col mb-4 md:mb-6">
+                      <h2 className="text-lg font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
                         Daap Link:
                       </h2>
-                      <div className="flex flex-grow items-center mt-1.5 truncate">
-                        <div
-                          onClick={() => {
-                            const daapLink =
-                              userData[0]?.params?.dapp_link?.[0];
-                            window.open(daapLink, "_blank");
-                          }}
-                          className="cursor-pointer"
-                        >
-                          {linkSvg}
-                        </div>
+                      <div className="flex flex-grow  mt-1.5 truncate items-start">
+                        {userData[0]?.params?.dapp_link?.[0] ? (
+                          <div
+                            onClick={() => {
+                              const url = userData[0]?.params?.dapp_link?.[0];
+                              window.open(url, "_blank");
+                            }}
+                            className="cursor-pointer mr-2"
+                          >
+                            {linkSvg}
+                          </div>
+                        ) : (
+                          <div className="flex-shrink-0 w-6 h-6 mr-1 pt-1">
+                            {noDataPresentSvg}
+                          </div>
+                        )}
 
-                        <p className="text-[#7283EA] text-xs  md:text-sm truncate px-2">
+                        <p className="text-[#7283EA] text-xs md:text-sm truncate">
                           {userData[0]?.params?.dapp_link?.[0] ||
                             "Not available"}
                         </p>
@@ -593,19 +657,26 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                       <h2 className="text-lg font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
                         Project Elevator Pitch:
                       </h2>
-                      <div className="flex flex-grow items-center mt-1.5 truncate">
-                        <div
-                          onClick={() => {
-                            const url =
-                              userData[0]?.params?.project_elevator_pitch?.[0];
-                            window.open(url, "_blank");
-                          }}
-                          className="cursor-pointer"
-                        >
-                          {pitchSvg}
-                        </div>
+                      <div className="flex flex-grow  mt-1.5 truncate items-start">
+                        {userData[0]?.params?.project_elevator_pitch?.[0] ? (
+                          <div
+                            onClick={() => {
+                              const url =
+                                userData[0]?.params
+                                  ?.project_elevator_pitch?.[0];
+                              window.open(url, "_blank");
+                            }}
+                            className="cursor-pointer mr-2"
+                          >
+                            {linkSvg}
+                          </div>
+                        ) : (
+                          <div className="flex-shrink-0 w-6 h-6 mr-1 pt-1">
+                            {noDataPresentSvg}
+                          </div>
+                        )}
 
-                        <p className="text-[#7283EA] text-xs  md:text-sm truncate px-2">
+                        <p className="text-[#7283EA] text-xs md:text-sm truncate">
                           {userData[0]?.params?.project_elevator_pitch?.[0] ||
                             "Not available"}
                         </p>
@@ -629,7 +700,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                             {videoSvg}
                           </div>
                         ) : (
-                          <div className="flex-shrink-0 w-6 h-6 mr-1">
+                          <div className="flex-shrink-0 w-6 h-6 mr-1 pt-1">
                             {noDataPresentSvg}
                           </div>
                         )}
@@ -643,7 +714,35 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                   </div>
 
                   <div className="flex flex-col md:w-1/2 w-full">
-                   
+                    <div className="flex flex-col mb-4 md:mb-6">
+                      <h2 className="text-lg font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
+                        Discord :
+                      </h2>
+                      <div className="flex flex-grow mt-1.5 truncate items-start">
+                        {userData[0]?.params?.project_discord?.[0] ? (
+                          <div
+                            onClick={() => {
+                              const url =
+                                userData[0]?.params?.project_discord?.[0];
+                              window.open(url, "_blank");
+                            }}
+                            className="cursor-pointer mr-2"
+                          >
+                            {discordSvg}
+                          </div>
+                        ) : (
+                          <div className="flex-shrink-0 w-6 h-6 mr-1 pt-1">
+                            {noDataPresentSvg}
+                          </div>
+                        )}
+
+                        <p className="text-[#7283EA] text-xs  md:text-sm truncate">
+                          {userData[0]?.params?.project_discord?.[0] ||
+                            "Not available"}
+                        </p>
+                      </div>
+                    </div>
+
                     <div className="flex flex-col mb-4 md:mb-6">
                       <h2 className="text-lg font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
                         Website:
@@ -661,7 +760,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                             {websiteSvg}
                           </div>
                         ) : (
-                          <div className="flex-shrink-0 w-6 h-6 mr-1">
+                          <div className="flex-shrink-0 w-6 h-6 mr-1 pt-1">
                             {noDataPresentSvg}
                           </div>
                         )}
@@ -690,7 +789,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                             {goalSvg}
                           </div>
                         ) : (
-                          <div className="flex-shrink-0 w-6 h-6 mr-1">
+                          <div className="flex-shrink-0 w-6 h-6 mr-1 pt-1">
                             {noDataPresentSvg}
                           </div>
                         )}
@@ -719,7 +818,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                             {tokenSvg}
                           </div>
                         ) : (
-                          <div className="flex-shrink-0 w-6 h-6 mr-1">
+                          <div className="flex-shrink-0 w-6 h-6 mr-1 pt-1">
                             {noDataPresentSvg}
                           </div>
                         )}
@@ -868,7 +967,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                       ) : (
                         <span className="flex items-center">
                           {noDataPresentSvg}
-                          Data Not Available
+                          No Data
                         </span>
                       )}
                     </p>
@@ -893,7 +992,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                     ) : (
                       <span className="flex items-center">
                         {noDataPresentSvg}
-                        Data Not Available
+                        No Data
                       </span>
                     )}
                   </div>
@@ -916,53 +1015,43 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                     ) : (
                       <span className="flex items-center">
                         {noDataPresentSvg}
-                        Data Not Available
+                        No Data
                       </span>
                     )}
                   </div>
                 </div>
               </li>
+
               <li className="list-disc ml-4">
-                <div className="flex flex-col items-start justify-start sm:text-left">
-                  <h2 className=" font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
-                    Project Area Of Focus :
-                  </h2>
-                  <div className="flex flex-grow items-center truncate text-xs">
-                    <p className="text-gray-600 text-xs truncate ml-2">
-                      {userData[0].params.project_area_of_focus ? (
-                        <span>{userData[0].params.project_area_of_focus}</span>
-                      ) : (
-                        <span className="flex items-center">
-                          {noDataPresentSvg}
-                          Data Not Available
-                        </span>
-                      )}
-                    </p>
-                  </div>
-                </div>
-              </li>
-              <li className="list-disc">
                 <div className="flex flex-col items-start justify-start sm:text-left">
                   <p className="text-black font-semibold mb-1">
                     Area Of Interest :
                   </p>
-                  <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap">
-                    {userData[0].params.user_data.area_of_interest
-                      .split(",")
-                      .slice(0, 3)
-                      .map((tag, index) => (
-                        <div
-                          key={index}
-                          className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
-                        >
-                          {tag.trim()}
-                        </div>
-                      ))}
+                  <div className="flex gap-2 text-xs items-center flex-wrap">
+                    {userData[0]?.params?.user_data?.area_of_interest &&
+                    userData[0].params.user_data.area_of_interest !== "" ? (
+                      userData[0]?.params?.user_data?.area_of_interest
+                        .split(",")
+                        .slice(0, 3)
+                        .map((tag, index) => (
+                          <div
+                            key={index}
+                            className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                          >
+                            {tag.trim()}
+                          </div>
+                        ))
+                    ) : (
+                      <div className="flex items-center">
+                        {noDataPresentSvg}
+                        <span className="ml-2 text-xs">No Data</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </li>
 
-              <li className="list-disc ml-4">
+              <li className="list-disc ">
                 <div className="flex flex-col items-start justify-start sm:text-left">
                   <h2 className=" font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
                     Type of Registration :
@@ -976,14 +1065,14 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                       ) : (
                         <span className="flex items-center">
                           {noDataPresentSvg}
-                          Data Not Available
+                          No Data
                         </span>
                       )}
                     </p>
                   </div>
                 </div>
               </li>
-              <li className="list-disc">
+              <li className="list-disc ml-4">
                 <div className="flex flex-col items-start justify-start sm:text-left">
                   <h2 className=" font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
                     Revenue:
@@ -995,14 +1084,14 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                       ) : (
                         <span className="flex items-center">
                           {noDataPresentSvg}
-                          Data Not Available
+                          No Data
                         </span>
                       )}
                     </p>
                   </div>
                 </div>
               </li>
-              <li className="list-disc ml-4">
+              <li className="list-disc ">
                 <div className="flex flex-col items-start justify-start sm:text-left">
                   <h2 className=" font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
                     ICP Grants:
@@ -1014,14 +1103,14 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                       ) : (
                         <span className="flex items-center">
                           {noDataPresentSvg}
-                          Data Not Available
+                          No Data
                         </span>
                       )}
                     </p>
                   </div>
                 </div>
               </li>
-              <li className="list-disc">
+              <li className="list-disc ml-4">
                 <div className="flex flex-col items-start justify-start sm:text-left">
                   <h2 className=" font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
                     Investors :
@@ -1033,14 +1122,14 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                       ) : (
                         <span className="flex items-center">
                           {noDataPresentSvg}
-                          Data Not Available
+                          No Data
                         </span>
                       )}
                     </p>
                   </div>
                 </div>
               </li>
-              <li className="list-disc ml-4">
+              <li className="list-disc ">
                 <div className="flex flex-col items-start justify-start sm:text-left">
                   <h2 className=" font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
                     Project Registered :
@@ -1057,35 +1146,44 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                     ) : (
                       <span className="flex items-center">
                         {noDataPresentSvg}
-                        Data Not Available
+                        No Data
                       </span>
                     )}
                   </div>
                 </div>
               </li>
 
-              <li className="list-disc">
+              <li className="list-disc ml-4">
                 <div className=" flex flex-col text-gray-600">
                   <p className="text-black font-semibold mb-1">
                     Support Multichain :
                   </p>
+
                   <div className="flex gap-2 text-xs items-center flex-wrap">
-                    {userData[0]?.params?.supports_multichain?.[0]
-                      .split(",")
-                      .slice(0, 3)
-                      .map((tag, index) => (
-                        <div
-                          key={index}
-                          className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
-                        >
-                          {tag.trim()}
-                        </div>
-                      ))}
+                    {userData[0]?.params?.supports_multichain?.[0] &&
+                    userData[0].params.supports_multichain[0] !== "" ? (
+                      userData[0]?.params?.supports_multichain?.[0]
+                        .split(",")
+                        .slice(0, 3)
+                        .map((tag, index) => (
+                          <div
+                            key={index}
+                            className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                          >
+                            {tag.trim()}
+                          </div>
+                        ))
+                    ) : (
+                      <div className="flex items-center">
+                        {noDataPresentSvg}
+                        <span className="ml-2 text-xs">No Data</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </li>
 
-              <li className="list-disc ml-4">
+              <li className="list-disc">
                 <div className="flex flex-col items-start justify-start sm:text-left">
                   <h2 className=" font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
                     Preferred ICP Hub :
@@ -1097,7 +1195,64 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                       ) : (
                         <span className="flex items-center">
                           {noDataPresentSvg}
-                          Data Not Available
+                          No Data
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </li>
+              <li className="list-disc ml-4">
+                <div className="flex flex-col items-start justify-start sm:text-left">
+                  <h2 className=" font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
+                    Weekly Active:
+                  </h2>
+                  <div className="flex flex-grow items-center truncate text-xs">
+                    <p className="text-gray-600 text-xs truncate ml-2">
+                      {weeklyUsers ? (
+                        <span>{weeklyUsers}</span>
+                      ) : (
+                        <span className="flex items-center">
+                          {noDataPresentSvg}
+                          No Data
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </li>
+              <li className="list-disc ">
+                <div className="flex flex-col items-start justify-start sm:text-left">
+                  <h2 className=" font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
+                    Raised from Other Ecosysytem:
+                  </h2>
+                  <div className="flex flex-grow items-center truncate text-xs">
+                    <p className="text-gray-600 text-xs truncate ml-2">
+                      {otherEcosystem ? (
+                        <span>{otherEcosystem}</span>
+                      ) : (
+                        <span className="flex items-center">
+                          {noDataPresentSvg}
+                          No Data
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </li>
+              <li className="list-disc ml-4">
+                <div className="flex flex-col items-start justify-start sm:text-left">
+                  <h2 className=" font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
+                    Targeted Amount:
+                  </h2>
+                  <div className="flex flex-grow items-center truncate text-xs">
+                    <p className="text-gray-600 text-xs truncate ml-2">
+                      {targetAmount ? (
+                        <span>{targetAmount}</span>
+                      ) : (
+                        <span className="flex items-center">
+                          {noDataPresentSvg}
+                          No Data
                         </span>
                       )}
                     </p>
@@ -1105,6 +1260,46 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                 </div>
               </li>
               <li className="list-disc">
+                <div className="flex flex-col items-start justify-start sm:text-left">
+                  <h2 className=" font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
+                    Sns:
+                  </h2>
+                  <div className="flex flex-grow items-center truncate text-xs">
+                    <p className="text-gray-600 text-xs truncate ml-2">
+                      {snsGrants ? (
+                        <span>{snsGrants}</span>
+                      ) : (
+                        <span className="flex items-center">
+                          {noDataPresentSvg}
+                          No Data
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </li>
+
+              {/* <li className="list-disc ml-4">
+                <div className="flex flex-col items-start justify-start sm:text-left">
+                  <h2 className=" font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
+                    Project Area Of Focus :
+                  </h2>
+                  <div className="flex flex-grow items-center truncate text-xs">
+                    <p className="text-gray-600 text-xs truncate ml-2">
+                      {userData[0].params.project_area_of_focus ? (
+                        <span>{userData[0].params.project_area_of_focus}</span>
+                      ) : (
+                        <span className="flex items-center">
+                          {noDataPresentSvg}
+                          No Data
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </li> */}
+
+              {/* <li className="list-disc">
                 <div className="flex flex-col items-start justify-start sm:text-left">
                   <h2 className=" font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
                     Mentor Assigned :
@@ -1116,14 +1311,14 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                       ) : (
                         <span className="flex items-center">
                           {noDataPresentSvg}
-                          Data Not Available
+                          No Data
                         </span>
                       )}
                     </p>
                   </div>
                 </div>
-              </li>
-              <li className="list-disc ml-4">
+              </li> */}
+              {/* <li className="list-disc ml-4">
                 <div className="flex flex-col items-start justify-start sm:text-left">
                   <h2 className=" font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
                     Project Team :
@@ -1138,13 +1333,13 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                     ) : (
                       <span className="flex items-center">
                         {noDataPresentSvg}
-                        Data Not Available
+                        No Data
                       </span>
                     )}
                   </div>
                 </div>
-              </li>
-              <li className="list-disc">
+              </li> */}
+              {/* <li className="list-disc">
                 <div className="flex flex-col items-start justify-start sm:text-left">
                   <h2 className=" font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
                     Target Market :
@@ -1156,14 +1351,14 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                       ) : (
                         <span className="flex items-center">
                           {noDataPresentSvg}
-                          Data Not Available
+                          No Data
                         </span>
                       )}
                     </p>
                   </div>
                 </div>
-              </li>
-              <li className="list-disc ml-4">
+              </li> */}
+              {/* <li className="list-disc ml-4">
                 <div className="flex flex-col items-start justify-start sm:text-left">
                   <h2 className=" font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
                     VC's assigned :
@@ -1175,89 +1370,13 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                       ) : (
                         <span className="flex items-center">
                           {noDataPresentSvg}
-                          Data Not Available
+                          No Data
                         </span>
                       )}
                     </p>
                   </div>
                 </div>
-              </li>
-              <li className="list-disc">
-                <div className="flex flex-col items-start justify-start sm:text-left">
-                  <h2 className=" font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
-                    Weekly Active:
-                  </h2>
-                  <div className="flex flex-grow items-center truncate text-xs">
-                    <p className="text-gray-600 text-xs truncate ml-2">
-                      {weeklyUsers ? (
-                        <span>{weeklyUsers}</span>
-                      ) : (
-                        <span className="flex items-center">
-                          {noDataPresentSvg}
-                          Data Not Available
-                        </span>
-                      )}
-                    </p>
-                  </div>
-                </div>
-              </li>
-              <li className="list-disc ml-4">
-                <div className="flex flex-col items-start justify-start sm:text-left">
-                  <h2 className=" font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
-                    Raised from Other Ecosysytem:
-                  </h2>
-                  <div className="flex flex-grow items-center truncate text-xs">
-                    <p className="text-gray-600 text-xs truncate ml-2">
-                      {otherEcosystem ? (
-                        <span>{otherEcosystem}</span>
-                      ) : (
-                        <span className="flex items-center">
-                          {noDataPresentSvg}
-                          Data Not Available
-                        </span>
-                      )}
-                    </p>
-                  </div>
-                </div>
-              </li>
-              <li className="list-disc">
-                <div className="flex flex-col items-start justify-start sm:text-left">
-                  <h2 className=" font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
-                    Targeted Amount:
-                  </h2>
-                  <div className="flex flex-grow items-center truncate text-xs">
-                    <p className="text-gray-600 text-xs truncate ml-2">
-                      {targetAmount ? (
-                        <span>{targetAmount}</span>
-                      ) : (
-                        <span className="flex items-center">
-                          {noDataPresentSvg}
-                          Data Not Available
-                        </span>
-                      )}
-                    </p>
-                  </div>
-                </div>
-              </li>
-              <li className="list-disc ml-4">
-                <div className="flex flex-col items-start justify-start sm:text-left">
-                  <h2 className=" font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
-                    Sns:
-                  </h2>
-                  <div className="flex flex-grow items-center truncate text-xs">
-                    <p className="text-gray-600 text-xs truncate ml-2">
-                      {snsGrants ? (
-                        <span>{snsGrants}</span>
-                      ) : (
-                        <span className="flex items-center">
-                          {noDataPresentSvg}
-                          Data Not Available
-                        </span>
-                      )}
-                    </p>
-                  </div>
-                </div>
-              </li>
+              </li> */}
             </ul>
           </div>
         </div>

@@ -2,6 +2,8 @@ import React, { lazy, Suspense, useEffect } from "react";
 // import { useSelector, useDispatch } from "react-redux";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Loader from "./components/Loader/Loader";
+import UpdateMentorProfile from "./components/Admindashboard/UpdateRequests/UpdateMentorProfile";
+import UpdateInvestorProfile from "./components/Admindashboard/UpdateRequests/UpdateInvestorProfile";
 
 const Adminalluser = lazy(() =>
   import("./components/Admindashboard/Adminalluser")
@@ -58,8 +60,8 @@ const AdminRoute = ({ setModalOpen }) => {
     { path: "/live", element: <LiveIncubated /> },
     { path: "/allUpdateRequest", element: <UpdateAllRequest /> },
     { path: "/projectupdate", element: <ProjectUpdate /> },
-    { path: "/mentorupdate", element: <MentorUpdate /> },
-    { path: "/investorupdate", element: <InvestorUpdate /> },
+    { path: "/mentorupdate", element: <UpdateMentorProfile /> },
+    { path: "/investorupdate", element: <UpdateInvestorProfile /> },
   ];
 
   // const dispatch = useDispatch();

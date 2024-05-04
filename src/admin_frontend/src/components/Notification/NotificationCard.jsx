@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BioSvg, DateSvg, place } from "../Utils/AdminData/SvgData";
+import {
+  BioSvg,
+  DateSvg,
+  noDataPresentSvg,
+  place,
+} from "../Utils/AdminData/SvgData";
 
 const NotificationCard = ({ notificationDetails }) => {
   const [modalPopUp, setModalPopUp] = useState(false);
@@ -10,7 +15,10 @@ const NotificationCard = ({ notificationDetails }) => {
     setModalPopUp((prev) => !prev);
   };
 
-  // console.log("notificationDetails =======================================>=> ", notificationDetails);
+  // console.log(
+  //   "notificationDetails =======================================>=> ",
+  //   notificationDetails
+  // );
 
   const dataSendToProfileHandler = () => {
     navigate("/all", { state: notificationDetails.principal });
@@ -72,26 +80,32 @@ const NotificationCard = ({ notificationDetails }) => {
                 </span>
               </div>
             )}
-            {notificationDetails.project_description ? (
+
+            {notificationDetails?.project_description ? (
               <div className="flex flex-row items-center text-sm font-medium text-gray-600 break-words">
                 <span className="text-gray-500 min-w-[40px] ml-3">
                   <BioSvg />
                 </span>
                 <span className="truncate md:text-sm text-xs">
-                  {notificationDetails.project_description}
+                  {notificationDetails?.project_description}
+                </span>
+              </div>
+            ) : notificationDetails?.user_data?.bio?.[0] ? (
+              <div className="flex flex-row items-center text-sm font-medium text-gray-600 break-words">
+                <span className="text-gray-500 min-w-[40px] ml-3">
+                  <BioSvg />
+                </span>
+                <span className="truncate md:text-sm text-xs">
+                  {notificationDetails.user_data.bio?.[0]}
                 </span>
               </div>
             ) : (
-              notificationDetails.user_data.bio && (
-                <div className="flex flex-row items-center text-sm font-medium text-gray-600 break-words">
-                  <span className="text-gray-500 min-w-[40px] ml-3">
-                    <BioSvg />
-                  </span>
-                  <span className="truncate md:text-sm text-xs">
-                    {notificationDetails.user_data.bio}
-                  </span>
-                </div>
-              )
+              <div className="flex flex-row items-center text-sm font-medium text-gray-600 break-words">
+                <span className="text-gray-500 min-w-[40px] ml-3.5">
+                  {noDataPresentSvg}
+                </span>
+                <span className="truncate md:text-sm text-xs">No Data</span>
+              </div>
             )}
           </div>
           <div className="md:w-1/4 w-full flex justify-end items-end space-x-2 md:h-10">

@@ -35,6 +35,8 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
   const [current, setCurrent] = useState("user");
   const [isAccepting, setIsAccepting] = useState(false);
   const [isDeclining, setIsDeclining] = useState(false);
+  const [isSkillsOpen, setIsSkillsOpen] = useState(false);
+  const [isReasonToJoinOpen, setIsReasonToJoinOpen] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -42,7 +44,7 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
 
   //   const notificationDetails = location.state;
 
-  console.log("userData in investor profile", userData[0]);
+  // console.log("userData in investor profile", userData[0]);
   // console.log("Allrole in investor profile", Allrole);
 
   useEffect(() => {
@@ -248,36 +250,107 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
                     </p>
                   </div>
                 )}
-                {userData[0].params.user_data.area_of_interest && (
-                  <div className=" flex flex-col text-gray-600">
+
+                <div className=" flex flex-col w-full text-gray-600">
+                  <div className="flex flex-row justify-between items-center">
                     <p className="text-black font-semibold mb-1">Skill :</p>
-                    <div className="flex gap-2 text-xs items-center truncate flex-wrap">
-                      {userData[0].params.user_data.area_of_interest
-                        .split(",")
-                        .map((tag, index) => (
-                          <div
-                            key={index}
-                            className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
-                          >
-                            {tag.trim()}
-                          </div>
-                        ))}
-                    </div>
-                  </div>
-                )}
-                {userData[0].params.user_data.reason_to_join[0] && (
-                  <p className="text-black font-semibold ">Reason to join :</p>
-                )}
-                <div className="flex text-gray-700 flex-row gap-2 flex-wrap text-xs">
-                  {userData[0].params.user_data.reason_to_join[0].map(
-                    (reason, index) => (
-                      <div
-                        key={index}
-                        className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                    <button
+                      onClick={() => setIsSkillsOpen(!isSkillsOpen)}
+                      className="flex items-center gap-2"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="size-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
                       >
-                        {reason.replace(/_/g, " ")}
+                        {isSkillsOpen ? (
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M5 15l7-7 7 7"
+                          />
+                        ) : (
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M19 9l-7 7-7-7"
+                          />
+                        )}
+                      </svg>
+                    </button>
+                  </div>
+
+                  {isSkillsOpen && (
+                    <div className="flex flex-col text-gray-600">
+                      <div className="flex gap-2 text-xs flex-wrap items-center">
+                        {userData[0].params.user_data.area_of_interest
+                          .split(",")
+                          .slice(0, 3)
+                          .map((tag, index) => (
+                            <div
+                              key={index}
+                              className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                            >
+                              {tag.trim()}
+                            </div>
+                          ))}
                       </div>
-                    )
+                    </div>
+                  )}
+                </div>
+
+                <div className=" flex flex-col w-full text-gray-600">
+                  <div className="flex flex-row justify-between items-center">
+                    <p className="text-black font-semibold mb-1">
+                      Reason to join :
+                    </p>
+                    <button
+                      onClick={() => setIsReasonToJoinOpen(!isReasonToJoinOpen)}
+                      className="flex items-center gap-2"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="size-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        {isReasonToJoinOpen ? (
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M5 15l7-7 7 7"
+                          />
+                        ) : (
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M19 9l-7 7-7-7"
+                          />
+                        )}
+                      </svg>
+                    </button>
+                  </div>
+
+                  {isReasonToJoinOpen && (
+                    <div className="flex flex-col text-gray-600">
+                      <div className="flex gap-2 break-all text-xs flex-wrap items-center">
+                        {userData[0]?.params?.user_data?.reason_to_join?.[0].map(
+                          (tag, index) => (
+                            <div
+                              key={index}
+                              className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                            >
+                              {tag.trim()}
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
                   )}
                 </div>
               </div>
@@ -339,9 +412,17 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
               </Swiper>
             </div>
             <h1 className="text-2xl font-bold text-gray-800">About Investor</h1>
-            <p className="text-gray-600 md:text-sm text-xs break-all line-clamp-6 my-3 px-[4%]">
-              {userData[0].params.user_data.bio}
-            </p>
+
+            <div className="text-gray-600 md:text-sm text-xs break-all line-clamp-6 my-3 px-[4%]">
+              {userData[0]?.params?.user_data?.bio?.[0] ? (
+                userData[0]?.params?.user_data?.bio?.[0]
+              ) : (
+                <p className="flex items-center">
+                  {noDataPresentSvg}
+                  <span className="ml-2">No Data</span>
+                </p>
+              )}
+            </div>
             <div className="pl-[4%]">
               <p className="w-full mb-4 border border-[#C5C5C5]"></p>
             </div>
@@ -501,33 +582,17 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
           <div className="flex flex-row justify-between bg-[#D2D5F2] shadow-md shadow-gray-400 p-6 rounded-lg md:w-3/4 sxxs:w-fulll">
             <ul className="grid grid-cols-2 gap-4 w-full px-[3%]">
               <li className="list-disc md:ml-4">
-                {userData[0].params.project_on_multichain && (
-                  <p className="text-gray-800 font-semibold ">Multichain :</p>
-                )}
-                <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap">
-                  {userData[0].params.project_on_multichain[0]
-                    .split(",")
-                    .slice(0, 3)
-                    .map((tag, index) => (
-                      <div
-                        key={index}
-                        className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
-                      >
-                        {tag.trim()}
-                      </div>
-                    ))}
-                </div>
-              </li>
+                <div className=" flex flex-col text-gray-600">
+                  <p className="text-black font-semibold mb-1">
+                    Support Multichain :
+                  </p>
 
-              <li className="list-disc md:ml-8">
-                {userData[0].params.category_of_investment && (
-                  <div className=" flex flex-col text-gray-600">
-                    <p className="font-semibold mb-1 text-gray-800">
-                      Areas of Invest :
-                    </p>
-                    <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap">
-                      {userData[0].params.category_of_investment
+                  <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap">
+                    {userData[0]?.params?.project_on_multichain?.[0] &&
+                    userData[0].params.project_on_multichain[0] !== "" ? (
+                      userData[0]?.params?.project_on_multichain?.[0]
                         .split(",")
+                        .slice(0, 3)
                         .map((tag, index) => (
                           <div
                             key={index}
@@ -535,51 +600,104 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
                           >
                             {tag.trim()}
                           </div>
-                        ))}
-                    </div>
+                        ))
+                    ) : (
+                      <div className="flex items-center">
+                        {noDataPresentSvg}
+                        <span className="ml-2 text-xs">No Data</span>
+                      </div>
+                    )}
                   </div>
-                )}
+                </div>
+              </li>
+
+              <li className="list-disc md:ml-8">
+                <div className=" flex flex-col text-gray-600">
+                  <p className="text-black font-semibold mb-1">
+                    Areas of Invest :
+                  </p>
+
+                  <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap">
+                    {userData[0]?.params?.category_of_investment &&
+                    userData[0].params.category_of_investment !== "" ? (
+                      userData[0]?.params?.category_of_investment
+                        .split(",")
+                        .slice(0, 3)
+                        .map((tag, index) => (
+                          <div
+                            key={index}
+                            className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                          >
+                            {tag.trim()}
+                          </div>
+                        ))
+                    ) : (
+                      <div className="flex items-center">
+                        {noDataPresentSvg}
+                        <span className="ml-2 text-xs">No Data</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </li>
 
               <li className="list-disc  md:ml-4">
                 <div className="flex flex-col items-start justify-start sm:text-left">
-                  <p className="font-semibold text-gray-800 mb-2 sm:mb-0 mr-2">
+                  <p className="text-black font-semibold mb-1">
                     At what stage of investment are you currently focusing on?
                   </p>
+
                   <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap">
-                    {userData[0].params.stage[0]
-                      .split(",")
-                      .slice(0, 3)
-                      .map((tag, index) => (
-                        <div
-                          key={index}
-                          className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
-                        >
-                          {tag.trim()}
-                        </div>
-                      ))}
+                    {userData[0]?.params?.stage[0] &&
+                    userData[0].params.stage[0] !== "" ? (
+                      userData[0]?.params?.stage[0]
+                        .split(",")
+                        .slice(0, 3)
+                        .map((tag, index) => (
+                          <div
+                            key={index}
+                            className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                          >
+                            {tag.trim()}
+                          </div>
+                        ))
+                    ) : (
+                      <div className="flex items-center">
+                        {noDataPresentSvg}
+                        <span className="ml-2 text-xs">No Data</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </li>
 
               <li className="list-disc md:ml-8">
                 <div className="flex flex-col items-start justify-start sm:text-left">
-                  <h2 className=" font-semibold text-gray-800 mb-2 sm:mb-0 mr-2">
+                  <p className="text-black font-semibold mb-1">
                     What is the typical range of check sizes for your
                     investments?
-                  </h2>
-                  <div className="text-gray-600 flex flex-wrap flex-grow items-center truncate text-xs">
-                    {userData[0].params.range_of_check_size[0]
-                      .split(",")
-                      .slice(0, 3)
-                      .map((tag, index) => (
-                        <div
-                          key={index}
-                          className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
-                        >
-                          {tag.trim()}
-                        </div>
-                      ))}
+                  </p>
+
+                  <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap">
+                    {userData[0]?.params?.range_of_check_size?.[0] &&
+                    userData[0].params.range_of_check_size[0] !== "" ? (
+                      userData[0]?.params?.range_of_check_size?.[0]
+                        .split(",")
+                        .slice(0, 3)
+                        .map((tag, index) => (
+                          <div
+                            key={index}
+                            className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                          >
+                            {tag.trim()}
+                          </div>
+                        ))
+                    ) : (
+                      <div className="flex items-center">
+                        {noDataPresentSvg}
+                        <span className="ml-2 text-xs">No Data</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </li>
@@ -601,7 +719,7 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
                     ) : (
                       <span className="flex items-center">
                         {noDataPresentSvg}
-                        Data Not Available
+                        No Data
                       </span>
                     )}
                   </div>
@@ -622,7 +740,7 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
                     ) : (
                       <span className="flex items-center text-xs">
                         {noDataPresentSvg}
-                        Data Not Available
+                        No Data
                       </span>
                     )}
                   </div>
@@ -640,7 +758,7 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
                     ) : (
                       <span className="flex items-center text-xs">
                         {noDataPresentSvg}
-                        Data Not Available
+                        No Data
                       </span>
                     )}
                   </div>
@@ -664,7 +782,7 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
                     ) : (
                       <span className="flex items-center text-xs">
                         {noDataPresentSvg}
-                        Data Not Available
+                        No Data
                       </span>
                     )}
                   </div>
@@ -689,7 +807,7 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
                     ) : (
                       <span className="flex items-center text-xs">
                         {noDataPresentSvg}
-                        Data Not Available
+                        No Data
                       </span>
                     )}
                   </div>
@@ -707,7 +825,7 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
                     ) : (
                       <span className="flex items-center text-xs">
                         {noDataPresentSvg}
-                        Data Not Available
+                        No Data
                       </span>
                     )}
                   </div>
@@ -725,7 +843,7 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
                     ) : (
                       <span className="flex items-center text-xs">
                         {noDataPresentSvg}
-                        Data Not Available
+                        No Data
                       </span>
                     )}
                   </div>
@@ -743,7 +861,7 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
                     ) : (
                       <span className="flex items-center text-xs">
                         {noDataPresentSvg}
-                        Data Not Available
+                        No Data
                       </span>
                     )}
                   </div>
@@ -765,7 +883,7 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
                     ) : (
                       <span className="flex items-center text-xs">
                         {noDataPresentSvg}
-                        Data Not Available
+                        No Data
                       </span>
                     )}
                   </div>
@@ -784,9 +902,7 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
                         {userData[0].params.registered_country[0]}
                       </span>
                     ) : (
-                      <span className="flex items-center text-xs">
-                        Data Not Available
-                      </span>
+                      <span className="flex items-center text-xs">No Data</span>
                     )}
                   </div>
                 </div>
@@ -805,7 +921,7 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
                     ) : (
                       <span className="flex items-center text-xs">
                         {noDataPresentSvg}
-                        Data Not Available
+                        No Data
                       </span>
                     )}
                   </div>
@@ -823,7 +939,7 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
                     ) : (
                       <span className="flex items-center text-xs">
                         {noDataPresentSvg}
-                        Data Not Available
+                        No Data
                       </span>
                     )}
                   </div>
