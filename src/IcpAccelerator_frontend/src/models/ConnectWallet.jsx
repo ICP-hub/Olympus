@@ -7,11 +7,6 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../components/StateManagement/useContext/useAuth";
 
 const ConnectWallet = ({ isModalOpen, onClose }) => {
-  // const roleNavigate = useSelector((currState) => currState.internet.navi);
-  // const userRole = useSelector((currState) => currState.current.specificRole);
-  // const hasSelectedRole = useSelector(
-  //   (currState) => currState.current.hasSelectedRole
-  // );
   const isAuthenticated = useSelector(
     (currState) => currState.internet.isAuthenticated
   );

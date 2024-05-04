@@ -106,15 +106,15 @@ const RequestCohort = () => {
           console.log("Unknown action");
           return;
       }
-
+  console.log(result);
       if (
         result &&
         result.includes(
-          `You have accepted the cohort creation with cohort id: ${cohortId}`
+          `You have ${value.toLowerCase()} the cohort creation with cohort id: ${cohortId}`
         )
       ) {
         // Assuming result contains some success indication
-        console.log(result);
+      
         toast.success(`Request ${value.toLowerCase()}ed successfully.`);
       } else {
         toast.error(`Failed to ${value.toLowerCase()} the request.`);

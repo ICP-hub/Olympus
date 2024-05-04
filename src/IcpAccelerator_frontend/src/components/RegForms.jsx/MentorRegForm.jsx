@@ -10,6 +10,7 @@ import { useCountries } from "react-countries";
 import ReactSelect from "react-select";
 import CompressedImage from "../ImageCompressed/CompressedImage";
 import { allHubHandlerRequest } from "../StateManagement/Redux/Reducers/All_IcpHubReducer";
+import { uint8ArrayToBase64 } from "../../../../admin_frontend/src/components/Utils/AdminData/saga_function/blobImageToUrl";
 
 const MentorRegForm = () => {
   const { countries } = useCountries();
@@ -462,7 +463,12 @@ const MentorRegForm = () => {
       setInterestedDomainsSelectedOptionsHandler(
         val?.user_data?.area_of_interest ?? null
       );
-      setImagePreview(val?.user_data?.profile_picture?.[0] ?? "");
+      // setImagePreview(val?.user_data?.profile_picture?.[0] ?? "");
+      setImagePreview(
+        val?.user_data?.profile_picture?.[0] instanceof Uint8Array
+          ? uint8ArrayToBase64(val?.user_data?.profile_picture?.[0])
+          : ""
+      );
       setValue("type_of_profile", val?.user_data?.type_of_profile?.[0]);
       setValue(
         "reasons_to_join_platform",

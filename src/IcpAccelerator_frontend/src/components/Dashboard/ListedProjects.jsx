@@ -52,7 +52,7 @@ const dummyData = [
 ];
 
 const ListedProjects = () => {
-  const role = useSelector((currState) => currState.current.specificRole);
+  const role = useSelector((currState) => currState.current);
   const [show, setShow] = useState(false);
 
   useEffect(() => {
