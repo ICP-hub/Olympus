@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import NoDataCard from "../../../../IcpAccelerator_frontend/src/components/Mentors/Event/NoDataCard";
 import { useSelector } from "react-redux";
 import uint8ArrayToBase64 from "../../../../IcpAccelerator_frontend/src/components/Utils/uint8ArrayToBase64";
+import NoData from "../../../../IcpAccelerator_frontend/assets/images/NoData.png"
+
 
 const Adminalluser = () => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -147,8 +149,8 @@ const Adminalluser = () => {
           </div>
         </div>
       ) : (
-        <NoDataCard />
-      )}
+        <NoDataCard image={NoData} desc={'No User'}/>
+        )}
 
       {currentUsers.length > 0 && (
         <div className="flex items-center gap-4 justify-center mb-4">

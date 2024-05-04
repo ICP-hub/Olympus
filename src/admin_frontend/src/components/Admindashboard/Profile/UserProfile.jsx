@@ -23,6 +23,8 @@ const UserProfile = ({ userData, Allrole }) => {
   // const actor = useSelector((currState) => currState.actors.actor);
 
   const [current, setCurrent] = useState("user");
+  const [isSkillsOpen, setIsSkillsOpen] = useState(false);
+  const [isReasonToJoinOpen, setIsReasonToJoinOpen] = useState(false);
 
   // const location = useLocation();
 
@@ -168,36 +170,109 @@ const UserProfile = ({ userData, Allrole }) => {
                 </p>
               </div>
             )}
-            {userData[0].params.area_of_interest && (
-              <div className=" flex flex-col text-gray-600">
+
+            <div className=" flex flex-col w-full text-gray-600">
+              <div className="flex flex-row justify-between items-center">
                 <p className="text-black font-semibold mb-1">Skill :</p>
-                <div className="flex gap-2 text-xs items-center">
-                  {userData[0].params.area_of_interest
-                    .split(",")
-                    .slice(0, 3)
-                    .map((tag, index) => (
-                      <div
-                        key={index}
-                        className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
-                      >
-                        {tag.trim()}
-                      </div>
-                    ))}
-                </div>
-              </div>
-            )}
-            {userData[0].params.reason_to_join[0] && (
-              <p className="text-black font-semibold ">Reason to join :</p>
-            )}
-            <div className="flex text-gray-700 flex-row gap-2 flex-wrap text-xs">
-              {userData[0].params.reason_to_join[0].map((reason, index) => (
-                <p
-                  key={index}
-                  className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                <button
+                  onClick={() => setIsSkillsOpen(!isSkillsOpen)}
+                  className="flex items-center gap-2"
                 >
-                  {reason.replace(/_/g, " ")}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="size-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    {isSkillsOpen ? (
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5 15l7-7 7 7"
+                      />
+                    ) : (
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M19 9l-7 7-7-7"
+                      />
+                    )}
+                  </svg>
+                </button>
+              </div>
+
+              {isSkillsOpen && (
+                <div className="flex flex-col text-gray-600">
+                  <div className="flex gap-2 text-xs flex-wrap items-center">
+                    {userData[0]?.params?.area_of_interest
+                      .split(",")
+                      .slice(0, 3)
+                      .map((tag, index) => (
+                        <div
+                          key={index}
+                          className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                        >
+                          {tag.trim()}
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className=" flex flex-col w-full text-gray-600">
+              <div className="flex flex-row justify-between items-center">
+                <p className="text-black font-semibold mb-1">
+                  Reason to join :
                 </p>
-              ))}
+                <button
+                  onClick={() => setIsReasonToJoinOpen(!isReasonToJoinOpen)}
+                  className="flex items-center gap-2"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="size-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    {isReasonToJoinOpen ? (
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5 15l7-7 7 7"
+                      />
+                    ) : (
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M19 9l-7 7-7-7"
+                      />
+                    )}
+                  </svg>
+                </button>
+              </div>
+
+              {isReasonToJoinOpen && (
+                <div className="flex flex-col text-gray-600">
+                  <div className="flex gap-2 break-all text-xs flex-wrap items-center">
+                    {userData[0]?.params?.reason_to_join?.[0]
+                      // .split(",")
+                      // .slice(0, 3)
+                      .map((tag, index) => (
+                        <div
+                          key={index}
+                          className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                        >
+                          {tag.trim()}
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -265,7 +340,7 @@ const UserProfile = ({ userData, Allrole }) => {
         ) : (
           <div className="text-gray-600 flex items-center text-sm md:text-md ml-2 my-4">
             {noDataPresentSvg}
-            <p>No data available</p>
+            <p>No Data</p>
           </div>
         )}
 
@@ -274,7 +349,7 @@ const UserProfile = ({ userData, Allrole }) => {
         </div>
         <div className="grid md:grid-cols-2 gap-4 w-full px-[3%]">
           <div className="md:w-1/2 w-3/4 flex flex-col items-start justify-start sm:text-left px-[4%]">
-            <h2 className="font-bold mb-2 mr-2 sm:text-2xl text-gray-800 text-xl">
+            <h2 className="font-bold mb-2 mr-2 text-gray-800 text-lg">
               Telegram :
             </h2>
             <div className="flex flex-grow items-center truncate">
@@ -299,14 +374,14 @@ const UserProfile = ({ userData, Allrole }) => {
               ) : (
                 <p className="text-gray-600 flex items-center text-sm md:text-md ml-2">
                   {noDataPresentSvg}
-                  No data found
+                  No Data
                 </p>
               )}
             </div>
           </div>
 
           <div className="flex flex-col md:w-1/2 w-3/4 items-start text-center sm:text-left px-[4%]">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2 mr-2">
+            <h2 className="text-lg font-bold text-gray-800 mb-2 mr-2">
               Twitter :
             </h2>
             <div className="flex flex-grow items-center truncate">
@@ -330,7 +405,7 @@ const UserProfile = ({ userData, Allrole }) => {
               ) : (
                 <p className="text-gray-600 flex items-center text-sm md:text-md ml-2">
                   {noDataPresentSvg}
-                  No data found
+                  No Data
                 </p>
               )}
             </div>

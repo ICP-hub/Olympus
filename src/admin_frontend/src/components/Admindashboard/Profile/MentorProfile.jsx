@@ -33,7 +33,8 @@ const MentorProfile = ({ userData, Allrole, principal }) => {
   const [current, setCurrent] = useState("user");
   const [isAccepting, setIsAccepting] = useState(false);
   const [isDeclining, setIsDeclining] = useState(false);
-
+  const [isSkillsOpen, setIsSkillsOpen] = useState(false);
+  const [isReasonToJoinOpen, setIsReasonToJoinOpen] = useState(false);
   // const navigate = useNavigate();
   const location = useLocation();
   const navigate = useNavigate();
@@ -159,7 +160,7 @@ const MentorProfile = ({ userData, Allrole, principal }) => {
     }
   };
 
-  console.log("userData[0].profile:", userData[0].profile);
+  // console.log("userData[0].profile:", userData[0].profile);
 
   const date = numberToDate(Allrole[2].requested_on[0]);
   const profile = uint8ArrayToBase64(
@@ -245,37 +246,107 @@ const MentorProfile = ({ userData, Allrole, principal }) => {
                     </p>
                   </div>
                 )}
-                {userData[0].profile.user_data.area_of_interest && (
-                  <div className=" flex flex-col text-gray-600">
+
+                <div className=" flex flex-col w-full text-gray-600">
+                  <div className="flex flex-row justify-between items-center">
                     <p className="text-black font-semibold mb-1">Skill :</p>
-                    <div className="flex gap-2 text-xs flex-wrap items-center">
-                      {userData[0].profile.user_data.area_of_interest
-                        .split(",")
-                        .slice(0, 3)
-                        .map((tag, index) => (
-                          <div
-                            key={index}
-                            className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
-                          >
-                            {tag.trim()}
-                          </div>
-                        ))}
-                    </div>
-                  </div>
-                )}
-                {userData[0].profile.user_data.reason_to_join[0] && (
-                  <p className="text-black font-semibold ">Reason to join :</p>
-                )}
-                <div className="flex text-gray-700 flex-row gap-2 flex-wrap text-xs">
-                  {userData[0].profile.user_data.reason_to_join[0].map(
-                    (reason, index) => (
-                      <p
-                        key={index}
-                        className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                    <button
+                      onClick={() => setIsSkillsOpen(!isSkillsOpen)}
+                      className="flex items-center gap-2"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="size-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
                       >
-                        {reason.replace(/_/g, " ")}
-                      </p>
-                    )
+                        {isSkillsOpen ? (
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M5 15l7-7 7 7"
+                          />
+                        ) : (
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M19 9l-7 7-7-7"
+                          />
+                        )}
+                      </svg>
+                    </button>
+                  </div>
+
+                  {isSkillsOpen && (
+                    <div className="flex flex-col text-gray-600">
+                      <div className="flex gap-2 text-xs flex-wrap items-center">
+                        {userData[0].profile.user_data.area_of_interest
+                          .split(",")
+                          .slice(0, 3)
+                          .map((tag, index) => (
+                            <div
+                              key={index}
+                              className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                            >
+                              {tag.trim()}
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className=" flex flex-col w-full text-gray-600">
+                  <div className="flex flex-row justify-between items-center">
+                    <p className="text-black font-semibold mb-1">
+                      Reason to join :
+                    </p>
+                    <button
+                      onClick={() => setIsReasonToJoinOpen(!isReasonToJoinOpen)}
+                      className="flex items-center gap-2"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="size-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        {isReasonToJoinOpen ? (
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M5 15l7-7 7 7"
+                          />
+                        ) : (
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M19 9l-7 7-7-7"
+                          />
+                        )}
+                      </svg>
+                    </button>
+                  </div>
+
+                  {isReasonToJoinOpen && (
+                    <div className="flex flex-col text-gray-600">
+                      <div className="flex gap-2 break-all text-xs flex-wrap items-center">
+                        {userData[0].profile.user_data.reason_to_join[0].map(
+                          (tag, index) => (
+                            <div
+                              key={index}
+                              className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                            >
+                              {tag.trim()}
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
                   )}
                 </div>
               </div>
@@ -337,16 +408,16 @@ const MentorProfile = ({ userData, Allrole, principal }) => {
               </Swiper>
             </div>
             <h1 className="text-2xl font-bold text-gray-800">About Mentor</h1>
-            <p className="text-gray-600 md:text-sm text-xs break-all line-clamp-6 my-3 px-[4%]">
+            <div className="text-gray-600 md:text-sm text-xs break-all line-clamp-6 my-3 px-[4%]">
               {userData[0]?.profile?.user_data?.bio[0] ? (
                 userData[0]?.profile?.user_data?.bio[0]
               ) : (
-                <div className="flex items-center">
+                <p className="flex items-center">
                   {noDataPresentSvg}
-                  <span className="ml-2">No data found</span>
-                </div>
+                  <span className="ml-2">No Data</span>
+                </p>
               )}
-            </p>
+            </div>
 
             <div className="pl-[4%]">
               <p className="w-full mb-4 border border-[#C5C5C5]"></p>
@@ -400,7 +471,7 @@ const MentorProfile = ({ userData, Allrole, principal }) => {
                         }}
                         className="cursor-pointer mr-2"
                       >
-                        {websiteSvg}
+                        {twitterSvg}
                       </div>
                     ) : (
                       <div className="flex-shrink-0 w-6 h-6 mr-1">
@@ -457,7 +528,7 @@ const MentorProfile = ({ userData, Allrole, principal }) => {
                         }}
                         className="cursor-pointer mr-2"
                       >
-                        {websiteSvg}
+                        {linkedInSvg}
                       </div>
                     ) : (
                       <div className="flex-shrink-0 w-6 h-6 mr-1">
@@ -479,33 +550,16 @@ const MentorProfile = ({ userData, Allrole, principal }) => {
           <div className="flex flex-col  w-full   md:w-[26%] sxxs:w-full"></div>
           <div className="flex flex-row justify-between bg-[#D2D5F2] shadow-md shadow-gray-400 p-6 rounded-lg md:w-3/4 sxxs:w-fulll">
             <ul className="grid grid-cols-2 gap-4 w-full ">
-              <li className="list-disc md:ml-4">
-                {userData[0].profile.multichain[0] && (
-                  <p className="text-black font-semibold ">Multichain :</p>
-                )}
-                <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap">
-                  {userData[0].profile.multichain[0]
-                    .split(",")
-                    .slice(0, 3)
-                    .map((tag, index) => (
-                      <div
-                        key={index}
-                        className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
-                      >
-                        {tag.trim()}
-                      </div>
-                    ))}
-                </div>
-              </li>
+              <li className="list-disc ml-4 md:ml-12">
+                <div className=" flex flex-col text-gray-600">
+                  <p className="text-black font-semibold mb-1">
+                    Support Multichain :
+                  </p>
 
-              <li className="list-disc ">
-                {userData[0].profile.user_data.area_of_interest && (
-                  <div className=" flex flex-col text-gray-600">
-                    <p className="text-black font-semibold mb-1">
-                      Area Of Expertise :
-                    </p>
-                    <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap">
-                      {userData[0].profile.user_data.area_of_interest
+                  <div className="flex gap-2 text-xs items-center flex-wrap">
+                    {userData[0]?.profile?.multichain?.[0] &&
+                    userData[0].profile.multichain[0] !== "" ? (
+                      userData[0]?.profile?.multichain?.[0]
                         .split(",")
                         .slice(0, 3)
                         .map((tag, index) => (
@@ -515,13 +569,48 @@ const MentorProfile = ({ userData, Allrole, principal }) => {
                           >
                             {tag.trim()}
                           </div>
-                        ))}
-                    </div>
+                        ))
+                    ) : (
+                      <div className="flex items-center">
+                        {noDataPresentSvg}
+                        <span className="ml-2 text-xs">No Data</span>
+                      </div>
+                    )}
                   </div>
-                )}
+                </div>
               </li>
 
-              <li className="list-disc md:ml-4">
+              <li className="list-disc ">
+                <div className=" flex flex-col text-gray-600">
+                  <p className="text-black font-semibold mb-1">
+                    Area Of Expertise :
+                  </p>
+
+                  <div className="flex gap-2 text-xs items-center flex-wrap">
+                    {userData[0]?.profile?.user_data?.area_of_interest &&
+                    userData[0].profile.user_data.area_of_interest !== "" ? (
+                      userData[0]?.profile?.user_data?.area_of_interest
+                        .split(",")
+                        .slice(0, 3)
+                        .map((tag, index) => (
+                          <div
+                            key={index}
+                            className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                          >
+                            {tag.trim()}
+                          </div>
+                        ))
+                    ) : (
+                      <div className="flex items-center">
+                        {noDataPresentSvg}
+                        <span className="ml-2 text-xs">No Data</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </li>
+
+              <li className="list-disc ml-4 md:ml-12">
                 <div className="flex flex-col items-start justify-start sm:text-left ">
                   <h2 className=" font-semibold text-gray-800 mb-2 sm:mb-0 mr-2">
                     How many Years of Mentoring ?
@@ -541,7 +630,7 @@ const MentorProfile = ({ userData, Allrole, principal }) => {
                       ) : (
                         <span className="flex items-center">
                           {noDataPresentSvg}
-                          Data Not Available
+                          No Data
                         </span>
                       )}
                     </p>
@@ -563,13 +652,13 @@ const MentorProfile = ({ userData, Allrole, principal }) => {
                     ) : (
                       <span className="flex items-center text-xs">
                         {noDataPresentSvg}
-                        Data Not Available
+                        No Data
                       </span>
                     )}
                   </div>
                 </div>
               </li>
-              <li className="list-disc md:ml-4">
+              <li className="list-disc ml-4 md:ml-12">
                 <div className="flex flex-col items-start justify-start sm:text-left">
                   <h2 className=" font-semibold text-gray-800 mb-2 sm:mb-0 mr-2">
                     What is the scope and status of the Existing ICP Project
@@ -583,7 +672,7 @@ const MentorProfile = ({ userData, Allrole, principal }) => {
                     ) : (
                       <span className="flex items-center text-xs">
                         {noDataPresentSvg}
-                        Data Not Available
+                        No Data
                       </span>
                     )}
                   </div>
@@ -600,14 +689,14 @@ const MentorProfile = ({ userData, Allrole, principal }) => {
                     ) : (
                       <span className="flex items-center text-xs">
                         {noDataPresentSvg}
-                        Data Not Available
+                        No Data
                       </span>
                     )}
                   </div>
                 </div>
               </li>
 
-              <li className="list-disc md:ml-4">
+              <li className="list-disc ml-4 md:ml-12">
                 <div className="flex flex-col items-start justify-start sm:text-left">
                   <h2 className=" font-semibold text-gray-800 mb-2 sm:mb-0 mr-2">
                     Have you previously been involved with any ICP hubs ?
@@ -622,7 +711,7 @@ const MentorProfile = ({ userData, Allrole, principal }) => {
                     ) : (
                       <span className="flex items-center text-xs">
                         {noDataPresentSvg}
-                        Data Not Available
+                        No Data
                       </span>
                     )}
                   </div>
@@ -641,13 +730,13 @@ const MentorProfile = ({ userData, Allrole, principal }) => {
                     ) : (
                       <span className="flex items-center text-xs">
                         {noDataPresentSvg}
-                        Data Not Available
+                        No Data
                       </span>
                     )}
                   </div>
                 </div>
               </li>
-              <li className="list-disc md:ml-4">
+              <li className="list-disc ml-4 md:ml-12">
                 <div className="flex flex-col items-start justify-start sm:text-left">
                   <h2 className=" font-semibold text-gray-800 mb-2 sm:mb-0 mr-2">
                     What motivated you to join the ICP hub?
@@ -658,7 +747,7 @@ const MentorProfile = ({ userData, Allrole, principal }) => {
                     ) : (
                       <span className="flex items-center text-xs">
                         {noDataPresentSvg}
-                        Data Not Available
+                        No Data
                       </span>
                     )}
                   </div>
@@ -677,30 +766,39 @@ const MentorProfile = ({ userData, Allrole, principal }) => {
                     ) : (
                       <span className="flex items-center text-xs">
                         {noDataPresentSvg}
-                        Data Not Available
+                        No Data
                       </span>
                     )}
                   </div>
                 </div>
               </li>
 
-              <li className="list-disc  md:ml-4">
-                <div className="flex flex-col items-start justify-start sm:text-left">
-                  <p className="font-semibold text-gray-800 mb-2 sm:mb-0 mr-2">
+              <li className="list-disc ml-4 md:ml-12">
+                <div className=" flex flex-col text-gray-600">
+                  <p className="text-black font-semibold mb-1">
                     What types of mentoring services are you offering?
                   </p>
-                  <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap">
-                    {userData[0].profile.category_of_mentoring_service
-                      .split(",")
-                      .slice(0, 3)
-                      .map((tag, index) => (
-                        <div
-                          key={index}
-                          className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
-                        >
-                          {tag.trim()}
-                        </div>
-                      ))}
+
+                  <div className="flex gap-2 text-xs items-center flex-wrap">
+                    {userData[0]?.profile?.category_of_mentoring_service &&
+                    userData[0].profile.category_of_mentoring_service !== "" ? (
+                      userData[0]?.profile?.category_of_mentoring_service
+                        .split(",")
+                        .slice(0, 3)
+                        .map((tag, index) => (
+                          <div
+                            key={index}
+                            className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                          >
+                            {tag.trim()}
+                          </div>
+                        ))
+                    ) : (
+                      <div className="flex items-center">
+                        {noDataPresentSvg}
+                        <span className="ml-2 text-xs">No Data</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </li>
