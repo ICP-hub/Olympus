@@ -21,7 +21,6 @@ const App = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const identity = useSelector((currState) => currState.internet.identity);
   const isAuthenticated = useSelector((currState) => currState.internet.isAuthenticated);
-  const specificRole = useSelector((currState) => currState.current.specificRole);
   const { reloadLogin } = useAuth();
   const [isModalOpen, setModalOpen] = useState(false);
   const dispatch = useDispatch();

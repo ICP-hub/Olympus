@@ -23,6 +23,7 @@ import { useNavigate } from "react-router-dom";
 import ProjectDocuments from "../../Resources/ProjectDocuments";
 import ProjectMoneyRaising from "../../Resources/ProjectMoneyRaising";
 import DonerMenu from "../../../models/DonerMenu";
+import RubricRating from "../RubricRating";
 const ProjectDetailsForOwnerProject = () => {
   const navigate = useNavigate();
   const actor = useSelector((currState) => currState.actors.actor);
@@ -174,7 +175,7 @@ const ProjectDetailsForOwnerProject = () => {
 
       case "project-ratings":
         return (
-          <ProjectRatings
+          <RubricRating
             data={projectData}
             isProjectLive={isProjectLive}
             profile={true}

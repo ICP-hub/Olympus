@@ -9,7 +9,6 @@ import React, { useEffect } from "react";
 // import Bottombar from "../Layout/BottomBar/Bottombar";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-// import ListedProjects from "../ListedProjects";
 import guide from "../../../../assets/getStarted/guide.png";
 import upvote from "../../../../assets/getStarted/upvote.png";
 import SubmitSection from "../../Footer/SubmitSection";

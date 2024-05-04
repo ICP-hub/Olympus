@@ -6,10 +6,8 @@ import { changeHasSelectedRoleHandler } from "../components/StateManagement/Redu
 import { useNavigate } from "react-router-dom";
 import { mentorRegisteredHandlerRequest } from "../components/StateManagement/Redux/Reducers/mentorRegisteredData";
 import { founderRegisteredHandlerRequest } from "../components/StateManagement/Redux/Reducers/founderRegisteredData";
-import { hubRegisteredHandlerRequest } from "../components/StateManagement/Redux/Reducers/hubRegisteredData";
 import { investorRegisteredHandlerRequest } from "../components/StateManagement/Redux/Reducers/investorRegisteredData";
 import { useAuth } from "../components/StateManagement/useContext/useAuth";
-import { userRoleHandler } from "../components/StateManagement/Redux/Reducers/userRoleReducer";
 import { useCallback } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { beforeCopySvg } from "../components/Utils/Data/SvgData";
@@ -18,9 +16,6 @@ const LogoutModal = () => {
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
   const principal = useSelector((currState) => currState.internet.principal);
   const actor = useSelector((currState) => currState.actors.actor);
-  const specificRole = useSelector(
-    (currState) => currState.currentRoleStatus.activeRole
-  );
 
   const { logout } = useAuth();
   const [customSvg, setCustomSvg] = useState(beforeCopySvg);
@@ -41,7 +36,8 @@ const LogoutModal = () => {
   const logoutHandler = async () => {
     dispatch(changeHasSelectedRoleHandler(false));
     await logout();
-    navigate("/");
+    // navigate("/");
+    window.location.href = "/";
   };
 
   const profileHandler = async (userCurrentRoleStatusActiveRole) => {

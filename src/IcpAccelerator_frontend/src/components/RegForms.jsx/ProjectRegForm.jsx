@@ -11,6 +11,7 @@ import ReactSelect from "react-select";
 import CompressedImage from "../ImageCompressed/CompressedImage";
 import { allHubHandlerRequest } from "../StateManagement/Redux/Reducers/All_IcpHubReducer";
 import { bufferToImageBlob } from "../Utils/formatter/bufferToImageBlob";
+import { uint8ArrayToBase64 } from "../../../../admin_frontend/src/components/Utils/AdminData/saga_function/blobImageToUrl";
 
 function ProjectRegForm() {
   const { countries } = useCountries();
@@ -951,7 +952,9 @@ function ProjectRegForm() {
         val?.user_data?.area_of_interest ?? null
       );
       setImagePreview(
-        handleProfilePicture(val?.user_data?.profile_picture?.[0]) ?? ""
+        val?.user_data?.profile_picture?.[0] instanceof Uint8Array
+          ? uint8ArrayToBase64(val?.user_data?.profile_picture?.[0])
+          : ""
       );
       setValue("type_of_profile", val?.user_data?.type_of_profile?.[0]);
       setValue(
@@ -961,9 +964,16 @@ function ProjectRegForm() {
           : ""
       );
       setReasonOfJoiningSelectedOptionsHandler(val?.user_data?.reason_to_join);
-      //Project Data
-      setLogoPreview(val?.project_logo ?? "");
-      setCoverPreview(val?.project_cover ?? "");
+      setLogoPreview(
+        val?.project_logo instanceof Uint8Array
+          ? uint8ArrayToBase64(val?.project_logo)
+          : ""
+      );
+      setCoverPreview(
+        val?.project_cover instanceof Uint8Array
+          ? uint8ArrayToBase64(val?.project_cover)
+          : ""
+      );
       setValue("preferred_icp_hub", val?.preferred_icp_hub?.[0]);
       setValue("project_name", val?.project_name ?? "");
       setValue("project_description", val?.project_description?.[0] ?? "");
@@ -1146,8 +1156,8 @@ function ProjectRegForm() {
               className="w-full px-4"
             >
               <div className="flex flex-col">
-                <div className="flex-row w-full flex justify-start gap-4 items-center">
-                  <div className="mb-3 ml-6 h-24 w-24 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
+                <div className="flex-row w-full sm0:flex center-text justify-start gap-4 items-center">
+                  <div className="mb-3 sm0:ml-6 h-24 w-24 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
                     {imagePreview && !errors.image ? (
                       <img
                         src={imagePreview}
@@ -1563,8 +1573,8 @@ function ProjectRegForm() {
 
                 {/* START OF PROJECT REGISTRATION FORM */}
                 <div className="flex flex-col">
-                  <div className="flex-row w-full flex justify-start gap-4 items-center">
-                    <div className="mb-3 ml-6 h-24 w-24 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
+                  <div className="flex-row w-full sm0:flex center-text justify-start gap-4 items-center">
+                    <div className="mb-3 sm0:ml-6 h-24 w-24 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
                       {logoPreview && !errors.logo ? (
                         <img
                           src={logoPreview}
@@ -1633,8 +1643,8 @@ function ProjectRegForm() {
                   )}
                 </div>
                 <div className="flex flex-col">
-                  <div className="flex-row w-full flex justify-start gap-4 items-center">
-                    <div className="mb-3 ml-6 h-24 w-24 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
+                  <div className="flex-row w-full sm0:flex center-text justify-start gap-4 items-center">
+                    <div className="mb-3 sm0:ml-6 h-24 w-24 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
                       {coverPreview && !errors.cover ? (
                         <img
                           src={coverPreview}
@@ -2531,7 +2541,7 @@ function ProjectRegForm() {
                   {uploadPrivateDocuments === "true" &&
                     fieldsPrivate.map((field, index) => (
                       <React.Fragment key={field.id}>
-                        <div className="flex flex-row mt-2 items-center">
+                        <div className="sm0:flex sm:block block dlg:flex flex-row mt-2 items-center">
                           <div className="w-full">
                             <label className="block mb-2 text-lg font-medium text-gray-500 text-start">
                               Title {index + 1}

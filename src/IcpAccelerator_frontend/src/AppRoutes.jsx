@@ -36,12 +36,6 @@ const UserProfile = lazy(() => import("./components/UserProfile/UserProfile"));
 const Error404 = lazy(() => import("./components/Error404/Error404"));
 
 const AppRoutes = () => {
-  const actor = useSelector((currState) => currState.actors.actor);
-  const allRoles = useSelector((currState) => currState.role.roles);
-  const specificRole = useSelector((state) => state.current.specificRole);
-  const isAuthenticated = useSelector((currState) => currState.internet.isAuthenticated);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const publicRoutes = [
   
