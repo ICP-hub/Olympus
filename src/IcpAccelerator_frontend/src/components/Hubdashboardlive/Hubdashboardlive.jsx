@@ -6,7 +6,6 @@ import upvote from "../../../assets/getStarted/upvote.png";
 import SubmitSection from "../Footer/SubmitSection";
 import LiveProjects from "../Dashboard/LiveProjects";
 
-import ListedProjects from '../Dashboard/ListedProjects';
 import project from "../../../assets/images/project.png";
 import ment from "../../../assets/images/ment.jpg";
 // import btn from "../../../assets/Comprehensive/upote.png";

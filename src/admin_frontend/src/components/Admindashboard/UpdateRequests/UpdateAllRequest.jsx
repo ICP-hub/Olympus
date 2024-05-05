@@ -2,10 +2,22 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 import uint8ArrayToBase64 from "../../../../../IcpAccelerator_frontend/src/components/Utils/uint8ArrayToBase64";
 import { OutSideClickHandler } from "../../../../../IcpAccelerator_frontend/src/components/hooks/OutSideClickHandler";
-import { projectFilterSvg } from "../../Utils/AdminData/SvgData";
+import {
+  BioSvg,
+  DateSvg,
+  noDataPresentSvg,
+  projectFilterSvg,
+  telegramSVg,
+} from "../../Utils/AdminData/SvgData";
 import NoDataCard from "../../../../../IcpAccelerator_frontend/src/components/Mentors/Event/NoDataCard";
-import { principalToText } from "../../Utils/AdminData/saga_function/blobImageToUrl";
+import NoData from "../../../../../IcpAccelerator_frontend/assets/images/NoData.png"
+
+import {
+  formatDateFromBigInt,
+  principalToText,
+} from "../../Utils/AdminData/saga_function/blobImageToUrl";
 import { useNavigate } from "react-router-dom";
+import { place } from "../../Utils/AdminData/SvgData";
 
 const UpdateAllRequest = () => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -37,10 +49,10 @@ const UpdateAllRequest = () => {
       }
 
       const processedData = data.map((item, index) => {
-        // console.log("data", data);
+        console.log("data updated wale mai =>>>>", data);
 
         const updatedInfo = item[1]?.updated_info || {};
-
+        const requestOn = formatDateFromBigInt(item[1]?.sent_at);
         // console.log("originalInfo", originalInfo);
         // console.log("updatedInfo", updatedInfo);
 
@@ -53,9 +65,9 @@ const UpdateAllRequest = () => {
         // console.log("principal", principal);
 
         const profilePicture =
-          uint8ArrayToBase64(updatedInfo.user_data?.profile_picture[0]) ||
-          uint8ArrayToBase64(updatedInfo[0].user_data?.profile_picture[0]) ||
-          uint8ArrayToBase64(updatedInfo.project_logo);
+          uint8ArrayToBase64(updatedInfo?.user_data?.profile_picture[0]) ||
+          uint8ArrayToBase64(updatedInfo[0]?.user_data?.profile_picture?.[0]) ||
+          uint8ArrayToBase64(updatedInfo?.project_logo);
 
         const commonData = {
           fullName: (
@@ -68,15 +80,26 @@ const UpdateAllRequest = () => {
             updatedInfo[0].user_data?.country ||
             "No Country",
           profilePictureURL: profilePicture,
+
           telegram:
-            updatedInfo.user_data?.telegram_id ||
-            updatedInfo[0].user_data?.telegram_id ||
-            "N/A",
+            updatedInfo?.user_data?.telegram_id?.[0] ||
+            updatedInfo[0]?.user_data?.telegram_id?.[0] ||
+            "",
           hub:
             updatedInfo?.preferred_icp_hub?.[0] ||
-            updatedInfo?.[0]?.preferred_icp_hub ||
-            updatedInfo?.[0]?.preferred_icp_hub?.[0] ||
+            updatedInfo[0]?.preferred_icp_hub ||
+            updatedInfo[0]?.preferred_icp_hub?.[0] ||
             "N/A",
+          requestTime: requestOn || "N/A",
+          description:
+            updatedInfo?.project_description?.[0] ||
+            updatedInfo[0]?.project_description ||
+            updatedInfo[0]?.project_description?.[0],
+          bio:
+            updatedInfo?.user_data?.bio?.[0] ||
+            // updatedInfo[0]?.user_data?.bio ||
+            updatedInfo[0]?.user_data?.bio?.[0],
+          // "N/A",
           principalId: principal,
           index: index + 1,
         };
@@ -107,6 +130,8 @@ const UpdateAllRequest = () => {
   const indexOfLastUser = currentPage * itemsPerPage;
   const indexOfFirstUser = indexOfLastUser - itemsPerPage;
   const currentData = filteredData.slice(indexOfFirstUser, indexOfLastUser);
+
+  console.log("currentData =?", currentData);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -212,61 +237,112 @@ const UpdateAllRequest = () => {
       </div>
 
       {currentData.length > 0 ? (
-        <div className="flex flex-col bg-white rounded-lg p-8 text-lg overflow-auto mb-8">
-          <div className="min-w-[600px]">
-            <table className="w-full table-fixed">
-              <thead className="border-b-2 border-gray-300">
-                <tr className="text-left text-xl font-fontUse uppercase">
-                  <th className="w-24 pb-2">S.No</th>
-                  <th className="w-1/4 pb-2">Name</th>
-                  <th className="w-1/4 pb-2">Hub</th>
-                  <th className="w-1/4 pb-2">Country</th>
-                  <th className="w-1/4 pb-2">Telegram</th>
-                </tr>
-              </thead>
-              <tbody className="text-base text-gray-700 font-fontUse">
-                {currentData.map((user, index) => (
-                  <tr
-                    key={`${user.fullName}-${user.country}-${index}`}
-                    onClick={() => handleRowClick(user.principalId)}
-                    className="hover:bg-gray-100 cursor-pointer mt-1"
-                  >
-                    <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                    <td className="py-2 ">
-                      <div className="flex items-center">
-                        <img
-                          className="w-10 h-10 rounded-full border-black border-2 p-1"
-                          src={user.profilePictureURL}
-                          alt="Profile"
-                        />
-                        <div className="ml-2">{user.fullName}</div>
+        <div className="px-[2%]  py-[1.5%] w-full flex flex-col mb-6 bg-white rounded-lg shadow border border-gray-200">
+          {currentData.map((user, index) => (
+            <div
+              className="w-full mb-2 justify-between items-center  flex flex-row flex-wrap"
+              key={index}
+            >
+              <div className="space-x-3 flex flex-row items-center">
+                <img
+                  src={user.profilePictureURL} // Use user.profilePictureURL instead of currentData.profilePictureURL
+                  alt="profile"
+                  className="w-10 h-10 rounded-full object-cover"
+                />
+                <h4 className="md:text-2xl text-md font-extrabold text-[#3505B2]">
+                  {user.fullName}{" "}
+                  {/* Use user.fullName instead of currentData.fullName */}
+                </h4>
+                <div>
+                  {filterOption && (
+                    <p className="bg-[#2A353D] md:text-[10px] text-[8px] items-center  rounded-full text-white py-0.5 px-2">
+                      {filterOption}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className=" hidden md:flex md:flex-row">
+                <span className="text-gray-500 mr-2">
+                  <DateSvg />
+                </span>
+                <p className="md:text-sm text-xs md:text-md text-[#3505B2]">
+                  {user.requestTime}{" "}
+                  {/* Use user.requestTime instead of currentData.requestTime */}
+                </p>
+              </div>
+
+              <div className="flex md:flex-row flex-col w-full">
+                <div className="flex flex-col md:w-3/4 w-full mb-3 md:mb-0">
+                  <div className="md:hidden mt-2 block">
+                    {user.requestTime && (
+                      <div className="flex flex-row mt-2 items-center text-sm mb-1 font-medium text-gray-600">
+                        <span className="text-gray-500 min-w-[40px] ml-3">
+                          <DateSvg />
+                        </span>
+                        <span className="truncate md:text-sm text-xs">
+                          {user.requestTime}{" "}
+                          {/* Use user.requestTime instead of currentData.requestTime */}
+                        </span>
                       </div>
-                    </td>
-                    <td>{user.hub}</td>
-                    <td>{user.country}</td>
-                    <td className="truncate max-w-xs">
-                      {user.telegram ? (
-                        <a
-                          href={`https://t.me/${user.telegram}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-700 hover:text-blue-900"
-                        >
-                          {user.telegram}
-                        </a>
-                      ) : (
-                        <p>N/A</p>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                    )}
+                  </div>
+
+                  {user.country && (
+                    <div className="flex flex-row items-center text-sm mb-1 md:mt-2 font-medium text-gray-600">
+                      <span className="text-gray-500 min-w-[40px] ml-3">
+                        {place}
+                      </span>
+                      <span className="truncate">
+                        {user.country}{" "}
+                        {/* Use user.country instead of currentData.country */}
+                      </span>
+                    </div>
+                  )}
+                  {user.description ? (
+                    <div className="flex flex-row items-center text-sm font-medium text-gray-600 break-words">
+                      <span className="text-gray-500 min-w-[40px] ml-3">
+                        <BioSvg />
+                      </span>
+                      <span className="truncate md:text-sm text-xs">
+                        {user.description}
+                      </span>
+                    </div>
+                  ) : user.bio ? (
+                    <div className="flex flex-row items-center text-sm font-medium text-gray-600 break-words">
+                      <span className="text-gray-500 min-w-[40px] ml-3">
+                        <BioSvg />
+                      </span>
+                      <span className="truncate md:text-sm text-xs">
+                        {user.bio}
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="flex flex-row items-center text-sm font-medium text-gray-600 break-words">
+                      <span className="text-gray-500 min-w-[40px] ml-3.5">
+                        {noDataPresentSvg}
+                      </span>
+                      <span className="truncate md:text-sm text-xs">
+                        No Data
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <div className="md:w-1/4 w-full flex justify-end items-end space-x-2 md:h-10">
+                  <button
+                    onClick={() => handleRowClick(user.principalId)}
+                    className="capitalize border-2 font-semibold bg-[#3505B2] border-[#3505B2] md:text-xs text-[9px]  text-white md:px-1 px-2 rounded-md md:h-8 h-7 hover:text-[#3505B2] hover:bg-white"
+                  >
+                    View User Profile
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       ) : (
-        <NoDataCard />
-      )}
+        <NoDataCard image={NoData} desc={'No Update Requests'}/>
+        )}
 
       {currentData.length > 0 && (
         <div className="flex items-center gap-4 justify-center mb-4">

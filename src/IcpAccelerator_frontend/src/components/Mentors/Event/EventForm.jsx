@@ -11,7 +11,6 @@ import { ThreeDots } from "react-loader-spinner";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import DetailHeroSection from "../../Common/DetailHeroSection";
-// import { userRoleHandler } from "../../StateManagement/Redux/Reducers/userRoleReducer";
 import Founder from "../../../../assets/images/founderRegistration.png";
 // import { getCurrentRoleStatusRequestHandler } from "../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 import { format, startOfToday } from "date-fns";

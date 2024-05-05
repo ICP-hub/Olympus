@@ -10,6 +10,7 @@ import { projectFilterSvg } from "../../../../IcpAccelerator_frontend/src/compon
 import { useRef } from "react";
 import { OutSideClickHandler } from "../../../../IcpAccelerator_frontend/src/components/hooks/OutSideClickHandler";
 import toast, { Toaster } from "react-hot-toast";
+import NoData from "../../../../IcpAccelerator_frontend/assets/images/NoData.png"
 
 const LiveIncubated = () => {
   const actor = useSelector((state) => state.actors.actor);
@@ -51,6 +52,10 @@ const LiveIncubated = () => {
     }));
   };
 
+
+
+
+  console.log("nodata => ",noData );
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -270,10 +275,14 @@ const LiveIncubated = () => {
         className="flex justify-start w-full space-x-2"
         style={{ minHeight: "60vh" }}
       >
-        {noData ? (
-          <NoDataCard />
-        ) : (
-          <div className="flex-wrap flex flex-row w-full">
+       {noData ? (
+    <NoDataCard image={NoData} desc={'No Projects'} />
+    ) : currentProjects.length === 0 ? (
+      <NoDataCard image={NoData} desc={'No Projects'} />
+    ) : (
+         
+         
+         <div className="flex-wrap flex flex-row w-full">
             {currentProjects.map((project, index) => {
               const {
                 project_name,
@@ -485,7 +494,10 @@ const LiveIncubated = () => {
               );
             })}
           </div>
-        )}
+
+
+          )}
+    
       </div>
 
       {/* {pageNumbers.length > 1 && ( */}

@@ -7,6 +7,9 @@ import NoDataCard from "../../../../IcpAccelerator_frontend/src/components/Mento
 import proj from "../../../../IcpAccelerator_frontend/assets/images/founder.png";
 import vc from "../../../../IcpAccelerator_frontend/assets/images/vc.png";
 import mentor from "../../../../IcpAccelerator_frontend/assets/images/mentor.png";
+import { OutSideClickHandler } from "../../../../IcpAccelerator_frontend/src/components/hooks/OutSideClickHandler";
+import NoData from "../../../../IcpAccelerator_frontend/assets/images/NoData.png"
+
 
 const RequestCheck = () => {
   // const principal = useSelector((currState) => currState.internet.principal);
@@ -17,6 +20,9 @@ const RequestCheck = () => {
   const [selectedStatus, setSelectedStatus] = useState("Pending");
   const [filteredNotifications, setFilteredNotifications] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const dropdownRef = useRef(null);
+  OutSideClickHandler(dropdownRef, () => setIsPopupOpen(false));
 
   const mentorPending = useSelector(
     (currState) => currState.mentor_pending.data
@@ -122,11 +128,11 @@ const RequestCheck = () => {
 
   return (
     <div className="px-[4%] py-[4%] w-full bg-gray-100 h-screen overflow-y-scroll">
-      <div className="text-2xl font-semibold text-left my-4 pb-2">
+      {/* <div className="text-2xl font-semibold text-left my-4 pb-2">
         <span className="inline-block bg-[#3505B2] text-transparent bg-clip-text">
           {selectedStatus}
         </span>
-      </div>
+      </div> */}
 
       <div className="flex justify-between">
         <div>
@@ -153,30 +159,39 @@ const RequestCheck = () => {
             </button>
           ))}
         </div>
-
-        <div
-          onClick={() => setIsPopupOpen(!isPopupOpen)}
-          className="cursor-pointer"
-        >
-          {projectFilterSvg}
-        </div>
-
-        {isPopupOpen && (
-          <div className="absolute w-[192px] top-[22%] md:top-[66%] md:right-[100px] right-[22px] bg-white shadow-md rounded-lg border border-gray-200 p-3 z-10">
-            {["Pending", "Approved", "Declined"].map((status) => (
-              <button
-                key={status}
-                onClick={() => {
-                  setSelectedStatus(status);
-                  setIsPopupOpen(false);
-                }}
-                className="border-[#9C9C9C] w-[170px]  hover:text-indigo-800 border-b-2 py-2 px-4 focus:outline-none text-base flex justify-start font-fontUse"
-              >
-                {status}
-              </button>
-            ))}
+        <div className="flex flex-row space-x-2">
+          <div
+            className="border-2 border-blue-900 p-1 w-auto  font-bold rounded-md text-blue-900 px-2 capitalize"
+            style={{ whiteSpace: "nowrap" }}
+          >
+            {selectedStatus}
           </div>
-        )}
+          <div className="flex justify-end gap-4 relative " ref={dropdownRef}>
+            <div
+              onClick={() => setIsPopupOpen(!isPopupOpen)}
+              className="cursor-pointer"
+            >
+              {projectFilterSvg}
+
+              {isPopupOpen && (
+                <div className="absolute w-[250px] mt-4 top-full right-0 bg-white shadow-md rounded-lg border border-gray-200 p-3 z-10">
+                  {["Pending", "Approved", "Declined"].map((status) => (
+                    <button
+                      key={status}
+                      onClick={() => {
+                        setSelectedStatus(status);
+                        setIsPopupOpen(false);
+                      }}
+                      className="border-[#9C9C9C] w-[230px]  hover:text-indigo-800 border-b-2 py-2 px-4 focus:outline-none text-base flex justify-start font-fontUse"
+                    >
+                      {status}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
 
       {isLoading && isAuthenticated ? (
@@ -201,7 +216,7 @@ const RequestCheck = () => {
         </div>
       ) : (
         <div className="mt-8 text-center py-4">
-          <NoDataCard />
+            <NoDataCard image={NoData} desc={'No Pending Requests'}/>
         </div>
       )}
     </div>

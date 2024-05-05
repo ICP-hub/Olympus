@@ -1,34 +1,16 @@
 import React, { useEffect } from "react";
-// import Sidebar from "../Layout/SidePanel/Sidebar";
-// import LiveProjects from "./LiveProjects";
-// import SearchForm from "./SearchForm";
-// import VideoScroller from "./VideoScroller";
-// import Founder from "./Founder";
-// import Partners from "./Partners";
-// import Footer from "../Footer/Footer";
-// import Bottombar from "../Layout/BottomBar/Bottombar";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-// import ListedProjects from "../ListedProjects";
 import guide from "../../../../assets/getStarted/guide.png";
 import upvote from "../../../../assets/getStarted/upvote.png";
 import SubmitSection from "../../Footer/SubmitSection";
 import { getCurrentRoleStatusRequestHandler } from "../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 import SpotLight from "../SpotLight";
-import ImpactTool from "../ImpactTool";
-import EventCard from "../EventCard";
-import ProjectJobs from "../../Project/ProjectDetails/ProjectJobs";
-import AssociatedProjects from "../AssociatedProjects";
-import SecondEventCard from "../SecondEventCard";
-import ListedProjects from "../ListedProjects";
-import LiveProjectBar from "../liveProjectBar";
 import LiveProjects from "../LiveProjects";
 import CurrentlyRaising from "../CurrentlyRaising";
 import MentorAssociated from "../../AssociatedProjects/MentorAssociated";
 import AnnouncementCard from "../AnnouncementCard";
 import LiveEventsCards from "../LiveEventsCards";
-// import ProjectJobCard from "../../Project/ProjectDetails/ProjectJobCard";
-// import Announcement from "../../Project/ProjectDetails/Announcement";
 
 const MentorDashboard = () => {
   const dispatch = useDispatch();

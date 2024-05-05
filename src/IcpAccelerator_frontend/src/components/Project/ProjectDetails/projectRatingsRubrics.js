@@ -414,5 +414,57 @@ export const rubric_table_data = [
         desc: "Growth with exit."
       }
     ]
-  }
+  },
+  {
+    id: 9,
+    title: "Exit",
+    desc: "Description for Exit",
+    levels: [
+      {
+        id: 1,
+        title: "Establishing the Founding Team",
+        desc: "Team understands what an exit is and has a vision for how they will ultimately provide a return for their investors."
+      },
+      {
+        id: 2,
+        title: "Setting the Vision",
+        desc: "Vision for growth has company solving a large piece of the global problem in 10 years."
+      },
+      {
+        id: 3,
+        title: "Solidifying the Value Proposition",
+        desc: "Initial evidence that the solution already solves the problem better than any incumbents."
+      },
+      {
+        id: 4,
+        title: "Validating an Investable Market",
+        desc: "Evidence of growth trajectory that could lead to IPO, acquisition, or self- liquidating exit."
+      },
+      {
+        id: 5,
+        title: "Proving a Profitable Business Model",
+        desc: "Inbound interest from large strategics."
+      },
+      {
+        id: 6,
+        title: "Moving Beyond Early Adopters",
+        desc: "Team has identified specific acquirer(s) or other exit environment."
+      },
+      {
+        id: 7,
+        title: "Hitting Product-Market Fit",
+        desc: "Team has strong relationships with multiple acquirers."
+      },
+      {
+        id: 8,
+        title: "Scaling Up",
+        desc: "Team has turned down acquisition offer."        
+      },
+      {
+        id: 9,
+        title: "Exit in Sight",
+        desc: "Growth with exit."
+      }
+    ]
+  },
 ];

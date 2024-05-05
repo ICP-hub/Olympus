@@ -92,7 +92,7 @@ const AnnouncementCard = () => {
                       <p className="text-black font-bold">{ann_name}</p>
                       <p className="text-gray-500 flex justify-end text-sm my-2 items-center"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"className="size-4 mr-2" fill="currentColor"><path d="M96 32V64H48C21.5 64 0 85.5 0 112v48H448V112c0-26.5-21.5-48-48-48H352V32c0-17.7-14.3-32-32-32s-32 14.3-32 32V64H160V32c0-17.7-14.3-32-32-32S96 14.3 96 32zM448 192H0V464c0 26.5 21.5 48 48 48H400c26.5 0 48-21.5 48-48V192z"/></svg>{ann_time}</p>
                     </div>
-                    <p className="max-h-48 text-gray-500 text-sm line-clamp-6 break-all">
+                    <p className="h-48 text-gray-500 text-sm line-clamp-6 break-all">
                       {ann_desc}
                     </p>
                     <div className="flex flex-row gap-2 items-center">
