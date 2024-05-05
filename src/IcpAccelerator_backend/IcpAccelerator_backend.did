@@ -162,6 +162,7 @@ type MentorProfile = record {
 type MentorUpdateRequest = record {
   rejected_at : nat64;
   approved_at : nat64;
+  sent_at : nat64;
   updated_info : opt MentorProfile;
   original_info : opt MentorProfile;
 };
@@ -445,6 +446,7 @@ type ProjectUpdateRequest = record {
   rejected_at : nat64;
   "principal" : principal;
   accepted_at : nat64;
+  sent_at : nat64;
   updated_info : ProjectInfo;
   original_info : ProjectInfo;
   project_id : text;
@@ -607,6 +609,7 @@ type UpdateCounts = record {
 type UpdateInfoStruct = record {
   rejected_at : nat64;
   approved_at : nat64;
+  sent_at : nat64;
   updated_info : opt VentureCapitalist;
   original_info : opt VentureCapitalist;
 };
@@ -1023,8 +1026,11 @@ service : {
   register_project : (ProjectInfo) -> (text);
   register_user : (UserInformation) -> (text);
   register_venture_capitalist : (VentureCapitalist) -> (text);
+  remove_mentor_from_cohort : (text, principal) -> (Result_4);
+  remove_project_from_cohort : (text, text) -> (Result_4);
   remove_project_from_incubated : (text) -> (Result_4);
   remove_project_from_spotlight : (text) -> (Result_3);
+  remove_vc_from_cohort : (text, principal) -> (Result_4);
   reply_to_suggestion_caller : (nat64, text, text) -> (nat64, text);
   self_decline_request : (text) -> (text);
   self_decline_request_for_investor : (text) -> (text);

@@ -1,4 +1,8 @@
 use crate::associations::*;
+use crate::cohort::APPLIER_COUNT;
+use crate::cohort::CAPITALIST_APPLIED_FOR_COHORT;
+use crate::cohort::MENTORS_APPLIED_FOR_COHORT;
+use crate::cohort::PROJECTS_APPLIED_FOR_COHORT;
 use crate::latest_popular_projects::INCUBATED_PROJECTS;
 use crate::latest_popular_projects::LIVE_PROJECTS;
 use crate::mentor::*;
@@ -62,7 +66,9 @@ pub struct UpdateCounts{
 
 thread_local! {
     static ADMIN_NOTIFICATIONS : RefCell<HashMap<Principal, Vec<Notification>>> = RefCell::new(HashMap::new());
-    static COHORT_REQUEST : RefCell<HashMap<Principal, Vec<CohortRequest>>> = RefCell::new(HashMap::new());
+    static COHORT_REQUEST : RefCell<HashMap<String, Vec<CohortRequest>>> = RefCell::new(HashMap::new());
+    static ACCEPTED_COHORTS : RefCell<HashMap<String, Vec<CohortRequest>>> = RefCell::new(HashMap::new());
+    static DECLINED_COHORTS: RefCell<HashMap<String, Vec<CohortRequest>>> = RefCell::new(HashMap::new());
 }
 
 pub fn pre_upgrade_admin(){
@@ -1871,95 +1877,75 @@ pub fn update_mentor_profile(requester: Principal, updated_profile: MentorProfil
 //cohort admin operations
 
 pub async fn send_cohort_request_to_admin(cohort_request: CohortRequest) -> String {
-    //access controllers
-    match get_info().await {
-        Ok(controllers) => {
-            let request_ref = &cohort_request;  
+    COHORT_REQUEST.with(|cohort_requests| {
+        let mut cohort_requests = cohort_requests.borrow_mut();
+        cohort_requests
+            .entry(cohort_request.cohort_details.cohort_id.clone())
+            .or_default()
+            .push(cohort_request) 
+    });
 
-            for (index, controller) in controllers.iter().enumerate() {
-                ic_cdk::println!("no = {} controller = {}", index + 1, controller);
-
-                COHORT_REQUEST.with(|cohort_requests| {
-                    let mut cohort_requests = cohort_requests.borrow_mut();
-                    cohort_requests
-                        .entry(*controller)
-                        .or_default()
-                        .push(request_ref.clone())  
-                });
-            }
-            ic_cdk::println!("REQUEST HAS BEEN SENT TO ADMIN");
-            "cohort creation request has been sent to admin".to_string()
-        }
-        Err(e) => {
-            ic_cdk::println!("Error retrieving canister information: {:?}", e);
-            format!("unable to get canister information: {:?}", e)
-        }
-    }
+    ic_cdk::println!("REQUEST HAS BEEN SENT TO ADMIN");
+    "cohort creation request has been sent to admin".to_string()
 }
 
 #[query]
 pub fn get_pending_cohort_requests_for_admin() -> Vec<CohortRequest> {
-    let mut seen_ids = HashSet::new();
-    let mut all_requests = Vec::new();
+    let mut accepted_requests = Vec::new();
 
-    COHORT_REQUEST.with(|requests| {
-        let requests = requests.borrow();
-
-        for (_principal, cohort_requests) in requests.iter() {
-            for request in cohort_requests.iter().filter(|r| r.request_status == "pending") {
-                if seen_ids.insert(request.cohort_details.cohort_id.clone()) {
-                    all_requests.push(request.clone());
-                } else {
-                    println!("Duplicate detected for cohort_id: {}", request.cohort_details.cohort_id);
-                }
-            }
+    COHORT_REQUEST.with(|storage| {
+        let storage = storage.borrow();
+        for (_cohort_id, requests) in storage.iter() {
+            accepted_requests.extend(requests.clone());
         }
     });
 
-    all_requests
+    accepted_requests
 }
+
+
 
 #[update]
 pub fn accept_cohort_creation_request(cohort_id: String) -> String {
     let mut response_message = String::new();
 
+    let already_accepted = ACCEPTED_COHORTS.with(|storage| {
+        let storage = storage.borrow();
+        storage.get(&cohort_id).map_or(false, |requests| requests.iter().any(|r| r.request_status == "accepted"))
+    });
+
+    if already_accepted {
+        return format!("Cohort request with id: {} has already been accepted.", cohort_id);
+    }
+
     COHORT_REQUEST.with(|state| {
         let mut state = state.borrow_mut();
         let mut request_found_and_updated = false;
 
-        // Iterate over all requests across all principals
         for (_principal, requests) in state.iter_mut() {
-            for request in requests.iter_mut() {
-                if request.cohort_details.cohort_id == cohort_id && request.request_status == "pending" {
-                    request.request_status = "accepted".to_string();
-                    request.accepted_at = time();
-                    request_found_and_updated = true;
-                }
+            if let Some(index) = requests.iter().position(|r| r.cohort_details.cohort_id == cohort_id && r.request_status == "pending") {
+                let mut request = requests.remove(index);
+                request.request_status = "accepted".to_string();
+                request.accepted_at = time();
+                
                 COHORT.with(|storage| {
-                let mut storage = storage.borrow_mut();
-                let cohort_details = request.cohort_details.clone();
-                storage.insert(cohort_id.clone(), cohort_details); // Insert cohort_details directly
-                ic_cdk::println!("Inserted cohort details into COHORT: {:?}", request);
-            });
-            }
-            if request_found_and_updated {
+                    let mut storage = storage.borrow_mut();
+                    storage.insert(cohort_id.clone(), request.cohort_details.clone());
+                    ic_cdk::println!("Inserted cohort details into COHORT for: {}", cohort_id);
+                });
+                
+                ACCEPTED_COHORTS.with(|storage| {
+                    let mut storage = storage.borrow_mut();
+                    storage.entry(cohort_id.clone()).or_default().push(request);
+                });
+                
+                request_found_and_updated = true;
+                response_message = format!("Cohort request with id: {} has been accepted.", cohort_id);
                 break;
             }
         }
 
-        if request_found_and_updated {
-            // Immediately verify the update
-            let status_verified = state.values().any(|requests| {
-                requests.iter().any(|r| r.cohort_details.cohort_id == cohort_id && r.request_status == "accepted")
-            });
-            if status_verified {
-                ic_cdk::println!("Verification successful: Cohort ID {} has been accepted.", cohort_id);
-                response_message = format!("You have accepted the cohort creation with cohort id: {}", cohort_id);
-            } else {
-                ic_cdk::println!("Verification failed: Cohort ID {} status not updated.", cohort_id);
-                response_message = format!("Failed to update status for cohort id: {}", cohort_id);
-            }
-        } else {
+        if !request_found_and_updated {
             response_message = format!("No pending cohort request found with cohort id: {}", cohort_id);
         }
     });
@@ -1969,72 +1955,145 @@ pub fn accept_cohort_creation_request(cohort_id: String) -> String {
 
 #[update]
 pub fn decline_cohort_creation_request(cohort_id: String) -> String {
-    let caller = caller();
+    let mut response_message = String::new();
 
-    COHORT_REQUEST.with(|state: &RefCell<HashMap<Principal, Vec<CohortRequest>>>| {
-        if let Some(requests) = state.borrow_mut().get_mut(&caller) {
-            if let Some(request) = requests
-                .iter_mut()
-                .find(|r| r.cohort_details.cohort_id == cohort_id)
-            {
+    COHORT_REQUEST.with(|state| {
+        let mut state = state.borrow_mut();
+        let mut request_found_and_updated = false;
+
+        if let Some(requests) = state.get_mut(&cohort_id) {
+            if let Some(index) = requests.iter().position(|r| r.request_status == "pending") {
+                let mut request = requests.remove(index); 
                 request.request_status = "declined".to_string();
-                request.accepted_at = time();
+                request.rejected_at = time();
+                request_found_and_updated = true;
 
-                MY_SENT_COHORT_REQUEST.with(|sent_state| {
-                    if let Some(sent_status_vector) = sent_state
-                        .borrow_mut()
-                        .get_mut(&request.cohort_details.cohort_creator)
-                    {
-                        if let Some(request) = sent_status_vector
-                            .iter_mut()
-                            .find(|r| r.cohort_details.cohort_id == cohort_id)
-                        {
-                            request.request_status = "declined".to_string();
-                            request.rejected_at = time();
-                        }
-                    }
+                DECLINED_COHORTS.with(|storage| {
+                    let mut storage = storage.borrow_mut();
+                    storage.entry(cohort_id.clone()).or_default().push(request);
                 });
+
+                response_message = format!("You have declined the cohort creation request: {}", cohort_id);
             }
+        }
+
+        if !request_found_and_updated {
+            response_message = format!("No pending cohort request found with cohort id: {}", cohort_id);
         }
     });
 
-    format!(
-        "you have declined the cohort creation request: {}",
-        cohort_id
-    )
+    response_message
 }
 
 #[query]
 pub fn get_accepted_cohort_creation_request_for_admin() -> Vec<CohortRequest> {
-    COHORT_REQUEST.with(|pending_alerts| {
-        pending_alerts
-            .borrow()
-            .get(&caller())
-            .map_or_else(Vec::new, |requests| {
-                requests
-                    .iter()
-                    .filter(|request| request.request_status == "accepted")
-                    .cloned()
-                    .collect()
-            })
-    })
+    let mut accepted_requests = Vec::new();
+
+    ACCEPTED_COHORTS.with(|storage| {
+        let storage = storage.borrow();
+        for (_cohort_id, requests) in storage.iter() {
+            accepted_requests.extend(requests.clone());
+        }
+    });
+
+    accepted_requests
 }
 
 #[query]
 pub fn get_declined_cohort_creation_request_for_admin() -> Vec<CohortRequest> {
-    COHORT_REQUEST.with(|pending_alerts| {
-        pending_alerts
-            .borrow()
-            .get(&caller())
-            .map_or_else(Vec::new, |requests| {
-                requests
-                    .iter()
-                    .filter(|request| request.request_status == "declined")
-                    .cloned()
-                    .collect()
+    let mut declined_requests = Vec::new();
+
+    DECLINED_COHORTS.with(|storage| {
+        let storage = storage.borrow();
+        for (_cohort_id, requests) in storage.iter() {
+            declined_requests.extend(requests.clone());
+        }
+    });
+
+    declined_requests
+}
+
+#[update]
+pub fn remove_mentor_from_cohort(cohort_id: String, mentor_principal: Principal) -> Result<String, String> {
+    MENTOR_REGISTRY.with(|mentors| {
+        if let Some(mentor_up_for_cohort) = mentors.borrow().get(&mentor_principal) {
+            let mentor_clone = mentor_up_for_cohort.clone();
+            MENTORS_APPLIED_FOR_COHORT.with(|mentors_applied| {
+                let mut mentors_applied = mentors_applied.borrow_mut();
+                let mentors = mentors_applied.entry(cohort_id.clone()).or_default();
+
+                if let Some(index) = mentors.iter().position(|x| *x == mentor_clone) {
+                    mentors.remove(index); 
+                    APPLIER_COUNT.with(|applier_count| {
+                        let mut applier_count = applier_count.borrow_mut();
+                        if let Some(count) = applier_count.get_mut(&cohort_id) {
+                            *count = count.saturating_sub(1);
+                        }
+                    });
+                    Ok(format!("Mentor successfully removed from the cohort with cohort id {}", cohort_id))
+                } else {
+                    Err("You are not part of this cohort".to_string())
+                }
             })
+        } else {
+            Err("Invalid mentor record".to_string())
+        }
     })
 }
+
+#[update]
+pub fn remove_vc_from_cohort(cohort_id: String, vc_principal: Principal) -> Result<String, String> {
+    VENTURECAPITALIST_STORAGE.with(|vcs| {
+        if let Some(vc_up_for_cohort) = vcs.borrow().get(&vc_principal) {
+            let vc_clone = vc_up_for_cohort.clone();
+            CAPITALIST_APPLIED_FOR_COHORT.with(|vcs_applied| {
+                let mut vcs_applied = vcs_applied.borrow_mut();
+                let vcs = vcs_applied.entry(cohort_id.clone()).or_default();
+
+                if let Some(index) = vcs.iter().position(|x| *x == vc_clone) {
+                    vcs.remove(index);
+                    APPLIER_COUNT.with(|applier_count| {
+                        let mut applier_count = applier_count.borrow_mut();
+                        if let Some(count) = applier_count.get_mut(&cohort_id) {
+                            *count = count.saturating_sub(1);
+                        }
+                    });
+                    Ok(format!("Venture capitalist successfully removed from the cohort with cohort id {}", cohort_id))
+                } else {
+                    Err("You are not part of this cohort".to_string())
+                }
+            })
+        } else {
+            Err("Invalid venture capitalist record".to_string())
+        }
+    })
+}
+
+#[update]
+pub fn remove_project_from_cohort(cohort_id: String, project_uid: String) -> Result<String, String> {
+    PROJECTS_APPLIED_FOR_COHORT.with(|projects_cohort| {
+        let mut projects_cohort = projects_cohort.borrow_mut();
+        if let Some(projects) = projects_cohort.get_mut(&cohort_id) {
+            if let Some(index) = projects.iter().position(|p| p.uid == project_uid) {
+                projects.remove(index);  
+                APPLIER_COUNT.with(|applier_count| {
+                    let mut applier_count = applier_count.borrow_mut();
+                    if let Some(count) = applier_count.get_mut(&cohort_id) {
+                        *count = count.saturating_sub(1); 
+                    }
+                });
+
+                Ok("Project successfully removed from the cohort.".to_string())
+            } else {
+                Err("Project not found in this cohort.".to_string())
+            }
+        } else {
+            Err("Cohort not found or no projects applied.".to_string())
+        }
+    })
+}
+
+
 
 #[update]
 pub fn admin_update_project(uid: String, is_live: bool, dapp_link: Option<String>) -> Result<(), String> {
