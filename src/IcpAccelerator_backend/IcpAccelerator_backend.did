@@ -1026,8 +1026,11 @@ service : {
   register_project : (ProjectInfo) -> (text);
   register_user : (UserInformation) -> (text);
   register_venture_capitalist : (VentureCapitalist) -> (text);
+  remove_mentor_from_cohort : (text, principal) -> (Result_4);
+  remove_project_from_cohort : (text, text) -> (Result_4);
   remove_project_from_incubated : (text) -> (Result_4);
   remove_project_from_spotlight : (text) -> (Result_3);
+  remove_vc_from_cohort : (text, principal) -> (Result_4);
   reply_to_suggestion_caller : (nat64, text, text) -> (nat64, text);
   self_decline_request : (text) -> (text);
   self_decline_request_for_investor : (text) -> (text);

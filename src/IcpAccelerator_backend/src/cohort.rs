@@ -211,6 +211,17 @@ pub fn get_cohort(cohort_id: String) -> CohortDetails {
     })
 }
 
+pub fn get_cohort_inner_func(cohort_id: String) -> Option<CohortDetails> {
+    Some(COHORT.with(|storage| {
+        let res = storage
+            .borrow()
+            .get(&cohort_id)
+            .expect("you have not crerated a cohort")
+            .clone();
+        res
+    }))
+}
+
 
 #[query]
 pub fn get_all_cohorts() -> Vec<CohortDetails> {
@@ -231,95 +242,71 @@ pub fn get_all_cohorts() -> Vec<CohortDetails> {
 pub fn apply_for_a_cohort_as_a_mentor_or_investor(cohort_id: String) -> String {
     let caller = caller();
 
-    //who's applying
-
-    let is_he_mentor: bool = MENTOR_REGISTRY.with(|mentors| mentors.borrow().contains_key(&caller));
-
-    let is_he_investor: bool =
-        VENTURECAPITALIST_STORAGE.with(|capitalist| capitalist.borrow().contains_key(&caller));
+    let is_he_mentor = MENTOR_REGISTRY.with(|mentors| mentors.borrow().contains_key(&caller));
+    let is_he_investor = VENTURECAPITALIST_STORAGE.with(|capitalist| capitalist.borrow().contains_key(&caller));
 
     if is_he_mentor {
-        MENTOR_REGISTRY.with(|mentors: &RefCell<MentorRegistry>| {  
-            let mentor_up_for_cohort = mentors.borrow().get(&caller).unwrap().clone();
+        MENTOR_REGISTRY.with(|mentors| {  
+            if let Some(mentor_up_for_cohort) = mentors.borrow().get(&caller) {
+                let mentor_clone = mentor_up_for_cohort.clone();
+                MENTORS_APPLIED_FOR_COHORT.with(|mentors_applied| {
+                    let mut mentors_applied = mentors_applied.borrow_mut();
+                    let mentors = mentors_applied.entry(cohort_id.clone()).or_insert(Vec::new());
 
-            MENTORS_APPLIED_FOR_COHORT.with(|mentors_applied: &RefCell<MentorsAppliedForCohort>| {
-                let mut mentors_applied = mentors_applied.borrow_mut();
-                let mentors = mentors_applied
-                    .entry(cohort_id.clone())
-                    .or_insert(Vec::new());
-
-                if !mentors.contains(&mentor_up_for_cohort) {
-                    // mentors.push(mentor_up_for_cohort.clone())
-
-                    APPLIER_COUNT.with(|applier_count: &RefCell<ApplierCount>| {
-                        let mut applier_count = applier_count.borrow_mut();
-                        let mut count = applier_count.get_mut(&cohort_id.clone()).unwrap().clone();
-
-                        let no_of_total_seats = get_cohort(cohort_id.clone()).cohort.no_of_seats;
-
-                        if count <= no_of_total_seats {
-                            mentors.push(mentor_up_for_cohort.clone());
-
-                            count += 1;
-
-                            applier_count.insert(cohort_id.clone(), count);
-
-                            return format!(
-                                "you have successfully applied for the cohort with cohort id {}",
-                                cohort_id.clone()
-                            );
-                        } else {
-                            return format!("all seats for this cohort are occupied!");
-                        }
-                    })
-                } else {
-                    return format!("you are already a part of the cohort");
-                }
-            })
-        })
-    } else if is_he_investor {
-        VENTURECAPITALIST_STORAGE.with(|capitalist: &RefCell<VentureCapitalistStorage>| {
-            let venture_capitalist = capitalist.borrow().get(&caller).unwrap().clone();
-
-            CAPITALIST_APPLIED_FOR_COHORT.with(
-                |capitalist: &RefCell<CapitalistAppliedForCohort>| {
-                    let mut capitalist_applied = capitalist.borrow_mut();
-                    let ventures = capitalist_applied
-                        .entry(cohort_id.clone())
-                        .or_insert(Vec::new());
-
-                    if !ventures.contains(&venture_capitalist) {
-                        
-
-                        APPLIER_COUNT.with(|applier_count: &RefCell<ApplierCount>| {
+                    if !mentors.contains(&mentor_clone) {
+                        APPLIER_COUNT.with(|applier_count| {
                             let mut applier_count = applier_count.borrow_mut();
-                            let mut count = applier_count.get_mut(&cohort_id.clone()).unwrap().clone();
-    
-                            let no_of_total_seats = get_cohort(cohort_id.clone()).cohort.no_of_seats;
-    
-                            if count <= no_of_total_seats {
-                                ventures.push(venture_capitalist);
-    
-                                count += 1;
-    
-                                applier_count.insert(cohort_id.clone(), count);
-    
-                                return format!(
-                                    "you have successfully applied for the cohort with cohort id {}",
-                                    cohort_id.clone()
-                                );
+                            let count = applier_count.entry(cohort_id.clone()).or_insert(0);
+                            let no_of_total_seats = get_cohort_inner_func(cohort_id.clone()).map(|c| c.cohort.no_of_seats).unwrap_or(0);
+                            
+                            if *count < no_of_total_seats {
+                                mentors.push(mentor_clone);
+                                *count += 1;
+                                format!("You have successfully applied for the cohort with cohort id {}", cohort_id)
                             } else {
-                                return format!("all seats for this cohort are occupied!");
+                                "All seats for this cohort are occupied!".to_string()
                             }
                         })
-                    }else {
-                        return format!("you are already a part of the cohort");
+                    } else {
+                        "You are already a part of the cohort".to_string()
                     }
-                },
-            )
+                })
+            } else {
+                "Invalid mentor record".to_string()
+            }
+        })
+    } else if is_he_investor {
+        VENTURECAPITALIST_STORAGE.with(|capitalist| {
+            if let Some(venture_capitalist) = capitalist.borrow().get(&caller) {
+                let venture_clone = venture_capitalist.clone();
+                CAPITALIST_APPLIED_FOR_COHORT.with(|capitalist_applied| {
+                    let mut capitalist_applied = capitalist_applied.borrow_mut();
+                    let ventures = capitalist_applied.entry(cohort_id.clone()).or_insert(Vec::new());
+
+                    if !ventures.contains(&venture_clone) {
+                        APPLIER_COUNT.with(|applier_count| {
+                            let mut applier_count = applier_count.borrow_mut();
+                            let count = applier_count.entry(cohort_id.clone()).or_insert(0);
+                            let no_of_total_seats = get_cohort_inner_func(cohort_id.clone()).map(|c| c.cohort.no_of_seats).unwrap_or(0);
+                            
+                            if *count < no_of_total_seats {
+                                ventures.push(venture_clone);
+                                *count += 1;
+                                format!("You have successfully applied for the cohort with cohort id {}", cohort_id)
+                            } else {
+                                "All seats for this cohort are occupied!".to_string()
+                            }
+                        })
+                    } else {
+                        "You are already a part of the cohort".to_string()
+                    }
+                })
+            } else {
+                "Invalid investor record".to_string()
+            }
         })
     } else {
-        return format!("you should either be an investor or mentor to register yourself in cohort")
+        "You should either be an investor or mentor to register yourself in cohort".to_string()
     }
 }
 
@@ -369,7 +356,9 @@ pub fn apply_for_a_cohort_as_a_project(
         }
 
         // Check if cohort has available seats
-        let no_of_total_seats = get_cohort(cohort_id.clone()).cohort.no_of_seats;
+        let no_of_total_seats = get_cohort_inner_func(cohort_id.clone())
+            .map(|c| c.cohort.no_of_seats)
+            .unwrap_or(0);  // Provide default if cohort details not found
         let count = APPLIER_COUNT.with(|applier_count| {
             let mut applier_count = applier_count.borrow_mut();
             let count = applier_count.entry(cohort_id.clone()).or_insert(0);
