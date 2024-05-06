@@ -492,6 +492,39 @@ pub fn get_mentor_announcements() -> HashMap<Principal, Vec<MAnnouncements>> {
     })
 }
 
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, Default, PartialEq)]
+pub struct MentorFilterCriteria {
+    pub country: Option<String>,
+    pub area_of_expertise: Option<String>,
+}
+
+#[query]
+pub fn filter_mentors(criteria: MentorFilterCriteria) -> Vec<MentorProfile> {
+    MENTOR_REGISTRY.with(|mentors| {
+        let mentors = mentors.borrow();
+
+        mentors
+            .values()
+            .filter(|mentor_internal| {
+                let country_match = match &criteria.country {
+                    Some(c) => &mentor_internal.profile.user_data.country == c,
+                    None => true, 
+                };
+
+                let expertise_match = criteria.area_of_expertise.as_ref().map_or(true, |exp| {
+                    &mentor_internal.profile.area_of_expertise == exp
+                });
+
+                mentor_internal.active && mentor_internal.approve && !mentor_internal.decline
+                    && country_match && expertise_match
+            })
+            .map(|mentor_internal| mentor_internal.profile.clone())
+            .collect()
+    })
+}
+
+
+
 pub fn pre_upgrade_mentor() {
     MENTOR_REGISTRY.with(|data| {
         match storage::stable_save((data.borrow().clone(),)) {

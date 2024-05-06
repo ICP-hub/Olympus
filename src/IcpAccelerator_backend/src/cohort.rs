@@ -8,7 +8,7 @@ use candid::{CandidType, Principal};
 use ic_cdk::api::{management_canister::main::raw_rand, time};
 use ic_cdk::caller;
 use ic_cdk_macros::{query, update};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -439,3 +439,37 @@ pub fn get_my_peers(cohort_id : String, your_project_id : String){
     })
 
 } 
+
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, Default, PartialEq)]
+pub struct CohortFilterCriteria {
+    pub tags: Option<String>,
+    pub level_on_rubric: Option<f64>,
+    pub no_of_seats_range: Option<(u8, u8)>,
+}
+
+#[query]
+pub fn filter_cohorts(criteria: CohortFilterCriteria) -> Vec<CohortDetails> {
+    COHORT.with(|cohorts| {
+        let cohorts = cohorts.borrow();
+
+        cohorts.values()
+            .filter(|cohort_details| {
+                let tags_match = criteria.tags.as_ref()
+                    .map_or(true, |tags| cohort_details.cohort.tags.contains(tags));
+
+                let level_match = criteria.level_on_rubric
+                    .map_or(true, |level| cohort_details.cohort.criteria.level_on_rubric >= level);
+
+                let seats_match = criteria.no_of_seats_range
+                    .map_or(true, |(min_seats, max_seats)| {
+                        let seats = cohort_details.cohort.no_of_seats;
+                        seats >= min_seats && seats <= max_seats
+                    });
+
+                tags_match && level_match && seats_match
+            })
+            .cloned()
+            .collect()
+    })
+}
+

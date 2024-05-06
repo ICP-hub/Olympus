@@ -22,9 +22,13 @@ mod user_module;
 mod vc_registration;
 mod cohort;
 mod default_images;
+mod cohort_rating;
+mod mentor_investor_ratings;
 
 use crate::project_registration::*;
 use cohort::*;
+use crate::cohort_rating::PeerRatingUpdate;
+use crate::cohort_rating::Rating;
 
 use project_offer_to_investor::*;
 use investor_offer_to_project::*;
