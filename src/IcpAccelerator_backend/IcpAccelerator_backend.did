@@ -751,6 +751,7 @@ service : {
   delete_venture_capitalist : () -> (text);
   delete_venture_capitalist_caller : () -> (text);
   filter_out_projects : (FilterCriteria) -> (vec ProjectInfo) query;
+  filter_projects : (FilterCriteria) -> (vec ProjectInfo) query;
   get_accepted_cohort_creation_request_for_admin : () -> (
       vec CohortRequest,
     ) query;
@@ -1043,11 +1044,11 @@ service : {
   register_project : (ProjectInfo) -> (text);
   register_user : (UserInformation) -> (text);
   register_venture_capitalist : (VentureCapitalist) -> (text);
-  remove_mentor_from_cohort : (text, principal) -> (Result_5);
-  remove_project_from_cohort : (text, text) -> (Result_5);
+  remove_mentor_from_cohort : (text, principal, text) -> (Result_5);
+  remove_project_from_cohort : (text, text, text) -> (Result_5);
   remove_project_from_incubated : (text) -> (Result_5);
   remove_project_from_spotlight : (text) -> (Result_3);
-  remove_vc_from_cohort : (text, principal) -> (Result_5);
+  remove_vc_from_cohort : (text, principal, text) -> (Result_5);
   reply_to_suggestion_caller : (nat64, text, text) -> (nat64, text);
   self_decline_request : (text) -> (text);
   self_decline_request_for_investor : (text) -> (text);
