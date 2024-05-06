@@ -1,51 +1,130 @@
-import React, { useEffect, useState } from "react";
-import NoDataCard from "../../../../IcpAccelerator_frontend/src/components/Mentors/Event/NoDataCard";
+import React, { useEffect, useRef, useState, useCallback ,useMemo} from "react";
 import { useSelector } from "react-redux";
 import uint8ArrayToBase64 from "../../../../IcpAccelerator_frontend/src/components/Utils/uint8ArrayToBase64";
-import NoData from "../../../../IcpAccelerator_frontend/assets/images/NoData.png"
-
+import { OutSideClickHandler } from "../../../../IcpAccelerator_frontend/src/components/hooks/OutSideClickHandler";
+import { projectFilterSvg } from "../Utils/AdminData/SvgData";
+import NoDataCard from "../../../../IcpAccelerator_frontend/src/components/Mentors/Event/NoDataCard";
+import { principalToText } from "../Utils/AdminData/saga_function/blobImageToUrl";
+import { useNavigate } from "react-router-dom";
 
 const Adminalluser = () => {
   const actor = useSelector((currState) => currState.actors.actor);
-
+  const navigate = useNavigate();
   const [allData, setAllData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [filterOption, setFilterOption] = useState("Users");
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [filter, setFilter] = useState("");
   const itemsPerPage = 10;
+  const dropdownRef = useRef(null);
+  OutSideClickHandler(dropdownRef, () => setIsPopupOpen(false));
 
-  useEffect(() => {
-    const getAlluser = async () => {
-      try {
-        const rawData = await actor.get_total_approved_list_with_user_data();
-        const processedData = [];
-
-        // console.log("rawData =>", rawData);
-        rawData.forEach((item) => {
+  const fetchData = useCallback(async () => {
+    let data = [];
+    try {
+      switch (filterOption) {
+        case "Users":
+          data = await actor.get_total_approved_list_with_user_data();
+          break;
+        case "Mentors":
+          data = await actor.mentor_profile_edit_awaiting_approval();
+          break;
+        case "Projects":
+          data = await actor.project_update_awaiting_approval();
+          break;
+        case "Investors":
+          data = await actor.vc_profile_edit_awaiting_approval();
+          break;
+        default:
+          data = [];
+      }
+      if (filterOption === "Users") {
+        const userProcessedData = [];
+        data.forEach((item) => {
+          console.log("datasssss", data);
           const userDetails = item[1];
           const profilePictureBase64 = userDetails.user_data.profile_picture[0]
             ? uint8ArrayToBase64(userDetails.user_data.profile_picture[0])
             : null;
 
           userDetails.approved_type.forEach((type) => {
-            processedData.push({
+            userProcessedData.push({
               approvedType: type,
               fullName: userDetails.user_data.full_name.trim(),
               country: userDetails.user_data.country,
-              telegramId: userDetails.user_data.telegram_id[0],
-              profilePicture: profilePictureBase64,
+              telegram: userDetails.user_data.telegram_id[0],
+              profilePictureURL: profilePictureBase64,
             });
           });
         });
+        setAllData(userProcessedData);
+      } else {
+        const processedData = data.map((item, index) => {
+          console.log("data", data);
+
+          const updatedInfo = item[1]?.updated_info || {};
+
+          let principal = "";
+          if (data && data?.[0]?.[1]?.principal) {
+            principal = principalToText(data?.[0]?.[1]?.principal);
+          } else if (data && data?.[0]?.[0]) {
+            principal = principalToText(data?.[0]?.[0]);
+          }
+
+          const profilePicture =
+            uint8ArrayToBase64(updatedInfo.user_data?.profile_picture[0]) ||
+            uint8ArrayToBase64(updatedInfo[0].user_data?.profile_picture[0]) ||
+            uint8ArrayToBase64(updatedInfo.project_logo);
+
+          const commonData = {
+            fullName: (
+              updatedInfo.user_data?.full_name ||
+              updatedInfo[0].user_data?.full_name ||
+              "No Name"
+            ).trim(),
+            country:
+              updatedInfo.user_data?.country ||
+              updatedInfo[0].user_data?.country ||
+              "No Country",
+            profilePictureURL: profilePicture,
+            telegram:
+              updatedInfo.user_data?.telegram_id ||
+              updatedInfo[0].user_data?.telegram_id ||
+              "N/A",
+            hub:
+              updatedInfo?.preferred_icp_hub?.[0] ||
+              updatedInfo?.[0]?.preferred_icp_hub ||
+              updatedInfo?.[0]?.preferred_icp_hub?.[0] ||
+              "N/A",
+            principalId: principal,
+            index: index + 1,
+          };
+
+          return commonData;
+        });
+
         setAllData(processedData);
-      } catch (error) {
-        console.error("Failed to fetch user data:", error);
       }
-    };
+    } catch (error) {
+      console.error("Failed to fetch data:", error);
+      setAllData([]);
+    }
+  }, [actor, filterOption]);
 
-    getAlluser();
-  }, [actor]);
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
-  const filteredUsers = React.useMemo(
+  let filteredData;
+  filteredData  = allData.filter((item) => {
+    const fullName = item.fullName?.toLowerCase() || "";
+    const country = item.country?.toLowerCase() || "";
+    return (
+      fullName.includes(filter.toLowerCase()) ||
+      country.includes(filter.toLowerCase())
+    );
+  });
+  filteredData= React.useMemo(
     () =>
       allData.filter(
         (user) =>
@@ -58,7 +137,7 @@ const Adminalluser = () => {
 
   const indexOfLastUser = currentPage * itemsPerPage;
   const indexOfFirstUser = indexOfLastUser - itemsPerPage;
-  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+  const currentData = filteredData.slice(indexOfFirstUser, indexOfLastUser);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -68,20 +147,23 @@ const Adminalluser = () => {
 
   const handleNext = () => {
     setCurrentPage((prev) =>
-      prev < Math.ceil(filteredUsers.length / itemsPerPage) ? prev + 1 : prev
+      prev < Math.ceil(filteredData.length / itemsPerPage) ? prev + 1 : prev
     );
+  };
+
+  const handleRowClick = (principalId) => {
+    const routePath =
+      filterOption === "Mentors"
+        ? "/userProfileMentorUpdate"
+        : filterOption === "Investors"
+        ? "/userProfileInvestorUpdate"
+        : "/userProfileProjectUpdate";
+    navigate(routePath, { state: principalId });
   };
 
   return (
     <div className="px-[4%] py-[3%] w-full bg-gray-100">
-      <div className="flex items-center justify-between mb-4">
-        <div
-          className="w-full bg-gradient-to-r from-purple-900 to-blue-500 text-transparent bg-clip-text text-3xl font-extrabold py-4 
-       font-fontUse"
-        >
-          All Users
-        </div>
-
+      <div className="flex justify-end mb-4">
         <div className="relative flex items-center max-w-xs bg-white rounded-xl">
           <input
             type="text"
@@ -103,7 +185,74 @@ const Adminalluser = () => {
         </div>
       </div>
 
-      {currentUsers.length > 0 ? (
+      <div className="flex justify-end mb-4 items-center w-full">
+        <div
+          className="w-full bg-gradient-to-r from-purple-900 to-blue-500 text-transparent bg-clip-text text-xl md:text-3xl font-extrabold py-4 
+       font-fontUse"
+        >
+          All Updates
+        </div>{" "}
+        <div
+          className="border-2 border-blue-900 p-1 w-auto  font-bold rounded-md text-blue-900 px-2 capitalize"
+          style={{ whiteSpace: "nowrap" }}
+        >
+          {filterOption}
+        </div>
+        <div className="flex items-center justify-between ml-2">
+          <div className="flex justify-end gap-4 relative " ref={dropdownRef}>
+            <div
+              className="cursor-pointer"
+              onClick={() => setIsPopupOpen((curr) => !curr)}
+            >
+              {projectFilterSvg}
+              {isPopupOpen && (
+                <div className="absolute w-[250px] mt-4 top-full right-0 bg-white shadow-md rounded-lg border border-gray-200 p-3 z-10">
+                  <ul className="flex flex-col">
+                    <li>
+                      <button
+                        className="border-[#9C9C9C] w-[230px]  hover:text-indigo-800 border-b-2 py-2 px-4 focus:outline-none text-base flex justify-start font-fontUse"
+                        onClick={() => {
+                          setFilterOption("Users");
+                        }}
+                      >
+                        All Users
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        className="border-[#9C9C9C] w-[230px]  hover:text-indigo-800 border-b-2 py-2 px-4 focus:outline-none text-base flex justify-start font-fontUse"
+                        onClick={() => {
+                          setFilterOption("Projects");
+                        }}
+                      >
+                        Projects
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        className="border-[#9C9C9C] w-[230px]  hover:text-indigo-800 border-b-2 py-2 px-4 focus:outline-none text-base flex justify-start font-fontUse"
+                        onClick={() => setFilterOption("Mentors")}
+                      >
+                        Mentors
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        className="border-[#9C9C9C] w-[230px]  hover:text-indigo-800 border-b-2 py-2 px-4 focus:outline-none text-base flex justify-start font-fontUse"
+                        onClick={() => setFilterOption("Investors")}
+                      >
+                        Investors
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>{" "}
+      </div>
+
+      {currentData.length > 0 ? (
         <div className="flex flex-col bg-white rounded-lg p-8 text-lg overflow-auto mb-8">
           <div className="min-w-[600px]">
             <table className="w-full table-fixed">
@@ -111,48 +260,83 @@ const Adminalluser = () => {
                 <tr className="text-left text-xl font-fontUse uppercase">
                   <th className="w-24 pb-2">S.No</th>
                   <th className="w-1/4 pb-2">Name</th>
-                  <th className="w-1/4 pb-2">Role</th>
+                  <th className="w-1/4 pb-2">
+                    {filterOption === "Users" ? "Role" : "Hub"}
+                  </th>
                   <th className="w-1/4 pb-2">Country</th>
                   <th className="w-1/4 pb-2">Telegram</th>
+                  {filterOption === "Users" ?"":
+                  <th className="w-1/4 pb-2">Action</th>}
                 </tr>
               </thead>
               <tbody className="text-base text-gray-700 font-fontUse">
-                {currentUsers.map((user, index) => (
-                  <tr key={`${user.fullName}-${user.country}-${index}`}>
-                    <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                    <td className="py-2 pl-4">
-                      <div className="flex items-center">
-                        <img
-                          className="w-10 h-10 rounded-full border-black border-2 p-1"
-                          src={user.profilePicture}
-                          alt="profile"
-                        />
-                        <div className="ml-2">{user.fullName}</div>
-                      </div>
-                    </td>
-                    <td>{user.approvedType}</td>
-                    <td>{user.country}</td>
-                    <td className="truncate max-w-xs">
-                      <a
-                        href={user.telegramId}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-700 hover:text-blue-900"
+                {currentData.map(
+                  (user, index) => (
+                    console.log("userrrr", user),
+                    (
+                      <tr
+                        key={`${user.fullName}-${user.country}-${index}`}
+                        className="hover:bg-gray-100 cursor-pointer mt-1"
                       >
-                        {user.telegramId}
-                      </a>
-                    </td>
-                  </tr>
-                ))}
+                        <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                        <td className="py-2 ">
+                          <div className="flex items-center">
+                            <img
+                              className="w-10 h-10 rounded-full border-black border-2 p-1"
+                              src={user.profilePictureURL}
+                              alt="Profile"
+                            />
+                            <div className="ml-2">{user.fullName}</div>
+                          </div>
+                        </td>
+                        <td>
+                          {filterOption === "Users"
+                            ? user.approvedType
+                            : user.hub}
+                        </td>
+                        <td>{user.country}</td>
+                        <td className="truncate max-w-xs">
+                          {user.telegram ? (
+                            <a
+                              href={`https://t.me/${user.telegram}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-700 hover:text-blue-900"
+                            >
+                              {user.telegram}
+                            </a>
+                          ) : (
+                            <p>N/A</p>
+                          )}
+                        </td>
+                        {filterOption === "Users"?'':<td> 
+                          <button
+                            className="p-2 bg-white rounded-lg border-2 border-gray-300 hover:bg-gray-300"
+                            onClick={() => handleRowClick(user.principalId)}
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 512 512"
+                              className="size-4 text-green-500"
+                              fill="currentColor"
+                            >
+                              <path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160V416c0 53 43 96 96 96H352c53 0 96-43 96-96V320c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H96z" />
+                            </svg>
+                          </button>
+                        </td>}
+                      </tr>
+                    )
+                  )
+                )}
               </tbody>
             </table>
           </div>
         </div>
       ) : (
-        <NoDataCard image={NoData} desc={'No User'}/>
-        )}
+        <NoDataCard />
+      )}
 
-      {currentUsers.length > 0 && (
+      {currentData.length > 0 && (
         <div className="flex items-center gap-4 justify-center mb-4">
           <button
             onClick={handlePrevious}
@@ -178,7 +362,7 @@ const Adminalluser = () => {
             Previous
           </button>
           {Array.from(
-            { length: Math.ceil(filteredUsers.length / itemsPerPage) },
+            { length: Math.ceil(filteredData.length / itemsPerPage) },
             (_, i) => i + 1
           ).map((number) => (
             <button
@@ -199,7 +383,7 @@ const Adminalluser = () => {
           <button
             onClick={handleNext}
             disabled={
-              currentPage === Math.ceil(filteredUsers.length / itemsPerPage)
+              currentPage === Math.ceil(filteredData.length / itemsPerPage)
             }
             className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
             type="button"

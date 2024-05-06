@@ -17,7 +17,9 @@ import notificationReducer from "./notificationReducer";
 import TotalLiveReducer from "./TotalLiveReducer";
 import UpdateUserProfileReducer from "./UpdateUserProfile";
 import All_IcpHubReducer from "./All_IcpHubReducer";
-
+import areaOfExpertiseReducer from "./areaOfExpertiseReducer";
+import getTypeOfProfile from "./getTypeOfProfile";
+import multiChainReducer from "./getMultiChainList"
 const rootReducer = combineReducers({
   actors: actorReducer,
   internet: internetIdentityReducer,
@@ -37,6 +39,9 @@ const rootReducer = combineReducers({
   totalLive: TotalLiveReducer,
   hubs: All_IcpHubReducer,
   updateProfile: UpdateUserProfileReducer,
+  expertise:areaOfExpertiseReducer,
+  profileTypes: getTypeOfProfile,
+  chains: multiChainReducer,
 });
 
 export default rootReducer;
