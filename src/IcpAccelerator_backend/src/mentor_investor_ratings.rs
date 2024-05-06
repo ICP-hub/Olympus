@@ -6,18 +6,18 @@ use ic_cdk::api::time;
 use ic_cdk_macros::{update,query};
 
 #[derive(Clone, CandidType, Deserialize, Debug, Serialize)]
-pub struct Rating {
+pub struct RatingMentorInvestor {
     pub value: f64,
     pub comment: Option<String>,
 }
 
 #[derive(Clone, CandidType, Deserialize, Debug, Serialize)]
-pub struct TimestampedRating {
-    pub rating: Rating,
+pub struct TimestampedRatingMentorInvestor {
+    pub rating: RatingMentorInvestor,
     pub timestamp: u64,
 }
 
-pub type IndividualRatings = HashMap<Principal, Vec<TimestampedRating>>;
+pub type IndividualRatings = HashMap<Principal, Vec<TimestampedRatingMentorInvestor>>;
 pub type AverageRatingStorage = HashMap<Principal, f64>; 
 
 thread_local! {
@@ -29,11 +29,11 @@ thread_local! {
 
 
 #[update]
-pub fn update_mentor_ratings(principal_id: Principal, new_rating: Rating) {
+pub fn update_mentor_ratings(principal_id: Principal, new_rating: RatingMentorInvestor) {
     let current_timestamp = time();
     MENTOR_RATING_SYSTEM.with(|sys| {
         let mut sys = sys.borrow_mut();
-        sys.entry(principal_id).or_default().push(TimestampedRating {
+        sys.entry(principal_id).or_default().push(TimestampedRatingMentorInvestor {
             rating: new_rating,
             timestamp: current_timestamp,
         });
@@ -41,11 +41,11 @@ pub fn update_mentor_ratings(principal_id: Principal, new_rating: Rating) {
 }
 
 #[update]
-pub fn update_vc_ratings(principal_id: Principal, new_rating: Rating) {
+pub fn update_vc_ratings(principal_id: Principal, new_rating: RatingMentorInvestor) {
     let current_timestamp = time();
     VC_RATING_SYSTEM.with(|sys| {
         let mut sys = sys.borrow_mut();
-        sys.entry(principal_id).or_default().push(TimestampedRating {
+        sys.entry(principal_id).or_default().push(TimestampedRatingMentorInvestor {
             rating: new_rating,
             timestamp: current_timestamp,
         });
