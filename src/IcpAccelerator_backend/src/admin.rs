@@ -2014,7 +2014,13 @@ pub fn get_declined_cohort_creation_request_for_admin() -> Vec<CohortRequest> {
 }
 
 #[update]
-pub fn remove_mentor_from_cohort(cohort_id: String, mentor_principal: Principal) -> Result<String, String> {
+pub fn remove_mentor_from_cohort(cohort_id: String, mentor_principal: Principal, passphrase_key: String) -> Result<String, String> {
+    let required_key = format!("delete/{}", mentor_principal);
+
+
+    if passphrase_key != required_key {
+        return Err("Unauthorized attempt: Incorrect passphrase key.".to_string());
+    }
     MENTOR_REGISTRY.with(|mentors| {
         if let Some(mentor_up_for_cohort) = mentors.borrow().get(&mentor_principal) {
             let mentor_clone = mentor_up_for_cohort.clone();
@@ -2042,7 +2048,13 @@ pub fn remove_mentor_from_cohort(cohort_id: String, mentor_principal: Principal)
 }
 
 #[update]
-pub fn remove_vc_from_cohort(cohort_id: String, vc_principal: Principal) -> Result<String, String> {
+pub fn remove_vc_from_cohort(cohort_id: String, vc_principal: Principal, passphrase_key: String) -> Result<String, String> {
+    let required_key = format!("delete/{}", vc_principal);
+
+
+    if passphrase_key != required_key {
+        return Err("Unauthorized attempt: Incorrect passphrase key.".to_string());
+    }
     VENTURECAPITALIST_STORAGE.with(|vcs| {
         if let Some(vc_up_for_cohort) = vcs.borrow().get(&vc_principal) {
             let vc_clone = vc_up_for_cohort.clone();
@@ -2070,7 +2082,13 @@ pub fn remove_vc_from_cohort(cohort_id: String, vc_principal: Principal) -> Resu
 }
 
 #[update]
-pub fn remove_project_from_cohort(cohort_id: String, project_uid: String) -> Result<String, String> {
+pub fn remove_project_from_cohort(cohort_id: String, project_uid: String, passphrase_key: String) -> Result<String, String> {
+    let required_key = format!("delete/{}", project_uid);
+
+
+    if passphrase_key != required_key {
+        return Err("Unauthorized attempt: Incorrect passphrase key.".to_string());
+    }
     PROJECTS_APPLIED_FOR_COHORT.with(|projects_cohort| {
         let mut projects_cohort = projects_cohort.borrow_mut();
         if let Some(projects) = projects_cohort.get_mut(&cohort_id) {

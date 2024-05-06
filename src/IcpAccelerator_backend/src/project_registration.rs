@@ -1451,6 +1451,7 @@ pub fn get_blog_post() -> HashMap<Principal, Vec<Blog>> {
     })
 }
 
+#[query]
 pub fn filter_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
     APPLICATION_FORM.with(|projects| {
         let projects = projects.borrow();

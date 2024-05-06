@@ -299,6 +299,11 @@ type OfferToSendToProjectByInvestor = record {
   self_declined_at : nat64;
 };
 type PaginationParam = record { page_size : nat64; page : nat64 };
+type PeerRatingUpdate = record {
+  ratings : vec Rating;
+  cohort_id : text;
+  project_id : text;
+};
 type ProjectInf = record {
   project_description : opt text;
   project_id : text;
@@ -474,7 +479,7 @@ type RatingAverages = record {
   mentor_average : vec float64;
 };
 type RatingUpdate = record {
-  ratings : vec Rating;
+  ratings : vec Rating_1;
   current_role : text;
   project_id : text;
 };
@@ -484,22 +489,30 @@ type RatingView = record {
   timestamp : nat64;
   rating : nat32;
 };
+type Rating_1 = record {
+  sub_level : text;
+  level_name : text;
+  sub_level_number : float64;
+  level_number : float64;
+  rating : float64;
+};
 type Request = record { mentor : opt MentorInternal; "text" : text };
 type Result = variant { Ok : MoneyRaised; Err : CustomError };
 type Result_1 = variant { Ok : vec Docs; Err : CustomError };
-type Result_10 = variant { Ok : vec Testimonial; Err : text };
-type Result_11 = variant { Ok : UserInformation; Err : text };
+type Result_10 = variant { Ok : vec Review; Err : text };
+type Result_11 = variant { Ok : vec Testimonial; Err : text };
+type Result_12 = variant { Ok : UserInformation; Err : text };
 type Result_2 = variant { Ok : text; Err : text };
 type Result_3 = variant { Ok; Err : text };
-type Result_4 = variant { Ok : text; Err : text };
-type Result_5 = variant { Ok : nat8; Err : text };
-type Result_6 = variant {
+type Result_4 = variant { Ok : float64; Err : text };
+type Result_5 = variant { Ok : text; Err : text };
+type Result_6 = variant { Ok : nat8; Err : text };
+type Result_7 = variant {
   Ok : record { opt vec record { principal; ProjectReview }; float32; bool };
   Err : text;
 };
-type Result_7 = variant { Ok : vec ProjectInfoInternal; Err : text };
-type Result_8 = variant { Ok : vec RatingView; Err : text };
-type Result_9 = variant { Ok : vec Review; Err : text };
+type Result_8 = variant { Ok : vec ProjectInfoInternal; Err : text };
+type Result_9 = variant { Ok : vec RatingView; Err : text };
 type Review = record {
   tag : text;
   name : text;
@@ -710,12 +723,15 @@ service : {
   approve_project_details_updation_request : (principal, text, bool) -> (text);
   approve_vc_creation_request : (principal, bool) -> (text);
   approve_vc_profile_update : (principal, bool) -> (text);
+  calculate_and_store_average_rating : (text, text) -> (Result_4);
   calculate_average : (text) -> (RatingAverages) query;
+  calculate_mentor_average_rating : (principal) -> (Result_4) query;
+  calculate_vc_average_rating : (principal) -> (Result_4) query;
   change_live_status : (principal, text, bool, opt text) -> (Result_2) query;
   connect_to_team_member : (text, text) -> (text);
   count_live_projects : () -> (nat64) query;
   create_cohort : (Cohort) -> (Result_2);
-  deactivate_and_remove_project : (text) -> (Result_4);
+  deactivate_and_remove_project : (text) -> (Result_5);
   decline_cohort_creation_request : (text) -> (text);
   decline_mentor_creation_request_candid : (principal, bool) -> (text);
   decline_mentor_profile_update_request : (principal, bool) -> (text);
@@ -879,7 +895,7 @@ service : {
   get_my_pending_cohort_creation_requests : () -> (vec CohortRequest) query;
   get_my_project : () -> (ProjectInfoInternal) query;
   get_no_of_individuals_applied_for_cohort_using_id : (text) -> (
-      Result_5,
+      Result_6,
     ) query;
   get_notifications_for_hubs : () -> (vec NotificationProject) query;
   get_pending_admin_notifications : () -> (vec Notification) query;
@@ -912,14 +928,14 @@ service : {
   get_project_public_information_using_id : (text) -> (
       ProjectPublicInfoInternal,
     ) query;
-  get_project_ratings : (text) -> (Result_6) query;
+  get_project_ratings : (text) -> (Result_7) query;
   get_project_requests : (text) -> (vec Request) query;
   get_project_update_declined_request : () -> (
       vec record { text; ProjectUpdateRequest },
     ) query;
   get_project_upvotes : (text) -> (opt UpvoteRecord) query;
   get_project_using_id : (text) -> (opt ProjectInfoInternal) query;
-  get_projects_applied_for_cohort : (text) -> (Result_7) query;
+  get_projects_applied_for_cohort : (text) -> (Result_8) query;
   get_projects_associated_with_investor : (principal) -> (
       vec ProjectInfoInternal,
     ) query;
@@ -928,8 +944,8 @@ service : {
     ) query;
   get_projects_with_all_info : () -> (vec ProjectInfoInternal) query;
   get_range_of_check_size : () -> (vec text) query;
-  get_ratings_by_principal : (text) -> (Result_8) query;
-  get_review : (principal) -> (Result_9) query;
+  get_ratings_by_principal : (text) -> (Result_9) query;
+  get_review : (principal) -> (Result_10) query;
   get_role : () -> (RolesResponse) query;
   get_role_status : () -> (vec Role) query;
   get_roles_for_principal : (principal) -> (vec Role) query;
@@ -941,9 +957,10 @@ service : {
   get_self_declined_requests_of_project : (text) -> (vec OfferToInvestor) query;
   get_spotlight_project_uids : () -> (vec text) query;
   get_spotlight_projects : () -> (vec SpotlightDetails) query;
+  get_stored_average_rating : (text, text) -> (Result_4) query;
   get_suggestions_by_parent_id_caller : (text, nat64) -> (vec Suggestion) query;
   get_suggestions_by_status_caller : (text, text) -> (vec Suggestion) query;
-  get_testimonials : (principal) -> (Result_10) query;
+  get_testimonials : (principal) -> (Result_11) query;
   get_top_5_mentors : () -> (vec record { principal; TopData; nat64 }) query;
   get_top_5_projects : () -> (vec record { text; TopDataProject; nat64 }) query;
   get_top_5_vcs : () -> (vec record { principal; TopData; nat64 }) query;
@@ -963,8 +980,8 @@ service : {
     ) query;
   get_user_info_struct : () -> (opt UserInformation) query;
   get_user_info_using_principal : (principal) -> (opt UserInfoInternal) query;
-  get_user_information : () -> (Result_11) query;
-  get_user_information_using_uid : (text) -> (Result_11) query;
+  get_user_information : () -> (Result_12) query;
+  get_user_information_using_uid : (text) -> (Result_12) query;
   get_user_likes : (text) -> (opt LikeRecord) query;
   get_users_with_all_info : () -> (UserInfoInternal) query;
   get_vc_announcements : () -> (
@@ -1026,11 +1043,11 @@ service : {
   register_project : (ProjectInfo) -> (text);
   register_user : (UserInformation) -> (text);
   register_venture_capitalist : (VentureCapitalist) -> (text);
-  remove_mentor_from_cohort : (text, principal) -> (Result_4);
-  remove_project_from_cohort : (text, text) -> (Result_4);
-  remove_project_from_incubated : (text) -> (Result_4);
+  remove_mentor_from_cohort : (text, principal) -> (Result_5);
+  remove_project_from_cohort : (text, text) -> (Result_5);
+  remove_project_from_incubated : (text) -> (Result_5);
   remove_project_from_spotlight : (text) -> (Result_3);
-  remove_vc_from_cohort : (text, principal) -> (Result_4);
+  remove_vc_from_cohort : (text, principal) -> (Result_5);
   reply_to_suggestion_caller : (nat64, text, text) -> (nat64, text);
   self_decline_request : (text) -> (text);
   self_decline_request_for_investor : (text) -> (text);
@@ -1049,12 +1066,15 @@ service : {
   update_founder_caller : (FounderInfo) -> (text);
   update_mentor : (MentorProfile) -> (text);
   update_mentor_profile : (principal, MentorProfile) -> (text);
+  update_mentor_ratings : (principal, Rating) -> ();
+  update_peer_rating_api : (PeerRatingUpdate) -> (text);
   update_project : (text, ProjectInfo) -> (text);
-  update_project_status_live_incubated : (ProjectInfoInternal) -> (Result_4);
+  update_project_status_live_incubated : (ProjectInfoInternal) -> (Result_5);
   update_rating : (RatingUpdate) -> (text);
   update_suggestion_status_caller : (nat64, text, text) -> ();
   update_team_member : (text, principal) -> (text);
   update_vc_profile : (principal, VentureCapitalist) -> (text);
+  update_vc_ratings : (principal, Rating_1) -> ();
   update_venture_capitalist : (VentureCapitalist) -> (text);
   update_venture_capitalist_caller : (VentureCapitalist) -> (text);
   upvote_project : (text) -> (text);
