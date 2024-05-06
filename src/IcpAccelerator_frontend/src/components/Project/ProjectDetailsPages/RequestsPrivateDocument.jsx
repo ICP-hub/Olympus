@@ -26,13 +26,13 @@ const RequestsPrivateDocument = () => {
     let result;
     switch (status) {
       case "Pending":
-        result = actor.get_all_pending_requests();
+        result = actor.get_all_pending_docs_access_request();
         break;
       case "Accepted":
-        result = actor.get_all_approved_requests();
+        result = actor.get_all_approved_docs_access_request();
         break;
       case "Declined":
-        result = actor.get_all_declined_requests();
+        result = actor.get_all_declined_docs_access_request();
         break;
       default:
         console.log("Unknown status");

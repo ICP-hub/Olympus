@@ -65,8 +65,11 @@ export const useAuthClient = (options = defaultOptions) => {
   }, []);
 
   const login = (val) => {
+    // console.log('val',val)
     return new Promise(async (resolve, reject) => {
       try {
+
+        console.log(" authClient.getIdentity() =>>>>>>",  authClient.getIdentity());
         if (
           authClient.isAuthenticated() &&
           (await authClient.getIdentity().getPrincipal().isAnonymous()) ===

@@ -16,6 +16,10 @@ import { notificationSaga } from "./notification";
 import { totalLiveSaga } from "./LiveCount";
 import { updateUserProfileSaga } from "./UpdateUserProfileSaga";
 import { allHubsSaga } from "./AllHub";
+import { expertiseInSaga } from "./areaOfExpertiseSaga";
+import { typeOfProfileSaga } from "./typeOfProfileSaga";
+import { chainsSaga } from './multiChainSaga';
+
 
 export default function* rootSaga() {
   yield all([
@@ -35,6 +39,9 @@ export default function* rootSaga() {
     totalPendingSaga(),
     totalLiveSaga(),
     updateUserProfileSaga(),
-    allHubsSaga()
+    allHubsSaga(),
+    expertiseInSaga(),
+    typeOfProfileSaga(),
+    chainsSaga(),
   ]);
 }

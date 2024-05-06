@@ -4,6 +4,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Loader from "./components/Loader/Loader";
 import UpdateMentorProfile from "./components/Admindashboard/UpdateRequests/UpdateMentorProfile";
 import UpdateInvestorProfile from "./components/Admindashboard/UpdateRequests/UpdateInvestorProfile";
+import UserProfileProjectUpdate from "./components/UserProfileUpdate/UserProfileProjectUpdate";
 
 const Adminalluser = lazy(() =>
   import("./components/Admindashboard/Adminalluser")
@@ -62,6 +63,10 @@ const AdminRoute = ({ setModalOpen }) => {
     { path: "/projectupdate", element: <ProjectUpdate /> },
     { path: "/mentorupdate", element: <UpdateMentorProfile /> },
     { path: "/investorupdate", element: <UpdateInvestorProfile /> },
+    { path: "/userProfileProjectUpdate", element: <UserProfileProjectUpdate /> },
+    { path: "/userProfileMentorUpdate", element: <UserProfileProjectUpdate /> },
+    { path: "/userProfileInvestorUpdate", element: <UserProfileProjectUpdate /> },
+
   ];
 
   // const dispatch = useDispatch();
