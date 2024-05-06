@@ -628,3 +628,36 @@ pub fn get_range_of_check_size() -> Vec<String>{
         "Above $10M".to_string()
     ]
 }
+
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, Default, PartialEq)]
+pub struct VcFilterCriteria {
+    pub country: Option<String>,
+    pub category_of_investment: Option<String>,
+    pub money_invested_range: Option<(f64, f64)>,  // Minimum and maximum investment range
+}
+
+#[query]
+pub fn filter_venture_capitalists(criteria: VcFilterCriteria) -> Vec<VentureCapitalist> {
+    VENTURECAPITALIST_STORAGE.with(|vcs| {
+        let vcs = vcs.borrow();
+
+        vcs.values()
+            .filter(|vc_internal| {
+                let country_match = criteria.country.as_ref()
+                    .map_or(true, |country| vc_internal.params.registered_country.as_ref() == Some(country));
+
+                let category_match = criteria.category_of_investment.as_ref()
+                    .map_or(true, |category| &vc_internal.params.category_of_investment == category);
+
+                let money_invested_match = criteria.money_invested_range.map_or(true, |(min, max)| {
+                    vc_internal.params.money_invested.map_or(false, |invested| invested >= min && invested <= max)
+                });
+
+                // Only include active and approved VCs
+                vc_internal.is_active && vc_internal.approve && !vc_internal.decline
+                    && country_match && category_match && money_invested_match
+            })
+            .map(|vc_internal| vc_internal.params.clone())
+            .collect()
+    })
+}

@@ -51,6 +51,11 @@ type CohortDetails = record {
   cohort_creator : principal;
   cohort : Cohort;
 };
+type CohortFilterCriteria = record {
+  level_on_rubric : opt float64;
+  tags : opt text;
+  no_of_seats_range : opt record { nat8; nat8 };
+};
 type CohortRequest = record {
   rejected_at : nat64;
   request_status : text;
@@ -130,6 +135,10 @@ type MAnnouncements = record {
   announcement_message : text;
   timestamp : nat64;
   project_name : text;
+};
+type MentorFilterCriteria = record {
+  country : opt text;
+  area_of_expertise : opt text;
 };
 type MentorInfo = record {
   mentor_image : vec nat8;
@@ -653,6 +662,11 @@ type UserInformation = record {
   full_name : text;
 };
 type UserType = record { id : int32; role_type : text };
+type VcFilterCriteria = record {
+  country : opt text;
+  money_invested_range : opt record { float64; float64 };
+  category_of_investment : opt text;
+};
 type VcWithRoles = record {
   vc_profile : VentureCapitalistInternal;
   roles : vec Role;
@@ -750,8 +764,13 @@ service : {
   delete_project : (text) -> (text);
   delete_venture_capitalist : () -> (text);
   delete_venture_capitalist_caller : () -> (text);
+  filter_cohorts : (CohortFilterCriteria) -> (vec CohortDetails) query;
+  filter_mentors : (MentorFilterCriteria) -> (vec MentorProfile) query;
   filter_out_projects : (FilterCriteria) -> (vec ProjectInfo) query;
   filter_projects : (FilterCriteria) -> (vec ProjectInfo) query;
+  filter_venture_capitalists : (VcFilterCriteria) -> (
+      vec VentureCapitalist,
+    ) query;
   get_accepted_cohort_creation_request_for_admin : () -> (
       vec CohortRequest,
     ) query;
