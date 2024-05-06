@@ -28,7 +28,7 @@ mod mentor_investor_ratings;
 use crate::project_registration::*;
 use cohort::*;
 use crate::cohort_rating::PeerRatingUpdate;
-use crate::cohort_rating::Rating;
+use crate::mentor_investor_ratings::RatingMentorInvestor;
 
 use project_offer_to_investor::*;
 use investor_offer_to_project::*;
