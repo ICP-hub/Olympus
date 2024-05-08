@@ -53,7 +53,8 @@ const schema = yup.object({
     .date()
     .required()
     .typeError("Must be a date")
-    .min(yup.ref("cohort_end_date"), "Deadline cannot be before end date"),
+    .min(yup.ref("cohort_launch_date"), "Deadline cannot be before Launch date")
+    .max(yup.ref("cohort_end_date"), "Deadline cannot be after end date"),
   eligibility: yup
     .string()
     .typeError("You must enter a eligibility")
