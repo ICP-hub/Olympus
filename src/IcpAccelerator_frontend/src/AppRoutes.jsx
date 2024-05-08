@@ -29,6 +29,7 @@ import InvestorRegForm from "./components/RegForms.jsx/InvestorRegForm";
 import ProjectRegForm from "./components/RegForms.jsx/ProjectRegForm";
 import RequestMoneyRaising from "./components/Project/ProjectDetailsPages/RequestMoneyRaising";
 import Home from "./components/Home/Home";
+import EventRegistration from "./components/Mentors/Event/EventRegistration";
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
 const ProjectDetails = lazy(() => import("./components/Project/ProjectDetails"));
@@ -46,7 +47,7 @@ const AppRoutes = () => {
     { path: "/individual-project-details-project-investor/:id", element: <ProjectDetailsForInvestor /> },
     { path: "/association", element: <ProjectAssociation /> },
     { path: "/create-user", element: <UserRegForm /> },
-    // { path: "/create-user", element: <NormalUser /> },
+    { path: "/event-register-request", element: <EventRegistration /> },
     { path: "/create-user", element: <UserRegForm /> },
     { path: "/create-project", element: <ProjectRegForm /> },
     // { path: "/create-investor", element: <InvestorRegistration /> },

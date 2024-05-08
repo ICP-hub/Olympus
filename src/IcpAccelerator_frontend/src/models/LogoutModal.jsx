@@ -164,6 +164,26 @@ const LogoutModal = () => {
                 ) : (
                   ""
                 )}
+                {userCurrentRoleStatus &&
+                userCurrentRoleStatusActiveRole &&
+                userCurrentRoleStatusActiveRole !== "user" &&
+                userCurrentRoleStatusActiveRole !== "project" &&
+                userCurrentRoleStatusActiveRole !== "vc" ? (
+                  <li
+                    onClick={() =>
+                      navigate(
+                        userCurrentRoleStatusActiveRole === "mentor"
+                          ? "/event-register-request"
+                          : ""
+                      )
+                    }
+                    className="block px-4 py-2 cursor-pointer hover:bg-gray-200 hover:text-black"
+                  >
+                    Cohort Request
+                  </li>
+                ) : (
+                  ""
+                )}
                 {/* <li className="block px-4 py-2 hover:bg-gray-200 hover:text-black">
                   Event
                 </li>
