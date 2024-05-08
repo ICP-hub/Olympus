@@ -29,6 +29,7 @@ use crate::project_registration::*;
 use cohort::*;
 use crate::cohort_rating::PeerRatingUpdate;
 use crate::mentor_investor_ratings::RatingMentorInvestor;
+use crate::cohort_rating::LeaderboardEntryForCohorts;
 
 use project_offer_to_investor::*;
 use investor_offer_to_project::*;
