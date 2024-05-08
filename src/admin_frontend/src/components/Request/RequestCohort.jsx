@@ -5,6 +5,7 @@ import toast, { Toaster } from "react-hot-toast";
 import uint8ArrayToBase64 from "../../../../IcpAccelerator_frontend/src/components/Utils/uint8ArrayToBase64";
 import { Principal } from "@dfinity/principal";
 import NoDataCard from "../../../../IcpAccelerator_frontend/src/components/Mentors/Event/NoDataCard";
+import EventCard from "../../../../IcpAccelerator_frontend/src/components/Dashboard/EventCard";
 
 const RequestCohort = () => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -106,18 +107,27 @@ const RequestCohort = () => {
           console.log("Unknown action");
           return;
       }
-  console.log(result);
+      console.log(result);
       if (
         result &&
         result.includes(
-          `You have ${value.toLowerCase()} the cohort creation with cohort id: ${cohortId}`
+          `Cohort request with id: ${cohortId} has been accepted.`
         )
       ) {
         // Assuming result contains some success indication
-      
-        toast.success(`Request ${value.toLowerCase()}ed successfully.`);
+
+        toast.success(`Request ${value.toLowerCase()}d successfully.`);
+      } else if (
+        result &&
+        result.includes(
+          `You have declined the cohort creation request: ${cohortId}`
+        )
+      ) {
+        toast.success(`Request ${value.toLowerCase()}d successfully.`);
+        window.location.href = "/";
       } else {
         toast.error(`Failed to ${value.toLowerCase()} the request.`);
+        window.location.href = "/";
       }
     } catch (error) {
       console.error("Error processing document request action:", error);
@@ -181,67 +191,12 @@ const RequestCohort = () => {
         ) : (
           requestedData &&
           requestedData.map((data, index) => {
-            const request = data?.cohort_details;
-            if (!request) return null;
-            const image = uint8ArrayToBase64(request?.cohort_creator?._arr);
-            const name = request?.cohort?.title;
-            const tags = request?.cohort?.tags;
-            const description = request?.cohort?.description;
-            const no_of_seats = request?.cohort?.no_of_seats;
-            const cohort_launch_date = request?.cohort?.cohort_launch_date;
-            const cohort_end_date = request?.cohort?.cohort_end_date;
-            const eligibility = request?.cohort?.criteria?.eligibility?.[0];
-            const level_on_rubric = request?.cohort?.criteria?.level_on_rubric;
-            // const principal = request?.sender.toText();
-            const status = data?.request_status;
-            const cohortId = request?.cohort_id;
             return (
-              <div
-                className="flex w-auto items-center flex-wrap justify-between bg-gray-200 rounded-lg  text-lg p-4 my-4"
-                key={index}
-              >
-                <div className="flex items-center">
-                  <img
-                    src={image}
-                    alt="Mentor"
-                    className="w-6 h-6 lg:w-12 lg:h-12 object-cover rounded-full mb-4 lg:mb-0 border-black border-2 p-1"
-                  />
-                  <p className="font-extrabold ml-2">{name}</p>
-                  <p
-                    className="line-clamp-1 w-48 font-fontUse text-base ml-12
-                  "
-                  >
-                    {description}
-                  </p>
-                </div>
-
-                <div className="flex flex-wrap md:flex-nowrap">
-                  <button className="px-4 py-1 bg-[#3505B2] text-white font-bold rounded-full uppercase text-base">
-                    {status}
-                  </button>
-                  {status === "approved" || status === "declined" ? (
-                    ""
-                  ) : (
-                    <>
-                      <button
-                        className="px-4 py-1 bg-white text-blue-800 font-bold rounded-lg border-2 border-blue-800 ml-12"
-                        onClick={() =>
-                          approveAndRejectCohort("Decline", cohortId)
-                        }
-                      >
-                        Reject
-                      </button>
-                      <button
-                        className="px-4 py-1 bg-[#3505B2] text-white font-bold rounded-lg ml-3"
-                        onClick={() =>
-                          approveAndRejectCohort("Approve", cohortId)
-                        }
-                      >
-                        Accept
-                      </button>
-                    </>
-                  )}
-                </div>
+              <div key={index}>
+                <EventCard
+                  data={data}
+                  approveAndRejectCohort={approveAndRejectCohort}
+                />
               </div>
             );
           })

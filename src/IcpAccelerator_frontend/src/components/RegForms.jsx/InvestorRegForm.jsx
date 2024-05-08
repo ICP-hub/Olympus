@@ -607,7 +607,10 @@ const InvestorRegForm = () => {
         setValue("investor_registered", "false");
       }
       setValue("registered_country", val?.registered_country?.[0] ?? "");
-      setValue("preferred_icp_hub", val?.preferred_icp_hub ?? "");
+      setValue(
+        "preferred_icp_hub",
+        val?.preferred_icp_hub ? val?.preferred_icp_hub : ""
+      );
       setValue("existing_icp_investor", val?.existing_icp_investor ?? "");
       if (val?.existing_icp_investor === true) {
         setValue("existing_icp_investor", "true");
@@ -726,6 +729,55 @@ const InvestorRegForm = () => {
           }
         } catch (error) {
           setInvestStageOptions([]);
+        }
+      })();
+    }
+  }, [actor]);
+  useEffect(() => {
+    if (actor) {
+      (async () => {
+        if (userCurrentRoleStatusActiveRole === "vc") {
+          const result = await actor.get_vc_info();
+          if (result) {
+            console.log("result", result);
+            setImageData(result?.[0]?.user_data?.profile_picture?.[0] ?? null);
+            setValue(
+              "type_of_profile",
+              result?.[0]?.user_data?.type_of_profile?.[0]
+                ? result?.[0]?.user_data?.type_of_profile?.[0]
+                : ""
+            );
+            setValue(
+              "preferred_icp_hub",
+              result?.[0]?.preferred_icp_hub
+                ? result?.[0]?.preferred_icp_hub
+                : ""
+            );
+          } else {
+            setImageData(null);
+            setValue("type_of_profile", "");
+            setValue("preferred_icp_hub", "");
+          }
+        } else if (
+          userCurrentRoleStatusActiveRole === null ||
+          userCurrentRoleStatusActiveRole === "user" ||
+          userCurrentRoleStatusActiveRole === "mentor" ||
+          userCurrentRoleStatusActiveRole === "project"
+        ) {
+          const result = await actor.get_user_information();
+          if (result) {
+            setImageData(result?.Ok?.profile_picture?.[0] ?? null);
+
+            setValue(
+              "type_of_profile",
+              result?.Ok?.type_of_profile?.[0]
+                ? result?.Ok?.type_of_profile?.[0]
+                : ""
+            );
+          } else {
+            setImageData(null);
+            setValue("type_of_profile", "");
+          }
         }
       })();
     }

@@ -438,7 +438,12 @@ const MentorRegForm = () => {
       setValue("domains_interested_in", val?.area_of_interest ?? "");
       setInterestedDomainsSelectedOptionsHandler(val?.area_of_interest ?? null);
       setImagePreview(val?.profile_picture?.[0] ?? "");
-      setValue("type_of_profile", val?.type_of_profile?.[0]);
+      setValue(
+        "type_of_profile",
+        val?.user_data?.type_of_profile?.[0]
+          ? val?.user_data?.type_of_profile?.[0]
+          : ""
+      );
       setValue(
         "reasons_to_join_platform",
         val?.reason_to_join ? val?.reason_to_join.join(", ") : ""
@@ -469,7 +474,12 @@ const MentorRegForm = () => {
           ? uint8ArrayToBase64(val?.user_data?.profile_picture?.[0])
           : ""
       );
-      setValue("type_of_profile", val?.user_data?.type_of_profile?.[0]);
+      setValue(
+        "type_of_profile",
+        val?.user_data?.type_of_profile?.[0]
+          ? val?.user_data?.type_of_profile?.[0]
+          : ""
+      );
       setValue(
         "reasons_to_join_platform",
         val?.user_data?.reason_to_join
@@ -496,7 +506,7 @@ const MentorRegForm = () => {
       } else {
         setValue("icp_hub_or_spoke", "false");
       }
-      setValue("hub_owner", val?.hub_owner?.[0] ?? "");
+      setValue("hub_owner", val?.hub_owner ? val?.hub_owner?.[0] : "");
       setValue("mentor_linkedin_url", val?.linkedin_link ?? "");
       if (val?.multichain?.[0]) {
         setValue("multi_chain", "true");
@@ -508,7 +518,10 @@ const MentorRegForm = () => {
         val?.multichain?.[0] ? val?.multichain?.[0] : ""
       );
       setMultiChainSelectedOptionsHandler(val?.multichain ?? null);
-      setValue("preferred_icp_hub", val?.preferred_icp_hub?.[0] ?? "");
+      setValue(
+        "preferred_icp_hub",
+        val?.preferred_icp_hub ? val?.preferred_icp_hub?.[0] : ""
+      );
       setValue("mentor_website_url", val?.website?.[0] ?? "");
       setValue("years_of_mentoring", val?.years_of_mentoring ?? "");
     }
@@ -572,11 +585,53 @@ const MentorRegForm = () => {
   useEffect(() => {
     if (actor) {
       (async () => {
-        const result = await actor.get_user_information();
-        if (result) {
-          setImageData(result?.Ok?.profile_picture?.[0] ?? null);
-        } else {
-          setImageData(null);
+        if (userCurrentRoleStatusActiveRole === "mentor") {
+          const result = await actor.get_mentor();
+          if (result) {
+            console.log("result", result?.[0]);
+            setImageData(result?.[0]?.user_data?.profile_picture?.[0] ?? null);
+            setValue(
+              "type_of_profile",
+              result?.[0]?.user_data?.type_of_profile?.[0]
+                ? result?.[0]?.user_data?.type_of_profile?.[0]
+                : ""
+            );
+            setValue(
+              "hub_owner",
+              result?.[0]?.hub_owner?.[0] ? result?.[0]?.hub_owner?.[0] : ""
+            );
+            setValue(
+              "preferred_icp_hub",
+              result?.[0]?.preferred_icp_hub?.[0]
+                ? result?.[0]?.preferred_icp_hub?.[0]
+                : ""
+            );
+          } else {
+            setImageData(null);
+            setValue("type_of_profile", "");
+            setValue("hub_owner", "");
+            setValue("preferred_icp_hub", "");
+          }
+        } else if (
+          userCurrentRoleStatusActiveRole === null ||
+          userCurrentRoleStatusActiveRole === "user" ||
+          userCurrentRoleStatusActiveRole === "project" ||
+          userCurrentRoleStatusActiveRole === "vc"
+        ) {
+          const result = await actor.get_user_information();
+          if (result) {
+            setImageData(result?.Ok?.profile_picture?.[0] ?? null);
+
+            setValue(
+              "type_of_profile",
+              result?.Ok?.type_of_profile?.[0]
+                ? result?.Ok?.type_of_profile?.[0]
+                : ""
+            );
+          } else {
+            setImageData(null);
+            setValue("type_of_profile", "");
+          }
         }
       })();
     }

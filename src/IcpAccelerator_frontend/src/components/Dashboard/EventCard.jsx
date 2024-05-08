@@ -1,249 +1,199 @@
-import React from "react";
+import React, { useState } from "react";
 import hover from "../../../assets/images/1.png";
 import { winner } from "../Utils/Data/SvgData";
 import girl from "../../../assets/images/girl.jpeg";
+import FunctionalityModel from "../../models/FunctionalityModel";
 
-// new card
-const EventCard = () => {
+const EventCard = ({ data, approveAndRejectCohort }) => {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [para, setPara] = useState("");
+  const [action, setAction] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleOpenModal = (para, action) => {
+    setPara(para);
+    setAction(action);
+    setModalOpen(true);
+    console.log("Modal open with", para, action);
+  };
+  const handleClick = async () => {
+    setIsSubmitting(true);
+    // console.log("Line 21 Action ====>>>>",action)
+    let decision = action === "Accept" ? "Approve" : "Decline";
+    // console.log("Line 23 Decision =====>>>>",decision)
+    try {
+      await approveAndRejectCohort(decision, cohortId);
+    } catch (error) {
+      console.error("Failed to process the decision: ", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
+
+  const request = data?.cohort_details;
+  if (!request) return null;
+  // const image = uint8ArrayToBase64(request?.cohort_creator?._arr);
+  const name = request?.cohort?.title;
+  const tags = request?.cohort?.tags;
+  const description = request?.cohort?.description;
+  const no_of_seats = request?.cohort?.no_of_seats;
+  const cohort_launch_date = request?.cohort?.cohort_launch_date;
+  const cohort_end_date = request?.cohort?.cohort_end_date;
+  const deadline = request?.cohort?.deadline;
+  const eligibility = request?.cohort?.criteria?.eligibility?.[0];
+  const level_on_rubric = request?.cohort?.criteria?.level_on_rubric;
+  // const principal = request?.sender.toText();
+  const status = data?.request_status;
+  const cohortId = request?.cohort_id;
   return (
-    <div className="lgx:flex">
-      <div className="block lgx:w-1/3 w-full drop-shadow-xl rounded-lg bg-gray-200 mb-8 lgx:mx-4">
-        <div className="w-full relative">
+    <div className="flex w-auto items-center flex-wrap justify-between bg-gray-200 rounded-lg  text-lg p-4 my-4">
+      <div className="block lgx:flex w-full drop-shadow-xl rounded-lg lgx:h-96 ">
+        <FunctionalityModel
+          para={para}
+          action={action}
+          onModal={modalOpen}
+          isSubmitting={isSubmitting}
+          onClose={handleCloseModal}
+          onClick={handleClick}
+          // handleClick={approveAndRejectCohort(`${decision}`, cohortId)}
+        />
+        <div className="lgx:w-[70%] w-full relative">
           <img
             className="h-full object-cover rounded-lg w-full"
             src={hover}
             alt="not found"
           />
-          <div className="absolute h-12 w-12 -bottom-1 right-[20px]">
+          <div className="absolute h-12 w-12 -bottom-1 lgx:top-0 lgx:right-[-8px] right-[20px]">
             {winner}
           </div>
         </div>
-        <div className="w-full">
-          <div className="p-8">
+        <div className="lgx:w-[30%] w-full">
+          <div className="px-8">
             <div className="w-full mt-4">
               <div className="w-1/2 flex-col text-[#737373] flex  ">
-                <h1 className="text-black font-bold text-xl text-nowrap">
-                  Fully On-Chain with ICP
+                <h1 className="font-bold text-black text-xl truncate capitalize">
+                  {name}
                 </h1>
-                <p className="text-xs font-light whitespace-nowrap">
-                  22 Apr 2024, 05:30pm - 25 Apr 2024, 7:30pm
+                <p className="text-sm whitespace-nowrap pt-1">
+                  <span className="text-black font-bold text-sm">
+                    Starting on :
+                  </span>{" "}
+                  {cohort_launch_date}
+                </p>
+                <p className="text-sm whitespace-nowrap pt-1">
+                  <span className="text-black font-bold text-sm">
+                    Ends on :
+                  </span>{" "}
+                  {cohort_end_date}
                 </p>
               </div>
-              <p className="text-[#7283EA] font-semibold mt-2">
-                Overview
-              </p>
-              <ul className="text-sm font-extralight list-disc list-outside pl-4">
-                <li>Direct interaction with the instructor</li>
-                <li>Session recording after the workshop</li>
-                <li>Access on mobile and web</li>
-                <li>1 hour live session</li>
-              </ul>
+              <p className="text-[#7283EA] font-semibold">Overview</p>
+              <div className="flex w-full py-1">
+                <p className="h-auto truncate text-sm">{description}</p>
+              </div>
+              {eligibility ? (
+                <div>
+                  <p className="text-[#7283EA] font-semibold">Eligibility</p>
+                  <div className="flex w-full py-1">
+                    <p className="h-auto truncate text-sm">{eligibility}</p>
+                  </div>
+                </div>
+              ) : (
+                ""
+              )}
 
+              {/* <div className="flex flex-col font-bold">
+                <p className="text-[#7283EA]">Eligibility</p>
+                <p className="flex text-black w-20">{eligibility}</p>
+              </div> */}
+              <p className="text-[#7283EA] font-semibold">Tags</p>
+              <div className="flex gap-2 mt-2 text-xs items-center pb-2">
+                {tags
+                  .split(",")
+                  .slice(0, 3)
+                  .map((tag, index) => (
+                    <div
+                      key={index}
+                      className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-gray-100"
+                    >
+                      {tag.trim()}
+                    </div>
+                  ))}
+              </div>
               <div className="flex flex-row flex-wrap lg:justify-between md:justify-center space-x-8 mt-2">
                 <div className="flex lg:justify-start gap-4 ">
                   <div className="flex flex-col font-bold">
-                    <p className="text-[#7283EA]">Date</p>
-                    <p className="text-black whitespace-nowrap">25 Apr 2024</p>
+                    <p className="text-[#7283EA]">Seats</p>
+                    <p className="text-black whitespace-nowrap text-sm">
+                      {no_of_seats}
+                    </p>
                   </div>
                   <div className="flex flex-col font-bold">
-                    <p className="text-[#7283EA]">Time</p>
-                    <p className="text-black">7:30 pm</p>
-                  </div>
-                  <div className="flex flex-col font-bold">
-                    <p className="text-[#7283EA]">Duration</p>
-                    <p className="text-black">60 min</p>
+                    <p className="text-[#7283EA]">Application's deadline</p>
+                    <p className="text-black whitespace-nowrap text-sm">
+                      {deadline}
+                    </p>
                   </div>
                 </div>
               </div>
-              <div className="flex justify-center items-center mt-8">
-                <button className="mb-2 uppercase w-full bg-[#3505B2] mr-2 text-white  px-4 py-2 rounded-md  items-center font-extrabold text-sm mt-2 ">
-                  Register now
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="block lgx:w-1/3 w-full drop-shadow-xl rounded-lg bg-gray-200 mb-8 lgx:mx-4">
-        <div className="w-full relative">
-          <img
-            className="h-full object-cover rounded-lg w-full"
-            src={hover}
-            alt="not found"
-          />
-          <div className="absolute h-12 w-12 -bottom-1 right-[20px]">
-            {winner}
-          </div>
-        </div>
-        <div className="w-full">
-          <div className="p-8">
-            <div className="w-full mt-4">
-              <div className="w-1/2 flex-col text-[#737373] flex  ">
-                <h1 className="text-black font-bold text-xl text-nowrap">
-                  Fully On-Chain with ICP
-                </h1>
-                <p className="text-xs font-light whitespace-nowrap">
-                  22 Apr 2024, 05:30pm - 25 Apr 2024, 7:30pm
-                </p>
-              </div>
-              <p className="text-[#7283EA] font-semibold mt-2">
-                Overview
-              </p>
-              <ul className="text-sm font-extralight list-disc list-outside pl-4">
-                <li>Direct interaction with the instructor</li>
-                <li>Session recording after the workshop</li>
-                <li>Access on mobile and web</li>
-                <li>1 hour live session</li>
-              </ul>
+              <div className="flex flex-wrap md:flex-nowrap mt-2">
+                {status === "pending" && (
+                  <button className="px-4 py-1 bg-[#3505B2] text-white font-bold rounded-full uppercase text-base">
+                    {status}
+                  </button>
+                )}
+                {status === "accepted" || status === "declined" ? (
+                  <button className="px-4 py-1 bg-[#3505B2] text-white font-bold rounded-full w-full uppercase text-base">
+                    {status}
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      className="px-4 py-1 bg-white text-blue-800 font-bold rounded-lg border-2 border-blue-800 ml-12"
+                      // onClick={() =>
+                      //   approveAndRejectCohort("Decline", cohortId)
+                      // }
 
-              <div className="flex flex-row flex-wrap lg:justify-between md:justify-center space-x-8 mt-2">
-                <div className="flex lg:justify-start gap-4 ">
-                  <div className="flex flex-col font-bold">
-                    <p className="text-[#7283EA]">Date</p>
-                    <p className="text-black whitespace-nowrap">25 Apr 2024</p>
-                  </div>
-                  <div className="flex flex-col font-bold">
-                    <p className="text-[#7283EA]">Time</p>
-                    <p className="text-black">7:30 pm</p>
-                  </div>
-                  <div className="flex flex-col font-bold">
-                    <p className="text-[#7283EA]">Duration</p>
-                    <p className="text-black">60 min</p>
-                  </div>
-                </div>
+                      onClick={() =>
+                        handleOpenModal(
+                          "Are you sure you want to Decline Request?",
+                          "Decline"
+                        )
+                      }
+                    >
+                      Reject
+                    </button>
+                    <button
+                      className="px-4 py-1 bg-[#3505B2] text-white font-bold rounded-lg ml-3"
+                      onClick={() =>
+                        handleOpenModal(
+                          "Are you sure you want to Accept Cohort Request?",
+                          "Accept"
+                        )
+                      }
+                    >
+                      Accept
+                    </button>
+                  </>
+                )}
               </div>
-              <div className="flex justify-center items-center mt-8">
+              {/* <div className="flex justify-center items-center">
                 <button className="mb-2 uppercase w-full bg-[#3505B2] mr-2 text-white  px-4 py-2 rounded-md  items-center font-extrabold text-sm mt-2 ">
-                  Register now
+                  Accept
                 </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="block lgx:w-1/3 w-full drop-shadow-xl rounded-lg bg-gray-200 mb-8 lgx:mx-4">
-        <div className="w-full relative">
-          <img
-            className="h-full object-cover rounded-lg w-full"
-            src={hover}
-            alt="not found"
-          />
-          <div className="absolute h-12 w-12 -bottom-1 right-[20px]">
-            {winner}
-          </div>
-        </div>
-        <div className="w-full">
-          <div className="p-8">
-            <div className="w-full mt-4">
-              <div className="w-1/2 flex-col text-[#737373] flex  ">
-                <h1 className="text-black font-bold text-xl text-nowrap">
-                  Fully On-Chain with ICP
-                </h1>
-                <p className="text-xs font-light whitespace-nowrap">
-                  22 Apr 2024, 05:30pm - 25 Apr 2024, 7:30pm
-                </p>
-              </div>
-              <p className="text-[#7283EA] font-semibold mt-2">
-                Overview
-              </p>
-              <ul className="text-sm font-extralight list-disc list-outside pl-4">
-                <li>Direct interaction with the instructor</li>
-                <li>Session recording after the workshop</li>
-                <li>Access on mobile and web</li>
-                <li>1 hour live session</li>
-              </ul>
-
-              <div className="flex flex-row flex-wrap lg:justify-between md:justify-center space-x-8 mt-2">
-                <div className="flex lg:justify-start gap-4 ">
-                  <div className="flex flex-col font-bold">
-                    <p className="text-[#7283EA]">Date</p>
-                    <p className="text-black whitespace-nowrap">25 Apr 2024</p>
-                  </div>
-                  <div className="flex flex-col font-bold">
-                    <p className="text-[#7283EA]">Time</p>
-                    <p className="text-black">7:30 pm</p>
-                  </div>
-                  <div className="flex flex-col font-bold">
-                    <p className="text-[#7283EA]">Duration</p>
-                    <p className="text-black">60 min</p>
-                  </div>
-                </div>
-              </div>
-              <div className="flex justify-center items-center mt-8">
                 <button className="mb-2 uppercase w-full bg-[#3505B2] mr-2 text-white  px-4 py-2 rounded-md  items-center font-extrabold text-sm mt-2 ">
-                  Register now
+                  Reject
                 </button>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
       </div>
     </div>
-
   );
 };
-
-// old card
-// const EventCard = () => {
-//   return (
-//     <div className="block lgx:flex w-full drop-shadow-xl rounded-lg bg-gray-200 lgx:h-96 mb-8">
-//       <div className="lgx:w-[70%] w-full relative">
-//         <img
-//           className="h-full object-cover rounded-lg w-full"
-//           src={hover}
-//           alt="not found"
-//         />
-//         <div className="absolute h-12 w-12 -bottom-1 lgx:top-0 lgx:right-[-8px] right-[20px]">
-//           {winner}
-//         </div>
-//       </div>
-//       <div className="lgx:w-[30%] w-full">
-//         <div className="p-8">
-//           <div className="w-full mt-4">
-//             <div className="w-1/2 flex-col text-[#737373] flex  ">
-//               <h1 className="text-black font-bold text-xl text-nowrap">
-//                 Fully On-Chain with ICP
-//               </h1>
-//               <p className="text-xs font-light whitespace-nowrap">
-//                 22 Apr 2024, 05:30pm - 25 Apr 2024, 7:30pm
-//               </p>
-//             </div>
-//             <p className="text-[#7283EA] font-semibold mt-2">
-//               Overview
-//             </p>
-//             <ul className="text-sm font-extralight list-disc list-outside pl-4">
-//               <li>Direct interaction with the instructor</li>
-//               <li>Session recording after the workshop</li>
-//               <li>Access on mobile and web</li>
-//               <li>1 hour live session</li>
-//             </ul>
-
-//             <div className="flex flex-row flex-wrap lg:justify-between md:justify-center space-x-8 mt-2">
-//               <div className="flex lg:justify-start gap-4 ">
-//                 <div className="flex flex-col font-bold">
-//                   <p className="text-[#7283EA]">Date</p>
-//                   <p className="text-black whitespace-nowrap">25 Apr 2024</p>
-//                 </div>
-//                 <div className="flex flex-col font-bold">
-//                   <p className="text-[#7283EA]">Time</p>
-//                   <p className="text-black">7:30 pm</p>
-//                 </div>
-//                 <div className="flex flex-col font-bold">
-//                   <p className="text-[#7283EA]">Duration</p>
-//                   <p className="text-black">60 min</p>
-//                 </div>
-//               </div>
-//             </div>
-//             <div className="flex justify-center items-center mt-8">
-//               <button className="mb-2 uppercase w-full bg-[#3505B2] mr-2 text-white  px-4 py-2 rounded-md  items-center font-extrabold text-sm mt-2 ">
-//                 Register now
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
 
 export default EventCard;
