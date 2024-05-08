@@ -6,6 +6,8 @@ use std::collections::HashMap;
 use ic_cdk::api::caller;
 use ic_cdk_macros::{update,query};
 
+use crate::{project_registration::{APPLICATION_FORM, ProjectInfoInternal, get_project_public_information_using_id}, get_project_using_id};
+
 #[derive(Clone, CandidType, Deserialize, Debug, Serialize)]
 pub struct TimestampedRating {
     rating: Rating,
@@ -137,4 +139,52 @@ pub fn get_stored_average_rating(cohort_id: String, project_id: String) -> Resul
             Err("Specified cohort not found.".to_string())
         }
     })
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, Default, PartialEq)]
+pub struct LeaderboardEntryForCohorts {
+    cohort_id: String,
+    project_data: Option<Vec<ProjectInfoInternal>>,  // Storing a list of projects per cohort
+    average_rating: f64,
+}
+
+#[query]
+pub fn generate_cohort_leaderboard() -> Vec<LeaderboardEntryForCohorts> {
+    let mut leaderboard_entries: Vec<LeaderboardEntryForCohorts> = Vec::new();
+
+    AVERAGE_RATINGS.with(|avg_ratings| {
+        let avg_ratings = avg_ratings.borrow();
+
+        for (cohort_id, creator_averages) in avg_ratings.iter() {
+            let mut project_entries: Vec<ProjectInfoInternal> = Vec::new();
+            let mut total_average = 0.0;
+            let mut project_count = 0;
+
+            for (creator_principal, average) in creator_averages.iter() {
+                match get_project_using_id(creator_principal.to_string()) {
+                    Some(info) => {
+                        project_entries.push(info);
+                        total_average += *average;
+                        project_count += 1;
+                    },
+                    None => {
+                        eprintln!("No project information found for Principal: {}", creator_principal);
+                    }
+                }
+            }
+
+            if project_count > 0 {
+                let cohort_average = total_average / project_count as f64;
+                leaderboard_entries.push(LeaderboardEntryForCohorts {
+                    cohort_id: cohort_id.clone(),
+                    project_data: Some(project_entries),
+                    average_rating: cohort_average,
+                });
+            }
+        }
+    });
+
+    leaderboard_entries.sort_by(|a, b| b.average_rating.partial_cmp(&a.average_rating).unwrap_or(std::cmp::Ordering::Equal));
+
+    leaderboard_entries
 }

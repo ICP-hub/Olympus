@@ -2514,6 +2514,32 @@ fn get_project_ratings(
     })
 }
 
+#[query]
+pub fn get_frequent_reviewers() -> Vec<UserInfoInternal> {
+    let mut review_count: HashMap<Principal, usize> = HashMap::new();
+
+    PROJECT_RATING.with(|registry| {
+        let registry = registry.borrow();
+        for reviews in registry.values() {
+            for (principal, _) in reviews {
+                *review_count.entry(*principal).or_insert(0) += 1;
+            }
+        }
+    });
+
+    let frequent_reviewers = review_count.iter()
+        .filter_map(|(&principal, &count)| {
+            if count > 5 {
+                get_user_info_using_principal(principal)
+            } else {
+                None
+            }
+        })
+        .collect::<Vec<_>>();
+
+    frequent_reviewers
+}
+
 pub fn get_type_of_registration() -> Vec<String>{
     vec![
         "Company".to_string(),
