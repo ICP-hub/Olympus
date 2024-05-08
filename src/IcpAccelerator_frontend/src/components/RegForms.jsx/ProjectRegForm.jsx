@@ -2590,7 +2590,7 @@ function ProjectRegForm() {
                   {uploadPrivateDocuments === "true" &&
                     fieldsPrivate.map((field, index) => (
                       <div key={field.id}>
-                        <div className="relative z-0 group mb-6">
+                        <div className="relative z-0 group mb-4">
                           <div className="sm0:flex sm:block block dlg:flex flex-row items-center">
                             <div className="w-full">
                               <label className="block mb-2 text-lg font-medium text-gray-500 text-start">
@@ -2646,7 +2646,7 @@ function ProjectRegForm() {
                                 onClick={() =>
                                   appendPrivate({ title: "", link: "" })
                                 }
-                                className="text-white bg-blue-800 rounded-md px-5 py-2 mt-4"
+                                className="text-white bg-blue-800 rounded-md px-5 py-2"
                               >
                                 Add Private Docs
                               </button>
@@ -2741,7 +2741,7 @@ function ProjectRegForm() {
                               <button
                                 type="button"
                                 onClick={() => append({ title: "", link: "" })}
-                                className="bg-blue-800 hover:bg-blue-900 text-white rounded-lg px-5 py-3"
+                                className="bg-blue-800 hover:bg-blue-900 text-white rounded-lg px-5 py-2"
                               >
                                 Add Public Docs
                               </button>
