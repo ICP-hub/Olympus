@@ -827,7 +827,7 @@ function ProjectRegForm() {
             console.log("result in project to check update call==>", result);
             if (result && result.includes("approval request is sent")) {
               toast.success("Approval request is sent");
-              window.location.href = "/";
+              // window.location.href = "/";
             } else {
               toast.error(result);
             }
@@ -1132,11 +1132,54 @@ function ProjectRegForm() {
   useEffect(() => {
     if (actor) {
       (async () => {
-        const result = await actor.get_user_information();
-        if (result) {
-          setImageData(result?.Ok?.profile_picture?.[0] ?? null);
-        } else {
-          setImageData(null);
+        if (userCurrentRoleStatusActiveRole === "project") {
+          const result = await actor.get_my_project();
+          if (result) {
+            console.log("result", result);
+            setImageData(
+              result?.params?.user_data?.profile_picture?.[0] ?? null
+            );
+            setLogoData(result?.params?.project_logo ?? null);
+            setCoverData(result?.params?.project_cover ?? null);
+            setValue(
+              "type_of_profile",
+              result?.params?.user_data?.type_of_profile?.[0]
+                ? result?.params?.user_data?.type_of_profile?.[0]
+                : ""
+            );
+            setValue(
+              "preferred_icp_hub",
+              result?.params?.preferred_icp_hub?.[0]
+                ? result?.params?.preferred_icp_hub?.[0]
+                : ""
+            );
+          } else {
+            setImageData(null);
+            setLogoData(null);
+            setCoverData(null);
+            setValue("type_of_profile", "");
+            setValue("preferred_icp_hub", "");
+          }
+        } else if (
+          userCurrentRoleStatusActiveRole === null ||
+          userCurrentRoleStatusActiveRole === "user" ||
+          userCurrentRoleStatusActiveRole === "mentor" ||
+          userCurrentRoleStatusActiveRole === "vc"
+        ) {
+          const result = await actor.get_user_information();
+          if (result) {
+            setImageData(result?.Ok?.profile_picture?.[0] ?? null);
+
+            setValue(
+              "type_of_profile",
+              result?.Ok?.type_of_profile?.[0]
+                ? result?.Ok?.type_of_profile?.[0]
+                : ""
+            );
+          } else {
+            setImageData(null);
+            setValue("type_of_profile", "");
+          }
         }
       })();
     }
@@ -1207,7 +1250,7 @@ function ProjectRegForm() {
                         </label>
                         {imagePreview || errors.image ? (
                           <button
-                            className="p-2 border-2 border-red-500 items-center rounded-md text-md bg-transparent text-red-500 cursor-pointer font-semibold capitalize"
+                            className="p-2 border-2 border-red-500 items-center rounded-md text-md bg-transparent text-red-500 cursor-pointer font-semibold capitalize mt-3 sm0:mt-0"
                             onClick={() => clearImageFunc("image")}
                           >
                             clear
@@ -1517,6 +1560,11 @@ function ProjectRegForm() {
                     menuPortalTarget={document.body}
                     menuPosition={"fixed"}
                     styles={{
+                      menu: (base) => ({
+                        ...base,
+                        overflowY: "auto",
+                        maxHeight: "300px",
+                      }), // adjust here
                       menuPortal: (base) => ({ ...base, zIndex: 9999 }),
                       control: (provided, state) => ({
                         ...provided,
@@ -1624,7 +1672,7 @@ function ProjectRegForm() {
                           </label>
                           {logoPreview || errors.logo ? (
                             <button
-                              className="p-2 border-2 border-red-500 items-center rounded-md text-md bg-transparent text-red-500 cursor-pointer font-semibold capitalize"
+                              className="p-2 border-2 border-red-500 items-center rounded-md text-md bg-transparent text-red-500 cursor-pointer font-semibold capitalize ml-1 sm0:ml-0"
                               onClick={() => clearLogoFunc("logo")}
                             >
                               clear
@@ -1694,7 +1742,7 @@ function ProjectRegForm() {
                           </label>
                           {coverPreview || errors.cover ? (
                             <button
-                              className="p-2 border-2 border-red-500 items-center rounded-md text-md bg-transparent text-red-500 cursor-pointer font-semibold capitalize"
+                              className="p-2 border-2 border-red-500 items-center rounded-md text-md bg-transparent text-red-500 cursor-pointer font-semibold capitalize mt-3 sm0:mt-0"
                               onClick={() => clearCoverFunc("cover")}
                             >
                               clear
@@ -2537,71 +2585,77 @@ function ProjectRegForm() {
                     </p>
                   )}
                 </div>
-                <div className="relative z-0 group mb-6">
+
+                <React.Fragment>
                   {uploadPrivateDocuments === "true" &&
                     fieldsPrivate.map((field, index) => (
-                      <React.Fragment key={field.id}>
-                        <div className="sm0:flex sm:block block dlg:flex flex-row mt-2 items-center">
-                          <div className="w-full">
-                            <label className="block mb-2 text-lg font-medium text-gray-500 text-start">
-                              Title {index + 1}
-                            </label>
-                            <input
-                              {...register(`privateDocs.${index}.title`)}
-                              className="bg-gray-50 border-2 border-black rounded-lg block w-full p-2.5 text-black"
-                              type="text"
-                            />
-                            {errors.privateDocs?.[index]?.title && (
-                              <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                                {errors.privateDocs[index].title.message}
-                              </p>
-                            )}
-                          </div>
-                          <div className="w-full ml-2">
-                            <label className="block mb-2 text-lg font-medium text-gray-500 text-start">
-                              Link {index + 1}
-                            </label>
-                            <input
-                              {...register(`privateDocs.${index}.link`)}
-                              className="bg-gray-50 border-2 border-black rounded-lg block w-full p-2.5 text-black"
-                              type="text"
-                            />
-                            {errors.privateDocs?.[index]?.link && (
-                              <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                                {errors.privateDocs[index].link.message}
-                              </p>
-                            )}
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => handleremovePrivate(index)}
-                            className="self-end bg-red-600 hover:bg-red-700 text-white rounded-lg px-4 py-3 ml-2"
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 384 512"
-                              fill="white"
-                              className="w-5 h-5"
+                      <div key={field.id}>
+                        <div className="relative z-0 group mb-6">
+                          <div className="sm0:flex sm:block block dlg:flex flex-row items-center">
+                            <div className="w-full">
+                              <label className="block mb-2 text-lg font-medium text-gray-500 text-start">
+                                Title {index + 1}
+                              </label>
+                              <input
+                                {...register(`privateDocs.${index}.title`)}
+                                className="bg-gray-50 border-2 border-black rounded-lg block w-full p-2.5 text-black"
+                                type="text"
+                              />
+                              {errors.privateDocs?.[index]?.title && (
+                                <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                                  {errors.privateDocs[index].title.message}
+                                </p>
+                              )}
+                            </div>
+                            <div className="w-full sm0:ml-2">
+                              <label className="block mb-2 text-lg font-medium text-gray-500 text-start">
+                                Link {index + 1}
+                              </label>
+                              <input
+                                {...register(`privateDocs.${index}.link`)}
+                                className="bg-gray-50 border-2 border-black rounded-lg block w-full p-2.5 text-black"
+                                type="text"
+                              />
+                              {errors.privateDocs?.[index]?.link && (
+                                <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                                  {errors.privateDocs[index].link.message}
+                                </p>
+                              )}
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => handleremovePrivate(index)}
+                              className="self-end bg-red-600 hover:bg-red-700 text-white rounded-lg px-4 py-3 sm0:ml-2 mt-1 sm0:mt-1"
                             >
-                              <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
-                            </svg>
-                          </button>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 384 512"
+                                fill="white"
+                                className="w-5 h-5"
+                              >
+                                <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
+                              </svg>
+                            </button>
+                          </div>
                         </div>
-                      </React.Fragment>
+                        {uploadPrivateDocuments === "true" &&
+                          index === fieldsPrivate.length - 1 && (
+                            <div className="flex justify-end items-center">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  appendPrivate({ title: "", link: "" })
+                                }
+                                className="text-white bg-blue-800 rounded-md px-5 py-2 mt-4"
+                              >
+                                Add Private Docs
+                              </button>
+                            </div>
+                          )}
+                      </div>
                     ))}
+                </React.Fragment>
 
-                  {uploadPrivateDocuments === "true" && (
-                    <div className="flex justify-end items-center">
-                      <button
-                        type="button"
-                        onClick={() => appendPrivate({ title: "", link: "" })}
-                        className="text-white bg-blue-800 rounded-md px-5 py-2 mt-4"
-                      >
-                        Add Private Docs
-                      </button>
-                    </div>
-                  )}
-                </div>
                 {/* Uploading Public Document */}
                 <div className="relative z-0 mb-6">
                   <label
@@ -2613,7 +2667,7 @@ function ProjectRegForm() {
                   </label>
                   <select
                     {...register("upload_public_documents")}
-                    className="bg-gray-50  border-2 border-[#737373] text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3"
+                    className="bg-gray-50  border-2 border-[#737373] text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                   >
                     <option className="text-lg font-bold" value="false">
                       No
@@ -2628,71 +2682,74 @@ function ProjectRegForm() {
                     </p>
                   )}
                 </div>
-                <div className="relative z-0 group mb-6">
+                <React.Fragment>
                   {uploadPublicDocuments === "true" &&
                     fields.map((field, index) => (
-                      <div
-                        className="flex flex-row gap-4 mt-4 items-center"
-                        key={field.id}
-                      >
-                        <div className="flex-1">
-                          <label className="block mb-2 text-lg font-medium text-gray-700 text-start">
-                            Title {index + 1}
-                          </label>
-                          <input
-                            {...register(`publicDocs.${index}.title`)}
-                            className="bg-gray-50 border-2 border-[#737373] rounded-lg block w-full p-3 text-black"
-                            type="text"
-                          />
-                          {errors.publicDocs?.[index]?.title && (
-                            <p className="mt-1 text-sm text-red-600 font-medium">
-                              {errors.publicDocs[index].title.message}
-                            </p>
-                          )}
-                        </div>
-                        <div className="flex-1">
-                          <label className="block mb-2 text-lg font-medium text-gray-700 text-start">
-                            Link {index + 1}
-                          </label>
-                          <input
-                            {...register(`publicDocs.${index}.link`)}
-                            className="bg-gray-50 border-2 border-[#737373] rounded-lg block w-full p-3 text-black"
-                            type="text"
-                          />
-                          {errors.publicDocs?.[index]?.link && (
-                            <p className="mt-1 text-sm text-red-600 font-medium">
-                              {errors.publicDocs[index].link.message}
-                            </p>
-                          )}
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => removePublic(index)}
-                          className="self-end bg-red-600 hover:bg-red-700 text-white rounded-lg px-4 py-3 ml-2"
+                      <div className="relative z-0 group mb-6">
+                        <div
+                          className="sm0:flex sm:block block dlg:flex flex-row items-center"
+                          key={field.id}
                         >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 384 512"
-                            fill="white"
-                            className="w-5 h-5"
+                          <div className="w-full">
+                            <label className="block mb-2 text-lg font-medium text-gray-700 text-start">
+                              Title {index + 1}
+                            </label>
+                            <input
+                              {...register(`publicDocs.${index}.title`)}
+                              className="bg-gray-50 border-2 border-[#737373] rounded-lg block w-full p-2.5 text-black"
+                              type="text"
+                            />
+                            {errors.publicDocs?.[index]?.title && (
+                              <p className="mt-1 text-sm text-red-600 font-medium">
+                                {errors.publicDocs[index].title.message}
+                              </p>
+                            )}
+                          </div>
+                          <div className="w-full sm0:ml-2">
+                            <label className="block mb-2 text-lg font-medium text-gray-700 text-start">
+                              Link {index + 1}
+                            </label>
+                            <input
+                              {...register(`publicDocs.${index}.link`)}
+                              className="bg-gray-50 border-2 border-[#737373] rounded-lg block w-full p-2.5 text-black"
+                              type="text"
+                            />
+                            {errors.publicDocs?.[index]?.link && (
+                              <p className="mt-1 text-sm text-red-600 font-medium">
+                                {errors.publicDocs[index].link.message}
+                              </p>
+                            )}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => removePublic(index)}
+                            className="self-end bg-red-600 hover:bg-red-700 text-white rounded-lg px-4 py-3 sm0:ml-2 mt-1 sm0:mt-1"
                           >
-                            <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
-                          </svg>
-                        </button>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 384 512"
+                              fill="white"
+                              className="w-5 h-5"
+                            >
+                              <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
+                            </svg>
+                          </button>
+                        </div>
+                        {uploadPublicDocuments === "true" &&
+                          index === fields.length - 1 && (
+                            <div className="flex justify-end items-center mt-4">
+                              <button
+                                type="button"
+                                onClick={() => append({ title: "", link: "" })}
+                                className="bg-blue-800 hover:bg-blue-900 text-white rounded-lg px-5 py-3"
+                              >
+                                Add Public Docs
+                              </button>
+                            </div>
+                          )}
                       </div>
                     ))}
-                  {uploadPublicDocuments === "true" && (
-                    <div className="flex justify-end items-center mt-4">
-                      <button
-                        type="button"
-                        onClick={() => append({ title: "", link: "" })}
-                        className="bg-blue-800 hover:bg-blue-900 text-white rounded-lg px-5 py-3"
-                      >
-                        Add Public Docs
-                      </button>
-                    </div>
-                  )}
-                </div>
+                </React.Fragment>
               </div>
 
               <div className="flex justify-end mt-4">

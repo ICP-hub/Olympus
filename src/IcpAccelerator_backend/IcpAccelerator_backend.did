@@ -487,6 +487,7 @@ type RatingAverages = record {
   vc_average : vec float64;
   mentor_average : vec float64;
 };
+type RatingMentorInvestor = record { value : float64; comment : opt text };
 type RatingUpdate = record {
   ratings : vec Rating_1;
   current_role : text;
@@ -912,6 +913,7 @@ service : {
   get_my_accepted_cohort_creation_request : () -> (vec CohortRequest) query;
   get_my_declined_cohort_creation_requests : () -> (vec CohortRequest) query;
   get_my_id : () -> (principal) query;
+  get_my_peers : (text, text) -> () query;
   get_my_pending_cohort_creation_requests : () -> (vec CohortRequest) query;
   get_my_project : () -> (ProjectInfoInternal) query;
   get_no_of_individuals_applied_for_cohort_using_id : (text) -> (
@@ -1086,7 +1088,7 @@ service : {
   update_founder_caller : (FounderInfo) -> (text);
   update_mentor : (MentorProfile) -> (text);
   update_mentor_profile : (principal, MentorProfile) -> (text);
-  update_mentor_ratings : (principal, Rating) -> ();
+  update_mentor_ratings : (principal, RatingMentorInvestor) -> ();
   update_peer_rating_api : (PeerRatingUpdate) -> (text);
   update_project : (text, ProjectInfo) -> (text);
   update_project_status_live_incubated : (ProjectInfoInternal) -> (Result_5);
@@ -1094,7 +1096,7 @@ service : {
   update_suggestion_status_caller : (nat64, text, text) -> ();
   update_team_member : (text, principal) -> (text);
   update_vc_profile : (principal, VentureCapitalist) -> (text);
-  update_vc_ratings : (principal, Rating_1) -> ();
+  update_vc_ratings : (principal, RatingMentorInvestor) -> ();
   update_venture_capitalist : (VentureCapitalist) -> (text);
   update_venture_capitalist_caller : (VentureCapitalist) -> (text);
   upvote_project : (text) -> (text);

@@ -9,6 +9,9 @@
     .right-text{
       text-align: -webkit-right;
     }
+    .center-text{
+      text-align: -webkit-center;
+    }
     .hide-scrollbar::-webkit-scrollbar {
       display: none;
     }
