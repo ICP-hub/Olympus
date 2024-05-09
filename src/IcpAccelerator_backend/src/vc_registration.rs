@@ -643,14 +643,25 @@ pub fn filter_venture_capitalists(criteria: VcFilterCriteria) -> Vec<VentureCapi
 
         vcs.values()
             .filter(|vc_internal| {
-                let country_match = criteria.country.as_ref()
-                    .map_or(true, |country| vc_internal.params.registered_country.as_ref() == Some(country));
+                let country_match = match &criteria.country {
+                    Some(c) => &vc_internal.params.user_data.country == c,
+                    None => true, 
+                };
 
                 let category_match = criteria.category_of_investment.as_ref()
                     .map_or(true, |category| &vc_internal.params.category_of_investment == category);
 
                 let money_invested_match = criteria.money_invested_range.map_or(true, |(min, max)| {
-                    vc_internal.params.money_invested.map_or(false, |invested| invested >= min && invested <= max)
+                    vc_internal.params.range_of_check_size.as_ref().map_or(false, |range_str| {
+                        let parts = range_str.trim_start_matches('$').split('-').collect::<Vec<_>>();
+                        if parts.len() == 2 {
+                            let min_range = parts[0].trim_end_matches('m').parse::<f64>().unwrap_or(0.0);
+                            let max_range = parts[1].trim_start_matches('$').trim_end_matches('m').parse::<f64>().unwrap_or(0.0);
+                            min <= max_range && max >= min_range
+                        } else {
+                            false
+                        }
+                    })
                 });
 
                 // Only include active and approved VCs
