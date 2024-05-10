@@ -352,6 +352,20 @@ pub fn send_enrollment_request_as_project(cohort_id: String, user_info: ProjectI
     "Enrollment request sent successfully".to_string()
 }
 
+#[query]
+pub fn get_pending_cohort_enrollment_requests(mentor_principal: Principal) -> Vec<CohortEnrollmentRequest> {
+    COHORT_ENROLLMENT_REQUESTS.with(|requests| {
+        requests.borrow()
+            .get(&mentor_principal)
+            .map_or_else(Vec::new, |request_list| {
+                request_list.iter()
+                    .filter(|request| request.request_status == "pending")
+                    .cloned()
+                    .collect()
+            })
+    })
+}
+
 #[update]
 pub fn approve_enrollment_request(cohort_id: String, enroller_principal: Principal) -> String {
     let caller = caller();
@@ -640,7 +654,7 @@ pub fn filter_cohorts(criteria: CohortFilterCriteria) -> Vec<CohortDetails> {
                     .map_or(true, |tags| cohort_details.cohort.tags.contains(tags));
 
                 let level_match = criteria.level_on_rubric
-                    .map_or(true, |level| cohort_details.cohort.criteria.level_on_rubric >= level);
+                    .map_or(true, |level| cohort_details.cohort.criteria.level_on_rubric == level);
 
                 let seats_match = criteria.no_of_seats_range
                     .map_or(true, |(min_seats, max_seats)| {

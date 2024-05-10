@@ -52,6 +52,14 @@ type CohortDetails = record {
   cohort_creator : principal;
   cohort : Cohort;
 };
+type CohortEnrollmentRequest = record {
+  rejected_at : nat64;
+  request_status : text;
+  cohort_details : CohortDetails;
+  accepted_at : nat64;
+  enroller_data : EnrollerDataInternal;
+  sent_at : nat64;
+};
 type CohortFilterCriteria = record {
   level_on_rubric : opt float64;
   tags : opt text;
@@ -74,6 +82,11 @@ type Counts = record {
 type CustomError = record { is_owner : bool; message : text };
 type Docs = record { title : text; link : text };
 type Eligibility = record { level_on_rubric : float64; eligibility : opt text };
+type EnrollerDataInternal = record {
+  vc_data : opt VentureCapitalistInternal;
+  project_data : opt ProjectInfoInternal;
+  mentor_data : opt MentorInternal;
+};
 type FilterCriteria = record {
   area_of_focus : opt text;
   country : opt text;
@@ -925,7 +938,6 @@ service : {
   get_my_accepted_cohort_creation_request : () -> (vec CohortRequest) query;
   get_my_declined_cohort_creation_requests : () -> (vec CohortRequest) query;
   get_my_id : () -> (principal) query;
-  get_my_peers : (text, text) -> () query;
   get_my_pending_cohort_creation_requests : () -> (vec CohortRequest) query;
   get_my_project : () -> (ProjectInfoInternal) query;
   get_no_of_individuals_applied_for_cohort_using_id : (text) -> (
@@ -933,6 +945,9 @@ service : {
     ) query;
   get_notifications_for_hubs : () -> (vec NotificationProject) query;
   get_pending_admin_notifications : () -> (vec Notification) query;
+  get_pending_cohort_enrollment_requests : (principal) -> (
+      vec CohortEnrollmentRequest,
+    ) query;
   get_pending_cohort_requests_for_admin : () -> (vec CohortRequest) query;
   get_pending_cycles : () -> (nat) query;
   get_pending_money_requestes : (text) -> (vec ProjectNotification) query;
