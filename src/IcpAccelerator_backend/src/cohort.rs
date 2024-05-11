@@ -70,6 +70,7 @@ pub struct CohortEnrollmentRequest{
     pub rejected_at : u64,
     pub request_status : String,
     pub enroller_data: EnrollerDataInternal,
+    pub enroller_principal: Principal,
 }
 
 pub type MentorsAppliedForCohort = HashMap<String, Vec<MentorInternal>>;
@@ -261,6 +262,7 @@ pub fn get_all_cohorts() -> Vec<CohortDetails> {
 
 #[update]
 pub fn send_enrollment_request_as_mentor(cohort_id: String, user_info: MentorInternal) -> String {
+    let caller = caller();
     let now = ic_cdk::api::time();
 
     // Retrieve the cohort creator's Principal
@@ -280,6 +282,7 @@ pub fn send_enrollment_request_as_mentor(cohort_id: String, user_info: MentorInt
         rejected_at: 0,
         request_status: "pending".to_string(),
         enroller_data: EnrollerDataInternal{ project_data: None, mentor_data: Some(user_info), vc_data: None },
+        enroller_principal: caller,
     };
 
     COHORT_ENROLLMENT_REQUESTS.with(|requests| {
@@ -292,6 +295,7 @@ pub fn send_enrollment_request_as_mentor(cohort_id: String, user_info: MentorInt
 
 #[update]
 pub fn send_enrollment_request_as_investor(cohort_id: String, user_info: VentureCapitalistInternal) -> String {
+    let caller = caller();
     let now = ic_cdk::api::time();
 
     // Retrieve the cohort creator's Principal
@@ -311,6 +315,7 @@ pub fn send_enrollment_request_as_investor(cohort_id: String, user_info: Venture
         rejected_at: 0,
         request_status: "pending".to_string(),
         enroller_data: EnrollerDataInternal{ project_data: None, mentor_data: None, vc_data: Some(user_info) },
+        enroller_principal: caller,
     };
 
     COHORT_ENROLLMENT_REQUESTS.with(|requests| {
@@ -323,6 +328,7 @@ pub fn send_enrollment_request_as_investor(cohort_id: String, user_info: Venture
 
 #[update]
 pub fn send_enrollment_request_as_project(cohort_id: String, user_info: ProjectInfoInternal) -> String {
+    let caller = caller();
     let now = ic_cdk::api::time();
 
     // Retrieve the cohort creator's Principal
@@ -342,6 +348,7 @@ pub fn send_enrollment_request_as_project(cohort_id: String, user_info: ProjectI
         rejected_at: 0,
         request_status: "pending".to_string(),
         enroller_data: EnrollerDataInternal{ project_data: Some(user_info), mentor_data: None, vc_data: None },
+        enroller_principal: caller,
     };
 
     COHORT_ENROLLMENT_REQUESTS.with(|requests| {
@@ -360,6 +367,34 @@ pub fn get_pending_cohort_enrollment_requests(mentor_principal: Principal) -> Ve
             .map_or_else(Vec::new, |request_list| {
                 request_list.iter()
                     .filter(|request| request.request_status == "pending")
+                    .cloned()
+                    .collect()
+            })
+    })
+}
+
+#[query]
+pub fn get_accepted_cohort_enrollment_requests(mentor_principal: Principal) -> Vec<CohortEnrollmentRequest> {
+    COHORT_ENROLLMENT_REQUESTS.with(|requests| {
+        requests.borrow()
+            .get(&mentor_principal)
+            .map_or_else(Vec::new, |request_list| {
+                request_list.iter()
+                    .filter(|request| request.request_status == "accepted")
+                    .cloned()
+                    .collect()
+            })
+    })
+}
+
+#[query]
+pub fn get_rejected_cohort_enrollment_requests(mentor_principal: Principal) -> Vec<CohortEnrollmentRequest> {
+    COHORT_ENROLLMENT_REQUESTS.with(|requests| {
+        requests.borrow()
+            .get(&mentor_principal)
+            .map_or_else(Vec::new, |request_list| {
+                request_list.iter()
+                    .filter(|request| request.request_status == "rejected")
                     .cloned()
                     .collect()
             })
