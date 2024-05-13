@@ -13,33 +13,33 @@ const RequestCohort = () => {
   const [selectedOption, setSelectedOption] = useState("Pending");
   const [requestedData, setRequestedData] = useState([]);
 
-  const fetchData = async () => {
-    try {
-      const result = await actor.get_pending_cohort_requests_for_admin();
-      const result1 =
-        await actor.get_accepted_cohort_creation_request_for_admin();
-      const result2 =
-        await actor.get_declined_cohort_creation_request_for_admin();
+  // const fetchData = async () => {
+  //   try {
+  //     const result = await actor.get_pending_cohort_requests_for_admin();
+  //     const result1 =
+  //       await actor.get_accepted_cohort_creation_request_for_admin();
+  //     const result2 =
+  //       await actor.get_declined_cohort_creation_request_for_admin();
 
-      console.log(
-        "result get_pending_cohort_requests_for_admin ====>>>> ",
-        result
-      );
-      console.log(
-        "result get_accepted_cohort_creation_request_for_admin====>>>> ",
-        result1
-      );
-      console.log(
-        "result get_declined_cohort_creation_request_for_admin ====>>>> ",
-        result2
-      );
+  //     console.log(
+  //       "result get_pending_cohort_requests_for_admin ====>>>> ",
+  //       result
+  //     );
+  //     console.log(
+  //       "result get_accepted_cohort_creation_request_for_admin====>>>> ",
+  //       result1
+  //     );
+  //     console.log(
+  //       "result get_declined_cohort_creation_request_for_admin ====>>>> ",
+  //       result2
+  //     );
 
-      // Handle your data here
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      // Handle errors here
-    }
-  };
+  //     // Handle your data here
+  //   } catch (error) {
+  //     console.error("Error fetching data:", error);
+  //     // Handle errors here
+  //   }
+  // };
   const [noData, setNoData] = useState(null);
 
   const fetchCohortRequests = async (status) => {
@@ -86,7 +86,7 @@ const RequestCohort = () => {
 
   useEffect(() => {
     fetchCohortRequests(selectedOption);
-    fetchData();
+    // fetchData();
   }, [actor, selectedOption]);
 
   const approveAndRejectCohort = async (value, cohortId) => {

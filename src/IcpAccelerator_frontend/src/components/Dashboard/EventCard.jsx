@@ -27,6 +27,8 @@ const EventCard = ({ data, approveAndRejectCohort }) => {
       console.error("Failed to process the decision: ", error);
     } finally {
       setIsSubmitting(false);
+      setModalOpen(false);
+      window.location.href = "/";
     }
   };
   const handleCloseModal = () => {
@@ -159,7 +161,7 @@ const EventCard = ({ data, approveAndRejectCohort }) => {
 
                       onClick={() =>
                         handleOpenModal(
-                          "Are you sure you want to Decline Request?",
+                          "Are you sure you want to decline request?",
                           "Decline"
                         )
                       }
@@ -170,7 +172,7 @@ const EventCard = ({ data, approveAndRejectCohort }) => {
                       className="px-4 py-1 bg-[#3505B2] text-white font-bold rounded-lg ml-3"
                       onClick={() =>
                         handleOpenModal(
-                          "Are you sure you want to Accept Cohort Request?",
+                          "Are you sure you want to accept cohort request?",
                           "Accept"
                         )
                       }

@@ -18,6 +18,7 @@ import { userSvg } from "../Utils/AdminData/SvgData";
 import NoDataCard from "../../../../IcpAccelerator_frontend/src/components/Mentors/Event/NoDataCard";
 import NoData from "../../../../IcpAccelerator_frontend/assets/images/file_not_found.png";
 const AdminDashboard = () => {
+  const actor = useSelector((currState) => currState.actors.actor);
   const principal = useSelector((currState) => currState.internet.principal);
   const mentorCount = useSelector((currState) => currState.count.mentor_count);
   const vcCount = useSelector((currState) => currState.count.vc_count);
@@ -51,6 +52,31 @@ const AdminDashboard = () => {
   // console.log("allNotification in dahboard", allNotification);
   const navigate = useNavigate();
 
+  const [cohortData, setCohortData] = useState(null);
+  const fetchCohortData = async () => {
+    await actor
+      .get_pending_cohort_requests_for_admin()
+      .then((result) => {
+        console.log("result-in-get_my_project ========>>>>>>>>", result);
+        if (result && Object.keys(result).length > 0) {
+          setCohortData(result);
+        } else {
+          setCohortData(null);
+        }
+      })
+      .catch((error) => {
+        console.log("error-in-get_my_project", error);
+        setCohortData(null);
+      });
+  };
+
+  useEffect(() => {
+    if (actor) {
+      fetchCohortData();
+    } else {
+      window.location.href = "/";
+    }
+  }, [actor]);
   return (
     <div className="px-[4%] py-[4%] w-full h-auto flex md:flex-row flex-col justify-between md:space-x-6">
       <div className="flex flex-col md:w-9/12 w-full">
@@ -210,17 +236,17 @@ const AdminDashboard = () => {
 
           <div
             onClick={() => navigate("/cohortRequest")}
-            className="rounded-[1rem] space-x-2 flex px-4   justify-center  flex-col  w-full  bg-white  drop-shadow-xl border-2 "
+            className="rounded-[1rem] space-x-2 flex px-4 cursor-pointer justify-center  flex-col  w-full  bg-white  drop-shadow-xl border-2 "
           >
             <div className="flex  flex-row  flex-wrap justify-around font-bold text-lg text-black items-center ">
               <div className="gap-2 flex-row flex items-center w-2/3">
                 <img src={proj} alt="proj" className="h-10 w-10" />
-                <p className="flex font-semibold justify-between text-sm">
+                <p className="flex font-semibold cursor-pointer justify-between text-sm">
                   Cohorts
                 </p>
               </div>
               <p className="font-extrabold  w-1/3 text-2xl h-[62px] flex  justify-center items-center">
-                0
+                {cohortData ? cohortData.length : 0}
               </p>
             </div>
           </div>
@@ -255,7 +281,9 @@ const AdminDashboard = () => {
                           className="w-[3rem] h-[3rem] object-cover rounded-lg"
                         />
                         <div className="flex flex-col md:ml-0 ml-4 justify-around items-start">
-                          <p className="font-extrabold truncate text-sm">{item.name}</p>
+                          <p className="font-extrabold truncate text-sm">
+                            {item.name}
+                          </p>
                           <p className="bg-[#495760] md:text-[9px] text-[8px] items-center  rounded-xl text-white  px-2">
                             {item.requestedFor}
                           </p>
