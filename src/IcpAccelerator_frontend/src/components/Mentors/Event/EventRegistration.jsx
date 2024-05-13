@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { projectFilterSvg } from "../../Utils/Data/SvgData";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Principal } from "@dfinity/principal";
-import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
-import { formatFullDateFromBigInt } from "../../Utils/formatter/formatDateFromBigInt";
-import DeclineOfferModal from "../../../models/DeclineOfferModal";
-import AcceptOfferModal from "../../../models/AcceptOfferModal";
 import NoDataCard from "../../Mentors/Event/MentorAssocReqNoDataCard";
+import hover from "../../../../assets/images/1.png";
+import FunctionalityModel from "../../../models/FunctionalityModel";
+import { projectFilterSvg } from "../../Utils/Data/SvgData";
 function EventRegistration() {
-  const navigate = useNavigate();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [para, setPara] = useState("");
+  const [action, setAction] = useState("");
+  const [index, setIndex] = useState("");
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState("pending");
   const [data, setData] = useState([]);
-  const [noData, setNoData] = useState(false);
   const headerData = [
     {
       id: "pending",
@@ -29,20 +30,24 @@ function EventRegistration() {
     },
   ];
 
-  //   const rolesFilterArray = [
-  //     {
-  //       id: "to-project",
-  //       label: "to project",
-  //     },
-  //     {
-  //       id: "from-project",
-  //       label: "from project",
-  //     },
-  //   ];
+    const rolesFilterArray = [
+      {
+        id: "from-project",
+        label: "from project",
+      },
+      {
+        id: "from-mentor",
+        label: "from mentor",
+      },
+      {
+        id: "from-investor",
+        label: "from investor",
+      },
+    ];
 
   const actor = useSelector((currState) => currState.actors.actor);
   const principal = useSelector((currState) => currState.internet.principal);
-  const [selectedStatus, setSelectedStatus] = useState("to-project");
+  const [selectedStatus, setSelectedStatus] = useState("from-project");
   const getTabClassName = (tab) => {
     return `inline-block p-1 ${
       activeTab === tab
@@ -55,23 +60,66 @@ function EventRegistration() {
     setActiveTab(tab);
   };
 
+  const handleOpenModal = (para, action, index) => {
+    setPara(para);
+    setAction(action);
+    setIndex(index);
+    setModalOpen(true);
+    console.log("Modal open with", para, action);
+  };
+  const handleClick = async (index) => {
+    setIsSubmitting(true);
+    try {
+      let enroller_principal = data?.[index]?.enroller_principal;
+      let cohortId = data?.[index]?.cohort_details?.cohort_id;
+      let cohort_creator_principal =
+        data?.[index]?.cohort_details?.cohort_creator_principal;
+
+      // console.log("Line 21 Action ====>>>>", action)
+      // console.log("Line 23 Decision =====>>>>", decision)
+
+      if (action === "Approve") {
+        const result = await actor.approve_enrollment_request(
+          cohortId,
+          enroller_principal
+        );
+        console.log("result of approve_enrollment_request 80 ====>>>>>",result)
+      } else {
+        const result = await actor.reject_enrollment_request(
+          cohort_creator_principal,
+          enroller_principal
+        );
+        console.log("result of reject_enrollment_request 86 ====>>>>>",result)
+      }
+    } catch (error) {
+      console.error("Failed to process the decision: ", error);
+    } finally {
+      setIsSubmitting(false);
+      setModalOpen(false);
+      // window.location.href = "/";
+    }
+  };
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
   // // // GET POST API HANDLERS WHERE MENTOR APPROCHES PROJECT // // //
 
   // GET API HANDLER TO GET THE PENDING REQUESTS DATA WHERE MENTOR APPROCHES PROJECT
-  const fetchPendingRequestFromMentorToProject = async () => {
-    // let mentor_id = Principal.fromText(principal)
+  const fetchPendingCohortEnrollmentRequests = async () => {
+    let mentor_principal = Principal.fromText(principal);
+    console.log(mentor_principal);
     try {
-      const result = await actor.get_all_offers_which_are_pending_for_mentor();
-      console.log(
-        `result-in-get_all_offers_which_are_pending_for_mentor`,
-        result
+      const result = await actor.get_pending_cohort_enrollment_requests(
+        mentor_principal
       );
+      console.log(
+        `result-in-get_pending_cohort_enrollment_requests`,
+        Principal
+      );
+      console.log(`result-in-get_pending_cohort_enrollment_requests`, result);
       setData(result);
     } catch (error) {
-      console.log(
-        `error-in-get_all_offers_which_are_pending_for_mentor`,
-        error
-      );
+      console.log(`error-in-get_pending_cohort_enrollment_requests`, error);
       setData([]);
     }
   };
@@ -119,7 +167,7 @@ function EventRegistration() {
     if (actor && principal && activeTab && selectedStatus) {
       switch (activeTab) {
         case "pending":
-          fetchPendingRequestFromMentorToProject(); /// change as needed
+          fetchPendingCohortEnrollmentRequests(); /// change as needed
           break;
         case "approved":
           fetchApprovedRequestFromMentorToProject(); /// change as needed
@@ -133,6 +181,14 @@ function EventRegistration() {
   return (
     <div className="font-fontUse flex flex-col items-center w-full h-fit px-[5%] lg1:px-[4%] py-[4%] md:pt-0">
       <div className="mb-4 flex flex-row justify-between items-end w-full">
+        <FunctionalityModel
+          para={para}
+          action={action}
+          onModal={modalOpen}
+          isSubmitting={isSubmitting}
+          onClose={handleCloseModal}
+          onClick={handleClick}
+        />
         <div className="flex flex-row">
           <p className="text-lg font-semibold bg-gradient-to-r from-indigo-900 to-sky-400 inline-block text-transparent bg-clip-text">
             Cohort Registeration Requests
@@ -155,7 +211,7 @@ function EventRegistration() {
             ))}
           </ul>
         </div>
-        {/* <div
+        <div
           onClick={() => setIsPopupOpen(!isPopupOpen)}
           className="cursor-pointer gap-2 flex flex-row items-center"
         >
@@ -163,8 +219,8 @@ function EventRegistration() {
             {selectedStatus.replace(/-/g, " ")}
           </button>
           {projectFilterSvg}
-        </div> */}
-        {/* {isPopupOpen && (
+        </div>
+        {isPopupOpen && (
           <div className="absolute w-[250px] top-52 right-16 bg-white shadow-xl rounded-lg border border-gray-300 p-4 z-50">
             {rolesFilterArray.map((status, index) => {
               console.log("rolesFilterArray-status", status);
@@ -187,63 +243,70 @@ function EventRegistration() {
               );
             })}
           </div>
-        )} */}
+        )}
       </div>
       <div className="h-screen overflow-y-scroll scroll-smooth w-full">
+        {console.log("data on 196 ====>>>", data)}
         {data && data.length > 0 ? (
           data.map((val, index) => {
-            console.log("full-val", val);
-            let img = "";
+            console.log("full-val on 199 ===>>>", val);
+
             let name = "";
-            let date = "";
-            let msg = "";
-            let offer_id = "";
-            let resp_msg = "";
-            let accpt_date = "";
-            let decln_date = "";
-            let self_decln = "";
+            let tags = "";
+            let description = "";
+            let no_of_seats = "";
+            let cohort_launch_date = "";
+            let cohort_end_date = "";
+            let deadline = "";
+            let eligibility = "";
+            let level_on_rubric = "";
+            let accepted_at = "";
+            let rejected_at = "";
 
             switch (activeTab) {
               case "pending":
-                img = val?.project_info?.project_logo
-                  ? uint8ArrayToBase64(val?.project_info?.project_logo)
-                  : "";
-                name = val?.project_info?.project_name ?? "";
-                date = val?.sent_at
-                  ? formatFullDateFromBigInt(val?.sent_at)
-                  : "";
-                msg = val?.offer ?? "";
-                offer_id = val?.offer_id ?? "";
+                name = val?.cohort_details?.cohort?.title;
+                tags = val?.cohort_details?.cohort?.tags;
+                description = val?.cohort_details?.cohort?.description;
+                no_of_seats = val?.cohort_details?.cohort?.no_of_seats;
+                cohort_launch_date =
+                  val?.cohort_details?.cohort?.cohort_launch_date;
+                cohort_end_date = val?.cohort_details?.cohort?.cohort_end_date;
+                deadline = val?.cohort_details?.cohort?.deadline;
+                eligibility =
+                  val?.cohort_details?.cohort?.criteria?.eligibility?.[0];
+                level_on_rubric =
+                  val?.cohort_details?.cohort?.criteria?.level_on_ ?? "";
                 break;
               case "approved":
-                img = val?.project_info?.project_logo
-                  ? uint8ArrayToBase64(val?.project_info?.project_logo)
-                  : "";
-                name = val?.project_info?.project_name ?? "";
-                date = val?.sent_at
-                  ? formatFullDateFromBigInt(val?.sent_at)
-                  : "";
-                msg = val?.offer ?? "";
-                offer_id = val?.offer_id ?? "";
-                resp_msg = val?.response ?? "";
-                accpt_date = val?.accepted_at
-                  ? formatFullDateFromBigInt(val?.accepted_at)
-                  : "";
+                name = val?.cohort_details?.cohort?.title;
+                tags = val?.cohort_details?.cohort?.tags;
+                description = val?.cohort_details?.cohort?.description;
+                no_of_seats = val?.cohort_details?.cohort?.no_of_seats;
+                cohort_launch_date =
+                  val?.cohort_details?.cohort?.cohort_launch_date;
+                cohort_end_date = val?.cohort_details?.cohort?.cohort_end_date;
+                deadline = val?.cohort_details?.cohort?.deadline;
+                eligibility =
+                  val?.cohort_details?.cohort?.criteria?.eligibility?.[0];
+                level_on_rubric =
+                  val?.cohort_details?.cohort?.criteria?.level_on_ ?? "";
+                accepted_at = val?.accepted_at ?? "";
                 break;
               case "declined":
-                img = val?.project_info?.project_logo
-                  ? uint8ArrayToBase64(val?.project_info?.project_logo)
-                  : "";
-                name = val?.project_info?.project_name ?? "";
-                date = val?.sent_at
-                  ? formatFullDateFromBigInt(val?.sent_at)
-                  : "";
-                msg = val?.offer ?? "";
-                offer_id = val?.offer_id ?? "";
-                resp_msg = val?.response ?? "";
-                decln_date = val?.declined_at
-                  ? formatFullDateFromBigInt(val?.declined_at)
-                  : "";
+                name = val?.cohort_details?.cohort?.title;
+                tags = val?.cohort_details?.cohort?.tags;
+                description = val?.cohort_details?.cohort?.description;
+                no_of_seats = val?.cohort_details?.cohort?.no_of_seats;
+                cohort_launch_date =
+                  val?.cohort_details?.cohort?.cohort_launch_date;
+                cohort_end_date = val?.cohort_details?.cohort?.cohort_end_date;
+                deadline = val?.cohort_details?.cohort?.deadline;
+                eligibility =
+                  val?.cohort_details?.cohort?.criteria?.eligibility?.[0];
+                level_on_rubric =
+                  val?.cohort_details?.cohort?.criteria?.level_on_ ?? "";
+                rejected_at = val?.rejected_at ?? "";
                 break;
             }
 
@@ -256,7 +319,7 @@ function EventRegistration() {
                   <div className="flex flex-col">
                     <div className="w-12 h-12">
                       <img
-                        src={img}
+                        src={hover}
                         alt="img"
                         className="object-cover rounded-full h-full w-full"
                       />
@@ -266,59 +329,35 @@ function EventRegistration() {
                     <div className="flex flex-col w-full pl-4 ">
                       <div className="flex justify-between">
                         <p className="text-gray-500 font-bold">{name}</p>
-                        <p className="text-gray-400 font-thin">{date}</p>
+                        <p className="text-gray-400 font-thin">
+                          {cohort_launch_date}
+                        </p>
                       </div>
                       <div className="min-h-4 line-clamp-3 text-gray-400">
-                        <p>{msg}</p>
+                        <p>{description}</p>
                       </div>
                       {activeTab === "approved" &&
-                      resp_msg &&
-                      resp_msg.trim() !== "" &&
-                      accpt_date &&
-                      accpt_date.trim() !== "" ? (
+                      accepted_at &&
+                      accepted_at.trim() !== "" ? (
                         <>
                           <div className="flex justify-between pt-2">
                             <p className="text-green-700">{"RESPONSE"}</p>
                             <p className="text-gray-400 font-thin">
-                              {accpt_date}
+                              {accepted_at}
                             </p>
-                          </div>
-                          <div className="min-h-4 line-clamp-3 text-gray-400">
-                            <p>{resp_msg}</p>
                           </div>
                         </>
                       ) : (
                         ""
                       )}
                       {activeTab === "declined" &&
-                      resp_msg &&
-                      resp_msg.trim() !== "" &&
-                      decln_date &&
-                      decln_date.trim() !== "" ? (
+                      rejected_at &&
+                      rejected_at.trim() !== "" ? (
                         <>
                           <div className="flex justify-between pt-2">
                             <p className="text-red-700">{"RESPONSE"}</p>
                             <p className="text-gray-400 font-thin">
-                              {decln_date}
-                            </p>
-                          </div>
-                          <div className="min-h-4 line-clamp-3 text-gray-400">
-                            <p>{resp_msg}</p>
-                          </div>
-                        </>
-                      ) : (
-                        ""
-                      )}
-                      {activeTab === "self-reject" &&
-                      self_decln &&
-                      self_decln.trim() !== "" ? (
-                        <>
-                          <div className="flex justify-between pt-2">
-                            <p className="text-blue-700 uppercase">
-                              self reject
-                            </p>
-                            <p className="text-gray-400 font-thin">
-                              {self_decln}
+                              {rejected_at}
                             </p>
                           </div>
                         </>
@@ -327,47 +366,35 @@ function EventRegistration() {
                       )}
                       <div className="flex justify-end pt-4">
                         <div className="flex gap-4">
-                          <div>
-                            <button
-                              onClick={() =>
-                                navigate(viewProjectProfileHandler(val))
-                              }
-                              className="capitalize border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900"
-                            >
-                              view project
-                            </button>
-                          </div>
                           {activeTab !== "pending" ? (
                             ""
-                          ) : selectedStatus.startsWith("to-") ? (
-                            <div>
-                              <button
-                                onClick={() => handleSelfReject(offer_id)}
-                                className="capitalize border-2 font-semibold bg-blue-900 border-blue-900 text-white px-2 py-1 rounded-md  hover:text-blue-900 hover:bg-white"
-                              >
-                                self decline
-                              </button>
-                            </div>
                           ) : (
                             <>
                               <div>
                                 <button
                                   onClick={() =>
-                                    handleDeclineModalOpenHandler(offer_id)
+                                    handleOpenModal(
+                                      "Are you sure you want to reject request?",
+                                      "Reject"
+                                    )
                                   }
                                   className="capitalize border-2 font-semibold bg-red-700 border-red-700 text-white px-2 py-1 rounded-md  hover:text-red-900 hover:bg-white"
                                 >
-                                  reject
+                                  Reject
                                 </button>
                               </div>
                               <div>
                                 <button
                                   onClick={() =>
-                                    handleAcceptModalOpenHandler(offer_id)
+                                    handleOpenModal(
+                                      "Are you sure you want to approve request?",
+                                      "Approve",
+                                      index
+                                    )
                                   }
                                   className="capitalize border-2 font-semibold bg-blue-900 border-blue-900 text-white px-2 py-1 rounded-md  hover:text-blue-900 hover:bg-white"
                                 >
-                                  approve
+                                  Approve
                                 </button>
                               </div>
                             </>

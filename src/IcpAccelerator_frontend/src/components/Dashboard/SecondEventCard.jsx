@@ -7,34 +7,9 @@ import toast, { Toaster } from "react-hot-toast";
 import { formatFullDateFromSimpleDate } from "../Utils/formatter/formatDateFromBigInt";
 const SecondEventCard = ({ data, register }) => {
   const actor = useSelector((currState) => currState.actors.actor);
-  const [projectData, setProjectData] = useState(null);
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
-  const fetchProjectData = async () => {
-    await actor
-      .get_my_project()
-      .then((result) => {
-        console.log("result-in-get_my_project ========>>>>>>>>", result);
-        if (result && Object.keys(result).length > 0) {
-          setProjectData(result);
-        } else {
-          setProjectData(null);
-        }
-      })
-      .catch((error) => {
-        console.log("error-in-get_my_project", error);
-        setProjectData(null);
-      });
-  };
-
-  useEffect(() => {
-    if (actor) {
-      fetchProjectData();
-    } else {
-      window.location.href = "/";
-    }
-  }, [actor]);
 
   if (!data) {
     return null;
@@ -62,19 +37,20 @@ const SecondEventCard = ({ data, register }) => {
     if (actor) {
       try {
         if (userCurrentRoleStatusActiveRole === "project") {
-          let project_id = projectData?.uid;
           let cohort_id = data?.cohort_id;
-          console.log("project_id ===> ", project_id);
           console.log("cohortid ===> ", cohort_id);
           await actor
-            .apply_for_a_cohort_as_a_project(cohort_id, project_id)
+            .apply_for_a_cohort_as_a_project(cohort_id)
             .then((result) => {
               console.log("result in project to check update call==>", result);
-              if (result.Ok) {
-                toast.success("You have successfully applied for the cohort");
+              if (
+                result &&
+                result.includes(`Request Has Been Sent To Cohort Creator`)
+              ) {
+                toast.success(result);
                 // window.location.href = "/";
               } else {
-                toast.error(result.Err);
+                toast.error(result);
               }
             });
         } else if (
@@ -91,13 +67,8 @@ const SecondEventCard = ({ data, register }) => {
                 "result in mentor || vc to check update call==>",
                 result
               );
-              if (
-                result &&
-                result.includes(
-                  `you have successfully applied for the cohort with cohort id ${cohort_id}`
-                )
-              ) {
-                toast.success("You have successfully applied for the cohort");
+              if (result) {
+                toast.success(result);
                 // window.location.href = "/";
               } else {
                 toast.error(result);

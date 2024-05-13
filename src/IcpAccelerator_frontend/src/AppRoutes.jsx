@@ -30,6 +30,7 @@ import ProjectRegForm from "./components/RegForms.jsx/ProjectRegForm";
 import RequestMoneyRaising from "./components/Project/ProjectDetailsPages/RequestMoneyRaising";
 import Home from "./components/Home/Home";
 import EventRegistration from "./components/Mentors/Event/EventRegistration";
+import CohortPage from "./components/Mentors/Event/CohortPage";
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
 const ProjectDetails = lazy(() => import("./components/Project/ProjectDetails"));
@@ -48,6 +49,7 @@ const AppRoutes = () => {
     { path: "/association", element: <ProjectAssociation /> },
     { path: "/create-user", element: <UserRegForm /> },
     { path: "/event-register-request", element: <EventRegistration /> },
+    { path: "/event-page", element: <CohortPage /> },
     { path: "/create-user", element: <UserRegForm /> },
     { path: "/create-project", element: <ProjectRegForm /> },
     // { path: "/create-investor", element: <InvestorRegistration /> },
