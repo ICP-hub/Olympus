@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import "react-circular-progressbar/dist/styles.css";
 import {
   place,
-  Profile2,
   telegramSVg,
   noDataPresentSvg,
   place1,
@@ -10,8 +9,6 @@ import {
   linkSvg,
 } from "../../Utils/AdminData/SvgData";
 import {
-  formatDateFromBigInt,
-  numberToDate,
   uint8ArrayToBase64,
 } from "../../Utils/AdminData/saga_function/blobImageToUrl";
 import { useSelector } from "react-redux";
@@ -19,15 +16,8 @@ import { Principal } from "@dfinity/principal";
 import { ThreeDots } from "react-loader-spinner";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { investorApprovedRequest } from "../../AdminStateManagement/Redux/Reducers/investorApproved";
-import { investorDeclinedRequest } from "../../AdminStateManagement/Redux/Reducers/investorDecline";
 import openchat_username from "../../../../assets/image/spinner.png";
 import { linkedInSvg } from "../../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
-import { Pagination, Autoplay } from "swiper/modules";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/autoplay";
 import { twitterSvg } from "../../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
 
 const UpdateInvestorProfile = () => {
@@ -46,10 +36,7 @@ const UpdateInvestorProfile = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  //   const notificationDetails = location.state;
-
-  //   console.log("userData in investor profile", originalInfo);
-  // console.log("Allrole in investor profile", Allrole);
+  const updateStatus =location.state
 
   useEffect(() => {
     const fetchProjectData = async () => {
@@ -188,78 +175,18 @@ const UpdateInvestorProfile = () => {
     }
   }, [actor]);
 
-  //   useEffect(() => {
-  //     const requestedRole = Allrole?.role?.find(
-  //       (role) => role.status === "requested"
-  //     );
-  //     if (requestedRole) {
-  //       setCurrent(requestedRole.name.toLowerCase());
-  //     } else {
-  //       setCurrent("user");
-  //     }
-  //   }, [Allrole.role]);
-
-  const getButtonClass = (status) => {
-    switch (status) {
-      case "active":
-        return "bg-[#A7943A]";
-      case "requested":
-        return "bg-[#e55711]";
-      case "approved":
-        return "bg-[#0071FF]";
-      default:
-        return "bg-[#FF3A41]";
-    }
-  };
-
-  function constructMessage(role) {
-    let baseMessage = `This User's ${
-      role.name.charAt(0).toUpperCase() + role.name.slice(1)
-    } Profile `;
-
-    if (
-      role.status === "active" &&
-      role.approved_on &&
-      role.approved_on.length > 0
-    ) {
-      baseMessage += `was approved on ${numberToDate(role.approved_on[0])}`;
-    } else if (
-      role.status === "approved" &&
-      role.approved_on &&
-      role.approved_on.length > 0
-    ) {
-      baseMessage += `was approved on ${numberToDate(role.approved_on[0])}`;
-    } else if (
-      role.status === "requested" &&
-      role.requested_on &&
-      role.requested_on.length > 0
-    ) {
-      baseMessage += `request was made on ${numberToDate(
-        role.requested_on[0]
-      )}`;
-    } else if (
-      role.status === "rejected" &&
-      role.rejected_on &&
-      role.rejected_on.length > 0
-    ) {
-      baseMessage += `was rejected on ${numberToDate(role.rejected_on[0])}`;
-    } else {
-      baseMessage += `is currently in the '${role.status}' status without a specific date.`;
-    }
-
-    return baseMessage;
-  }
-
   const declineUserRoleHandler = async (
+    principle,
     boolean
   ) => {
     setIsDeclining(true);
     try {
-      // const covertedPrincipal = await Principal.fromText(principal);
-      // console.log("Converted Principal ", covertedPrincipal);
+      const covertedPrincipal = await Principal.fromText(principle);
 
-            await actor.decline_vc_profile_update_request(principal, boolean);
-            await dispatch(investorDeclinedRequest());
+            await actor.decline_vc_profile_update_request(
+              covertedPrincipal,
+              boolean
+            );
     } catch (error) {
       console.error("Error processing request:", error);
     } finally {
@@ -268,13 +195,14 @@ const UpdateInvestorProfile = () => {
     }
   };
 
-  const allowUserRoleHandler = async (boolean) => {
+  const allowUserRoleHandler = async ( principle,boolean) => {
     setIsAccepting(true);
-
     try {
-      // const covertedPrincipal = await Principal.fromText(principal);
-            await actor.approve_vc_profile_update(principal, boolean);
-            await dispatch(investorApprovedRequest());
+       const covertedPrincipal = await Principal.fromText(principle);
+            await actor.approve_vc_profile_update(
+              covertedPrincipal,
+              boolean
+            );
     } catch (error) {
       console.error("Error processing request:", error);
     } finally {
@@ -330,13 +258,13 @@ const UpdateInvestorProfile = () => {
                 </h1>
               </div>
               {orignalData?.email && (
-                <div className="text-gray-500 md:text-md text-sm font-normal flex mb-2">
-                  <span className="inline-block w-1.5  p-0.5 h-1.5  bg-red-700 rounded-full"></span>
+                <div className="text-gray-500 md:text-md text-sm items-center space-x-4 font-normal flex mb-2">
+                  <span className="inline-block w-1.5  p-0.5 h-1.5  bg-green-700 rounded-full"></span>
 
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 512 512"
-                    className="size-4 "
+                    className="size-4 ml-2"
                     fill="currentColor"
                   >
                     <path d="M256 64C150 64 64 150 64 256s86 192 192 192c17.7 0 32 14.3 32 32s-14.3 32-32 32C114.6 512 0 397.4 0 256S114.6 0 256 0S512 114.6 512 256v32c0 53-43 96-96 96c-29.3 0-55.6-13.2-73.2-33.9C320 371.1 289.5 384 256 384c-70.7 0-128-57.3-128-128s57.3-128 128-128c27.9 0 53.7 8.9 74.7 24.1c5.7-5 13.1-8.1 21.3-8.1c17.7 0 32 14.3 32 32v80 32c0 17.7 14.3 32 32 32s32-14.3 32-32V256c0-106-86-192-192-192zm64 192a64 64 0 1 0 -128 0 64 64 0 1 0 128 0z" />
@@ -351,7 +279,7 @@ const UpdateInvestorProfile = () => {
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 512 512"
-                    className="size-4 "
+                    className="size-4 ml-2"
                     fill="currentColor"
                   >
                     <path d="M256 64C150 64 64 150 64 256s86 192 192 192c17.7 0 32 14.3 32 32s-14.3 32-32 32C114.6 512 0 397.4 0 256S114.6 0 256 0S512 114.6 512 256v32c0 53-43 96-96 96c-29.3 0-55.6-13.2-73.2-33.9C320 371.1 289.5 384 256 384c-70.7 0-128-57.3-128-128s57.3-128 128-128c27.9 0 53.7 8.9 74.7 24.1c5.7-5 13.1-8.1 21.3-8.1c17.7 0 32 14.3 32 32v80 32c0 17.7 14.3 32 32 32s32-14.3 32-32V256c0-106-86-192-192-192zm64 192a64 64 0 1 0 -128 0 64 64 0 1 0 128 0z" />
@@ -372,7 +300,7 @@ const UpdateInvestorProfile = () => {
                   {place1}
                   <p className="underline">{updatedData?.country}</p>
                 </div>
-                <div className=" flex flex-row items-center space-x-3 text-gray-600">
+                {/* <div className=" flex flex-row items-center space-x-3 text-gray-600">
                   <span className="inline-block w-1.5  p-0.5 h-1.5  bg-red-700 rounded-full"></span>
 
                   <svg
@@ -383,11 +311,11 @@ const UpdateInvestorProfile = () => {
                   >
                     <path d="M152 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H64C28.7 64 0 92.7 0 128v16 48V448c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V192 144 128c0-35.3-28.7-64-64-64H344V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H152V24zM48 192H400V448c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V192z" />
                   </svg>
-                  {/* <p className="ml-2 truncate">
+                  <p className="ml-2 truncate">
                     {Allrole[2]?.requested_on?.length > 0
                       ? date
                       : "No requested date"}
-                  </p> */}
+                  </p>
                 </div>
                 <div className=" flex flex-row items-center space-x-3 text-gray-600">
                   <span className="inline-block w-1.5  p-0.5 h-1.5  bg-green-700 rounded-full"></span>
@@ -400,12 +328,12 @@ const UpdateInvestorProfile = () => {
                   >
                     <path d="M152 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H64C28.7 64 0 92.7 0 128v16 48V448c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V192 144 128c0-35.3-28.7-64-64-64H344V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H152V24zM48 192H400V448c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V192z" />
                   </svg>
-                  {/* <p className="ml-2 truncate">
+                  <p className="ml-2 truncate">
                     {Allrole[2]?.requested_on?.length > 0
                       ? date
                       : "No requested date"}
-                  </p> */}
-                </div>
+                  </p>
+                </div> */}
 
                 {orignalData?.openchatUsername && (
                   <div className="flex flex-row space-x-3 items-center text-gray-600">
@@ -1730,49 +1658,30 @@ const UpdateInvestorProfile = () => {
             </ul>
           </div>
         </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        {/* {Allrole?.map((role, index) => {
-          const roleName = role.name === "vc" ? "vc" : role.name;
-          if (role.status === "requested" && roleName === "vc") {
-            return (
-              <div key={index} className="flex justify-end gap-2 mt-6">
+        {updateStatus.selectionOption === "Pending"?
+        <div className="flex justify-end gap-2 mt-6">
                 <button
                   onClick={() =>
                     declineUserRoleHandler(
-                      principal,
-                      true,
+                      updateStatus.principalId,
+                      true,  
                     )
                   }
                   disabled={isDeclining}
-                  className="px-5 py-2.5 text-sm font-medium text-white bg-[#C60404] hover:bg-[#8b2a2a] rounded-lg  focus:outline-none focus:ring-4 focus:ring-gray-100"
+                  className="px-5 py-2.5 text-sm font-medium text-white bg-[#C60404] hover:bg-[#8b2a2a] rounded-lg focus:outline-none focus:ring-4 focus:ring-gray-100"
                 >
                   {isDeclining ? (
                     <ThreeDots color="#FFF" height={13} width={51} />
                   ) : (
                     "Decline"
                   )}
-                </button>
+                </button>{" "}
                 <button
                   onClick={() =>
-                    allowUserRoleHandler(principal, true,)
+                    allowUserRoleHandler(updateStatus.principalId, true)
                   }
                   disabled={isAccepting}
-                  className="px-5 py-2.5 text-sm font-medium text-white bg-[#3505B2] hover:bg-[#482b90] rounded-lg  focus:outline-none focus:ring-4 focus:ring-blue-300"
+                  className="px-5 py-2.5 text-sm font-medium text-white bg-[#3505B2] hover:bg-[#482b90] rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-300"
                 >
                   {isAccepting ? (
                     <ThreeDots color="#FFF" height={13} width={51} />
@@ -1780,11 +1689,7 @@ const UpdateInvestorProfile = () => {
                     "Accept"
                   )}
                 </button>
-              </div>
-            );
-          }
-          return null;
-        })} */}
+              </div>:""}
       </div>
     </>
   );

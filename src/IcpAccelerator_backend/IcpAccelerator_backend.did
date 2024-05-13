@@ -759,6 +759,7 @@ service : {
   approve_private_docs_access_request : (text, principal) -> (text);
   approve_project_creation_request : (principal) -> (text);
   approve_project_details_updation_request : (principal, text, bool) -> (text);
+  approve_project_update : (principal, text, bool) -> (text);
   approve_vc_creation_request : (principal, bool) -> (text);
   approve_vc_profile_update : (principal, bool) -> (text);
   calculate_and_store_average_rating : (text, text) -> (Result_4);

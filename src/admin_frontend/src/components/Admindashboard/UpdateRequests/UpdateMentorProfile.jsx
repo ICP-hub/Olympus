@@ -2,9 +2,7 @@ import React, { useState, useEffect } from "react";
 import "react-circular-progressbar/dist/styles.css";
 
 import {
-  place,
   place1,
-  Profile2,
   telegramSVg,
   websiteSvg,
 } from "../../Utils/AdminData/SvgData";
@@ -18,18 +16,10 @@ import { Principal } from "@dfinity/principal";
 import { ThreeDots } from "react-loader-spinner";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { mentorDeclinedRequest } from "../../AdminStateManagement/Redux/Reducers/mentorDeclined";
-import { mentorApprovedRequest } from "../../AdminStateManagement/Redux/Reducers/mentorApproved";
 import openchat_username from "../../../../assets/image/spinner.png";
 import { linkedInSvg } from "../../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
 import { twitterSvg } from "../../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
 import { noDataPresentSvg } from "../../Utils/AdminData/SvgData";
-import { Pagination, Autoplay } from "swiper/modules";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/autoplay";
-
 const UpdateMentorProfile = () => {
   const actor = useSelector((currState) => currState.actors.actor);
 
@@ -47,6 +37,8 @@ const UpdateMentorProfile = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const updateStatus =location.state
 
   // console.log("userData in mentor profile", userData);
   // console.log("Allrole in mentor profile", Allrole);
@@ -81,7 +73,7 @@ const UpdateMentorProfile = () => {
             areaOfInterest: originalInfo?.user_data?.area_of_interest,
             reasonForJoining: originalInfo?.reason_for_joining?.[0],
             email: originalInfo?.user_data?.email[0],
-            bio: originalInfo?.bio?.[0] || [],
+            bio: originalInfo?.user_data?.bio?.[0] ?? [],
             country: originalInfo?.user_data?.country,
             fullName: originalInfo?.user_data?.full_name,
             openchatUsername: originalInfo?.user_data.openchat_username?.[0],
@@ -99,9 +91,9 @@ const UpdateMentorProfile = () => {
             website: originalInfo?.website?.[0],
             typeOfProfile: originalInfo?.user_data?.type_of_profile?.[0],
 
-            yearsOfMentoring: originalInfo?.years_of_mentoring?.[0] || [],
+            yearsOfMentoring: originalInfo?.years_of_mentoring?.[0] ?? [],
             existingIcpProjectPortfolio:
-              originalInfo?.existing_icp_project_porfolio?.[0] || [],
+              originalInfo?.existing_icp_project_porfolio?.[0] ?? [],
           });
 
           setUpdatedData({
@@ -116,7 +108,7 @@ const UpdateMentorProfile = () => {
             reasonForJoining: updatedInfo?.reason_for_joining?.[0],
 
             email: updatedInfo?.user_data?.email[0],
-            bio: updatedInfo?.bio?.[0] || [],
+            bio: updatedInfo?.user_data?.bio?.[0] ?? [],
             country: updatedInfo?.user_data?.country,
             fullName: updatedInfo?.user_data?.full_name,
             openchatUsername: updatedInfo?.user_data.openchat_username?.[0],
@@ -128,7 +120,7 @@ const UpdateMentorProfile = () => {
             telegram: updatedInfo?.user_data?.telegram_id?.[0],
             twitter: updatedInfo?.user_data?.twitter_id?.[0],
             website: updatedInfo?.website?.[0],
-            yearsOfMentoring: updatedInfo?.years_of_mentoring?.[0] || [],
+            yearsOfMentoring: updatedInfo?.years_of_mentoring?.[0] ?? [],
           });
         } else {
           console.error("Unexpected data structure:", data);
@@ -208,24 +200,17 @@ const UpdateMentorProfile = () => {
   }
 
   const declineUserRoleHandler = async (
-    boolean,
+    principle,
+    boolean
   ) => {
     setIsDeclining(true);
     try {
-      // const covertedPrincipal = await Principal.fromText(principal);
-      // switch (category) {
-      //   case "mentor":
-      //     if (state === "Pending") {
+      const covertedPrincipal = await Principal.fromText(principle);
+
             await actor.decline_mentor_profile_update_request(
-              principal,
+              covertedPrincipal,
               boolean
             );
-            await dispatch(mentorDeclinedRequest());
-      //     }
-      //     break;
-      //   default:
-      //     console.warn("Unhandled category:", category);
-      // }
     } catch (error) {
       console.error("Error processing request:", error);
     } finally {
@@ -234,23 +219,14 @@ const UpdateMentorProfile = () => {
     }
   };
 
-  const allowUserRoleHandler = async ( boolean) => {
+  const allowUserRoleHandler = async ( principle,boolean) => {
     setIsAccepting(true);
     try {
-      // const covertedPrincipal = await Principal.fromText(principal);
-      // switch (category) {
-      //   case "mentor":
-      //     if (state === "Pending") {
+       const covertedPrincipal = await Principal.fromText(principle);
             await actor.approve_mentor_profile_update(
-              principal,
+              covertedPrincipal,
               boolean
             );
-            await dispatch(mentorApprovedRequest());
-      //     }
-      //     break;
-      //   default:
-      //     console.warn("Unhandled category:", category);
-      // }
     } catch (error) {
       console.error("Error processing request:", error);
     } finally {
@@ -307,7 +283,7 @@ const UpdateMentorProfile = () => {
                 </h1>
               </div>
               {orignalData?.email && (
-                <div className="text-gray-500 md:text-md text-sm font-normal flex mb-2">
+                <div className="text-gray-500 md:text-md text-sm items-center space-x-4 font-normal flex mb-2">
                   <span className="inline-block w-1.5  p-0.5 h-1.5  bg-red-700 rounded-full"></span>
 
                   <svg
@@ -349,7 +325,7 @@ const UpdateMentorProfile = () => {
                   {place1}
                   <p className="underline">{updatedData?.country}</p>
                 </div>
-                <div className=" flex flex-row items-center space-x-3 text-gray-600">
+                {/* <div className=" flex flex-row items-center space-x-3 text-gray-600">
                   <span className="inline-block w-1.5  p-0.5 h-1.5  bg-red-700 rounded-full"></span>
 
                   <svg
@@ -364,7 +340,7 @@ const UpdateMentorProfile = () => {
                     {Allrole[2]?.requested_on?.length > 0
                       ? date
                       : "No requested date"}
-                  </p> */}
+                  </p> 
                 </div>
                 <div className=" flex flex-row items-center space-x-3 text-gray-600">
                   <span className="inline-block w-1.5  p-0.5 h-1.5  bg-green-700 rounded-full"></span>
@@ -377,12 +353,12 @@ const UpdateMentorProfile = () => {
                   >
                     <path d="M152 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H64C28.7 64 0 92.7 0 128v16 48V448c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V192 144 128c0-35.3-28.7-64-64-64H344V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H152V24zM48 192H400V448c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V192z" />
                   </svg>
-                  {/* <p className="ml-2 truncate">
+                  <p className="ml-2 truncate">
                     {Allrole[2]?.requested_on?.length > 0
                       ? date
                       : "No requested date"}
-                  </p> */}
-                </div>
+                  </p> 
+                </div> */}
 
                 {orignalData?.openchatUsername && (
                   <div className="flex flex-row space-x-3 items-center text-gray-600">
@@ -598,8 +574,8 @@ const UpdateMentorProfile = () => {
             <div className="flex flex-row space-x-4 mt-4 justify-start items-start">
               <span className="inline-block w-1.5  md:ml-8 p-1 h-1.5 mt-2 bg-red-700 rounded-full"></span>
               <div className="text-gray-600 flex flex-row items-start md:text-sm text-xs break-all line-clamp-6">
-                {orignalData?.user_data?.bio ? (
-                  orignalData?.user_data?.bio
+                {orignalData?.bio ?(
+                  orignalData?.bio
                 ) : (
                   <p className="flex items-center">
                     {noDataPresentSvg}
@@ -611,8 +587,8 @@ const UpdateMentorProfile = () => {
             <div className="flex flex-row space-x-4 my-4 justify-start items-start">
               <span className="inline-block w-1.5 md:ml-8 p-1 h-1.5 mt-2 bg-green-700 rounded-full"></span>
               <div className="text-gray-600 flex flex-row items-start md:text-sm text-xs break-all line-clamp-6">
-                {updatedData?.user_data?.bio ? (
-                  updatedData?.user_data?.bio
+                {updatedData?.bio ? (
+                  updatedData?.bio
                 ) : (
                   <p className="flex items-center">
                     {noDataPresentSvg}
@@ -881,7 +857,7 @@ const UpdateMentorProfile = () => {
                     </div>
                   )}
                 </div>
-                <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap">
+                <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap  space-y-1">
                   <span className="inline-block w-1.5  p-0.5 h-1.5 mr-2  bg-green-700 rounded-full"></span>
                   {updatedData?.multichain && updatedData.multichain !== "" ? (
                     updatedData.multichain
@@ -931,7 +907,7 @@ const UpdateMentorProfile = () => {
                     </div>
                   )}
                 </div>
-                <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap">
+                <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap  space-y-1">
                   <span className="inline-block w-1.5  p-0.5 h-1.5 mr-2  bg-green-700 rounded-full"></span>
                   {updatedData?.areaOfInterest && updatedData.areaOfInterest !== "" ? (
                     updatedData.areaOfInterest
@@ -1280,7 +1256,7 @@ const UpdateMentorProfile = () => {
                     </div>
                   )}
                 </div>
-                <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap">
+                <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap space-y-1">
                   <span className="inline-block w-1.5  p-0.5 h-1.5 mr-2  bg-green-700 rounded-full"></span>
                   {updatedData?.categoryOfMentoring && updatedData.categoryOfMentoring !== "" ? (
                     updatedData.categoryOfMentoring
@@ -1310,18 +1286,13 @@ const UpdateMentorProfile = () => {
             </ul>
           </div>
         </div>
-
-        {/* {Allrole?.map((role, index) => {
-          const roleName = role.name === "vc" ? "investor" : role.name;
-          if (role.status === "requested" && roleName === "mentor") {
-            return (
-              <div key={index} className="flex justify-end gap-2 mt-6">
+        {updateStatus.selectionOption === "Pending"?
+        <div className="flex justify-end gap-2 mt-6">
                 <button
                   onClick={() =>
                     declineUserRoleHandler(
-                     
-                      true,
-                   
+                      updateStatus.principalId,
+                      true,  
                     )
                   }
                   disabled={isDeclining}
@@ -1335,7 +1306,7 @@ const UpdateMentorProfile = () => {
                 </button>{" "}
                 <button
                   onClick={() =>
-                    allowUserRoleHandler(true)
+                    allowUserRoleHandler(updateStatus.principalId, true)
                   }
                   disabled={isAccepting}
                   className="px-5 py-2.5 text-sm font-medium text-white bg-[#3505B2] hover:bg-[#482b90] rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-300"
@@ -1346,11 +1317,7 @@ const UpdateMentorProfile = () => {
                     "Accept"
                   )}
                 </button>
-              </div>
-            );
-          }
-          return null;
-        })} */}
+              </div>:""}
       </div>
     </>
   );

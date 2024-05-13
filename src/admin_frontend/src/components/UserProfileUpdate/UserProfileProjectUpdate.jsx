@@ -20,6 +20,7 @@ import pdfSvg from "../../../assets/image/pdfimage.png";
 import openchat_username from "../../../assets/image/spinner.png";
 import { useCountries } from "react-countries";
 import toast, { Toaster } from "react-hot-toast";
+import {blobToArrayBuffer} from "../../../../IcpAccelerator_frontend/src/components/Utils/formatter/blobToArrayBuffer"
 
 const validationSchema = yup
   .object()
@@ -428,7 +429,7 @@ const UserProfileProjectUpdate = () => {
   const [multiChainSelectedOptions, setMultiChainSelectedOptions] = useState(
     []
   );
-
+const [projectId ,setProjectId]=useState('');
   const handleToggleChange = () => {
     setshowOriginalLogoAndCover(!showOriginalLogoAndCover);
   };
@@ -437,6 +438,23 @@ const UserProfileProjectUpdate = () => {
     setshowOriginalBioAndDescription(!showOriginalBioAndDescription);
   };
 
+  function convertBlobToArray(val) {
+      fetch(val)
+          .then(response => {
+              if (response.ok) return response.blob();
+              throw new Error('Network response was not ok.');
+          })
+          .then(blob => {
+              blobToArrayBuffer(blob).then(arrayBuffer => {
+                  console.log(arrayBuffer);
+              }).catch(error => {
+                  console.error("Error converting blob to ArrayBuffer:", error);
+              });
+          })
+          .catch(error => {
+              console.error("Error fetching the Blob:", error);
+          });
+  }
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
@@ -537,7 +555,7 @@ const UserProfileProjectUpdate = () => {
   const uploadPublicDocuments = watch("upload_public_documents");
 
   React.useEffect(() => {
-    if (uploadPublicDocuments === "true" && fields.length === 0) {
+    if (uploadPublicDocuments === "true" && fields && fields.length === 0) {
       append({ title: "", link: "" });
     } else if (uploadPublicDocuments === "false") {
       remove({ title: "", link: "" });
@@ -569,6 +587,8 @@ const UserProfileProjectUpdate = () => {
         const reader = new FileReader();
         reader.onloadend = () => {
           setImagePreview(reader.result);
+          setImageData(reader.result);
+
         };
         reader.readAsDataURL(compressedFile);
         const byteArray = await compressedFile.arrayBuffer();
@@ -593,6 +613,7 @@ const UserProfileProjectUpdate = () => {
         const reader = new FileReader();
         reader.onloadend = () => {
           setLogoPreview(reader.result);
+          setLogoData(reader.result);
         };
         reader.onerror = (error) => {
           console.error("FileReader error: ", error);
@@ -624,6 +645,8 @@ const UserProfileProjectUpdate = () => {
         const reader = new FileReader();
         reader.onloadend = () => {
           setCoverPreview(reader.result);
+        setCoverData(reader.result);
+
         };
         reader.onerror = (error) => {
           console.error("FileReader error: ", error);
@@ -635,6 +658,7 @@ const UserProfileProjectUpdate = () => {
         reader.readAsDataURL(compressedFile);
 
         const byteArray = new Uint8Array(await compressedFile.arrayBuffer());
+        console.log('byteArray',byteArray)
         setCoverData(byteArray);
       } catch (error) {
         setError("cover", {
@@ -675,7 +699,6 @@ const UserProfileProjectUpdate = () => {
     const fetchProjectData = async () => {
       try {
         const data = await actor.project_update_awaiting_approval();
-        // console.log("Received data from actor:", data);
         if (
           data &&
           data.length > 0 &&
@@ -690,29 +713,29 @@ const UserProfileProjectUpdate = () => {
 
           setOrignalData({
             projectId:data[0][0],
-            projectName: originalInfo?.project_name || "No Name",
-            projectLogo:
+            projectName: originalInfo?.project_name ?? "No Name",
+            projectLogo:  originalInfo?.project_logo &&
               originalInfo?.project_logo.length > 0
                 ? uint8ArrayToBase64(originalInfo.project_logo)
                 : null,
-            projectCover:
+            projectCover:originalInfo?.project_cover &&
               originalInfo?.project_cover.length > 0
                 ? uint8ArrayToBase64(originalInfo.project_cover)
                 : null,
             projectDescription:
-              originalInfo?.project_description?.[0] || "No Description",
+              originalInfo?.project_description?.[0] ?? "No Description",
             projectWebsite: originalInfo?.project_website?.[0],
             projectDiscord: originalInfo?.project_discord?.[0],
             projectLinkedin: originalInfo?.project_linkedin?.[0],
             userTwitter: originalInfo?.user_data.twitter_id?.[0],
             dappLink: originalInfo?.dapp_link?.[0],
-            privateDocs: originalInfo?.private_docs?.[0] || [],
-            publicDocs: originalInfo?.public_docs?.[0] || [],
+            privateDocs: originalInfo?.private_docs?.[0] ?? [],
+            publicDocs: originalInfo?.public_docs?.[0] ?? [],
             countryOfRegistration: originalInfo?.country_of_registration?.[0],
             promotionalVideo: originalInfo?.promotional_video?.[0],
             tokenEconomics: originalInfo?.token_economics?.[0],
             projectTeams: originalInfo?.project_team?.[0],
-            technicalDocs: originalInfo?.technical_docs?.[0] || [],
+            technicalDocs: originalInfo?.technical_docs?.[0] ?? [],
             projectElevatorPitch: originalInfo?.project_elevator_pitch?.[0],
             longTermGoals: originalInfo?.long_term_goals?.[0],
             revenue: originalInfo?.revenue?.[0],
@@ -728,7 +751,7 @@ const UserProfileProjectUpdate = () => {
             supportsMultichain: originalInfo?.supports_multichain?.[0],
             typeOfRegistration: originalInfo?.type_of_registration?.[0],
             uploadPrivateDocuments: originalInfo?.upload_private_documents?.[0],
-            uploadPublicDocuments: originalInfo?.public_docs?.[0].length >0 ?true:false,
+            uploadPublicDocuments:originalInfo?.public_docs?.[0] && originalInfo?.public_docs?.[0].length >0 ?true:false,
             projectAreaOfFocus: originalInfo?.project_area_of_focus,
             mentorsAssigned: originalInfo?.mentors_assigned[0],
             vcsAssigned: originalInfo?.vc_assigned[0],
@@ -743,7 +766,7 @@ const UserProfileProjectUpdate = () => {
             isYourProjectRegistered:
               originalInfo?.is_your_project_registered[0],
             userEmail: originalInfo?.user_data?.email,
-            userProfilePicture:
+            userProfilePicture: originalInfo?.user_data.profile_picture &&
               originalInfo?.user_data.profile_picture[0].length > 0
                 ? uint8ArrayToBase64(originalInfo.user_data.profile_picture[0])
                 : null,
@@ -755,30 +778,30 @@ const UserProfileProjectUpdate = () => {
 
           setUpdatedData({
             projectId:data[0][0],
-            projectName: updatedInfo?.project_name || "No Name",
-            projectLogo:
+            projectName: updatedInfo?.project_name ?? "No Name",
+            projectLogo:  updatedInfo?.project_logo &&
               updatedInfo?.project_logo.length > 0
                 ? uint8ArrayToBase64(updatedInfo.project_logo)
                 : null,
-            projectCover:
+            projectCover:updatedInfo?.project_cove &&
               updatedInfo?.project_cover.length > 0
                 ? uint8ArrayToBase64(updatedInfo.project_cover)
                 : null,
             projectDescription:
-              updatedInfo?.project_description?.[0] || "No Description",
+              updatedInfo?.project_description?.[0] ?? "No Description",
             projectWebsite: updatedInfo?.project_website?.[0],
             projectDiscord: updatedInfo?.project_discord?.[0],
             projectLinkedin: updatedInfo?.project_linkedin?.[0],
             userTwitter: originalInfo?.user_data.twitter_id?.[0],
             dappLink: updatedInfo?.dapp_link?.[0],
-            privateDocs: updatedInfo?.private_docs?.[0] || [],
-            publicDocs: updatedInfo?.public_docs?.[0] || [],
+            privateDocs: updatedInfo?.private_docs?.[0] ?? [],
+            publicDocs: updatedInfo?.public_docs?.[0] ?? [],
             countryOfRegistration: updatedInfo?.country_of_registration?.[0],
             promotionalVideo: updatedInfo?.promotional_video?.[0],
             tokenEconomics: updatedInfo?.token_economics?.[0],
             projectTeams: updatedInfo?.project_team?.[0],
-            technicalDocs: updatedInfo?.technical_docs?.[0] || [],
-            githubLink: updatedInfo?.github_link?.[0] || [],
+            technicalDocs: updatedInfo?.technical_docs?.[0] ?? [],
+            githubLink: updatedInfo?.github_link?.[0] ?? [],
             projectElevatorPitch: updatedInfo?.project_elevator_pitch?.[0],
             longTermGoals: updatedInfo?.long_term_goals?.[0],
             revenue: updatedInfo?.revenue?.[0],
@@ -796,7 +819,7 @@ const UserProfileProjectUpdate = () => {
             isYourProjectRegistered:
               updatedInfo?.is_your_project_registered?.[0],
             uploadPrivateDocuments: updatedInfo?.upload_private_documents?.[0],
-            uploadPublicDocuments: updatedInfo?.public_docs?.[0].length >0 ?true:false,
+            uploadPublicDocuments:updatedInfo?.public_docs?.[0] && updatedInfo?.public_docs?.[0].length >0 ? true:false,
             projectAreaOfFocus: updatedInfo?.project_area_of_focus,
             mentorsAssigned: updatedInfo?.mentors_assigned[0],
             vcsAssigned: updatedInfo?.vc_assigned[0],
@@ -808,7 +831,7 @@ const UserProfileProjectUpdate = () => {
             userCountry: updatedInfo?.user_data?.country,
             userFullName: updatedInfo?.user_data?.full_name,
             userEmail: updatedInfo?.user_data?.email,
-            userProfilePicture:
+            userProfilePicture: updatedInfo?.user_data.profile_picture &&
               updatedInfo?.user_data.profile_picture[0].length > 0
                 ? uint8ArrayToBase64(updatedInfo.user_data.profile_picture[0])
                 : null,
@@ -842,8 +865,9 @@ const UserProfileProjectUpdate = () => {
   const setProjectValuesHandler = (val) => {
      console.log("setval",   val);
     if (val) {
+      setProjectId(val?.projectId ??"")
       setValue("full_name", val?.userFullName ?? "");
-      setValue("email", val?.userEmail?.[0] ?? "");
+      setValue("email", val?.email ?? "");
       setValue("telegram_id", val?.userTelegram ?? "");
       setValue("twitter_url", val?.userTwitter ?? "");
       setValue("openchat_user_name", val?.openchatUsername ?? "");
@@ -851,7 +875,8 @@ const UserProfileProjectUpdate = () => {
       setValue("country", val?.userCountry ?? "");
       setValue("domains_interested_in", val?.areaOfInterest ?? "");
       setInterestedDomainsSelectedOptionsHandler(val?.areaOfInterest ?? null);
-      setImagePreview(val?.userProfilePicture??''  );
+      setImagePreview(val?.userProfilePicture ?? '');
+      setImageData(val?.userProfilePicture ?convertBlobToArray(val?.userProfilePicture ): null);
       setValue("type_of_profile", val?.userProfileType);
       setValue(
         "reasons_to_join_platform",
@@ -860,9 +885,10 @@ const UserProfileProjectUpdate = () => {
       setReasonOfJoiningSelectedOptionsHandler(val?.reasonToJoin);
       setLogoPreview(
         val?.projectLogo ?? "");
-      setLogoPreview(
-        val?.projectCover ?? ""
-      );
+        setLogoData(val?.projectLogo ? convertBlobToArray(val?.projectLogo ): null)
+    setCoverPreview(
+        val?.projectCover ?? "");
+        setCoverData(val?.projectCover ? convertBlobToArray(val?.projectCover): null)
       setValue("preferred_icp_hub", val?.preferredIcpHub);
       setValue("project_name", val?.projectName ?? "");
       setValue("project_description", val?.projectDescription ?? "");
@@ -908,11 +934,11 @@ const UserProfileProjectUpdate = () => {
       } else {
         setValue("money_raising", "false");
       }
-      setValue("icp_grants", val?.icpGrants || 0);
-      setValue("investors", val?.investors || 0);
+      setValue("icp_grants", val?.icpGrants ?? 0);
+      setValue("investors", val?.investors ?? 0);
       setValue(
         "raised_from_other_ecosystem",
-        val?.raisedFromOtherEcosystem || 0
+        val?.raisedFromOtherEcosystem ?? 0
       );
       setValue("valuation", val?.snsGrants ?? "");
       setValue("target_amount", val?.targetAmount ?? 0);
@@ -1120,35 +1146,35 @@ const UserProfileProjectUpdate = () => {
   // form submit handler func
   const onSubmitHandler = async (data) => {
     console.log('update data',data)
-    console.log('coverData',coverData)
+     console.log('coverData',coverData)
     if (actor) {
       const projectData = {
         // user data
         user_data: {
           full_name: data?.full_name,
-          email: data?.email,
+          email: [data?.email],
           telegram_id: [data?.telegram_id.toString()],
           twitter_id: [data?.twitter_url.toString()],
           openchat_username: [data?.openchat_user_name],
           bio: [data?.bio],
           country: data?.country,
           area_of_interest: data?.domains_interested_in,
-          type_of_profile: [data?.type_of_profile || ""],
+          type_of_profile: [data?.type_of_profile ?? ""],
           reason_to_join: [
             data?.reasons_to_join_platform
               .split(",")
-              .map((val) => val.trim()) || [""],
+              .map((val) => val.trim()) ?? [""],
           ],
           profile_picture: imageData ? [imageData] : [],
         },
         // project data
         project_cover: coverData ? coverData : [],
         project_logo: logoData ? logoData : [],
-        preferred_icp_hub: [data?.preferred_icp_hub || ""],
-        project_name: data?.project_name || "",
-        project_description: [data?.project_description || ""],
-        project_elevator_pitch: [data?.project_elevator_pitch || ""],
-        project_website: [data?.project_website || ""],
+        preferred_icp_hub: [data?.preferred_icp_hub ?? ""],
+        project_name: data?.project_name ?? "",
+        project_description: [data?.project_description ?? ""],
+        project_elevator_pitch: [data?.project_elevator_pitch ?? ""],
+        project_website: [data?.project_website ?? ""],
         is_your_project_registered: [
           data?.is_your_project_registered === "true" ? true : false,
         ],
@@ -1220,12 +1246,12 @@ const UserProfileProjectUpdate = () => {
                 : [],
           },
         ],
-        promotional_video: [data?.promotional_video || ""],
-        project_discord: [data?.project_discord || ""],
-        project_linkedin: [data?.project_linkedin || ""],
-        github_link: [data?.github_link || ""],
-        token_economics: [data?.token_economics || ""],
-        long_term_goals: [data?.white_paper || ""],
+        promotional_video: [data?.promotional_video ?? ""],
+        project_discord: [data?.project_discord ?? ""],
+        project_linkedin: [data?.project_linkedin ?? ""],
+        github_link: [data?.github_link ?? ""],
+        token_economics: [data?.token_economics ?? ""],
+        long_term_goals: [data?.white_paper ?? ""],
         private_docs:
           data?.upload_private_documents === "true" ? [data?.privateDocs] : [],
         public_docs:
@@ -1234,8 +1260,8 @@ const UserProfileProjectUpdate = () => {
           data?.upload_private_documents === "true" ? true : false,
         ],
         // Extra field at Project
-        project_area_of_focus: "",
-        reason_to_join_incubator: data?.reasons_to_join_platform || [""],
+        project_area_of_focus:data?.domains_interested_in ?? "",
+        reason_to_join_incubator: data?.reasons_to_join_platform ?? [""],
         vc_assigned: [],
         mentors_assigned: [],
         project_team: [],
@@ -1246,9 +1272,10 @@ const UserProfileProjectUpdate = () => {
       };
       try {
         console.log('projectData',projectData)
-        console.log('imagedata ==>>> 1261',imageData)
+        // console.log('imagedata ==>>> 1261',imageData)
 
-          let id = data?.projectId;
+          let id = projectId;
+          console.log("data 1277 ====>>>" , data)
           await actor.update_project(id, projectData).then((result) => {
             console.log("result in project to check update call==>", result);
             if (result && result.includes("approval request is sent")) {
@@ -1306,7 +1333,6 @@ const UserProfileProjectUpdate = () => {
                       backdropFilter: "blur(20px)",
                     }}
                   >
-                  {console.log("imagePreview 1320 ===>>>>s",imagePreview)}
                     <img
                       className="object-cover size-44 max-h-44 rounded-full"
                       src={orignalData?.userProfilePicture}
@@ -1498,7 +1524,7 @@ const UserProfileProjectUpdate = () => {
                       <path d="M256 64C150 64 64 150 64 256s86 192 192 192c17.7 0 32 14.3 32 32s-14.3 32-32 32C114.6 512 0 397.4 0 256S114.6 0 256 0S512 114.6 512 256v32c0 53-43 96-96 96c-29.3 0-55.6-13.2-73.2-33.9C320 371.1 289.5 384 256 384c-70.7 0-128-57.3-128-128s57.3-128 128-128c27.9 0 53.7 8.9 74.7 24.1c5.7-5 13.1-8.1 21.3-8.1c17.7 0 32 14.3 32 32v80 32c0 17.7 14.3 32 32 32s32-14.3 32-32V256c0-106-86-192-192-192zm64 192a64 64 0 1 0 -128 0 64 64 0 1 0 128 0z" />
                     </svg>
                     <span className="ml-2 truncate">
-                      {orignalData.userEmail}
+                      {orignalData?.userEmail}
                     </span>
                   </div>
                   <div className="flex space-x-2 items-center flex-row mt-1">
@@ -1916,7 +1942,7 @@ const UserProfileProjectUpdate = () => {
                           </div>
                         </div>
                         <div className="flex text-gray-700 flex-row gap-2 flex-wrap text-xs">
-                          {orignalData?.reasonToJoin?.map((reason, index) => (
+                          {updatedData?.reasonToJoin?.map((reason, index) => (
                             <div
                               key={index}
                               className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
@@ -2142,7 +2168,7 @@ const UserProfileProjectUpdate = () => {
                           <img
                             className="md:w-20 object-fill md:h-20 w-16 h-16 border border-white bg-gray-300 justify-center rounded-md"
                             src={orignalData.projectCover}
-                            alt="projectLogo"
+                            alt="projectCover"
                           />
                         ) : (
                           <div>
@@ -2219,12 +2245,12 @@ const UserProfileProjectUpdate = () => {
                                             <svg
                                               xmlns="http://www.w3.org/2000/svg"
                                               viewBox="0 0 512 512"
-                                              className="size-3"
+                                              className="size-5"
                                               fill="currentColor"
                                             >
                                               <path d="M288 109.3V352c0 17.7-14.3 32-32 32s-32-14.3-32-32V109.3l-73.4 73.4c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l128-128c12.5-12.5 32.8-12.5 45.3 0l128 128c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L288 109.3zM64 352H192c0 35.3 28.7 64 64 64s64-28.7 64-64H448c35.3 0 64 28.7 64 64v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V416c0-35.3 28.7-64 64-64zM432 456a24 24 0 1 0 0-48 24 24 0 1 0 0 48z" />
                                             </svg>
-                                            <span className="ml-2 text-nowrap">
+                                            <span className="ml-2">
                                               Upload cover picture
                                             </span>
                                           </label>
@@ -2382,7 +2408,7 @@ const UserProfileProjectUpdate = () => {
                         <div className="flex space-x-2 items-center  flex-row ml-3">
                           <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                           <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                            {orignalData?.project_name || "Not available"}
+                            {orignalData?.project_name ?? "Not available"}
                           </div>
                         </div>
                         <div className="flex space-x-2 items-center flex-row ml-3">
@@ -2408,7 +2434,7 @@ const UserProfileProjectUpdate = () => {
                             </div>
                           ) : (
                             <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {updatedData?.project_name || "Not available"}
+                              {updatedData?.project_name ?? "Not available"}
                             </div>
                           )}
                         </div>
@@ -2421,7 +2447,7 @@ const UserProfileProjectUpdate = () => {
                         <div className="flex space-x-2 items-center  flex-row ml-3">
                           <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                           <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                            {orignalData?.projectLinkedin || "Not available"}
+                            {orignalData?.projectLinkedin ?? "Not available"}
                           </div>
                         </div>
                         <div className="flex space-x-2 items-center flex-row ml-3">
@@ -2447,7 +2473,7 @@ const UserProfileProjectUpdate = () => {
                             </div>
                           ) : (
                             <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {updatedData?.projectLinkedin || "Not available"}
+                              {updatedData?.projectLinkedin ?? "Not available"}
                             </div>
                           )}
                         </div>
@@ -2460,7 +2486,7 @@ const UserProfileProjectUpdate = () => {
                         <div className="flex space-x-2 items-center  flex-row ml-3">
                           <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                           <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                            {orignalData?.userTwitter || "Not available"}
+                            {orignalData?.userTwitter ?? "Not available"}
                           </div>
                         </div>
                         <div className="flex space-x-2 items-center flex-row ml-3">
@@ -2486,7 +2512,7 @@ const UserProfileProjectUpdate = () => {
                             </div>
                           ) : (
                             <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {updatedData?.userTwitter || "Not available"}
+                              {updatedData?.userTwitter ?? "Not available"}
                             </div>
                           )}
                         </div>
@@ -2499,7 +2525,7 @@ const UserProfileProjectUpdate = () => {
                         <div className="flex space-x-2 items-center  flex-row ml-3">
                           <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                           <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                            {orignalData?.projectElevatorPitch ||
+                            {orignalData?.projectElevatorPitch ??
                               "Not available"}
                           </div>
                         </div>
@@ -2526,7 +2552,7 @@ const UserProfileProjectUpdate = () => {
                             </div>
                           ) : (
                             <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {updatedData?.projectElevatorPitch ||
+                              {updatedData?.projectElevatorPitch ??
                                 "Not available"}
                             </div>
                           )}
@@ -2540,7 +2566,7 @@ const UserProfileProjectUpdate = () => {
                         <div className="flex space-x-2 items-center  flex-row ml-3">
                           <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                           <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                            {orignalData?.promotionalVideo || "Not available"}
+                            {orignalData?.promotionalVideo ?? "Not available"}
                           </div>
                         </div>
                         <div className="flex space-x-2 items-center flex-row ml-3">
@@ -2566,7 +2592,7 @@ const UserProfileProjectUpdate = () => {
                             </div>
                           ) : (
                             <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {updatedData?.promotionalVideo || "Not available"}
+                              {updatedData?.promotionalVideo ?? "Not available"}
                             </div>
                           )}
                         </div>
@@ -2581,7 +2607,7 @@ const UserProfileProjectUpdate = () => {
                         <div className="flex space-x-2 items-center  flex-row ml-3">
                           <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                           <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                            {orignalData?.githubLink || "Not available"}
+                            {orignalData?.githubLink ?? "Not available"}
                           </div>
                         </div>
                         <div className="flex space-x-2 items-center flex-row ml-3">
@@ -2607,7 +2633,7 @@ const UserProfileProjectUpdate = () => {
                             </div>
                           ) : (
                             <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {updatedData?.githubLink || "Not available"}
+                              {updatedData?.githubLink ?? "Not available"}
                             </div>
                           )}
                         </div>
@@ -2620,7 +2646,7 @@ const UserProfileProjectUpdate = () => {
                         <div className="flex space-x-2 items-center  flex-row ml-3">
                           <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                           <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                            {orignalData?.projectDiscord || "Not available"}
+                            {orignalData?.projectDiscord ?? "Not available"}
                           </div>
                         </div>
                         <div className="flex space-x-2 items-center flex-row ml-3">
@@ -2646,7 +2672,7 @@ const UserProfileProjectUpdate = () => {
                             </div>
                           ) : (
                             <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {updatedData?.projectDiscord || "Not available"}
+                              {updatedData?.projectDiscord ?? "Not available"}
                             </div>
                           )}
                         </div>
@@ -2659,7 +2685,7 @@ const UserProfileProjectUpdate = () => {
                         <div className="flex space-x-2 items-center  flex-row ml-3">
                           <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                           <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                            {orignalData?.projectWebsite || "Not available"}
+                            {orignalData?.projectWebsite ?? "Not available"}
                           </div>
                         </div>
                         <div className="flex space-x-2 items-center flex-row ml-3">
@@ -2685,7 +2711,7 @@ const UserProfileProjectUpdate = () => {
                             </div>
                           ) : (
                             <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {updatedData?.projectWebsite || "Not available"}
+                              {updatedData?.projectWebsite ?? "Not available"}
                             </div>
                           )}
                         </div>
@@ -2698,7 +2724,7 @@ const UserProfileProjectUpdate = () => {
                         <div className="flex space-x-2 items-center  flex-row ml-3">
                           <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                           <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                            {orignalData?.longTermGoals || "Not available"}
+                            {orignalData?.longTermGoals ?? "Not available"}
                           </div>
                         </div>
                         <div className="flex space-x-2 items-center flex-row ml-3">
@@ -2724,7 +2750,7 @@ const UserProfileProjectUpdate = () => {
                             </div>
                           ) : (
                             <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {updatedData?.longTermGoals || "Not available"}
+                              {updatedData?.longTermGoals ?? "Not available"}
                             </div>
                           )}
                         </div>
@@ -2737,7 +2763,7 @@ const UserProfileProjectUpdate = () => {
                         <div className="flex space-x-2 items-center  flex-row ml-3">
                           <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                           <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                            {orignalData?.tokenEconomics || "Not available"}
+                            {orignalData?.tokenEconomics ?? "Not available"}
                           </div>
                         </div>
                         <div className="flex space-x-2 items-center flex-row ml-3">
@@ -2763,7 +2789,7 @@ const UserProfileProjectUpdate = () => {
                             </div>
                           ) : (
                             <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {updatedData?.tokenEconomics || "Not available"}
+                              {updatedData?.tokenEconomics ?? "Not available"}
                             </div>
                           )}
                         </div>
@@ -2804,7 +2830,7 @@ const UserProfileProjectUpdate = () => {
         <div className="w-full flex gap-4  md:flex-row flex-col mt-4">
           <div className="flex flex-col md:w-1/4 w-full">
             <div className=" bg-[#D2D5F2] flex  flex-col h-[310px] overflow-y-auto shadow-md shadow-gray-400 p-6 rounded-lg  w-full mb-4">
-              <div className="flex flex-col md:pl-0 pl-4">
+              <div className="flex flex-col md:pl-0 pl-4 mb-3">
                 <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
                   Uploaded Private Docs :
                 </h2>
@@ -2868,6 +2894,7 @@ const UserProfileProjectUpdate = () => {
                 <h1 className="text-xl font-bold text-gray-800">
                   Private Documents
                 </h1>
+                {editMode?
                 <button
                   type="button"
                   onClick={() => appendPrivate({ title: "", link: "" })}
@@ -2881,19 +2908,15 @@ const UserProfileProjectUpdate = () => {
                   >
                     <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
                   </svg>
-                </button>
+                </button>:''}
               </div>
               <div className="flex flex-col space-y-2">
-                <div className="flex flex-row gap-2  p-2 items-center border-2 rounded-xl">
-                  <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                  <img src={pdfSvg} alt="PDF Icon" className="w-10 h-12" />
-                  <div className="overflow-hidden">
-                    <div className="space-y-4 w-full">
+                  <div className="overflow-hidden space-y-2 ">
                       {orignalData?.privateDocs.map((doc, index) => (
-                        <div
-                          key={index}
-                          className="truncate flex flex-col items-start"
-                        >
+                <div className="flex flex-row  p-2 items-center border-2 rounded-xl" key={index}>
+                        <span className="w-2 h-2 bg-red-700 rounded-full"></span>
+                        <img src={pdfSvg} alt="PDF Icon" className="w-10 h-12 ml-2" />
+                        <div className="truncate flex flex-col ml-2">
                           <div className="flex-grow">
                             <a
                               href={doc.link}
@@ -2918,9 +2941,9 @@ const UserProfileProjectUpdate = () => {
                             </div>
                           </div>
                         </div>
-                      ))}
+                  
                     </div>
-                  </div>
+                      ))}
                 </div>
                 <div className="div">
                   {watch('upload_private_documents') === 'true' && editMode? (
@@ -2988,16 +3011,12 @@ const UserProfileProjectUpdate = () => {
                       ))}
                     </div>
                   ) : (
-                    <div className="flex flex-row gap-2  p-2 items-center border-2 rounded-xl">
-                      <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                      <img src={pdfSvg} alt="PDF Icon" className="w-10 h-12" />
-                      <div className="overflow-hidden">
-                        <div className="space-y-4 w-full">
+                      <div className="overflow-hidden space-y-2">
                           {updatedData?.privateDocs.map((doc, index) => (
-                            <div
-                              key={index}
-                              className="truncate flex flex-col items-start"
-                            >
+                            <div className="flex flex-row gap-2  p-2 items-center border-2 rounded-xl" key={index}>
+                            <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                            <img src={pdfSvg} alt="PDF Icon" className="w-10 h-12" />
+                            <div className="truncate flex flex-col ml-2">
                               <div className="flex-grow">
                                 <a
                                   href={doc.link}
@@ -3022,17 +3041,18 @@ const UserProfileProjectUpdate = () => {
                                 </div>
                               </div>
                             </div>
+                            </div>
                           ))}
                         </div>
-                      </div>
-                    </div>
+                     
+                    
                   )}
                 </div>
               </div>
             </div>
 
             <div className=" bg-[#D2D5F2] flex  flex-col h-[310px] overflow-y-auto shadow-md shadow-gray-400 p-6 rounded-lg  w-full mb-4">
-              <div className="flex flex-col md:pl-0 pl-4">
+              <div className="flex flex-col md:pl-0 pl-4 mb-3">
                 <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
                   Uploaded Public Docs :
                 </h2>
@@ -3096,6 +3116,7 @@ const UserProfileProjectUpdate = () => {
                 <h1 className="text-xl font-bold text-gray-800">
                   Public Documents
                 </h1>
+                {editMode?
                 <button
                   type="button"
                   onClick={() => append({ title: "", link: "" })}
@@ -3109,19 +3130,15 @@ const UserProfileProjectUpdate = () => {
                   >
                     <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
                   </svg>
-                </button>
+                </button>:''}
               </div>
               <div className="flex flex-col space-y-2">
-                <div className="flex flex-row gap-2  p-2 items-center border-2 rounded-xl">
-                  <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                  <img src={pdfSvg} alt="PDF Icon" className="w-10 h-12" />
-                  <div className="overflow-hidden">
-                    <div className="space-y-4 w-full">
+                  <div className="overflow-hidden space-y-2">
                       {orignalData?.publicDocs.map((doc, index) => (
-                        <div
-                          key={index}
-                          className="truncate flex flex-col items-start"
-                        >
+                        <div className="flex flex-row gap-2  p-2 items-center border-2 rounded-xl" key={index}>
+                        <span className="w-2 h-2 bg-red-700 rounded-full"></span>
+                        <img src={pdfSvg} alt="PDF Icon" className="w-10 h-12 ml-2" />
+                        <div  className="truncate flex flex-col ml-2">
                           <div className="flex-grow">
                             <a
                               href={doc.link}
@@ -3146,9 +3163,8 @@ const UserProfileProjectUpdate = () => {
                             </div>
                           </div>
                         </div>
+                        </div>
                       ))}
-                    </div>
-                  </div>
                 </div>
                 <div className="div">
                   {watch('upload_public_documents') === 'true' && editMode ? (
@@ -3210,16 +3226,15 @@ const UserProfileProjectUpdate = () => {
                         </React.Fragment>
                       ))}
                     </div>
-                  ) : (
-                    <div className="flex flex-row gap-2  p-2 items-center border-2 rounded-xl">
-                      <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                      <img src={pdfSvg} alt="PDF Icon" className="w-10 h-12" />
-                      <div className="overflow-hidden">
-                        <div className="space-y-4 w-full">
+                  ) : (  
+                      <div className="overflow-hidden space-y-2">
                           {updatedData?.publicDocs.map((doc, index) => (
+                            <div className="flex flex-row gap-2  p-2 items-center border-2 rounded-xl" key={index}>
+                            <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                            <img src={pdfSvg} alt="PDF Icon" className="w-10 h-12 ml-2" />
                             <div
-                              key={index}
-                              className="truncate flex flex-col items-start"
+                              
+                              className="truncate flex flex-col ml-2"
                             >
                               <div className="flex-grow">
                                 <a
@@ -3245,10 +3260,9 @@ const UserProfileProjectUpdate = () => {
                                 </div>
                               </div>
                             </div>
+                            </div>
                           ))}
                         </div>
-                      </div>
-                    </div>
                   )}
                 </div>
               </div>
@@ -3757,7 +3771,7 @@ const UserProfileProjectUpdate = () => {
                 <div className="flex space-x-2 items-center  flex-row ml-3">
                   <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                   <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                    {orignalData?.dappLink || "Not available"}
+                    {orignalData?.dappLink ?? "Not available"}
                   </div>
                 </div>
                 <div className="flex space-x-2 items-center flex-row ml-3">
@@ -3782,7 +3796,7 @@ const UserProfileProjectUpdate = () => {
                     </div>
                   ) : (
                     <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                      {updatedData?.dappLink || "Not available"}
+                      {updatedData?.dappLink ?? "Not available"}
                     </div>
                   )}
                 </div>
