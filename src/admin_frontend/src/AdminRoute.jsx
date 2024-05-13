@@ -5,6 +5,8 @@ import Loader from "./components/Loader/Loader";
 import UpdateMentorProfile from "./components/Admindashboard/UpdateRequests/UpdateMentorProfile";
 import UpdateInvestorProfile from "./components/Admindashboard/UpdateRequests/UpdateInvestorProfile";
 import UserProfileProjectUpdate from "./components/UserProfileUpdate/UserProfileProjectUpdate";
+import UserProfileMentorUpdate from "./components/UserProfileUpdate/UserProfileMentorUpdate";
+import UserProfileInvestorUpdate from "./components/UserProfileUpdate/UserProfileInvestorUpdate";
 
 const Adminalluser = lazy(() =>
   import("./components/Admindashboard/Adminalluser")
@@ -64,8 +66,8 @@ const AdminRoute = ({ setModalOpen }) => {
     { path: "/mentorupdate", element: <UpdateMentorProfile /> },
     { path: "/investorupdate", element: <UpdateInvestorProfile /> },
     { path: "/userProfileProjectUpdate", element: <UserProfileProjectUpdate /> },
-    { path: "/userProfileMentorUpdate", element: <UserProfileProjectUpdate /> },
-    { path: "/userProfileInvestorUpdate", element: <UserProfileProjectUpdate /> },
+    { path: "/userProfileMentorUpdate", element: <UserProfileMentorUpdate /> },
+    { path: "/userProfileInvestorUpdate", element: <UserProfileInvestorUpdate /> },
 
   ];
 
