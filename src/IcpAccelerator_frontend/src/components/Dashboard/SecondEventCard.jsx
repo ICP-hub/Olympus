@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import hover from "../../../assets/images/1.png";
 import { winner } from "../Utils/Data/SvgData";
-import girl from "../../../assets/images/girl.jpeg";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
 import { formatFullDateFromSimpleDate } from "../Utils/formatter/formatDateFromBigInt";
 const SecondEventCard = ({ data, register }) => {
   const actor = useSelector((currState) => currState.actors.actor);
+  const navigate = useNavigate();
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
@@ -29,6 +30,7 @@ const SecondEventCard = ({ data, register }) => {
   let desc = data?.cohort?.description ?? "";
   let tags = data?.cohort?.tags ?? "";
   let seats = data?.cohort?.no_of_seats ?? 0;
+  let cohortId =data?.cohort_id
 
   // const toastHandler = () => {
   //   toast.success("Thank you for the registration request. admin approval in process now.")
@@ -102,7 +104,8 @@ const SecondEventCard = ({ data, register }) => {
           <div className="p-8">
             <div className="w-full mt-4">
               <div className="w-1/2 flex-col text-[#737373] flex  ">
-                <h1 className="font-bold text-black text-xl truncate capitalize">
+                <h1 className="font-bold text-black text-xl truncate capitalize" onClick={() => navigate(`/event-details/${cohortId}`)}
+>
                   {name}
                 </h1>
                 <p className="text-sm whitespace-nowrap pt-1">

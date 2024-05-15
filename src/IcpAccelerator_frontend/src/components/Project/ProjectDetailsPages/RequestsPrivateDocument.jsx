@@ -6,6 +6,8 @@ import toast, { Toaster } from "react-hot-toast";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import { Principal } from "@dfinity/principal";
 import NoDataCard from "../../Mentors/Event/NoDataCard";
+import { useNavigate } from "react-router-dom";
+import NoData from "../../../../assets/images/file_not_found.png";
 
 const RequestsPrivateDocument = () => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -13,6 +15,7 @@ const RequestsPrivateDocument = () => {
   const [selectedOption, setSelectedOption] = useState("Pending");
   const [requestedData, setRequestedData] = useState([]);
   const [noData, setNoData] = useState(null);
+  const navigate = useNavigate();
 
   const dropdownRef = useRef(null);
   OutSideClickHandler(dropdownRef, () => setIsPopupOpen(false));
@@ -26,13 +29,13 @@ const RequestsPrivateDocument = () => {
     let result;
     switch (status) {
       case "Pending":
-        result = actor.get_all_pending_docs_access_request();
+        result = actor.get_all_pending_docs_access_requests();
         break;
       case "Accepted":
-        result = actor.get_all_approved_docs_access_request();
+        result = actor.get_all_approved_docs_access_requests();
         break;
       case "Declined":
-        result = actor.get_all_declined_docs_access_request();
+        result = actor.get_all_declined_docs_access_requests();
         break;
       default:
         console.log("Unknown status");
@@ -41,16 +44,13 @@ const RequestsPrivateDocument = () => {
     }
     result
       .then((result) => {
-        console.log('request',result)
-        if (result && result.length>0) {
+        console.log("Received data:", result);
+        if (result && Array.isArray(result) && result.length > 0) {
           setNoData(false);
           setRequestedData(result);
-          setIsPopupOpen(false);
         } else {
           setNoData(true);
           setRequestedData([]);
-          setIsPopupOpen(false);
-          throw new Error("Invalid response format");
         }
       })
       .catch((error) => {
@@ -97,8 +97,10 @@ const RequestsPrivateDocument = () => {
       if (result) {
         // Assuming result contains some success indication
         toast.success(`Request ${value.toLowerCase()}ed successfully.`);
+        navigate("/individual-project-details-project-owner");
       } else {
         toast.error(`Failed to ${value.toLowerCase()} the request.`);
+        navigate("/individual-project-details-project-owner");
       }
     } catch (error) {
       console.error("Error processing document request action:", error);
@@ -106,7 +108,7 @@ const RequestsPrivateDocument = () => {
     }
   };
 
-  console.log(noData)
+  console.log(noData);
   return (
     <div className="container mx-auto">
       <div className="px-[3%] py-[4%] w-full bg-gray-100 h-screen overflow-y-scroll">
@@ -162,7 +164,7 @@ const RequestsPrivateDocument = () => {
           </div>
         </div>
         {noData ? (
-          <NoDataCard />
+          <NoDataCard image={NoData} desc={"No Document request yet"} />
         ) : (
           requestedData &&
           requestedData.map((data, index) => {
