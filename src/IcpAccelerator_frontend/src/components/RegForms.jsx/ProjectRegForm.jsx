@@ -353,11 +353,7 @@ function ProjectRegForm() {
         .optional()
         .when("money_raised_till_now", (val, schema) =>
           val && val[0] === "true"
-            ? schema.test({
-              test: (value) =>
-                value === undefined || value === null || value === "",
-              message: null,
-            })
+            ? schema
                 .typeError("You must enter a number")
                 .min(0, "Must be a non-negative number")
             : schema.test({
@@ -372,11 +368,7 @@ function ProjectRegForm() {
         .nullable(true)
         .when("money_raised_till_now", (val, schema) =>
           val && val[0] === "true"
-            ? schema.test({
-              test: (value) =>
-                value === undefined || value === null || value === "",
-              message: null,
-            })
+            ? schema
                 .typeError("You must enter a number")
                 .min(0, "Must be a non-negative number")
             : schema.test({
@@ -392,11 +384,7 @@ function ProjectRegForm() {
 
         .when("money_raised_till_now", (val, schema) =>
           val && val[0] === "true"
-            ? schema.test({
-              test: (value) =>
-                value === undefined || value === null || value === "",
-              message: null,
-            })
+            ? schema
                 .typeError("You must enter a number")
                 .min(0, "Must be a non-negative number")
             : schema.test({
