@@ -57,7 +57,8 @@ const RubricRating = ({ data }) => {
       userCurrentRoleStatusActiveRole &&
       userCurrentRoleStatusActiveRole !== "user"
     ) {
-      handleAddRating(argument);
+      console.log(argument);
+      // handleAddRating(argument);
     } else {
       toast.error("No Authorization !!");
     }
@@ -161,7 +162,8 @@ const RubricRating = ({ data }) => {
               </p>
               <div className=" mb-2 pt-0">
                 <ul className="mb-4 space-y-1 cursor-pointer">
-                  {rubric_table_data[rating].levels.map((val, index) => {
+                  {rubric_table_data[rating - 1]?.levels.map((val, index) => {
+                    console.log("rubric data", val);
                     return (
                       <li className="flex py-4 items-center" key={index}>
                         <div className="w-11/12">
@@ -176,15 +178,40 @@ const RubricRating = ({ data }) => {
                                 {val?.title}
                               </p>
                             </div>
+                            {console.log("index", index)}
+                            {onSelectLevel.map((val) =>
+                              console.log("onSelectLevel[rating]", val)
+                            )}
+                            {console.log(
+                              "dudfuisfdui",
+                              index + 1 === onSelectLevel.map((val) => val)
+                            )}
                             <div className="text-end">
-                              <input
-                                type="radio"
-                                id={`consent_${index}`}
-                                name="consent_levels"
-                                value={index}
-                                onChange={() => handleLevelSelect(index)}
-                                checked={index + 1 === onSelectLevel[rating]}
-                              />
+                              <label className="relative p-2">
+                                <input
+                                  type="radio"
+                                  id={`consent_${index}`}
+                                  className="opacity-0 absolute size-2"
+                                  name="consent_levels"
+                                  value={index + 1}
+                                  onChange={() => handleLevelSelect(index)}
+                                  checked={
+                                    index + 1 === onSelectLevel[rating - 1]
+                                  }
+                                />
+                                <div
+                                  className={`rounded-full border-2 size-4 flex items-center justify-center
+    ${
+      index + 1 === onSelectLevel[rating - 1]
+        ? "bg-[#3F49B2] border-[#3F49B2]"
+        : "bg-[#B9C0F3] border-gray-400"
+    }`}
+                                >
+                                  {index + 1 === onSelectLevel[rating - 1] && (
+                                    <div className="size-2 bg-white rounded-full"></div>
+                                  )}
+                                </div>
+                              </label>
                             </div>
                           </div>
                           <p className="text-sm text-white px-5">{val?.desc}</p>
@@ -196,7 +223,7 @@ const RubricRating = ({ data }) => {
               </div>
             </div>
             <div className="px-4 pt-0">
-              <div className="flex justify-end gap-2 border-t">
+              <div className="flex justify-end gap-2">
                 {rating > 1 && (
                   <button
                     type="button"

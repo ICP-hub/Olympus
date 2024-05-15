@@ -285,7 +285,7 @@ const InvestorRegForm = () => {
           /\S/.test(value)
         )
         .matches(
-          /^(https?:\/\/)?(www\.)?linkedin\.com\/(in\/[a-zA-Z0-9_-]+|company\/[a-zA-Z0-9_-]+|groups\/[a-zA-Z0-9_-]+)\/?$/,
+          /^(https?:\/\/)?(www\.)?linkedin\.com\/in\/[a-zA-Z0-9_-]+\/?$/,
           "Invalid LinkedIn URL"
         )
         .required("LinkedIn url is required"),
@@ -473,6 +473,7 @@ const InvestorRegForm = () => {
 
   // form error handler func
   const onErrorHandler = (val) => {
+    console.log('val Error',val)
     toast.error("Empty fields or invalid values, please recheck the form");
   };
 

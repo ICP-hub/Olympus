@@ -75,6 +75,7 @@ const AppRoutes = () => {
     { path: "/project-private-document-requests", element: <RequestsPrivateDocument /> },
     { path: "/project-money-raising-requests/:id", element: <RequestMoneyRaising /> },
     { path: "/all-live-events", element: <LiveEventsCards /> },
+    { path: "/event-details/:id", element: <CohortPage /> },
    
   ];
 
