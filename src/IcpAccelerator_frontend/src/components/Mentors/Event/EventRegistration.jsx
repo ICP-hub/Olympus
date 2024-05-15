@@ -6,6 +6,9 @@ import NoDataCard from "../../Mentors/Event/MentorAssocReqNoDataCard";
 import hover from "../../../../assets/images/1.png";
 import FunctionalityModel from "../../../models/FunctionalityModel";
 import { projectFilterSvg } from "../../Utils/Data/SvgData";
+import toast from "react-hot-toast";
+import { formatFullDateFromBigInt } from "../../Utils/formatter/formatDateFromBigInt";
+import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 function EventRegistration() {
   const [modalOpen, setModalOpen] = useState(false);
   const [para, setPara] = useState("");
@@ -30,20 +33,21 @@ function EventRegistration() {
     },
   ];
 
-    const rolesFilterArray = [
-      {
-        id: "from-project",
-        label: "from project",
-      },
-      {
-        id: "from-mentor",
-        label: "from mentor",
-      },
-      {
-        id: "from-investor",
-        label: "from investor",
-      },
-    ];
+  const rolesFilterArray = [
+    {
+      id: "from-project",
+      label: "from project",
+      map: "product_data",
+    },
+    {
+      id: "from-mentor",
+      label: "from mentor",
+    },
+    {
+      id: "from-investor",
+      label: "from investor",
+    },
+  ];
 
   const actor = useSelector((currState) => currState.actors.actor);
   const principal = useSelector((currState) => currState.internet.principal);
@@ -65,119 +69,102 @@ function EventRegistration() {
     setAction(action);
     setIndex(index);
     setModalOpen(true);
-    console.log("Modal open with", para, action);
-  };
-  const handleClick = async (index) => {
-    setIsSubmitting(true);
-    try {
-      let enroller_principal = data?.[index]?.enroller_principal;
-      let cohortId = data?.[index]?.cohort_details?.cohort_id;
-      let cohort_creator_principal =
-        data?.[index]?.cohort_details?.cohort_creator_principal;
 
-      // console.log("Line 21 Action ====>>>>", action)
-      // console.log("Line 23 Decision =====>>>>", decision)
+    console.log(
+      "Line 79 enroller_principal =====>>>>",
+      data?.[index]?.enroller_principal
+    );
+    console.log("Modal open with", para, action, index);
+  };
+  const handleClick = async () => {
+    console.log(data);
+    setIsSubmitting(true);
+    let enroller_principal = data?.[index]?.enroller_principal;
+    let cohortId = data?.[index]?.cohort_details?.cohort_id;
+    let cohort_creator_principal =
+      data?.[index]?.cohort_details?.cohort_creator_principal;
+    try {
+      console.log("Line 78 data ====>>>>", data);
+      console.log("Line 78 Action ====>>>>", action);
+      console.log("Line 79 enroller_principal =====>>>>", enroller_principal);
+      console.log("Line 79 cohortId =====>>>>", cohortId);
+      console.log(
+        "Line 79 cohort_creator_principal =====>>>>",
+        cohort_creator_principal
+      );
+      console.log("Line 79 index =====>>>>", index);
 
       if (action === "Approve") {
         const result = await actor.approve_enrollment_request(
           cohortId,
           enroller_principal
         );
-        console.log("result of approve_enrollment_request 80 ====>>>>>",result)
-      } else {
+        console.log(
+          "result of approve_enrollment_request 80 ====>>>>>",
+          result
+        );
+        toast.success(result);
+      } else if (action === "Reject") {
         const result = await actor.reject_enrollment_request(
           cohort_creator_principal,
           enroller_principal
         );
-        console.log("result of reject_enrollment_request 86 ====>>>>>",result)
+        console.log("result of reject_enrollment_request 86 ====>>>>>", result);
+        toast.success(result);
+      } else {
+        toast.error(result);
       }
     } catch (error) {
       console.error("Failed to process the decision: ", error);
     } finally {
       setIsSubmitting(false);
       setModalOpen(false);
-      // window.location.href = "/";
+      // window.location.reload();
     }
   };
   const handleCloseModal = () => {
     setModalOpen(false);
   };
-  // // // GET POST API HANDLERS WHERE MENTOR APPROCHES PROJECT // // //
-
-  // GET API HANDLER TO GET THE PENDING REQUESTS DATA WHERE MENTOR APPROCHES PROJECT
-  const fetchPendingCohortEnrollmentRequests = async () => {
-    let mentor_principal = Principal.fromText(principal);
-    console.log(mentor_principal);
-    try {
-      const result = await actor.get_pending_cohort_enrollment_requests(
-        mentor_principal
-      );
-      console.log(
-        `result-in-get_pending_cohort_enrollment_requests`,
-        Principal
-      );
-      console.log(`result-in-get_pending_cohort_enrollment_requests`, result);
-      setData(result);
-    } catch (error) {
-      console.log(`error-in-get_pending_cohort_enrollment_requests`, error);
-      setData([]);
-    }
-  };
-
-  // GET API HANDLER TO GET THE APPROVED REQUESTS DATA WHERE MENTOR APPROCHES PROJECT
-  const fetchApprovedRequestFromMentorToProject = async () => {
-    try {
-      const result =
-        await actor.get_all_requests_which_got_accepted_for_mentor();
-      console.log(
-        `result-in-get_all_requests_which_got_accepted_for_mentor`,
-        result
-      );
-      setData(result);
-    } catch (error) {
-      console.log(
-        `error-in-get_all_requests_which_got_accepted_for_mentor`,
-        error
-      );
-      setData([]);
-    }
-  };
-
-  // GET API HANDLER TO GET THE DECLINED REQUESTS DATA WHERE MENTOR APPROCHES PROJECT
-  const fetchDeclinedRequestFromMentorToProject = async () => {
-    try {
-      const result =
-        await actor.get_all_requests_which_got_declined_for_mentor();
-      console.log(
-        `result-in-get_all_requests_which_got_declined_for_mentor`,
-        result
-      );
-      setData(result);
-    } catch (error) {
-      console.log(
-        `error-in-get_all_requests_which_got_declined_for_mentor`,
-        error
-      );
-      setData([]);
-    }
-  };
 
   useEffect(() => {
-    setData([]);
-    if (actor && principal && activeTab && selectedStatus) {
-      switch (activeTab) {
-        case "pending":
-          fetchPendingCohortEnrollmentRequests(); /// change as needed
-          break;
-        case "approved":
-          fetchApprovedRequestFromMentorToProject(); /// change as needed
-          break;
-        case "declined":
-          fetchDeclinedRequestFromMentorToProject(); /// change as needed
-          break;
+    const fetchRequests = async (type) => {
+      let result = [];
+      setIsSubmitting(true);
+
+      try {
+        switch (type) {
+          case "pending":
+            result = await actor.get_pending_cohort_enrollment_requests(
+              Principal.fromText(principal)
+            );
+            break;
+          case "approved":
+            result = await actor.get_accepted_cohort_enrollment_requests(
+              Principal.fromText(principal)
+            );
+            break;
+          case "declined":
+            result = await actor.get_rejected_cohort_enrollment_requests(
+              Principal.fromText(principal)
+            );
+            break;
+          default:
+            result = [];
+        }
+        setData(result);
+        setIsSubmitting(false);
+      } catch (error) {
+        console.error(`Error fetching ${type} requests:`, error);
+        setData([]);
+        setIsSubmitting(false);
       }
+    };
+
+    if (actor && principal && activeTab && selectedStatus) {
+      fetchRequests(activeTab);
     }
   }, [actor, principal, activeTab, selectedStatus]);
+
   return (
     <div className="font-fontUse flex flex-col items-center w-full h-fit px-[5%] lg1:px-[4%] py-[4%] md:pt-0">
       <div className="mb-4 flex flex-row justify-between items-end w-full">
@@ -248,11 +235,13 @@ function EventRegistration() {
       <div className="h-screen overflow-y-scroll scroll-smooth w-full">
         {console.log("data on 196 ====>>>", data)}
         {data && data.length > 0 ? (
-          data.map((val, index) => {
+          data?.map((val, index) => {
             console.log("full-val on 199 ===>>>", val);
 
+            let img = "";
             let name = "";
             let tags = "";
+            let request_status = "";
             let description = "";
             let no_of_seats = "";
             let cohort_launch_date = "";
@@ -265,48 +254,111 @@ function EventRegistration() {
 
             switch (activeTab) {
               case "pending":
-                name = val?.cohort_details?.cohort?.title;
-                tags = val?.cohort_details?.cohort?.tags;
-                description = val?.cohort_details?.cohort?.description;
-                no_of_seats = val?.cohort_details?.cohort?.no_of_seats;
-                cohort_launch_date =
-                  val?.cohort_details?.cohort?.cohort_launch_date;
-                cohort_end_date = val?.cohort_details?.cohort?.cohort_end_date;
-                deadline = val?.cohort_details?.cohort?.deadline;
-                eligibility =
-                  val?.cohort_details?.cohort?.criteria?.eligibility?.[0];
-                level_on_rubric =
-                  val?.cohort_details?.cohort?.criteria?.level_on_ ?? "";
-                break;
+                switch (selectedStatus) {
+                  case "from-project":
+                    request_status = val?.request_status;
+                    val &&
+                      val.enroller_data.project_data.map((projectData) => {
+                        img = projectData?.profile?.user_data
+                          ?.profile_picture?.[0]
+                          ? uint8ArrayToBase64(
+                              projectData?.profile?.user_data
+                                ?.profile_picture?.[0]
+                            )
+                          : "";
+                        name = projectData?.title;
+                        tags = projectData?.tags;
+                        description = projectData?.description;
+                        no_of_seats = projectData?.no_of_seats;
+                        cohort_launch_date = projectData?.cohort_launch_date;
+                        cohort_end_date = projectData?.cohort_end_date;
+                        deadline = projectData?.deadline;
+                        eligibility = projectData?.criteria?.eligibility?.[0];
+                        level_on_rubric =
+                          projectData?.criteria?.level_on_ ?? "";
+                      });
+                    break;
+                  case "from-mentor":
+                    request_status = val?.request_status;
+                    val &&
+                      val.enroller_data.mentor_data.map((mentorData) => {
+                        img = mentorData?.profile?.user_data
+                          ?.profile_picture?.[0]
+                          ? uint8ArrayToBase64(
+                              mentorData?.profile?.user_data
+                                ?.profile_picture?.[0]
+                            )
+                          : "";
+                        name = mentorData?.profile?.user_data?.full_name;
+                        description = mentorData?.profile?.user_data?.bio;
+                        no_of_seats = mentorData?.profile?.no_of_seats;
+                        cohort_launch_date =
+                          mentorData?.profile?.cohort_launch_date;
+                        cohort_end_date = mentorData?.profile?.cohort_end_date;
+                        deadline = mentorData?.profile?.deadline;
+                        eligibility =
+                          mentorData?.profile?.criteria?.eligibility?.[0];
+                        level_on_rubric =
+                          mentorData?.profile?.criteria?.level_on_ ?? "";
+                      });
+                    break;
+                  case "from-investor":
+                    img = hover;
+                    name = val?.enroller_data?.project_data?.title;
+                    request_status = val?.request_status;
+                    tags = val?.enroller_data?.project_data?.tags;
+                    description = val?.enroller_data?.project_data?.description;
+                    no_of_seats = val?.enroller_data?.project_data?.no_of_seats;
+                    cohort_launch_date =
+                      val?.enroller_data?.project_data?.cohort_launch_date;
+                    cohort_end_date =
+                      val?.enroller_data?.project_data?.cohort_end_date;
+                    deadline = val?.enroller_data?.project_data?.deadline;
+                    eligibility =
+                      val?.enroller_data?.project_data?.criteria
+                        ?.eligibility?.[0];
+                    level_on_rubric =
+                      val?.enroller_data?.project_data?.criteria?.level_on_ ??
+                      "";
+                    break;
+                  default:
+                    break;
+                }
               case "approved":
-                name = val?.cohort_details?.cohort?.title;
-                tags = val?.cohort_details?.cohort?.tags;
-                description = val?.cohort_details?.cohort?.description;
-                no_of_seats = val?.cohort_details?.cohort?.no_of_seats;
+                name = val?.enroller_data?.cohort?.title;
+                request_status = val?.request_status;
+                tags = val?.enroller_data?.cohort?.tags;
+                description = val?.enroller_data?.cohort?.description;
+                no_of_seats = val?.enroller_data?.cohort?.no_of_seats;
                 cohort_launch_date =
-                  val?.cohort_details?.cohort?.cohort_launch_date;
-                cohort_end_date = val?.cohort_details?.cohort?.cohort_end_date;
-                deadline = val?.cohort_details?.cohort?.deadline;
+                  val?.enroller_data?.cohort?.cohort_launch_date;
+                cohort_end_date = val?.enroller_data?.cohort?.cohort_end_date;
+                deadline = val?.enroller_data?.cohort?.deadline;
                 eligibility =
-                  val?.cohort_details?.cohort?.criteria?.eligibility?.[0];
+                  val?.enroller_data?.cohort?.criteria?.eligibility?.[0];
                 level_on_rubric =
-                  val?.cohort_details?.cohort?.criteria?.level_on_ ?? "";
-                accepted_at = val?.accepted_at ?? "";
+                  val?.enroller_data?.cohort?.criteria?.level_on_ ?? "";
+                accepted_at = val?.accepted_at
+                  ? formatFullDateFromBigInt(val?.accepted_at)
+                  : "";
                 break;
               case "declined":
-                name = val?.cohort_details?.cohort?.title;
-                tags = val?.cohort_details?.cohort?.tags;
-                description = val?.cohort_details?.cohort?.description;
-                no_of_seats = val?.cohort_details?.cohort?.no_of_seats;
+                name = val?.enroller_data?.cohort?.title;
+                request_status = val?.request_status;
+                tags = val?.enroller_data?.cohort?.tags;
+                description = val?.enroller_data?.cohort?.description;
+                no_of_seats = val?.enroller_data?.cohort?.no_of_seats;
                 cohort_launch_date =
-                  val?.cohort_details?.cohort?.cohort_launch_date;
-                cohort_end_date = val?.cohort_details?.cohort?.cohort_end_date;
-                deadline = val?.cohort_details?.cohort?.deadline;
+                  val?.enroller_data?.cohort?.cohort_launch_date;
+                cohort_end_date = val?.enroller_data?.cohort?.cohort_end_date;
+                deadline = val?.enroller_data?.cohort?.deadline;
                 eligibility =
-                  val?.cohort_details?.cohort?.criteria?.eligibility?.[0];
+                  val?.enroller_data?.cohort?.criteria?.eligibility?.[0];
                 level_on_rubric =
-                  val?.cohort_details?.cohort?.criteria?.level_on_ ?? "";
-                rejected_at = val?.rejected_at ?? "";
+                  val?.enroller_data?.cohort?.criteria?.level_on_ ?? "";
+                rejected_at = val?.rejected_at
+                  ? formatFullDateFromBigInt(val?.rejected_at)
+                  : "";
                 break;
             }
 
@@ -319,7 +371,7 @@ function EventRegistration() {
                   <div className="flex flex-col">
                     <div className="w-12 h-12">
                       <img
-                        src={hover}
+                        src={img}
                         alt="img"
                         className="object-cover rounded-full h-full w-full"
                       />
@@ -341,7 +393,9 @@ function EventRegistration() {
                       accepted_at.trim() !== "" ? (
                         <>
                           <div className="flex justify-between pt-2">
-                            <p className="text-green-700">{"RESPONSE"}</p>
+                            <p className="text-green-700 capitalize">
+                              {request_status || ""}
+                            </p>
                             <p className="text-gray-400 font-thin">
                               {accepted_at}
                             </p>
@@ -355,7 +409,9 @@ function EventRegistration() {
                       rejected_at.trim() !== "" ? (
                         <>
                           <div className="flex justify-between pt-2">
-                            <p className="text-red-700">{"RESPONSE"}</p>
+                            <p className="text-red-700 capitalize">
+                              {request_status || ""}
+                            </p>
                             <p className="text-gray-400 font-thin">
                               {rejected_at}
                             </p>
@@ -375,7 +431,8 @@ function EventRegistration() {
                                   onClick={() =>
                                     handleOpenModal(
                                       "Are you sure you want to reject request?",
-                                      "Reject"
+                                      "Reject",
+                                      index
                                     )
                                   }
                                   className="capitalize border-2 font-semibold bg-red-700 border-red-700 text-white px-2 py-1 rounded-md  hover:text-red-900 hover:bg-white"

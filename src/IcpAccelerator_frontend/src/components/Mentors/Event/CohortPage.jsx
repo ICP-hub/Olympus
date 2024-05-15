@@ -1,7 +1,42 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import hover from "../../../../assets/images/1.png";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { formatFullDateFromSimpleDate } from "../../Utils/formatter/formatDateFromBigInt";
+import LiveProjects from "../../Dashboard/LiveProjects";
+import EventProject from "./EventProject";
 
 function CohortPage() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const actor = useSelector((currState) => currState.actors.actor);
+  const { cohort_id } = location.state || {};
+
+  const [cohortData, setCohortData] = useState(null);
+  const fetchCohortData = async () => {
+    await actor
+      .get_cohort(cohort_id)
+      .then((result) => {
+        console.log("get_cohort line 14 ========>>>>>>>>", result);
+        if (result && Object.keys(result).length > 0) {
+          setCohortData(result);
+        } else {
+          setCohortData(null);
+        }
+      })
+      .catch((error) => {
+        console.log("error-in-get_my_cohort", error);
+        setCohortData(null);
+      });
+  };
+
+  useEffect(() => {
+    if (actor) {
+      fetchCohortData();
+    } else {
+      window.location.href = "/";
+    }
+  }, [actor]);
   return (
     <section className="bg-gray-100 w-full h-full lg1:px-[4%] py-[2%] px-[5%]">
       <div className="container">
@@ -14,7 +49,7 @@ function CohortPage() {
             <div className="flex justify-between p-8">
               <div className="w-1/2">
                 <p className="font-extrabold text-xl">
-                  Incrypted Pitch Session I
+                  {cohortData?.cohort?.title}
                 </p>
                 <div className="pt-2">
                   <h4 className="font-extrabold py-2">EVENT PROGRAM</h4>
@@ -74,7 +109,7 @@ function CohortPage() {
                         <div className="flex flex-col font-bold">
                           <p className="text-[#7283EA]">Date</p>
                           <p className="text-black whitespace-nowrap">
-                            25 Apr 2024
+                            {cohortData?.cohort?.cohort_end_date}
                           </p>
                         </div>
                         <div class="text-2xl">•</div>
@@ -99,6 +134,22 @@ function CohortPage() {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+          <div>
+            <div className="flex items-center justify-between my-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
+              <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl sxxs:text-lg">
+                Projects
+              </h1>
+              <button
+                onClick={() => navigate("/live-projects")}
+                className="border border-violet-800 px-4 py-2 rounded-md text-violet-800 sxxs:px-2 sxxs:py-1 sxxs:text-xs sm:text-lg"
+              >
+                View More
+              </button>
+            </div>
+            <div className="mb-4 fade-in">
+              <EventProject />
             </div>
           </div>
         </div>
