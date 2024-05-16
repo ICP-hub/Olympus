@@ -316,7 +316,7 @@ function EventRegistration() {
       <div className="h-screen overflow-y-scroll scroll-smooth w-full">
       {data && data.length > 0 ? (
   data.map((val, index) => {
-    if (selectedStatus === "from-project") {
+    if (selectedStatus === "from-project" && val?.enroller_data?.project_data && val?.enroller_data?.project_data.length >0) {
       if (!val?.enroller_data?.project_data || val?.enroller_data?.project_data.length === 0) {
         return <NoDataCard />;
       }
@@ -347,7 +347,7 @@ function EventRegistration() {
           handleOpenModal={handleOpenModal}
         />
       );
-    } else if (selectedStatus === "from-mentor") {
+    } else if (selectedStatus === "from-mentor" && val?.enroller_data?.mentor_data && val?.enroller_data?.mentor_data.length >0 ) {
       if (!val?.enroller_data?.mentor_data || val?.enroller_data?.mentor_data.length === 0) {
         return <NoDataCard />;
       }
@@ -378,7 +378,7 @@ function EventRegistration() {
           handleOpenModal={handleOpenModal}
         />
       );
-    } else if (selectedStatus === "from-investor") {
+    } else if (selectedStatus === "from-investor" && val?.enroller_data?.vc_data && val?.enroller_data?.vc_data.length>0) {
       if (!val?.enroller_data?.vc_data || val?.enroller_data?.vc_data.length === 0) {
         return <NoDataCard />;
       }
