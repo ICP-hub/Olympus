@@ -89,7 +89,7 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
                     If you already have - continue with method you have used
                     previously.
                   </p> */}
-                  <ul className="my-4 space-y-3 cursor-pointer">
+                  <ul className="cursor-pointer">
                     {walletModalSvg.map((wallet, index) => (
                       console.log('wallet',wallet),
                       <div key={index} onClick={()=>loginHandler(wallet.id)}>

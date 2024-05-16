@@ -56,14 +56,33 @@ const SecondEventCard = ({ data, register }) => {
               }
             });
         } else if (
-          userCurrentRoleStatusActiveRole === "mentor" ||
           userCurrentRoleStatusActiveRole === "vc"
         ) {
           let cohort_id = data?.cohort_id;
 
           // console.log("cohortid ===> ", cohort_id);
           await actor
-            .apply_for_a_cohort_as_a_mentor_or_investor(cohort_id)
+            .apply_for_a_cohort_as_a_investor(cohort_id)
+            .then((result) => {
+              // console.log(
+              //   "result in mentor || vc to check update call==>",
+              //   result
+              // );
+              if (result) {
+                toast.success(result);
+                // window.location.href = "/";
+              } else {
+                toast.error(result);
+              }
+            });
+        }else if (
+          userCurrentRoleStatusActiveRole === "mentor"
+        ){
+          let cohort_id = data?.cohort_id;
+
+          // console.log("cohortid ===> ", cohort_id);
+          await actor
+            .apply_for_a_cohort_as_a_mentor(cohort_id)
             .then((result) => {
               // console.log(
               //   "result in mentor || vc to check update call==>",

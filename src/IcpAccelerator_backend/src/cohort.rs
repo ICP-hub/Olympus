@@ -533,7 +533,7 @@ pub fn apply_for_a_cohort_as_a_mentor(cohort_id: String) -> String {
         };
         send_enrollment_request_as_mentor(cohort_id, mentor_data)
     } else {
-        "You should either be an investor or mentor to register yourself in cohort".to_string()
+        "You should either be an mentor to register yourself in cohort".to_string()
     }
 }
 
@@ -547,11 +547,11 @@ pub fn apply_for_a_cohort_as_a_investor(cohort_id: String) -> String {
         let vc_data_option = get_vc_info_using_principal(caller);
         let vc_data = match vc_data_option {
             Some(data) => data,
-            None => return "Mentor data is required but not found.".to_string(),
+            None => return "Investor data is required but not found.".to_string(),
         };
         send_enrollment_request_as_investor(cohort_id, vc_data)
     } else {
-        "You should either be an investor or mentor to register yourself in cohort".to_string()
+        "You should either be an investor to register yourself in cohort".to_string()
     }
 }
 

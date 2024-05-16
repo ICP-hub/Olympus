@@ -756,28 +756,28 @@ export const walletModalSvg = [
   //   ),
   // },
 
-  {
-    id: "ii",
-    content: (
-      <li className="flex items-center p-3 text-base font-bold text-gray-900  bg-gray-50 hover:bg-gray-100 group hover:shadow  opacity-95 rounded-[10px] border border-zinc-400">
-        <img src={IcpWallet} alt="IcpWallet" className="w-12" />
-        <span className="flex-1 ms-3 whitespace-nowrap">Internet Identity</span>
-        <svg
-          width="45"
-          height="23"
-          viewBox="0 0 56 23"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            id="Arrow 1"
-            d="M2.06926 10.1943C1.24083 10.1938 0.568858 10.865 0.56836 11.6934C0.567861 12.5219 1.23903 13.1938 2.06746 13.1943L2.06926 10.1943ZM54.819 12.7867C55.4051 12.2013 55.4057 11.2515 54.8203 10.6654L45.2801 1.11372C44.6946 0.527581 43.7449 0.52701 43.1587 1.11244C42.5726 1.69788 42.572 2.64763 43.1575 3.23376L51.6376 11.7241L43.1473 20.2043C42.5611 20.7898 42.5605 21.7395 43.146 22.3256C43.7314 22.9118 44.6812 22.9124 45.2673 22.3269L54.819 12.7867ZM2.06746 13.1943L53.7581 13.2254L53.7599 10.2254L2.06926 10.1943L2.06746 13.1943Z"
-            fill="#B3B3B3"
-          />
-        </svg>
-      </li>
-    ),
-  },
+  // {
+  //   id: "ii",
+  //   content: (
+  //     <li className="flex items-center p-3 text-base font-bold text-gray-900  bg-gray-50 hover:bg-gray-100 group hover:shadow  opacity-95 rounded-[10px] border border-zinc-400">
+  //       <img src={IcpWallet} alt="IcpWallet" className="w-12" />
+  //       <span className="flex-1 ms-3 whitespace-nowrap">Internet Identity</span>
+  //       <svg
+  //         width="45"
+  //         height="23"
+  //         viewBox="0 0 56 23"
+  //         fill="none"
+  //         xmlns="http://www.w3.org/2000/svg"
+  //       >
+  //         <path
+  //           id="Arrow 1"
+  //           d="M2.06926 10.1943C1.24083 10.1938 0.568858 10.865 0.56836 11.6934C0.567861 12.5219 1.23903 13.1938 2.06746 13.1943L2.06926 10.1943ZM54.819 12.7867C55.4051 12.2013 55.4057 11.2515 54.8203 10.6654L45.2801 1.11372C44.6946 0.527581 43.7449 0.52701 43.1587 1.11244C42.5726 1.69788 42.572 2.64763 43.1575 3.23376L51.6376 11.7241L43.1473 20.2043C42.5611 20.7898 42.5605 21.7395 43.146 22.3256C43.7314 22.9118 44.6812 22.9124 45.2673 22.3269L54.819 12.7867ZM2.06746 13.1943L53.7581 13.2254L53.7599 10.2254L2.06926 10.1943L2.06746 13.1943Z"
+  //           fill="#B3B3B3"
+  //         />
+  //       </svg>
+  //     </li>
+  //   ),
+  // },
   {
     id: "nfid",
     content: (

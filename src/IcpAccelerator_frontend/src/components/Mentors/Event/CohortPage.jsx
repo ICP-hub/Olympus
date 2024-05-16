@@ -228,7 +228,7 @@ function CohortPage() {
                 View More
               </button>
             </div>
-            <div className="w-full md:w-3/4 px-4 md:flex md:gap-4 sm:flex sm:gap-4">
+            <div className="w-full md:w-full px-4 md:flex md:gap-4 sm:flex sm:gap-4">
               <EventMentor allMentorData={allMentorData} noData={noData} />
             </div>
             <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px] mt-3">

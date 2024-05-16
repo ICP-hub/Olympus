@@ -7,7 +7,7 @@ import NoData from "../../../../assets/images/search_not_found.png";
 function EventMentor({ allMentorData, noData }) {
   const navigate = useNavigate();
 
-  if (noData) {
+  if (noData|| !allMentorData?.Ok?.length) {
     return (
       <div className="items-center w-full flex justify-center">
         <NoDataCard image={NoData} desc={"Mentors not found at the moment"} />
