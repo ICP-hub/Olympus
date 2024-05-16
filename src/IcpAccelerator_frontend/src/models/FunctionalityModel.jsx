@@ -41,7 +41,7 @@ function FunctionalityModel({
                 visible={true}
                 height="35"
                 width="35"
-                color="#000"
+                color="#ffffff"
                 radius="9"
                 ariaLabel="three-dots-loading"
                 wrapperStyle={{ justifyContent: "center" }}

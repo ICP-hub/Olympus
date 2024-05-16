@@ -349,33 +349,49 @@ function ProjectRegForm() {
         .oneOf(["true", "false"], "Invalid value"),
       icp_grants: yup
         .number()
+        .nullable(true)
+        .optional()
         .when("money_raised_till_now", (val, schema) =>
           val && val[0] === "true"
             ? schema
                 .typeError("You must enter a number")
-                .positive("Must be a positive number")
-                .required("Grants is required")
-            : schema
+                .min(0, "Must be a non-negative number")
+            : schema.test({
+                test: (value) =>
+                  value === undefined || value === null || value === "",
+                message: null,
+              })
         ),
       investors: yup
         .number()
+        .optional()
+        .nullable(true)
         .when("money_raised_till_now", (val, schema) =>
           val && val[0] === "true"
             ? schema
                 .typeError("You must enter a number")
-                .positive("Must be a positive number")
-                .required("Investors is required")
-            : schema
+                .min(0, "Must be a non-negative number")
+            : schema.test({
+                test: (value) =>
+                  value === undefined || value === null || value === "",
+                message: null,
+              })
         ),
       raised_from_other_ecosystem: yup
         .number()
+        .optional()
+        .nullable(true)
+
         .when("money_raised_till_now", (val, schema) =>
           val && val[0] === "true"
             ? schema
                 .typeError("You must enter a number")
-                .positive("Must be a positive number")
-                .required("Launchpad is required")
-            : schema
+                .min(0, "Must be a non-negative number")
+            : schema.test({
+                test: (value) =>
+                  value === undefined || value === null || value === "",
+                message: null,
+              })
         ),
       target_amount: yup
         .number()
@@ -383,7 +399,7 @@ function ProjectRegForm() {
           val && val[0] === "true"
             ? schema
                 .typeError("You must enter a number")
-                .positive("Must be a positive number")
+                .min(0, "Must be a non-negative number")
                 .required("Target Amount is required")
             : schema
         ),
@@ -444,7 +460,7 @@ function ProjectRegForm() {
         .test("is-valid-linkedin", "Invalid LinkedIn URL", (value) => {
           if (!value) return true;
           const hasValidChars =
-            /^(https?:\/\/)?(www\.)?linkedin\.com\/(in\/[a-zA-Z0-9_-]+|company\/[a-zA-Z0-9_-]+|groups\/[a-zA-Z0-9_-]+)$/.test(
+            /^(https?:\/\/)?(www\.)?linkedin\.com\/in\/[a-zA-Z0-9_-]+\/?$/.test(
               value
             );
           return hasValidChars;
@@ -1945,8 +1961,8 @@ function ProjectRegForm() {
                         <option className="text-lg font-bold" value="">
                           Select registration type
                         </option>
-                        <option className="text-lg font-bold" value="Comapany">
-                          Comapany
+                        <option className="text-lg font-bold" value="Company">
+                          Company
                         </option>
                         <option className="text-lg font-bold" value="DAO">
                           DAO
@@ -2246,7 +2262,8 @@ function ProjectRegForm() {
                         htmlFor="icp_grants"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        Grants <span className="text-red-500">*</span>
+                        How much funding have you raised in grants,(USD)?{" "}
+                        <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="number"
@@ -2272,7 +2289,8 @@ function ProjectRegForm() {
                         htmlFor="investors"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        Investors <span className="text-red-500">*</span>
+                        How much funding have you received from Investors (USD)
+                        ? <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="number"
@@ -2298,7 +2316,8 @@ function ProjectRegForm() {
                         htmlFor="raised_from_other_ecosystem"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        Launchpad <span className="text-red-500">*</span>
+                        How much funding has been provided through the launchpad
+                        program (USD) ?<span className="text-red-500">*</span>
                       </label>
                       <input
                         type="number"

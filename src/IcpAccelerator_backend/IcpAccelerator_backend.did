@@ -55,6 +55,7 @@ type CohortDetails = record {
 type CohortEnrollmentRequest = record {
   rejected_at : nat64;
   request_status : text;
+  enroller_principal : principal;
   cohort_details : CohortDetails;
   accepted_at : nat64;
   enroller_data : EnrollerDataInternal;
@@ -758,6 +759,7 @@ service : {
   approve_private_docs_access_request : (text, principal) -> (text);
   approve_project_creation_request : (principal) -> (text);
   approve_project_details_updation_request : (principal, text, bool) -> (text);
+  approve_project_update : (principal, text, bool) -> (text);
   approve_vc_creation_request : (principal, bool) -> (text);
   approve_vc_profile_update : (principal, bool) -> (text);
   calculate_and_store_average_rating : (text, text) -> (Result_4);
@@ -797,6 +799,9 @@ service : {
   generate_cohort_leaderboard : () -> (vec LeaderboardEntryForCohorts) query;
   get_accepted_cohort_creation_request_for_admin : () -> (
       vec CohortRequest,
+    ) query;
+  get_accepted_cohort_enrollment_requests : (principal) -> (
+      vec CohortEnrollmentRequest,
     ) query;
   get_accepted_request_for_investor : () -> (vec OfferToSendToInvestor) query;
   get_accepted_request_for_mentor : (principal) -> (
@@ -994,6 +999,9 @@ service : {
   get_projects_with_all_info : () -> (vec ProjectInfoInternal) query;
   get_range_of_check_size : () -> (vec text) query;
   get_ratings_by_principal : (text) -> (Result_10) query;
+  get_rejected_cohort_enrollment_requests : (principal) -> (
+      vec CohortEnrollmentRequest,
+    ) query;
   get_review : (principal) -> (Result_11) query;
   get_role : () -> (RolesResponse) query;
   get_role_status : () -> (vec Role) query;

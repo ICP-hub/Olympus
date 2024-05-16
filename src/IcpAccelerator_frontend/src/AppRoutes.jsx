@@ -30,24 +30,39 @@ import ProjectRegForm from "./components/RegForms.jsx/ProjectRegForm";
 import RequestMoneyRaising from "./components/Project/ProjectDetailsPages/RequestMoneyRaising";
 import Home from "./components/Home/Home";
 import EventRegistration from "./components/Mentors/Event/EventRegistration";
+import CohortPage from "./components/Mentors/Event/CohortPage";
+import EventMentorProfile from "./components/Mentors/Event/EventMentorProfile";
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
-const ProjectDetails = lazy(() => import("./components/Project/ProjectDetails"));
+const ProjectDetails = lazy(() =>
+  import("./components/Project/ProjectDetails")
+);
 const UserProfile = lazy(() => import("./components/UserProfile/UserProfile"));
 const Error404 = lazy(() => import("./components/Error404/Error404"));
 
 const AppRoutes = () => {
-
   const publicRoutes = [
-  
     { path: "/", element: <DashBoard /> },
-    { path: "/individual-project-details-user/:id", element: <ProjectDetailsForUserRole /> },
-    { path: "/individual-project-details-project-owner", element: <ProjectDetailsForOwnerProject /> },
-    { path: "/individual-project-details-project-mentor/:id", element: <ProjectDetailsForMentor /> },
-    { path: "/individual-project-details-project-investor/:id", element: <ProjectDetailsForInvestor /> },
+    {
+      path: "/individual-project-details-user/:id",
+      element: <ProjectDetailsForUserRole />,
+    },
+    {
+      path: "/individual-project-details-project-owner",
+      element: <ProjectDetailsForOwnerProject />,
+    },
+    {
+      path: "/individual-project-details-project-mentor/:id",
+      element: <ProjectDetailsForMentor />,
+    },
+    {
+      path: "/individual-project-details-project-investor/:id",
+      element: <ProjectDetailsForInvestor />,
+    },
     { path: "/association", element: <ProjectAssociation /> },
     { path: "/create-user", element: <UserRegForm /> },
     { path: "/event-register-request", element: <EventRegistration /> },
+    { path: "/event-page", element: <CohortPage /> },
     { path: "/create-user", element: <UserRegForm /> },
     { path: "/create-project", element: <ProjectRegForm /> },
     // { path: "/create-investor", element: <InvestorRegistration /> },
@@ -58,6 +73,7 @@ const AppRoutes = () => {
     { path: "/profile", element: <UserProfile /> },
     // { path: "/create-mentor", element: <MentorRegistration /> },
     { path: "/create-mentor", element: <MentorRegForm /> },
+    { path: "/view-mentor-details", element: <EventMentorProfile /> },
     { path: "/view-mentor-details/:id", element: <MentorsProfile /> },
     { path: "/view-investor-details/:id", element: <InvestorProfile /> },
     { path: "/view-mentors", element: <SearchMentors /> },
@@ -67,27 +83,42 @@ const AppRoutes = () => {
     { path: "/raising-projects", element: <MoreCurrentlyRaisingProjects /> },
     { path: "/view-investor", element: <ViewInvestor /> },
     { path: "/view-investor/:id", element: <ViewInvestorByProjectId /> },
-    { path: "/project-association-requests", element: <ProjectSideAssociation /> },
-    { path: "/mentor-association-requests", element: <MentorSideAssociation /> },
-    { path: "/investor-association-requests", element: <InvestorSideAssociation /> },
-    { path: "/project-private-document-requests", element: <RequestsPrivateDocument /> },
-    { path: "/project-money-raising-requests/:id", element: <RequestMoneyRaising /> },
+    {
+      path: "/project-association-requests",
+      element: <ProjectSideAssociation />,
+    },
+    {
+      path: "/mentor-association-requests",
+      element: <MentorSideAssociation />,
+    },
+    {
+      path: "/investor-association-requests",
+      element: <InvestorSideAssociation />,
+    },
+    {
+      path: "/project-private-document-requests",
+      element: <RequestsPrivateDocument />,
+    },
+    {
+      path: "/project-money-raising-requests/:id",
+      element: <RequestMoneyRaising />,
+    },
     { path: "/all-live-events", element: <LiveEventsCards /> },
-   
+    { path: "/event-details/:id", element: <CohortPage /> },
   ];
 
-
-  return (<>
-    <Breadcrumbs publicRoutes={publicRoutes} />
-    <Suspense fallback={<Loader />}>
-      <Routes>
-        {publicRoutes.map((route, index) => (
-          <Route key={index} path={route.path} element={route.element} />
-        ))}
-        <Route path="*" element={<Error404 />} />
-      </Routes>
-    </Suspense>
-  </>
+  return (
+    <>
+      <Breadcrumbs publicRoutes={publicRoutes} />
+      <Suspense fallback={<Loader />}>
+        <Routes>
+          {publicRoutes.map((route, index) => (
+            <Route key={index} path={route.path} element={route.element} />
+          ))}
+          <Route path="*" element={<Error404 />} />
+        </Routes>
+      </Suspense>
+    </>
   );
 };
 

@@ -7,10 +7,9 @@ import {
   DateSvg,
   noDataPresentSvg,
   projectFilterSvg,
-  telegramSVg,
 } from "../../Utils/AdminData/SvgData";
 import NoDataCard from "../../../../../IcpAccelerator_frontend/src/components/Mentors/Event/NoDataCard";
-import NoData from "../../../../../IcpAccelerator_frontend/assets/images/NoData.png"
+import NoData from "../../../../../IcpAccelerator_frontend/assets/images/NoData.png";
 
 import {
   formatDateFromBigInt,
@@ -18,36 +17,49 @@ import {
 } from "../../Utils/AdminData/saga_function/blobImageToUrl";
 import { useNavigate } from "react-router-dom";
 import { place } from "../../Utils/AdminData/SvgData";
-
+import proj from "../../../../../IcpAccelerator_frontend/assets/images/founder.png";
+import vc from "../../../../../IcpAccelerator_frontend/assets/images/vc.png";
+import mentor from "../../../../../IcpAccelerator_frontend/assets/images/mentor.png";
 const UpdateAllRequest = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const navigate = useNavigate();
   const [allData, setAllData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [filterOption, setFilterOption] = useState("Projects");
+  const [selectionOption, setSelectionOption] = useState("Pending");
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [filter, setFilter] = useState("");
   const itemsPerPage = 10;
   const dropdownRef = useRef(null);
   OutSideClickHandler(dropdownRef, () => setIsPopupOpen(false));
 
-  const fetchData = useCallback(async () => {
-    let data = [];
-    try {
-      switch (filterOption) {
-        case "Mentors":
-          data = await actor.mentor_profile_edit_awaiting_approval();
-          break;
-        case "Projects":
-          data = await actor.project_update_awaiting_approval();
-          break;
-        case "Investors":
-          data = await actor.vc_profile_edit_awaiting_approval();
-          break;
-        default:
-          data = [];
-      }
+  async function fetchUpdationData(filterOption, selectionOption) {
+    const actions = {
+      Mentors: {
+        Pending: () => actor.mentor_profile_edit_awaiting_approval(),
+        Approved: () => actor,
+        Declined: () => actor.get_mentor_update_declined_request(),
+      },
+      Projects: {
+        Pending: () => actor.project_update_awaiting_approval(),
+        Approved: () => actor,
+        Declined: () => actor.get_project_update_declined_request(),
+      },
+      Investors: {
+        Pending: () => actor.vc_profile_edit_awaiting_approval(),
+        Approved: () => actor,
+        Declined: () => actor.get_vc_update_declined_request(),
+      },
+    };
+    const action = actions[filterOption]?.[selectionOption];
+    return action ? await action() : [];
+  }
 
+
+  const fetchData = useCallback(async () => {
+    try {
+      const data = await fetchUpdationData(filterOption, selectionOption);
+      console.log("data status wala ==>", data);
       const processedData = data.map((item, index) => {
         console.log("data updated wale mai =>>>>", data);
 
@@ -145,19 +157,30 @@ const UpdateAllRequest = () => {
     );
   };
 
-  const handleRowClick = (principalId) => {
+  const handleRowClick = (principalId ,selectionOption) => {
     const routePath =
       filterOption === "Mentors"
         ? "/mentorupdate"
         : filterOption === "Investors"
         ? "/investorupdate"
         : "/projectupdate";
-    navigate(routePath, { state: principalId });
+        navigate(routePath, {
+          state: {
+            principalId: principalId,
+            selectionOption: selectionOption
+          }
+        });
   };
 
   return (
     <div className="px-[4%] py-[3%] w-full bg-gray-100">
-      <div className="flex justify-end mb-4">
+      <div className="flex justify-between mb-10">
+        <div
+          className="w-full bg-gradient-to-r from-purple-900 to-blue-500 text-transparent bg-clip-text text-xl md:text-3xl font-extrabold 
+       font-fontUse"
+        >
+          All Updates
+        </div>
         <div className="relative flex items-center max-w-xs bg-white rounded-xl">
           <input
             type="text"
@@ -179,61 +202,81 @@ const UpdateAllRequest = () => {
         </div>
       </div>
 
-      <div className="flex justify-end mb-4 items-center w-full">
-        <div
-          className="w-full bg-gradient-to-r from-purple-900 to-blue-500 text-transparent bg-clip-text text-xl md:text-3xl font-extrabold py-4 
-       font-fontUse"
-        >
-          All Updates
-        </div>{" "}
-        <div
-          className="border-2 border-blue-900 p-1 w-auto  font-bold rounded-md text-blue-900 px-2 capitalize"
-          style={{ whiteSpace: "nowrap" }}
-        >
-          {filterOption}
-        </div>
-        <div className="flex items-center justify-between ml-2">
-          <div className="flex justify-end gap-4 relative " ref={dropdownRef}>
-            <div
-              className="cursor-pointer"
-              onClick={() => setIsPopupOpen((curr) => !curr)}
+      <div className="flex justify-between mb-4 items-center w-full">
+        <div>
+          {[
+            { name: "Projects", icon: proj },
+            { name: "Mentors", icon: mentor },
+            { name: "Investors", icon: vc },
+          ].map((item) => (
+            <button
+              key={item.name}
+              onClick={() => setFilterOption(item.name)}
+              className={`mr-4 text-sm font-medium transition-colors duration-300 ease-in-out ${
+                filterOption === item.name
+                  ? "pb-1 border-b-2 border-gray-700 font-bold text-gray-700"
+                  : "text-gray-500"
+              }`}
             >
-              {projectFilterSvg}
-              {isPopupOpen && (
-                <div className="absolute w-[250px] mt-4 top-full right-0 bg-white shadow-md rounded-lg border border-gray-200 p-3 z-10">
-                  <ul className="flex flex-col">
-                    <li>
-                      <button
-                        className="border-[#9C9C9C] w-[230px]  hover:text-indigo-800 border-b-2 py-2 px-4 focus:outline-none text-base flex justify-start font-fontUse"
-                        onClick={() => {
-                          setFilterOption("Projects");
-                        }}
-                      >
-                        Projects
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className="border-[#9C9C9C] w-[230px]  hover:text-indigo-800 border-b-2 py-2 px-4 focus:outline-none text-base flex justify-start font-fontUse"
-                        onClick={() => setFilterOption("Mentors")}
-                      >
-                        Mentors
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className="border-[#9C9C9C] w-[230px]  hover:text-indigo-800 border-b-2 py-2 px-4 focus:outline-none text-base flex justify-start font-fontUse"
-                        onClick={() => setFilterOption("Investors")}
-                      >
-                        Investors
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              )}
+              <span className="md:block hidden">{item.name}</span>
+              <img
+                src={item.icon}
+                alt={item.icon}
+                className="inline md:hidden w-7 h-7"
+              />
+            </button>
+          ))}
+        </div>
+        <div className="flex">
+          <div
+            className="border-2 border-blue-900 p-1 w-auto  font-bold rounded-md text-blue-900 px-2 capitalize"
+            style={{ whiteSpace: "nowrap" }}
+          >
+            {selectionOption}
+          </div>
+          <div className="flex items-center justify-between ml-2">
+            <div className="flex justify-end gap-4 relative " ref={dropdownRef}>
+              <div
+                className="cursor-pointer"
+                onClick={() => setIsPopupOpen((curr) => !curr)}
+              >
+                {projectFilterSvg}
+                {isPopupOpen && (
+                  <div className="absolute w-[250px] mt-4 top-full right-0 bg-white shadow-md rounded-lg border border-gray-200 p-3 z-10">
+                    <ul className="flex flex-col">
+                      <li>
+                        <button
+                          className="border-[#9C9C9C] w-[230px]  hover:text-indigo-800 border-b-2 py-2 px-4 focus:outline-none text-base flex justify-start font-fontUse"
+                          onClick={() => {
+                            setSelectionOption("Pending");
+                          }}
+                        >
+                          Pending
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          className="border-[#9C9C9C] w-[230px]  hover:text-indigo-800 border-b-2 py-2 px-4 focus:outline-none text-base flex justify-start font-fontUse"
+                          onClick={() => setSelectionOption("Approved")}
+                        >
+                          Approved
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          className="border-[#9C9C9C] w-[230px]  hover:text-indigo-800 border-b-2 py-2 px-4 focus:outline-none text-base flex justify-start font-fontUse"
+                          onClick={() => setSelectionOption("Declined")}
+                        >
+                          Declined
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>{" "}
+        </div>
       </div>
 
       {currentData.length > 0 ? (
@@ -330,7 +373,7 @@ const UpdateAllRequest = () => {
                 </div>
                 <div className="md:w-1/4 w-full flex justify-end items-end space-x-2 md:h-10">
                   <button
-                    onClick={() => handleRowClick(user.principalId)}
+                    onClick={() => handleRowClick(user.principalId ,selectionOption)}
                     className="capitalize border-2 font-semibold bg-[#3505B2] border-[#3505B2] md:text-xs text-[9px]  text-white md:px-1 px-2 rounded-md md:h-8 h-7 hover:text-[#3505B2] hover:bg-white"
                   >
                     View User Profile
@@ -341,8 +384,8 @@ const UpdateAllRequest = () => {
           ))}
         </div>
       ) : (
-        <NoDataCard image={NoData} desc={'No Update Requests'}/>
-        )}
+        <NoDataCard image={NoData} desc={"No Update Requests"} />
+      )}
 
       {currentData.length > 0 && (
         <div className="flex items-center gap-4 justify-center mb-4">

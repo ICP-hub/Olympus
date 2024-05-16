@@ -1,19 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { projectFilterSvg } from "../../Utils/Data/SvgData";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Principal } from "@dfinity/principal";
-import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
-import { formatFullDateFromBigInt } from "../../Utils/formatter/formatDateFromBigInt";
-import DeclineOfferModal from "../../../models/DeclineOfferModal";
-import AcceptOfferModal from "../../../models/AcceptOfferModal";
 import NoDataCard from "../../Mentors/Event/MentorAssocReqNoDataCard";
+import hover from "../../../../assets/images/1.png";
+import FunctionalityModel from "../../../models/FunctionalityModel";
+import { projectFilterSvg } from "../../Utils/Data/SvgData";
+import toast from "react-hot-toast";
+import { formatFullDateFromBigInt } from "../../Utils/formatter/formatDateFromBigInt";
+import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
+import EventRequset from "./EventRequset";
 function EventRegistration() {
-  const navigate = useNavigate();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [para, setPara] = useState("");
+  const [action, setAction] = useState("");
+  const [index, setIndex] = useState("");
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState("pending");
   const [data, setData] = useState([]);
-  const [noData, setNoData] = useState(false);
   const headerData = [
     {
       id: "pending",
@@ -29,20 +34,25 @@ function EventRegistration() {
     },
   ];
 
-  //   const rolesFilterArray = [
-  //     {
-  //       id: "to-project",
-  //       label: "to project",
-  //     },
-  //     {
-  //       id: "from-project",
-  //       label: "from project",
-  //     },
-  //   ];
+  const rolesFilterArray = [
+    {
+      id: "from-project",
+      label: "from project",
+      map: "product_data",
+    },
+    {
+      id: "from-mentor",
+      label: "from mentor",
+    },
+    {
+      id: "from-investor",
+      label: "from investor",
+    },
+  ];
 
   const actor = useSelector((currState) => currState.actors.actor);
   const principal = useSelector((currState) => currState.internet.principal);
-  const [selectedStatus, setSelectedStatus] = useState("to-project");
+  const [selectedStatus, setSelectedStatus] = useState("from-project");
   const getTabClassName = (tab) => {
     return `inline-block p-1 ${
       activeTab === tab
@@ -55,84 +65,199 @@ function EventRegistration() {
     setActiveTab(tab);
   };
 
-  // // // GET POST API HANDLERS WHERE MENTOR APPROCHES PROJECT // // //
-
-  // GET API HANDLER TO GET THE PENDING REQUESTS DATA WHERE MENTOR APPROCHES PROJECT
-  const fetchPendingRequestFromMentorToProject = async () => {
-    // let mentor_id = Principal.fromText(principal)
+  const handleOpenModal = (para, action, index) => {
+    setPara(para);
+    setAction(action);
+    setIndex(index);
+    setModalOpen(true);
+  };
+  const handleClick = async () => {
+    setIsSubmitting(true);
+    let enroller_principal = data?.[index]?.enroller_principal;
+    let cohortId = data?.[index]?.cohort_details?.cohort_id;
+    let cohort_creator_principal =
+      data?.[index]?.cohort_details?.cohort_creator_principal;
     try {
-      const result = await actor.get_all_offers_which_are_pending_for_mentor();
-      console.log(
-        `result-in-get_all_offers_which_are_pending_for_mentor`,
-        result
-      );
-      setData(result);
+      if (action === "Approve") {
+        const result = await actor.approve_enrollment_request(
+          cohortId,
+          enroller_principal
+        );
+        toast.success(result);
+      } else if (action === "Reject") {
+        const result = await actor.reject_enrollment_request(
+          cohort_creator_principal,
+          enroller_principal
+        );
+        toast.success(result);
+      } else {
+        toast.error(result);
+      }
     } catch (error) {
-      console.log(
-        `error-in-get_all_offers_which_are_pending_for_mentor`,
-        error
-      );
-      setData([]);
+      console.error("Failed to process the decision: ", error);
+    } finally {
+      setIsSubmitting(false);
+      setModalOpen(false);
+      // window.location.reload();
     }
   };
-
-  // GET API HANDLER TO GET THE APPROVED REQUESTS DATA WHERE MENTOR APPROCHES PROJECT
-  const fetchApprovedRequestFromMentorToProject = async () => {
-    try {
-      const result =
-        await actor.get_all_requests_which_got_accepted_for_mentor();
-      console.log(
-        `result-in-get_all_requests_which_got_accepted_for_mentor`,
-        result
-      );
-      setData(result);
-    } catch (error) {
-      console.log(
-        `error-in-get_all_requests_which_got_accepted_for_mentor`,
-        error
-      );
-      setData([]);
-    }
-  };
-
-  // GET API HANDLER TO GET THE DECLINED REQUESTS DATA WHERE MENTOR APPROCHES PROJECT
-  const fetchDeclinedRequestFromMentorToProject = async () => {
-    try {
-      const result =
-        await actor.get_all_requests_which_got_declined_for_mentor();
-      console.log(
-        `result-in-get_all_requests_which_got_declined_for_mentor`,
-        result
-      );
-      setData(result);
-    } catch (error) {
-      console.log(
-        `error-in-get_all_requests_which_got_declined_for_mentor`,
-        error
-      );
-      setData([]);
-    }
+  const handleCloseModal = () => {
+    setModalOpen(false);
   };
 
   useEffect(() => {
-    setData([]);
-    if (actor && principal && activeTab && selectedStatus) {
-      switch (activeTab) {
-        case "pending":
-          fetchPendingRequestFromMentorToProject(); /// change as needed
-          break;
-        case "approved":
-          fetchApprovedRequestFromMentorToProject(); /// change as needed
-          break;
-        case "declined":
-          fetchDeclinedRequestFromMentorToProject(); /// change as needed
-          break;
+    let isMounted = true;
+    const fetchRequests = async (type) => {
+      let result = [];
+      setIsSubmitting(true);
+
+      try {
+        switch (type) {
+          case "pending":
+            result = await actor.get_pending_cohort_enrollment_requests(
+              Principal.fromText(principal)
+            );
+            break;
+          case "approved":
+            result = await actor.get_accepted_cohort_enrollment_requests(
+              Principal.fromText(principal)
+            );
+            break;
+          case "declined":
+            result = await actor.get_rejected_cohort_enrollment_requests(
+              Principal.fromText(principal)
+            );
+            break;
+          default:
+            result = [];
+        }
+        if (isMounted) {
+          console.log("data", result);
+          setData(result);
+          setIsSubmitting(false);
+        }
+      } catch (error) {
+        console.error(`Error fetching ${type} requests:`, error);
+        if (isMounted) {
+          setData([]);
+          setIsSubmitting(false);
+        }
       }
+    };
+
+    if (actor && principal) {
+      fetchRequests(activeTab);
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [actor, principal, activeTab, selectedStatus]);
+
+  console.log("selectedStatus", selectedStatus);
+
+  function processData(val, type) {
+    console.log(type);
+    console.log("pval", val);
+    let img = "";
+    let name = "";
+    let tags = "";
+    let request_status = "";
+    let description = "";
+    let no_of_seats = "";
+    let cohort_launch_date = "";
+    let cohort_end_date = "";
+    let deadline = "";
+    let eligibility = "";
+    let level_on_rubric = "";
+    let request = "";
+    let role = "";
+    let accepted_at = "";
+    let rejected_at = "";
+    let cohort_name = "";
+    if (val?.request_status) {
+      request_status = val?.request_status;
+    }
+
+    // Process only the data related to the selected status
+    if (type === "from-project" && val?.enroller_data?.project_data) {
+      val?.enroller_data?.project_data.forEach((projectData) => {
+        console.log("pdata", projectData);
+        img = projectData?.params?.user_data?.profile_picture?.[0]
+          ? uint8ArrayToBase64(
+              projectData?.params?.user_data?.profile_picture?.[0]
+            )
+          : "";
+        name = projectData?.params.user_data.full_name;
+        cohort_name = val?.cohort_details?.cohort?.title;
+        description = projectData?.params?.user_data?.bio;
+        role = val?.enroller_data?.project_data.length > 0 ? "Project" : "";
+        request = formatFullDateFromBigInt(val?.sent_at);
+        accepted_at = formatFullDateFromBigInt(val?.accepted_at);
+        rejected_at = formatFullDateFromBigInt(val?.rejected_at);
+      });
+    } else if (type === "from-mentor" && val?.enroller_data?.mentor_data) {
+      val?.enroller_data?.mentor_data.forEach((mentorData) => {
+        img = mentorData?.profile?.user_data?.profile_picture?.[0]
+          ? uint8ArrayToBase64(
+              mentorData?.profile?.user_data?.profile_picture?.[0]
+            )
+          : "";
+        name = mentorData?.profile.user_data.full_name;
+        cohort_name = val?.cohort_details?.cohort?.title;
+        description = mentorData?.profile?.user_data?.bio[0];
+        role = val?.enroller_data?.mentor_data.length > 0 ? "Mentor" : "";
+        request = formatFullDateFromBigInt(val?.sent_at);
+        accepted_at = formatFullDateFromBigInt(val?.accepted_at);
+        rejected_at = formatFullDateFromBigInt(val?.rejected_at);
+      });
+    } else if (type === "from-investor" && val?.enroller_data?.vc_data) {
+      val?.enroller_data?.vc_data.forEach((vcData) => {
+        console.log("vcData", vcData);
+        img = vcData?.params?.user_data?.profile_picture?.[0]
+          ? uint8ArrayToBase64(vcData?.params?.user_data?.profile_picture?.[0])
+          : "";
+        name = vcData?.params.user_data.full_name;
+        cohort_name = val?.cohort_details?.cohort?.title;
+        description = vcData?.params?.user_data?.bio;
+        role = val?.enroller_data?.vc_data.length > 0 ? "Investor" : "";
+        request = formatFullDateFromBigInt(val?.sent_at);
+        accepted_at = formatFullDateFromBigInt(val?.accepted_at);
+        rejected_at = formatFullDateFromBigInt(val?.rejected_at);
+      });
+    }
+
+    return {
+      img,
+      name,
+      tags,
+      request,
+      request_status,
+      role,
+      cohort_name,
+      rejected_at,
+      accepted_at,
+      description,
+      no_of_seats,
+      cohort_launch_date,
+      cohort_end_date,
+      deadline,
+      eligibility,
+      level_on_rubric,
+    };
+  }
+
   return (
     <div className="font-fontUse flex flex-col items-center w-full h-fit px-[5%] lg1:px-[4%] py-[4%] md:pt-0">
       <div className="mb-4 flex flex-row justify-between items-end w-full">
+        <FunctionalityModel
+          para={para}
+          action={action}
+          onModal={modalOpen}
+          isSubmitting={isSubmitting}
+          onClose={handleCloseModal}
+          onClick={handleClick}
+        />
         <div className="flex flex-row">
           <p className="text-lg font-semibold bg-gradient-to-r from-indigo-900 to-sky-400 inline-block text-transparent bg-clip-text">
             Cohort Registeration Requests
@@ -155,7 +280,7 @@ function EventRegistration() {
             ))}
           </ul>
         </div>
-        {/* <div
+        <div
           onClick={() => setIsPopupOpen(!isPopupOpen)}
           className="cursor-pointer gap-2 flex flex-row items-center"
         >
@@ -163,11 +288,10 @@ function EventRegistration() {
             {selectedStatus.replace(/-/g, " ")}
           </button>
           {projectFilterSvg}
-        </div> */}
-        {/* {isPopupOpen && (
+        </div>
+        {isPopupOpen && (
           <div className="absolute w-[250px] top-52 right-16 bg-white shadow-xl rounded-lg border border-gray-300 p-4 z-50">
             {rolesFilterArray.map((status, index) => {
-              console.log("rolesFilterArray-status", status);
               return (
                 <button
                   key={index}
@@ -187,198 +311,121 @@ function EventRegistration() {
               );
             })}
           </div>
-        )} */}
+        )}
       </div>
       <div className="h-screen overflow-y-scroll scroll-smooth w-full">
         {data && data.length > 0 ? (
-          data.map((val, index) => {
-            console.log("full-val", val);
-            let img = "";
-            let name = "";
-            let date = "";
-            let msg = "";
-            let offer_id = "";
-            let resp_msg = "";
-            let accpt_date = "";
-            let decln_date = "";
-            let self_decln = "";
-
-            switch (activeTab) {
-              case "pending":
-                img = val?.project_info?.project_logo
-                  ? uint8ArrayToBase64(val?.project_info?.project_logo)
-                  : "";
-                name = val?.project_info?.project_name ?? "";
-                date = val?.sent_at
-                  ? formatFullDateFromBigInt(val?.sent_at)
-                  : "";
-                msg = val?.offer ?? "";
-                offer_id = val?.offer_id ?? "";
-                break;
-              case "approved":
-                img = val?.project_info?.project_logo
-                  ? uint8ArrayToBase64(val?.project_info?.project_logo)
-                  : "";
-                name = val?.project_info?.project_name ?? "";
-                date = val?.sent_at
-                  ? formatFullDateFromBigInt(val?.sent_at)
-                  : "";
-                msg = val?.offer ?? "";
-                offer_id = val?.offer_id ?? "";
-                resp_msg = val?.response ?? "";
-                accpt_date = val?.accepted_at
-                  ? formatFullDateFromBigInt(val?.accepted_at)
-                  : "";
-                break;
-              case "declined":
-                img = val?.project_info?.project_logo
-                  ? uint8ArrayToBase64(val?.project_info?.project_logo)
-                  : "";
-                name = val?.project_info?.project_name ?? "";
-                date = val?.sent_at
-                  ? formatFullDateFromBigInt(val?.sent_at)
-                  : "";
-                msg = val?.offer ?? "";
-                offer_id = val?.offer_id ?? "";
-                resp_msg = val?.response ?? "";
-                decln_date = val?.declined_at
-                  ? formatFullDateFromBigInt(val?.declined_at)
-                  : "";
-                break;
+          data?.map((val, index) => {
+            if (selectedStatus === "from-project" && val?.enroller_data?.project_data) {
+              console.log("val main", val);
+              const {
+                img,
+                name,
+                request,
+                role,
+                request_status,
+                cohort_name,
+                description,
+                rejected_at,
+                accepted_at,
+                no_of_seats,
+                cohort_launch_date,
+                cohort_end_date,
+                deadline,
+                eligibility,
+                level_on_rubric,
+              } = processData(val, selectedStatus);
+              return (
+                <EventRequset
+                  index={index}
+                  img={img}
+                  name={name}
+                  role={role}
+                  request={request}
+                  description={description}
+                  cohort_name={cohort_name}
+                  accepted_at={accepted_at}
+                  request_status={request_status}
+                  rejected_at={rejected_at}
+                  activeTab={activeTab}
+                  handleOpenModal={handleOpenModal}
+                />
+              );
+            } else if (
+              selectedStatus === "from-mentor" &&
+              val?.enroller_data?.mentor_data
+            ) {
+              const {
+                img,
+                name,
+                request,
+                role,
+                request_status,
+                cohort_name,
+                description,
+                rejected_at,
+                accepted_at,
+                no_of_seats,
+                cohort_launch_date,
+                cohort_end_date,
+                deadline,
+                eligibility,
+                level_on_rubric,
+              } = processData(val, selectedStatus);
+              return (
+                <EventRequset
+                  index={index}
+                  img={img}
+                  name={name}
+                  role={role}
+                  request={request}
+                  description={description}
+                  cohort_name={cohort_name}
+                  accepted_at={accepted_at}
+                  request_status={request_status}
+                  rejected_at={rejected_at}
+                  activeTab={activeTab}
+                  handleOpenModal={handleOpenModal}
+                />
+              );
+            } else if (
+              selectedStatus === "from-investor" &&
+              val?.enroller_data?.vc_data
+            ) {
+              const {
+                img,
+                name,
+                request,
+                role,
+                request_status,
+                cohort_name,
+                description,
+                rejected_at,
+                accepted_at,
+                no_of_seats,
+                cohort_launch_date,
+                cohort_end_date,
+                deadline,
+                eligibility,
+                level_on_rubric,
+              } = processData(val, selectedStatus);
+              return (
+                <EventRequset
+                  index={index}
+                  img={img}
+                  name={name}
+                  role={role}
+                  request={request}
+                  description={description}
+                  cohort_name={cohort_name}
+                  accepted_at={accepted_at}
+                  request_status={request_status}
+                  rejected_at={rejected_at}
+                  activeTab={activeTab}
+                  handleOpenModal={handleOpenModal}
+                />
+              );
             }
-
-            return (
-              <div
-                className="p-4 border-2 bg-white rounded-lg mb-4"
-                key={index}
-              >
-                <div className="flex">
-                  <div className="flex flex-col">
-                    <div className="w-12 h-12">
-                      <img
-                        src={img}
-                        alt="img"
-                        className="object-cover rounded-full h-full w-full"
-                      />
-                    </div>
-                  </div>
-                  <div className="w-full">
-                    <div className="flex flex-col w-full pl-4 ">
-                      <div className="flex justify-between">
-                        <p className="text-gray-500 font-bold">{name}</p>
-                        <p className="text-gray-400 font-thin">{date}</p>
-                      </div>
-                      <div className="min-h-4 line-clamp-3 text-gray-400">
-                        <p>{msg}</p>
-                      </div>
-                      {activeTab === "approved" &&
-                      resp_msg &&
-                      resp_msg.trim() !== "" &&
-                      accpt_date &&
-                      accpt_date.trim() !== "" ? (
-                        <>
-                          <div className="flex justify-between pt-2">
-                            <p className="text-green-700">{"RESPONSE"}</p>
-                            <p className="text-gray-400 font-thin">
-                              {accpt_date}
-                            </p>
-                          </div>
-                          <div className="min-h-4 line-clamp-3 text-gray-400">
-                            <p>{resp_msg}</p>
-                          </div>
-                        </>
-                      ) : (
-                        ""
-                      )}
-                      {activeTab === "declined" &&
-                      resp_msg &&
-                      resp_msg.trim() !== "" &&
-                      decln_date &&
-                      decln_date.trim() !== "" ? (
-                        <>
-                          <div className="flex justify-between pt-2">
-                            <p className="text-red-700">{"RESPONSE"}</p>
-                            <p className="text-gray-400 font-thin">
-                              {decln_date}
-                            </p>
-                          </div>
-                          <div className="min-h-4 line-clamp-3 text-gray-400">
-                            <p>{resp_msg}</p>
-                          </div>
-                        </>
-                      ) : (
-                        ""
-                      )}
-                      {activeTab === "self-reject" &&
-                      self_decln &&
-                      self_decln.trim() !== "" ? (
-                        <>
-                          <div className="flex justify-between pt-2">
-                            <p className="text-blue-700 uppercase">
-                              self reject
-                            </p>
-                            <p className="text-gray-400 font-thin">
-                              {self_decln}
-                            </p>
-                          </div>
-                        </>
-                      ) : (
-                        ""
-                      )}
-                      <div className="flex justify-end pt-4">
-                        <div className="flex gap-4">
-                          <div>
-                            <button
-                              onClick={() =>
-                                navigate(viewProjectProfileHandler(val))
-                              }
-                              className="capitalize border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900"
-                            >
-                              view project
-                            </button>
-                          </div>
-                          {activeTab !== "pending" ? (
-                            ""
-                          ) : selectedStatus.startsWith("to-") ? (
-                            <div>
-                              <button
-                                onClick={() => handleSelfReject(offer_id)}
-                                className="capitalize border-2 font-semibold bg-blue-900 border-blue-900 text-white px-2 py-1 rounded-md  hover:text-blue-900 hover:bg-white"
-                              >
-                                self decline
-                              </button>
-                            </div>
-                          ) : (
-                            <>
-                              <div>
-                                <button
-                                  onClick={() =>
-                                    handleDeclineModalOpenHandler(offer_id)
-                                  }
-                                  className="capitalize border-2 font-semibold bg-red-700 border-red-700 text-white px-2 py-1 rounded-md  hover:text-red-900 hover:bg-white"
-                                >
-                                  reject
-                                </button>
-                              </div>
-                              <div>
-                                <button
-                                  onClick={() =>
-                                    handleAcceptModalOpenHandler(offer_id)
-                                  }
-                                  className="capitalize border-2 font-semibold bg-blue-900 border-blue-900 text-white px-2 py-1 rounded-md  hover:text-blue-900 hover:bg-white"
-                                >
-                                  approve
-                                </button>
-                              </div>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
           })
         ) : (
           <>

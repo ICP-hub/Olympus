@@ -5,41 +5,18 @@ import girl from "../../../assets/images/girl.jpeg";
 import { useSelector } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
 import { formatFullDateFromSimpleDate } from "../Utils/formatter/formatDateFromBigInt";
+import { useNavigate } from "react-router-dom";
 const SecondEventCard = ({ data, register }) => {
   const actor = useSelector((currState) => currState.actors.actor);
-  const [projectData, setProjectData] = useState(null);
+  const navigate = useNavigate();
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
-  const fetchProjectData = async () => {
-    await actor
-      .get_my_project()
-      .then((result) => {
-        console.log("result-in-get_my_project ========>>>>>>>>", result);
-        if (result && Object.keys(result).length > 0) {
-          setProjectData(result);
-        } else {
-          setProjectData(null);
-        }
-      })
-      .catch((error) => {
-        console.log("error-in-get_my_project", error);
-        setProjectData(null);
-      });
-  };
-
-  useEffect(() => {
-    if (actor) {
-      fetchProjectData();
-    } else {
-      window.location.href = "/";
-    }
-  }, [actor]);
 
   if (!data) {
     return null;
   }
-  console.log("data ====???>>>>>>>", data);
+  // console.log("data ====???>>>>>>>", data);
   let image = hover;
   let name = data?.cohort?.title ?? "";
   let launch_date = data?.cohort?.cohort_launch_date
@@ -62,19 +39,20 @@ const SecondEventCard = ({ data, register }) => {
     if (actor) {
       try {
         if (userCurrentRoleStatusActiveRole === "project") {
-          let project_id = projectData?.uid;
           let cohort_id = data?.cohort_id;
-          console.log("project_id ===> ", project_id);
-          console.log("cohortid ===> ", cohort_id);
+          // console.log("cohortid ===> ", cohort_id);
           await actor
-            .apply_for_a_cohort_as_a_project(cohort_id, project_id)
+            .apply_for_a_cohort_as_a_project(cohort_id)
             .then((result) => {
-              console.log("result in project to check update call==>", result);
-              if (result.Ok) {
-                toast.success("You have successfully applied for the cohort");
+              // console.log("result in project to check update call==>", result);
+              if (
+                result &&
+                result.includes(`Request Has Been Sent To Cohort Creator`)
+              ) {
+                toast.success(result);
                 // window.location.href = "/";
               } else {
-                toast.error(result.Err);
+                toast.error(result);
               }
             });
         } else if (
@@ -83,21 +61,16 @@ const SecondEventCard = ({ data, register }) => {
         ) {
           let cohort_id = data?.cohort_id;
 
-          console.log("cohortid ===> ", cohort_id);
+          // console.log("cohortid ===> ", cohort_id);
           await actor
             .apply_for_a_cohort_as_a_mentor_or_investor(cohort_id)
             .then((result) => {
-              console.log(
-                "result in mentor || vc to check update call==>",
-                result
-              );
-              if (
-                result &&
-                result.includes(
-                  `you have successfully applied for the cohort with cohort id ${cohort_id}`
-                )
-              ) {
-                toast.success("You have successfully applied for the cohort");
+              // console.log(
+              //   "result in mentor || vc to check update call==>",
+              //   result
+              // );
+              if (result) {
+                toast.success(result);
                 // window.location.href = "/";
               } else {
                 toast.error(result);
@@ -117,7 +90,12 @@ const SecondEventCard = ({ data, register }) => {
   return (
     <>
       <div className="block w-full drop-shadow-xl rounded-lg bg-gray-200 mb-8">
-        <div className="w-full relative">
+        <div
+          onClick={() =>
+            navigate("/event-page", { state: { cohort_id: data?.cohort_id } })
+          }
+          className="w-full relative"
+        >
           <img
             className="w-full object-cover rounded-lg "
             src={hover}

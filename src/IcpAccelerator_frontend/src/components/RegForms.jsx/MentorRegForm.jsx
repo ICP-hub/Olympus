@@ -243,7 +243,7 @@ const MentorRegForm = () => {
           /\S/.test(value)
         )
         .matches(
-          /^(https?:\/\/)?(www\.)?linkedin\.com\/(in\/[a-zA-Z0-9_-]+|company\/[a-zA-Z0-9_-]+|groups\/[a-zA-Z0-9_-]+)$/,
+          /^(https?:\/\/)?(www\.)?linkedin\.com\/in\/[a-zA-Z0-9_-]+\/?$/,
           "Invalid LinkedIn URL"
         )
         .required("LinkedIn url is required"),

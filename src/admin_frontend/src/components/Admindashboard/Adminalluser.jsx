@@ -261,11 +261,11 @@ const Adminalluser = () => {
                   <th className="w-24 pb-2">S.No</th>
                   <th className="w-1/4 pb-2">Name</th>
                   <th className="w-1/4 pb-2">
-                    {filterOption === "Users" ? "Role" : "Hub"}
+                    {filterOption && filterOption === "Users" ? "Role" : "Hub"}
                   </th>
                   <th className="w-1/4 pb-2">Country</th>
                   <th className="w-1/4 pb-2">Telegram</th>
-                  {filterOption === "Users" ?"":
+                  {filterOption && filterOption === "Users" ? null:
                   <th className="w-1/4 pb-2">Action</th>}
                 </tr>
               </thead>
@@ -309,7 +309,7 @@ const Adminalluser = () => {
                             <p>N/A</p>
                           )}
                         </td>
-                        {filterOption === "Users"?'':<td> 
+                        {filterOption === "Users"?null:<td> 
                           <button
                             className="p-2 bg-white rounded-lg border-2 border-gray-300 hover:bg-gray-300"
                             onClick={() => handleRowClick(user.principalId)}

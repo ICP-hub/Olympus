@@ -24,6 +24,8 @@ import { checkTotalLiveStart } from "./components/AdminStateManagement/Redux/Red
 import { checkUpdateUserProfileStart } from "./components/AdminStateManagement/Redux/Reducers/UpdateUserProfile";
 import { areaOfExpertiseHandlerRequest } from "./components/AdminStateManagement/Redux/Reducers/areaOfExpertiseReducer";
 import { multiChainHandlerRequest } from "./components/AdminStateManagement/Redux/Reducers/getMultiChainList";
+import { allHubHandlerRequest } from "./components/AdminStateManagement/Redux/Reducers/All_IcpHubReducer";
+import { typeOfProfileSliceHandlerRequest } from "./components/AdminStateManagement/Redux/Reducers/getTypeOfProfile";
 const App = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const isAuthenticated = useSelector(
@@ -57,7 +59,9 @@ const App = () => {
       dispatch(checkTotalLiveStart());
       dispatch(checkUpdateUserProfileStart());
       dispatch(areaOfExpertiseHandlerRequest());
-      dispatch(multiChainHandlerRequest())
+      dispatch(multiChainHandlerRequest());
+      dispatch(allHubHandlerRequest());
+      dispatch(typeOfProfileSliceHandlerRequest());
     }
   }, [isAuthenticated, actor, dispatch]);
 
