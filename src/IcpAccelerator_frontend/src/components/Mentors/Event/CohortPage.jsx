@@ -5,14 +5,21 @@ import { useSelector } from "react-redux";
 import { formatFullDateFromSimpleDate } from "../../Utils/formatter/formatDateFromBigInt";
 import LiveProjects from "../../Dashboard/LiveProjects";
 import EventProject from "./EventProject";
+import EventMentor from "./EventMentor";
+import EventInvestor from "./EventInvestor";
 
 function CohortPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const actor = useSelector((currState) => currState.actors.actor);
+
+  const [noData, setNoData] = useState(null);
   const { cohort_id } = location.state || {};
 
   const [cohortData, setCohortData] = useState(null);
+  const [allProjectData, setAllProjectData] = useState([]);
+  const [allMentorData, setAllMentorData] = useState([]);
+  const [allInvestorData, setAllInvestorData] = useState([]);
   const fetchCohortData = async () => {
     await actor
       .get_cohort(cohort_id)
@@ -20,8 +27,10 @@ function CohortPage() {
         console.log("get_cohort line 14 ========>>>>>>>>", result);
         if (result && Object.keys(result).length > 0) {
           setCohortData(result);
+          setNoData(false);
         } else {
           setCohortData(null);
+          setNoData(true);
         }
       })
       .catch((error) => {
@@ -29,10 +38,67 @@ function CohortPage() {
         setCohortData(null);
       });
   };
+  const fetchProjectData = async () => {
+    await actor
+      .get_projects_applied_for_cohort(cohort_id)
+      .then((result) => {
+        console.log("get_project line 38 ========>>>>>>>>", result);
+        if (result && Object.keys(result).length > 0) {
+          setAllProjectData(result);
+          setNoData(false);
+        } else {
+          setAllProjectData(null);
+          setNoData(true);
+        }
+      })
+      .catch((error) => {
+        console.log("error-in-get_project", error);
+        setAllProjectData(null);
+      });
+  };
+  const fetchMentorData = async () => {
+    await actor
+      .get_mentors_applied_for_cohort(cohort_id)
+      .then((result) => {
+        console.log("get_mentor line 54 ========>>>>>>>>", result);
+        if (result && Object.keys(result).length > 0) {
+          setAllMentorData(result);
+          setNoData(false);
+        } else {
+          setAllMentorData(null);
+          setNoData(true);
+        }
+      })
+      .catch((error) => {
+        console.log("error-in-get_mentor", error);
+        setAllMentorData(null);
+      });
+  };
+  const fetchInvestorData = async () => {
+    await actor
+      .get_vcs_applied_for_cohort(cohort_id)
+      .then((result) => {
+        console.log("get_investor line 81 ========>>>>>>>>", result);
+        if (result && Object.keys(result).length > 0) {
+          setAllInvestorData(result);
+          setNoData(false);
+        } else {
+          setAllInvestorData(null);
+          setNoData(true);
+        }
+      })
+      .catch((error) => {
+        console.log("error-in-get_investor", error);
+        setAllInvestorData(null);
+      });
+  };
 
   useEffect(() => {
     if (actor) {
       fetchCohortData();
+      fetchProjectData();
+      fetchMentorData();
+      fetchInvestorData();
     } else {
       window.location.href = "/";
     }
@@ -149,7 +215,41 @@ function CohortPage() {
               </button>
             </div>
             <div className="mb-4 fade-in">
-              <EventProject />
+              <EventProject allProjectData={allProjectData} noData={noData} />
+            </div>
+            <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px] mt-3">
+              <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl sxxs:text-lg">
+                Mentors
+              </h1>
+              <button
+                onClick={() => navigate("/view-mentors")}
+                className="border border-violet-800 px-4 py-2 rounded-md text-violet-800 sxxs:px-2 sxxs:py-1 sxxs:text-xs sm:text-lg"
+              >
+                View More
+              </button>
+            </div>
+            <div className="w-full md:w-3/4 px-4 md:flex md:gap-4 sm:flex sm:gap-4">
+              <EventMentor allMentorData={allMentorData} noData={noData} />
+            </div>
+            <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px] mt-3">
+              <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl sxxs:text-lg">
+                Investors
+              </h1>
+              <button
+                onClick={() => navigate("/view-investor")}
+                className="border border-violet-800 px-4 py-2 rounded-md text-violet-800 sxxs:px-2 sxxs:py-1 sxxs:text-xs sm:text-lg"
+              >
+                View More
+              </button>
+            </div>
+
+            <div className="flex max-md:flex-col -mx-4 mb-4 items-stretch fade-in">
+              <div className="w-full px-4 md:flex md:gap-4 sm:flex sm:gap-4">
+                <EventInvestor
+                  allInvestorData={allInvestorData}
+                  noData={noData}
+                />
+              </div>
             </div>
           </div>
         </div>

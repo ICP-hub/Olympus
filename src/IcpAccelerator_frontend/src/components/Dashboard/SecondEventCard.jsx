@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import hover from "../../../assets/images/1.png";
 import { winner } from "../Utils/Data/SvgData";
-import { useNavigate } from "react-router-dom";
+import girl from "../../../assets/images/girl.jpeg";
 import { useSelector } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
 import { formatFullDateFromSimpleDate } from "../Utils/formatter/formatDateFromBigInt";
+import { useNavigate } from "react-router-dom";
 const SecondEventCard = ({ data, register }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ const SecondEventCard = ({ data, register }) => {
   if (!data) {
     return null;
   }
-  console.log("data ====???>>>>>>>", data);
+  // console.log("data ====???>>>>>>>", data);
   let image = hover;
   let name = data?.cohort?.title ?? "";
   let launch_date = data?.cohort?.cohort_launch_date
@@ -30,7 +31,6 @@ const SecondEventCard = ({ data, register }) => {
   let desc = data?.cohort?.description ?? "";
   let tags = data?.cohort?.tags ?? "";
   let seats = data?.cohort?.no_of_seats ?? 0;
-  let cohortId =data?.cohort_id
 
   // const toastHandler = () => {
   //   toast.success("Thank you for the registration request. admin approval in process now.")
@@ -40,11 +40,11 @@ const SecondEventCard = ({ data, register }) => {
       try {
         if (userCurrentRoleStatusActiveRole === "project") {
           let cohort_id = data?.cohort_id;
-          console.log("cohortid ===> ", cohort_id);
+          // console.log("cohortid ===> ", cohort_id);
           await actor
             .apply_for_a_cohort_as_a_project(cohort_id)
             .then((result) => {
-              console.log("result in project to check update call==>", result);
+              // console.log("result in project to check update call==>", result);
               if (
                 result &&
                 result.includes(`Request Has Been Sent To Cohort Creator`)
@@ -61,14 +61,14 @@ const SecondEventCard = ({ data, register }) => {
         ) {
           let cohort_id = data?.cohort_id;
 
-          console.log("cohortid ===> ", cohort_id);
+          // console.log("cohortid ===> ", cohort_id);
           await actor
             .apply_for_a_cohort_as_a_mentor_or_investor(cohort_id)
             .then((result) => {
-              console.log(
-                "result in mentor || vc to check update call==>",
-                result
-              );
+              // console.log(
+              //   "result in mentor || vc to check update call==>",
+              //   result
+              // );
               if (result) {
                 toast.success(result);
                 // window.location.href = "/";
@@ -90,7 +90,12 @@ const SecondEventCard = ({ data, register }) => {
   return (
     <>
       <div className="block w-full drop-shadow-xl rounded-lg bg-gray-200 mb-8">
-        <div className="w-full relative">
+        <div
+          onClick={() =>
+            navigate("/event-page", { state: { cohort_id: data?.cohort_id } })
+          }
+          className="w-full relative"
+        >
           <img
             className="w-full object-cover rounded-lg "
             src={hover}
@@ -104,8 +109,7 @@ const SecondEventCard = ({ data, register }) => {
           <div className="p-8">
             <div className="w-full mt-4">
               <div className="w-1/2 flex-col text-[#737373] flex  ">
-                <h1 className="font-bold text-black text-xl truncate capitalize" onClick={() => navigate(`/event-details/${cohortId}`)}
->
+                <h1 className="font-bold text-black text-xl truncate capitalize">
                   {name}
                 </h1>
                 <p className="text-sm whitespace-nowrap pt-1">
