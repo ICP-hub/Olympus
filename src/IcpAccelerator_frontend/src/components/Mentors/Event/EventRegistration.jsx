@@ -314,124 +314,110 @@ function EventRegistration() {
         )}
       </div>
       <div className="h-screen overflow-y-scroll scroll-smooth w-full">
-        {data && data.length > 0 ? (
-          data?.map((val, index) => {
-            if (selectedStatus === "from-project" && val?.enroller_data?.project_data) {
-              console.log("val main", val);
-              const {
-                img,
-                name,
-                request,
-                role,
-                request_status,
-                cohort_name,
-                description,
-                rejected_at,
-                accepted_at,
-                no_of_seats,
-                cohort_launch_date,
-                cohort_end_date,
-                deadline,
-                eligibility,
-                level_on_rubric,
-              } = processData(val, selectedStatus);
-              return (
-                <EventRequset
-                  index={index}
-                  img={img}
-                  name={name}
-                  role={role}
-                  request={request}
-                  description={description}
-                  cohort_name={cohort_name}
-                  accepted_at={accepted_at}
-                  request_status={request_status}
-                  rejected_at={rejected_at}
-                  activeTab={activeTab}
-                  handleOpenModal={handleOpenModal}
-                />
-              );
-            } else if (
-              selectedStatus === "from-mentor" &&
-              val?.enroller_data?.mentor_data
-            ) {
-              const {
-                img,
-                name,
-                request,
-                role,
-                request_status,
-                cohort_name,
-                description,
-                rejected_at,
-                accepted_at,
-                no_of_seats,
-                cohort_launch_date,
-                cohort_end_date,
-                deadline,
-                eligibility,
-                level_on_rubric,
-              } = processData(val, selectedStatus);
-              return (
-                <EventRequset
-                  index={index}
-                  img={img}
-                  name={name}
-                  role={role}
-                  request={request}
-                  description={description}
-                  cohort_name={cohort_name}
-                  accepted_at={accepted_at}
-                  request_status={request_status}
-                  rejected_at={rejected_at}
-                  activeTab={activeTab}
-                  handleOpenModal={handleOpenModal}
-                />
-              );
-            } else if (
-              selectedStatus === "from-investor" &&
-              val?.enroller_data?.vc_data
-            ) {
-              const {
-                img,
-                name,
-                request,
-                role,
-                request_status,
-                cohort_name,
-                description,
-                rejected_at,
-                accepted_at,
-                no_of_seats,
-                cohort_launch_date,
-                cohort_end_date,
-                deadline,
-                eligibility,
-                level_on_rubric,
-              } = processData(val, selectedStatus);
-              return (
-                <EventRequset
-                  index={index}
-                  img={img}
-                  name={name}
-                  role={role}
-                  request={request}
-                  description={description}
-                  cohort_name={cohort_name}
-                  accepted_at={accepted_at}
-                  request_status={request_status}
-                  rejected_at={rejected_at}
-                  activeTab={activeTab}
-                  handleOpenModal={handleOpenModal}
-                />
-              );
-            }
-          })
-        ) : (
-          <>
-            <NoDataCard />
-          </>
-        )}
+      {data && data.length > 0 ? (
+  data.map((val, index) => {
+    if (selectedStatus === "from-project") {
+      if (!val?.enroller_data?.project_data || val?.enroller_data?.project_data.length === 0) {
+        return <NoDataCard />;
+      }
+      const {
+        img,
+        name,
+        request,
+        role,
+        request_status,
+        cohort_name,
+        description,
+        rejected_at,
+        accepted_at,
+      } = processData(val, selectedStatus);
+      return (
+        <EventRequset
+          index={index}
+          img={img}
+          name={name}
+          role={role}
+          request={request}
+          description={description}
+          cohort_name={cohort_name}
+          accepted_at={accepted_at}
+          request_status={request_status}
+          rejected_at={rejected_at}
+          activeTab={activeTab}
+          handleOpenModal={handleOpenModal}
+        />
+      );
+    } else if (selectedStatus === "from-mentor") {
+      if (!val?.enroller_data?.mentor_data || val?.enroller_data?.mentor_data.length === 0) {
+        return <NoDataCard />;
+      }
+      const {
+        img,
+        name,
+        request,
+        role,
+        request_status,
+        cohort_name,
+        description,
+        rejected_at,
+        accepted_at,
+      } = processData(val, selectedStatus);
+      return (
+        <EventRequset
+          index={index}
+          img={img}
+          name={name}
+          role={role}
+          request={request}
+          description={description}
+          cohort_name={cohort_name}
+          accepted_at={accepted_at}
+          request_status={request_status}
+          rejected_at={rejected_at}
+          activeTab={activeTab}
+          handleOpenModal={handleOpenModal}
+        />
+      );
+    } else if (selectedStatus === "from-investor") {
+      if (!val?.enroller_data?.vc_data || val?.enroller_data?.vc_data.length === 0) {
+        return <NoDataCard />;
+      }
+      const {
+        img,
+        name,
+        request,
+        role,
+        request_status,
+        cohort_name,
+        description,
+        rejected_at,
+        accepted_at,
+      } = processData(val, selectedStatus);
+      return (
+        <EventRequset
+          index={index}
+          img={img}
+          name={name}
+          role={role}
+          request={request}
+          description={description}
+          cohort_name={cohort_name}
+          accepted_at={accepted_at}
+          request_status={request_status}
+          rejected_at={rejected_at}
+          activeTab={activeTab}
+          handleOpenModal={handleOpenModal}
+        />
+      );
+    }
+    return null;
+  })
+) : (
+  <>
+    <NoDataCard />
+  </>
+)}
+
       </div>
     </div>
   );
