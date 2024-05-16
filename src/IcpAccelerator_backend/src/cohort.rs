@@ -275,6 +275,16 @@ pub fn send_enrollment_request_as_mentor(cohort_id: String, user_info: MentorInt
         }
     });
 
+    let is_pending = COHORT_ENROLLMENT_REQUESTS.with(|requests| {
+        requests.borrow().get(&cohort_creator_principal).map_or(false, |reqs| {
+            reqs.iter().any(|req| req.request_status == "pending" && req.enroller_principal == caller)
+        })
+    });
+
+    if is_pending {
+        return "There is already a pending enrollment request for this cohort.".to_string();
+    }
+
     let enrollment_request = CohortEnrollmentRequest {
         cohort_details: get_cohort(cohort_id),
         sent_at: now,
@@ -308,6 +318,16 @@ pub fn send_enrollment_request_as_investor(cohort_id: String, user_info: Venture
         }
     });
 
+    let is_pending = COHORT_ENROLLMENT_REQUESTS.with(|requests| {
+        requests.borrow().get(&cohort_creator_principal).map_or(false, |reqs| {
+            reqs.iter().any(|req| req.request_status == "pending" && req.enroller_principal == caller)
+        })
+    });
+
+    if is_pending {
+        return "There is already a pending enrollment request for this cohort.".to_string();
+    }
+
     let enrollment_request = CohortEnrollmentRequest {
         cohort_details: get_cohort(cohort_id),
         sent_at: now,
@@ -340,6 +360,16 @@ pub fn send_enrollment_request_as_project(cohort_id: String, user_info: ProjectI
             Principal::anonymous() 
         }
     });
+
+    let is_pending = COHORT_ENROLLMENT_REQUESTS.with(|requests| {
+        requests.borrow().get(&cohort_creator_principal).map_or(false, |reqs| {
+            reqs.iter().any(|req| req.request_status == "pending" && req.enroller_principal == caller)
+        })
+    });
+
+    if is_pending {
+        return "There is already a pending enrollment request for this cohort.".to_string();
+    }
 
     let enrollment_request = CohortEnrollmentRequest {
         cohort_details: get_cohort(cohort_id),
@@ -490,12 +520,10 @@ pub fn reject_enrollment_request(cohort_creator_principal: Principal, enroller_p
 //needs to be made good in terms of error handling
 
 #[update]
-pub fn apply_for_a_cohort_as_a_mentor_or_investor(cohort_id: String) -> String {
+pub fn apply_for_a_cohort_as_a_mentor(cohort_id: String) -> String {
     let caller = caller();
 
     let is_he_mentor = MENTOR_REGISTRY.with(|mentors| mentors.borrow().contains_key(&caller));
-    let is_he_investor = VENTURECAPITALIST_STORAGE.with(|capitalist| capitalist.borrow().contains_key(&caller));
-
 
     if is_he_mentor {
         let mentor_data_option = get_mentor_info_using_principal(caller);
@@ -504,7 +532,18 @@ pub fn apply_for_a_cohort_as_a_mentor_or_investor(cohort_id: String) -> String {
             None => return "Mentor data is required but not found.".to_string(),
         };
         send_enrollment_request_as_mentor(cohort_id, mentor_data)
-    } else if is_he_investor {
+    } else {
+        "You should either be an investor or mentor to register yourself in cohort".to_string()
+    }
+}
+
+#[update]
+pub fn apply_for_a_cohort_as_a_investor(cohort_id: String) -> String {
+    let caller = caller();
+    let is_he_investor = VENTURECAPITALIST_STORAGE.with(|capitalist| capitalist.borrow().contains_key(&caller));
+
+
+    if is_he_investor {
         let vc_data_option = get_vc_info_using_principal(caller);
         let vc_data = match vc_data_option {
             Some(data) => data,
