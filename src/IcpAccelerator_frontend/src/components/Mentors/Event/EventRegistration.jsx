@@ -9,6 +9,7 @@ import { projectFilterSvg } from "../../Utils/Data/SvgData";
 import toast from "react-hot-toast";
 import { formatFullDateFromBigInt } from "../../Utils/formatter/formatDateFromBigInt";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
+import EventRequset from "./EventRequset";
 function EventRegistration() {
   const [modalOpen, setModalOpen] = useState(false);
   const [para, setPara] = useState("");
@@ -69,39 +70,18 @@ function EventRegistration() {
     setAction(action);
     setIndex(index);
     setModalOpen(true);
-
-    console.log(
-      "Line 79 enroller_principal =====>>>>",
-      data?.[index]?.enroller_principal
-    );
-    console.log("Modal open with", para, action, index);
   };
   const handleClick = async () => {
-    console.log(data);
     setIsSubmitting(true);
     let enroller_principal = data?.[index]?.enroller_principal;
     let cohortId = data?.[index]?.cohort_details?.cohort_id;
     let cohort_creator_principal =
       data?.[index]?.cohort_details?.cohort_creator_principal;
     try {
-      console.log("Line 78 data ====>>>>", data);
-      console.log("Line 78 Action ====>>>>", action);
-      console.log("Line 79 enroller_principal =====>>>>", enroller_principal);
-      console.log("Line 79 cohortId =====>>>>", cohortId);
-      console.log(
-        "Line 79 cohort_creator_principal =====>>>>",
-        cohort_creator_principal
-      );
-      console.log("Line 79 index =====>>>>", index);
-
       if (action === "Approve") {
         const result = await actor.approve_enrollment_request(
           cohortId,
           enroller_principal
-        );
-        console.log(
-          "result of approve_enrollment_request 80 ====>>>>>",
-          result
         );
         toast.success(result);
       } else if (action === "Reject") {
@@ -109,7 +89,6 @@ function EventRegistration() {
           cohort_creator_principal,
           enroller_principal
         );
-        console.log("result of reject_enrollment_request 86 ====>>>>>", result);
         toast.success(result);
       } else {
         toast.error(result);
@@ -127,6 +106,7 @@ function EventRegistration() {
   };
 
   useEffect(() => {
+    let isMounted = true;
     const fetchRequests = async (type) => {
       let result = [];
       setIsSubmitting(true);
@@ -151,19 +131,121 @@ function EventRegistration() {
           default:
             result = [];
         }
-        setData(result);
-        setIsSubmitting(false);
+        if (isMounted) {
+          console.log("data", result);
+          setData(result);
+          setIsSubmitting(false);
+        }
       } catch (error) {
         console.error(`Error fetching ${type} requests:`, error);
-        setData([]);
-        setIsSubmitting(false);
+        if (isMounted) {
+          setData([]);
+          setIsSubmitting(false);
+        }
       }
     };
 
-    if (actor && principal && activeTab && selectedStatus) {
+    if (actor && principal) {
       fetchRequests(activeTab);
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [actor, principal, activeTab, selectedStatus]);
+
+  console.log("selectedStatus", selectedStatus);
+
+  function processData(val, type) {
+    console.log(type);
+    console.log("pval", val);
+    let img = "";
+    let name = "";
+    let tags = "";
+    let request_status = "";
+    let description = "";
+    let no_of_seats = "";
+    let cohort_launch_date = "";
+    let cohort_end_date = "";
+    let deadline = "";
+    let eligibility = "";
+    let level_on_rubric = "";
+    let request = "";
+    let role = "";
+    let accepted_at = "";
+    let rejected_at = "";
+    let cohort_name = "";
+    if (val?.request_status) {
+      request_status = val?.request_status;
+    }
+
+    // Process only the data related to the selected status
+    if (type === "from-project" && val?.enroller_data?.project_data) {
+      val?.enroller_data?.project_data.forEach((projectData) => {
+        console.log("pdata", projectData);
+        img = projectData?.params?.user_data?.profile_picture?.[0]
+          ? uint8ArrayToBase64(
+              projectData?.params?.user_data?.profile_picture?.[0]
+            )
+          : "";
+        name = projectData?.params.user_data.full_name;
+        cohort_name = val?.cohort_details?.cohort?.title;
+        description = projectData?.params?.user_data?.bio;
+        role = val?.enroller_data?.project_data.length > 0 ? "Project" : "";
+        request = formatFullDateFromBigInt(val?.sent_at);
+        accepted_at = formatFullDateFromBigInt(val?.accepted_at);
+        rejected_at = formatFullDateFromBigInt(val?.rejected_at);
+      });
+    } else if (type === "from-mentor" && val?.enroller_data?.mentor_data) {
+      val?.enroller_data?.mentor_data.forEach((mentorData) => {
+        img = mentorData?.profile?.user_data?.profile_picture?.[0]
+          ? uint8ArrayToBase64(
+              mentorData?.profile?.user_data?.profile_picture?.[0]
+            )
+          : "";
+        name = mentorData?.profile.user_data.full_name;
+        cohort_name = val?.cohort_details?.cohort?.title;
+        description = mentorData?.profile?.user_data?.bio[0];
+        role = val?.enroller_data?.mentor_data.length > 0 ? "Mentor" : "";
+        request = formatFullDateFromBigInt(val?.sent_at);
+        accepted_at = formatFullDateFromBigInt(val?.accepted_at);
+        rejected_at = formatFullDateFromBigInt(val?.rejected_at);
+      });
+    } else if (type === "from-investor" && val?.enroller_data?.vc_data) {
+      val?.enroller_data?.vc_data.forEach((vcData) => {
+        console.log("vcData", vcData);
+        img = vcData?.params?.user_data?.profile_picture?.[0]
+          ? uint8ArrayToBase64(vcData?.params?.user_data?.profile_picture?.[0])
+          : "";
+        name = vcData?.params.user_data.full_name;
+        cohort_name = val?.cohort_details?.cohort?.title;
+        description = vcData?.params?.user_data?.bio;
+        role = val?.enroller_data?.vc_data.length > 0 ? "Investor" : "";
+        request = formatFullDateFromBigInt(val?.sent_at);
+        accepted_at = formatFullDateFromBigInt(val?.accepted_at);
+        rejected_at = formatFullDateFromBigInt(val?.rejected_at);
+      });
+    }
+
+    return {
+      img,
+      name,
+      tags,
+      request,
+      request_status,
+      role,
+      cohort_name,
+      rejected_at,
+      accepted_at,
+      description,
+      no_of_seats,
+      cohort_launch_date,
+      cohort_end_date,
+      deadline,
+      eligibility,
+      level_on_rubric,
+    };
+  }
 
   return (
     <div className="font-fontUse flex flex-col items-center w-full h-fit px-[5%] lg1:px-[4%] py-[4%] md:pt-0">
@@ -210,7 +292,6 @@ function EventRegistration() {
         {isPopupOpen && (
           <div className="absolute w-[250px] top-52 right-16 bg-white shadow-xl rounded-lg border border-gray-300 p-4 z-50">
             {rolesFilterArray.map((status, index) => {
-              console.log("rolesFilterArray-status", status);
               return (
                 <button
                   key={index}
@@ -233,236 +314,118 @@ function EventRegistration() {
         )}
       </div>
       <div className="h-screen overflow-y-scroll scroll-smooth w-full">
-        {console.log("data on 196 ====>>>", data)}
         {data && data.length > 0 ? (
           data?.map((val, index) => {
-            console.log("full-val on 199 ===>>>", val);
-
-            let img = "";
-            let name = "";
-            let tags = "";
-            let request_status = "";
-            let description = "";
-            let no_of_seats = "";
-            let cohort_launch_date = "";
-            let cohort_end_date = "";
-            let deadline = "";
-            let eligibility = "";
-            let level_on_rubric = "";
-            let accepted_at = "";
-            let rejected_at = "";
-
-            switch (activeTab) {
-              case "pending":
-                switch (selectedStatus) {
-                  case "from-project":
-                    request_status = val?.request_status;
-                    val &&
-                      val.enroller_data.project_data.map((projectData) => {
-                        img = projectData?.profile?.user_data
-                          ?.profile_picture?.[0]
-                          ? uint8ArrayToBase64(
-                              projectData?.profile?.user_data
-                                ?.profile_picture?.[0]
-                            )
-                          : "";
-                        name = projectData?.title;
-                        tags = projectData?.tags;
-                        description = projectData?.description;
-                        no_of_seats = projectData?.no_of_seats;
-                        cohort_launch_date = projectData?.cohort_launch_date;
-                        cohort_end_date = projectData?.cohort_end_date;
-                        deadline = projectData?.deadline;
-                        eligibility = projectData?.criteria?.eligibility?.[0];
-                        level_on_rubric =
-                          projectData?.criteria?.level_on_ ?? "";
-                      });
-                    break;
-                  case "from-mentor":
-                    request_status = val?.request_status;
-                    val &&
-                      val.enroller_data.mentor_data.map((mentorData) => {
-                        img = mentorData?.profile?.user_data
-                          ?.profile_picture?.[0]
-                          ? uint8ArrayToBase64(
-                              mentorData?.profile?.user_data
-                                ?.profile_picture?.[0]
-                            )
-                          : "";
-                        name = mentorData?.profile?.user_data?.full_name;
-                        description = mentorData?.profile?.user_data?.bio;
-                        no_of_seats = mentorData?.profile?.no_of_seats;
-                        cohort_launch_date =
-                          mentorData?.profile?.cohort_launch_date;
-                        cohort_end_date = mentorData?.profile?.cohort_end_date;
-                        deadline = mentorData?.profile?.deadline;
-                        eligibility =
-                          mentorData?.profile?.criteria?.eligibility?.[0];
-                        level_on_rubric =
-                          mentorData?.profile?.criteria?.level_on_ ?? "";
-                      });
-                    break;
-                  case "from-investor":
-                    img = hover;
-                    name = val?.enroller_data?.project_data?.title;
-                    request_status = val?.request_status;
-                    tags = val?.enroller_data?.project_data?.tags;
-                    description = val?.enroller_data?.project_data?.description;
-                    no_of_seats = val?.enroller_data?.project_data?.no_of_seats;
-                    cohort_launch_date =
-                      val?.enroller_data?.project_data?.cohort_launch_date;
-                    cohort_end_date =
-                      val?.enroller_data?.project_data?.cohort_end_date;
-                    deadline = val?.enroller_data?.project_data?.deadline;
-                    eligibility =
-                      val?.enroller_data?.project_data?.criteria
-                        ?.eligibility?.[0];
-                    level_on_rubric =
-                      val?.enroller_data?.project_data?.criteria?.level_on_ ??
-                      "";
-                    break;
-                  default:
-                    break;
-                }
-              case "approved":
-                name = val?.enroller_data?.cohort?.title;
-                request_status = val?.request_status;
-                tags = val?.enroller_data?.cohort?.tags;
-                description = val?.enroller_data?.cohort?.description;
-                no_of_seats = val?.enroller_data?.cohort?.no_of_seats;
-                cohort_launch_date =
-                  val?.enroller_data?.cohort?.cohort_launch_date;
-                cohort_end_date = val?.enroller_data?.cohort?.cohort_end_date;
-                deadline = val?.enroller_data?.cohort?.deadline;
-                eligibility =
-                  val?.enroller_data?.cohort?.criteria?.eligibility?.[0];
-                level_on_rubric =
-                  val?.enroller_data?.cohort?.criteria?.level_on_ ?? "";
-                accepted_at = val?.accepted_at
-                  ? formatFullDateFromBigInt(val?.accepted_at)
-                  : "";
-                break;
-              case "declined":
-                name = val?.enroller_data?.cohort?.title;
-                request_status = val?.request_status;
-                tags = val?.enroller_data?.cohort?.tags;
-                description = val?.enroller_data?.cohort?.description;
-                no_of_seats = val?.enroller_data?.cohort?.no_of_seats;
-                cohort_launch_date =
-                  val?.enroller_data?.cohort?.cohort_launch_date;
-                cohort_end_date = val?.enroller_data?.cohort?.cohort_end_date;
-                deadline = val?.enroller_data?.cohort?.deadline;
-                eligibility =
-                  val?.enroller_data?.cohort?.criteria?.eligibility?.[0];
-                level_on_rubric =
-                  val?.enroller_data?.cohort?.criteria?.level_on_ ?? "";
-                rejected_at = val?.rejected_at
-                  ? formatFullDateFromBigInt(val?.rejected_at)
-                  : "";
-                break;
+            if (selectedStatus === "from-project" && val?.enroller_data?.project_data) {
+              console.log("val main", val);
+              const {
+                img,
+                name,
+                request,
+                role,
+                request_status,
+                cohort_name,
+                description,
+                rejected_at,
+                accepted_at,
+                no_of_seats,
+                cohort_launch_date,
+                cohort_end_date,
+                deadline,
+                eligibility,
+                level_on_rubric,
+              } = processData(val, selectedStatus);
+              return (
+                <EventRequset
+                  index={index}
+                  img={img}
+                  name={name}
+                  role={role}
+                  request={request}
+                  description={description}
+                  cohort_name={cohort_name}
+                  accepted_at={accepted_at}
+                  request_status={request_status}
+                  rejected_at={rejected_at}
+                  activeTab={activeTab}
+                  handleOpenModal={handleOpenModal}
+                />
+              );
+            } else if (
+              selectedStatus === "from-mentor" &&
+              val?.enroller_data?.mentor_data
+            ) {
+              const {
+                img,
+                name,
+                request,
+                role,
+                request_status,
+                cohort_name,
+                description,
+                rejected_at,
+                accepted_at,
+                no_of_seats,
+                cohort_launch_date,
+                cohort_end_date,
+                deadline,
+                eligibility,
+                level_on_rubric,
+              } = processData(val, selectedStatus);
+              return (
+                <EventRequset
+                  index={index}
+                  img={img}
+                  name={name}
+                  role={role}
+                  request={request}
+                  description={description}
+                  cohort_name={cohort_name}
+                  accepted_at={accepted_at}
+                  request_status={request_status}
+                  rejected_at={rejected_at}
+                  activeTab={activeTab}
+                  handleOpenModal={handleOpenModal}
+                />
+              );
+            } else if (
+              selectedStatus === "from-investor" &&
+              val?.enroller_data?.vc_data
+            ) {
+              const {
+                img,
+                name,
+                request,
+                role,
+                request_status,
+                cohort_name,
+                description,
+                rejected_at,
+                accepted_at,
+                no_of_seats,
+                cohort_launch_date,
+                cohort_end_date,
+                deadline,
+                eligibility,
+                level_on_rubric,
+              } = processData(val, selectedStatus);
+              return (
+                <EventRequset
+                  index={index}
+                  img={img}
+                  name={name}
+                  role={role}
+                  request={request}
+                  description={description}
+                  cohort_name={cohort_name}
+                  accepted_at={accepted_at}
+                  request_status={request_status}
+                  rejected_at={rejected_at}
+                  activeTab={activeTab}
+                  handleOpenModal={handleOpenModal}
+                />
+              );
             }
-
-            return (
-              <div
-                className="p-4 border-2 bg-white rounded-lg mb-4"
-                key={index}
-              >
-                <div className="flex">
-                  <div className="flex flex-col">
-                    <div className="w-12 h-12">
-                      <img
-                        src={img}
-                        alt="img"
-                        className="object-cover rounded-full h-full w-full"
-                      />
-                    </div>
-                  </div>
-                  <div className="w-full">
-                    <div className="flex flex-col w-full pl-4 ">
-                      <div className="flex justify-between">
-                        <p className="text-gray-500 font-bold">{name}</p>
-                        <p className="text-gray-400 font-thin">
-                          {cohort_launch_date}
-                        </p>
-                      </div>
-                      <div className="min-h-4 line-clamp-3 text-gray-400">
-                        <p>{description}</p>
-                      </div>
-                      {activeTab === "approved" &&
-                      accepted_at &&
-                      accepted_at.trim() !== "" ? (
-                        <>
-                          <div className="flex justify-between pt-2">
-                            <p className="text-green-700 capitalize">
-                              {request_status || ""}
-                            </p>
-                            <p className="text-gray-400 font-thin">
-                              {accepted_at}
-                            </p>
-                          </div>
-                        </>
-                      ) : (
-                        ""
-                      )}
-                      {activeTab === "declined" &&
-                      rejected_at &&
-                      rejected_at.trim() !== "" ? (
-                        <>
-                          <div className="flex justify-between pt-2">
-                            <p className="text-red-700 capitalize">
-                              {request_status || ""}
-                            </p>
-                            <p className="text-gray-400 font-thin">
-                              {rejected_at}
-                            </p>
-                          </div>
-                        </>
-                      ) : (
-                        ""
-                      )}
-                      <div className="flex justify-end pt-4">
-                        <div className="flex gap-4">
-                          {activeTab !== "pending" ? (
-                            ""
-                          ) : (
-                            <>
-                              <div>
-                                <button
-                                  onClick={() =>
-                                    handleOpenModal(
-                                      "Are you sure you want to reject request?",
-                                      "Reject",
-                                      index
-                                    )
-                                  }
-                                  className="capitalize border-2 font-semibold bg-red-700 border-red-700 text-white px-2 py-1 rounded-md  hover:text-red-900 hover:bg-white"
-                                >
-                                  Reject
-                                </button>
-                              </div>
-                              <div>
-                                <button
-                                  onClick={() =>
-                                    handleOpenModal(
-                                      "Are you sure you want to approve request?",
-                                      "Approve",
-                                      index
-                                    )
-                                  }
-                                  className="capitalize border-2 font-semibold bg-blue-900 border-blue-900 text-white px-2 py-1 rounded-md  hover:text-blue-900 hover:bg-white"
-                                >
-                                  Approve
-                                </button>
-                              </div>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
           })
         ) : (
           <>
