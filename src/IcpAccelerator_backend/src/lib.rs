@@ -1,78 +1,74 @@
 mod admin;
-mod hub_organizer;
+
+mod investor_offer_to_project;
 mod latest_popular_projects;
 mod leaderboard;
 mod manage_focus_expertise;
 mod manage_hubs;
 mod mentor;
-mod notification;
 
 mod notification_to_mentor;
 mod notification_to_project;
 mod project_offer_to_investor;
-mod investor_offer_to_project;
+mod state_handler;
 
 mod associations;
 
-mod project_like;
-mod requests;
-mod roles;
-mod upvotes;
-mod user_module;
-mod vc_registration;
 mod cohort;
-mod default_images;
 mod cohort_rating;
+mod default_images;
 mod mentor_investor_ratings;
 
-use crate::project_registration::*;
-use cohort::*;
+mod roles;
+
+mod user_module;
+mod vc_registration;
+
+use crate::cohort_rating::LeaderboardEntryForCohorts;
 use crate::cohort_rating::PeerRatingUpdate;
 use crate::mentor_investor_ratings::RatingMentorInvestor;
-use crate::cohort_rating::LeaderboardEntryForCohorts;
-
-use project_offer_to_investor::*;
+use crate::project_registration::*;
+use crate::state_handler::*;
+use associations::*;
+use cohort::*;
 use investor_offer_to_project::*;
 use notification_to_mentor::*;
 use notification_to_project::*;
-use associations::*;
+use project_offer_to_investor::*;
 
 use ic_cdk::api::caller;
-use ic_cdk_macros::pre_upgrade;
 use ic_cdk_macros::post_upgrade;
+use ic_cdk_macros::pre_upgrade;
 
 use leaderboard::{
     LeaderboardEntryForLikes, LeaderboardEntryForRatings, LeaderboardEntryForUpvote,
 };
 // use notification::pre_upgrade_notifications;
-use project_like::LikeRecord;
+
 use project_registration::FilterCriteria;
-use ratings::RatingAverages;
-use ratings::RatingUpdate;
 use ratings::post_upgrade_rating_system;
 use ratings::pre_upgrade_rating_system;
+use ratings::RatingAverages;
+use ratings::RatingUpdate;
 // use ratings::post_upgrade_rating_system;
 // use ratings::pre_upgrade_rating_system;
-use requests::Request;
+use ic_cdk::api::management_canister::main::{
+    canister_status, CanisterIdRecord, CanisterStatusResponse, CanisterStatusType,
+    DefiniteCanisterSettings,
+};
+
 use roles::{get_roles, RolesResponse};
 use std::collections::HashMap;
-
 use user_module::*;
 
 use ic_cdk::export_candid;
 use manage_focus_expertise::{get_areas, Areas};
 use manage_hubs::{get_icp_hubs, IcpHub};
 use mentor::MentorProfile;
-use upvotes::*;
 
 mod project_registration;
 mod ratings;
-mod rbac;
-mod register_user;
-mod roadmap_suggestion;
-mod trie;
 
-// use crate::notification::Notification;
 use crate::project_registration::Announcements;
 use crate::project_registration::Blog;
 use admin::*;
@@ -84,13 +80,9 @@ use project_registration::{
     NotificationForOwner, NotificationProject, ProjectInfo, ProjectInfoInternal, TeamMember,
 };
 
-use notification::*;
-use register_user::FounderInfo;
-use roadmap_suggestion::Suggestion;
-
+use crate::ratings::RatingView;
 use vc_registration::VentureCapitalist;
 use vc_registration::*;
-use crate::ratings::RatingView;
 
 // private function to check if the caller is one of the controllers of the canister
 fn check_admin() {
@@ -156,21 +148,6 @@ pub fn make_user_inactive() -> String {
 //     register_user::get_founder_info()
 // }
 
-#[query]
-fn list_all_founders() -> Vec<register_user::FounderInfo> {
-    register_user::list_all_founders()
-}
-
-#[update]
-fn delete_founder_caller() -> std::string::String {
-    register_user::delete_founder()
-}
-
-#[update]
-fn update_founder_caller(updated_profile: FounderInfo) -> String {
-    register_user::update_founder(updated_profile)
-}
-
 #[update]
 
 async fn register_project(params: ProjectInfo) -> String {
@@ -217,10 +194,13 @@ fn delete_project(id: String) -> std::string::String {
 //     project_registration::verify_project(&project_id)
 // }
 
-#[update]
-fn connect_to_team_member(project_id: String, team_user_name: String) -> String {
-    project_registration::send_connection_request_to_owner(&project_id, &team_user_name)
-}
+
+//todo:-uncomment this
+
+// #[update]
+// fn connect_to_team_member(project_id: String, team_user_name: String) -> String {
+//     project_registration::send_connection_request_to_owner(&project_id, &team_user_name)
+// }
 
 #[query]
 fn get_your_project_notifications() -> Vec<NotificationForOwner> {
@@ -232,16 +212,6 @@ fn get_notifications_for_hubs() -> Vec<NotificationProject> {
     project_registration::get_notifications_for_caller()
 }
 
-#[update]
-fn like_project(project_id: String) -> std::string::String {
-    project_like::like_project(project_id)
-}
-
-#[query]
-fn get_user_likes(project_id: String) -> Option<LikeRecord> {
-    project_like::get_user_likes(project_id)
-}
-
 // #[update]
 // fn add_suggestion_caller(
 //     content: String,
@@ -249,35 +219,6 @@ fn get_user_likes(project_id: String) -> Option<LikeRecord> {
 // ) -> Result<(u64, String), &'static str> {
 //     roadmap_suggestion::add_suggestion(content, project_id)
 // }
-
-#[update]
-fn update_suggestion_status_caller(id: u64, status: String, project_id: String) {
-    roadmap_suggestion::update_suggestion_status(id, status, project_id);
-}
-
-#[query]
-fn get_suggestions_by_status_caller(project_id: String, status: String) -> Vec<Suggestion> {
-    roadmap_suggestion::get_suggestions_by_status(project_id, status)
-}
-
-#[update]
-fn reply_to_suggestion_caller(
-    parent_id: u64,
-    reply_content: String,
-    project_id: String,
-) -> (u64, String) {
-    roadmap_suggestion::reply_to_suggestion(parent_id, reply_content, project_id)
-}
-
-#[query]
-fn get_suggestions_by_parent_id_caller(project_id: String, parent_id: u64) -> Vec<Suggestion> {
-    roadmap_suggestion::get_suggestions_by_parent_id(project_id, parent_id)
-}
-
-#[query]
-fn get_total_suggestions(project_id: String) -> u64 {
-    roadmap_suggestion::get_total_suggestions_count(project_id)
-}
 
 #[query]
 fn get_all_roles() -> RolesResponse {
@@ -315,25 +256,6 @@ fn get_all_mentors_candid() -> HashMap<Principal, MentorWithRoles> {
 
 #[query]
 
-fn get_mentor_by_expertise(area_of_expertise: String) -> Vec<MentorProfile> {
-    mentor::find_mentors_by_expertise(&area_of_expertise)
-}
-
-#[update]
-
-fn upvote_project(project_id: String) -> std::string::String {
-    upvotes::upvote(project_id)
-}
-
-#[query]
-
-fn get_project_upvotes(project_id: String) -> Option<UpvoteRecord> {
-    upvotes::get_upvote_record(project_id)
-}
-
-
-#[query]
-
 fn get_venture_capitalist_info() -> Option<VentureCapitalist> {
     vc_registration::get_vc_info()
 }
@@ -366,17 +288,6 @@ fn greet(name: String) -> String {
 }
 
 #[query]
-fn get_leaderboard_using_upvotes() -> Vec<LeaderboardEntryForUpvote> {
-    leaderboard::get_leaderboard_by_upvotes()
-}
-
-#[query]
-
-fn get_leaderboard_using_likes() -> Vec<LeaderboardEntryForLikes> {
-    leaderboard::get_leaderboard_by_likes()
-}
-
-#[query]
 
 fn get_leaderboard_using_ratings() -> Vec<LeaderboardEntryForRatings> {
     leaderboard::get_leaderboard_by_ratings()
@@ -399,18 +310,6 @@ fn calculate_average(project_id: String) -> RatingAverages {
 // fn get_main_level_ratings(project_id: String) -> HashMap<String, MainLevelRatings> {
 //     ratings::get_ratings_by_project_id(&project_id)
 // }
-
-#[update]
-
-fn send_request_as_mentor(project_id: String, request_text: String) -> String {
-    requests::send_request_to_project(project_id, request_text)
-}
-
-#[query]
-
-fn get_project_requests(project_id: String) -> Vec<Request> {
-    requests::get_requests(project_id)
-}
 
 //made for admin side.....
 // #[query]
@@ -467,26 +366,26 @@ fn get_admin_notifications() -> Vec<admin::Notification> {
 
 //2vxsx-fae
 
-#[pre_upgrade]
-fn pre_upgrade() {
-    pre_upgrade_venture_capitalist();
-    pre_upgrade_user_modules();
-    pre_upgrade_project_registration();
-    // pre_upgrade_upvotes();
-    pre_upgrade_mentor();
-    //pre_upgrade_admin();
-    //pre_upgrade_rating_system();
-}
+// #[pre_upgrade]
+// fn pre_upgrade() {
+//     pre_upgrade_venture_capitalist();
+//     pre_upgrade_user_modules();
+//     pre_upgrade_project_registration();
+//     // pre_upgrade_upvotes();
+//     pre_upgrade_mentor();
+//     //pre_upgrade_admin();
+//     //pre_upgrade_rating_system();
+// }
 
-#[post_upgrade]
-fn post_upgrade() {
-    post_upgrade_venture_capitalist();
-    post_upgrade_user_modules();
-    post_upgrade_project_registration();
-    //post_upgrade_upvotes();
-    post_upgrade_mentor();
-    //post_upgrade_admin();
-    //post_upgrade_rating_system();
-}
+// #[post_upgrade]
+// fn post_upgrade() {
+//     post_upgrade_venture_capitalist();
+//     post_upgrade_user_modules();
+//     post_upgrade_project_registration();
+//     //post_upgrade_upvotes();
+//     post_upgrade_mentor();
+//     //post_upgrade_admin();
+//     //post_upgrade_rating_system();
+// }
 
 export_candid!();

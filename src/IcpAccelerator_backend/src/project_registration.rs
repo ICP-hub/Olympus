@@ -4,16 +4,13 @@ use crate::mentor::MentorProfile;
 use crate::user_module::*;
 
 use crate::ratings::{RatingAverages, RatingSystem};
-use crate::roadmap_suggestion::Suggestion;
+
 use crate::user_module::{UserInfoInternal, UserInformation};
 
 use crate::admin::send_approval_request;
 use crate::ratings::calculate_average_api;
 use crate::vc_registration::VentureCapitalist;
-use crate::{
-    hub_organizer,
-    register_user::{self, get_founder_info},
-};
+
 use bincode::{self, DefaultOptions, Options};
 use candid::{CandidType, Principal};
 use ic_cdk::api::caller;
@@ -105,9 +102,9 @@ pub struct ProjectInfo {
     pub dapp_link: Option<String>,
     pub weekly_active_users: Option<u64>,
     pub revenue: Option<u64>,
-    pub is_your_project_registered : Option<bool>,
-    pub type_of_registration : Option<String>,
-    pub country_of_registration : Option<String>,
+    pub is_your_project_registered: Option<bool>,
+    pub type_of_registration: Option<String>,
+    pub country_of_registration: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
@@ -215,7 +212,7 @@ pub struct ProjectInfoForUser {
     pub vc_associated: Option<Vec<VentureCapitalist>>,
     pub team_member_info: Option<Vec<TeamMember>>,
     pub announcements: HashMap<Principal, Vec<AnnouncementsInternal>>,
-    pub reviews: Vec<Suggestion>,
+    pub reviews: Option<String>,
     pub website_social_group: Option<String>,
     pub live_link_of_project: Option<String>,
     pub jobs_opportunity: Option<Vec<JobsInternal>>,
@@ -360,7 +357,6 @@ pub struct ProjectReview {
     rating: u32,
 }
 
-
 #[derive(CandidType, Clone, Serialize, Deserialize)]
 pub struct ProjectRatingStruct {
     rating: u32,
@@ -433,7 +429,8 @@ thread_local! {
 pub fn pre_upgrade_project_registration() {
     PROJECT_ACCESS_NOTIFICATIONS.with(|data| {
         let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save PROJECT_ACCESS_NOTIFICATIONS");
+        ic_cdk::storage::stable_save((&cloned_data,))
+            .expect("Failed to save PROJECT_ACCESS_NOTIFICATIONS");
     });
     APPLICATION_FORM.with(|data| {
         let cloned_data = data.borrow().clone();
@@ -453,7 +450,8 @@ pub fn pre_upgrade_project_registration() {
     });
     PROJECT_ANNOUNCEMENTS.with(|data| {
         let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save PROJECT_ANNOUNCEMENTS");
+        ic_cdk::storage::stable_save((&cloned_data,))
+            .expect("Failed to save PROJECT_ANNOUNCEMENTS");
     });
     BLOG_POST.with(|data| {
         let cloned_data = data.borrow().clone();
@@ -461,19 +459,23 @@ pub fn pre_upgrade_project_registration() {
     });
     PROJECT_AWAITS_RESPONSE.with(|data| {
         let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save PROJECT_AWAITS_RESPONSE");
+        ic_cdk::storage::stable_save((&cloned_data,))
+            .expect("Failed to save PROJECT_AWAITS_RESPONSE");
     });
     DECLINED_PROJECT_REQUESTS.with(|data| {
         let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save DECLINED_PROJECT_REQUESTS");
+        ic_cdk::storage::stable_save((&cloned_data,))
+            .expect("Failed to save DECLINED_PROJECT_REQUESTS");
     });
     PENDING_PROJECT_UPDATES.with(|data| {
         let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save PENDING_PROJECT_UPDATES");
+        ic_cdk::storage::stable_save((&cloned_data,))
+            .expect("Failed to save PENDING_PROJECT_UPDATES");
     });
     DECLINED_PROJECT_UPDATES.with(|data| {
         let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save DECLINED_PROJECT_UPDATES");
+        ic_cdk::storage::stable_save((&cloned_data,))
+            .expect("Failed to save DECLINED_PROJECT_UPDATES");
     });
     POST_JOB.with(|data| {
         let cloned_data = data.borrow().clone();
@@ -501,91 +503,92 @@ pub fn pre_upgrade_project_registration() {
     });
     MONEY_ACCESS_REQUESTS.with(|data| {
         let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save MONEY_ACCESS_REQUESTS");
+        ic_cdk::storage::stable_save((&cloned_data,))
+            .expect("Failed to save MONEY_ACCESS_REQUESTS");
     });
     PRIVATE_DOCS_ACCESS_REQUESTS.with(|data| {
         let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save PRIVATE_DOCS_ACCESS_REQUESTS");
+        ic_cdk::storage::stable_save((&cloned_data,))
+            .expect("Failed to save PRIVATE_DOCS_ACCESS_REQUESTS");
     });
 }
 
 pub fn post_upgrade_project_registration() {
-    let (project_access_notifications,): (HashMap<String, Vec<ProjectNotification>>, ) =
+    let (project_access_notifications,): (HashMap<String, Vec<ProjectNotification>>,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore PROJECT_ACCESS_NOTIFICATIONS");
     PROJECT_ACCESS_NOTIFICATIONS.with(|data| *data.borrow_mut() = project_access_notifications);
 
-    let (application_form,): (ApplicationDetails, ) =
+    let (application_form,): (ApplicationDetails,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore APPLICATION_FORM");
     APPLICATION_FORM.with(|data| *data.borrow_mut() = application_form);
 
-    let (project_details,): (ProjectDetails, ) =
+    let (project_details,): (ProjectDetails,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore PROJECT_DETAILS");
     PROJECT_DETAILS.with(|data| *data.borrow_mut() = project_details);
 
-    let (notifications,): (Notifications, ) =
+    let (notifications,): (Notifications,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore NOTIFICATIONS");
     NOTIFICATIONS.with(|data| *data.borrow_mut() = notifications);
 
-    let (owner_notifications,): (HashMap<Principal, Vec<NotificationForOwner>>, ) =
+    let (owner_notifications,): (HashMap<Principal, Vec<NotificationForOwner>>,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore OWNER_NOTIFICATIONS");
     OWNER_NOTIFICATIONS.with(|data| *data.borrow_mut() = owner_notifications);
 
-    let (project_announcements,): (ProjectAnnouncements, ) =
+    let (project_announcements,): (ProjectAnnouncements,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore PROJECT_ANNOUNCEMENTS");
     PROJECT_ANNOUNCEMENTS.with(|data| *data.borrow_mut() = project_announcements);
 
-    let (blog_post,): (BlogPost, ) =
+    let (blog_post,): (BlogPost,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore BLOG_POST");
     BLOG_POST.with(|data| *data.borrow_mut() = blog_post);
 
-    let (project_awaits_response,): (ProjectDetails, ) =
+    let (project_awaits_response,): (ProjectDetails,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore PROJECT_AWAITS_RESPONSE");
     PROJECT_AWAITS_RESPONSE.with(|data| *data.borrow_mut() = project_awaits_response);
 
-    let (declined_project_requests,): (ProjectDetails, ) =
+    let (declined_project_requests,): (ProjectDetails,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore DECLINED_PROJECT_REQUESTS");
     DECLINED_PROJECT_REQUESTS.with(|data| *data.borrow_mut() = declined_project_requests);
 
-    let (pending_project_updates,): (PendingDetails, ) =
+    let (pending_project_updates,): (PendingDetails,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore PENDING_PROJECT_UPDATES");
     PENDING_PROJECT_UPDATES.with(|data| *data.borrow_mut() = pending_project_updates);
 
-    let (declined_project_updates,): (DeclinedDetails, ) =
+    let (declined_project_updates,): (DeclinedDetails,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore DECLINED_PROJECT_UPDATES");
     DECLINED_PROJECT_UPDATES.with(|data| *data.borrow_mut() = declined_project_updates);
 
-    let (post_job,): (JobDetails, ) =
+    let (post_job,): (JobDetails,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore POST_JOB");
     POST_JOB.with(|data| *data.borrow_mut() = post_job);
 
-    let (job_type,): (Vec<String>, ) =
+    let (job_type,): (Vec<String>,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore JOB_TYPE");
     JOB_TYPE.with(|data| *data.borrow_mut() = job_type);
 
-    let (spotlight_projects,): (SpotlightProjects, ) =
+    let (spotlight_projects,): (SpotlightProjects,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore SPOTLIGHT_PROJECTS");
     SPOTLIGHT_PROJECTS.with(|data| *data.borrow_mut() = spotlight_projects);
 
-    let (money_access,): (HashMap<String, Vec<Principal>>, ) =
+    let (money_access,): (HashMap<String, Vec<Principal>>,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore MONEY_ACCESS");
     MONEY_ACCESS.with(|data| *data.borrow_mut() = money_access);
 
-    let (private_docs_access,): (HashMap<String, Vec<Principal>>, ) =
+    let (private_docs_access,): (HashMap<String, Vec<Principal>>,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore PRIVATE_DOCS_ACCESS");
     PRIVATE_DOCS_ACCESS.with(|data| *data.borrow_mut() = private_docs_access);
 
-    let (project_rating,): (HashMap<String, Vec<(Principal, ProjectReview)>>, ) =
+    let (project_rating,): (HashMap<String, Vec<(Principal, ProjectReview)>>,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore PROJECT_RATING");
     PROJECT_RATING.with(|data| *data.borrow_mut() = project_rating);
 
-    let (money_access_requests,): (MoneyAccess, ) =
+    let (money_access_requests,): (MoneyAccess,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore MONEY_ACCESS_REQUESTS");
     MONEY_ACCESS_REQUESTS.with(|data| *data.borrow_mut() = money_access_requests);
 
-    let (private_docs_access_requests,): (PrivateDocsAccess, ) =
+    let (private_docs_access_requests,): (PrivateDocsAccess,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore PRIVATE_DOCS_ACCESS_REQUESTS");
     PRIVATE_DOCS_ACCESS_REQUESTS.with(|data| *data.borrow_mut() = private_docs_access_requests);
-
 }
 
 pub async fn create_project(info: ProjectInfo) -> String {
@@ -659,7 +662,6 @@ pub async fn create_project(info: ProjectInfo) -> String {
         is_verified: false,
         creation_date: time(),
     };
-
 
     PROJECT_AWAITS_RESPONSE.with(
         |awaiters: &RefCell<HashMap<Principal, ProjectInfoInternal>>| {
@@ -827,11 +829,8 @@ pub fn get_project_details_for_mentor_and_investor(
     project_internal
 }
 
-
 #[query]
-pub fn get_project_public_information_using_id(
-    project_id: String,
-) -> ProjectPublicInfoInternal {
+pub fn get_project_public_information_using_id(project_id: String) -> ProjectPublicInfoInternal {
     let project_details = find_project_by_id(project_id.as_str()).expect("project not found");
     let project_id = project_id.to_string().clone();
 
@@ -873,7 +872,7 @@ pub fn get_project_public_information_using_id(
         uid: project_details.uid,
         is_active: project_details.is_active,
         is_verified: project_details.is_verified,
-        creation_date: project_details.creation_date
+        creation_date: project_details.creation_date,
     };
 
     project_internal
@@ -929,7 +928,6 @@ pub struct ListAllProjects {
 //     })
 // }
 
-
 #[query]
 pub fn list_all_projects() -> Vec<ListAllProjects> {
     APPLICATION_FORM.with(|projects: &RefCell<ApplicationDetails>| {
@@ -939,19 +937,15 @@ pub fn list_all_projects() -> Vec<ListAllProjects> {
             return Vec::new();
         }
 
-
-
         let mut list_all_projects: Vec<ListAllProjects> = vec![];
 
         for (principal, projects) in projects.iter() {
-
             if projects.is_empty() {
                 continue;
             }
 
             for project in projects {
                 let get_rating = calculate_average_api(&project.uid);
-
 
                 if !get_rating.overall_average.is_empty() {
                     let project_info = ListAllProjects {
@@ -960,19 +954,17 @@ pub fn list_all_projects() -> Vec<ListAllProjects> {
                         overall_average: Some(get_rating.overall_average[0]),
                     };
 
-                    if project.is_active == true{
+                    if project.is_active == true {
                         list_all_projects.push(project_info);
                     }
-
                 } else {
-
                     let project_info = ListAllProjects {
                         principal: principal.clone(),
                         params: project.clone(),
                         overall_average: None,
                     };
 
-                    if project.is_active == true{
+                    if project.is_active == true {
                         list_all_projects.push(project_info);
                     }
                 }
@@ -989,7 +981,9 @@ pub struct PaginationParams {
 }
 
 #[query]
-pub fn list_all_projects_with_pagination(pagination_params: PaginationParams) -> Vec<ListAllProjects> {
+pub fn list_all_projects_with_pagination(
+    pagination_params: PaginationParams,
+) -> Vec<ListAllProjects> {
     APPLICATION_FORM.with(|projects: &RefCell<ApplicationDetails>| {
         let projects = projects.borrow();
 
@@ -1024,7 +1018,10 @@ pub fn list_all_projects_with_pagination(pagination_params: PaginationParams) ->
         }
 
         // Calculate the start index based on the page number and page size. Ensure it does not exceed the list's bounds.
-        let start = std::cmp::min((pagination_params.page - 1) * pagination_params.page_size, list_all_projects.len());
+        let start = std::cmp::min(
+            (pagination_params.page - 1) * pagination_params.page_size,
+            list_all_projects.len(),
+        );
 
         // Calculate the end index based on the start index and page size. Ensure it does not exceed the list's bounds.
         let end = std::cmp::min(start + pagination_params.page_size, list_all_projects.len());
@@ -1065,9 +1062,8 @@ pub async fn update_project(project_id: String, updated_project: ProjectInfo) ->
         return "Error: Only the project owner can request updates.".to_string();
     }
 
-    let original_info_cloned = APPLICATION_FORM.with(|app_form| {
-        app_form.borrow().get(&caller).cloned()
-    });
+    let original_info_cloned =
+        APPLICATION_FORM.with(|app_form| app_form.borrow().get(&caller).cloned());
     let mut approved_timestamp = 0;
     let mut rejected_timestamp = 0;
     ROLE_STATUS_ARRAY.with(|role_status| {
@@ -1091,18 +1087,21 @@ pub async fn update_project(project_id: String, updated_project: ProjectInfo) ->
                 // Now we have the original project info, proceed to create the update request
                 PENDING_PROJECT_UPDATES.with(|updates| {
                     let mut updates = updates.borrow_mut();
-                    updates.insert(project_id.clone(), ProjectUpdateRequest {
-                        project_id: project_id.clone(),
-                        original_info: orig_info.params.clone(),  // Assuming `params` is of type `ProjectInfo`
-                        updated_info: updated_project.clone(),
-                        principal: caller,
-                        accepted_at: approved_timestamp,
-                        rejected_at: rejected_timestamp,
-                        sent_at: time(),
-                    });
+                    updates.insert(
+                        project_id.clone(),
+                        ProjectUpdateRequest {
+                            project_id: project_id.clone(),
+                            original_info: orig_info.params.clone(), // Assuming `params` is of type `ProjectInfo`
+                            updated_info: updated_project.clone(),
+                            principal: caller,
+                            accepted_at: approved_timestamp,
+                            rejected_at: rejected_timestamp,
+                            sent_at: time(),
+                        },
+                    );
                 });
             }
-        },
+        }
         None => todo!(),
     }
 
@@ -1216,58 +1215,60 @@ fn find_project_owner_principal(project_id: &str) -> Option<Principal> {
     })
 }
 
-pub fn send_connection_request_to_owner(project_id: &str, team_member_username: &str) -> String {
-    let caller_principal = caller();
 
-    let sender_info = register_user::get_founder_info();
-    if sender_info.is_none() {
-        return "Sender information could not be retrieved.".to_string();
-    }
-    let (name, image) = match sender_info {
-        Some(info) => {
-            let name = info
-                .thirty_info
-                .as_ref()
-                .and_then(|thirty_info| thirty_info.full_name.clone());
-            let image = info
-                .seventy_info
-                .as_ref()
-                .and_then(|seventy_info| seventy_info.founder_image.clone());
-            (name, image)
-        }
-        None => (None, None),
-    };
+//todo:-change this function structure
+// pub fn send_connection_request_to_owner(project_id: &str, team_member_username: &str) -> String {
+//     let caller_principal = caller();
 
-    let message = format!(
-        "{} is interested in connecting with team member {} in your project.",
-        name.clone().unwrap_or_else(|| "Unknown Sender".to_string()),
-        team_member_username
-    );
+//     let sender_info = register_user::get_founder_info();
+//     if sender_info.is_none() {
+//         return "Sender information could not be retrieved.".to_string();
+//     }
+//     let (name, image) = match sender_info {
+//         Some(info) => {
+//             let name = info
+//                 .thirty_info
+//                 .as_ref()
+//                 .and_then(|thirty_info| thirty_info.full_name.clone());
+//             let image = info
+//                 .seventy_info
+//                 .as_ref()
+//                 .and_then(|seventy_info| seventy_info.founder_image.clone());
+//             (name, image)
+//         }
+//         None => (None, None),
+//     };
 
-    let project_owner_principal = find_project_owner_principal(project_id);
+//     let message = format!(
+//         "{} is interested in connecting with team member {} in your project.",
+//         name.clone().unwrap_or_else(|| "Unknown Sender".to_string()),
+//         team_member_username
+//     );
 
-    let notification = NotificationForOwner {
-        sender_name: name.unwrap_or_else(|| "Unknown Founder".to_string()),
-        sender_image: image.unwrap_or_else(|| vec![]),
-        message,
-        project_id: project_id.to_string(),
-        timestamp: ic_cdk::api::time(),
-    };
+//     let project_owner_principal = find_project_owner_principal(project_id);
 
-    // Store the notification
-    if let Some(project_owner_principal) = find_project_owner_principal(project_id) {
-        OWNER_NOTIFICATIONS.with(|notifications| {
-            notifications
-                .borrow_mut()
-                .entry(project_owner_principal)
-                .or_insert_with(Vec::new)
-                .push(notification);
-        });
-        "Notification sent successfully.".to_string()
-    } else {
-        "Project owner not found.".to_string()
-    }
-}
+//     let notification = NotificationForOwner {
+//         sender_name: name.unwrap_or_else(|| "Unknown Founder".to_string()),
+//         sender_image: image.unwrap_or_else(|| vec![]),
+//         message,
+//         project_id: project_id.to_string(),
+//         timestamp: ic_cdk::api::time(),
+//     };
+
+//     // Store the notification
+//     if let Some(project_owner_principal) = find_project_owner_principal(project_id) {
+//         OWNER_NOTIFICATIONS.with(|notifications| {
+//             notifications
+//                 .borrow_mut()
+//                 .entry(project_owner_principal)
+//                 .or_insert_with(Vec::new)
+//                 .push(notification);
+//         });
+//         "Notification sent successfully.".to_string()
+//     } else {
+//         "Project owner not found.".to_string()
+//     }
+// }
 
 pub fn get_notifications_for_owner() -> Vec<NotificationForOwner> {
     let owner_principal = caller();
@@ -1521,10 +1522,7 @@ pub fn filter_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
 #[query]
 pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUserInternal> {
     let announcements_project = get_announcements();
-    let project_reviews = crate::roadmap_suggestion::get_suggestions_by_status(
-        project_id.clone(),
-        "In Progress".to_string(),
-    );
+
     let jobs_opportunity_posted = get_jobs_posted_by_project(project_id.clone());
 
     let community_ratings = crate::ratings::calculate_average_api(&project_id);
@@ -1558,7 +1556,7 @@ pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUse
                     vc_associated: project_internal.params.vc_assigned.clone(),
                     team_member_info: project_internal.params.project_team.clone(),
                     announcements: announcements_project,
-                    reviews: project_reviews,
+                    reviews: Some("No reviews yet".to_string()),
                     website_social_group: project_internal.params.project_discord.clone(),
                     live_link_of_project: project_internal.params.dapp_link.clone(),
                     jobs_opportunity: Some(jobs_opportunity_posted),
@@ -1678,15 +1676,15 @@ pub fn make_project_active_inactive(p_id: Principal, project_id: String) -> Stri
 //     }
 // }
 
-pub fn get_dummy_suggestion() -> Suggestion {
-    Suggestion {
-        id: 1, // Example ID
-        content: "This project could benefit from more robust testing strategies.".to_string(),
-        status: "Pending Review".to_string(),
-        project_id: "ProjectX123".to_string(),
-        parent_id: None, // or Some(id) if you want to simulate a response to another suggestion
-    }
-}
+// pub fn get_dummy_suggestion() -> Suggestion {
+//     Suggestion {
+//         id: 1, // Example ID
+//         content: "This project could benefit from more robust testing strategies.".to_string(),
+//         status: "Pending Review".to_string(),
+//         project_id: "ProjectX123".to_string(),
+//         parent_id: None, // or Some(id) if you want to simulate a response to another suggestion
+//     }
+// }
 
 // pub fn get_dummy_jon_opportunity() -> Jobs {
 //     Jobs {
@@ -2003,7 +2001,8 @@ pub fn get_all_pending_docs_access_requests() -> Vec<ProjectNotification> {
                 notifications.iter().filter_map(|notification| {
                     match &notification.notification_type {
                         ProjectNotificationType::AccessRequest(access_request)
-                            if access_request.request_type == "private_docs_access" && access_request.status == "pending" =>
+                            if access_request.request_type == "private_docs_access"
+                                && access_request.status == "pending" =>
                         {
                             Some(notification.clone())
                         }
@@ -2025,7 +2024,8 @@ pub fn get_all_approved_docs_access_requests() -> Vec<ProjectNotification> {
                 notifications.iter().filter_map(|notification| {
                     match &notification.notification_type {
                         ProjectNotificationType::AccessRequest(access_request)
-                            if access_request.request_type == "private_docs_access" && access_request.status == "approved" =>
+                            if access_request.request_type == "private_docs_access"
+                                && access_request.status == "approved" =>
                         {
                             Some(notification.clone())
                         }
@@ -2047,7 +2047,8 @@ pub fn get_all_declined_docs_access_requests() -> Vec<ProjectNotification> {
                 notifications.iter().filter_map(|notification| {
                     match &notification.notification_type {
                         ProjectNotificationType::AccessRequest(access_request)
-                            if access_request.request_type == "private_docs_access" && access_request.status == "declined" =>
+                            if access_request.request_type == "private_docs_access"
+                                && access_request.status == "declined" =>
                         {
                             Some(notification.clone())
                         }
@@ -2113,7 +2114,10 @@ pub fn get_pending_money_requestes(project_id: String) -> Vec<ProjectNotificatio
     // Print debug information
     match &project_info {
         Some(info) => ic_cdk::println!("Project information found: {:?}", info),
-        None => ic_cdk::println!("No project information found for project ID: {}", project_id),
+        None => ic_cdk::println!(
+            "No project information found for project ID: {}",
+            project_id
+        ),
     }
 
     // Return project information if found, otherwise return an empty vector
@@ -2527,7 +2531,8 @@ pub fn get_frequent_reviewers() -> Vec<UserInfoInternal> {
         }
     });
 
-    let frequent_reviewers = review_count.iter()
+    let frequent_reviewers = review_count
+        .iter()
         .filter_map(|(&principal, &count)| {
             if count > 5 {
                 get_user_info_using_principal(principal)
@@ -2540,9 +2545,6 @@ pub fn get_frequent_reviewers() -> Vec<UserInfoInternal> {
     frequent_reviewers
 }
 
-pub fn get_type_of_registration() -> Vec<String>{
-    vec![
-        "Company".to_string(),
-        "DAO".to_string()
-    ]
+pub fn get_type_of_registration() -> Vec<String> {
+    vec!["Company".to_string(), "DAO".to_string()]
 }

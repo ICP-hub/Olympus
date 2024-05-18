@@ -7,6 +7,7 @@ use crate::latest_popular_projects::INCUBATED_PROJECTS;
 use crate::latest_popular_projects::LIVE_PROJECTS;
 use crate::mentor::*;
 use crate::project_registration::*;
+use crate::state_handler::*;
 use crate::user_module::*;
 use crate::vc_registration::*;
 use crate::CohortDetails;
@@ -23,11 +24,11 @@ use ic_cdk::storage;
 use ic_cdk::storage::stable_restore;
 use ic_cdk_macros::*;
 use serde::{Deserialize, Serialize};
+use std::borrow::Cow;
 use std::cell::RefCell;
 use std::cmp::Reverse;
 use std::collections::{HashMap, HashSet};
 use std::io::{Read, Write};
-
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 struct ApprovalRequest {
     sender: Principal,
@@ -58,37 +59,37 @@ enum MyError {
 }
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
-pub struct UpdateCounts{
+pub struct UpdateCounts {
     project_update: Option<u32>,
     mentor_update: Option<u32>,
-    vc_update: Option<u32>
+    vc_update: Option<u32>,
 }
 
 thread_local! {
-    static ADMIN_NOTIFICATIONS : RefCell<HashMap<Principal, Vec<Notification>>> = RefCell::new(HashMap::new());
+    static ADMIN_NOTIFICATIONS: RefCell<HashMap<Principal, Vec<Notification>>> = RefCell::new(HashMap::new());
     static COHORT_REQUEST : RefCell<HashMap<String, Vec<CohortRequest>>> = RefCell::new(HashMap::new());
     static ACCEPTED_COHORTS : RefCell<HashMap<String, Vec<CohortRequest>>> = RefCell::new(HashMap::new());
     static DECLINED_COHORTS: RefCell<HashMap<String, Vec<CohortRequest>>> = RefCell::new(HashMap::new());
 }
 
-pub fn pre_upgrade_admin(){
-    ADMIN_NOTIFICATIONS.with(|data| {
-        match storage::stable_save((data.borrow().clone(),)) {
-            Ok(_) => ic_cdk::println!("ADMIN_NOTIFICATIONS saved successfully."),
-            Err(e) => ic_cdk::println!("Failed to save ADMIN_NOTIFICATIONS: {:?}", e),
-        }
-    });
-}
+// pub fn pre_upgrade_admin() {
+//     ADMIN_NOTIFICATIONS.with(
+//         |data| match storage::stable_save((data.borrow().clone(),)) {
+//             Ok(_) => ic_cdk::println!("ADMIN_NOTIFICATIONS saved successfully."),
+//             Err(e) => ic_cdk::println!("Failed to save ADMIN_NOTIFICATIONS: {:?}", e),
+//         },
+//     );
+// }
 
-pub fn post_upgrade_admin(){
-    match stable_restore::<(HashMap<Principal, Vec<Notification>>,)>() {
-        Ok((restored_admin_notifications,)) => {
-            ADMIN_NOTIFICATIONS.with(|data| *data.borrow_mut() = restored_admin_notifications);
-            ic_cdk::println!("ADMIN_NOTIFICATIONS restored successfully.");
-        },
-        Err(e) => ic_cdk::println!("Failed to restore ADMIN_NOTIFICATIONS: {:?}", e),
-    }
-}
+// pub fn post_upgrade_admin() {
+//     match stable_restore::<(HashMap<Principal, Vec<Notification>>,)>() {
+//         Ok((restored_admin_notifications,)) => {
+//             ADMIN_NOTIFICATIONS.with(|data| *data.borrow_mut() = restored_admin_notifications);
+//             ic_cdk::println!("ADMIN_NOTIFICATIONS restored successfully.");
+//         }
+//         Err(e) => ic_cdk::println!("Failed to restore ADMIN_NOTIFICATIONS: {:?}", e),
+//     }
+// }
 
 fn change_notification_status(requester: Principal, requested_for: String, changed_status: String) {
     ADMIN_NOTIFICATIONS.with(|admin_notifications| {
@@ -109,7 +110,7 @@ fn change_notification_status(requester: Principal, requested_for: String, chang
         }
     });
 }
-
+#[update]
 pub async fn send_approval_request(
     photo: Vec<u8>,
     name: String,
@@ -149,12 +150,21 @@ pub async fn send_approval_request(
                     notification_type: NotificationType::ApprovalRequest(approval_request),
                     timestamp: time(),
                 };
-                ADMIN_NOTIFICATIONS.with(|admin_notifications| {
-                    let mut notifications = admin_notifications.borrow_mut();
-                    notifications
-                        .entry(c)
-                        .or_default()
-                        .push(notification_to_send)
+                mutate_state(|state| {
+                    let principal = c;
+
+                    let mut notifications = state
+                        .admin_notifications
+                        .get(&StoredPrincipal(principal))
+                        .map_or(Vec::new(), |candid_vec| {
+                            Candid::from_bytes(Cow::Borrowed(&candid_vec.to_bytes())).0
+                        });
+
+                    notifications.push(notification_to_send);
+
+                    state
+                        .admin_notifications
+                        .insert(StoredPrincipal(principal), Candid(notifications));
                 });
             }
             format!("approval request is sent")
@@ -502,7 +512,6 @@ fn project_update_awaiting_approval() -> HashMap<String, ProjectUpdateRequest> {
     PENDING_PROJECT_UPDATES.with(|awaiters| awaiters.borrow().clone())
 }
 
-
 #[update]
 pub fn decline_vc_creation_request(requester: Principal, decline: bool) -> String {
     VC_AWAITS_RESPONSE.with(|awaiters| {
@@ -669,9 +678,12 @@ pub fn approve_vc_profile_update(requester: Principal, approve: bool) -> String 
                                 .clone()
                                 .or(existing_vc_internal.params.registered_country.clone());
 
-                            existing_vc_internal.params.fund_size = 
-                                Some(update.fund_size.map(|size| (size * 100.0).round() / 100.0)
-                                  .unwrap_or(0.0));
+                            existing_vc_internal.params.fund_size = Some(
+                                update
+                                    .fund_size
+                                    .map(|size| (size * 100.0).round() / 100.0)
+                                    .unwrap_or(0.0),
+                            );
 
                             existing_vc_internal.params.assets_under_management =
                                 update.assets_under_management.clone();
@@ -699,8 +711,7 @@ pub fn approve_vc_profile_update(requester: Principal, approve: bool) -> String 
                             existing_vc_internal.params.reason_for_joining =
                                 update.reason_for_joining.clone();
 
-                            existing_vc_internal.params.name_of_fund = 
-                                update.name_of_fund.clone();
+                            existing_vc_internal.params.name_of_fund = update.name_of_fund.clone();
 
                             existing_vc_internal.params.preferred_icp_hub =
                                 update.preferred_icp_hub.clone();
@@ -708,17 +719,14 @@ pub fn approve_vc_profile_update(requester: Principal, approve: bool) -> String 
                             existing_vc_internal.params.type_of_investment =
                                 update.type_of_investment.clone();
 
-                            existing_vc_internal.params.user_data = 
-                                update.user_data.clone();
+                            existing_vc_internal.params.user_data = update.user_data.clone();
 
                             existing_vc_internal.params.linkedin_link =
                                 update.linkedin_link.clone();
 
-                            existing_vc_internal.params.website_link = 
-                                update.website_link.clone();
+                            existing_vc_internal.params.website_link = update.website_link.clone();
 
-                            existing_vc_internal.params.registered = 
-                                update.registered.clone();
+                            existing_vc_internal.params.registered = update.registered.clone();
                         }
                     }
                 });
@@ -741,18 +749,19 @@ pub fn approve_vc_profile_update(requester: Principal, approve: bool) -> String 
     })
 }
 
-
 #[update]
 pub fn decline_vc_profile_update_request(requester: Principal, decline: bool) -> String {
     let previous_profile = VENTURECAPITALIST_STORAGE.with(|app_form| {
-        app_form.borrow().get(&requester)
+        app_form
+            .borrow()
+            .get(&requester)
             .map(|mentor_internal| mentor_internal.params.clone())
     });
     VC_PROFILE_EDIT_AWAITS.with(|awaiters| {
         let mut awaiters = awaiters.borrow_mut();
 
         if let Some(vc_internal) = awaiters.get(&requester) {
-            let declined_data = UpdateInfoStruct{
+            let declined_data = UpdateInfoStruct {
                 original_info: previous_profile,
                 updated_info: vc_internal.updated_info.clone(),
                 approved_at: 0,
@@ -835,17 +844,22 @@ pub fn approve_mentor_profile_update(requester: Principal, approve: bool) -> Str
                     let mut mentor = vc_registry.borrow_mut();
                     if let Some(mentor_internal) = mentor.get_mut(&requester) {
                         if let Some(ref updated_info) = updated_profile.updated_info {
-                            mentor_internal.profile.preferred_icp_hub = updated_info.preferred_icp_hub
+                            mentor_internal.profile.preferred_icp_hub = updated_info
+                                .preferred_icp_hub
                                 .clone()
                                 .or(mentor_internal.profile.preferred_icp_hub.clone());
 
-                            mentor_internal.profile.multichain = updated_info.multichain
+                            mentor_internal.profile.multichain = updated_info
+                                .multichain
                                 .clone()
                                 .or(mentor_internal.profile.multichain.clone());
                             mentor_internal.profile.existing_icp_project_porfolio = updated_info
                                 .existing_icp_project_porfolio
                                 .clone()
-                                .or(mentor_internal.profile.existing_icp_project_porfolio.clone());
+                                .or(mentor_internal
+                                    .profile
+                                    .existing_icp_project_porfolio
+                                    .clone());
 
                             mentor_internal.profile.area_of_expertise =
                                 updated_info.area_of_expertise.clone();
@@ -864,7 +878,8 @@ pub fn approve_mentor_profile_update(requester: Principal, approve: bool) -> Str
                             mentor_internal.profile.reason_for_joining =
                                 updated_info.reason_for_joining.clone();
                             mentor_internal.profile.user_data = updated_info.user_data.clone();
-                            mentor_internal.profile.hub_owner = updated_info.hub_owner
+                            mentor_internal.profile.hub_owner = updated_info
+                                .hub_owner
                                 .clone()
                                 .or(mentor_internal.profile.hub_owner.clone());
                         }
@@ -892,14 +907,16 @@ pub fn approve_mentor_profile_update(requester: Principal, approve: bool) -> Str
 #[update]
 pub fn decline_mentor_profile_update_request(requester: Principal, decline: bool) -> String {
     let previous_profile = MENTOR_REGISTRY.with(|app_form| {
-        app_form.borrow().get(&requester)
+        app_form
+            .borrow()
+            .get(&requester)
             .map(|mentor_internal| mentor_internal.profile.clone())
     });
     MENTOR_PROFILE_EDIT_AWAITS.with(|awaiters| {
         let mut awaiters = awaiters.borrow_mut();
 
         if let Some(vc_internal) = awaiters.get(&requester) {
-            let declined_data = MentorUpdateRequest{
+            let declined_data = MentorUpdateRequest {
                 original_info: previous_profile,
                 updated_info: vc_internal.updated_info.clone(),
                 approved_at: 0,
@@ -1218,7 +1235,6 @@ pub fn get_spotlight_project_uids() -> Vec<String> {
     })
 }
 
-
 #[query]
 fn get_pending_cycles() -> u128 {
     canister_balance128()
@@ -1471,7 +1487,7 @@ fn get_top_5_vcs() -> Vec<(Principal, TopData, usize)> {
 //         let application_form = application_form.borrow(); // Access the RefCell for reading
 
 //         for (_principal, projects) in application_form.iter() {
-            
+
 //             for project_internal in projects {
 
 //                 let project_info = &project_internal.params;
@@ -1484,7 +1500,7 @@ fn get_top_5_vcs() -> Vec<(Principal, TopData, usize)> {
 //                 let total_count = mentor_count + vc_count;
 
 //                 // Placeholder for TopData - adjust according to actual data retrieval method
-                
+
 //                 let top_data = TopData {
 //                     full_name: project_info.user_data.full_name.clone(),
 //                     profile_picture: Some(project_info.project_logo.clone()),
@@ -1504,7 +1520,6 @@ fn get_top_5_vcs() -> Vec<(Principal, TopData, usize)> {
 //     // Taking the top 5 projects based on total counts
 //     project_counts.into_iter().take(5).collect()
 // }
-
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default)]
 pub struct TopDataProject {
@@ -1526,9 +1541,7 @@ fn get_top_5_projects() -> Vec<(String, TopDataProject, usize)> {
         let application_form = application_form.borrow(); // Access the RefCell for reading
 
         for (_principal, projects) in application_form.iter() {
-            
             for project_internal in projects {
-
                 let project_info = &project_internal.params;
 
                 let mentor_count = project_info
@@ -1539,7 +1552,7 @@ fn get_top_5_projects() -> Vec<(String, TopDataProject, usize)> {
                 let total_count = mentor_count + vc_count;
 
                 // Placeholder for TopData - adjust according to actual data retrieval method
-                
+
                 let top_data = TopDataProject {
                     full_name: project_info.user_data.full_name.clone(),
                     profile_picture: Some(project_info.project_logo.clone()),
@@ -1561,20 +1574,16 @@ fn get_top_5_projects() -> Vec<(String, TopDataProject, usize)> {
     project_counts.into_iter().take(5).collect()
 }
 
-
-
-
 // #[query]
 // fn get_top_5_projects() -> Vec<(String, TopData, usize)> {
 //     // Temporarily holding the projects to sort and filter
 //     let mut project_counts: Vec<(Principal, String, TopData, usize)> = Vec::new();
 
-    
 //     APPLICATION_FORM.with(|application_form| {
-//         let application_form = application_form.borrow(); 
+//         let application_form = application_form.borrow();
 
 //         for (principal, projects) in application_form.iter() {
-            
+
 //             for project_internal in projects {
 
 //                 let project_info = &project_internal.params;
@@ -1585,7 +1594,7 @@ fn get_top_5_projects() -> Vec<(String, TopDataProject, usize)> {
 //                     .map_or(0, |v| v.len());
 //                 let vc_count = project_info.vc_assigned.as_ref().map_or(0, |v| v.len());
 //                 let total_count = mentor_count + vc_count;
-                
+
 //                 let top_data = TopData {
 //                     full_name: project_info.user_data.full_name.clone(),
 //                     profile_picture: Some(project_info.project_logo.clone()),
@@ -1605,7 +1614,6 @@ fn get_top_5_projects() -> Vec<(String, TopDataProject, usize)> {
 //     // Taking the top 5 projects based on total counts
 //     project_counts.into_iter().take(5).collect()
 // }
-
 
 #[query]
 pub fn change_live_status(
@@ -1796,8 +1804,12 @@ pub fn update_vc_profile(requester: Principal, vc_internal: VentureCapitalist) -
                 .clone()
                 .or(existing_vc_internal.params.registered_country.clone());
 
-            existing_vc_internal.params.fund_size = Some(vc_internal.fund_size.map(|size| (size * 100.0).round() / 100.0)
-                                  .unwrap_or(0.0));
+            existing_vc_internal.params.fund_size = Some(
+                vc_internal
+                    .fund_size
+                    .map(|size| (size * 100.0).round() / 100.0)
+                    .unwrap_or(0.0),
+            );
             existing_vc_internal.params.assets_under_management =
                 vc_internal.assets_under_management.clone();
 
@@ -1883,7 +1895,7 @@ pub async fn send_cohort_request_to_admin(cohort_request: CohortRequest) -> Stri
         cohort_requests
             .entry(cohort_request.cohort_details.cohort_id.clone())
             .or_default()
-            .push(cohort_request) 
+            .push(cohort_request)
     });
 
     ic_cdk::println!("REQUEST HAS BEEN SENT TO ADMIN");
@@ -1904,19 +1916,22 @@ pub fn get_pending_cohort_requests_for_admin() -> Vec<CohortRequest> {
     accepted_requests
 }
 
-
-
 #[update]
 pub fn accept_cohort_creation_request(cohort_id: String) -> String {
     let mut response_message = String::new();
 
     let already_accepted = ACCEPTED_COHORTS.with(|storage| {
         let storage = storage.borrow();
-        storage.get(&cohort_id).map_or(false, |requests| requests.iter().any(|r| r.request_status == "accepted"))
+        storage.get(&cohort_id).map_or(false, |requests| {
+            requests.iter().any(|r| r.request_status == "accepted")
+        })
     });
 
     if already_accepted {
-        return format!("Cohort request with id: {} has already been accepted.", cohort_id);
+        return format!(
+            "Cohort request with id: {} has already been accepted.",
+            cohort_id
+        );
     }
 
     COHORT_REQUEST.with(|state| {
@@ -1924,30 +1939,36 @@ pub fn accept_cohort_creation_request(cohort_id: String) -> String {
         let mut request_found_and_updated = false;
 
         for (_principal, requests) in state.iter_mut() {
-            if let Some(index) = requests.iter().position(|r| r.cohort_details.cohort_id == cohort_id && r.request_status == "pending") {
+            if let Some(index) = requests.iter().position(|r| {
+                r.cohort_details.cohort_id == cohort_id && r.request_status == "pending"
+            }) {
                 let mut request = requests.remove(index);
                 request.request_status = "accepted".to_string();
                 request.accepted_at = time();
-                
+
                 COHORT.with(|storage| {
                     let mut storage = storage.borrow_mut();
                     storage.insert(cohort_id.clone(), request.cohort_details.clone());
                     ic_cdk::println!("Inserted cohort details into COHORT for: {}", cohort_id);
                 });
-                
+
                 ACCEPTED_COHORTS.with(|storage| {
                     let mut storage = storage.borrow_mut();
                     storage.entry(cohort_id.clone()).or_default().push(request);
                 });
-                
+
                 request_found_and_updated = true;
-                response_message = format!("Cohort request with id: {} has been accepted.", cohort_id);
+                response_message =
+                    format!("Cohort request with id: {} has been accepted.", cohort_id);
                 break;
             }
         }
 
         if !request_found_and_updated {
-            response_message = format!("No pending cohort request found with cohort id: {}", cohort_id);
+            response_message = format!(
+                "No pending cohort request found with cohort id: {}",
+                cohort_id
+            );
         }
     });
 
@@ -1964,7 +1985,7 @@ pub fn decline_cohort_creation_request(cohort_id: String) -> String {
 
         if let Some(requests) = state.get_mut(&cohort_id) {
             if let Some(index) = requests.iter().position(|r| r.request_status == "pending") {
-                let mut request = requests.remove(index); 
+                let mut request = requests.remove(index);
                 request.request_status = "declined".to_string();
                 request.rejected_at = time();
                 request_found_and_updated = true;
@@ -1974,12 +1995,18 @@ pub fn decline_cohort_creation_request(cohort_id: String) -> String {
                     storage.entry(cohort_id.clone()).or_default().push(request);
                 });
 
-                response_message = format!("You have declined the cohort creation request: {}", cohort_id);
+                response_message = format!(
+                    "You have declined the cohort creation request: {}",
+                    cohort_id
+                );
             }
         }
 
         if !request_found_and_updated {
-            response_message = format!("No pending cohort request found with cohort id: {}", cohort_id);
+            response_message = format!(
+                "No pending cohort request found with cohort id: {}",
+                cohort_id
+            );
         }
     });
 
@@ -2015,9 +2042,12 @@ pub fn get_declined_cohort_creation_request_for_admin() -> Vec<CohortRequest> {
 }
 
 #[update]
-pub fn remove_mentor_from_cohort(cohort_id: String, mentor_principal: Principal, passphrase_key: String) -> Result<String, String> {
+pub fn remove_mentor_from_cohort(
+    cohort_id: String,
+    mentor_principal: Principal,
+    passphrase_key: String,
+) -> Result<String, String> {
     let required_key = format!("delete/{}", mentor_principal);
-
 
     if passphrase_key != required_key {
         return Err("Unauthorized attempt: Incorrect passphrase key.".to_string());
@@ -2030,14 +2060,17 @@ pub fn remove_mentor_from_cohort(cohort_id: String, mentor_principal: Principal,
                 let mentors = mentors_applied.entry(cohort_id.clone()).or_default();
 
                 if let Some(index) = mentors.iter().position(|x| *x == mentor_clone) {
-                    mentors.remove(index); 
+                    mentors.remove(index);
                     APPLIER_COUNT.with(|applier_count| {
                         let mut applier_count = applier_count.borrow_mut();
                         if let Some(count) = applier_count.get_mut(&cohort_id) {
                             *count = count.saturating_sub(1);
                         }
                     });
-                    Ok(format!("Mentor successfully removed from the cohort with cohort id {}", cohort_id))
+                    Ok(format!(
+                        "Mentor successfully removed from the cohort with cohort id {}",
+                        cohort_id
+                    ))
                 } else {
                     Err("You are not part of this cohort".to_string())
                 }
@@ -2049,9 +2082,12 @@ pub fn remove_mentor_from_cohort(cohort_id: String, mentor_principal: Principal,
 }
 
 #[update]
-pub fn remove_vc_from_cohort(cohort_id: String, vc_principal: Principal, passphrase_key: String) -> Result<String, String> {
+pub fn remove_vc_from_cohort(
+    cohort_id: String,
+    vc_principal: Principal,
+    passphrase_key: String,
+) -> Result<String, String> {
     let required_key = format!("delete/{}", vc_principal);
-
 
     if passphrase_key != required_key {
         return Err("Unauthorized attempt: Incorrect passphrase key.".to_string());
@@ -2071,7 +2107,10 @@ pub fn remove_vc_from_cohort(cohort_id: String, vc_principal: Principal, passphr
                             *count = count.saturating_sub(1);
                         }
                     });
-                    Ok(format!("Venture capitalist successfully removed from the cohort with cohort id {}", cohort_id))
+                    Ok(format!(
+                        "Venture capitalist successfully removed from the cohort with cohort id {}",
+                        cohort_id
+                    ))
                 } else {
                     Err("You are not part of this cohort".to_string())
                 }
@@ -2083,9 +2122,12 @@ pub fn remove_vc_from_cohort(cohort_id: String, vc_principal: Principal, passphr
 }
 
 #[update]
-pub fn remove_project_from_cohort(cohort_id: String, project_uid: String, passphrase_key: String) -> Result<String, String> {
+pub fn remove_project_from_cohort(
+    cohort_id: String,
+    project_uid: String,
+    passphrase_key: String,
+) -> Result<String, String> {
     let required_key = format!("delete/{}", project_uid);
-
 
     if passphrase_key != required_key {
         return Err("Unauthorized attempt: Incorrect passphrase key.".to_string());
@@ -2094,11 +2136,11 @@ pub fn remove_project_from_cohort(cohort_id: String, project_uid: String, passph
         let mut projects_cohort = projects_cohort.borrow_mut();
         if let Some(projects) = projects_cohort.get_mut(&cohort_id) {
             if let Some(index) = projects.iter().position(|p| p.uid == project_uid) {
-                projects.remove(index);  
+                projects.remove(index);
                 APPLIER_COUNT.with(|applier_count| {
                     let mut applier_count = applier_count.borrow_mut();
                     if let Some(count) = applier_count.get_mut(&cohort_id) {
-                        *count = count.saturating_sub(1); 
+                        *count = count.saturating_sub(1);
                     }
                 });
 
@@ -2112,10 +2154,12 @@ pub fn remove_project_from_cohort(cohort_id: String, project_uid: String, passph
     })
 }
 
-
-
 #[update]
-pub fn admin_update_project(uid: String, is_live: bool, dapp_link: Option<String>) -> Result<(), String> {
+pub fn admin_update_project(
+    uid: String,
+    is_live: bool,
+    dapp_link: Option<String>,
+) -> Result<(), String> {
     let mut project_found_and_updated = false;
     let mut project_to_classify = None;
 
@@ -2138,8 +2182,8 @@ pub fn admin_update_project(uid: String, is_live: bool, dapp_link: Option<String
 
     if let Some(project) = project_to_classify {
         match crate::latest_popular_projects::update_project_status_live_incubated(project) {
-            Ok(_) => Ok(()), 
-            Err(e) => Err(format!("Failed to reclassify project: {}", e)), 
+            Ok(_) => Ok(()),
+            Err(e) => Err(format!("Failed to reclassify project: {}", e)),
         }
     } else {
         Err("Unexpected error during project reclassification.".to_string())
@@ -2182,13 +2226,12 @@ pub fn deactivate_and_remove_project(project_id: String) -> Result<&'static str,
     }
 }
 
-
 #[update]
 pub fn remove_project_from_incubated(project_id: String) -> Result<&'static str, &'static str> {
     INCUBATED_PROJECTS.with(|projects| {
         let mut projects = projects.borrow_mut();
         if let Some(pos) = projects.iter().position(|p| p.uid == project_id) {
-            projects.remove(pos); 
+            projects.remove(pos);
             Ok("Project successfully removed from incubated projects.")
         } else {
             Err("Project not found in incubated projects.")
@@ -2197,9 +2240,11 @@ pub fn remove_project_from_incubated(project_id: String) -> Result<&'static str,
 }
 
 #[query]
-pub fn get_update_request_count() -> UpdateCounts{
-    let project_update_count = PENDING_PROJECT_UPDATES.with(|awaiters| awaiters.borrow().len() as u32);
-    let mentor_update_count = MENTOR_PROFILE_EDIT_AWAITS.with(|awaiters| awaiters.borrow().len() as u32);
+pub fn get_update_request_count() -> UpdateCounts {
+    let project_update_count =
+        PENDING_PROJECT_UPDATES.with(|awaiters| awaiters.borrow().len() as u32);
+    let mentor_update_count =
+        MENTOR_PROFILE_EDIT_AWAITS.with(|awaiters| awaiters.borrow().len() as u32);
     let vc_update_count = VC_PROFILE_EDIT_AWAITS.with(|awaiters| awaiters.borrow().len() as u32);
 
     UpdateCounts {
@@ -2210,10 +2255,8 @@ pub fn get_update_request_count() -> UpdateCounts{
 }
 
 #[query]
-pub fn get_project_update_declined_request()->HashMap<String, ProjectUpdateRequest>{
-    DECLINED_PROJECT_UPDATES.with(|declined| {
-        declined.borrow().clone()
-    })
+pub fn get_project_update_declined_request() -> HashMap<String, ProjectUpdateRequest> {
+    DECLINED_PROJECT_UPDATES.with(|declined| declined.borrow().clone())
 }
 
 #[query]
@@ -2225,12 +2268,11 @@ pub fn get_mentor_update_declined_request() -> HashMap<Principal, MentorUpdateRe
 }
 
 #[query]
-pub fn get_vc_update_declined_request()->HashMap<Principal, UpdateInfoStruct>{
+pub fn get_vc_update_declined_request() -> HashMap<Principal, UpdateInfoStruct> {
     DECLINED_VC_PROFILE_EDIT_REQUEST.with(|requests| {
         let requests_borrow = requests.borrow();
         requests_borrow.clone()
     })
 }
-
 
 //b5pqo-yef5a-lut3t-kmrpc-h7dnp-v3d2t-ls6di-y33wa-clrtb-xdhl4-dae

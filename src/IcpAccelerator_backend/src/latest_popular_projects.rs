@@ -1,19 +1,19 @@
-use crate::{project_registration, upvotes};
+use crate::project_registration::*;
 use candid::Nat;
-use ic_cdk_macros::{update, query};
-use project_registration::{ProjectInfoInternal, list_all_projects, APPLICATION_FORM};
-use upvotes::{get_upvote_record,UPVOTES};
-use std::{cell::RefCell, borrow::BorrowMut};
-use num_traits::ToPrimitive;
+use ic_cdk_macros::{query, update};
 
+use num_traits::ToPrimitive;
+use std::{borrow::BorrowMut, cell::RefCell};
 
 thread_local! {
     pub static LIVE_PROJECTS: RefCell<Vec<ProjectInfoInternal>> = RefCell::new(Vec::new());
-    pub static INCUBATED_PROJECTS: RefCell<Vec<ProjectInfoInternal>> = RefCell::new(Vec::new());   
+    pub static INCUBATED_PROJECTS: RefCell<Vec<ProjectInfoInternal>> = RefCell::new(Vec::new());
 }
 
 #[update]
-pub fn update_project_status_live_incubated(project: ProjectInfoInternal) -> Result<&'static str, &'static str> {
+pub fn update_project_status_live_incubated(
+    project: ProjectInfoInternal,
+) -> Result<&'static str, &'static str> {
     let is_live = project.params.live_on_icp_mainnet.unwrap_or(false);
     let has_dapp_link = project.params.dapp_link.is_some();
 
@@ -41,4 +41,3 @@ pub fn get_all_live_projects() -> Vec<ProjectInfoInternal> {
 pub fn get_all_incubated_projects() -> Vec<ProjectInfoInternal> {
     INCUBATED_PROJECTS.with(|projects| projects.borrow().clone())
 }
-

@@ -7,7 +7,7 @@ use sha2::{Digest, Sha256};
 use std::collections::HashMap;
 extern crate serde_cbor;
 use crate::admin::*;
-use crate::trie::EXPERTISE_TRIE;
+
 use crate::user_module::*;
 use ic_cdk::api::stable::{StableReader, StableWriter};
 use ic_cdk::api::time;
@@ -43,7 +43,7 @@ impl MentorProfile {
         //         return Err("Field cannot be empty".into());
         //     }
         // }
-        
+
         // if let Some(ref multichain) = self.multichain {
         //     if multichain.trim().is_empty() {
         //         return Err("Field cannot be empty".into());
@@ -252,7 +252,9 @@ pub async fn update_mentor(updated_profile: MentorProfile) -> String {
     }
 
     let previous_profile = MENTOR_REGISTRY.with(|app_form| {
-        app_form.borrow().get(&caller)
+        app_form
+            .borrow()
+            .get(&caller)
             .map(|mentor_internal| mentor_internal.profile.clone())
     });
 
@@ -273,10 +275,9 @@ pub async fn update_mentor(updated_profile: MentorProfile) -> String {
         }
     });
 
-
     MENTOR_PROFILE_EDIT_AWAITS.with(|awaiters| {
-        let mut await_ers= awaiters.borrow_mut();
-        let update_data_tp_store = MentorUpdateRequest{
+        let mut await_ers = awaiters.borrow_mut();
+        let update_data_tp_store = MentorUpdateRequest {
             original_info: previous_profile,
             updated_info: Some(updated_profile.clone()),
             approved_at: approved_timestamp,
@@ -364,14 +365,13 @@ pub fn get_all_mentors() -> HashMap<Principal, MentorWithRoles> {
             roles,
         };
 
-        if mentor_internal.active == true{
+        if mentor_internal.active == true {
             mentor_with_roles_map.insert(*principal, mentor_with_roles);
         }
     }
 
     mentor_with_roles_map
 }
-
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct PaginationParam {
@@ -380,7 +380,9 @@ pub struct PaginationParam {
 }
 
 #[query]
-pub fn get_all_mentors_with_pagination(pagination_params: PaginationParam) -> HashMap<Principal, MentorWithRoles> {
+pub fn get_all_mentors_with_pagination(
+    pagination_params: PaginationParam,
+) -> HashMap<Principal, MentorWithRoles> {
     let mentor_awaiters = MENTOR_REGISTRY.with(|awaiters| awaiters.borrow().clone());
 
     let mut mentor_list: Vec<(Principal, MentorWithRoles)> = Vec::new();
@@ -401,7 +403,10 @@ pub fn get_all_mentors_with_pagination(pagination_params: PaginationParam) -> Ha
     mentor_list.sort_by_key(|(principal, _)| *principal);
 
     // Calculate start and end indices for pagination, ensuring they're within the bounds of the vector
-    let start = std::cmp::min((pagination_params.page - 1) * pagination_params.page_size, mentor_list.len());
+    let start = std::cmp::min(
+        (pagination_params.page - 1) * pagination_params.page_size,
+        mentor_list.len(),
+    );
     let end = std::cmp::min(start + pagination_params.page_size, mentor_list.len());
 
     // If start is greater than or equal to mentor_list's length, it means the requested page is beyond the available data
@@ -414,11 +419,11 @@ pub fn get_all_mentors_with_pagination(pagination_params: PaginationParam) -> Ha
     let paginated_mentor_list = mentor_list[start..end].to_vec();
 
     // Correctly initialize and assign the variable for the paginated HashMap
-    let paginated_mentor_map: HashMap<Principal, MentorWithRoles> = paginated_mentor_list.into_iter().collect();
+    let paginated_mentor_map: HashMap<Principal, MentorWithRoles> =
+        paginated_mentor_list.into_iter().collect();
 
     paginated_mentor_map
 }
-
 
 pub fn make_active_inactive(p_id: Principal) -> String {
     let principal_id = caller();
@@ -445,23 +450,6 @@ pub fn make_active_inactive(p_id: Principal) -> String {
     } else {
         "you are not authorised to use this function".to_string()
     }
-}
-
-pub fn find_mentors_by_expertise(expertise_keyword: &str) -> Vec<MentorProfile> {
-    let keyword = expertise_keyword;
-    let mentor_principals = EXPERTISE_TRIE.with(|trie| trie.borrow().search(keyword));
-
-    let mut mentor_profiles = Vec::new();
-    MENTOR_REGISTRY.with(|registry| {
-        let registry = registry.borrow();
-        for principal in mentor_principals {
-            if let Some(mentor_internal) = registry.get(&principal) {
-                mentor_profiles.push(mentor_internal.profile.clone());
-            }
-        }
-    });
-
-    mentor_profiles
 }
 
 #[update]
@@ -508,79 +496,101 @@ pub fn filter_mentors(criteria: MentorFilterCriteria) -> Vec<MentorProfile> {
             .filter(|mentor_internal| {
                 let country_match = match &criteria.country {
                     Some(c) => &mentor_internal.profile.user_data.country == c,
-                    None => true, 
+                    None => true,
                 };
 
                 let expertise_match = criteria.area_of_expertise.as_ref().map_or(true, |exp| {
                     &mentor_internal.profile.area_of_expertise == exp
                 });
 
-                mentor_internal.active && mentor_internal.approve && !mentor_internal.decline
-                    && country_match && expertise_match
+                mentor_internal.active
+                    && mentor_internal.approve
+                    && !mentor_internal.decline
+                    && country_match
+                    && expertise_match
             })
             .map(|mentor_internal| mentor_internal.profile.clone())
             .collect()
     })
 }
 
-
-
 pub fn pre_upgrade_mentor() {
-    MENTOR_REGISTRY.with(|data| {
-        match storage::stable_save((data.borrow().clone(),)) {
+    MENTOR_REGISTRY.with(
+        |data| match storage::stable_save((data.borrow().clone(),)) {
             Ok(_) => ic_cdk::println!("MENTOR_REGISTRY saved successfully."),
             Err(e) => ic_cdk::println!("Failed to save MENTOR_REGISTRY: {:?}", e),
-        }
-    });
+        },
+    );
 
-    MENTOR_AWAITS_RESPONSE.with(|data| {
-        match storage::stable_save((data.borrow().clone(),)) {
+    MENTOR_AWAITS_RESPONSE.with(
+        |data| match storage::stable_save((data.borrow().clone(),)) {
             Ok(_) => ic_cdk::println!("MENTOR_AWAITS_RESPONSE saved successfully."),
             Err(e) => ic_cdk::println!("Failed to save MENTOR_AWAITS_RESPONSE: {:?}", e),
-        }
-    });
+        },
+    );
 
-    DECLINED_MENTOR_REQUESTS.with(|data| {
-        match storage::stable_save((data.borrow().clone(),)) {
+    DECLINED_MENTOR_REQUESTS.with(
+        |data| match storage::stable_save((data.borrow().clone(),)) {
             Ok(_) => ic_cdk::println!("DECLINED_MENTOR_REQUESTS saved successfully."),
             Err(e) => ic_cdk::println!("Failed to save DECLINED_MENTOR_REQUESTS: {:?}", e),
-        }
-    });
+        },
+    );
 
-    MENTOR_PROFILE_EDIT_AWAITS.with(|data| {
-        match storage::stable_save((data.borrow().clone(),)) {
+    MENTOR_PROFILE_EDIT_AWAITS.with(
+        |data| match storage::stable_save((data.borrow().clone(),)) {
             Ok(_) => ic_cdk::println!("MENTOR_PROFILE_EDIT_AWAITS saved successfully."),
             Err(e) => ic_cdk::println!("Failed to save MENTOR_PROFILE_EDIT_AWAITS: {:?}", e),
-        }
-    });
+        },
+    );
 
     DECLINED_MENTOR_PROFILE_EDIT_REQUEST.with(|data| {
         match storage::stable_save((data.borrow().clone(),)) {
             Ok(_) => ic_cdk::println!("DECLINED_MENTOR_PROFILE_EDIT_REQUEST saved successfully."),
-            Err(e) => ic_cdk::println!("Failed to save DECLINED_MENTOR_PROFILE_EDIT_REQUEST: {:?}", e),
+            Err(e) => ic_cdk::println!(
+                "Failed to save DECLINED_MENTOR_PROFILE_EDIT_REQUEST: {:?}",
+                e
+            ),
         }
     });
 
-    MENTOR_ANNOUNCEMENTS.with(|data| {
-        match storage::stable_save((data.borrow().clone(),)) {
+    MENTOR_ANNOUNCEMENTS.with(
+        |data| match storage::stable_save((data.borrow().clone(),)) {
             Ok(_) => ic_cdk::println!("MENTOR_ANNOUNCEMENTS saved successfully."),
             Err(e) => ic_cdk::println!("Failed to save MENTOR_ANNOUNCEMENTS: {:?}", e),
-        }
-    });
+        },
+    );
 }
 
 pub fn post_upgrade_mentor() {
-    match stable_restore::<(MentorRegistry, MentorRegistry, MentorRegistry, MentorUpdateParams, MentorUpdateParams, MentorAnnouncements)>() {
-        Ok((restored_mentor_registry, restored_mentor_awaits_response, restored_declined_mentor_requests, restored_mentor_profile_edit_awaits, restored_declined_mentor_profile_edit_request, restored_mentor_announcements)) => {
+    match stable_restore::<(
+        MentorRegistry,
+        MentorRegistry,
+        MentorRegistry,
+        MentorUpdateParams,
+        MentorUpdateParams,
+        MentorAnnouncements,
+    )>() {
+        Ok((
+            restored_mentor_registry,
+            restored_mentor_awaits_response,
+            restored_declined_mentor_requests,
+            restored_mentor_profile_edit_awaits,
+            restored_declined_mentor_profile_edit_request,
+            restored_mentor_announcements,
+        )) => {
             MENTOR_REGISTRY.with(|data| *data.borrow_mut() = restored_mentor_registry);
-            MENTOR_AWAITS_RESPONSE.with(|data| *data.borrow_mut() = restored_mentor_awaits_response);
-            DECLINED_MENTOR_REQUESTS.with(|data| *data.borrow_mut() = restored_declined_mentor_requests);
-            MENTOR_PROFILE_EDIT_AWAITS.with(|data| *data.borrow_mut() = restored_mentor_profile_edit_awaits);
-            DECLINED_MENTOR_PROFILE_EDIT_REQUEST.with(|data| *data.borrow_mut() = restored_declined_mentor_profile_edit_request);
+            MENTOR_AWAITS_RESPONSE
+                .with(|data| *data.borrow_mut() = restored_mentor_awaits_response);
+            DECLINED_MENTOR_REQUESTS
+                .with(|data| *data.borrow_mut() = restored_declined_mentor_requests);
+            MENTOR_PROFILE_EDIT_AWAITS
+                .with(|data| *data.borrow_mut() = restored_mentor_profile_edit_awaits);
+            DECLINED_MENTOR_PROFILE_EDIT_REQUEST
+                .with(|data| *data.borrow_mut() = restored_declined_mentor_profile_edit_request);
             MENTOR_ANNOUNCEMENTS.with(|data| *data.borrow_mut() = restored_mentor_announcements);
 
             ic_cdk::println!("Mentor modules restored successfully.");
-        },
+        }
         Err(e) => ic_cdk::println!("Failed to restore mentor modules: {:?}", e),
     }
 }
