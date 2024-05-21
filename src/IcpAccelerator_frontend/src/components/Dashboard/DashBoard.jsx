@@ -224,7 +224,7 @@ const DashBoard = () => {
                     Hot right now
                   </h1>
                 </div>
-                <div className="mb-4 z-20 fade-in" ref={SpotLightRef}>
+                <div className="mb-4 z-20 fade-in">
                   <SpotLight />
                 </div>
                 </div>
@@ -247,7 +247,7 @@ const DashBoard = () => {
                     View More
                   </button>
                 </div>
-                <div className="mb-4 fade-in" ref={ProjectRef}>
+                <div className="mb-4 fade-in" >
                   <LiveProjects progress={false} />
                 </div>
                 <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px] mt-3">
@@ -261,7 +261,7 @@ const DashBoard = () => {
                     View More
                   </button>
                 </div>
-                <div className="mb-4 fade-in" ref={CohorotRef}>
+                <div className="mb-4 fade-in" >
                   <LiveEventsCards wrap={true} register={false} />
                 </div>
                 <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px] mt-3">
@@ -276,7 +276,7 @@ const DashBoard = () => {
                   </button>
                 </div>
                
-                <div className="flex max-md:flex-col -mx-4 mb-4 items-stretch fade-in" ref={InvestorRef}>
+                <div className="flex max-md:flex-col -mx-4 mb-4 items-stretch fade-in" >
                   <div className="w-full md:w-3/4 px-4 md:flex md:gap-4 sm:flex sm:gap-4">
                     <InvestorCard />
                   </div>
@@ -295,7 +295,7 @@ const DashBoard = () => {
                     View More
                   </button>
                 </div>
-                <div className="flex max-md:flex-col -mx-4 mb-4 items-stretch fade-in" ref={MentorRef}>
+                <div className="flex max-md:flex-col -mx-4 mb-4 items-stretch fade-in">
                   <div className="w-full md:w-3/4 px-4 md:flex md:gap-4 sm:flex sm:gap-4">
                     <MentorCard />
                   </div>
@@ -309,7 +309,7 @@ const DashBoard = () => {
                   </h1>
                   
                 </div>
-                <div className="mb-4 fade-in" ref={AnnouncementRef}>
+                <div className="mb-4 fade-in">
                   <AnnouncementCard />
                 </div>
                 <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px] mt-3">
@@ -317,7 +317,7 @@ const DashBoard = () => {
                     Jobs / Bounties
                   </h1>
                 </div>
-                <div className="mb-2 fade-in" ref={JobRef}>
+                <div className="mb-2 fade-in">
                   <ProjectJobCard
                     image={true}
                     tags={true}
