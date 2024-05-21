@@ -112,7 +112,7 @@ const ViewInvestor = () => {
           </div>
         ) : (
           <>
-            <div className="flex space-x-4 my-4 items-center flex-wrap ">
+            <div className="flex justify-center mb-4 items-center flex-wrap ">
               {currentInvestors.map((investor, index) => {
                 let id = investor[0].toText();
                 let img = uint8ArrayToBase64(
@@ -130,7 +130,7 @@ const ViewInvestor = () => {
                 return (
                   <div
                   key={index}
-                  className="bg-white  hover:scale-105 w-full sm:w-1/2 md:w-1/4 rounded-lg mb-5 md:mb-0 p-6"
+                  className="bg-white  hover:scale-105 w-full sm:w-1/2 md:w-1/4 rounded-lg mb-5 md:mb-0 p-6 m-4"
                 >
                   <div className="justify-center flex items-center">
                   <div className="size-48  rounded-full bg-no-repeat bg-center bg-cover relative p-1 bg-blend-overlay border-2 border-gray-300"

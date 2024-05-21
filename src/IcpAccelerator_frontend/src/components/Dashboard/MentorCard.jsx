@@ -14,32 +14,74 @@ const MentorCard = () => {
 
   const actor = useSelector((currState) => currState.actors.actor);
 
-  const getAllMentors = async (caller) => {
-    await caller
-      .get_all_mentors_candid()
-      .then((result) => {
-        if (!result || result.length == 0) {
-          setNoData(true);
-          setData([]);
-        } else {
-          console.log("all mentors", result);
-          setData(result);
-          setNoData(false);
-        }
-      })
-      .catch((error) => {
-        setNoData(true);
-        setData([]);
-      });
-  };
+  // const getAllMentors = async (caller) => {
+  //   await caller
+  //     .get_all_mentors_candid()
+  //     .then((result) => {
+  //       if (!result || result.length == 0) {
+  //         setNoData(true);
+  //         setData([]);
+  //       } else {
+  //         console.log("all mentors", result);
+  //         setData(result);
+  //         setNoData(false);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       setNoData(true);
+  //       setData([]);
+  //     });
+  // };
+
+  // useEffect(() => {
+  //   if (actor) {
+  //     getAllMentors(actor);
+  //   } else {
+  //     getAllMentors(IcpAccelerator_backend);
+  //   }
+  // }, [actor]);
+
+
 
   useEffect(() => {
+    let isMounted = true; 
+  
+    const getAllMentors = async (caller) => {
+      await caller
+        .get_all_mentors_candid()
+        .then((result) => {
+          if (isMounted) {
+          if (!result || result.length == 0) {
+            setNoData(true);
+            setData([]);
+          } else {
+            console.log("all mentors", result);
+            setData(result);
+            setNoData(false);
+          }
+        }
+        })
+        .catch((error) => {
+          if (isMounted) {
+          setNoData(true);
+          setData([]);
+          }
+        });
+    };
+  
     if (actor) {
       getAllMentors(actor);
     } else {
       getAllMentors(IcpAccelerator_backend);
     }
+  
+    return () => {
+      isMounted = false; 
+    };
   }, [actor]);
+
+
+
   if (noData) {
     return (
       <div className="items-center w-full flex justify-center">
@@ -82,11 +124,11 @@ const MentorCard = () => {
             >
               <div className="justify-center flex items-center">
                 <div
-                  className="size-48  rounded-full bg-no-repeat bg-center bg-cover relative p-1 bg-blend-overlay border-2 border-gray-300"
-                  style={{
-                    backgroundImage: `url(${img}), linear-gradient(168deg, rgba(255, 255, 255, 0.25) -0.86%, rgba(255, 255, 255, 0) 103.57%)`,
-                    backdropFilter: "blur(20px)",
-                  }}
+                  className="size-48  rounded-full bg-no-repeat bg-center bg-cover relative p-1 bg-blend-overlay"
+                  // style={{
+                  //   backgroundImage: `url(${img}), linear-gradient(168deg, rgba(255, 255, 255, 0.25) -0.86%, rgba(255, 255, 255, 0) 103.57%)`,
+                  //   backdropFilter: "blur(20px)",
+                  // }}
                 >
                   <img
                     className="object-cover size-48 max-h-44 rounded-full"

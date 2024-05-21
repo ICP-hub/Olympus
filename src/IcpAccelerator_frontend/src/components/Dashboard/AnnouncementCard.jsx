@@ -19,31 +19,38 @@ const AnnouncementCard = () => {
   const [latestAnnouncementData, setLatestAnnouncementData] = useState([]);
   const [timeAgo] = useFormatDateFromBigInt();
 
-  const fetchLatestAnnouncement = async (caller) => {
-    await caller
-      .get_latest_announcements()
-      .then((result) => {
-        console.log('result',result);
-        if (result && result.length > 0) {
-          setLatestAnnouncementData(result);
-          setNoData(false);
-        } else {
+  useEffect(() => {
+    let isMounted = true; 
+  
+    const fetchLatestAnnouncement = async (caller) => {
+      try {
+        const result = await caller.get_latest_announcements();
+        if (isMounted) {
+          if (result && result.length > 0) {
+            setLatestAnnouncementData(result);
+            setNoData(false);
+          } else {
+            setNoData(true);
+            setLatestAnnouncementData([]);
+          }
+        }
+      } catch (error) {
+        if (isMounted) { 
           setNoData(true);
           setLatestAnnouncementData([]);
         }
-      })
-      .catch((error) => {
-        setNoData(true);
-        setLatestAnnouncementData([]);
-      });
-  };
-
-  useEffect(() => {
+      }
+    };
+  
     if (actor) {
       fetchLatestAnnouncement(actor);
     } else {
       fetchLatestAnnouncement(IcpAccelerator_backend);
     }
+  
+    return () => {
+      isMounted = false; 
+    };
   }, [actor]);
 
   console.log('noData',noData)
@@ -56,7 +63,7 @@ const AnnouncementCard = () => {
           <Swiper
             modules={[Pagination, Autoplay]}
             centeredSlides={true}
-            loop={true}
+            loop={latestAnnouncementData[0] && latestAnnouncementData[0][1].length > 3}
             autoplay={{
               delay: 2500,
               disableOnInteraction: false,

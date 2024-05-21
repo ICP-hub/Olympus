@@ -1,7 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Pagination, Autoplay } from "swiper/modules";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
 import girlImage from "../../../assets/images/girl.jpeg";
 import { useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
