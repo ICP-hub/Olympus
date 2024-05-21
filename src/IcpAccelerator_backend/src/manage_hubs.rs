@@ -86,30 +86,35 @@ pub fn get_icp_hubs() -> Vec<IcpHub> {
         IcpHub {
             id: 15,
             name: "ICP Hub".to_string(),
-            region: "Portugal".to_string(),
+            region: "Poland".to_string(),
         },
         IcpHub {
             id: 16,
             name: "ICP Hub".to_string(),
-            region: "Singapore".to_string(),
+            region: "Portugal".to_string(),
         },
         IcpHub {
             id: 17,
             name: "ICP Hub".to_string(),
-            region: "Thailand".to_string(),
+            region: "Singapore".to_string(),
         },
         IcpHub {
             id: 18,
             name: "ICP Hub".to_string(),
-            region: "Turkey".to_string(),
+            region: "Thailand".to_string(),
         },
         IcpHub {
             id: 19,
             name: "ICP Hub".to_string(),
-            region: "UAE".to_string(),
+            region: "Turkey".to_string(),
         },
         IcpHub {
             id: 20,
+            name: "ICP Hub".to_string(),
+            region: "UAE".to_string(),
+        },
+        IcpHub {
+            id: 21,
             name: "ICP Hub".to_string(),
             region: "West Africa".to_string(),
         },

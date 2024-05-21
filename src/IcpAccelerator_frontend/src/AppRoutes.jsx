@@ -60,7 +60,6 @@ const AppRoutes = () => {
       element: <ProjectDetailsForInvestor />,
     },
     { path: "/association", element: <ProjectAssociation /> },
-    { path: "/create-user", element: <UserRegForm /> },
     { path: "/event-register-request", element: <EventRegistration /> },
     { path: "/event-page", element: <CohortPage /> },
     { path: "/create-user", element: <UserRegForm /> },

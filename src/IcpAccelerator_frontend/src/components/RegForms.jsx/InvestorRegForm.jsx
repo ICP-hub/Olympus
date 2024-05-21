@@ -116,7 +116,7 @@ const InvestorRegForm = () => {
         .test("is-valid-twitter", "Invalid Twitter ID", (value) => {
           if (!value) return true;
           const hasValidChars =
-            /^(https?:\/\/)?(www\.)?twitter\.com\/[a-zA-Z0-9_]{1,15}$/.test(
+          /^(https?:\/\/)?(www\.)?(twitter\.com|x\.com)\/[a-zA-Z0-9_]{1,15}$/.test(
               value
             );
           return hasValidChars;
@@ -983,7 +983,7 @@ const InvestorRegForm = () => {
                     htmlFor="twitter_url"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Twitter URL
+                    Twitter ID
                   </label>
                   <input
                     type="text"
