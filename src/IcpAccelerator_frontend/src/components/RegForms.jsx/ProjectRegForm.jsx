@@ -306,7 +306,7 @@ function ProjectRegForm() {
                 .required("Country of registration is required")
             : schema
         ),
-      live_on_icp_mainnet: yup
+        live_on_icp_mainnet: yup
         .string()
         .required("Required")
         .oneOf(["true", "false"], "Invalid value"),
@@ -319,15 +319,15 @@ function ProjectRegForm() {
               .url("Invalid url")
               .required("dApp Link is required")
           : schema
-      ),
+        ),
       weekly_active_users: yup
         .number()
         .when("live_on_icp_mainnet", (val, schema) =>
           val && val[0] === "true"
             ? schema
                 .typeError("You must enter a number")
-                .positive("Must be a positive number")
-                .required("Weekly active users is required")
+                .min(0, "Must be a non-negative number")
+                .notRequired()
             : schema
         ),
       revenue: yup
@@ -336,8 +336,8 @@ function ProjectRegForm() {
           val && val[0] === "true"
             ? schema
                 .typeError("You must enter a number")
-                .positive("Must be a positive number")
-                .required("Revenue is required")
+                .min(0, "Must be a non-negative number")
+                .notRequired()
             : schema
         ),
       money_raised_till_now: yup

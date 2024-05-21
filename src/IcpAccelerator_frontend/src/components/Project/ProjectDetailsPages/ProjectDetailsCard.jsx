@@ -10,6 +10,7 @@ import {
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { useSelector } from "react-redux";
+import LiveModal from "../../../../../admin_frontend/src/components/models/LiveModal";
 
 function ProjectDetailsCard({
   data,
@@ -26,6 +27,13 @@ function ProjectDetailsCard({
   if (!data) {
     return null;
   }
+  const [modalData, setModalData] = useState(null);
+
+  const [isAcceptModalOpen, setIsAcceptModalOpen] = useState(false);
+  const toggleAcceptModal = (id) => {
+    setModalData(id);
+    setIsAcceptModalOpen(!isAcceptModalOpen);
+  };
   const navigate = useNavigate();
   const actor = useSelector((currState) => currState.actors.actor);
 
@@ -85,6 +93,9 @@ function ProjectDetailsCard({
 
   return (
     <>
+      {isAcceptModalOpen && (
+        <LiveModal onClose={() => setIsAcceptModalOpen(false)} id={data?.uid} />
+      )}
       <div className="p-6 sm5:block hidden shadow-2xl bg-[#FFFFFF4D] border-[#E9E9E9] border-1 drop-shadow-[#0000000D] rounded-[10px]">
         <div className="flex items-center">
           <div className="flex">
@@ -191,7 +202,8 @@ function ProjectDetailsCard({
                     </button>
                   </a>
                 ) : (
-                  <button className="font-[950] border text-[#3505B2] py-[7px] px-[9px] rounded-md border-[#C7C7C7] bg-[#FFFFFF] text-nowrap">
+                  <button className="font-[950] border text-[#3505B2] py-[7px] px-[9px] rounded-md border-[#C7C7C7] bg-[#FFFFFF] text-nowrap"
+                  onClick={() => toggleAcceptModal(data?.uid)}>
                     Live Now
                   </button>
                 ))}

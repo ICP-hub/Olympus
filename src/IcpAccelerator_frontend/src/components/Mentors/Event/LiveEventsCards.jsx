@@ -15,12 +15,12 @@ const LiveEventsCards = ({ wrap, register }) => {
       .get_all_cohorts()
       .then((result) => {
         console.log("cohort result", result);
-        if (!result || result.length == 0) {
-          setNoData(true);
-          setAllLiveEventsData([]);
-        } else {
+        if (result && result.length >= 0) {
           setAllLiveEventsData(result);
           setNoData(false);
+        } else {
+          setNoData(true);
+          setAllLiveEventsData([]);
         }
       })
       .catch((error) => {
@@ -39,36 +39,46 @@ const LiveEventsCards = ({ wrap, register }) => {
   const today = new Date();
   const filteredEvents = allLiveEventsData.filter((val) => {
     const launchDate = new Date(val?.cohort?.cohort_launch_date);
-    return launchDate < today;
+    return launchDate >= today;
   });
+  console.log("filteredEvents", filteredEvents);
   return (
-    <div
-      className={`flex mb-4 items-start ${wrap === true ? "" : "min-h-screen"}`}
-    >
-      {noData ? (
-        <NoDataCard image={NoData} desc={"There is no ongoing accelerator"} />
-      ) : (
+    <>
+      {filteredEvents && (
         <div
-          className={`${
-            wrap === true
-              ? "flex flex-row overflow-x-auto w-full"
-              : "flex flex-row flex-wrap w-full px-8"
+          className={`flex mb-4 items-start ${
+            wrap === true ? "" : "min-h-screen"
           }`}
         >
-          {filteredEvents &&
-            filteredEvents.map((val, index) => {
-              return (
-                <div
-                  key={index}
-                  className="px-2 w-full sm:min-w-[50%] lg:min-w-[33.33%] sm:max-w-[50%] lg:max-w-[33.33%]"
-                >
-                  <SecondEventCard data={val} register={register} />
-                </div>
-              );
-            })}
+          {noData ? (
+            <NoDataCard
+              image={NoData}
+              desc={"There is no ongoing accelerator"}
+            />
+          ) : (
+            <div
+              className={`${
+                wrap === true
+                  ? "flex flex-row overflow-x-auto w-full"
+                  : "flex flex-row flex-wrap w-full px-8"
+              }`}
+            >
+              {filteredEvents &&
+                filteredEvents.map((val, index) => {
+                  return (
+                    <div
+                      key={index}
+                      className="px-2 w-full sm:min-w-[50%] lg:min-w-[33.33%] sm:max-w-[50%] lg:max-w-[33.33%]"
+                    >
+                      <SecondEventCard data={val} register={register} />
+                    </div>
+                  );
+                })}
+            </div>
+          )}
         </div>
       )}
-    </div>
+    </>
   );
 };
 

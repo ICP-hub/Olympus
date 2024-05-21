@@ -37,7 +37,7 @@ export const formFields = [
     },
      {
       id: "rubric_eligibility",
-      type: "number",
+      type: "select",
       name: "rubric_eligibility",
       required: true,
       label: "Level on rubric required for eligibility",
