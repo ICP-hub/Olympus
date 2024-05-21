@@ -75,7 +75,7 @@ const UserRegForm = () => {
         .test("is-valid-twitter", "Invalid Twitter ID", (value) => {
           if (!value) return true;
           const hasValidChars =
-            /^(https?:\/\/)?(www\.)?twitter\.com\/[a-zA-Z0-9_]{1,15}$/.test(
+          /^(https?:\/\/)?(www\.)?(twitter\.com|x\.com)\/[a-zA-Z0-9_]{1,15}$/.test(
               value
             );
           return hasValidChars;

@@ -146,7 +146,7 @@ const LogoutModal = () => {
                 userCurrentRoleStatusActiveRole &&
                 userCurrentRoleStatusActiveRole !== "user" ? (
                   <li
-                    onClick={() =>
+                    onClick={() =>{
                       navigate(
                         userCurrentRoleStatusActiveRole === "project"
                           ? "/project-association-requests"
@@ -156,6 +156,8 @@ const LogoutModal = () => {
                           ? "/investor-association-requests"
                           : ""
                       )
+                      setDropdownOpen(false);
+                    }
                     }
                     className="block px-4 py-2 cursor-pointer hover:bg-gray-200 hover:text-black"
                   >
@@ -170,12 +172,14 @@ const LogoutModal = () => {
                 userCurrentRoleStatusActiveRole !== "project" &&
                 userCurrentRoleStatusActiveRole !== "vc" ? (
                   <li
-                    onClick={() =>
+                    onClick={() =>{
                       navigate(
                         userCurrentRoleStatusActiveRole === "mentor"
                           ? "/event-register-request"
                           : ""
                       )
+                      setDropdownOpen(false);
+                    }
                     }
                     className="block px-4 py-2 cursor-pointer hover:bg-gray-200 hover:text-black"
                   >

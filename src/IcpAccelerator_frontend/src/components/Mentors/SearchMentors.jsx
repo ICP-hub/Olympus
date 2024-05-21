@@ -118,7 +118,7 @@ function SearchMentors() {
           <NoDataCard />
         ) : (
           <>
-            <div className="flex space-x-4 my-4 items-center flex-wrap ">
+            <div className="flex justify-center items-center flex-wrap ">
               {currentMentors.map((mentor, index) => {
                 let id = mentor[0] ? mentor[0].toText() : "";
                 let img = uint8ArrayToBase64(
