@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import hover from "../../../assets/images/1.png";
-import { winner } from "../Utils/Data/SvgData";
-import girl from "../../../assets/images/girl.jpeg";
-import FunctionalityModel from "../../models/FunctionalityModel";
+import hover from "../../../../assets/images/1.png";
+import { winner } from "../../Utils/Data/SvgData";
+import girl from "../../../../assets/images/girl.jpeg";
+import FunctionalityModel from "../../../models/FunctionalityModel";
 
 const EventCard = ({ data, approveAndRejectCohort }) => {
   const [modalOpen, setModalOpen] = useState(false);

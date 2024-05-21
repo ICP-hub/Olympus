@@ -2,41 +2,77 @@ import React, { useState, useEffect } from "react";
 import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
 import { useSelector } from "react-redux";
 import NoDataCard from "../Mentors/Event/NoDataCard";
-import SecondEventCard from "./SecondEventCard";
 import NoData from "../../../assets/images/file_not_found.png";
+import SecondEventCard from "../Mentors/Event/SecondEventCard";
 
 const LiveEventsCards = ({ wrap, register }) => {
     const actor = useSelector((currState) => currState.actors.actor);
     const [noData, setNoData] = useState(null);
     const [allLiveEventsData, setAllLiveEventsData] = useState([]);
 
-    const getAllLiveEvents = async (caller) => {
-        await caller
-            .get_all_cohorts()
-            .then((result) => {
-                console.log('cohort result',result)
-                if (!result || result.length == 0) {
-                    setNoData(true);
-                    setAllLiveEventsData([]);
-                } else {
-                    setAllLiveEventsData(result);
-                    setNoData(false);
-                }
-            })
-            .catch((error) => {
-                setNoData(true);
-                setAllLiveEventsData([]);
-            });
-    };
+    // const getAllLiveEvents = async (caller) => {
+    //     await caller
+    //         .get_all_cohorts()
+    //         .then((result) => {
+    //             console.log('cohort result',result)
+    //             if (!result || result.length == 0) {
+    //                 setNoData(true);
+    //                 setAllLiveEventsData([]);
+    //             } else {
+    //                 setAllLiveEventsData(result);
+    //                 setNoData(false);
+    //             }
+    //         })
+    //         .catch((error) => {
+    //             setNoData(true);
+    //             setAllLiveEventsData([]);
+    //         });
+    // };
+
+    // useEffect(() => {
+    //     if (actor) {
+    //         getAllLiveEvents(actor);
+    //     } else {
+    //         getAllLiveEvents(IcpAccelerator_backend);
+    //     }
+    // }, [actor]);
+
 
     useEffect(() => {
+        let isMounted = true; 
+      
+        const getAllLiveEvents = async (caller) => {
+            await caller
+                .get_all_cohorts()
+                .then((result) => {
+                    if (isMounted) { 
+                    if (!result || result.length == 0) {
+                        setNoData(true);
+                        setAllLiveEventsData([]);
+                    } else {
+                        setAllLiveEventsData(result);
+                        setNoData(false);
+                    }
+                }
+                })
+                .catch((error) => {
+                    if (isMounted) { 
+                    setNoData(true);
+                    setAllLiveEventsData([]);
+                    }
+                });
+        };
+      
         if (actor) {
             getAllLiveEvents(actor);
         } else {
             getAllLiveEvents(IcpAccelerator_backend);
         }
-    }, [actor]);
-
+      
+        return () => {
+          isMounted = false; 
+        };
+      }, [actor]);
     return (
         <div className={`flex mb-4 items-start ${wrap === true?'':'min-h-screen'}`}>
             {noData ?

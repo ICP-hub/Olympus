@@ -5,7 +5,7 @@ import toast, { Toaster } from "react-hot-toast";
 import uint8ArrayToBase64 from "../../../../IcpAccelerator_frontend/src/components/Utils/uint8ArrayToBase64";
 import { Principal } from "@dfinity/principal";
 import NoDataCard from "../../../../IcpAccelerator_frontend/src/components/Mentors/Event/NoDataCard";
-import EventCard from "../../../../IcpAccelerator_frontend/src/components/Dashboard/EventCard";
+import EventCard from "../../../../IcpAccelerator_frontend/src/components/Mentors/Event/EventCard";
 
 const RequestCohort = () => {
   const actor = useSelector((currState) => currState.actors.actor);

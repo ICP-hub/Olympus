@@ -27,7 +27,7 @@ function ProjectDescription() {
           <Swiper
   modules={[Pagination, Autoplay]}
   centeredSlides={true}
-  loop={true}
+  // loop={true}
   autoplay={{
     delay: 2500,
     disableOnInteraction: false,

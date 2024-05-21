@@ -12,24 +12,19 @@ import toast, { Toaster } from "react-hot-toast";
 import { useParams, useNavigate } from 'react-router-dom';
 import ProjectDocuments from '../../Resources/ProjectDocuments';
 import AddAMentorRequestModal from '../../../models/AddAMentorRequestModal';
+import { Principal } from '@dfinity/principal';
 
-const ProjectDetailsForInvestor = () => {
+const EventProjectDetail = () => {
     const navigate = useNavigate();
-    const { id } = useParams();
-
+    const { id } = useParams()
     const actor = useSelector((currState) => currState.actors.actor)
     const principal = useSelector((currState) => currState.internet.principal);
-
     const [projectData, setProjectData] = useState(null);
-    const [isAddProjectModalOpenAsInvestor, setIsAddProjectModalOpenAsInvestor] = useState(false);
-
-    const handleProjectCloseModalAsInvestor = () => setIsAddProjectModalOpenAsInvestor(false);
-    const handleProjectOpenModalAsInvestor = () => setIsAddProjectModalOpenAsInvestor(true);
 
     const fetchProjectData = async () => {
         await actor.get_project_details_for_mentor_and_investor(id)
             .then((result) => {
-                console.log('result-in-get_project_details_for_mentor_and_investor', result)
+                console.log('result-in-get_my_project', result)
                 if (result && Object.keys(result).length > 0) {
                     setProjectData(result)
                 } else {
@@ -37,7 +32,7 @@ const ProjectDetailsForInvestor = () => {
                 }
             })
             .catch((error) => {
-                console.log('error-in-get_project_details_for_mentor_and_investor', error)
+                console.log('error-in-get_my_project', error)
                 setProjectData(null)
             })
     };
@@ -74,6 +69,10 @@ const ProjectDetailsForInvestor = () => {
     ];
 
     const [activeTab, setActiveTab] = useState(headerData[0].id);
+    const [isAddProjectModalOpen, setIsAddProjectModalOpen] = useState(false);
+
+    const handleProjectCloseModal = () => setIsAddProjectModalOpen(false);
+    const handleProjectOpenModal = () => setIsAddProjectModalOpen(true);
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);
@@ -163,6 +162,8 @@ const ProjectDetailsForInvestor = () => {
                         role={true}
                         socials={true}
                         filter={"documents"}
+                        allowAccess={!true}
+
                     />
                 );
             default:
@@ -181,36 +182,34 @@ const ProjectDetailsForInvestor = () => {
             })
     }
 
-
-
     // ASSOCIATE IN A PROJECT HANDLER AS A MENTOR
-    const handleAddProjectAsInvestor = async ({ message }) => {
-        console.log('add into a project AS INVESTOR')
+    const handleAddProject = async ({ message }) => {
+        console.log('add into a project')
         if (actor && principal) {
             let project_id = id;
             let msg = message
+            let mentor_id = Principal.fromText(principal)
 
-            await actor.send_offer_to_project_by_investor(project_id, msg)
+
+            await actor.send_offer_to_project(project_id, msg, mentor_id)
                 .then((result) => {
-                    console.log('result-in-send_offer_to_project_by_investor', result)
+                    console.log('result-in-send_offer_to_project', result)
                     if (result) {
-                        handleProjectCloseModalAsInvestor();
+                        handleProjectCloseModal();
                         toast.success('offer sent to project successfully')
                     } else {
-                        handleProjectCloseModalAsInvestor();
+                        handleProjectCloseModal();
                         toast.error('something got wrong')
                     }
                 })
                 .catch((error) => {
-                    console.log('error-in-send_offer_to_project_by_investor', error)
-                    handleProjectCloseModalAsInvestor();
+                    console.log('error-in-send_offer_to_project', error)
+                    handleProjectCloseModal();
                     toast.error('something got wrong')
 
                 })
         }
     }
-
-
     useEffect(() => {
         if (actor && principal) {
             if (!projectData) {
@@ -248,7 +247,7 @@ const ProjectDetailsForInvestor = () => {
                         <div className="flex flex-col w-full py-4">
                             <div className='flex justify-between w-full'>
                                 <p className="capitalize pb-2 font-bold text-xl">overview</p>
-                                <button onClick={handleProjectOpenModalAsInvestor} className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900">
+                                <button onClick={handleProjectOpenModal} className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900">
                                     Reach Out
                                 </button>
                             </div>
@@ -259,6 +258,7 @@ const ProjectDetailsForInvestor = () => {
                     )}
 
                     <div className="mb-4">
+                        {/* <ProjectRank dayRank={true} weekRank={true} /> */}
                         <div className="text-sm font-bold text-center text-[#737373] mt-5 pt-4">
                             <ul className="flex flex-wrap -mb-px text-[10px] ss2:text-[10.5px] ss3:text-[11px]  cursor-pointer">
                                 {headerData.map((header) => (
@@ -293,7 +293,6 @@ const ProjectDetailsForInvestor = () => {
                             <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold">
                                 Jobs / Bounties
                             </h1>
-
                         </div>
                         <ProjectJobDetailsCard
                             data={projectData}
@@ -305,17 +304,15 @@ const ProjectDetailsForInvestor = () => {
                     </div>
                 </div>
             </div>
-
-            {isAddProjectModalOpenAsInvestor && (
+            {isAddProjectModalOpen && (
                 <AddAMentorRequestModal
                     title={'Associate Project'}
-                    onClose={handleProjectCloseModalAsInvestor}
-                    onSubmitHandler={handleAddProjectAsInvestor}
+                    onClose={handleProjectCloseModal}
+                    onSubmitHandler={handleAddProject}
                 />)}
-
             <Toaster />
         </section>
     );
 };
 
-export default ProjectDetailsForInvestor;
+export default EventProjectDetail;

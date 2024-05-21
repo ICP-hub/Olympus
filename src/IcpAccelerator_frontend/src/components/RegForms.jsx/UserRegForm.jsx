@@ -72,14 +72,15 @@ const UserRegForm = () => {
         .string()
         .nullable(true)
         .optional()
-        .test("is-valid-twitter", "Invalid Twitter ID", (value) => {
-          if (!value) return true;
-          const hasValidChars =
-            /^(https?:\/\/)?(www\.)?twitter\.com\/[a-zA-Z0-9_]{1,15}$/.test(
-              value
-            );
-          return hasValidChars;
-        }),
+        // .test("is-valid-twitter", "Invalid Twitter ID", (value) => {
+        //   if (!value) return true;
+        //   const hasValidChars =
+        //   /^(https?:\/\/)?(www\.)?(twitter\.com|x\.com)\/[a-zA-Z0-9_]{1,15}$/.test(
+        //       value
+        //     );
+        //   return hasValidChars;
+        // })
+        .url("Invalid url"),
       openchat_user_name: yup
         .string()
         .nullable(true)

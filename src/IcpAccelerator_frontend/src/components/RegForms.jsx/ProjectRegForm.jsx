@@ -129,14 +129,15 @@ function ProjectRegForm() {
         .string()
         .nullable(true)
         .optional()
-        .test("is-valid-twitter", "Invalid Twitter ID", (value) => {
-          if (!value) return true;
-          const hasValidChars =
-            /^(https?:\/\/)?(www\.)?twitter\.com\/[a-zA-Z0-9_]{1,15}$/.test(
-              value
-            );
-          return hasValidChars;
-        }),
+        // .test("is-valid-twitter", "Invalid Twitter ID", (value) => {
+        //   if (!value) return true;
+        //   const hasValidChars =
+        //   /^(https?:\/\/)?(www\.)?(twitter\.com|x\.com)\/[a-zA-Z0-9_]{1,15}$/.test(
+        //       value
+        //     );
+        //   return hasValidChars;
+        // })
+        .url("Invalid url"),
       openchat_user_name: yup
         .string()
         .nullable(true)
@@ -445,38 +446,41 @@ function ProjectRegForm() {
         .string()
         .nullable(true)
         .optional()
-        .test("is-valid-discord", "Invalid Discord URL", (value) => {
-          if (!value) return true;
-          const hasValidChars =
-            /^(https?:\/\/)?(www\.)?(discord\.(gg|com)\/(invite\/)?[a-zA-Z0-9\-_]+|discordapp\.com\/invite\/[a-zA-Z0-9\-_]+)$/.test(
-              value
-            );
-          return hasValidChars;
-        }),
+        // .test("is-valid-discord", "Invalid Discord URL", (value) => {
+        //   if (!value) return true;
+        //   const hasValidChars =
+        //     /^(https?:\/\/)?(www\.)?(discord\.(gg|com)\/(invite\/)?[a-zA-Z0-9\-_]+|discordapp\.com\/invite\/[a-zA-Z0-9\-_]+)$/.test(
+        //       value
+        //     );
+        //   return hasValidChars;
+        // })
+        .url("Invalid url"),
       project_linkedin: yup
         .string()
         .nullable(true)
         .optional()
-        .test("is-valid-linkedin", "Invalid LinkedIn URL", (value) => {
-          if (!value) return true;
-          const hasValidChars =
-            /^(https?:\/\/)?(www\.)?linkedin\.com\/in\/[a-zA-Z0-9_-]+\/?$/.test(
-              value
-            );
-          return hasValidChars;
-        }),
+        // .test("is-valid-linkedin", "Invalid LinkedIn URL", (value) => {
+        //   if (!value) return true;
+        //   const hasValidChars =
+        //     /^(https?:\/\/)?(www\.)?linkedin\.com\/in\/[a-zA-Z0-9_-]+\/?$/.test(
+        //       value
+        //     );
+        //   return hasValidChars;
+        // })
+        .url("Invalid url"),
       github_link: yup
         .string()
         .nullable(true)
         .optional()
-        .test("is-valid-github", "Invalid GitHub URL", (value) => {
-          if (!value) return true;
-          const hasValidChars =
-            /^(https?:\/\/)?(www\.)?github\.com\/[a-zA-Z0-9_\-]+(\/[a-zA-Z0-9_\-]+)?(\/)?$/.test(
-              value
-            );
-          return hasValidChars;
-        }),
+        // .test("is-valid-github", "Invalid GitHub URL", (value) => {
+        //   if (!value) return true;
+        //   const hasValidChars =
+        //     /^(https?:\/\/)?(www\.)?github\.com\/[a-zA-Z0-9_\-]+(\/[a-zA-Z0-9_\-]+)?(\/)?$/.test(
+        //       value
+        //     );
+        //   return hasValidChars;
+        // })
+        .url("Invalid url"),
       token_economics: yup
         .string()
         .nullable(true)
@@ -843,7 +847,7 @@ function ProjectRegForm() {
             console.log("result in project to check update call==>", result);
             if (result && result.includes("approval request is sent")) {
               toast.success("Approval request is sent");
-              // window.location.href = "/";
+              window.location.href = "/";
             } else {
               toast.error(result);
             }
@@ -1365,7 +1369,7 @@ function ProjectRegForm() {
                     htmlFor="twitter_url"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Twitter URL
+                    Twitter ID
                   </label>
                   <input
                     type="text"

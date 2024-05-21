@@ -7,6 +7,8 @@ import { Line } from "rc-progress";
 import { star } from "../Utils/Data/SvgData";
 
 const RubricRating = ({ data }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
   if (!data) {
     return null;
   }
@@ -31,7 +33,14 @@ const RubricRating = ({ data }) => {
     } else {
       setRating(rating + 1);
     }
+    if (currentIndex < onSelectLevel.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+    }
   };
+  // selected level set
+  const level = onSelectLevel[currentIndex];
+  const percentage = Math.round((level * 100) / 9);
+
   const handleBack = () => {
     if (showSubmit === true) {
       setShowSubmit(false);
@@ -39,26 +48,53 @@ const RubricRating = ({ data }) => {
     } else {
       setRating(rating - 1);
     }
+    if (currentIndex < onSelectLevel.length - 1) {
+      setCurrentIndex(currentIndex - 1);
+    }
   };
   const handleLevelSelect = (index) => {
     const updatedLevels = [...onSelectLevel];
     updatedLevels[rating - 1] = index + 1;
     setonSelectLevel(updatedLevels);
+    console.log(updatedLevels);
   };
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Your submission logic here
-    console.log("Form submitted:", sendingData);
-    let argument = {
-      project_id: data?.uid,
-      current_role: userCurrentRoleStatusActiveRole,
-      ratings: sendingData,
-    };
-    if (
-      userCurrentRoleStatusActiveRole &&
-      userCurrentRoleStatusActiveRole !== "user"
-    ) {
-      console.log(argument);
-      // handleAddRating(argument);
+    const ratings = onSelectLevel.map((level, index) => ({
+      level_name: rubric_table_data[index].title,
+      level_number: index + 1,
+      sub_level: rubric_table_data[index].levels[level - 1]?.title || "",
+      sub_level_number: level,
+      rating: Math.round((level * 100) / 9),
+    }));
+    console.log("Form submitted:", ratings);
+    if (actor) {
+      let argument = {
+        project_id: data?.uid,
+        current_role: userCurrentRoleStatusActiveRole,
+        ratings,
+      };
+      if (
+        userCurrentRoleStatusActiveRole &&
+        userCurrentRoleStatusActiveRole !== "user"
+      ) {
+        console.log(argument);
+        await actor
+          .update_rating(argument)
+          .then((result) => {
+            console.log("result-in-update_rating", result);
+            if (result && result.includes(`Ratings updated successfully`)) {
+              toast.success(result);
+              navigate("/");
+            } else {
+              toast.error(result);
+            }
+          })
+          .catch((error) => {
+            console.log("error-in-update_rating", error);
+            toast.error('something got wrong')
+          });
+      }
     } else {
       toast.error("No Authorization !!");
     }
@@ -137,21 +173,21 @@ const RubricRating = ({ data }) => {
                 {rubric_table_data?.[rating - 1].title}
               </h2>
               <div className="mx-4 flex items-center w-full">
-                {console.log("onSelectLevel 139line ===> ", onSelectLevel)}
+                {console.log("onSelectLevel 139line ===> ", percentage)}
                 <Line
                   strokeWidth={0.5}
-                  percent={Number(Math.round((onSelectLevel * 100) / 9))}
+                  percent={Number(percentage)}
                   strokeColor="white"
                   className="line-horizontal"
                 />
                 <div className="text-white text-[15px] font-normal font-fontUse ml-2">
-                  {Math.round((onSelectLevel * 100) / 9)}%
+                  {percentage}%
                 </div>
                 {star}
               </div>
             </div>
             <div>
-              <p className="pr-24">
+              {/* <p className="pr-24">
                 Asia 30 under 30 honorees. PANY was established PANONY was
                 established in March 2018 with operations in Greater China,
                 South Korea and the U.S. Both founders are Forbes Asia 30 under
@@ -159,11 +195,11 @@ const RubricRating = ({ data }) => {
                 2018 with operations in Greater China, South Korea and the U.S.
                 Both founders are Forbes Asia 30 under 30 honorees. PANY was
                 established
-              </p>
+              </p> */}
               <div className=" mb-2 pt-0">
                 <ul className="mb-4 space-y-1 cursor-pointer">
                   {rubric_table_data[rating - 1]?.levels.map((val, index) => {
-                    console.log("rubric data", val);
+                    // console.log("rubric data", val);
                     return (
                       <li className="flex py-4 items-center" key={index}>
                         <div className="w-11/12">
@@ -178,14 +214,14 @@ const RubricRating = ({ data }) => {
                                 {val?.title}
                               </p>
                             </div>
-                            {console.log("index", index)}
-                            {onSelectLevel.map((val) =>
+                            {/* {console.log("index", index)} */}
+                            {/* {onSelectLevel.map((val) =>
                               console.log("onSelectLevel[rating]", val)
-                            )}
-                            {console.log(
+                            )} */}
+                            {/*  {console.log(
                               "dudfuisfdui",
                               index + 1 === onSelectLevel.map((val) => val)
-                            )}
+                            )} */}
                             <div className="text-end">
                               <label className="relative p-2">
                                 <input

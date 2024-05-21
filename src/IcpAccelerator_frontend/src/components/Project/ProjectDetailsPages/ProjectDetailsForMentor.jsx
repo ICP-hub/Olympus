@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import ProjectDetailsCard from './ProjectDetailsCard';
-import ProjectRatings from '../ProjectRatings';
+import RubricRating from '../RubricRating';
 import MembersProfileDetailsCard from './MembersProfileDetailsCard';
 import MentorsProfileDetailsCard from './MentorsProfileDetailsCard';
 import InvestorProfileDetailsCard from './InvestorProfileDetailsCard';
@@ -141,7 +141,7 @@ const ProjectDetailsForMentor = () => {
 
             case "project-ratings":
                 return (
-                    <ProjectRatings
+                    <RubricRating
                         data={projectData}
                         isProjectLive={true}
                         profile={true}

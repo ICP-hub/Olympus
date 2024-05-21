@@ -10,7 +10,8 @@ import LiveProjects from "../LiveProjects";
 import CurrentlyRaising from "../CurrentlyRaising";
 import MentorAssociated from "../../AssociatedProjects/MentorAssociated";
 import AnnouncementCard from "../AnnouncementCard";
-import LiveEventsCards from "../LiveEventsCards";
+import LiveEventsCards from "../../Mentors/Event/LiveEventsCards";
+import UpcomingEventsCard from "../../Mentors/Event/UpcomingEventsCard";
 
 const MentorDashboard = () => {
   const dispatch = useDispatch();
@@ -94,9 +95,12 @@ const MentorDashboard = () => {
         <EventCard /> */}
         <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
           <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
-          Upcoming Projects
+            Upcoming Projects
           </h1>
-          <button onClick={() => navigate("/live-projects")} className="border border-violet-800 px-4 py-2 rounded-md text-violet-800">
+          <button
+            onClick={() => navigate("/live-projects")}
+            className="border border-violet-800 px-4 py-2 rounded-md text-violet-800"
+          >
             Explore more
           </button>
         </div>
@@ -122,23 +126,25 @@ const MentorDashboard = () => {
             Ongoing Accelerator
           </h1>
           <div className="flex gap-2">
-          <button
-            onClick={() => navigate(`/all-live-events`)}
-            className="border border-violet-800 px-4 py-2 rounded-md text-violet-800"
-          >
-            View More
-          </button>
-          <button
-            onClick={() => navigate(`/event-form`)}
-            className="border border-violet-800 px-4 py-2 rounded-md text-violet-800"
-          >
-            Start Your Cohort
-          </button>
+            <button
+              onClick={() => navigate(`/all-live-events`)}
+              className="border border-violet-800 px-4 py-2 rounded-md text-violet-800"
+            >
+              View More
+            </button>
+            <button
+              onClick={() => navigate(`/event-form`)}
+              className="border border-violet-800 px-4 py-2 rounded-md text-violet-800"
+            >
+              Start Your Cohort
+            </button>
           </div>
-         
         </div>
         <div className="mb-4">
-          <LiveEventsCards wrap={true} register={true}/>
+          <LiveEventsCards wrap={true} register={true} />
+        </div>
+        <div className="mb-4 fade-in">
+          <UpcomingEventsCard wrap={true} register={false} />
         </div>
       </div>
     </section>

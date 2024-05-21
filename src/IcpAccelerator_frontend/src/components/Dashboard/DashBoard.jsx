@@ -47,11 +47,11 @@ const DashBoard = () => {
   }
 
     const SpotLightRef = useRef(null);
-    useFadeInScrollAnimation(SpotLightRef, 0, 120);
+    useFadeInScrollAnimation(SpotLightRef, 0, 100);
     const ProjectRef = useRef(null);
-    useFadeInScrollAnimation(ProjectRef, 170, 345);
+    useFadeInScrollAnimation(ProjectRef, 170, 310);
     const CohorotRef = useRef(null);
-    useFadeInScrollAnimation(CohorotRef, 390, 930);
+    useFadeInScrollAnimation(CohorotRef, 370, 880);
     const InvestorRef = useRef(null);
     useFadeInScrollAnimation(InvestorRef, 955, 1137);
     const MentorRef = useRef(null);
@@ -198,8 +198,14 @@ const DashBoard = () => {
                   >
                     Learn more about the beta version.
                   </a>
-                  <button className="bg-white rounded-lg capitalize px-4 py-3 sxxs:py-1 sxxs:px-2 sxxs:mb-8 hover:bg-[#fffc] text-[#6752C0] mr-auto font-semibold flex justify-start">Use with
-                    caution.</button> 
+                  <div className="capitalize items-center px-4 py-3 sxxs:py-1 sxxs:px-2 sxxs:mb-8 text-white mr-auto font-semibold flex justify-start">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="9" cy="9" r="7.5" stroke="#fff"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M8.99326 11.25H9H8.99326Z" fill="#fff"/>
+<path d="M8.99326 11.25H9" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M9 9L9 6" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+<span className="ml-1">Use with caution.</span></div> 
                 </div>
                 <div className="w-full px-4 md:w-1/2 md:flex hidden">
                   <div className="h-fit w-fit">
@@ -218,18 +224,18 @@ const DashBoard = () => {
                     Hot right now
                   </h1>
                 </div>
-                <div className="mb-4 z-20 fade-in" ref={SpotLightRef}>
+                <div className="mb-4 z-20 fade-in">
                   <SpotLight />
                 </div>
                 </div>
-                <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
+                {/* <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
                   <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl sxxs:text-lg">
                     Goals for 2024
                   </h1>
                 </div>
                 <div className="mb-4">
                   <ImpactTool />
-                </div>
+                </div> */}
                 <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
                   <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl sxxs:text-lg">
                     Upcoming Projects
@@ -241,7 +247,7 @@ const DashBoard = () => {
                     View More
                   </button>
                 </div>
-                <div className="mb-4 fade-in" ref={ProjectRef}>
+                <div className="mb-4 fade-in" >
                   <LiveProjects progress={false} />
                 </div>
                 <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px] mt-3">
@@ -255,7 +261,7 @@ const DashBoard = () => {
                     View More
                   </button>
                 </div>
-                <div className="mb-4 fade-in" ref={CohorotRef}>
+                <div className="mb-4 fade-in" >
                   <LiveEventsCards wrap={true} register={false} />
                 </div>
                 <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px] mt-3">
@@ -270,7 +276,7 @@ const DashBoard = () => {
                   </button>
                 </div>
                
-                <div className="flex max-md:flex-col -mx-4 mb-4 items-stretch fade-in" ref={InvestorRef}>
+                <div className="flex max-md:flex-col -mx-4 mb-4 items-stretch fade-in" >
                   <div className="w-full md:w-3/4 px-4 md:flex md:gap-4 sm:flex sm:gap-4">
                     <InvestorCard />
                   </div>
@@ -289,7 +295,7 @@ const DashBoard = () => {
                     View More
                   </button>
                 </div>
-                <div className="flex max-md:flex-col -mx-4 mb-4 items-stretch fade-in" ref={MentorRef}>
+                <div className="flex max-md:flex-col -mx-4 mb-4 items-stretch fade-in">
                   <div className="w-full md:w-3/4 px-4 md:flex md:gap-4 sm:flex sm:gap-4">
                     <MentorCard />
                   </div>
@@ -303,7 +309,7 @@ const DashBoard = () => {
                   </h1>
                   
                 </div>
-                <div className="mb-4 fade-in"ref={AnnouncementRef}>
+                <div className="mb-4 fade-in">
                   <AnnouncementCard />
                 </div>
                 <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px] mt-3">
@@ -311,7 +317,7 @@ const DashBoard = () => {
                     Jobs / Bounties
                   </h1>
                 </div>
-                <div className="mb-2 fade-in" ref={JobRef}>
+                <div className="mb-2 fade-in">
                   <ProjectJobCard
                     image={true}
                     tags={true}

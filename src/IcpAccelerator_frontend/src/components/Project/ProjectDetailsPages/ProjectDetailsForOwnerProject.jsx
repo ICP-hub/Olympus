@@ -4,7 +4,6 @@ import ProjectDetailsCard from "./ProjectDetailsCard";
 import MembersProfileCard from "../../TeamMembers/MembersProfileCard";
 import MentorsProfileCard from "../../TeamMembers/MentorsProfileCard";
 import InvenstorProfileCard from "../../TeamMembers/InvenstorProfileCard";
-import ProjectRatings from "../ProjectRatings";
 import MembersProfileDetailsCard from "./MembersProfileDetailsCard";
 import MentorsProfileDetailsCard from "./MentorsProfileDetailsCard";
 import InvestorProfileDetailsCard from "./InvestorProfileDetailsCard";

@@ -104,14 +104,15 @@ const MentorRegForm = () => {
         .string()
         .nullable(true)
         .optional()
-        .test("is-valid-twitter", "Invalid Twitter ID", (value) => {
-          if (!value) return true;
-          const hasValidChars =
-            /^(https?:\/\/)?(www\.)?twitter\.com\/[a-zA-Z0-9_]{1,15}$/.test(
-              value
-            );
-          return hasValidChars;
-        }),
+        // .test("is-valid-twitter", "Invalid Twitter ID", (value) => {
+        //   if (!value) return true;
+        //   const hasValidChars =
+        //   /^(https?:\/\/)?(www\.)?(twitter\.com|x\.com)\/[a-zA-Z0-9_]{1,15}$/.test(
+        //       value
+        //     );
+        //   return hasValidChars;
+        // })
+        .url("Invalid url"),
       openchat_user_name: yup
         .string()
         .nullable(true)
@@ -239,13 +240,14 @@ const MentorRegForm = () => {
         .required("Years of experience mentoring startups is required"),
       mentor_linkedin_url: yup
         .string()
-        .test("is-non-empty", "LinkedIn url is required", (value) =>
-          /\S/.test(value)
-        )
-        .matches(
-          /^(https?:\/\/)?(www\.)?linkedin\.com\/in\/[a-zA-Z0-9_-]+\/?$/,
-          "Invalid LinkedIn URL"
-        )
+        // .test("is-non-empty", "LinkedIn url is required", (value) =>
+        //   /\S/.test(value)
+        // )
+        // .matches(
+        //   /^(https?:\/\/)?(www\.)?linkedin\.com\/in\/[a-zA-Z0-9_-]+\/?$/,
+        //   "Invalid LinkedIn URL"
+        // )
+        .url("Invalid url")
         .required("LinkedIn url is required"),
     })
     .required();
@@ -802,7 +804,7 @@ const MentorRegForm = () => {
                     htmlFor="twitter_url"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Twitter URL
+                    Twitter ID
                   </label>
                   <input
                     type="text"

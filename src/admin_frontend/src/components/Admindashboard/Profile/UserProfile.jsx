@@ -282,7 +282,7 @@ const UserProfile = ({ userData, Allrole }) => {
           <Swiper
             modules={[Pagination, Autoplay]}
             centeredSlides={true}
-            loop={true}
+            loop={Allrole && Allrole.length > 1}
             autoplay={{
               delay: 2500,
               disableOnInteraction: false,

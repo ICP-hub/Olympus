@@ -45,7 +45,7 @@ const MentorCard = (mentor) => {
   return (
     <div
     // key={}
-    className="bg-white  hover:scale-105 w-full sm:w-1/2 md:w-1/4 rounded-lg mb-5 md:mb-0 p-6"
+    className="bg-white  hover:scale-105 w-full sm:w-1/2 md:w-1/4 rounded-lg mb-5 md:mb-0 p-6 m-4"
   >
     <div className="justify-center flex items-center">
       <div

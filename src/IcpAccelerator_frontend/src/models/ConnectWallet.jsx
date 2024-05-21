@@ -1,8 +1,9 @@
-import React, { useEffect } from "react";
-import { closeModalSvg } from "../components/Utils/Data/SvgData";
-import { walletModalSvg } from "../components/Utils/Data/SvgData";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
+import React, { useEffect, useRef } from "react";
+import {
+  closeModalSvg,
+  walletModalSvg,
+} from "../components/Utils/Data/SvgData";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../components/StateManagement/useContext/useAuth";
 
@@ -13,44 +14,7 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
   const { login } = useAuth();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  // console.log("bande ka role ", userRole);
-
-  // useEffect(() => {
-  //   console.log(
-  //     "isAuthenticated=> ",
-  //     isAuthenticated,
-  //     "roleNavigate =>",
-  //     roleNavigate,
-  //     "userRole=>",
-  //     userRole,
-  //     "hasSelectedRole =>",
-  //     hasSelectedRole
-  //   );
-  //   if (userRole && isAuthenticated) {
-  //     // console.log("1");
-  //     onClose();
-  //     navigate("/dashboard");
-  //   } else if (
-  //     userRole === null &&
-  //     roleNavigate === "roleSelect" &&
-  //     isAuthenticated &&
-  //     hasSelectedRole === false
-  //   ) {
-  //     // console.log("2");
-  //     onClose();
-  //     navigate(`/${roleNavigate}`);
-  //   } else if (
-  //     hasSelectedRole === true &&https://www.fvr
-  //     isAuthenticated &&
-  //     userRole !== null
-  //   ) {
-  //     navigate("/details");
-  //   } else if (!isAuthenticated) {
-  //     // console.log("3");
-  //     navigate("/");
-  //   }
-  // }, [isAuthenticated, roleNavigate, userRole]);
+  const modalRef = useRef(null);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -63,14 +27,34 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
     await login(val);
   };
 
+  const handleClickOutside = (event) => {
+    if (modalRef.current && !modalRef.current.contains(event.target)) {
+      onClose();
+    }
+  };
+
+  useEffect(() => {
+    if (isModalOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isModalOpen]);
 
   return (
     <>
       {isModalOpen && !isAuthenticated ? (
         <>
           <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-50"></div>
-          <div className=" overflow-y-auto overflow-x-hidden  top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full fixed flex">
-            <div className="relative p-4 w-full max-w-md max-h-full">
+          <div className="overflow-y-auto overflow-x-hidden top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full fixed flex">
+            <div
+              className="relative p-4 w-full max-w-md max-h-full"
+              ref={modalRef}
+            >
               <div className="relative bg-white rounded-lg shadow">
                 <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
                   <button
@@ -85,14 +69,9 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
                   </h3>
                 </div>
                 <div className="p-4 md:p-5">
-                  {/* <p className="text-[16px] font-normal text-gray-500 text-center">
-                    If you already have - continue with method you have used
-                    previously.
-                  </p> */}
                   <ul className="cursor-pointer">
                     {walletModalSvg.map((wallet, index) => (
-                      console.log('wallet',wallet),
-                      <div key={index} onClick={()=>loginHandler(wallet.id)}>
+                      <div key={index} onClick={() => loginHandler(wallet.id)}>
                         {wallet.content}
                       </div>
                     ))}
@@ -103,7 +82,9 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
             </div>
           </div>
         </>
-      ) : ''}
+      ) : (
+        ""
+      )}
     </>
   );
 };

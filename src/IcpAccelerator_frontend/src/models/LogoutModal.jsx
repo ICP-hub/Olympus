@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState ,useRef} from "react";
 import internetIdentity from "../../assets/WalletLogo/IcpWallet1.png";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
@@ -71,10 +71,28 @@ const LogoutModal = () => {
       }
     );
   }, [principal]);
+  const modalRef = useRef(null);
+  const handleClickOutside = (event) => {
+    if (modalRef.current && !modalRef.current.contains(event.target)) {
+    setDropdownOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isDropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isDropdownOpen]);
   return (
     <>
       <Toaster />
-      <div className="relative z-50 justify-end flex rounded-full">
+      <div className="relative z-50 justify-end flex rounded-full" ref={modalRef}>
         {isAuthenticated && (
           <img
             id="avatarButton"
@@ -146,7 +164,7 @@ const LogoutModal = () => {
                 userCurrentRoleStatusActiveRole &&
                 userCurrentRoleStatusActiveRole !== "user" ? (
                   <li
-                    onClick={() =>
+                    onClick={() =>{
                       navigate(
                         userCurrentRoleStatusActiveRole === "project"
                           ? "/project-association-requests"
@@ -156,6 +174,8 @@ const LogoutModal = () => {
                           ? "/investor-association-requests"
                           : ""
                       )
+                      setDropdownOpen(false);
+                    }
                     }
                     className="block px-4 py-2 cursor-pointer hover:bg-gray-200 hover:text-black"
                   >
@@ -170,12 +190,14 @@ const LogoutModal = () => {
                 userCurrentRoleStatusActiveRole !== "project" &&
                 userCurrentRoleStatusActiveRole !== "vc" ? (
                   <li
-                    onClick={() =>
+                    onClick={() =>{
                       navigate(
                         userCurrentRoleStatusActiveRole === "mentor"
                           ? "/event-register-request"
                           : ""
                       )
+                      setDropdownOpen(false);
+                    }
                     }
                     className="block px-4 py-2 cursor-pointer hover:bg-gray-200 hover:text-black"
                   >
