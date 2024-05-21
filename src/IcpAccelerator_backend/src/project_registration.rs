@@ -1718,7 +1718,7 @@ pub fn make_project_active_inactive(p_id: Principal, project_id: String) -> Stri
 
 #[update]
 pub fn post_job(params: Jobs) -> String {
-    let principal_id = caller();
+    let principal_id = ic_cdk::api::caller();
     let is_owner = APPLICATION_FORM.with(|projects| {
         projects.borrow().iter().any(|(owner_principal, projects)| {
             *owner_principal == principal_id && projects.iter().any(|p| p.uid == params.project_id)
@@ -1728,32 +1728,26 @@ pub fn post_job(params: Jobs) -> String {
     if !is_owner {
         return "Error: Only the project owner can request updates.".to_string();
     }
+
     match find_project_by_id(&params.project_id) {
         Some(project_data_internal) => {
-            let current_time = time();
+            let current_time = ic_cdk::api::time();
             let project_data_for_job = project_data_internal.params;
 
-            JOB_TYPE.with(|job_types| {
-                let job_types = job_types.borrow();
-                if job_types.contains(&params.category) {
-                    POST_JOB.with(|state| {
-                        let mut state = state.borrow_mut();
-                        let new_job = JobsInternal {
-                            job_data: params,
-                            timestamp: current_time,
-                            project_name: project_data_for_job.project_name,
-                            project_desc: project_data_for_job.project_description,
-                            project_logo: project_data_for_job.project_logo,
-                        };
-                        state
-                            .entry(principal_id)
-                            .or_insert_with(Vec::new)
-                            .push(new_job);
-                        format!("Job Post added successfully at {}", current_time)
-                    })
-                } else {
-                    "Choose correct job type".to_string()
-                }
+            POST_JOB.with(|state| {
+                let mut state = state.borrow_mut();
+                let new_job = JobsInternal {
+                    job_data: params,
+                    timestamp: current_time,
+                    project_name: project_data_for_job.project_name,
+                    project_desc: project_data_for_job.project_description,
+                    project_logo: project_data_for_job.project_logo,
+                };
+                state
+                    .entry(principal_id)
+                    .or_insert_with(Vec::new)
+                    .push(new_job);
+                format!("Job Post added successfully at {}", current_time)
             })
         }
         None => "Error: Project not found.".to_string(),

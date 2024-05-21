@@ -728,7 +728,11 @@ service : {
   decline_vc_creation_request : (principal, bool) -> (text);
   decline_vc_profile_update_request : (principal, bool) -> (text);
   delete_mentor_candid : () -> (text);
+  delete_mentor_using_principal : (principal) -> (text);
   delete_project : (text) -> (text);
+  delete_project_using_principal : (principal) -> (text);
+  delete_user_using_principal : (principal) -> (text);
+  delete_vc_using_principal : (principal) -> (text);
   delete_venture_capitalist : () -> (text);
   delete_venture_capitalist_caller : () -> (text);
   filter_cohorts : (CohortFilterCriteria) -> (vec CohortDetails) query;
