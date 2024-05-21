@@ -2232,5 +2232,57 @@ pub fn get_vc_update_declined_request()->HashMap<Principal, UpdateInfoStruct>{
     })
 }
 
+#[update]
+pub fn delete_user_using_principal(principal: Principal)->String{
+    USER_STORAGE.with(|storage| {
+        let mut storage = storage.borrow_mut(); 
+        if storage.remove(&principal).is_some() {
+            ROLE_STATUS_ARRAY.with(|roles_arr| {
+                let mut roles = roles_arr.borrow_mut();
+                roles.remove(&principal);
+            });
+            "User successfully deleted".to_string()
+        } else {
+            "User not found".to_string()
+        }
+    })
+}
+
+#[update]
+pub fn delete_project_using_principal(principal: Principal)->String{
+    APPLICATION_FORM.with(|storage| {
+        let mut storage = storage.borrow_mut(); 
+        if storage.remove(&principal).is_some() {
+            "Project successfully deleted".to_string() 
+        } else {
+            "Project not found".to_string() 
+        }
+    })
+}
+
+#[update]
+pub fn delete_mentor_using_principal(principal: Principal)->String{
+    MENTOR_REGISTRY.with(|storage| {
+        let mut storage = storage.borrow_mut(); 
+        if storage.remove(&principal).is_some() {
+            "Mentor successfully deleted".to_string() 
+        } else {
+            "Mentor not found".to_string() 
+        }
+    })
+}
+
+#[update]
+pub fn delete_vc_using_principal(principal: Principal)->String{
+    VENTURECAPITALIST_STORAGE.with(|storage| {
+        let mut storage = storage.borrow_mut(); 
+        if storage.remove(&principal).is_some() {
+            "VC successfully deleted".to_string() 
+        } else {
+            "VC not found".to_string() 
+        }
+    })
+}
+
 
 //b5pqo-yef5a-lut3t-kmrpc-h7dnp-v3d2t-ls6di-y33wa-clrtb-xdhl4-dae
