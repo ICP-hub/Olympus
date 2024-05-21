@@ -307,7 +307,7 @@ const LiveProjects = ({ progress }) => {
                             )}
 
                             <button
-                              className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full sxxs:w-11/12 text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"
+                              className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"
                               onClick={() =>
                                 handleNavigate(projectId, projectData)
                               }

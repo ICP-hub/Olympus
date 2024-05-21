@@ -22,7 +22,7 @@ import ProjectDetailsForMentor from "./components/Project/ProjectDetailsPages/Pr
 import ProjectDetailsForInvestor from "./components/Project/ProjectDetailsPages/ProjectDetailsForInvestor";
 import ProjectDetailsForUserRole from "./components/Project/ProjectDetailsPages/ProjectDetailsForUserRole";
 import MoreLiveProjects from "./components/Dashboard/MoreLivePages/MoreLiveProjects";
-import LiveEventsCards from "./components/Dashboard/LiveEventsCards";
+import LiveEventsCards from "./components/Mentors/Event/LiveEventsCards";
 import UserRegForm from "./components/RegForms.jsx/UserRegForm";
 import MentorRegForm from "./components/RegForms.jsx/MentorRegForm";
 import InvestorRegForm from "./components/RegForms.jsx/InvestorRegForm";
