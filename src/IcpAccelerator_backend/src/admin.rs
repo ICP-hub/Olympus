@@ -2237,9 +2237,13 @@ pub fn delete_user_using_principal(principal: Principal)->String{
     USER_STORAGE.with(|storage| {
         let mut storage = storage.borrow_mut(); 
         if storage.remove(&principal).is_some() {
-            "User successfully deleted".to_string() 
+            ROLE_STATUS_ARRAY.with(|roles_arr| {
+                let mut roles = roles_arr.borrow_mut();
+                roles.remove(&principal);
+            });
+            "User successfully deleted".to_string()
         } else {
-            "User not found".to_string() 
+            "User not found".to_string()
         }
     })
 }
