@@ -50,7 +50,7 @@ const AnnouncementDetailsCard = ({ data }) => {
       <Swiper
         modules={[Pagination, Autoplay]}
         centeredSlides={true}
-        loop={true}
+        loop={latestAnnouncementData && latestAnnouncementData.length > 3}
         autoplay={{
           delay: 2500,
           disableOnInteraction: false,

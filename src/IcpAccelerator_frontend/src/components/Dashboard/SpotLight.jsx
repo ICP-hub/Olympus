@@ -25,30 +25,42 @@ const SpotLight = () => {
   const [spotLightData, setSpotLightData] = useState([]);
   const navigate = useNavigate();
 
-  const fetchSpotLight = async (caller) => {
-    await caller
-      .get_spotlight_projects()
-      .then((result) => {
-        if (result && result.length > 0) {
-          setSpotLightData(result);
-          setNoData(false);
-        } else {
-          setSpotLightData([]);
-          setNoData(true);
-        }
-      })
-      .catch((error) => {
-        setNoData(true);
-        setSpotLightData([]);
-      });
-  };
+  
 
   useEffect(() => {
+    let isMounted = true; 
+  
+    const fetchSpotLight = async (caller) => {
+      await caller
+        .get_spotlight_projects()
+        .then((result) => {
+          if(isMounted){
+          if (result && result.length > 0) {
+            setSpotLightData(result);
+            setNoData(false);
+          } else {
+            setSpotLightData([]);
+            setNoData(true);
+          }
+        }
+        })
+        .catch((error) => {
+          if (isMounted) { 
+          setNoData(true);
+          setSpotLightData([]);
+          }
+        });
+    };
+  
     if (actor) {
       fetchSpotLight(actor);
     } else {
       fetchSpotLight(IcpAccelerator_backend);
     }
+  
+    return () => {
+      isMounted = false; 
+    };
   }, [actor]);
 
   const handleNavigate = (projectId, projectData) => {
@@ -88,10 +100,8 @@ const SpotLight = () => {
         ) : (
           <Swiper
             modules={[Pagination, Autoplay]}
-            centeredSlides={
-              spotLightData.length > 1 || spotLightData.length > 2
-            }
-            loop={spotLightData.length > 1 || spotLightData.length > 2}
+            centeredSlides={spotLightData.length > 1}
+            loop={spotLightData.length >= 3}
             // autoplay={{
             //   delay: 2500,
             //   disableOnInteraction: false,

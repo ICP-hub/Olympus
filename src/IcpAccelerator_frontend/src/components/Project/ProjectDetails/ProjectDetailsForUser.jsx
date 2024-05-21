@@ -6,7 +6,6 @@ import ProjectJobCard from "./ProjectJobCard";
 import { useSelector } from "react-redux";
 import MentorsProfileCard from "../../TeamMembers/MentorsProfileCard";
 import InvenstorProfileCard from "../../TeamMembers/InvenstorProfileCard";
-import "swiper/css";
 import CommunityRatings from "./CommunityRatings";
 import { useParams, useLocation } from "react-router-dom";
 import AnnouncementCard from "../../Dashboard/AnnouncementCard";

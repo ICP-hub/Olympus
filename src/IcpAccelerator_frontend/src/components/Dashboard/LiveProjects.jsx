@@ -26,22 +26,22 @@ const LiveProjects = ({ progress }) => {
   const tm = useRef(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (percent < 100) {
-      tm.current = setTimeout(increase, 30);
-    }
-    return () => clearTimeout(tm.current);
-  }, [percent]);
+  // useEffect(() => {
+  //   if (percent < 100) {
+  //     tm.current = setTimeout(increase, 30);
+  //   }
+  //   return () => clearTimeout(tm.current);
+  // }, [percent]);
 
-  const increase = () => {
-    setPercent((prevPercent) => {
-      if (prevPercent >= 100) {
-        clearTimeout(tm.current);
-        return 100;
-      }
-      return prevPercent + 1;
-    });
-  };
+  // const increase = () => {
+  //   setPercent((prevPercent) => {
+  //     if (prevPercent >= 100) {
+  //       clearTimeout(tm.current);
+  //       return 100;
+  //     }
+  //     return prevPercent + 1;
+  //   });
+  // };
 
   const projectCategories = [
     {
@@ -57,31 +57,67 @@ const LiveProjects = ({ progress }) => {
   const [noData, setNoData] = useState(null);
   const [allProjectData, setAllProjectData] = useState([]);
 
-  const getAllProject = async (caller) => {
-    await caller
-      .list_all_projects()
-      .then((result) => {
-        if (!result || result.length === 0) {
-          setNoData(true);
-          setAllProjectData([]);
-        } else {
-          setAllProjectData(result);
-          setNoData(false);
-        }
-      })
-      .catch((error) => {
-        setNoData(true);
-        setAllProjectData([]);
-      });
-  };
+  // const getAllProject = async (caller) => {
+  //   await caller
+  //     .list_all_projects()
+  //     .then((result) => {
+  //       if (!result || result.length === 0) {
+  //         setNoData(true);
+  //         setAllProjectData([]);
+  //       } else {
+  //         setAllProjectData(result);
+  //         setNoData(false);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       setNoData(true);
+  //       setAllProjectData([]);
+  //     });
+  // };
+
+  // useEffect(() => {
+  //   if (actor) {
+  //     getAllProject(actor);
+  //   } else {
+  //     getAllProject(IcpAccelerator_backend);
+  //   }
+  //   return;
+  // }, [actor, userCurrentRoleStatusActiveRole]);
 
   useEffect(() => {
+    let isMounted = true; 
+  
+    const getAllProject = async (caller) => {
+      await caller
+        .list_all_projects()
+        .then((result) => {
+          if (isMounted){ 
+          if (!result || result.length === 0) {
+            setNoData(true);
+            setAllProjectData([]);
+          } else {
+            setAllProjectData(result);
+            setNoData(false);
+          }
+        }
+        })
+        .catch((error) => {
+          if (isMounted){ 
+          setNoData(true);
+          setAllProjectData([]);
+          }
+        });
+    };
+  
     if (actor) {
       getAllProject(actor);
     } else {
       getAllProject(IcpAccelerator_backend);
     }
-    return;
+  
+    return () => {
+      isMounted = false; 
+    };
   }, [actor, userCurrentRoleStatusActiveRole]);
 
   const handleNavigate = (projectId, projectData) => {

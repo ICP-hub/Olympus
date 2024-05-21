@@ -20,31 +20,40 @@ const ProjectJobCard = ({ image, website, tags, country }) => {
   const [latestJobs, setLatestJobs] = useState([]);
   const [timeAgo] = useFormatDateFromBigInt();
 
-  const fetchLatestJobs = async (caller) => {
-    await caller
-      .get_all_jobs()
-      .then((result) => {
-        console.log('result',result)
-        if (!result || result.length == 0) {
-          setNoData(true);
-          setLatestJobs([]);
-        } else {
-          setLatestJobs(result);
-          setNoData(false);
-        }
-      })
-      .catch((error) => {
-        setNoData(true);
-        setLatestJobs([]);
-      });
-  };
-
   useEffect(() => {
+    let isMounted = true; // Flag to check if the component is still mounted
+  
+    const fetchLatestJobs = async (caller) => {
+      await caller
+        .get_all_jobs()
+        .then((result) => {
+          if (isMounted) { // Only update state if the component is still mounted
+            if (!result || result.length === 0) {
+              setNoData(true);
+              setLatestJobs([]);
+            } else {
+              setLatestJobs(result);
+              setNoData(false);
+            }
+          }
+        })
+        .catch((error) => {
+          if (isMounted) {
+            setNoData(true);
+            setLatestJobs([]);
+          }
+        });
+    };
+  
     if (actor) {
       fetchLatestJobs(actor);
     } else {
       fetchLatestJobs(IcpAccelerator_backend);
     }
+  
+    return () => {
+      isMounted = false; // Set the flag to false when the component unmounts
+    };
   }, [actor]);
   if (noData) {
     return (

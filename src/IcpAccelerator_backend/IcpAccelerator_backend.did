@@ -750,7 +750,8 @@ service : {
   add_testimonial : (text) -> (text);
   add_vc_announcement : (text, text) -> (text);
   admin_update_project : (text, bool, opt text) -> (Result_3);
-  apply_for_a_cohort_as_a_mentor_or_investor : (text) -> (text);
+  apply_for_a_cohort_as_a_investor : (text) -> (text);
+  apply_for_a_cohort_as_a_mentor : (text) -> (text);
   apply_for_a_cohort_as_a_project : (text) -> (text);
   approve_enrollment_request : (text, principal) -> (text);
   approve_mentor_creation_request_candid : (principal, bool) -> (text);

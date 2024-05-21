@@ -52,7 +52,7 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
       <Swiper
         modules={[Pagination, Autoplay]}
         centeredSlides={true}
-        loop={true}
+        loop={latestJobs && latestJobs.length>3}
         autoplay={{
           delay: 2500,
           disableOnInteraction: false,

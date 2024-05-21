@@ -201,8 +201,7 @@ const InvestorProfile = () => {
               <h6 className="ml-2"> <span className="font-bold">Range of check size:</span>
                 <span className="ml-2">{range_of_check_size}</span></h6>
             </div>
-          </div>
-          <div className="col">
+            <div className="flex">
             {linkedinLink && (<div className="flex items-center my-2">
               <a href={linkedinLink} target="_blank" className="hover:text-blue-600 ml-2">
               <svg
@@ -229,6 +228,10 @@ const InvestorProfile = () => {
               </svg>
               </a>
             </div>)}
+            </div>
+          </div>
+          <div className="col">
+           
             {existingIcpProjectPorfolio && existingIcpProjectPorfolio[0] && existingIcpProjectPorfolio[0].trim() !== "" && (
               <div className="flex items-center my-2">
                 <svg
