@@ -244,7 +244,7 @@ const EventForm = () => {
       <section className="w-full h-fit px-[6%] lg1:px-[4%] py-[6%] lg1:py-[4%] bg-gray-100">
         <div className="w-full h-full bg-gray-100 pt-8">
           <div className="bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-[30px]  sm:text-[25px] md1:text-[30px] md2:text-[35px] font-black font-fontUse dxl:text-[40px] p-8">
-            Event Information
+            Cohort Information
           </div>
           <div className="text-sm font-medium text-center text-gray-200 ">
             <form
@@ -270,42 +270,53 @@ const EventForm = () => {
                       </span>
                     </label>
                     {field.type === "textarea" ? (
-                      <textarea
-                        name={field.name}
-                        id={field.id}
-                        {...register(field.name)}
-                        className={`bg-gray-50 border-2 ${
-                          errors[field.name]
-                            ? "border-red-500 placeholder:text-red-500"
-                            : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                        placeholder={field.placeholder}
-                        onFocus={() => handleFocus(field)}
-                        onBlur={() => handleBlur(field)}
-                      ></textarea>
-                    ) : (
-                      <input
-                        type={
-                          field.id === "date_of_birth" ? inputType : field.type
-                        }
-                        name={field.name}
-                        id={field.id}
-                        {...register(field.name)}
-                        className={`bg-gray-50 border-2 ${
-                          errors[field.name]
-                            ? "border-red-500 placeholder:text-red-500"
-                            : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                        placeholder={field.placeholder}
-                        onFocus={() => handleFocus(field)}
-                        onBlur={() => handleBlur(field)}
-                      />
-                    )}
-                    {errors[field.name] && (
-                      <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                        {errors[field.name].message}
-                      </span>
-                    )}
+  <textarea
+    name={field.name}
+    id={field.id}
+    {...register(field.name)}
+    className={`bg-gray-50 border-2 ${
+      errors[field.name] ? "border-red-500 placeholder:text-red-500" : "border-[#737373]"
+    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+    placeholder={field.placeholder}
+    onFocus={() => handleFocus(field)}
+    onBlur={() => handleBlur(field)}
+  ></textarea>
+) : field.type === "select" ? (
+  <select
+    name={field.name}
+    id={field.id}
+    {...register(field.name)}
+    className={`bg-gray-50 border-2 ${
+      errors[field.name] ? "border-red-500" : "border-[#737373]"
+    } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+    onFocus={() => handleFocus(field)}
+    onBlur={() => handleBlur(field)}
+  >
+    {["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"].map((word, index) => (
+    <option key={index} value={index + 1}>
+      {index + 1} ({word})
+    </option>
+  ))}
+  </select>
+) : (
+  <input
+    type={field.id === "date_of_birth" ? inputType : field.type}
+    name={field.name}
+    id={field.id}
+    {...register(field.name)}
+    className={`bg-gray-50 border-2 ${
+      errors[field.name] ? "border-red-500 placeholder:text-red-500" : "border-[#737373]"
+    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+    placeholder={field.placeholder}
+    onFocus={() => handleFocus(field)}
+    onBlur={() => handleBlur(field)}
+  />
+)}
+{errors[field.name] && (
+  <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+    {errors[field.name].message}
+  </span>
+)}
                   </div>
                 ))}
                 <div className="relative z-0 group mb-6">

@@ -32,6 +32,7 @@ import Home from "./components/Home/Home";
 import EventRegistration from "./components/Mentors/Event/EventRegistration";
 import CohortPage from "./components/Mentors/Event/CohortPage";
 import EventMentorProfile from "./components/Mentors/Event/EventMentorProfile";
+import LiveEventViewAll from "./components/Mentors/Event/LiveEventViewAll";
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
 const ProjectDetails = lazy(() =>
@@ -102,7 +103,7 @@ const AppRoutes = () => {
       path: "/project-money-raising-requests/:id",
       element: <RequestMoneyRaising />,
     },
-    { path: "/all-live-events", element: <LiveEventsCards /> },
+    { path: "/all-live-events", element: <LiveEventViewAll /> },
     { path: "/event-details/:id", element: <CohortPage /> },
   ];
 
