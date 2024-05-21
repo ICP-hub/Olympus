@@ -46,5 +46,9 @@ pub fn get_areas() -> Vec<Areas> {
             id: 9,
             name: "Metaverse".to_string(),
         },
+        Areas {
+            id: 10,
+            name: "AI".to_string(),
+        },
     ]
 }
