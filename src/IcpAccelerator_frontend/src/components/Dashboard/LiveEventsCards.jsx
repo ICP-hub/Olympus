@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
 import { useSelector } from "react-redux";
 import NoDataCard from "../Mentors/Event/NoDataCard";
-import SecondEventCard from "./SecondEventCard";
 import NoData from "../../../assets/images/file_not_found.png";
+import SecondEventCard from "../Mentors/Event/SecondEventCard";
 
 const LiveEventsCards = ({ wrap, register }) => {
     const actor = useSelector((currState) => currState.actors.actor);

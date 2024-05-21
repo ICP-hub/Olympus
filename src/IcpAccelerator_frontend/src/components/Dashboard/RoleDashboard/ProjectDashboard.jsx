@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import SpotLight from "../SpotLight";
-import EventCard from "../EventCard";
+import EventCard from "../../Mentors/Event/EventCard";
 import ProjectJobCard from "../../Project/ProjectDetails/ProjectJobCard";
 import AnnouncementCard from "../AnnouncementCard";
 import LiveProjectBar from "../liveProjectBar";
-import LiveEventsCards from "../LiveEventsCards";
+import LiveEventsCards from "../../Mentors/Event/LiveEventsCards";
+import UpcomingEventsCard from "../../Mentors/Event/UpcomingEventsCard";
 
 const ProjectDashboard = () => {
   const navigate = useNavigate();
@@ -14,26 +15,27 @@ const ProjectDashboard = () => {
   const [projectData, setProjectData] = useState(null);
 
   const fetchProjectData = async () => {
-    await actor.get_my_project()
+    await actor
+      .get_my_project()
       .then((result) => {
-        console.log('result-in-get_my_project', result)
+        console.log("result-in-get_my_project", result);
         if (result && Object.keys(result).length > 0) {
-          setProjectData(result)
+          setProjectData(result);
         } else {
-          setProjectData(null)
+          setProjectData(null);
         }
       })
       .catch((error) => {
-        console.log('error-in-get_my_project', error)
-        setProjectData(null)
-      })
+        console.log("error-in-get_my_project", error);
+        setProjectData(null);
+      });
   };
 
   useEffect(() => {
     if (actor) {
       fetchProjectData();
     } else {
-      window.location.href = '/'
+      window.location.href = "/";
     }
   }, [actor]);
 
@@ -93,7 +95,10 @@ const ProjectDashboard = () => {
           </button>
         </div>
         <div className="mb-4">
-          <LiveEventsCards wrap={true} register={true}/>
+          <LiveEventsCards wrap={true} register={true} />
+        </div>
+        <div className="mb-4 fade-in">
+          <UpcomingEventsCard wrap={true} register={false} />
         </div>
       </div>
     </section>
