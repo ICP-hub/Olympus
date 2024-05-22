@@ -1501,7 +1501,7 @@ const InvestorRegForm = () => {
                     htmlFor="investor_fund_size"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Fund size <span className="text-red-500">*</span>
+                    Fund size (in million USD) <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="number"

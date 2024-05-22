@@ -41,7 +41,7 @@ const LiveEventViewAll = () => {
     const today = new Date();
     const filteredEvents = allLiveEventsData.filter((val) => {
       const launchDate = new Date(val?.cohort?.cohort_launch_date);
-      return launchDate >= today;
+      return launchDate <= today;
     });
  
   return (
@@ -67,14 +67,14 @@ const LiveEventViewAll = () => {
             />
           ) : (
             <div
-              className="flex flex-row flex-wrap w-full gap-6"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 flex-wrap w-full gap-6"
             >
               {filteredEvents &&
                 filteredEvents.map((val, index) => {
                   return (
                     <div
                       key={index}
-                      className=" w-full sm:min-w-[50%] lg:min-w-[33.33%] sm:max-w-[50%] lg:max-w-[33.33%]"
+                      className="w-min-w-[33%] sm:w-full "
                     >
                       <SecondEventCard data={val} register={false} />
                     </div>

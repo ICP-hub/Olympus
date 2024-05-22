@@ -99,7 +99,7 @@ function EventRegistration() {
     } finally {
       setIsSubmitting(false);
       setModalOpen(false);
-      // window.location.reload();
+      window.location.reload();
     }
   };
   const handleCloseModal = () => {

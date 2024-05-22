@@ -39,7 +39,7 @@ const LiveEventsCards = ({ wrap, register }) => {
   const today = new Date();
   const filteredEvents = allLiveEventsData.filter((val) => {
     const launchDate = new Date(val?.cohort?.cohort_launch_date);
-    return launchDate >= today;
+    return launchDate <= today;
   });
   console.log("filteredEvents", filteredEvents);
   return (
