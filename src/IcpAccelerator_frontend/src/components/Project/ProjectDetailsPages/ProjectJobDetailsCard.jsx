@@ -50,9 +50,10 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
   return (
     <div className="py-4 gap-2 overflow-x-auto">
       <Swiper
+        // className="custom-swiper"
         modules={[Pagination, Autoplay]}
-        centeredSlides={true}
-        loop={latestJobs && latestJobs.length>3}
+        // centeredSlides={true}
+        loop={latestJobs && latestJobs.length > 3}
         autoplay={{
           delay: 2500,
           disableOnInteraction: false,

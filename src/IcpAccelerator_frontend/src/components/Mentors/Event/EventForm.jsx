@@ -181,7 +181,7 @@ const EventForm = () => {
 
     try {
       await actor.create_cohort(eventData).then((result) => {
-        toast.success("Event Created");
+        toast.success(result);
         console.log("Event Created", result);
         navigate("/");
       });
