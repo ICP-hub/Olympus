@@ -24,11 +24,13 @@ const MembersProfileDetailsCard = ({
   const actor = useSelector((currState) => currState.actors.actor);
   const [isAddTeamModalOpen, setIsAddTeamModalOpen] = useState(false);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const handleTeamMemberCloseModal = () => setIsAddTeamModalOpen(false);
   const handleTeamMemberOpenModal = () => setIsAddTeamModalOpen(true);
 
   const handleAddTeamMember = async ({ user_id }) => {
     console.log("add team member");
+    setIsSubmitting(true);
     if (actor) {
       let project_id = data?.uid;
       let member_principal_id = Principal.fromText(user_id);
@@ -38,15 +40,18 @@ const MembersProfileDetailsCard = ({
           console.log("result-in-update_team_member", result);
           if (result) {
             handleTeamMemberCloseModal();
+            setIsSubmitting(false);
             toast.success("team member added successfully");
           } else {
             handleTeamMemberCloseModal();
+            setIsSubmitting(false);
             toast.error("something got wrong");
           }
         })
         .catch((error) => {
           console.log("error-in-update_team_member", error);
           handleTeamMemberCloseModal();
+          setIsSubmitting(false);
           toast.error("something got wrong");
         });
     }
@@ -203,6 +208,7 @@ const MembersProfileDetailsCard = ({
           title={"Add Team Member"}
           onClose={handleTeamMemberCloseModal}
           onSubmitHandler={handleAddTeamMember}
+          isSubmitting={isSubmitting}
         />
       )}
       <Toaster />

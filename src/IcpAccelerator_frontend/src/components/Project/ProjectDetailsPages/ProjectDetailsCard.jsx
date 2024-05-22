@@ -22,6 +22,7 @@ function ProjectDetailsCard({
   doj,
   country,
   website,
+  live,
   dapp,
 }) {
   if (!data) {
@@ -36,7 +37,7 @@ function ProjectDetailsCard({
   };
   const navigate = useNavigate();
   const actor = useSelector((currState) => currState.actors.actor);
-
+  console.log("data line 38", data);
   let logo = data?.params?.project_logo
     ? uint8ArrayToBase64(data?.params?.project_logo)
     : girl;
@@ -202,10 +203,14 @@ function ProjectDetailsCard({
                     </button>
                   </a>
                 ) : (
-                  <button className="font-[950] border text-[#3505B2] py-[7px] px-[9px] rounded-md border-[#C7C7C7] bg-[#FFFFFF] text-nowrap"
-                  onClick={() => toggleAcceptModal(data?.uid)}>
-                    Live Now
-                  </button>
+                  live && (
+                    <button
+                      className="font-[950] border text-[#3505B2] py-[7px] px-[9px] rounded-md border-[#C7C7C7] bg-[#FFFFFF] text-nowrap"
+                      onClick={() => toggleAcceptModal(data?.uid)}
+                    >
+                      Live Now
+                    </button>
+                  )
                 ))}
             </div>
           </div>

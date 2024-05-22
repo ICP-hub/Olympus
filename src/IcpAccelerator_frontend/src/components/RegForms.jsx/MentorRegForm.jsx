@@ -120,10 +120,10 @@ const MentorRegForm = () => {
         .nullable(true)
         .test(
           "is-valid-username",
-          "Username must be between 6 and 20 characters and can only contain letters, numbers, and underscores",
+          "Username must be between 5 and 20 characters",
           (value) => {
             if (!value) return true;
-            const isValidLength = value.length >= 6 && value.length <= 20;
+            const isValidLength = value.length >= 5 && value.length <= 20;
             // const hasValidChars = /^(?=.*[A-Z0-9_])[a-zA-Z0-9_]+$/.test(value);
             return isValidLength;
           }
