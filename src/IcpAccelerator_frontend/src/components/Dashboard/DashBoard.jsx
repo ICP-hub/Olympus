@@ -25,6 +25,7 @@ import LiveProjects from "./LiveProjects";
 import { Banner } from "../Utils/Data/SvgData";
 import LiveEventsCards from "./LiveEventsCards";
 import useFadeInScrollAnimation from "../hooks/useFadeInScrollAnimation";
+import toast, { Toaster } from "react-hot-toast";
 
 
 const DashBoard = () => {
@@ -38,7 +39,7 @@ const DashBoard = () => {
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
-
+  const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
   function getNameOfCurrentStatus(rolesStatusArray) {
     const currentStatus = rolesStatusArray.find(
       (role) => role.status === "active"
@@ -163,7 +164,38 @@ const DashBoard = () => {
       imgSrc: testimonial,
     },
   ];
-
+  const handleNavigateProject = () => {
+    if (isAuthenticated) {
+      navigate("/live-projects")
+    }else{
+      toast.error("Please Sign Up !!!");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }
+  const handleNavigateCohort = () => {
+    if (isAuthenticated) {
+      navigate(`/all-live-events`)
+    }else{
+      toast.error("Please Sign Up !!!");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }
+  const handleNavigateInvestor = () => {
+    if (isAuthenticated) {
+      navigate("/view-investor")
+    }else{
+      toast.error("Please Sign Up !!!");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }
+  const handleNavigateMentor = () => {
+    if (isAuthenticated) {
+      navigate("/view-mentors")
+    }else{
+      toast.error("Please Sign Up !!!");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }
   switch (userCurrentRoleStatusActiveRole) {
     case "project":
       return <ProjectDashboard />;
@@ -241,7 +273,7 @@ const DashBoard = () => {
                     Upcoming Projects
                   </h1>
                   <button
-                    onClick={() => navigate("/live-projects")}
+                    onClick={handleNavigateProject}
                     className="border border-violet-800 px-4 py-2 rounded-md text-violet-800 sxxs:px-2 sxxs:py-1 sxxs:text-xs sm:text-lg"
                   >
                     View More
@@ -255,7 +287,7 @@ const DashBoard = () => {
                     Ongoing Accelerator
                   </h1>
                   <button
-                    onClick={() => navigate(`/all-live-events`)}
+                    onClick={handleNavigateCohort}
                     className="border border-violet-800 px-4 py-2 rounded-md text-violet-800 sxxs:px-2 sxxs:py-1 sxxs:text-xs sm:text-lg"
                   >
                     View More
@@ -269,7 +301,7 @@ const DashBoard = () => {
                     Investors
                   </h1>
                   <button
-                    onClick={() => navigate("/view-investor")}
+                    onClick={handleNavigateInvestor}
                     className="border border-violet-800 px-4 py-2 rounded-md text-violet-800 sxxs:px-2 sxxs:py-1 sxxs:text-xs sm:text-lg"
                   >
                     View More
@@ -289,7 +321,7 @@ const DashBoard = () => {
                     Mentors
                   </h1>
                   <button
-                    onClick={() => navigate("/view-mentors")}
+                    onClick={handleNavigateMentor}
                     className="border border-violet-800 px-4 py-2 rounded-md text-violet-800 sxxs:px-2 sxxs:py-1 sxxs:text-xs sm:text-lg"
                   >
                     View More
@@ -345,6 +377,7 @@ const DashBoard = () => {
               </div>
             </div>
           </section>
+          <Toaster/>
         </>
       );
   }

@@ -47,7 +47,7 @@ function EventMentor({ allMentorData, noData }) {
           return (
             <div
               key={index}
-              className="bg-white  hover:scale-105 w-full sm:w-1/2 md:w-1/3 rounded-lg mb-5 md:mb-0 p-6"
+              className="bg-white  hover:scale-105 w-full sm:w-1/2 md:w-1/4 rounded-lg mb-5 md:mb-0 p-6"
             >
               <div className="justify-center flex items-center">
                 <div

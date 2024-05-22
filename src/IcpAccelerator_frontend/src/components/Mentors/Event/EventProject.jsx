@@ -81,14 +81,14 @@ function EventProject({ allProjectData, noData }) {
                   let projectAreaOfFocus =
                     data?.params?.project_area_of_focus ?? "";
                   let projectData = data?.params ? data?.params : null;
-                  let projectRubricStatus =
-                    data?.overall_average.length > 0
-                      ? data?.overall_average[data?.overall_average.length - 1]
-                      : 0;
+                  // let projectRubricStatus =
+                  //   data?.overall_average.length > 0
+                  //     ? data?.overall_average[data?.overall_average.length - 1]
+                  //     : 0;
 
                   return (
                     <div
-                      className="w-full sm:w-1/2 md:w-1/3  hover:scale-105 transition-transform duration-300 ease-in-out"
+                      className="w-full sm:w-1/2 md:w-1/4  hover:scale-105 transition-transform duration-300 ease-in-out"
                       key={index}
                     >
                       <div className="sm:w-fit flex justify-between items-baseline flex-wrap bg-white overflow-hidden rounded-lg shadow-lg mb-5 md:mb-0">
@@ -192,7 +192,7 @@ function EventProject({ allProjectData, noData }) {
                           )}
 
                           <button
-                            className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full sxxs:w-11/12 text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"
+                            className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"
                             // onClick={() =>
                             //   handleNavigate(projectId, projectData)
                             // }

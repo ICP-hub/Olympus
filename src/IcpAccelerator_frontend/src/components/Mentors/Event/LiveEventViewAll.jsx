@@ -38,11 +38,11 @@ const LiveEventViewAll = () => {
         getAllLiveEvents(IcpAccelerator_backend);
       }
     }, [actor]);
-    const today = new Date();
-    const filteredEvents = allLiveEventsData.filter((val) => {
-      const launchDate = new Date(val?.cohort?.cohort_launch_date);
-      return launchDate <= today;
-    });
+    // const today = new Date();
+    // const filteredEvents = allLiveEventsData.filter((val) => {
+    //   const launchDate = new Date(val?.cohort?.cohort_launch_date);
+    //   return launchDate <= today;
+    // });
  
   return (
     <div className="container mx-auto min-h-screen">
@@ -55,7 +55,7 @@ const LiveEventViewAll = () => {
            Cohorts
           </div>
         </div>
-        {filteredEvents && (
+        {allLiveEventsData && (
         <div
           className="flex mb-4 items-start
              min-h-screen"
@@ -69,8 +69,8 @@ const LiveEventViewAll = () => {
             <div
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 flex-wrap w-full gap-6"
             >
-              {filteredEvents &&
-                filteredEvents.map((val, index) => {
+              {allLiveEventsData &&
+                allLiveEventsData.map((val, index) => {
                   return (
                     <div
                       key={index}
