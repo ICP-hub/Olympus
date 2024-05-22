@@ -239,6 +239,7 @@ const ProjectDetailsForInvestor = () => {
                             country={true}
                             website={true}
                             dapp={true}
+                            live={false}
                         />
                     </div>
                     <div className="flex justify-end w-full py-4">

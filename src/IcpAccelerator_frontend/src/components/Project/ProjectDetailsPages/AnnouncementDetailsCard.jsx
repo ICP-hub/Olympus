@@ -51,11 +51,15 @@ const AnnouncementDetailsCard = ({ data }) => {
         // className="custom-swiper"
         modules={[Pagination, Autoplay]}
         // centeredSlides={true}
-        loop={latestAnnouncementData && latestAnnouncementData.length > 3}
-        autoplay={{
-          delay: 2500,
-          disableOnInteraction: false,
-        }}
+        loop={latestAnnouncementData.length <= 3}
+        autoplay={
+          latestAnnouncementData.length <= 3
+            ? {
+                delay: 2500,
+                disableOnInteraction: false,
+              }
+            : {}
+        }
         pagination={{
           clickable: true,
         }}

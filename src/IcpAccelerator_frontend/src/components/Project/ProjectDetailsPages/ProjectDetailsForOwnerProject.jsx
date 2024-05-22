@@ -28,6 +28,7 @@ const ProjectDetailsForOwnerProject = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [projectData, setProjectData] = useState(null);
   const [isProjectLive, setIsProjectLive] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fetchProjectData = async () => {
     await actor
@@ -129,7 +130,6 @@ const ProjectDetailsForOwnerProject = () => {
             addButton={true}
             filter={"team"}
           />
-          
         );
       case "mentors-associated":
         return (
@@ -223,6 +223,7 @@ const ProjectDetailsForOwnerProject = () => {
     announcementDescription,
   }) => {
     console.log("add announcement");
+    setIsSubmitting(true);
     if (actor) {
       let argument = {
         project_id: projectData?.uid,
@@ -238,15 +239,18 @@ const ProjectDetailsForOwnerProject = () => {
           if (result && Object.keys(result).length > 0) {
             handleCloseModal();
             fetchProjectData();
+            setIsSubmitting(false);
             toast.success("announcement added successfully");
           } else {
             handleCloseModal();
+            setIsSubmitting(false);
             toast.error("something got wrong");
           }
         })
         .catch((error) => {
           console.log("error-in-add_announcement", error);
           toast.error("something got wrong");
+          setIsSubmitting(false);
           handleCloseModal();
         });
     }
@@ -260,6 +264,7 @@ const ProjectDetailsForOwnerProject = () => {
     jobLocation,
   }) => {
     console.log("add job");
+    setIsSubmitting(true);
     if (actor) {
       let argument = {
         title: jobTitle,
@@ -277,14 +282,17 @@ const ProjectDetailsForOwnerProject = () => {
           if (result) {
             handleJobsCloseModal();
             fetchProjectData();
+            setIsSubmitting(false);
             toast.success("job posted successfully");
           } else {
             handleJobsCloseModal();
+            setIsSubmitting(false);
             toast.error("something got wrong");
           }
         })
         .catch((error) => {
           console.log("error-in-post_job", error);
+          setIsSubmitting(false);
           toast.error("something got wrong");
           handleJobsCloseModal();
         });
@@ -329,6 +337,7 @@ const ProjectDetailsForOwnerProject = () => {
               country={true}
               website={true}
               dapp={true}
+              live={true}
             />
           </div>
           <div className="flex justify-end w-full py-4"></div>
@@ -445,12 +454,14 @@ const ProjectDetailsForOwnerProject = () => {
         <AnnouncementModal
           onClose={handleCloseModal}
           onSubmitHandler={handleAddAnnouncement}
+          isSubmitting={isSubmitting}
         />
       )}
       {isJobsModalOpen && (
         <AddJobsModal
           onJobsClose={handleJobsCloseModal}
           onSubmitHandler={handleAddJob}
+          isSubmitting={isSubmitting}
         />
       )}
 

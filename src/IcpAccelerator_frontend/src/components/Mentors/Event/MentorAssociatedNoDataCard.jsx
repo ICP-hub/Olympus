@@ -7,7 +7,7 @@ function NoDataCard() {
       <div className="flex justify-center items-center">
         <img src={NoData} className="w-2/6" alt="" />
       </div>
-      <p className="text-gray-400">You are not associated with any project yet</p>
+      <p className="text-gray-400">No Mentor associated with this project yet</p>
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import { ThreeDots } from "react-loader-spinner";
 
 const schema = yup
   .object({
@@ -16,7 +17,7 @@ const schema = yup
   })
   .required();
 
-const AddRatingModal = ({ onRatingClose, onSubmitHandler }) => {
+const AddRatingModal = ({ onRatingClose, onSubmitHandler, isSubmitting }) => {
   const [rating, setRating] = useState(0);
   const {
     register,
@@ -30,13 +31,12 @@ const AddRatingModal = ({ onRatingClose, onSubmitHandler }) => {
     resolver: yupResolver(schema),
     mode: "all",
     defaultValues: {
-        rating: 0, 
-       
-      },
+      rating: 0,
+    },
   });
 
   const changeRating = (newRating) => {
-    console.log(newRating)
+    console.log(newRating);
     setRating(newRating);
     setValue("rating", newRating);
     if (newRating < 0 || newRating > 5) {
@@ -59,7 +59,7 @@ const AddRatingModal = ({ onRatingClose, onSubmitHandler }) => {
     } else {
       clearErrors("rating");
     }
-  }, [rating, setValue, setError, clearErrors])
+  }, [rating, setValue, setError, clearErrors]);
 
   const ratingPercentage = (watch("rating") / 5) * 100;
 
@@ -77,7 +77,9 @@ const AddRatingModal = ({ onRatingClose, onSubmitHandler }) => {
         <div className="relative p-4 w-full max-w-md max-h-full">
           <div className="relative bg-white rounded-lg shadow">
             <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t ">
-              <h3 className="text-xl font-semibold text-gray-900 ">Community Ratings</h3>
+              <h3 className="text-xl font-semibold text-gray-900 ">
+                Community Ratings
+              </h3>
               <button
                 type="button"
                 className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center "
@@ -179,8 +181,22 @@ const AddRatingModal = ({ onRatingClose, onSubmitHandler }) => {
                 <button
                   className="text-white font-bold items-center py-2"
                   type="submit"
+                  disabled={isSubmitting}
                 >
-                  Add Rating
+                  {isSubmitting ? (
+                    <ThreeDots
+                      visible={true}
+                      height="35"
+                      width="35"
+                      color="#FFFEFF"
+                      radius="9"
+                      ariaLabel="three-dots-loading"
+                      wrapperStyle={{}}
+                      wrapperclassName=""
+                    />
+                  ) : (
+                    "Add Rating"
+                  )}
                 </button>
               </div>
             </form>
