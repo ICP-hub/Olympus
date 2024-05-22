@@ -52,7 +52,7 @@ const EventCard = ({ data, approveAndRejectCohort }) => {
   const cohortId = request?.cohort_id;
   return (
     <div className="flex w-auto items-center flex-wrap justify-between bg-gray-200 rounded-lg  text-lg p-4 my-4">
-      <div className="block lgx:flex w-full drop-shadow-xl rounded-lg lgx:h-96 ">
+      <div className="block lgx:flex w-full rounded-lg lgx:h-96 ">
         <FunctionalityModel
           para={para}
           action={action}
