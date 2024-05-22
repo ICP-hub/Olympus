@@ -2284,5 +2284,58 @@ pub fn delete_vc_using_principal(principal: Principal)->String{
     })
 }
 
+#[update]
+pub fn delete_mentor_announcement_by_index(mentor_principal: Principal, index: usize) -> String {
+    MENTOR_ANNOUNCEMENTS.with(|announcements| {
+        let mut announcements = announcements.borrow_mut();
+        if let Some(ann_list) = announcements.get_mut(&mentor_principal) {
+            if index < ann_list.len() {
+                ann_list.remove(index);
+                "Announcement successfully deleted.".to_string()
+            } else {
+                "Invalid index provided, out of bounds.".to_string()
+            }
+        } else {
+            "No announcements found for this mentor.".to_string()
+        }
+    })
+}
+
+#[update]
+pub fn delete_project_announcement_by_index(project_principal: Principal, index: usize) -> String {
+    PROJECT_ANNOUNCEMENTS.with(|announcements| {
+        let mut announcements = announcements.borrow_mut();
+        if let Some(ann_list) = announcements.get_mut(&project_principal) {
+            if index < ann_list.len() {
+                ann_list.remove(index);
+                "Announcement successfully deleted.".to_string()
+            } else {
+                "Invalid index provided, out of bounds.".to_string()
+            }
+        } else {
+            "No announcements found for this mentor.".to_string()
+        }
+    })
+}
+
+#[update]
+pub fn delete_vc_announcement_by_index(vc_principal: Principal, index: usize) -> String {
+    VC_ANNOUNCEMENTS.with(|announcements| {
+        let mut announcements = announcements.borrow_mut();
+        if let Some(ann_list) = announcements.get_mut(&vc_principal) {
+            if index < ann_list.len() {
+                ann_list.remove(index);
+                "Announcement successfully deleted.".to_string()
+            } else {
+                "Invalid index provided, out of bounds.".to_string()
+            }
+        } else {
+            "No announcements found for this mentor.".to_string()
+        }
+    })
+}
+
+
+
 
 //b5pqo-yef5a-lut3t-kmrpc-h7dnp-v3d2t-ls6di-y33wa-clrtb-xdhl4-dae
