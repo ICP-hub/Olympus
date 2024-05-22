@@ -87,7 +87,7 @@ function SearchMentors() {
   return (
     <div className="container mx-auto min-h-screen">
       <div className="px-[4%] pb-[4%] pt-[1%]">
-      <div className="flex items-center justify-between sm:flex-col sxxs:flex-col md:flex-row">
+        <div className="flex items-center justify-between sm:flex-col sxxs:flex-col md:flex-row">
           <div
             className="w-full bg-gradient-to-r from-purple-900 to-blue-500 text-transparent bg-clip-text text-3xl font-extrabold py-4 
        font-fontUse"
@@ -118,7 +118,7 @@ function SearchMentors() {
           <NoDataCard />
         ) : (
           <>
-            <div className="flex justify-center items-center flex-wrap ">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 mb-4 gap-4 items-center flex-wrap ">
               {currentMentors.map((mentor, index) => {
                 let id = mentor[0] ? mentor[0].toText() : "";
                 let img = uint8ArrayToBase64(
@@ -136,18 +136,60 @@ function SearchMentors() {
                   mentor[1]?.mentor_profile?.profile
                     ?.category_of_mentoring_service;
                 return (
-                  <MentorCard
+                  <div
                     key={index}
-                    img={img}
-                    id={id}
-                    name={name}
-                    bio={bio}
-                    role={role}
-                    category_of_mentoring_service={
-                      category_of_mentoring_service
-                    }
-                    skills={skills}
-                  />
+                    className="bg-white  hover:scale-105 w-full rounded-lg mb-5 md:mb-0 p-6"
+                  >
+                    <div className="justify-center flex items-center">
+                      <div
+                        className="size-48  rounded-full bg-no-repeat bg-center bg-cover relative p-1 bg-blend-overlay border-2 border-gray-300"
+                        style={{
+                          backgroundImage: `url(${img}), linear-gradient(168deg, rgba(255, 255, 255, 0.25) -0.86%, rgba(255, 255, 255, 0) 103.57%)`,
+                          backdropFilter: "blur(20px)",
+                        }}
+                      >
+                        <img
+                          className="object-cover size-48 max-h-44 rounded-full"
+                          src={img}
+                          alt=""
+                        />
+                      </div>
+                    </div>
+                    <div className="text-black text-start">
+                      <div className="text-start my-3">
+                        <span className="font-semibold text-lg truncate">
+                          {name}
+                        </span>
+                        <span className="block text-gray-500 truncate">
+                          {category_of_mentoring_service}
+                        </span>
+                      </div>
+                      <div>
+                        <div className="flex overflow-x-auto gap-2 pb-4 max-md:justify-center">
+                          {skills?.split(",").map((item, index) => {
+                            return (
+                              <span
+                                key={index}
+                                className="bg-[#E7E7E8] rounded-full text-gray-600 text-xs font-bold px-3 py-2 leading-none flex items-center mt-2"
+                              >
+                                {item.trim()}
+                              </span>
+                            );
+                          })}
+                        </div>
+                        <button
+                          onClick={() =>
+                            id
+                              ? navigate(`/view-mentor-details/${id}`)
+                              : ""
+                          }
+                          className="mt-4 text-white px-4 py-1 rounded-lg uppercase w-full text-center border border-gray-300 font-bold bg-[#3505B2] transition-colors duration-200 ease-in-out"
+                        >
+                          View Profile
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 );
               })}
             </div>

@@ -19,7 +19,7 @@ function EventProjectLeads({ allInvestorData, noData }) {
   }
 
   return (
-    <div className="items-center w-full flex justify-center">
+    <div className="items-center w-full flex justify-start">
       {allInvestorData.Ok.map((investor, index) => {
         let img = uint8ArrayToBase64(
           investor?.params?.user_data?.profile_picture[0]
@@ -32,7 +32,7 @@ function EventProjectLeads({ allInvestorData, noData }) {
         return (
           <div
             key={index}
-            className="bg-white hover:scale-105 w-full sm:w-1/2 md:w-1/3 rounded-lg mb-5 md:mb-0 p-6"
+            className="bg-white hover:scale-105 w-full sm:w-1/2 md:w-1/4 rounded-lg mb-5 md:mb-0 p-6 py-8"
           >
             <div className="justify-center flex items-center">
               <div

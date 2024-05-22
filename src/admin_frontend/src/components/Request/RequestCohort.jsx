@@ -6,6 +6,7 @@ import uint8ArrayToBase64 from "../../../../IcpAccelerator_frontend/src/componen
 import { Principal } from "@dfinity/principal";
 import NoDataCard from "../../../../IcpAccelerator_frontend/src/components/Mentors/Event/NoDataCard";
 import EventCard from "../../../../IcpAccelerator_frontend/src/components/Mentors/Event/EventCard";
+import NoData from "../../../../IcpAccelerator_frontend/assets/images/NoData.png";
 
 const RequestCohort = () => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -187,7 +188,7 @@ const RequestCohort = () => {
           </div>
         </div>
         {noData ? (
-          <NoDataCard />
+          <NoDataCard image={NoData} desc={"No Cohorts"} />
         ) : (
           requestedData &&
           requestedData.map((data, index) => {

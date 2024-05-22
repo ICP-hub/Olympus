@@ -381,49 +381,7 @@ const LiveIncubated = () => {
                       <p className="px-3 text-gray-700 text-sm md:line-clamp-8 sxs:line-clamp-4 sm:line-clamp-6 line-clamp-8 h-36">
                         {projectDescription}
                       </p>
-                      {project_area_of_focus && (
-                        <div
-                          className="flex gap-2 mt-2 text-xs items-center overflow-x-auto"
-                          style={{ minHeight: "50px" }}
-                        >
-                          {/* Always visible data */}
-                          {project_area_of_focus
-                            .split(",")
-                            .slice(0, 3)
-                            .map((focus, index) => (
-                              <div
-                                key={index}
-                                className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-gray-100"
-                              >
-                                {focus.trim()}
-                              </div>
-                            ))}
-
-                          {/* Conditionally visible data */}
-                          {showLine[projectId] &&
-                            project_area_of_focus
-                              .split(",")
-                              .slice(3)
-                              .map((tag, index) => (
-                                <div
-                                  key={index}
-                                  className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-gray-100"
-                                >
-                                  {tag.trim()}
-                                </div>
-                              ))}
-
-                          {/* Toggle button */}
-                          {project_area_of_focus.split(",").length > 3 && (
-                            <p
-                              onClick={() => handleClickPlusOne(projectId)}
-                              className="cursor-pointer flex-shrink-0 px-2"
-                            >
-                              {showLine[projectId] ? "View less" : "view more"}
-                            </p>
-                          )}
-                        </div>
-                      )}
+                   
 
                       <button
                         className="mt-4 bg-transparent text-blue-900 px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-blue-900 hover:text-white transition-colors duration-200 ease-in-out"

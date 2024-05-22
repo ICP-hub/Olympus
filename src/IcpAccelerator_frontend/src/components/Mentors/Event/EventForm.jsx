@@ -181,9 +181,14 @@ const EventForm = () => {
 
     try {
       await actor.create_cohort(eventData).then((result) => {
-        toast.success("Event Created");
-        console.log("Event Created", result);
-        navigate("/");
+        if (result && result.Ok) {
+          toast.success("Cohort creation request has been sent to admin");
+          console.log("Event Created", result);
+          navigate("/");
+        } else {
+          toast.error("Some went wrong");
+          console.log("Event Created", result);
+        }
       });
     } catch (error) {
       toast.error(error);
@@ -270,53 +275,71 @@ const EventForm = () => {
                       </span>
                     </label>
                     {field.type === "textarea" ? (
-  <textarea
-    name={field.name}
-    id={field.id}
-    {...register(field.name)}
-    className={`bg-gray-50 border-2 ${
-      errors[field.name] ? "border-red-500 placeholder:text-red-500" : "border-[#737373]"
-    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-    placeholder={field.placeholder}
-    onFocus={() => handleFocus(field)}
-    onBlur={() => handleBlur(field)}
-  ></textarea>
-) : field.type === "select" ? (
-  <select
-    name={field.name}
-    id={field.id}
-    {...register(field.name)}
-    className={`bg-gray-50 border-2 ${
-      errors[field.name] ? "border-red-500" : "border-[#737373]"
-    } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-    onFocus={() => handleFocus(field)}
-    onBlur={() => handleBlur(field)}
-  >
-    {["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"].map((word, index) => (
-    <option key={index} value={index + 1}>
-      {index + 1} ({word})
-    </option>
-  ))}
-  </select>
-) : (
-  <input
-    type={field.id === "date_of_birth" ? inputType : field.type}
-    name={field.name}
-    id={field.id}
-    {...register(field.name)}
-    className={`bg-gray-50 border-2 ${
-      errors[field.name] ? "border-red-500 placeholder:text-red-500" : "border-[#737373]"
-    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-    placeholder={field.placeholder}
-    onFocus={() => handleFocus(field)}
-    onBlur={() => handleBlur(field)}
-  />
-)}
-{errors[field.name] && (
-  <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-    {errors[field.name].message}
-  </span>
-)}
+                      <textarea
+                        name={field.name}
+                        id={field.id}
+                        {...register(field.name)}
+                        className={`bg-gray-50 border-2 ${
+                          errors[field.name]
+                            ? "border-red-500 placeholder:text-red-500"
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        placeholder={field.placeholder}
+                        onFocus={() => handleFocus(field)}
+                        onBlur={() => handleBlur(field)}
+                      ></textarea>
+                    ) : field.type === "select" ? (
+                      <select
+                        name={field.name}
+                        id={field.id}
+                        {...register(field.name)}
+                        className={`bg-gray-50 border-2 ${
+                          errors[field.name]
+                            ? "border-red-500"
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        onFocus={() => handleFocus(field)}
+                        onBlur={() => handleBlur(field)}
+                      >
+                        {[
+                          "One",
+                          "Two",
+                          "Three",
+                          "Four",
+                          "Five",
+                          "Six",
+                          "Seven",
+                          "Eight",
+                          "Nine",
+                        ].map((word, index) => (
+                          <option key={index} value={index + 1}>
+                            {index + 1} ({word})
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        type={
+                          field.id === "date_of_birth" ? inputType : field.type
+                        }
+                        name={field.name}
+                        id={field.id}
+                        {...register(field.name)}
+                        className={`bg-gray-50 border-2 ${
+                          errors[field.name]
+                            ? "border-red-500 placeholder:text-red-500"
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                        placeholder={field.placeholder}
+                        onFocus={() => handleFocus(field)}
+                        onBlur={() => handleBlur(field)}
+                      />
+                    )}
+                    {errors[field.name] && (
+                      <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                        {errors[field.name].message}
+                      </span>
+                    )}
                   </div>
                 ))}
                 <div className="relative z-0 group mb-6">

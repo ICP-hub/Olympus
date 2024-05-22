@@ -63,11 +63,13 @@ const UserRegForm = () => {
       telegram_id: yup
         .string()
         .nullable(true)
-        .test("is-valid-telegram", "Invalid Telegram ID", (value) => {
-          if (!value) return true;
-          const hasValidChars = /^[a-zA-Z0-9_]{5,32}$/.test(value);
-          return hasValidChars;
-        }),
+        .optional()
+        // .test("is-valid-telegram", "Invalid Telegram link", (value) => {
+        //   if (!value) return true;
+        //   const hasValidChars = /^[a-zA-Z0-9_]{5,32}$/.test(value);
+        //   return hasValidChars;
+        // })
+        .url("Invalid url"),
       twitter_url: yup
         .string()
         .nullable(true)
@@ -86,12 +88,12 @@ const UserRegForm = () => {
         .nullable(true)
         .test(
           "is-valid-username",
-          "Username must be between 6 and 20 characters and can only contain letters, numbers, and underscores",
+          "Username must be between 5 and 20 characters",
           (value) => {
             if (!value) return true;
-            const isValidLength = value.length >= 6 && value.length <= 20;
-            const hasValidChars = /^(?=.*[A-Z0-9_])[a-zA-Z0-9_]+$/.test(value);
-            return isValidLength && hasValidChars;
+            const isValidLength = value.length >= 5 && value.length <= 20;
+            // const hasValidChars = /^(?=.*[A-Z0-9_])[a-zA-Z0-9_]+$/.test(value);
+            return isValidLength;
           }
         ),
       bio: yup
@@ -326,9 +328,9 @@ const UserRegForm = () => {
   return (
     <>
       <DetailHeroSection />
-      <section className="w-full h-fit px-[6%] lg1:px-[4%] py-[6%] lg1:py-[4%] bg-gray-100">
+      <section className="w-full h-fit px-[6%] lg1:px-[4%] bg-gray-100">
         <div className="w-full h-full bg-gray-100 pt-8 sm:text-left text-center">
-          <div className="bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-[30px]  sm:text-[25px] md1:text-[30px] md2:text-[35px] font-black font-fontUse dxl:text-[40px] p-8">
+          <div className="bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-[30px]  sm:text-[25px] md1:text-[30px] md2:text-[35px] font-black font-fontUse dxl:text-[40px] p-6">
             User Information
           </div>
           <div className="text-sm font-medium text-center text-gray-200 ">
@@ -463,7 +465,7 @@ const UserRegForm = () => {
                     htmlFor="telegram_id"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Telegram ID
+                    Telegram link
                   </label>
                   <input
                     type="text"
@@ -474,7 +476,7 @@ const UserRegForm = () => {
                                                     ? "border-red-500 "
                                                     : "border-[#737373]"
                                                 } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                    placeholder="Enter your telegram id"
+                    placeholder="Enter your telegram url"
                   />
                   {errors?.telegram_id && (
                     <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
@@ -487,7 +489,7 @@ const UserRegForm = () => {
                     htmlFor="twitter_url"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Twitter URL
+                    Twitter link
                   </label>
                   <input
                     type="text"

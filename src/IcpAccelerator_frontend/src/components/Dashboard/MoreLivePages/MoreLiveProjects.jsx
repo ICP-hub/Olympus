@@ -166,7 +166,7 @@ const MoreLiveProjects = () => {
               <NoDataCard />
             </div>
           ) : (
-            <div className="flex flex-row  w-full gap-4  flex-wrap">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 w-full gap-4  flex-wrap">
               {currentProjectsData &&
                currentProjectsData.map((data, index) => { console.log('data,')
                     let projectName = data?.params?.params?.project_name ?? "";
@@ -200,7 +200,7 @@ const MoreLiveProjects = () => {
 
                     return (
                       <div
-                        className="w-full sm:w-1/2 md:w-1/4  hover:scale-105 transition-transform duration-300 ease-in-out"
+                        className="w-full  hover:scale-105 transition-transform duration-300 ease-in-out"
                         key={index}
                       >
                         <div className="w-fit flex justify-between items-baseline flex-wrap bg-white overflow-hidden rounded-lg shadow-lg mb-5 md:mb-0">
@@ -281,7 +281,7 @@ const MoreLiveProjects = () => {
                               {projectDescription}
                             </p>
 
-                            {projectAreaOfFocus ? (
+                            {/* {projectAreaOfFocus ? (
                               <div className="flex gap-2 mt-2 text-xs items-center">
                                 {projectAreaOfFocus
                                   .split(",")
@@ -309,7 +309,7 @@ const MoreLiveProjects = () => {
                               </div>
                             ) : (
                               ""
-                            )}
+                            )} */}
 
                             <button
                               className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"

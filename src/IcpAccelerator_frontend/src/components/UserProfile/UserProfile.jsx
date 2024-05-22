@@ -40,8 +40,8 @@ const UserProfile = () => {
   };
 
   return (
-    <div className="font-fontUse bg-gray-100 w-full mt-16">
-      <div className="  bg-white  shadow-md shadow-gray-300 pb-6 text-black pt-4 rounded-lg md:mx-[6%] mx-[6%]">
+    <div className="font-fontUse bg-gray-100 w-full">
+      {/* <div className="  bg-white  shadow-md shadow-gray-300 pb-6 text-black pt-4 rounded-lg md:mx-[6%] mx-[6%]">
         <div className="flex flex-row items-end px-10 space-y-4">
           <h1 className="md:text-4xl text-[20px] font-bold bg-gradient-to-r from-violet-900 to-sky-500 text-transparent bg-clip-text">
             My Profile
@@ -96,7 +96,7 @@ const UserProfile = () => {
                   {`${percentage}%`}
                 </div>
               </div>
-            </div> */}
+            </div> 
           </div>
           <div className="flex flex-col ml-4 flex-wrap mt-2 w-auto">
             <h1 className="md:text-3xl text-xl md:font-extrabold font-bold pb-2 bg-gradient-to-r from-blue-900 to-sky-400 text-transparent bg-clip-text">
@@ -121,9 +121,9 @@ const UserProfile = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
 
-      <section className="relative overflow-hidden mt-6 md:mx-[6%] mx-[6%]">
+      <section className="relative overflow-hidden md:mx-[6%] mx-[6%]">
         <div className="w-full h-fit">
           <div className="w-full h-full  rounded-md z-10 relative">
             {/* <div className="text-sm font-medium text-center text-gray-200 ">

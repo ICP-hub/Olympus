@@ -46,7 +46,7 @@ const RegisterCard = ({ categories, border }) => {
                   : ""
               } gap-2 overflow-hidden rounded-lg`}
             >
-              <div className="p-5 flex-col space-y-4 h-full">
+              <div className="p-5 flex-col space-y-4 h-full relative">
                 <img
                   className={` w-full rounded-md object-cover ${
                     category.title === "Add your testimonial"

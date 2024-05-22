@@ -51,12 +51,16 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
     <div className="py-4 gap-2 overflow-x-auto">
       <Swiper
         modules={[Pagination, Autoplay]}
-        centeredSlides={true}
-        loop={latestJobs && latestJobs.length>3}
-        autoplay={{
-          delay: 2500,
-          disableOnInteraction: false,
-        }}
+        // centeredSlides={true}
+        loop={latestJobs.length <= 3}
+        autoplay={
+          latestJobs.length <= 3
+            ? {
+                delay: 2500,
+                disableOnInteraction: false,
+              }
+            : {}
+        }
         pagination={{
           clickable: true,
         }}
@@ -75,7 +79,7 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
           },
         }}
       >
-        {latestJobs.length == 0 ? (
+        {noData ? (
           <NoDataCard image={NoData} desc={"No jobs are posted yet"} />
         ) : (
           latestJobs.map((card, index) => {
