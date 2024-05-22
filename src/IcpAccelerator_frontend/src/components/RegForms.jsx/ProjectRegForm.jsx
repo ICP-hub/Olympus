@@ -2258,7 +2258,7 @@ function ProjectRegForm() {
                         htmlFor="icp_grants"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        How much funding have you raised in grants,(USD)?{" "}
+                        How much funding have you raised in grants (USD)?{" "}
                         <span className="text-red-500">*</span>
                       </label>
                       <input
@@ -2376,7 +2376,7 @@ function ProjectRegForm() {
                         htmlFor="target_amount"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        Target Amount (USD){" "}
+                        Target Amount (in Millions USD){" "}
                         <span className="text-red-500">*</span>
                       </label>
                       <input
