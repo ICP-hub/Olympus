@@ -5,7 +5,7 @@ import { rubric_table_data } from "./ProjectDetails/projectRatingsRubrics";
 import { useDispatch, useSelector } from "react-redux";
 import { Line } from "rc-progress";
 import { star } from "../Utils/Data/SvgData";
-
+import image from "../../../assets/images/success.gif"
 const RubricRating = ({ data }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -131,8 +131,12 @@ const RubricRating = ({ data }) => {
     <section className="bg-gray-100 w-full h-full lg1:px-[4%] py-[2%] px-[5%]">
       {ratingDone ? (
         <div className="container">
-          <h1>Rating already Done</h1>
-          {/* <RubricRatingExt /> */}
+          <div className="flex flex-col justify-center items-center w-full font-fontUse py-5">
+      <div className="flex justify-center items-center">
+        <img src={image} className="w-full" alt="" />
+      </div>
+      <p className="text-gray-400 text-center text-xl">Rating is successfully submitted</p>
+    </div>
         </div>
       ) : (
         <div className="container">
