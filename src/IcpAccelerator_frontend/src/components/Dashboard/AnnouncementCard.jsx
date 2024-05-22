@@ -20,8 +20,8 @@ const AnnouncementCard = () => {
   const [timeAgo] = useFormatDateFromBigInt();
 
   useEffect(() => {
-    let isMounted = true; 
-  
+    let isMounted = true;
+
     const fetchLatestAnnouncement = async (caller) => {
       try {
         const result = await caller.get_latest_announcements();
@@ -35,25 +35,25 @@ const AnnouncementCard = () => {
           }
         }
       } catch (error) {
-        if (isMounted) { 
+        if (isMounted) {
           setNoData(true);
           setLatestAnnouncementData([]);
         }
       }
     };
-  
+
     if (actor) {
       fetchLatestAnnouncement(actor);
     } else {
       fetchLatestAnnouncement(IcpAccelerator_backend);
     }
-  
+
     return () => {
-      isMounted = false; 
+      isMounted = false;
     };
   }, [actor]);
 
-  console.log('noData',noData)
+  console.log("noData", noData);
   return (
     <>
       {noData ? (
@@ -62,12 +62,15 @@ const AnnouncementCard = () => {
         <div className="gap-2 overflow-x-auto">
           <Swiper
             modules={[Pagination, Autoplay]}
-            centeredSlides={true}
-            loop={latestAnnouncementData[0] && latestAnnouncementData[0][1].length > 3}
-            autoplay={{
-              delay: 2500,
-              disableOnInteraction: false,
-            }}
+            // centeredSlides={true}
+            loop={
+              latestAnnouncementData[0] &&
+              latestAnnouncementData[0][1].length > 3
+            }
+            // autoplay={{
+            //   delay: 2500,
+            //   disableOnInteraction: false,
+            // }}
             pagination={{
               clickable: true,
             }}
@@ -86,9 +89,9 @@ const AnnouncementCard = () => {
               },
             }}
           >
-            {latestAnnouncementData && 
-            latestAnnouncementData[0] && 
-            Array.isArray(latestAnnouncementData[0][1]) &&
+            {latestAnnouncementData &&
+              latestAnnouncementData[0] &&
+              Array.isArray(latestAnnouncementData[0][1]) &&
               latestAnnouncementData[0][1].map((card, index) => {
                 let ann_name =
                   card?.announcement_data?.announcement_title ?? "";
@@ -121,7 +124,7 @@ const AnnouncementCard = () => {
                               {ann_time}
                             </p>
                           </div>
-                          <p className="h-48 text-gray-500 text-sm line-clamp-6 break-all">
+                          <p className="h-32 overflow-y-scroll text-gray-500 text-sm">
                             {ann_desc}
                           </p>
                           <div className="flex flex-row gap-2 items-center">
@@ -134,7 +137,7 @@ const AnnouncementCard = () => {
                               <p className="font-bold text-md truncate">
                                 {ann_project_name}
                               </p>
-                              <p className="font-semibold text-gray-500  text-xs truncate break-all sxxs:w-[130px] w-full">
+                              <p className="font-semibold text-gray-500  text-xs line-clamp-2">
                                 {ann_project_desc}
                               </p>
                             </div>
@@ -147,7 +150,7 @@ const AnnouncementCard = () => {
               })}
           </Swiper>
         </div>
-      )} 
+      )}
     </>
   );
 };

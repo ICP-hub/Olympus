@@ -1,5 +1,4 @@
 import React from "react";
-import NoData from "../../../../assets/images/NoData.png";
 
 function NoDataCard({image,desc}) {
   return (

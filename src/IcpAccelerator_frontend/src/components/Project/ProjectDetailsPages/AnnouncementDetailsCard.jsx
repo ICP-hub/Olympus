@@ -8,12 +8,12 @@ import { useSelector } from "react-redux";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import { formatFullDateFromBigInt } from "../../Utils/formatter/formatDateFromBigInt";
 import NoDataCard from "../../Mentors/Event/NoDataCard";
-import ment from "../../../../assets/images/ment.jpg"
+import ment from "../../../../assets/images/ment.jpg";
 import NoData from "../../../../assets/images/file_not_found.png";
 const AnnouncementDetailsCard = ({ data }) => {
   // console.log('data', data?.uid)
-  if(!data){
-    return null
+  if (!data) {
+    return null;
   }
   const actor = useSelector((currState) => currState.actors.actor);
   const [noData, setNoData] = useState(null);
@@ -25,16 +25,16 @@ const AnnouncementDetailsCard = ({ data }) => {
       .then((result) => {
         console.log("result-in-get_announcements_by_project_id", result);
         if (!result || result.length == 0) {
-          setNoData(true)
+          setNoData(true);
           setLatestAnnouncementData([]);
         } else {
           setLatestAnnouncementData(result);
-          setNoData(false)
+          setNoData(false);
         }
       })
       .catch((error) => {
-        setNoData(true)
-        setLatestAnnouncementData([])
+        setNoData(true);
+        setLatestAnnouncementData([]);
         console.log("error-in-get_announcements_by_project_id", error);
       });
   };
@@ -48,8 +48,9 @@ const AnnouncementDetailsCard = ({ data }) => {
   return (
     <div className="gap-2 overflow-x-auto">
       <Swiper
+        // className="custom-swiper"
         modules={[Pagination, Autoplay]}
-        centeredSlides={true}
+        // centeredSlides={true}
         loop={latestAnnouncementData && latestAnnouncementData.length > 3}
         autoplay={{
           delay: 2500,
@@ -73,14 +74,20 @@ const AnnouncementDetailsCard = ({ data }) => {
           },
         }}
       >
-        {latestAnnouncementData.length == 0 ?
-            <NoDataCard image={NoData} desc={'No active announcement found'}/>
-          : latestAnnouncementData.map((card, index) => {
+        {latestAnnouncementData.length == 0 ? (
+          <NoDataCard image={NoData} desc={"No active announcement found"} />
+        ) : (
+          latestAnnouncementData.map((card, index) => {
             // console.log('card', card)
             let ann_name = card?.announcement_data?.announcement_title ?? "";
-            let ann_time = card?.timestamp ? formatFullDateFromBigInt(card?.timestamp) : "";
-            let ann_desc = card?.announcement_data?.announcement_description ?? "";
-            let ann_project_logo = card?.project_logo ? uint8ArrayToBase64(card?.project_logo) : ment;
+            let ann_time = card?.timestamp
+              ? formatFullDateFromBigInt(card?.timestamp)
+              : "";
+            let ann_desc =
+              card?.announcement_data?.announcement_description ?? "";
+            let ann_project_logo = card?.project_logo
+              ? uint8ArrayToBase64(card?.project_logo)
+              : ment;
             // let ann_project_logo = ment;
             let ann_project_name = card?.project_name ?? "";
             let ann_project_desc = card?.project_desc ?? "";
@@ -91,7 +98,9 @@ const AnnouncementDetailsCard = ({ data }) => {
                     <div className="flex flex-col gap-2">
                       <div className="flex-row justify-between">
                         <p className="text-black font-bold">{ann_name}</p>
-                        <p className="text-black text-gray-500 text-right">{ann_time}</p>
+                        <p className="text-black text-gray-500 text-right">
+                          {ann_time}
+                        </p>
                       </div>
                       <p className="h-32 overflow-y-scroll text-gray-500 text-sm">
                         {ann_desc}
@@ -103,17 +112,21 @@ const AnnouncementDetailsCard = ({ data }) => {
                           alt="img"
                         />
                         <div className="flex flex-col justify-around gap-2">
-                          <p className="font-bold text-md truncate w-28">{ann_project_name}</p>
+                          <p className="font-bold text-md truncate w-28">
+                            {ann_project_name}
+                          </p>
                           <p className="font-semibold text-gray-500  text-xs line-clamp-2">
-                            {ann_project_desc}</p>
+                            {ann_project_desc}
+                          </p>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </SwiperSlide>
-            )
-          })}
+            );
+          })
+        )}
       </Swiper>
     </div>
   );

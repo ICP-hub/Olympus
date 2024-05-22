@@ -14,7 +14,6 @@ import ment from "../../../assets/images/ment.jpg";
 import girl from "../../../assets/images/girl.jpeg";
 import NoData from "../../../assets/images/file_not_found.png";
 
-
 const SpotLight = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
@@ -25,41 +24,39 @@ const SpotLight = () => {
   const [spotLightData, setSpotLightData] = useState([]);
   const navigate = useNavigate();
 
-  
-
   useEffect(() => {
-    let isMounted = true; 
-  
+    let isMounted = true;
+
     const fetchSpotLight = async (caller) => {
       await caller
         .get_spotlight_projects()
         .then((result) => {
-          if(isMounted){
-          if (result && result.length > 0) {
-            setSpotLightData(result);
-            setNoData(false);
-          } else {
-            setSpotLightData([]);
-            setNoData(true);
+          if (isMounted) {
+            if (result && result.length > 0) {
+              setSpotLightData(result);
+              setNoData(false);
+            } else {
+              setSpotLightData([]);
+              setNoData(true);
+            }
           }
-        }
         })
         .catch((error) => {
-          if (isMounted) { 
-          setNoData(true);
-          setSpotLightData([]);
+          if (isMounted) {
+            setNoData(true);
+            setSpotLightData([]);
           }
         });
     };
-  
+
     if (actor) {
       fetchSpotLight(actor);
     } else {
       fetchSpotLight(IcpAccelerator_backend);
     }
-  
+
     return () => {
-      isMounted = false; 
+      isMounted = false;
     };
   }, [actor]);
 
@@ -96,7 +93,7 @@ const SpotLight = () => {
     <div className="py-4">
       <div className="gap-4 overflow-x-auto">
         {noData ? (
-          <NoDataCard image={NoData} desc={'No featured projects yet'}/>
+          <NoDataCard image={NoData} desc={"No featured projects yet"} />
         ) : (
           <Swiper
             modules={[Pagination, Autoplay]}
