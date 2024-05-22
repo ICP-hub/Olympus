@@ -121,9 +121,9 @@ function ProjectDetailsCard({
                             ? (rubRating?.overall_average[
                                 rubRating?.overall_average.length - 1
                               ] /
-                                8) *
+                                9) *
                               100
-                            : (0 / 8) * 100
+                            : (0 / 9) * 100
                         }
                         text={
                           rubRating?.overall_average &&
@@ -132,8 +132,8 @@ function ProjectDetailsCard({
                                 rubRating?.overall_average[
                                   rubRating?.overall_average.length - 1
                                 ]
-                              }/8`
-                            : `0/8`
+                              }/9`
+                            : `0/9`
                         }
                         className="w-14 h-14 font-extrabold"
                         strokeWidth={8}
@@ -275,9 +275,9 @@ function ProjectDetailsCard({
                               ? (rubRating?.overall_average[
                                   rubRating?.overall_average.length - 1
                                 ] /
-                                  8) *
+                                  9) *
                                 100
-                              : (0 / 8) * 100
+                              : (0 / 9) * 100
                           }
                           text={
                             rubRating?.overall_average &&
@@ -286,8 +286,8 @@ function ProjectDetailsCard({
                                   rubRating?.overall_average[
                                     rubRating?.overall_average.length - 1
                                   ]
-                                }/8`
-                              : `0/8`
+                                }/9`
+                              : `0/9`
                           }
                           className="w-8 h-8 font-extrabold"
                           strokeWidth={8}
