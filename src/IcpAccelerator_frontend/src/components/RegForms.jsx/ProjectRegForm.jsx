@@ -321,25 +321,14 @@ function ProjectRegForm() {
           : schema
         ),
       weekly_active_users: yup
-        .number()
-        .when("live_on_icp_mainnet", (val, schema) =>
-          val && val[0] === "true"
-            ? schema
-                .typeError("You must enter a number")
-                .min(0, "Must be a non-negative number")
-                .notRequired()
-            : schema
-        ),
+      .number()
+        .nullable(true)
+        .optional()
+        ,
       revenue: yup
-        .number()
-        .when("live_on_icp_mainnet", (val, schema) =>
-          val && val[0] === "true"
-            ? schema
-                .typeError("You must enter a number")
-                .min(0, "Must be a non-negative number")
-                .notRequired()
-            : schema
-        ),
+      .number()
+      .nullable(true)
+      .optional(),
       money_raised_till_now: yup
         .string()
         .required("Required")
@@ -520,6 +509,8 @@ function ProjectRegForm() {
     publicDocs: [],
     upload_private_documents: "false",
     privateDocs: [],
+    weekly_active_users:0,
+    revenue:0
   };
 
   const {
@@ -541,8 +532,9 @@ function ProjectRegForm() {
   });
   const [selectedTypeOfProfile, setSelectedTypeOfProfile] = useState(
     watch("type_of_profile")
-  );
+  )
 
+  console.log('defaultValues',defaultValues)
   // Add Private Docs
 
   const {
@@ -1027,8 +1019,8 @@ function ProjectRegForm() {
         setValue("live_on_icp_mainnet", "false");
       }
       setValue("dapp_link", val?.dapp_link?.[0] ?? "");
-      setValue("weekly_active_users", val?.weekly_active_users?.[0] ?? "");
-      setValue("revenue", val?.revenue?.[0] ?? "");
+      setValue("weekly_active_users", val?.weekly_active_users?.[0] ?? 0);
+      setValue("revenue", val?.revenue?.[0] ?? 0);
       if (val?.supports_multichain?.[0]) {
         setValue("multi_chain", "true");
       } else {
@@ -2176,7 +2168,7 @@ function ProjectRegForm() {
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
                         Weekly active users{" "}
-                        <span className="text-red-500">*</span>
+                        {/* <span className="text-red-500">*</span> */}
                       </label>
                       <input
                         type="number"
@@ -2203,7 +2195,7 @@ function ProjectRegForm() {
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
                         Revenue (in Million USD){" "}
-                        <span className="text-red-500">*</span>
+                        {/* <span className="text-red-500">*</span> */}
                       </label>
                       <input
                         type="number"
