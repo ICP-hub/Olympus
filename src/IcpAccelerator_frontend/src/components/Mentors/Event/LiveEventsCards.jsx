@@ -11,22 +11,29 @@ const LiveEventsCards = ({ wrap, register }) => {
   const [allLiveEventsData, setAllLiveEventsData] = useState([]);
 
   const getAllLiveEvents = async (caller) => {
-    await caller
-      .get_all_cohorts()
-      .then((result) => {
-        console.log("cohort result", result);
-        if (result && result.length >= 0) {
+    try {
+      const result = await caller.get_all_cohorts();
+      console.log("cohort result", result);
+
+      if (result && Array.isArray(result)) {
+        if (
+          result.length > 0 ||
+          (result.length === 0 && JSON.stringify(result) !== JSON.stringify([]))
+        ) {
           setAllLiveEventsData(result);
           setNoData(false);
         } else {
           setNoData(true);
           setAllLiveEventsData([]);
         }
-      })
-      .catch((error) => {
+      } else {
         setNoData(true);
         setAllLiveEventsData([]);
-      });
+      }
+    } catch (error) {
+      setNoData(true);
+      setAllLiveEventsData([]);
+    }
   };
 
   useEffect(() => {
@@ -37,11 +44,17 @@ const LiveEventsCards = ({ wrap, register }) => {
     }
   }, [actor]);
   const today = new Date();
+  const todayStr = today.toISOString().split("T")[0]; // Get only the date part in 'YYYY-MM-DD' format
+
   const filteredEvents = allLiveEventsData.filter((val) => {
-    const launchDate = new Date(val?.cohort?.cohort_launch_date);
-    return launchDate <= today;
+    const launchDateStr = new Date(val?.cohort?.cohort_launch_date)
+      .toISOString()
+      .split("T")[0];
+    console.log("filteredEvents launchDateStr", launchDateStr);
+    return launchDateStr <= todayStr;
   });
   console.log("filteredEvents", filteredEvents);
+  console.log("filteredEvents today", todayStr);
   return (
     <>
       {filteredEvents && (
