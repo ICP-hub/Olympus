@@ -359,7 +359,7 @@ const LiveIncubated = () => {
                                 stopOpacity="1"
                               />
                               <stop
-                                offset={`${(projectRubricStatus * 100) / 8}%`}
+                                offset={`${(projectRubricStatus * 100) / 9}%`}
                                 stopColor={"#3C04BA"}
                                 stopOpacity="1"
                               />
@@ -368,14 +368,14 @@ const LiveIncubated = () => {
                           <rect
                             x="0"
                             y="0"
-                            width={`${(projectRubricStatus * 100) / 8}%`}
+                            width={`${(projectRubricStatus * 100) / 9}%`}
                             height="10"
                             fill={`url(#gradient-${projectId})`}
                           />
                         </svg>
                         <div className="ml-2 text-nowrap text-sm">
                           {" "}
-                          {`${projectRubricStatus}/8`}
+                          {`${projectRubricStatus}/9`}
                         </div>
                       </div> */}
                       <p className="px-3 text-gray-700 text-sm md:line-clamp-8 sxs:line-clamp-4 sm:line-clamp-6 line-clamp-8 h-36">

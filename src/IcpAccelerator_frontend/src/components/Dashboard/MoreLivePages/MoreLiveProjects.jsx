@@ -247,7 +247,7 @@ const MoreLiveProjects = () => {
                                       />
                                       <stop
                                         offset={`${
-                                          (projectRubricStatus * 100) / 8
+                                          (projectRubricStatus * 100) / 9
                                         }%`}
                                         stopColor={"#3C04BA"}
                                         stopOpacity="1"
@@ -258,14 +258,14 @@ const MoreLiveProjects = () => {
                                     x="0"
                                     y="0"
                                     width={`${
-                                      (projectRubricStatus * 100) / 8
+                                      (projectRubricStatus * 100) / 9
                                     }%`}
                                     height="10"
                                     fill={`url(#gradient-${index})`}
                                   />
                                 </svg>
                                 <div className="ml-2 text-nowrap text-sm">
-                                  {`${projectRubricStatus}/8`}
+                                  {`${projectRubricStatus}/9`}
                                 </div>
                               </div>
                             )}

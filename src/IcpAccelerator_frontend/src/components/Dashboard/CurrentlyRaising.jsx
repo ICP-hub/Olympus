@@ -177,7 +177,7 @@ const CurrentlyRaising = ({ progress }) => {
                                   stopOpacity="1"
                                 />
                                 <stop
-                                  offset={`${(projectRubricStatus * 100) / 8}%`}
+                                  offset={`${(projectRubricStatus * 100) / 9}%`}
                                   stopColor={"#3C04BA"}
                                   stopOpacity="1"
                                 />
@@ -186,12 +186,12 @@ const CurrentlyRaising = ({ progress }) => {
                             <rect
                               x="0"
                               y="0"
-                              width={`${(projectRubricStatus * 100) / 8}%`}
+                              width={`${(projectRubricStatus * 100) / 9}%`}
                               height="10"
                               fill={`url(#gradient-${index})`}
                             />
                           </svg>
-                          <div className="ml-2 text-nowrap text-sm">{`${projectRubricStatus}/8`}</div>
+                          <div className="ml-2 text-nowrap text-sm">{`${projectRubricStatus}/9`}</div>
                         </div>)}
                         <p className="text-gray-700 text-sm p-2 h-36 overflow-hidden line-clamp-8 mb-4">
                           {projectDescription}
