@@ -161,7 +161,7 @@ function EventProject({ allProjectData, noData }) {
                             {projectDescription}
                           </p>
 
-                          {projectAreaOfFocus ? (
+                          {/* {projectAreaOfFocus ? (
                             <div className="flex gap-2 mt-2 text-xs items-center">
                               {projectAreaOfFocus
                                 .split(",")
@@ -189,7 +189,7 @@ function EventProject({ allProjectData, noData }) {
                             </div>
                           ) : (
                             ""
-                          )}
+                          )} */}
 
                           <button
                             className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"
