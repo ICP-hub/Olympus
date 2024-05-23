@@ -17,7 +17,6 @@ const MoreLiveProjects = () => {
 
   const navigate = useNavigate();
 
-
   const [noData, setNoData] = useState(null);
   const [allProjectData, setAllProjectData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -26,10 +25,7 @@ const MoreLiveProjects = () => {
 
   const getAllProject = async (caller) => {
     await caller
-      .list_all_projects_with_pagination({
-        page_size: itemsPerPage,
-        page: currentPage
-      })
+      .list_all_projects()
       .then((result) => {
         console.log("result-in-get-all-projects", result);
 
@@ -54,7 +50,7 @@ const MoreLiveProjects = () => {
     } else {
       getAllProject(IcpAccelerator_backend);
     }
-  }, [actor, userCurrentRoleStatusActiveRole,currentPage]);
+  }, [actor, userCurrentRoleStatusActiveRole, currentPage]);
 
   const handleNavigate = (projectId, projectData) => {
     if (isAuthenticated) {
@@ -85,7 +81,6 @@ const MoreLiveProjects = () => {
     }
   };
 
-
   const filteredUsers = React.useMemo(
     () =>
       allProjectData.filter((user) => {
@@ -106,7 +101,11 @@ const MoreLiveProjects = () => {
 
   const indexOfLastUser = currentPage * itemsPerPage;
   const indexOfFirstUser = indexOfLastUser - itemsPerPage;
-  const currentProjects = filteredUsers.slice(
+  const currentProjectsData = filteredUsers.filter((val) => {
+    const liveStatus = val?.params?.params?.live_on_icp_mainnet;
+    return Array.isArray(liveStatus) && liveStatus[0] === true;
+  });
+  const currentProjects = currentProjectsData.slice(
     indexOfFirstUser,
     indexOfLastUser
   );
@@ -119,14 +118,10 @@ const MoreLiveProjects = () => {
 
   const handleNext = () => {
     setCurrentPage((prev) =>
-      prev < Math.ceil(filteredUsers.length / itemsPerPage) ? prev + 1 : prev
+      prev < Math.ceil(currentProjectsData.length / itemsPerPage) ? prev + 1 : prev
     );
   };
-  
-  const currentProjectsData = filteredUsers.filter(val => {
-    const liveStatus = val?.params?.params?.live_on_icp_mainnet;
-    return Array.isArray(liveStatus) && liveStatus[0] === true;
-  });
+
   return (
     <div className="container mx-auto">
       <div className="px-[4%] pb-[4%] pt-[2%]">
@@ -159,129 +154,124 @@ const MoreLiveProjects = () => {
           </div>
         </div>
         <div className="flex justify-center mt-4">
-          {noData ||
-          (currentProjectsData &&
-            currentProjectsData.length === 0) ? (
+          {noData || (currentProjects && currentProjects.length === 0) ? (
             <div className="h-screen">
               <NoDataCard />
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 w-full gap-4  flex-wrap">
-              {currentProjectsData &&
-               currentProjectsData.map((data, index) => { console.log('data,')
-                    let projectName = data?.params?.params?.project_name ?? "";
-                    let projectId = data?.params?.uid ?? "";
-                    let projectImage = data?.params?.params?.project_logo
-                      ? uint8ArrayToBase64(data?.params?.params?.project_logo)
-                      : "";
-                    let userImage = data?.params?.params?.user_data
-                      ?.profile_picture[0]
-                      ? uint8ArrayToBase64(
-                          data?.params?.params?.user_data?.profile_picture[0]
-                        )
-                      : "";
-                    let userName = data?.params?.params?.user_data?.full_name
-                      ? data?.params?.params?.user_data?.full_name
-                      : "";
-                    let principalId = data?.principal
-                      ? data?.principal.toText()
-                      : "";
-                    let projectDescription =
-                      data?.params?.params?.project_description ?? "";
-                    let projectAreaOfFocus =
-                      data?.params?.params?.project_area_of_focus ?? "";
-                    let projectData = data?.params ? data?.params : null;
-                    let projectRubricStatus =
-                      data?.overall_average.length > 0
-                        ? data?.overall_average[
-                            data?.overall_average.length - 1
-                          ]
-                        : 0;
+              {currentProjects &&
+                currentProjects.map((data, index) => {
+                  console.log("data,");
+                  let projectName = data?.params?.params?.project_name ?? "";
+                  let projectId = data?.params?.uid ?? "";
+                  let projectImage = data?.params?.params?.project_logo
+                    ? uint8ArrayToBase64(data?.params?.params?.project_logo)
+                    : "";
+                  let userImage = data?.params?.params?.user_data
+                    ?.profile_picture[0]
+                    ? uint8ArrayToBase64(
+                        data?.params?.params?.user_data?.profile_picture[0]
+                      )
+                    : "";
+                  let userName = data?.params?.params?.user_data?.full_name
+                    ? data?.params?.params?.user_data?.full_name
+                    : "";
+                  let principalId = data?.principal
+                    ? data?.principal.toText()
+                    : "";
+                  let projectDescription =
+                    data?.params?.params?.project_description ?? "";
+                  let projectAreaOfFocus =
+                    data?.params?.params?.project_area_of_focus ?? "";
+                  let projectData = data?.params ? data?.params : null;
+                  let projectRubricStatus =
+                    data?.overall_average.length > 0
+                      ? data?.overall_average[data?.overall_average.length - 1]
+                      : 0;
 
-                    return (
-                      <div
-                        className="w-full  hover:scale-105 transition-transform duration-300 ease-in-out"
-                        key={index}
-                      >
-                        <div className="w-fit flex justify-between items-baseline flex-wrap bg-white overflow-hidden rounded-lg shadow-lg mb-5 md:mb-0">
-                          <div className="p-4">
-                            <div className="flex justify-between items-baseline flex-wrap w-fit">
-                              <div className="flex items-center w-full">
-                                <img
-                                  className="rounded-full w-12 h-12 object-cover"
-                                  src={projectImage}
-                                  alt="profile"
+                  return (
+                    <div
+                      className="w-full  hover:scale-105 transition-transform duration-300 ease-in-out"
+                      key={index}
+                    >
+                      <div className="w-fit flex justify-between items-baseline flex-wrap bg-white overflow-hidden rounded-lg shadow-lg mb-5 md:mb-0">
+                        <div className="p-4">
+                          <div className="flex justify-between items-baseline flex-wrap w-fit">
+                            <div className="flex items-center w-full">
+                              <img
+                                className="rounded-full w-12 h-12 object-cover"
+                                src={projectImage}
+                                alt="profile"
+                              />
+                              <h1 className="ms-2 font-bold text-nowrap truncate w-[220px]">
+                                {projectName}
+                              </h1>
+                            </div>
+                            <div className="flex items-center m-2 w-full">
+                              <img
+                                className="h-5 w-5 rounded-full mr-2"
+                                src={userImage}
+                                alt="not found"
+                              />
+                              <p className="text-xs truncate">{userName}</p>
+                            </div>
+                          </div>
+                          {/* {projectRubricStatus && (
+                            <div className="mb-4 flex items-baseline">
+                              <svg
+                                width="100%"
+                                height="8"
+                                className="bg-[#B2B1B6] rounded-lg"
+                              >
+                                <defs>
+                                  <linearGradient
+                                    id={`gradient-${index}`}
+                                    x1="0%"
+                                    y1="0%"
+                                    x2="100%"
+                                    y2="0%"
+                                  >
+                                    <stop
+                                      offset="0%"
+                                      stopColor={"#4087BF"}
+                                      stopOpacity="1"
+                                    />
+                                    <stop
+                                      offset={`${
+                                        (projectRubricStatus * 100) / 9
+                                      }%`}
+                                      stopColor={"#3C04BA"}
+                                      stopOpacity="1"
+                                    />
+                                  </linearGradient>
+                                </defs>
+                                <rect
+                                  x="0"
+                                  y="0"
+                                  width={`${(projectRubricStatus * 100) / 9}%`}
+                                  height="10"
+                                  fill={`url(#gradient-${index})`}
                                 />
-                                <h1 className="ms-2 font-bold text-nowrap truncate w-[220px]">
-                                  {projectName}
-                                </h1>
-                              </div>
-                              <div className="flex items-center m-2 w-full">
-                                <img
-                                  className="h-5 w-5 rounded-full mr-2"
-                                  src={userImage}
-                                  alt="not found"
-                                />
-                                <p className="text-xs truncate">{userName}</p>
+                              </svg>
+                              <div className="ml-2 text-nowrap text-sm">
+                                {`${projectRubricStatus}/9`}
                               </div>
                             </div>
-                            {projectRubricStatus && (
-                              <div className="mb-4 flex items-baseline">
-                                <svg
-                                  width="100%"
-                                  height="8"
-                                  className="bg-[#B2B1B6] rounded-lg"
-                                >
-                                  <defs>
-                                    <linearGradient
-                                      id={`gradient-${index}`}
-                                      x1="0%"
-                                      y1="0%"
-                                      x2="100%"
-                                      y2="0%"
-                                    >
-                                      <stop
-                                        offset="0%"
-                                        stopColor={"#4087BF"}
-                                        stopOpacity="1"
-                                      />
-                                      <stop
-                                        offset={`${
-                                          (projectRubricStatus * 100) / 9
-                                        }%`}
-                                        stopColor={"#3C04BA"}
-                                        stopOpacity="1"
-                                      />
-                                    </linearGradient>
-                                  </defs>
-                                  <rect
-                                    x="0"
-                                    y="0"
-                                    width={`${
-                                      (projectRubricStatus * 100) / 9
-                                    }%`}
-                                    height="10"
-                                    fill={`url(#gradient-${index})`}
-                                  />
-                                </svg>
-                                <div className="ml-2 text-nowrap text-sm">
-                                  {`${projectRubricStatus}/9`}
-                                </div>
-                              </div>
-                            )}
-                            <p
-                              className="text-gray-700 text-sm p-2 overflow-hidden line-clamp-8 truncate text-wrap h-48"
-                              style={{
-                                overflow: "scroll",
-                                display: "-webkit-box",
-                                WebkitBoxOrient: "vertical",
-                                WebkitLineClamp: 8,
-                              }}
-                            >
-                              {projectDescription}
-                            </p>
+                          )} */}
+                          <p
+                            className="text-gray-700 text-sm p-2 overflow-hidden line-clamp-8 truncate text-wrap h-48"
+                            style={{
+                              overflow: "scroll",
+                              display: "-webkit-box",
+                              WebkitBoxOrient: "vertical",
+                              WebkitLineClamp: 8,
+                            }}
+                          >
+                            {projectDescription}
+                          </p>
 
-                            {/* {projectAreaOfFocus ? (
+                          {/* {projectAreaOfFocus ? (
                               <div className="flex gap-2 mt-2 text-xs items-center">
                                 {projectAreaOfFocus
                                   .split(",")
@@ -311,19 +301,19 @@ const MoreLiveProjects = () => {
                               ""
                             )} */}
 
-                            <button
-                              className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"
-                              onClick={() =>
-                                handleNavigate(projectId, projectData)
-                              }
-                            >
-                              KNOW MORE
-                            </button>
-                          </div>
+                          <button
+                            className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"
+                            onClick={() =>
+                              handleNavigate(projectId, projectData)
+                            }
+                          >
+                            KNOW MORE
+                          </button>
                         </div>
                       </div>
-                    );
-                  })}
+                    </div>
+                  );
+                })}
             </div>
           )}
         </div>
@@ -353,7 +343,7 @@ const MoreLiveProjects = () => {
               Previous
             </button>
             {Array.from(
-              { length: Math.ceil(filteredUsers.length / itemsPerPage) },
+              { length: Math.ceil(currentProjectsData.length / itemsPerPage) },
               (_, i) => i + 1
             ).map((number) => (
               <button
@@ -374,7 +364,8 @@ const MoreLiveProjects = () => {
             <button
               onClick={handleNext}
               disabled={
-                currentPage === Math.ceil(filteredUsers.length / itemsPerPage)
+                currentPage ===
+                Math.ceil(currentProjectsData.length / itemsPerPage)
               }
               className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
               type="button"

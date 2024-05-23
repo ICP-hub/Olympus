@@ -209,7 +209,7 @@ const MoreCurrentlyRaisingProjects = () => {
                         <p className="text-xs truncate w-20">{principalId}</p>
                       </div>
                     </div>
-                    <div className="mb-4 flex items-baseline">
+                    {/* <div className="mb-4 flex items-baseline">
                       <svg
                         width="100%"
                         height="8"
@@ -246,7 +246,7 @@ const MoreCurrentlyRaisingProjects = () => {
                         />
                       </svg>
                       <div className="ml-2 text-nowrap text-sm">{`${projectRubricStatus}/9`}</div>
-                    </div>
+                    </div> */}
                     <p className="text-gray-700 text-sm md:line-clamp-8 sxs:line-clamp-4 sm:line-clamp-6 line-clamp-8 h-36">
                       {projectDescription}
                     </p>

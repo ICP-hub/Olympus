@@ -14,14 +14,6 @@ const ProjectDetailsForUserRole = () => {
   const stateData = useLocation();
   const projectData = stateData.state;
   const navigate = useNavigate();
-
-  if (!projectData) {
-    navigate("/");
-    return null;
-  }
-
-  console.log("projectData ================>>>>>>", projectData);
-
   const { id } = useParams();
   const actor = useSelector((currState) => currState.actors.actor);
   const principal = useSelector((currState) => currState.internet.principal);
@@ -133,7 +125,12 @@ const ProjectDetailsForUserRole = () => {
         return null;
     }
   };
-
+  if (projectData) {
+    console.log("projectData ================>>>>>>", projectData);
+  } else {
+    navigate("/");
+    return null;
+  }
   useEffect(() => {
     if (!actor) {
       navigate("/");
