@@ -46,8 +46,7 @@ use leaderboard::{
 // use notification::pre_upgrade_notifications;
 
 use project_registration::FilterCriteria;
-use ratings::post_upgrade_rating_system;
-use ratings::pre_upgrade_rating_system;
+
 use ratings::RatingAverages;
 use ratings::RatingUpdate;
 // use ratings::post_upgrade_rating_system;

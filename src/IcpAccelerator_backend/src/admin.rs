@@ -3,8 +3,6 @@ use crate::cohort::APPLIER_COUNT;
 use crate::cohort::CAPITALIST_APPLIED_FOR_COHORT;
 use crate::cohort::MENTORS_APPLIED_FOR_COHORT;
 use crate::cohort::PROJECTS_APPLIED_FOR_COHORT;
-use crate::latest_popular_projects::INCUBATED_PROJECTS;
-use crate::latest_popular_projects::LIVE_PROJECTS;
 use crate::mentor::*;
 use crate::project_registration::*;
 use crate::state_handler::*;
@@ -23,6 +21,7 @@ use ic_cdk::api::{canister_balance128, time};
 use ic_cdk::storage;
 use ic_cdk::storage::stable_restore;
 use ic_cdk_macros::*;
+use ic_stable_structures::StableVec;
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 use std::cell::RefCell;
@@ -2190,6 +2189,7 @@ pub fn admin_update_project(
     }
 }
 
+//todo:- check this function thoroughly
 #[update]
 pub fn deactivate_and_remove_project(project_id: String) -> Result<&'static str, &'static str> {
     let mut found_and_updated_in_application = false;
@@ -2211,12 +2211,21 @@ pub fn deactivate_and_remove_project(project_id: String) -> Result<&'static str,
         return Err("Project not found in main application storage.");
     }
 
-    LIVE_PROJECTS.with(|live_projects| {
-        let mut live_projects = live_projects.borrow_mut();
-        if let Some(position) = live_projects.iter().position(|p| p.uid == project_id) {
-            live_projects.remove(position);
-            found_in_live_projects = true; // Mark as found and removed
+    mutate_state(|state| {
+        let new_projects = MEMORY_MANAGER.with(|mm| {
+            let new_projects = StableVec::new(mm.borrow().get(LIVE_PROJECTS_MEMORY_ID))
+                .expect("Failed to initialize live projects");
+            new_projects
+        });
+
+        for project in state.live_projects.iter() {
+            if let Err(e) = new_projects.push(&Candid(project.0.clone())) {
+                ic_cdk::println!("Failed to push project to new_projects: {:?}", e);
+            } else {
+                found_in_live_projects = true;
+            }
         }
+        state.live_projects = new_projects; // Replace the old vector
     });
 
     if found_in_live_projects {
@@ -2228,14 +2237,24 @@ pub fn deactivate_and_remove_project(project_id: String) -> Result<&'static str,
 
 #[update]
 pub fn remove_project_from_incubated(project_id: String) -> Result<&'static str, &'static str> {
-    INCUBATED_PROJECTS.with(|projects| {
-        let mut projects = projects.borrow_mut();
-        if let Some(pos) = projects.iter().position(|p| p.uid == project_id) {
-            projects.remove(pos);
-            Ok("Project successfully removed from incubated projects.")
-        } else {
-            Err("Project not found in incubated projects.")
+    mutate_state(|state| {
+        let new_projects = MEMORY_MANAGER.with(|mm| {
+            let new_projects = StableVec::new(mm.borrow().get(INCUBATED_PROJECTS_MEMORY_ID))
+                .expect("Failed to initialize live projects");
+            new_projects
+        });
+
+        for project in state.incubated_projects.iter() {
+            if project.0.uid != project_id {
+                if let Err(e) = new_projects.push(&Candid(project.0.clone())) {
+                    ic_cdk::println!("Failed to push project to new_projects: {:?}", e);
+                }
+            }
         }
+        state.live_projects = new_projects;
+        Ok(
+            "Project successfully removed from incubated projects. It will be reclassified as live.",
+        )
     })
 }
 
