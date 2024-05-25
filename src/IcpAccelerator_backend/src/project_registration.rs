@@ -983,12 +983,12 @@ pub struct PaginationParams {
 #[query]
 pub fn list_all_projects_with_pagination(
     pagination_params: PaginationParams,
-) -> Vec<ListAllProjects> {
+) -> (Vec<ListAllProjects>, usize) {
     APPLICATION_FORM.with(|projects: &RefCell<ApplicationDetails>| {
         let projects = projects.borrow();
 
         if projects.is_empty() {
-            return Vec::new();
+            return (Vec::new(),0);
         }
 
         let mut list_all_projects: Vec<ListAllProjects> = Vec::new();
@@ -1027,7 +1027,10 @@ pub fn list_all_projects_with_pagination(
         let end = std::cmp::min(start + pagination_params.page_size, list_all_projects.len());
 
         // Using the safe start and end indices, slice the vector and return a new vector containing just the paginated items.
-        list_all_projects[start..end].to_vec()
+        (
+            list_all_projects[start..end].to_vec(),
+            list_all_projects.len(),
+        )
     })
 }
 
@@ -1214,7 +1217,6 @@ fn find_project_owner_principal(project_id: &str) -> Option<Principal> {
         None
     })
 }
-
 
 //todo:-change this function structure
 // pub fn send_connection_request_to_owner(project_id: &str, team_member_username: &str) -> String {
