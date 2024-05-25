@@ -977,6 +977,7 @@ service : {
   get_user_information : () -> (Result_14) query;
   get_user_information_using_uid : (text) -> (Result_14) query;
   get_users_with_all_info : () -> (UserInfoInternal) query;
+  get_vc_and_mentor_name : () -> (vec text, vec text) query;
   get_vc_announcements : () -> (
       vec record { principal; vec Announcements },
     ) query;
@@ -1007,6 +1008,7 @@ service : {
     ) query;
   list_all_projects_with_pagination : (PaginationParam) -> (
       vec ListAllProjects,
+      nat64,
     ) query;
   list_all_vcs : () -> (vec record { principal; VcWithRoles }) query;
   list_all_vcs_with_pagination : (PaginationParam) -> (

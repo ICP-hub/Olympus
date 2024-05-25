@@ -1,11 +1,11 @@
 use crate::admin::*;
 use crate::mentor::MentorProfile;
 
-use crate::user_module::*;
-
+use crate::mentor::*;
 use crate::ratings::{RatingAverages, RatingSystem};
-
+use crate::user_module::*;
 use crate::user_module::{UserInfoInternal, UserInformation};
+use crate::vc_registration::*;
 
 use crate::admin::send_approval_request;
 use crate::ratings::calculate_average_api;
@@ -988,7 +988,7 @@ pub fn list_all_projects_with_pagination(
         let projects = projects.borrow();
 
         if projects.is_empty() {
-            return (Vec::new(),0);
+            return (Vec::new(), 0);
         }
 
         let mut list_all_projects: Vec<ListAllProjects> = Vec::new();
@@ -1519,6 +1519,27 @@ pub fn filter_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
             .map(|project_internal| project_internal.params.clone())
             .collect()
     })
+}
+
+#[query]
+pub fn get_vc_and_mentor_name() -> (Vec<String>, Vec<String>) {
+    let mut vc_new: Vec<String> = Vec::new();
+    VENTURECAPITALIST_STORAGE.with(|state| {
+        let vc_details = state.borrow();
+        for (_, vc) in vc_details.iter() {
+            vc_new.push(vc.params.user_data.full_name.clone());
+        }
+    });
+
+    let mut mentor_new: Vec<String> = Vec::new();
+    MENTOR_REGISTRY.with(|state| {
+        let mentor_details = state.borrow();
+        for (_, mentor) in mentor_details.iter() {
+            mentor_new.push(mentor.profile.user_data.full_name.clone());
+        }
+    });
+
+    (vc_new, mentor_new)
 }
 
 #[query]
