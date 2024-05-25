@@ -64,37 +64,11 @@ pub struct UpdateCounts {
     vc_update: Option<u32>,
 }
 
-thread_local! {
-    static ADMIN_NOTIFICATIONS: RefCell<HashMap<Principal, Vec<Notification>>> = RefCell::new(HashMap::new());
-    static COHORT_REQUEST : RefCell<HashMap<String, Vec<CohortRequest>>> = RefCell::new(HashMap::new());
-    static ACCEPTED_COHORTS : RefCell<HashMap<String, Vec<CohortRequest>>> = RefCell::new(HashMap::new());
-    static DECLINED_COHORTS: RefCell<HashMap<String, Vec<CohortRequest>>> = RefCell::new(HashMap::new());
-}
-
-// pub fn pre_upgrade_admin() {
-//     ADMIN_NOTIFICATIONS.with(
-//         |data| match storage::stable_save((data.borrow().clone(),)) {
-//             Ok(_) => ic_cdk::println!("ADMIN_NOTIFICATIONS saved successfully."),
-//             Err(e) => ic_cdk::println!("Failed to save ADMIN_NOTIFICATIONS: {:?}", e),
-//         },
-//     );
-// }
-
-// pub fn post_upgrade_admin() {
-//     match stable_restore::<(HashMap<Principal, Vec<Notification>>,)>() {
-//         Ok((restored_admin_notifications,)) => {
-//             ADMIN_NOTIFICATIONS.with(|data| *data.borrow_mut() = restored_admin_notifications);
-//             ic_cdk::println!("ADMIN_NOTIFICATIONS restored successfully.");
-//         }
-//         Err(e) => ic_cdk::println!("Failed to restore ADMIN_NOTIFICATIONS: {:?}", e),
-//     }
-// }
-
 fn change_notification_status(requester: Principal, requested_for: String, changed_status: String) {
-    ADMIN_NOTIFICATIONS.with(|admin_notifications| {
-        let mut notifications = admin_notifications.borrow_mut();
-        for (_, admin_notif_list) in notifications.iter_mut() {
-            for notification in admin_notif_list.iter_mut() {
+    mutate_state(|admin_notifications| {
+        let mut notifications = &mut admin_notifications.admin_notifications;
+        for (_, mut admin_notif_list) in notifications.iter() {
+            for notification in admin_notif_list.0.iter_mut() {
                 match &mut notification.notification_type {
                     NotificationType::ApprovalRequest(approval_request)
                         if approval_request.sender == requester
@@ -304,8 +278,12 @@ pub fn decline_mentor_creation_request(requester: Principal, decline: bool) -> S
 pub fn get_admin_notifications() -> Vec<Notification> {
     let caller = caller();
 
-    ADMIN_NOTIFICATIONS.with(|alerts| {
-        let mut alerts = alerts.borrow().get(&caller).cloned().unwrap_or_default();
+    read_state(|alerts| {
+        let mut alerts = alerts
+            .admin_notifications
+            .get(&StoredPrincipal(caller))
+            .map(|candid_res| candid_res.0.clone())
+            .unwrap_or_default();
         // Sort the alerts by timestamp in descending order
         alerts.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
         alerts
@@ -316,13 +294,14 @@ pub fn get_admin_notifications() -> Vec<Notification> {
 pub fn get_pending_admin_notifications() -> Vec<Notification> {
     let caller = caller();
 
-    ADMIN_NOTIFICATIONS.with(|alerts| {
-        let alerts = alerts.borrow();
+    read_state(|alerts| {
+        let alerts = &alerts.admin_notifications;
 
         // First, get the caller's notifications, if any, and filter them by "pending" status.
         let pending_alerts: Vec<Notification> = alerts
-            .get(&caller)
-            .unwrap_or(&Vec::new())
+            .get(&StoredPrincipal(caller))
+            .map(|candid_res| candid_res.0.clone())
+            .unwrap_or_default()
             .iter()
             .filter(|notification| {
                 // Check if the notification is an ApprovalRequest and its status is "pending".
@@ -1889,11 +1868,12 @@ pub fn update_mentor_profile(requester: Principal, updated_profile: MentorProfil
 //cohort admin operations
 
 pub async fn send_cohort_request_to_admin(cohort_request: CohortRequest) -> String {
-    COHORT_REQUEST.with(|cohort_requests| {
-        let mut cohort_requests = cohort_requests.borrow_mut();
+    mutate_state(|cohort_requests| {
+        let cohort_requests = &mut cohort_requests.cohort_request_admin;
         cohort_requests
-            .entry(cohort_request.cohort_details.cohort_id.clone())
-            .or_default()
+            .get(&cohort_request.cohort_details.cohort_id.clone())
+            .map(|candid_res| candid_res.0)
+            .unwrap_or_default()
             .push(cohort_request)
     });
 
@@ -1905,24 +1885,26 @@ pub async fn send_cohort_request_to_admin(cohort_request: CohortRequest) -> Stri
 pub fn get_pending_cohort_requests_for_admin() -> Vec<CohortRequest> {
     let mut accepted_requests = Vec::new();
 
-    COHORT_REQUEST.with(|storage| {
-        let storage = storage.borrow();
+    read_state(|storage| {
+        let storage = &storage.cohort_request_admin;
         for (_cohort_id, requests) in storage.iter() {
-            accepted_requests.extend(requests.clone());
+            accepted_requests.extend(requests.0.clone());
         }
     });
 
     accepted_requests
 }
 
+//todo:- test this function thoroughly
+
 #[update]
 pub fn accept_cohort_creation_request(cohort_id: String) -> String {
     let mut response_message = String::new();
 
-    let already_accepted = ACCEPTED_COHORTS.with(|storage| {
-        let storage = storage.borrow();
+    let already_accepted = mutate_state(|storage| {
+        let storage = &mut storage.accepted_cohorts;
         storage.get(&cohort_id).map_or(false, |requests| {
-            requests.iter().any(|r| r.request_status == "accepted")
+            requests.0.iter().any(|r| r.request_status == "accepted")
         })
     });
 
@@ -1933,15 +1915,15 @@ pub fn accept_cohort_creation_request(cohort_id: String) -> String {
         );
     }
 
-    COHORT_REQUEST.with(|state| {
-        let mut state = state.borrow_mut();
+    mutate_state(|state| {
+        let mut state = &mut state.cohort_request_admin;
         let mut request_found_and_updated = false;
 
-        for (_principal, requests) in state.iter_mut() {
-            if let Some(index) = requests.iter().position(|r| {
+        for (_principal, mut requests) in state.iter() {
+            if let Some(index) = requests.0.iter().position(|r| {
                 r.cohort_details.cohort_id == cohort_id && r.request_status == "pending"
             }) {
-                let mut request = requests.remove(index);
+                let mut request = requests.0.remove(index);
                 request.request_status = "accepted".to_string();
                 request.accepted_at = time();
 
@@ -1951,9 +1933,16 @@ pub fn accept_cohort_creation_request(cohort_id: String) -> String {
                     ic_cdk::println!("Inserted cohort details into COHORT for: {}", cohort_id);
                 });
 
-                ACCEPTED_COHORTS.with(|storage| {
-                    let mut storage = storage.borrow_mut();
-                    storage.entry(cohort_id.clone()).or_default().push(request);
+                mutate_state(|storage| {
+                    let mut storage = &mut storage.accepted_cohorts;
+
+                    if let Some(mut requests) = storage.get(&cohort_id.clone()) {
+                        // If the cohort_id exists, push the request into the existing Vec
+                        requests.0.push(request);
+                    } else {
+                        // If the cohort_id does not exist, create a new Vec and insert it
+                        storage.insert(cohort_id.clone(), Candid(vec![request]));
+                    }
                 });
 
                 request_found_and_updated = true;
@@ -1978,20 +1967,30 @@ pub fn accept_cohort_creation_request(cohort_id: String) -> String {
 pub fn decline_cohort_creation_request(cohort_id: String) -> String {
     let mut response_message = String::new();
 
-    COHORT_REQUEST.with(|state| {
-        let mut state = state.borrow_mut();
+    mutate_state(|state| {
+        let mut state = &mut state.cohort_request_admin;
         let mut request_found_and_updated = false;
 
-        if let Some(requests) = state.get_mut(&cohort_id) {
-            if let Some(index) = requests.iter().position(|r| r.request_status == "pending") {
-                let mut request = requests.remove(index);
+        if let Some(mut requests) = state.get(&cohort_id) {
+            if let Some(index) = requests
+                .0
+                .iter()
+                .position(|r| r.request_status == "pending")
+            {
+                let mut request = requests.0.remove(index);
                 request.request_status = "declined".to_string();
                 request.rejected_at = time();
                 request_found_and_updated = true;
 
-                DECLINED_COHORTS.with(|storage| {
-                    let mut storage = storage.borrow_mut();
-                    storage.entry(cohort_id.clone()).or_default().push(request);
+                mutate_state(|storage| {
+                    let mut storage = &mut storage.declined_cohorts;
+                    if let Some(mut requests) = storage.get(&cohort_id.clone()) {
+                        // If the cohort_id exists, push the request into the existing Vec
+                        requests.0.push(request);
+                    } else {
+                        // If the cohort_id does not exist, create a new Vec and insert it
+                        storage.insert(cohort_id.clone(), Candid(vec![request]));
+                    }
                 });
 
                 response_message = format!(
@@ -2016,10 +2015,10 @@ pub fn decline_cohort_creation_request(cohort_id: String) -> String {
 pub fn get_accepted_cohort_creation_request_for_admin() -> Vec<CohortRequest> {
     let mut accepted_requests = Vec::new();
 
-    ACCEPTED_COHORTS.with(|storage| {
-        let storage = storage.borrow();
+    read_state(|storage| {
+        let storage = &storage.accepted_cohorts;
         for (_cohort_id, requests) in storage.iter() {
-            accepted_requests.extend(requests.clone());
+            accepted_requests.extend(requests.0.clone());
         }
     });
 
@@ -2030,10 +2029,10 @@ pub fn get_accepted_cohort_creation_request_for_admin() -> Vec<CohortRequest> {
 pub fn get_declined_cohort_creation_request_for_admin() -> Vec<CohortRequest> {
     let mut declined_requests = Vec::new();
 
-    DECLINED_COHORTS.with(|storage| {
-        let storage = storage.borrow();
+    read_state(|storage| {
+        let storage = &storage.declined_cohorts;
         for (_cohort_id, requests) in storage.iter() {
-            declined_requests.extend(requests.clone());
+            declined_requests.extend(requests.0.clone());
         }
     });
 

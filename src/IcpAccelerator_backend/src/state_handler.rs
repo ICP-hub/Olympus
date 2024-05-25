@@ -1,8 +1,10 @@
 use crate::admin::*;
 use crate::cohort_rating::*;
 
+use crate::cohort::*;
 use crate::investor_offer_to_project::*;
 use crate::mentor_investor_ratings::*;
+use crate::project_offer_to_investor::*;
 use crate::ProjectInfoInternal;
 use candid::{CandidType, Principal};
 use ic_cdk::api::management_canister::main::{
@@ -19,17 +21,12 @@ use std::borrow::Cow;
 use std::cell::RefCell;
 use std::collections::HashMap;
 
-use crate::project_offer_to_investor::*;
-
 use crate::notification_to_mentor::*;
 use crate::ratings::*;
 
+use crate::admin::*;
 use crate::notification_to_project::*;
-
 pub type VMem = VirtualMemory<DefaultMemoryImpl>;
-
-type AdminNotification = StableBTreeMap<StoredPrincipal, Candid<Vec<Notification>>, VMem>;
-const ADMIN_NOTIFICATION_MEMORY_ID: MemoryId = MemoryId::new(0);
 
 type CheckingData = StableBTreeMap<StoredPrincipal, String, VMem>;
 const CHECKING_DATA_MEMORY_ID: MemoryId = MemoryId::new(1);
@@ -109,8 +106,23 @@ pub type MySentNotificationsProject =
 pub type ProjectAlerts = StableBTreeMap<String, Candid<Vec<OfferToSendToProject>>, VMem>;
 const MY_SENT_NOTIFICATIONS_PROJECT_MEMORY_ID: MemoryId = MemoryId::new(20);
 const PROJECT_ALERTS_MEMORY_ID: MemoryId = MemoryId::new(21);
+
+//admin.rs
+
+pub type CohortRequestNotification = StableBTreeMap<String, Candid<Vec<CohortRequest>>, VMem>;
+const COHORT_REQUEST_MEMORY_ID: MemoryId = MemoryId::new(22);
+type AdminNotification = StableBTreeMap<StoredPrincipal, Candid<Vec<Notification>>, VMem>;
+const ADMIN_NOTIFICATION_MEMORY_ID: MemoryId = MemoryId::new(0);
+
+pub type AcceptedCohorts = StableBTreeMap<String, Candid<Vec<CohortRequest>>, VMem>;
+const ACCEPTED_COHORTS_MEMORY_ID: MemoryId = MemoryId::new(23);
+
+pub type DeclinedCohorts = StableBTreeMap<String, Candid<Vec<CohortRequest>>, VMem>;
+const DECLINED_COHORTS_MEMORY_ID: MemoryId = MemoryId::new(24);
+
 pub struct State {
     pub admin_notifications: AdminNotification,
+    pub cohort_request_admin: CohortRequestNotification,
     pub checking_data: CheckingData,
     pub projects_associated_with_mentor: ProjectAssociatedWithMentor,
     pub projects_associated_with_vc: ProjectAssociatedWithVc,
@@ -133,6 +145,8 @@ pub struct State {
     pub mentor_alerts: MentorAlerts,
     pub my_sent_notifications_project: MySentNotificationsProject,
     pub project_alerts: ProjectAlerts,
+    pub accepted_cohorts: AcceptedCohorts,
+    pub declined_cohorts: DeclinedCohorts,
 }
 
 thread_local! {
@@ -165,6 +179,10 @@ thread_local! {
             mentor_alerts:MentorAlerts::init(mm.borrow().get(MENTOR_ALERTS_MEMORY_ID)),
             my_sent_notifications_project:MySentNotificationsProject::init(mm.borrow().get(MY_SENT_NOTIFICATIONS_PROJECT_MEMORY_ID)),
             project_alerts:ProjectAlerts::init(mm.borrow().get(PROJECT_ALERTS_MEMORY_ID)),
+            cohort_request_admin: CohortRequestNotification::init(mm.borrow().get(COHORT_REQUEST_MEMORY_ID)),
+            accepted_cohorts:AcceptedCohorts::init(mm.borrow().get(ACCEPTED_COHORTS_MEMORY_ID)),
+            declined_cohorts:DeclinedCohorts::init(mm.borrow().get(ACCEPTED_COHORTS_MEMORY_ID)),
+
 
 
 
