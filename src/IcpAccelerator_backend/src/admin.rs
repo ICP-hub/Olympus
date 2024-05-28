@@ -1878,16 +1878,18 @@ pub fn update_mentor_profile(requester: Principal, updated_profile: MentorProfil
 //cohort admin operations
 
 pub async fn send_cohort_request_to_admin(cohort_request: CohortRequest) -> String {
+    let cohort_id = cohort_request.cohort_details.cohort_id.clone(); // Clone the cohort ID for use in the message.
+    let message = format!("Cohort creation request with ID {} has been sent to admin.", cohort_id);
     COHORT_REQUEST.with(|cohort_requests| {
         let mut cohort_requests = cohort_requests.borrow_mut();
         cohort_requests
             .entry(cohort_request.cohort_details.cohort_id.clone())
             .or_default()
-            .push(cohort_request) 
+            .push(cohort_request)
     });
 
     ic_cdk::println!("REQUEST HAS BEEN SENT TO ADMIN");
-    "cohort creation request has been sent to admin".to_string()
+    message
 }
 
 #[query]
