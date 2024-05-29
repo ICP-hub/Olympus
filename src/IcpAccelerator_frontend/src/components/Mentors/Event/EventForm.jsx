@@ -65,6 +65,7 @@ const schema = yup.object({
     .max(9, "level 1 - 9 allowed only")
     .typeError("You must enter a number")
     .required("Required"),
+  // area: yup.string().typeError("You must select area").required("Required"),
   no_of_seats: yup.number().typeError("You must enter a number").required(),
 });
 
@@ -75,6 +76,7 @@ const EventForm = () => {
   );
 
   const [inputType, setInputType] = useState("date");
+  const [selectedArea, setSelectedArea] = useState("");
 
   const [interestedDomainsOptions, setInterestedDomainsOptions] = useState([]);
   const [
@@ -318,6 +320,23 @@ const EventForm = () => {
                         ))}
                       </select>
                     ) : (
+                      // : field.name === "area" ? (
+                      //   <select
+                      //     name={field.name}
+                      //     id={field.id}
+                      //     {...register(field.name)}
+                      //     className={`bg-gray-50 border-2 ${
+                      //       errors.area ? "border-red-500" : "border-[#737373]"
+                      //     } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      //     onFocus={() => handleFocus({ name: field.name })}
+                      //     onBlur={() => handleBlur({ name: field.name })}
+                      //     onChange={(e) => setSelectedArea(e.target.value)}
+                      //   >
+                      //     <option value="">Select Area</option>
+                      //     <option value="global">Global</option>
+                      //     <option value="country">Country</option>
+                      //   </select>
+                      // )
                       <input
                         type={
                           field.id === "date_of_birth" ? inputType : field.type
@@ -342,6 +361,34 @@ const EventForm = () => {
                     )}
                   </div>
                 ))}
+                {selectedArea === "country" && (
+                  <select
+                    name="region"
+                    id="region"
+                    {...register("region")}
+                    className={`bg-gray-50 border-2 ${
+                      errors.region ? "border-red-500" : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    onFocus={() => handleFocus({ name: "region" })}
+                    onBlur={() => handleBlur({ name: "region" })}
+                  >
+                    {[
+                      "One",
+                      "Two",
+                      "Three",
+                      "Four",
+                      "Five",
+                      "Six",
+                      "Seven",
+                      "Eight",
+                      "Nine",
+                    ].map((word, index) => (
+                      <option key={index} value={index + 1}>
+                        {index + 1} ({word})
+                      </option>
+                    ))}
+                  </select>
+                )}
                 <div className="relative z-0 group mb-6">
                   <label
                     htmlFor="tags"
