@@ -214,7 +214,7 @@ const MoreLiveProjects = () => {
                                 src={userImage}
                                 alt="not found"
                               />
-                              <p className="text-xs truncate">{userName}</p>
+                              <p className="text-xs line-clamp-1">{userName}</p>
                             </div>
                           </div>
                           {/* {projectRubricStatus && (
