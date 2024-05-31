@@ -11,6 +11,7 @@ mod notification_to_mentor;
 mod notification_to_project;
 mod project_offer_to_investor;
 mod investor_offer_to_project;
+mod state_handler;
 
 mod associations;
 
@@ -30,6 +31,7 @@ use cohort::*;
 use crate::cohort_rating::PeerRatingUpdate;
 use crate::mentor_investor_ratings::RatingMentorInvestor;
 use crate::cohort_rating::LeaderboardEntryForCohorts;
+use ic_cdk::api::management_canister::main::CanisterStatusResponse;
 
 use project_offer_to_investor::*;
 use investor_offer_to_project::*;
@@ -217,10 +219,6 @@ fn delete_project(id: String) -> std::string::String {
 //     project_registration::verify_project(&project_id)
 // }
 
-#[update]
-fn connect_to_team_member(project_id: String, team_user_name: String) -> String {
-    project_registration::send_connection_request_to_owner(&project_id, &team_user_name)
-}
 
 #[query]
 fn get_your_project_notifications() -> Vec<NotificationForOwner> {
@@ -470,10 +468,10 @@ fn get_admin_notifications() -> Vec<admin::Notification> {
 #[pre_upgrade]
 fn pre_upgrade() {
     pre_upgrade_venture_capitalist();
-    pre_upgrade_user_modules();
+    //pre_upgrade_user_modules();
     pre_upgrade_project_registration();
     // pre_upgrade_upvotes();
-    pre_upgrade_mentor();
+    //pre_upgrade_mentor();
     //pre_upgrade_admin();
     //pre_upgrade_rating_system();
 }
@@ -481,10 +479,10 @@ fn pre_upgrade() {
 #[post_upgrade]
 fn post_upgrade() {
     post_upgrade_venture_capitalist();
-    post_upgrade_user_modules();
+    //post_upgrade_user_modules();
     post_upgrade_project_registration();
     //post_upgrade_upvotes();
-    post_upgrade_mentor();
+    //post_upgrade_mentor();
     //post_upgrade_admin();
     //post_upgrade_rating_system();
 }

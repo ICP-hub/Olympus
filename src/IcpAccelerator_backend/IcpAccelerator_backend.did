@@ -34,6 +34,17 @@ type ApprovedList = record {
   approved_type : vec text;
 };
 type Blog = record { blog_url : text; timestamp : nat64 };
+type CanisterStatusResponse = record {
+  status : CanisterStatusType;
+  memory_size : nat;
+  cycles : nat;
+  settings : DefiniteCanisterSettings;
+  query_stats : QueryStats;
+  idle_cycles_burned_per_day : nat;
+  module_hash : opt vec nat8;
+  reserved_cycles : nat;
+};
+type CanisterStatusType = variant { stopped; stopping; running };
 type Cohort = record {
   cohort_end_date : text;
   title : text;
@@ -81,6 +92,13 @@ type Counts = record {
   project_count : nat64;
 };
 type CustomError = record { is_owner : bool; message : text };
+type DefiniteCanisterSettings = record {
+  freezing_threshold : nat;
+  controllers : vec principal;
+  reserved_cycles_limit : nat;
+  memory_allocation : nat;
+  compute_allocation : nat;
+};
 type Docs = record { title : text; link : text };
 type Eligibility = record { level_on_rubric : float64; eligibility : opt text };
 type EnrollerDataInternal = record {
@@ -493,6 +511,12 @@ type ProjectWithRoles = record {
   project_profile : ProjectInfoInternal;
   roles : vec Role;
 };
+type QueryStats = record {
+  response_payload_bytes_total : nat;
+  num_instructions_total : nat;
+  num_calls_total : nat;
+  request_payload_bytes_total : nat;
+};
 type Rating = record {
   sub_level : text;
   level_name : text;
@@ -529,22 +553,23 @@ type Rating_1 = record {
 type Request = record { mentor : opt MentorInternal; "text" : text };
 type Result = variant { Ok : MoneyRaised; Err : CustomError };
 type Result_1 = variant { Ok : vec Docs; Err : CustomError };
-type Result_10 = variant { Ok : vec RatingView; Err : text };
-type Result_11 = variant { Ok : vec Review; Err : text };
-type Result_12 = variant { Ok : vec Testimonial; Err : text };
-type Result_13 = variant { Ok : UserInformation; Err : text };
-type Result_14 = variant { Ok : vec VentureCapitalistInternal; Err : text };
+type Result_10 = variant { Ok : vec ProjectInfoInternal; Err : text };
+type Result_11 = variant { Ok : vec RatingView; Err : text };
+type Result_12 = variant { Ok : vec Review; Err : text };
+type Result_13 = variant { Ok : vec Testimonial; Err : text };
+type Result_14 = variant { Ok : UserInformation; Err : text };
+type Result_15 = variant { Ok : vec VentureCapitalistInternal; Err : text };
 type Result_2 = variant { Ok : text; Err : text };
 type Result_3 = variant { Ok; Err : text };
 type Result_4 = variant { Ok : float64; Err : text };
 type Result_5 = variant { Ok : text; Err : text };
-type Result_6 = variant { Ok : vec MentorInternal; Err : text };
-type Result_7 = variant { Ok : nat8; Err : text };
-type Result_8 = variant {
+type Result_6 = variant { Ok : CanisterStatusResponse; Err : text };
+type Result_7 = variant { Ok : vec MentorInternal; Err : text };
+type Result_8 = variant { Ok : nat8; Err : text };
+type Result_9 = variant {
   Ok : record { opt vec record { principal; ProjectReview }; float32; bool };
   Err : text;
 };
-type Result_9 = variant { Ok : vec ProjectInfoInternal; Err : text };
 type Review = record {
   tag : text;
   name : text;
@@ -742,6 +767,7 @@ service : {
   access_private_docs : (text) -> (Result_1) query;
   add_BlogPost : (text) -> (text);
   add_announcement : (Announcements) -> (text);
+  add_data_checking : () -> (text);
   add_job_type : (text) -> (text);
   add_mentor_announcement : (text, text) -> (text);
   add_project_rating : (ProjectRatingStruct) -> (Result_2);
@@ -768,7 +794,6 @@ service : {
   calculate_mentor_average_rating : (principal) -> (Result_4) query;
   calculate_vc_average_rating : (principal) -> (Result_4) query;
   change_live_status : (principal, text, bool, opt text) -> (Result_2) query;
-  connect_to_team_member : (text, text) -> (text);
   count_live_projects : () -> (nat64) query;
   create_cohort : (Cohort) -> (Result_2);
   deactivate_and_remove_project : (text) -> (Result_5);
@@ -903,8 +928,10 @@ service : {
   get_announcements_by_project_id : (text) -> (vec AnnouncementsInternal) query;
   get_area_focus_expertise : () -> (vec Role_1) query;
   get_blog_post : () -> (vec record { principal; vec Blog }) query;
+  get_canister_status : () -> (Result_6);
   get_cohort : (text) -> (CohortDetails) query;
   get_dapp_link : (text) -> (text) query;
+  get_data_checking : () -> (text) query;
   get_declined_cohort_creation_request_for_admin : () -> (
       vec CohortRequest,
     ) query;
@@ -946,7 +973,7 @@ service : {
   get_mentor_update_declined_request : () -> (
       vec record { principal; MentorUpdateRequest },
     ) query;
-  get_mentors_applied_for_cohort : (text) -> (Result_6) query;
+  get_mentors_applied_for_cohort : (text) -> (Result_7) query;
   get_multichain_list : () -> (vec text) query;
   get_my_accepted_cohort_creation_request : () -> (vec CohortRequest) query;
   get_my_declined_cohort_creation_requests : () -> (vec CohortRequest) query;
@@ -954,8 +981,9 @@ service : {
   get_my_pending_cohort_creation_requests : () -> (vec CohortRequest) query;
   get_my_project : () -> (ProjectInfoInternal) query;
   get_no_of_individuals_applied_for_cohort_using_id : (text) -> (
-      Result_7,
+      Result_8,
     ) query;
+  get_notifications_check : () -> (vec Notification) query;
   get_notifications_for_hubs : () -> (vec NotificationProject) query;
   get_pending_admin_notifications : () -> (vec Notification) query;
   get_pending_cohort_enrollment_requests : (principal) -> (
@@ -990,14 +1018,14 @@ service : {
   get_project_public_information_using_id : (text) -> (
       ProjectPublicInfoInternal,
     ) query;
-  get_project_ratings : (text) -> (Result_8) query;
+  get_project_ratings : (text) -> (Result_9) query;
   get_project_requests : (text) -> (vec Request) query;
   get_project_update_declined_request : () -> (
       vec record { text; ProjectUpdateRequest },
     ) query;
   get_project_upvotes : (text) -> (opt UpvoteRecord) query;
   get_project_using_id : (text) -> (opt ProjectInfoInternal) query;
-  get_projects_applied_for_cohort : (text) -> (Result_9) query;
+  get_projects_applied_for_cohort : (text) -> (Result_10) query;
   get_projects_associated_with_investor : (principal) -> (
       vec ProjectInfoInternal,
     ) query;
@@ -1006,11 +1034,11 @@ service : {
     ) query;
   get_projects_with_all_info : () -> (vec ProjectInfoInternal) query;
   get_range_of_check_size : () -> (vec text) query;
-  get_ratings_by_principal : (text) -> (Result_10) query;
+  get_ratings_by_principal : (text) -> (Result_11) query;
   get_rejected_cohort_enrollment_requests : (principal) -> (
       vec CohortEnrollmentRequest,
     ) query;
-  get_review : (principal) -> (Result_11) query;
+  get_review : (principal) -> (Result_12) query;
   get_role : () -> (RolesResponse) query;
   get_role_status : () -> (vec Role) query;
   get_roles_for_principal : (principal) -> (vec Role) query;
@@ -1025,7 +1053,7 @@ service : {
   get_stored_average_rating : (text, text) -> (Result_4) query;
   get_suggestions_by_parent_id_caller : (text, nat64) -> (vec Suggestion) query;
   get_suggestions_by_status_caller : (text, text) -> (vec Suggestion) query;
-  get_testimonials : (principal) -> (Result_12) query;
+  get_testimonials : (principal) -> (Result_13) query;
   get_top_5_mentors : () -> (vec record { principal; TopData; nat64 }) query;
   get_top_5_projects : () -> (vec record { text; TopDataProject; nat64 }) query;
   get_top_5_vcs : () -> (vec record { principal; TopData; nat64 }) query;
@@ -1045,8 +1073,8 @@ service : {
     ) query;
   get_user_info_struct : () -> (opt UserInformation) query;
   get_user_info_using_principal : (principal) -> (opt UserInfoInternal) query;
-  get_user_information : () -> (Result_13) query;
-  get_user_information_using_uid : (text) -> (Result_13) query;
+  get_user_information : () -> (Result_14) query;
+  get_user_information_using_uid : (text) -> (Result_14) query;
   get_user_likes : (text) -> (opt LikeRecord) query;
   get_users_with_all_info : () -> (UserInfoInternal) query;
   get_vc_announcements : () -> (
@@ -1069,7 +1097,7 @@ service : {
   get_vc_update_declined_request : () -> (
       vec record { principal; UpdateInfoStruct },
     ) query;
-  get_vcs_applied_for_cohort : (text) -> (Result_14) query;
+  get_vcs_applied_for_cohort : (text) -> (Result_15) query;
   get_venture_capitalist_info : () -> (opt VentureCapitalist) query;
   get_your_project_notifications : () -> (vec NotificationForOwner) query;
   greet : (text) -> (text) query;
