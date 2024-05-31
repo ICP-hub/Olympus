@@ -2539,3 +2539,30 @@ pub fn get_type_of_registration() -> Vec<String>{
         "DAO".to_string()
     ]
 }
+#[update]
+pub fn edit_job_details(job_id: String, new_details: Jobs) -> String {
+    let principal_id = ic_cdk::api::caller();
+    let is_owner = POST_JOB.with(|jobs| {
+        jobs.borrow().iter().any(|(owner_principal, job_list)| {
+            *owner_principal == principal_id && job_list.iter().any(|j| j.job_data.project_id == job_id)
+        })
+    });
+
+    if !is_owner {
+        return "Error: Only the job owner can edit job details.".to_string();
+    }
+
+    POST_JOB.with(|jobs| {
+        let mut jobs = jobs.borrow_mut();
+        if let Some(job_list) = jobs.get_mut(&principal_id) {
+            if let Some(job) = job_list.iter_mut().find(|j| j.job_data.project_id == job_id) {
+                job.job_data = new_details.clone();  // Assuming Jobs struct implements Clone
+                "Job details updated successfully.".to_string()
+            } else {
+                "Error: Job not found.".to_string()
+            }
+        } else {
+            "Error: Job not found.".to_string()
+        }
+    })
+}

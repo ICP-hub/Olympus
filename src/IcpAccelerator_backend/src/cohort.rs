@@ -30,7 +30,11 @@ pub struct Cohort {
     description: String,
     tags: String,
     criteria: Eligibility,
-    no_of_seats: u8,
+    no_of_seats: u64,
+    country: String,
+    funding_amount: String,
+    funding_type: String,
+    start_date: String,
     deadline: String,
     cohort_launch_date: String,
     cohort_end_date: String,
@@ -76,7 +80,7 @@ pub struct CohortEnrollmentRequest{
 pub type MentorsAppliedForCohort = HashMap<String, Vec<MentorInternal>>;
 pub type CohortInfo = HashMap<String, CohortDetails>;
 pub type ProjectsAppliedForCohort = HashMap<String, Vec<ProjectInfoInternal>>;
-pub type ApplierCount = HashMap<String, u8>;
+pub type ApplierCount = HashMap<String, u64>;
 pub type CapitalistAppliedForCohort = HashMap<String, Vec<VentureCapitalistInternal>>;
 pub type CohortsAssociated = HashMap<String, Vec<String>>;
 pub type CohortEnrollmentRequests = HashMap<Principal, Vec<CohortEnrollmentRequest>>;
@@ -557,14 +561,14 @@ pub fn apply_for_a_cohort_as_a_investor(cohort_id: String) -> String {
 
 #[query]
 pub fn get_no_of_individuals_applied_for_cohort_using_id(cohort_id: String) -> Result<u8, String>{
-    let count : Option<u8> = APPLIER_COUNT.with(|count| count.borrow().get(&cohort_id).cloned());
+    let count : Option<u64> = APPLIER_COUNT.with(|count| count.borrow().get(&cohort_id).cloned());
 
     let project_count_in_cohort = match count {
         Some(count) => count,
         None => return Err("No one has applied for this cohort".to_string())
     };
 
-    Ok(project_count_in_cohort)
+    Ok(project_count_in_cohort.try_into().unwrap())
 }
 
 
@@ -714,7 +718,7 @@ pub fn get_my_peers(cohort_id : String, your_project_id : String){
 pub struct CohortFilterCriteria {
     pub tags: Option<String>,
     pub level_on_rubric: Option<f64>,
-    pub no_of_seats_range: Option<(u8, u8)>,
+    pub no_of_seats_range: Option<(u64, u64)>,
 }
 
 #[query]

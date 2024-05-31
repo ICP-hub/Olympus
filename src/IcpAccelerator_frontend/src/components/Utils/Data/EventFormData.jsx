@@ -42,13 +42,19 @@ export const formFields = [
       required: true,
       label: "Level on rubric required for eligibility",
     },
-    //  {
-    //   id: "area",
-    //   type: "text",
-    //   name: "area",
-    //   required: true,
-    //   label: "Select Area",
-    // },
+    {
+      id: "area",
+      type: "text",
+      name: "area",
+      required: true,
+      label: "Select area",
+    },
+  //   {
+  //    id: "country",
+  //    type: "select",
+  //    name: "country",
+  //    label: "Select country",
+  //  },
     {
       id: "no_of_seats",
       type: "number",
