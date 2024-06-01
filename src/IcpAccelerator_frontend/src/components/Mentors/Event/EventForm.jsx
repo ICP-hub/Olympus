@@ -15,6 +15,7 @@ import Founder from "../../../../assets/images/founderRegistration.png";
 // import { getCurrentRoleStatusRequestHandler } from "../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 import { format, startOfToday } from "date-fns";
 import ReactSelect from "react-select";
+import { useCountries } from "react-countries";
 
 const today = new Date();
 const startDate = new Date("1900-01-01");
@@ -83,7 +84,7 @@ const EventForm = () => {
     interestedDomainsSelectedOptions,
     setInterestedDomainsSelectedOptions,
   ] = useState([]);
-
+  const { countries } = useCountries();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -246,9 +247,8 @@ const EventForm = () => {
     console.log("val", val);
   };
 
-  {
-    console.log(selectedArea);
-  }
+  console.log(selectedArea);
+
   return (
     <>
       <DetailHeroSection HeroImage={HeroImage} />
@@ -323,51 +323,7 @@ const EventForm = () => {
                           </option>
                         ))}
                       </select>
-                    ) : field.name === "area" ? (
-                      <select
-                        name={field.name}
-                        id={field.id}
-                        {...register(field.name)}
-                        className={`bg-gray-50 border-2 ${
-                          errors.area ? "border-red-500" : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                        onFocus={() => handleFocus({ name: field.name })}
-                        onBlur={() => handleBlur({ name: field.name })}
-                        onChange={(e) => setSelectedArea(e.target.value)}
-                      >
-                        <option value="">Select Area</option>
-                        <option value="global">Global</option>
-                        <option value="country">Country</option>
-                      </select>
-                    ) : selectedArea === "country" ? (
-                      <select
-                        name="country"
-                        id="country"
-                        {...register("country")}
-                        className={`bg-gray-50 border-2 ${
-                          errors.country ? "border-red-500" : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                        onFocus={() => handleFocus("country")}
-                        onBlur={() => handleBlur("country")}
-                      >
-                        {[
-                          "One",
-                          "Two",
-                          "Three",
-                          "Four",
-                          "Five",
-                          "Six",
-                          "Seven",
-                          "Eight",
-                          "Nine",
-                        ].map((word, index) => (
-                          <option key={index} value={index + 1}>
-                            {index + 1} ({word})
-                          </option>
-                        ))}
-                      </select>
                     ) : (
-                      // ):null:
                       <input
                         type={
                           field.id === "date_of_birth" ? inputType : field.type
@@ -392,6 +348,64 @@ const EventForm = () => {
                     )}
                   </div>
                 ))}
+                <div className="relative z-0 group mb-6">
+                  <label
+                    htmlFor="tags"
+                    className="flex gap-2 mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    Select area <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    name="area"
+                    id="area"
+                    {...register("area")}
+                    className={`bg-gray-50 border-2 ${
+                      errors.area ? "border-red-500" : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    onFocus={() => handleFocus({ name: "area" })}
+                    onBlur={() => handleBlur({ name: "area" })}
+                    onChange={(e) => setSelectedArea(e.target.value)}
+                  >
+                    <option value="">Select Area</option>
+                    <option value="global">Global</option>
+                    <option value="country">Country</option>
+                  </select>
+                </div>
+                {selectedArea === "country" ? (
+                  <div className="relative z-0 group mb-6">
+                    <label
+                    htmlFor="tags"
+                    className="flex gap-2 mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    Select Country <span className="text-red-500">*</span>
+                  </label>
+                    <select
+                      name="country"
+                      id="country"
+                      {...register("country")}
+                      className={`bg-gray-50 border-2 ${
+                        errors.country ? "border-red-500" : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      onFocus={() => handleFocus("country")}
+                      onBlur={() => handleBlur("country")}
+                    >
+                      <option className="text-lg font-bold" value="">
+                        Select your country
+                      </option>
+                      {countries?.map((expert) => (
+                        <option
+                          key={expert.name}
+                          value={expert.name}
+                          className="text-lg font-bold"
+                        >
+                          {expert.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                ) : (
+                  ""
+                )}
                 <div className="relative z-0 group mb-6">
                   <label
                     htmlFor="tags"
