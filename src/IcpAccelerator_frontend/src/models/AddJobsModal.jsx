@@ -40,7 +40,13 @@ const schema = yup
       ),
   })
   .required();
-const AddJobsModal = ({ onJobsClose, onSubmitHandler, isSubmitting }) => {
+const AddJobsModal = ({
+  onJobsClose,
+  onSubmitHandler,
+  isSubmitting,
+  jobtitle,
+  jobbutton,
+}) => {
   const dispatch = useDispatch();
   const actor = useSelector((currState) => currState.actors.actor);
   const jobCategoryData = useSelector(
@@ -73,7 +79,7 @@ const AddJobsModal = ({ onJobsClose, onSubmitHandler, isSubmitting }) => {
           <div className="relative bg-white rounded-lg shadow">
             <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t ">
               <h3 className="text-xl font-semibold text-gray-900 ">
-                Add Annoucement
+                {jobtitle}
               </h3>
               <button
                 type="button"
@@ -243,7 +249,7 @@ const AddJobsModal = ({ onJobsClose, onSubmitHandler, isSubmitting }) => {
                     wrapperclassName=""
                   />
                 ) : (
-                  "Add Jobs"
+                  `${jobbutton}`
                 )}
               </button>
             </form>
