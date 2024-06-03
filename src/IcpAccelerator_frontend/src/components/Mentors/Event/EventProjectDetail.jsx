@@ -1,21 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import ProjectDetailsCard from "./ProjectDetailsCard";
-import RubricRating from "../RubricRating";
-import MembersProfileDetailsCard from "./MembersProfileDetailsCard";
-import MentorsProfileDetailsCard from "./MentorsProfileDetailsCard";
-import InvestorProfileDetailsCard from "./InvestorProfileDetailsCard";
-import AnnouncementDetailsCard from "./AnnouncementDetailsCard";
-import ProjectJobDetailsCard from "./ProjectJobDetailsCard";
-import ProjectDetailsCommunityRatings from "./ProjectDetailsCommunityRatings";
 import toast, { Toaster } from "react-hot-toast";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import ProjectDocuments from "../../Resources/ProjectDocuments";
 import AddAMentorRequestModal from "../../../models/AddAMentorRequestModal";
 import { Principal } from "@dfinity/principal";
+import MembersProfileDetailsCard from "../../Project/ProjectDetailsPages/MembersProfileDetailsCard";
+import MentorsProfileDetailsCard from "../../Project/ProjectDetailsPages/MentorsProfileDetailsCard";
+import InvestorProfileDetailsCard from "../../Project/ProjectDetailsPages/InvestorProfileDetailsCard";
+import ProjectDetailsCommunityRatings from "../../Project/ProjectDetailsPages/ProjectDetailsCommunityRatings";
+import CohortRubricRating from "./CohortRubricRating";
+import ProjectDetailsCard from "../../Project/ProjectDetailsPages/ProjectDetailsCard";
+import AnnouncementDetailsCard from "../../Project/ProjectDetailsPages/AnnouncementDetailsCard";
+import ProjectJobDetailsCard from "../../Project/ProjectDetailsPages/ProjectJobDetailsCard";
 
 const EventProjectDetail = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { cohortId } = location.state || {};
   const { id } = useParams();
   const actor = useSelector((currState) => currState.actors.actor);
   const principal = useSelector((currState) => currState.internet.principal);
@@ -23,7 +25,7 @@ const EventProjectDetail = () => {
 
   const fetchProjectData = async () => {
     await actor
-      .get_project_details_for_mentor_and_investor(id)
+      .get_project_public_information_using_id(id)
       .then((result) => {
         console.log("result-in-get_my_project", result);
         if (result && Object.keys(result).length > 0) {
@@ -143,8 +145,9 @@ const EventProjectDetail = () => {
 
       case "project-ratings":
         return (
-          <RubricRating
+          <CohortRubricRating
             data={projectData}
+            cohortId={cohortId}
             isProjectLive={true}
             profile={true}
             type={!true}

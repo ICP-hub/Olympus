@@ -801,6 +801,7 @@ service : {
   delete_vc_using_principal : (principal) -> (text);
   delete_venture_capitalist : () -> (text);
   delete_venture_capitalist_caller : () -> (text);
+  edit_job_details : (text, Jobs) -> (text);
   filter_cohorts : (CohortFilterCriteria) -> (vec CohortDetails) query;
   filter_mentors : (MentorFilterCriteria) -> (vec MentorProfile) query;
   filter_out_projects : (FilterCriteria) -> (vec ProjectInfo) query;
