@@ -307,7 +307,7 @@ function CohortPage() {
                         </span>
                         <span className="flex items-center">
                           <span className="ml-2 text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-gray-100 w-fit">
-                          {cohortData?.cohort?.no_of_seats}
+                          {Number(cohortData?.cohort?.no_of_seats)}
                           </span>
                         </span>
                       </div>

@@ -130,7 +130,7 @@ const EventCard = ({ data, approveAndRejectCohort }) => {
                   <div className="flex flex-col font-bold">
                     <p className="text-[#7283EA]">Seats</p>
                     <p className="text-black whitespace-nowrap text-sm">
-                      {no_of_seats}
+                      {Number(no_of_seats)}
                     </p>
                   </div>
                   <div className="flex flex-col font-bold">

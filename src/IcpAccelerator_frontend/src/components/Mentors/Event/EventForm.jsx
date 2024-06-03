@@ -66,7 +66,7 @@ const schema = yup.object({
     .max(9, "level 1 - 9 allowed only")
     .typeError("You must enter a number")
     .required("Required"),
-  // area: yup.string().typeError("You must select area").required("Required"),
+  // area: yup.string().typeError("You must select area").required(),
   no_of_seats: yup.number().typeError("You must enter a number").required(),
 });
 
@@ -78,11 +78,24 @@ const EventForm = () => {
 
   const [inputType, setInputType] = useState("date");
   const [selectedArea, setSelectedArea] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState("");
 
   const [interestedDomainsOptions, setInterestedDomainsOptions] = useState([]);
   const [
     interestedDomainsSelectedOptions,
     setInterestedDomainsSelectedOptions,
+  ] = useState([]);
+  const [interestedFundingTypeOptions, setInterestedFundingTypeOptions] =
+    useState([
+      {
+        value: "Grants",
+        label: "Grants",
+      },
+      { value: "Investments", label: "Investments" },
+    ]);
+  const [
+    interestedFundingTypeSelectedOptions,
+    setInterestedFundingTypeSelectedOptions,
   ] = useState([]);
   const { countries } = useCountries();
   const dispatch = useDispatch();
@@ -156,7 +169,8 @@ const EventForm = () => {
   //   [setError, clearErrors, setIsLoading, setImagePreview, setImageData]
   // );
   const onSubmitHandler = async (data) => {
-    // console.log("data aaya data aaya ", data);
+    const areaValue = selectedArea === "global" ? "global" : selectedCountry;
+    console.log("data aaya data aaya ", data);
     // title: String,
     // description: String,
     // tags: String,
@@ -167,11 +181,15 @@ const EventForm = () => {
     // cohort_end_date: String,
     const eventData = {
       title: data.title,
+      country: areaValue,
+      funding_amount: data.funding_amount,
+      funding_type: data.funding_type,
       description: data.description,
       cohort_launch_date: format(
         new Date(data.cohort_launch_date),
         "yyyy-MM-dd"
       ),
+      start_date: format(new Date(data.cohort_start_date), "yyyy-MM-dd"),
       cohort_end_date: format(new Date(data.cohort_end_date), "yyyy-MM-dd"),
       deadline: format(new Date(data.deadline), "yyyy-MM-dd"),
       tags: data.tags,
@@ -181,7 +199,7 @@ const EventForm = () => {
       },
       no_of_seats: parseInt(data.no_of_seats),
     };
-
+    console.log("eventData ===>>>", eventData);
     try {
       await actor.create_cohort(eventData).then((result) => {
         if (result && result.Ok) {
@@ -350,7 +368,7 @@ const EventForm = () => {
                 ))}
                 <div className="relative z-0 group mb-6">
                   <label
-                    htmlFor="tags"
+                    htmlFor="area"
                     className="flex gap-2 mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
                     Select area <span className="text-red-500">*</span>
@@ -374,11 +392,11 @@ const EventForm = () => {
                 {selectedArea === "country" ? (
                   <div className="relative z-0 group mb-6">
                     <label
-                    htmlFor="tags"
-                    className="flex gap-2 mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
-                  >
-                    Select Country <span className="text-red-500">*</span>
-                  </label>
+                      htmlFor="country"
+                      className="flex gap-2 mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                    >
+                      Select Country <span className="text-red-500">*</span>
+                    </label>
                     <select
                       name="country"
                       id="country"
@@ -388,6 +406,7 @@ const EventForm = () => {
                       } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                       onFocus={() => handleFocus("country")}
                       onBlur={() => handleBlur("country")}
+                      onChange={(e) => setSelectedCountry(e.target.value)}
                     >
                       <option className="text-lg font-bold" value="">
                         Select your country
@@ -464,6 +483,106 @@ const EventForm = () => {
                       {errors.tags.message}
                     </span>
                   )}
+                </div>
+                <div className="relative z-0 group mb-6">
+                  <label
+                    htmlFor="funding_type"
+                    className="flex gap-2 mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    Funding type <span className="text-red-500">*</span>
+                  </label>
+                  <ReactSelect
+                    isMulti
+                    menuPortalTarget={document.body}
+                    menuPosition={"fixed"}
+                    styles={{
+                      menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                      control: (provided, state) => ({
+                        ...provided,
+                        paddingBlock: "2px",
+                        borderRadius: "8px",
+                        border: errors.funding_type
+                          ? "2px solid #ef4444"
+                          : "2px solid #737373",
+                        backgroundColor: "rgb(249 250 251)",
+                        "&::placeholder": {
+                          color: errors.funding_type
+                            ? "#ef4444"
+                            : "currentColor",
+                        },
+                      }),
+                    }}
+                    value={interestedFundingTypeSelectedOptions}
+                    options={interestedFundingTypeOptions}
+                    classNamePrefix="select"
+                    className="basic-multi-select w-full text-start"
+                    placeholder="Select funding type"
+                    name="funding_type"
+                    onChange={(selectedOptions) => {
+                      if (selectedOptions && selectedOptions.length > 0) {
+                        setInterestedFundingTypeSelectedOptions(
+                          selectedOptions
+                        );
+                        clearErrors("funding_type");
+                        setValue(
+                          "funding_type",
+                          selectedOptions
+                            .map((option) => option.value)
+                            .join(", "),
+                          { shouldValidate: true }
+                        );
+                      } else {
+                        setInterestedFundingTypeSelectedOptions([]);
+                        setValue("funding_type", "", { shouldValidate: true });
+                        setError("funding_type", {
+                          type: "required",
+                          message: "Selecting a type is required",
+                        });
+                      }
+                    }}
+                  />
+                  {errors.funding_type && (
+                    <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                      {errors.funding_type.message}
+                    </span>
+                  )}
+                </div>
+                <div className="relative z-0 group mb-6">
+                  <label
+                    htmlFor="funding_amount"
+                    className="flex gap-2 mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    Select funding amount{" "}
+                    <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    name="funding_amount"
+                    id="funding_amount"
+                    {...register("funding_amount")}
+                    className={`bg-gray-50 border-2 ${
+                      errors.funding_amount
+                        ? "border-red-500"
+                        : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    onFocus={() => handleFocus("funding_amount")}
+                    onBlur={() => handleBlur("funding_amount")}
+                  >
+                    <option className="text-lg font-bold" value="">
+                      Select Amount of Funding
+                    </option>
+                    <option value="1k-5k" className="text-lg font-bold">
+                      1k-5k
+                    </option>
+                    <option value="5k-25k" className="text-lg font-bold">
+                      5k-25k
+                    </option>
+                    <option value="25k- 100k" className="text-lg font-bold">
+                      25k-100k
+                    </option>
+                    <option value="100k+" className="text-lg font-bold">
+                      100k+
+                    </option>
+                  </select>
                 </div>
               </div>
               <div className="flex justify-end mt-4">
