@@ -473,6 +473,8 @@ const ProjectDetailsForMentorProject = () => {
       )}
       {isJobsModalOpen && (
         <AddJobsModal
+          jobbutton={"Add"}
+          jobtitle={"Add Job"}
           onJobsClose={handleJobsCloseModal}
           onSubmitHandler={handleAddJob}
         />

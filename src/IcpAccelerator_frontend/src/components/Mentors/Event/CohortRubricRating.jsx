@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
-import { rubric_table_data } from "./ProjectDetails/projectRatingsRubrics";
+import { rubric_table_data } from "../../Project/ProjectDetails/projectRatingsRubrics";
 import { useDispatch, useSelector } from "react-redux";
 import { Line } from "rc-progress";
-import { star } from "../Utils/Data/SvgData";
-import image from "../../../assets/images/success.gif";
-const RubricRating = ({ data }) => {
+import { star } from "../../Utils/Data/SvgData";
+const CohortRubricRating = ({ data, cohortId }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   if (!data) {
@@ -73,7 +72,7 @@ const RubricRating = ({ data }) => {
     if (actor) {
       let argument = {
         project_id: data?.uid,
-        current_role: userCurrentRoleStatusActiveRole,
+        cohort_id: cohortId,
         ratings,
       };
       if (
@@ -82,7 +81,7 @@ const RubricRating = ({ data }) => {
       ) {
         console.log(argument);
         await actor
-          .update_rating(argument)
+          .update_peer_rating_api(argument)
           .then((result) => {
             console.log("result-in-update_rating", result);
             if (result && result.includes(`Ratings updated successfully`)) {
@@ -321,4 +320,4 @@ const RubricRating = ({ data }) => {
   );
 };
 
-export default RubricRating;
+export default CohortRubricRating;

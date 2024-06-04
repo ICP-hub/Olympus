@@ -33,6 +33,7 @@ import EventRegistration from "./components/Mentors/Event/EventRegistration";
 import CohortPage from "./components/Mentors/Event/CohortPage";
 import EventMentorProfile from "./components/Mentors/Event/EventMentorProfile";
 import LiveEventViewAll from "./components/Mentors/Event/LiveEventViewAll";
+import EventProjectDetail from "./components/Mentors/Event/EventProjectDetail";
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
 const ProjectDetails = lazy(() =>
@@ -63,6 +64,7 @@ const AppRoutes = () => {
     { path: "/association", element: <ProjectAssociation /> },
     { path: "/event-register-request", element: <EventRegistration /> },
     { path: "/event-page", element: <CohortPage /> },
+    { path: "/cohort-project-detail/:id", element: <EventProjectDetail /> },
     { path: "/create-user", element: <UserRegForm /> },
     { path: "/create-project", element: <ProjectRegForm /> },
     // { path: "/create-investor", element: <InvestorRegistration /> },

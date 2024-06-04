@@ -324,9 +324,11 @@ function ProjectDetailsCard({
                           </button>
                         </a>
                       ) : (
-                        <button className="font-[950] border text-[#3505B2] py-[7px] px-[9px] rounded-md border-[#C7C7C7] bg-[#FFFFFF] text-nowrap">
-                          Live Now
-                        </button>
+                        live && (
+                          <button className="font-[950] border text-[#3505B2] py-[7px] px-[9px] rounded-md border-[#C7C7C7] bg-[#FFFFFF] text-nowrap">
+                            Live Now
+                          </button>
+                        )
                       ))}
                   </div>
                 </div>

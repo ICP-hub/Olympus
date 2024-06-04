@@ -152,8 +152,8 @@ const LiveProjects = ({ progress }) => {
   return (
     <>
       <div className="flex max-md:flex-col -mx-4 mb-4 items-stretch">
-        <div className=" md:w-3/4">
-          <div className="w-full grid gap-2 sm:w-grid-cols-2 md:grid-cols-3 px-4 md:gap-4 sm:gap-4">
+        <div className=" md:w-3/4 content-center">
+          <div className="w-full items-center px-4 md:gap-4 sm:gap-4">
             {noData ||
             (allProjectData &&
               allProjectData.filter(
@@ -163,7 +163,8 @@ const LiveProjects = ({ progress }) => {
               ).length == 0) ? (
               <NoDataCard image={NoData} desc={"No featured projects yet"} />
             ) : (
-              <>
+              
+          <div className="w-full grid gap-2 grid-cols-1 md:grid-cols-3 md:px-4 md:gap-4 sm:gap-4">
                 {allProjectData &&
                   allProjectData
                     .filter(
@@ -323,7 +324,7 @@ const LiveProjects = ({ progress }) => {
                         </div>
                       );
                     })}
-              </>
+              </div>
             )}
           </div>
         </div>

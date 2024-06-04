@@ -37,11 +37,15 @@ type Blog = record { blog_url : text; timestamp : nat64 };
 type Cohort = record {
   cohort_end_date : text;
   title : text;
+  country : text;
   tags : text;
   description : text;
   deadline : text;
+  start_date : text;
+  funding_type : text;
   criteria : Eligibility;
-  no_of_seats : nat8;
+  funding_amount : text;
+  no_of_seats : nat64;
   cohort_launch_date : text;
 };
 type CohortDetails = record {
@@ -64,7 +68,7 @@ type CohortEnrollmentRequest = record {
 type CohortFilterCriteria = record {
   level_on_rubric : opt float64;
   tags : opt text;
-  no_of_seats_range : opt record { nat8; nat8 };
+  no_of_seats_range : opt record { nat64; nat64 };
 };
 type CohortRequest = record {
   rejected_at : nat64;
@@ -797,6 +801,7 @@ service : {
   delete_vc_using_principal : (principal) -> (text);
   delete_venture_capitalist : () -> (text);
   delete_venture_capitalist_caller : () -> (text);
+  edit_job_details : (text, Jobs) -> (text);
   filter_cohorts : (CohortFilterCriteria) -> (vec CohortDetails) query;
   filter_mentors : (MentorFilterCriteria) -> (vec MentorProfile) query;
   filter_out_projects : (FilterCriteria) -> (vec ProjectInfo) query;
