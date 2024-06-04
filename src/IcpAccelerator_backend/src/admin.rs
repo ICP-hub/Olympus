@@ -7,10 +7,10 @@ use crate::latest_popular_projects::INCUBATED_PROJECTS;
 use crate::latest_popular_projects::LIVE_PROJECTS;
 use crate::mentor::*;
 use crate::project_registration::*;
-use crate::state_handler::Candid;
-use crate::state_handler::StoredPrincipal;
 use crate::state_handler::mutate_state;
 use crate::state_handler::read_state;
+use crate::state_handler::Candid;
+use crate::state_handler::StoredPrincipal;
 use crate::user_module::*;
 use crate::vc_registration::*;
 use crate::CohortDetails;
@@ -62,10 +62,10 @@ enum MyError {
 }
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
-pub struct UpdateCounts{
+pub struct UpdateCounts {
     project_update: Option<u32>,
     mentor_update: Option<u32>,
-    vc_update: Option<u32>
+    vc_update: Option<u32>,
 }
 
 thread_local! {
@@ -75,21 +75,21 @@ thread_local! {
     static DECLINED_COHORTS: RefCell<HashMap<String, Vec<CohortRequest>>> = RefCell::new(HashMap::new());
 }
 
-pub fn pre_upgrade_admin(){
-    ADMIN_NOTIFICATIONS.with(|data| {
-        match storage::stable_save((data.borrow().clone(),)) {
+pub fn pre_upgrade_admin() {
+    ADMIN_NOTIFICATIONS.with(
+        |data| match storage::stable_save((data.borrow().clone(),)) {
             Ok(_) => ic_cdk::println!("ADMIN_NOTIFICATIONS saved successfully."),
             Err(e) => ic_cdk::println!("Failed to save ADMIN_NOTIFICATIONS: {:?}", e),
-        }
-    });
+        },
+    );
 }
 
-pub fn post_upgrade_admin(){
+pub fn post_upgrade_admin() {
     match stable_restore::<(HashMap<Principal, Vec<Notification>>,)>() {
         Ok((restored_admin_notifications,)) => {
             ADMIN_NOTIFICATIONS.with(|data| *data.borrow_mut() = restored_admin_notifications);
             ic_cdk::println!("ADMIN_NOTIFICATIONS restored successfully.");
-        },
+        }
         Err(e) => ic_cdk::println!("Failed to restore ADMIN_NOTIFICATIONS: {:?}", e),
     }
 }
@@ -173,20 +173,28 @@ pub async fn send_approval_request(
 pub fn approve_mentor_creation_request(requester: Principal, approve: bool) -> String {
     read_state(|state| {
         let mut result = String::new();
-        if let Some(mut mentor_internal) = state.mentor_awaits_response.get(&StoredPrincipal(requester)) {
+        if let Some(mut mentor_internal) = state
+            .mentor_awaits_response
+            .get(&StoredPrincipal(requester))
+        {
             if approve || mentor_internal.0.approve {
                 mentor_internal.0.decline = false;
                 mentor_internal.0.approve = approve;
 
                 // Register mentor
                 mutate_state(|state| {
-                    state.mentor_storage.insert(StoredPrincipal(requester), mentor_internal);
+                    state
+                        .mentor_storage
+                        .insert(StoredPrincipal(requester), mentor_internal);
                 });
 
                 // Approve mentor
                 mutate_state(|state| {
-                    if let Some(mut user_roles) = state.role_status.get(&StoredPrincipal(requester)) {
-                        if let Some(user_role) = user_roles.0.iter_mut().find(|r| r.name == "mentor") {
+                    if let Some(mut user_roles) = state.role_status.get(&StoredPrincipal(requester))
+                    {
+                        if let Some(user_role) =
+                            user_roles.0.iter_mut().find(|r| r.name == "mentor")
+                        {
                             user_role.status = "approved".to_string();
                             user_role.approved_on = Some(time());
                         }
@@ -195,17 +203,25 @@ pub fn approve_mentor_creation_request(requester: Principal, approve: bool) -> S
 
                 // Remove from awaiters
                 mutate_state(|state| {
-                    state.mentor_awaits_response.remove(&StoredPrincipal(requester));
+                    state
+                        .mentor_awaits_response
+                        .remove(&StoredPrincipal(requester));
                 });
 
                 // Change notification status
                 result = format!("Requester with principal id {} is approved", requester);
                 change_notification_status(requester, "mentor".to_string(), "approved".to_string());
             } else {
-                result = format!("Requester with principal id {} could not be approved", requester);
+                result = format!(
+                    "Requester with principal id {} could not be approved",
+                    requester
+                );
             }
         } else {
-            result = format!("Requester with principal id {} has not registered", requester);
+            result = format!(
+                "Requester with principal id {} has not registered",
+                requester
+            );
         }
         result
     })
@@ -213,22 +229,33 @@ pub fn approve_mentor_creation_request(requester: Principal, approve: bool) -> S
 
 pub fn decline_mentor_creation_request(requester: Principal, decline: bool) -> String {
     mutate_state(|state| {
-        if let Some(mut mentor_internal) = state.mentor_awaits_response.get(&StoredPrincipal(requester)) {
+        if let Some(mut mentor_internal) = state
+            .mentor_awaits_response
+            .get(&StoredPrincipal(requester))
+        {
             if decline {
                 mentor_internal.0.decline = decline;
                 mentor_internal.0.approve = false;
 
-                if let Some(res) = state.mentor_awaits_response.get(&StoredPrincipal(requester)) {
-                    state.mentor_declined_request.insert(StoredPrincipal(requester), res);
+                if let Some(res) = state
+                    .mentor_awaits_response
+                    .get(&StoredPrincipal(requester))
+                {
+                    state
+                        .mentor_declined_request
+                        .insert(StoredPrincipal(requester), res);
                     if let Some(user_roles) = state.role_status.get(&StoredPrincipal(requester)) {
                         let mut roles_clone = user_roles.0.clone();
-                        if let Some(user_role) = roles_clone.iter_mut().find(|r| r.name == "mentor") {
+                        if let Some(user_role) = roles_clone.iter_mut().find(|r| r.name == "mentor")
+                        {
                             user_role.status = "default".to_string();
                             user_role.rejected_on = Some(time());
                         }
                     }
 
-                    state.mentor_awaits_response.remove(&StoredPrincipal(requester));
+                    state
+                        .mentor_awaits_response
+                        .remove(&StoredPrincipal(requester));
                     change_notification_status(
                         requester,
                         "mentor".to_string(),
@@ -496,7 +523,6 @@ fn project_update_awaiting_approval() -> HashMap<String, ProjectUpdateRequest> {
     })
 }
 
-
 #[update]
 pub fn decline_vc_creation_request(requester: Principal, decline: bool) -> String {
     mutate_state(|state| {
@@ -507,10 +533,14 @@ pub fn decline_vc_creation_request(requester: Principal, decline: bool) -> Strin
 
                 match state.vc_awaits_response.get(&StoredPrincipal(requester)) {
                     Some(res) => {
-                        state.vc_declined_request.insert(StoredPrincipal(requester), Candid(res.0.clone()));
-                        if let Some(user_roles) = state.role_status.get(&StoredPrincipal(requester)) {
+                        state
+                            .vc_declined_request
+                            .insert(StoredPrincipal(requester), Candid(res.0.clone()));
+                        if let Some(user_roles) = state.role_status.get(&StoredPrincipal(requester))
+                        {
                             let mut roles_clone = user_roles.0.clone();
-                            if let Some(user_role) = roles_clone.iter_mut().find(|r| r.name == "vc") {
+                            if let Some(user_role) = roles_clone.iter_mut().find(|r| r.name == "vc")
+                            {
                                 user_role.status = "default".to_string();
                                 user_role.rejected_on = Some(time());
                             }
@@ -557,11 +587,15 @@ pub fn approve_vc_creation_request(requester: Principal, approve: bool) -> Strin
 
                 match state.vc_awaits_response.get(&StoredPrincipal(requester)) {
                     Some(res) => {
-                        state.vc_storage.insert(StoredPrincipal(requester), Candid(res.0.clone()));
+                        state
+                            .vc_storage
+                            .insert(StoredPrincipal(requester), Candid(res.0.clone()));
 
-                        if let Some(user_roles) = state.role_status.get(&StoredPrincipal(requester)) {
+                        if let Some(user_roles) = state.role_status.get(&StoredPrincipal(requester))
+                        {
                             let mut roles_clone = user_roles.0.clone();
-                            if let Some(user_role) = roles_clone.iter_mut().find(|r| r.name == "vc") {
+                            if let Some(user_role) = roles_clone.iter_mut().find(|r| r.name == "vc")
+                            {
                                 user_role.status = "approved".to_string();
                                 user_role.approved_on = Some(time());
                             }
@@ -601,14 +635,23 @@ pub fn approve_vc_creation_request(requester: Principal, approve: bool) -> Strin
 #[update]
 pub fn approve_vc_profile_update(requester: Principal, approve: bool) -> String {
     mutate_state(|state| {
-        if let Some(vc_internal) = state.vc_profile_edit_awaits.get(&StoredPrincipal(requester)) {
+        if let Some(vc_internal) = state
+            .vc_profile_edit_awaits
+            .get(&StoredPrincipal(requester))
+        {
             if approve {
-                if let Some(mut existing_vc_internal) = state.vc_storage.get(&StoredPrincipal(requester)) {
+                if let Some(mut existing_vc_internal) =
+                    state.vc_storage.get(&StoredPrincipal(requester))
+                {
                     if let Some(update) = &vc_internal.0.updated_info {
                         existing_vc_internal.0.params.registered_under_any_hub = update
                             .registered_under_any_hub
                             .clone()
-                            .or(existing_vc_internal.0.params.registered_under_any_hub.clone());
+                            .or(existing_vc_internal
+                                .0
+                                .params
+                                .registered_under_any_hub
+                                .clone());
 
                         existing_vc_internal.0.params.project_on_multichain = update
                             .project_on_multichain
@@ -661,7 +704,8 @@ pub fn approve_vc_profile_update(requester: Principal, approve: bool) -> String 
                         existing_vc_internal.0.params.number_of_portfolio_companies =
                             update.number_of_portfolio_companies;
 
-                        existing_vc_internal.0.params.portfolio_link = update.portfolio_link.clone();
+                        existing_vc_internal.0.params.portfolio_link =
+                            update.portfolio_link.clone();
 
                         existing_vc_internal.0.params.reason_for_joining =
                             update.reason_for_joining.clone();
@@ -685,7 +729,9 @@ pub fn approve_vc_profile_update(requester: Principal, approve: bool) -> String 
                 }
             }
 
-            state.vc_profile_edit_awaits.remove(&StoredPrincipal(requester));
+            state
+                .vc_profile_edit_awaits
+                .remove(&StoredPrincipal(requester));
             change_notification_status(requester, "vc".to_string(), "approved".to_string());
 
             if approve {
@@ -705,14 +751,18 @@ pub fn approve_vc_profile_update(requester: Principal, approve: bool) -> String 
     })
 }
 
-
 #[update]
 pub fn decline_vc_profile_update_request(requester: Principal, decline: bool) -> String {
     mutate_state(|state| {
-        let previous_profile = state.vc_storage.get(&StoredPrincipal(requester))
+        let previous_profile = state
+            .vc_storage
+            .get(&StoredPrincipal(requester))
             .map(|vc_internal| vc_internal.0.params.clone());
 
-        if let Some(vc_internal) = state.vc_profile_edit_awaits.get(&StoredPrincipal(requester)) {
+        if let Some(vc_internal) = state
+            .vc_profile_edit_awaits
+            .get(&StoredPrincipal(requester))
+        {
             let declined_data = UpdateInfoStruct {
                 original_info: previous_profile,
                 updated_info: vc_internal.0.updated_info.clone(),
@@ -721,8 +771,12 @@ pub fn decline_vc_profile_update_request(requester: Principal, decline: bool) ->
                 sent_at: 0,
             };
             if decline {
-                state.vc_profile_edit_declined.insert(StoredPrincipal(requester), Candid(declined_data.clone()));
-                state.vc_profile_edit_awaits.remove(&StoredPrincipal(requester));
+                state
+                    .vc_profile_edit_declined
+                    .insert(StoredPrincipal(requester), Candid(declined_data.clone()));
+                state
+                    .vc_profile_edit_awaits
+                    .remove(&StoredPrincipal(requester));
                 change_notification_status(requester, "vc".to_string(), "declined".to_string());
                 format!("Requester with principal id {} is declined", requester)
             } else {
@@ -745,7 +799,9 @@ pub fn decline_project_profile_update_request(requester: String, decline: bool) 
     mutate_state(|state| {
         if let Some(vc_internal) = state.pending_project_details.get(&requester) {
             if decline {
-                state.declined_project_details.insert(requester.clone(), Candid(vc_internal.0.clone()));
+                state
+                    .declined_project_details
+                    .insert(requester.clone(), Candid(vc_internal.0.clone()));
                 state.pending_project_details.remove(&requester);
                 format!("Requester with principal id {} is declined", requester)
             } else {
@@ -767,41 +823,60 @@ pub fn decline_project_profile_update_request(requester: String, decline: bool) 
 
 pub fn approve_mentor_profile_update(requester: Principal, approve: bool) -> String {
     mutate_state(|state| {
-        if let Some(updated_profile) = state.mentor_profile_edit_awaits.get(&StoredPrincipal(requester)) {
+        if let Some(updated_profile) = state
+            .mentor_profile_edit_awaits
+            .get(&StoredPrincipal(requester))
+        {
             if approve {
-                if let Some(mut mentor_internal) = state.mentor_storage.get(&StoredPrincipal(requester)) {
+                if let Some(mut mentor_internal) =
+                    state.mentor_storage.get(&StoredPrincipal(requester))
+                {
                     if let Some(ref updated_info) = updated_profile.0.updated_info {
-                        mentor_internal.0.profile.preferred_icp_hub = updated_info.preferred_icp_hub
+                        mentor_internal.0.profile.preferred_icp_hub = updated_info
+                            .preferred_icp_hub
                             .clone()
                             .or(mentor_internal.0.profile.preferred_icp_hub.clone());
 
-                        mentor_internal.0.profile.multichain = updated_info.multichain
+                        mentor_internal.0.profile.multichain = updated_info
+                            .multichain
                             .clone()
                             .or(mentor_internal.0.profile.multichain.clone());
 
                         mentor_internal.0.profile.existing_icp_project_porfolio = updated_info
                             .existing_icp_project_porfolio
                             .clone()
-                            .or(mentor_internal.0.profile.existing_icp_project_porfolio.clone());
+                            .or(mentor_internal
+                                .0
+                                .profile
+                                .existing_icp_project_porfolio
+                                .clone());
 
-                        mentor_internal.0.profile.area_of_expertise = updated_info.area_of_expertise.clone();
+                        mentor_internal.0.profile.area_of_expertise =
+                            updated_info.area_of_expertise.clone();
                         mentor_internal.0.profile.category_of_mentoring_service =
                             updated_info.category_of_mentoring_service.clone();
 
-                        mentor_internal.0.profile.existing_icp_mentor = updated_info.existing_icp_mentor;
+                        mentor_internal.0.profile.existing_icp_mentor =
+                            updated_info.existing_icp_mentor;
                         mentor_internal.0.profile.icp_hub_or_spoke = updated_info.icp_hub_or_spoke;
-                        mentor_internal.0.profile.linkedin_link = updated_info.linkedin_link.clone();
+                        mentor_internal.0.profile.linkedin_link =
+                            updated_info.linkedin_link.clone();
                         mentor_internal.0.profile.website = updated_info.website.clone();
-                        mentor_internal.0.profile.years_of_mentoring = updated_info.years_of_mentoring.clone();
-                        mentor_internal.0.profile.reason_for_joining = updated_info.reason_for_joining.clone();
+                        mentor_internal.0.profile.years_of_mentoring =
+                            updated_info.years_of_mentoring.clone();
+                        mentor_internal.0.profile.reason_for_joining =
+                            updated_info.reason_for_joining.clone();
                         mentor_internal.0.profile.user_data = updated_info.user_data.clone();
-                        mentor_internal.0.profile.hub_owner = updated_info.hub_owner
+                        mentor_internal.0.profile.hub_owner = updated_info
+                            .hub_owner
                             .clone()
                             .or(mentor_internal.0.profile.hub_owner.clone());
                     }
                 }
 
-                state.mentor_profile_edit_awaits.remove(&StoredPrincipal(requester));
+                state
+                    .mentor_profile_edit_awaits
+                    .remove(&StoredPrincipal(requester));
                 change_notification_status(requester, "mentor".to_string(), "approved".to_string());
                 format!("Requester with principal id {} is approved", requester)
             } else {
@@ -822,10 +897,15 @@ pub fn approve_mentor_profile_update(requester: Principal, approve: bool) -> Str
 #[update]
 pub fn decline_mentor_profile_update_request(requester: Principal, decline: bool) -> String {
     mutate_state(|state| {
-        let previous_profile = state.mentor_storage.get(&StoredPrincipal(requester))
+        let previous_profile = state
+            .mentor_storage
+            .get(&StoredPrincipal(requester))
             .map(|mentor_internal| mentor_internal.0.profile.clone());
 
-        if let Some(updated_profile) = state.mentor_profile_edit_awaits.get(&StoredPrincipal(requester)) {
+        if let Some(updated_profile) = state
+            .mentor_profile_edit_awaits
+            .get(&StoredPrincipal(requester))
+        {
             let declined_data = MentorUpdateRequest {
                 original_info: previous_profile,
                 updated_info: updated_profile.0.updated_info.clone(),
@@ -835,8 +915,12 @@ pub fn decline_mentor_profile_update_request(requester: Principal, decline: bool
             };
 
             if decline {
-                state.mentor_profile_edit_declined.insert(StoredPrincipal(requester), Candid(declined_data.clone()));
-                state.mentor_profile_edit_awaits.remove(&StoredPrincipal(requester));
+                state
+                    .mentor_profile_edit_declined
+                    .insert(StoredPrincipal(requester), Candid(declined_data.clone()));
+                state
+                    .mentor_profile_edit_awaits
+                    .remove(&StoredPrincipal(requester));
                 change_notification_status(requester, "mentor".to_string(), "declined".to_string());
 
                 format!("Requester with principal id {} is declined", requester)
@@ -858,59 +942,99 @@ pub fn decline_mentor_profile_update_request(requester: Principal, decline: bool
 #[update]
 pub fn approve_project_creation_request(requester: Principal) -> String {
     mutate_state(|state| {
-        if let Some(mut project_internal) = state.project_awaits_response.get(&StoredPrincipal(requester)) {
+        if let Some(mut project_internal) = state
+            .project_awaits_response
+            .get(&StoredPrincipal(requester))
+        {
             project_internal.0.is_verified = true;
 
-            if let Some(res) = state.project_awaits_response.get(&StoredPrincipal(requester)) {
-                state.project_storage.insert(StoredPrincipal(requester), Candid(vec![res.0.clone()]));
+            if let Some(res) = state
+                .project_awaits_response
+                .get(&StoredPrincipal(requester))
+            {
+                state
+                    .project_storage
+                    .insert(StoredPrincipal(requester), Candid(vec![res.0.clone()]));
 
                 if let Some(user_roles) = state.role_status.get(&StoredPrincipal(requester)) {
-                            let mut roles_clone = user_roles.0.clone();
-                            if let Some(user_role) = roles_clone.iter_mut().find(|r| r.name == "project") {
-                                user_role.status = "approved".to_string();
-                                user_role.approved_on = Some(time());
-                            }
-                        }
+                    let mut roles_clone = user_roles.0.clone();
+                    if let Some(user_role) = roles_clone.iter_mut().find(|r| r.name == "project") {
+                        user_role.status = "approved".to_string();
+                        user_role.approved_on = Some(time());
+                    }
+                }
 
-                state.project_awaits_response.remove(&StoredPrincipal(requester));
-                change_notification_status(requester, "project".to_string(), "approved".to_string());
+                state
+                    .project_awaits_response
+                    .remove(&StoredPrincipal(requester));
+                change_notification_status(
+                    requester,
+                    "project".to_string(),
+                    "approved".to_string(),
+                );
 
                 format!("Requester with principal id {} is approved", requester)
             } else {
-                format!("Requester with principal id {} has not registered", requester)
+                format!(
+                    "Requester with principal id {} has not registered",
+                    requester
+                )
             }
         } else {
-            format!("Requester with principal id {} could not be approved", requester)
+            format!(
+                "Requester with principal id {} could not be approved",
+                requester
+            )
         }
     })
 }
 
 #[update]
 pub fn decline_project_creation_request(requester: Principal) -> String {
-     mutate_state(|state| {
-        if let Some(mut project_internal) = state.project_awaits_response.get(&StoredPrincipal(requester)) {
+    mutate_state(|state| {
+        if let Some(mut project_internal) = state
+            .project_awaits_response
+            .get(&StoredPrincipal(requester))
+        {
             project_internal.0.is_verified = false;
 
-            if let Some(res) = state.project_awaits_response.get(&StoredPrincipal(requester)) {
-                state.project_declined_request.insert(StoredPrincipal(requester), Candid(res.0.clone()));
+            if let Some(res) = state
+                .project_awaits_response
+                .get(&StoredPrincipal(requester))
+            {
+                state
+                    .project_declined_request
+                    .insert(StoredPrincipal(requester), Candid(res.0.clone()));
 
                 if let Some(user_roles) = state.role_status.get(&StoredPrincipal(requester)) {
-                            let mut roles_clone = user_roles.0.clone();
-                            if let Some(user_role) = roles_clone.iter_mut().find(|r| r.name == "project") {
-                                user_role.status = "default".to_string();
-                                user_role.rejected_on = Some(time());
-                            }
-                        }
+                    let mut roles_clone = user_roles.0.clone();
+                    if let Some(user_role) = roles_clone.iter_mut().find(|r| r.name == "project") {
+                        user_role.status = "default".to_string();
+                        user_role.rejected_on = Some(time());
+                    }
+                }
 
-                state.project_awaits_response.remove(&StoredPrincipal(requester));
-                change_notification_status(requester, "project".to_string(), "declined".to_string());
+                state
+                    .project_awaits_response
+                    .remove(&StoredPrincipal(requester));
+                change_notification_status(
+                    requester,
+                    "project".to_string(),
+                    "declined".to_string(),
+                );
 
                 format!("Requester with principal id {} is declined", requester)
             } else {
-                format!("Requester with principal id {} has not registered", requester)
+                format!(
+                    "Requester with principal id {} has not registered",
+                    requester
+                )
             }
         } else {
-            format!("Requester with principal id {} could not be declined", requester)
+            format!(
+                "Requester with principal id {} could not be declined",
+                requester
+            )
         }
     })
 }
@@ -920,7 +1044,9 @@ pub fn approve_project_update(requester: Principal, project_id: String, approve:
     mutate_state(|state| {
         if let Some(project_update_request) = state.pending_project_details.remove(&project_id) {
             if approve {
-                if let Some(mut project_list) = state.project_storage.get(&StoredPrincipal(requester)) {
+                if let Some(mut project_list) =
+                    state.project_storage.get(&StoredPrincipal(requester))
+                {
                     if let Some(project) = project_list.0.iter_mut().find(|p| p.uid == project_id) {
                         project.params.project_name =
                             project_update_request.0.updated_info.project_name;
@@ -942,8 +1068,10 @@ pub fn approve_project_update(requester: Principal, project_id: String, approve:
                             project_update_request.0.updated_info.promotional_video;
                         project.params.github_link =
                             project_update_request.0.updated_info.github_link;
-                        project.params.reason_to_join_incubator =
-                            project_update_request.0.updated_info.reason_to_join_incubator;
+                        project.params.reason_to_join_incubator = project_update_request
+                            .0
+                            .updated_info
+                            .reason_to_join_incubator;
                         project.params.project_description =
                             project_update_request.0.updated_info.project_description;
                         project.params.project_cover =
@@ -983,7 +1111,11 @@ pub fn approve_project_update(requester: Principal, project_id: String, approve:
                     project_id
                 );
             } else {
-                change_notification_status(requester, "project".to_string(), "declined".to_string());
+                change_notification_status(
+                    requester,
+                    "project".to_string(),
+                    "declined".to_string(),
+                );
                 // Optionally handle declined updates, such as logging or notifying the requester.
                 return format!("Project update for ID {} was declined.", project_id);
             }
@@ -995,8 +1127,8 @@ pub fn approve_project_update(requester: Principal, project_id: String, approve:
 #[update]
 pub fn add_job_type(job_type: String) -> String {
     mutate_state(|state| {
-        state.job_type.push(&job_type);
-        format!("Job type added")
+        state.job_type.insert(job_type.clone(), job_type);
+        "Job type added".to_string()
     })
 }
 
@@ -1076,7 +1208,6 @@ pub fn get_spotlight_project_uids() -> Vec<String> {
     })
 }
 
-
 #[query]
 fn get_pending_cycles() -> u128 {
     canister_balance128()
@@ -1141,14 +1272,17 @@ fn get_total_approved_list_with_user_data() -> HashMap<Principal, ApprovedList> 
         principals_roles
             .iter()
             .filter_map(|(stored_principal, roles)| {
-                state.user_storage.get(stored_principal).map(|user_info_internal| {
-                    let principal = stored_principal.0; // Extract Principal from StoredPrincipal
-                    let approved_list = ApprovedList {
-                        approved_type: roles.clone(),
-                        user_data: user_info_internal.0.params.clone(), // Directly use UserInformation
-                    };
-                    (principal, approved_list)
-                })
+                state
+                    .user_storage
+                    .get(stored_principal)
+                    .map(|user_info_internal| {
+                        let principal = stored_principal.0; // Extract Principal from StoredPrincipal
+                        let approved_list = ApprovedList {
+                            approved_type: roles.clone(),
+                            user_data: user_info_internal.0.params.clone(), // Directly use UserInformation
+                        };
+                        (principal, approved_list)
+                    })
             })
             .collect()
     });
@@ -1201,8 +1335,10 @@ fn get_total_pending_request() -> usize {
     let mentor_pending = read_state(|state| state.mentor_awaits_response.len());
     let vc_pending = read_state(|state| state.vc_awaits_response.len());
     let project_pending = read_state(|state| state.project_awaits_response.len());
-    
-    (mentor_pending + vc_pending + project_pending).try_into().unwrap()
+
+    (mentor_pending + vc_pending + project_pending)
+        .try_into()
+        .unwrap()
 }
 
 // #[query]
@@ -1212,7 +1348,10 @@ fn get_total_pending_request() -> usize {
 fn update_dapp_link(project_id: String, new_dapp_link: String) -> String {
     mutate_state(|state| {
         // Access the project storage from the state
-        if let Some(mut project_list) = state.project_storage.get(&StoredPrincipal(ic_cdk::caller())) {
+        if let Some(mut project_list) = state
+            .project_storage
+            .get(&StoredPrincipal(ic_cdk::caller()))
+        {
             // Iterate through each project in the list
             if let Some(project) = project_list.0.iter_mut().find(|p| p.uid == project_id) {
                 // If a project with the matching project_id is found, update its dapp_link
@@ -1237,10 +1376,17 @@ pub struct TopData {
 fn get_joined_on_(principal: &Principal, roletype: String) -> Option<u64> {
     read_state(|state| {
         // Access the role status from the state
-        state.role_status.get(&StoredPrincipal(*principal)).and_then(|roles| {
-            // Find the role with the specified roletype and status "approved"
-            roles.0.iter().find(|role| role.name == roletype && role.status == "approved").and_then(|role| role.approved_on)
-        })
+        state
+            .role_status
+            .get(&StoredPrincipal(*principal))
+            .and_then(|roles| {
+                // Find the role with the specified roletype and status "approved"
+                roles
+                    .0
+                    .iter()
+                    .find(|role| role.name == roletype && role.status == "approved")
+                    .and_then(|role| role.approved_on)
+            })
     })
 }
 
@@ -1328,7 +1474,7 @@ fn get_top_5_vcs() -> Vec<(Principal, TopData, usize)> {
 //         let application_form = application_form.borrow(); // Access the RefCell for reading
 
 //         for (_principal, projects) in application_form.iter() {
-            
+
 //             for project_internal in projects {
 
 //                 let project_info = &project_internal.params;
@@ -1341,7 +1487,7 @@ fn get_top_5_vcs() -> Vec<(Principal, TopData, usize)> {
 //                 let total_count = mentor_count + vc_count;
 
 //                 // Placeholder for TopData - adjust according to actual data retrieval method
-                
+
 //                 let top_data = TopData {
 //                     full_name: project_info.user_data.full_name.clone(),
 //                     profile_picture: Some(project_info.project_logo.clone()),
@@ -1361,7 +1507,6 @@ fn get_top_5_vcs() -> Vec<(Principal, TopData, usize)> {
 //     // Taking the top 5 projects based on total counts
 //     project_counts.into_iter().take(5).collect()
 // }
-
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default)]
 pub struct TopDataProject {
@@ -1383,9 +1528,7 @@ fn get_top_5_projects() -> Vec<(String, TopDataProject, usize)> {
         let application_form = application_form.borrow(); // Access the RefCell for reading
 
         for (_principal, projects) in application_form.iter() {
-            
             for project_internal in projects {
-
                 let project_info = &project_internal.params;
 
                 let mentor_count = project_info
@@ -1396,7 +1539,7 @@ fn get_top_5_projects() -> Vec<(String, TopDataProject, usize)> {
                 let total_count = mentor_count + vc_count;
 
                 // Placeholder for TopData - adjust according to actual data retrieval method
-                
+
                 let top_data = TopDataProject {
                     full_name: project_info.user_data.full_name.clone(),
                     profile_picture: Some(project_info.project_logo.clone()),
@@ -1418,20 +1561,16 @@ fn get_top_5_projects() -> Vec<(String, TopDataProject, usize)> {
     project_counts.into_iter().take(5).collect()
 }
 
-
-
-
 // #[query]
 // fn get_top_5_projects() -> Vec<(String, TopData, usize)> {
 //     // Temporarily holding the projects to sort and filter
 //     let mut project_counts: Vec<(Principal, String, TopData, usize)> = Vec::new();
 
-    
 //     APPLICATION_FORM.with(|application_form| {
-//         let application_form = application_form.borrow(); 
+//         let application_form = application_form.borrow();
 
 //         for (principal, projects) in application_form.iter() {
-            
+
 //             for project_internal in projects {
 
 //                 let project_info = &project_internal.params;
@@ -1442,7 +1581,7 @@ fn get_top_5_projects() -> Vec<(String, TopDataProject, usize)> {
 //                     .map_or(0, |v| v.len());
 //                 let vc_count = project_info.vc_assigned.as_ref().map_or(0, |v| v.len());
 //                 let total_count = mentor_count + vc_count;
-                
+
 //                 let top_data = TopData {
 //                     full_name: project_info.user_data.full_name.clone(),
 //                     profile_picture: Some(project_info.project_logo.clone()),
@@ -1462,7 +1601,6 @@ fn get_top_5_projects() -> Vec<(String, TopDataProject, usize)> {
 //     // Taking the top 5 projects based on total counts
 //     project_counts.into_iter().take(5).collect()
 // }
-
 
 #[query]
 pub fn change_live_status(
@@ -1653,8 +1791,12 @@ pub fn update_vc_profile(requester: Principal, vc_internal: VentureCapitalist) -
                 .clone()
                 .or(existing_vc_internal.params.registered_country.clone());
 
-            existing_vc_internal.params.fund_size = Some(vc_internal.fund_size.map(|size| (size * 100.0).round() / 100.0)
-                                  .unwrap_or(0.0));
+            existing_vc_internal.params.fund_size = Some(
+                vc_internal
+                    .fund_size
+                    .map(|size| (size * 100.0).round() / 100.0)
+                    .unwrap_or(0.0),
+            );
             existing_vc_internal.params.assets_under_management =
                 vc_internal.assets_under_management.clone();
 
@@ -1736,7 +1878,10 @@ pub fn update_mentor_profile(requester: Principal, updated_profile: MentorProfil
 
 pub async fn send_cohort_request_to_admin(cohort_request: CohortRequest) -> String {
     let cohort_id = cohort_request.cohort_details.cohort_id.clone(); // Clone the cohort ID for use in the message.
-    let message = format!("Cohort creation request with ID {} has been sent to admin.", cohort_id);
+    let message = format!(
+        "Cohort creation request with ID {} has been sent to admin.",
+        cohort_id
+    );
     COHORT_REQUEST.with(|cohort_requests| {
         let mut cohort_requests = cohort_requests.borrow_mut();
         cohort_requests
@@ -1763,19 +1908,22 @@ pub fn get_pending_cohort_requests_for_admin() -> Vec<CohortRequest> {
     accepted_requests
 }
 
-
-
 #[update]
 pub fn accept_cohort_creation_request(cohort_id: String) -> String {
     let mut response_message = String::new();
 
     let already_accepted = ACCEPTED_COHORTS.with(|storage| {
         let storage = storage.borrow();
-        storage.get(&cohort_id).map_or(false, |requests| requests.iter().any(|r| r.request_status == "accepted"))
+        storage.get(&cohort_id).map_or(false, |requests| {
+            requests.iter().any(|r| r.request_status == "accepted")
+        })
     });
 
     if already_accepted {
-        return format!("Cohort request with id: {} has already been accepted.", cohort_id);
+        return format!(
+            "Cohort request with id: {} has already been accepted.",
+            cohort_id
+        );
     }
 
     COHORT_REQUEST.with(|state| {
@@ -1783,30 +1931,36 @@ pub fn accept_cohort_creation_request(cohort_id: String) -> String {
         let mut request_found_and_updated = false;
 
         for (_principal, requests) in state.iter_mut() {
-            if let Some(index) = requests.iter().position(|r| r.cohort_details.cohort_id == cohort_id && r.request_status == "pending") {
+            if let Some(index) = requests.iter().position(|r| {
+                r.cohort_details.cohort_id == cohort_id && r.request_status == "pending"
+            }) {
                 let mut request = requests.remove(index);
                 request.request_status = "accepted".to_string();
                 request.accepted_at = time();
-                
+
                 COHORT.with(|storage| {
                     let mut storage = storage.borrow_mut();
                     storage.insert(cohort_id.clone(), request.cohort_details.clone());
                     ic_cdk::println!("Inserted cohort details into COHORT for: {}", cohort_id);
                 });
-                
+
                 ACCEPTED_COHORTS.with(|storage| {
                     let mut storage = storage.borrow_mut();
                     storage.entry(cohort_id.clone()).or_default().push(request);
                 });
-                
+
                 request_found_and_updated = true;
-                response_message = format!("Cohort request with id: {} has been accepted.", cohort_id);
+                response_message =
+                    format!("Cohort request with id: {} has been accepted.", cohort_id);
                 break;
             }
         }
 
         if !request_found_and_updated {
-            response_message = format!("No pending cohort request found with cohort id: {}", cohort_id);
+            response_message = format!(
+                "No pending cohort request found with cohort id: {}",
+                cohort_id
+            );
         }
     });
 
@@ -1823,7 +1977,7 @@ pub fn decline_cohort_creation_request(cohort_id: String) -> String {
 
         if let Some(requests) = state.get_mut(&cohort_id) {
             if let Some(index) = requests.iter().position(|r| r.request_status == "pending") {
-                let mut request = requests.remove(index); 
+                let mut request = requests.remove(index);
                 request.request_status = "declined".to_string();
                 request.rejected_at = time();
                 request_found_and_updated = true;
@@ -1833,12 +1987,18 @@ pub fn decline_cohort_creation_request(cohort_id: String) -> String {
                     storage.entry(cohort_id.clone()).or_default().push(request);
                 });
 
-                response_message = format!("You have declined the cohort creation request: {}", cohort_id);
+                response_message = format!(
+                    "You have declined the cohort creation request: {}",
+                    cohort_id
+                );
             }
         }
 
         if !request_found_and_updated {
-            response_message = format!("No pending cohort request found with cohort id: {}", cohort_id);
+            response_message = format!(
+                "No pending cohort request found with cohort id: {}",
+                cohort_id
+            );
         }
     });
 
@@ -1874,9 +2034,12 @@ pub fn get_declined_cohort_creation_request_for_admin() -> Vec<CohortRequest> {
 }
 
 #[update]
-pub fn remove_mentor_from_cohort(cohort_id: String, mentor_principal: Principal, passphrase_key: String) -> Result<String, String> {
+pub fn remove_mentor_from_cohort(
+    cohort_id: String,
+    mentor_principal: Principal,
+    passphrase_key: String,
+) -> Result<String, String> {
     let required_key = format!("delete/{}", mentor_principal);
-
 
     if passphrase_key != required_key {
         return Err("Unauthorized attempt: Incorrect passphrase key.".to_string());
@@ -1889,14 +2052,17 @@ pub fn remove_mentor_from_cohort(cohort_id: String, mentor_principal: Principal,
                 let mentors = mentors_applied.entry(cohort_id.clone()).or_default();
 
                 if let Some(index) = mentors.iter().position(|x| *x == mentor_clone) {
-                    mentors.remove(index); 
+                    mentors.remove(index);
                     APPLIER_COUNT.with(|applier_count| {
                         let mut applier_count = applier_count.borrow_mut();
                         if let Some(count) = applier_count.get_mut(&cohort_id) {
                             *count = count.saturating_sub(1);
                         }
                     });
-                    Ok(format!("Mentor successfully removed from the cohort with cohort id {}", cohort_id))
+                    Ok(format!(
+                        "Mentor successfully removed from the cohort with cohort id {}",
+                        cohort_id
+                    ))
                 } else {
                     Err("You are not part of this cohort".to_string())
                 }
@@ -1908,9 +2074,12 @@ pub fn remove_mentor_from_cohort(cohort_id: String, mentor_principal: Principal,
 }
 
 #[update]
-pub fn remove_vc_from_cohort(cohort_id: String, vc_principal: Principal, passphrase_key: String) -> Result<String, String> {
+pub fn remove_vc_from_cohort(
+    cohort_id: String,
+    vc_principal: Principal,
+    passphrase_key: String,
+) -> Result<String, String> {
     let required_key = format!("delete/{}", vc_principal);
-
 
     if passphrase_key != required_key {
         return Err("Unauthorized attempt: Incorrect passphrase key.".to_string());
@@ -1930,7 +2099,10 @@ pub fn remove_vc_from_cohort(cohort_id: String, vc_principal: Principal, passphr
                             *count = count.saturating_sub(1);
                         }
                     });
-                    Ok(format!("Venture capitalist successfully removed from the cohort with cohort id {}", cohort_id))
+                    Ok(format!(
+                        "Venture capitalist successfully removed from the cohort with cohort id {}",
+                        cohort_id
+                    ))
                 } else {
                     Err("You are not part of this cohort".to_string())
                 }
@@ -1942,9 +2114,12 @@ pub fn remove_vc_from_cohort(cohort_id: String, vc_principal: Principal, passphr
 }
 
 #[update]
-pub fn remove_project_from_cohort(cohort_id: String, project_uid: String, passphrase_key: String) -> Result<String, String> {
+pub fn remove_project_from_cohort(
+    cohort_id: String,
+    project_uid: String,
+    passphrase_key: String,
+) -> Result<String, String> {
     let required_key = format!("delete/{}", project_uid);
-
 
     if passphrase_key != required_key {
         return Err("Unauthorized attempt: Incorrect passphrase key.".to_string());
@@ -1953,11 +2128,11 @@ pub fn remove_project_from_cohort(cohort_id: String, project_uid: String, passph
         let mut projects_cohort = projects_cohort.borrow_mut();
         if let Some(projects) = projects_cohort.get_mut(&cohort_id) {
             if let Some(index) = projects.iter().position(|p| p.uid == project_uid) {
-                projects.remove(index);  
+                projects.remove(index);
                 APPLIER_COUNT.with(|applier_count| {
                     let mut applier_count = applier_count.borrow_mut();
                     if let Some(count) = applier_count.get_mut(&cohort_id) {
-                        *count = count.saturating_sub(1); 
+                        *count = count.saturating_sub(1);
                     }
                 });
 
@@ -1971,10 +2146,12 @@ pub fn remove_project_from_cohort(cohort_id: String, project_uid: String, passph
     })
 }
 
-
-
 #[update]
-pub fn admin_update_project(uid: String, is_live: bool, dapp_link: Option<String>) -> Result<(), String> {
+pub fn admin_update_project(
+    uid: String,
+    is_live: bool,
+    dapp_link: Option<String>,
+) -> Result<(), String> {
     let mut project_found_and_updated = false;
     let mut project_to_classify = None;
 
@@ -1997,8 +2174,8 @@ pub fn admin_update_project(uid: String, is_live: bool, dapp_link: Option<String
 
     if let Some(project) = project_to_classify {
         match crate::latest_popular_projects::update_project_status_live_incubated(project) {
-            Ok(_) => Ok(()), 
-            Err(e) => Err(format!("Failed to reclassify project: {}", e)), 
+            Ok(_) => Ok(()),
+            Err(e) => Err(format!("Failed to reclassify project: {}", e)),
         }
     } else {
         Err("Unexpected error during project reclassification.".to_string())
@@ -2026,12 +2203,12 @@ pub fn deactivate_and_remove_project(project_id: String) -> Result<&'static str,
         return Err("Project not found in main application storage.");
     }
 
-    LIVE_PROJECTS.with(|live_projects| {
-        let mut live_projects = live_projects.borrow_mut();
-        if let Some(position) = live_projects.iter().position(|p| p.uid == project_id) {
-            live_projects.remove(position);
-            found_in_live_projects = true; // Mark as found and removed
+    mutate_state(|state| {
+        if let Some(_project) = state.live_projects.remove(&project_id) {
+            found_in_live_projects = true;
         }
+
+        // No need to replace or alter the entire live_projects collection as it has been updated in place.
     });
 
     if found_in_live_projects {
@@ -2041,13 +2218,10 @@ pub fn deactivate_and_remove_project(project_id: String) -> Result<&'static str,
     }
 }
 
-
 #[update]
 pub fn remove_project_from_incubated(project_id: String) -> Result<&'static str, &'static str> {
-    INCUBATED_PROJECTS.with(|projects| {
-        let mut projects = projects.borrow_mut();
-        if let Some(pos) = projects.iter().position(|p| p.uid == project_id) {
-            projects.remove(pos); 
+    mutate_state(|state| {
+        if state.incubated_projects.remove(&project_id).is_some() {
             Ok("Project successfully removed from incubated projects.")
         } else {
             Err("Project not found in incubated projects.")
@@ -2056,9 +2230,11 @@ pub fn remove_project_from_incubated(project_id: String) -> Result<&'static str,
 }
 
 #[query]
-pub fn get_update_request_count() -> UpdateCounts{
-    let project_update_count = PENDING_PROJECT_UPDATES.with(|awaiters| awaiters.borrow().len() as u32);
-    let mentor_update_count = MENTOR_PROFILE_EDIT_AWAITS.with(|awaiters| awaiters.borrow().len() as u32);
+pub fn get_update_request_count() -> UpdateCounts {
+    let project_update_count =
+        PENDING_PROJECT_UPDATES.with(|awaiters| awaiters.borrow().len() as u32);
+    let mentor_update_count =
+        MENTOR_PROFILE_EDIT_AWAITS.with(|awaiters| awaiters.borrow().len() as u32);
     let vc_update_count = VC_PROFILE_EDIT_AWAITS.with(|awaiters| awaiters.borrow().len() as u32);
 
     UpdateCounts {
@@ -2069,10 +2245,8 @@ pub fn get_update_request_count() -> UpdateCounts{
 }
 
 #[query]
-pub fn get_project_update_declined_request()->HashMap<String, ProjectUpdateRequest>{
-    DECLINED_PROJECT_UPDATES.with(|declined| {
-        declined.borrow().clone()
-    })
+pub fn get_project_update_declined_request() -> HashMap<String, ProjectUpdateRequest> {
+    DECLINED_PROJECT_UPDATES.with(|declined| declined.borrow().clone())
 }
 
 #[query]
@@ -2084,7 +2258,7 @@ pub fn get_mentor_update_declined_request() -> HashMap<Principal, MentorUpdateRe
 }
 
 #[query]
-pub fn get_vc_update_declined_request()->HashMap<Principal, UpdateInfoStruct>{
+pub fn get_vc_update_declined_request() -> HashMap<Principal, UpdateInfoStruct> {
     DECLINED_VC_PROFILE_EDIT_REQUEST.with(|requests| {
         let requests_borrow = requests.borrow();
         requests_borrow.clone()
@@ -2092,7 +2266,7 @@ pub fn get_vc_update_declined_request()->HashMap<Principal, UpdateInfoStruct>{
 }
 
 #[update]
-pub fn delete_user_using_principal(principal: Principal)->String{
+pub fn delete_user_using_principal(principal: Principal) -> String {
     let stored_principal = StoredPrincipal(principal);
 
     mutate_state(|state| {
@@ -2106,37 +2280,37 @@ pub fn delete_user_using_principal(principal: Principal)->String{
 }
 
 #[update]
-pub fn delete_project_using_principal(principal: Principal)->String{
+pub fn delete_project_using_principal(principal: Principal) -> String {
     APPLICATION_FORM.with(|storage| {
-        let mut storage = storage.borrow_mut(); 
+        let mut storage = storage.borrow_mut();
         if storage.remove(&principal).is_some() {
-            "Project successfully deleted".to_string() 
+            "Project successfully deleted".to_string()
         } else {
-            "Project not found".to_string() 
+            "Project not found".to_string()
         }
     })
 }
 
 #[update]
-pub fn delete_mentor_using_principal(principal: Principal)->String{
+pub fn delete_mentor_using_principal(principal: Principal) -> String {
     MENTOR_REGISTRY.with(|storage| {
-        let mut storage = storage.borrow_mut(); 
+        let mut storage = storage.borrow_mut();
         if storage.remove(&principal).is_some() {
-            "Mentor successfully deleted".to_string() 
+            "Mentor successfully deleted".to_string()
         } else {
-            "Mentor not found".to_string() 
+            "Mentor not found".to_string()
         }
     })
 }
 
 #[update]
-pub fn delete_vc_using_principal(principal: Principal)->String{
+pub fn delete_vc_using_principal(principal: Principal) -> String {
     VENTURECAPITALIST_STORAGE.with(|storage| {
-        let mut storage = storage.borrow_mut(); 
+        let mut storage = storage.borrow_mut();
         if storage.remove(&principal).is_some() {
-            "VC successfully deleted".to_string() 
+            "VC successfully deleted".to_string()
         } else {
-            "VC not found".to_string() 
+            "VC not found".to_string()
         }
     })
 }
@@ -2191,8 +2365,5 @@ pub fn delete_vc_announcement_by_index(vc_principal: Principal, index: usize) ->
         }
     })
 }
-
-
-
 
 //b5pqo-yef5a-lut3t-kmrpc-h7dnp-v3d2t-ls6di-y33wa-clrtb-xdhl4-dae

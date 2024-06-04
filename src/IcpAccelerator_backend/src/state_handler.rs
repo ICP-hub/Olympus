@@ -1,6 +1,7 @@
-
-use crate::{admin::*, user_module::*, mentor::*, vc_registration::*, project_registration::*};
+use crate::admin::*;
+use crate::cohort_rating::*;
 use crate::vc_registration::Announcements;
+use crate::{admin::*, mentor::*, project_registration::*, user_module::*, vc_registration::*};
 use candid::{CandidType, Principal};
 use ic_cdk::api::management_canister::main::{
     canister_status, CanisterIdRecord, CanisterStatusResponse, CanisterStatusType,
@@ -10,14 +11,24 @@ use ic_stable_structures::StableVec;
 use ic_stable_structures::{
     memory_manager::{MemoryId, MemoryManager, VirtualMemory},
     storable::{Blob, Bound, Storable},
-    DefaultMemoryImpl, StableBTreeMap, StableCell, Memory,
+    DefaultMemoryImpl, Memory, StableBTreeMap, StableCell,
 };
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 use std::cell::RefCell;
 use std::collections::HashMap;
 
-type VMem = VirtualMemory<DefaultMemoryImpl>;
+use crate::cohort::*;
+use crate::investor_offer_to_project::*;
+use crate::mentor_investor_ratings::*;
+use crate::notification_to_mentor::*;
+use crate::project_offer_to_investor::*;
+use crate::ratings::*;
+
+use crate::admin::*;
+use crate::notification_to_project::*;
+
+pub type VMem = VirtualMemory<DefaultMemoryImpl>;
 
 type AdminNotification = StableBTreeMap<StoredPrincipal, Candid<Vec<Notification>>, VMem>;
 const ADMIN_NOTIFICATION_MEMORY_ID: MemoryId = MemoryId::new(0);
@@ -28,108 +39,215 @@ const CHECKING_DATA_MEMORY_ID: MemoryId = MemoryId::new(1);
 type UserStorage = StableBTreeMap<StoredPrincipal, Candid<UserInfoInternal>, VMem>;
 const USER_STORAGE_MEMORY_ID: MemoryId = MemoryId::new(2);
 
-type RoleStatus = StableBTreeMap<StoredPrincipal, Candid<Vec<Role>>, VMem>;
-const ROLE_STATUS_MEMORY_ID: MemoryId = MemoryId::new(3);
+//association-vc
+type ProjectAssociatedWithVc =
+    StableBTreeMap<StoredPrincipal, Candid<Vec<ProjectInfoInternal>>, VMem>;
+const PROJECTS_ASSOCIATED_WITH_VC_MEMORY_ID: MemoryId = MemoryId::new(3);
 
+type ProjectAssociatedWithMentor =
+    StableBTreeMap<StoredPrincipal, Candid<Vec<ProjectInfoInternal>>, VMem>;
+const PROJECTS_ASSOCIATED_WITH_MENTOR_MEMORY_ID: MemoryId = MemoryId::new(59);
+
+type RoleStatus = StableBTreeMap<StoredPrincipal, Candid<Vec<Role>>, VMem>;
+const ROLE_STATUS_MEMORY_ID: MemoryId = MemoryId::new(4);
+
+// cohort_rating type definitions
+
+pub type CohortRatings = StableBTreeMap<String, Candid<CohortProjectRatings>, VMem>;
+pub type AverageRatingStorage = StableBTreeMap<String, Candid<HashMap<String, f64>>, VMem>;
+
+const COHORT_RATINGS_MEMORY_ID: MemoryId = MemoryId::new(5);
+const AVERAGE_RATINGS_STORAGE_MEMORY_ID: MemoryId = MemoryId::new(6);
 type UserTestimonial = StableBTreeMap<StoredPrincipal, Candid<Vec<Testimonial>>, VMem>;
-const USER_TESTIMONIAL_MEMORY_ID: MemoryId = MemoryId::new(4);
+const USER_TESTIMONIAL_MEMORY_ID: MemoryId = MemoryId::new(7);
 
 type UserRating = StableBTreeMap<StoredPrincipal, Candid<Vec<Review>>, VMem>;
-const USER_RATING_MEMORY_ID: MemoryId = MemoryId::new(5);
+const USER_RATING_MEMORY_ID: MemoryId = MemoryId::new(8);
 
 type MentorRegistry = StableBTreeMap<StoredPrincipal, Candid<MentorInternal>, VMem>;
-const MENTOR_REGISTRY_MEMORY_ID: MemoryId = MemoryId::new(6);
+const MENTOR_REGISTRY_MEMORY_ID: MemoryId = MemoryId::new(9);
 
+//investor_offer_to_investor
+pub type OffersSentByInvestor =
+    StableBTreeMap<StoredPrincipal, Candid<Vec<OfferToProjectByInvestor>>, VMem>;
+
+pub type ProjectAlertsOfInvestor =
+    StableBTreeMap<String, Candid<Vec<OfferToSendToProjectByInvestor>>, VMem>;
+
+const OFFERS_SENT_BY_INVESTOR_MEMORY_ID: MemoryId = MemoryId::new(10);
+const PROJECT_ALERTS_OF_INVESTOR_MEMORY_ID: MemoryId = MemoryId::new(11);
 type MentorAwaitsResponse = StableBTreeMap<StoredPrincipal, Candid<MentorInternal>, VMem>;
-const MENTOR_AWAITS_RESPONSE_MEMORY_ID: MemoryId = MemoryId::new(7);
+const MENTOR_AWAITS_RESPONSE_MEMORY_ID: MemoryId = MemoryId::new(12);
 
 type MentorDeclinedRequest = StableBTreeMap<StoredPrincipal, Candid<MentorInternal>, VMem>;
-const MENTOR_DECLINED_REQUEST_MEMORY_ID: MemoryId = MemoryId::new(8);
+const MENTOR_DECLINED_REQUEST_MEMORY_ID: MemoryId = MemoryId::new(13);
 
 type MentorProfileEditAwaits = StableBTreeMap<StoredPrincipal, Candid<MentorUpdateRequest>, VMem>;
-const MENTOR_PROFILE_EDIT_AWAITS_MEMORY_ID: MemoryId = MemoryId::new(9);
+const MENTOR_PROFILE_EDIT_AWAITS_MEMORY_ID: MemoryId = MemoryId::new(14);
 
+//latest popular project
+pub type LiveProjects = StableBTreeMap<String, Candid<ProjectInfoInternal>, VMem>;
+pub type IncubatedProjects = StableBTreeMap<String, Candid<ProjectInfoInternal>, VMem>;
+
+pub const LIVE_PROJECTS_MEMORY_ID: MemoryId = MemoryId::new(15);
+pub const INCUBATED_PROJECTS_MEMORY_ID: MemoryId = MemoryId::new(16);
 type MentorProfileEditDeclined = StableBTreeMap<StoredPrincipal, Candid<MentorUpdateRequest>, VMem>;
-const MENTOR_PROFILE_EDIT_DECLINED_MEMORY_ID: MemoryId = MemoryId::new(9);
+const MENTOR_PROFILE_EDIT_DECLINED_MEMORY_ID: MemoryId = MemoryId::new(17);
 
 type MentorAnnouncement = StableBTreeMap<StoredPrincipal, Candid<Vec<MAnnouncements>>, VMem>;
-const MENTOR_ANNOUNCEMENTS_MEMORY_ID: MemoryId = MemoryId::new(10);
+const MENTOR_ANNOUNCEMENTS_MEMORY_ID: MemoryId = MemoryId::new(18);
 
-type VentureCapitalistStorage = StableBTreeMap<StoredPrincipal, Candid<VentureCapitalistInternal>, VMem>;
-const VENTURE_CAPITALIST_STORAGE_MEMORY_ID: MemoryId = MemoryId::new(11);
+type VentureCapitalistStorage =
+    StableBTreeMap<StoredPrincipal, Candid<VentureCapitalistInternal>, VMem>;
+const VENTURE_CAPITALIST_STORAGE_MEMORY_ID: MemoryId = MemoryId::new(19);
 
-type VentureCapitalistAwaitsResponse = StableBTreeMap<StoredPrincipal, Candid<VentureCapitalistInternal>, VMem>;
-const VENTURE_CAPITALIST_AWAIT_RESPONSE_MEMORY_ID: MemoryId = MemoryId::new(11);
+//mentor_investor_ratings
 
-type VentureCapitalistDeclinedRequest = StableBTreeMap<StoredPrincipal, Candid<VentureCapitalistInternal>, VMem>;
-const VENTURE_CAPITALIST_DECLINED_REQUEST_MEMORY_ID: MemoryId = MemoryId::new(11);
+pub type IndividualRatings =
+    StableBTreeMap<StoredPrincipal, Candid<Vec<TimestampedRatingMentorInvestor>>, VMem>;
+pub type MentorVcAverageRatingStorage = StableBTreeMap<StoredPrincipal, f64, VMem>;
+
+const MENTOR_INDIVIDUAL_RATINGS_MEMORY_ID: MemoryId = MemoryId::new(20);
+const VC_INDIVIDUAL_RATINGS_MEMORY_ID: MemoryId = MemoryId::new(21);
+const MENTOR_AVERAGE_RATING_STORAGE_MEMORY_ID: MemoryId = MemoryId::new(22);
+const VC_AVERAGE_RATING_STORAGE_MEMORY_ID: MemoryId = MemoryId::new(23);
+type VentureCapitalistAwaitsResponse =
+    StableBTreeMap<StoredPrincipal, Candid<VentureCapitalistInternal>, VMem>;
+const VENTURE_CAPITALIST_AWAIT_RESPONSE_MEMORY_ID: MemoryId = MemoryId::new(24);
+
+type VentureCapitalistDeclinedRequest =
+    StableBTreeMap<StoredPrincipal, Candid<VentureCapitalistInternal>, VMem>;
+const VENTURE_CAPITALIST_DECLINED_REQUEST_MEMORY_ID: MemoryId = MemoryId::new(25);
 
 type VentureCapitalistEditAwaits = StableBTreeMap<StoredPrincipal, Candid<UpdateInfoStruct>, VMem>;
-const VENTURE_CAPITALIST_EDIT_AWAITS_MEMORY_ID: MemoryId = MemoryId::new(12);
+const VENTURE_CAPITALIST_EDIT_AWAITS_MEMORY_ID: MemoryId = MemoryId::new(26);
 
-type VentureCapitalistEditDeclined = StableBTreeMap<StoredPrincipal, Candid<UpdateInfoStruct>, VMem>;
-const VENTURE_CAPITALIST_EDIT_DECLINED_MEMORY_ID: MemoryId = MemoryId::new(13);
+type VentureCapitalistEditDeclined =
+    StableBTreeMap<StoredPrincipal, Candid<UpdateInfoStruct>, VMem>;
+const VENTURE_CAPITALIST_EDIT_DECLINED_MEMORY_ID: MemoryId = MemoryId::new(27);
 
-type VentureCapitalistAnnouncement = StableBTreeMap<StoredPrincipal, Candid<Vec<Announcements>>, VMem>;
-const VC_ANNOUNCEMENTS_MEMORY_ID: MemoryId = MemoryId::new(14);
+type VentureCapitalistAnnouncement =
+    StableBTreeMap<StoredPrincipal, Candid<Vec<Announcements>>, VMem>;
+const VC_ANNOUNCEMENTS_MEMORY_ID: MemoryId = MemoryId::new(28);
 
+//project offer to investor
+
+pub type OffersOfferedByMe = StableBTreeMap<String, Candid<Vec<OfferToInvestor>>, VMem>;
+pub type InvestorAlerts = StableBTreeMap<StoredPrincipal, Candid<Vec<OfferToSendToInvestor>>, VMem>;
+
+const OFFERS_OFFERED_BY_ME_MEMORY_ID: MemoryId = MemoryId::new(29);
+const INVESTOR_ALERTS_MEMORY_ID: MemoryId = MemoryId::new(30);
 type ProjectAccessNotification = StableBTreeMap<String, Candid<Vec<ProjectNotification>>, VMem>;
-const PROJECT_ACCESS_NOTIFICATIONS_MEMORY_ID: MemoryId = MemoryId::new(15);
+const PROJECT_ACCESS_NOTIFICATIONS_MEMORY_ID: MemoryId = MemoryId::new(31);
 
 type ProjectStorage = StableBTreeMap<StoredPrincipal, Candid<Vec<ProjectInfoInternal>>, VMem>;
-const PROJECT_STORAGE_MEMORY_ID: MemoryId = MemoryId::new(16);
+const PROJECT_STORAGE_MEMORY_ID: MemoryId = MemoryId::new(32);
 
 type Notifications = StableBTreeMap<StoredPrincipal, Candid<Vec<NotificationProject>>, VMem>;
-const NOTIFICATIONS_MEMORY_ID: MemoryId = MemoryId::new(17);
+const NOTIFICATIONS_MEMORY_ID: MemoryId = MemoryId::new(33);
 
+//rating.rs module
+
+const RATING_SYSTEM_MEMORY_ID: MemoryId = MemoryId::new(34);
+const LAST_RATING_TIMESTAMPS_MEMORY_ID: MemoryId = MemoryId::new(35);
+const AVERAGE_STORAGE_MEMORY_ID: MemoryId = MemoryId::new(36);
 type OwnerNotification = StableBTreeMap<StoredPrincipal, Candid<Vec<NotificationForOwner>>, VMem>;
-const OWNER_NOTIFICATION_MEMORY_ID: MemoryId = MemoryId::new(18);
+const OWNER_NOTIFICATION_MEMORY_ID: MemoryId = MemoryId::new(37);
 
-type ProjectAnnouncement = StableBTreeMap<StoredPrincipal, Candid<Vec<AnnouncementsInternal>>, VMem>;
-const PROJECT_ANNOUNCEMENT_MEMORY_ID: MemoryId = MemoryId::new(19);
+type ProjectAnnouncement =
+    StableBTreeMap<StoredPrincipal, Candid<Vec<AnnouncementsInternal>>, VMem>;
+const PROJECT_ANNOUNCEMENT_MEMORY_ID: MemoryId = MemoryId::new(38);
 
 type BlogPost = StableBTreeMap<StoredPrincipal, Candid<Vec<Blog>>, VMem>;
-const BLOG_POST_MEMORY_ID: MemoryId = MemoryId::new(20);
+const BLOG_POST_MEMORY_ID: MemoryId = MemoryId::new(39);
 
+//notification to mentor
+
+pub type MySentNotifications = StableBTreeMap<StoredPrincipal, Candid<Vec<OfferToMentor>>, VMem>;
+pub type MentorAlerts = StableBTreeMap<StoredPrincipal, Candid<Vec<OfferToSendToMentor>>, VMem>;
+
+const MY_SENT_NOTIFICATIONS_MEMORY_ID: MemoryId = MemoryId::new(40);
+const MENTOR_ALERTS_MEMORY_ID: MemoryId = MemoryId::new(41);
+
+//notification to project
+
+pub type MySentNotificationsProject =
+    StableBTreeMap<StoredPrincipal, Candid<Vec<OfferToProject>>, VMem>;
+pub type ProjectAlerts = StableBTreeMap<String, Candid<Vec<OfferToSendToProject>>, VMem>;
+const MY_SENT_NOTIFICATIONS_PROJECT_MEMORY_ID: MemoryId = MemoryId::new(42);
+const PROJECT_ALERTS_MEMORY_ID: MemoryId = MemoryId::new(43);
 type ProjectAwaitsResponse = StableBTreeMap<StoredPrincipal, Candid<ProjectInfoInternal>, VMem>;
-const PROJECT_AWAITS_RESPONSE_MEMORY_ID: MemoryId = MemoryId::new(21);
+const PROJECT_AWAITS_RESPONSE_MEMORY_ID: MemoryId = MemoryId::new(44);
 
 type ProjectDeclinedRequest = StableBTreeMap<StoredPrincipal, Candid<ProjectInfoInternal>, VMem>;
-const PROJECT_DECLINED_REQUEST_MEMORY_ID: MemoryId = MemoryId::new(22);
+const PROJECT_DECLINED_REQUEST_MEMORY_ID: MemoryId = MemoryId::new(45);
 
 type PendingProjectDetails = StableBTreeMap<String, Candid<ProjectUpdateRequest>, VMem>;
-const PROJECT_UPDATE_PENDING_MEMORY_ID: MemoryId = MemoryId::new(23);
+const PROJECT_UPDATE_PENDING_MEMORY_ID: MemoryId = MemoryId::new(46);
 
 type DeclinedProjectDetails = StableBTreeMap<String, Candid<ProjectUpdateRequest>, VMem>;
-const PROJECT_UPDATE_DECLINED_MEMORY_ID: MemoryId = MemoryId::new(23);
+const PROJECT_UPDATE_DECLINED_MEMORY_ID: MemoryId = MemoryId::new(47);
 
 type PostJob = StableBTreeMap<StoredPrincipal, Candid<Vec<JobsInternal>>, VMem>;
-const POST_JOB_MEMORY_ID: MemoryId = MemoryId::new(24);
+const POST_JOB_MEMORY_ID: MemoryId = MemoryId::new(48);
 
-type JobType = StableVec<String, VMem>;
-const JOB_TYPE_MEMORY_ID: MemoryId = MemoryId::new(25);
+type JobType = StableBTreeMap<String, String, VMem>;
+const JOB_TYPE_MEMORY_ID: MemoryId = MemoryId::new(49);
 
-type SpotLightProjects = StableVec<Candid<Vec<SpotlightDetails>>, VMem>;
-const SPOTLIGHT_PROJECT_MEMORY_ID: MemoryId = MemoryId::new(26);
+type SpotLightProjects = StableBTreeMap<String, Candid<Vec<SpotlightDetails>>, VMem>;
+const SPOTLIGHT_PROJECT_MEMORY_ID: MemoryId = MemoryId::new(50);
 
 type MoneyAccess = StableBTreeMap<String, Candid<Vec<Principal>>, VMem>;
-const MONEY_ACCESS_MEMORY_ID: MemoryId = MemoryId::new(27);
+const MONEY_ACCESS_MEMORY_ID: MemoryId = MemoryId::new(51);
+
+//admin.rs
+
+pub type CohortRequestNotification = StableBTreeMap<String, Candid<Vec<CohortRequest>>, VMem>;
+const COHORT_REQUEST_MEMORY_ID: MemoryId = MemoryId::new(52);
 
 type PrivateDocsAccess = StableBTreeMap<String, Candid<Vec<Principal>>, VMem>;
-const PRIVATE_DOCS_ACCESS_MEMORY_ID: MemoryId = MemoryId::new(27);
+const PRIVATE_DOCS_ACCESS_MEMORY_ID: MemoryId = MemoryId::new(53);
 
-type ProjectRating = StableBTreeMap<String, Candid<Vec<(Principal,ProjectReview)>>, VMem>;
-const PROJECT_RATING_MEMORY_ID: MemoryId = MemoryId::new(28);
+type ProjectRating = StableBTreeMap<String, Candid<Vec<(Principal, ProjectReview)>>, VMem>;
+const PROJECT_RATING_MEMORY_ID: MemoryId = MemoryId::new(54);
 
+pub type AcceptedCohorts = StableBTreeMap<String, Candid<Vec<CohortRequest>>, VMem>;
+const ACCEPTED_COHORTS_MEMORY_ID: MemoryId = MemoryId::new(55);
 type MoneyAccessRequest = StableBTreeMap<StoredPrincipal, Candid<Vec<AccessRequest>>, VMem>;
-const MONEY_ACCESS_REQUEST_MEMORY_ID: MemoryId = MemoryId::new(29);
+const MONEY_ACCESS_REQUEST_MEMORY_ID: MemoryId = MemoryId::new(56);
 
+pub type DeclinedCohorts = StableBTreeMap<String, Candid<Vec<CohortRequest>>, VMem>;
+const DECLINED_COHORTS_MEMORY_ID: MemoryId = MemoryId::new(57);
 type PrivateDocsAccessRequest = StableBTreeMap<StoredPrincipal, Candid<Vec<AccessRequest>>, VMem>;
-const PRIVATE_DOCS_ACCESS_REQUEST_MEMORY_ID: MemoryId = MemoryId::new(30);
+const PRIVATE_DOCS_ACCESS_REQUEST_MEMORY_ID: MemoryId = MemoryId::new(58);
 
 pub struct State {
     pub admin_notifications: AdminNotification,
+    pub cohort_request_admin: CohortRequestNotification,
     pub checking_data: CheckingData,
+    pub projects_associated_with_mentor: ProjectAssociatedWithMentor,
+    pub projects_associated_with_vc: ProjectAssociatedWithVc,
+    pub cohort_rating_system: CohortRatings,
+    pub cohort_average_ratings: AverageRatingStorage,
+    pub offers_sent_by_investor: OffersSentByInvestor,
+    pub project_alerts_of_investor: ProjectAlertsOfInvestor,
+    pub live_projects: LiveProjects,
+    pub incubated_projects: IncubatedProjects,
+    pub mentor_rating_system: IndividualRatings,
+    pub vc_rating_system: IndividualRatings,
+    pub mentor_average_rating: MentorVcAverageRatingStorage,
+    pub vc_average_rating: MentorVcAverageRatingStorage,
+    pub offers_offered_by_me: OffersOfferedByMe,
+    pub investor_alerts: InvestorAlerts,
+    pub rating_system: RatingSystem,
+    pub last_rating_timestamps: LastRatingTimestamps,
+    pub average_storage: RatingAverageStorage,
+    pub my_sent_notifications: MySentNotifications,
+    pub mentor_alerts: MentorAlerts,
+    pub my_sent_notifications_project: MySentNotificationsProject,
+    pub project_alerts: ProjectAlerts,
+    pub accepted_cohorts: AcceptedCohorts,
+    pub declined_cohorts: DeclinedCohorts,
     pub user_storage: UserStorage,
     pub role_status: RoleStatus,
     pub user_testimonial: UserTestimonial,
@@ -175,6 +293,36 @@ thread_local! {
         MEMORY_MANAGER.with(|mm| State {
             admin_notifications: AdminNotification::init(mm.borrow().get(ADMIN_NOTIFICATION_MEMORY_ID)),
             checking_data: CheckingData::init(mm.borrow().get(CHECKING_DATA_MEMORY_ID)),
+            projects_associated_with_mentor:ProjectAssociatedWithMentor::init(mm.borrow().get(PROJECTS_ASSOCIATED_WITH_MENTOR_MEMORY_ID)),
+            projects_associated_with_vc:ProjectAssociatedWithVc::init(mm.borrow().get(PROJECTS_ASSOCIATED_WITH_VC_MEMORY_ID)),
+            cohort_rating_system : CohortRatings::init(mm.borrow().get(COHORT_RATINGS_MEMORY_ID)),
+            cohort_average_ratings: AverageRatingStorage::init(mm.borrow().get(AVERAGE_RATINGS_STORAGE_MEMORY_ID)),
+            offers_sent_by_investor: OffersSentByInvestor::init(mm.borrow().get(OFFERS_SENT_BY_INVESTOR_MEMORY_ID)),
+            project_alerts_of_investor:ProjectAlertsOfInvestor::init(mm.borrow().get(PROJECT_ALERTS_OF_INVESTOR_MEMORY_ID)),
+            live_projects: LiveProjects::init(mm.borrow().get(LIVE_PROJECTS_MEMORY_ID)),
+            incubated_projects: IncubatedProjects::init(mm.borrow().get(INCUBATED_PROJECTS_MEMORY_ID)),
+            mentor_rating_system: IndividualRatings::init(mm.borrow().get(MENTOR_INDIVIDUAL_RATINGS_MEMORY_ID)),
+            vc_rating_system:IndividualRatings::init(mm.borrow().get(VC_INDIVIDUAL_RATINGS_MEMORY_ID)),
+            mentor_average_rating:MentorVcAverageRatingStorage::init(mm.borrow().get(MENTOR_AVERAGE_RATING_STORAGE_MEMORY_ID)),
+            vc_average_rating:MentorVcAverageRatingStorage::init(mm.borrow().get(VC_AVERAGE_RATING_STORAGE_MEMORY_ID)),
+            offers_offered_by_me:OffersOfferedByMe::init(mm.borrow().get(OFFERS_OFFERED_BY_ME_MEMORY_ID)),
+            investor_alerts: InvestorAlerts::init(mm.borrow().get(INVESTOR_ALERTS_MEMORY_ID)),
+            rating_system:RatingSystem::init(mm.borrow().get(RATING_SYSTEM_MEMORY_ID)),
+            last_rating_timestamps:LastRatingTimestamps::init(mm.borrow().get(LAST_RATING_TIMESTAMPS_MEMORY_ID)),
+            average_storage:RatingAverageStorage::init(mm.borrow().get(AVERAGE_STORAGE_MEMORY_ID)),
+            my_sent_notifications:MySentNotifications::init(mm.borrow().get(MY_SENT_NOTIFICATIONS_MEMORY_ID)),
+            mentor_alerts:MentorAlerts::init(mm.borrow().get(MENTOR_ALERTS_MEMORY_ID)),
+            my_sent_notifications_project:MySentNotificationsProject::init(mm.borrow().get(MY_SENT_NOTIFICATIONS_PROJECT_MEMORY_ID)),
+            project_alerts:ProjectAlerts::init(mm.borrow().get(PROJECT_ALERTS_MEMORY_ID)),
+            cohort_request_admin: CohortRequestNotification::init(mm.borrow().get(COHORT_REQUEST_MEMORY_ID)),
+            accepted_cohorts:AcceptedCohorts::init(mm.borrow().get(ACCEPTED_COHORTS_MEMORY_ID)),
+            declined_cohorts:DeclinedCohorts::init(mm.borrow().get(DECLINED_COHORTS_MEMORY_ID)),
+
+
+
+
+
+
             user_storage: UserStorage::init(mm.borrow().get(USER_STORAGE_MEMORY_ID)),
             role_status: RoleStatus::init(mm.borrow().get(ROLE_STATUS_MEMORY_ID)),
             user_testimonial: UserTestimonial::init(mm.borrow().get(USER_TESTIMONIAL_MEMORY_ID)),
@@ -202,8 +350,8 @@ thread_local! {
             pending_project_details: PendingProjectDetails::init(mm.borrow().get(PROJECT_UPDATE_PENDING_MEMORY_ID)),
             declined_project_details: DeclinedProjectDetails::init(mm.borrow().get(PROJECT_UPDATE_DECLINED_MEMORY_ID)),
             post_job: PostJob::init(mm.borrow().get(POST_JOB_MEMORY_ID)),
-            job_type: JobType::init(mm.borrow().get(JOB_TYPE_MEMORY_ID)).expect("Failed to initialize Job Type"),
-            spotlight_projects: SpotLightProjects::init(mm.borrow().get(SPOTLIGHT_PROJECT_MEMORY_ID)).expect("Failed to initialize SpotLight Project"),
+            job_type: JobType::init(mm.borrow().get(JOB_TYPE_MEMORY_ID)),
+            spotlight_projects: SpotLightProjects::init(mm.borrow().get(SPOTLIGHT_PROJECT_MEMORY_ID)),
             money_access: MoneyAccess::init(mm.borrow().get(MONEY_ACCESS_MEMORY_ID)),
             private_docs_access: PrivateDocsAccess::init(mm.borrow().get(PRIVATE_DOCS_ACCESS_MEMORY_ID)),
             project_rating: ProjectRating::init(mm.borrow().get(PROJECT_RATING_MEMORY_ID)),

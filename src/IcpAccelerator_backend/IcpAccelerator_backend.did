@@ -145,16 +145,8 @@ type LeaderboardEntryForCohorts = record {
   average_rating : float64;
   project_data : opt vec ProjectInfoInternal;
 };
-type LeaderboardEntryForLikes = record {
-  like_count : opt nat;
-  project_id : opt text;
-};
 type LeaderboardEntryForRatings = record {
   average_rating : opt float64;
-  project_id : opt text;
-};
-type LeaderboardEntryForUpvote = record {
-  upvote_count : opt nat;
   project_id : opt text;
 };
 type LikeRecord = record { count : nat; upvoters : vec LikesInfo };
@@ -952,9 +944,7 @@ service : {
       vec record { principal; vec AnnouncementsInternal },
     ) query;
   get_latest_testimonials : () -> (vec Testimonial) query;
-  get_leaderboard_using_likes : () -> (vec LeaderboardEntryForLikes) query;
   get_leaderboard_using_ratings : () -> (vec LeaderboardEntryForRatings) query;
-  get_leaderboard_using_upvotes : () -> (vec LeaderboardEntryForUpvote) query;
   get_member_id : () -> (text) query;
   get_mentor : () -> (opt MentorProfile) query;
   get_mentor_announcements : () -> (

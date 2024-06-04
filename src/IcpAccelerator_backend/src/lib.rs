@@ -7,52 +7,49 @@ mod manage_hubs;
 mod mentor;
 mod notification;
 
+mod investor_offer_to_project;
 mod notification_to_mentor;
 mod notification_to_project;
 mod project_offer_to_investor;
-mod investor_offer_to_project;
 mod state_handler;
 
 mod associations;
 
+mod cohort;
+mod cohort_rating;
+mod default_images;
+mod mentor_investor_ratings;
 mod project_like;
 mod requests;
 mod roles;
 mod upvotes;
 mod user_module;
 mod vc_registration;
-mod cohort;
-mod default_images;
-mod cohort_rating;
-mod mentor_investor_ratings;
 
-use crate::project_registration::*;
-use cohort::*;
+use crate::cohort_rating::LeaderboardEntryForCohorts;
 use crate::cohort_rating::PeerRatingUpdate;
 use crate::mentor_investor_ratings::RatingMentorInvestor;
-use crate::cohort_rating::LeaderboardEntryForCohorts;
+use crate::project_registration::*;
+use cohort::*;
 use ic_cdk::api::management_canister::main::CanisterStatusResponse;
 
-use project_offer_to_investor::*;
+use associations::*;
 use investor_offer_to_project::*;
 use notification_to_mentor::*;
 use notification_to_project::*;
-use associations::*;
+use project_offer_to_investor::*;
 
 use ic_cdk::api::caller;
-use ic_cdk_macros::pre_upgrade;
 use ic_cdk_macros::post_upgrade;
+use ic_cdk_macros::pre_upgrade;
 
 use leaderboard::{
     LeaderboardEntryForLikes, LeaderboardEntryForRatings, LeaderboardEntryForUpvote,
 };
 // use notification::pre_upgrade_notifications;
+use crate::ratings::*;
 use project_like::LikeRecord;
 use project_registration::FilterCriteria;
-use ratings::RatingAverages;
-use ratings::RatingUpdate;
-use ratings::post_upgrade_rating_system;
-use ratings::pre_upgrade_rating_system;
 // use ratings::post_upgrade_rating_system;
 // use ratings::pre_upgrade_rating_system;
 use requests::Request;
@@ -90,9 +87,9 @@ use notification::*;
 use register_user::FounderInfo;
 use roadmap_suggestion::Suggestion;
 
+use crate::ratings::RatingView;
 use vc_registration::VentureCapitalist;
 use vc_registration::*;
-use crate::ratings::RatingView;
 
 // private function to check if the caller is one of the controllers of the canister
 fn check_admin() {
@@ -219,7 +216,6 @@ fn delete_project(id: String) -> std::string::String {
 //     project_registration::verify_project(&project_id)
 // }
 
-
 #[query]
 fn get_your_project_notifications() -> Vec<NotificationForOwner> {
     project_registration::get_notifications_for_owner()
@@ -329,7 +325,6 @@ fn get_project_upvotes(project_id: String) -> Option<UpvoteRecord> {
     upvotes::get_upvote_record(project_id)
 }
 
-
 #[query]
 
 fn get_venture_capitalist_info() -> Option<VentureCapitalist> {
@@ -361,17 +356,6 @@ fn get_area_focus_expertise() -> Vec<Areas> {
 #[query]
 fn greet(name: String) -> String {
     format!("Hello! {}", name)
-}
-
-#[query]
-fn get_leaderboard_using_upvotes() -> Vec<LeaderboardEntryForUpvote> {
-    leaderboard::get_leaderboard_by_upvotes()
-}
-
-#[query]
-
-fn get_leaderboard_using_likes() -> Vec<LeaderboardEntryForLikes> {
-    leaderboard::get_leaderboard_by_likes()
 }
 
 #[query]
