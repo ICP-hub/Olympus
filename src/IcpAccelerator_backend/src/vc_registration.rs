@@ -111,6 +111,12 @@ pub struct Announcements {
 }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+pub struct VCAnnouncementsInternal {
+    announcement_id: String,
+    announcement_data: Announcements,
+}
+
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct UpdateInfoStruct{
     pub original_info: Option<VentureCapitalist>,
     pub updated_info: Option<VentureCapitalist>,
@@ -119,7 +125,7 @@ pub struct UpdateInfoStruct{
     pub sent_at: u64,
 }
 
-pub type VcAnnouncements = HashMap<Principal, Vec<Announcements>>;
+pub type VcAnnouncements = HashMap<Principal, Vec<VCAnnouncementsInternal>>;
 
 pub type VentureCapitalistStorage = HashMap<Principal, VentureCapitalistInternal>;
 pub type VentureCapitalistParams = HashMap<Principal, VentureCapitalist>;
@@ -549,10 +555,14 @@ pub fn get_multichain_list() -> Vec<String> {
 }
 
 #[update]
-pub fn add_vc_announcement(name: String, announcement_message: String) -> String {
+pub async fn add_vc_announcement(name: String, announcement_message: String) -> String {
     let caller_id = caller();
 
     let current_time = time();
+
+    let uuids = raw_rand().await.unwrap().0;
+    let uid = format!("{:x}", Sha256::digest(&uuids));
+    let new_id = uid.clone().to_string();
 
     VC_ANNOUNCEMENTS.with(|state| {
         let mut state = state.borrow_mut();
@@ -562,14 +572,48 @@ pub fn add_vc_announcement(name: String, announcement_message: String) -> String
             timestamp: current_time,
         };
 
-        state.entry(caller_id).or_insert_with(Vec::new).push(new_vc);
+        let new_vc_internal = VCAnnouncementsInternal{
+            announcement_id: new_id,
+            announcement_data: new_vc,
+        };
+
+        state.entry(caller_id).or_insert_with(Vec::new).push(new_vc_internal);
         format!("Announcement added successfully at {}", current_time)
+    })
+}
+
+#[update]
+pub async fn update_vc_announcement(announcement_id: String, new_details: Announcements) -> String {
+    VC_ANNOUNCEMENTS.with(|state| {
+        let mut state = state.borrow_mut();
+        for announcements in state.values_mut() {
+            for announcement in announcements.iter_mut() {
+                if announcement.announcement_id == announcement_id {
+                    // Update announcement details
+                    announcement.announcement_data = new_details;
+                    return format!("VC announcement with ID {} updated successfully", announcement_id);
+                }
+            }
+        }
+        "VC announcement not found".to_string()
+    })
+}
+
+#[update]
+pub async fn delete_vc_announcement(announcement_id: String) -> String {
+    VC_ANNOUNCEMENTS.with(|state| {
+        let mut state = state.borrow_mut();
+        for announcements in state.values_mut() {
+            announcements.retain(|announcement| announcement.announcement_id != announcement_id);
+            return format!("VC announcement with ID {} deleted successfully", announcement_id);
+        }
+        "VC announcement not found".to_string()
     })
 }
 
 //for testing purpose
 #[query]
-pub fn get_vc_announcements() -> HashMap<Principal, Vec<Announcements>> {
+pub fn get_vc_announcements() -> HashMap<Principal, Vec<VCAnnouncementsInternal>> {
     VC_ANNOUNCEMENTS.with(|state| {
         let state = state.borrow();
         state.clone()
