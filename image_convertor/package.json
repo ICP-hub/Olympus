@@ -1,0 +1,14 @@
+{
+  "name": "image_convertor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "image_convertor.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "xhr2": "^0.2.1"
+  }
+}
