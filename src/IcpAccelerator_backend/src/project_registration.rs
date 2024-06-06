@@ -63,6 +63,7 @@ pub struct Announcements {
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct AnnouncementsInternal {
+    announcement_id: String,
     announcement_data: Announcements,
     timestamp: u64,
     project_name: String,
@@ -1345,7 +1346,7 @@ pub async fn update_team_member(project_id: &str, member_principal_id: Principal
 }
 
 #[update]
-pub fn add_announcement(mut announcement_details: Announcements) -> String {
+pub async fn add_announcement(mut announcement_details: Announcements) -> String {
     let caller_id = caller();
 
     let current_time = time();
@@ -1367,7 +1368,12 @@ pub fn add_announcement(mut announcement_details: Announcements) -> String {
         return "Project ID does not exist in application forms.".to_string();
     }
 
+    let uuids = raw_rand().await.unwrap().0;
+    let uid = format!("{:x}", Sha256::digest(&uuids));
+    let new_id = uid.clone().to_string();
+
     let new_announcement = AnnouncementsInternal {
+        announcement_id: new_id,
         announcement_data: announcement_details,
         timestamp: current_time,
         project_name: project_info_internal.params.project_name,
@@ -1382,6 +1388,36 @@ pub fn add_announcement(mut announcement_details: Announcements) -> String {
             .or_insert_with(Vec::new)
             .push(new_announcement);
         format!("Announcement added successfully at {}", current_time)
+    })
+}
+
+#[update]
+pub async fn update_project_announcement_by_id(announcement_id: String, new_details: Announcements) -> String {
+    PROJECT_ANNOUNCEMENTS.with(|state| {
+        let mut state = state.borrow_mut();
+        for announcements in state.values_mut() {
+            for announcement in announcements.iter_mut() {
+                if announcement.announcement_id == announcement_id {
+                    // Update announcement details
+                    announcement.announcement_data = new_details;
+                    return format!("Announcement with ID {} updated successfully", announcement_id);
+                }
+            }
+        }
+        "Announcement not found".to_string()
+    })
+}
+
+#[update]
+pub async fn delete_project_announcement_by_id(announcement_id: String) -> String {
+    PROJECT_ANNOUNCEMENTS.with(|state| {
+        let mut state = state.borrow_mut();
+        for announcements in state.values_mut() {
+            announcements.retain(|announcement| announcement.announcement_id != announcement_id);
+            return format!("Announcement with ID {} deleted successfully", announcement_id);
+        }
+        // If no announcement found with the given ID
+        "Announcement not found".to_string()
     })
 }
 

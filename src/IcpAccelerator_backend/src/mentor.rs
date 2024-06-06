@@ -76,14 +76,20 @@ pub struct MentorInternal {
     pub decline: bool,
 }
 
-#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct MAnnouncements {
     project_name: String,
     announcement_message: String,
     timestamp: u64,
 }
 
-pub type MentorAnnouncements = HashMap<Principal, Vec<MAnnouncements>>;
+#[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
+pub struct MAnnouncementsInternal {
+    announcement_id: String,
+    announcement_data: MAnnouncements,
+}
+
+pub type MentorAnnouncements = HashMap<Principal, Vec<MAnnouncementsInternal>>;
 
 thread_local! {
     pub static MENTOR_REGISTRY: RefCell<MentorRegistry> = RefCell::new(MentorRegistry::new());
@@ -465,10 +471,14 @@ pub fn find_mentors_by_expertise(expertise_keyword: &str) -> Vec<MentorProfile> 
 }
 
 #[update]
-pub fn add_mentor_announcement(name: String, announcement_message: String) -> String {
+pub async fn add_mentor_announcement(name: String, announcement_message: String) -> String {
     let caller_id = caller();
 
     let current_time = time();
+
+    let uuids = raw_rand().await.unwrap().0;
+    let uid = format!("{:x}", Sha256::digest(&uuids));
+    let new_id = uid.clone().to_string();
 
     MENTOR_ANNOUNCEMENTS.with(|state| {
         let mut state = state.borrow_mut();
@@ -478,14 +488,49 @@ pub fn add_mentor_announcement(name: String, announcement_message: String) -> St
             timestamp: current_time,
         };
 
-        state.entry(caller_id).or_insert_with(Vec::new).push(new_vc);
+        let new_vc_internal = MAnnouncementsInternal{
+            announcement_id: new_id,
+            announcement_data: new_vc
+        };
+
+        state.entry(caller_id).or_insert_with(Vec::new).push(new_vc_internal);
         format!("Announcement added successfully at {}", current_time)
+    })
+}
+
+#[update]
+pub async fn update_mentor_announcement(announcement_id: String, new_details: MAnnouncements) -> String {
+    MENTOR_ANNOUNCEMENTS.with(|state| {
+        let mut state = state.borrow_mut();
+        for announcements in state.values_mut() {
+            for announcement in announcements.iter_mut() {
+                if announcement.announcement_id == announcement_id {
+                    // Update announcement details
+                    announcement.announcement_data = new_details;
+                    return format!("Mentor announcement with ID {} updated successfully", announcement_id);
+                }
+            }
+        }
+        "Mentor announcement not found".to_string()
+    })
+}
+
+#[update]
+pub async fn delete_mentor_announcement(announcement_id: String) -> String {
+    MENTOR_ANNOUNCEMENTS.with(|state| {
+        let mut state = state.borrow_mut();
+        for announcements in state.values_mut() {
+            announcements.retain(|announcement| announcement.announcement_id != announcement_id);
+            return format!("Mentor announcement with ID {} deleted successfully", announcement_id);
+        }
+        // If no announcement found with the given ID
+        "Mentor announcement not found".to_string()
     })
 }
 
 //for testing purpose
 #[query]
-pub fn get_mentor_announcements() -> HashMap<Principal, Vec<MAnnouncements>> {
+pub fn get_mentor_announcements() -> HashMap<Principal, Vec<MAnnouncementsInternal>> {
     MENTOR_ANNOUNCEMENTS.with(|state| {
         let state = state.borrow();
         state.clone()
