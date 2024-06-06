@@ -379,8 +379,15 @@ pub fn list_all_vcs() -> HashMap<Principal, VcWithRoles> {
 
     vc_with_roles_map
 }
+
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+pub struct PaginatedVCs {
+    vcs: HashMap<Principal, VcWithRoles>,
+    total_count: usize,
+}
+
 #[query]
-pub fn list_all_vcs_with_pagination(pagination_params: PaginationParam) -> HashMap<Principal, VcWithRoles> {
+pub fn list_all_vcs_with_pagination(pagination_params: PaginationParam) -> PaginatedVCs {
     let vc_awaiters = VENTURECAPITALIST_STORAGE.with(|awaiters: &RefCell<VentureCapitalistStorage>| awaiters.borrow().clone());
 
     let mut vc_list: Vec<(Principal, VcWithRoles)> = Vec::new();
@@ -404,16 +411,22 @@ pub fn list_all_vcs_with_pagination(pagination_params: PaginationParam) -> HashM
     let start = (pagination_params.page - 1) * pagination_params.page_size;
     let end = std::cmp::min(start + pagination_params.page_size, vc_list.len());
 
-    // Guard against cases where the pagination request exceeds the list bounds
+    // If the start index exceeds the length of the list, return an empty structure with zero count
     if start >= vc_list.len() {
-        return HashMap::new();
+        return PaginatedVCs {
+            vcs: HashMap::new(),
+            total_count: 0,
+        };
     }
 
     // Convert the appropriately sliced list segment to a HashMap
     let paginated_vc_list = vc_list[start..end].to_vec();
     let paginated_vc_map: HashMap<Principal, VcWithRoles> = paginated_vc_list.into_iter().collect();
 
-    paginated_vc_map
+    PaginatedVCs {
+        vcs: paginated_vc_map,
+        total_count: vc_list.len(),
+    }
 }
 
 
