@@ -385,6 +385,13 @@ pub struct PaginationParam {
     pub page_size: usize,
 }
 
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+struct PaginatedMentors {
+    mentors: HashMap<Principal, MentorWithRoles>,
+    total_count: usize,
+}
+
+
 #[query]
 pub fn get_all_mentors_with_pagination(pagination_params: PaginationParam) -> HashMap<Principal, MentorWithRoles> {
     let mentor_awaiters = MENTOR_REGISTRY.with(|awaiters| awaiters.borrow().clone());

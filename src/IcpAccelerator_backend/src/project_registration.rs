@@ -47,6 +47,7 @@ pub struct Jobs {
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct JobsInternal {
+    uid: String,
     job_data: Jobs,
     timestamp: u64,
     project_name: String,
@@ -899,7 +900,7 @@ pub fn list_all_projects_for_admin() -> HashMap<Principal, ProjectVecWithRoles> 
     project_with_roles_map
 }
 
-#[derive(CandidType, Clone)]
+#[derive(CandidType, Clone, Debug, Deserialize, Serialize)]
 pub struct ListAllProjects {
     principal: Principal,
     params: ProjectInfoInternal,
@@ -989,13 +990,23 @@ pub struct PaginationParams {
     page_size: usize,
 }
 
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+pub struct ProjectReturn{
+    project_data: Vec<ListAllProjects>,
+    count: usize
+}
+
 #[query]
-pub fn list_all_projects_with_pagination(pagination_params: PaginationParams) -> Vec<ListAllProjects> {
+pub fn list_all_projects_with_pagination(pagination_params: PaginationParams) -> ProjectReturn {
     APPLICATION_FORM.with(|projects: &RefCell<ApplicationDetails>| {
         let projects = projects.borrow();
 
+        // If projects are empty, return an empty vector and a count of zero.
         if projects.is_empty() {
-            return Vec::new();
+            return ProjectReturn {
+                project_data: Vec::new(),
+                count: 0
+            };
         }
 
         let mut list_all_projects: Vec<ListAllProjects> = Vec::new();
@@ -1030,8 +1041,13 @@ pub fn list_all_projects_with_pagination(pagination_params: PaginationParams) ->
         // Calculate the end index based on the start index and page size. Ensure it does not exceed the list's bounds.
         let end = std::cmp::min(start + pagination_params.page_size, list_all_projects.len());
 
-        // Using the safe start and end indices, slice the vector and return a new vector containing just the paginated items.
-        list_all_projects[start..end].to_vec()
+        // Construct the return value
+        let return_value = ProjectReturn {
+            project_data: list_all_projects[start..end].to_vec(),
+            count: list_all_projects.len()
+        };
+
+        return_value
     })
 }
 
@@ -1755,7 +1771,7 @@ pub fn get_dummy_suggestion() -> Suggestion {
 // }
 
 #[update]
-pub fn post_job(params: Jobs) -> String {
+pub async fn post_job(params: Jobs) -> String {
     let principal_id = ic_cdk::api::caller();
     let is_owner = APPLICATION_FORM.with(|projects| {
         projects.borrow().iter().any(|(owner_principal, projects)| {
@@ -1766,6 +1782,9 @@ pub fn post_job(params: Jobs) -> String {
     if !is_owner {
         return "Error: Only the project owner can request updates.".to_string();
     }
+    let random_bytes = raw_rand().await.expect("Failed to generate random bytes").0;
+
+    let uid_new = format!("{:x}", Sha256::digest(&random_bytes));
     match find_project_by_id(&params.project_id) {
         Some(project_data_internal) => {
             let current_time = ic_cdk::api::time();
@@ -1774,6 +1793,7 @@ pub fn post_job(params: Jobs) -> String {
             POST_JOB.with(|state| {
                 let mut state = state.borrow_mut();
                 let new_job = JobsInternal {
+                    uid: uid_new.clone(),
                     job_data: params,
                     timestamp: current_time,
                     project_name: project_data_for_job.project_name,
@@ -1789,6 +1809,62 @@ pub fn post_job(params: Jobs) -> String {
         }
         None => "Error: Project not found.".to_string(),
     }
+}
+
+#[update]
+pub async fn delete_job(job_uid: String) -> String {
+    POST_JOB.with(|state| {
+        let mut state = state.borrow_mut();
+        let mut found = false;
+        let mut empty_principal = None;
+
+        // Search for the job UID across all principals
+        for (principal, jobs) in state.iter_mut() {
+            if let Some(pos) = jobs.iter().position(|job| job.uid == job_uid) {
+                jobs.remove(pos);
+                found = true;
+                if jobs.is_empty() {
+                    empty_principal = Some(*principal); // Mark the principal for later removal if the job list is empty
+                }
+                break;
+            }
+        }
+
+        if found {
+            if let Some(principal) = empty_principal {
+                state.remove(&principal); // Remove the principal entry if the job list is empty
+            }
+            "Job deleted successfully.".to_string()
+        } else {
+            "Error: No job found with the provided UID.".to_string()
+        }
+    })
+}
+
+
+#[update]
+pub async fn update_job(job_uid: String, updated_job: Jobs) -> String {
+    POST_JOB.with(|state| {
+        let mut state = state.borrow_mut();
+        let mut found = false;
+        let current_time = ic_cdk::api::time();
+
+        // Search for the job UID across all principals
+        for (principal, jobs) in state.iter_mut() {
+            if let Some(job) = jobs.iter_mut().find(|job| job.uid == job_uid) {
+                job.job_data = updated_job;
+                job.timestamp = current_time; // Optionally update the timestamp
+                found = true;
+                break;
+            }
+        }
+
+        if found {
+            format!("Job updated successfully at {}", current_time)
+        } else {
+            "Error: No job found with the provided UID.".to_string()
+        }
+    })
 }
 
 pub fn get_jobs_for_project(project_id: String) -> Vec<JobsInternal> {
@@ -2602,3 +2678,4 @@ pub fn edit_job_details(job_id: String, new_details: Jobs) -> String {
         }
     })
 }
+
