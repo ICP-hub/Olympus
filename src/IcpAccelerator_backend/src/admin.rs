@@ -1,7 +1,10 @@
 use crate::associations::*;
 use crate::cohort::APPLIER_COUNT;
 use crate::cohort::CAPITALIST_APPLIED_FOR_COHORT;
+use crate::cohort::InviteRequest;
 use crate::cohort::MENTORS_APPLIED_FOR_COHORT;
+use crate::cohort::MENTOR_REMOVED_FROM_COHORT;
+use crate::cohort::PENDING_MENTOR_CONFIRMATION_TO_REJOIN;
 use crate::cohort::PROJECTS_APPLIED_FOR_COHORT;
 use crate::latest_popular_projects::INCUBATED_PROJECTS;
 use crate::latest_popular_projects::LIVE_PROJECTS;
@@ -2017,9 +2020,12 @@ pub fn get_declined_cohort_creation_request_for_admin() -> Vec<CohortRequest> {
 }
 
 #[update]
-pub fn remove_mentor_from_cohort(cohort_id: String, mentor_principal: Principal, passphrase_key: String) -> Result<String, String> {
+pub fn remove_mentor_from_cohort(
+    cohort_id: String,
+    mentor_principal: Principal,
+    passphrase_key: String,
+) -> Result<String, String> {
     let required_key = format!("delete/{}", mentor_principal);
-
 
     if passphrase_key != required_key {
         return Err("Unauthorized attempt: Incorrect passphrase key.".to_string());
@@ -2032,14 +2038,23 @@ pub fn remove_mentor_from_cohort(cohort_id: String, mentor_principal: Principal,
                 let mentors = mentors_applied.entry(cohort_id.clone()).or_default();
 
                 if let Some(index) = mentors.iter().position(|x| *x == mentor_clone) {
-                    mentors.remove(index); 
+                    let mentor_data = mentors.remove(index);
+                    MENTOR_REMOVED_FROM_COHORT.with(|removed| {
+                        removed.borrow_mut()
+                           .entry(cohort_id.clone())
+                           .or_default()
+                           .push((mentor_principal, mentor_data));
+                    });
                     APPLIER_COUNT.with(|applier_count| {
                         let mut applier_count = applier_count.borrow_mut();
                         if let Some(count) = applier_count.get_mut(&cohort_id) {
                             *count = count.saturating_sub(1);
                         }
                     });
-                    Ok(format!("Mentor successfully removed from the cohort with cohort id {}", cohort_id))
+                    Ok(format!(
+                        "Mentor successfully removed from the cohort with cohort id {}",
+                        cohort_id
+                    ))
                 } else {
                     Err("You are not part of this cohort".to_string())
                 }
@@ -2047,6 +2062,77 @@ pub fn remove_mentor_from_cohort(cohort_id: String, mentor_principal: Principal,
         } else {
             Err("Invalid mentor record".to_string())
         }
+    })
+}
+
+#[update]
+pub fn send_rejoin_invitation_to_mentor(cohort_id: String, mentor_principal: Principal, invite_message: String) -> Result<String, String> {
+    MENTOR_REMOVED_FROM_COHORT.with(|removed| {
+        let mut removed = removed.borrow_mut();
+        if let Some(mentors) = removed.get_mut(&cohort_id) {
+            if let Some((index, _)) = mentors.iter().enumerate().find(|(_, (pr, _))| *pr == mentor_principal) {
+                let (principal, mentor_data) = mentors.remove(index);
+                let invite_request = InviteRequest {
+                    cohort_id: cohort_id.clone(),
+                    sender_principal: principal,
+                    mentor_data,
+                    invite_message: invite_message,
+                };
+                PENDING_MENTOR_CONFIRMATION_TO_REJOIN.with(|pending| {
+                    pending.borrow_mut().insert(cohort_id.clone(), invite_request);
+                });
+                return Ok("Invitation sent to rejoin the cohort.".to_string());
+            }
+        }
+        Err("No removed mentor found for this principal in the specified cohort.".to_string())
+    })
+}
+
+
+
+#[update]
+pub fn accept_rejoin_invitation(cohort_id: String) -> Result<String, String> {
+    PENDING_MENTOR_CONFIRMATION_TO_REJOIN.with(|pending| {
+        let mut pending = pending.borrow_mut();
+        if let Some(invite_request) = pending.remove(&cohort_id) {
+            MENTORS_APPLIED_FOR_COHORT.with(|mentors| {
+                mentors.borrow_mut()
+                       .entry(cohort_id.clone())
+                       .or_default()
+                       .push(invite_request.mentor_data);
+            });
+            return Ok(format!("Mentor has successfully rejoined the cohort {}", cohort_id));
+        }
+        Err("No pending invitation found for this cohort.".to_string())
+    })
+}
+
+
+#[update]
+pub fn decline_rejoin_invitation(cohort_id: String) -> Result<String, String> {
+    PENDING_MENTOR_CONFIRMATION_TO_REJOIN.with(|pending| {
+        let mut pending = pending.borrow_mut();
+        if pending.remove(&cohort_id).is_some() {
+            return Ok(format!("Mentor has declined the invitation to rejoin the cohort {}", cohort_id));
+        }
+        Err("No pending invitation found for this cohort.".to_string())
+    })
+}
+
+#[query]
+pub fn get_my_invitation_request(cohort_id: String) -> Result<InviteRequest, String> {
+    let principal_id = ic_cdk::api::caller(); 
+
+    PENDING_MENTOR_CONFIRMATION_TO_REJOIN.with(|pending| {
+        let pending = pending.borrow();
+        if let Some(invite_request) = pending.get(&cohort_id) {
+            if invite_request.sender_principal == principal_id {
+                return Ok(invite_request.clone());
+            } else {
+                return Err("You are not authorized to view this invitation.".to_string());
+            }
+        }
+        Err("No pending invitation found for this cohort.".to_string())
     })
 }
 

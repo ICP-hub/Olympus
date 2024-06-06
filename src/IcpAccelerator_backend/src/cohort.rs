@@ -77,6 +77,14 @@ pub struct CohortEnrollmentRequest{
     pub enroller_principal: Principal,
 }
 
+#[derive(Clone, CandidType, Deserialize, Debug)]
+pub struct InviteRequest{
+    pub cohort_id: String,
+    pub sender_principal: Principal,
+    pub mentor_data: MentorInternal,
+    pub invite_message: String
+}
+
 pub type MentorsAppliedForCohort = HashMap<String, Vec<MentorInternal>>;
 pub type CohortInfo = HashMap<String, CohortDetails>;
 pub type ProjectsAppliedForCohort = HashMap<String, Vec<ProjectInfoInternal>>;
@@ -84,6 +92,8 @@ pub type ApplierCount = HashMap<String, u64>;
 pub type CapitalistAppliedForCohort = HashMap<String, Vec<VentureCapitalistInternal>>;
 pub type CohortsAssociated = HashMap<String, Vec<String>>;
 pub type CohortEnrollmentRequests = HashMap<Principal, Vec<CohortEnrollmentRequest>>;
+pub type MentorsRemovedFromCohort = HashMap<String, Vec<(Principal, MentorInternal)>>;
+pub type MentorsInviteRequest = HashMap<String, InviteRequest>;
 
 thread_local! {
     pub static COHORT : RefCell<CohortInfo> = RefCell::new(CohortInfo::new());
@@ -94,6 +104,8 @@ thread_local! {
     pub static ASSOCIATED_COHORTS_WITH_PROJECT : RefCell<CohortsAssociated> = RefCell::new(CohortsAssociated::new());
     pub static MY_SENT_COHORT_REQUEST : RefCell<HashMap<Principal, Vec<CohortRequest>>> = RefCell::new(HashMap::new());
     pub static COHORT_ENROLLMENT_REQUESTS: RefCell<CohortEnrollmentRequests> = RefCell::new(HashMap::new());
+    pub static MENTOR_REMOVED_FROM_COHORT: RefCell<MentorsRemovedFromCohort> = RefCell::new(MentorsRemovedFromCohort::new());
+    pub static PENDING_MENTOR_CONFIRMATION_TO_REJOIN: RefCell<MentorsInviteRequest> = RefCell::new(MentorsInviteRequest::new());
 }
 
 
