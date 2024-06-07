@@ -268,11 +268,10 @@ function ProjectRegForm() {
           "Project Description must not exceed 500 characters",
           (value) => !value || value.length <= 500
         )
-        .required("Project Description is required"),
-      project_elevator_pitch: yup
-        .string()
-        .url("Invalid url")
-        .required("Project Pitch deck is required"),
+        .optional(),
+      // .required("Project Description is required"),
+      project_elevator_pitch: yup.string().url("Invalid url").optional(),
+      // .required("Project Pitch deck is required"),
       project_website: yup
         .string()
         .nullable(true)
@@ -1196,7 +1195,7 @@ function ProjectRegForm() {
       <DetailHeroSection />
       <section className="w-full h-fit px-[6%] lg1:px-[4%] bg-gray-100">
         <div className="w-full h-full bg-gray-100">
-          <div className="bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-[30px]  sm:text-[25px] md1:text-[30px] md2:text-[35px] font-black font-fontUse dxl:text-[40px] p-6">
+          <div className="bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-[30px]  sm:text-[25px] md1:text-[30px] md2:text-[35px] font-black font-fontUse dxl:text-[40px] p-6 mt-[30px]">
             Project Information
           </div>
           <div className="text-sm font-medium text-center text-gray-200 ">
@@ -1257,7 +1256,7 @@ function ProjectRegForm() {
                         </label>
                         {imagePreview || errors.image ? (
                           <button
-                            className="p-2 border-2 border-red-500 items-center rounded-md text-md bg-transparent text-red-500 cursor-pointer font-semibold capitalize mt-3 sm0:mt-0"
+                            className="p-2 border-2 border-red-500 items-center rounded-md text-md bg-transparent text-red-500 cursor-pointer font-semibold capitalize mt-3 sm0:mt-0 mt-[11px]"
                             onClick={() => clearImageFunc("image")}
                           >
                             clear
@@ -1834,7 +1833,7 @@ function ProjectRegForm() {
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
                     Project Description (50 words){" "}
-                    <span className="text-red-500">*</span>
+                    {/* <span className="text-red-500">*</span> */}
                   </label>
                   <input
                     type="text"
@@ -1858,7 +1857,8 @@ function ProjectRegForm() {
                     htmlFor="project_elevator_pitch"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Project pitch deck <span className="text-red-500">*</span>
+                    Project pitch deck
+                    {/* <span className="text-red-500">*</span> */}
                   </label>
                   <input
                     type="text"
