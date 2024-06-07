@@ -3,6 +3,7 @@ use crate::cohort_rating::*;
 use crate::vc_registration::Announcements;
 use crate::{admin::*, mentor::*, project_registration::*, user_module::*, vc_registration::*};
 use candid::{CandidType, Principal};
+use crate::cohort::*;
 use ic_cdk::api::management_canister::main::{
     canister_status, CanisterIdRecord, CanisterStatusResponse, CanisterStatusType,
     DefiniteCanisterSettings,
@@ -221,6 +222,39 @@ const DECLINED_COHORTS_MEMORY_ID: MemoryId = MemoryId::new(57);
 type PrivateDocsAccessRequest = StableBTreeMap<StoredPrincipal, Candid<Vec<AccessRequest>>, VMem>;
 const PRIVATE_DOCS_ACCESS_REQUEST_MEMORY_ID: MemoryId = MemoryId::new(58);
 
+pub type MentorsAppliedForCohort = StableBTreeMap<String, Candid<Vec<MentorInternal>>, VMem>;
+const MENTORS_APPLIED_FOR_COHORT_MEMORY_ID: MemoryId = MemoryId::new(59);
+
+pub type CohortInfo = StableBTreeMap<String, Candid<CohortDetails>, VMem>;
+const COHORT_MEMORY_ID: MemoryId = MemoryId::new(60);
+
+pub type ProjectsAppliedForCohort = StableBTreeMap<String, Candid<Vec<ProjectInfoInternal>>, VMem>;
+const PROJECTS_APPLIED_FOR_COHORT_MEMORY_ID: MemoryId = MemoryId::new(61);
+
+pub type ApplierCount = StableBTreeMap<String, u64, VMem>;
+const APPLIER_COUNT_MEMORY_ID: MemoryId = MemoryId::new(62);
+
+pub type CapitalistAppliedForCohort = StableBTreeMap<String, Candid<Vec<VentureCapitalistInternal>>, VMem>;
+const CAPITALIST_APPLIED_FOR_COHORT_MEMORY_ID: MemoryId = MemoryId::new(63);
+
+pub type CohortsAssociated = StableBTreeMap<String, Candid<Vec<String>>, VMem>;
+const ASSOCIATED_COHORTS_WITH_PROJECT_MEMORY_ID: MemoryId = MemoryId::new(64);
+
+pub type CohortEnrollmentRequests = StableBTreeMap<StoredPrincipal, Candid<Vec<CohortEnrollmentRequest>>, VMem>;
+const COHORT_ENROLLMENT_REQUESTS_MEMORY_ID: MemoryId = MemoryId::new(65);
+
+pub type MentorsRemovedFromCohort = StableBTreeMap<String, Candid<Vec<(Principal, MentorInternal)>>, VMem>;
+const MENTOR_REMOVED_FROM_COHORT_MEMORY_ID: MemoryId = MemoryId::new(66);
+
+pub type MentorsInviteRequest = StableBTreeMap<String, Candid<InviteRequest>, VMem>;
+const PENDING_MENTOR_CONFIRMATION_TO_REJOIN_MEMORY_ID: MemoryId = MemoryId::new(67);
+
+pub type MySentCohortRequest = StableBTreeMap<StoredPrincipal, Candid<Vec<CohortRequest>>, VMem>;
+const MY_SENT_COHORT_REQUEST_MEMORY_ID: MemoryId = MemoryId::new(68);
+
+
+
+
 pub struct State {
     pub admin_notifications: AdminNotification,
     pub cohort_request_admin: CohortRequestNotification,
@@ -282,6 +316,18 @@ pub struct State {
     pub project_rating: ProjectRating,
     pub money_access_request: MoneyAccessRequest,
     pub private_docs_access_request: PrivateDocsAccessRequest,
+
+    
+    pub cohort_info: CohortInfo,
+    pub project_applied_for_cohort: ProjectsAppliedForCohort,
+    pub applier_count: ApplierCount,
+    pub vc_applied_for_cohort:CapitalistAppliedForCohort,
+    pub mentor_applied_for_cohort: MentorsAppliedForCohort,
+    pub cohorts_associated: CohortsAssociated,
+    pub cohort_enrollment_request: CohortEnrollmentRequests,
+    pub mentor_removed_from_cohort: MentorsRemovedFromCohort,
+    pub mentor_invite_request: MentorsInviteRequest,
+    pub my_sent_cohort_request: MySentCohortRequest,
 }
 
 thread_local! {
@@ -357,6 +403,17 @@ thread_local! {
             project_rating: ProjectRating::init(mm.borrow().get(PROJECT_RATING_MEMORY_ID)),
             money_access_request: MoneyAccessRequest::init(mm.borrow().get(MONEY_ACCESS_REQUEST_MEMORY_ID)),
             private_docs_access_request: PrivateDocsAccessRequest::init(mm.borrow().get(PRIVATE_DOCS_ACCESS_REQUEST_MEMORY_ID)),
+
+            cohort_info: CohortInfo::init(mm.borrow().get(COHORT_MEMORY_ID)),
+            project_applied_for_cohort: ProjectsAppliedForCohort::init(mm.borrow().get(PROJECTS_APPLIED_FOR_COHORT_MEMORY_ID)),
+            applier_count: ApplierCount::init(mm.borrow().get(APPLIER_COUNT_MEMORY_ID)),
+            vc_applied_for_cohort:CapitalistAppliedForCohort::init(mm.borrow().get(CAPITALIST_APPLIED_FOR_COHORT_MEMORY_ID)),
+            mentor_applied_for_cohort: MentorsAppliedForCohort::init(mm.borrow().get(MENTORS_APPLIED_FOR_COHORT_MEMORY_ID)),
+            cohorts_associated: CohortsAssociated::init(mm.borrow().get(ASSOCIATED_COHORTS_WITH_PROJECT_MEMORY_ID)),
+            cohort_enrollment_request: CohortEnrollmentRequests::init(mm.borrow().get(COHORT_ENROLLMENT_REQUESTS_MEMORY_ID)),
+            mentor_removed_from_cohort: MentorsRemovedFromCohort::init(mm.borrow().get(MENTOR_REMOVED_FROM_COHORT_MEMORY_ID)),
+            mentor_invite_request: MentorsInviteRequest::init(mm.borrow().get(PENDING_MENTOR_CONFIRMATION_TO_REJOIN_MEMORY_ID)),
+            my_sent_cohort_request: MySentCohortRequest::init(mm.borrow().get(MY_SENT_COHORT_REQUEST_MEMORY_ID)),
         })
     );
 }

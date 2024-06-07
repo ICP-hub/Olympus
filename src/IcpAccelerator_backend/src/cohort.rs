@@ -1,5 +1,6 @@
 use crate::mentor::get_mentor_info_using_principal;
 use crate::project_registration::{ProjectInfo, ProjectInfoInternal, get_project_info_using_principal};
+use crate::state_handler::{read_state, StoredPrincipal, mutate_state, Candid};
 use crate::user_module::UserInformation;
 use crate::vc_registration::get_vc_info_using_principal;
 use crate::{
@@ -30,7 +31,7 @@ pub struct Cohort {
     description: String,
     tags: String,
     criteria: Eligibility,
-    no_of_seats: u8,
+    no_of_seats: u64,
     deadline: String,
     cohort_launch_date: String,
     cohort_end_date: String,
@@ -73,13 +74,23 @@ pub struct CohortEnrollmentRequest{
     pub enroller_principal: Principal,
 }
 
+#[derive(Clone, CandidType, Deserialize, Debug)]
+pub struct InviteRequest{
+    pub cohort_id: String,
+    pub sender_principal: Principal,
+    pub mentor_data: MentorInternal,
+    pub invite_message: String
+}
+
 pub type MentorsAppliedForCohort = HashMap<String, Vec<MentorInternal>>;
 pub type CohortInfo = HashMap<String, CohortDetails>;
 pub type ProjectsAppliedForCohort = HashMap<String, Vec<ProjectInfoInternal>>;
-pub type ApplierCount = HashMap<String, u8>;
+pub type ApplierCount = HashMap<String, u64>;
 pub type CapitalistAppliedForCohort = HashMap<String, Vec<VentureCapitalistInternal>>;
 pub type CohortsAssociated = HashMap<String, Vec<String>>;
 pub type CohortEnrollmentRequests = HashMap<Principal, Vec<CohortEnrollmentRequest>>;
+pub type MentorsRemovedFromCohort = HashMap<String, Vec<(Principal, MentorInternal)>>;
+pub type MentorsInviteRequest = HashMap<String, InviteRequest>;
 
 thread_local! {
     pub static COHORT : RefCell<CohortInfo> = RefCell::new(CohortInfo::new());
@@ -90,238 +101,208 @@ thread_local! {
     pub static ASSOCIATED_COHORTS_WITH_PROJECT : RefCell<CohortsAssociated> = RefCell::new(CohortsAssociated::new());
     pub static MY_SENT_COHORT_REQUEST : RefCell<HashMap<Principal, Vec<CohortRequest>>> = RefCell::new(HashMap::new());
     pub static COHORT_ENROLLMENT_REQUESTS: RefCell<CohortEnrollmentRequests> = RefCell::new(HashMap::new());
+    pub static MENTOR_REMOVED_FROM_COHORT: RefCell<MentorsRemovedFromCohort> = RefCell::new(MentorsRemovedFromCohort::new());
+    pub static PENDING_MENTOR_CONFIRMATION_TO_REJOIN: RefCell<MentorsInviteRequest> = RefCell::new(MentorsInviteRequest::new());
 }
 
 
 //a. create_cohort
 #[update]
 pub async fn create_cohort(params: Cohort) -> Result<String, String>{
-    let is_he_mentor = MENTOR_REGISTRY.with(|storage: &RefCell<MentorRegistry>| {
-        let storage = storage.borrow();
-        storage.contains_key(&caller())
+
+    let caller_principal = caller();
+
+    let is_mentor_or_investor = read_state(|state| {
+        state.mentor_storage.contains_key(&StoredPrincipal(caller_principal)) ||
+        state.vc_storage.contains_key(&StoredPrincipal(caller_principal))
     });
 
-    if !is_he_mentor {
-        let is_he_investor =
-            VENTURECAPITALIST_STORAGE.with(|capitalist: &RefCell<VentureCapitalistStorage>| {
-                let capitalist = capitalist.borrow();
-                capitalist.contains_key(&caller())
-            });
-
-        if !is_he_investor {
-            return Err("you are not priviledged to create a cohort".to_string());
-            //return format!("you are not priviledged to create a cohort");
-        }
+    if !is_mentor_or_investor {
+        return Err("You are not privileged to create a cohort.".to_string());
     }
 
     let u_ids = raw_rand().await.unwrap().0;
     let cohort_id = format!("{:x}", Sha256::digest(&u_ids));
 
-    let roles_of_caller = get_roles_for_principal(caller());
-
-    let mut roles_assigned: Vec<String> = vec![];
-
-    for r in roles_of_caller {
-        if r.status == "approved" || r.status == "active" {
-            roles_assigned.push(r.name)
-        }
-    }
+    let roles_assigned = read_state(|state| {
+        get_roles_for_principal(caller_principal).iter()
+            .filter(|r| r.status == "approved" || r.status == "active")
+            .map(|r| r.name.clone())
+            .collect::<Vec<String>>()
+    });
 
     let cohort_details = CohortDetails {
         cohort_id: cohort_id.clone(),
-        cohort: params.clone(),
-        cohort_created_at: time(),
-        cohort_creator: caller(),
+        cohort: params,
+        cohort_created_at: ic_cdk::api::time(),
+        cohort_creator: caller_principal,
         cohort_creator_role: roles_assigned,
-        cohort_creator_principal: caller()
+        cohort_creator_principal: caller_principal
     };
 
     let cohort_request = CohortRequest {
-        cohort_details,
-        accepted_at : 0,
-        rejected_at : 0,
-        sent_at : time(),
-        request_status : "pending".to_string()
+        cohort_details: cohort_details.clone(),
+        accepted_at: 0,
+        rejected_at: 0,
+        sent_at: ic_cdk::api::time(),
+        request_status: "pending".to_string()
     };
 
-    //store my cohort creation request
+    send_cohort_request_to_admin(cohort_request.clone());
 
-    store_cohort_creation_pending_request(cohort_request.clone());
-    
-
-    ic_cdk::println!("cohort id is {}", cohort_id.clone());
-    Ok(send_cohort_request_to_admin(cohort_request.clone()).await)
-
-    // COHORT.with(|storage| {
-    //     let mut storage = storage.borrow_mut();
-    //     storage.insert(cohort_id.clone(), cohort_details)
-    // });
-
-    // Ok(format!(
-    //     "accelerator is successfully created by {} with cohort id {}",
-    //     caller(),
-    //     cohort_id.clone()
-    // ))
-}
-
-//admin should be notified about cohort creation 
-
-pub fn store_cohort_creation_pending_request(request: CohortRequest) {
-    MY_SENT_COHORT_REQUEST.with(|store| {
-        store
-            .borrow_mut()
-            .entry(caller())
-            .or_insert_with(Vec::new)
-            .push(request);
+    mutate_state(|state| {
+        // Check if there are already requests for this principal
+        if let Some(mut requests) = state.my_sent_cohort_request.get(&StoredPrincipal(caller_principal)) {
+            requests.0.push(cohort_request);
+        } else {
+            state.my_sent_cohort_request.insert(StoredPrincipal(caller_principal), Candid(vec![cohort_request]));
+        }
     });
+
+    ic_cdk::println!("Cohort ID is {}", cohort_id);
+    Ok("Cohort request sent to admin for approval.".to_string())
 }
 
 #[query]
 pub fn get_my_pending_cohort_creation_requests() -> Vec<CohortRequest> {
-    MY_SENT_COHORT_REQUEST.with(|pending_alerts| {
-        pending_alerts
-            .borrow()
-            .get(&caller())
-            .map_or_else(Vec::new, |requests| {
-                requests
-                    .iter()
-                    .filter(|request| request.request_status == "pending")
-                    .cloned()
-                    .collect()
-            })
+    let caller_principal = ic_cdk::caller();
+    read_state(|state| {
+        state.my_sent_cohort_request.get(&StoredPrincipal(caller_principal))
+            .map_or_else(
+                || Vec::new(),
+                |requests| {
+                    requests.0.iter()
+                        .filter(|request| request.request_status == "pending")
+                        .cloned()
+                        .collect()
+                }
+            )
     })
 }
 
 #[query]
 pub fn get_my_accepted_cohort_creation_request() -> Vec<CohortRequest> {
-    MY_SENT_COHORT_REQUEST.with(|pending_alerts| {
-        pending_alerts
-            .borrow()
-            .get(&caller())
-            .map_or_else(Vec::new, |requests| {
-                requests
-                    .iter()
-                    .filter(|request| request.request_status == "accepted")
-                    .cloned()
-                    .collect()
-            })
+    let caller_principal = ic_cdk::caller();
+    read_state(|state| {
+        state.my_sent_cohort_request.get(&StoredPrincipal(caller_principal))
+            .map_or_else(
+                || Vec::new(),
+                |requests| {
+                    requests.0.iter()
+                        .filter(|request| request.request_status == "accepted")
+                        .cloned()
+                        .collect()
+                }
+            )
     })
 }
 
 #[query]
 pub fn get_my_declined_cohort_creation_requests() -> Vec<CohortRequest> {
-    MY_SENT_COHORT_REQUEST.with(|pending_alerts| {
-        pending_alerts
-            .borrow()
-            .get(&caller())
-            .map_or_else(Vec::new, |requests| {
-                requests
-                    .iter()
-                    .filter(|request| request.request_status == "declined")
-                    .cloned()
-                    .collect()
-            })
+    let caller_principal = ic_cdk::caller();
+    read_state(|state| {
+        state.my_sent_cohort_request.get(&StoredPrincipal(caller_principal))
+            .map_or_else(
+                || Vec::new(),
+                |requests| {
+                    requests.0.iter()
+                        .filter(|request| request.request_status == "declined")
+                        .cloned()
+                        .collect()
+                }
+            )
     })
 }
 
 #[query]
 pub fn get_cohort(cohort_id: String) -> CohortDetails {
-    COHORT.with(|storage| {
-        let res = storage
-            .borrow()
-            .get(&cohort_id)
-            .expect("you have not crerated a cohort")
-            .clone();
-        res
+    read_state(|state| {
+        state.cohort_info.get(&cohort_id)
+            .expect("You have not created a cohort")
+            .0
+            .clone()
     })
 }
 
 pub fn get_cohort_inner_func(cohort_id: String) -> Option<CohortDetails> {
-    Some(COHORT.with(|storage| {
-        let res = storage
-            .borrow()
-            .get(&cohort_id)
-            .expect("you have not crerated a cohort")
-            .clone();
-        res
-    }))
+    read_state(|state| {
+        state.cohort_info.get(&cohort_id)
+            .map(|candid_cohort_details| candid_cohort_details.0.clone())  
+    })
 }
 
 
 #[query]
 pub fn get_all_cohorts() -> Vec<CohortDetails> {
-    COHORT.with(|storage| {
-        storage
-            .borrow()
-            .values()
-            .map(|v| v.clone())
+    read_state(|state| {
+        state.cohort_info.iter()
+            .map(|(_key, candid_cohort_details)| candid_cohort_details.0.clone())
             .collect()
     })
-
 }
 
 #[update]
 pub fn send_enrollment_request_as_mentor(cohort_id: String, user_info: MentorInternal) -> String {
-    let caller = caller();
+    let caller = ic_cdk::api::caller();
     let now = ic_cdk::api::time();
 
-    // Retrieve the cohort creator's Principal
-    let cohort_creator_principal = COHORT.with(|cohorts| {
-        let cohorts = cohorts.borrow();
-        if let Some(details) = cohorts.get(&cohort_id) {
-            details.cohort_creator
-        } else {
-            Principal::anonymous() 
-        }
-    });
+    // Retrieve the cohort creator's Principal and check for existing pending requests
+    let (cohort_creator_principal, is_pending) = read_state(|state| {
+        let cohort_creator_principal = state.cohort_info.get(&cohort_id)
+            .map(|c| c.0.cohort_creator)
+            .unwrap_or(Principal::anonymous());
 
-    let is_pending = COHORT_ENROLLMENT_REQUESTS.with(|requests| {
-        requests.borrow().get(&cohort_creator_principal).map_or(false, |reqs| {
-            reqs.iter().any(|req| req.request_status == "pending" && req.enroller_principal == caller)
-        })
+        let is_pending = state.cohort_enrollment_request.get(&StoredPrincipal(cohort_creator_principal))
+            .map_or(false, |reqs| {
+                reqs.0.iter().any(|req| req.request_status == "pending" && req.enroller_principal == caller)
+            });
+
+        (cohort_creator_principal, is_pending)
     });
 
     if is_pending {
         return "There is already a pending enrollment request for this cohort.".to_string();
     }
 
+    // Create and send enrollment request
     let enrollment_request = CohortEnrollmentRequest {
-        cohort_details: get_cohort(cohort_id),
+        cohort_details: get_cohort(cohort_id), 
         sent_at: now,
         accepted_at: 0,
         rejected_at: 0,
         request_status: "pending".to_string(),
-        enroller_data: EnrollerDataInternal{ project_data: None, mentor_data: Some(user_info), vc_data: None },
+        enroller_data: EnrollerDataInternal { project_data: None, mentor_data: Some(user_info), vc_data: None },
         enroller_principal: caller,
     };
 
-    COHORT_ENROLLMENT_REQUESTS.with(|requests| {
-        let mut requests = requests.borrow_mut();
-        requests.entry(cohort_creator_principal).or_insert_with(Vec::new).push(enrollment_request);
+    mutate_state(|state| {
+        if let Some(mut requests) = state.cohort_enrollment_request.get(&StoredPrincipal(cohort_creator_principal)) {
+            requests.0.push(enrollment_request);
+        } else {
+            state.cohort_enrollment_request.insert(StoredPrincipal(cohort_creator_principal), Candid(vec![enrollment_request]));
+        }
     });
 
     "Enrollment request sent successfully".to_string()
-}
+} 
 
 #[update]
 pub fn send_enrollment_request_as_investor(cohort_id: String, user_info: VentureCapitalistInternal) -> String {
-    let caller = caller();
+    let caller = ic_cdk::api::caller();
     let now = ic_cdk::api::time();
 
-    // Retrieve the cohort creator's Principal
-    let cohort_creator_principal = COHORT.with(|cohorts| {
-        let cohorts = cohorts.borrow();
-        if let Some(details) = cohorts.get(&cohort_id) {
-            details.cohort_creator
-        } else {
-            Principal::anonymous() 
-        }
-    });
+    // Retrieve the cohort creator's Principal and check for existing pending requests
+    let (cohort_creator_principal, is_pending) = read_state(|state| {
+        let cohort_creator_principal = state.cohort_info.get(&cohort_id)
+            .map(|c| c.0.cohort_creator)
+            .unwrap_or(Principal::anonymous());
 
-    let is_pending = COHORT_ENROLLMENT_REQUESTS.with(|requests| {
-        requests.borrow().get(&cohort_creator_principal).map_or(false, |reqs| {
-            reqs.iter().any(|req| req.request_status == "pending" && req.enroller_principal == caller)
-        })
+        let is_pending = state.cohort_enrollment_request.get(&StoredPrincipal(cohort_creator_principal))
+            .map_or(false, |reqs| {
+                reqs.0.iter().any(|req| req.request_status == "pending" && req.enroller_principal == caller)
+            });
+
+        (cohort_creator_principal, is_pending)
     });
 
     if is_pending {
@@ -329,18 +310,21 @@ pub fn send_enrollment_request_as_investor(cohort_id: String, user_info: Venture
     }
 
     let enrollment_request = CohortEnrollmentRequest {
-        cohort_details: get_cohort(cohort_id),
+        cohort_details: get_cohort(cohort_id), 
         sent_at: now,
         accepted_at: 0,
         rejected_at: 0,
         request_status: "pending".to_string(),
-        enroller_data: EnrollerDataInternal{ project_data: None, mentor_data: None, vc_data: Some(user_info) },
+        enroller_data: EnrollerDataInternal { project_data: None, mentor_data: None, vc_data: Some(user_info) },
         enroller_principal: caller,
     };
 
-    COHORT_ENROLLMENT_REQUESTS.with(|requests| {
-        let mut requests = requests.borrow_mut();
-        requests.entry(cohort_creator_principal).or_insert_with(Vec::new).push(enrollment_request);
+    mutate_state(|state| {
+        if let Some(mut requests) = state.cohort_enrollment_request.get(&StoredPrincipal(cohort_creator_principal)) {
+            requests.0.push(enrollment_request);
+        } else {
+            state.cohort_enrollment_request.insert(StoredPrincipal(cohort_creator_principal), Candid(vec![enrollment_request]));
+        }
     });
 
     "Enrollment request sent successfully".to_string()
@@ -348,23 +332,21 @@ pub fn send_enrollment_request_as_investor(cohort_id: String, user_info: Venture
 
 #[update]
 pub fn send_enrollment_request_as_project(cohort_id: String, user_info: ProjectInfoInternal) -> String {
-    let caller = caller();
+    let caller = ic_cdk::api::caller();
     let now = ic_cdk::api::time();
 
-    // Retrieve the cohort creator's Principal
-    let cohort_creator_principal = COHORT.with(|cohorts| {
-        let cohorts = cohorts.borrow();
-        if let Some(details) = cohorts.get(&cohort_id) {
-            details.cohort_creator
-        } else {
-            Principal::anonymous() 
-        }
-    });
+    // Retrieve the cohort creator's Principal and check for existing pending requests
+    let (cohort_creator_principal, is_pending) = read_state(|state| {
+        let cohort_creator_principal = state.cohort_info.get(&cohort_id)
+            .map(|c| c.0.cohort_creator)
+            .unwrap_or(Principal::anonymous());
 
-    let is_pending = COHORT_ENROLLMENT_REQUESTS.with(|requests| {
-        requests.borrow().get(&cohort_creator_principal).map_or(false, |reqs| {
-            reqs.iter().any(|req| req.request_status == "pending" && req.enroller_principal == caller)
-        })
+        let is_pending = state.cohort_enrollment_request.get(&StoredPrincipal(cohort_creator_principal))
+            .map_or(false, |reqs| {
+                reqs.0.iter().any(|req| req.request_status == "pending" && req.enroller_principal == caller)
+            });
+
+        (cohort_creator_principal, is_pending)
     });
 
     if is_pending {
@@ -372,18 +354,21 @@ pub fn send_enrollment_request_as_project(cohort_id: String, user_info: ProjectI
     }
 
     let enrollment_request = CohortEnrollmentRequest {
-        cohort_details: get_cohort(cohort_id),
+        cohort_details: get_cohort(cohort_id), 
         sent_at: now,
         accepted_at: 0,
         rejected_at: 0,
         request_status: "pending".to_string(),
-        enroller_data: EnrollerDataInternal{ project_data: Some(user_info), mentor_data: None, vc_data: None },
+        enroller_data: EnrollerDataInternal { project_data: Some(user_info), mentor_data: None, vc_data: None },
         enroller_principal: caller,
     };
 
-    COHORT_ENROLLMENT_REQUESTS.with(|requests| {
-        let mut requests = requests.borrow_mut();
-        requests.entry(cohort_creator_principal).or_insert_with(Vec::new).push(enrollment_request);
+    mutate_state(|state| {
+        if let Some(mut requests) = state.cohort_enrollment_request.get(&StoredPrincipal(cohort_creator_principal)) {
+            requests.0.push(enrollment_request);
+        } else {
+            state.cohort_enrollment_request.insert(StoredPrincipal(cohort_creator_principal), Candid(vec![enrollment_request]));
+        }
     });
 
     "Enrollment request sent successfully".to_string()
@@ -391,122 +376,146 @@ pub fn send_enrollment_request_as_project(cohort_id: String, user_info: ProjectI
 
 #[query]
 pub fn get_pending_cohort_enrollment_requests(mentor_principal: Principal) -> Vec<CohortEnrollmentRequest> {
-    COHORT_ENROLLMENT_REQUESTS.with(|requests| {
-        requests.borrow()
-            .get(&mentor_principal)
-            .map_or_else(Vec::new, |request_list| {
-                request_list.iter()
-                    .filter(|request| request.request_status == "pending")
-                    .cloned()
-                    .collect()
-            })
+    read_state(|state| {
+        state.cohort_enrollment_request.get(&StoredPrincipal(mentor_principal))
+            .map_or_else(
+                || Vec::new(),
+                |request_list| {
+                    request_list.0.iter()
+                        .filter(|request| request.request_status == "pending")
+                        .cloned()
+                        .collect()
+                }
+            )
     })
 }
 
 #[query]
 pub fn get_accepted_cohort_enrollment_requests(mentor_principal: Principal) -> Vec<CohortEnrollmentRequest> {
-    COHORT_ENROLLMENT_REQUESTS.with(|requests| {
-        requests.borrow()
-            .get(&mentor_principal)
-            .map_or_else(Vec::new, |request_list| {
-                request_list.iter()
-                    .filter(|request| request.request_status == "accepted")
-                    .cloned()
-                    .collect()
-            })
+    read_state(|state| {
+        state.cohort_enrollment_request.get(&StoredPrincipal(mentor_principal))
+            .map_or_else(
+                || Vec::new(),
+                |request_list| {
+                    request_list.0.iter()
+                        .filter(|request| request.request_status == "accepted")
+                        .cloned()
+                        .collect()
+                }
+            )
     })
 }
 
 #[query]
 pub fn get_rejected_cohort_enrollment_requests(mentor_principal: Principal) -> Vec<CohortEnrollmentRequest> {
-    COHORT_ENROLLMENT_REQUESTS.with(|requests| {
-        requests.borrow()
-            .get(&mentor_principal)
-            .map_or_else(Vec::new, |request_list| {
-                request_list.iter()
-                    .filter(|request| request.request_status == "rejected")
-                    .cloned()
-                    .collect()
-            })
+    read_state(|state| {
+        state.cohort_enrollment_request.get(&StoredPrincipal(mentor_principal))
+            .map_or_else(
+                || Vec::new(),
+                |request_list| {
+                    request_list.0.iter()
+                        .filter(|request| request.request_status == "rejected")
+                        .cloned()
+                        .collect()
+                }
+            )
     })
 }
 
 #[update]
 pub fn approve_enrollment_request(cohort_id: String, enroller_principal: Principal) -> String {
-    let caller = caller();
-    COHORT_ENROLLMENT_REQUESTS.with(|requests| {
-        let mut requests = requests.borrow_mut();
-        if let Some(request_list) = requests.get_mut(&caller) {
-            if let Some(request) = request_list.iter_mut().find(|req| req.request_status == "pending") {
-                
-                let current_count = APPLIER_COUNT.with(|applier_count| {
-                    applier_count.borrow().get(&cohort_id).copied().unwrap_or(0)
-                });
-                let max_seats = get_cohort_inner_func(cohort_id.clone()).map(|c| c.cohort.no_of_seats).unwrap_or(0);
+    let caller = ic_cdk::api::caller();
 
-                if current_count >= max_seats {
-                    return "All seats for this cohort are occupied!".to_string();
-                }
-                // Approve the request directly without any additional checks
+    // Check if there's a pending request and current applier count
+    let (is_request_pending, current_count, max_seats) = read_state(|state| {
+        let is_request_pending = state.cohort_enrollment_request.get(&StoredPrincipal(caller))
+            .map_or(false, |reqs| reqs.0.iter().any(|req| req.enroller_principal == enroller_principal && req.request_status == "pending"));
+
+        let current_count = state.applier_count.get(&cohort_id).unwrap_or(0);
+        let max_seats = state.cohort_info.get(&cohort_id).map(|c| c.0.cohort.no_of_seats).unwrap_or(0);
+
+        (is_request_pending, current_count, max_seats)
+    });
+
+    if !is_request_pending {
+        return "Request not found or already processed".to_string();
+    }
+
+    if current_count >= max_seats {
+        return "All seats for this cohort are occupied!".to_string();
+    }
+
+    // Update the request status to accepted
+    let mut data_added = false;
+    mutate_state(|state| {
+        if let Some(mut reqs) = state.cohort_enrollment_request.get(&StoredPrincipal(caller)) {
+            if let Some(request) = reqs.0.iter_mut().find(|req| req.enroller_principal == enroller_principal && req.request_status == "pending") {
                 request.request_status = "accepted".to_string();
                 request.accepted_at = ic_cdk::api::time();
 
-                // Logic to add the user directly to the cohort
-                let data_added = if MENTOR_REGISTRY.with(|mentors| mentors.borrow().contains_key(&enroller_principal)) {
-                    request.enroller_data.mentor_data.clone().map(|mentor_data| {
-                        MENTORS_APPLIED_FOR_COHORT.with(|mentors_applied| {
-                            let mut mentors_applied = mentors_applied.borrow_mut();
-                            mentors_applied.entry(cohort_id.clone()).or_default().push(mentor_data);
-                        });
-                        true
-                    }).is_some()
-                } else if VENTURECAPITALIST_STORAGE.with(|capitalist| capitalist.borrow().contains_key(&enroller_principal)) {
-                    request.enroller_data.vc_data.clone().map(|vc_data| {
-                        CAPITALIST_APPLIED_FOR_COHORT.with(|vcs_applied| {
-                            let mut vcs_applied = vcs_applied.borrow_mut();
-                            vcs_applied.entry(cohort_id.clone()).or_default().push(vc_data);
-                        });
-                        true
-                    }).is_some()
-                } else if APPLICATION_FORM.with(|projects| projects.borrow().contains_key(&enroller_principal)) {
-                    request.enroller_data.project_data.clone().map(|project_data| {
-                        PROJECTS_APPLIED_FOR_COHORT.with(|projects_applied| {
-                            let mut projects_applied = projects_applied.borrow_mut();
-                            projects_applied.entry(cohort_id.clone()).or_default().push(project_data);
-                        });
-                        true
-                    }).is_some()
-                } else {
-                    false
-                };
-
-                if data_added {
-                    APPLIER_COUNT.with(|applier_count| {
-                        let mut applier_count = applier_count.borrow_mut();
-                        *applier_count.entry(cohort_id.clone()).or_insert(0) += 1;
-                    });
-                    "Request approved successfully".to_string()
-                } else {
-                    "User role not recognized or missing necessary data to add to cohort".to_string()
+                // Add user based on their role
+                match request.enroller_data.clone() {
+                    EnrollerDataInternal { project_data: Some(project_data), .. } => {
+                        let cohort_id_cloned = cohort_id.clone();
+                        let mut projects = match state.project_applied_for_cohort.get(&cohort_id_cloned.clone()) {
+                            Some(projects) => projects, // If exists, use it directly
+                            None => {
+                                state.project_applied_for_cohort.insert(cohort_id_cloned.clone(), Candid(Vec::new()));
+                                state.project_applied_for_cohort.get(&cohort_id_cloned.clone()).unwrap() // It is safe to unwrap here since we just inserted it
+                            }
+                        };
+                        projects.0.push(project_data);
+                        data_added = true;
+                    },
+                    EnrollerDataInternal { mentor_data: Some(mentor_data), .. } => {
+                        let cohort_id_cloned = cohort_id.clone();
+                        let mut mentors = match state.mentor_applied_for_cohort.get(&cohort_id_cloned.clone()) {
+                            Some(mentors) => mentors,
+                            None => {
+                                state.mentor_applied_for_cohort.insert(cohort_id_cloned.clone(), Candid(Vec::new()));
+                                state.mentor_applied_for_cohort.get(&cohort_id_cloned).unwrap()
+                            }
+                        };
+                        mentors.0.push(mentor_data);
+                        data_added = true;
+                    },
+                    EnrollerDataInternal { vc_data: Some(vc_data), .. } => {
+                        let cohort_id_cloned = cohort_id.clone();
+                        let mut vcs = match state.vc_applied_for_cohort.get(&cohort_id_cloned.clone()) {
+                            Some(vcs) => vcs,
+                            None => {
+                                state.vc_applied_for_cohort.insert(cohort_id_cloned.clone(), Candid(Vec::new()));
+                                state.vc_applied_for_cohort.get(&cohort_id_cloned).unwrap()
+                            }
+                        };
+                        vcs.0.push(vc_data);
+                        data_added = true;
+                    },
+                    _ => {}
                 }
-            } else {
-                "Request not found or already processed".to_string()
+
+                // Increase applier count
+                let mut count = state.applier_count.get(&cohort_id).unwrap_or(0);
+                count += 1;
             }
-        } else {
-            "No requests found for this cohort".to_string()
         }
-    })
+    });
+
+    if data_added {
+        "Request approved successfully".to_string()
+    } else {
+        "User role not recognized or missing necessary data to add to cohort".to_string()
+    }
 }
 
 
 
 #[update]
 pub fn reject_enrollment_request(cohort_creator_principal: Principal, enroller_principal: Principal) -> String {
-    COHORT_ENROLLMENT_REQUESTS.with(|requests| {
-        let mut requests = requests.borrow_mut();
-        if let Some(request_list) = requests.get_mut(&cohort_creator_principal) {
-            for request in request_list.iter_mut() {
-                if request.request_status == "pending" {
+    mutate_state(|state| {
+        if let Some(mut request_list) = state.cohort_enrollment_request.get(&StoredPrincipal(cohort_creator_principal)) {
+            for request in request_list.0.iter_mut() {
+                if request.enroller_principal == enroller_principal && request.request_status == "pending" {
                     request.request_status = "rejected".to_string();
                     request.rejected_at = ic_cdk::api::time();
                     return "Request rejected successfully".to_string();
@@ -521,9 +530,11 @@ pub fn reject_enrollment_request(cohort_creator_principal: Principal, enroller_p
 
 #[update]
 pub fn apply_for_a_cohort_as_a_mentor(cohort_id: String) -> String {
-    let caller = caller();
+    let caller = ic_cdk::api::caller();
 
-    let is_he_mentor = MENTOR_REGISTRY.with(|mentors| mentors.borrow().contains_key(&caller));
+    let is_he_mentor = read_state(|state| {
+        state.mentor_storage.contains_key(&StoredPrincipal(caller))
+    });
 
     if is_he_mentor {
         let mentor_data_option = get_mentor_info_using_principal(caller);
@@ -533,15 +544,17 @@ pub fn apply_for_a_cohort_as_a_mentor(cohort_id: String) -> String {
         };
         send_enrollment_request_as_mentor(cohort_id, mentor_data)
     } else {
-        "You should either be an mentor to register yourself in cohort".to_string()
+        "You should either be a mentor to register yourself in a cohort".to_string()
     }
 }
 
 #[update]
 pub fn apply_for_a_cohort_as_a_investor(cohort_id: String) -> String {
-    let caller = caller();
-    let is_he_investor = VENTURECAPITALIST_STORAGE.with(|capitalist| capitalist.borrow().contains_key(&caller));
+    let caller = ic_cdk::api::caller();
 
+    let is_he_investor = read_state(|state| {
+        state.vc_storage.contains_key(&StoredPrincipal(caller))
+    });
 
     if is_he_investor {
         let vc_data_option = get_vc_info_using_principal(caller);
@@ -551,16 +564,24 @@ pub fn apply_for_a_cohort_as_a_investor(cohort_id: String) -> String {
         };
         send_enrollment_request_as_investor(cohort_id, vc_data)
     } else {
-        "You should either be an investor to register yourself in cohort".to_string()
+        "You should either be an investor to register yourself in a cohort".to_string()
     }
 }
 
 #[query]
 pub fn get_no_of_individuals_applied_for_cohort_using_id(cohort_id: String) -> Result<u8, String>{
-    let count : Option<u8> = APPLIER_COUNT.with(|count| count.borrow().get(&cohort_id).cloned());
+    let count: Option<u64> = read_state(|state| {
+        state.applier_count.get(&cohort_id)
+    });
 
     let project_count_in_cohort = match count {
-        Some(count) => count,
+        Some(count) => {
+            if let Ok(count_u8) = count.try_into() {
+                count_u8
+            } else {
+                return Err("The number of applicants is too large to fit into a u8".to_string());
+            }
+        },
         None => return Err("No one has applied for this cohort".to_string())
     };
 
@@ -573,14 +594,14 @@ pub fn get_no_of_individuals_applied_for_cohort_using_id(cohort_id: String) -> R
 pub fn apply_for_a_cohort_as_a_project(
     cohort_id: String,
 ) -> String {
-    let caller = caller();
+    let caller = ic_cdk::api::caller();
 
     let project_data_option = get_project_info_using_principal(caller);
     let project_data = match project_data_option {
         Some(data) => data,
-        None => return "Mentor data is required but not found.".to_string(),
+        None => return "Project data is required but not found.".to_string(),  
     };
-    
+
     send_enrollment_request_as_project(cohort_id, project_data);
     "Request Has Been Sent To Cohort Creator".to_string()
 }
@@ -590,32 +611,28 @@ pub fn apply_for_a_cohort_as_a_project(
 pub fn get_projects_applied_for_cohort(
     cohort_id: String,
 ) -> Result<Vec<ProjectInfoInternal>, String> {
-    let caller = caller();
+    let caller = ic_cdk::api::caller();
 
-    let cohort: Option<CohortDetails> = COHORT.with(|cohort: &RefCell<CohortInfo>| {
-        let cohort = cohort.borrow();
-        cohort.get(&cohort_id).cloned()
+    let cohort: Option<Candid<CohortDetails>> = read_state(|state| {
+        state.cohort_info.get(&cohort_id).map(|c| c.clone())
     });
 
-    //cohort existence
     let concerned_cohort: CohortDetails = match cohort {
-        Some(cohort) => cohort,
+        Some(candid_cohort) => candid_cohort.0, 
         None => return Err("Cohort doesn't exist".to_string()),
     };
 
-
-
-    //caller must be cohort creator
+    // Uncomment if you want to enforce that only the cohort creator can view project details
     // if concerned_cohort.cohort_creator != caller {
-    //     return Err("You must be a cohort creator to see project details of individuals".to_string());
+    //     return Err("You must be the cohort creator to see project details of individuals".to_string());
     // }
 
-    //project applied for given cohort_id
-    let projects_in_cohort: Vec<ProjectInfoInternal> =
-        PROJECTS_APPLIED_FOR_COHORT.with(|cohort_projects: &RefCell<ProjectsAppliedForCohort>| {
-            let cohort_projects = cohort_projects.borrow();
-            cohort_projects.get(&cohort_id).cloned().unwrap_or_default()
-        });
+    // Retrieve projects applied for the given cohort using read_state
+    let projects_in_cohort: Vec<ProjectInfoInternal> = read_state(|state| {
+        state.project_applied_for_cohort.get(&cohort_id)
+            .map(|candid_projects| candid_projects.0.clone())  
+            .unwrap_or_default()
+    });
 
     Ok(projects_in_cohort)
 }
@@ -626,14 +643,13 @@ pub fn get_mentors_applied_for_cohort(
 ) -> Result<Vec<MentorInternal>, String> {
     let caller = caller();
 
-    let cohort: Option<CohortDetails> = COHORT.with(|cohort: &RefCell<CohortInfo>| {
-        let cohort = cohort.borrow();
-        cohort.get(&cohort_id).cloned()
+    let cohort: Option<Candid<CohortDetails>> = read_state(|state| {
+        state.cohort_info.get(&cohort_id).map(|c| c.clone())
     });
 
 
     let concerned_cohort: CohortDetails = match cohort {
-        Some(cohort) => cohort,
+        Some(candid_cohort) => candid_cohort.0, 
         None => return Err("Cohort doesn't exist".to_string()),
     };
 
@@ -641,11 +657,10 @@ pub fn get_mentors_applied_for_cohort(
     //     return Err("You must be the cohort creator to see mentor details of individuals".to_string());
     // }
 
-    let mentors_in_cohort: Vec<MentorInternal> =
-        MENTORS_APPLIED_FOR_COHORT.with(|cohort_mentors: &RefCell<MentorsAppliedForCohort>| {
-            let cohort_mentors = cohort_mentors.borrow();
-            cohort_mentors.get(&cohort_id).cloned().unwrap_or_default()
-        });
+    let mentors_in_cohort: Vec<MentorInternal> = read_state(|state| {
+        state.mentor_applied_for_cohort.get(&cohort_id)
+            .map_or_else(Vec::new, |candid_mentors| candid_mentors.0.clone())
+    });
 
     Ok(mentors_in_cohort)
 }
@@ -656,14 +671,13 @@ pub fn get_vcs_applied_for_cohort(
 ) -> Result<Vec<VentureCapitalistInternal>, String> {
     let caller = caller();
 
-    let cohort: Option<CohortDetails> = COHORT.with(|cohort: &RefCell<CohortInfo>| {
-        let cohort = cohort.borrow();
-        cohort.get(&cohort_id).cloned()
+    let cohort: Option<Candid<CohortDetails>> = read_state(|state| {
+        state.cohort_info.get(&cohort_id).map(|c| c.clone())
     });
 
 
     let concerned_cohort: CohortDetails = match cohort {
-        Some(cohort) => cohort,
+        Some(candid_cohort) => candid_cohort.0, 
         None => return Err("Cohort doesn't exist".to_string()),
     };
 
@@ -673,11 +687,10 @@ pub fn get_vcs_applied_for_cohort(
     // }
 
 
-    let vcs_in_cohort: Vec<VentureCapitalistInternal> =
-        CAPITALIST_APPLIED_FOR_COHORT.with(|cohort_vcs: &RefCell<CapitalistAppliedForCohort>| {
-            let cohort_vcs = cohort_vcs.borrow();
-            cohort_vcs.get(&cohort_id).cloned().unwrap_or_default()
-        });
+    let vcs_in_cohort: Vec<VentureCapitalistInternal> = read_state(|state| {
+        state.vc_applied_for_cohort.get(&cohort_id)
+            .map_or_else(Vec::new, |candid_mentors| candid_mentors.0.clone())
+    });
 
     Ok(vcs_in_cohort)
 }
@@ -685,47 +698,22 @@ pub fn get_vcs_applied_for_cohort(
 
 
 
-//get_all_my_peers
-pub fn get_my_peers(cohort_id : String, your_project_id : String){
-
-    //check that caller is in the cohort    
-    PROJECTS_APPLIED_FOR_COHORT.with(|cohort : &RefCell<ProjectsAppliedForCohort>|{
-        let cohort_projects = cohort.borrow();
-
-        //do cohort exists ?
-        let do_cohort_exists = cohort_projects.contains_key(&cohort_id);
-
-        // if !do_cohort_exists{
-        //     retturn 
-        // }
-
-        let cohort_projects = cohort_projects.get(&cohort_id).cloned();
-
-//         let projects = match cohort_projects{
-// Some(projects) => projects,
-// None => return Err("") 
-//         }
-
-    })
-
-} 
-
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, Default, PartialEq)]
 pub struct CohortFilterCriteria {
     pub tags: Option<String>,
     pub level_on_rubric: Option<f64>,
-    pub no_of_seats_range: Option<(u8, u8)>,
+    pub no_of_seats_range: Option<(u64, u64)>,
 }
 
 #[query]
 pub fn filter_cohorts(criteria: CohortFilterCriteria) -> Vec<CohortDetails> {
-    COHORT.with(|cohorts| {
-        let cohorts = cohorts.borrow();
+    read_state(|state| {
+        state.cohort_info.iter()
+            .filter_map(|(_, candid_cohort)| { 
+                let cohort_details = &candid_cohort.0; 
 
-        cohorts.values()
-            .filter(|cohort_details| {
                 let tags_match = criteria.tags.as_ref()
-                    .map_or(true, |tags| cohort_details.cohort.tags.contains(tags));
+                    .map_or(true, |tags| cohort_details.cohort.tags.chars().any(|tag| tags.contains(tag)));
 
                 let level_match = criteria.level_on_rubric
                     .map_or(true, |level| cohort_details.cohort.criteria.level_on_rubric == level);
@@ -736,10 +724,13 @@ pub fn filter_cohorts(criteria: CohortFilterCriteria) -> Vec<CohortDetails> {
                         seats >= min_seats && seats <= max_seats
                     });
 
-                tags_match && level_match && seats_match
+                if tags_match && level_match && seats_match {
+                    Some(cohort_details.clone()) 
+                } else {
+                    None 
+                }
             })
-            .cloned()
-            .collect()
+            .collect() 
     })
 }
 

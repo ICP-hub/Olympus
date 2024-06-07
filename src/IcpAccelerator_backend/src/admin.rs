@@ -13,6 +13,9 @@ use crate::state_handler::Candid;
 use crate::state_handler::StoredPrincipal;
 use crate::user_module::*;
 use crate::vc_registration::*;
+use crate::cohort::InviteRequest;
+use crate::cohort::MENTOR_REMOVED_FROM_COHORT;
+use crate::cohort::PENDING_MENTOR_CONFIRMATION_TO_REJOIN;
 use crate::CohortDetails;
 use crate::CohortRequest;
 use crate::COHORT;
@@ -1591,19 +1594,17 @@ pub fn change_live_status(
     live_status: bool,
     new_dapp_link: Option<String>,
 ) -> Result<String, String> {
-    APPLICATION_FORM.with(|projects_registry| {
-        let mut projects = projects_registry.borrow_mut();
-        // Logging before the update attempt
-        println!("Attempting to update project with ID: {}", project_id);
-
-        if let Some(project_list) = projects.get_mut(&project_principal) {
-            if let Some(project_internal) = project_list.iter_mut().find(|p| p.uid == project_id) {
-                // Logging the current state before the update
-                println!(
+    mutate_state(|state| {
+        // Access the projects registry
+        if let Some(mut project_list) = state.project_storage.get(&StoredPrincipal(project_principal)) {
+            if let Some(project_internal) = project_list.0.iter_mut().find(|p| p.uid == project_id) {
+                // Log before update
+                ic_cdk::println!(
                     "Before update: live_on_icp_mainnet = {:?}, dapp_link = {:?}",
                     project_internal.params.live_on_icp_mainnet, project_internal.params.dapp_link
                 );
 
+                // Update project status and link based on live_status
                 project_internal.params.live_on_icp_mainnet = Some(live_status);
                 project_internal.params.dapp_link = if live_status {
                     new_dapp_link.clone()
@@ -1611,20 +1612,22 @@ pub fn change_live_status(
                     None
                 };
 
-                // Logging the state after the update
-                println!(
+                // Log after update
+                ic_cdk::println!(
                     "After update: live_on_icp_mainnet = {:?}, dapp_link = {:?}",
                     project_internal.params.live_on_icp_mainnet, project_internal.params.dapp_link
                 );
 
+                // Return success message
                 return Ok(format!(
                     "Project updated successfully: live_on_icp_mainnet = {:?}, dapp_link = {:?}",
                     project_internal.params.live_on_icp_mainnet, project_internal.params.dapp_link
                 ));
             }
         }
-        // Logging in case the project is not found
-        println!("Project with ID: {} not found.", project_id);
+
+        // Log if the project is not found
+        ic_cdk::println!("Project with ID: {} not found.", project_id);
         Err("Project not found.".to_string())
     })
 }
@@ -1720,88 +1723,81 @@ pub fn get_user_all_data(
 
 #[query]
 fn count_live_projects() -> usize {
-    APPLICATION_FORM.with(|application_form| {
-        let application_form = application_form.borrow(); // Access the RefCell for reading
-
-        application_form
-            .iter()
+    read_state(|state| {
+        state.project_storage.iter()
             .flat_map(|(_principal, projects)| {
-                projects.iter().filter(|project_internal| {
-                    let project_info = &project_internal.params; // Accessing nested ProjectInfo
-                    project_info.live_on_icp_mainnet == Some(true)
-                        && project_info
-                            .dapp_link
-                            .as_ref()
-                            .map_or(false, |d| !d.is_empty())
-                })
+                projects.0.iter().filter(|project_internal| {
+                    let project_info = &project_internal.params; 
+                    project_info.live_on_icp_mainnet == Some(true) &&
+                    project_info.dapp_link.as_ref().map_or(false, |d| !d.is_empty())
+                }).cloned().collect::<Vec<_>>() 
             })
-            .count()
+            .count()  
     })
 }
 
 #[update]
 pub fn update_vc_profile(requester: Principal, vc_internal: VentureCapitalist) -> String {
-    VENTURECAPITALIST_STORAGE.with(|vc_registry| {
-        let mut vc = vc_registry.borrow_mut();
-        if let Some(existing_vc_internal) = vc.get_mut(&requester) {
-            existing_vc_internal.params.registered_under_any_hub = vc_internal
+    mutate_state(|state| {
+        if let Some(mut existing_vc_internal) = state.vc_storage.get(&StoredPrincipal(requester)) {
+            existing_vc_internal.0.params.registered_under_any_hub = vc_internal
                 .registered_under_any_hub
                 .clone()
-                .or(existing_vc_internal.params.registered_under_any_hub.clone());
+                .or(existing_vc_internal.0.params.registered_under_any_hub.clone());
 
-            existing_vc_internal.params.project_on_multichain = vc_internal
+            existing_vc_internal.0.params.project_on_multichain = vc_internal
                 .project_on_multichain
                 .clone()
-                .or(existing_vc_internal.params.project_on_multichain.clone());
+                .or(existing_vc_internal.0.params.project_on_multichain.clone());
 
-            existing_vc_internal.params.money_invested = vc_internal
+            existing_vc_internal.0.params.money_invested = vc_internal
                 .money_invested
                 .clone()
-                .or(existing_vc_internal.params.money_invested.clone());
+                .or(existing_vc_internal.0.params.money_invested.clone());
 
-            existing_vc_internal.params.existing_icp_portfolio = vc_internal
+            existing_vc_internal.0.params.existing_icp_portfolio = vc_internal
                 .existing_icp_portfolio
                 .clone()
-                .or(existing_vc_internal.params.existing_icp_portfolio.clone());
-            existing_vc_internal.params.announcement_details = vc_internal
+                .or(existing_vc_internal.0.params.existing_icp_portfolio.clone());
+            existing_vc_internal.0.params.announcement_details = vc_internal
                 .announcement_details
                 .clone()
-                .or(existing_vc_internal.params.announcement_details.clone());
+                .or(existing_vc_internal.0.params.announcement_details.clone());
 
-            existing_vc_internal.params.registered_country = vc_internal
+            existing_vc_internal.0.params.registered_country = vc_internal
                 .registered_country
                 .clone()
-                .or(existing_vc_internal.params.registered_country.clone());
+                .or(existing_vc_internal.0.params.registered_country.clone());
 
-            existing_vc_internal.params.fund_size = Some(
+            existing_vc_internal.0.params.fund_size = Some(
                 vc_internal
                     .fund_size
                     .map(|size| (size * 100.0).round() / 100.0)
                     .unwrap_or(0.0),
             );
-            existing_vc_internal.params.assets_under_management =
+            existing_vc_internal.0.params.assets_under_management =
                 vc_internal.assets_under_management.clone();
 
-            existing_vc_internal.params.category_of_investment =
+            existing_vc_internal.0.params.category_of_investment =
                 vc_internal.category_of_investment.clone();
 
-            existing_vc_internal.params.logo = vc_internal.logo.clone();
-            existing_vc_internal.params.average_check_size =
+            existing_vc_internal.0.params.logo = vc_internal.logo.clone();
+            existing_vc_internal.0.params.average_check_size =
                 (vc_internal.average_check_size * 100.0).round() / 100.0;
-            existing_vc_internal.params.existing_icp_investor = vc_internal.existing_icp_investor;
-            existing_vc_internal.params.investor_type = vc_internal.investor_type.clone();
-            existing_vc_internal.params.number_of_portfolio_companies =
+            existing_vc_internal.0.params.existing_icp_investor = vc_internal.existing_icp_investor;
+            existing_vc_internal.0.params.investor_type = vc_internal.investor_type.clone();
+            existing_vc_internal.0.params.number_of_portfolio_companies =
                 vc_internal.number_of_portfolio_companies;
-            existing_vc_internal.params.portfolio_link = vc_internal.portfolio_link.clone();
-            existing_vc_internal.params.reason_for_joining = vc_internal.reason_for_joining.clone();
-            existing_vc_internal.params.name_of_fund = vc_internal.name_of_fund.clone();
+            existing_vc_internal.0.params.portfolio_link = vc_internal.portfolio_link.clone();
+            existing_vc_internal.0.params.reason_for_joining = vc_internal.reason_for_joining.clone();
+            existing_vc_internal.0.params.name_of_fund = vc_internal.name_of_fund.clone();
 
-            existing_vc_internal.params.preferred_icp_hub = vc_internal.preferred_icp_hub.clone();
-            existing_vc_internal.params.type_of_investment = vc_internal.type_of_investment.clone();
-            existing_vc_internal.params.user_data = vc_internal.user_data.clone();
-            existing_vc_internal.params.linkedin_link = vc_internal.linkedin_link.clone();
-            existing_vc_internal.params.website_link = vc_internal.website_link.clone();
-            existing_vc_internal.params.registered = vc_internal.registered.clone();
+            existing_vc_internal.0.params.preferred_icp_hub = vc_internal.preferred_icp_hub.clone();
+            existing_vc_internal.0.params.type_of_investment = vc_internal.type_of_investment.clone();
+            existing_vc_internal.0.params.user_data = vc_internal.user_data.clone();
+            existing_vc_internal.0.params.linkedin_link = vc_internal.linkedin_link.clone();
+            existing_vc_internal.0.params.website_link = vc_internal.website_link.clone();
+            existing_vc_internal.0.params.registered = vc_internal.registered.clone();
 
             "Venture Capitalist profile updated successfully.".to_string()
         } else {
@@ -1813,42 +1809,41 @@ pub fn update_vc_profile(requester: Principal, vc_internal: VentureCapitalist) -
 
 #[update]
 pub fn update_mentor_profile(requester: Principal, updated_profile: MentorProfile) -> String {
-    MENTOR_REGISTRY.with(|vc_registry| {
-        let mut mentor = vc_registry.borrow_mut();
-        if let Some(mentor_internal) = mentor.get_mut(&requester) {
-            mentor_internal.profile.preferred_icp_hub = updated_profile
+    mutate_state(|state| {
+        if let Some(mut mentor_internal) = state.mentor_storage.get(&StoredPrincipal(requester)) {
+            mentor_internal.0.profile.preferred_icp_hub = updated_profile
                 .preferred_icp_hub
                 .clone()
-                .or(mentor_internal.profile.preferred_icp_hub.clone());
+                .or(mentor_internal.0.profile.preferred_icp_hub.clone());
 
-            mentor_internal.profile.multichain = updated_profile
+            mentor_internal.0.profile.multichain = updated_profile
                 .multichain
                 .clone()
-                .or(mentor_internal.profile.multichain.clone());
-            mentor_internal.profile.existing_icp_project_porfolio = updated_profile
+                .or(mentor_internal.0.profile.multichain.clone());
+            mentor_internal.0.profile.existing_icp_project_porfolio = updated_profile
                 .existing_icp_project_porfolio
                 .clone()
                 .or(mentor_internal
-                    .profile
+                    .0.profile
                     .existing_icp_project_porfolio
                     .clone());
 
-            mentor_internal.profile.area_of_expertise = updated_profile.area_of_expertise.clone();
-            mentor_internal.profile.category_of_mentoring_service =
+            mentor_internal.0.profile.area_of_expertise = updated_profile.area_of_expertise.clone();
+            mentor_internal.0.profile.category_of_mentoring_service =
                 updated_profile.category_of_mentoring_service.clone();
 
-            mentor_internal.profile.existing_icp_mentor =
+            mentor_internal.0.profile.existing_icp_mentor =
                 updated_profile.existing_icp_mentor.clone();
-            mentor_internal.profile.icp_hub_or_spoke = updated_profile.icp_hub_or_spoke.clone();
-            mentor_internal.profile.linkedin_link = updated_profile.linkedin_link.clone();
-            mentor_internal.profile.website = updated_profile.website.clone();
-            mentor_internal.profile.years_of_mentoring = updated_profile.years_of_mentoring.clone();
-            mentor_internal.profile.reason_for_joining = updated_profile.reason_for_joining.clone();
-            mentor_internal.profile.user_data = updated_profile.user_data.clone();
-            mentor_internal.profile.hub_owner = updated_profile
+            mentor_internal.0.profile.icp_hub_or_spoke = updated_profile.icp_hub_or_spoke.clone();
+            mentor_internal.0.profile.linkedin_link = updated_profile.linkedin_link.clone();
+            mentor_internal.0.profile.website = updated_profile.website.clone();
+            mentor_internal.0.profile.years_of_mentoring = updated_profile.years_of_mentoring.clone();
+            mentor_internal.0.profile.reason_for_joining = updated_profile.reason_for_joining.clone();
+            mentor_internal.0.profile.user_data = updated_profile.user_data.clone();
+            mentor_internal.0.profile.hub_owner = updated_profile
                 .hub_owner
                 .clone()
-                .or(mentor_internal.profile.hub_owner.clone());
+                .or(mentor_internal.0.profile.hub_owner.clone());
             "Mentor profile updated successfully.".to_string()
         } else {
             "Mentor profile not found.".to_string()
@@ -1864,40 +1859,39 @@ pub async fn send_cohort_request_to_admin(cohort_request: CohortRequest) -> Stri
         "Cohort creation request with ID {} has been sent to admin.",
         cohort_id
     );
-    COHORT_REQUEST.with(|cohort_requests| {
-        let mut cohort_requests = cohort_requests.borrow_mut();
-        cohort_requests
-            .entry(cohort_request.cohort_details.cohort_id.clone())
-            .or_default()
-            .push(cohort_request)
+
+    mutate_state(|state| {
+        let cohort_requests = &mut state.cohort_request_admin;
+
+        if let Some(mut requests) = cohort_requests.get(&cohort_request.cohort_details.cohort_id) {
+            requests.0.push(cohort_request);
+        } else {
+            cohort_requests.insert(cohort_request.cohort_details.cohort_id.clone(), Candid(vec![cohort_request]));
+        }
     });
 
-    ic_cdk::println!("REQUEST HAS BEEN SENT TO ADMIN");
+    ic_cdk::println!("REQUEST HAS BEEN SENT TO ADMIN"); // Confirm the action in the logs
     message
 }
 
 #[query]
 pub fn get_pending_cohort_requests_for_admin() -> Vec<CohortRequest> {
-    let mut accepted_requests = Vec::new();
-
-    COHORT_REQUEST.with(|storage| {
-        let storage = storage.borrow();
-        for (_cohort_id, requests) in storage.iter() {
-            accepted_requests.extend(requests.clone());
+    read_state(|state| {
+        let mut pending_requests = Vec::new();
+        for (_cohort_id, candid_requests) in state.cohort_request_admin.iter() {
+            pending_requests.extend(candid_requests.0.clone());
         }
-    });
-
-    accepted_requests
+        pending_requests
+    })
 }
 
 #[update]
 pub fn accept_cohort_creation_request(cohort_id: String) -> String {
     let mut response_message = String::new();
 
-    let already_accepted = ACCEPTED_COHORTS.with(|storage| {
-        let storage = storage.borrow();
-        storage.get(&cohort_id).map_or(false, |requests| {
-            requests.iter().any(|r| r.request_status == "accepted")
+    let already_accepted = read_state(|state| {
+        state.accepted_cohorts.get(&cohort_id).map_or(false, |requests| {
+            requests.0.iter().any(|r| r.request_status == "accepted")
         })
     });
 
@@ -1908,32 +1902,31 @@ pub fn accept_cohort_creation_request(cohort_id: String) -> String {
         );
     }
 
-    COHORT_REQUEST.with(|state| {
-        let mut state = state.borrow_mut();
+    mutate_state(|state| {
         let mut request_found_and_updated = false;
 
-        for (_principal, requests) in state.iter_mut() {
-            if let Some(index) = requests.iter().position(|r| {
+        for (_principal, mut requests) in state.cohort_request_admin.iter() {
+            if let Some(index) = requests.0.iter().position(|r| {
                 r.cohort_details.cohort_id == cohort_id && r.request_status == "pending"
             }) {
-                let mut request = requests.remove(index);
+                let mut request = requests.0.remove(index);
                 request.request_status = "accepted".to_string();
-                request.accepted_at = time();
+                request.accepted_at = ic_cdk::api::time();
 
-                COHORT.with(|storage| {
-                    let mut storage = storage.borrow_mut();
-                    storage.insert(cohort_id.clone(), request.cohort_details.clone());
-                    ic_cdk::println!("Inserted cohort details into COHORT for: {}", cohort_id);
-                });
+                state.cohort_info.insert(cohort_id.clone(), Candid(request.cohort_details.clone()));
 
-                ACCEPTED_COHORTS.with(|storage| {
-                    let mut storage = storage.borrow_mut();
-                    storage.entry(cohort_id.clone()).or_default().push(request);
-                });
+                let accepted_requests = state.accepted_cohorts.get(&cohort_id);
+                match accepted_requests {
+                    Some(mut candid_requests) => {
+                        candid_requests.0.push(request);
+                    },
+                    None => {
+                        state.accepted_cohorts.insert(cohort_id.clone(), Candid(vec![request]));
+                    }
+                }
 
                 request_found_and_updated = true;
-                response_message =
-                    format!("Cohort request with id: {} has been accepted.", cohort_id);
+                response_message = format!("Cohort request with id: {} has been accepted.", cohort_id);
                 break;
             }
         }
@@ -1953,21 +1946,25 @@ pub fn accept_cohort_creation_request(cohort_id: String) -> String {
 pub fn decline_cohort_creation_request(cohort_id: String) -> String {
     let mut response_message = String::new();
 
-    COHORT_REQUEST.with(|state| {
-        let mut state = state.borrow_mut();
+    mutate_state(|state| {
         let mut request_found_and_updated = false;
 
-        if let Some(requests) = state.get_mut(&cohort_id) {
-            if let Some(index) = requests.iter().position(|r| r.request_status == "pending") {
-                let mut request = requests.remove(index);
+        if let Some(mut requests) = state.cohort_request_admin.get(&cohort_id) {
+            if let Some(index) = requests.0.iter().position(|r| r.request_status == "pending") {
+                let mut request = requests.0.remove(index);
                 request.request_status = "declined".to_string();
-                request.rejected_at = time();
+                request.rejected_at = ic_cdk::api::time();
                 request_found_and_updated = true;
 
-                DECLINED_COHORTS.with(|storage| {
-                    let mut storage = storage.borrow_mut();
-                    storage.entry(cohort_id.clone()).or_default().push(request);
-                });
+                let declined_requests = state.declined_cohorts.get(&cohort_id);
+                match declined_requests {
+                    Some(mut candid_requests) => {
+                        candid_requests.0.push(request);
+                    },
+                    None => {
+                        state.declined_cohorts.insert(cohort_id.clone(), Candid(vec![request]));
+                    }
+                }
 
                 response_message = format!(
                     "You have declined the cohort creation request: {}",
@@ -1989,30 +1986,25 @@ pub fn decline_cohort_creation_request(cohort_id: String) -> String {
 
 #[query]
 pub fn get_accepted_cohort_creation_request_for_admin() -> Vec<CohortRequest> {
-    let mut accepted_requests = Vec::new();
-
-    ACCEPTED_COHORTS.with(|storage| {
-        let storage = storage.borrow();
-        for (_cohort_id, requests) in storage.iter() {
-            accepted_requests.extend(requests.clone());
+    read_state(|state| {
+        let mut accepted_requests = Vec::new();
+        for (_cohort_id, candid_requests) in state.accepted_cohorts.iter() {
+            accepted_requests.extend(candid_requests.0.clone());
         }
-    });
-
-    accepted_requests
+        accepted_requests
+    })
 }
 
 #[query]
 pub fn get_declined_cohort_creation_request_for_admin() -> Vec<CohortRequest> {
-    let mut declined_requests = Vec::new();
-
-    DECLINED_COHORTS.with(|storage| {
-        let storage = storage.borrow();
-        for (_cohort_id, requests) in storage.iter() {
-            declined_requests.extend(requests.clone());
+    read_state(|state| {
+        let mut declined_requests = Vec::new();
+        for (_cohort_id, candid_requests) in state.declined_cohorts.iter() {
+            declined_requests.extend(candid_requests.0.clone());
         }
-    });
+        declined_requests
+    })
 
-    declined_requests
 }
 
 #[update]
@@ -2026,32 +2018,130 @@ pub fn remove_mentor_from_cohort(
     if passphrase_key != required_key {
         return Err("Unauthorized attempt: Incorrect passphrase key.".to_string());
     }
-    MENTOR_REGISTRY.with(|mentors| {
-        if let Some(mentor_up_for_cohort) = mentors.borrow().get(&mentor_principal) {
-            let mentor_clone = mentor_up_for_cohort.clone();
-            MENTORS_APPLIED_FOR_COHORT.with(|mentors_applied| {
-                let mut mentors_applied = mentors_applied.borrow_mut();
-                let mentors = mentors_applied.entry(cohort_id.clone()).or_default();
+    mutate_state(|state| {
+        if let Some(mentor_up_for_cohort) = state.mentor_storage.get(&StoredPrincipal(mentor_principal)) {
+            let mentor_clone = mentor_up_for_cohort.0.clone();
 
-                if let Some(index) = mentors.iter().position(|x| *x == mentor_clone) {
-                    mentors.remove(index);
-                    APPLIER_COUNT.with(|applier_count| {
-                        let mut applier_count = applier_count.borrow_mut();
-                        if let Some(count) = applier_count.get_mut(&cohort_id) {
-                            *count = count.saturating_sub(1);
-                        }
-                    });
-                    Ok(format!(
+            if let Some(mut mentors) = state.mentor_applied_for_cohort.get(&cohort_id) {
+                if let Some(index) = mentors.0.iter().position(|x| *x == mentor_clone) {
+                    let mentor_data = mentors.0.remove(index);
+
+                    if let Some(mut removed_mentors) = state.mentor_removed_from_cohort.get(&cohort_id) {
+                        removed_mentors.0.push((mentor_principal, mentor_data));
+                    } else {
+                        state.mentor_removed_from_cohort.insert(cohort_id.clone(), Candid(vec![(mentor_principal, mentor_data)]));
+                    }
+
+                    if let Some(mut count) = state.applier_count.get(&cohort_id) {
+                        count = count.saturating_sub(1);
+                    }
+
+                    return Ok(format!(
                         "Mentor successfully removed from the cohort with cohort id {}",
                         cohort_id
-                    ))
+                    ));
                 } else {
-                    Err("You are not part of this cohort".to_string())
+                    return Err("You are not part of this cohort".to_string());
                 }
-            })
+            } else {
+                return Err("No mentors found for this cohort".to_string());
+            }
         } else {
-            Err("Invalid mentor record".to_string())
+            return Err("Invalid mentor record".to_string());
         }
+    })
+}
+
+#[update]
+pub fn send_rejoin_invitation_to_mentor(cohort_id: String, mentor_principal: Principal, invite_message: String) -> Result<String, String> {
+    let result = mutate_state(|state| {
+        if let Some(mut mentors) = state.mentor_removed_from_cohort.get(&cohort_id) {
+            if let Some((index, _)) = mentors.0.iter().enumerate().find(|(_, (pr, _))| *pr == mentor_principal) {
+                let (principal, mentor_data) = mentors.0.remove(index);
+                let invite_request = InviteRequest {
+                    cohort_id: cohort_id.clone(),
+                    sender_principal: principal,
+                    mentor_data,
+                    invite_message: invite_message.clone(),
+                };
+
+                if let Some(_) = state.mentor_invite_request.get(&cohort_id) {
+                    state.mentor_invite_request.insert(cohort_id.clone(), Candid(invite_request));
+                } else {
+                    state.mentor_invite_request.insert(cohort_id.clone(), Candid(invite_request));
+                }
+
+                return Ok("Invitation sent to rejoin the cohort.".to_string());
+            }
+        }
+        Err("No removed mentor found for this principal in the specified cohort.".to_string())
+    });
+
+    result
+}
+
+
+
+#[update]
+pub fn accept_rejoin_invitation(cohort_id: String) -> Result<String, String> {
+    let result = mutate_state(|state| {
+        if let Some(invite_request) = state.mentor_invite_request.remove(&cohort_id) {
+            let mentors = state.mentor_applied_for_cohort.get(&cohort_id);
+            match mentors {
+                Some(mut candid_mentors) => {
+                    candid_mentors.0.push(invite_request.0.mentor_data);
+                }
+                None => {
+                    state.mentor_applied_for_cohort.insert(cohort_id.clone(), Candid(vec![invite_request.0.mentor_data]));
+                }
+            }
+            return Ok(format!("Mentor has successfully rejoined the cohort {}", cohort_id));
+        }
+        Err("No pending invitation found for this cohort.".to_string())
+    });
+
+    result
+}
+
+
+#[update]
+pub fn decline_rejoin_invitation(cohort_id: String) -> Result<String, String> {
+    let result = mutate_state(|state| {
+        if state.mentor_invite_request.remove(&cohort_id).is_some() {
+            return Ok(format!(
+                "Mentor has declined the invitation to rejoin the cohort {}",
+                cohort_id
+            ));
+        }
+        Err("No pending invitation found for this cohort.".to_string())
+    });
+
+    result
+}
+
+#[query]
+pub fn get_my_invitation_request(cohort_id: String) -> Result<InviteRequest, String> {
+    let principal_id = ic_cdk::api::caller(); 
+
+    read_state(|state| {
+        if let Some(invite_request) = state.mentor_invite_request.get(&cohort_id) {
+            if invite_request.0.sender_principal == principal_id {
+                return Ok(invite_request.0.clone());
+            } else {
+                return Err("You are not authorized to view this invitation.".to_string());
+            }
+        }
+        Err("No pending invitation found for this cohort.".to_string())
+    })
+}
+
+#[query]
+pub fn get_left_mentors_of_cohort(cohort_id: String) -> Vec<MentorInternal> {
+    read_state(|state| {
+        if let Some(mentors) = state.mentor_removed_from_cohort.get(&cohort_id) {
+            return mentors.0.iter().map(|(_, mentor_data)| mentor_data.clone()).collect();
+        }
+        Vec::new()
     })
 }
 
@@ -2066,34 +2156,34 @@ pub fn remove_vc_from_cohort(
     if passphrase_key != required_key {
         return Err("Unauthorized attempt: Incorrect passphrase key.".to_string());
     }
-    VENTURECAPITALIST_STORAGE.with(|vcs| {
-        if let Some(vc_up_for_cohort) = vcs.borrow().get(&vc_principal) {
-            let vc_clone = vc_up_for_cohort.clone();
-            CAPITALIST_APPLIED_FOR_COHORT.with(|vcs_applied| {
-                let mut vcs_applied = vcs_applied.borrow_mut();
-                let vcs = vcs_applied.entry(cohort_id.clone()).or_default();
+     mutate_state(|state| {
+        if let Some(vc_up_for_cohort) = state.vc_storage.get(&StoredPrincipal(vc_principal)) {
+            let vc_clone = vc_up_for_cohort.0.clone();
 
-                if let Some(index) = vcs.iter().position(|x| *x == vc_clone) {
-                    vcs.remove(index);
-                    APPLIER_COUNT.with(|applier_count| {
-                        let mut applier_count = applier_count.borrow_mut();
-                        if let Some(count) = applier_count.get_mut(&cohort_id) {
-                            *count = count.saturating_sub(1);
-                        }
-                    });
-                    Ok(format!(
+            if let Some(mut vcs) = state.vc_applied_for_cohort.get(&cohort_id) {
+                if let Some(index) = vcs.0.iter().position(|x| *x == vc_clone) {
+                    vcs.0.remove(index);
+
+                    if let Some(mut count) = state.applier_count.get(&cohort_id) {
+                        count = count.saturating_sub(1);
+                    }
+
+                    return Ok(format!(
                         "Venture capitalist successfully removed from the cohort with cohort id {}",
                         cohort_id
-                    ))
+                    ));
                 } else {
-                    Err("You are not part of this cohort".to_string())
+                    return Err("You are not part of this cohort".to_string());
                 }
-            })
+            } else {
+                return Err("No venture capitalists found for this cohort".to_string());
+            }
         } else {
-            Err("Invalid venture capitalist record".to_string())
+            return Err("Invalid venture capitalist record".to_string());
         }
     })
 }
+
 
 #[update]
 pub fn remove_project_from_cohort(
@@ -2106,24 +2196,21 @@ pub fn remove_project_from_cohort(
     if passphrase_key != required_key {
         return Err("Unauthorized attempt: Incorrect passphrase key.".to_string());
     }
-    PROJECTS_APPLIED_FOR_COHORT.with(|projects_cohort| {
-        let mut projects_cohort = projects_cohort.borrow_mut();
-        if let Some(projects) = projects_cohort.get_mut(&cohort_id) {
-            if let Some(index) = projects.iter().position(|p| p.uid == project_uid) {
-                projects.remove(index);
-                APPLIER_COUNT.with(|applier_count| {
-                    let mut applier_count = applier_count.borrow_mut();
-                    if let Some(count) = applier_count.get_mut(&cohort_id) {
-                        *count = count.saturating_sub(1);
-                    }
-                });
+    mutate_state(|state| {
+        if let Some(mut projects) = state.project_applied_for_cohort.get(&cohort_id) {
+            if let Some(index) = projects.0.iter().position(|p| p.uid == project_uid) {
+                projects.0.remove(index);
 
-                Ok("Project successfully removed from the cohort.".to_string())
+                if let Some(mut count) = state.applier_count.get(&cohort_id) {
+                    count = count.saturating_sub(1);
+                }
+
+                return Ok("Project successfully removed from the cohort.".to_string());
             } else {
-                Err("Project not found in this cohort.".to_string())
+                return Err("Project not found in this cohort.".to_string());
             }
         } else {
-            Err("Cohort not found or no projects applied.".to_string())
+            return Err("Cohort not found or no projects applied.".to_string());
         }
     })
 }
@@ -2134,25 +2221,19 @@ pub fn admin_update_project(
     is_live: bool,
     dapp_link: Option<String>,
 ) -> Result<(), String> {
-    let mut project_found_and_updated = false;
     let mut project_to_classify = None;
 
-    APPLICATION_FORM.with(|app_form| {
-        for project_list in app_form.borrow_mut().values_mut() {
-            if let Some(project_pos) = project_list.iter().position(|p| p.uid == uid) {
-                let project = &mut project_list[project_pos];
+    mutate_state(|state| {
+        for (_, mut project_list) in state.project_storage.iter() {
+            if let Some(project_pos) = project_list.0.iter_mut().position(|p| p.uid == uid) {
+                let project = &mut project_list.0[project_pos];
                 project.params.live_on_icp_mainnet = Some(is_live);
                 project.params.dapp_link = dapp_link.clone();
-                project_found_and_updated = true;
                 project_to_classify = Some(project.clone());
                 break;
             }
         }
     });
-
-    if !project_found_and_updated {
-        return Err(format!("Project with UID {} not found.", uid));
-    }
 
     if let Some(project) = project_to_classify {
         match crate::latest_popular_projects::update_project_status_live_incubated(project) {
@@ -2160,7 +2241,7 @@ pub fn admin_update_project(
             Err(e) => Err(format!("Failed to reclassify project: {}", e)),
         }
     } else {
-        Err("Unexpected error during project reclassification.".to_string())
+        Err(format!("Project with UID {} not found.", uid))
     }
 }
 
@@ -2169,10 +2250,10 @@ pub fn deactivate_and_remove_project(project_id: String) -> Result<&'static str,
     let mut found_and_updated_in_application = false;
     let mut found_in_live_projects = false;
 
-    APPLICATION_FORM.with(|app_forms| {
-        let mut app_forms = app_forms.borrow_mut();
-        for projects in app_forms.values_mut() {
-            if let Some(project) = projects.iter_mut().find(|p| p.uid == project_id) {
+    // Update the project in project_storage
+    mutate_state(|state| {
+        for (_key, mut project_list) in state.project_storage.iter() {
+            if let Some(project) = project_list.0.iter_mut().find(|p| p.uid == project_id) {
                 project.params.live_on_icp_mainnet = Some(false);
                 project.params.dapp_link = None;
                 found_and_updated_in_application = true;
@@ -2185,12 +2266,11 @@ pub fn deactivate_and_remove_project(project_id: String) -> Result<&'static str,
         return Err("Project not found in main application storage.");
     }
 
+    // Remove the project from live_projects
     mutate_state(|state| {
-        if let Some(_project) = state.live_projects.remove(&project_id) {
+        if state.live_projects.remove(&project_id).is_some() {
             found_in_live_projects = true;
         }
-
-        // No need to replace or alter the entire live_projects collection as it has been updated in place.
     });
 
     if found_in_live_projects {
@@ -2213,37 +2293,43 @@ pub fn remove_project_from_incubated(project_id: String) -> Result<&'static str,
 
 #[query]
 pub fn get_update_request_count() -> UpdateCounts {
-    let project_update_count =
-        PENDING_PROJECT_UPDATES.with(|awaiters| awaiters.borrow().len() as u32);
-    let mentor_update_count =
-        MENTOR_PROFILE_EDIT_AWAITS.with(|awaiters| awaiters.borrow().len() as u32);
-    let vc_update_count = VC_PROFILE_EDIT_AWAITS.with(|awaiters| awaiters.borrow().len() as u32);
+    read_state(|state| {
+        let project_update_count = state.pending_project_details.len() as u32;
+        let mentor_update_count = state.mentor_profile_edit_awaits.len() as u32;
+        let vc_update_count = state.vc_profile_edit_awaits.len() as u32;
 
-    UpdateCounts {
-        project_update: Some(project_update_count),
-        mentor_update: Some(mentor_update_count),
-        vc_update: Some(vc_update_count),
-    }
+        UpdateCounts {
+            project_update: Some(project_update_count),
+            mentor_update: Some(mentor_update_count),
+            vc_update: Some(vc_update_count),
+        }
+    })
 }
 
 #[query]
 pub fn get_project_update_declined_request() -> HashMap<String, ProjectUpdateRequest> {
-    DECLINED_PROJECT_UPDATES.with(|declined| declined.borrow().clone())
+    read_state(|state| {
+        state.declined_project_details.iter()
+            .map(|(key, value)| (key.clone(), value.0.clone()))
+            .collect()
+    })
 }
 
 #[query]
 pub fn get_mentor_update_declined_request() -> HashMap<Principal, MentorUpdateRequest> {
-    DECLINED_MENTOR_PROFILE_EDIT_REQUEST.with(|requests| {
-        let requests_borrow = requests.borrow();
-        requests_borrow.clone()
+    read_state(|state| {
+        state.mentor_profile_edit_declined.iter()
+            .map(|(key, value)| (key.0, value.0.clone()))
+            .collect()
     })
 }
 
 #[query]
 pub fn get_vc_update_declined_request() -> HashMap<Principal, UpdateInfoStruct> {
-    DECLINED_VC_PROFILE_EDIT_REQUEST.with(|requests| {
-        let requests_borrow = requests.borrow();
-        requests_borrow.clone()
+    read_state(|state| {
+        state.vc_profile_edit_declined.iter()
+            .map(|(key, value)| (key.0, value.0.clone()))
+            .collect()
     })
 }
 
@@ -2263,9 +2349,8 @@ pub fn delete_user_using_principal(principal: Principal) -> String {
 
 #[update]
 pub fn delete_project_using_principal(principal: Principal) -> String {
-    APPLICATION_FORM.with(|storage| {
-        let mut storage = storage.borrow_mut();
-        if storage.remove(&principal).is_some() {
+    mutate_state(|state| {
+        if state.project_storage.remove(&StoredPrincipal(principal)).is_some() {
             "Project successfully deleted".to_string()
         } else {
             "Project not found".to_string()
@@ -2275,9 +2360,8 @@ pub fn delete_project_using_principal(principal: Principal) -> String {
 
 #[update]
 pub fn delete_mentor_using_principal(principal: Principal) -> String {
-    MENTOR_REGISTRY.with(|storage| {
-        let mut storage = storage.borrow_mut();
-        if storage.remove(&principal).is_some() {
+    mutate_state(|state| {
+        if state.mentor_storage.remove(&StoredPrincipal(principal)).is_some() {
             "Mentor successfully deleted".to_string()
         } else {
             "Mentor not found".to_string()
@@ -2287,9 +2371,8 @@ pub fn delete_mentor_using_principal(principal: Principal) -> String {
 
 #[update]
 pub fn delete_vc_using_principal(principal: Principal) -> String {
-    VENTURECAPITALIST_STORAGE.with(|storage| {
-        let mut storage = storage.borrow_mut();
-        if storage.remove(&principal).is_some() {
+    mutate_state(|state| {
+        if state.vc_storage.remove(&StoredPrincipal(principal)).is_some() {
             "VC successfully deleted".to_string()
         } else {
             "VC not found".to_string()
@@ -2299,11 +2382,10 @@ pub fn delete_vc_using_principal(principal: Principal) -> String {
 
 #[update]
 pub fn delete_mentor_announcement_by_index(mentor_principal: Principal, index: usize) -> String {
-    MENTOR_ANNOUNCEMENTS.with(|announcements| {
-        let mut announcements = announcements.borrow_mut();
-        if let Some(ann_list) = announcements.get_mut(&mentor_principal) {
-            if index < ann_list.len() {
-                ann_list.remove(index);
+    mutate_state(|state| {
+        if let Some(mut ann_list) = state.mentor_announcement.get(&StoredPrincipal(mentor_principal)) {
+            if index < ann_list.0.len() {
+                ann_list.0.remove(index);
                 "Announcement successfully deleted.".to_string()
             } else {
                 "Invalid index provided, out of bounds.".to_string()
@@ -2316,34 +2398,32 @@ pub fn delete_mentor_announcement_by_index(mentor_principal: Principal, index: u
 
 #[update]
 pub fn delete_project_announcement_by_index(project_principal: Principal, index: usize) -> String {
-    PROJECT_ANNOUNCEMENTS.with(|announcements| {
-        let mut announcements = announcements.borrow_mut();
-        if let Some(ann_list) = announcements.get_mut(&project_principal) {
-            if index < ann_list.len() {
-                ann_list.remove(index);
+    mutate_state(|state| {
+        if let Some(mut ann_list) = state.project_announcement.get(&StoredPrincipal(project_principal)) {
+            if index < ann_list.0.len() {
+                ann_list.0.remove(index);
                 "Announcement successfully deleted.".to_string()
             } else {
                 "Invalid index provided, out of bounds.".to_string()
             }
         } else {
-            "No announcements found for this mentor.".to_string()
+            "No announcements found for this project.".to_string()
         }
     })
 }
 
 #[update]
 pub fn delete_vc_announcement_by_index(vc_principal: Principal, index: usize) -> String {
-    VC_ANNOUNCEMENTS.with(|announcements| {
-        let mut announcements = announcements.borrow_mut();
-        if let Some(ann_list) = announcements.get_mut(&vc_principal) {
-            if index < ann_list.len() {
-                ann_list.remove(index);
+    mutate_state(|state| {
+        if let Some(mut ann_list) = state.vc_announcement.get(&StoredPrincipal(vc_principal)) {
+            if index < ann_list.0.len() {
+                ann_list.0.remove(index);
                 "Announcement successfully deleted.".to_string()
             } else {
                 "Invalid index provided, out of bounds.".to_string()
             }
         } else {
-            "No announcements found for this mentor.".to_string()
+            "No announcements found for this venture capitalist.".to_string()
         }
     })
 }
