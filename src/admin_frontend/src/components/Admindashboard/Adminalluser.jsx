@@ -12,6 +12,7 @@ import { projectFilterSvg } from "../Utils/AdminData/SvgData";
 import NoDataCard from "../../../../IcpAccelerator_frontend/src/components/Mentors/Event/NoDataCard";
 import { principalToText } from "../Utils/AdminData/saga_function/blobImageToUrl";
 import { useNavigate } from "react-router-dom";
+import NoData from "../../../../IcpAccelerator_frontend/assets/images/file_not_found.png";
 
 const Adminalluser = () => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -108,7 +109,6 @@ const Adminalluser = () => {
 
           return commonData;
         });
-
         setAllData(processedData);
       }
     } catch (error) {
@@ -345,7 +345,7 @@ const Adminalluser = () => {
           </div>
         </div>
       ) : (
-        <NoDataCard />
+        <NoDataCard image={NoData} desc={"No data yet"} />
       )}
 
       {currentData.length > 0 && (

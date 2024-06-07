@@ -18,8 +18,8 @@ import SearchMentorsByProjectId from "./components/Mentors/SearchMentorsByProjec
 import InvestorSideAssociation from "./components/Association/InvestorSideAssociation";
 import ViewInvestorByProjectId from "./components/Dashboard/MoreLaunchPages/ViewInvestorByProjectId";
 import RequestsPrivateDocument from "./components/Project/ProjectDetailsPages/RequestsPrivateDocument";
-import ProjectDetailsForMentor from "./components/Project/ProjectDetailsPages/ProjectDetailsForMentor";
-import ProjectDetailsForInvestor from "./components/Project/ProjectDetailsPages/ProjectDetailsForInvestor";
+import ProjectDetailsForMentor from "./components/Project/ProjectDetailsPages/ProjectDetailsForMentorProject";
+import ProjectDetailsForInvestor from "./components/Project/ProjectDetailsPages/ProjectDetailsForInvestorProject";
 import ProjectDetailsForUserRole from "./components/Project/ProjectDetailsPages/ProjectDetailsForUserRole";
 import MoreLiveProjects from "./components/Dashboard/MoreLivePages/MoreLiveProjects";
 import LiveEventsCards from "./components/Mentors/Event/LiveEventsCards";
