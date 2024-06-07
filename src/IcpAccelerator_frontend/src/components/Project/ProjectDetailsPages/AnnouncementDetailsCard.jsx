@@ -4,6 +4,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/autoplay";
+import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import { formatFullDateFromBigInt } from "../../Utils/formatter/formatDateFromBigInt";
@@ -23,16 +24,30 @@ const AnnouncementDetailsCard = ({ data }) => {
   const [latestAnnouncementData, setLatestAnnouncementData] = useState([]);
   const [isAnnouncementModalOpen, setAnnouncementModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
-  const handleCloseModal = () => setAnnouncementModalOpen(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const handleOpenModal = () => setAnnouncementModalOpen(true);
-  const handleOpenDeleteModal = () => setDeleteModalOpen(true);
+  const [currentAnnouncementId, setCurrentAnnouncementId] = useState(null);
+  const handleOpenModal = (id) => {
+    setCurrentAnnouncementId(id);
+    setAnnouncementModalOpen(true);
+  };
+  const handleCloseModal = () => {
+    setAnnouncementModalOpen(false);
+    setCurrentAnnouncementId(null);
+  };
+  const handleOpenDeleteModal = (id) => {
+    setCurrentAnnouncementId(id);
+    setDeleteModalOpen(true);
+  };
+  const handleClose = () => {
+    setDeleteModalOpen(false);
+    setCurrentAnnouncementId(null);
+  };
 
   const fetchLatestAnnouncement = async (caller) => {
     await caller
       .get_announcements_by_project_id(data?.uid)
       .then((result) => {
-        console.log("result-in-get_announcements_by_project_id", result);
+        // console.log("result-in-get_announcements_by_project_id", result);
         if (!result || result.length == 0) {
           setNoData(true);
           setLatestAnnouncementData([]);
@@ -50,64 +65,80 @@ const AnnouncementDetailsCard = ({ data }) => {
 
   // <<<<<<----- Updating the announcement_data -------->>>>>>
 
-  // const handleUpdateAnnouncement = async ({
-  //   announcementTitle,
-  //   announcementDescription,
-  // }) => {
-  //   console.log("update announcement");
-  //   setIsSubmitting(true);
-  //   if (actor) {
-  //     let argument = {
-  //       project_id: data?.uid,
-  //       announcement_title: announcementTitle,
-  //       announcement_description: announcementDescription,
-  //       timestamp: Date.now(),
-  //     };
-  //     console.log("argument", argument);
-  //     await actor
-  //       .Update_announcement(argument)
-  //       .then((result) => {
-  //         console.log("result-in-update_announcement", result);
-  //         if (result && Object.keys(result).length > 0) {
-  //           handleCloseModal();
-  //           setIsSubmitting(false);
-  //           toast.success("announcement updated successfully");
-  //         } else {
-  //           setIsSubmitting(false);
-  //           toast.error("something got wrong");
-  //         }
-  //       })
-  //       .catch((error) => {
-  //         console.log("error-in-update_announcement", error);
-  //         toast.error("something got wrong");
-  //         setIsSubmitting(false);
-  //         handleCloseModal();
-  //       });
-  //   }
-  // };
+  const handleUpdateAnnouncement = async ({
+    announcementTitle,
+    announcementDescription,
+  }) => {
+    // console.log("update announcement");
+    setIsSubmitting(true);
+    if (actor) {
+      let new_details = {
+        project_id: data?.uid,
+        announcement_title: announcementTitle,
+        announcement_description: announcementDescription,
+        timestamp: Date.now(),
+      };
+      // console.log("new_details", new_details);
+      await actor
+        .update_project_announcement_by_id(currentAnnouncementId, new_details)
+        .then((result) => {
+          // console.log("result-in-update_announcement", result);
+          if (
+            result &&
+            result.includes(
+              `Announcement with ID ${currentAnnouncementId} updated successfully`
+            )
+          ) {
+            handleCloseModal();
+            setIsSubmitting(false);
+            toast.success("Announcement updated successfully");
+            setTimeout(() => {
+              window.location.reload();
+            }, 2000);
+          } else {
+            setIsSubmitting(false);
+            toast.error("something got wrong");
+          }
+        })
+        .catch((error) => {
+          console.log("error-in-update_announcement", error);
+          toast.error("something got wrong");
+          setIsSubmitting(false);
+          handleCloseModal();
+        });
+    }
+  };
 
   // <<<<<<----- Deleting the announcement_data -------->>>>>>
 
-  // const handleClose = async (project_id) => {
-  //   console.log("project_id===>>>>>>>>>", project_id);
-  //   await actor
-  //     .delete_project_announcement_by_index(principal, project_id)
-  //     .then((result) => {
-  //       console.log("result-in-get_announcements_by_project_id", result);
-  // if (!result || result.length == 0) {
-  //   setNoData(true);
-  //   setLatestAnnouncementData([]);
-  // } else {
-  //   setLatestAnnouncementData(result);
-  //   setNoData(false);
-  // }
-  //     })
-  //     .catch((error) => {
-  //       setNoData(true);
-  //       setLatestAnnouncementData([]);
-  //       console.log("error-in-get_announcements_by_project_id", error);
-  //     });
-  // };
+  const handleDelete = async () => {
+    // console.log("project_id===>>>>>>>>>", currentAnnouncementId);
+    setIsSubmitting(true);
+    await actor
+      .delete_project_announcement_by_id(currentAnnouncementId)
+      .then((result) => {
+        // console.log("result-in-get_announcements_by_project_id", result);
+        if (
+          result &&
+          result.includes(
+            `Announcement with ID ${currentAnnouncementId} deleted successfully`
+          )
+        ) {
+          setIsSubmitting(false);
+          toast.success("Announcement deleted successfully");
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+        } else {
+          toast.error(result);
+          setIsSubmitting(false);
+        }
+      })
+      .catch((error) => {
+        console.log("error-in-get_announcements_by_project_id", error);
+        setIsSubmitting(false);
+      });
+  };
 
   useEffect(() => {
     if (actor && data) {
@@ -151,8 +182,9 @@ const AnnouncementDetailsCard = ({ data }) => {
         {latestAnnouncementData.length == 0 ? (
           <NoDataCard image={NoData} desc={"No active announcement found"} />
         ) : (
+          latestAnnouncementData &&
           latestAnnouncementData.map((card, index) => {
-            console.log("card", card);
+            // console.log("card", card);
             let ann_name = card?.announcement_data?.announcement_title ?? "";
             let project_id = card?.announcement_data?.project_id ?? "";
             let ann_time = card?.timestamp
@@ -166,6 +198,7 @@ const AnnouncementDetailsCard = ({ data }) => {
             // let ann_project_logo = ment;
             let ann_project_name = card?.project_name ?? "";
             let ann_project_desc = card?.project_desc ?? "";
+            let announcement_id = card?.announcement_id ?? "";
             return (
               <SwiperSlide key={index}>
                 <div className="border-2 mb-4 mx-1 overflow-hidden rounded-3xl shadow-md">
@@ -175,7 +208,10 @@ const AnnouncementDetailsCard = ({ data }) => {
                         <div className="flex justify-between items-center">
                           {" "}
                           <p className="text-black font-bold">{ann_name}</p>
-                          <div className="flex items-center">
+                          <div
+                            onClick={() => handleOpenModal(announcement_id)}
+                            className="flex items-center"
+                          >
                             {" "}
                             {/* <div onClick={handleOpenModal}> */}
                             <svg
@@ -188,7 +224,11 @@ const AnnouncementDetailsCard = ({ data }) => {
                               <path d="M4.75 3.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h6.5c.69 0 1.25-.56 1.25-1.25V9A.75.75 0 0 1 14 9v2.25A2.75 2.75 0 0 1 11.25 14h-6.5A2.75 2.75 0 0 1 2 11.25v-6.5A2.75 2.75 0 0 1 4.75 2H7a.75.75 0 0 1 0 1.5H4.75Z" />
                             </svg>
                             {/* </div> */}
-                            <div onClick={handleOpenDeleteModal}>
+                            <div
+                              onClick={() =>
+                                handleOpenDeleteModal(announcement_id)
+                              }
+                            >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 16 16"
@@ -243,10 +283,12 @@ const AnnouncementDetailsCard = ({ data }) => {
       )}
       {isDeleteModalOpen && (
         <DeleteModel
-          onClose={handleCloseModal}
-          heading={"Are you sure to delete this Announcement"}
-          // onSubmitHandler={handleDeleteAnnouncement}
-          // isSubmitting={isSubmitting}
+          onClose={handleClose}
+          title={"Delete announcement"}
+          heading={"Are you sure to delete this announcement"}
+          onSubmitHandler={handleDelete}
+          isSubmitting={isSubmitting}
+          Id={currentAnnouncementId}
         />
       )}
     </div>

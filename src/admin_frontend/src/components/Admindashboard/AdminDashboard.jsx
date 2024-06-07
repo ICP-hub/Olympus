@@ -177,7 +177,10 @@ const AdminDashboard = () => {
             // onClick={() => navigate("/request")}
           >
             <div className="flex  flex-row  flex-wrap justify-around  font-bold text-lg text-black items-center ">
-              <div className="gap-2 flex flex-row items-center w-2/3">
+              <div
+                onClick={() => navigate("/alluser")}
+                className="gap-2 flex flex-row items-center w-2/3"
+              >
                 {userSvg}
                 <p className="flex justify-start text-sm">Users</p>
               </div>

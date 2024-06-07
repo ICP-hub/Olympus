@@ -49,13 +49,13 @@ export const formFields = [
     required: true,
     label: "Eligibility criteria",
   },
-  {
-    id: "rubric_eligibility",
-    type: "select",
-    name: "rubric_eligibility",
-    required: true,
-    label: "Level on rubric required for eligibility",
-  },
+  // {
+  //   id: "rubric_eligibility",
+  //   type: "select",
+  //   name: "rubric_eligibility",
+  //   required: true,
+  //   label: "Level on rubric required for eligibility",
+  // },
   // {
   //   id: "funding_type",
   //   type: "text",

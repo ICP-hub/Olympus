@@ -50,21 +50,19 @@ const schema = yup.object({
     )
     .required("Selecting an interest is required"),
 
-  deadline: yup
-    .date()
-    .required()
-    .typeError("Must be a date")
-    .min(yup.ref("cohort_launch_date"), "Deadline cannot be before Launch date")
-    .max(yup.ref("cohort_end_date"), "Deadline cannot be after end date"),
+  deadline: yup.date().required().typeError("Must be a date"),
+  // .min(yup.ref("cohort_launch_date"), "Deadline cannot be before Launch date")
+  // .max(yup.ref("cohort_end_date"), "Deadline cannot be after end date")
   eligibility: yup
     .string()
     .typeError("You must enter a eligibility")
     .required(),
   rubric_eligibility: yup
-    .number()
-    .min(1, "level 1 - 9 allowed only")
-    .max(9, "level 1 - 9 allowed only")
-    .typeError("You must enter a number")
+    .string()
+    // .number()
+    // .min(1, "level 1 - 9 allowed only")
+    // .max(9, "level 1 - 9 allowed only")
+    // .typeError("You must enter a number")
     .required("Required"),
   // area: yup.string().typeError("You must select area").required(),
   no_of_seats: yup.number().typeError("You must enter a number").required(),
@@ -84,6 +82,48 @@ const EventForm = () => {
   const [
     interestedDomainsSelectedOptions,
     setInterestedDomainsSelectedOptions,
+  ] = useState([]);
+  const [rubricEligibilityOptions, setRubricEligibilityOptions] = useState([
+    {
+      value: "1",
+      label: "One (1)",
+    },
+    {
+      value: "2",
+      label: "Two (2)",
+    },
+    {
+      value: "3",
+      label: "Three (3)",
+    },
+    {
+      value: "4",
+      label: "Four (4)",
+    },
+    {
+      value: "5",
+      label: "Five (5)",
+    },
+    {
+      value: "6",
+      label: "Six (6)",
+    },
+    {
+      value: "7",
+      label: "Seven (7)",
+    },
+    {
+      value: "8",
+      label: "Eight (8)",
+    },
+    {
+      value: "9",
+      label: "Nine (9)",
+    },
+  ]);
+  const [
+    rubricEligibilitySelectedOptions,
+    setRubricEligibilitySelectedOptions,
   ] = useState([]);
   const [interestedFundingTypeOptions, setInterestedFundingTypeOptions] =
     useState([
@@ -312,36 +352,36 @@ const EventForm = () => {
                         onFocus={() => handleFocus(field)}
                         onBlur={() => handleBlur(field)}
                       ></textarea>
-                    ) : field.type === "select" ? (
-                      <select
-                        name={field.name}
-                        id={field.id}
-                        {...register(field.name)}
-                        className={`bg-gray-50 border-2 ${
-                          errors[field.name]
-                            ? "border-red-500"
-                            : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                        onFocus={() => handleFocus(field)}
-                        onBlur={() => handleBlur(field)}
-                      >
-                        {[
-                          "One",
-                          "Two",
-                          "Three",
-                          "Four",
-                          "Five",
-                          "Six",
-                          "Seven",
-                          "Eight",
-                          "Nine",
-                        ].map((word, index) => (
-                          <option key={index} value={index + 1}>
-                            {index + 1} ({word})
-                          </option>
-                        ))}
-                      </select>
                     ) : (
+                      // ) : field.type === "select" ? (
+                      //   <select
+                      //     name={field.name}
+                      //     id={field.id}
+                      //     {...register(field.name)}
+                      //     className={`bg-gray-50 border-2 ${
+                      //       errors[field.name]
+                      //         ? "border-red-500"
+                      //         : "border-[#737373]"
+                      //     } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      //     onFocus={() => handleFocus(field)}
+                      //     onBlur={() => handleBlur(field)}
+                      //   >
+                      //     {[
+                      //       "One",
+                      //       "Two",
+                      //       "Three",
+                      //       "Four",
+                      //       "Five",
+                      //       "Six",
+                      //       "Seven",
+                      //       "Eight",
+                      //       "Nine",
+                      //     ].map((word, index) => (
+                      //       <option key={index} value={index + 1}>
+                      //         {index + 1} ({word})
+                      //       </option>
+                      //     ))}
+                      //   </select>
                       <input
                         type={
                           field.id === "date_of_birth" ? inputType : field.type
@@ -425,6 +465,70 @@ const EventForm = () => {
                 ) : (
                   ""
                 )}
+                <div className="relative z-0 group mb-6">
+                  <label
+                    htmlFor="rubric_eligibility"
+                    className="flex gap-2 mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    Level on rubric required for eligibility{" "}
+                    <span className="text-red-500">*</span>
+                  </label>
+                  <ReactSelect
+                    isMulti
+                    menuPortalTarget={document.body}
+                    menuPosition={"fixed"}
+                    styles={{
+                      menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                      control: (provided, state) => ({
+                        ...provided,
+                        paddingBlock: "2px",
+                        borderRadius: "8px",
+                        border: errors.rubric_eligibility
+                          ? "2px solid #ef4444"
+                          : "2px solid #737373",
+                        backgroundColor: "rgb(249 250 251)",
+                        "&::placeholder": {
+                          color: errors.rubric_eligibility
+                            ? "#ef4444"
+                            : "currentColor",
+                        },
+                      }),
+                    }}
+                    value={rubricEligibilitySelectedOptions}
+                    options={rubricEligibilityOptions}
+                    classNamePrefix="select"
+                    className="basic-multi-select w-full text-start"
+                    placeholder="Select a tag"
+                    name="rubric_eligibility"
+                    onChange={(selectedOptions) => {
+                      if (selectedOptions && selectedOptions.length > 0) {
+                        setRubricEligibilitySelectedOptions(selectedOptions);
+                        clearErrors("rubric_eligibility");
+                        setValue(
+                          "rubric_eligibility",
+                          selectedOptions
+                            .map((option) => option.value)
+                            .join(", "),
+                          { shouldValidate: true }
+                        );
+                      } else {
+                        setRubricEligibilitySelectedOptions([]);
+                        setValue("rubric_eligibility", "", {
+                          shouldValidate: true,
+                        });
+                        setError("rubric_eligibility", {
+                          type: "required",
+                          message: "Selecting a rubric eligibility is required",
+                        });
+                      }
+                    }}
+                  />
+                  {errors.rubric_eligibility && (
+                    <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                      {errors.rubric_eligibility.message}
+                    </span>
+                  )}
+                </div>
                 <div className="relative z-0 group mb-6">
                   <label
                     htmlFor="tags"
