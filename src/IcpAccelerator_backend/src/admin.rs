@@ -169,63 +169,45 @@ pub async fn send_approval_request(
     }
 }
 
-//
 pub fn approve_mentor_creation_request(requester: Principal, approve: bool) -> String {
-    read_state(|state| {
-        let mut result = String::new();
-        if let Some(mut mentor_internal) = state
-            .mentor_awaits_response
-            .get(&StoredPrincipal(requester))
-        {
-            if approve || mentor_internal.0.approve {
-                mentor_internal.0.decline = false;
-                mentor_internal.0.approve = approve;
-
-                // Register mentor
-                mutate_state(|state| {
-                    state
-                        .mentor_storage
-                        .insert(StoredPrincipal(requester), mentor_internal);
-                });
-
-                // Approve mentor
-                mutate_state(|state| {
-                    if let Some(mut user_roles) = state.role_status.get(&StoredPrincipal(requester))
-                    {
-                        if let Some(user_role) =
-                            user_roles.0.iter_mut().find(|r| r.name == "mentor")
-                        {
-                            user_role.status = "approved".to_string();
-                            user_role.approved_on = Some(time());
-                        }
-                    }
-                });
-
-                // Remove from awaiters
-                mutate_state(|state| {
-                    state
-                        .mentor_awaits_response
-                        .remove(&StoredPrincipal(requester));
-                });
-
-                // Change notification status
-                result = format!("Requester with principal id {} is approved", requester);
-                change_notification_status(requester, "mentor".to_string(), "approved".to_string());
-            } else {
-                result = format!(
-                    "Requester with principal id {} could not be approved",
-                    requester
-                );
-            }
+    // First, perform a read to determine if action is required
+    let (mentor_internal, should_update) = read_state(|state| {
+        if let Some(mentor) = state.mentor_awaits_response.get(&StoredPrincipal(requester)) {
+            let should_update = mentor.0.approve != approve;
+            (Some(mentor), should_update) // Directly pass reference or copy data as needed
         } else {
-            result = format!(
-                "Requester with principal id {} has not registered",
-                requester
-            );
+            (None, false)
         }
-        result
-    })
+    });
+
+    // Process the read data
+    if let Some(mentor) = mentor_internal {
+        if approve {
+            // Handle approvals
+            mutate_state(|state| {
+                // Update various parts of the state
+                state.mentor_storage.insert(StoredPrincipal(requester), mentor.clone());
+                state.mentor_awaits_response.remove(&StoredPrincipal(requester));
+                if let Some(mut user_roles) = state.role_status.get(&StoredPrincipal(requester)) {
+                    if let Some(role) = user_roles.0.iter_mut().find(|r| r.name == "mentor") {
+                        role.status = "approved".to_string();
+                        role.approved_on = Some(time());
+                    }
+                }
+            });
+
+            if should_update {
+                change_notification_status(requester, "mentor".to_string(), "approved".to_string());
+            }
+            format!("Requester with principal id {} is approved", requester)
+        } else {
+            format!("Requester with principal id {} could not be approved", requester)
+        }
+    } else {
+        format!("Requester with principal id {} has not registered", requester)
+    }
 }
+
 
 pub fn decline_mentor_creation_request(requester: Principal, decline: bool) -> String {
     mutate_state(|state| {
