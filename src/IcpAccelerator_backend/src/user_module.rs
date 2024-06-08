@@ -40,7 +40,7 @@ pub struct UserInfoInternal {
     pub joining_date: u64,
 }
 
-#[derive(CandidType, Clone, Serialize, Deserialize)]
+#[derive(CandidType, Clone, Serialize, Deserialize, Debug)]
 pub struct Role {
     pub name: String,
     pub status: String,

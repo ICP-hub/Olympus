@@ -1,23 +1,17 @@
 use crate::mentor::get_mentor_info_using_principal;
-use crate::project_registration::{ProjectInfo, ProjectInfoInternal, get_project_info_using_principal};
+use crate::project_registration::{ProjectInfoInternal, get_project_info_using_principal};
 use crate::state_handler::{read_state, StoredPrincipal, mutate_state, Candid};
-use crate::user_module::UserInformation;
 use crate::vc_registration::get_vc_info_using_principal;
 use crate::{
-    get_roles_for_principal, ApplicationDetails, MentorInternal, MentorRegistry,
-    VentureCapitalistInternal, VentureCapitalistStorage, APPLICATION_FORM, MENTOR_REGISTRY,
-    VENTURECAPITALIST_STORAGE,
-};
+    get_roles_for_principal,  MentorInternal, 
+    VentureCapitalistInternal};
 use candid::{CandidType, Principal};
-use ic_cdk::api::{management_canister::main::raw_rand, time};
+use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::caller;
 use ic_cdk_macros::{query, update};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
-use std::cell::RefCell;
-use std::collections::HashMap;
 use crate::send_cohort_request_to_admin;
-use candid::types::TypeInner::Null;
 
 #[derive(Clone, CandidType, Deserialize, Debug)]
 pub struct Eligibility {
@@ -82,28 +76,28 @@ pub struct InviteRequest{
     pub invite_message: String
 }
 
-pub type MentorsAppliedForCohort = HashMap<String, Vec<MentorInternal>>;
-pub type CohortInfo = HashMap<String, CohortDetails>;
-pub type ProjectsAppliedForCohort = HashMap<String, Vec<ProjectInfoInternal>>;
-pub type ApplierCount = HashMap<String, u64>;
-pub type CapitalistAppliedForCohort = HashMap<String, Vec<VentureCapitalistInternal>>;
-pub type CohortsAssociated = HashMap<String, Vec<String>>;
-pub type CohortEnrollmentRequests = HashMap<Principal, Vec<CohortEnrollmentRequest>>;
-pub type MentorsRemovedFromCohort = HashMap<String, Vec<(Principal, MentorInternal)>>;
-pub type MentorsInviteRequest = HashMap<String, InviteRequest>;
+// pub type MentorsAppliedForCohort = HashMap<String, Vec<MentorInternal>>;
+// pub type CohortInfo = HashMap<String, CohortDetails>;
+// pub type ProjectsAppliedForCohort = HashMap<String, Vec<ProjectInfoInternal>>;
+// pub type ApplierCount = HashMap<String, u64>;
+// pub type CapitalistAppliedForCohort = HashMap<String, Vec<VentureCapitalistInternal>>;
+// pub type CohortsAssociated = HashMap<String, Vec<String>>;
+// pub type CohortEnrollmentRequests = HashMap<Principal, Vec<CohortEnrollmentRequest>>;
+// pub type MentorsRemovedFromCohort = HashMap<String, Vec<(Principal, MentorInternal)>>;
+// pub type MentorsInviteRequest = HashMap<String, InviteRequest>;
 
-thread_local! {
-    pub static COHORT : RefCell<CohortInfo> = RefCell::new(CohortInfo::new());
-    pub static PROJECTS_APPLIED_FOR_COHORT : RefCell<ProjectsAppliedForCohort> = RefCell::new(ProjectsAppliedForCohort::new());
-    pub static MENTORS_APPLIED_FOR_COHORT : RefCell<MentorsAppliedForCohort> = RefCell::new(MentorsAppliedForCohort::new());
-    pub static CAPITALIST_APPLIED_FOR_COHORT : RefCell<CapitalistAppliedForCohort> = RefCell::new(CapitalistAppliedForCohort::new());
-    pub static APPLIER_COUNT : RefCell<ApplierCount> = RefCell::new(ApplierCount::new());
-    pub static ASSOCIATED_COHORTS_WITH_PROJECT : RefCell<CohortsAssociated> = RefCell::new(CohortsAssociated::new());
-    pub static MY_SENT_COHORT_REQUEST : RefCell<HashMap<Principal, Vec<CohortRequest>>> = RefCell::new(HashMap::new());
-    pub static COHORT_ENROLLMENT_REQUESTS: RefCell<CohortEnrollmentRequests> = RefCell::new(HashMap::new());
-    pub static MENTOR_REMOVED_FROM_COHORT: RefCell<MentorsRemovedFromCohort> = RefCell::new(MentorsRemovedFromCohort::new());
-    pub static PENDING_MENTOR_CONFIRMATION_TO_REJOIN: RefCell<MentorsInviteRequest> = RefCell::new(MentorsInviteRequest::new());
-}
+// thread_local! {
+//     pub static COHORT : RefCell<CohortInfo> = RefCell::new(CohortInfo::new());
+//     pub static PROJECTS_APPLIED_FOR_COHORT : RefCell<ProjectsAppliedForCohort> = RefCell::new(ProjectsAppliedForCohort::new());
+//     pub static MENTORS_APPLIED_FOR_COHORT : RefCell<MentorsAppliedForCohort> = RefCell::new(MentorsAppliedForCohort::new());
+//     pub static CAPITALIST_APPLIED_FOR_COHORT : RefCell<CapitalistAppliedForCohort> = RefCell::new(CapitalistAppliedForCohort::new());
+//     pub static APPLIER_COUNT : RefCell<ApplierCount> = RefCell::new(ApplierCount::new());
+//     pub static ASSOCIATED_COHORTS_WITH_PROJECT : RefCell<CohortsAssociated> = RefCell::new(CohortsAssociated::new());
+//     pub static MY_SENT_COHORT_REQUEST : RefCell<HashMap<Principal, Vec<CohortRequest>>> = RefCell::new(HashMap::new());
+//     pub static COHORT_ENROLLMENT_REQUESTS: RefCell<CohortEnrollmentRequests> = RefCell::new(HashMap::new());
+//     pub static MENTOR_REMOVED_FROM_COHORT: RefCell<MentorsRemovedFromCohort> = RefCell::new(MentorsRemovedFromCohort::new());
+//     pub static PENDING_MENTOR_CONFIRMATION_TO_REJOIN: RefCell<MentorsInviteRequest> = RefCell::new(MentorsInviteRequest::new());
+// }
 
 
 //a. create_cohort
@@ -124,7 +118,7 @@ pub async fn create_cohort(params: Cohort) -> Result<String, String>{
     let u_ids = raw_rand().await.unwrap().0;
     let cohort_id = format!("{:x}", Sha256::digest(&u_ids));
 
-    let roles_assigned = read_state(|state| {
+    let roles_assigned = read_state(|_state| {
         get_roles_for_principal(caller_principal).iter()
             .filter(|r| r.status == "approved" || r.status == "active")
             .map(|r| r.name.clone())
@@ -148,7 +142,7 @@ pub async fn create_cohort(params: Cohort) -> Result<String, String>{
         request_status: "pending".to_string()
     };
 
-    send_cohort_request_to_admin(cohort_request.clone());
+    send_cohort_request_to_admin(cohort_request.clone()).await;
 
     mutate_state(|state| {
         // Check if there are already requests for this principal
@@ -224,12 +218,12 @@ pub fn get_cohort(cohort_id: String) -> CohortDetails {
     })
 }
 
-pub fn get_cohort_inner_func(cohort_id: String) -> Option<CohortDetails> {
-    read_state(|state| {
-        state.cohort_info.get(&cohort_id)
-            .map(|candid_cohort_details| candid_cohort_details.0.clone())  
-    })
-}
+// pub fn get_cohort_inner_func(cohort_id: String) -> Option<CohortDetails> {
+//     read_state(|state| {
+//         state.cohort_info.get(&cohort_id)
+//             .map(|candid_cohort_details| candid_cohort_details.0.clone())  
+//     })
+// }
 
 
 #[query]

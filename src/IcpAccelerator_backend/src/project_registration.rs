@@ -1,20 +1,14 @@
-use crate::admin::*;
 use crate::mentor::MentorProfile;
 
 use crate::state_handler::{read_state, StoredPrincipal, mutate_state, Candid};
 use crate::user_module::*;
 
 use crate::ratings::{RatingAverages, RatingSystem};
-use crate::roadmap_suggestion::Suggestion;
 use crate::user_module::{UserInfoInternal, UserInformation};
 
 use crate::admin::send_approval_request;
 use crate::ratings::calculate_average_api;
 use crate::vc_registration::VentureCapitalist;
-use crate::{
-    hub_organizer,
-    register_user::{self, get_founder_info},
-};
 use bincode::{self, DefaultOptions, Options};
 use candid::{CandidType, Principal};
 use ic_cdk::api::caller;
@@ -216,7 +210,6 @@ pub struct ProjectInfoForUser {
     pub vc_associated: Option<Vec<VentureCapitalist>>,
     pub team_member_info: Option<Vec<TeamMember>>,
     pub announcements: HashMap<Principal, Vec<AnnouncementsInternal>>,
-    pub reviews: Vec<Suggestion>,
     pub website_social_group: Option<String>,
     pub live_link_of_project: Option<String>,
     pub jobs_opportunity: Option<Vec<JobsInternal>>,
@@ -1432,10 +1425,6 @@ pub fn filter_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
 #[query]
 pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUserInternal> {
     let announcements_project = get_announcements();
-    let project_reviews = crate::roadmap_suggestion::get_suggestions_by_status(
-        project_id.clone(),
-        "In Progress".to_string(),
-    );
     let jobs_opportunity_posted = get_jobs_posted_by_project(project_id.clone());
 
     let community_ratings = crate::ratings::calculate_average_api(&project_id);
@@ -1468,7 +1457,6 @@ pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUse
                     vc_associated: project_internal.params.vc_assigned.clone(),
                     team_member_info: project_internal.params.project_team.clone(),
                     announcements: announcements_project,
-                    reviews: project_reviews,
                     website_social_group: project_internal.params.project_discord.clone(),
                     live_link_of_project: project_internal.params.dapp_link.clone(),
                     jobs_opportunity: Some(jobs_opportunity_posted),
@@ -1586,15 +1574,6 @@ pub fn make_project_active_inactive(p_id: Principal, project_id: String) -> Stri
 //     }
 // }
 
-pub fn get_dummy_suggestion() -> Suggestion {
-    Suggestion {
-        id: 1, // Example ID
-        content: "This project could benefit from more robust testing strategies.".to_string(),
-        status: "Pending Review".to_string(),
-        project_id: "ProjectX123".to_string(),
-        parent_id: None, // or Some(id) if you want to simulate a response to another suggestion
-    }
-}
 
 // pub fn get_dummy_jon_opportunity() -> Jobs {
 //     Jobs {

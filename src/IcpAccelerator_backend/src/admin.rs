@@ -1,10 +1,4 @@
 use crate::associations::*;
-use crate::cohort::APPLIER_COUNT;
-use crate::cohort::CAPITALIST_APPLIED_FOR_COHORT;
-use crate::cohort::MENTORS_APPLIED_FOR_COHORT;
-use crate::cohort::PROJECTS_APPLIED_FOR_COHORT;
-use crate::latest_popular_projects::INCUBATED_PROJECTS;
-use crate::latest_popular_projects::LIVE_PROJECTS;
 use crate::mentor::*;
 use crate::project_registration::*;
 use crate::state_handler::mutate_state;
@@ -14,26 +8,19 @@ use crate::state_handler::StoredPrincipal;
 use crate::user_module::*;
 use crate::vc_registration::*;
 use crate::cohort::InviteRequest;
-use crate::cohort::MENTOR_REMOVED_FROM_COHORT;
-use crate::cohort::PENDING_MENTOR_CONFIRMATION_TO_REJOIN;
-use crate::CohortDetails;
 use crate::CohortRequest;
-use crate::COHORT;
-use crate::MY_SENT_COHORT_REQUEST;
 use candid::{CandidType, Principal};
-use ic_cdk::api::is_controller;
 use ic_cdk::api::management_canister::main::{canister_info, CanisterInfoRequest};
-use ic_cdk::api::stable::{StableReader, StableWriter};
 use ic_cdk::api::{caller, id};
 use ic_cdk::api::{canister_balance128, time};
 use ic_cdk::storage;
 use ic_cdk::storage::stable_restore;
 use ic_cdk_macros::*;
 use serde::{Deserialize, Serialize};
+use std::borrow::Cow;
 use std::cell::RefCell;
-use std::cmp::Reverse;
 use std::collections::{HashMap, HashSet};
-use std::io::{Read, Write};
+
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 struct ApprovalRequest {
@@ -98,10 +85,10 @@ pub fn post_upgrade_admin() {
 }
 
 fn change_notification_status(requester: Principal, requested_for: String, changed_status: String) {
-    ADMIN_NOTIFICATIONS.with(|admin_notifications| {
-        let mut notifications = admin_notifications.borrow_mut();
-        for (_, admin_notif_list) in notifications.iter_mut() {
-            for notification in admin_notif_list.iter_mut() {
+    mutate_state(|admin_notifications| {
+        let mut notifications = &mut admin_notifications.admin_notifications;
+        for (_, mut admin_notif_list) in notifications.iter() {
+            for notification in admin_notif_list.0.iter_mut() {
                 match &mut notification.notification_type {
                     NotificationType::ApprovalRequest(approval_request)
                         if approval_request.sender == requester
@@ -156,12 +143,21 @@ pub async fn send_approval_request(
                     notification_type: NotificationType::ApprovalRequest(approval_request),
                     timestamp: time(),
                 };
-                ADMIN_NOTIFICATIONS.with(|admin_notifications| {
-                    let mut notifications = admin_notifications.borrow_mut();
-                    notifications
-                        .entry(c)
-                        .or_default()
-                        .push(notification_to_send)
+                mutate_state(|state| {
+                    let principal = c;
+
+                    let mut notifications = state
+                        .admin_notifications
+                        .get(&StoredPrincipal(principal))
+                        .map_or(Vec::new(), |candid_vec| {
+                            Candid::from_bytes(Cow::Borrowed(&candid_vec.to_bytes())).0
+                        });
+
+                    notifications.push(notification_to_send);
+
+                    state
+                        .admin_notifications
+                        .insert(StoredPrincipal(principal), Candid(notifications));
                 });
             }
             format!("approval request is sent")
@@ -271,25 +267,31 @@ pub fn decline_mentor_creation_request(requester: Principal, decline: bool) -> S
 pub fn get_admin_notifications() -> Vec<Notification> {
     let caller = caller();
 
-    ADMIN_NOTIFICATIONS.with(|alerts| {
-        let mut alerts = alerts.borrow().get(&caller).cloned().unwrap_or_default();
+    read_state(|alerts| {
+        let mut alerts = alerts
+            .admin_notifications
+            .get(&StoredPrincipal(caller))
+            .map(|candid_res| candid_res.0.clone())
+            .unwrap_or_default();
         // Sort the alerts by timestamp in descending order
         alerts.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
         alerts
     })
 }
 
+
 #[query]
 pub fn get_pending_admin_notifications() -> Vec<Notification> {
     let caller = caller();
 
-    ADMIN_NOTIFICATIONS.with(|alerts| {
-        let alerts = alerts.borrow();
+    read_state(|alerts| {
+        let alerts = &alerts.admin_notifications;
 
         // First, get the caller's notifications, if any, and filter them by "pending" status.
         let pending_alerts: Vec<Notification> = alerts
-            .get(&caller)
-            .unwrap_or(&Vec::new())
+            .get(&StoredPrincipal(caller))
+            .map(|candid_res| candid_res.0.clone())
+            .unwrap_or_default()
             .iter()
             .filter(|notification| {
                 // Check if the notification is an ApprovalRequest and its status is "pending".
@@ -332,7 +334,7 @@ async fn get_info() -> Result<Vec<Principal>, MyError> {
     }
 }
 
-#[derive(Serialize, Deserialize, Clone, CandidType)]
+#[derive(Serialize, Deserialize, Clone, CandidType, Debug)]
 pub struct MentorWithRoles {
     pub mentor_profile: MentorInternal,
     pub roles: Vec<Role>,
@@ -365,7 +367,7 @@ pub fn mentors_awaiting_approval() -> HashMap<Principal, MentorWithRoles> {
 
             mentor_with_roles_map.insert(principal.0, mentor_with_roles);
         }
-
+        ic_cdk::println!("Mentors awaiting approval: {:?}", mentor_with_roles_map);
         mentor_with_roles_map
     })
 }

@@ -8,7 +8,6 @@ use std::collections::HashMap;
 extern crate serde_cbor;
 use crate::admin::*;
 use crate::state_handler::{StoredPrincipal, read_state, mutate_state, Candid};
-use crate::trie::EXPERTISE_TRIE;
 use crate::user_module::*;
 use ic_cdk::api::stable::{StableReader, StableWriter};
 use ic_cdk::api::time;
@@ -166,7 +165,7 @@ pub async fn register_mentor(profile: MentorProfile) -> String {
             };
 
             mutate_state(|state| {
-                state.mentor_awaits_response.insert(StoredPrincipal(caller), Candid(mentor_internal.clone()));
+                state.mentor_awaits_response.insert(StoredPrincipal(caller), Candid(mentor_internal));
             });
 
             let res = send_approval_request(
@@ -406,22 +405,6 @@ pub fn make_active_inactive(p_id: Principal) -> String {
     }
 }
 
-pub fn find_mentors_by_expertise(expertise_keyword: &str) -> Vec<MentorProfile> {
-    let keyword = expertise_keyword;
-    let mentor_principals = EXPERTISE_TRIE.with(|trie| trie.borrow().search(keyword));
-
-    let mut mentor_profiles = Vec::new();
-    MENTOR_REGISTRY.with(|registry| {
-        let registry = registry.borrow();
-        for principal in mentor_principals {
-            if let Some(mentor_internal) = registry.get(&principal) {
-                mentor_profiles.push(mentor_internal.profile.clone());
-            }
-        }
-    });
-
-    mentor_profiles
-}
 
 #[update]
 pub fn add_mentor_announcement(name: String, announcement_message: String) -> String {
