@@ -264,7 +264,7 @@ pub async fn update_data_for_roles(principal_id: Principal, user_data: UserInfor
     }
     Ok(())
 }
-
+#[update]
 async fn update_user_data(user_id: Principal, user_data: UserInformation) -> Result<(), String> {
     USER_STORAGE.with(|storage| {
         let mut storage = storage.borrow_mut();

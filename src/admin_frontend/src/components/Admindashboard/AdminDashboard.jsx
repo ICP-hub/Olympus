@@ -185,7 +185,7 @@ const AdminDashboard = () => {
                 <p className="flex justify-start text-sm">Users</p>
               </div>
               <p className="w-1/3 font-extrabold -[59px] h-[62px] flex  text-2xl justify-center items-center">
-                {onlyUser}
+                {totalUser}
               </p>
             </div>
           </div>
