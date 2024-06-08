@@ -29,6 +29,10 @@ use sha2::{Digest, Sha256};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::io::Read;
+use ic_certified_assets::{types::Key};
+use serde_bytes::ByteBuf;
+use ic_cdk::api::call::call;
+
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct TeamMember {
     pub member_uid: String,
@@ -52,7 +56,7 @@ pub struct JobsInternal {
     timestamp: u64,
     project_name: String,
     project_desc: Option<String>,
-    project_logo: Vec<u8>,
+    project_logo: Option<Vec<u8>>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
@@ -69,13 +73,13 @@ pub struct AnnouncementsInternal {
     timestamp: u64,
     project_name: String,
     project_desc: Option<String>,
-    project_logo: Vec<u8>,
+    project_logo: Option<Vec<u8>>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct ProjectInfo {
     pub project_name: String,
-    pub project_logo: Vec<u8>,
+    pub project_logo: Option<Vec<u8>>,
     pub preferred_icp_hub: Option<String>,
     pub live_on_icp_mainnet: Option<bool>,
     pub money_raised_till_now: Option<bool>,
@@ -86,7 +90,7 @@ pub struct ProjectInfo {
     pub github_link: Option<String>,
     pub reason_to_join_incubator: String,
     pub project_description: Option<String>, //
-    pub project_cover: Vec<u8>,
+    pub project_cover: Option<Vec<u8>>,
     pub project_team: Option<Vec<TeamMember>>,
     pub token_economics: Option<String>,
     pub technical_docs: Option<String>,
@@ -116,7 +120,7 @@ pub struct ProjectInfo {
 pub struct ProjectPublicInfo {
     pub project_id: String,
     pub project_name: String,
-    pub project_logo: Vec<u8>,
+    pub project_logo: Option<Vec<u8>>,
     pub preferred_icp_hub: Option<String>,
     pub live_on_icp_mainnet: Option<bool>,
     pub money_raised_till_now: Option<bool>,
@@ -127,7 +131,7 @@ pub struct ProjectPublicInfo {
     pub github_link: Option<String>,
     pub reason_to_join_incubator: String,
     pub project_description: Option<String>,
-    pub project_cover: Vec<u8>,
+    pub project_cover: Option<Vec<u8>>,
     pub project_team: Option<Vec<TeamMember>>,
     pub token_economics: Option<String>,
     pub technical_docs: Option<String>,
@@ -201,7 +205,7 @@ pub struct ProjectInfoForUser {
     pub project_logo: Option<Vec<u8>>,
     pub project_description: Option<String>,
     pub community_rating: Option<RatingAverages>,
-    pub project_cover: Vec<u8>,
+    pub project_cover: Option<Vec<u8>>,
     pub project_twitter: Option<String>,
     pub project_linkedin: Option<String>,
     pub project_website: Option<String>,
@@ -654,8 +658,53 @@ pub async fn create_project(info: ProjectInfo) -> String {
     let uid = format!("{:x}", Sha256::digest(&uuids));
     let new_id = uid.clone().to_string();
 
+    let canister_id = crate::asset_manager::get_asset_canister();
+    let full_url_logo = canister_id.to_string() + "/uploads/default_project_logo.jpeg";
+    let key_logo = "/uploads/".to_owned()+&caller.to_string()+"_project_logo.jpeg";
+
+    let full_url_cover = canister_id.to_string() + "/uploads/default_project_cover.jpeg";
+    let key_cover = "/uploads/".to_owned()+&caller.to_string()+"_project_cover.jpeg";
+
+    fn default_profile_picture(full_url: &str) -> Vec<u8> {
+        // base64::decode(DEFAULT_USER_AVATAR_BASE64).expect("Failed to decode base64 image")
+        full_url.as_bytes().to_vec()
+    }
+
+    let mut info_with_default = info.clone();
+
+    if info_with_default.project_logo.is_none() {
+        info_with_default.project_logo = Some(default_profile_picture(&full_url_logo));
+    }else{
+        let arg_logo = StoreArg{
+            key: key_logo.clone(),
+            content_type: "image/*".to_string(),
+            content_encoding: "identity".to_string(),
+            content: ByteBuf::from(info_with_default.project_logo.clone().unwrap()),
+            sha256: None,
+        };
+        let (result,): ((),) = call(canister_id, "store", (arg_logo, )).await.unwrap();
+
+    }
+
+    if info_with_default.project_cover.is_none() {
+        info_with_default.project_cover = Some(default_profile_picture(&full_url_cover));
+    }else{
+        let arg_cover = StoreArg{
+            key: key_cover.clone(),
+            content_type: "image/*".to_string(),
+            content_encoding: "identity".to_string(),
+            content: ByteBuf::from(info_with_default.project_cover.clone().unwrap()),
+            sha256: None,
+        };
+        let (result,): ((),) = call(canister_id, "store", (arg_cover, )).await.unwrap();
+
+    }
+
+    info_with_default.project_logo = Some((canister_id.to_string()+&key_logo).as_bytes().to_vec());
+    info_with_default.project_cover = Some((canister_id.to_string()+&key_cover).as_bytes().to_vec());
+
     let new_project = ProjectInfoInternal {
-        params: info.clone(),
+        params: info_with_default,
         uid: new_id,
         is_active: true,
         is_verified: false,
@@ -1591,7 +1640,7 @@ pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUse
             .map(|project_internal| ProjectInfoForUserInternal {
                 params: ProjectInfoForUser {
                     project_name: Some(project_internal.params.project_name.clone()),
-                    project_logo: Some(project_internal.params.project_logo.clone()),
+                    project_logo: project_internal.params.project_logo.clone(),
                     project_description: project_internal.params.project_description.clone(),
                     community_rating: Some(community_ratings),
                     project_cover: project_internal.params.project_cover.clone(),

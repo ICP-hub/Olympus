@@ -1545,7 +1545,7 @@ fn get_top_5_projects() -> Vec<(String, TopDataProject, usize)> {
                 
                 let top_data = TopDataProject {
                     full_name: project_info.user_data.full_name.clone(),
-                    profile_picture: Some(project_info.project_logo.clone()),
+                    profile_picture: project_info.project_logo.clone(),
                     area_of_interest: project_info.project_area_of_focus.clone(),
                     country: project_info.user_data.country.clone(),
                     joined_on: project_internal.creation_date.clone(),

@@ -92,6 +92,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "asset_canister_backend"
+version = "0.1.0"
+dependencies = [
+ "candid 0.7.18",
+ "ic-cdk 0.5.7",
+ "ic-cdk-macros 0.5.7",
+ "ic-certified-assets",
+ "serde",
+ "serde_bytes",
+ "serde_cbor",
+ "serde_json",
+]
+
+[[package]]
 name = "async-attributes"
 version = "1.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"

@@ -147,7 +147,7 @@ pub async fn send_offer_to_project_by_investor(project_id: String, msg: String) 
     let offer_to_project = OfferToProjectByInvestor {
         offer_id: offer_id.clone(),
         project_id: project_id.clone(),
-        project_image: Some(project.params.project_logo),
+        project_image: project.params.project_logo,
         project_name: project.params.project_name,
         offer_i_have_written: msg.clone(),
         time_of_request: time(),

@@ -32,7 +32,7 @@ pub struct ProjectInfoo {
     project_id: String,
     project_name: String,
     project_description: Option<String>,
-    project_logo: Vec<u8>,
+    project_logo: Option<Vec<u8>>,
 }
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
