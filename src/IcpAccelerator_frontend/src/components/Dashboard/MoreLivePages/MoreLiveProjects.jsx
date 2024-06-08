@@ -19,27 +19,34 @@ const MoreLiveProjects = () => {
 
   const [noData, setNoData] = useState(null);
   const [allProjectData, setAllProjectData] = useState([]);
+  const [countData, setCountData] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [filter, setFilter] = useState("");
   const itemsPerPage = 12;
 
   const getAllProject = async (caller) => {
     await caller
-      .list_all_projects()
+      .list_all_projects_with_pagination({
+        page_size: itemsPerPage,
+        page: currentPage,
+      })
       .then((result) => {
         console.log("result-in-get-all-projects", result);
 
         if (!result || result.length == 0) {
           setNoData(true);
           setAllProjectData([]);
+          setCountData("");
         } else {
-          setAllProjectData(result);
+          setAllProjectData(result.project_data);
+          setCountData(result.count);
           setNoData(false);
         }
       })
       .catch((error) => {
         setNoData(true);
         setAllProjectData([]);
+        setCountData();
         console.log("error-in-get-all-projects", error);
       });
   };
@@ -85,12 +92,10 @@ const MoreLiveProjects = () => {
     () =>
       allProjectData.filter((user) => {
         if (!filter) return true; // If no filter is set, show all users.
-
         const projectName =
           user?.params?.params?.project_name?.toLowerCase() || "";
         const userName =
           user?.params?.params?.user_data?.fullName?.toLowerCase() || "";
-
         return (
           projectName.includes(filter.toLowerCase()) ||
           userName.includes(filter.toLowerCase())
@@ -101,11 +106,7 @@ const MoreLiveProjects = () => {
 
   const indexOfLastUser = currentPage * itemsPerPage;
   const indexOfFirstUser = indexOfLastUser - itemsPerPage;
-  const currentProjectsData = filteredUsers.filter((val) => {
-    const liveStatus = val?.params?.params?.live_on_icp_mainnet;
-    return Array.isArray(liveStatus) && liveStatus[0] === true;
-  });
-  const currentProjects = currentProjectsData.slice(
+  const currentProjects = filteredUsers.slice(
     indexOfFirstUser,
     indexOfLastUser
   );
@@ -118,8 +119,43 @@ const MoreLiveProjects = () => {
 
   const handleNext = () => {
     setCurrentPage((prev) =>
-      prev < Math.ceil(currentProjectsData.length / itemsPerPage) ? prev + 1 : prev
+      prev < Math.ceil(Number(countData) / itemsPerPage) ? prev + 1 : prev
     );
+  };
+
+  const currentProjectsData = filteredUsers.filter((val) => {
+    const liveStatus = val?.params?.params?.live_on_icp_mainnet;
+    return Array.isArray(liveStatus) && liveStatus[0] === true;
+  });
+
+  // Logic to limit the displayed page numbers to 10 at a time
+  const renderPaginationNumbers = () => {
+    const totalPages = Math.ceil(Number(countData) / itemsPerPage);
+    const maxPageNumbers = 10;
+    const startPage =
+      Math.floor((currentPage - 1) / maxPageNumbers) * maxPageNumbers + 1;
+    const endPage = Math.min(startPage + maxPageNumbers - 1, totalPages);
+
+    const pageNumbers = [];
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(
+        <button
+          key={i}
+          onClick={() => paginate(i)}
+          className={`relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-full text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all ${
+            currentPage === i
+              ? "bg-gray-900 text-white"
+              : "hover:bg-gray-900/10 active:bg-gray-900/20"
+          }`}
+          type="button"
+        >
+          <span className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+            {i}
+          </span>
+        </button>
+      );
+    }
+    return pageNumbers;
   };
 
   return (
@@ -132,7 +168,6 @@ const MoreLiveProjects = () => {
           >
             All Live Projects
           </div>
-
           <div className="relative flex items-center max-w-xs bg-white rounded-xl">
             <input
               type="text"
@@ -154,14 +189,15 @@ const MoreLiveProjects = () => {
           </div>
         </div>
         <div className="flex justify-center mt-4">
-          {noData || (currentProjects && currentProjects.length === 0) ? (
+          {noData ||
+          (currentProjectsData && currentProjectsData.length === 0) ? (
             <div className="h-screen">
               <NoDataCard />
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 w-full gap-4  flex-wrap">
-              {currentProjects &&
-                currentProjects.map((data, index) => {
+              {currentProjectsData &&
+                currentProjectsData.map((data, index) => {
                   console.log("data,");
                   let projectName = data?.params?.params?.project_name ?? "";
                   let projectId = data?.params?.uid ?? "";
@@ -317,7 +353,7 @@ const MoreLiveProjects = () => {
             </div>
           )}
         </div>
-        {currentProjects.length > 0 && (
+        {Number(countData) > 0 && (
           <div className="flex items-center gap-4 justify-center mt-8">
             <button
               onClick={handlePrevious}
@@ -342,30 +378,11 @@ const MoreLiveProjects = () => {
               </svg>
               Previous
             </button>
-            {Array.from(
-              { length: Math.ceil(currentProjectsData.length / itemsPerPage) },
-              (_, i) => i + 1
-            ).map((number) => (
-              <button
-                key={number}
-                onClick={() => paginate(number)}
-                className={`relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-full text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all ${
-                  currentPage === number
-                    ? "bg-gray-900 text-white"
-                    : "hover:bg-gray-900/10 active:bg-gray-900/20"
-                }`}
-                type="button"
-              >
-                <span className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
-                  {number}
-                </span>
-              </button>
-            ))}
+            {renderPaginationNumbers()}
             <button
               onClick={handleNext}
               disabled={
-                currentPage ===
-                Math.ceil(currentProjectsData.length / itemsPerPage)
+                currentPage === Math.ceil(Number(countData) / itemsPerPage)
               }
               className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
               type="button"
