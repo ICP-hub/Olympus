@@ -4,11 +4,12 @@ set -e
 
 # remove ids
 NUM_MENTORS=5
+START=1
 
 # Get the default identity
 DEFAULT_IDENTITY=$(dfx identity whoami)
 
-for i in $(seq 1 $NUM_MENTORS); do
+for i in $(seq $START $NUM_MENTORS); do
     CURRENT_IDENTITY="user$i"
     
     if [ "$CURRENT_IDENTITY" == "$DEFAULT_IDENTITY" ]; then
