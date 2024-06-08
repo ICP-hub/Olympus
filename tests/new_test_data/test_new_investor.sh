@@ -4,6 +4,8 @@ set -e
 
 # Number of mentors you want to register (ensure this matches the number of existing identities)
 NUM_MENTORS=5
+START=1
+
 
 echo "Using existing User Identities to Register as Mentors..."
 CANISTER=$(dfx canister id IcpAccelerator_backend)
@@ -12,7 +14,7 @@ echo "Canister ID: $CANISTER"
 # Register each existing identity as a mentor
 
 declare -a mentors
-for i in $(seq 1 $NUM_MENTORS); do
+for i in $(seq $START $NUM_MENTORS); do
     identity_name="user$i"
     dfx identity use "$identity_name"
     CURRENT_PRINCIPAL=$(dfx identity get-principal)

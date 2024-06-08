@@ -4,9 +4,9 @@ set -e
 
 # Number of mentors you want to register
 NUM_MENTORS=5
-
+START_NUM=1
 echo "Creating User Identities..."
-for i in $(seq 1 $NUM_MENTORS); do
+for i in $(seq $START_NUM $NUM_MENTORS); do
     dfx identity new "user$i" --storage-mode=plaintext || true
     echo "User identity user$i created."
 done
@@ -21,7 +21,7 @@ declare -a reasons=("Mentoring" "Networking" "Collaboration" "Learning" "Investi
 # Define the base template for mentor data
 declare -a mentors
 
-for i in $(seq 1 $NUM_MENTORS); do
+for i in $(seq $START $NUM_MENTORS); do
     # Fetch random name and email from the API
     response=$(curl -s "https://randomuser.me/api/?nat=us,ca,gb,au,nz")
     
@@ -32,10 +32,12 @@ for i in $(seq 1 $NUM_MENTORS); do
     country=$(echo $response | jq -r '.results[0].location.country')
     bio="This is a bio for User $i, an expert in field $i."
     area_of_interest="Interest $i"
+    
     mentors[$i]="record { full_name = \"$full_name\"; profile_picture = $profile_picture; email = opt \"$email\"; country = \"$country\"; bio = opt \"$bio\"; area_of_interest = \"$area_of_interest\"; }"
+    echo "mentor data $mentors[$i]" 
 done 
 
-for i in $(seq 1 $NUM_MENTORS); do
+for i in $(seq $START $NUM_MENTORS); do
     dfx identity use "user$i"
     CURRENT_PRINCIPAL=$(dfx identity get-principal)
     echo "Using identity user$i with principal $CURRENT_PRINCIPAL"
