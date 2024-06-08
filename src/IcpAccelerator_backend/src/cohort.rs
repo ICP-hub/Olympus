@@ -80,26 +80,7 @@ pub struct InviteRequest{
     pub invite_message: String
 }
 
-pub type MentorsAppliedForCohort = HashMap<String, Vec<MentorInternal>>;
-pub type CohortInfo = HashMap<String, CohortDetails>;
-pub type ProjectsAppliedForCohort = HashMap<String, Vec<ProjectInfoInternal>>;
-pub type ApplierCount = HashMap<String, u64>;
-pub type CapitalistAppliedForCohort = HashMap<String, Vec<VentureCapitalistInternal>>;
-pub type CohortsAssociated = HashMap<String, Vec<String>>;
-pub type CohortEnrollmentRequests = HashMap<Principal, Vec<CohortEnrollmentRequest>>;
-pub type MentorsRemovedFromCohort = HashMap<String, Vec<(Principal, MentorInternal)>>;
-pub type MentorsInviteRequest = HashMap<String, InviteRequest>;
 
-thread_local! {
-    pub static COHORT : RefCell<CohortInfo> = RefCell::new(CohortInfo::new());
-    pub static PROJECTS_APPLIED_FOR_COHORT : RefCell<ProjectsAppliedForCohort> = RefCell::new(ProjectsAppliedForCohort::new());
-    pub static MENTORS_APPLIED_FOR_COHORT : RefCell<MentorsAppliedForCohort> = RefCell::new(MentorsAppliedForCohort::new());
-    pub static CAPITALIST_APPLIED_FOR_COHORT : RefCell<CapitalistAppliedForCohort> = RefCell::new(CapitalistAppliedForCohort::new());
-    pub static APPLIER_COUNT : RefCell<ApplierCount> = RefCell::new(ApplierCount::new());
-    pub static ASSOCIATED_COHORTS_WITH_PROJECT : RefCell<CohortsAssociated> = RefCell::new(CohortsAssociated::new());
-    pub static MY_SENT_COHORT_REQUEST : RefCell<HashMap<Principal, Vec<CohortRequest>>> = RefCell::new(HashMap::new());
-    pub static COHORT_ENROLLMENT_REQUESTS: RefCell<CohortEnrollmentRequests> = RefCell::new(HashMap::new());
-}
 
 // pub type MentorsAppliedForCohort = HashMap<String, Vec<MentorInternal>>;
 // pub type CohortInfo = HashMap<String, CohortDetails>;
@@ -593,7 +574,7 @@ pub fn get_no_of_individuals_applied_for_cohort_using_id(cohort_id: String) -> R
         state.applier_count.get(&cohort_id)
     });
 
-    let project_count_in_cohort = match count {
+    let project_count_in_cohort: u8 = match count {
         Some(count) => {
             if let Ok(count_u8) = count.try_into() {
                 count_u8
