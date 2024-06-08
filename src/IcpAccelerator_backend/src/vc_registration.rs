@@ -113,12 +113,6 @@ pub struct Announcements {
 }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
-pub struct VCAnnouncementsInternal {
-    announcement_id: String,
-    announcement_data: Announcements,
-}
-
-#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct UpdateInfoStruct{
     pub original_info: Option<VentureCapitalist>,
     pub updated_info: Option<VentureCapitalist>,
@@ -127,7 +121,7 @@ pub struct UpdateInfoStruct{
     pub sent_at: u64,
 }
 
-pub type VcAnnouncements = HashMap<Principal, Vec<VCAnnouncementsInternal>>;
+pub type VcAnnouncements = HashMap<Principal, Vec<Announcements>>;
 
 pub type VentureCapitalistStorage = HashMap<Principal, VentureCapitalistInternal>;
 pub type VentureCapitalistParams = HashMap<Principal, VentureCapitalist>;
@@ -369,14 +363,9 @@ pub fn list_all_vcs() -> HashMap<Principal, VcWithRoles> {
         vc_with_roles_map
     })
 }
-#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
-pub struct PaginatedVCs {
-    vcs: HashMap<Principal, VcWithRoles>,
-    total_count: usize,
-}
 
 #[query]
-pub fn list_all_vcs_with_pagination(pagination_params: PaginationParam) -> PaginatedVCs {
+pub fn list_all_vcs_with_pagination(pagination_params: PaginationParam) -> HashMap<Principal, VcWithRoles> {
     read_state(|state| {
         let mut vc_list: Vec<(Principal, VcWithRoles)> = Vec::new();
 
@@ -410,10 +399,7 @@ pub fn list_all_vcs_with_pagination(pagination_params: PaginationParam) -> Pagin
         let paginated_vc_list = vc_list[start..end].to_vec();
         let paginated_vc_map: HashMap<Principal, VcWithRoles> = paginated_vc_list.into_iter().collect();
 
-        PaginatedVCs {
-        vcs: paginated_vc_map,
-        total_count: vc_list.len(),
-    }
+        paginated_vc_map
     })
 }
 
@@ -570,41 +556,21 @@ pub fn add_vc_announcement(name: String, announcement_message: String) -> String
     })
 }
 
-#[update]
-pub async fn update_vc_announcement(announcement_id: String, new_details: Announcements) -> String {
-    VC_ANNOUNCEMENTS.with(|state| {
-        let mut state = state.borrow_mut();
-        for announcements in state.values_mut() {
-            for announcement in announcements.iter_mut() {
-                if announcement.announcement_id == announcement_id {
-                    // Update announcement details
-                    announcement.announcement_data = new_details;
-                    return format!("VC announcement with ID {} updated successfully", announcement_id);
-                }
-            }
-        }
-        "VC announcement not found".to_string()
-    })
-}
-
-#[update]
-pub async fn delete_vc_announcement(announcement_id: String) -> String {
-    VC_ANNOUNCEMENTS.with(|state| {
-        let mut state = state.borrow_mut();
-        for announcements in state.values_mut() {
-            announcements.retain(|announcement| announcement.announcement_id != announcement_id);
-            return format!("VC announcement with ID {} deleted successfully", announcement_id);
-        }
-        "VC announcement not found".to_string()
-    })
-}
-
 //for testing purpose
 #[query]
 pub fn get_vc_announcements() -> HashMap<Principal, Vec<Announcements>> {
-    VC_ANNOUNCEMENTS.with(|state| {
-        let state = state.borrow();
-        state.clone()
+    read_state(|state| {
+        let announcements_map = &state.vc_announcement;
+        let mut result_map: HashMap<Principal, Vec<Announcements>> = HashMap::new();
+
+        for (principal, announcements) in announcements_map.iter() {
+            let principal = principal.0; // Extract Principal from StoredPrincipal
+            let announcements = announcements.0.clone(); // Extract Vec<Announcements> from Candid<Vec<Announcements>>
+
+            result_map.insert(principal, announcements);
+        }
+
+        result_map
     })
 }
 

@@ -42,7 +42,6 @@ pub struct Jobs {
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct JobsInternal {
-    uid: String,
     job_data: Jobs,
     timestamp: u64,
     project_name: String,
@@ -59,7 +58,6 @@ pub struct Announcements {
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct AnnouncementsInternal {
-    announcement_id: String,
     announcement_data: Announcements,
     timestamp: u64,
     project_name: String,
@@ -896,7 +894,7 @@ pub fn list_all_projects_for_admin() -> HashMap<Principal, ProjectVecWithRoles> 
     })
 }
 
-#[derive(CandidType, Clone, Debug, Deserialize, Serialize)]
+#[derive(CandidType, Clone)]
 pub struct ListAllProjects {
     principal: StoredPrincipal,
     params: ProjectInfoInternal,
@@ -980,18 +978,10 @@ pub struct PaginationParams {
     page_size: usize,
 }
 
-#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
-pub struct ProjectReturn{
-    project_data: Vec<ListAllProjects>,
-    count: usize
-}
-
 #[query]
-pub fn list_all_projects_with_pagination(pagination_params: PaginationParams) -> ProjectReturn{
- 
+pub fn list_all_projects_with_pagination(pagination_params: PaginationParams) -> Vec<ListAllProjects> {
     read_state(|state| {
         let projects = &state.project_storage;
-
         let mut list_all_projects: Vec<ListAllProjects> = Vec::new();
 
         for (stored_principal, project_infos) in projects.iter() {
@@ -1013,13 +1003,7 @@ pub fn list_all_projects_with_pagination(pagination_params: PaginationParams) ->
         let start = std::cmp::min((pagination_params.page - 1) * pagination_params.page_size, list_all_projects.len());
         let end = std::cmp::min(start + pagination_params.page_size, list_all_projects.len());
 
-        // Using the safe start and end indices, slice the vector and return a new vector containing just the paginated items.
-        let return_value = ProjectReturn {
-            project_data: list_all_projects[start..end].to_vec(),
-            count: list_all_projects.len()
-        };
-
-        return_value
+        list_all_projects[start..end].to_vec()
     })
 }
 
@@ -1266,7 +1250,7 @@ pub async fn update_team_member(project_id: &str, member_principal_id: Principal
 }
 
 #[update]
-pub async fn add_announcement(mut announcement_details: Announcements) -> String {
+pub fn add_announcement(mut announcement_details: Announcements) -> String {
     let caller_id = caller();
 
     let current_time = time();
@@ -1288,12 +1272,7 @@ pub async fn add_announcement(mut announcement_details: Announcements) -> String
         return "Project ID does not exist in application forms.".to_string();
     }
 
-    let uuids = raw_rand().await.unwrap().0;
-    let uid = format!("{:x}", Sha256::digest(&uuids));
-    let new_id = uid.clone().to_string();
-
     let new_announcement = AnnouncementsInternal {
-        announcement_id: new_id,
         announcement_data: announcement_details,
         timestamp: current_time,
         project_name: project_info_internal.params.project_name.clone(),
@@ -1311,36 +1290,6 @@ pub async fn add_announcement(mut announcement_details: Announcements) -> String
             })
             .0.push(new_announcement);
         format!("Announcement added successfully at {}", current_time)
-    })
-}
-
-#[update]
-pub async fn update_project_announcement_by_id(announcement_id: String, new_details: Announcements) -> String {
-    PROJECT_ANNOUNCEMENTS.with(|state| {
-        let mut state = state.borrow_mut();
-        for announcements in state.values_mut() {
-            for announcement in announcements.iter_mut() {
-                if announcement.announcement_id == announcement_id {
-                    // Update announcement details
-                    announcement.announcement_data = new_details;
-                    return format!("Announcement with ID {} updated successfully", announcement_id);
-                }
-            }
-        }
-        "Announcement not found".to_string()
-    })
-}
-
-#[update]
-pub async fn delete_project_announcement_by_id(announcement_id: String) -> String {
-    PROJECT_ANNOUNCEMENTS.with(|state| {
-        let mut state = state.borrow_mut();
-        for announcements in state.values_mut() {
-            announcements.retain(|announcement| announcement.announcement_id != announcement_id);
-            return format!("Announcement with ID {} deleted successfully", announcement_id);
-        }
-        // If no announcement found with the given ID
-        "Announcement not found".to_string()
     })
 }
 
@@ -1657,7 +1606,7 @@ pub fn make_project_active_inactive(p_id: Principal, project_id: String) -> Stri
 // }
 
 #[update]
-pub async fn post_job(params: Jobs) -> String {
+pub fn post_job(params: Jobs) -> String {
     let principal_id = ic_cdk::api::caller();
     let is_owner = read_state(|state| {
         state
@@ -1671,9 +1620,6 @@ pub async fn post_job(params: Jobs) -> String {
     if !is_owner {
         return "Error: Only the project owner can request updates.".to_string();
     }
-    let random_bytes = raw_rand().await.expect("Failed to generate random bytes").0;
-
-    let uid_new = format!("{:x}", Sha256::digest(&random_bytes));
     match find_project_by_id(&params.project_id) {
         Some(project_data_internal) => {
             let current_time = ic_cdk::api::time();
@@ -1682,7 +1628,6 @@ pub async fn post_job(params: Jobs) -> String {
             mutate_state(|state| {
                 if let Some(mut jobs) = state.post_job.get(&StoredPrincipal(principal_id)) {
                     jobs.0.push(JobsInternal {
-                        uid: uid_new.clone(),
                         job_data: params,
                         timestamp: current_time,
                         project_name: project_data_for_job.project_name.clone(),
@@ -1693,7 +1638,6 @@ pub async fn post_job(params: Jobs) -> String {
                     state.post_job.insert(
                         StoredPrincipal(principal_id),
                         Candid(vec![JobsInternal {
-                            uid: uid_new.clone(),
                             job_data: params,
                             timestamp: current_time,
                             project_name: project_data_for_job.project_name.clone(),
@@ -1707,62 +1651,6 @@ pub async fn post_job(params: Jobs) -> String {
         }
         None => "Error: Project not found.".to_string(),
     }
-}
-
-#[update]
-pub async fn delete_job(job_uid: String) -> String {
-    POST_JOB.with(|state| {
-        let mut state = state.borrow_mut();
-        let mut found = false;
-        let mut empty_principal = None;
-
-        // Search for the job UID across all principals
-        for (principal, jobs) in state.iter_mut() {
-            if let Some(pos) = jobs.iter().position(|job| job.uid == job_uid) {
-                jobs.remove(pos);
-                found = true;
-                if jobs.is_empty() {
-                    empty_principal = Some(*principal); // Mark the principal for later removal if the job list is empty
-                }
-                break;
-            }
-        }
-
-        if found {
-            if let Some(principal) = empty_principal {
-                state.remove(&principal); // Remove the principal entry if the job list is empty
-            }
-            "Job deleted successfully.".to_string()
-        } else {
-            "Error: No job found with the provided UID.".to_string()
-        }
-    })
-}
-
-
-#[update]
-pub async fn update_job(job_uid: String, updated_job: Jobs) -> String {
-    POST_JOB.with(|state| {
-        let mut state = state.borrow_mut();
-        let mut found = false;
-        let current_time = ic_cdk::api::time();
-
-        // Search for the job UID across all principals
-        for (principal, jobs) in state.iter_mut() {
-            if let Some(job) = jobs.iter_mut().find(|job| job.uid == job_uid) {
-                job.job_data = updated_job;
-                job.timestamp = current_time; // Optionally update the timestamp
-                found = true;
-                break;
-            }
-        }
-
-        if found {
-            format!("Job updated successfully at {}", current_time)
-        } else {
-            "Error: No job found with the provided UID.".to_string()
-        }
-    })
 }
 
 pub fn get_jobs_for_project(project_id: String) -> Vec<JobsInternal> {
@@ -2536,31 +2424,3 @@ pub fn get_type_of_registration() -> Vec<String>{
         "DAO".to_string()
     ]
 }
-#[update]
-pub fn edit_job_details(job_id: String, new_details: Jobs) -> String {
-    let principal_id = ic_cdk::api::caller();
-    let is_owner = POST_JOB.with(|jobs| {
-        jobs.borrow().iter().any(|(owner_principal, job_list)| {
-            *owner_principal == principal_id && job_list.iter().any(|j| j.job_data.project_id == job_id)
-        })
-    });
-
-    if !is_owner {
-        return "Error: Only the job owner can edit job details.".to_string();
-    }
-
-    POST_JOB.with(|jobs| {
-        let mut jobs = jobs.borrow_mut();
-        if let Some(job_list) = jobs.get_mut(&principal_id) {
-            if let Some(job) = job_list.iter_mut().find(|j| j.job_data.project_id == job_id) {
-                job.job_data = new_details.clone();  // Assuming Jobs struct implements Clone
-                "Job details updated successfully.".to_string()
-            } else {
-                "Error: Job not found.".to_string()
-            }
-        } else {
-            "Error: Job not found.".to_string()
-        }
-    })
-}
-
