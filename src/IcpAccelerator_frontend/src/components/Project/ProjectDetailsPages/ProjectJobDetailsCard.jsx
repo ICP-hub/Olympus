@@ -5,11 +5,14 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/autoplay";
+import toast from "react-hot-toast";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import { formatFullDateFromBigInt } from "../../Utils/formatter/formatDateFromBigInt";
 import NoDataCard from "../../Mentors/Event/NoDataCard";
 import ment from "../../../../assets/images/ment.jpg";
 import NoData from "../../../../assets/images/file_not_found.png";
+import AddJobsModal from "../../../models/AddJobsModal";
+import DeleteModel from "../../../models/DeleteModel";
 
 const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
   console.log("job", data);
@@ -20,14 +23,35 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
 
   const [noData, setNoData] = useState(null);
   const [latestJobs, setLatestJobs] = useState([]);
-  console.log("data?.uid", data?.uid);
+
+  const [isJobsModalOpen, setJobsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentJobId, setCurrentJobId] = useState(null);
+  const handleJobsOpenModal = (id) => {
+    setCurrentJobId(id);
+    setJobsModalOpen(true);
+  };
+  const handleJobsCloseModal = () => {
+    setJobsModalOpen(false);
+    setCurrentJobId(null);
+  };
+  const handleOpenDeleteModal = (id) => {
+    setCurrentJobId(id);
+    setDeleteModalOpen(true);
+  };
+  const handleClose = () => {
+    setDeleteModalOpen(false);
+    setCurrentJobId(null);
+  };
+
   const fetchPostedJobs = async () => {
     let project_id = data?.uid;
     await actor
       .get_jobs_posted_by_project(project_id)
       .then((result) => {
         console.log("result-in-get_jobs_posted_by_project", result);
-        if (!result || result.length == 0) {
+        if (!result || result.length === 0 || result[0].length === 0) {
           setNoData(true);
           setLatestJobs([]);
         } else {
@@ -42,6 +66,57 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
       });
   };
 
+  // <<<<<------- Job Updates ----->>>>>
+  const handleEdit = async (job_data) => {
+    console.log("currentJobId===>>>>>>>>>", currentJobId);
+    let project_id = data?.uid;
+    setIsSubmitting(true);
+    let new_details = {
+      title: job_data?.jobTitle,
+      description: job_data?.jobDescription,
+      category: job_data?.jobCategory,
+      location: job_data?.jobLocation,
+      link: job_data?.jobLink,
+      project_id: project_id,
+    };
+    console.log("argument", new_details);
+    await actor.update_job(currentJobId, new_details).then((result) => {
+      if (result) {
+        handleJobsCloseModal();
+        toast.success(result);
+        setIsSubmitting(false);
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+        console.log("result-in-get_announcements_by_project_id", result);
+      } else {
+        handleJobsCloseModal();
+        setIsSubmitting(false);
+        toast.error(result);
+      }
+    });
+  };
+
+  // <<<<<------- Job Delete ----->>>>>
+  const handleDelete = async () => {
+    console.log("currentJobId===>>>>>>>>>", currentJobId);
+    setIsSubmitting(true);
+    await actor.delete_job(currentJobId).then((result) => {
+      if (result) {
+        setDeleteModalOpen();
+        toast.success(result);
+        setIsSubmitting(false);
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+        console.log("result-in-get_announcements_by_project_id", result);
+      } else {
+        setDeleteModalOpen();
+        setIsSubmitting(false);
+        toast.error(result);
+      }
+    });
+  };
   useEffect(() => {
     if (actor && data) {
       fetchPostedJobs(actor);
@@ -94,6 +169,7 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
               : ment;
             let job_project_name = card?.project_name ?? "";
             let job_project_desc = card?.project_desc ?? "";
+            let job_uid = card?.uid ?? "";
             let job_post_time = card?.timestamp
               ? formatFullDateFromBigInt(card?.timestamp)
               : "";
@@ -104,9 +180,39 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
                   key={index}
                 >
                   <div className="md:p-4 p-2">
-                    <h3 className="text-lg font-[950] truncate w-1/2">
-                      {job_name}
-                    </h3>
+                    <div className="flex justify-between items-center">
+                      <h3 className="text-lg font-[950] truncate w-1/2">
+                        {job_name}
+                      </h3>
+                      <div className="flex items-center">
+                        {" "}
+                        <div onClick={() => handleJobsOpenModal(job_uid)}>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 16 16"
+                            fill="green"
+                            className="size-4"
+                          >
+                            <path d="M13.488 2.513a1.75 1.75 0 0 0-2.475 0L6.75 6.774a2.75 2.75 0 0 0-.596.892l-.848 2.047a.75.75 0 0 0 .98.98l2.047-.848a2.75 2.75 0 0 0 .892-.596l4.261-4.262a1.75 1.75 0 0 0 0-2.474Z" />
+                            <path d="M4.75 3.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h6.5c.69 0 1.25-.56 1.25-1.25V9A.75.75 0 0 1 14 9v2.25A2.75 2.75 0 0 1 11.25 14h-6.5A2.75 2.75 0 0 1 2 11.25v-6.5A2.75 2.75 0 0 1 4.75 2H7a.75.75 0 0 1 0 1.5H4.75Z" />
+                          </svg>
+                        </div>
+                        <div onClick={() => handleOpenDeleteModal(job_uid)}>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 16 16"
+                            fill="red"
+                            className="size-4 ml-2"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M5 3.25V4H2.75a.75.75 0 0 0 0 1.5h.3l.815 8.15A1.5 1.5 0 0 0 5.357 15h5.285a1.5 1.5 0 0 0 1.493-1.35l.815-8.15h.3a.75.75 0 0 0 0-1.5H11v-.75A2.25 2.25 0 0 0 8.75 1h-1.5A2.25 2.25 0 0 0 5 3.25Zm2.25-.75a.75.75 0 0 0-.75.75V4h3v-.75a.75.75 0 0 0-.75-.75h-1.5ZM6.05 6a.75.75 0 0 1 .787.713l.275 5.5a.75.75 0 0 1-1.498.075l-.275-5.5A.75.75 0 0 1 6.05 6Zm3.9 0a.75.75 0 0 1 .712.787l-.275 5.5a.75.75 0 0 1-1.498-.075l.275-5.5a.75.75 0 0 1 .786-.711Z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
                     <div className="sm:flex">
                       <div className="sm:w-1/2">
                         <div className="pt-2 flex">
@@ -181,6 +287,26 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
           })
         )}
       </Swiper>
+      {isJobsModalOpen && (
+        <AddJobsModal
+          jobbutton={"Update"}
+          jobtitle={"Update Job"}
+          onJobsClose={handleJobsCloseModal}
+          onSubmitHandler={handleEdit}
+          isSubmitting={isSubmitting}
+        />
+      )}
+
+      {isDeleteModalOpen && (
+        <DeleteModel
+          onClose={handleClose}
+          title={"Delete job"}
+          heading={"Are you sure to delete this job"}
+          onSubmitHandler={handleDelete}
+          isSubmitting={isSubmitting}
+          Id={currentJobId}
+        />
+      )}
     </div>
   );
 };

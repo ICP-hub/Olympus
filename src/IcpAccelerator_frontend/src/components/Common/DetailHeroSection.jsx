@@ -1,9 +1,4 @@
 import React from "react";
-import DetailStatisticCard from "./DetailStatisticCard";
-import astro1 from "../../../assets/images/astro1.png";
-import HalfAstro from "../../../assets/images/astroRegular.png";
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
 import Project from "../../../assets/images/founderRegistration.png";
 import Mentor from "../../../assets/images/mentorRegistration.png";
 import User from "../../../assets/images/userRegistration.png";

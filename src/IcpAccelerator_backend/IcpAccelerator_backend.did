@@ -48,9 +48,12 @@ type CanisterStatusType = variant { stopped; stopping; running };
 type Cohort = record {
   cohort_end_date : text;
   title : text;
+  country : text;
   tags : text;
   description : text;
   deadline : text;
+  start_date : text;
+  funding_type : text;
   criteria : Eligibility;
   no_of_seats : nat64;
   cohort_launch_date : text;
@@ -746,6 +749,7 @@ service : {
   delete_vc_using_principal : (principal) -> (text);
   delete_venture_capitalist : () -> (text);
   delete_venture_capitalist_caller : () -> (text);
+  edit_job_details : (text, Jobs) -> (text);
   filter_cohorts : (CohortFilterCriteria) -> (vec CohortDetails) query;
   filter_mentors : (MentorFilterCriteria) -> (vec MentorProfile) query;
   filter_out_projects : (FilterCriteria) -> (vec ProjectInfo) query;

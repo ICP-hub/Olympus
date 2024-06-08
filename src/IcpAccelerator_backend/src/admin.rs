@@ -1,4 +1,5 @@
 use crate::associations::*;
+
 use crate::mentor::*;
 use crate::project_registration::*;
 use crate::state_handler::mutate_state;
@@ -339,7 +340,7 @@ pub struct MentorWithRoles {
     pub mentor_profile: MentorInternal,
     pub roles: Vec<Role>,
 }
-#[derive(Serialize, Deserialize, Clone, CandidType)]
+#[derive(Serialize, Deserialize, Clone, CandidType, Debug)]
 pub struct VcWithRoles {
     pub vc_profile: VentureCapitalistInternal,
     pub roles: Vec<Role>,
@@ -2015,6 +2016,11 @@ pub fn remove_mentor_from_cohort(
     mentor_principal: Principal,
     passphrase_key: String,
 ) -> Result<String, String> {
+pub fn remove_mentor_from_cohort(
+    cohort_id: String,
+    mentor_principal: Principal,
+    passphrase_key: String,
+) -> Result<String, String> {
     let required_key = format!("delete/{}", mentor_principal);
 
     if passphrase_key != required_key {
@@ -2146,6 +2152,7 @@ pub fn get_left_mentors_of_cohort(cohort_id: String) -> Vec<MentorInternal> {
         Vec::new()
     })
 }
+
 
 #[update]
 pub fn remove_vc_from_cohort(
@@ -2429,5 +2436,33 @@ pub fn delete_vc_announcement_by_index(vc_principal: Principal, index: usize) ->
         }
     })
 }
+
+#[query]
+pub fn get_vc_and_mentor_name() -> NameDetails {
+    let mut vc_new: Vec<String> = Vec::new();
+    VENTURECAPITALIST_STORAGE.with(|state| {
+        let vc_details = state.borrow();
+        for (_, vc) in vc_details.iter() {
+            vc_new.push(vc.params.user_data.full_name.clone());
+        }
+    });
+
+    let mut mentor_new: Vec<String> = Vec::new();
+    MENTOR_REGISTRY.with(|state| {
+        let mentor_details = state.borrow();
+        for (_, mentor) in mentor_details.iter() {
+            mentor_new.push(mentor.profile.user_data.full_name.clone());
+        }
+    });
+
+    let new_details = NameDetails {
+        vc_name: vc_new,
+        mentor_name: mentor_new,
+    };
+
+    new_details
+}
+
+
 
 //b5pqo-yef5a-lut3t-kmrpc-h7dnp-v3d2t-ls6di-y33wa-clrtb-xdhl4-dae

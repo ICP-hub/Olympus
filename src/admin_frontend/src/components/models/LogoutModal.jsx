@@ -154,6 +154,17 @@ const LogoutModal = () => {
               </ul>
             )}
             <div className="text-sm text-black font-bold">
+              <li
+                onClick={() => {
+                  navigate("/cohortDelete");
+                  toggleDropdown();
+                }}
+                className="block px-4 py-2 hover:bg-gray-200 hover:text-black"
+              >
+                Remove Cohort
+              </li>
+            </div>
+            <div className="text-sm text-black font-bold">
               <p
                 className="py-2 px-4 hover:bg-gray-200"
                 onClick={logoutHandler}

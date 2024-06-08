@@ -7,6 +7,8 @@ import UpdateInvestorProfile from "./components/Admindashboard/UpdateRequests/Up
 import UserProfileProjectUpdate from "./components/UserProfileUpdate/UserProfileProjectUpdate";
 import UserProfileMentorUpdate from "./components/UserProfileUpdate/UserProfileMentorUpdate";
 import UserProfileInvestorUpdate from "./components/UserProfileUpdate/UserProfileInvestorUpdate";
+import DeleteCohort from "./components/Request/CohortDeleteAndRemove/DeleteCohort";
+import DeleteFromCohort from "./components/Request/CohortDeleteAndRemove/DeleteFromCohort";
 
 const Adminalluser = lazy(() =>
   import("./components/Admindashboard/Adminalluser")
@@ -40,6 +42,9 @@ const MentorUpdate = lazy(() =>
 const ProjectUpdate = lazy(() =>
   import("./components/Admindashboard/UpdateRequests/ProjectUpdate")
 );
+const UserUpdate = lazy(() =>
+  import("./components/Admindashboard/UpdateRequests/UserUpdate")
+);
 const InvestorUpdate = lazy(() =>
   import("./components/Admindashboard/UpdateRequests/InvestorUpdate")
 );
@@ -59,16 +64,24 @@ const AdminRoute = ({ setModalOpen }) => {
     { path: "/accept", element: <AcceptModal /> },
     { path: "/project_details", element: <Projectdetails /> },
     { path: "/cohortRequest", element: <RequestCohort /> },
+    { path: "/cohortDelete", element: <DeleteCohort /> },
+    { path: "/cohortRemove", element: <DeleteFromCohort /> },
     { path: "/all", element: <UserAllProfile /> },
     { path: "/live", element: <LiveIncubated /> },
     { path: "/allUpdateRequest", element: <UpdateAllRequest /> },
     { path: "/projectupdate", element: <ProjectUpdate /> },
+    { path: "/userupdate", element: <UserUpdate /> },
     { path: "/mentorupdate", element: <UpdateMentorProfile /> },
     { path: "/investorupdate", element: <UpdateInvestorProfile /> },
-    { path: "/userProfileProjectUpdate", element: <UserProfileProjectUpdate /> },
+    {
+      path: "/userProfileProjectUpdate",
+      element: <UserProfileProjectUpdate />,
+    },
     { path: "/userProfileMentorUpdate", element: <UserProfileMentorUpdate /> },
-    { path: "/userProfileInvestorUpdate", element: <UserProfileInvestorUpdate /> },
-
+    {
+      path: "/userProfileInvestorUpdate",
+      element: <UserProfileInvestorUpdate />,
+    },
   ];
 
   // const dispatch = useDispatch();
