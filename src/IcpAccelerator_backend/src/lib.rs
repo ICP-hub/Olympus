@@ -126,8 +126,8 @@ pub fn get_user_information() -> Result<UserInformation, &'static str> {
 }
 
 #[query]
-pub fn get_all_users_information() -> Vec<UserInformation> {
-    user_module::list_all_users()
+pub fn get_all_users_information(pagination: Pagination) -> Vec<UserInformation> {
+    user_module::list_all_users(pagination)
 }
 
 #[update]
