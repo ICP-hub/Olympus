@@ -36,8 +36,8 @@ for i in $(seq $START $NUM_MENTORS); do
     mentors[$i]="record { full_name = \"$full_name\"; profile_picture = $profile_picture; email = opt \"$email\"; country = \"$country\"; bio = opt \"$bio\"; area_of_interest = \"$area_of_interest\"; }"
     echo "mentor data $mentors[$i]" 
 done 
-1
-for i in $(seq 1 $NUM_MENTORS); do
+
+for i in $(seq $START $NUM_MENTORS); do
     dfx identity use "user$i"
     CURRENT_PRINCIPAL=$(dfx identity get-principal)
     echo "Using identity user$i with principal $CURRENT_PRINCIPAL"
