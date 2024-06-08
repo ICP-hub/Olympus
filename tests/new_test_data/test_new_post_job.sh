@@ -2,63 +2,34 @@
 
 set -e
 
-
+# Number of mentors you want to register (ensure this matches the number of existing identities)
 NUM_MENTORS=5
+START=1
 
-
+echo "Using existing User Identities to Register as Mentors..."
 CANISTER=$(dfx canister id IcpAccelerator_backend)
 echo "Canister ID: $CANISTER"
 
-# Define job details
+# Define announcement titles and descriptions
 titles=(
-    "DSCVR Frontend Integration on Internet Computer"
-    "OpenChats Unique Approach to Data Exploration"
-    "Distrikt - Transactions with Unparalleled Isolation"
-    "Bitfinity EVM - Revolutionizing Scalability on the Internet Computer"
-    "Yumi - Empowering Community Moderation with Innovative Tools"
-    "Bioniq - Empowering Decentralized Staking on the Internet Computer Network"
+    "Exciting News from DSCVR: Revolutionizing Online Forums on the ICP!"
+    "OpenChat Unveils Major Upgrade: Secure, Decentralized Messaging for Everyone"
+    "Distrikt Launches: A New Era of Decentralized Social Networking on ICP"
+    "Bitfinity EVM Goes Live: Bridging Ethereum and ICP for Limitless Possibilities"
+    "Yumi Introduces: The Ultimate Decentralized Marketplace on ICP"
 )
 
 descriptions=(
-    "DSCVR is a decentralized borrowing protocol that allows users to draw interest-free loans against Ether used as collateral. DSCVR now has a fully decentralized, immutable frontend hosted on the Internet Computer."
-    "OpenChat is the most advanced web3.0 search engine of exceptional speed and accuracy, that empowers its users to search over the Internet Computer."
-    "Self-custody made simple and secure. Turn a spare smartphone into a cold wallet that can store a plethora of tokens including ICP and ckBTC. Using Distrikt, you can stake ICP directly on the NNS and participate in governance."
-    "Worried about data being persisted or how your data structure will scale across canisters? Bitfinity EVM can help you focus more on building out your vision, and spend less time thinking about how to scale out your multi-canister architecture on the IC."
-    "Modclub is an AI-enhanced decentralized crowdwork platform that handles resource-intensive tasks such as moderation, user verification and data labeling."
-    "Bioniq is the liquid-staking protocol revolutionizing staking on the Internet Computer, putting control in investors hands. ICP is staked in the NNS DAO, and stakers receive rewards just by holding the stICP token. The stICP token is DeFi-compatible, to support protocols building on the Internet Computer, and always fully-backed by ICP staked in the NNS."
+    "We are thrilled to announce the latest update to DSCVR, the leading decentralized forum platform built on the Internet Computer Protocol (ICP). This update introduces groundbreaking features designed to enhance user engagement and foster community growth. With enhanced content discovery algorithms and user-customizable interfaces, DSCVR is setting a new standard for online discussions. Join us in exploring diverse topics, connecting with like-minded individuals, and contributing to the future of decentralized communication. Experience the power of blockchain-based forums today with DSCVR!"
+    "OpenChat is proud to announce a major upgrade, reinforcing our commitment to providing a secure and decentralized messaging experience. Leveraging the Internet Computer Protocol, OpenChat now offers end-to-end encryption, ensuring that your conversations remain private and secure. With new features such as group video calls and file sharing, staying connected with friends, family, and colleagues has never been easier—or more secure. Discover the future of messaging with OpenChat, where privacy meets convenience."
+    "Introducing Distrikt—the next-generation social networking platform that redefines online communities through decentralization. Built on the robust Internet Computer Protocol, Distrikt empowers users with unparalleled control over their data and privacy. Celebrate the launch with us and be part of a vibrant community that values authenticity, privacy, and meaningful connections. Create your profile, connect with friends, and engage in discussions that matter. Welcome to Distrikt, where your digital space is truly yours."
+    "We are excited to announce the launch of Bitfinity EVM, the revolutionary platform that seamlessly integrates Ethereum Virtual Machine (EVM) capabilities with the Internet Computer Protocol. This groundbreaking development enables developers to deploy Ethereum-based applications on ICPs fast, secure, and scalable network. Enjoy the best of both worlds—Ethereums rich ecosystem and ICPs cutting-edge technology. Start building on Bitfinity EVM today and unlock a new realm of possibilities for decentralized applications."
+    "Yumi is proud to unveil the first decentralized marketplace built on the Internet Computer Protocol, offering a secure and transparent platform for buying and selling goods and services. With Yumi, users enjoy lower transaction fees, faster settlement times, and enhanced security features, all while maintaining complete control over their data. Whether you are a buyer looking for unique items or a seller aiming to reach a global audience, Yumi provides the perfect ecosystem to connect and transact. Join Yumi today and be part of the future of e-commerce."
 )
-
-categories=(
-    "JOBS"
-    "BOUNTY"
-    "JOBS"
-    "BOUNTY"
-    "BOUNTY"
-    "RFP"
-)
-
-links=(
-    "https://dscvr.one/"
-    "https://oc.app/"
-    "https://distrikt.app/"
-    "https://bitfinity.network/"
-    "https://tppkg-ziaaa-aaaal-qatrq-cai.raw.ic0.app/"
-    "https://bioniq.io/home/24-hours"
-)
-
-locations=(
-    "Remote"
-    "Bangalore"
-    "Bangalore"
-    "Bangalore"
-    "Bangalore"
-    "Bangalore"
-)
-
 
 # Get project IDs dynamically
 project_ids=()
-for i in $(seq 1 $NUM_MENTORS); do
+for i in $(seq $START $NUM_MENTORS); do
     identity_name="user$i"
     project_id=$(dfx --identity "$identity_name" canister call $CANISTER get_project_id '()' | sed 's/[()]//g' | tr -d '[:space:]')
     project_ids+=($project_id)
@@ -66,30 +37,20 @@ for i in $(seq 1 $NUM_MENTORS); do
     echo "the project id is $project_id"
 done
 
-
-# Loop through users and create job postings dynamically
-for i in $(seq 1 $NUM_MENTORS); do
+# Loop through users and create announcements dynamically
+for i in $(seq $START $NUM_MENTORS); do
     identity_name="user$i"
     dfx identity use "$identity_name"
     CURRENT_PRINCIPAL=$(dfx identity get-principal)
     echo "Using identity $identity_name with principal $CURRENT_PRINCIPAL"
 
-    # Get project ID dynamically
-   
-
-    # Create Candid data for the job posting
-    JOB_DATA="(record {
-        title = \"${titles[$i-1]}\";
-        description = \"${descriptions[$i-1]}\";
-        category = \"${categories[$i-1]}\";
-        link = \"${links[$i-1]}\";
+    # Create Candid data for the announcement
+    PROJECT_DATA="(record {
         project_id = ${project_ids[$((i-1))]};
-        location = \"${locations[$i-1]}\";
+        announcement_title = \"${titles[$((i-1))]}\";
+        announcement_description = \"${descriptions[$((i-1))]}\";
     })"
-
-    echo "Registering with data: $JOB_DATA"
-
-    # Call the post_job function with the current identity and its unique data
-    dfx canister call $CANISTER post_job "$JOB_DATA"
-    echo "registered data successfully"
+    
+    # Call the register_user function with the current identity and its unique data
+    dfx canister call $CANISTER add_announcement "$PROJECT_DATA"
 done

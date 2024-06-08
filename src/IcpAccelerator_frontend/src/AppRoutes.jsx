@@ -36,9 +36,9 @@ import LiveEventViewAll from "./components/Mentors/Event/LiveEventViewAll";
 import EventProjectDetail from "./components/Mentors/Event/EventProjectDetail";
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
-const ProjectDetails = lazy(() =>
-  import("./components/Project/ProjectDetails")
-);
+// const ProjectDetails = lazy(() =>
+//   import("./components/Project/ProjectDetails")
+// );
 const UserProfile = lazy(() => import("./components/UserProfile/UserProfile"));
 const Error404 = lazy(() => import("./components/Error404/Error404"));
 
@@ -71,7 +71,7 @@ const AppRoutes = () => {
     { path: "/create-investor", element: <InvestorRegForm /> },
     { path: "/event-form", element: <EventForm /> },
     { path: "/update-project", element: <ProjectRegForm /> },
-    { path: "/project-details", element: <ProjectDetails /> },
+    // { path: "/project-details", element: <ProjectDetails /> },
     { path: "/profile", element: <UserProfile /> },
     // { path: "/create-mentor", element: <MentorRegistration /> },
     { path: "/create-mentor", element: <MentorRegForm /> },
