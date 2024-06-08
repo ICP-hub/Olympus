@@ -1,6 +1,7 @@
 use crate::default_images::*;
 use crate::mentor::MENTOR_REGISTRY;
 use crate::project_registration::APPLICATION_FORM;
+use crate::state_handler::{mutate_state, StoredPrincipal, Candid, read_state};
 use crate::vc_registration::VENTURECAPITALIST_STORAGE;
 use candid::{CandidType, Principal};
 use ic_cdk::api::caller;
@@ -154,15 +155,18 @@ pub fn initialize_roles() {
         },
     ];
 
-    ROLE_STATUS_ARRAY.with(|roles_arr| {
-        let mut arr = roles_arr.borrow_mut();
-        if arr.contains_key(&caller) {
-            //ic_cdk::println!("role status is already assigned")
+    mutate_state(|state| {
+        let stored_principal = StoredPrincipal(caller);
+        let role_status = &mut state.role_status;
+
+        if role_status.contains_key(&stored_principal) {
+            // Role status is already assigned, do nothing
+            ic_cdk::println!("Role status is already assigned for the caller.");
         } else {
-            arr.insert(caller, initial_roles);
-            //ic_cdk::println!("default role are assigned")
+            role_status.insert(stored_principal, Candid(initial_roles));
+            ic_cdk::println!("Default roles are assigned to the caller.");
         }
-    })
+    });
 }
 
 pub async fn register_user_role(info: UserInformation) -> std::string::String {
@@ -205,27 +209,65 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
         joining_date: time(),
     };
 
-    USER_STORAGE.with(|storage| {
-        let mut storage = storage.borrow_mut();
-        if storage.contains_key(&caller) {
-            format!("User with this Principal ID already exists");
+    let user_added = mutate_state(|state| {
+        let user_storage = &mut state.user_storage;
+        if user_storage.contains_key(&StoredPrincipal(caller)) {
+            false
         } else {
-            storage.insert(caller, user_info_internal);
+            user_storage.insert(StoredPrincipal(caller), Candid(user_info_internal));
+            true
         }
     });
 
-    ROLE_STATUS_ARRAY.with(|role_status| {
-        let mut role_status = role_status.borrow_mut();
+    if !user_added {
+        return "User with this Principal ID already exists".to_string();
+    }
 
-        let role_status_opt_vec = role_status.get_mut(&caller);
+    mutate_state(|state| {
+        let role_status = &mut state.role_status;
 
-        let role_status_vec = role_status_opt_vec.expect("couldn't get role_status_vector");
-
-        for role in role_status_vec.iter_mut() {
-            if role.name == "user" {
-                role.status = "active".to_string();
-                break;
+        if let Some(mut role_status_vec_candid) = role_status.get(&StoredPrincipal(caller)) {
+            let mut role_status_vec = role_status_vec_candid.0;
+            for role in role_status_vec.iter_mut() {
+                if role.name == "user" {
+                    role.status = "active".to_string();
+                    break;
+                }
             }
+            role_status.insert(StoredPrincipal(caller), Candid(role_status_vec));
+        } else {
+            // If the role_status doesn't exist for the caller, insert the initial roles
+            let initial_roles = vec![
+                Role {
+                    name: "user".to_string(),
+                    status: "active".to_string(),
+                    requested_on: None,
+                    approved_on: Some(time()),
+                    rejected_on: None,
+                },
+                Role {
+                    name: "project".to_string(),
+                    status: "default".to_string(),
+                    requested_on: None,
+                    approved_on: None,
+                    rejected_on: None,
+                },
+                Role {
+                    name: "mentor".to_string(),
+                    status: "default".to_string(),
+                    requested_on: None,
+                    approved_on: None,
+                    rejected_on: None,
+                },
+                Role {
+                    name: "vc".to_string(),
+                    status: "default".to_string(),
+                    requested_on: None,
+                    approved_on: None,
+                    rejected_on: None,
+                },
+            ];
+            role_status.insert(StoredPrincipal(caller), Candid(initial_roles));
         }
     });
     format!("User registered successfully with ID: {}", new_id)
@@ -266,12 +308,11 @@ pub async fn update_data_for_roles(principal_id: Principal, user_data: UserInfor
 }
 #[update]
 async fn update_user_data(user_id: Principal, user_data: UserInformation) -> Result<(), String> {
-    USER_STORAGE.with(|storage| {
-        let mut storage = storage.borrow_mut();
-
-        if let Some(user_info_internal) = storage.get_mut(&user_id) {
-            user_info_internal.params = user_data;  
-            Ok(()) 
+    mutate_state(|state| {
+        if let Some(Candid(mut user_info_internal)) = state.user_storage.get(&StoredPrincipal(user_id)) {
+            user_info_internal.params = user_data;
+            state.user_storage.insert(StoredPrincipal(user_id), Candid(user_info_internal));
+            Ok(())
         } else {
             Err("User not found. Please register before updating.".to_string())
         }
@@ -318,10 +359,8 @@ async fn update_vc_data(user_id: Principal, user_data: UserInformation) -> Resul
 
 #[query]
 pub fn get_roles_for_principal(principal_id: Principal) -> Vec<Role> {
-    ROLE_STATUS_ARRAY.with(|r| {
-        let role_status_map = r.borrow();
-
-        if let Some(role_status) = role_status_map.get(&principal_id) {
+    read_state(|state| {
+        if let Some(Candid(role_status)) = state.role_status.get(&StoredPrincipal(principal_id)) {
             role_status.clone()
         } else {
             vec![
@@ -360,10 +399,8 @@ pub fn get_roles_for_principal(principal_id: Principal) -> Vec<Role> {
 
 #[query]
 pub fn get_role_status() -> Vec<Role> {
-    ROLE_STATUS_ARRAY.with(|r| {
-        let role_status_map = r.borrow();
-
-        if let Some(role_status) = role_status_map.get(&caller()) {
+    read_state(|state| {
+        if let Some(Candid(role_status)) = state.role_status.get(&StoredPrincipal(caller())) {
             role_status.clone()
         } else {
             vec![
@@ -415,38 +452,71 @@ pub fn get_role_status() -> Vec<Role> {
 
 #[update]
 pub fn switch_role(role_to_switch: String, new_status: String) {
-    ROLE_STATUS_ARRAY.with(|status_arr| {
-        let mut status_arr = status_arr.borrow_mut();
-        let caller_id = caller();
-        let roles = status_arr.entry(caller_id).or_insert_with(Vec::new);
+    mutate_state(|state| {
+        let caller_id = StoredPrincipal(caller());
+        let roles_opt = state.role_status.get(&caller_id);
 
-        if new_status == "active" {
-            let mut active_role_index = None;
-            let mut approved_role_index = None;
+        if let Some(mut roles) = roles_opt {
+            if new_status == "active" {
+                let mut active_role_index = None;
+                let mut approved_role_index = None;
 
-            // Find indices of the active role and the role to be switched if approved
-            for (index, role) in roles.iter().enumerate() {
-                if role.status == "active" {
-                    active_role_index = Some(index);
+                // Find indices of the active role and the role to be switched if approved
+                for (index, role) in roles.0.iter().enumerate() {
+                    if role.status == "active" {
+                        active_role_index = Some(index);
+                    }
+                    if role.name == role_to_switch && role.status == "approved" {
+                        approved_role_index = Some(index);
+                    }
                 }
-                if role.name == role_to_switch && role.status == "approved" {
-                    approved_role_index = Some(index);
-                }
-            }
 
-            if let Some(approved_index) = approved_role_index {
-                // Set the approved role to active
-                roles[approved_index].status = "active".to_string();
+                if let Some(approved_index) = approved_role_index {
+                    // Set the approved role to active
+                    roles.0[approved_index].status = "active".to_string();
 
-                if let Some(active_index) = active_role_index {
-                    // Change the previously active role to approved
-                    roles[active_index].status = "approved".to_string();
+                    if let Some(active_index) = active_role_index {
+                        // Change the previously active role to approved
+                        roles.0[active_index].status = "approved".to_string();
+                    }
+                } else {
+                    ic_cdk::println!("The role to switch is not approved or doesn't exist.");
                 }
             } else {
-                // ic_cdk::println!("The role to switch is not approved or doesn't exist.");
+                ic_cdk::println!("Only roles with 'approved' status can be set to 'active'");
             }
         } else {
-            // ic_cdk::println!("Only roles with 'approved' status can be set to 'active'");
+            // Insert default roles if the user does not have any roles
+            state.role_status.insert(caller_id.clone(), Candid(vec![
+                Role {
+                    name: "user".to_string(),
+                    status: "default".to_string(),
+                    requested_on: None,
+                    approved_on: None,
+                    rejected_on: None,
+                },
+                Role {
+                    name: "project".to_string(),
+                    status: "default".to_string(),
+                    requested_on: None,
+                    approved_on: None,
+                    rejected_on: None,
+                },
+                Role {
+                    name: "mentor".to_string(),
+                    status: "default".to_string(),
+                    requested_on: None,
+                    approved_on: None,
+                    rejected_on: None,
+                },
+                Role {
+                    name: "vc".to_string(),
+                    status: "default".to_string(),
+                    requested_on: None,
+                    approved_on: None,
+                    rejected_on: None,
+                },
+            ]));
         }
     });
 }
@@ -486,66 +556,86 @@ pub fn switch_role(role_to_switch: String, new_status: String) {
 // }
 
 pub fn get_user_info() -> Result<UserInformation, &'static str> {
-    let caller = caller();
+    let caller = StoredPrincipal(caller());
 
-    USER_STORAGE.with(|registry| {
-        registry
-            .borrow()
+    read_state(|state| {
+        state
+            .user_storage
             .get(&caller)
-            .map(|user_internal| user_internal.params.clone())
+            .map(|user_internal| user_internal.0.params.clone())
             .ok_or("You have to Register Yourself First.")
+    })
+}
+
+pub fn get_user_info_for_testimonial() -> Option<UserInformation> {
+    let caller = StoredPrincipal(caller());
+
+    read_state(|state| {
+        state
+            .user_storage
+            .get(&caller)
+            .map(|user_internal| user_internal.0.params.clone())
     })
 }
 
 #[query]
 pub fn get_user_info_struct() -> Option<UserInformation> {
-    let caller = caller();
-    USER_STORAGE.with(|registry| {
-        registry
-            .borrow()
+    let caller = StoredPrincipal(caller());
+
+    read_state(|state| {
+        state
+            .user_storage
             .get(&caller)
-            .map(|user_internal| user_internal.params.clone())
+            .map(|user_internal| user_internal.0.params.clone())
     })
 }
 
 #[query]
 pub fn get_member_id() -> String {
-    let caller = caller();
-    USER_STORAGE.with(|registry| {
-        let members = registry.borrow();
-        let members: &UserInfoInternal = members.get(&caller).expect("you are not a user");
-        members.uid.clone()
+    let caller = StoredPrincipal(caller());
+
+    read_state(|state| {
+        state
+            .user_storage
+            .get(&caller)
+            .map(|user_internal| user_internal.0.uid.clone())
+            .expect("you are not a user")
     })
 }
 
 #[query]
 pub fn get_users_with_all_info() -> UserInfoInternal {
-    let caller = caller();
-    USER_STORAGE.with(|registry| {
-        let user_info_ref = registry.borrow();
-        let user_all_info = user_info_ref
+    let caller = StoredPrincipal(caller());
+
+    read_state(|state| {
+        state
+            .user_storage
             .get(&caller)
-            .expect("couldn't find user information");
-        user_all_info.clone()
+            .map(|candid_user_info| candid_user_info.0.clone())
+            .expect("couldn't find user information")
     })
 }
 
 pub fn list_all_users() -> Vec<UserInformation> {
-    USER_STORAGE.with(|storage| {
-        storage
-            .borrow()
-            .values()
-            .map(|user_internal| user_internal.params.clone())
-            .collect()
+    read_state(|state| {
+        let user_storage = &state.user_storage;
+        let mut users_info = Vec::new();
+
+        for (_, candid_user_internal) in user_storage.iter() {
+            users_info.push(candid_user_internal.0.params.clone());
+        }
+
+        users_info
     })
 }
 
 pub fn delete_user() -> std::string::String {
     let caller = caller();
-    USER_STORAGE.with(|storage| {
-        let mut storage = storage.borrow_mut();
-        if let Some(founder) = storage.get_mut(&caller) {
-            founder.is_active = false;
+    
+    mutate_state(|state| {
+        let user_storage = &mut state.user_storage;
+        if let Some(mut founder) = user_storage.get(&StoredPrincipal(caller)) {
+            founder.0.is_active = false;
             format!("User deactivated for caller: {:?}", caller.to_string())
         } else {
             format!(
@@ -557,14 +647,21 @@ pub fn delete_user() -> std::string::String {
 }
 
 pub async fn get_user_info_by_id(uid: String) -> Result<UserInformation, &'static str> {
-    USER_STORAGE.with(|storage| {
-        for user_info_internal in storage.borrow().values() {
-            if user_info_internal.uid == uid {
-                return Ok(user_info_internal.params.clone());
+    let mut user_info = None;
+
+    read_state(|state| {
+        for (_, user_info_internal) in state.user_storage.iter() {
+            if user_info_internal.0.uid == uid {
+                user_info = Some(user_info_internal.0.params.clone());
+                break;
             }
         }
-        Err("No user found with the given ID.")
-    })
+    });
+
+    match user_info {
+        Some(info) => Ok(info),
+        None => Err("No user found with the given ID."),
+    }
 }
 
 pub async fn update_user(info: UserInformation) -> std::string::String {
@@ -579,16 +676,16 @@ pub async fn update_user(info: UserInformation) -> std::string::String {
         return "Please provide input for required fields: full_name and email.".to_string();
     }
 
-    USER_STORAGE.with(|storage| {
-        let mut storage = storage.borrow_mut();
+    let mut result = "User not found. Please register before updating.".to_string();
 
-        if let Some(user_info_internal) = storage.get_mut(&caller) {
-            user_info_internal.params = info;
-            "User information updated successfully.".to_string()
-        } else {
-            "User not found. Please register before updating.".to_string()
+    mutate_state(|state| {
+        if let Some(mut user_info_internal) = state.user_storage.get(&StoredPrincipal(caller)) {
+            user_info_internal.0.params = info;
+            result = "User information updated successfully.".to_string();
         }
-    })
+    });
+
+    result
 }
 
 
@@ -601,34 +698,34 @@ pub async fn update_user(info: UserInformation) -> std::string::String {
 //     });
 // }
 
-pub fn pre_upgrade_user_modules() {
-    USER_STORAGE.with(|user_storage| {
-        ROLE_STATUS_ARRAY.with(|role_status_array| {
-            match stable_save((
-                user_storage.borrow().clone(),
-                role_status_array.borrow().clone(),
-            )) {
-                Ok(_) => ic_cdk::println!("User modules saved successfully."),
-                Err(e) => ic_cdk::println!("{}", format!("Failed to save user modules: {:?}", e)),
-            }
-        });
-    });
-}
+// pub fn pre_upgrade_user_modules() {
+//     USER_STORAGE.with(|user_storage| {
+//         ROLE_STATUS_ARRAY.with(|role_status_array| {
+//             match stable_save((
+//                 user_storage.borrow().clone(),
+//                 role_status_array.borrow().clone(),
+//             )) {
+//                 Ok(_) => ic_cdk::println!("User modules saved successfully."),
+//                 Err(e) => ic_cdk::println!("{}", format!("Failed to save user modules: {:?}", e)),
+//             }
+//         });
+//     });
+// }
 
-pub fn post_upgrade_user_modules() {
-    match stable_restore() {
-        Ok((restored_user_storage, restored_role_status_array)) => {
-            USER_STORAGE.with(|user_storage_ref| {
-                *user_storage_ref.borrow_mut() = restored_user_storage;
-            });
-            ROLE_STATUS_ARRAY.with(|role_status_array_ref| {
-                *role_status_array_ref.borrow_mut() = restored_role_status_array;
-            });
-            ic_cdk::println!("User modules restored successfully.");
-        }
-        Err(e) => ic_cdk::println!("{}", format!("Failed to restore user modules: {:?}", e)),
-    }
-}
+// pub fn post_upgrade_user_modules() {
+//     match stable_restore() {
+//         Ok((restored_user_storage, restored_role_status_array)) => {
+//             USER_STORAGE.with(|user_storage_ref| {
+//                 *user_storage_ref.borrow_mut() = restored_user_storage;
+//             });
+//             ROLE_STATUS_ARRAY.with(|role_status_array_ref| {
+//                 *role_status_array_ref.borrow_mut() = restored_role_status_array;
+//             });
+//             ic_cdk::println!("User modules restored successfully.");
+//         }
+//         Err(e) => ic_cdk::println!("{}", format!("Failed to restore user modules: {:?}", e)),
+//     }
+// }
 
 // pub fn post_upgrade_user_modules() {
 //     let (restored_user_storage, restored_role_status_array):
@@ -644,51 +741,60 @@ pub fn post_upgrade_user_modules() {
 // }
 
 pub fn get_user_info_by_principal(caller: Principal) -> Result<UserInformation, &'static str> {
-    USER_STORAGE.with(|registry| {
-        registry
-            .borrow()
-            .get(&caller)
-            .map(|user_internal| user_internal.params.clone())
+    read_state(|state| {
+        state
+            .user_storage
+            .get(&StoredPrincipal(caller))
+            .map(|user_internal| user_internal.0.params.clone())
             .ok_or("User not Found")
     })
 }
 
 #[query]
 pub fn get_user_info_using_principal(caller: Principal) -> Option<UserInfoInternal> {
-    USER_STORAGE.with(|registry| registry.borrow().get(&caller).cloned())
+    read_state(|state| {
+        state.user_storage.get(&StoredPrincipal(caller)).map(|candid| candid.0.clone())
+    })
 }
 
 #[update]
 fn add_testimonial(message: String) -> String {
     let principal_id = caller();
-    let userData = get_user_info();
-    let userData = userData.clone().unwrap();
-    USER_TESTIMONIAL.with(|registry| {
+
+    if let Some(user_info) = get_user_info_for_testimonial() {
         let testimony = Testimonial {
-            name: userData.full_name,
-            profile_pic: userData.profile_picture.expect("not found"),
+            name: user_info.full_name,
+            profile_pic: user_info.profile_picture.unwrap_or_else(Vec::new),
             timestamp: time(),
             message,
         };
 
-        let mut registry = registry.borrow_mut();
-        registry
-            .entry(principal_id)
-            .or_insert_with(Vec::new)
-            .push(testimony);
-        format!("testimony added")
-    })
+        mutate_state(|state| {
+            let mut testimonial_list = state
+                .user_testimonial
+                .get(&StoredPrincipal(principal_id))
+                .unwrap_or_else(|| {
+                    state.user_testimonial.insert(StoredPrincipal(principal_id), Candid(Vec::new()));
+                    state.user_testimonial.get(&StoredPrincipal(principal_id)).unwrap()
+                });
+            testimonial_list.0.push(testimony);
+        });
+
+        "Testimony added".to_string()
+    } else {
+        "User not found".to_string()
+    }
 }
+
 
 #[query]
 fn get_testimonials(principal_id: Principal) -> Result<Vec<Testimonial>, &'static str> {
-    USER_TESTIMONIAL.with(|registry| {
-        let registry = registry.borrow();
-        if let Some(testimonials) = registry.get(&principal_id) {
-            Ok(testimonials.clone()) // Return a clone of the testimonials vector
-        } else {
-            Err("No testimonials found for the given user.")
-        }
+    read_state(|state| {
+        state
+            .user_testimonial
+            .get(&StoredPrincipal(principal_id))
+            .map(|testimonials| testimonials.0.clone())
+            .ok_or("No testimonials found for the given user.")
     })
 }
 
@@ -708,18 +814,22 @@ fn get_testimonials(principal_id: Principal) -> Result<Vec<Testimonial>, &'stati
 
 #[query]
 fn get_latest_testimonials() -> Vec<Testimonial> {
-    USER_TESTIMONIAL.with(|registry| {
-        let registry = registry.borrow();
-        registry.values().cloned().flatten().collect()
+    read_state(|state| {
+        let mut testimonials = Vec::new();
+        for (_, candid_testimonials) in state.user_testimonial.iter() {
+            let testimonials_vec: Vec<Testimonial> = candid_testimonials.0.clone();
+            testimonials.extend(testimonials_vec);
+        }
+        testimonials
     })
 }
 
 #[query]
 fn get_review(principal_id: Principal) -> Result<Vec<Review>, &'static str> {
-    USER_RATING.with(|registry| {
-        let registry = registry.borrow();
-        if let Some(rating) = registry.get(&principal_id) {
-            Ok(rating.clone())
+    let principal_id_stored = StoredPrincipal(principal_id);
+    read_state(|state| {
+        if let Some(rating) = state.user_rating.get(&principal_id_stored) {
+            Ok(rating.0.clone())
         } else {
             Err("No rating found for the given user.")
         }
@@ -728,28 +838,35 @@ fn get_review(principal_id: Principal) -> Result<Vec<Review>, &'static str> {
 
 #[update]
 fn add_review(rating: f32, message: String) -> String {
-    let principal_id = caller();
-    let userData = get_user_info();
+    let principal_id = ic_cdk::caller();
+    let principal_id_stored = StoredPrincipal(principal_id);
 
-    let userData = userData.clone().unwrap();
-    USER_RATING.with(|registry| {
-        match Review::new(
-            userData.full_name,
-            userData.profile_picture.expect("not found"),
-            message,
-            rating,
-        ) {
-            Ok(review) => {
-                let mut registry = registry.borrow_mut();
-                registry
-                    .entry(principal_id)
-                    .or_insert_with(Vec::new)
-                    .push(review);
-                format!("rating added")
+    let user_data = match read_state(|state| state.user_storage.get(&principal_id_stored)) {
+        Some(user_info) => user_info.0,
+        None => return "User not found".to_string(),
+    };
+
+    let profile_picture = match user_data.params.profile_picture {
+        Some(picture) => picture,
+        None => return "Profile picture not found".to_string(),
+    };
+
+    let review = match Review::new(user_data.params.full_name, profile_picture, message, rating) {
+        Ok(review) => review,
+        Err(e) => return format!("Error creating review: {}", e),
+    };
+
+    mutate_state(|state| {
+        let user_ratings = state.user_rating.get(&principal_id_stored);
+        match user_ratings {
+            Some(mut ratings) => ratings.0.push(review),
+            None => {
+                state.user_rating.insert(principal_id_stored, Candid(vec![review]));
             }
-            Err(e) => format!("Error creating review: {}", e),
         }
-    })
+    });
+
+    "Rating added".to_string()
 }
 
 //new_additions

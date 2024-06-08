@@ -1,13 +1,15 @@
+use crate::state_handler::*;
+use candid::types::principal;
 use candid::{CandidType, Principal};
+use ic_cdk::api::caller;
 use ic_cdk::api::time;
-use ic_cdk::storage::{stable_save, self, stable_restore};
+use ic_cdk::storage::{self, stable_restore, stable_save};
+use ic_cdk_macros::query;
+use ic_stable_structures::StableBTreeMap;
 use serde::{Deserialize, Serialize};
 use std::cell::RefCell;
 use std::collections::HashMap;
-use ic_cdk::api::caller;
 use std::fmt;
-use ic_cdk_macros::query;
-
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct RatingTypes {
@@ -16,7 +18,6 @@ pub struct RatingTypes {
     mentor: Vec<TimestampedRating>,
     vc: Vec<TimestampedRating>,
 }
-
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct Rating {
@@ -28,7 +29,7 @@ pub struct Rating {
 }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
-pub struct RatingInternal{
+pub struct RatingInternal {
     params: Vec<Rating>,
     timestamp: u64,
     current_role: String,
@@ -40,7 +41,6 @@ pub struct TimestampedRating {
     rating: Rating,
     timestamp: u64,
 }
-
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq, Default)]
 pub struct RatingAverages {
@@ -63,45 +63,12 @@ impl RatingAverages {
     }
 }
 
-pub type RatingAverageStorage = HashMap<String, RatingAverages>;
+pub type RatingAverageStorage = StableBTreeMap<String, Candid<RatingAverages>, VMem>;
 
-pub type RatingSystem = HashMap<String, HashMap<Principal, Vec<(String, TimestampedRating)>>>;
+pub type RatingSystem =
+    StableBTreeMap<String, Candid<HashMap<Principal, Vec<(String, TimestampedRating)>>>, VMem>;
 
-type LastRatingTimestamps = HashMap<String, HashMap<Principal, u64>>;
-
-thread_local! {
-    pub static RATING_SYSTEM: RefCell<RatingSystem> = RefCell::new(RatingSystem::new());
-    pub static LAST_RATING_TIMESTAMPS: RefCell<LastRatingTimestamps> = RefCell::new(LastRatingTimestamps::new());
-    pub static AVERAGE_STORAGE: RefCell<RatingAverageStorage> = RefCell::new(RatingAverageStorage::new());
-}
-
-pub fn pre_upgrade_rating_system() {
-    RATING_SYSTEM.with(|data| {
-        match storage::stable_save((data.borrow().clone(),)) {
-            Ok(_) => ic_cdk::println!("RATING_SYSTEM saved successfully."),
-            Err(e) => ic_cdk::println!("Failed to save RATING_SYSTEM: {:?}", e),
-        }
-    });
-    
-    LAST_RATING_TIMESTAMPS.with(|data| {
-        match storage::stable_save((data.borrow().clone(),)) {
-            Ok(_) => ic_cdk::println!("LAST_RATING_TIMESTAMPS saved successfully."),
-            Err(e) => ic_cdk::println!("Failed to save LAST_RATING_TIMESTAMPS: {:?}", e),
-        }
-    });
-}
-
-pub fn post_upgrade_rating_system() {
-    match stable_restore::<(RatingSystem, LastRatingTimestamps)>() {
-        Ok((restored_rating_system, restored_last_rating_timestamps)) => {
-            RATING_SYSTEM.with(|data| *data.borrow_mut() = restored_rating_system);
-            LAST_RATING_TIMESTAMPS.with(|data| *data.borrow_mut() = restored_last_rating_timestamps);
-            ic_cdk::println!("Rating system modules restored successfully.");
-        },
-        Err(e) => ic_cdk::println!("Failed to restore rating system modules: {:?}", e),
-    }
-}
-
+pub type LastRatingTimestamps = StableBTreeMap<String, Candid<HashMap<Principal, u64>>, VMem>;
 
 impl RatingTypes {
     fn new() -> Self {
@@ -123,7 +90,6 @@ impl fmt::Display for ParseMainLevelError {
     }
 }
 
-
 // impl FromStr for MainLevel {
 //     type Err = ParseMainLevelError;
 
@@ -142,22 +108,31 @@ impl fmt::Display for ParseMainLevelError {
 //     }
 // }
 
-
-fn can_rate_again(system: &RatingSystem, project_id: &String, user_id: &Principal, current_timestamp: u64, interval: u64) -> bool {
-    let last_rating_time = LAST_RATING_TIMESTAMPS.with(|timestamps| {
-        let timestamps_borrowed = timestamps.borrow();
+fn can_rate_again(
+    system: &RatingSystem,
+    project_id: &String,
+    user_id: &Principal,
+    current_timestamp: u64,
+    interval: u64,
+) -> bool {
+    let last_rating_time = read_state(|timestamps| {
+        let timestamps_borrowed = &timestamps.last_rating_timestamps;
         if !timestamps_borrowed.contains_key(project_id) {
-            ic_cdk::println!("Debug: No previous ratings found for project_id: {}", project_id);
+            ic_cdk::println!(
+                "Debug: No previous ratings found for project_id: {}",
+                project_id
+            );
         }
-        timestamps_borrowed
-            .get(project_id)
-            .and_then(|project_map| {
-                if !project_map.contains_key(user_id) {
-                    ic_cdk::println!("Debug: No previous ratings found for user_id: {:?} in project_id: {}", user_id, project_id);
-                }
-                project_map.get(user_id)
-            })
-            .cloned()
+        timestamps_borrowed.get(project_id).and_then(|project_map| {
+            if !project_map.0.contains_key(user_id) {
+                ic_cdk::println!(
+                    "Debug: No previous ratings found for user_id: {:?} in project_id: {}",
+                    user_id,
+                    project_id
+                );
+            }
+            project_map.0.get(user_id).cloned()
+        })
     });
 
     match last_rating_time {
@@ -165,42 +140,60 @@ fn can_rate_again(system: &RatingSystem, project_id: &String, user_id: &Principa
             let can_rate_again = current_timestamp - last_time >= interval;
             ic_cdk::println!("Debug: Last rating time for user_id: {:?} in project_id: {} was at {}. Can rate again: {}", user_id, project_id, last_time, can_rate_again);
             can_rate_again
-        },
+        }
         None => {
             ic_cdk::println!("Debug: No previous rating time found for user_id: {:?} in project_id: {}. User can rate.", user_id, project_id);
             true
-        },
+        }
     }
 }
 
 fn update_last_rating_time(project_id: &String, user_id: &Principal, timestamp: u64) {
-    LAST_RATING_TIMESTAMPS.with(|timestamps| {
-        let mut timestamps = timestamps.borrow_mut();
-        if timestamps.contains_key(project_id) {
-            ic_cdk::println!("Debug: Found existing project map for project_id: {}", project_id);
+    mutate_state(|timestamps| {
+        let mut timestampsi = &mut timestamps.last_rating_timestamps;
+        if timestampsi.contains_key(project_id) {
+            ic_cdk::println!(
+                "Debug: Found existing project map for project_id: {}",
+                project_id
+            );
         } else {
-            ic_cdk::println!("Debug: Creating new project map for project_id: {}", project_id);
+            ic_cdk::println!(
+                "Debug: Creating new project map for project_id: {}",
+                project_id
+            );
         }
 
-        let project_map = timestamps.entry(project_id.clone()).or_insert_with(HashMap::new);
+        let mut project_map = timestamps
+            .last_rating_timestamps
+            .get(&project_id.clone())
+            .map_or_else(HashMap::new, |candid_res| candid_res.0);
 
         if let Some(existing_timestamp) = project_map.get(user_id) {
             ic_cdk::println!("Debug: Updating existing timestamp for user_id: {:?} in project_id: {} from {} to {}", user_id, project_id, existing_timestamp, timestamp);
         } else {
-            ic_cdk::println!("Debug: Inserting new timestamp for user_id: {:?} in project_id: {} as {}", user_id, project_id, timestamp);
+            ic_cdk::println!(
+                "Debug: Inserting new timestamp for user_id: {:?} in project_id: {} as {}",
+                user_id,
+                project_id,
+                timestamp
+            );
         }
 
         project_map.insert(*user_id, timestamp);
 
-        ic_cdk::println!("Debug: Updated timestamp for user_id: {:?} in project_id: {}. New timestamp: {}", user_id, project_id, timestamp);
+        ic_cdk::println!(
+            "Debug: Updated timestamp for user_id: {:?} in project_id: {}. New timestamp: {}",
+            user_id,
+            project_id,
+            timestamp
+        );
     });
 }
 
-
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct RatingUpdate {
-    project_id: String, 
-    current_role: String, 
+    project_id: String,
+    current_role: String,
     ratings: Vec<Rating>,
 }
 
@@ -211,13 +204,24 @@ pub fn update_rating_api(rating_data: RatingUpdate) -> String {
     }
 
     let principal_id = caller();
-    ic_cdk::println!("Debug: Starting updates for Principal ID: {} with {} ratings for project ID: {}", principal_id, rating_data.ratings.len(), rating_data.project_id);
+    ic_cdk::println!(
+        "Debug: Starting updates for Principal ID: {} with {} ratings for project ID: {}",
+        principal_id,
+        rating_data.ratings.len(),
+        rating_data.project_id
+    );
 
     let current_timestamp = time();
     let thirteen_days_in_seconds: u64 = 13 * 24 * 60 * 60 * 1000000000;
     let mut response_message = "No ratings updated.".to_string();
-    let can_rate = RATING_SYSTEM.with(|system| {
-        can_rate_again(&system.borrow(), &rating_data.project_id, &principal_id, current_timestamp, thirteen_days_in_seconds)
+    let can_rate = read_state(|system| {
+        can_rate_again(
+            &system.rating_system,
+            &rating_data.project_id,
+            &principal_id,
+            current_timestamp,
+            thirteen_days_in_seconds,
+        )
     });
     ic_cdk::println!("CAN RATE AGAIN FUNTION RETURNED {}", can_rate);
 
@@ -226,22 +230,30 @@ pub fn update_rating_api(rating_data: RatingUpdate) -> String {
         return "You cannot rate this project for the next 13 days".to_string();
     }
 
-    RATING_SYSTEM.with(|system| {
-        let mut system = system.borrow_mut();
-        let project_ratings = system.entry(rating_data.project_id.clone()).or_insert_with(HashMap::new);
+    mutate_state(|system| {
+        let mut system = &mut system.rating_system;
+        let mut project_ratings = system
+            .get(&rating_data.project_id.clone())
+            .map_or_else(HashMap::new, |candid_res| candid_res.0);
         let role_ratings = project_ratings.entry(principal_id).or_insert_with(Vec::new);
-        
+
         for rating in rating_data.ratings {
-            let new_rating = (rating_data.current_role.clone(), TimestampedRating {
-                rating,
-                timestamp: current_timestamp,
-            });
+            let new_rating = (
+                rating_data.current_role.clone(),
+                TimestampedRating {
+                    rating,
+                    timestamp: current_timestamp,
+                },
+            );
 
             match rating_data.current_role.as_str() {
                 "vc" => role_ratings.push(new_rating),
                 "mentor" => role_ratings.push(new_rating),
                 "project" => role_ratings.push(new_rating),
-                _ => println!("Debug: Encountered unknown role: '{}'.", rating_data.current_role),
+                _ => println!(
+                    "Debug: Encountered unknown role: '{}'.",
+                    rating_data.current_role
+                ),
             }
             response_message = "Ratings updated successfully".to_string();
         }
@@ -252,24 +264,26 @@ pub fn update_rating_api(rating_data: RatingUpdate) -> String {
     response_message
 }
 
-
 fn round_to_one_decimal(value: f64) -> f64 {
     format!("{:.1}", value).parse::<f64>().unwrap()
 }
 
-
-pub fn calculate_average_api_storage(project_id: &str){
-
+pub fn calculate_average_api_storage(project_id: &str) {
     let total_levels = 8;
-    
-    let mut averages = AVERAGE_STORAGE.with(|storage| {
-        storage.borrow().get(project_id).cloned().unwrap_or_default()
+
+    let mut averages = read_state(|storage| {
+        storage
+            .average_storage
+            .get(&project_id.to_string())
+            .map(|candid_res| candid_res.0)
+            .unwrap_or_default()
+            .clone()
     });
 
-    RATING_SYSTEM.with(|system| {
-        let system = system.borrow();
-        if let Some(project_ratings) = system.get(project_id) {
-            for (_, ratings) in project_ratings {
+    mutate_state(|system| {
+        let system = &mut system.rating_system;
+        if let Some(project_ratings) = system.get(&project_id.to_string()) {
+            for (_, ratings) in project_ratings.0 {
                 let mut mentor_sum = 0.0;
                 let mut mentor_count = 0;
                 let mut vc_sum = 0.0;
@@ -285,15 +299,15 @@ pub fn calculate_average_api_storage(project_id: &str){
                         "mentor" => {
                             mentor_sum += sub_level_num;
                             mentor_count += 1;
-                        },
+                        }
                         "vc" => {
                             vc_sum += sub_level_num;
                             vc_count += 1;
-                        },
+                        }
                         "project" => {
                             own_sum += sub_level_num;
                             own_count += 1;
-                        },
+                        }
                         _ => (),
                     }
                 }
@@ -301,15 +315,21 @@ pub fn calculate_average_api_storage(project_id: &str){
                 // Calculate and store new averages, appending to the history
                 if mentor_count > 0 {
                     let new_mentor_average = mentor_sum / total_levels as f64;
-                    averages.mentor_average.push(round_to_one_decimal(new_mentor_average));
+                    averages
+                        .mentor_average
+                        .push(round_to_one_decimal(new_mentor_average));
                 }
                 if vc_count > 0 {
                     let new_vc_average = vc_sum / total_levels as f64;
-                    averages.vc_average.push(round_to_one_decimal(new_vc_average));
+                    averages
+                        .vc_average
+                        .push(round_to_one_decimal(new_vc_average));
                 }
                 if own_count > 0 {
                     let new_own_average = own_sum / total_levels as f64;
-                    averages.own_average.push(round_to_one_decimal(new_own_average));
+                    averages
+                        .own_average
+                        .push(round_to_one_decimal(new_own_average));
                 }
             }
 
@@ -319,37 +339,45 @@ pub fn calculate_average_api_storage(project_id: &str){
             let latest_own = averages.own_average.last().unwrap_or(&0.0);
             let combined_mentor_vc = (latest_mentor + latest_vc) / 2.0;
             let new_overall_average = 0.6 * combined_mentor_vc + 0.4 * latest_own;
-            averages.overall_average.push(round_to_one_decimal(new_overall_average));
+            averages
+                .overall_average
+                .push(round_to_one_decimal(new_overall_average));
         }
     });
 
-    AVERAGE_STORAGE.with(|storage| {
-        storage.borrow_mut().insert(project_id.to_string(), averages);
+    mutate_state(|storage| {
+        storage
+            .average_storage
+            .insert(project_id.to_string(), Candid(averages));
     });
 }
 
-
-
-pub fn calculate_average_api(project_id: &str) -> RatingAverages{
+pub fn calculate_average_api(project_id: &str) -> RatingAverages {
     calculate_average_api_storage(project_id);
-    AVERAGE_STORAGE.with(|storage| {
-        let storage = storage.borrow();
-        storage.get(project_id).cloned().unwrap_or_default()
+    read_state(|storage| {
+        let storage = &storage.average_storage;
+        storage
+            .get(&project_id.to_string())
+            .map(|candid_res| candid_res.0)
+            .unwrap_or_default()
+            .clone()
     })
 }
-
 
 #[query]
 pub fn get_ratings_by_principal(project_id: String) -> Result<Vec<RatingView>, String> {
     let caller_id = caller();
-    println!("Retrieving ratings for Principal ID: {} on project ID: {}", caller_id, project_id);
+    println!(
+        "Retrieving ratings for Principal ID: {} on project ID: {}",
+        caller_id, project_id
+    );
 
     let mut ratings_by_principal: Vec<RatingView> = Vec::new();
 
-    let result = RATING_SYSTEM.with(|system| {
-        let system = system.borrow();
+    let result = read_state(|system| {
+        let system = &system.rating_system;
         if let Some(project_ratings) = system.get(&project_id) {
-            if let Some(role_ratings) = project_ratings.get(&caller_id) {
+            if let Some(role_ratings) = project_ratings.0.get(&caller_id) {
                 for (role, timestamped_rating) in role_ratings {
                     let view = RatingView {
                         level_name: timestamped_rating.rating.level_name.clone(),
@@ -378,8 +406,6 @@ pub struct RatingView {
     pub rating: u32,
     pub timestamp: u64,
 }
-
-
 
 #[derive(Serialize, Deserialize, Debug, CandidType)]
 pub struct MainLevels {
@@ -423,7 +449,6 @@ pub fn get_main_levels() -> Vec<MainLevels> {
         },
     ]
 }
-
 
 #[derive(Serialize, Deserialize, Debug, CandidType)]
 pub struct SubLevels {
