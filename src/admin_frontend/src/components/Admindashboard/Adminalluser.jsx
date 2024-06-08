@@ -13,6 +13,9 @@ import NoDataCard from "../../../../IcpAccelerator_frontend/src/components/Mento
 import { principalToText } from "../Utils/AdminData/saga_function/blobImageToUrl";
 import { useNavigate } from "react-router-dom";
 import NoData from "../../../../IcpAccelerator_frontend/assets/images/file_not_found.png";
+import DeleteModel from "../../../../IcpAccelerator_frontend/src/models/DeleteModel";
+import { Principal } from "@dfinity/principal";
+import toast from "react-hot-toast";
 
 const Adminalluser = () => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -22,6 +25,59 @@ const Adminalluser = () => {
   const [filterOption, setFilterOption] = useState("Users");
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [filter, setFilter] = useState("");
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [principalId, setPrincipalId] = useState(null);
+  const handleOpenDeleteModal = (id) => {
+    setPrincipalId(id);
+    setDeleteModalOpen(true);
+  };
+  const handleClose = () => {
+    setDeleteModalOpen(false);
+    setPrincipalId(null);
+  };
+  // <<<<<<----- Deleting the Profiles -------->>>>>>
+
+  const handleDelete = async () => {
+    const covertedPrincipal = await Principal.fromText(principalId);
+    console.log("principalId ==>>>", covertedPrincipal);
+    setIsSubmitting(true);
+    let result = [];
+    try {
+      switch (filterOption) {
+        case "Users":
+          result = await actor.delete_user_using_principal(covertedPrincipal);
+          break;
+        case "Mentors":
+          result = await actor.delete_mentor_using_principal(covertedPrincipal);
+          break;
+        case "Projects":
+          result = await actor.delete_project_using_principal(
+            covertedPrincipal
+          );
+          break;
+        case "Investors":
+          result = await actor.delete_vc_using_principal(covertedPrincipal);
+          break;
+        default:
+          result = [];
+      }
+
+      if (result) {
+        setIsSubmitting(false);
+        toast.success(result);
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      } else {
+        setIsSubmitting(false);
+      }
+    } catch (error) {
+      console.log("error-in-handleDelete", error);
+      setIsSubmitting(false);
+    }
+  };
+
   const itemsPerPage = 10;
   const dropdownRef = useRef(null);
   OutSideClickHandler(dropdownRef, () => setIsPopupOpen(false));
@@ -49,19 +105,28 @@ const Adminalluser = () => {
         const userProcessedData = [];
         data.forEach((item) => {
           console.log("datasssss", data);
+          let principal = "";
+          if (data && data?.[0]?.[1]?.principal) {
+            principal = principalToText(data?.[0]?.[1]?.principal);
+          } else if (data && data?.[0]?.[0]) {
+            principal = principalToText(data?.[0]?.[0]);
+          }
           const userDetails = item[1];
           const profilePictureBase64 = userDetails.user_data.profile_picture[0]
             ? uint8ArrayToBase64(userDetails.user_data.profile_picture[0])
             : null;
 
           userDetails.approved_type.forEach((type) => {
-            userProcessedData.push({
-              approvedType: type,
-              fullName: userDetails.user_data.full_name.trim(),
-              country: userDetails.user_data.country,
-              telegram: userDetails.user_data.telegram_id[0],
-              profilePictureURL: profilePictureBase64,
-            });
+            if (type === "user") {
+              userProcessedData.push({
+                approvedType: type,
+                fullName: userDetails.user_data.full_name.trim(),
+                country: userDetails.user_data.country,
+                telegram: userDetails.user_data.telegram_id[0],
+                profilePictureURL: profilePictureBase64,
+                principalId: principal,
+              });
+            }
           });
         });
         setAllData(userProcessedData);
@@ -273,9 +338,9 @@ const Adminalluser = () => {
                   </th>
                   <th className="w-1/4 pb-2">Country</th>
                   <th className="w-1/4 pb-2">Telegram</th>
-                  {filterOption && filterOption === "Users" ? null : (
-                    <th className="w-1/4 pb-2">Action</th>
-                  )}
+                  {/* {filterOption && filterOption === "Users" ? null : ( */}
+                  <th className="w-1/4 pb-2">Action</th>
+                  {/* )}/ */}
                 </tr>
               </thead>
               <tbody className="text-base text-gray-700 font-fontUse">
@@ -332,6 +397,27 @@ const Adminalluser = () => {
                               fill="currentColor"
                             >
                               <path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160V416c0 53 43 96 96 96H352c53 0 96-43 96-96V320c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H96z" />
+                            </svg>
+                          </button>{" "}
+                          <button
+                            className="p-2 bg-white rounded-lg border-2 border-gray-300 hover:bg-gray-300"
+                            onClick={() =>
+                              handleOpenDeleteModal(user.principalId)
+                            }
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth="1.5"
+                              stroke="currentColor"
+                              className="size-4 text-red-500"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+                              />
                             </svg>
                           </button>
                         </td>
@@ -418,6 +504,16 @@ const Adminalluser = () => {
             </svg>
           </button>
         </div>
+      )}
+      {isDeleteModalOpen && (
+        <DeleteModel
+          onClose={handleClose}
+          title={`Delete ${filterOption}`}
+          heading={`Are you sure to delete this ${filterOption}`}
+          onSubmitHandler={handleDelete}
+          isSubmitting={isSubmitting}
+          Id={principalId}
+        />
       )}
     </div>
   );
