@@ -27,7 +27,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/autoplay";
-const MentorProfile = ({ userData, Allrole, principal }) => {
+const MentorProfile = ({ userData, Allrole, principal, currentRole }) => {
   const actor = useSelector((currState) => currState.actors.actor);
 
   const [current, setCurrent] = useState("user");
@@ -41,7 +41,7 @@ const MentorProfile = ({ userData, Allrole, principal }) => {
   const dispatch = useDispatch();
 
   // console.log("userData in mentor profile", userData);
-  // console.log("Allrole in mentor profile", Allrole);
+  console.log("Allrole in mentor profile", Allrole);
 
   useEffect(() => {
     const requestedRole = Allrole?.role?.find(

@@ -18,35 +18,35 @@ const DetailHeroSection = () => {
       src: Project,
       alt: "Astronaut",
       className:
-        "z-20 w-[500px] md:w-[275px] sm:w-[200px] sxs:w-[200px] sxs:h-[180px] md:h-64 relative  sxs:-right-3 right-16 md:right-8 sm:right-4 top-10 object-contain",
+        "z-10 w-[500px] md:w-[275px] sm:w-[200px] sxs:w-[200px] sxs:h-[180px] md:h-64 relative  sxs:-right-3 right-16 md:right-8 sm:right-4 top-10 object-contain",
       text: "Signup as a project",
     },
     "/create-mentor": {
       src: Mentor,
       alt: "Astronaut",
       className:
-        "z-20 w-[500px] md:w-[270px] sm:w-[250px] sxs:w-[160px] md:h-56 relative  sxs:-right-3 right-16 md:right-0 sm:right-0 top-10 object-contain",
+        "z-10 w-[500px] md:w-[270px] sm:w-[250px] sxs:w-[160px] md:h-56 relative  sxs:-right-3 right-16 md:right-0 sm:right-0 top-10 object-contain",
       text: "Sign Up As Mentor",
     },
     "/create-investor": {
       src: Investor,
       alt: "Astronaut",
       className:
-        "z-20 w-[500px] md:w-[250px] sm:w-[250px] sxs:w-[160px] md:h-56 relative  sxs:-right-3 right-16 md:right-0 sm:right-0 top-10 object-contain",
+        "z-10 w-[500px] md:w-[250px] sm:w-[250px] sxs:w-[160px] md:h-56 relative  sxs:-right-3 right-16 md:right-0 sm:right-0 top-10 object-contain",
       text: "Sign Up As INVESTOR",
     },
     "/create-user": {
       src: User,
       alt: "Astronaut",
       className:
-        "z-20 w-[500px] md:w-[250px] md:h-[210px] sm:w-[250px] sxs:w-[170px] md:h-56 relative sxs:-right-3 right-16 md:right-0 sm:right-0 top-10",
+        "z-10 w-[500px] md:w-[250px] md:h-[210px] sm:w-[250px] sxs:w-[170px] md:h-56 relative sxs:-right-3 right-16 md:right-0 sm:right-0 top-10",
       text: "Sign Up As User",
     },
     "/event-form": {
       src: Event,
       alt: "Astronaut",
       className:
-        "z-20 w-[500px] md:w-[250px] md:h-[210px] sm:w-[250px] sxs:w-[170px] md:h-56 relative sxs:-right-3 right-16 md:right-0 sm:right-0 top-10",
+        "z-10 w-[500px] md:w-[250px] md:h-[210px] sm:w-[250px] sxs:w-[170px] md:h-56 relative sxs:-right-3 right-16 md:right-0 sm:right-0 top-10",
       text: "Start a Cohort",
     },
   };

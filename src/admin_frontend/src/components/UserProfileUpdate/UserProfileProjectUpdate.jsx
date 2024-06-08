@@ -20,7 +20,7 @@ import pdfSvg from "../../../assets/image/pdfimage.png";
 import openchat_username from "../../../assets/image/spinner.png";
 import { useCountries } from "react-countries";
 import toast, { Toaster } from "react-hot-toast";
-import {blobToArrayBuffer} from "../../../../IcpAccelerator_frontend/src/components/Utils/formatter/blobToArrayBuffer"
+import { blobToArrayBuffer } from "../../../../IcpAccelerator_frontend/src/components/Utils/formatter/blobToArrayBuffer";
 
 const validationSchema = yup
   .object()
@@ -35,16 +35,26 @@ const validationSchema = yup
     telegram_id: yup
       .string()
       .nullable(true)
-      .matches(/^[a-zA-Z0-9_]{5,32}$/, "Invalid Telegram ID")
-      .optional(),
+      .optional()
+      // .test("is-valid-telegram", "Invalid Telegram link", (value) => {
+      //   if (!value) return true;
+      //   const hasValidChars = /^[a-zA-Z0-9_]{5,32}$/.test(value);
+      //   return hasValidChars;
+      // })
+      .url("Invalid url"),
     twitter_url: yup
       .string()
       .nullable(true)
       .optional()
-      .matches(
-        /^(https?:\/\/)?(www\.)?twitter\.com\/[a-zA-Z0-9_]{1,15}$/,
-        "Invalid Twitter URL"
-      ),
+      // .test("is-valid-twitter", "Invalid Twitter ID", (value) => {
+      //   if (!value) return true;
+      //   const hasValidChars =
+      //   /^(https?:\/\/)?(www\.)?(twitter\.com|x\.com)\/[a-zA-Z0-9_]{1,15}$/.test(
+      //       value
+      //     );
+      //   return hasValidChars;
+      // })
+      .url("Invalid url"),
     openchat_user_name: yup
       .string()
       .nullable(true)
@@ -429,7 +439,7 @@ const UserProfileProjectUpdate = () => {
   const [multiChainSelectedOptions, setMultiChainSelectedOptions] = useState(
     []
   );
-const [projectId ,setProjectId]=useState('');
+  const [projectId, setProjectId] = useState("");
   const handleToggleChange = () => {
     setshowOriginalLogoAndCover(!showOriginalLogoAndCover);
   };
@@ -439,21 +449,23 @@ const [projectId ,setProjectId]=useState('');
   };
 
   function convertBlobToArray(val) {
-      fetch(val)
-          .then(response => {
-              if (response.ok) return response.blob();
-              throw new Error('Network response was not ok.');
+    fetch(val)
+      .then((response) => {
+        if (response.ok) return response.blob();
+        throw new Error("Network response was not ok.");
+      })
+      .then((blob) => {
+        blobToArrayBuffer(blob)
+          .then((arrayBuffer) => {
+            console.log(arrayBuffer);
           })
-          .then(blob => {
-              blobToArrayBuffer(blob).then(arrayBuffer => {
-                  console.log(arrayBuffer);
-              }).catch(error => {
-                  console.error("Error converting blob to ArrayBuffer:", error);
-              });
-          })
-          .catch(error => {
-              console.error("Error fetching the Blob:", error);
+          .catch((error) => {
+            console.error("Error converting blob to ArrayBuffer:", error);
           });
+      })
+      .catch((error) => {
+        console.error("Error fetching the Blob:", error);
+      });
   }
   const navigate = useNavigate();
   const location = useLocation();
@@ -588,7 +600,6 @@ const [projectId ,setProjectId]=useState('');
         reader.onloadend = () => {
           setImagePreview(reader.result);
           setImageData(reader.result);
-
         };
         reader.readAsDataURL(compressedFile);
         const byteArray = await compressedFile.arrayBuffer();
@@ -645,8 +656,7 @@ const [projectId ,setProjectId]=useState('');
         const reader = new FileReader();
         reader.onloadend = () => {
           setCoverPreview(reader.result);
-        setCoverData(reader.result);
-
+          setCoverData(reader.result);
         };
         reader.onerror = (error) => {
           console.error("FileReader error: ", error);
@@ -658,7 +668,7 @@ const [projectId ,setProjectId]=useState('');
         reader.readAsDataURL(compressedFile);
 
         const byteArray = new Uint8Array(await compressedFile.arrayBuffer());
-        console.log('byteArray',byteArray)
+        console.log("byteArray", byteArray);
         setCoverData(byteArray);
       } catch (error) {
         setError("cover", {
@@ -712,13 +722,15 @@ const [projectId ,setProjectId]=useState('');
           console.log("updated Info:", updatedInfo);
 
           setOrignalData({
-            projectId:data[0][0],
+            projectId: data[0][0],
             projectName: originalInfo?.project_name ?? "No Name",
-            projectLogo:  originalInfo?.project_logo &&
+            projectLogo:
+              originalInfo?.project_logo &&
               originalInfo?.project_logo.length > 0
                 ? uint8ArrayToBase64(originalInfo.project_logo)
                 : null,
-            projectCover:originalInfo?.project_cover &&
+            projectCover:
+              originalInfo?.project_cover &&
               originalInfo?.project_cover.length > 0
                 ? uint8ArrayToBase64(originalInfo.project_cover)
                 : null,
@@ -751,7 +763,11 @@ const [projectId ,setProjectId]=useState('');
             supportsMultichain: originalInfo?.supports_multichain?.[0],
             typeOfRegistration: originalInfo?.type_of_registration?.[0],
             uploadPrivateDocuments: originalInfo?.upload_private_documents?.[0],
-            uploadPublicDocuments:originalInfo?.public_docs?.[0] && originalInfo?.public_docs?.[0].length >0 ?true:false,
+            uploadPublicDocuments:
+              originalInfo?.public_docs?.[0] &&
+              originalInfo?.public_docs?.[0].length > 0
+                ? true
+                : false,
             projectAreaOfFocus: originalInfo?.project_area_of_focus,
             mentorsAssigned: originalInfo?.mentors_assigned[0],
             vcsAssigned: originalInfo?.vc_assigned[0],
@@ -766,7 +782,8 @@ const [projectId ,setProjectId]=useState('');
             isYourProjectRegistered:
               originalInfo?.is_your_project_registered[0],
             userEmail: originalInfo?.user_data?.email,
-            userProfilePicture: originalInfo?.user_data.profile_picture &&
+            userProfilePicture:
+              originalInfo?.user_data.profile_picture &&
               originalInfo?.user_data.profile_picture[0].length > 0
                 ? uint8ArrayToBase64(originalInfo.user_data.profile_picture[0])
                 : null,
@@ -777,14 +794,14 @@ const [projectId ,setProjectId]=useState('');
           });
 
           setUpdatedData({
-            projectId:data[0][0],
+            projectId: data[0][0],
             projectName: updatedInfo?.project_name ?? "No Name",
-            projectLogo:  updatedInfo?.project_logo &&
-              updatedInfo?.project_logo.length > 0
+            projectLogo:
+              updatedInfo?.project_logo && updatedInfo?.project_logo.length > 0
                 ? uint8ArrayToBase64(updatedInfo.project_logo)
                 : null,
-            projectCover:updatedInfo?.project_cove &&
-              updatedInfo?.project_cover.length > 0
+            projectCover:
+              updatedInfo?.project_cove && updatedInfo?.project_cover.length > 0
                 ? uint8ArrayToBase64(updatedInfo.project_cover)
                 : null,
             projectDescription:
@@ -819,7 +836,11 @@ const [projectId ,setProjectId]=useState('');
             isYourProjectRegistered:
               updatedInfo?.is_your_project_registered?.[0],
             uploadPrivateDocuments: updatedInfo?.upload_private_documents?.[0],
-            uploadPublicDocuments:updatedInfo?.public_docs?.[0] && updatedInfo?.public_docs?.[0].length >0 ? true:false,
+            uploadPublicDocuments:
+              updatedInfo?.public_docs?.[0] &&
+              updatedInfo?.public_docs?.[0].length > 0
+                ? true
+                : false,
             projectAreaOfFocus: updatedInfo?.project_area_of_focus,
             mentorsAssigned: updatedInfo?.mentors_assigned[0],
             vcsAssigned: updatedInfo?.vc_assigned[0],
@@ -831,7 +852,8 @@ const [projectId ,setProjectId]=useState('');
             userCountry: updatedInfo?.user_data?.country,
             userFullName: updatedInfo?.user_data?.full_name,
             userEmail: updatedInfo?.user_data?.email,
-            userProfilePicture: updatedInfo?.user_data.profile_picture &&
+            userProfilePicture:
+              updatedInfo?.user_data.profile_picture &&
               updatedInfo?.user_data.profile_picture[0].length > 0
                 ? uint8ArrayToBase64(updatedInfo.user_data.profile_picture[0])
                 : null,
@@ -863,9 +885,9 @@ const [projectId ,setProjectId]=useState('');
   }, [updatedData]);
 
   const setProjectValuesHandler = (val) => {
-     console.log("setval",   val);
+    console.log("setval", val);
     if (val) {
-      setProjectId(val?.projectId ??"")
+      setProjectId(val?.projectId ?? "");
       setValue("full_name", val?.userFullName ?? "");
       setValue("email", val?.email ?? "");
       setValue("telegram_id", val?.userTelegram ?? "");
@@ -875,20 +897,26 @@ const [projectId ,setProjectId]=useState('');
       setValue("country", val?.userCountry ?? "");
       setValue("domains_interested_in", val?.areaOfInterest ?? "");
       setInterestedDomainsSelectedOptionsHandler(val?.areaOfInterest ?? null);
-      setImagePreview(val?.userProfilePicture ?? '');
-      setImageData(val?.userProfilePicture ?convertBlobToArray(val?.userProfilePicture ): null);
+      setImagePreview(val?.userProfilePicture ?? "");
+      setImageData(
+        val?.userProfilePicture
+          ? convertBlobToArray(val?.userProfilePicture)
+          : null
+      );
       setValue("type_of_profile", val?.userProfileType);
       setValue(
         "reasons_to_join_platform",
         val?.reasonToJoin ? val?.reasonToJoin.join(", ") : ""
       );
       setReasonOfJoiningSelectedOptionsHandler(val?.reasonToJoin);
-      setLogoPreview(
-        val?.projectLogo ?? "");
-        setLogoData(val?.projectLogo ? convertBlobToArray(val?.projectLogo ): null)
-    setCoverPreview(
-        val?.projectCover ?? "");
-        setCoverData(val?.projectCover ? convertBlobToArray(val?.projectCover): null)
+      setLogoPreview(val?.projectLogo ?? "");
+      setLogoData(
+        val?.projectLogo ? convertBlobToArray(val?.projectLogo) : null
+      );
+      setCoverPreview(val?.projectCover ?? "");
+      setCoverData(
+        val?.projectCover ? convertBlobToArray(val?.projectCover) : null
+      );
       setValue("preferred_icp_hub", val?.preferredIcpHub);
       setValue("project_name", val?.projectName ?? "");
       setValue("project_description", val?.projectDescription ?? "");
@@ -948,19 +976,13 @@ const [projectId ,setProjectId]=useState('');
       setValue("github_link", val?.githubLink ?? "");
       setValue("token_economics", val?.tokenEconomics ?? "");
       setValue("white_paper", val?.longTermGoals ?? "");
-      setValue(
-        "upload_private_documents",
-        val?.uploadPrivateDocuments ?? ""
-      );
+      setValue("upload_private_documents", val?.uploadPrivateDocuments ?? "");
       if (val?.uploadPrivateDocuments === true) {
         setValue("upload_private_documents", "true");
       } else {
         setValue("upload_private_documents", "false");
       }
-      setValue(
-        "upload_public_documents",
-        val?.uploadPublicDocuments ?? ""
-      );
+      setValue("upload_public_documents", val?.uploadPublicDocuments ?? "");
       if (val?.uploadPublicDocuments === true) {
         setValue("upload_public_documents", "true");
       } else {
@@ -1145,8 +1167,8 @@ const [projectId ,setProjectId]=useState('');
 
   // form submit handler func
   const onSubmitHandler = async (data) => {
-    console.log('update data',data)
-     console.log('coverData',coverData)
+    console.log("update data", data);
+    console.log("coverData", coverData);
     if (actor) {
       const projectData = {
         // user data
@@ -1260,7 +1282,7 @@ const [projectId ,setProjectId]=useState('');
           data?.upload_private_documents === "true" ? true : false,
         ],
         // Extra field at Project
-        project_area_of_focus:data?.domains_interested_in ?? "",
+        project_area_of_focus: data?.domains_interested_in ?? "",
         reason_to_join_incubator: data?.reasons_to_join_platform ?? [""],
         vc_assigned: [],
         mentors_assigned: [],
@@ -1271,20 +1293,20 @@ const [projectId ,setProjectId]=useState('');
         self_rating_of_project: 0,
       };
       try {
-        console.log('projectData',projectData)
+        console.log("projectData", projectData);
         // console.log('imagedata ==>>> 1261',imageData)
 
-          let id = projectId;
-          console.log("data 1277 ====>>>" , data)
-          await actor.update_project(id, projectData).then((result) => {
-            console.log("result in project to check update call==>", result);
-            if (result && result.includes("approval request is sent")) {
-              toast.success("Approval request is sent");
-              window.location.href = "/";
-            } else {
-              toast.error(result);
-            }
-          });
+        let id = projectId;
+        console.log("data 1277 ====>>>", data);
+        await actor.update_project(id, projectData).then((result) => {
+          console.log("result in project to check update call==>", result);
+          if (result && result.includes("approval request is sent")) {
+            toast.success("Approval request is sent");
+            window.location.href = "/";
+          } else {
+            toast.error(result);
+          }
+        });
       } catch (error) {
         toast.error(error);
         console.error("Error sending data to the backend:", error);
@@ -1303,319 +1325,323 @@ const [projectId ,setProjectId]=useState('');
 
   return (
     <>
-    <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
-      <div className="w-full px-[4%] py-[4%]">
-        <div className="flex sm:flex-row justify-between  mb-4 sxxs:flex-col">
-          <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-black to-gray-800 text-transparent bg-clip-text">
-            Project Profile
-          </h1>
-          <div className="flex text-white text-sm flex-row font-semibold h-auto items-center bg-customBlue rounded-lg p-3 justify-around">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 512 512"
-              className="size-4"
-              fill="currentColor"
-              onClick={handleSwitchEditMode}
-            >
-              <path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160V416c0 53 43 96 96 96H352c53 0 96-43 96-96V320c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H96z" />
-            </svg>
-          </div>
-        </div>
-        <div className="w-full flex gap-4  md:flex-row flex-col mt-4">
-          <div className=" bg-[#D2D5F2]  shadow-md shadow-gray-400 p-6 rounded-lg md:w-1/4 w-full">
-            <div className="div">
-              {showOriginalProfile ? (
-                <div className="justify-center flex items-center">
-                  <div
-                    className="size-fit  rounded-full bg-no-repeat bg-center bg-cover relative p-1 bg-blend-overlay border-2 border-gray-300"
-                    style={{
-                      backgroundImage: `url(${orignalData?.userProfilePicture}), linear-gradient(168deg, rgba(255, 255, 255, 0.25) -0.86%, rgba(255, 255, 255, 0) 103.57%)`,
-                      backdropFilter: "blur(20px)",
-                    }}
-                  >
-                    <img
-                      className="object-cover size-44 max-h-44 rounded-full"
-                      src={orignalData?.userProfilePicture}
-                      alt=""
-                    />
-                  </div>
-                </div>
-              ) : (
-                <div>
-
-                  {editMode ? (
-                    <div className="flex flex-col">
-                      <div className="flex-col w-full flex justify-start gap-4 items-center">
-                        <div className=" size-28 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
-                          {imagePreview && !errors.image ? (
-                            <img
-                              src={imagePreview}
-                              alt="Profile"
-                              className="h-full w-full object-cover"
-                            />
-                          ) : (
-                            <svg
-                              width="35"
-                              height="37"
-                              viewBox="0 0 35 37"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="bg-no-repeat"
-                            >
-                              <path
-                                d="M8.53049 8.62583C8.5304 13.3783 12.3575 17.2449 17.0605 17.2438C21.7634 17.2428 25.5907 13.3744 25.5908 8.62196C25.5909 3.8695 21.7638 0.00287764 17.0608 0.00394405C12.3579 0.00501045 8.53058 3.87336 8.53049 8.62583ZM32.2249 36.3959L34.1204 36.3954L34.1205 34.4799C34.1206 27.0878 28.1667 21.0724 20.8516 21.0741L13.2692 21.0758C5.95224 21.0775 -3.41468e-05 27.0955 -0.000176714 34.4876L-0.000213659 36.4032L32.2249 36.3959Z"
-                                fill="#BBBBBB"
-                              />
-                            </svg>
-                          )}
-                        </div>
-
-                        <Controller
-                          name="image"
-                          control={control}
-                          render={({ field }) => (
-                            <>
-                              <input
-                                type="file"
-                                className="hidden"
-                                id="image"
-                                name="image"
-                                onChange={(e) => {
-                                  field.onChange(e.target.files[0]);
-                                  imageCreationFunc(e.target.files[0]);
-                                }}
-                                accept=".jpg, .jpeg, .png"
-                              />
-                              <div className="flex">
-                                {console.log("imagePreview 1373 ===>>>>s",imagePreview)}
-                                {imagePreview && !errors.image ? (
-                                  <label
-                                    htmlFor="image"
-                                    className="p-2 border-2 border-blue-800 items-center rounded-md text-xs bg-transparent text-blue-800 cursor-pointer font-semibold flex"
-                                  >
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      viewBox="0 0 448 512"
-                                      className="size-4"
-                                      fill="currentColor"
-                                      style={{ transform: "rotate(135deg)" }}
-                                    >
-                                      <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
-                                    </svg>
-                                    <span className="ml-2">
-                                      Change profile picture
-                                    </span>
-                                  </label>
-                                ) : (
-                                  <label
-                                    htmlFor="image"
-                                    className="p-2 border-2 border-blue-800 items-center rounded-md text-xs bg-transparent text-blue-800 cursor-pointer font-semibold flex"
-                                  >
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      viewBox="0 0 512 512"
-                                      className="size-4"
-                                      fill="currentColor"
-                                    >
-                                      <path d="M288 109.3V352c0 17.7-14.3 32-32 32s-32-14.3-32-32V109.3l-73.4 73.4c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l128-128c12.5-12.5 32.8-12.5 45.3 0l128 128c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L288 109.3zM64 352H192c0 35.3 28.7 64 64 64s64-28.7 64-64H448c35.3 0 64 28.7 64 64v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V416c0-35.3 28.7-64 64-64zM432 456a24 24 0 1 0 0-48 24 24 0 1 0 0 48z" />
-                                    </svg>
-                                    <span className="ml-2">
-                                      Upload profile picture
-                                    </span>
-                                  </label>
-                                )}
-                                {imagePreview || errors.image ? (
-                                  <button
-                                    className=" ml-2 p-2 border-2 border-red-500 items-center rounded-md text-xs bg-transparent text-red-500 cursor-pointer font-semibold capitalize"
-                                    onClick={() => clearImageFunc("image")}
-                                  >
-                                    clear
-                                  </button>
-                                ) : (
-                                  ""
-                                )}
-                              </div>
-                            </>
-                          )}
-                        />
-                      </div>
-                      {errors.image && (
-                        <span className="mt-1 text-sm text-red-500 font-bold text-start px-4">
-                          {errors?.image?.message}
-                        </span>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="justify-center flex items-center">
-                      <div
-                        className="size-fit  rounded-full bg-no-repeat bg-center bg-cover relative p-1 bg-blend-overlay border-2 border-gray-300"
-                        style={{
-                          backgroundImage: `url(${updatedData?.userProfilePicture}), linear-gradient(168deg, rgba(255, 255, 255, 0.25) -0.86%, rgba(255, 255, 255, 0) 103.57%)`,
-                          backdropFilter: "blur(20px)",
-                        }}
-                      >
-                        <img
-                          className="object-cover size-44 max-h-44 rounded-full"
-                          src={updatedData?.userProfilePicture}
-                          alt=""
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-              <div className="flex justify-center p-2 gap-2">
-                <span
-                  className="w-2 h-2 bg-red-700 rounded-full"
-                  onClick={() => setShowOriginalProfile(true)}
-                ></span>
-                <span
-                  className="w-2 h-2 bg-green-700 rounded-full"
-                  onClick={() => setShowOriginalProfile(false)}
-                ></span>
-              </div>
+      <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
+        <div className="w-full px-[4%] py-[4%]">
+          <div className="flex sm:flex-row justify-between  mb-4 sxxs:flex-col">
+            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-black to-gray-800 text-transparent bg-clip-text">
+              Project Profile
+            </h1>
+            <div className="flex text-white text-sm flex-row font-semibold h-auto items-center bg-customBlue rounded-lg p-3 justify-around">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 512 512"
+                className="size-4"
+                fill="currentColor"
+                onClick={handleSwitchEditMode}
+              >
+                <path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160V416c0 53 43 96 96 96H352c53 0 96-43 96-96V320c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H96z" />
+              </svg>
             </div>
-            <div className="flex flex-col ml-4 w-auto justify-start md:mb-0 mb-6">
-              <div className="flex flex-col mb-2">
-                <div className="flex space-x-2 items-center flex-row">
-                  <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                  <h1 className="md:text-3xl text-xl md:font-extrabold font-bold  bg-black text-transparent bg-clip-text">
-                    {orignalData?.userFullName}
-                  </h1>
+          </div>
+          <div className="w-full flex gap-4  md:flex-row flex-col mt-4">
+            <div className=" bg-[#D2D5F2]  shadow-md shadow-gray-400 p-6 rounded-lg md:w-1/4 w-full">
+              <div className="div">
+                {showOriginalProfile ? (
+                  <div className="justify-center flex items-center">
+                    <div
+                      className="size-fit  rounded-full bg-no-repeat bg-center bg-cover relative p-1 bg-blend-overlay border-2 border-gray-300"
+                      style={{
+                        backgroundImage: `url(${orignalData?.userProfilePicture}), linear-gradient(168deg, rgba(255, 255, 255, 0.25) -0.86%, rgba(255, 255, 255, 0) 103.57%)`,
+                        backdropFilter: "blur(20px)",
+                      }}
+                    >
+                      <img
+                        className="object-cover size-44 max-h-44 rounded-full"
+                        src={orignalData?.userProfilePicture}
+                        alt=""
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    {editMode ? (
+                      <div className="flex flex-col">
+                        <div className="flex-col w-full flex justify-start gap-4 items-center">
+                          <div className=" size-28 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
+                            {imagePreview && !errors.image ? (
+                              <img
+                                src={imagePreview}
+                                alt="Profile"
+                                className="h-full w-full object-cover"
+                              />
+                            ) : (
+                              <svg
+                                width="35"
+                                height="37"
+                                viewBox="0 0 35 37"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="bg-no-repeat"
+                              >
+                                <path
+                                  d="M8.53049 8.62583C8.5304 13.3783 12.3575 17.2449 17.0605 17.2438C21.7634 17.2428 25.5907 13.3744 25.5908 8.62196C25.5909 3.8695 21.7638 0.00287764 17.0608 0.00394405C12.3579 0.00501045 8.53058 3.87336 8.53049 8.62583ZM32.2249 36.3959L34.1204 36.3954L34.1205 34.4799C34.1206 27.0878 28.1667 21.0724 20.8516 21.0741L13.2692 21.0758C5.95224 21.0775 -3.41468e-05 27.0955 -0.000176714 34.4876L-0.000213659 36.4032L32.2249 36.3959Z"
+                                  fill="#BBBBBB"
+                                />
+                              </svg>
+                            )}
+                          </div>
+
+                          <Controller
+                            name="image"
+                            control={control}
+                            render={({ field }) => (
+                              <>
+                                <input
+                                  type="file"
+                                  className="hidden"
+                                  id="image"
+                                  name="image"
+                                  onChange={(e) => {
+                                    field.onChange(e.target.files[0]);
+                                    imageCreationFunc(e.target.files[0]);
+                                  }}
+                                  accept=".jpg, .jpeg, .png"
+                                />
+                                <div className="flex">
+                                  {console.log(
+                                    "imagePreview 1373 ===>>>>s",
+                                    imagePreview
+                                  )}
+                                  {imagePreview && !errors.image ? (
+                                    <label
+                                      htmlFor="image"
+                                      className="p-2 border-2 border-blue-800 items-center rounded-md text-xs bg-transparent text-blue-800 cursor-pointer font-semibold flex"
+                                    >
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 448 512"
+                                        className="size-4"
+                                        fill="currentColor"
+                                        style={{ transform: "rotate(135deg)" }}
+                                      >
+                                        <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
+                                      </svg>
+                                      <span className="ml-2">
+                                        Change profile picture
+                                      </span>
+                                    </label>
+                                  ) : (
+                                    <label
+                                      htmlFor="image"
+                                      className="p-2 border-2 border-blue-800 items-center rounded-md text-xs bg-transparent text-blue-800 cursor-pointer font-semibold flex"
+                                    >
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 512 512"
+                                        className="size-4"
+                                        fill="currentColor"
+                                      >
+                                        <path d="M288 109.3V352c0 17.7-14.3 32-32 32s-32-14.3-32-32V109.3l-73.4 73.4c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l128-128c12.5-12.5 32.8-12.5 45.3 0l128 128c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L288 109.3zM64 352H192c0 35.3 28.7 64 64 64s64-28.7 64-64H448c35.3 0 64 28.7 64 64v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V416c0-35.3 28.7-64 64-64zM432 456a24 24 0 1 0 0-48 24 24 0 1 0 0 48z" />
+                                      </svg>
+                                      <span className="ml-2">
+                                        Upload profile picture
+                                      </span>
+                                    </label>
+                                  )}
+                                  {imagePreview || errors.image ? (
+                                    <button
+                                      className=" ml-2 p-2 border-2 border-red-500 items-center rounded-md text-xs bg-transparent text-red-500 cursor-pointer font-semibold capitalize"
+                                      onClick={() => clearImageFunc("image")}
+                                    >
+                                      clear
+                                    </button>
+                                  ) : (
+                                    ""
+                                  )}
+                                </div>
+                              </>
+                            )}
+                          />
+                        </div>
+                        {errors.image && (
+                          <span className="mt-1 text-sm text-red-500 font-bold text-start px-4">
+                            {errors?.image?.message}
+                          </span>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="justify-center flex items-center">
+                        <div
+                          className="size-fit  rounded-full bg-no-repeat bg-center bg-cover relative p-1 bg-blend-overlay border-2 border-gray-300"
+                          style={{
+                            backgroundImage: `url(${updatedData?.userProfilePicture}), linear-gradient(168deg, rgba(255, 255, 255, 0.25) -0.86%, rgba(255, 255, 255, 0) 103.57%)`,
+                            backdropFilter: "blur(20px)",
+                          }}
+                        >
+                          <img
+                            className="object-cover size-44 max-h-44 rounded-full"
+                            src={updatedData?.userProfilePicture}
+                            alt=""
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+                <div className="flex justify-center p-2 gap-2">
+                  <span
+                    className="w-2 h-2 bg-red-700 rounded-full"
+                    onClick={() => setShowOriginalProfile(true)}
+                  ></span>
+                  <span
+                    className="w-2 h-2 bg-green-700 rounded-full"
+                    onClick={() => setShowOriginalProfile(false)}
+                  ></span>
                 </div>
-                <div className="flex space-x-2 items-center flex-row mt-1">
-                  <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                  {editMode ? (
-                    <div className="flex flex-col mb-3">
-                      <input
-                        type="text"
-                        {...register("full_name")}
-                        className={`bg-gray-50 border-2 
+              </div>
+              <div className="flex flex-col ml-4 w-auto justify-start md:mb-0 mb-6">
+                <div className="flex flex-col mb-2">
+                  <div className="flex space-x-2 items-center flex-row">
+                    <span className="w-2 h-2 bg-red-700 rounded-full"></span>
+                    <h1 className="md:text-3xl text-xl md:font-extrabold font-bold  bg-black text-transparent bg-clip-text">
+                      {orignalData?.userFullName}
+                    </h1>
+                  </div>
+                  <div className="flex space-x-2 items-center flex-row mt-1">
+                    <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                    {editMode ? (
+                      <div className="flex flex-col mb-3">
+                        <input
+                          type="text"
+                          {...register("full_name")}
+                          className={`bg-gray-50 border-2 
                                               ${
                                                 errors?.full_name
                                                   ? "border-red-500"
                                                   : "border-[#737373]"
                                               } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                        placeholder="Enter your full name"
-                      />
-                      {errors?.full_name && (
-                        <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                          {errors?.full_name?.message}
-                        </span>
-                      )}
-                    </div>
-                  ) : (
-                    <h1 className="md:text-3xl text-xl md:font-extrabold font-bold  bg-black text-transparent bg-clip-text">
-                      {updatedData?.userFullName}
-                    </h1>
-                  )}
-                </div>
-              </div>
-              <div className="text-gray-500 md:text-md text-sm font-normal flex mb-2">
-                <div className="flex flex-col mb-2">
-                  <div className="flex space-x-2 items-center flex-row">
-                    <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 512 512"
-                      className="size-4 "
-                      fill="currentColor"
-                    >
-                      <path d="M256 64C150 64 64 150 64 256s86 192 192 192c17.7 0 32 14.3 32 32s-14.3 32-32 32C114.6 512 0 397.4 0 256S114.6 0 256 0S512 114.6 512 256v32c0 53-43 96-96 96c-29.3 0-55.6-13.2-73.2-33.9C320 371.1 289.5 384 256 384c-70.7 0-128-57.3-128-128s57.3-128 128-128c27.9 0 53.7 8.9 74.7 24.1c5.7-5 13.1-8.1 21.3-8.1c17.7 0 32 14.3 32 32v80 32c0 17.7 14.3 32 32 32s32-14.3 32-32V256c0-106-86-192-192-192zm64 192a64 64 0 1 0 -128 0 64 64 0 1 0 128 0z" />
-                    </svg>
-                    <span className="ml-2 truncate">
-                      {orignalData?.userEmail}
-                    </span>
+                          placeholder="Enter your full name"
+                        />
+                        {errors?.full_name && (
+                          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                            {errors?.full_name?.message}
+                          </span>
+                        )}
+                      </div>
+                    ) : (
+                      <h1 className="md:text-3xl text-xl md:font-extrabold font-bold  bg-black text-transparent bg-clip-text">
+                        {updatedData?.userFullName}
+                      </h1>
+                    )}
                   </div>
-                  <div className="flex space-x-2 items-center flex-row mt-1">
-                    <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                    {editMode ? (
-                      <div className="flex flex-col mt-1">
-                        <input
-                          type="email"
-                          {...register("email")}
-                          className={`bg-gray-50 border-2 
+                </div>
+                <div className="text-gray-500 md:text-md text-sm font-normal flex mb-2">
+                  <div className="flex flex-col mb-2">
+                    <div className="flex space-x-2 items-center flex-row">
+                      <span className="w-2 h-2 bg-red-700 rounded-full"></span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 512 512"
+                        className="size-4 "
+                        fill="currentColor"
+                      >
+                        <path d="M256 64C150 64 64 150 64 256s86 192 192 192c17.7 0 32 14.3 32 32s-14.3 32-32 32C114.6 512 0 397.4 0 256S114.6 0 256 0S512 114.6 512 256v32c0 53-43 96-96 96c-29.3 0-55.6-13.2-73.2-33.9C320 371.1 289.5 384 256 384c-70.7 0-128-57.3-128-128s57.3-128 128-128c27.9 0 53.7 8.9 74.7 24.1c5.7-5 13.1-8.1 21.3-8.1c17.7 0 32 14.3 32 32v80 32c0 17.7 14.3 32 32 32s32-14.3 32-32V256c0-106-86-192-192-192zm64 192a64 64 0 1 0 -128 0 64 64 0 1 0 128 0z" />
+                      </svg>
+                      <span className="ml-2 truncate">
+                        {orignalData?.userEmail}
+                      </span>
+                    </div>
+                    <div className="flex space-x-2 items-center flex-row mt-1">
+                      <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                      {editMode ? (
+                        <div className="flex flex-col mt-1">
+                          <input
+                            type="email"
+                            {...register("email")}
+                            className={`bg-gray-50 border-2 
                                               ${
                                                 errors?.email
                                                   ? "border-red-500"
                                                   : "border-[#737373]"
                                               } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                          placeholder="Enter your email"
-                        />
-                        {errors?.email && (
-                          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                            {errors?.email?.message}
-                          </span>
-                        )}
-                      </div>
-                    ) : (
-                      <>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 512 512"
-                          className="size-4 "
-                          fill="currentColor"
-                        >
-                          <path d="M256 64C150 64 64 150 64 256s86 192 192 192c17.7 0 32 14.3 32 32s-14.3 32-32 32C114.6 512 0 397.4 0 256S114.6 0 256 0S512 114.6 512 256v32c0 53-43 96-96 96c-29.3 0-55.6-13.2-73.2-33.9C320 371.1 289.5 384 256 384c-70.7 0-128-57.3-128-128s57.3-128 128-128c27.9 0 53.7 8.9 74.7 24.1c5.7-5 13.1-8.1 21.3-8.1c17.7 0 32 14.3 32 32v80 32c0 17.7 14.3 32 32 32s32-14.3 32-32V256c0-106-86-192-192-192zm64 192a64 64 0 1 0 -128 0 64 64 0 1 0 128 0z" />
-                        </svg>
-                        <span className="ml-2 truncate">
-                          {updatedData?.userEmail}
-                        </span>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-col items-start text-sm">
-                <div className="flex flex-col mb-2">
-                  <div className="flex flex-row  text-gray-600 space-x-2 items-center">
-                    <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                    {place}
-                    <div className="underline ">{orignalData?.userCountry}</div>
-                  </div>
-                  <div className="flex space-x-2 items-center flex-row text-gray-600">
-                    <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                    {editMode ? (
-                      <div className="flex flex-col mt-1">
-                        <select
-                          {...register("country")}
-                          className={`bg-gray-50 border-2 ${
-                            errors.country
-                              ? "border-red-500 "
-                              : "border-[#737373]"
-                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                        >
-                          <option className="text-sm font-bold" value="">
-                            Select your country
-                          </option>
-                          {countries?.map((expert) => (
-                            <option
-                              key={expert.name}
-                              value={expert.name}
-                              className="text-sm font-bold "
-                            >
-                              {expert.name}
-                            </option>
-                          ))}
-                        </select>
-
-                        {errors?.country && (
-                          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                            {errors?.country?.message}
-                          </span>
-                        )}
-                      </div>
-                    ) : (
-                      <>
-                        {place}
-                        <div className="underline ">
-                          {updatedData?.userCountry}
+                            placeholder="Enter your email"
+                          />
+                          {errors?.email && (
+                            <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                              {errors?.email?.message}
+                            </span>
+                          )}
                         </div>
-                      </>
-                    )}
+                      ) : (
+                        <>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 512 512"
+                            className="size-4 "
+                            fill="currentColor"
+                          >
+                            <path d="M256 64C150 64 64 150 64 256s86 192 192 192c17.7 0 32 14.3 32 32s-14.3 32-32 32C114.6 512 0 397.4 0 256S114.6 0 256 0S512 114.6 512 256v32c0 53-43 96-96 96c-29.3 0-55.6-13.2-73.2-33.9C320 371.1 289.5 384 256 384c-70.7 0-128-57.3-128-128s57.3-128 128-128c27.9 0 53.7 8.9 74.7 24.1c5.7-5 13.1-8.1 21.3-8.1c17.7 0 32 14.3 32 32v80 32c0 17.7 14.3 32 32 32s32-14.3 32-32V256c0-106-86-192-192-192zm64 192a64 64 0 1 0 -128 0 64 64 0 1 0 128 0z" />
+                          </svg>
+                          <span className="ml-2 truncate">
+                            {updatedData?.userEmail}
+                          </span>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
-                {/* <div className="flex flex-col mb-2">
+                <div className="flex flex-col items-start text-sm">
+                  <div className="flex flex-col mb-2">
+                    <div className="flex flex-row  text-gray-600 space-x-2 items-center">
+                      <span className="w-2 h-2 bg-red-700 rounded-full"></span>
+                      {place}
+                      <div className="underline ">
+                        {orignalData?.userCountry}
+                      </div>
+                    </div>
+                    <div className="flex space-x-2 items-center flex-row text-gray-600">
+                      <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                      {editMode ? (
+                        <div className="flex flex-col mt-1">
+                          <select
+                            {...register("country")}
+                            className={`bg-gray-50 border-2 ${
+                              errors.country
+                                ? "border-red-500 "
+                                : "border-[#737373]"
+                            } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
+                          >
+                            <option className="text-sm font-bold" value="">
+                              Select your country
+                            </option>
+                            {countries?.map((expert) => (
+                              <option
+                                key={expert.name}
+                                value={expert.name}
+                                className="text-sm font-bold "
+                              >
+                                {expert.name}
+                              </option>
+                            ))}
+                          </select>
+
+                          {errors?.country && (
+                            <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                              {errors?.country?.message}
+                            </span>
+                          )}
+                        </div>
+                      ) : (
+                        <>
+                          {place}
+                          <div className="underline ">
+                            {updatedData?.userCountry}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  {/* <div className="flex flex-col mb-2">
                 <div className="flex flex-row  text-gray-600 space-x-2 items-center">
                   <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                   <svg
@@ -1675,49 +1701,174 @@ const [projectId ,setProjectId]=useState('');
                   )}
                 </div>
               </div> */}
-                <div className="flex flex-col mb-2">
-                  <div className="flex flex-row  text-gray-600 space-x-2 items-center">
-                    <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                    <img
-                      src={openchat_username}
-                      alt="openchat_username"
-                      className="size-5"
-                    />
-                    <div className="ml-2">{orignalData?.openchatUsername}</div>
-                  </div>
-                  <div className="flex space-x-2 items-center flex-row text-gray-600 mt-1">
-                    <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                    {editMode ? (
-                      <div className="flex flex-col mt-1">
-                        <input
-                          type="text"
-                          {...register("openchat_user_name")}
-                          className={`bg-gray-50 border-2 
+                  <div className="flex flex-col mb-2">
+                    <div className="flex flex-row  text-gray-600 space-x-2 items-center">
+                      <span className="w-2 h-2 bg-red-700 rounded-full"></span>
+                      <img
+                        src={openchat_username}
+                        alt="openchat_username"
+                        className="size-5"
+                      />
+                      <div className="ml-2">
+                        {orignalData?.openchatUsername}
+                      </div>
+                    </div>
+                    <div className="flex space-x-2 items-center flex-row text-gray-600 mt-1">
+                      <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                      {editMode ? (
+                        <div className="flex flex-col mt-1">
+                          <input
+                            type="text"
+                            {...register("openchat_user_name")}
+                            className={`bg-gray-50 border-2 
                                               ${
                                                 errors?.openchat_user_name
                                                   ? "border-red-500 "
                                                   : "border-[#737373]"
                                               } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                          placeholder="Enter openchat username"
-                        />
-                        {errors?.openchat_user_name && (
-                          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                            {errors?.openchat_user_name?.message}
-                          </span>
+                            placeholder="Enter openchat username"
+                          />
+                          {errors?.openchat_user_name && (
+                            <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                              {errors?.openchat_user_name?.message}
+                            </span>
+                          )}
+                        </div>
+                      ) : (
+                        <>
+                          <img
+                            src={openchat_username}
+                            alt="openchat_username"
+                            className="size-5"
+                          />
+                          <div className="ml-2">
+                            {updatedData?.openchatUsername}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col mb-2">
+                    <div className="flex flex-col  text-gray-600 space-x-2">
+                      <div className="flex flex-row  text-gray-600 space-x-2 items-center">
+                        <span className="w-2 h-2 bg-red-700 rounded-full"></span>
+
+                        <div className="text-black font-semibold">Skill :</div>
+                      </div>
+                      <div className="flex gap-2 text-xs items-center flex-wrap">
+                        {orignalData?.areaOfInterest &&
+                          orignalData?.areaOfInterest
+                            .split(",")
+                            .slice(0, 3)
+                            .map((tag, index) => (
+                              <div
+                                key={index}
+                                className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                              >
+                                {tag.trim()}
+                              </div>
+                            ))}
+                      </div>
+                    </div>
+                    <div className="flex space-x-2 items-center flex-row text-gray-600 mt-1">
+                      <div className="flex flex-row  text-gray-600 space-x-2 items-center">
+                        {editMode ? (
+                          <div className="flex flex-row mt-1 items-center">
+                            <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                            <div className="flex flex-col">
+                              <ReactSelect
+                                isMulti
+                                menuPortalTarget={document.body}
+                                menuPosition={"fixed"}
+                                styles={{
+                                  menuPortal: (base) => ({
+                                    ...base,
+                                    zIndex: 9999,
+                                  }),
+                                  control: (provided, state) => ({
+                                    ...provided,
+                                    paddingBlock: "0px",
+                                    borderRadius: "8px",
+                                    border: errors.domains_interested_in
+                                      ? "2px solid #ef4444"
+                                      : "2px solid #737373",
+                                    backgroundColor: "rgb(249 250 251)",
+                                    "&::placeholder": {
+                                      color: errors.domains_interested_in
+                                        ? "#ef4444"
+                                        : "currentColor",
+                                    },
+                                  }),
+                                }}
+                                value={interestedDomainsSelectedOptions}
+                                options={interestedDomainsOptions}
+                                classNamePrefix="select"
+                                className="basic-multi-select w-full text-start text-nowrap p-1"
+                                placeholder="Select domains you are interested in"
+                                name="domains_interested_in"
+                                onChange={(selectedOptions) => {
+                                  if (
+                                    selectedOptions &&
+                                    selectedOptions.length > 0
+                                  ) {
+                                    setInterestedDomainsSelectedOptions(
+                                      selectedOptions
+                                    );
+                                    clearErrors("domains_interested_in");
+                                    setValue(
+                                      "domains_interested_in",
+                                      selectedOptions
+                                        .map((option) => option.value)
+                                        .join(", "),
+                                      { shouldValidate: true }
+                                    );
+                                  } else {
+                                    setInterestedDomainsSelectedOptions([]);
+                                    setValue("domains_interested_in", "", {
+                                      shouldValidate: true,
+                                    });
+                                    setError("domains_interested_in", {
+                                      type: "required",
+                                      message:
+                                        "Selecting an interest is required",
+                                    });
+                                  }
+                                }}
+                              />
+                              {errors.domains_interested_in && (
+                                <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                  {errors.domains_interested_in.message}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="flex flex-col space-x-2 text-gray-600">
+                            <div className="flex flex-row  text-gray-600 space-x-2 items-center">
+                              <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                              <div className="text-black font-semibold">
+                                Skill :
+                              </div>
+                            </div>
+                            <div className="flex gap-2 text-xs items-center flex-wrap">
+                              {updatedData?.areaOfInterest &&
+                                updatedData?.areaOfInterest
+                                  .split(",")
+                                  .slice(0, 3)
+                                  .map((tag, index) => (
+                                    <div
+                                      key={index}
+                                      className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                                    >
+                                      {tag.trim()}
+                                    </div>
+                                  ))}
+                            </div>
+                          </div>
                         )}
                       </div>
-                    ) : (
-                      <>
-                        <img
-                          src={openchat_username}
-                          alt="openchat_username"
-                          className="size-5"
-                        />
-                        <div className="ml-2">
-                          {updatedData?.openchatUsername}
-                        </div>
-                      </>
-                    )}
+                    </div>
                   </div>
                 </div>
 
@@ -1725,22 +1876,21 @@ const [projectId ,setProjectId]=useState('');
                   <div className="flex flex-col  text-gray-600 space-x-2">
                     <div className="flex flex-row  text-gray-600 space-x-2 items-center">
                       <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-
-                      <div className="text-black font-semibold">Skill :</div>
+                      <div className=" text-black mb-2 font-semibold">
+                        Reason to join:
+                      </div>
                     </div>
                     <div className="flex gap-2 text-xs items-center flex-wrap">
-                      {orignalData?.areaOfInterest &&
-                        orignalData?.areaOfInterest
-                          .split(",")
-                          .slice(0, 3)
-                          .map((tag, index) => (
-                            <div
-                              key={index}
-                              className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
-                            >
-                              {tag.trim()}
-                            </div>
-                          ))}
+                      <div className="flex text-gray-700 flex-row gap-2 flex-wrap text-xs">
+                        {orignalData?.reasonToJoin?.map((reason, index) => (
+                          <div
+                            key={index}
+                            className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                          >
+                            {reason.replace(/_/g, " ")}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                   <div className="flex space-x-2 items-center flex-row text-gray-600 mt-1">
@@ -1762,55 +1912,54 @@ const [projectId ,setProjectId]=useState('');
                                   ...provided,
                                   paddingBlock: "0px",
                                   borderRadius: "8px",
-                                  border: errors.domains_interested_in
+                                  border: errors.reasons_to_join_platform
                                     ? "2px solid #ef4444"
                                     : "2px solid #737373",
                                   backgroundColor: "rgb(249 250 251)",
                                   "&::placeholder": {
-                                    color: errors.domains_interested_in
+                                    color: errors.reasons_to_join_platform
                                       ? "#ef4444"
                                       : "currentColor",
                                   },
                                 }),
                               }}
-                              value={interestedDomainsSelectedOptions}
-                              options={interestedDomainsOptions}
+                              value={reasonOfJoiningSelectedOptions}
+                              options={reasonOfJoiningOptions}
                               classNamePrefix="select"
-                              className="basic-multi-select w-full text-start text-nowrap p-1"
-                              placeholder="Select domains you are interested in"
-                              name="domains_interested_in"
+                              className="basic-multi-select w-full text-start text-nowrap p-1 text-xs"
+                              placeholder="Select your reasons to join this platform"
+                              name="reasons_to_join_platform"
                               onChange={(selectedOptions) => {
                                 if (
                                   selectedOptions &&
                                   selectedOptions.length > 0
                                 ) {
-                                  setInterestedDomainsSelectedOptions(
+                                  setReasonOfJoiningSelectedOptions(
                                     selectedOptions
                                   );
-                                  clearErrors("domains_interested_in");
+                                  clearErrors("reasons_to_join_platform");
                                   setValue(
-                                    "domains_interested_in",
+                                    "reasons_to_join_platform",
                                     selectedOptions
                                       .map((option) => option.value)
                                       .join(", "),
                                     { shouldValidate: true }
                                   );
                                 } else {
-                                  setInterestedDomainsSelectedOptions([]);
-                                  setValue("domains_interested_in", "", {
+                                  setReasonOfJoiningSelectedOptions([]);
+                                  setValue("reasons_to_join_platform", "", {
                                     shouldValidate: true,
                                   });
-                                  setError("domains_interested_in", {
+                                  setError("reasons_to_join_platform", {
                                     type: "required",
-                                    message:
-                                      "Selecting an interest is required",
+                                    message: "Selecting a reason is required",
                                   });
                                 }
                               }}
                             />
-                            {errors.domains_interested_in && (
+                            {errors.reasons_to_join_platform && (
                               <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                                {errors.domains_interested_in.message}
+                                {errors.reasons_to_join_platform.message}
                               </span>
                             )}
                           </div>
@@ -1819,23 +1968,19 @@ const [projectId ,setProjectId]=useState('');
                         <div className="flex flex-col space-x-2 text-gray-600">
                           <div className="flex flex-row  text-gray-600 space-x-2 items-center">
                             <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                            <div className="text-black font-semibold">
-                              Skill :
+                            <div className=" text-black mb-2 font-semibold">
+                              Reason to join:
                             </div>
                           </div>
-                          <div className="flex gap-2 text-xs items-center flex-wrap">
-                            {updatedData?.areaOfInterest &&
-                              updatedData?.areaOfInterest
-                                .split(",")
-                                .slice(0, 3)
-                                .map((tag, index) => (
-                                  <div
-                                    key={index}
-                                    className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
-                                  >
-                                    {tag.trim()}
-                                  </div>
-                                ))}
+                          <div className="flex text-gray-700 flex-row gap-2 flex-wrap text-xs">
+                            {updatedData?.reasonToJoin?.map((reason, index) => (
+                              <div
+                                key={index}
+                                className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                              >
+                                {reason.replace(/_/g, " ")}
+                              </div>
+                            ))}
                           </div>
                         </div>
                       )}
@@ -1843,479 +1988,63 @@ const [projectId ,setProjectId]=useState('');
                   </div>
                 </div>
               </div>
-
-              <div className="flex flex-col mb-2">
-                <div className="flex flex-col  text-gray-600 space-x-2">
-                  <div className="flex flex-row  text-gray-600 space-x-2 items-center">
-                    <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                    <div className=" text-black mb-2 font-semibold">
-                      Reason to join:
-                    </div>
-                  </div>
-                  <div className="flex gap-2 text-xs items-center flex-wrap">
-                    <div className="flex text-gray-700 flex-row gap-2 flex-wrap text-xs">
-                      {orignalData?.reasonToJoin?.map((reason, index) => (
-                        <div
-                          key={index}
-                          className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
-                        >
-                          {reason.replace(/_/g, " ")}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                <div className="flex space-x-2 items-center flex-row text-gray-600 mt-1">
-                  <div className="flex flex-row  text-gray-600 space-x-2 items-center">
-                    {editMode ? (
-                      <div className="flex flex-row mt-1 items-center">
-                        <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                        <div className="flex flex-col">
-                          <ReactSelect
-                            isMulti
-                            menuPortalTarget={document.body}
-                            menuPosition={"fixed"}
-                            styles={{
-                              menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                              control: (provided, state) => ({
-                                ...provided,
-                                paddingBlock: "0px",
-                                borderRadius: "8px",
-                                border: errors.reasons_to_join_platform
-                                  ? "2px solid #ef4444"
-                                  : "2px solid #737373",
-                                backgroundColor: "rgb(249 250 251)",
-                                "&::placeholder": {
-                                  color: errors.reasons_to_join_platform
-                                    ? "#ef4444"
-                                    : "currentColor",
-                                },
-                              }),
-                            }}
-                            value={reasonOfJoiningSelectedOptions}
-                            options={reasonOfJoiningOptions}
-                            classNamePrefix="select"
-                            className="basic-multi-select w-full text-start text-nowrap p-1 text-xs"
-                            placeholder="Select your reasons to join this platform"
-                            name="reasons_to_join_platform"
-                            onChange={(selectedOptions) => {
-                              if (
-                                selectedOptions &&
-                                selectedOptions.length > 0
-                              ) {
-                                setReasonOfJoiningSelectedOptions(
-                                  selectedOptions
-                                );
-                                clearErrors("reasons_to_join_platform");
-                                setValue(
-                                  "reasons_to_join_platform",
-                                  selectedOptions
-                                    .map((option) => option.value)
-                                    .join(", "),
-                                  { shouldValidate: true }
-                                );
-                              } else {
-                                setReasonOfJoiningSelectedOptions([]);
-                                setValue("reasons_to_join_platform", "", {
-                                  shouldValidate: true,
-                                });
-                                setError("reasons_to_join_platform", {
-                                  type: "required",
-                                  message: "Selecting a reason is required",
-                                });
-                              }
-                            }}
-                          />
-                          {errors.reasons_to_join_platform && (
-                            <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                              {errors.reasons_to_join_platform.message}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col space-x-2 text-gray-600">
-                        <div className="flex flex-row  text-gray-600 space-x-2 items-center">
-                          <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                          <div className=" text-black mb-2 font-semibold">
-                            Reason to join:
-                          </div>
-                        </div>
-                        <div className="flex text-gray-700 flex-row gap-2 flex-wrap text-xs">
-                          {updatedData?.reasonToJoin?.map((reason, index) => (
-                            <div
-                              key={index}
-                              className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
-                            >
-                              {reason.replace(/_/g, " ")}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
             </div>
-          </div>
 
-          <div className=" bg-[#D2D5F2]  shadow-md shadow-gray-400 pb-6 pt-4 rounded-lg md:w-3/4 w-full">
-            <div className="w-full flex flex-col  justify-around px-[4%] py-4">
-              <div className="w-full flex flex-row justify-between items-center">
-                {showOriginalBioAndDescription ? (
-                  <>
-                    <h1 className="md:text-lg text-sm font-bold text-gray-800 truncate">
-                      Project Description
-                    </h1>
-                    <div className="flex justify-center p-2 gap-2">
-                      <span
-                        className="w-2 h-2 bg-red-700 rounded-full"
-                        onClick={() => setshowOriginalDescription(true)}
-                      ></span>
-                      <span
-                        className="w-2 h-2 bg-green-700 rounded-full"
-                        onClick={() => setshowOriginalDescription(false)}
-                      ></span>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <h1 className="md:text-lg text-sm font-bold text-gray-800 truncate">
-                      User Bio
-                    </h1>
-                    <div className="flex justify-center p-2 gap-2">
-                      <span
-                        className="w-2 h-2 bg-red-700 rounded-full"
-                        onClick={() => setshowOriginalBio(true)}
-                      ></span>
-                      <span
-                        className="w-2 h-2 bg-green-700 rounded-full"
-                        onClick={() => setshowOriginalBio(false)}
-                      ></span>
-                    </div>
-                  </>
-                )}
-              </div>
-              <div className="flex justify-end mr-1">
-                <label
-                  htmlFor="project_description"
-                  className={`flex items-center cursor-pointer`}
-                >
-                  <div className="relative">
-                    <input
-                      type="checkbox"
-                      id="project_description"
-                      className="sr-only"
-                      checked={showOriginalBioAndDescription}
-                      onChange={handleToggleChangeDescription}
-                    />
-                    <div className="block border-2 w-8 h-4 rounded-full"></div>
-
-                    <div
-                      className={`dot absolute left-1 top-1 bg-white w-3 h-2 rounded-full flex items-center justify-center transition-transform duration-300 ease-in-out ${
-                        showOriginalBioAndDescription
-                          ? ""
-                          : "transform translate-x-full"
-                      }`}
-                    ></div>
-                  </div>
-                </label>
-              </div>
-              <div className="flex md:flex-row flex-col w-full mt-3 items-start">
-                <div className="flex flex-col items-center">
-                  <div className=" md:w-[5.5rem] md:flex-shrink-0 w-full justify-start">
-                    <span className="text-xs font-semibold">
-                      {showOriginalLogoAndCover
-                        ? "Project Logo"
-                        : "Project Cover"}
-                    </span>
-                    {showOriginalLogoAndCover ? (
-                      <div className="flex flex-col">
-                        {showOriginalLogo ? (
-                          <img
-                            className="md:w-20 object-fill md:h-20 w-16 h-16 border border-white bg-gray-300 justify-center rounded-md"
-                            src={orignalData.projectLogo}
-                            alt="projectLogo"
-                          />
-                        ) : (
-                          <div>
-                            {editMode ? (
-                              <div className="flex flex-col mt-1">
-                                <div className="flex-col w-full flex justify-start gap-1 items-center">
-                                  <div className="size-16 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
-                                    {logoPreview && !errors.logo ? (
-                                      <img
-                                        src={logoPreview}
-                                        alt="Logo"
-                                        className="h-full w-full object-cover"
-                                      />
-                                    ) : (
-                                      <svg
-                                        width="35"
-                                        height="37"
-                                        viewBox="0 0 35 37"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="bg-no-repeat"
-                                      >
-                                        <path
-                                          d="M8.53049 8.62583C8.5304 13.3783 12.3575 17.2449 17.0605 17.2438C21.7634 17.2428 25.5907 13.3744 25.5908 8.62196C25.5909 3.8695 21.7638 0.00287764 17.0608 0.00394405C12.3579 0.00501045 8.53058 3.87336 8.53049 8.62583ZM32.2249 36.3959L34.1204 36.3954L34.1205 34.4799C34.1206 27.0878 28.1667 21.0724 20.8516 21.0741L13.2692 21.0758C5.95224 21.0775 -3.41468e-05 27.0955 -0.000176714 34.4876L-0.000213659 36.4032L32.2249 36.3959Z"
-                                          fill="#BBBBBB"
-                                        />
-                                      </svg>
-                                    )}
-                                  </div>
-
-                                  <Controller
-                                    name="logo"
-                                    control={control}
-                                    render={({ field }) => (
-                                      <>
-                                        <input
-                                          type="file"
-                                          className="hidden"
-                                          id="logo"
-                                          name="logo"
-                                          onChange={(e) => {
-                                            field.onChange(e.target.files[0]);
-                                            logoCreationFunc(e.target.files[0]);
-                                          }}
-                                          accept=".jpg, .jpeg, .png"
-                                        />
-                                        {logoPreview && !errors.logo ? (
-                                          <label
-                                            htmlFor="logo"
-                                            className="p-1 border-2 border-blue-800 items-center rounded-md text-[9px] bg-transparent text-blue-800 cursor-pointer font-semibold flex"
-                                          >
-                                            <svg
-                                              xmlns="http://www.w3.org/2000/svg"
-                                              viewBox="0 0 448 512"
-                                              className="size-3"
-                                              fill="currentColor"
-                                              style={{
-                                                transform: "rotate(135deg)",
-                                              }}
-                                            >
-                                              <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
-                                            </svg>
-                                            <span className="ml-2">
-                                              Change logo
-                                            </span>
-                                          </label>
-                                        ) : (
-                                          <label
-                                            htmlFor="logo"
-                                            className="p-1 border-2 border-blue-800 items-center rounded-md text-[9px] bg-transparent text-blue-800 cursor-pointer font-semibold flex"
-                                          >
-                                            <svg
-                                              xmlns="http://www.w3.org/2000/svg"
-                                              viewBox="0 0 512 512"
-                                              className="size-3"
-                                              fill="currentColor"
-                                            >
-                                              <path d="M288 109.3V352c0 17.7-14.3 32-32 32s-32-14.3-32-32V109.3l-73.4 73.4c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l128-128c12.5-12.5 32.8-12.5 45.3 0l128 128c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L288 109.3zM64 352H192c0 35.3 28.7 64 64 64s64-28.7 64-64H448c35.3 0 64 28.7 64 64v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V416c0-35.3 28.7-64 64-64zM432 456a24 24 0 1 0 0-48 24 24 0 1 0 0 48z" />
-                                            </svg>
-                                            <span className="ml-2 text-nowrap">
-                                              Upload logo
-                                            </span>
-                                          </label>
-                                        )}
-                                        {logoPreview || errors.logo ? (
-                                          <button
-                                            className=" w-full p-1 border-2 border-red-500 items-center rounded-md text-[9px] bg-transparent text-red-500 cursor-pointer font-semibold capitalize"
-                                            onClick={() =>
-                                              clearLogoFunc("logo")
-                                            }
-                                          >
-                                            clear
-                                          </button>
-                                        ) : (
-                                          ""
-                                        )}
-                                      </>
-                                    )}
-                                  />
-                                </div>
-                                {errors.logo && (
-                                  <span className="mt-1 text-sm text-red-500 font-bold text-start px-4">
-                                    {errors?.logo?.message}
-                                  </span>
-                                )}
-                              </div>
-                            ) : (
-                              <img
-                                className="md:w-20 object-fill md:h-20 w-16 h-16 border border-white bg-gray-300 justify-center rounded-md"
-                                src={updatedData.projectLogo}
-                                alt="projectLogo"
-                              />
-                            )}
-                          </div>
-                        )}
-                        <div className="flex justify-center p-2 gap-2">
-                          <span
-                            className="w-2 h-2 bg-red-700 rounded-full"
-                            onClick={() => setshowOriginalLogo(true)}
-                          ></span>
-                          <span
-                            className="w-2 h-2 bg-green-700 rounded-full"
-                            onClick={() => setshowOriginalLogo(false)}
-                          ></span>
-                        </div>
+            <div className=" bg-[#D2D5F2]  shadow-md shadow-gray-400 pb-6 pt-4 rounded-lg md:w-3/4 w-full">
+              <div className="w-full flex flex-col  justify-around px-[4%] py-4">
+                <div className="w-full flex flex-row justify-between items-center">
+                  {showOriginalBioAndDescription ? (
+                    <>
+                      <h1 className="md:text-lg text-sm font-bold text-gray-800 truncate">
+                        Project Description
+                      </h1>
+                      <div className="flex justify-center p-2 gap-2">
+                        <span
+                          className="w-2 h-2 bg-red-700 rounded-full"
+                          onClick={() => setshowOriginalDescription(true)}
+                        ></span>
+                        <span
+                          className="w-2 h-2 bg-green-700 rounded-full"
+                          onClick={() => setshowOriginalDescription(false)}
+                        ></span>
                       </div>
-                    ) : (
-                      <div className="flex flex-col">
-                        {showOriginalCover ? (
-                          <img
-                            className="md:w-20 object-fill md:h-20 w-16 h-16 border border-white bg-gray-300 justify-center rounded-md"
-                            src={orignalData.projectCover}
-                            alt="projectCover"
-                          />
-                        ) : (
-                          <div>
-                            {editMode ? (
-                              <div className="flex flex-col">
-                                <div className="flex-col w-full flex justify-start gap-1 items-center">
-                                  <div className="size-16 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
-                                    {coverPreview && !errors.cover ? (
-                                      <img
-                                        src={coverPreview}
-                                        alt="cover"
-                                        className="h-full w-full object-cover"
-                                      />
-                                    ) : (
-                                      <svg
-                                        width="35"
-                                        height="37"
-                                        viewBox="0 0 35 37"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="bg-no-repeat"
-                                      >
-                                        <path
-                                          d="M8.53049 8.62583C8.5304 13.3783 12.3575 17.2449 17.0605 17.2438C21.7634 17.2428 25.5907 13.3744 25.5908 8.62196C25.5909 3.8695 21.7638 0.00287764 17.0608 0.00394405C12.3579 0.00501045 8.53058 3.87336 8.53049 8.62583ZM32.2249 36.3959L34.1204 36.3954L34.1205 34.4799C34.1206 27.0878 28.1667 21.0724 20.8516 21.0741L13.2692 21.0758C5.95224 21.0775 -3.41468e-05 27.0955 -0.000176714 34.4876L-0.000213659 36.4032L32.2249 36.3959Z"
-                                          fill="#BBBBBB"
-                                        />
-                                      </svg>
-                                    )}
-                                  </div>
-
-                                  <Controller
-                                    name="cover"
-                                    control={control}
-                                    render={({ field }) => (
-                                      <>
-                                        <input
-                                          type="file"
-                                          className="hidden"
-                                          id="cover"
-                                          name="cover"
-                                          onChange={(e) => {
-                                            field.onChange(e.target.files[0]);
-                                            coverCreationFunc(
-                                              e.target.files[0]
-                                            );
-                                          }}
-                                          accept=".jpg, .jpeg, .png"
-                                        />
-                                        {coverPreview && !errors.cover ? (
-                                          <label
-                                            htmlFor="cover"
-                                            className="p-1 border-2 border-blue-800 items-center rounded-md text-[9px] bg-transparent text-blue-800 cursor-pointer font-semibold flex"
-                                          >
-                                            <svg
-                                              xmlns="http://www.w3.org/2000/svg"
-                                              viewBox="0 0 448 512"
-                                              className="size-3"
-                                              fill="currentColor"
-                                              style={{
-                                                transform: "rotate(135deg)",
-                                              }}
-                                            >
-                                              <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
-                                            </svg>
-                                            <span className="ml-2">
-                                              Change cover picture
-                                            </span>
-                                          </label>
-                                        ) : (
-                                          <label
-                                            htmlFor="cover"
-                                            className="p-1 border-2 border-blue-800 items-center rounded-md text-[9px] bg-transparent text-blue-800 cursor-pointer font-semibold flex"
-                                          >
-                                            <svg
-                                              xmlns="http://www.w3.org/2000/svg"
-                                              viewBox="0 0 512 512"
-                                              className="size-5"
-                                              fill="currentColor"
-                                            >
-                                              <path d="M288 109.3V352c0 17.7-14.3 32-32 32s-32-14.3-32-32V109.3l-73.4 73.4c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l128-128c12.5-12.5 32.8-12.5 45.3 0l128 128c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L288 109.3zM64 352H192c0 35.3 28.7 64 64 64s64-28.7 64-64H448c35.3 0 64 28.7 64 64v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V416c0-35.3 28.7-64 64-64zM432 456a24 24 0 1 0 0-48 24 24 0 1 0 0 48z" />
-                                            </svg>
-                                            <span className="ml-2">
-                                              Upload cover picture
-                                            </span>
-                                          </label>
-                                        )}
-                                        {coverPreview || errors.cover ? (
-                                          <button
-                                            className="w-full p-1 border-2 border-red-500 items-center rounded-md text-[9px] bg-transparent text-red-500 cursor-pointer font-semibold capitalize"
-                                            onClick={() =>
-                                              clearCoverFunc("cover")
-                                            }
-                                          >
-                                            clear
-                                          </button>
-                                        ) : (
-                                          ""
-                                        )}
-                                      </>
-                                    )}
-                                  />
-                                </div>
-                                {errors.cover && (
-                                  <span className="mt-1 text-sm text-red-500 font-bold text-start px-4">
-                                    {errors?.cover?.message}
-                                  </span>
-                                )}
-                              </div>
-                            ) : (
-                              <img
-                                className="md:w-20 object-fill md:h-20 w-16 h-16 border border-white bg-gray-300 justify-center rounded-md"
-                                src={updatedData.projectCover}
-                                alt="projectLogo"
-                              />
-                            )}
-                          </div>
-                        )}
-                        <div className="flex justify-center p-2 gap-2">
-                          <span
-                            className="w-2 h-2 bg-red-700 rounded-full"
-                            onClick={() => setshowOriginalCover(true)}
-                          ></span>
-                          <span
-                            className="w-2 h-2 bg-green-700 rounded-full"
-                            onClick={() => setshowOriginalCover(false)}
-                          ></span>
-                        </div>
+                    </>
+                  ) : (
+                    <>
+                      <h1 className="md:text-lg text-sm font-bold text-gray-800 truncate">
+                        User Bio
+                      </h1>
+                      <div className="flex justify-center p-2 gap-2">
+                        <span
+                          className="w-2 h-2 bg-red-700 rounded-full"
+                          onClick={() => setshowOriginalBio(true)}
+                        ></span>
+                        <span
+                          className="w-2 h-2 bg-green-700 rounded-full"
+                          onClick={() => setshowOriginalBio(false)}
+                        ></span>
                       </div>
-                    )}
-                  </div>
+                    </>
+                  )}
+                </div>
+                <div className="flex justify-end mr-1">
                   <label
-                    htmlFor="toggle"
-                    className={`flex items-center cursor-pointer ml-1`}
+                    htmlFor="project_description"
+                    className={`flex items-center cursor-pointer`}
                   >
                     <div className="relative">
                       <input
                         type="checkbox"
-                        id="toggle"
+                        id="project_description"
                         className="sr-only"
-                        checked={showOriginalLogoAndCover}
-                        onChange={handleToggleChange}
+                        checked={showOriginalBioAndDescription}
+                        onChange={handleToggleChangeDescription}
                       />
                       <div className="block border-2 w-8 h-4 rounded-full"></div>
 
                       <div
                         className={`dot absolute left-1 top-1 bg-white w-3 h-2 rounded-full flex items-center justify-center transition-transform duration-300 ease-in-out ${
-                          showOriginalLogoAndCover
+                          showOriginalBioAndDescription
                             ? ""
                             : "transform translate-x-full"
                         }`}
@@ -2323,483 +2052,789 @@ const [projectId ,setProjectId]=useState('');
                     </div>
                   </label>
                 </div>
-                <div className="flex flex-col md:flex-grow md:w-5/6 w-full justify-start md:ml-4 md:mb-0 mb-6">
-                  <div className="flex flex-row  gap-4 items-center">
-                    {showOriginalBioAndDescription ? (
-                      <>
-                        {showOriginalDescription ? (
-                          <h1 className="md:text-base md:h-[8rem] h-[12rem] flex-wrap text-sm bg-black break-all text-transparent bg-clip-text">
-                            {orignalData.projectDescription}
-                          </h1>
-                        ) : (
-                          <div className="w-full">
-                            {editMode ? (
-                              <div className="flex flex-col mt-1">
-                                <textarea
-                                  type="text"
-                                  {...register("project_description")}
-                                  className={`bg-gray-50 border-2 
+                <div className="flex md:flex-row flex-col w-full mt-3 items-start">
+                  <div className="flex flex-col items-center">
+                    <div className=" md:w-[5.5rem] md:flex-shrink-0 w-full justify-start">
+                      <span className="text-xs font-semibold">
+                        {showOriginalLogoAndCover
+                          ? "Project Logo"
+                          : "Project Cover"}
+                      </span>
+                      {showOriginalLogoAndCover ? (
+                        <div className="flex flex-col">
+                          {showOriginalLogo ? (
+                            <img
+                              className="md:w-20 object-fill md:h-20 w-16 h-16 border border-white bg-gray-300 justify-center rounded-md"
+                              src={orignalData.projectLogo}
+                              alt="projectLogo"
+                            />
+                          ) : (
+                            <div>
+                              {editMode ? (
+                                <div className="flex flex-col mt-1">
+                                  <div className="flex-col w-full flex justify-start gap-1 items-center">
+                                    <div className="size-16 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
+                                      {logoPreview && !errors.logo ? (
+                                        <img
+                                          src={logoPreview}
+                                          alt="Logo"
+                                          className="h-full w-full object-cover"
+                                        />
+                                      ) : (
+                                        <svg
+                                          width="35"
+                                          height="37"
+                                          viewBox="0 0 35 37"
+                                          fill="none"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          className="bg-no-repeat"
+                                        >
+                                          <path
+                                            d="M8.53049 8.62583C8.5304 13.3783 12.3575 17.2449 17.0605 17.2438C21.7634 17.2428 25.5907 13.3744 25.5908 8.62196C25.5909 3.8695 21.7638 0.00287764 17.0608 0.00394405C12.3579 0.00501045 8.53058 3.87336 8.53049 8.62583ZM32.2249 36.3959L34.1204 36.3954L34.1205 34.4799C34.1206 27.0878 28.1667 21.0724 20.8516 21.0741L13.2692 21.0758C5.95224 21.0775 -3.41468e-05 27.0955 -0.000176714 34.4876L-0.000213659 36.4032L32.2249 36.3959Z"
+                                            fill="#BBBBBB"
+                                          />
+                                        </svg>
+                                      )}
+                                    </div>
+
+                                    <Controller
+                                      name="logo"
+                                      control={control}
+                                      render={({ field }) => (
+                                        <>
+                                          <input
+                                            type="file"
+                                            className="hidden"
+                                            id="logo"
+                                            name="logo"
+                                            onChange={(e) => {
+                                              field.onChange(e.target.files[0]);
+                                              logoCreationFunc(
+                                                e.target.files[0]
+                                              );
+                                            }}
+                                            accept=".jpg, .jpeg, .png"
+                                          />
+                                          {logoPreview && !errors.logo ? (
+                                            <label
+                                              htmlFor="logo"
+                                              className="p-1 border-2 border-blue-800 items-center rounded-md text-[9px] bg-transparent text-blue-800 cursor-pointer font-semibold flex"
+                                            >
+                                              <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 448 512"
+                                                className="size-3"
+                                                fill="currentColor"
+                                                style={{
+                                                  transform: "rotate(135deg)",
+                                                }}
+                                              >
+                                                <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
+                                              </svg>
+                                              <span className="ml-2">
+                                                Change logo
+                                              </span>
+                                            </label>
+                                          ) : (
+                                            <label
+                                              htmlFor="logo"
+                                              className="p-1 border-2 border-blue-800 items-center rounded-md text-[9px] bg-transparent text-blue-800 cursor-pointer font-semibold flex"
+                                            >
+                                              <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 512 512"
+                                                className="size-3"
+                                                fill="currentColor"
+                                              >
+                                                <path d="M288 109.3V352c0 17.7-14.3 32-32 32s-32-14.3-32-32V109.3l-73.4 73.4c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l128-128c12.5-12.5 32.8-12.5 45.3 0l128 128c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L288 109.3zM64 352H192c0 35.3 28.7 64 64 64s64-28.7 64-64H448c35.3 0 64 28.7 64 64v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V416c0-35.3 28.7-64 64-64zM432 456a24 24 0 1 0 0-48 24 24 0 1 0 0 48z" />
+                                              </svg>
+                                              <span className="ml-2 text-nowrap">
+                                                Upload logo
+                                              </span>
+                                            </label>
+                                          )}
+                                          {logoPreview || errors.logo ? (
+                                            <button
+                                              className=" w-full p-1 border-2 border-red-500 items-center rounded-md text-[9px] bg-transparent text-red-500 cursor-pointer font-semibold capitalize"
+                                              onClick={() =>
+                                                clearLogoFunc("logo")
+                                              }
+                                            >
+                                              clear
+                                            </button>
+                                          ) : (
+                                            ""
+                                          )}
+                                        </>
+                                      )}
+                                    />
+                                  </div>
+                                  {errors.logo && (
+                                    <span className="mt-1 text-sm text-red-500 font-bold text-start px-4">
+                                      {errors?.logo?.message}
+                                    </span>
+                                  )}
+                                </div>
+                              ) : (
+                                <img
+                                  className="md:w-20 object-fill md:h-20 w-16 h-16 border border-white bg-gray-300 justify-center rounded-md"
+                                  src={updatedData.projectLogo}
+                                  alt="projectLogo"
+                                />
+                              )}
+                            </div>
+                          )}
+                          <div className="flex justify-center p-2 gap-2">
+                            <span
+                              className="w-2 h-2 bg-red-700 rounded-full"
+                              onClick={() => setshowOriginalLogo(true)}
+                            ></span>
+                            <span
+                              className="w-2 h-2 bg-green-700 rounded-full"
+                              onClick={() => setshowOriginalLogo(false)}
+                            ></span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col">
+                          {showOriginalCover ? (
+                            <img
+                              className="md:w-20 object-fill md:h-20 w-16 h-16 border border-white bg-gray-300 justify-center rounded-md"
+                              src={orignalData.projectCover}
+                              alt="projectCover"
+                            />
+                          ) : (
+                            <div>
+                              {editMode ? (
+                                <div className="flex flex-col">
+                                  <div className="flex-col w-full flex justify-start gap-1 items-center">
+                                    <div className="size-16 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
+                                      {coverPreview && !errors.cover ? (
+                                        <img
+                                          src={coverPreview}
+                                          alt="cover"
+                                          className="h-full w-full object-cover"
+                                        />
+                                      ) : (
+                                        <svg
+                                          width="35"
+                                          height="37"
+                                          viewBox="0 0 35 37"
+                                          fill="none"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          className="bg-no-repeat"
+                                        >
+                                          <path
+                                            d="M8.53049 8.62583C8.5304 13.3783 12.3575 17.2449 17.0605 17.2438C21.7634 17.2428 25.5907 13.3744 25.5908 8.62196C25.5909 3.8695 21.7638 0.00287764 17.0608 0.00394405C12.3579 0.00501045 8.53058 3.87336 8.53049 8.62583ZM32.2249 36.3959L34.1204 36.3954L34.1205 34.4799C34.1206 27.0878 28.1667 21.0724 20.8516 21.0741L13.2692 21.0758C5.95224 21.0775 -3.41468e-05 27.0955 -0.000176714 34.4876L-0.000213659 36.4032L32.2249 36.3959Z"
+                                            fill="#BBBBBB"
+                                          />
+                                        </svg>
+                                      )}
+                                    </div>
+
+                                    <Controller
+                                      name="cover"
+                                      control={control}
+                                      render={({ field }) => (
+                                        <>
+                                          <input
+                                            type="file"
+                                            className="hidden"
+                                            id="cover"
+                                            name="cover"
+                                            onChange={(e) => {
+                                              field.onChange(e.target.files[0]);
+                                              coverCreationFunc(
+                                                e.target.files[0]
+                                              );
+                                            }}
+                                            accept=".jpg, .jpeg, .png"
+                                          />
+                                          {coverPreview && !errors.cover ? (
+                                            <label
+                                              htmlFor="cover"
+                                              className="p-1 border-2 border-blue-800 items-center rounded-md text-[9px] bg-transparent text-blue-800 cursor-pointer font-semibold flex"
+                                            >
+                                              <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 448 512"
+                                                className="size-3"
+                                                fill="currentColor"
+                                                style={{
+                                                  transform: "rotate(135deg)",
+                                                }}
+                                              >
+                                                <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
+                                              </svg>
+                                              <span className="ml-2">
+                                                Change cover picture
+                                              </span>
+                                            </label>
+                                          ) : (
+                                            <label
+                                              htmlFor="cover"
+                                              className="p-1 border-2 border-blue-800 items-center rounded-md text-[9px] bg-transparent text-blue-800 cursor-pointer font-semibold flex"
+                                            >
+                                              <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 512 512"
+                                                className="size-5"
+                                                fill="currentColor"
+                                              >
+                                                <path d="M288 109.3V352c0 17.7-14.3 32-32 32s-32-14.3-32-32V109.3l-73.4 73.4c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l128-128c12.5-12.5 32.8-12.5 45.3 0l128 128c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L288 109.3zM64 352H192c0 35.3 28.7 64 64 64s64-28.7 64-64H448c35.3 0 64 28.7 64 64v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V416c0-35.3 28.7-64 64-64zM432 456a24 24 0 1 0 0-48 24 24 0 1 0 0 48z" />
+                                              </svg>
+                                              <span className="ml-2">
+                                                Upload cover picture
+                                              </span>
+                                            </label>
+                                          )}
+                                          {coverPreview || errors.cover ? (
+                                            <button
+                                              className="w-full p-1 border-2 border-red-500 items-center rounded-md text-[9px] bg-transparent text-red-500 cursor-pointer font-semibold capitalize"
+                                              onClick={() =>
+                                                clearCoverFunc("cover")
+                                              }
+                                            >
+                                              clear
+                                            </button>
+                                          ) : (
+                                            ""
+                                          )}
+                                        </>
+                                      )}
+                                    />
+                                  </div>
+                                  {errors.cover && (
+                                    <span className="mt-1 text-sm text-red-500 font-bold text-start px-4">
+                                      {errors?.cover?.message}
+                                    </span>
+                                  )}
+                                </div>
+                              ) : (
+                                <img
+                                  className="md:w-20 object-fill md:h-20 w-16 h-16 border border-white bg-gray-300 justify-center rounded-md"
+                                  src={updatedData.projectCover}
+                                  alt="projectLogo"
+                                />
+                              )}
+                            </div>
+                          )}
+                          <div className="flex justify-center p-2 gap-2">
+                            <span
+                              className="w-2 h-2 bg-red-700 rounded-full"
+                              onClick={() => setshowOriginalCover(true)}
+                            ></span>
+                            <span
+                              className="w-2 h-2 bg-green-700 rounded-full"
+                              onClick={() => setshowOriginalCover(false)}
+                            ></span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    <label
+                      htmlFor="toggle"
+                      className={`flex items-center cursor-pointer ml-1`}
+                    >
+                      <div className="relative">
+                        <input
+                          type="checkbox"
+                          id="toggle"
+                          className="sr-only"
+                          checked={showOriginalLogoAndCover}
+                          onChange={handleToggleChange}
+                        />
+                        <div className="block border-2 w-8 h-4 rounded-full"></div>
+
+                        <div
+                          className={`dot absolute left-1 top-1 bg-white w-3 h-2 rounded-full flex items-center justify-center transition-transform duration-300 ease-in-out ${
+                            showOriginalLogoAndCover
+                              ? ""
+                              : "transform translate-x-full"
+                          }`}
+                        ></div>
+                      </div>
+                    </label>
+                  </div>
+                  <div className="flex flex-col md:flex-grow md:w-5/6 w-full justify-start md:ml-4 md:mb-0 mb-6">
+                    <div className="flex flex-row  gap-4 items-center">
+                      {showOriginalBioAndDescription ? (
+                        <>
+                          {showOriginalDescription ? (
+                            <h1 className="md:text-base md:h-[8rem] h-[12rem] flex-wrap text-sm bg-black break-all text-transparent bg-clip-text">
+                              {orignalData.projectDescription}
+                            </h1>
+                          ) : (
+                            <div className="w-full">
+                              {editMode ? (
+                                <div className="flex flex-col mt-1">
+                                  <textarea
+                                    type="text"
+                                    {...register("project_description")}
+                                    className={`bg-gray-50 border-2 
                                              ${
                                                errors?.project_description
                                                  ? "border-red-500 "
                                                  : "border-[#737373]"
                                              } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 h-32 resize-none`}
-                                  placeholder="Max 50 words"
-                                />
-                                {errors?.project_description && (
-                                  <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                                    {errors?.project_description?.message}
-                                  </span>
-                                )}
-                              </div>
-                            ) : (
-                              <h1 className="md:text-base md:h-[8rem] h-[12rem] flex-wrap text-sm bg-black break-all text-transparent bg-clip-text">
-                                {updatedData.projectDescription}
-                              </h1>
-                            )}
+                                    placeholder="Max 50 words"
+                                  />
+                                  {errors?.project_description && (
+                                    <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                      {errors?.project_description?.message}
+                                    </span>
+                                  )}
+                                </div>
+                              ) : (
+                                <h1 className="md:text-base md:h-[8rem] h-[12rem] flex-wrap text-sm bg-black break-all text-transparent bg-clip-text">
+                                  {updatedData.projectDescription}
+                                </h1>
+                              )}
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          {showOriginalBio ? (
+                            <h1 className="md:text-base md:h-[8rem] h-[12rem] flex-wrap text-sm bg-black break-all text-transparent bg-clip-text">
+                              {orignalData.userBio}
+                            </h1>
+                          ) : (
+                            <div className="w-full">
+                              {editMode ? (
+                                <div className="flex flex-col mt-1">
+                                  <textarea
+                                    {...register("bio")}
+                                    className={`bg-gray-50 border-2 ${
+                                      errors?.bio
+                                        ? "border-red-500 "
+                                        : "border-[#737373]"
+                                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 h-32 resize-none`}
+                                    placeholder="Enter your bio"
+                                  ></textarea>
+                                  {errors?.bio && (
+                                    <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                      {errors?.bio?.message}
+                                    </span>
+                                  )}
+                                </div>
+                              ) : (
+                                <h1 className="md:text-base md:h-[8rem] h-[12rem] flex-wrap text-sm bg-black break-all text-transparent bg-clip-text">
+                                  {updatedData.userBio}
+                                </h1>
+                              )}
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </div>
+
+                    <div className="border border-gray-400 w-full mt-2 mb-4 relative " />
+
+                    <div className="grid md:grid-cols-2 gap-3 text-sm w-full">
+                      <div className="flex flex-col w-full md:w-4/5">
+                        <div className="flex flex-col mb-4 md:mb-6">
+                          <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                            {" "}
+                            Project Name:
+                          </h2>
+                          <div className="flex space-x-2 items-center  flex-row ml-3">
+                            <span className="w-2 h-2 bg-red-700 rounded-full"></span>
+                            <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
+                              {orignalData?.project_name ?? "Not available"}
+                            </div>
                           </div>
-                        )}
-                      </>
-                    ) : (
-                      <>
-                        {showOriginalBio ? (
-                          <h1 className="md:text-base md:h-[8rem] h-[12rem] flex-wrap text-sm bg-black break-all text-transparent bg-clip-text">
-                            {orignalData.userBio}
-                          </h1>
-                        ) : (
-                          <div className="w-full">
+                          <div className="flex space-x-2 items-center flex-row ml-3">
+                            <span className="w-2 h-2 bg-green-700 rounded-full"></span>
                             {editMode ? (
                               <div className="flex flex-col mt-1">
-                                <textarea
-                                  {...register("bio")}
-                                  className={`bg-gray-50 border-2 ${
-                                    errors?.bio
-                                      ? "border-red-500 "
-                                      : "border-[#737373]"
-                                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 h-32 resize-none`}
-                                  placeholder="Enter your bio"
-                                ></textarea>
-                                {errors?.bio && (
-                                  <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                                    {errors?.bio?.message}
-                                  </span>
-                                )}
-                              </div>
-                            ) : (
-                              <h1 className="md:text-base md:h-[8rem] h-[12rem] flex-wrap text-sm bg-black break-all text-transparent bg-clip-text">
-                                {updatedData.userBio}
-                              </h1>
-                            )}
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </div>
-
-                  <div className="border border-gray-400 w-full mt-2 mb-4 relative " />
-
-                  <div className="grid md:grid-cols-2 gap-3 text-sm w-full">
-                    <div className="flex flex-col w-full md:w-4/5">
-                      <div className="flex flex-col mb-4 md:mb-6">
-                        <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
-                          {" "}
-                          Project Name:
-                        </h2>
-                        <div className="flex space-x-2 items-center  flex-row ml-3">
-                          <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                          <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                            {orignalData?.project_name ?? "Not available"}
-                          </div>
-                        </div>
-                        <div className="flex space-x-2 items-center flex-row ml-3">
-                          <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                          {editMode ? (
-                            <div className="flex flex-col mt-1">
-                              <input
-                                type="text"
-                                {...register("project_name")}
-                                className={`bg-gray-50 border-2 
+                                <input
+                                  type="text"
+                                  {...register("project_name")}
+                                  className={`bg-gray-50 border-2 
                                              ${
                                                errors?.project_name
                                                  ? "border-red-500 "
                                                  : "border-[#737373]"
                                              } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                                placeholder="Enter your Project name"
-                              />
-                              {errors?.project_name && (
-                                <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                                  {errors?.project_name?.message}
-                                </span>
-                              )}
-                            </div>
-                          ) : (
-                            <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {updatedData?.project_name ?? "Not available"}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex flex-col mb-4 md:mb-6">
-                        <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
-                          {" "}
-                          Linkedin:
-                        </h2>
-                        <div className="flex space-x-2 items-center  flex-row ml-3">
-                          <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                          <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                            {orignalData?.projectLinkedin ?? "Not available"}
+                                  placeholder="Enter your Project name"
+                                />
+                                {errors?.project_name && (
+                                  <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                    {errors?.project_name?.message}
+                                  </span>
+                                )}
+                              </div>
+                            ) : (
+                              <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
+                                {updatedData?.project_name ?? "Not available"}
+                              </div>
+                            )}
                           </div>
                         </div>
-                        <div className="flex space-x-2 items-center flex-row ml-3">
-                          <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                          {editMode ? (
-                            <div className="flex flex-col mt-1">
-                              <input
-                                type="text"
-                                {...register("project_linkedin")}
-                                className={`bg-gray-50 border-2 
+                        <div className="flex flex-col mb-4 md:mb-6">
+                          <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                            {" "}
+                            Linkedin:
+                          </h2>
+                          <div className="flex space-x-2 items-center  flex-row ml-3">
+                            <span className="w-2 h-2 bg-red-700 rounded-full"></span>
+                            <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
+                              {orignalData?.projectLinkedin ?? "Not available"}
+                            </div>
+                          </div>
+                          <div className="flex space-x-2 items-center flex-row ml-3">
+                            <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                            {editMode ? (
+                              <div className="flex flex-col mt-1">
+                                <input
+                                  type="text"
+                                  {...register("project_linkedin")}
+                                  className={`bg-gray-50 border-2 
                                                     ${
                                                       errors?.project_linkedin
                                                         ? "border-red-500 "
                                                         : "border-[#737373]"
                                                     } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                                placeholder="https://"
-                              />
-                              {errors?.project_linkedin && (
-                                <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                                  {errors?.project_linkedin?.message}
-                                </span>
-                              )}
-                            </div>
-                          ) : (
-                            <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {updatedData?.projectLinkedin ?? "Not available"}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col mb-4 md:mb-6">
-                        <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
-                          Twitter:
-                        </h2>
-                        <div className="flex space-x-2 items-center  flex-row ml-3">
-                          <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                          <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                            {orignalData?.userTwitter ?? "Not available"}
+                                  placeholder="https://"
+                                />
+                                {errors?.project_linkedin && (
+                                  <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                    {errors?.project_linkedin?.message}
+                                  </span>
+                                )}
+                              </div>
+                            ) : (
+                              <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
+                                {updatedData?.projectLinkedin ??
+                                  "Not available"}
+                              </div>
+                            )}
                           </div>
                         </div>
-                        <div className="flex space-x-2 items-center flex-row ml-3">
-                          <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                          {editMode ? (
-                            <div className="flex flex-col mt-1">
-                              <input
-                                type="text"
-                                {...register("twitter_url")}
-                                className={`bg-gray-50 border-2 
+
+                        <div className="flex flex-col mb-4 md:mb-6">
+                          <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                            Twitter:
+                          </h2>
+                          <div className="flex space-x-2 items-center  flex-row ml-3">
+                            <span className="w-2 h-2 bg-red-700 rounded-full"></span>
+                            <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
+                              {orignalData?.userTwitter ?? "Not available"}
+                            </div>
+                          </div>
+                          <div className="flex space-x-2 items-center flex-row ml-3">
+                            <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                            {editMode ? (
+                              <div className="flex flex-col mt-1">
+                                <input
+                                  type="text"
+                                  {...register("twitter_url")}
+                                  className={`bg-gray-50 border-2 
                                               ${
                                                 errors?.twitter_url
                                                   ? "border-red-500 "
                                                   : "border-[#737373]"
                                               } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                                placeholder="Enter your twitter url"
-                              />
-                              {errors?.twitter_url && (
-                                <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                                  {errors?.twitter_url?.message}
-                                </span>
-                              )}
-                            </div>
-                          ) : (
-                            <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {updatedData?.userTwitter ?? "Not available"}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col mb-4 md:mb-6">
-                        <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
-                          Project Pitch Deck:
-                        </h2>
-                        <div className="flex space-x-2 items-center  flex-row ml-3">
-                          <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                          <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                            {orignalData?.projectElevatorPitch ??
-                              "Not available"}
+                                  placeholder="Enter your twitter url"
+                                />
+                                {errors?.twitter_url && (
+                                  <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                    {errors?.twitter_url?.message}
+                                  </span>
+                                )}
+                              </div>
+                            ) : (
+                              <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
+                                {updatedData?.userTwitter ?? "Not available"}
+                              </div>
+                            )}
                           </div>
                         </div>
-                        <div className="flex space-x-2 items-center flex-row ml-3">
-                          <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                          {editMode ? (
-                            <div className="flex flex-col mt-1">
-                              <input
-                                type="text"
-                                {...register("project_elevator_pitch")}
-                                className={`bg-gray-50 border-2 
+
+                        <div className="flex flex-col mb-4 md:mb-6">
+                          <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                            Project Pitch Deck:
+                          </h2>
+                          <div className="flex space-x-2 items-center  flex-row ml-3">
+                            <span className="w-2 h-2 bg-red-700 rounded-full"></span>
+                            <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
+                              {orignalData?.projectElevatorPitch ??
+                                "Not available"}
+                            </div>
+                          </div>
+                          <div className="flex space-x-2 items-center flex-row ml-3">
+                            <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                            {editMode ? (
+                              <div className="flex flex-col mt-1">
+                                <input
+                                  type="text"
+                                  {...register("project_elevator_pitch")}
+                                  className={`bg-gray-50 border-2 
                                              ${
                                                errors?.project_elevator_pitch
                                                  ? "border-red-500 "
                                                  : "border-[#737373]"
                                              } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                                placeholder="https://"
-                              />
-                              {errors?.project_elevator_pitch && (
-                                <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                                  {errors?.project_elevator_pitch?.message}
-                                </span>
-                              )}
-                            </div>
-                          ) : (
-                            <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {updatedData?.projectElevatorPitch ??
-                                "Not available"}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col mb-4 md:mb-6">
-                        <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
-                          Promotional Video:
-                        </h2>
-                        <div className="flex space-x-2 items-center  flex-row ml-3">
-                          <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                          <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                            {orignalData?.promotionalVideo ?? "Not available"}
+                                  placeholder="https://"
+                                />
+                                {errors?.project_elevator_pitch && (
+                                  <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                    {errors?.project_elevator_pitch?.message}
+                                  </span>
+                                )}
+                              </div>
+                            ) : (
+                              <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
+                                {updatedData?.projectElevatorPitch ??
+                                  "Not available"}
+                              </div>
+                            )}
                           </div>
                         </div>
-                        <div className="flex space-x-2 items-center flex-row ml-3">
-                          <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                          {editMode ? (
-                            <div className="flex flex-col mt-1">
-                              <input
-                                type="text"
-                                {...register("promotional_video")}
-                                className={`bg-gray-50 border-2 
+
+                        <div className="flex flex-col mb-4 md:mb-6">
+                          <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                            Promotional Video:
+                          </h2>
+                          <div className="flex space-x-2 items-center  flex-row ml-3">
+                            <span className="w-2 h-2 bg-red-700 rounded-full"></span>
+                            <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
+                              {orignalData?.promotionalVideo ?? "Not available"}
+                            </div>
+                          </div>
+                          <div className="flex space-x-2 items-center flex-row ml-3">
+                            <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                            {editMode ? (
+                              <div className="flex flex-col mt-1">
+                                <input
+                                  type="text"
+                                  {...register("promotional_video")}
+                                  className={`bg-gray-50 border-2 
                                              ${
                                                errors?.promotional_video
                                                  ? "border-red-500 "
                                                  : "border-[#737373]"
                                              } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                                placeholder="https://"
-                              />
-                              {errors?.promotional_video && (
-                                <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                                  {errors?.promotional_video?.message}
-                                </span>
-                              )}
-                            </div>
-                          ) : (
-                            <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {updatedData?.promotionalVideo ?? "Not available"}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col md:w-4/5 w-full">
-                      <div className="flex flex-col mb-4 md:mb-6">
-                        <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
-                          Github:
-                        </h2>
-                        <div className="flex space-x-2 items-center  flex-row ml-3">
-                          <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                          <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                            {orignalData?.githubLink ?? "Not available"}
+                                  placeholder="https://"
+                                />
+                                {errors?.promotional_video && (
+                                  <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                    {errors?.promotional_video?.message}
+                                  </span>
+                                )}
+                              </div>
+                            ) : (
+                              <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
+                                {updatedData?.promotionalVideo ??
+                                  "Not available"}
+                              </div>
+                            )}
                           </div>
                         </div>
-                        <div className="flex space-x-2 items-center flex-row ml-3">
-                          <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                          {editMode ? (
-                            <div className="flex flex-col mt-1">
-                              <input
-                                type="text"
-                                {...register("github_link")}
-                                className={`bg-gray-50 border-2 
+                      </div>
+
+                      <div className="flex flex-col md:w-4/5 w-full">
+                        <div className="flex flex-col mb-4 md:mb-6">
+                          <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                            Github:
+                          </h2>
+                          <div className="flex space-x-2 items-center  flex-row ml-3">
+                            <span className="w-2 h-2 bg-red-700 rounded-full"></span>
+                            <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
+                              {orignalData?.githubLink ?? "Not available"}
+                            </div>
+                          </div>
+                          <div className="flex space-x-2 items-center flex-row ml-3">
+                            <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                            {editMode ? (
+                              <div className="flex flex-col mt-1">
+                                <input
+                                  type="text"
+                                  {...register("github_link")}
+                                  className={`bg-gray-50 border-2 
                                              ${
                                                errors?.github_link
                                                  ? "border-red-500 "
                                                  : "border-[#737373]"
                                              } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                                placeholder="https://"
-                              />
-                              {errors?.github_link && (
-                                <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                                  {errors?.github_link?.message}
-                                </span>
-                              )}
-                            </div>
-                          ) : (
-                            <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {updatedData?.githubLink ?? "Not available"}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col mb-4 md:mb-6">
-                        <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
-                          Discord:
-                        </h2>
-                        <div className="flex space-x-2 items-center  flex-row ml-3">
-                          <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                          <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                            {orignalData?.projectDiscord ?? "Not available"}
+                                  placeholder="https://"
+                                />
+                                {errors?.github_link && (
+                                  <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                    {errors?.github_link?.message}
+                                  </span>
+                                )}
+                              </div>
+                            ) : (
+                              <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
+                                {updatedData?.githubLink ?? "Not available"}
+                              </div>
+                            )}
                           </div>
                         </div>
-                        <div className="flex space-x-2 items-center flex-row ml-3">
-                          <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                          {editMode ? (
-                            <div className="flex flex-col mt-1">
-                              <input
-                                type="text"
-                                {...register("project_discord")}
-                                className={`bg-gray-50 border-2 
+
+                        <div className="flex flex-col mb-4 md:mb-6">
+                          <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                            Discord:
+                          </h2>
+                          <div className="flex space-x-2 items-center  flex-row ml-3">
+                            <span className="w-2 h-2 bg-red-700 rounded-full"></span>
+                            <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
+                              {orignalData?.projectDiscord ?? "Not available"}
+                            </div>
+                          </div>
+                          <div className="flex space-x-2 items-center flex-row ml-3">
+                            <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                            {editMode ? (
+                              <div className="flex flex-col mt-1">
+                                <input
+                                  type="text"
+                                  {...register("project_discord")}
+                                  className={`bg-gray-50 border-2 
                                              ${
                                                errors?.project_discord
                                                  ? "border-red-500 "
                                                  : "border-[#737373]"
                                              } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                                placeholder="https://"
-                              />
-                              {errors?.project_discord && (
-                                <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                                  {errors?.project_discord?.message}
-                                </span>
-                              )}
-                            </div>
-                          ) : (
-                            <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {updatedData?.projectDiscord ?? "Not available"}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col mb-4 md:mb-6">
-                        <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
-                          Website:
-                        </h2>
-                        <div className="flex space-x-2 items-center  flex-row ml-3">
-                          <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                          <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                            {orignalData?.projectWebsite ?? "Not available"}
+                                  placeholder="https://"
+                                />
+                                {errors?.project_discord && (
+                                  <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                    {errors?.project_discord?.message}
+                                  </span>
+                                )}
+                              </div>
+                            ) : (
+                              <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
+                                {updatedData?.projectDiscord ?? "Not available"}
+                              </div>
+                            )}
                           </div>
                         </div>
-                        <div className="flex space-x-2 items-center flex-row ml-3">
-                          <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                          {editMode ? (
-                            <div className="flex flex-col mt-1">
-                              <input
-                                type="text"
-                                {...register("project_website")}
-                                className={`bg-gray-50 border-2 
+
+                        <div className="flex flex-col mb-4 md:mb-6">
+                          <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                            Website:
+                          </h2>
+                          <div className="flex space-x-2 items-center  flex-row ml-3">
+                            <span className="w-2 h-2 bg-red-700 rounded-full"></span>
+                            <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
+                              {orignalData?.projectWebsite ?? "Not available"}
+                            </div>
+                          </div>
+                          <div className="flex space-x-2 items-center flex-row ml-3">
+                            <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                            {editMode ? (
+                              <div className="flex flex-col mt-1">
+                                <input
+                                  type="text"
+                                  {...register("project_website")}
+                                  className={`bg-gray-50 border-2 
                                              ${
                                                errors?.project_website
                                                  ? "border-red-500 "
                                                  : "border-[#737373]"
                                              } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                                placeholder="https://"
-                              />
-                              {errors?.project_website && (
-                                <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                                  {errors?.project_website?.message}
-                                </span>
-                              )}
-                            </div>
-                          ) : (
-                            <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {updatedData?.projectWebsite ?? "Not available"}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col mb-4 md:mb-6">
-                        <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
-                          WhitePaper :
-                        </h2>
-                        <div className="flex space-x-2 items-center  flex-row ml-3">
-                          <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                          <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                            {orignalData?.longTermGoals ?? "Not available"}
+                                  placeholder="https://"
+                                />
+                                {errors?.project_website && (
+                                  <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                    {errors?.project_website?.message}
+                                  </span>
+                                )}
+                              </div>
+                            ) : (
+                              <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
+                                {updatedData?.projectWebsite ?? "Not available"}
+                              </div>
+                            )}
                           </div>
                         </div>
-                        <div className="flex space-x-2 items-center flex-row ml-3">
-                          <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                          {editMode ? (
-                            <div className="flex flex-col mt-1">
-                              <input
-                                type="text"
-                                {...register("white_paper")}
-                                className={`bg-gray-50 border-2 
+
+                        <div className="flex flex-col mb-4 md:mb-6">
+                          <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                            WhitePaper :
+                          </h2>
+                          <div className="flex space-x-2 items-center  flex-row ml-3">
+                            <span className="w-2 h-2 bg-red-700 rounded-full"></span>
+                            <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
+                              {orignalData?.longTermGoals ?? "Not available"}
+                            </div>
+                          </div>
+                          <div className="flex space-x-2 items-center flex-row ml-3">
+                            <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                            {editMode ? (
+                              <div className="flex flex-col mt-1">
+                                <input
+                                  type="text"
+                                  {...register("white_paper")}
+                                  className={`bg-gray-50 border-2 
                                              ${
                                                errors?.white_paper
                                                  ? "border-red-500 "
                                                  : "border-[#737373]"
                                              } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                                placeholder="https://"
-                              />
-                              {errors?.white_paper && (
-                                <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                                  {errors?.white_paper?.message}
-                                </span>
-                              )}
-                            </div>
-                          ) : (
-                            <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {updatedData?.longTermGoals ?? "Not available"}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col mb-4 md:mb-6">
-                        <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
-                          Token Economics:
-                        </h2>
-                        <div className="flex space-x-2 items-center  flex-row ml-3">
-                          <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                          <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                            {orignalData?.tokenEconomics ?? "Not available"}
+                                  placeholder="https://"
+                                />
+                                {errors?.white_paper && (
+                                  <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                    {errors?.white_paper?.message}
+                                  </span>
+                                )}
+                              </div>
+                            ) : (
+                              <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
+                                {updatedData?.longTermGoals ?? "Not available"}
+                              </div>
+                            )}
                           </div>
                         </div>
-                        <div className="flex space-x-2 items-center flex-row ml-3">
-                          <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                          {editMode ? (
-                            <div className="flex flex-col mt-1">
-                              <input
-                                type="text"
-                                {...register("token_economics")}
-                                className={`bg-gray-50 border-2 
+
+                        <div className="flex flex-col mb-4 md:mb-6">
+                          <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                            Token Economics:
+                          </h2>
+                          <div className="flex space-x-2 items-center  flex-row ml-3">
+                            <span className="w-2 h-2 bg-red-700 rounded-full"></span>
+                            <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
+                              {orignalData?.tokenEconomics ?? "Not available"}
+                            </div>
+                          </div>
+                          <div className="flex space-x-2 items-center flex-row ml-3">
+                            <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                            {editMode ? (
+                              <div className="flex flex-col mt-1">
+                                <input
+                                  type="text"
+                                  {...register("token_economics")}
+                                  className={`bg-gray-50 border-2 
                                              ${
                                                errors?.token_economics
                                                  ? "border-red-500 "
                                                  : "border-[#737373]"
                                              } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                                placeholder="https://"
-                              />
-                              {errors?.token_economics && (
-                                <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                                  {errors?.token_economics?.message}
-                                </span>
-                              )}
-                            </div>
-                          ) : (
-                            <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {updatedData?.tokenEconomics ?? "Not available"}
-                            </div>
-                          )}
+                                  placeholder="https://"
+                                />
+                                {errors?.token_economics && (
+                                  <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                    {errors?.token_economics?.message}
+                                  </span>
+                                )}
+                              </div>
+                            ) : (
+                              <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
+                                {updatedData?.tokenEconomics ?? "Not available"}
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              {/* 
+                {/* 
           <div className="flex flex-col gap-2 h-[275px] bg-gray-100 px-[1%] rounded-md mt-2  overflow-y-auto py-2">
             {Allrole &&
               Allrole.length > 0 &&
@@ -2823,62 +2858,25 @@ const [projectId ,setProjectId]=useState('');
                 </div>
               ))}
           </div> */}
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="w-full flex gap-4  md:flex-row flex-col mt-4">
-          <div className="flex flex-col md:w-1/4 w-full">
-            <div className=" bg-[#D2D5F2] flex  flex-col h-[310px] overflow-y-auto shadow-md shadow-gray-400 p-6 rounded-lg  w-full mb-4">
-              <div className="flex flex-col md:pl-0 pl-4 mb-3">
-                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
-                  Uploaded Private Docs :
-                </h2>
-                <div className="flex space-x-2 items-center  flex-row ml-3">
-                  <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                  <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                    {orignalData?.uploadPrivateDocuments ? (
-                      "Yes"
-                    ) : "No" ? (
-                      <span>
-                        {orignalData?.uploadPrivateDocuments ? "Yes" : "No"}
-                      </span>
-                    ) : (
-                      <span className="flex items-center">
-                        {noDataPresentSvg}
-                        Data Not Available
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className="flex space-x-2 items-center flex-row ml-3">
-                  <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                  {editMode? (
-                    <div className="flex flex-col mt-1 w-11/12">
-                      <select
-                        {...register("upload_private_documents")}
-                        className="bg-gray-50 border-2 text-sm border-[#737373] text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1"
-                      >
-                        <option className="text-lg font-bold" value="false">
-                          No
-                        </option>
-                        <option className="text-lg font-bold" value="true">
-                          Yes
-                        </option>
-                      </select>
-                      {errors.upload_private_documents && (
-                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                          {errors.upload_private_documents.message}
-                        </p>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="text-md font-normal text-gray-600 break-all flex-wrap">
-                      {updatedData?.uploadPrivateDocuments ? (
+          <div className="w-full flex gap-4  md:flex-row flex-col mt-4">
+            <div className="flex flex-col md:w-1/4 w-full">
+              <div className=" bg-[#D2D5F2] flex  flex-col h-[310px] overflow-y-auto shadow-md shadow-gray-400 p-6 rounded-lg  w-full mb-4">
+                <div className="flex flex-col md:pl-0 pl-4 mb-3">
+                  <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                    Uploaded Private Docs :
+                  </h2>
+                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                    <span className="w-2 h-2 bg-red-700 rounded-full"></span>
+                    <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
+                      {orignalData?.uploadPrivateDocuments ? (
                         "Yes"
                       ) : "No" ? (
                         <span>
-                          {updatedData?.uploadPrivateDocuments ? "Yes" : "No"}
+                          {orignalData?.uploadPrivateDocuments ? "Yes" : "No"}
                         </span>
                       ) : (
                         <span className="flex items-center">
@@ -2887,35 +2885,82 @@ const [projectId ,setProjectId]=useState('');
                         </span>
                       )}
                     </div>
+                  </div>
+                  <div className="flex space-x-2 items-center flex-row ml-3">
+                    <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                    {editMode ? (
+                      <div className="flex flex-col mt-1 w-11/12">
+                        <select
+                          {...register("upload_private_documents")}
+                          className="bg-gray-50 border-2 text-sm border-[#737373] text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1"
+                        >
+                          <option className="text-lg font-bold" value="false">
+                            No
+                          </option>
+                          <option className="text-lg font-bold" value="true">
+                            Yes
+                          </option>
+                        </select>
+                        {errors.upload_private_documents && (
+                          <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                            {errors.upload_private_documents.message}
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-md font-normal text-gray-600 break-all flex-wrap">
+                        {updatedData?.uploadPrivateDocuments ? (
+                          "Yes"
+                        ) : "No" ? (
+                          <span>
+                            {updatedData?.uploadPrivateDocuments ? "Yes" : "No"}
+                          </span>
+                        ) : (
+                          <span className="flex items-center">
+                            {noDataPresentSvg}
+                            Data Not Available
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="flex justify-between items-center mb-2">
+                  <h1 className="text-xl font-bold text-gray-800">
+                    Private Documents
+                  </h1>
+                  {editMode ? (
+                    <button
+                      type="button"
+                      onClick={() => appendPrivate({ title: "", link: "" })}
+                      className=" p-1"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 448 512"
+                        className="size-4"
+                        fill="currentColor"
+                      >
+                        <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
+                      </svg>
+                    </button>
+                  ) : (
+                    ""
                   )}
                 </div>
-              </div>
-              <div className="flex justify-between items-center mb-2">
-                <h1 className="text-xl font-bold text-gray-800">
-                  Private Documents
-                </h1>
-                {editMode?
-                <button
-                  type="button"
-                  onClick={() => appendPrivate({ title: "", link: "" })}
-                  className=" p-1"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 448 512"
-                    className="size-4"
-                    fill="currentColor"
-                  >
-                    <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
-                  </svg>
-                </button>:''}
-              </div>
-              <div className="flex flex-col space-y-2">
+                <div className="flex flex-col space-y-2">
                   <div className="overflow-hidden space-y-2 ">
-                      {orignalData?.privateDocs.map((doc, index) => (
-                <div className="flex flex-row  p-2 items-center border-2 rounded-xl" key={index}>
+                    {orignalData?.privateDocs.map((doc, index) => (
+                      <div
+                        className="flex flex-row  p-2 items-center border-2 rounded-xl"
+                        key={index}
+                      >
                         <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                        <img src={pdfSvg} alt="PDF Icon" className="w-10 h-12 ml-2" />
+                        <img
+                          src={pdfSvg}
+                          alt="PDF Icon"
+                          className="w-10 h-12 ml-2"
+                        />
                         <div className="truncate flex flex-col ml-2">
                           <div className="flex-grow">
                             <a
@@ -2941,81 +2986,93 @@ const [projectId ,setProjectId]=useState('');
                             </div>
                           </div>
                         </div>
-                  
-                    </div>
-                      ))}
-                </div>
-                <div className="div">
-                  {watch('upload_private_documents') === 'true' && editMode? (
-                    <div className="flex flex-col space-y-2">
-                      {fieldsPrivate.map((field, index) => (
-                        <React.Fragment key={field.id}>
-                          <div className="flex flex-row gap-2  p-2 items-center border-2 rounded-xl">
+                      </div>
+                    ))}
+                  </div>
+                  <div className="div">
+                    {watch("upload_private_documents") === "true" &&
+                    editMode ? (
+                      <div className="flex flex-col space-y-2">
+                        {fieldsPrivate.map((field, index) => (
+                          <React.Fragment key={field.id}>
+                            <div className="flex flex-row gap-2  p-2 items-center border-2 rounded-xl">
+                              <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                              <img
+                                src={pdfSvg}
+                                alt="PDF Icon"
+                                className="w-10 h-12"
+                              />
+                              <div className="overflow-hidden">
+                                <div className="flex flex-row items-center">
+                                  <div className="flex flex-col space-y-1">
+                                    <div className="w-full">
+                                      <input
+                                        {...register(
+                                          `privateDocs.${index}.title`
+                                        )}
+                                        className="bg-gray-50 border-2 border-black rounded-lg block w-full p-1 text-black text-xs"
+                                        type="text"
+                                      />
+                                      {errors.privateDocs?.[index]?.title && (
+                                        <p className="mt-1 text-xs text-red-500 font-bold text-left">
+                                          {
+                                            errors.privateDocs[index].title
+                                              .message
+                                          }
+                                        </p>
+                                      )}
+                                    </div>
+                                    <div className="w-full">
+                                      <input
+                                        {...register(
+                                          `privateDocs.${index}.link`
+                                        )}
+                                        className="bg-gray-50 border-2 border-black rounded-lg block w-full p-1 text-xs text-black"
+                                        type="text"
+                                      />
+                                      {errors.privateDocs?.[index]?.link && (
+                                        <p className="mt-1 text-xs text-red-500 font-bold text-left">
+                                          {
+                                            errors.privateDocs[index].link
+                                              .message
+                                          }
+                                        </p>
+                                      )}
+                                    </div>
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleremovePrivate(index)}
+                                    className="p-2 ml-2"
+                                  >
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      viewBox="0 0 448 512"
+                                      className="size-4 "
+                                      fill="red"
+                                    >
+                                      <path d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0H284.2c12.1 0 23.2 6.8 28.6 17.7L320 32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 96 0 81.7 0 64S14.3 32 32 32h96l7.2-14.3zM32 128H416V448c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V128zm96 64c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16z" />
+                                    </svg>
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </React.Fragment>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="overflow-hidden space-y-2">
+                        {updatedData?.privateDocs.map((doc, index) => (
+                          <div
+                            className="flex flex-row gap-2  p-2 items-center border-2 rounded-xl"
+                            key={index}
+                          >
                             <span className="w-2 h-2 bg-green-700 rounded-full"></span>
                             <img
                               src={pdfSvg}
                               alt="PDF Icon"
                               className="w-10 h-12"
                             />
-                            <div className="overflow-hidden">
-                              <div className="flex flex-row items-center">
-                                <div className="flex flex-col space-y-1">
-                                  <div className="w-full">
-                                    <input
-                                      {...register(
-                                        `privateDocs.${index}.title`
-                                      )}
-                                      className="bg-gray-50 border-2 border-black rounded-lg block w-full p-1 text-black text-xs"
-                                      type="text"
-                                    />
-                                    {errors.privateDocs?.[index]?.title && (
-                                      <p className="mt-1 text-xs text-red-500 font-bold text-left">
-                                        {
-                                          errors.privateDocs[index].title
-                                            .message
-                                        }
-                                      </p>
-                                    )}
-                                  </div>
-                                  <div className="w-full">
-                                    <input
-                                      {...register(`privateDocs.${index}.link`)}
-                                      className="bg-gray-50 border-2 border-black rounded-lg block w-full p-1 text-xs text-black"
-                                      type="text"
-                                    />
-                                    {errors.privateDocs?.[index]?.link && (
-                                      <p className="mt-1 text-xs text-red-500 font-bold text-left">
-                                        {errors.privateDocs[index].link.message}
-                                      </p>
-                                    )}
-                                  </div>
-                                </div>
-                                <button
-                                  type="button"
-                                  onClick={() => handleremovePrivate(index)}
-                                  className="p-2 ml-2"
-                                >
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 448 512"
-                                    className="size-4 "
-                                    fill="red"
-                                  >
-                                    <path d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0H284.2c12.1 0 23.2 6.8 28.6 17.7L320 32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 96 0 81.7 0 64S14.3 32 32 32h96l7.2-14.3zM32 128H416V448c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V128zm96 64c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16z" />
-                                  </svg>
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        </React.Fragment>
-                      ))}
-                    </div>
-                  ) : (
-                      <div className="overflow-hidden space-y-2">
-                          {updatedData?.privateDocs.map((doc, index) => (
-                            <div className="flex flex-row gap-2  p-2 items-center border-2 rounded-xl" key={index}>
-                            <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                            <img src={pdfSvg} alt="PDF Icon" className="w-10 h-12" />
                             <div className="truncate flex flex-col ml-2">
                               <div className="flex-grow">
                                 <a
@@ -3041,66 +3098,27 @@ const [projectId ,setProjectId]=useState('');
                                 </div>
                               </div>
                             </div>
-                            </div>
-                          ))}
-                        </div>
-                     
-                    
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className=" bg-[#D2D5F2] flex  flex-col h-[310px] overflow-y-auto shadow-md shadow-gray-400 p-6 rounded-lg  w-full mb-4">
-              <div className="flex flex-col md:pl-0 pl-4 mb-3">
-                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
-                  Uploaded Public Docs :
-                </h2>
-                <div className="flex space-x-2 items-center  flex-row ml-3">
-                  <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                  <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                    {orignalData?.uploadPublicDocuments ? (
-                      "Yes"
-                    ) : "No" ? (
-                      <span>
-                        {orignalData?.uploadPublicDocuments ? "Yes" : "No"}
-                      </span>
-                    ) : (
-                      <span className="flex items-center">
-                        {noDataPresentSvg}
-                        Data Not Available
-                      </span>
+                          </div>
+                        ))}
+                      </div>
                     )}
                   </div>
                 </div>
-                <div className="flex space-x-2 items-center flex-row ml-3">
-                  <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                  {editMode ? (
-                    <div className="flex flex-col mt-1 w-11/12">
-                      <select
-                        {...register("upload_public_documents")}
-                        className="bg-gray-50 border-2 text-sm border-[#737373] text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1"
-                      >
-                        <option className="text-lg font-bold" value="false">
-                          No
-                        </option>
-                        <option className="text-lg font-bold" value="true">
-                          Yes
-                        </option>
-                      </select>
-                      {errors.upload_public_documents && (
-                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                          {errors.upload_public_documents.message}
-                        </p>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="text-md font-normal text-gray-600 break-all flex-wrap">
-                      {updatedData?.uploadPublicDocuments ? (
+              </div>
+
+              <div className=" bg-[#D2D5F2] flex  flex-col h-[310px] overflow-y-auto shadow-md shadow-gray-400 p-6 rounded-lg  w-full mb-4">
+                <div className="flex flex-col md:pl-0 pl-4 mb-3">
+                  <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                    Uploaded Public Docs :
+                  </h2>
+                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                    <span className="w-2 h-2 bg-red-700 rounded-full"></span>
+                    <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
+                      {orignalData?.uploadPublicDocuments ? (
                         "Yes"
                       ) : "No" ? (
                         <span>
-                          {updatedData?.uploadPublicDocuments ? "Yes" : "No"}
+                          {orignalData?.uploadPublicDocuments ? "Yes" : "No"}
                         </span>
                       ) : (
                         <span className="flex items-center">
@@ -3109,36 +3127,83 @@ const [projectId ,setProjectId]=useState('');
                         </span>
                       )}
                     </div>
+                  </div>
+                  <div className="flex space-x-2 items-center flex-row ml-3">
+                    <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                    {editMode ? (
+                      <div className="flex flex-col mt-1 w-11/12">
+                        <select
+                          {...register("upload_public_documents")}
+                          className="bg-gray-50 border-2 text-sm border-[#737373] text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1"
+                        >
+                          <option className="text-lg font-bold" value="false">
+                            No
+                          </option>
+                          <option className="text-lg font-bold" value="true">
+                            Yes
+                          </option>
+                        </select>
+                        {errors.upload_public_documents && (
+                          <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                            {errors.upload_public_documents.message}
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-md font-normal text-gray-600 break-all flex-wrap">
+                        {updatedData?.uploadPublicDocuments ? (
+                          "Yes"
+                        ) : "No" ? (
+                          <span>
+                            {updatedData?.uploadPublicDocuments ? "Yes" : "No"}
+                          </span>
+                        ) : (
+                          <span className="flex items-center">
+                            {noDataPresentSvg}
+                            Data Not Available
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="flex justify-between items-center mb-2">
+                  <h1 className="text-xl font-bold text-gray-800">
+                    Public Documents
+                  </h1>
+                  {editMode ? (
+                    <button
+                      type="button"
+                      onClick={() => append({ title: "", link: "" })}
+                      className=" p-1"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 448 512"
+                        className="size-4"
+                        fill="currentColor"
+                      >
+                        <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
+                      </svg>
+                    </button>
+                  ) : (
+                    ""
                   )}
                 </div>
-              </div>
-              <div className="flex justify-between items-center mb-2">
-                <h1 className="text-xl font-bold text-gray-800">
-                  Public Documents
-                </h1>
-                {editMode?
-                <button
-                  type="button"
-                  onClick={() => append({ title: "", link: "" })}
-                  className=" p-1"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 448 512"
-                    className="size-4"
-                    fill="currentColor"
-                  >
-                    <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
-                  </svg>
-                </button>:''}
-              </div>
-              <div className="flex flex-col space-y-2">
+                <div className="flex flex-col space-y-2">
                   <div className="overflow-hidden space-y-2">
-                      {orignalData?.publicDocs.map((doc, index) => (
-                        <div className="flex flex-row gap-2  p-2 items-center border-2 rounded-xl" key={index}>
+                    {orignalData?.publicDocs.map((doc, index) => (
+                      <div
+                        className="flex flex-row gap-2  p-2 items-center border-2 rounded-xl"
+                        key={index}
+                      >
                         <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                        <img src={pdfSvg} alt="PDF Icon" className="w-10 h-12 ml-2" />
-                        <div  className="truncate flex flex-col ml-2">
+                        <img
+                          src={pdfSvg}
+                          alt="PDF Icon"
+                          className="w-10 h-12 ml-2"
+                        />
+                        <div className="truncate flex flex-col ml-2">
                           <div className="flex-grow">
                             <a
                               href={doc.link}
@@ -3163,79 +3228,93 @@ const [projectId ,setProjectId]=useState('');
                             </div>
                           </div>
                         </div>
-                        </div>
-                      ))}
-                </div>
-                <div className="div">
-                  {watch('upload_public_documents') === 'true' && editMode ? (
-                    <div className="flex flex-col space-y-2">
-                      {fields.map((field, index) => (
-                        <React.Fragment key={field.id}>
-                          <div className="flex flex-row gap-2  p-2 items-center border-2 rounded-xl">
+                      </div>
+                    ))}
+                  </div>
+                  <div className="div">
+                    {watch("upload_public_documents") === "true" && editMode ? (
+                      <div className="flex flex-col space-y-2">
+                        {fields.map((field, index) => (
+                          <React.Fragment key={field.id}>
+                            <div className="flex flex-row gap-2  p-2 items-center border-2 rounded-xl">
+                              <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                              <img
+                                src={pdfSvg}
+                                alt="PDF Icon"
+                                className="w-10 h-12"
+                              />
+                              <div className="overflow-hidden">
+                                <div className="flex flex-row items-center">
+                                  <div className="flex flex-col space-y-1">
+                                    <div className="w-full">
+                                      <input
+                                        {...register(
+                                          `publicDocs.${index}.title`
+                                        )}
+                                        className="bg-gray-50 border-2 border-black rounded-lg block w-full p-1 text-black text-xs"
+                                        type="text"
+                                      />
+                                      {errors.publicDocs?.[index]?.title && (
+                                        <p className="mt-1 text-xs text-red-500 font-bold text-left">
+                                          {
+                                            errors.publicDocs[index].title
+                                              .message
+                                          }
+                                        </p>
+                                      )}
+                                    </div>
+                                    <div className="w-full">
+                                      <input
+                                        {...register(
+                                          `publicDocs.${index}.link`
+                                        )}
+                                        className="bg-gray-50 border-2 border-black rounded-lg block w-full p-1 text-xs text-black"
+                                        type="text"
+                                      />
+                                      {errors.publicDocs?.[index]?.link && (
+                                        <p className="mt-1 text-xs text-red-500 font-bold text-left">
+                                          {
+                                            errors.publicDocs[index].link
+                                              .message
+                                          }
+                                        </p>
+                                      )}
+                                    </div>
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => removePublic(index)}
+                                    className="p-2 ml-2"
+                                  >
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      viewBox="0 0 448 512"
+                                      className="size-4 "
+                                      fill="red"
+                                    >
+                                      <path d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0H284.2c12.1 0 23.2 6.8 28.6 17.7L320 32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 96 0 81.7 0 64S14.3 32 32 32h96l7.2-14.3zM32 128H416V448c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V128zm96 64c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16z" />
+                                    </svg>
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </React.Fragment>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="overflow-hidden space-y-2">
+                        {updatedData?.publicDocs.map((doc, index) => (
+                          <div
+                            className="flex flex-row gap-2  p-2 items-center border-2 rounded-xl"
+                            key={index}
+                          >
                             <span className="w-2 h-2 bg-green-700 rounded-full"></span>
                             <img
                               src={pdfSvg}
                               alt="PDF Icon"
-                              className="w-10 h-12"
+                              className="w-10 h-12 ml-2"
                             />
-                            <div className="overflow-hidden">
-                              <div className="flex flex-row items-center">
-                                <div className="flex flex-col space-y-1">
-                                  <div className="w-full">
-                                    <input
-                                      {...register(`publicDocs.${index}.title`)}
-                                      className="bg-gray-50 border-2 border-black rounded-lg block w-full p-1 text-black text-xs"
-                                      type="text"
-                                    />
-                                    {errors.publicDocs?.[index]?.title && (
-                                      <p className="mt-1 text-xs text-red-500 font-bold text-left">
-                                        {errors.publicDocs[index].title.message}
-                                      </p>
-                                    )}
-                                  </div>
-                                  <div className="w-full">
-                                    <input
-                                      {...register(`publicDocs.${index}.link`)}
-                                      className="bg-gray-50 border-2 border-black rounded-lg block w-full p-1 text-xs text-black"
-                                      type="text"
-                                    />
-                                    {errors.publicDocs?.[index]?.link && (
-                                      <p className="mt-1 text-xs text-red-500 font-bold text-left">
-                                        {errors.publicDocs[index].link.message}
-                                      </p>
-                                    )}
-                                  </div>
-                                </div>
-                                <button
-                                  type="button"
-                                  onClick={() => removePublic(index)}
-                                  className="p-2 ml-2"
-                                >
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 448 512"
-                                    className="size-4 "
-                                    fill="red"
-                                  >
-                                    <path d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0H284.2c12.1 0 23.2 6.8 28.6 17.7L320 32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 96 0 81.7 0 64S14.3 32 32 32h96l7.2-14.3zM32 128H416V448c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V128zm96 64c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16z" />
-                                  </svg>
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        </React.Fragment>
-                      ))}
-                    </div>
-                  ) : (  
-                      <div className="overflow-hidden space-y-2">
-                          {updatedData?.publicDocs.map((doc, index) => (
-                            <div className="flex flex-row gap-2  p-2 items-center border-2 rounded-xl" key={index}>
-                            <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                            <img src={pdfSvg} alt="PDF Icon" className="w-10 h-12 ml-2" />
-                            <div
-                              
-                              className="truncate flex flex-col ml-2"
-                            >
+                            <div className="truncate flex flex-col ml-2">
                               <div className="flex-grow">
                                 <a
                                   href={doc.link}
@@ -3260,69 +3339,25 @@ const [projectId ,setProjectId]=useState('');
                                 </div>
                               </div>
                             </div>
-                            </div>
-                          ))}
-                        </div>
-                  )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className=" bg-[#D2D5F2] md:px-[4%] flex md:flex-row flex-col shadow-md shadow-gray-400 pb-6 pt-4 rounded-lg md:w-3/4 w-full">
-            <div className="grid md:grid-cols-2 w-full">
-              <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
-                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
-                  Preferred ICP Hub :
-                </h2>
-                <div className="flex space-x-2 items-center  flex-row ml-3">
-                  <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                  <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                    {orignalData?.preferredIcpHub ? (
-                      <span>{orignalData?.preferredIcpHub}</span>
-                    ) : (
-                      <span className="flex items-center">
-                        {noDataPresentSvg}
-                        Data Not Available
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className="flex space-x-2 items-center flex-row ml-3">
-                  <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                  {editMode ? (
-                    <div className="flex flex-col mt-1 w-3/4">
-                      <select
-                        {...register("preferred_icp_hub")}
-                        defaultValue={getValues("preferred_icp_hub")}
-                        className={`bg-gray-50 border-2 ${
-                          errors.preferred_icp_hub
-                            ? "border-red-500 "
-                            : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                      >
-                        <option className="text-lg font-bold" value="">
-                          Select your ICP Hub
-                        </option>
-                        {getAllIcpHubs?.map((hub) => (
-                          <option
-                            key={hub.id}
-                            value={`${hub.name} ,${hub.region}`}
-                            className="text-lg font-bold"
-                          >
-                            {hub.name}, {hub.region}
-                          </option>
-                        ))}
-                      </select>
-                      {errors.preferred_icp_hub && (
-                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                          {errors.preferred_icp_hub.message}
-                        </p>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="text-md font-normal text-gray-600 break-all flex-wrap">
-                      {updatedData?.preferredIcpHub ? (
-                        <span>{updatedData?.preferredIcpHub}</span>
+            <div className=" bg-[#D2D5F2] md:px-[4%] flex md:flex-row flex-col shadow-md shadow-gray-400 pb-6 pt-4 rounded-lg md:w-3/4 w-full">
+              <div className="grid md:grid-cols-2 w-full">
+                <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
+                  <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                    Preferred ICP Hub :
+                  </h2>
+                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                    <span className="w-2 h-2 bg-red-700 rounded-full"></span>
+                    <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
+                      {orignalData?.preferredIcpHub ? (
+                        <span>{orignalData?.preferredIcpHub}</span>
                       ) : (
                         <span className="flex items-center">
                           {noDataPresentSvg}
@@ -3330,62 +3365,65 @@ const [projectId ,setProjectId]=useState('');
                         </span>
                       )}
                     </div>
-                  )}
-                </div>
-              </div>
-              <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
-                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
-                  Project Registered :
-                </h2>
-                <div className="flex space-x-2 items-center  flex-row ml-3">
-                  <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                  <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                    {orignalData?.isYourProjectRegistered ? (
-                      "Yes"
-                    ) : "No" ? (
-                      <span>
-                        {orignalData?.isYourProjectRegistered ? "Yes" : "No"}
-                      </span>
+                  </div>
+                  <div className="flex space-x-2 items-center flex-row ml-3">
+                    <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                    {editMode ? (
+                      <div className="flex flex-col mt-1 w-3/4">
+                        <select
+                          {...register("preferred_icp_hub")}
+                          defaultValue={getValues("preferred_icp_hub")}
+                          className={`bg-gray-50 border-2 ${
+                            errors.preferred_icp_hub
+                              ? "border-red-500 "
+                              : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
+                        >
+                          <option className="text-lg font-bold" value="">
+                            Select your ICP Hub
+                          </option>
+                          {getAllIcpHubs?.map((hub) => (
+                            <option
+                              key={hub.id}
+                              value={`${hub.name} ,${hub.region}`}
+                              className="text-lg font-bold"
+                            >
+                              {hub.name}, {hub.region}
+                            </option>
+                          ))}
+                        </select>
+                        {errors.preferred_icp_hub && (
+                          <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                            {errors.preferred_icp_hub.message}
+                          </p>
+                        )}
+                      </div>
                     ) : (
-                      <span className="flex items-center">
-                        {noDataPresentSvg}
-                        Data Not Available
-                      </span>
+                      <div className="text-md font-normal text-gray-600 break-all flex-wrap">
+                        {updatedData?.preferredIcpHub ? (
+                          <span>{updatedData?.preferredIcpHub}</span>
+                        ) : (
+                          <span className="flex items-center">
+                            {noDataPresentSvg}
+                            Data Not Available
+                          </span>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>
-                <div className="flex space-x-2 items-center  flex-row ml-3">
-                  <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                  {editMode ? (
-                    <div className="flex flex-col mt-1 w-3/4">
-                      <select
-                        {...register("is_your_project_registered")}
-                        className={`bg-gray-50 border-2 ${
-                          errors.is_your_project_registered
-                            ? "border-red-500"
-                            : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                      >
-                        <option className="text-lg font-bold" value="false">
-                          No
-                        </option>
-                        <option className="text-lg font-bold" value="true">
-                          Yes
-                        </option>
-                      </select>
-                      {errors.is_your_project_registered && (
-                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                          {errors.is_your_project_registered.message}
-                        </p>
-                      )}
-                    </div>
-                  ) : (
+                <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
+                  <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                    Project Registered :
+                  </h2>
+                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                    <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                     <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                      {updatedData?.isYourProjectRegistered ? (
+                      {orignalData?.isYourProjectRegistered ? (
                         "Yes"
                       ) : "No" ? (
                         <span>
-                          {updatedData?.isYourProjectRegistered ? "Yes" : "No"}
+                          {orignalData?.isYourProjectRegistered ? "Yes" : "No"}
                         </span>
                       ) : (
                         <span className="flex items-center">
@@ -3394,120 +3432,61 @@ const [projectId ,setProjectId]=useState('');
                         </span>
                       )}
                     </div>
-                  )}
-                </div>
-              </div>
-              <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
-                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
-                  Type of Registration :
-                </h2>
-                <div className="flex space-x-2 items-center  flex-row ml-3">
-                  <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                  <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                    {orignalData?.typeOfRegistration ? (
-                      <span>{orignalData?.typeOfRegistration}</span>
-                    ) : (
-                      <span className="flex items-center">
-                        {noDataPresentSvg}
-                        Data Not Available
-                      </span>
-                    )}
                   </div>
-                </div>
-                <div className="flex space-x-2 items-center  flex-row ml-3">
-                  <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                  {watch("is_your_project_registered") === "true" && editMode ? (
-                    <div className="flex flex-col mt-1 w-3/4">
-                      <select
-                        {...register("type_of_registration")}
-                        className={`bg-gray-50 border-2 ${
-                          errors.type_of_registration
-                            ? "border-red-500"
-                            : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                      >
-                        <option className="text-lg font-bold" value="">
-                          Select registration type
-                        </option>
-                        <option className="text-lg font-bold" value="Comapany">
-                          Comapany
-                        </option>
-                        <option className="text-lg font-bold" value="DAO">
-                          DAO
-                        </option>
-                      </select>
-                      {errors.type_of_registration && (
-                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                          {errors.type_of_registration.message}
-                        </p>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                      {updatedData?.typeOfRegistration ? (
-                        <span>{updatedData?.typeOfRegistration}</span>
-                      ) : (
-                        <span className="flex items-center">
-                          {noDataPresentSvg}
-                          Data Not Available
-                        </span>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
-                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
-                  Country of Registration:
-                </h2>
-                <div className="flex space-x-2 items-center  flex-row ml-3">
-                  <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                  <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                    {orignalData?.countryOfRegistration ? (
-                      <span>{orignalData?.countryOfRegistration}</span>
-                    ) : (
-                      <span className="flex items-center">
-                        {noDataPresentSvg}
-                        Data Not Available
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className="flex space-x-2 items-center flex-row ml-3">
-                  <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                  {watch("is_your_project_registered") === "true" && editMode? (
-                    <div className="flex flex-col mt-1 w-3/4">
-                      <select
-                        {...register("country_of_registration")}
-                        className={`bg-gray-50 border-2 ${
-                          errors.country_of_registration
-                            ? "border-red-500 "
-                            : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                      >
-                        <option className="text-lg font-bold" value="">
-                          Select your country
-                        </option>
-                        {countries?.map((expert) => (
-                          <option
-                            key={expert.name}
-                            value={expert.name}
-                            className="text-lg font-bold"
-                          >
-                            {expert.name}
+                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                    <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                    {editMode ? (
+                      <div className="flex flex-col mt-1 w-3/4">
+                        <select
+                          {...register("is_your_project_registered")}
+                          className={`bg-gray-50 border-2 ${
+                            errors.is_your_project_registered
+                              ? "border-red-500"
+                              : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
+                        >
+                          <option className="text-lg font-bold" value="false">
+                            No
                           </option>
-                        ))}
-                      </select>
-                      {errors?.country_of_registration && (
-                        <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                          {errors?.country_of_registration?.message}
-                        </span>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="text-md font-normal text-gray-600 break-all flex-wrap">
-                      {updatedData?.countryOfRegistration ? (
-                        <span>{updatedData?.countryOfRegistration}</span>
+                          <option className="text-lg font-bold" value="true">
+                            Yes
+                          </option>
+                        </select>
+                        {errors.is_your_project_registered && (
+                          <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                            {errors.is_your_project_registered.message}
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
+                        {updatedData?.isYourProjectRegistered ? (
+                          "Yes"
+                        ) : "No" ? (
+                          <span>
+                            {updatedData?.isYourProjectRegistered
+                              ? "Yes"
+                              : "No"}
+                          </span>
+                        ) : (
+                          <span className="flex items-center">
+                            {noDataPresentSvg}
+                            Data Not Available
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
+                  <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                    Type of Registration :
+                  </h2>
+                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                    <span className="w-2 h-2 bg-red-700 rounded-full"></span>
+                    <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
+                      {orignalData?.typeOfRegistration ? (
+                        <span>{orignalData?.typeOfRegistration}</span>
                       ) : (
                         <span className="flex items-center">
                           {noDataPresentSvg}
@@ -3515,63 +3494,129 @@ const [projectId ,setProjectId]=useState('');
                         </span>
                       )}
                     </div>
-                  )}
+                  </div>
+                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                    <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                    {watch("is_your_project_registered") === "true" &&
+                    editMode ? (
+                      <div className="flex flex-col mt-1 w-3/4">
+                        <select
+                          {...register("type_of_registration")}
+                          className={`bg-gray-50 border-2 ${
+                            errors.type_of_registration
+                              ? "border-red-500"
+                              : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
+                        >
+                          <option className="text-lg font-bold" value="">
+                            Select registration type
+                          </option>
+                          <option
+                            className="text-lg font-bold"
+                            value="Comapany"
+                          >
+                            Comapany
+                          </option>
+                          <option className="text-lg font-bold" value="DAO">
+                            DAO
+                          </option>
+                        </select>
+                        {errors.type_of_registration && (
+                          <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                            {errors.type_of_registration.message}
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
+                        {updatedData?.typeOfRegistration ? (
+                          <span>{updatedData?.typeOfRegistration}</span>
+                        ) : (
+                          <span className="flex items-center">
+                            {noDataPresentSvg}
+                            Data Not Available
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
+                <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
+                  <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                    Country of Registration:
+                  </h2>
+                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                    <span className="w-2 h-2 bg-red-700 rounded-full"></span>
+                    <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
+                      {orignalData?.countryOfRegistration ? (
+                        <span>{orignalData?.countryOfRegistration}</span>
+                      ) : (
+                        <span className="flex items-center">
+                          {noDataPresentSvg}
+                          Data Not Available
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex space-x-2 items-center flex-row ml-3">
+                    <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                    {watch("is_your_project_registered") === "true" &&
+                    editMode ? (
+                      <div className="flex flex-col mt-1 w-3/4">
+                        <select
+                          {...register("country_of_registration")}
+                          className={`bg-gray-50 border-2 ${
+                            errors.country_of_registration
+                              ? "border-red-500 "
+                              : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
+                        >
+                          <option className="text-lg font-bold" value="">
+                            Select your country
+                          </option>
+                          {countries?.map((expert) => (
+                            <option
+                              key={expert.name}
+                              value={expert.name}
+                              className="text-lg font-bold"
+                            >
+                              {expert.name}
+                            </option>
+                          ))}
+                        </select>
+                        {errors?.country_of_registration && (
+                          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                            {errors?.country_of_registration?.message}
+                          </span>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-md font-normal text-gray-600 break-all flex-wrap">
+                        {updatedData?.countryOfRegistration ? (
+                          <span>{updatedData?.countryOfRegistration}</span>
+                        ) : (
+                          <span className="flex items-center">
+                            {noDataPresentSvg}
+                            Data Not Available
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
 
-              <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
-                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
-                  Support Multichain :
-                </h2>
-                <div className="flex space-x-2 items-center  flex-row ml-3">
-                  <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                  <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                    {orignalData?.supports_multichain ? (
-                      "Yes"
-                    ) : "No" ? (
-                      <span>
-                        {orignalData?.supports_multichain ? "Yes" : "No"}
-                      </span>
-                    ) : (
-                      <span className="flex items-center">
-                        {noDataPresentSvg}
-                        Data Not Available
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className="flex space-x-2 items-center  flex-row ml-3">
-                  <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                  {editMode ? (
-                    <div className="flex flex-col mt-1 w-3/4">
-                      <select
-                        {...register("multi_chain")}
-                        className={`bg-gray-50 border-2 ${
-                          errors.multi_chain
-                            ? "border-red-500"
-                            : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                      >
-                        <option className="text-lg font-bold" value="false">
-                          No
-                        </option>
-                        <option className="text-lg font-bold" value="true">
-                          Yes
-                        </option>
-                      </select>
-                      {errors.multi_chain && (
-                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                          {errors.multi_chain.message}
-                        </p>
-                      )}
-                    </div>
-                  ) : (
+                <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
+                  <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                    Support Multichain :
+                  </h2>
+                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                    <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                     <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                      {updatedData?.supports_multichain ? (
+                      {orignalData?.supports_multichain ? (
                         "Yes"
                       ) : "No" ? (
                         <span>
-                          {updatedData?.supports_multichain ? "Yes" : "No"}
+                          {orignalData?.supports_multichain ? "Yes" : "No"}
                         </span>
                       ) : (
                         <span className="flex items-center">
@@ -3580,105 +3625,61 @@ const [projectId ,setProjectId]=useState('');
                         </span>
                       )}
                     </div>
-                  )}
-                </div>
-              </div>
-              <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
-                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
-                  Support Multichain :
-                </h2>
-                <div className="flex space-x-2 items-center  flex-row ml-3">
-                  <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                  <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                    {orignalData?.supportsMultichain ? (
-                      <span className="flex flex-wrap gap-2 mb-1">
-                        {orignalData?.supportsMultichain &&
-                          orignalData?.supportsMultichain
-                            .split(",")
-                            .slice(0, 3)
-                            .map((tag, index) => (
-                              <div
-                                key={index}
-                                className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
-                              >
-                                {tag.trim()}
-                              </div>
-                            ))}
-                      </span>
+                  </div>
+                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                    <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                    {editMode ? (
+                      <div className="flex flex-col mt-1 w-3/4">
+                        <select
+                          {...register("multi_chain")}
+                          className={`bg-gray-50 border-2 ${
+                            errors.multi_chain
+                              ? "border-red-500"
+                              : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
+                        >
+                          <option className="text-lg font-bold" value="false">
+                            No
+                          </option>
+                          <option className="text-lg font-bold" value="true">
+                            Yes
+                          </option>
+                        </select>
+                        {errors.multi_chain && (
+                          <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                            {errors.multi_chain.message}
+                          </p>
+                        )}
+                      </div>
                     ) : (
-                      <span className="flex items-center">
-                        {noDataPresentSvg}
-                        Data Not Available
-                      </span>
+                      <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
+                        {updatedData?.supports_multichain ? (
+                          "Yes"
+                        ) : "No" ? (
+                          <span>
+                            {updatedData?.supports_multichain ? "Yes" : "No"}
+                          </span>
+                        ) : (
+                          <span className="flex items-center">
+                            {noDataPresentSvg}
+                            Data Not Available
+                          </span>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>
-                <div className="flex space-x-2 items-center  flex-row ml-3">
-                  <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                  {watch("multi_chain") === "true"&& editMode ? (
-                    <div className="flex flex-col mt-1 w-3/4">
-                      <ReactSelect
-                        isMulti
-                        menuPortalTarget={document.body}
-                        menuPosition={"fixed"}
-                        styles={{
-                          menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                          control: (provided, state) => ({
-                            ...provided,
-                            paddingBlock: "0px",
-                            borderRadius: "8px",
-                            border: errors.multi_chain_names
-                              ? "2px solid #ef4444"
-                              : "2px solid #737373",
-                            backgroundColor: "rgb(249 250 251)",
-                            "&::placeholder": {
-                              color: errors.multi_chain_names
-                                ? "#ef4444"
-                                : "currentColor",
-                            },
-                          }),
-                        }}
-                        value={multiChainSelectedOptions}
-                        options={multiChainOptions}
-                        classNamePrefix="select"
-                        className="basic-multi-select w-full text-start text-nowrap"
-                        placeholder="Select a chain"
-                        name="multi_chain_names"
-                        onChange={(selectedOptions) => {
-                          if (selectedOptions && selectedOptions.length > 0) {
-                            setMultiChainSelectedOptions(selectedOptions);
-                            clearErrors("multi_chain_names");
-                            setValue(
-                              "multi_chain_names",
-                              selectedOptions
-                                .map((option) => option.value)
-                                .join(", "),
-                              { shouldValidate: true }
-                            );
-                          } else {
-                            setMultiChainSelectedOptions([]);
-                            setValue("multi_chain_names", "", {
-                              shouldValidate: true,
-                            });
-                            setError("multi_chain_names", {
-                              type: "required",
-                              message: "Atleast one chain name required",
-                            });
-                          }
-                        }}
-                      />
-                      {errors.multi_chain_names && (
-                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                          {errors.multi_chain_names.message}
-                        </p>
-                      )}
-                    </div>
-                  ) : (
+                <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
+                  <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                    Support Multichain :
+                  </h2>
+                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                    <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                     <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                      {updatedData?.supportsMultichain ? (
-                        <span className="flex flex-wrap gap-2">
-                          {updatedData?.supportsMultichain &&
-                            updatedData?.supportsMultichain
+                      {orignalData?.supportsMultichain ? (
+                        <span className="flex flex-wrap gap-2 mb-1">
+                          {orignalData?.supportsMultichain &&
+                            orignalData?.supportsMultichain
                               .split(",")
                               .slice(0, 3)
                               .map((tag, index) => (
@@ -3697,62 +3698,106 @@ const [projectId ,setProjectId]=useState('');
                         </span>
                       )}
                     </div>
-                  )}
-                </div>
-              </div>
-              <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
-                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
-                  Live On Mainnet :
-                </h2>
-                <div className="flex space-x-2 items-center  flex-row ml-3">
-                  <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                  <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                    {orignalData?.liveOnIcpMainnet ? (
-                      "Yes"
-                    ) : "No" ? (
-                      <span>
-                        {orignalData?.liveOnIcpMainnet ? "Yes" : "No"}
-                      </span>
+                  </div>
+                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                    <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                    {watch("multi_chain") === "true" && editMode ? (
+                      <div className="flex flex-col mt-1 w-3/4">
+                        <ReactSelect
+                          isMulti
+                          menuPortalTarget={document.body}
+                          menuPosition={"fixed"}
+                          styles={{
+                            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                            control: (provided, state) => ({
+                              ...provided,
+                              paddingBlock: "0px",
+                              borderRadius: "8px",
+                              border: errors.multi_chain_names
+                                ? "2px solid #ef4444"
+                                : "2px solid #737373",
+                              backgroundColor: "rgb(249 250 251)",
+                              "&::placeholder": {
+                                color: errors.multi_chain_names
+                                  ? "#ef4444"
+                                  : "currentColor",
+                              },
+                            }),
+                          }}
+                          value={multiChainSelectedOptions}
+                          options={multiChainOptions}
+                          classNamePrefix="select"
+                          className="basic-multi-select w-full text-start text-nowrap"
+                          placeholder="Select a chain"
+                          name="multi_chain_names"
+                          onChange={(selectedOptions) => {
+                            if (selectedOptions && selectedOptions.length > 0) {
+                              setMultiChainSelectedOptions(selectedOptions);
+                              clearErrors("multi_chain_names");
+                              setValue(
+                                "multi_chain_names",
+                                selectedOptions
+                                  .map((option) => option.value)
+                                  .join(", "),
+                                { shouldValidate: true }
+                              );
+                            } else {
+                              setMultiChainSelectedOptions([]);
+                              setValue("multi_chain_names", "", {
+                                shouldValidate: true,
+                              });
+                              setError("multi_chain_names", {
+                                type: "required",
+                                message: "Atleast one chain name required",
+                              });
+                            }
+                          }}
+                        />
+                        {errors.multi_chain_names && (
+                          <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                            {errors.multi_chain_names.message}
+                          </p>
+                        )}
+                      </div>
                     ) : (
-                      <span className="flex items-center">
-                        {noDataPresentSvg}
-                        Data Not Available
-                      </span>
+                      <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
+                        {updatedData?.supportsMultichain ? (
+                          <span className="flex flex-wrap gap-2">
+                            {updatedData?.supportsMultichain &&
+                              updatedData?.supportsMultichain
+                                .split(",")
+                                .slice(0, 3)
+                                .map((tag, index) => (
+                                  <div
+                                    key={index}
+                                    className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                                  >
+                                    {tag.trim()}
+                                  </div>
+                                ))}
+                          </span>
+                        ) : (
+                          <span className="flex items-center">
+                            {noDataPresentSvg}
+                            Data Not Available
+                          </span>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>
-                <div className="flex space-x-2 items-center flex-row ml-3">
-                  <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                  {editMode ? (
-                    <div className="flex flex-col mt-1 w-3/4">
-                      <select
-                        {...register("live_on_icp_mainnet")}
-                        className={`bg-gray-50 border-2 ${
-                          errors.live_on_icp_mainnet
-                            ? "border-red-500"
-                            : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                      >
-                        <option className="text-lg font-bold" value="false">
-                          No
-                        </option>
-                        <option className="text-lg font-bold" value="true">
-                          Yes
-                        </option>
-                      </select>
-                      {errors.live_on_icp_mainnet && (
-                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                          {errors.live_on_icp_mainnet.message}
-                        </p>
-                      )}
-                    </div>
-                  ) : (
+                <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
+                  <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                    Live On Mainnet :
+                  </h2>
+                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                    <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                     <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                      {updatedData?.liveOnIcpMainnet ? (
+                      {orignalData?.liveOnIcpMainnet ? (
                         "Yes"
                       ) : "No" ? (
                         <span>
-                          {updatedData?.liveOnIcpMainnet ? "Yes" : "No"}
+                          {orignalData?.liveOnIcpMainnet ? "Yes" : "No"}
                         </span>
                       ) : (
                         <span className="flex items-center">
@@ -3761,90 +3806,150 @@ const [projectId ,setProjectId]=useState('');
                         </span>
                       )}
                     </div>
-                  )}
-                </div>
-              </div>
-              <div className="flex flex-col mb-4 md:mb-6">
-                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
-                  Daap Link:
-                </h2>
-                <div className="flex space-x-2 items-center  flex-row ml-3">
-                  <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                  <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                    {orignalData?.dappLink ?? "Not available"}
                   </div>
-                </div>
-                <div className="flex space-x-2 items-center flex-row ml-3">
-                  <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                  {watch("live_on_icp_mainnet") === "true" && editMode ? (
-                    <div className="flex flex-col mt-1 w-3/4">
-                      <input
-                        type="text"
-                        {...register("dapp_link")}
-                        placeholder="Enter your dApp Link"
-                        className={`bg-gray-50 border-2 ${
-                          errors.dapp_link
-                            ? "border-red-500"
-                            : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                      />
-                      {errors.dapp_link && (
-                        <div className="mt-1 text-sm text-red-500 font-bold">
-                          {errors.dapp_link.message}
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                      {updatedData?.dappLink ?? "Not available"}
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
-                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
-                  Weekly Active:
-                </h2>
-                <div className="flex space-x-2 items-center  flex-row ml-3">
-                  <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                  <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                    {weeklyUsers ? (
-                      <span>{weeklyUsers}</span>
+                  <div className="flex space-x-2 items-center flex-row ml-3">
+                    <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                    {editMode ? (
+                      <div className="flex flex-col mt-1 w-3/4">
+                        <select
+                          {...register("live_on_icp_mainnet")}
+                          className={`bg-gray-50 border-2 ${
+                            errors.live_on_icp_mainnet
+                              ? "border-red-500"
+                              : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
+                        >
+                          <option className="text-lg font-bold" value="false">
+                            No
+                          </option>
+                          <option className="text-lg font-bold" value="true">
+                            Yes
+                          </option>
+                        </select>
+                        {errors.live_on_icp_mainnet && (
+                          <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                            {errors.live_on_icp_mainnet.message}
+                          </p>
+                        )}
+                      </div>
                     ) : (
-                      <span className="flex items-center">
-                        {noDataPresentSvg}
-                        Data Not Available
-                      </span>
+                      <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
+                        {updatedData?.liveOnIcpMainnet ? (
+                          "Yes"
+                        ) : "No" ? (
+                          <span>
+                            {updatedData?.liveOnIcpMainnet ? "Yes" : "No"}
+                          </span>
+                        ) : (
+                          <span className="flex items-center">
+                            {noDataPresentSvg}
+                            Data Not Available
+                          </span>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>
-                <div className="flex space-x-2 items-center  flex-row ml-3">
-                  <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                  {watch("live_on_icp_mainnet") === "true" && editMode ? (
-                    <div className="flex flex-col mt-1 w-3/4">
-                      <input
-                        type="number"
-                        {...register("weekly_active_users")}
-                        className={`bg-gray-50 border-2 
+                <div className="flex flex-col mb-4 md:mb-6">
+                  <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                    Daap Link:
+                  </h2>
+                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                    <span className="w-2 h-2 bg-red-700 rounded-full"></span>
+                    <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
+                      {orignalData?.dappLink ?? "Not available"}
+                    </div>
+                  </div>
+                  <div className="flex space-x-2 items-center flex-row ml-3">
+                    <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                    {watch("live_on_icp_mainnet") === "true" && editMode ? (
+                      <div className="flex flex-col mt-1 w-3/4">
+                        <input
+                          type="text"
+                          {...register("dapp_link")}
+                          placeholder="Enter your dApp Link"
+                          className={`bg-gray-50 border-2 ${
+                            errors.dapp_link
+                              ? "border-red-500"
+                              : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
+                        />
+                        {errors.dapp_link && (
+                          <div className="mt-1 text-sm text-red-500 font-bold">
+                            {errors.dapp_link.message}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
+                        {updatedData?.dappLink ?? "Not available"}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
+                  <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                    Weekly Active:
+                  </h2>
+                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                    <span className="w-2 h-2 bg-red-700 rounded-full"></span>
+                    <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
+                      {weeklyUsers ? (
+                        <span>{weeklyUsers}</span>
+                      ) : (
+                        <span className="flex items-center">
+                          {noDataPresentSvg}
+                          Data Not Available
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                    <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                    {watch("live_on_icp_mainnet") === "true" && editMode ? (
+                      <div className="flex flex-col mt-1 w-3/4">
+                        <input
+                          type="number"
+                          {...register("weekly_active_users")}
+                          className={`bg-gray-50 border-2 
                                              ${
                                                errors?.weekly_active_users
                                                  ? "border-red-500 "
                                                  : "border-[#737373]"
                                              } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                        placeholder="Enter Weekly active users"
-                        onWheel={(e) => e.target.blur()}
-                        min={0}
-                      />
-                      {errors?.weekly_active_users && (
-                        <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                          {errors?.weekly_active_users?.message}
-                        </span>
-                      )}
-                    </div>
-                  ) : (
+                          placeholder="Enter Weekly active users"
+                          onWheel={(e) => e.target.blur()}
+                          min={0}
+                        />
+                        {errors?.weekly_active_users && (
+                          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                            {errors?.weekly_active_users?.message}
+                          </span>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
+                        {updatedweeklyUsers ? (
+                          <span>{updatedweeklyUsers}</span>
+                        ) : (
+                          <span className="flex items-center">
+                            {noDataPresentSvg}
+                            Data Not Available
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
+                  <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                    Revenue:
+                  </h2>
+                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                    <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                     <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                      {updatedweeklyUsers ? (
-                        <span>{updatedweeklyUsers}</span>
+                      {revenueNum ? (
+                        <span>{revenueNum}</span>
                       ) : (
                         <span className="flex items-center">
                           {noDataPresentSvg}
@@ -3852,116 +3957,56 @@ const [projectId ,setProjectId]=useState('');
                         </span>
                       )}
                     </div>
-                  )}
-                </div>
-              </div>
-              <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
-                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
-                  Revenue:
-                </h2>
-                <div className="flex space-x-2 items-center  flex-row ml-3">
-                  <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                  <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                    {revenueNum ? (
-                      <span>{revenueNum}</span>
-                    ) : (
-                      <span className="flex items-center">
-                        {noDataPresentSvg}
-                        Data Not Available
-                      </span>
-                    )}
                   </div>
-                </div>
-                <div className="flex space-x-2 items-center  flex-row ml-3">
-                  <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                  {watch("live_on_icp_mainnet") === "true" && editMode ? (
-                    <div className="flex flex-col mt-1 w-3/4">
-                      <input
-                        type="number"
-                        {...register("revenue")}
-                        className={`bg-gray-50 border-2 
+                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                    <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                    {watch("live_on_icp_mainnet") === "true" && editMode ? (
+                      <div className="flex flex-col mt-1 w-3/4">
+                        <input
+                          type="number"
+                          {...register("revenue")}
+                          className={`bg-gray-50 border-2 
                                              ${
                                                errors?.revenue
                                                  ? "border-red-500 "
                                                  : "border-[#737373]"
                                              } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                        placeholder="Enter Revenue"
-                        onWheel={(e) => e.target.blur()}
-                        min={0}
-                      />
-                      {errors?.revenue && (
-                        <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                          {errors?.revenue?.message}
-                        </span>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                      {updatedRevenueNum ? (
-                        <span>{updatedRevenueNum}</span>
-                      ) : (
-                        <span className="flex items-center">
-                          {noDataPresentSvg}
-                          Data Not Available
-                        </span>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
-                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
-                  Have you raised any funds in past :
-                </h2>
-                <div className="flex space-x-2 items-center  flex-row ml-3">
-                  <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                  <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                    {orignalData?.moneyRaisedTillNow ? (
-                      "Yes"
-                    ) : "No" ? (
-                      <span>
-                        {orignalData?.moneyRaisedTillNow ? "Yes" : "No"}
-                      </span>
+                          placeholder="Enter Revenue"
+                          onWheel={(e) => e.target.blur()}
+                          min={0}
+                        />
+                        {errors?.revenue && (
+                          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                            {errors?.revenue?.message}
+                          </span>
+                        )}
+                      </div>
                     ) : (
-                      <span className="flex items-center">
-                        {noDataPresentSvg}
-                        Data Not Available
-                      </span>
+                      <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
+                        {updatedRevenueNum ? (
+                          <span>{updatedRevenueNum}</span>
+                        ) : (
+                          <span className="flex items-center">
+                            {noDataPresentSvg}
+                            Data Not Available
+                          </span>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>
-                <div className="flex space-x-2 items-center  flex-row ml-3">
-                  <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                  {editMode ? (
-                    <div className="flex flex-col mt-1 w-3/4">
-                      <select
-                        {...register("money_raised_till_now")}
-                        className={`bg-gray-50 border-2 ${
-                          errors.money_raised_till_now
-                            ? "border-red-500"
-                            : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                      >
-                        <option className="text-lg font-bold" value="false">
-                          No
-                        </option>
-                        <option className="text-lg font-bold" value="true">
-                          Yes
-                        </option>
-                      </select>
-                      {errors.money_raised_till_now && (
-                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                          {errors.money_raised_till_now.message}
-                        </p>
-                      )}
-                    </div>
-                  ) : (
+                <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
+                  <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                    Have you raised any funds in past :
+                  </h2>
+                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                    <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                     <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                      {updatedData?.moneyRaisedTillNow ? (
+                      {orignalData?.moneyRaisedTillNow ? (
                         "Yes"
                       ) : "No" ? (
                         <span>
-                          {updatedData?.moneyRaisedTillNow ? "Yes" : "No"}
+                          {orignalData?.moneyRaisedTillNow ? "Yes" : "No"}
                         </span>
                       ) : (
                         <span className="flex items-center">
@@ -3970,53 +4015,113 @@ const [projectId ,setProjectId]=useState('');
                         </span>
                       )}
                     </div>
-                  )}
-                </div>
-              </div>
-              <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
-                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
-                  ICP Grants:
-                </h2>
-                <div className="flex space-x-2 items-center  flex-row ml-3">
-                  <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                  <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                    {icpGrants ? (
-                      <span>{icpGrants}</span>
+                  </div>
+                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                    <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                    {editMode ? (
+                      <div className="flex flex-col mt-1 w-3/4">
+                        <select
+                          {...register("money_raised_till_now")}
+                          className={`bg-gray-50 border-2 ${
+                            errors.money_raised_till_now
+                              ? "border-red-500"
+                              : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
+                        >
+                          <option className="text-lg font-bold" value="false">
+                            No
+                          </option>
+                          <option className="text-lg font-bold" value="true">
+                            Yes
+                          </option>
+                        </select>
+                        {errors.money_raised_till_now && (
+                          <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                            {errors.money_raised_till_now.message}
+                          </p>
+                        )}
+                      </div>
                     ) : (
-                      <span className="flex items-center">
-                        {noDataPresentSvg}
-                        Data Not Available
-                      </span>
+                      <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
+                        {updatedData?.moneyRaisedTillNow ? (
+                          "Yes"
+                        ) : "No" ? (
+                          <span>
+                            {updatedData?.moneyRaisedTillNow ? "Yes" : "No"}
+                          </span>
+                        ) : (
+                          <span className="flex items-center">
+                            {noDataPresentSvg}
+                            Data Not Available
+                          </span>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>
-                <div className="flex space-x-2 items-center  flex-row ml-3">
-                  <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                  {watch("money_raised_till_now") === "true" && editMode ? (
-                    <div className="flex flex-col mt-1 w-3/4">
-                      <input
-                        type="number"
-                        {...register("icp_grants")}
-                        className={`bg-gray-50 border-2 
+                <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
+                  <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                    ICP Grants:
+                  </h2>
+                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                    <span className="w-2 h-2 bg-red-700 rounded-full"></span>
+                    <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
+                      {icpGrants ? (
+                        <span>{icpGrants}</span>
+                      ) : (
+                        <span className="flex items-center">
+                          {noDataPresentSvg}
+                          Data Not Available
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                    <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                    {watch("money_raised_till_now") === "true" && editMode ? (
+                      <div className="flex flex-col mt-1 w-3/4">
+                        <input
+                          type="number"
+                          {...register("icp_grants")}
+                          className={`bg-gray-50 border-2 
                                        ${
                                          errors?.icp_grants
                                            ? "border-red-500 "
                                            : "border-[#737373]"
                                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                        placeholder="Enter your Grants"
-                        onWheel={(e) => e.target.blur()}
-                        min={0}
-                      />
-                      {errors?.icp_grants && (
-                        <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                          {errors?.icp_grants?.message}
-                        </span>
-                      )}
-                    </div>
-                  ) : (
+                          placeholder="Enter your Grants"
+                          onWheel={(e) => e.target.blur()}
+                          min={0}
+                        />
+                        {errors?.icp_grants && (
+                          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                            {errors?.icp_grants?.message}
+                          </span>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
+                        {updatedIcpGrants ? (
+                          <span>{updatedIcpGrants}</span>
+                        ) : (
+                          <span className="flex items-center">
+                            {noDataPresentSvg}
+                            Data Not Available
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
+                  <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                    Investors :
+                  </h2>
+                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                    <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                     <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                      {updatedIcpGrants ? (
-                        <span>{updatedIcpGrants}</span>
+                      {investorInvest ? (
+                        <span>{investorInvest}</span>
                       ) : (
                         <span className="flex items-center">
                           {noDataPresentSvg}
@@ -4024,53 +4129,53 @@ const [projectId ,setProjectId]=useState('');
                         </span>
                       )}
                     </div>
-                  )}
-                </div>
-              </div>
-              <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
-                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
-                  Investors :
-                </h2>
-                <div className="flex space-x-2 items-center  flex-row ml-3">
-                  <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                  <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                    {investorInvest ? (
-                      <span>{investorInvest}</span>
-                    ) : (
-                      <span className="flex items-center">
-                        {noDataPresentSvg}
-                        Data Not Available
-                      </span>
-                    )}
                   </div>
-                </div>
-                <div className="flex space-x-2 items-center  flex-row ml-3">
-                  <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                  {watch("money_raised_till_now") === "true" && editMode ? (
-                    <div className="flex flex-col mt-1 w-3/4">
-                      <input
-                        type="number"
-                        {...register("investors")}
-                        className={`bg-gray-50 border-2 
+                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                    <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                    {watch("money_raised_till_now") === "true" && editMode ? (
+                      <div className="flex flex-col mt-1 w-3/4">
+                        <input
+                          type="number"
+                          {...register("investors")}
+                          className={`bg-gray-50 border-2 
                                              ${
                                                errors?.investors
                                                  ? "border-red-500 "
                                                  : "border-[#737373]"
                                              } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                        placeholder="Enter Investors"
-                        onWheel={(e) => e.target.blur()}
-                        min={0}
-                      />
-                      {errors?.investors && (
-                        <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                          {errors?.investors?.message}
-                        </span>
-                      )}
-                    </div>
-                  ) : (
+                          placeholder="Enter Investors"
+                          onWheel={(e) => e.target.blur()}
+                          min={0}
+                        />
+                        {errors?.investors && (
+                          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                            {errors?.investors?.message}
+                          </span>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
+                        {updatedInvestorInvest ? (
+                          <span>{updatedInvestorInvest}</span>
+                        ) : (
+                          <span className="flex items-center">
+                            {noDataPresentSvg}
+                            Data Not Available
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
+                  <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                    Launchpad :
+                  </h2>
+                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                    <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                     <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                      {updatedInvestorInvest ? (
-                        <span>{updatedInvestorInvest}</span>
+                      {otherEcosystem ? (
+                        <span>{otherEcosystem}</span>
                       ) : (
                         <span className="flex items-center">
                           {noDataPresentSvg}
@@ -4078,120 +4183,56 @@ const [projectId ,setProjectId]=useState('');
                         </span>
                       )}
                     </div>
-                  )}
-                </div>
-              </div>
-              <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
-                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
-                  Launchpad :
-                </h2>
-                <div className="flex space-x-2 items-center  flex-row ml-3">
-                  <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                  <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                    {otherEcosystem ? (
-                      <span>{otherEcosystem}</span>
-                    ) : (
-                      <span className="flex items-center">
-                        {noDataPresentSvg}
-                        Data Not Available
-                      </span>
-                    )}
                   </div>
-                </div>
-                <div className="flex space-x-2 items-center  flex-row ml-3">
-                  <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                  {watch("money_raised_till_now") === "true" && editMode ? (
-                    <div className="flex flex-col mt-1 w-3/4">
-                      <input
-                        type="number"
-                        {...register("raised_from_other_ecosystem")}
-                        className={`bg-gray-50 border-2 
+                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                    <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                    {watch("money_raised_till_now") === "true" && editMode ? (
+                      <div className="flex flex-col mt-1 w-3/4">
+                        <input
+                          type="number"
+                          {...register("raised_from_other_ecosystem")}
+                          className={`bg-gray-50 border-2 
                                              ${
                                                errors?.raised_from_other_ecosystem
                                                  ? "border-red-500 "
                                                  : "border-[#737373]"
                                              } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                        placeholder="Enter Launchpad"
-                        onWheel={(e) => e.target.blur()}
-                        min={0}
-                      />
-                      {errors?.raised_from_other_ecosystem && (
-                        <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                          {errors?.raised_from_other_ecosystem?.message}
-                        </span>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                      {updatedOtherEcosystem ? (
-                        <span>{updatedOtherEcosystem}</span>
-                      ) : (
-                        <span className="flex items-center">
-                          {noDataPresentSvg}
-                          Data Not Available
-                        </span>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
-                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
-                  Are you currently raising money :
-                </h2>
-                <div className="flex space-x-2 items-center  flex-row ml-3">
-                  <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                  <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                    {orignalData.money_raised && orignalData?.money_raised ? (
-                      "Yes"
-                    ) : "No" ? (
-                      <span>
-                        {orignalData.money_raised && orignalData?.money_raised
-                          ? "Yes"
-                          : "No"}
-                      </span>
+                          placeholder="Enter Launchpad"
+                          onWheel={(e) => e.target.blur()}
+                          min={0}
+                        />
+                        {errors?.raised_from_other_ecosystem && (
+                          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                            {errors?.raised_from_other_ecosystem?.message}
+                          </span>
+                        )}
+                      </div>
                     ) : (
-                      <span className="flex items-center">
-                        {noDataPresentSvg}
-                        Data Not Available
-                      </span>
+                      <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
+                        {updatedOtherEcosystem ? (
+                          <span>{updatedOtherEcosystem}</span>
+                        ) : (
+                          <span className="flex items-center">
+                            {noDataPresentSvg}
+                            Data Not Available
+                          </span>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>
-                <div className="flex space-x-2 items-center  flex-row ml-3">
-                  <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                  {editMode ? (
-                    <div className="flex flex-col mt-1 w-3/4">
-                      <select
-                        {...register("money_raising")}
-                        className={`bg-gray-50 border-2 ${
-                          errors.money_raising
-                            ? "border-red-500"
-                            : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                      >
-                        <option className="text-lg font-bold" value="false">
-                          No
-                        </option>
-                        <option className="text-lg font-bold" value="true">
-                          Yes
-                        </option>
-                      </select>
-                      {errors.money_raising && (
-                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                          {errors.money_raising.message}
-                        </p>
-                      )}
-                    </div>
-                  ) : (
+                <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
+                  <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                    Are you currently raising money :
+                  </h2>
+                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                    <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                     <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                      {updatedData?.money_raised &&
-                      updatedData?.money_raised ? (
+                      {orignalData.money_raised && orignalData?.money_raised ? (
                         "Yes"
                       ) : "No" ? (
                         <span>
-                          {updatedData?.money_raised &&
-                          updatedData?.money_raised
+                          {orignalData.money_raised && orignalData?.money_raised
                             ? "Yes"
                             : "No"}
                         </span>
@@ -4202,53 +4243,117 @@ const [projectId ,setProjectId]=useState('');
                         </span>
                       )}
                     </div>
-                  )}
-                </div>
-              </div>
-              <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
-                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
-                  Targeted Amount:
-                </h2>
-                <div className="flex space-x-2 items-center  flex-row ml-3">
-                  <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                  <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                    {targetAmount ? (
-                      <span>{targetAmount}</span>
+                  </div>
+                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                    <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                    {editMode ? (
+                      <div className="flex flex-col mt-1 w-3/4">
+                        <select
+                          {...register("money_raising")}
+                          className={`bg-gray-50 border-2 ${
+                            errors.money_raising
+                              ? "border-red-500"
+                              : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
+                        >
+                          <option className="text-lg font-bold" value="false">
+                            No
+                          </option>
+                          <option className="text-lg font-bold" value="true">
+                            Yes
+                          </option>
+                        </select>
+                        {errors.money_raising && (
+                          <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                            {errors.money_raising.message}
+                          </p>
+                        )}
+                      </div>
                     ) : (
-                      <span className="flex items-center">
-                        {noDataPresentSvg}
-                        Data Not Available
-                      </span>
+                      <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
+                        {updatedData?.money_raised &&
+                        updatedData?.money_raised ? (
+                          "Yes"
+                        ) : "No" ? (
+                          <span>
+                            {updatedData?.money_raised &&
+                            updatedData?.money_raised
+                              ? "Yes"
+                              : "No"}
+                          </span>
+                        ) : (
+                          <span className="flex items-center">
+                            {noDataPresentSvg}
+                            Data Not Available
+                          </span>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>
-                <div className="flex space-x-2 items-center  flex-row ml-3">
-                  <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                  {watch("money_raising") === "true" && editMode ? (
-                    <div className="flex flex-col mt-1 w-3/4">
-                      <input
-                        type="number"
-                        {...register("target_amount")}
-                        className={`bg-gray-50 border-2 
+                <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
+                  <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                    Targeted Amount:
+                  </h2>
+                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                    <span className="w-2 h-2 bg-red-700 rounded-full"></span>
+                    <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
+                      {targetAmount ? (
+                        <span>{targetAmount}</span>
+                      ) : (
+                        <span className="flex items-center">
+                          {noDataPresentSvg}
+                          Data Not Available
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                    <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                    {watch("money_raising") === "true" && editMode ? (
+                      <div className="flex flex-col mt-1 w-3/4">
+                        <input
+                          type="number"
+                          {...register("target_amount")}
+                          className={`bg-gray-50 border-2 
                                              ${
                                                errors?.target_amount
                                                  ? "border-red-500 "
                                                  : "border-[#737373]"
                                              } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                        placeholder="Enter your Target Amount"
-                        onWheel={(e) => e.target.blur()}
-                        min={0}
-                      />
-                      {errors?.target_amount && (
-                        <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                          {errors?.target_amount?.message}
-                        </span>
-                      )}
-                    </div>
-                  ) : (
+                          placeholder="Enter your Target Amount"
+                          onWheel={(e) => e.target.blur()}
+                          min={0}
+                        />
+                        {errors?.target_amount && (
+                          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                            {errors?.target_amount?.message}
+                          </span>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
+                        {updatedTargetAmount ? (
+                          <span>{updatedTargetAmount}</span>
+                        ) : (
+                          <span className="flex items-center">
+                            {noDataPresentSvg}
+                            Data Not Available
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
+                  <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                    Valuation :
+                  </h2>
+                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                    <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                     <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                      {updatedTargetAmount ? (
-                        <span>{updatedTargetAmount}</span>
+                      {snsGrants ? (
+                        <span>{snsGrants}</span>
                       ) : (
                         <span className="flex items-center">
                           {noDataPresentSvg}
@@ -4256,90 +4361,76 @@ const [projectId ,setProjectId]=useState('');
                         </span>
                       )}
                     </div>
-                  )}
-                </div>
-              </div>
-              <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
-                <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
-                  Valuation :
-                </h2>
-                <div className="flex space-x-2 items-center  flex-row ml-3">
-                  <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                  <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                    {snsGrants ? (
-                      <span>{snsGrants}</span>
-                    ) : (
-                      <span className="flex items-center">
-                        {noDataPresentSvg}
-                        Data Not Available
-                      </span>
-                    )}
                   </div>
-                </div>
-                <div className="flex space-x-2 items-center  flex-row ml-3">
-                  <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                  {watch("money_raising") === "true" && editMode ? (
-                    <div className="flex flex-col mt-1 w-3/4">
-                      <input
-                        type="number"
-                        {...register("valuation")}
-                        className={`bg-gray-50 border-2 
+                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                    <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                    {watch("money_raising") === "true" && editMode ? (
+                      <div className="flex flex-col mt-1 w-3/4">
+                        <input
+                          type="number"
+                          {...register("valuation")}
+                          className={`bg-gray-50 border-2 
                                              ${
                                                errors?.valuation
                                                  ? "border-red-500 "
                                                  : "border-[#737373]"
                                              } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                        placeholder="Enter valuation (In million)"
-                        onWheel={(e) => e.target.blur()}
-                        min={0}
-                      />
-                      {errors?.valuation && (
-                        <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                          {errors?.valuation?.message}
-                        </span>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                      {updatedSnsGrants ? (
-                        <span>{updatedSnsGrants}</span>
-                      ) : (
-                        <span className="flex items-center">
-                          {noDataPresentSvg}
-                          Data Not Available
-                        </span>
-                      )}
-                    </div>
-                  )}
+                          placeholder="Enter valuation (In million)"
+                          onWheel={(e) => e.target.blur()}
+                          min={0}
+                        />
+                        {errors?.valuation && (
+                          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                            {errors?.valuation?.message}
+                          </span>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
+                        {updatedSnsGrants ? (
+                          <span>{updatedSnsGrants}</span>
+                        ) : (
+                          <span className="flex items-center">
+                            {noDataPresentSvg}
+                            Data Not Available
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+          {editMode ? (
+            <div className="flex justify-end mt-4">
+              <button
+                disabled={isSubmitting}
+                type="submit"
+                className="text-white font-bold bg-blue-800 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md w-auto sm:w-auto px-5 py-2 text-center mb-4"
+              >
+                {isSubmitting ? (
+                  <ThreeDots
+                    visible={true}
+                    height="35"
+                    width="35"
+                    color="#FFFEFF"
+                    radius="9"
+                    ariaLabel="three-dots-loading"
+                    wrapperStyle={{}}
+                    wrapperclassName=""
+                  />
+                ) : (
+                  "Update"
+                )}
+              </button>
+            </div>
+          ) : (
+            ""
+          )}
         </div>
-{editMode?
-        <div className="flex justify-end mt-4">
-          <button
-            disabled={isSubmitting}
-            type="submit"
-            className="text-white font-bold bg-blue-800 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md w-auto sm:w-auto px-5 py-2 text-center mb-4"
-          >
-            {isSubmitting ? (
-              <ThreeDots
-                visible={true}
-                height="35"
-                width="35"
-                color="#FFFEFF"
-                radius="9"
-                ariaLabel="three-dots-loading"
-                wrapperStyle={{}}
-                wrapperclassName=""
-              />
-            ) :"Update"}
-          </button>
-        </div>:""}
-      </div>
-    </form>
-    <Toaster/>
+      </form>
+      <Toaster />
     </>
   );
 };
