@@ -161,7 +161,7 @@ const LaunchedProjects = () => {
                 allProjectData.filter((val) => val?.params?.params?.live_on_icp_mainnet[0] && val?.params?.params?.live_on_icp_mainnet[0] === false).slice(0, 3).map((data, index) => {
                   let projectName = data?.params?.params?.project_name ??"";
                   let projectId = data?.params?.uid ?? "";
-                  let projectImage = data?.params?.params?.project_logo ? uint8ArrayToBase64(data?.params?.params?.project_logo) : "";
+                  let projectImage = data?.params?.params?.project_logo ? uint8ArrayToBase64(data?.params?.params?.project_logo[0]) : "";
                   let userImage = data?.params?.params?.user_data?.profile_picture[0] ? uint8ArrayToBase64(data?.params?.params?.user_data?.profile_picture[0]) : "";
                   let principalId = data?.principal ? data?.principal.toText() : "";
                   let projectDescription = data?.params?.params?.project_description ?? "";

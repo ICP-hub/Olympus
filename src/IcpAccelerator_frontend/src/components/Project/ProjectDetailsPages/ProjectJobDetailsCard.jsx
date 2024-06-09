@@ -165,7 +165,7 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
             let job_location = card?.job_data?.location ?? "";
             let job_link = card?.job_data?.link ?? "";
             let job_project_logo = card?.project_logo
-              ? uint8ArrayToBase64(card?.project_logo)
+              ? uint8ArrayToBase64(card?.project_logo[0])
               : ment;
             let job_project_name = card?.project_name ?? "";
             let job_project_desc = card?.project_desc ?? "";

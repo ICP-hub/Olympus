@@ -270,10 +270,10 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
   );
   const logo =
     userData && userData[0]?.params?.project_logo.length > 0
-      ? uint8ArrayToBase64(userData[0]?.params?.project_logo)
+      ? uint8ArrayToBase64(userData[0]?.params?.project_logo[0])
       : null;
 
-  const Project_cover = uint8ArrayToBase64(userData[0]?.params?.project_cover);
+  const Project_cover = uint8ArrayToBase64(userData[0]?.params?.project_cover[0]);
   return (
     <>
       <div className="w-full flex flex-col">

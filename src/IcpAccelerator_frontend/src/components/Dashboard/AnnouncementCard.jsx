@@ -101,7 +101,7 @@ const AnnouncementCard = () => {
                 let ann_desc =
                   card?.announcement_data?.announcement_description ?? "";
                 let ann_project_logo = card?.project_logo
-                  ? uint8ArrayToBase64(card?.project_logo)
+                  ? uint8ArrayToBase64(card?.project_logo[0])
                   : ment;
                 let ann_project_name = card?.project_name ?? "";
                 let ann_project_desc = card?.project_desc ?? "";

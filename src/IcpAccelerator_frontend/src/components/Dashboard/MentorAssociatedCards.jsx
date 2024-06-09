@@ -12,8 +12,8 @@ const AssociatedProjects = ({ data }) => {
 
   let projectName = data?.params?.project_name ?? "";
   let projectId = data?.uid ?? "";
-  let projectImage = data?.params?.project_logo ? uint8ArrayToBase64(data?.params?.project_logo) : ment;
-  let projectCover = data?.params?.project_cover ? uint8ArrayToBase64(data?.params?.project_cover) : coding1;
+  let projectImage = data?.params?.project_logo ? uint8ArrayToBase64(data?.params?.project_logo[0]) : ment;
+  let projectCover = data?.params?.project_cover ? uint8ArrayToBase64(data?.params?.project_cover[0]) : coding1;
   let userImage = data?.params?.user_data?.profile_picture[0] ? uint8ArrayToBase64(data?.params?.user_data?.profile_picture[0]) : girl;
   let userName = data?.params?.user_data?.full_name ?? "";
   let projectDescription = data?.params?.project_description ?? "";
