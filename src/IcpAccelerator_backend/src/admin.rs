@@ -928,52 +928,42 @@ pub fn decline_mentor_profile_update_request(requester: Principal, decline: bool
 
 #[update]
 pub fn approve_project_creation_request(requester: Principal) -> String {
-    mutate_state(|state| {
-        if let Some(mut project_internal) = state
-            .project_awaits_response
-            .get(&StoredPrincipal(requester))
-        {
-            project_internal.0.is_verified = true;
-
-            if let Some(res) = state
-                .project_awaits_response
-                .get(&StoredPrincipal(requester))
-            {
-                state
-                    .project_storage
-                    .insert(StoredPrincipal(requester), Candid(vec![res.0.clone()]));
-
-                if let Some(user_roles) = state.role_status.get(&StoredPrincipal(requester)) {
-                    let mut roles_clone = user_roles.0.clone();
-                    if let Some(user_role) = roles_clone.iter_mut().find(|r| r.name == "project") {
-                        user_role.status = "approved".to_string();
-                        user_role.approved_on = Some(time());
-                    }
-                }
-
-                state
-                    .project_awaits_response
-                    .remove(&StoredPrincipal(requester));
-                change_notification_status(
-                    requester,
-                    "project".to_string(),
-                    "approved".to_string(),
-                );
-
-                format!("Requester with principal id {} is approved", requester)
-            } else {
-                format!(
-                    "Requester with principal id {} has not registered",
-                    requester
-                )
-            }
+    let (project_internal, should_update) = read_state(|state| {
+        if let Some(project) = state.project_awaits_response.get(&StoredPrincipal(requester)) {
+            let should_update = !project.0.is_verified;
+            (Some(project.clone()), should_update) // Clone to avoid borrow issues
         } else {
-            format!(
-                "Requester with principal id {} could not be approved",
-                requester
-            )
+            (None, false)
         }
-    })
+    });
+
+    // Process the read data
+    if let Some(mut project) = project_internal {
+        if should_update {
+            project.0.is_verified = true;
+            mutate_state(|state| {
+                state.project_storage.insert(StoredPrincipal(requester), Candid(vec![project.0.clone()]));
+                state.project_awaits_response.remove(&StoredPrincipal(requester));
+                let role_status = &mut state.role_status;
+                if let Some(mut role_status_vec_candid) = role_status.get(&StoredPrincipal(requester)) {
+                    let mut role_status_vec = role_status_vec_candid.0;
+                    for role in role_status_vec.iter_mut() {
+                        if role.name == "project" {
+                            role.status = "approved".to_string();
+                            break;
+                        }
+                    }
+                    role_status.insert(StoredPrincipal(requester), Candid(role_status_vec));
+                }
+            });
+            change_notification_status(requester, "project".to_string(), "approved".to_string());
+            format!("Requester with principal id {} is approved", requester)
+        } else {
+            format!("Requester with principal id {} could not be approved", requester)
+        }
+    } else {
+        format!("Requester with principal id {} has not registered", requester)
+    }
 }
 
 #[update]
@@ -1236,7 +1226,6 @@ fn get_principals_by_role(role_name: &str) -> HashSet<Principal> {
 }
 
 #[query]
-
 fn get_total_approved_list_with_user_data() -> HashMap<Principal, ApprovedList> {
     let roles_to_check = vec!["user", "mentor", "vc", "project"];
 
@@ -1276,6 +1265,8 @@ fn get_total_approved_list_with_user_data() -> HashMap<Principal, ApprovedList> 
 
     approved_list_map
 }
+
+
 #[query]
 pub fn get_total_count() -> Counts {
     let vc_count = read_state(|state| state.vc_storage.len());
