@@ -333,13 +333,19 @@ pub fn get_all_mentors() -> HashMap<Principal, MentorWithRoles> {
 
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
-pub struct PaginationParam {
+pub struct PaginationParamMentor {
     pub page: usize,
     pub page_size: usize,
 }
 
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+pub struct PaginationReturnMentor{
+    pub data: HashMap<Principal, MentorWithRoles>,
+    pub count: usize,
+}
+
 #[query]
-pub fn get_all_mentors_with_pagination(pagination_params: PaginationParam) -> HashMap<Principal, MentorWithRoles> {
+pub fn get_all_mentors_with_pagination(pagination_params: PaginationParamMentor) -> PaginationReturnMentor {
     read_state(|state| {
         let mentor_registry = state.mentor_storage.iter().collect::<Vec<_>>();
 
@@ -352,7 +358,7 @@ pub fn get_all_mentors_with_pagination(pagination_params: PaginationParam) -> Ha
             if mentor_internal.active {
                 let roles = get_roles_for_principal(principal);
                 let mentor_with_roles = MentorWithRoles {
-                    mentor_profile: mentor_internal.clone(),
+                    mentor_profile: mentor_internal,
                     roles,
                 };
 
@@ -364,22 +370,19 @@ pub fn get_all_mentors_with_pagination(pagination_params: PaginationParam) -> Ha
         mentor_list.sort_by_key(|(principal, _)| *principal);
 
         // Calculate start and end indices for pagination, ensuring they're within the bounds of the vector
-        let start = std::cmp::min((pagination_params.page - 1) * pagination_params.page_size, mentor_list.len());
+        let start = std::cmp::min(pagination_params.page.saturating_sub(1) * pagination_params.page_size, mentor_list.len());
         let end = std::cmp::min(start + pagination_params.page_size, mentor_list.len());
 
-        // If start is greater than or equal to mentor_list's length, it means the requested page is beyond the available data
-        // In such cases, return an empty HashMap instead of attempting to slice the vector
-        if start >= mentor_list.len() {
-            return HashMap::new();
+        // Convert the slice of mentor data to a HashMap for the output
+        let paginated_mentor_map: HashMap<Principal, MentorWithRoles> = mentor_list[start..end]
+            .iter()
+            .cloned()
+            .collect();
+
+        PaginationReturnMentor {
+            data: paginated_mentor_map,
+            count: mentor_list.len(),  // Return the total count of active mentors
         }
-
-        // Now safe to slice because we've ensured start is within bounds and end is either within bounds or equal to the length of the vector
-        let paginated_mentor_list = mentor_list[start..end].to_vec();
-
-        // Correctly initialize and assign the variable for the paginated HashMap
-        let paginated_mentor_map: HashMap<Principal, MentorWithRoles> = paginated_mentor_list.into_iter().collect();
-
-        paginated_mentor_map
     })
 }
 

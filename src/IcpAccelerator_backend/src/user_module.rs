@@ -617,13 +617,13 @@ pub fn get_users_with_all_info() -> UserInfoInternal {
 }
 
 #[derive(CandidType, Deserialize)]
-pub struct Pagination {
+pub struct PaginationUser {
     page: usize,
     page_size: usize,
 }
 
 #[query]
-pub fn list_all_users(pagination: Pagination) -> Vec<UserInformation> {
+pub fn list_all_users(pagination: PaginationUser) -> Vec<UserInformation> {
     read_state(|state| {
         let user_storage = &state.user_storage;
         let users_info: Vec<_> = user_storage

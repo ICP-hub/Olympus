@@ -974,8 +974,8 @@ pub fn list_all_projects() -> Vec<ListAllProjects> {
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct PaginationParams {
-    page: usize,
-    page_size: usize,
+    pub page: usize,
+    pub page_size: usize,
 }
 
 #[query]

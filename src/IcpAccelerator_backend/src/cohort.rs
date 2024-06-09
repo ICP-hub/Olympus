@@ -13,13 +13,13 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use crate::send_cohort_request_to_admin;
 
-#[derive(Clone, CandidType, Deserialize, Debug)]
+#[derive(Clone, CandidType, Deserialize, Debug, Serialize)]
 pub struct Eligibility {
     level_on_rubric: f64,
     eligibility: Option<String>,
 }
 
-#[derive(Clone, CandidType, Deserialize, Debug)]
+#[derive(Clone, CandidType, Deserialize, Debug, Serialize)]
 pub struct Cohort {
     title: String,
     description: String,
@@ -35,7 +35,7 @@ pub struct Cohort {
     cohort_end_date: String,
 }
 
-#[derive(Clone, CandidType, Deserialize, Debug)]
+#[derive(Clone, CandidType, Deserialize, Debug, Serialize)]
 pub struct CohortDetails {
     pub cohort_id: String,
     pub cohort: Cohort,
@@ -45,7 +45,7 @@ pub struct CohortDetails {
     pub cohort_creator_principal: Principal,
 }
 
-#[derive(Clone, CandidType, Deserialize, Debug)]
+#[derive(Clone, CandidType, Deserialize, Debug, Serialize)]
 pub struct CohortRequest {
     pub cohort_details : CohortDetails,
     pub sent_at : u64,
@@ -231,15 +231,48 @@ pub fn get_cohort(cohort_id: String) -> CohortDetails {
 //     })
 // }
 
+#[derive(CandidType, Debug, Clone, Serialize, Deserialize)]
+pub struct Pagination {
+    pub page: usize,
+    pub page_size: usize,
+}
+
+#[derive(CandidType, Debug, Clone, Serialize, Deserialize)]
+pub struct PaginationReturnCohort {
+    pub data: Vec<CohortDetails>,
+    pub total_count: usize,
+}
 
 #[query]
-pub fn get_all_cohorts() -> Vec<CohortDetails> {
+pub fn get_all_cohorts(pagination_params: Pagination) -> PaginationReturnCohort {
     read_state(|state| {
-        state.cohort_info.iter()
+        let all_cohorts: Vec<CohortDetails> = state.cohort_info.iter()
             .map(|(_key, candid_cohort_details)| candid_cohort_details.0.clone())
-            .collect()
+            .collect();
+
+        // Sorting the vector if necessary, e.g., by name or creation date
+        // all_cohorts.sort_by(|a, b| a.name.cmp(&b.name));
+
+        let total_count = all_cohorts.len();
+
+        // Calculate start and end indices for pagination
+        let start = pagination_params.page.saturating_sub(1) * pagination_params.page_size;
+        let end = std::cmp::min(start + pagination_params.page_size, total_count);
+
+        // Slice the vector to obtain the paginated items
+        let paginated_cohorts = if start < total_count {
+            all_cohorts[start..end].to_vec()
+        } else {
+            Vec::new()  // If start is out of range, return empty vector
+        };
+
+        PaginationReturnCohort {
+            data: paginated_cohorts,
+            total_count,
+        }
     })
 }
+
 
 #[update]
 pub fn send_enrollment_request_as_mentor(cohort_id: String, user_info: MentorInternal) -> String {

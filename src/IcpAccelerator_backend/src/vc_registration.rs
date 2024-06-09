@@ -17,7 +17,7 @@ use std::borrow::BorrowMut;
 use std::cell::RefCell;
 use std::io::Read;
 use std::{collections::HashMap, io::Write};
-use crate::PaginationParam;
+use crate::PaginationParams;
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct VentureCapitalist {
@@ -364,8 +364,10 @@ pub fn list_all_vcs() -> HashMap<Principal, VcWithRoles> {
     })
 }
 
+
+
 #[query]
-pub fn list_all_vcs_with_pagination(pagination_params: PaginationParam) -> HashMap<Principal, VcWithRoles> {
+pub fn list_all_vcs_with_pagination(pagination_params: PaginationParams) -> HashMap<Principal, VcWithRoles> {
     read_state(|state| {
         let mut vc_list: Vec<(Principal, VcWithRoles)> = Vec::new();
 
