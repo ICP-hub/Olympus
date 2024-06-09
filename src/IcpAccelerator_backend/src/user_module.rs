@@ -616,16 +616,27 @@ pub fn get_users_with_all_info() -> UserInfoInternal {
     })
 }
 
-pub fn list_all_users() -> Vec<UserInformation> {
+#[derive(CandidType, Deserialize)]
+pub struct PaginationUser {
+    page: usize,
+    page_size: usize,
+}
+
+#[query]
+pub fn list_all_users(pagination: PaginationUser) -> Vec<UserInformation> {
     read_state(|state| {
         let user_storage = &state.user_storage;
-        let mut users_info = Vec::new();
+        let users_info: Vec<_> = user_storage
+            .iter()
+            .map(|(_, candid_user_internal)| candid_user_internal.0.params.clone())
+            .collect();
 
-        for (_, candid_user_internal) in user_storage.iter() {
-            users_info.push(candid_user_internal.0.params.clone());
-        }
+        // Calculate the range to slice the vector for pagination
+        let start = pagination.page.saturating_sub(1) * pagination.page_size;
+        let end = std::cmp::min(start + pagination.page_size, users_info.len());
 
-        users_info
+        // Return the slice of users for the current page
+        users_info[start..end].to_vec()
     })
 }
 
