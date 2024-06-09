@@ -5,7 +5,7 @@ import { rubric_table_data } from "./ProjectDetails/projectRatingsRubrics";
 import { useDispatch, useSelector } from "react-redux";
 import { Line } from "rc-progress";
 import { star } from "../Utils/Data/SvgData";
-
+import image from "../../../assets/images/success.gif";
 const RubricRating = ({ data }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -18,6 +18,8 @@ const RubricRating = ({ data }) => {
   );
   const actor = useSelector((currState) => currState.actors.actor);
   const [ratingDone, setRatingDone] = useState(null);
+  const [getRating, setGetRating] = useState(null);
+  const [ratings, setRatings] = useState([]);
   const [rating, setRating] = useState(1);
   const [onSelectLevel, setonSelectLevel] = useState(
     Array(rubric_table_data.length).fill(0)
@@ -92,7 +94,7 @@ const RubricRating = ({ data }) => {
           })
           .catch((error) => {
             console.log("error-in-update_rating", error);
-            toast.error('something got wrong')
+            toast.error("something got wrong");
           });
       }
     } else {
@@ -107,6 +109,7 @@ const RubricRating = ({ data }) => {
       .then((result) => {
         console.log("result-in-get_ratings_by_principal", result);
         if (result && result?.Ok.length > 0) {
+          setRatings(result);
           setRatingDone(true);
           // navigate('/')
         } else {
@@ -121,18 +124,40 @@ const RubricRating = ({ data }) => {
       });
   };
   useEffect(() => {
-    if (actor && data) {
+    if (data) {
       fetchMyRatings(data);
     } else {
       navigate("/");
     }
-  }, [actor]);
+  }, [data]);
+
+  console.log("rubric_table_data", rubric_table_data);
   return (
     <section className="bg-gray-100 w-full h-full lg1:px-[4%] py-[2%] px-[5%]">
       {ratingDone ? (
         <div className="container">
-          <h1>Rating already Done</h1>
-          {/* <RubricRatingExt /> */}
+          <div className="relative flex items-center bg-[#B9C0F3] p-4 w-3/4 flex-col rounded-lg border-2 overflow-hidden border-gray-300 backdrop-blur-3xl m-auto ">
+            {/* <div className="absolute rounded-full bg-[#7283EA] bg-opacity-8 w-1/4 h-3/4 -top-[5%] -left-[10%]"></div> */}
+            {ratings &&
+              ratings?.Ok.map((rat, i) => {
+                return (
+                  <div key={i} className="w-full text-white z-10">
+                    <p className="font-bold p-1 text-lg">{rat?.level_name}</p>
+                    <div className="mx-4 flex p-1 items-center">
+                      <Line
+                        strokeWidth={0.5}
+                        percent={Number(rat?.rating / 9) * 100}
+                        strokeColor="white"
+                        className="line-horizontal"
+                      />
+                      <div className="text-[15px] font-normal font-fontUse ml-2">
+                        {Math.round(Number(rat?.rating / 9) * 100)}%
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+          </div>
         </div>
       ) : (
         <div className="container">

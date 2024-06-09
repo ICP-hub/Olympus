@@ -4,12 +4,13 @@ import { useSelector } from "react-redux";
 import NoDataCard from "./NoDataCard";
 import SecondEventCard from "../Event/SecondEventCard";
 import NoData from "../../../../assets/images/file_not_found.png";
+import { useNavigate } from "react-router-dom"
 
 const UpcomingEventsCard = ({ wrap, register }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [noData, setNoData] = useState(null);
   const [allLiveEventsData, setAllLiveEventsData] = useState([]);
-
+  const navigate = useNavigate();
   const getAllLiveEvents = async (caller) => {
     await caller
       .get_all_cohorts()
@@ -49,7 +50,7 @@ const UpcomingEventsCard = ({ wrap, register }) => {
         <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl sxxs:text-lg">
           Upcoming Accelerator
         </h1>
-        {filteredEvents.length > 0 && (
+        {filteredEvents && filteredEvents.length > 0 && (
           <button
             onClick={() => navigate(`/all-live-events`)}
             className="border border-violet-800 px-4 py-2 rounded-md text-violet-800 sxxs:px-2 sxxs:py-1 sxxs:text-xs sm:text-lg"

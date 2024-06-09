@@ -1,4 +1,4 @@
-import React, { useEffect ,useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
@@ -25,7 +25,7 @@ import LiveProjects from "./LiveProjects";
 import { Banner } from "../Utils/Data/SvgData";
 import LiveEventsCards from "./LiveEventsCards";
 import useFadeInScrollAnimation from "../hooks/useFadeInScrollAnimation";
-
+import toast, { Toaster } from "react-hot-toast";
 
 const DashBoard = () => {
   const dispatch = useDispatch();
@@ -38,7 +38,7 @@ const DashBoard = () => {
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
-
+  const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
   function getNameOfCurrentStatus(rolesStatusArray) {
     const currentStatus = rolesStatusArray.find(
       (role) => role.status === "active"
@@ -46,20 +46,20 @@ const DashBoard = () => {
     return currentStatus ? currentStatus.name : null;
   }
 
-    const SpotLightRef = useRef(null);
-    useFadeInScrollAnimation(SpotLightRef, 0, 100);
-    const ProjectRef = useRef(null);
-    useFadeInScrollAnimation(ProjectRef, 170, 310);
-    const CohorotRef = useRef(null);
-    useFadeInScrollAnimation(CohorotRef, 370, 880);
-    const InvestorRef = useRef(null);
-    useFadeInScrollAnimation(InvestorRef, 955, 1137);
-    const MentorRef = useRef(null);
-    useFadeInScrollAnimation(MentorRef, 1140, 1322);
-    const AnnouncementRef = useRef(null);
-    useFadeInScrollAnimation(AnnouncementRef, 1327, 1557);
-    const JobRef = useRef(null);
-    useFadeInScrollAnimation(JobRef, 1590, 1840);
+  const SpotLightRef = useRef(null);
+  useFadeInScrollAnimation(SpotLightRef, 0, 100);
+  const ProjectRef = useRef(null);
+  useFadeInScrollAnimation(ProjectRef, 170, 310);
+  const CohorotRef = useRef(null);
+  useFadeInScrollAnimation(CohorotRef, 370, 880);
+  const InvestorRef = useRef(null);
+  useFadeInScrollAnimation(InvestorRef, 955, 1137);
+  const MentorRef = useRef(null);
+  useFadeInScrollAnimation(MentorRef, 1140, 1322);
+  const AnnouncementRef = useRef(null);
+  useFadeInScrollAnimation(AnnouncementRef, 1327, 1557);
+  const JobRef = useRef(null);
+  useFadeInScrollAnimation(JobRef, 1590, 1840);
 
   function formatFullDateFromBigInt(bigIntDate) {
     const date = new Date(Number(bigIntDate / 1000000n));
@@ -163,7 +163,38 @@ const DashBoard = () => {
       imgSrc: testimonial,
     },
   ];
-
+  const handleNavigateProject = () => {
+    if (isAuthenticated) {
+      navigate("/live-projects");
+    } else {
+      toast.error("Please Sign Up !!!");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+  const handleNavigateCohort = () => {
+    if (isAuthenticated) {
+      navigate(`/all-live-events`);
+    } else {
+      toast.error("Please Sign Up !!!");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+  const handleNavigateInvestor = () => {
+    if (isAuthenticated) {
+      navigate("/view-investor");
+    } else {
+      toast.error("Please Sign Up !!!");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+  const handleNavigateMentor = () => {
+    if (isAuthenticated) {
+      navigate("/view-mentors");
+    } else {
+      toast.error("Please Sign Up !!!");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
   switch (userCurrentRoleStatusActiveRole) {
     case "project":
       return <ProjectDashboard />;
@@ -175,14 +206,14 @@ const DashBoard = () => {
       return (
         <>
           <section
-            className="flex items-center w-full pl-[9%] pr-[9%] py-[2%] max-h-screen"
+            className="flex items-center w-full pl-[9%] pr-[9%] py-[2%] h-fit dxl0:max-h-screen"
             style={{
               background: " linear-gradient(63deg, #3B00B9 0%, #D38ED7 100%)",
             }}
           >
             <div className="container mx-auto">
-              <div className="flex flex-wrap">
-                <div className="flex flex-col justify-center md:w-1/2 sm:px-4 w-full relative lg:-top-8">
+              <div className="block dxl0:flex flex-wrap">
+                <div className="flex flex-col justify-center dxl0:w-1/2 dxl0:px-4 w-full relative md:top-12 dxl0:-top-8">
                   <h1 className="text-4xl font-semibold mb-4 lg:text-8xl sxxs:text-3xl text-white font-fontUse">
                     OLYMPUS
                   </h1>
@@ -190,7 +221,8 @@ const DashBoard = () => {
                     Peak of Web3 Acceleration
                   </h1>
                   <p className="text-lg mb-6 md:text-xl lg:text-2xl font-normal text-white font-fontUse">
-                    Web3 Acceleration Platform for Founders, Investors, Mentors, Talent and Users
+                    Web3 Acceleration Platform for Founders, Investors, Mentors,
+                    Talent and Users
                   </p>
                   <a
                     className="mb-4 text-white font-fontUse hover:text-black"
@@ -199,15 +231,37 @@ const DashBoard = () => {
                     Learn more about the beta version.
                   </a>
                   <div className="capitalize items-center px-4 py-3 sxxs:py-1 sxxs:px-2 sxxs:mb-8 text-white mr-auto font-semibold flex justify-start">
-                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-<circle cx="9" cy="9" r="7.5" stroke="#fff"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M8.99326 11.25H9H8.99326Z" fill="#fff"/>
-<path d="M8.99326 11.25H9" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M9 9L9 6" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
-<span className="ml-1">Use with caution.</span></div> 
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 18 18"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <circle cx="9" cy="9" r="7.5" stroke="#fff" />
+                      <path
+                        fill-rule="evenodd"
+                        clip-rule="evenodd"
+                        d="M8.99326 11.25H9H8.99326Z"
+                        fill="#fff"
+                      />
+                      <path
+                        d="M8.99326 11.25H9"
+                        stroke="#fff"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M9 9L9 6"
+                        stroke="#fff"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                    <span className="ml-1">Use with caution.</span>
+                  </div>
                 </div>
-                <div className="w-full px-4 md:w-1/2 md:flex hidden">
+                <div className="w-full px-4 dxl0:w-1/2 justify-center md:flex hidden">
                   <div className="h-fit w-fit">
                     <div className="relative z-10">{Banner}</div>
                   </div>
@@ -218,7 +272,7 @@ const DashBoard = () => {
           <section className="overflow-hidden relative bg-gray-100">
             <div className="container mx-auto">
               <div className="font-fontUse flex flex-col w-full h-fit px-[5%] lg1:px-[4%] py-[4%]">
-                <div>
+                {/* <div>
                 <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
                   <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent inline-block bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl sxxs:text-lg">
                     Hot right now
@@ -227,7 +281,7 @@ const DashBoard = () => {
                 <div className="mb-4 z-20 fade-in">
                   <SpotLight />
                 </div>
-                </div>
+                </div> */}
                 {/* <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
                   <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl sxxs:text-lg">
                     Goals for 2024
@@ -241,13 +295,13 @@ const DashBoard = () => {
                     Upcoming Projects
                   </h1>
                   <button
-                    onClick={() => navigate("/live-projects")}
-                    className="border border-violet-800 px-4 py-2 rounded-md text-violet-800 sxxs:px-2 sxxs:py-1 sxxs:text-xs sm:text-lg"
+                    onClick={handleNavigateProject}
+                    className="border border-violet-800 cursor-pointer px-4 py-2 rounded-md text-violet-800 sxxs:px-2 sxxs:py-1 sxxs:text-xs sm:text-lg"
                   >
                     View More
                   </button>
                 </div>
-                <div className="mb-4 fade-in" >
+                <div className="mb-4 fade-in">
                   <LiveProjects progress={false} />
                 </div>
                 <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px] mt-3">
@@ -255,13 +309,13 @@ const DashBoard = () => {
                     Ongoing Accelerator
                   </h1>
                   <button
-                    onClick={() => navigate(`/all-live-events`)}
+                    onClick={handleNavigateCohort}
                     className="border border-violet-800 px-4 py-2 rounded-md text-violet-800 sxxs:px-2 sxxs:py-1 sxxs:text-xs sm:text-lg"
                   >
                     View More
                   </button>
                 </div>
-                <div className="mb-4 fade-in" >
+                <div className="mb-4 fade-in">
                   <LiveEventsCards wrap={true} register={false} />
                 </div>
                 <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px] mt-3">
@@ -269,14 +323,14 @@ const DashBoard = () => {
                     Investors
                   </h1>
                   <button
-                    onClick={() => navigate("/view-investor")}
+                    onClick={handleNavigateInvestor}
                     className="border border-violet-800 px-4 py-2 rounded-md text-violet-800 sxxs:px-2 sxxs:py-1 sxxs:text-xs sm:text-lg"
                   >
                     View More
                   </button>
                 </div>
-               
-                <div className="flex max-md:flex-col -mx-4 mb-4 items-stretch fade-in" >
+
+                <div className="flex max-md:flex-col -mx-4 mb-4 items-stretch fade-in">
                   <div className="w-full md:w-3/4 px-4 md:flex md:gap-4 sm:flex sm:gap-4">
                     <InvestorCard />
                   </div>
@@ -289,7 +343,7 @@ const DashBoard = () => {
                     Mentors
                   </h1>
                   <button
-                    onClick={() => navigate("/view-mentors")}
+                    onClick={handleNavigateMentor}
                     className="border border-violet-800 px-4 py-2 rounded-md text-violet-800 sxxs:px-2 sxxs:py-1 sxxs:text-xs sm:text-lg"
                   >
                     View More
@@ -307,7 +361,6 @@ const DashBoard = () => {
                   <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl sxxs:text-lg">
                     Announcements
                   </h1>
-                  
                 </div>
                 <div className="mb-4 fade-in">
                   <AnnouncementCard />
@@ -325,7 +378,7 @@ const DashBoard = () => {
                     website={true}
                   />
                 </div>
-                
+
                 {/* <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px] mt-3">
                   <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
                     User Testimonials
@@ -335,7 +388,7 @@ const DashBoard = () => {
                   <div className="mb-4 px-2 w-full">
                     <Testimonial />
                   </div> */}
-                  {/* <div className="w-full sm:w-1/2 lg:w-1/4 px-2">
+                {/* <div className="w-full sm:w-1/2 lg:w-1/4 px-2">
                     <RegisterCard
                       categories={testimonialCategories}
                       border={true}
@@ -345,6 +398,7 @@ const DashBoard = () => {
               </div>
             </div>
           </section>
+          <Toaster />
         </>
       );
   }

@@ -32,8 +32,10 @@ const ProjectDetailsCommunityRatings = ({
   const handleRatingCloseModal = () => setRatingModalOpen(false);
   const handleRatingOpenModal = () => setRatingModalOpen(true);
   const [noData, setNoData] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(null);
   const handleAddRating = async ({ rating, ratingDescription }) => {
     console.log("add job");
+    setIsSubmitting(true);
     if (actor) {
       let argument = {
         rating,
@@ -47,15 +49,18 @@ const ProjectDetailsCommunityRatings = ({
           console.log("result-in-add_project_rating", result);
           if (result) {
             handleRatingCloseModal();
+            setIsSubmitting(false);
             toast.success("review added successfully");
           } else {
             handleRatingCloseModal();
+            setIsSubmitting(false);
             toast.error("something got wrong");
           }
         })
         .catch((error) => {
           console.log("error-in-add_project_rating", error);
           toast.error("something got wrong");
+          setIsSubmitting(false);
           handleRatingCloseModal();
         });
     }
@@ -267,6 +272,7 @@ const ProjectDetailsCommunityRatings = ({
         <AddRatingModal
           onRatingClose={handleRatingCloseModal}
           onSubmitHandler={handleAddRating}
+          isSubmitting={isSubmitting}
         />
       )}
       <Toaster />

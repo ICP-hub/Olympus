@@ -92,6 +92,7 @@ module.exports = {
       dlg: "1024px",
       lg1: "1100px",
       lgx: "1134px",
+      dxl0: "1240px",
       dxl: "1280px",
       dxl1: "1380px",
       xl: "1440px",

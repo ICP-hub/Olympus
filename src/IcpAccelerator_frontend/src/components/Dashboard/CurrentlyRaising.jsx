@@ -177,7 +177,7 @@ const CurrentlyRaising = ({ progress }) => {
                                   stopOpacity="1"
                                 />
                                 <stop
-                                  offset={`${(projectRubricStatus * 100) / 8}%`}
+                                  offset={`${(projectRubricStatus * 100) / 9}%`}
                                   stopColor={"#3C04BA"}
                                   stopOpacity="1"
                                 />
@@ -186,17 +186,17 @@ const CurrentlyRaising = ({ progress }) => {
                             <rect
                               x="0"
                               y="0"
-                              width={`${(projectRubricStatus * 100) / 8}%`}
+                              width={`${(projectRubricStatus * 100) / 9}%`}
                               height="10"
                               fill={`url(#gradient-${index})`}
                             />
                           </svg>
-                          <div className="ml-2 text-nowrap text-sm">{`${projectRubricStatus}/8`}</div>
+                          <div className="ml-2 text-nowrap text-sm">{`${projectRubricStatus}/9`}</div>
                         </div>)}
                         <p className="text-gray-700 text-sm p-2 h-36 overflow-hidden line-clamp-8 mb-4">
                           {projectDescription}
                         </p>
-                        {projectAreaOfFocus ? (
+                        {/* {projectAreaOfFocus ? (
                           <div className="flex gap-2 mt-2 text-xs items-center">
                             {projectAreaOfFocus
                               .split(",")
@@ -221,7 +221,7 @@ const CurrentlyRaising = ({ progress }) => {
                           </div>
                         ) : (
                           ""
-                        )}
+                        )} */}
 
                         <button
                           className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"

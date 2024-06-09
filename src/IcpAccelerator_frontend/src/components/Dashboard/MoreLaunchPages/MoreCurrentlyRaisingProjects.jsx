@@ -209,7 +209,7 @@ const MoreCurrentlyRaisingProjects = () => {
                         <p className="text-xs truncate w-20">{principalId}</p>
                       </div>
                     </div>
-                    <div className="mb-4 flex items-baseline">
+                    {/* <div className="mb-4 flex items-baseline">
                       <svg
                         width="100%"
                         height="8"
@@ -231,7 +231,7 @@ const MoreCurrentlyRaisingProjects = () => {
                               stopOpacity="1"
                             />
                             <stop
-                              offset={`${(projectRubricStatus * 100) / 8}%`}
+                              offset={`${(projectRubricStatus * 100) / 9}%`}
                               stopColor={"#3C04BA"}
                               stopOpacity="1"
                             />
@@ -240,17 +240,17 @@ const MoreCurrentlyRaisingProjects = () => {
                         <rect
                           x="0"
                           y="0"
-                          width={`${(projectRubricStatus * 100) / 8}%`}
+                          width={`${(projectRubricStatus * 100) / 9}%`}
                           height="10"
                           fill={`url(#gradient-${projectId})`}
                         />
                       </svg>
-                      <div className="ml-2 text-nowrap text-sm">{`${projectRubricStatus}/8`}</div>
-                    </div>
+                      <div className="ml-2 text-nowrap text-sm">{`${projectRubricStatus}/9`}</div>
+                    </div> */}
                     <p className="text-gray-700 text-sm md:line-clamp-8 sxs:line-clamp-4 sm:line-clamp-6 line-clamp-8 h-36">
                       {projectDescription}
                     </p>
-                    {projectAreaOfFocus ?
+                    {/* {projectAreaOfFocus ?
                       <div className="flex gap-2 mt-2 text-xs">
                         <p>{projectAreaOfFocus}</p>
 
@@ -262,7 +262,7 @@ const MoreCurrentlyRaisingProjects = () => {
                         >
                           +1 more
                         </p>
-                      </div> : ''}
+                      </div> : ''} */}
 
                     <button
                       className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"

@@ -11,22 +11,29 @@ const LiveEventsCards = ({ wrap, register }) => {
   const [allLiveEventsData, setAllLiveEventsData] = useState([]);
 
   const getAllLiveEvents = async (caller) => {
-    await caller
-      .get_all_cohorts()
-      .then((result) => {
-        console.log("cohort result", result);
-        if (!result || result.length == 0) {
-          setNoData(true);
-          setAllLiveEventsData([]);
-        } else {
+    try {
+      const result = await caller.get_all_cohorts();
+      console.log("cohort result", result);
+
+      if (result && Array.isArray(result)) {
+        if (
+          result.length > 0 ||
+          (result.length === 0 && JSON.stringify(result) !== JSON.stringify([]))
+        ) {
           setAllLiveEventsData(result);
           setNoData(false);
+        } else {
+          setNoData(true);
+          setAllLiveEventsData([]);
         }
-      })
-      .catch((error) => {
+      } else {
         setNoData(true);
         setAllLiveEventsData([]);
-      });
+      }
+    } catch (error) {
+      setNoData(true);
+      setAllLiveEventsData([]);
+    }
   };
 
   useEffect(() => {
@@ -37,38 +44,54 @@ const LiveEventsCards = ({ wrap, register }) => {
     }
   }, [actor]);
   const today = new Date();
+  const todayStr = today.toISOString().split("T")[0]; // Get only the date part in 'YYYY-MM-DD' format
+
   const filteredEvents = allLiveEventsData.filter((val) => {
-    const launchDate = new Date(val?.cohort?.cohort_launch_date);
-    return launchDate < today;
+    const launchDateStr = new Date(val?.cohort?.cohort_launch_date)
+      .toISOString()
+      .split("T")[0];
+    console.log("filteredEvents launchDateStr", launchDateStr);
+    return launchDateStr <= todayStr;
   });
+  console.log("filteredEvents", filteredEvents);
+  console.log("filteredEvents today", todayStr);
   return (
-    <div
-      className={`flex mb-4 items-start ${wrap === true ? "" : "min-h-screen"}`}
-    >
-      {noData ? (
-        <NoDataCard image={NoData} desc={"There is no ongoing accelerator"} />
-      ) : (
+    <>
+      {filteredEvents && (
         <div
-          className={`${
-            wrap === true
-              ? "flex flex-row overflow-x-auto w-full"
-              : "flex flex-row flex-wrap w-full px-8"
+          className={`flex mb-4 items-start ${
+            wrap === true ? "" : "min-h-screen"
           }`}
         >
-          {filteredEvents &&
-            filteredEvents.map((val, index) => {
-              return (
-                <div
-                  key={index}
-                  className="px-2 w-full sm:min-w-[50%] lg:min-w-[33.33%] sm:max-w-[50%] lg:max-w-[33.33%]"
-                >
-                  <SecondEventCard data={val} register={register} />
-                </div>
-              );
-            })}
+          {noData ? (
+            <NoDataCard
+              image={NoData}
+              desc={"There is no ongoing accelerator"}
+            />
+          ) : (
+            <div
+              className={`${
+                wrap === true
+                  ? "flex flex-row overflow-x-auto w-full"
+                  : "flex flex-row flex-wrap w-full px-8"
+              }`}
+            >
+              {filteredEvents &&
+                filteredEvents.map((val, index) => {
+                  return (
+                    <div
+                      key={index}
+                      className="px-2 w-full sm:min-w-[50%] lg:min-w-[33.33%] sm:max-w-[50%] lg:max-w-[33.33%]"
+                    >
+                      <SecondEventCard data={val} register={register} />
+                    </div>
+                  );
+                })}
+            </div>
+          )}
         </div>
       )}
-    </div>
+    </>
   );
 };
 

@@ -8,6 +8,7 @@ import { formatFullDateFromSimpleDate } from "../../Utils/formatter/formatDateFr
 import { useNavigate } from "react-router-dom";
 const SecondEventCard = ({ data, register }) => {
   const actor = useSelector((currState) => currState.actors.actor);
+  const principal = useSelector((currState) => currState.internet.principal);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
   const userCurrentRoleStatusActiveRole = useSelector(
@@ -42,28 +43,48 @@ const SecondEventCard = ({ data, register }) => {
       const deadline = new Date(
         formatFullDateFromSimpleDate(data?.cohort?.deadline)
       );
+      const todayDateOnly = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate()
+      );
+      const deadlineDateOnly = new Date(
+        deadline.getFullYear(),
+        deadline.getMonth(),
+        deadline.getDate()
+      );
 
-      if (deadline < today) {
+      if (deadlineDateOnly < todayDateOnly) {
         setIsModalOpen(true);
       } else {
         try {
           if (userCurrentRoleStatusActiveRole === "project") {
             let cohort_id = data?.cohort_id;
             // console.log("cohortid ===> ", cohort_id);
-            await actor
-              .apply_for_a_cohort_as_a_project(cohort_id)
-              .then((result) => {
-                // console.log("result in project to check update call==>", result);
-                if (
-                  result &&
-                  result.includes(`Request Has Been Sent To Cohort Creator`)
-                ) {
-                  toast.success(result);
-                  // window.location.href = "/";
-                } else {
-                  toast.error(result);
-                }
-              });
+            const cohort_creator_principal =
+              data?.cohort_creator_principal.toText();
+            const Projectprincipal = principal;
+
+            if (cohort_creator_principal !== Projectprincipal) {
+              await actor
+                .apply_for_a_cohort_as_a_project(cohort_id)
+                .then((result) => {
+                  // console.log("result in project to check update call==>", result);
+                  if (
+                    result &&
+                    result.includes(`Request Has Been Sent To Cohort Creator`)
+                  ) {
+                    toast.success(result);
+                    window.location.href = "/";
+                  } else {
+                    toast.error(result);
+                  }
+                });
+            } else {
+              toast.error(
+                "Cohort creator cannot apply"
+              );
+            }
           } else if (userCurrentRoleStatusActiveRole === "vc") {
             let cohort_id = data?.cohort_id;
 
@@ -188,7 +209,7 @@ const SecondEventCard = ({ data, register }) => {
         <div className="w-full">
           <div className="p-8">
             <div className="w-full mt-4">
-              <div className="w-1/2 flex-col text-[#737373] flex  ">
+              <div className="flex-col text-[#737373] flex  ">
                 <h1 className="font-bold text-black text-xl truncate capitalize">
                   {name}
                 </h1>
@@ -217,7 +238,6 @@ const SecondEventCard = ({ data, register }) => {
                 <div className="flex gap-2 mt-2 text-xs items-center pb-2">
                   {tags
                     .split(",")
-                    .slice(0, 3)
                     .map((tag, index) => (
                       <div
                         key={index}

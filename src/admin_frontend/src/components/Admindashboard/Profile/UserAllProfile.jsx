@@ -16,26 +16,23 @@ import mentor from "../../../../../IcpAccelerator_frontend/assets/images/mentor.
 const UserAllProfile = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const location = useLocation();
-  const CurrentUserPrincipal = location.state;
-
-  // console.log("CurrentUserPrincipal", CurrentUserPrincipal);
-  const [currentRole, setCurrentRole] = useState("user");
+  const { principal, activeCategory } = location.state;
+  // console.log("principal", principal);
+  const [currentRole, setCurrentRole] = useState(activeCategory || "user");
   const [userData, setUserData] = useState(null);
 
   const roleImages = {
     user: proj,
-    investor: vc,
-    mentor: mentor,
-    project: founder,
+    Investor: vc,
+    Mentor: mentor,
+    Project: founder,
   };
 
   useEffect(() => {
-    if (CurrentUserPrincipal) {
+    if (principal) {
       const getAllRequestOfUser = async () => {
         try {
-          const convertedPrincipal = await Principal.fromText(
-            CurrentUserPrincipal
-          );
+          const convertedPrincipal = await Principal.fromText(principal);
           const getAll = await actor.get_user_all_data(convertedPrincipal);
           // console.log("gotchaaa data =>", getAll);
           setUserData(getAll);
@@ -46,7 +43,7 @@ const UserAllProfile = () => {
 
       getAllRequestOfUser();
     }
-  }, [CurrentUserPrincipal, actor]);
+  }, [principal, actor]);
 
   const handleRoleChange = (role) => {
     setCurrentRole(role);
@@ -54,9 +51,9 @@ const UserAllProfile = () => {
 
   const roleToIndexMap = {
     user: 0,
-    investor: 1,
-    mentor: 2,
-    project: 3,
+    Investor: 1,
+    Mentor: 2,
+    Project: 3,
   };
 
   return (
@@ -67,7 +64,7 @@ const UserAllProfile = () => {
             {currentRole.charAt(0).toUpperCase() + currentRole.slice(1)} Profile
           </h1>
           <div className="flex text-white text-sm flex-row font-semibold h-auto items-center bg-customBlue rounded-lg p-3 justify-around">
-            {["user", "project", "mentor", "investor"].map((role) => {
+            {["user", "Project", "Mentor", "Investor"].map((role) => {
               const index = roleToIndexMap[role];
               const isRoleActive =
                 userData && userData[index] && userData[index].length > 0;
@@ -109,25 +106,26 @@ const UserAllProfile = () => {
         {currentRole === "user" && userData && (
           <UserProfile userData={userData[0]} Allrole={userData[4]} />
         )}
-        {currentRole === "investor" && userData && userData[1] && (
+        {currentRole === "Investor" && userData && userData[1] && (
           <InvestorProfile
             userData={userData[1]}
             Allrole={userData[4]}
-            principal={CurrentUserPrincipal}
+            principal={principal}
           />
         )}
-        {currentRole === "mentor" && userData && userData[2] && (
+        {currentRole === "Mentor" && userData && userData[2] && (
           <MentorProfile
             userData={userData[2]}
             Allrole={userData[4]}
-            principal={CurrentUserPrincipal}
+            principal={principal}
+            currentRole={"Mentor"}
           />
         )}
-        {currentRole === "project" && userData && userData[3] && (
+        {currentRole === "Project" && userData && userData[3] && (
           <Projectdetails
             userData={userData[3]}
             Allrole={userData[4]}
-            principal={CurrentUserPrincipal}
+            principal={principal}
           />
         )}
       </div>

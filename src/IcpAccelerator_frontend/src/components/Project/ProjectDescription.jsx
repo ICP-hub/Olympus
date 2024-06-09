@@ -26,7 +26,7 @@ function ProjectDescription() {
           <div className="relative lg:float-right w-[calc(100%/2-10px)] mx-auto self-center">
           <Swiper
   modules={[Pagination, Autoplay]}
-  centeredSlides={true}
+  // centeredSlides={true}
   // loop={true}
   autoplay={{
     delay: 2500,

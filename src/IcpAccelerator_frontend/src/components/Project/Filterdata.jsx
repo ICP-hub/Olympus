@@ -4,7 +4,6 @@ import { OutSideClickHandler } from "../hooks/OutSideClickHandler";
 import ReactSlider from "react-slider";
 
 const Filterdata = () => {
-  const [currentStep, setCurrentStep] = useState(0);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isCountryPopupOpen, setIsCountryPopupOpen] = useState(false);
   const [isMentorPopupOpen, setMentorPopupopen] = useState(false);
@@ -12,79 +11,13 @@ const Filterdata = () => {
   const [isLevel, setLevel] = useState(false);
   const [isGenre, setGenre] = useState(false);
   const [isrange, setrange] = useState(false);
-  const [selectedOption, setSelectedOption] = useState("Leaderboard");
   const dropdownRef = useRef(null);
   const countryPopupRef = useRef(null);
   // Const MentorPopupRef = useRef (null);
 
   OutSideClickHandler(dropdownRef, () => setIsPopupOpen(false));
   
-  const customStyles = `
-    .slider-mark::after {
-      content: attr(data-label);
-      position: absolute;
-      top: -2rem;
-      left: 50%;
-      transform: translateX(-50%);
-      text-align: center;
-      white-space: nowrap;
-      font-size: 0.75rem;
-      color: #fff;
-      padding: 0.2rem 0.4rem; 
-      border-radius: 0.25rem;
-    }
-  `;
-  const [sliderValuesProgress, setSliderValuesProgress] = useState({
-    Team: 0,
-    ProblemAndVision: 0,
-    ValueProp: 0,
-    Product: 0,
-    Market: 0,
-    BusinessModel: 0,
 
-    Scale: 0,
-    Exit: 0,
-  });
-  const [sliderValues, setSliderValues] = useState({
-    Team: 0,
-    ProblemAndVision: 0,
-    ValueProp: 0,
-    Product: 0,
-    Market: 0,
-    BusinessModel: 0,
-    Scale: 0,
-    Exit: 0,
-  });
-  const sliderKeys = [
-    "Team",
-    "ProblemAndVision",
-    "ValueProp",
-    "Product",
-    "Market",
-    "BusinessModel",
-    "Scale",
-    "Exit",
-  ];
-  const handleSliderChange = (index, value) => {
-
-
-    const key = sliderKeys[index];
-    const newSliderValues = { ...sliderValues, [key]: value };
-    setSliderValues(newSliderValues);
-    const newSliderValuesProgress = {
-      ...sliderValuesProgress,
-      [key]: value === 9 ? 100 : Math.floor((value / 9) * 100),
-    };
-    setSliderValuesProgress(newSliderValuesProgress);
-  };
-  const handleFileInputChange = (event) => {
-
-    const selectedFile = event.target.files[0];
-    console.log('Selected file:', selectedFile);
-  };
-  const handleFileSelect = () => {
-    document.getElementById('fileInput').click();
-  };
   const handleLevelButtonClick = () => {
     setIsCountryPopupOpen(false);
     setMentorPopupopen(false);
@@ -144,18 +77,14 @@ const Filterdata = () => {
   return (
     <div>
       <div className="flex items-center justify-between">
-        {selectedOption && (
-          <div className="left-4 lg:left-auto bg-gradient-to-r from-purple-900 to-blue-500 text-transparent bg-clip-text text-2xl font-extrabold ">
-            {selectedOption}
-          </div>
-        )}
+     
 
         <div className="flex justify-end gap-4 relative " >
           <div className="cursor-pointer" onClick={() => setIsPopupOpen(true)}>
             {projectFilterSvg}
 
             {isPopupOpen && (
-              <div className="absolute w-[250px] top-full right-9 bg-white shadow-md rounded-lg border border-gray-200 p-3 z-10 ">
+              <div className="absolute w-[250px] top-full right-0 bg-white shadow-md rounded-lg border border-gray-200 p-3 z-10 ">
                 <ul className="flex flex-col">
                   <li>
                     <button
@@ -369,47 +298,7 @@ const Filterdata = () => {
                   </div>
               </div>
               <div className="relative my-2 flex items-center">
-                  <style dangerouslySetInnerHTML={{ __html: customStyles }} />
-                  <ReactSlider
-                      className="bg-gradient-to-r from-blue-200 to-blue-600 h-1 rounded-md flex-grow"
-                      marks
-                      markClassName="slider-mark bg-purple-800 rounded-md h-1 w-1"
-                      min={1}
-                      max={10}
-                      thumbClassName="absolute bg-white w-2 h-2 flex items-center justify-center rounded-full shadow-md -top-7" 
-                      trackClassName="h-3 rounded"
-                      value={sliderValues[sliderKeys[currentStep]]}
-                      onChange={(value) => handleSliderChange(currentStep, value)}
-                      renderThumb={(props, state) => (
-                          <div {...props} className="w-4 h-12 -top-6"> 
-
-                              <div className='w-4 h-4 rounded-full bg-white border-gradient-to-t border-4 from-blue-200 to-blue-600 mt-[16px] '></div>
-                          </div>
-                      )}
-                      renderMark={({ key, style }) => (
-                          <div
-                              key={key > 0 ? key : ''}
-                              className="slider-mark bg-transparent rounded-md h-1 w-1"
-                              style={{ ...style, top: "0px" }}
-                          >
-                              {key > 0 ?
-                                  <div className="flex flex-row text-white items-center space-x-1 relative -top-8 justify-between">
-                                      <span></span>
-                                      <div className="relative group">
-                                          <span className="cursor-pointer"></span>
-                                          <div className="absolute hidden group-hover:block bg-transparent text-white p-2 rounded-lg shadow-lg min-w-[250px] -left-14 -top-[6.95rem] z-20 h-32 drop-shadow-sm backdrop-blur-lg border-white border-2">
-                                              <div className="relative z-10 p-2"></div>
-                                          </div>
-                                      </div>
-                                  </div>
-                                  : ''}
-                          </div>
-                      )}
-                  />
-                
-                  <div className="text-gray-600 ml-4">
-                      {((sliderValues[sliderKeys[currentStep]] - 2) / 8 * 100).toFixed(0)}%
-                  </div>
+                 
               </div>
            
           </div>

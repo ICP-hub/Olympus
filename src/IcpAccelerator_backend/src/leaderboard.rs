@@ -1,4 +1,5 @@
-use crate::ratings::{calculate_average_api, Rating, RATING_SYSTEM};
+use crate::ratings::{calculate_average_api, Rating};
+use crate::state_handler::*;
 
 use candid::{CandidType, Nat, Principal};
 use std::cmp::Ordering;
@@ -29,15 +30,15 @@ fn compare_nat(a: &Option<Nat>, b: &Option<Nat>) -> Ordering {
 pub fn get_leaderboard_by_ratings() -> Vec<LeaderboardEntryForRatings> {
     let mut leaderboard: Vec<LeaderboardEntryForRatings> = Vec::new();
 
-    RATING_SYSTEM.with(|system| {
-        let system = system.borrow();
+    read_state(|system| {
+        let system = &system.rating_system;
 
         for (project_id, _) in system.iter() {
-            let averages = calculate_average_api(project_id);
+            let averages = calculate_average_api(&project_id);
             if let Some(overall_average) = averages.overall_average.get(0) {
                 // Assuming you want the first (or most recent) overall average rating
                 leaderboard.push(LeaderboardEntryForRatings {
-                    project_id: Some(project_id.clone()),
+                    project_id: Some(project_id.to_string().clone()),
                     average_rating: Some(*overall_average), // Directly using the f64 value
                 });
             }

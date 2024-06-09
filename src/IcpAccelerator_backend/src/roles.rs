@@ -77,4 +77,43 @@ pub fn get_roles() -> RolesResponse {
     }
 }
 
+//purana
+// use ic_cdk_macros::query;
+// use candid::CandidType;
+
+// #[derive(CandidType)]
+// pub struct RolesResponse {
+//     roles: Vec<&'static str>,
+// }
+
+// 
+// pub fn get_roles() -> RolesResponse {
+//     RolesResponse {
+//         roles: vec!["Mentor/Expert", "Project", "Venture Capital", "Hub Organizer", "Admin"],
+//     }
+// }
+
+// pub fn pre_upgrade_upvotes() {
+//     ROLES.with(|notifications| {
+//         let serialized =
+//             bincode::serialize(&*notifications.borrow()).expect("Serialization failed");
+//         let mut writer = StableWriter::default();
+//         writer
+//             .write(&serialized)
+//             .expect("Failed to write to stable storage");
+//     });
+// }
+
+// pub fn post_upgrade_upvotes() {
+//     let mut reader = StableReader::default();
+//     let mut data = Vec::new();
+//     reader
+//         .read_to_end(&mut data)
+//         .expect("Failed to read from stable storage");
+//     let upvotes: UpvoteStorage =
+//         bincode::deserialize(&data).expect("Deserialization failed of notification");
+//     UPVOTES.with(|notifications_ref| {
+//         *notifications_ref.borrow_mut() = upvotes;
+//     });
+// }
 

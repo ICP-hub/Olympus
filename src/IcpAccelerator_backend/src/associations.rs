@@ -1,26 +1,25 @@
+use crate::state_handler::*;
 use crate::ProjectInfoInternal;
-use std::cell::RefCell;
 use candid::Principal;
-use std::collections::HashMap;
-
-
-thread_local!{
-    pub static PROJECTS_ASSOCIATED_WITH_MENTOR : RefCell<HashMap<Principal, Vec<ProjectInfoInternal>>> = RefCell::new(HashMap::new());
-    pub static PROJECTS_ASSOCIATED_WITH_INVESTOR : RefCell<HashMap<Principal, Vec<ProjectInfoInternal>>> = RefCell::new(HashMap::new());
-}
 
 #[ic_cdk::query]
-pub fn get_projects_associated_with_mentor(mentor_id : Principal) -> Vec<ProjectInfoInternal>{
-    PROJECTS_ASSOCIATED_WITH_MENTOR.with(|storage|{
-        let storage = storage.borrow();
-        storage.get(&mentor_id).unwrap_or(&Vec::new()).clone()
+pub fn get_projects_associated_with_mentor(mentor_id: Principal) -> Vec<ProjectInfoInternal> {
+    read_state(|state| {
+        let storage = &state.projects_associated_with_mentor;
+        storage
+            .get(&StoredPrincipal(mentor_id))
+            .map(|candid_vec| candid_vec.0.clone())
+            .unwrap_or_else(Vec::new)
     })
 }
 
 #[ic_cdk::query]
-pub fn get_projects_associated_with_investor(investor_id : Principal) -> Vec<ProjectInfoInternal>{
-    PROJECTS_ASSOCIATED_WITH_INVESTOR.with(|storage|{
-        let storage = storage.borrow();
-        storage.get(&investor_id).unwrap_or(&Vec::new()).clone()
+pub fn get_projects_associated_with_investor(investor_id: Principal) -> Vec<ProjectInfoInternal> {
+    read_state(|state| {
+        let storage = &state.projects_associated_with_vc;
+        storage
+            .get(&StoredPrincipal(investor_id))
+            .map(|candid_vec| candid_vec.0.clone())
+            .unwrap_or_else(Vec::new)
     })
 }

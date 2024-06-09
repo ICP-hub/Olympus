@@ -1,45 +1,47 @@
 import React from "react";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import NoDataCard from "../../Mentors/Event/NoDataCard";
 import NoData from "../../../../assets/images/file_not_found.png";
 
-function EventProject({ allProjectData, noData }) {
+function EventProject({ allProjectData, noData, cohortId }) {
   const actor = useSelector((currState) => currState.actors.actor);
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
+  const navigate = useNavigate();
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
   console.log("allProjectData line no 17 =====>>>>>>>", allProjectData);
-  const handleNavigate = (projectId, projectData) => {
-    if (isAuthenticated) {
-      switch (userCurrentRoleStatusActiveRole) {
-        case "user":
-          navigate(`/individual-project-details-user/${projectId}`, {
-            state: projectData,
-          });
-          break;
-        case "project":
-          toast.error("Only Access if you are in a same cohort!!");
-          window.scrollTo({ top: 0, behavior: "smooth" });
-          break;
-        case "mentor":
-          navigate(`/individual-project-details-project-mentor/${projectId}`);
-          break;
-        case "vc":
-          navigate(`/individual-project-details-project-investor/${projectId}`);
-          break;
-        default:
-          toast.error("No Role Found, Please Sign Up !!!");
-          window.scrollTo({ top: 0, behavior: "smooth" });
-          break;
-      }
-    } else {
-      toast.error("Please Sign Up !!!");
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  };
+  // const handleNavigate = (projectId, projectData) => {
+  //   if (isAuthenticated) {
+  //     switch (userCurrentRoleStatusActiveRole) {
+  //       case "user":
+  //         navigate(`/individual-project-details-user/${projectId}`, {
+  //           state: projectData,
+  //         });
+  //         break;
+  //       case "project":
+  //         toast.error("Only Access if you are in a same cohort!!");
+  //         window.scrollTo({ top: 0, behavior: "smooth" });
+  //         break;
+  //       case "mentor":
+  //         navigate(`/individual-project-details-project-mentor/${projectId}`);
+  //         break;
+  //       case "vc":
+  //         navigate(`/individual-project-details-project-investor/${projectId}`);
+  //         break;
+  //       default:
+  //         toast.error("No Role Found, Please Sign Up !!!");
+  //         window.scrollTo({ top: 0, behavior: "smooth" });
+  //         break;
+  //     }
+  //   } else {
+  //     toast.error("Please Sign Up !!!");
+  //     window.scrollTo({ top: 0, behavior: "smooth" });
+  //   }
+  // };
   return (
     <>
       <div className="flex max-md:flex-col -mx-4 mb-4 items-stretch">
@@ -81,14 +83,14 @@ function EventProject({ allProjectData, noData }) {
                   let projectAreaOfFocus =
                     data?.params?.project_area_of_focus ?? "";
                   let projectData = data?.params ? data?.params : null;
-                  let projectRubricStatus =
-                    data?.overall_average.length > 0
-                      ? data?.overall_average[data?.overall_average.length - 1]
-                      : 0;
+                  // let projectRubricStatus =
+                  //   data?.overall_average.length > 0
+                  //     ? data?.overall_average[data?.overall_average.length - 1]
+                  //     : 0;
 
                   return (
                     <div
-                      className="w-full sm:w-1/2 md:w-1/3  hover:scale-105 transition-transform duration-300 ease-in-out"
+                      className="w-full sm:w-1/2 md:w-1/4  hover:scale-105 transition-transform duration-300 ease-in-out"
                       key={index}
                     >
                       <div className="sm:w-fit flex justify-between items-baseline flex-wrap bg-white overflow-hidden rounded-lg shadow-lg mb-5 md:mb-0">
@@ -135,7 +137,7 @@ function EventProject({ allProjectData, noData }) {
                                       />
                                       <stop
                                         offset={`${
-                                          (projectRubricStatus * 100) / 8
+                                          (projectRubricStatus * 100) / 9
                                         }%`}
                                         stopColor={"#3C04BA"}
                                         stopOpacity="1"
@@ -146,14 +148,14 @@ function EventProject({ allProjectData, noData }) {
                                     x="0"
                                     y="0"
                                     width={`${
-                                      (projectRubricStatus * 100) / 8
+                                      (projectRubricStatus * 100) / 9
                                     }%`}
                                     height="10"
                                     fill={`url(#gradient-${index})`}
                                   />
                                 </svg>
                                 <div className="ml-2 text-nowrap text-sm">
-                                  {`${projectRubricStatus}/8`}
+                                  {`${projectRubricStatus}/9`}
                                 </div>
                               </div>
                             )} */}
@@ -161,7 +163,7 @@ function EventProject({ allProjectData, noData }) {
                             {projectDescription}
                           </p>
 
-                          {projectAreaOfFocus ? (
+                          {/* {projectAreaOfFocus ? (
                             <div className="flex gap-2 mt-2 text-xs items-center">
                               {projectAreaOfFocus
                                 .split(",")
@@ -189,13 +191,15 @@ function EventProject({ allProjectData, noData }) {
                             </div>
                           ) : (
                             ""
-                          )}
+                          )} */}
 
                           <button
-                            className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full sxxs:w-11/12 text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"
-                            // onClick={() =>
-                            //   handleNavigate(projectId, projectData)
-                            // }
+                            className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"
+                            onClick={() =>
+                              navigate(`/cohort-project-detail/${projectId}`, {
+                                state: { cohortId: cohortId },
+                              })
+                            }
                           >
                             KNOW MORE
                           </button>

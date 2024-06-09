@@ -120,11 +120,13 @@ function ProjectRegForm() {
       telegram_id: yup
         .string()
         .nullable(true)
-        .test("is-valid-telegram", "Invalid Telegram ID", (value) => {
-          if (!value) return true;
-          const hasValidChars = /^[a-zA-Z0-9_]{5,32}$/.test(value);
-          return hasValidChars;
-        }),
+        .optional()
+        // .test("is-valid-telegram", "Invalid Telegram link", (value) => {
+        //   if (!value) return true;
+        //   const hasValidChars = /^[a-zA-Z0-9_]{5,32}$/.test(value);
+        //   return hasValidChars;
+        // })
+        .url("Invalid url"),
       twitter_url: yup
         .string()
         .nullable(true)
@@ -143,12 +145,12 @@ function ProjectRegForm() {
         .nullable(true)
         .test(
           "is-valid-username",
-          "Username must be between 6 and 20 characters and can only contain letters, numbers, and underscores",
+          "Username must be between 5 and 20 characters",
           (value) => {
             if (!value) return true;
-            const isValidLength = value.length >= 6 && value.length <= 20;
-            const hasValidChars = /^(?=.*[A-Z0-9_])[a-zA-Z0-9_]+$/.test(value);
-            return isValidLength && hasValidChars;
+            const isValidLength = value.length >= 5 && value.length <= 20;
+            // const hasValidChars = /^(?=.*[A-Z0-9_])[a-zA-Z0-9_]+$/.test(value);
+            return isValidLength;
           }
         ),
       bio: yup
@@ -266,11 +268,10 @@ function ProjectRegForm() {
           "Project Description must not exceed 500 characters",
           (value) => !value || value.length <= 500
         )
-        .required("Project Description is required"),
-      project_elevator_pitch: yup
-        .string()
-        .url("Invalid url")
-        .required("Project Pitch deck is required"),
+        .optional(),
+      // .required("Project Description is required"),
+      project_elevator_pitch: yup.string().url("Invalid url").optional(),
+      // .required("Project Pitch deck is required"),
       project_website: yup
         .string()
         .nullable(true)
@@ -320,26 +321,8 @@ function ProjectRegForm() {
               .required("dApp Link is required")
           : schema
       ),
-      weekly_active_users: yup
-        .number()
-        .when("live_on_icp_mainnet", (val, schema) =>
-          val && val[0] === "true"
-            ? schema
-                .typeError("You must enter a number")
-                .positive("Must be a positive number")
-                .required("Weekly active users is required")
-            : schema
-        ),
-      revenue: yup
-        .number()
-        .when("live_on_icp_mainnet", (val, schema) =>
-          val && val[0] === "true"
-            ? schema
-                .typeError("You must enter a number")
-                .positive("Must be a positive number")
-                .required("Revenue is required")
-            : schema
-        ),
+      weekly_active_users: yup.number().nullable(true).optional(),
+      revenue: yup.number().nullable(true).optional(),
       money_raised_till_now: yup
         .string()
         .required("Required")
@@ -520,6 +503,8 @@ function ProjectRegForm() {
     publicDocs: [],
     upload_private_documents: "false",
     privateDocs: [],
+    weekly_active_users: 0,
+    revenue: 0,
   };
 
   const {
@@ -543,6 +528,7 @@ function ProjectRegForm() {
     watch("type_of_profile")
   );
 
+  console.log("defaultValues", defaultValues);
   // Add Private Docs
 
   const {
@@ -1027,8 +1013,8 @@ function ProjectRegForm() {
         setValue("live_on_icp_mainnet", "false");
       }
       setValue("dapp_link", val?.dapp_link?.[0] ?? "");
-      setValue("weekly_active_users", val?.weekly_active_users?.[0] ?? "");
-      setValue("revenue", val?.revenue?.[0] ?? "");
+      setValue("weekly_active_users", val?.weekly_active_users?.[0] ?? 0);
+      setValue("revenue", val?.revenue?.[0] ?? 0);
       if (val?.supports_multichain?.[0]) {
         setValue("multi_chain", "true");
       } else {
@@ -1207,9 +1193,9 @@ function ProjectRegForm() {
   return (
     <>
       <DetailHeroSection />
-      <section className="w-full h-fit px-[6%] lg1:px-[4%] py-[6%] lg1:py-[4%] bg-gray-100">
-        <div className="w-full h-full bg-gray-100 pt-8">
-          <div className="bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-[30px]  sm:text-[25px] md1:text-[30px] md2:text-[35px] font-black font-fontUse dxl:text-[40px] p-8">
+      <section className="w-full h-fit px-[6%] lg1:px-[4%] bg-gray-100">
+        <div className="w-full center-text sm:left-text h-full bg-gray-100">
+          <div className="bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-[30px]  sm:text-[25px] md1:text-[30px] md2:text-[35px] font-black font-fontUse dxl:text-[40px] p-6 mt-[50px]">
             Project Information
           </div>
           <div className="text-sm font-medium text-center text-gray-200 ">
@@ -1270,7 +1256,7 @@ function ProjectRegForm() {
                         </label>
                         {imagePreview || errors.image ? (
                           <button
-                            className="p-2 border-2 border-red-500 items-center rounded-md text-md bg-transparent text-red-500 cursor-pointer font-semibold capitalize mt-3 sm0:mt-0"
+                            className="p-2 border-2 border-red-500 items-center rounded-md text-md bg-transparent text-red-500 cursor-pointer font-semibold capitalize mt-3 sm0:mt-0 mt-[11px]"
                             onClick={() => clearImageFunc("image")}
                           >
                             clear
@@ -1345,7 +1331,7 @@ function ProjectRegForm() {
                     htmlFor="telegram_id"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Telegram ID
+                    Telegram link
                   </label>
                   <input
                     type="text"
@@ -1356,7 +1342,7 @@ function ProjectRegForm() {
                                                   ? "border-red-500 "
                                                   : "border-[#737373]"
                                               } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                    placeholder="Enter your telegram id"
+                    placeholder="Enter your telegram url"
                   />
                   {errors?.telegram_id && (
                     <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
@@ -1369,7 +1355,7 @@ function ProjectRegForm() {
                     htmlFor="twitter_url"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Twitter ID
+                    Twitter link
                   </label>
                   <input
                     type="text"
@@ -1847,7 +1833,7 @@ function ProjectRegForm() {
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
                     Project Description (50 words){" "}
-                    <span className="text-red-500">*</span>
+                    {/* <span className="text-red-500">*</span> */}
                   </label>
                   <input
                     type="text"
@@ -1871,7 +1857,8 @@ function ProjectRegForm() {
                     htmlFor="project_elevator_pitch"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                   >
-                    Project pitch deck <span className="text-red-500">*</span>
+                    Project pitch deck
+                    {/* <span className="text-red-500">*</span> */}
                   </label>
                   <input
                     type="text"
@@ -2176,7 +2163,7 @@ function ProjectRegForm() {
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
                         Weekly active users{" "}
-                        <span className="text-red-500">*</span>
+                        {/* <span className="text-red-500">*</span> */}
                       </label>
                       <input
                         type="number"
@@ -2203,7 +2190,7 @@ function ProjectRegForm() {
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
                         Revenue (in Million USD){" "}
-                        <span className="text-red-500">*</span>
+                        {/* <span className="text-red-500">*</span> */}
                       </label>
                       <input
                         type="number"
@@ -2266,7 +2253,7 @@ function ProjectRegForm() {
                         htmlFor="icp_grants"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        How much funding have you raised in grants,(USD)?{" "}
+                        How much funding have you raised in grants (USD)?{" "}
                         <span className="text-red-500">*</span>
                       </label>
                       <input
@@ -2384,7 +2371,7 @@ function ProjectRegForm() {
                         htmlFor="target_amount"
                         className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
                       >
-                        Target Amount (USD){" "}
+                        Target Amount (in Millions USD){" "}
                         <span className="text-red-500">*</span>
                       </label>
                       <input

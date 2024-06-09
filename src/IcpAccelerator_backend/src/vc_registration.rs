@@ -1,4 +1,5 @@
 use crate::admin::*;
+use crate::state_handler::{read_state, StoredPrincipal, mutate_state, Candid};
 use crate::user_module::*;
 
 use bincode;
@@ -12,10 +13,11 @@ use ic_cdk::storage::stable_restore;
 use ic_cdk_macros::*;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
+use std::borrow::BorrowMut;
 use std::cell::RefCell;
 use std::io::Read;
 use std::{collections::HashMap, io::Write};
-use crate::PaginationParam;
+use crate::PaginationParams;
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct VentureCapitalist {
@@ -201,33 +203,34 @@ pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::
     let uuids = raw_rand().await.unwrap().0;
     let uid = format!("{:x}", Sha256::digest(&uuids));
     let new_id = uid.clone().to_string();
-    DECLINED_VC_REQUESTS.with(|d_vc| {
-        let exits = d_vc.borrow().contains_key(&caller);
-        if exits {
-            panic!("You had got your request declined earlier");
-        }
+
+    // Check if the request was declined earlier
+    let request_declined = read_state(|state| {
+        state.vc_declined_request.contains_key(&StoredPrincipal(caller))
     });
+    if request_declined {
+        return "You had got your request declined earlier".to_string();
+    }
 
-    let already_registered =
-        VENTURECAPITALIST_STORAGE.with(|registry| registry.borrow().contains_key(&caller));
-
+    // Check if the VC is already registered
+    let already_registered = read_state(|state| {
+        state.vc_storage.contains_key(&StoredPrincipal(caller))
+    });
     if already_registered {
         ic_cdk::println!("This Principal is already registered");
         return "This Principal is already registered.".to_string();
     }
 
-    ROLE_STATUS_ARRAY.with(|role_status| {
-        let mut role_status = role_status.borrow_mut();
-
-        for role in role_status
-            .get_mut(&caller)
-            .expect("you are not a user! be a user first!")
-            .iter_mut()
-        {
-            if role.name == "vc" {
-                role.status = "requested".to_string();
-                role.requested_on = Some(time());
+    mutate_state(|state| {
+        if let Some(mut role_status) = state.role_status.get(&StoredPrincipal(caller)) {
+            for role in role_status.0.iter_mut() {
+                if role.name == "vc" {
+                    role.status = "requested".to_string();
+                    role.requested_on = Some(ic_cdk::api::time());
+                }
             }
+        } else {
+            panic!("you are not a user! be a user first!");
         }
     });
 
@@ -237,18 +240,6 @@ pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::
     match params.validate() {
         Ok(_) => {
             println!("Validation passed!");
-            // let fund_size = (params.fund_size * 100.0).round() / 100.0;
-            // params.fund_size = fund_size;
-
-            // let average_check_size = (params.average_check_size * 100.0).round() / 100.0;
-            // params.average_check_size = average_check_size;
-
-            // let money_invested = params
-            //     .money_invested
-            //     .map(|money| (money * 100.0).round() / 100.0);
-
-            // params.money_invested = money_invested;
-
             let profile_for_pushing = params.clone();
 
             let new_vc = VentureCapitalistInternal {
@@ -258,15 +249,11 @@ pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::
                 approve: false,
                 decline: false,
             };
-            VC_AWAITS_RESPONSE.with(
-                |awaiters: &RefCell<HashMap<Principal, VentureCapitalistInternal>>| {
-                    let mut await_ers: std::cell::RefMut<
-                        '_,
-                        HashMap<Principal, VentureCapitalistInternal>,
-                    > = awaiters.borrow_mut();
-                    await_ers.insert(caller, new_vc.clone());
-                },
-            );
+
+            // Add the new VC to the awaiting response list
+            mutate_state(|state| {
+                state.vc_awaits_response.insert(StoredPrincipal(caller), Candid(new_vc.clone()));
+            });
 
             let res = send_approval_request(
                 params
@@ -277,55 +264,44 @@ pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::
                 params.user_data.country,
                 params.category_of_investment,
                 "vc".to_string(),
-                params.user_data.bio.unwrap_or("no bio".to_string()),
+                params.user_data.bio.unwrap_or_else(|| "no bio".to_string()),
             )
             .await;
 
             format!("{}", res)
-
-            // println!("Registering VC for caller: {:?}", caller);
-            // VENTURECAPITALIST_STORAGE.with(|storage| {
-            //     let mut storage = storage.borrow_mut();
-            //     if storage.contains_key(&caller) {
-            //         panic!("VC with this Principal ID already exists");
-            //     }
-            //     storage.insert(caller, new_vc);
-            //     println!("VC Registered {:?}", caller);
-            // });
-            // format!("VC registered successfully with ID: {}", new_id)
         }
-        Err(e) => {
-            format!("Validation error: {}", e)
-        }
+        Err(e) => format!("Validation error: {}", e),
     }
 }
 
 #[query]
 pub fn get_vc_info() -> Option<VentureCapitalist> {
-    let caller = caller();
-    println!("Fetching founder info for caller: {:?}", caller);
-    VENTURECAPITALIST_STORAGE.with(|registry| {
-        registry
-            .borrow()
-            .get(&caller)
-            .map(|vc_internal| vc_internal.params.clone())
+    let caller = ic_cdk::caller();
+    println!("Fetching venture capitalist info for caller: {:?}", caller);
+
+    read_state(|state| {
+        state
+            .vc_storage
+            .get(&StoredPrincipal(caller))
+            .map(|vc_internal| vc_internal.0.params.clone())
     })
 }
 
 #[query]
 pub fn get_vc_info_by_principal(caller: Principal) -> HashMap<Principal, VentureCapitalistAll> {
-    VENTURECAPITALIST_STORAGE.with(|registry| {
-        let profile = registry
-            .borrow()
-            .get(&caller)
-            .expect("couldn't get venture capital")
+    read_state(|state| {
+        let profile = state
+            .vc_storage
+            .get(&StoredPrincipal(caller))
+            .expect("couldn't get venture capitalist")
+            .0
             .clone();
 
         let mut vc_all_info: HashMap<Principal, VentureCapitalistAll> = HashMap::new();
 
         let all_capitalist_info = VentureCapitalistAll {
             principal: caller,
-            profile: profile,
+            profile,
         };
 
         vc_all_info.insert(caller, all_capitalist_info);
@@ -335,165 +311,175 @@ pub fn get_vc_info_by_principal(caller: Principal) -> HashMap<Principal, Venture
 
 #[query]
 pub fn get_vc_info_using_principal(caller: Principal) -> Option<VentureCapitalistInternal> {
-    VENTURECAPITALIST_STORAGE.with(|registry| registry.borrow().get(&caller).cloned())
+    read_state(|state| {
+        state
+            .vc_storage
+            .get(&StoredPrincipal(caller))
+            .map(|vc| vc.0.clone())
+    })
 }
 
 #[query]
 pub fn get_vc_awaiting_info_using_principal(
     caller: Principal,
 ) -> Option<VentureCapitalistInternal> {
-    VC_AWAITS_RESPONSE.with(|registry| registry.borrow().get(&caller).cloned())
+    read_state(|state| {
+        state
+            .vc_awaits_response
+            .get(&StoredPrincipal(caller))
+            .map(|vc| vc.0.clone())
+    })
 }
 
 #[query]
 pub fn get_vc_declined_info_using_principal(
     caller: Principal,
 ) -> Option<VentureCapitalistInternal> {
-    DECLINED_VC_REQUESTS.with(|registry| registry.borrow().get(&caller).cloned())
+    read_state(|state| {
+        state
+            .vc_declined_request
+            .get(&StoredPrincipal(caller))
+            .map(|vc| vc.0.clone())
+    })
 }
 
 #[query]
 pub fn list_all_vcs() -> HashMap<Principal, VcWithRoles> {
-    let vc_awaiters = VENTURECAPITALIST_STORAGE.with(|awaiters : &RefCell<VentureCapitalistStorage> | awaiters.borrow().clone());
+    read_state(|state| {
+        let mut vc_with_roles_map: HashMap<Principal, VcWithRoles> = HashMap::new();
 
-    let mut vc_with_roles_map: HashMap<Principal, VcWithRoles> = HashMap::new();
-
-    for (principal, vc_internal) in vc_awaiters.iter() {
-        let roles = get_roles_for_principal(*principal);
-        let vc_with_roles = VcWithRoles {
-            vc_profile: vc_internal.clone(),
-            roles,
-        };
-
-        if vc_internal.is_active == true{
-            vc_with_roles_map.insert(*principal, vc_with_roles);
-        }
-        
-    }
-
-    vc_with_roles_map
-}
-#[query]
-pub fn list_all_vcs_with_pagination(pagination_params: PaginationParam) -> HashMap<Principal, VcWithRoles> {
-    let vc_awaiters = VENTURECAPITALIST_STORAGE.with(|awaiters: &RefCell<VentureCapitalistStorage>| awaiters.borrow().clone());
-
-    let mut vc_list: Vec<(Principal, VcWithRoles)> = Vec::new();
-
-    for (principal, vc_internal) in vc_awaiters.iter() {
-        if vc_internal.is_active {
-            let roles = get_roles_for_principal(*principal);
+        for (principal, vc_internal) in state.vc_storage.iter() {
+            let roles = get_roles_for_principal(principal.0);
             let vc_with_roles = VcWithRoles {
-                vc_profile: vc_internal.clone(),
+                vc_profile: vc_internal.0.clone(),
                 roles,
             };
 
-            vc_list.push((*principal, vc_with_roles));
+            if vc_internal.0.is_active {
+                vc_with_roles_map.insert(principal.0, vc_with_roles);
+            }
         }
-    }
 
-    // Ensure the list is sorted for consistent pagination
-    vc_list.sort_by_key(|(principal, _)| *principal);
+        vc_with_roles_map
+    })
+}
 
-    // Calculate the start and end indices for the pagination, ensuring the indices are within the bounds of the list
-    let start = (pagination_params.page - 1) * pagination_params.page_size;
-    let end = std::cmp::min(start + pagination_params.page_size, vc_list.len());
 
-    // Guard against cases where the pagination request exceeds the list bounds
-    if start >= vc_list.len() {
-        return HashMap::new();
-    }
 
-    // Convert the appropriately sliced list segment to a HashMap
-    let paginated_vc_list = vc_list[start..end].to_vec();
-    let paginated_vc_map: HashMap<Principal, VcWithRoles> = paginated_vc_list.into_iter().collect();
+#[query]
+pub fn list_all_vcs_with_pagination(pagination_params: PaginationParams) -> HashMap<Principal, VcWithRoles> {
+    read_state(|state| {
+        let mut vc_list: Vec<(Principal, VcWithRoles)> = Vec::new();
 
-    paginated_vc_map
+        for (stored_principal, candid_vc_internal) in state.vc_storage.iter() {
+            let vc_internal = &candid_vc_internal.0;
+            if vc_internal.is_active {
+                let principal = stored_principal.0;
+                let roles = get_roles_for_principal(principal);
+                let vc_with_roles = VcWithRoles {
+                    vc_profile: vc_internal.clone(),
+                    roles,
+                };
+
+                vc_list.push((principal, vc_with_roles));
+            }
+        }
+
+        // Ensure the list is sorted for consistent pagination
+        vc_list.sort_by_key(|(principal, _)| *principal);
+
+        // Calculate the start and end indices for the pagination, ensuring the indices are within the bounds of the list
+        let start = (pagination_params.page - 1) * pagination_params.page_size;
+        let end = std::cmp::min(start + pagination_params.page_size, vc_list.len());
+
+        // Guard against cases where the pagination request exceeds the list bounds
+        if start >= vc_list.len() {
+            return HashMap::new();
+        }
+
+        // Convert the appropriately sliced list segment to a HashMap
+        let paginated_vc_list = vc_list[start..end].to_vec();
+        let paginated_vc_map: HashMap<Principal, VcWithRoles> = paginated_vc_list.into_iter().collect();
+
+        paginated_vc_map
+    })
 }
 
 
 #[update]
 pub fn delete_venture_capitalist() -> std::string::String {
-    let caller = caller();
+    let caller = ic_cdk::caller();
     println!("Attempting to deactivate founder for caller: {:?}", caller);
 
-    VENTURECAPITALIST_STORAGE.with(|storage| {
-        let mut storage = storage.borrow_mut();
-        if let Some(vc) = storage.get_mut(&caller) {
-            vc.is_active = false;
+    mutate_state(|state| {
+        if let Some(mut vc_internal) = state.vc_storage.get(&StoredPrincipal(caller)) {
+            vc_internal.0.is_active = false;
             println!("Founder deactivated for caller: {:?}", caller);
         } else {
             println!("Founder not found for caller: {:?}", caller);
         }
     });
+
     format!("Venture Capitalist Account Has Been DeActivated")
 }
 
 #[update]
 pub async fn update_venture_capitalist(params: VentureCapitalist) -> String {
-    let caller = caller();
+    let caller = ic_cdk::caller();
 
-    DECLINED_VC_PROFILE_EDIT_REQUEST.with(|d_vc| {
-        let exits = d_vc.borrow().contains_key(&caller);
-        if exits {
-            panic!("You had got your request declined earlier");
-        }
-    });
-    let already_registered =
-        VENTURECAPITALIST_STORAGE.with(|registry| registry.borrow().contains_key(&caller));
+    let declined_request_exists = read_state(|state| state.vc_profile_edit_declined.contains_key(&StoredPrincipal(caller)));
+    if declined_request_exists {
+        panic!("You had got your request declined earlier");
+    }
 
+    let already_registered = read_state(|state| state.vc_storage.contains_key(&StoredPrincipal(caller)));
     if !already_registered {
         ic_cdk::println!("This Principal is not registered");
         return "This Principal is not registered.".to_string();
     }
 
-    let profile_edit_request_already_sent =
-        VC_PROFILE_EDIT_AWAITS.with(|registry| registry.borrow().contains_key(&caller));
+    let profile_edit_request_already_sent = read_state(|state| state.vc_profile_edit_awaits.contains_key(&StoredPrincipal(caller)));
     if profile_edit_request_already_sent {
         ic_cdk::println!("Wait for your previous request to get approved");
-        return "Wait for your previous request to get approved. ".to_string();
+        return "Wait for your previous request to get approved.".to_string();
     }
 
-    let previous_profile = VENTURECAPITALIST_STORAGE.with(|app_form| {
-        app_form.borrow().get(&caller)
-            .map(|mentor_internal| mentor_internal.params.clone())
+    let previous_profile = read_state(|state| {
+        state
+            .vc_storage
+            .get(&StoredPrincipal(caller))
+            .map(|vc_internal| vc_internal.0.params.clone())
     });
 
     let mut approved_timestamp = 0;
     let mut rejected_timestamp = 0;
-    ROLE_STATUS_ARRAY.with(|role_status| {
-        let mut role_status_ref = role_status.borrow_mut();
-        if let Some(roles) = role_status_ref.get_mut(&caller) {
-            if let Some(role) = roles.iter_mut().find(|r| r.name == "mentor") {
+
+    mutate_state(|state| {
+        if let Some(mut roles) = state.role_status.get(&StoredPrincipal(caller)) {
+            if let Some(role) = roles.0.iter_mut().find(|r| r.name == "mentor") {
                 if role.status == "approved" {
-                    approved_timestamp = time();
+                    approved_timestamp = ic_cdk::api::time();
                     role.approved_on = Some(approved_timestamp);
                 } else if role.status == "rejected" {
-                    rejected_timestamp = time();
+                    rejected_timestamp = ic_cdk::api::time();
                     role.rejected_on = Some(rejected_timestamp);
                 }
             }
         }
+
+        let update_data_to_store = UpdateInfoStruct {
+            original_info: previous_profile,
+            updated_info: Some(params.clone()),
+            approved_at: approved_timestamp,
+            rejected_at: rejected_timestamp,
+            sent_at: ic_cdk::api::time(),
+        };
+
+        state.vc_profile_edit_awaits.insert(StoredPrincipal(caller), Candid(update_data_to_store.clone()));
     });
 
-    VC_PROFILE_EDIT_AWAITS.with(
-        |awaiters| {
-            let mut await_ers =awaiters.borrow_mut();
-            let update_data_to_store = UpdateInfoStruct{
-                original_info: previous_profile,
-                updated_info: Some(params.clone()),
-                approved_at: approved_timestamp,
-                rejected_at: rejected_timestamp,
-                sent_at: time(),
-            };
-            await_ers.insert(caller, update_data_to_store.clone());
-        },
-    );
-
     let res = send_approval_request(
-        params
-            .user_data
-            .profile_picture
-            .unwrap_or_else(|| Vec::new()),
+        params.user_data.profile_picture.unwrap_or_else(|| Vec::new()),
         params.user_data.full_name,
         params.user_data.country,
         params.category_of_investment,
@@ -550,19 +536,24 @@ pub fn get_multichain_list() -> Vec<String> {
 
 #[update]
 pub fn add_vc_announcement(name: String, announcement_message: String) -> String {
-    let caller_id = caller();
+    let caller_id = ic_cdk::caller();
+    let current_time = ic_cdk::api::time();
 
-    let current_time = time();
-
-    VC_ANNOUNCEMENTS.with(|state| {
-        let mut state = state.borrow_mut();
+    mutate_state(|state| {
+        let stored_principal = StoredPrincipal(caller_id);
         let new_vc = Announcements {
             project_name: name,
             announcement_message: announcement_message,
             timestamp: current_time,
         };
 
-        state.entry(caller_id).or_insert_with(Vec::new).push(new_vc);
+        let mut announcements = state.vc_announcement.get(&stored_principal)
+            .map(|candid_vec| candid_vec.0.clone())
+            .unwrap_or_else(Vec::new);
+
+        announcements.push(new_vc);
+        state.vc_announcement.insert(stored_principal, Candid(announcements));
+
         format!("Announcement added successfully at {}", current_time)
     })
 }
@@ -570,9 +561,18 @@ pub fn add_vc_announcement(name: String, announcement_message: String) -> String
 //for testing purpose
 #[query]
 pub fn get_vc_announcements() -> HashMap<Principal, Vec<Announcements>> {
-    VC_ANNOUNCEMENTS.with(|state| {
-        let state = state.borrow();
-        state.clone()
+    read_state(|state| {
+        let announcements_map = &state.vc_announcement;
+        let mut result_map: HashMap<Principal, Vec<Announcements>> = HashMap::new();
+
+        for (principal, announcements) in announcements_map.iter() {
+            let principal = principal.0; // Extract Principal from StoredPrincipal
+            let announcements = announcements.0.clone(); // Extract Vec<Announcements> from Candid<Vec<Announcements>>
+
+            result_map.insert(principal, announcements);
+        }
+
+        result_map
     })
 }
 
@@ -580,18 +580,18 @@ pub fn get_vc_announcements() -> HashMap<Principal, Vec<Announcements>> {
 pub fn make_vc_active_inactive(p_id: Principal) -> String {
     let principal_id = caller();
     if p_id == principal_id || ic_cdk::api::is_controller(&principal_id) {
-        VENTURECAPITALIST_STORAGE.with(|m_container| {
-            let mut tutor_hashmap = m_container.borrow_mut();
-            if let Some(vc_internal) = tutor_hashmap.get_mut(&p_id) {
-                if vc_internal.is_active {
+        mutate_state(|m_container| {
+            let mut tutor_hashmap = &m_container.vc_storage;
+            if let Some(mut vc_internal) = tutor_hashmap.get(&StoredPrincipal(p_id)) {
+                if vc_internal.0.is_active {
                     let active = false;
-                    vc_internal.is_active = active;
+                    vc_internal.0.is_active = active;
 
                     //ic_cdk::println!("mentor profile check status {:?}", vc_internal);
                     return "made inactive".to_string();
                 } else {
                     let active = true;
-                    vc_internal.is_active = active;
+                    vc_internal.0.is_active = active;
                     //ic_cdk::println!("mentor profile check status {:?}", vc_internal);
                     return "made active".to_string();
                 }
@@ -638,21 +638,20 @@ pub struct VcFilterCriteria {
 
 #[query]
 pub fn filter_venture_capitalists(criteria: VcFilterCriteria) -> Vec<VentureCapitalist> {
-    VENTURECAPITALIST_STORAGE.with(|vcs| {
-        let vcs = vcs.borrow();
-
-        vcs.values()
-            .filter(|vc_internal| {
+    read_state(|state| {
+        state.vc_storage
+            .iter()
+            .filter(|(_, vc_internal)| {
                 let country_match = match &criteria.country {
-                    Some(c) => &vc_internal.params.user_data.country == c,
+                    Some(c) => &vc_internal.0.params.user_data.country == c,
                     None => true, 
                 };
 
                 let category_match = criteria.category_of_investment.as_ref()
-                    .map_or(true, |category| &vc_internal.params.category_of_investment == category);
+                    .map_or(true, |category| &vc_internal.0.params.category_of_investment == category);
 
                 let money_invested_match = criteria.money_invested_range.map_or(true, |(min, max)| {
-                    vc_internal.params.range_of_check_size.as_ref().map_or(false, |range_str| {
+                    vc_internal.0.params.range_of_check_size.as_ref().map_or(false, |range_str| {
                         let parts = range_str.trim_start_matches('$').split('-').collect::<Vec<_>>();
                         if parts.len() == 2 {
                             let min_range = parts[0].trim_end_matches('m').parse::<f64>().unwrap_or(0.0);
@@ -665,10 +664,10 @@ pub fn filter_venture_capitalists(criteria: VcFilterCriteria) -> Vec<VentureCapi
                 });
 
                 // Only include active and approved VCs
-                vc_internal.is_active && vc_internal.approve && !vc_internal.decline
+                vc_internal.0.is_active && vc_internal.0.approve && !vc_internal.0.decline
                     && country_match && category_match && money_invested_match
             })
-            .map(|vc_internal| vc_internal.params.clone())
+            .map(|(_, vc_internal)| vc_internal.0.params.clone())
             .collect()
     })
 }

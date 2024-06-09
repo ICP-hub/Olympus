@@ -5,8 +5,8 @@ import toast, { Toaster } from "react-hot-toast";
 import NoDataCard from "../Mentors/Event/DocumentNoDataCard";
 import { useNavigate } from "react-router-dom";
 
-const ProjectDocuments = ({ data ,allowAccess}) => {
-  console.log('data',data);
+const ProjectDocuments = ({ data, allowAccess }) => {
+  console.log("data", data);
   const navigate = useNavigate();
   const actor = useSelector((currState) => currState.actors.actor);
   const projectId = data?.uid;
@@ -23,20 +23,23 @@ const ProjectDocuments = ({ data ,allowAccess}) => {
 
       try {
         const result = await actor.access_private_docs(projectId);
-        console.log('result ====>',result)
+        console.log("result ====>", result);
         if ("Ok" in result) {
           setDocuments(Array.isArray(result.Ok) ? result.Ok : [result.Ok]);
+          setNoData(false);
           // setAllowAccess(result.Ok.is_owner);
         } else if ("Err" in result) {
           toast.error(result.Err.message);
           // setAllowAccess(result.Err.is_owner);
           setDocuments([]);
+          setNoData(true);
         }
       } catch (error) {
         toast.error(
           "An unexpected error occurred while fetching private documents"
         );
         // setAllowAccess(false);
+        setNoData(true);
         setDocuments([]);
       }
     };
@@ -44,16 +47,14 @@ const ProjectDocuments = ({ data ,allowAccess}) => {
     if (isChecked) {
       fetchAccessPrivateData();
     } else {
-      if(Array.isArray(data?.params?.public_docs[0])){
-        if(data?.params?.public_docs[0][0].title !== ''){
-          setDocuments(data.params.public_docs[0])
+      if (Array.isArray(data?.params?.public_docs[0])) {
+        if (data?.params?.public_docs[0][0].title !== "") {
+          setDocuments(data.params.public_docs[0]);
+        } else {
+          setDocuments([]);
         }
-        else{
-          setDocuments([])
-        }
-      }
-      else{
-        setDocuments([])
+      } else {
+        setDocuments([]);
       }
 
       // ? data.params.public_docs[0]
@@ -96,7 +97,7 @@ const ProjectDocuments = ({ data ,allowAccess}) => {
             >
               View Documents Requsets
             </button>
-          )  : (
+          ) : (
             <button
               className="text-white bg-blue-700 font-bold py-2 px-4 rounded-xl float-right"
               onClick={sendPrivateDocumentRequest}
@@ -152,18 +153,15 @@ const ProjectDocuments = ({ data ,allowAccess}) => {
             </div>
           </label>
         </div>
-        {documents.length === 0 ? (
+        {noData ? (
           <NoDataCard />
         ) : (
-          documents?.map(
-            (doc, index) => (
-              (
-                <div
-                  className="group w-[100%] md1:w-[calc(100%/2-10px)] dlg:w-[calc(100%/3-10px)]"
-                  key={index}
-                >
-                  
-                    {/* <div className=" md:m-1 p-4 mb-4 overflow-hidden bg-gradient-to-b from-[#B9C0F2] to-[#B9C0F23B] border-2 border-blue-400 rounded-2xl shadow">
+          documents?.map((doc, index) => (
+            <div
+              className="group w-[100%] md1:w-[calc(100%/2-10px)] dlg:w-[calc(100%/3-10px)]"
+              key={index}
+            >
+              {/* <div className=" md:m-1 p-4 mb-4 overflow-hidden bg-gradient-to-b from-[#B9C0F2] to-[#B9C0F23B] border-2 border-blue-400 rounded-2xl shadow">
                       <div className="relative">
                         <div className="relative z-10 p-2">
                           <h5 className="mb-2 text-2xl font-bold tracking-tight text-white">
@@ -189,58 +187,56 @@ const ProjectDocuments = ({ data ,allowAccess}) => {
                         <div className="absolute opacity-25 w-40 h-40 -right-[50px] -bottom-[52px] rounded-full bg-gradient-to-r from-[#3C04BA] to-[#4087BF]"></div>
                       </div>
                     </div> */}
-                  { allowAccess === true ? (
-                    <div className=" md:m-1 p-4 mb-4 overflow-hidden bg-gradient-to-b from-[#B9C0F2] to-[#B9C0F23B] border-2 border-blue-400 rounded-2xl shadow">
-                      <div className="relative">
-                        <div className="relative z-10 p-2">
-                          <h5 className="mb-2 text-2xl font-bold tracking-tight text-white">
-                            {doc?.title}
-                            <br></br>
-                            <span className="border-b border-[#4E5999] pb-2">
-                              PDF
-                            </span>
-                          </h5>
-                          <p className="font-[450] text-xs text-[#4E5999] py-4">
-                            Give your weekend projects, side projects, hobby
-                            projects, serious ventures a place to breathe,
-                            invite collaborators and inspire other builders.
-                          </p>
-                          <div>
-                            <a
-                              href={doc?.link}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              {task}
-                            </a>
-                          </div>
-                        </div>
-                        <div className="absolute opacity-25 w-40 h-40 -left-[85px] -top-[28px] rounded-full bg-gradient-to-b from-[#3C04BA] to-[#4087BF]"></div>
-                        <div className="absolute opacity-25 w-40 h-40 -right-[50px] -bottom-[52px] rounded-full bg-gradient-to-r from-[#3C04BA] to-[#4087BF]"></div>
+              {allowAccess === true ? (
+                <div className=" md:m-1 p-4 mb-4 overflow-hidden bg-gradient-to-b from-[#B9C0F2] to-[#B9C0F23B] border-2 border-blue-400 rounded-2xl shadow">
+                  <div className="relative">
+                    <div className="relative z-10 p-2">
+                      <h5 className="mb-2 text-2xl font-bold tracking-tight text-white">
+                        {doc?.title}
+                        <br></br>
+                        <span className="border-b border-[#4E5999] pb-2">
+                          PDF
+                        </span>
+                      </h5>
+                      <p className="font-[450] text-xs text-[#4E5999] py-4">
+                        Give your weekend projects, side projects, hobby
+                        projects, serious ventures a place to breathe, invite
+                        collaborators and inspire other builders.
+                      </p>
+                      <div>
+                        <a
+                          href={doc?.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {task}
+                        </a>
                       </div>
                     </div>
-                  ) : (
-                    <div className=" md:m-1 p-4 mb-4 bg-gradient-to-b overflow-hidden from-[#B9C0F2] to-[#B9C0F23B] border-2 border-blue-400 rounded-2xl shadow">
-                      <div className="relative">
-                        <div className="relative z-10 p-2">
-                          <div className=" -m-4 p-6 inset-0 bg-[#BDC4F3]/30 backdrop-blur-sm flex-col text-center items-center transition-opacity duration-300 ease-in-out opacity-100">
-                            <h5 className="mb-2 text-2xl font-bold text-black">
-                              Request to see Private Document
-                            </h5>
-                            <p className=" text-base text-white py-4">
-                              Request to view Private Data
-                            </p>
-                          </div>
-                        </div>
-                        <div className="absolute opacity-25 w-40 h-40 -left-[85px] -top-[28px] rounded-full bg-gradient-to-b from-[#3C04BA] to-[#4087BF]"></div>
-                        <div className="absolute opacity-25 w-40 h-40 -right-[50px] -bottom-[52px] rounded-full bg-gradient-to-r from-[#3C04BA] to-[#4087BF]"></div>
-                      </div>
-                    </div>
-                  )}
+                    <div className="absolute opacity-25 w-40 h-40 -left-[85px] -top-[28px] rounded-full bg-gradient-to-b from-[#3C04BA] to-[#4087BF]"></div>
+                    <div className="absolute opacity-25 w-40 h-40 -right-[50px] -bottom-[52px] rounded-full bg-gradient-to-r from-[#3C04BA] to-[#4087BF]"></div>
+                  </div>
                 </div>
-              )
-            )
-          )
+              ) : (
+                <div className=" md:m-1 p-4 mb-4 bg-gradient-to-b overflow-hidden from-[#B9C0F2] to-[#B9C0F23B] border-2 border-blue-400 rounded-2xl shadow">
+                  <div className="relative">
+                    <div className="relative z-10 p-2">
+                      <div className=" -m-4 p-6 inset-0 bg-[#BDC4F3]/30 backdrop-blur-sm flex-col text-center items-center transition-opacity duration-300 ease-in-out opacity-100">
+                        <h5 className="mb-2 text-2xl font-bold text-black">
+                          Request to see Private Document
+                        </h5>
+                        <p className=" text-base text-white py-4">
+                          Request to view Private Data
+                        </p>
+                      </div>
+                    </div>
+                    <div className="absolute opacity-25 w-40 h-40 -left-[85px] -top-[28px] rounded-full bg-gradient-to-b from-[#3C04BA] to-[#4087BF]"></div>
+                    <div className="absolute opacity-25 w-40 h-40 -right-[50px] -bottom-[52px] rounded-full bg-gradient-to-r from-[#3C04BA] to-[#4087BF]"></div>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))
         )}
       </div>
       <Toaster />

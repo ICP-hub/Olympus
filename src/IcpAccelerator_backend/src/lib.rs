@@ -1,12 +1,11 @@
 mod admin;
-
-mod investor_offer_to_project;
 mod latest_popular_projects;
 mod leaderboard;
 mod manage_focus_expertise;
 mod manage_hubs;
 mod mentor;
 
+mod investor_offer_to_project;
 mod notification_to_mentor;
 mod notification_to_project;
 mod project_offer_to_investor;
@@ -18,9 +17,7 @@ mod cohort;
 mod cohort_rating;
 mod default_images;
 mod mentor_investor_ratings;
-
 mod roles;
-
 mod user_module;
 mod vc_registration;
 
@@ -28,9 +25,10 @@ use crate::cohort_rating::LeaderboardEntryForCohorts;
 use crate::cohort_rating::PeerRatingUpdate;
 use crate::mentor_investor_ratings::RatingMentorInvestor;
 use crate::project_registration::*;
-use crate::state_handler::*;
-use associations::*;
 use cohort::*;
+use ic_cdk::api::management_canister::main::CanisterStatusResponse;
+
+use associations::*;
 use investor_offer_to_project::*;
 use notification_to_mentor::*;
 use notification_to_project::*;
@@ -44,21 +42,14 @@ use leaderboard::{
     LeaderboardEntryForLikes, LeaderboardEntryForRatings, LeaderboardEntryForUpvote,
 };
 // use notification::pre_upgrade_notifications;
-
+use crate::ratings::*;
 use project_registration::FilterCriteria;
-use ratings::post_upgrade_rating_system;
-use ratings::pre_upgrade_rating_system;
-use ratings::RatingAverages;
-use ratings::RatingUpdate;
 // use ratings::post_upgrade_rating_system;
 // use ratings::pre_upgrade_rating_system;
-use ic_cdk::api::management_canister::main::{
-    canister_status, CanisterIdRecord, CanisterStatusResponse, CanisterStatusType,
-    DefiniteCanisterSettings,
-};
 
 use roles::{get_roles, RolesResponse};
 use std::collections::HashMap;
+
 use user_module::*;
 
 use ic_cdk::export_candid;
@@ -68,7 +59,7 @@ use mentor::MentorProfile;
 
 mod project_registration;
 mod ratings;
-
+// use crate::notification::Notification;
 use crate::project_registration::Announcements;
 use crate::project_registration::Blog;
 use admin::*;
@@ -79,6 +70,7 @@ use mentor::*;
 use project_registration::{
     NotificationForOwner, NotificationProject, ProjectInfo, ProjectInfoInternal, TeamMember,
 };
+
 
 use crate::ratings::RatingView;
 use vc_registration::VentureCapitalist;
@@ -134,8 +126,8 @@ pub fn get_user_information() -> Result<UserInformation, &'static str> {
 }
 
 #[query]
-pub fn get_all_users_information() -> Vec<UserInformation> {
-    user_module::list_all_users()
+pub fn get_all_users_information(pagination: PaginationUser) -> Vec<UserInformation> {
+    user_module::list_all_users(pagination)
 }
 
 #[update]
@@ -147,6 +139,7 @@ pub fn make_user_inactive() -> String {
 // fn get_founder_info_caller() -> Option<FounderInfo> {
 //     register_user::get_founder_info()
 // }
+
 
 #[update]
 
@@ -194,14 +187,6 @@ fn delete_project(id: String) -> std::string::String {
 //     project_registration::verify_project(&project_id)
 // }
 
-
-//todo:-uncomment this
-
-// #[update]
-// fn connect_to_team_member(project_id: String, team_user_name: String) -> String {
-//     project_registration::send_connection_request_to_owner(&project_id, &team_user_name)
-// }
-
 #[query]
 fn get_your_project_notifications() -> Vec<NotificationForOwner> {
     project_registration::get_notifications_for_owner()
@@ -212,6 +197,8 @@ fn get_notifications_for_hubs() -> Vec<NotificationProject> {
     project_registration::get_notifications_for_caller()
 }
 
+
+
 // #[update]
 // fn add_suggestion_caller(
 //     content: String,
@@ -219,6 +206,9 @@ fn get_notifications_for_hubs() -> Vec<NotificationProject> {
 // ) -> Result<(u64, String), &'static str> {
 //     roadmap_suggestion::add_suggestion(content, project_id)
 // }
+
+
+
 
 #[query]
 fn get_all_roles() -> RolesResponse {
@@ -253,6 +243,7 @@ fn make_active_inactive_mentor(id: Principal) -> String {
 fn get_all_mentors_candid() -> HashMap<Principal, MentorWithRoles> {
     mentor::get_all_mentors()
 }
+
 
 #[query]
 
@@ -311,6 +302,7 @@ fn calculate_average(project_id: String) -> RatingAverages {
 //     ratings::get_ratings_by_project_id(&project_id)
 // }
 
+
 //made for admin side.....
 // #[query]
 //  fn get_role() -> RolesResponse {
@@ -366,26 +358,26 @@ fn get_admin_notifications() -> Vec<admin::Notification> {
 
 //2vxsx-fae
 
-// #[pre_upgrade]
-// fn pre_upgrade() {
-//     pre_upgrade_venture_capitalist();
-//     pre_upgrade_user_modules();
-//     pre_upgrade_project_registration();
-//     // pre_upgrade_upvotes();
-//     pre_upgrade_mentor();
-//     //pre_upgrade_admin();
-//     //pre_upgrade_rating_system();
-// }
+#[pre_upgrade]
+fn pre_upgrade() {
+    pre_upgrade_venture_capitalist();
+    //pre_upgrade_user_modules();
+    pre_upgrade_project_registration();
+    // pre_upgrade_upvotes();
+    //pre_upgrade_mentor();
+    //pre_upgrade_admin();
+    //pre_upgrade_rating_system();
+}
 
-// #[post_upgrade]
-// fn post_upgrade() {
-//     post_upgrade_venture_capitalist();
-//     post_upgrade_user_modules();
-//     post_upgrade_project_registration();
-//     //post_upgrade_upvotes();
-//     post_upgrade_mentor();
-//     //post_upgrade_admin();
-//     //post_upgrade_rating_system();
-// }
+#[post_upgrade]
+fn post_upgrade() {
+    post_upgrade_venture_capitalist();
+    //post_upgrade_user_modules();
+    post_upgrade_project_registration();
+    //post_upgrade_upvotes();
+    //post_upgrade_mentor();
+    //post_upgrade_admin();
+    //post_upgrade_rating_system();
+}
 
 export_candid!();

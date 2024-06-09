@@ -15,6 +15,7 @@ import Founder from "../../../../assets/images/founderRegistration.png";
 // import { getCurrentRoleStatusRequestHandler } from "../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 import { format, startOfToday } from "date-fns";
 import ReactSelect from "react-select";
+import { useCountries } from "react-countries";
 
 const today = new Date();
 const startDate = new Date("1900-01-01");
@@ -49,22 +50,21 @@ const schema = yup.object({
     )
     .required("Selecting an interest is required"),
 
-  deadline: yup
-    .date()
-    .required()
-    .typeError("Must be a date")
-    .min(yup.ref("cohort_launch_date"), "Deadline cannot be before Launch date")
-    .max(yup.ref("cohort_end_date"), "Deadline cannot be after end date"),
+  deadline: yup.date().required().typeError("Must be a date"),
+  // .min(yup.ref("cohort_launch_date"), "Deadline cannot be before Launch date")
+  // .max(yup.ref("cohort_end_date"), "Deadline cannot be after end date")
   eligibility: yup
     .string()
     .typeError("You must enter a eligibility")
     .required(),
   rubric_eligibility: yup
-    .number()
-    .min(1, "level 1 - 9 allowed only")
-    .max(9, "level 1 - 9 allowed only")
-    .typeError("You must enter a number")
+    .string()
+    // .number()
+    // .min(1, "level 1 - 9 allowed only")
+    // .max(9, "level 1 - 9 allowed only")
+    // .typeError("You must enter a number")
     .required("Required"),
+  // area: yup.string().typeError("You must select area").required(),
   no_of_seats: yup.number().typeError("You must enter a number").required(),
 });
 
@@ -75,13 +75,69 @@ const EventForm = () => {
   );
 
   const [inputType, setInputType] = useState("date");
+  const [selectedArea, setSelectedArea] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState("");
 
   const [interestedDomainsOptions, setInterestedDomainsOptions] = useState([]);
   const [
     interestedDomainsSelectedOptions,
     setInterestedDomainsSelectedOptions,
   ] = useState([]);
-
+  const [rubricEligibilityOptions, setRubricEligibilityOptions] = useState([
+    {
+      value: "1",
+      label: "One (1)",
+    },
+    {
+      value: "2",
+      label: "Two (2)",
+    },
+    {
+      value: "3",
+      label: "Three (3)",
+    },
+    {
+      value: "4",
+      label: "Four (4)",
+    },
+    {
+      value: "5",
+      label: "Five (5)",
+    },
+    {
+      value: "6",
+      label: "Six (6)",
+    },
+    {
+      value: "7",
+      label: "Seven (7)",
+    },
+    {
+      value: "8",
+      label: "Eight (8)",
+    },
+    {
+      value: "9",
+      label: "Nine (9)",
+    },
+  ]);
+  const [
+    rubricEligibilitySelectedOptions,
+    setRubricEligibilitySelectedOptions,
+  ] = useState([]);
+  const [interestedFundingTypeOptions, setInterestedFundingTypeOptions] =
+    useState([
+      {
+        value: "Grants",
+        label: "Grants",
+      },
+      { value: "Investments", label: "Investments" },
+    ]);
+  const [
+    interestedFundingTypeSelectedOptions,
+    setInterestedFundingTypeSelectedOptions,
+  ] = useState([]);
+  const { countries } = useCountries();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -153,7 +209,8 @@ const EventForm = () => {
   //   [setError, clearErrors, setIsLoading, setImagePreview, setImageData]
   // );
   const onSubmitHandler = async (data) => {
-    // console.log("data aaya data aaya ", data);
+    const areaValue = selectedArea === "global" ? "global" : selectedCountry;
+    console.log("data aaya data aaya ", data);
     // title: String,
     // description: String,
     // tags: String,
@@ -164,11 +221,15 @@ const EventForm = () => {
     // cohort_end_date: String,
     const eventData = {
       title: data.title,
+      country: areaValue,
+      funding_amount: data.funding_amount,
+      funding_type: data.funding_type,
       description: data.description,
       cohort_launch_date: format(
         new Date(data.cohort_launch_date),
         "yyyy-MM-dd"
       ),
+      start_date: format(new Date(data.cohort_start_date), "yyyy-MM-dd"),
       cohort_end_date: format(new Date(data.cohort_end_date), "yyyy-MM-dd"),
       deadline: format(new Date(data.deadline), "yyyy-MM-dd"),
       tags: data.tags,
@@ -178,12 +239,17 @@ const EventForm = () => {
       },
       no_of_seats: parseInt(data.no_of_seats),
     };
-
+    console.log("eventData ===>>>", eventData);
     try {
       await actor.create_cohort(eventData).then((result) => {
-        toast.success("Event Created");
-        console.log("Event Created", result);
-        navigate("/");
+        if (result && result.Ok) {
+          toast.success("Cohort creation request has been sent to admin");
+          console.log("Event Created", result);
+          navigate("/");
+        } else {
+          toast.error("Some went wrong");
+          console.log("Event Created", result);
+        }
       });
     } catch (error) {
       toast.error(error);
@@ -238,13 +304,16 @@ const EventForm = () => {
   const errorsFunc = (val) => {
     console.log("val", val);
   };
+
+  console.log(selectedArea);
+
   return (
     <>
       <DetailHeroSection HeroImage={HeroImage} />
       <section className="w-full h-fit px-[6%] lg1:px-[4%] py-[6%] lg1:py-[4%] bg-gray-100">
         <div className="w-full h-full bg-gray-100 pt-8">
           <div className="bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-[30px]  sm:text-[25px] md1:text-[30px] md2:text-[35px] font-black font-fontUse dxl:text-[40px] p-8">
-            Event Information
+            Cohort Information
           </div>
           <div className="text-sm font-medium text-center text-gray-200 ">
             <form
@@ -284,6 +353,35 @@ const EventForm = () => {
                         onBlur={() => handleBlur(field)}
                       ></textarea>
                     ) : (
+                      // ) : field.type === "select" ? (
+                      //   <select
+                      //     name={field.name}
+                      //     id={field.id}
+                      //     {...register(field.name)}
+                      //     className={`bg-gray-50 border-2 ${
+                      //       errors[field.name]
+                      //         ? "border-red-500"
+                      //         : "border-[#737373]"
+                      //     } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      //     onFocus={() => handleFocus(field)}
+                      //     onBlur={() => handleBlur(field)}
+                      //   >
+                      //     {[
+                      //       "One",
+                      //       "Two",
+                      //       "Three",
+                      //       "Four",
+                      //       "Five",
+                      //       "Six",
+                      //       "Seven",
+                      //       "Eight",
+                      //       "Nine",
+                      //     ].map((word, index) => (
+                      //       <option key={index} value={index + 1}>
+                      //         {index + 1} ({word})
+                      //       </option>
+                      //     ))}
+                      //   </select>
                       <input
                         type={
                           field.id === "date_of_birth" ? inputType : field.type
@@ -308,6 +406,129 @@ const EventForm = () => {
                     )}
                   </div>
                 ))}
+                <div className="relative z-0 group mb-6">
+                  <label
+                    htmlFor="area"
+                    className="flex gap-2 mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    Select area <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    name="area"
+                    id="area"
+                    {...register("area")}
+                    className={`bg-gray-50 border-2 ${
+                      errors.area ? "border-red-500" : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    onFocus={() => handleFocus({ name: "area" })}
+                    onBlur={() => handleBlur({ name: "area" })}
+                    onChange={(e) => setSelectedArea(e.target.value)}
+                  >
+                    <option value="">Select Area</option>
+                    <option value="global">Global</option>
+                    <option value="country">Country</option>
+                  </select>
+                </div>
+                {selectedArea === "country" ? (
+                  <div className="relative z-0 group mb-6">
+                    <label
+                      htmlFor="country"
+                      className="flex gap-2 mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                    >
+                      Select Country <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="country"
+                      id="country"
+                      {...register("country")}
+                      className={`bg-gray-50 border-2 ${
+                        errors.country ? "border-red-500" : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      onFocus={() => handleFocus("country")}
+                      onBlur={() => handleBlur("country")}
+                      onChange={(e) => setSelectedCountry(e.target.value)}
+                    >
+                      <option className="text-lg font-bold" value="">
+                        Select your country
+                      </option>
+                      {countries?.map((expert) => (
+                        <option
+                          key={expert.name}
+                          value={expert.name}
+                          className="text-lg font-bold"
+                        >
+                          {expert.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                ) : (
+                  ""
+                )}
+                <div className="relative z-0 group mb-6">
+                  <label
+                    htmlFor="rubric_eligibility"
+                    className="flex gap-2 mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    Level on rubric required for eligibility{" "}
+                    <span className="text-red-500">*</span>
+                  </label>
+                  <ReactSelect
+                    isMulti
+                    menuPortalTarget={document.body}
+                    menuPosition={"fixed"}
+                    styles={{
+                      menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                      control: (provided, state) => ({
+                        ...provided,
+                        paddingBlock: "2px",
+                        borderRadius: "8px",
+                        border: errors.rubric_eligibility
+                          ? "2px solid #ef4444"
+                          : "2px solid #737373",
+                        backgroundColor: "rgb(249 250 251)",
+                        "&::placeholder": {
+                          color: errors.rubric_eligibility
+                            ? "#ef4444"
+                            : "currentColor",
+                        },
+                      }),
+                    }}
+                    value={rubricEligibilitySelectedOptions}
+                    options={rubricEligibilityOptions}
+                    classNamePrefix="select"
+                    className="basic-multi-select w-full text-start"
+                    placeholder="Select a tag"
+                    name="rubric_eligibility"
+                    onChange={(selectedOptions) => {
+                      if (selectedOptions && selectedOptions.length > 0) {
+                        setRubricEligibilitySelectedOptions(selectedOptions);
+                        clearErrors("rubric_eligibility");
+                        setValue(
+                          "rubric_eligibility",
+                          selectedOptions
+                            .map((option) => option.value)
+                            .join(", "),
+                          { shouldValidate: true }
+                        );
+                      } else {
+                        setRubricEligibilitySelectedOptions([]);
+                        setValue("rubric_eligibility", "", {
+                          shouldValidate: true,
+                        });
+                        setError("rubric_eligibility", {
+                          type: "required",
+                          message: "Selecting a rubric eligibility is required",
+                        });
+                      }
+                    }}
+                  />
+                  {errors.rubric_eligibility && (
+                    <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                      {errors.rubric_eligibility.message}
+                    </span>
+                  )}
+                </div>
                 <div className="relative z-0 group mb-6">
                   <label
                     htmlFor="tags"
@@ -366,6 +587,106 @@ const EventForm = () => {
                       {errors.tags.message}
                     </span>
                   )}
+                </div>
+                <div className="relative z-0 group mb-6">
+                  <label
+                    htmlFor="funding_type"
+                    className="flex gap-2 mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    Funding type <span className="text-red-500">*</span>
+                  </label>
+                  <ReactSelect
+                    isMulti
+                    menuPortalTarget={document.body}
+                    menuPosition={"fixed"}
+                    styles={{
+                      menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                      control: (provided, state) => ({
+                        ...provided,
+                        paddingBlock: "2px",
+                        borderRadius: "8px",
+                        border: errors.funding_type
+                          ? "2px solid #ef4444"
+                          : "2px solid #737373",
+                        backgroundColor: "rgb(249 250 251)",
+                        "&::placeholder": {
+                          color: errors.funding_type
+                            ? "#ef4444"
+                            : "currentColor",
+                        },
+                      }),
+                    }}
+                    value={interestedFundingTypeSelectedOptions}
+                    options={interestedFundingTypeOptions}
+                    classNamePrefix="select"
+                    className="basic-multi-select w-full text-start"
+                    placeholder="Select funding type"
+                    name="funding_type"
+                    onChange={(selectedOptions) => {
+                      if (selectedOptions && selectedOptions.length > 0) {
+                        setInterestedFundingTypeSelectedOptions(
+                          selectedOptions
+                        );
+                        clearErrors("funding_type");
+                        setValue(
+                          "funding_type",
+                          selectedOptions
+                            .map((option) => option.value)
+                            .join(", "),
+                          { shouldValidate: true }
+                        );
+                      } else {
+                        setInterestedFundingTypeSelectedOptions([]);
+                        setValue("funding_type", "", { shouldValidate: true });
+                        setError("funding_type", {
+                          type: "required",
+                          message: "Selecting a type is required",
+                        });
+                      }
+                    }}
+                  />
+                  {errors.funding_type && (
+                    <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                      {errors.funding_type.message}
+                    </span>
+                  )}
+                </div>
+                <div className="relative z-0 group mb-6">
+                  <label
+                    htmlFor="funding_amount"
+                    className="flex gap-2 mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                  >
+                    Select funding amount{" "}
+                    <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    name="funding_amount"
+                    id="funding_amount"
+                    {...register("funding_amount")}
+                    className={`bg-gray-50 border-2 ${
+                      errors.funding_amount
+                        ? "border-red-500"
+                        : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    onFocus={() => handleFocus("funding_amount")}
+                    onBlur={() => handleBlur("funding_amount")}
+                  >
+                    <option className="text-lg font-bold" value="">
+                      Select Amount of Funding
+                    </option>
+                    <option value="1k-5k" className="text-lg font-bold">
+                      1k-5k
+                    </option>
+                    <option value="5k-25k" className="text-lg font-bold">
+                      5k-25k
+                    </option>
+                    <option value="25k- 100k" className="text-lg font-bold">
+                      25k-100k
+                    </option>
+                    <option value="100k+" className="text-lg font-bold">
+                      100k+
+                    </option>
+                  </select>
                 </div>
               </div>
               <div className="flex justify-end mt-4">

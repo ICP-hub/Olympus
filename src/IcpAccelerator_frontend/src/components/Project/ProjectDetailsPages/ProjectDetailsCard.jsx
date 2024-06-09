@@ -10,6 +10,7 @@ import {
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { useSelector } from "react-redux";
+import LiveModal from "../../../../../admin_frontend/src/components/models/LiveModal";
 
 function ProjectDetailsCard({
   data,
@@ -21,14 +22,22 @@ function ProjectDetailsCard({
   doj,
   country,
   website,
+  live,
   dapp,
 }) {
   if (!data) {
     return null;
   }
+  const [modalData, setModalData] = useState(null);
+
+  const [isAcceptModalOpen, setIsAcceptModalOpen] = useState(false);
+  const toggleAcceptModal = (id) => {
+    setModalData(id);
+    setIsAcceptModalOpen(!isAcceptModalOpen);
+  };
   const navigate = useNavigate();
   const actor = useSelector((currState) => currState.actors.actor);
-
+  console.log("data line 38", data);
   let logo = data?.params?.project_logo
     ? uint8ArrayToBase64(data?.params?.project_logo)
     : girl;
@@ -85,6 +94,9 @@ function ProjectDetailsCard({
 
   return (
     <>
+      {isAcceptModalOpen && (
+        <LiveModal onClose={() => setIsAcceptModalOpen(false)} id={data?.uid} />
+      )}
       <div className="p-6 sm5:block hidden shadow-2xl bg-[#FFFFFF4D] border-[#E9E9E9] border-1 drop-shadow-[#0000000D] rounded-[10px]">
         <div className="flex items-center">
           <div className="flex">
@@ -110,9 +122,9 @@ function ProjectDetailsCard({
                             ? (rubRating?.overall_average[
                                 rubRating?.overall_average.length - 1
                               ] /
-                                8) *
+                                9) *
                               100
-                            : (0 / 8) * 100
+                            : (0 / 9) * 100
                         }
                         text={
                           rubRating?.overall_average &&
@@ -121,8 +133,8 @@ function ProjectDetailsCard({
                                 rubRating?.overall_average[
                                   rubRating?.overall_average.length - 1
                                 ]
-                              }/8`
-                            : `0/8`
+                              }/9`
+                            : `0/9`
                         }
                         className="w-14 h-14 font-extrabold"
                         strokeWidth={8}
@@ -191,9 +203,14 @@ function ProjectDetailsCard({
                     </button>
                   </a>
                 ) : (
-                  <button className="font-[950] border text-[#3505B2] py-[7px] px-[9px] rounded-md border-[#C7C7C7] bg-[#FFFFFF] text-nowrap">
-                    Live Now
-                  </button>
+                  live && (
+                    <button
+                      className="font-[950] border text-[#3505B2] py-[7px] px-[9px] rounded-md border-[#C7C7C7] bg-[#FFFFFF] text-nowrap"
+                      onClick={() => toggleAcceptModal(data?.uid)}
+                    >
+                      Live Now
+                    </button>
+                  )
                 ))}
             </div>
           </div>
@@ -263,9 +280,9 @@ function ProjectDetailsCard({
                               ? (rubRating?.overall_average[
                                   rubRating?.overall_average.length - 1
                                 ] /
-                                  8) *
+                                  9) *
                                 100
-                              : (0 / 8) * 100
+                              : (0 / 9) * 100
                           }
                           text={
                             rubRating?.overall_average &&
@@ -274,8 +291,8 @@ function ProjectDetailsCard({
                                   rubRating?.overall_average[
                                     rubRating?.overall_average.length - 1
                                   ]
-                                }/8`
-                              : `0/8`
+                                }/9`
+                              : `0/9`
                           }
                           className="w-8 h-8 font-extrabold"
                           strokeWidth={8}
@@ -307,9 +324,11 @@ function ProjectDetailsCard({
                           </button>
                         </a>
                       ) : (
-                        <button className="font-[950] border text-[#3505B2] py-[7px] px-[9px] rounded-md border-[#C7C7C7] bg-[#FFFFFF] text-nowrap">
-                          Live Now
-                        </button>
+                        live && (
+                          <button className="font-[950] border text-[#3505B2] py-[7px] px-[9px] rounded-md border-[#C7C7C7] bg-[#FFFFFF] text-nowrap">
+                            Live Now
+                          </button>
+                        )
                       ))}
                   </div>
                 </div>
