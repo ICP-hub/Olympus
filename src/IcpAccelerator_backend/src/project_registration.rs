@@ -109,6 +109,30 @@ pub struct ProjectInfo {
     pub country_of_registration : Option<String>,
 }
 
+impl ProjectInfo {
+    pub fn validate(&self) -> Result<(), String> {
+        if let Some(ref preferred_icp_hub) = self.preferred_icp_hub {
+            if preferred_icp_hub.trim().is_empty() {
+                return Err("Field cannot be empty".into());
+            }
+        }
+
+        // if let Some(ref exisitng_icp_project_porfolio) = self.existing_icp_project_porfolio {
+        //     if exisitng_icp_project_porfolio.trim().is_empty() {
+        //         return Err("Field cannot be empty".into());
+        //     }
+        // }
+        
+        // if let Some(ref multichain) = self.multichain {
+        //     if multichain.trim().is_empty() {
+        //         return Err("Field cannot be empty".into());
+        //     }
+        // }
+
+        Ok(())
+    }
+}
+
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct ProjectPublicInfo {
     pub project_id: String,
@@ -622,19 +646,63 @@ pub async fn create_project(info: ProjectInfo) -> String {
     }
 
     mutate_state(|state| {
-        if let Some(mut role_status) = state.role_status.get(&StoredPrincipal(caller)) {
-            for role in role_status.0.iter_mut() {
+        let role_status = &mut state.role_status;
+
+        if let Some(mut role_status_vec_candid) = role_status.get(&StoredPrincipal(caller)) {
+            let mut role_status_vec = role_status_vec_candid.0;
+            for role in role_status_vec.iter_mut() {
                 if role.name == "project" {
                     role.status = "requested".to_string();
-                    role.requested_on = Some(time());
+                    break;
                 }
             }
+            role_status.insert(StoredPrincipal(caller), Candid(role_status_vec));
+        } else {
+            // If the role_status doesn't exist for the caller, insert the initial roles
+            let initial_roles = vec![
+                Role {
+                    name: "user".to_string(),
+                    status: "active".to_string(),
+                    requested_on: None,
+                    approved_on: Some(time()),
+                    rejected_on: None,
+                },
+                Role {
+                    name: "project".to_string(),
+                    status: "default".to_string(),
+                    requested_on: None,
+                    approved_on: None,
+                    rejected_on: None,
+                },
+                Role {
+                    name: "mentor".to_string(),
+                    status: "default".to_string(),
+                    requested_on: None,
+                    approved_on: None,
+                    rejected_on: None,
+                },
+                Role {
+                    name: "vc".to_string(),
+                    status: "default".to_string(),
+                    requested_on: None,
+                    approved_on: None,
+                    rejected_on: None,
+                },
+            ];
+            role_status.insert(StoredPrincipal(caller), Candid(initial_roles));
         }
     });
 
-    let info_clone = info.clone();
-    let user_uid = crate::user_module::update_user(info_clone.user_data).await;
-    let uuids = raw_rand().await.unwrap().0;
+    // crate::latest_popular_projects::update_project_status_live_incubated(new_project).await;
+
+    // let user_data_for_updation = info.clone();
+    // crate::user_module::update_data_for_roles(caller, user_data_for_updation.user_data).await;
+
+
+    //let info_clone = info.clone();
+    //let user_uid = crate::user_module::update_user(info_clone.user_data).await;
+    match info.validate() {
+    Ok(_)=>{let uuids = raw_rand().await.unwrap().0;
     let uid = format!("{:x}", Sha256::digest(&uuids));
     let new_id = uid.clone().to_string();
 
@@ -695,10 +763,6 @@ pub async fn create_project(info: ProjectInfo) -> String {
             .insert(StoredPrincipal(caller), Candid(new_project.clone()));
     });
 
-    crate::latest_popular_projects::update_project_status_live_incubated(new_project);
-
-    let user_data_for_updation = info.clone();
-    crate::user_module::update_data_for_roles(caller, user_data_for_updation.user_data);
 
     let res = send_approval_request(
         info.user_data.profile_picture.unwrap_or_else(|| Vec::new()),
@@ -710,7 +774,8 @@ pub async fn create_project(info: ProjectInfo) -> String {
     )
     .await;
 
-    format!("{}", res)
+    format!("{}", res)}
+        Err(e) => format!("Validation error: {}", e), }
 }
 
 #[query]
