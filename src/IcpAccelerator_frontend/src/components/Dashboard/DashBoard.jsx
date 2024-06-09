@@ -206,14 +206,14 @@ const DashBoard = () => {
       return (
         <>
           <section
-            className="flex items-center w-full pl-[9%] pr-[9%] py-[2%] max-h-screen"
+            className="flex items-center w-full pl-[9%] pr-[9%] py-[2%] h-fit dxl0:max-h-screen"
             style={{
               background: " linear-gradient(63deg, #3B00B9 0%, #D38ED7 100%)",
             }}
           >
             <div className="container mx-auto">
-              <div className="flex flex-wrap">
-                <div className="flex flex-col justify-center md:w-1/2 sm:px-4 w-full relative lg:-top-8">
+              <div className="block dxl0:flex flex-wrap">
+                <div className="flex flex-col justify-center dxl0:w-1/2 dxl0:px-4 w-full relative md:top-12 dxl0:-top-8">
                   <h1 className="text-4xl font-semibold mb-4 lg:text-8xl sxxs:text-3xl text-white font-fontUse">
                     OLYMPUS
                   </h1>
@@ -261,7 +261,7 @@ const DashBoard = () => {
                     <span className="ml-1">Use with caution.</span>
                   </div>
                 </div>
-                <div className="w-full px-4 md:w-1/2 md:flex hidden">
+                <div className="w-full px-4 dxl0:w-1/2 justify-center md:flex hidden">
                   <div className="h-fit w-fit">
                     <div className="relative z-10">{Banner}</div>
                   </div>

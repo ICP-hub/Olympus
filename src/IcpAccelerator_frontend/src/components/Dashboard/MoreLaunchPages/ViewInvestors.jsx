@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import image from "../../../../assets/images/samya.jpg";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -9,6 +8,7 @@ import NoDataCard from "../../Mentors/Event/NoDataCard";
 const ViewInvestor = () => {
   const navigate = useNavigate();
   const [allInvestorData, setAllInvestorData] = useState([]);
+  const [countData, setCountData] = useState("");
   const [noData, setNoData] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [filter, setFilter] = useState("");
@@ -16,23 +16,27 @@ const ViewInvestor = () => {
   const actor = useSelector((currState) => currState.actors.actor);
 
   const getAllInvestors = async (caller) => {
-    await caller
-      .list_all_vcs()
-      .then((result) => {
-        console.log("result-in-get-all-investors", result);
-        if (!result || result.length == 0) {
-          setNoData(true);
-          setAllInvestorData([]);
-        } else {
-          setNoData(false);
-          setAllInvestorData(result);
-        }
-      })
-      .catch((error) => {
+    try {
+      const result = await caller.list_all_vcs_with_pagination({
+        page_size: itemsPerPage,
+        page: currentPage,
+      });
+      console.log("result-in-get-all-investors", result);
+      if (!result || result.vcs.length === 0) {
         setNoData(true);
         setAllInvestorData([]);
-        console.log("error-in-get-all-investors", error);
-      });
+        setCountData("");
+      } else {
+        setNoData(false);
+        setAllInvestorData(result.vcs);
+        setCountData(result.total_count);
+      }
+    } catch (error) {
+      setNoData(true);
+      setAllInvestorData([]);
+      setCountData("");
+      console.log("error-in-get-all-investors", error);
+    }
   };
 
   useEffect(() => {
@@ -41,24 +45,25 @@ const ViewInvestor = () => {
     } else {
       getAllInvestors(IcpAccelerator_backend);
     }
-  }, [actor]);
+  }, [actor, currentPage]);
 
- 
   const filteredInvestors = React.useMemo(() => {
-    return allInvestorData.filter(user => {
-      const fullName = user[1]?.vc_profile?.params?.user_data?.full_name?.toLowerCase() || "";
+    return allInvestorData.filter((user) => {
+      const fullName =
+        user[1]?.vc_profile?.params?.user_data?.full_name?.toLowerCase() || "";
       const companyName =
         user[1]?.vc_profile?.params?.name_of_fund?.toLowerCase() || "";
-      return fullName.includes(filter.toLowerCase()) || companyName.includes(filter.toLowerCase());
+      return (
+        fullName.includes(filter.toLowerCase()) ||
+        companyName.includes(filter.toLowerCase())
+      );
     });
   }, [filter, allInvestorData]);
 
-  const indexOfLastUser = currentPage * itemsPerPage;
-  const indexOfFirstUser = indexOfLastUser - itemsPerPage;
-  const currentInvestors = filteredInvestors.slice(
-    indexOfFirstUser,
-    indexOfLastUser
-  );
+  // Determine the investors to show on the current page
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentInvestors = filteredInvestors.slice(startIndex, endIndex);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -68,13 +73,44 @@ const ViewInvestor = () => {
 
   const handleNext = () => {
     setCurrentPage((prev) =>
-      prev < Math.ceil(filteredInvestors.length / itemsPerPage)
-        ? prev + 1
-        : prev
+      prev < Math.ceil(Number(countData) / itemsPerPage) ? prev + 1 : prev
     );
   };
 
- 
+  // Logic to limit the displayed page numbers to 10 at a time
+  const renderPaginationNumbers = () => {
+    const totalPages = Math.ceil(Number(countData) / itemsPerPage);
+    const maxPageNumbers = 10;
+    const startPage =
+      Math.floor((currentPage - 1) / maxPageNumbers) * maxPageNumbers + 1;
+    const endPage = Math.min(startPage + maxPageNumbers - 1, totalPages);
+
+    const pageNumbers = [];
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(
+        <button
+          key={i}
+          onClick={() => paginate(i)}
+          className={`relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-full text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all ${
+            currentPage === i
+              ? "bg-gray-900 text-white"
+              : "hover:bg-gray-900/10 active:bg-gray-900/20"
+          }`}
+          type="button"
+        >
+          <span className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+            {i}
+          </span>
+        </button>
+      );
+    }
+    return pageNumbers;
+  };
+  console.log("countData:", countData);
+  console.log("currentPage:", currentPage);
+  console.log("filteredInvestors:", filteredInvestors);
+  console.log("currentInvestors:", currentInvestors);
+
   return (
     <div className="container mx-auto min-h-screen">
       <div className="px-[4%] pb-[4%] pt-[1%]">
@@ -129,59 +165,64 @@ const ViewInvestor = () => {
 
                 return (
                   <div
-                  key={index}
-                  className="bg-white  hover:scale-105 w-full rounded-lg mb-5 md:mb-0 p-6"
-                >
-                  <div className="justify-center flex items-center">
-                  <div className="size-48  rounded-full bg-no-repeat bg-center bg-cover relative p-1 bg-blend-overlay border-2 border-gray-300"
-                   style={{
-                    backgroundImage: `url(${img}), linear-gradient(168deg, rgba(255, 255, 255, 0.25) -0.86%, rgba(255, 255, 255, 0) 103.57%)`,
-                    backdropFilter: "blur(20px)",
-                  }}
+                    key={index}
+                    className="bg-white  hover:scale-105 w-full rounded-lg mb-5 md:mb-0 p-6"
                   >
-                    <img
-                      className="object-cover size-48 max-h-44 rounded-full"
-                      src={img}
-                      alt=""
-                    />
-                  </div>
-                  </div>
-                  <div className="text-black text-start">
-                    <div className="text-start my-3">
-                      <span className="font-semibold text-lg truncate">
-                        {name}
-                      </span>
-                      <span className="block text-gray-500 truncate">{company}</span>
+                    <div className="justify-center flex items-center">
+                      <div
+                        className="size-48  rounded-full bg-no-repeat bg-center bg-cover relative p-1 bg-blend-overlay border-2 border-gray-300"
+                        style={{
+                          backgroundImage: `url(${img}), linear-gradient(168deg, rgba(255, 255, 255, 0.25) -0.86%, rgba(255, 255, 255, 0) 103.57%)`,
+                          backdropFilter: "blur(20px)",
+                        }}
+                      >
+                        <img
+                          className="object-cover size-48 max-h-44 rounded-full"
+                          src={img}
+                          alt=""
+                        />
+                      </div>
                     </div>
-                    <div className="flex overflow-x-auto gap-2 pb-4 max-md:justify-center">
-                      {category_of_investment && category_of_investment !== ""
-                        ? category_of_investment.split(",").map((item, index) => {
-                            return (
-                              <span
-                                key={index}
-                                className="bg-[#E7E7E8] rounded-full text-gray-600 text-xs font-bold px-3 py-1 leading-none flex items-center"
-                              >
-                                {item.trim()}
-                              </span>
-                            );
-                          })
-                        : ""}
+                    <div className="text-black text-start">
+                      <div className="text-start my-3">
+                        <span className="font-semibold text-lg truncate">
+                          {name}
+                        </span>
+                        <span className="block text-gray-500 truncate">
+                          {company}
+                        </span>
+                      </div>
+                      <div className="flex overflow-x-auto gap-2 pb-4 max-md:justify-center">
+                        {category_of_investment && category_of_investment !== ""
+                          ? category_of_investment
+                              .split(",")
+                              .map((item, index) => {
+                                return (
+                                  <span
+                                    key={index}
+                                    className="bg-[#E7E7E8] rounded-full text-gray-600 text-xs font-bold px-3 py-1 leading-none flex items-center"
+                                  >
+                                    {item.trim()}
+                                  </span>
+                                );
+                              })
+                          : ""}
+                      </div>
+                      <button
+                        onClick={() =>
+                          id ? navigate(`/view-investor-details/${id}`) : ""
+                        }
+                        className="text-white px-4 py-1 rounded-lg uppercase w-full text-center border border-gray-300 font-bold bg-[#3505B2] transition-colors duration-200 ease-in-out"
+                      >
+                        View Profile
+                      </button>
                     </div>
-                    <button
-                      onClick={() =>
-                        id ? navigate(`/view-investor-details/${id}`) : ""
-                      }
-                      className="text-white px-4 py-1 rounded-lg uppercase w-full text-center border border-gray-300 font-bold bg-[#3505B2] transition-colors duration-200 ease-in-out"
-                    >
-                      View Profile
-                    </button>
                   </div>
-                </div>
                 );
               })}
             </div>
             <div className="flex flex-row  w-full gap-4 justify-center">
-              {currentInvestors.length > 0 && (
+              {Number(countData) > 0 && (
                 <div className="flex items-center gap-4 justify-center">
                   <button
                     onClick={handlePrevious}
@@ -206,34 +247,12 @@ const ViewInvestor = () => {
                     </svg>
                     Previous
                   </button>
-                  {Array.from(
-                    {
-                      length: Math.ceil(
-                        filteredInvestors.length / itemsPerPage
-                      ),
-                    },
-                    (_, i) => i + 1
-                  ).map((number) => (
-                    <button
-                      key={number}
-                      onClick={() => paginate(number)}
-                      className={`relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-full text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all ${
-                        currentPage === number
-                          ? "bg-gray-900 text-white"
-                          : "hover:bg-gray-900/10 active:bg-gray-900/20"
-                      }`}
-                      type="button"
-                    >
-                      <span className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
-                        {number}
-                      </span>
-                    </button>
-                  ))}
+                  {renderPaginationNumbers()}
                   <button
                     onClick={handleNext}
                     disabled={
                       currentPage ===
-                      Math.ceil(filteredInvestors.length / itemsPerPage)
+                      Math.ceil(Number(countData) / itemsPerPage)
                     }
                     className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                     type="button"

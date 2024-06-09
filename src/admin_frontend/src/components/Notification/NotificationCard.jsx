@@ -15,13 +15,18 @@ const NotificationCard = ({ notificationDetails }) => {
     setModalPopUp((prev) => !prev);
   };
 
-  // console.log(
-  //   "notificationDetails =======================================>=> ",
-  //   notificationDetails
-  // );
+  console.log(
+    "notificationDetails =======================================>=> ",
+    notificationDetails
+  );
 
   const dataSendToProfileHandler = () => {
-    navigate("/all", { state: notificationDetails.principal });
+    navigate("/all", {
+      state: {
+        principal: notificationDetails.principal,
+        activeCategory: notificationDetails.category.activeCategory,
+      },
+    });
   };
 
   return (

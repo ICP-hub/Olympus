@@ -9,6 +9,7 @@ import MentorCard from "./MentorCard";
 function SearchMentors() {
   const navigate = useNavigate();
   const [allMentorData, setAllMentorData] = useState([]);
+  const [countData, setCountData] = useState("");
   const [noData, setNoData] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [filter, setFilter] = useState("");
@@ -17,19 +18,25 @@ function SearchMentors() {
 
   const getAllMentors = async (caller) => {
     await caller
-      .get_all_mentors_candid()
+      .get_all_mentors_with_pagination({
+        page_size: itemsPerPage,
+        page: currentPage,
+      })
       .then((result) => {
         console.log("result-in-get-all-mentors", result);
         if (result.length > 0) {
           setAllMentorData(result);
+          setCountData(result.total_count);
           setNoData(false);
         } else {
           setAllMentorData([]);
+          setCountData("");
           setNoData(true);
         }
       })
       .catch((error) => {
         setAllMentorData([]);
+        setCountData("");
         setNoData(true);
         console.log("error-in-get-all-mentors", error);
       });
@@ -78,9 +85,7 @@ function SearchMentors() {
 
   const handleNext = () => {
     setCurrentPage((prev) =>
-      prev < Math.ceil(filteredInvestors.length / itemsPerPage)
-        ? prev + 1
-        : prev
+      prev < Math.ceil(Number(countData) / itemsPerPage) ? prev + 1 : prev
     );
   };
 
@@ -179,9 +184,7 @@ function SearchMentors() {
                         </div>
                         <button
                           onClick={() =>
-                            id
-                              ? navigate(`/view-mentor-details/${id}`)
-                              : ""
+                            id ? navigate(`/view-mentor-details/${id}`) : ""
                           }
                           className="mt-4 text-white px-4 py-1 rounded-lg uppercase w-full text-center border border-gray-300 font-bold bg-[#3505B2] transition-colors duration-200 ease-in-out"
                         >
@@ -194,7 +197,7 @@ function SearchMentors() {
               })}
             </div>
             <div className="flex flex-row  w-full gap-4 justify-center">
-              {currentMentors.length > 0 && (
+              {Number(countData) > 0 && (
                 <div className="flex items-center gap-4 justify-center">
                   <button
                     onClick={handlePrevious}
@@ -221,9 +224,7 @@ function SearchMentors() {
                   </button>
                   {Array.from(
                     {
-                      length: Math.ceil(
-                        filteredInvestors.length / itemsPerPage
-                      ),
+                      length: Math.ceil(Number(countData) / itemsPerPage),
                     },
                     (_, i) => i + 1
                   ).map((number) => (
@@ -246,7 +247,7 @@ function SearchMentors() {
                     onClick={handleNext}
                     disabled={
                       currentPage ===
-                      Math.ceil(filteredInvestors.length / itemsPerPage)
+                      Math.ceil(Number(countData) / itemsPerPage)
                     }
                     className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                     type="button"

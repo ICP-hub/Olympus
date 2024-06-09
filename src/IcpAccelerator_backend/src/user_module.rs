@@ -306,7 +306,7 @@ pub async fn update_data_for_roles(principal_id: Principal, user_data: UserInfor
     }
     Ok(())
 }
-
+#[update]
 async fn update_user_data(user_id: Principal, user_data: UserInformation) -> Result<(), String> {
     mutate_state(|state| {
         if let Some(Candid(mut user_info_internal)) = state.user_storage.get(&StoredPrincipal(user_id)) {
