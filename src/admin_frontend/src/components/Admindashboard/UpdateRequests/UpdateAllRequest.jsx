@@ -79,7 +79,7 @@ const UpdateAllRequest = () => {
         const profilePicture =
           uint8ArrayToBase64(updatedInfo?.user_data?.profile_picture[0]) ||
           uint8ArrayToBase64(updatedInfo[0]?.user_data?.profile_picture?.[0]) ||
-          uint8ArrayToBase64(updatedInfo?.project_logo);
+          uint8ArrayToBase64(updatedInfo?.project_logo[0]);
 
         const commonData = {
           fullName: (

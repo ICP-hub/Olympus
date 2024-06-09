@@ -4,6 +4,7 @@ mod leaderboard;
 mod manage_focus_expertise;
 mod manage_hubs;
 mod mentor;
+mod asset_manager;
 
 mod investor_offer_to_project;
 mod notification_to_mentor;

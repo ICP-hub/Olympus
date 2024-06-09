@@ -1529,7 +1529,7 @@ fn get_top_5_projects() -> Vec<(String, TopDataProject, usize)> {
 
                 let top_data = TopDataProject {
                     full_name: project_info.user_data.full_name.clone(),
-                    profile_picture: Some(project_info.project_logo.clone()),
+                    profile_picture: project_info.project_logo.clone(),
                     area_of_interest: project_info.project_area_of_focus.clone(),
                     country: project_info.user_data.country.clone(),
                     joined_on: project_internal.creation_date.clone(),
@@ -2381,6 +2381,9 @@ pub fn delete_vc_using_principal(principal: Principal) -> String {
         }
     })
 }
+
+
+//b5pqo-yef5a-lut3t-kmrpc-h7dnp-v3d2t-ls6di-y33wa-clrtb-xdhl4-dae
 
 #[update]
 pub fn delete_mentor_announcement_by_index(mentor_principal: Principal, index: usize) -> String {

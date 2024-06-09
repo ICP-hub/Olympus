@@ -727,12 +727,12 @@ const UserProfileProjectUpdate = () => {
             projectLogo:
               originalInfo?.project_logo &&
               originalInfo?.project_logo.length > 0
-                ? uint8ArrayToBase64(originalInfo.project_logo)
+                ? uint8ArrayToBase64(originalInfo.project_logo[0])
                 : null,
             projectCover:
               originalInfo?.project_cover &&
               originalInfo?.project_cover.length > 0
-                ? uint8ArrayToBase64(originalInfo.project_cover)
+                ? uint8ArrayToBase64(originalInfo.project_cover[0])
                 : null,
             projectDescription:
               originalInfo?.project_description?.[0] ?? "No Description",
@@ -798,11 +798,11 @@ const UserProfileProjectUpdate = () => {
             projectName: updatedInfo?.project_name ?? "No Name",
             projectLogo:
               updatedInfo?.project_logo && updatedInfo?.project_logo.length > 0
-                ? uint8ArrayToBase64(updatedInfo.project_logo)
+                ? uint8ArrayToBase64(updatedInfo.project_logo[0])
                 : null,
             projectCover:
               updatedInfo?.project_cove && updatedInfo?.project_cover.length > 0
-                ? uint8ArrayToBase64(updatedInfo.project_cover)
+                ? uint8ArrayToBase64(updatedInfo.project_cover[0])
                 : null,
             projectDescription:
               updatedInfo?.project_description?.[0] ?? "No Description",
@@ -1190,8 +1190,8 @@ const UserProfileProjectUpdate = () => {
           profile_picture: imageData ? [imageData] : [],
         },
         // project data
-        project_cover: coverData ? coverData : [],
-        project_logo: logoData ? logoData : [],
+        project_cover: coverData ? [coverData] : [],
+        project_logo: logoData ? [logoData] : [],
         preferred_icp_hub: [data?.preferred_icp_hub ?? ""],
         project_name: data?.project_name ?? "",
         project_description: [data?.project_description ?? ""],

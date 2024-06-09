@@ -378,7 +378,7 @@ const MentorSideAssociation = () => {
                                         offer_id = val?.offer_id ?? ""
                                         break;
                                     case 'from-project':
-                                        img = val?.project_info?.project_logo ? uint8ArrayToBase64(val?.project_info?.project_logo) : ''
+                                        img = val?.project_info?.project_logo ? uint8ArrayToBase64(val?.project_info?.project_logo[0]) : ''
                                         name = val?.project_info?.project_name ?? ""
                                         date = val?.sent_at ? formatFullDateFromBigInt(val?.sent_at) : ''
                                         msg = val?.offer ?? ""
@@ -400,7 +400,7 @@ const MentorSideAssociation = () => {
                                         accpt_date = val?.accepted_at ? formatFullDateFromBigInt(val?.accepted_at) : ""
                                         break;
                                     case 'from-project':
-                                        img = val?.project_info?.project_logo ? uint8ArrayToBase64(val?.project_info?.project_logo) : ''
+                                        img = val?.project_info?.project_logo ? uint8ArrayToBase64(val?.project_info?.project_logo[0]) : ''
                                         name = val?.project_info?.project_name ?? ""
                                         date = val?.sent_at ? formatFullDateFromBigInt(val?.sent_at) : ''
                                         msg = val?.offer ?? ""
@@ -424,7 +424,7 @@ const MentorSideAssociation = () => {
                                         decln_date = val?.declined_at ? formatFullDateFromBigInt(val?.declined_at) : ""
                                         break;
                                     case 'from-project':
-                                        img = val?.project_info?.project_logo ? uint8ArrayToBase64(val?.project_info?.project_logo) : ''
+                                        img = val?.project_info?.project_logo ? uint8ArrayToBase64(val?.project_info?.project_logo[0]) : ''
                                         name = val?.project_info?.project_name ?? ""
                                         date = val?.sent_at ? formatFullDateFromBigInt(val?.sent_at) : ''
                                         msg = val?.offer ?? ""
@@ -447,7 +447,7 @@ const MentorSideAssociation = () => {
                                         self_decln = val?.self_declined_at ? formatFullDateFromBigInt(val?.self_declined_at) : ""
                                         break;
                                     case 'from-project':
-                                        img = val?.project_info?.project_logo ? uint8ArrayToBase64(val?.project_info?.project_logo) : ''
+                                        img = val?.project_info?.project_logo ? uint8ArrayToBase64(val?.project_info?.project_logo[0]) : ''
                                         name = val?.project_info?.project_name ?? ""
                                         date = val?.sent_at ? formatFullDateFromBigInt(val?.sent_at) : ''
                                         msg = val?.offer ?? ""

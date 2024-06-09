@@ -75,7 +75,7 @@ const LiveProjectBar = ({ data }) => {
   console.log("data ===>",data)
   // const projectProgress = 50;
   let logo = data?.params?.project_logo
-    ? uint8ArrayToBase64(data?.params?.project_logo)
+    ? uint8ArrayToBase64(data?.params?.project_logo[0])
     : ment;
   let name = data?.params?.project_name ?? "";
   let area_tags = data?.params?.project_area_of_focus ?? "";

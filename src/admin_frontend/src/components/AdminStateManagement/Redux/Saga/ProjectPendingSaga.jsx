@@ -33,11 +33,11 @@ function* fetchProjectPendingHandler() {
             : null;
         const projectCoverURL =
           project_profile.params.project_cover instanceof Uint8Array
-            ? uint8ArrayToBase64(project_profile.params.project_cover)
+            ? uint8ArrayToBase64(project_profile.params.project_cover[0])
             : null;
         const projectLogoURL =
           project_profile.params.project_logo instanceof Uint8Array
-            ? uint8ArrayToBase64(project_profile.params.project_logo)
+            ? uint8ArrayToBase64(project_profile.params.project_logo[0])
             : null;
 
         const weeklyUsers = formatDateFromBigInt(
