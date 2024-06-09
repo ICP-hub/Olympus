@@ -12,6 +12,12 @@
       "id": "rdmx6-jaaaa-aaaaa-aaadq-cai"
     },
 
+    "asset_canister_backend": {
+      "candid": "src/asset_canister_backend/asset_canister_backend.did",
+      "package": "asset_canister_backend",
+      "type": "rust"
+    },
+
     "IcpAccelerator_frontend": {
       "dependencies": [
         "IcpAccelerator_backend"

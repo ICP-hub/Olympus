@@ -8,6 +8,7 @@ use ic_cdk::api::caller;
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::api::stable::{StableReader, StableWriter};
 use ic_cdk::api::time;
+use ic_cdk::api::call::call;
 use ic_cdk_macros::*;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
@@ -16,6 +17,8 @@ use std::collections::HashMap;
 use std::io::Read;
 // use ic_cdk::storage;
 use ic_cdk::storage::{self, stable_restore, stable_save};
+use ic_certified_assets::{types::Key};
+use serde_bytes::ByteBuf;
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
 pub struct UserInformation {
@@ -38,6 +41,15 @@ pub struct UserInfoInternal {
     pub params: UserInformation,
     pub is_active: bool,
     pub joining_date: u64,
+}
+
+#[derive(Clone, Debug, CandidType, Deserialize)]
+pub struct StoreArg {
+    pub key: Key,
+    pub content_type: String,
+    pub content_encoding: String,
+    pub content: ByteBuf,
+    pub sha256: Option<ByteBuf>,
 }
 
 #[derive(CandidType, Clone, Serialize, Deserialize, Debug)]
@@ -188,14 +200,29 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
     let uid = format!("{:x}", Sha256::digest(&uuids));
     let new_id = uid.clone().to_string();
 
-    fn default_profile_picture() -> Vec<u8> {
-        base64::decode(DEFAULT_USER_AVATAR_BASE64).expect("Failed to decode base64 image")
+    let canister_id = crate::asset_manager::get_asset_canister();
+    let full_url = canister_id.to_string() + "/uploads/default_user.jpeg";
+    let key = "/uploads/".to_owned()+&caller.to_string()+"_user.jpeg";
+
+    fn default_profile_picture(full_url: &str) -> Vec<u8> {
+        // base64::decode(DEFAULT_USER_AVATAR_BASE64).expect("Failed to decode base64 image")
+        full_url.as_bytes().to_vec()
     }
 
     let mut info_with_default = info.clone();
 
     if info_with_default.profile_picture.is_none() {
-        info_with_default.profile_picture = Some(default_profile_picture());
+        info_with_default.profile_picture = Some(default_profile_picture(&full_url));
+    }else{
+        let arg = StoreArg{
+            key: key.clone(),
+            content_type: "image/*".to_string(),
+            content_encoding: "identity".to_string(),
+            content: ByteBuf::from(info_with_default.profile_picture.clone().unwrap()),
+            sha256: None,
+        };
+        let (result,): ((),) = call(canister_id, "store", (arg, )).await.unwrap();
+        info_with_default.profile_picture = Some((canister_id.to_string()+&key).as_bytes().to_vec());
     }
 
     //convert_to_lowercase
