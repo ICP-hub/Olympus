@@ -65,7 +65,7 @@ function EventProject({ allProjectData, noData, cohortId }) {
                   let projectName = data?.params?.project_name ?? "";
                   let projectId = data?.uid ?? "";
                   let projectImage = data?.params?.project_logo
-                    ? uint8ArrayToBase64(data?.params?.project_logo)
+                    ? uint8ArrayToBase64(data?.params?.project_logo[0])
                     : "";
                   let userName = data?.params?.user_data?.full_name
                     ? data?.params?.user_data?.full_name

@@ -421,11 +421,11 @@ const ProjectUpdate = () => {
             projectName: originalInfo?.project_name || "No Name",
             projectLogo:
               originalInfo?.project_logo.length > 0
-                ? uint8ArrayToBase64(originalInfo.project_logo)
+                ? uint8ArrayToBase64(originalInfo.project_logo[0])
                 : null,
             projectCover:
               originalInfo?.project_cover.length > 0
-                ? uint8ArrayToBase64(originalInfo.project_cover)
+                ? uint8ArrayToBase64(originalInfo.project_cover[0])
                 : null,
             projectDescription:
               originalInfo?.project_description?.[0] || "No Description",
@@ -486,11 +486,11 @@ const ProjectUpdate = () => {
             projectName: updatedInfo?.project_name || "No Name",
             projectLogo:
               updatedInfo?.project_logo.length > 0
-                ? uint8ArrayToBase64(updatedInfo.project_logo)
+                ? uint8ArrayToBase64(updatedInfo.project_logo[0])
                 : null,
             projectCover:
               updatedInfo?.project_cover.length > 0
-                ? uint8ArrayToBase64(updatedInfo.project_cover)
+                ? uint8ArrayToBase64(updatedInfo.project_cover[0])
                 : null,
             projectDescription:
               updatedInfo?.project_description?.[0] || "No Description",

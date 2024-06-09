@@ -39,7 +39,7 @@ function ProjectDetailsCard({
   const actor = useSelector((currState) => currState.actors.actor);
   console.log("data line 38", data);
   let logo = data?.params?.project_logo
-    ? uint8ArrayToBase64(data?.params?.project_logo)
+    ? uint8ArrayToBase64(data?.params?.project_logo[0])
     : girl;
   let name = data?.params?.project_name ?? "";
   let area_tags = data?.params?.user_data?.area_of_interest ?? "";

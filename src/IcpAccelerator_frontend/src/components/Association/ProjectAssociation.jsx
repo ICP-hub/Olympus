@@ -248,7 +248,7 @@ const ProjectAssociation = () => {
             <div className='h-screen overflow-y-scroll scroll-smooth'>
                 {data && data.length > 0 ?
                     data.map((val, index) => {
-                        let img = val?.project_info?.project_logo ? uint8ArrayToBase64(val?.project_info?.project_logo) : ''
+                        let img = val?.project_info?.project_logo ? uint8ArrayToBase64(val?.project_info?.project_logo[0]) : ''
                         let name = val?.project_info?.project_name ?? ""
                         let date = val?.sent_at ? formatFullDateFromBigInt(val?.sent_at) : ''
                         let msg = val?.offer ?? ""

@@ -297,7 +297,7 @@ const LiveIncubated = () => {
               let projectData = project?.params?.params ?? "";
               let name = user_data?.full_name;
               const projectImage = project_logo
-                ? uint8ArrayToBase64(project_logo)
+                ? uint8ArrayToBase64(project_logo[0])
                 : "";
               const userImage = user_data?.profile_picture
                 ? uint8ArrayToBase64(user_data.profile_picture[0])

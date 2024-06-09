@@ -721,8 +721,8 @@ function ProjectRegForm() {
           profile_picture: imageData ? [imageData] : [],
         },
         // project data
-        project_cover: coverData ? coverData : [],
-        project_logo: logoData ? logoData : [],
+        project_cover: coverData ? [coverData] : [],
+        project_logo: logoData ? [logoData] : [],
         preferred_icp_hub: [data?.preferred_icp_hub || ""],
         project_name: data?.project_name || "",
         project_description: [data?.project_description || ""],
@@ -972,12 +972,12 @@ function ProjectRegForm() {
       setReasonOfJoiningSelectedOptionsHandler(val?.user_data?.reason_to_join);
       setLogoPreview(
         val?.project_logo instanceof Uint8Array
-          ? uint8ArrayToBase64(val?.project_logo)
+          ? uint8ArrayToBase64(val?.project_logo[0])
           : ""
       );
       setCoverPreview(
         val?.project_cover instanceof Uint8Array
-          ? uint8ArrayToBase64(val?.project_cover)
+          ? uint8ArrayToBase64(val?.project_cover[0])
           : ""
       );
       setValue("preferred_icp_hub", val?.preferred_icp_hub?.[0]);
