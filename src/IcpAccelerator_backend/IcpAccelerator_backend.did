@@ -15,7 +15,7 @@ type AnnouncementsInternal = record {
   announcement_data : Announcements;
   timestamp : nat64;
   project_desc : opt text;
-  project_logo : vec nat8;
+  project_logo : opt vec nat8;
   project_name : text;
   announcement_id : text;
 };
@@ -131,7 +131,7 @@ type JobsInternal = record {
   timestamp : nat64;
   job_data : Jobs;
   project_desc : opt text;
-  project_logo : vec nat8;
+  project_logo : opt vec nat8;
   project_name : text;
 };
 type LeaderboardEntryForCohorts = record {
@@ -357,7 +357,7 @@ type PeerRatingUpdate = record {
 type ProjectInf = record {
   project_description : opt text;
   project_id : text;
-  project_logo : vec nat8;
+  project_logo : opt vec nat8;
   project_name : text;
 };
 type ProjectInfo = record {
@@ -387,12 +387,12 @@ type ProjectInfo = record {
   github_link : opt text;
   type_of_registration : opt text;
   public_docs : opt vec Docs;
-  project_cover : vec nat8;
+  project_cover : opt vec nat8;
   project_website : opt text;
   promotional_video : opt text;
   money_raised_till_now : opt bool;
   supports_multichain : opt text;
-  project_logo : vec nat8;
+  project_logo : opt vec nat8;
   project_name : text;
   is_your_project_registered : opt bool;
   money_raised : opt MoneyRaised;
@@ -416,7 +416,7 @@ type ProjectInfoForUser = record {
   mentor_associated : opt vec MentorProfile;
   github_link : opt text;
   country_of_project : opt text;
-  project_cover : vec nat8;
+  project_cover : opt vec nat8;
   project_website : opt text;
   promotional_video : opt text;
   project_logo : opt vec nat8;
@@ -437,7 +437,7 @@ type ProjectInfoInternal = record {
 type ProjectInfoo = record {
   project_description : opt text;
   project_id : text;
-  project_logo : vec nat8;
+  project_logo : opt vec nat8;
   project_name : text;
 };
 type ProjectNotification = record {
@@ -467,13 +467,13 @@ type ProjectPublicInfo = record {
   technical_docs : opt text;
   github_link : opt text;
   public_docs : opt vec Docs;
-  project_cover : vec nat8;
+  project_cover : opt vec nat8;
   project_id : text;
   project_website : opt text;
   promotional_video : opt text;
   money_raised_till_now : opt bool;
   supports_multichain : opt text;
-  project_logo : vec nat8;
+  project_logo : opt vec nat8;
   project_name : text;
   project_team : opt vec TeamMember;
 };
@@ -935,6 +935,7 @@ service : {
     ) query;
   get_announcements_by_project_id : (text) -> (vec AnnouncementsInternal) query;
   get_area_focus_expertise : () -> (vec Role_1) query;
+  get_asset_canister : () -> (principal) query;
   get_blog_post : () -> (vec record { principal; vec Blog }) query;
   get_cohort : (text) -> (CohortDetails) query;
   get_dapp_link : (text) -> (text) query;
@@ -1070,7 +1071,6 @@ service : {
   get_total_pending_request : () -> (nat64) query;
   get_total_suggestions : (text) -> (nat64) query;
   get_update_request_count : () -> (UpdateCounts) query;
-  get_url : () -> (principal) query;
   get_user_all_data : (principal) -> (
       opt UserInfoInternal,
       opt VentureCapitalistInternal,
@@ -1167,7 +1167,7 @@ service : {
   send_private_docs_access_request : (text) -> (text);
   send_rejoin_invitation_to_mentor : (text, principal, text) -> (Result_5);
   send_request_as_mentor : (text, text) -> (text);
-  set_url : (principal) -> ();
+  set_asset_canister : (principal) -> ();
   switch_role : (text, text) -> ();
   type_of_user_profile : () -> (vec UserType) query;
   update_dapp_link : (text, text) -> (text);
