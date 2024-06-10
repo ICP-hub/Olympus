@@ -65,25 +65,6 @@ thread_local! {
     static DECLINED_COHORTS: RefCell<HashMap<String, Vec<CohortRequest>>> = RefCell::new(HashMap::new());
 }
 
-pub fn pre_upgrade_admin() {
-    ADMIN_NOTIFICATIONS.with(
-        |data| match storage::stable_save((data.borrow().clone(),)) {
-            Ok(_) => ic_cdk::println!("ADMIN_NOTIFICATIONS saved successfully."),
-            Err(e) => ic_cdk::println!("Failed to save ADMIN_NOTIFICATIONS: {:?}", e),
-        },
-    );
-}
-
-pub fn post_upgrade_admin() {
-    match stable_restore::<(HashMap<Principal, Vec<Notification>>,)>() {
-        Ok((restored_admin_notifications,)) => {
-            ADMIN_NOTIFICATIONS.with(|data| *data.borrow_mut() = restored_admin_notifications);
-            ic_cdk::println!("ADMIN_NOTIFICATIONS restored successfully.");
-        }
-        Err(e) => ic_cdk::println!("Failed to restore ADMIN_NOTIFICATIONS: {:?}", e),
-    }
-}
-
 fn change_notification_status(requester: Principal, requested_for: String, changed_status: String) {
     mutate_state(|admin_notifications| {
         let mut notifications = &mut admin_notifications.admin_notifications;
@@ -1139,9 +1120,10 @@ pub fn add_job_type(job_type: String) -> String {
 pub async fn add_project_to_spotlight(project_id: String) -> Result<(), String> {
     let caller = caller();
 
+    // Uncomment and use the following block if admin validation is needed
     // let admin_principals = match get_info().await {
     //     Ok(principals) => principals,
-    //     Err(e) => return Err(format!("Failed to retrieve admin principals")),
+    //     Err(_) => return Err("Failed to retrieve admin principals".to_string()),
     // };
 
     // if !admin_principals.contains(&caller) {
@@ -1164,14 +1146,24 @@ pub async fn add_project_to_spotlight(project_id: String) -> Result<(), String> 
         Some((project_creator, project_info)) => {
             let spotlight_details = SpotlightDetails {
                 added_by: project_creator,
-                project_id: project_id,
+                project_id: project_id.clone(),
                 project_details: project_info,
                 approval_time: time(),
             };
 
-            SPOTLIGHT_PROJECTS.with(|spotlight| {
-                spotlight.borrow_mut().push(spotlight_details);
+            mutate_state(|spotlight| {
+                // Check if the project ID exists
+                if let Some(mut existing_details) = spotlight.spotlight_projects.get(&project_id) {
+                    // Update existing entry
+                    existing_details.0.push(spotlight_details);
+                } else {
+                    // Insert new entry
+                    spotlight
+                        .spotlight_projects
+                        .insert(project_id, Candid(vec![spotlight_details]));
+                }
             });
+
             Ok(())
         }
         None => Err("Project not found.".to_string()),
