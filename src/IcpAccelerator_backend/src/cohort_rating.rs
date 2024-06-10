@@ -1,8 +1,6 @@
+use crate::is_user_anonymous;
 use crate::state_handler::*;
-use crate::{
-    get_project_using_id,
-    project_registration::ProjectInfoInternal,
-};
+use crate::{get_project_using_id, project_registration::ProjectInfoInternal};
 use candid::{CandidType, Principal};
 use ic_cdk::api::caller;
 use ic_cdk::api::time;
@@ -36,7 +34,7 @@ pub struct PeerRatingUpdate {
 pub type ProjectRatings = HashMap<Principal, Vec<(String, TimestampedRating)>>;
 pub type CohortProjectRatings = HashMap<String, ProjectRatings>;
 
-#[update]
+#[update(guard = "is_user_anonymous")]
 pub fn update_peer_rating_api(rating_data: PeerRatingUpdate) -> String {
     let caller = caller();
     if rating_data.ratings.is_empty() {
@@ -113,7 +111,7 @@ pub fn update_peer_rating_api(rating_data: PeerRatingUpdate) -> String {
     })
 }
 
-#[update]
+#[update(guard = "is_user_anonymous")]
 pub fn calculate_and_store_average_rating(
     cohort_id: String,
     project_id: String,
@@ -160,7 +158,7 @@ pub fn calculate_and_store_average_rating(
     })
 }
 
-#[query]
+#[query(guard="is_user_anonymous")]
 pub fn get_stored_average_rating(cohort_id: String, project_id: String) -> Result<f64, String> {
     read_state(|avg_ratings| {
         let avg_ratings = &avg_ratings.cohort_average_ratings;
@@ -183,7 +181,7 @@ pub struct LeaderboardEntryForCohorts {
     average_rating: f64,
 }
 
-#[query]
+#[query(guard="is_user_anonymous")]
 pub fn generate_cohort_leaderboard() -> Vec<LeaderboardEntryForCohorts> {
     let mut leaderboard_entries: Vec<LeaderboardEntryForCohorts> = Vec::new();
 

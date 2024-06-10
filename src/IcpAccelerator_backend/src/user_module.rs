@@ -1,14 +1,14 @@
 use crate::default_images::*;
 use crate::mentor::MENTOR_REGISTRY;
 use crate::project_registration::APPLICATION_FORM;
-use crate::state_handler::{mutate_state, StoredPrincipal, Candid, read_state};
+use crate::state_handler::{mutate_state, read_state, Candid, StoredPrincipal};
 use crate::vc_registration::VENTURECAPITALIST_STORAGE;
 use candid::{CandidType, Principal};
+use ic_cdk::api::call::call;
 use ic_cdk::api::caller;
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::api::stable::{StableReader, StableWriter};
 use ic_cdk::api::time;
-use ic_cdk::api::call::call;
 use ic_cdk_macros::*;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
@@ -16,8 +16,9 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::io::Read;
 // use ic_cdk::storage;
+use crate::is_user_anonymous;
 use ic_cdk::storage::{self, stable_restore, stable_save};
-use ic_certified_assets::{types::Key};
+use ic_certified_assets::types::Key;
 use serde_bytes::ByteBuf;
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
@@ -32,7 +33,7 @@ pub struct UserInformation {
     pub twitter_id: Option<String>,
     pub openchat_username: Option<String>,
     pub type_of_profile: Option<String>,
-    pub reason_to_join : Option<Vec<String>>
+    pub reason_to_join: Option<Vec<String>>,
 }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
@@ -124,13 +125,6 @@ pub type UserInfoStorage = HashMap<Principal, UserInfoInternal>;
 pub type UserTestimonial = HashMap<Principal, Vec<Testimonial>>;
 pub type UserRating = HashMap<Principal, Vec<Review>>;
 
-thread_local! {
-    pub static USER_STORAGE: RefCell<UserInfoStorage> = RefCell::new(UserInfoStorage::new());
-    pub static ROLE_STATUS_ARRAY : RefCell<HashMap<Principal, Vec<Role>>> = RefCell::new(HashMap::new());
-    pub static USER_TESTIMONIAL : RefCell<UserTestimonial> = RefCell::new(UserTestimonial::new());
-    pub static USER_RATING : RefCell<UserRating> = RefCell::new(UserRating::new());
-}
-
 pub fn initialize_roles() {
     let caller = caller();
 
@@ -193,8 +187,6 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
     //     return "Please provide input for required fields: full_name and email.".to_string();
     // }
 
-    
-
     let caller = caller();
     let uuids = raw_rand().await.unwrap().0;
     let uid = format!("{:x}", Sha256::digest(&uuids));
@@ -202,7 +194,7 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
 
     let canister_id = crate::asset_manager::get_asset_canister();
     let full_url = canister_id.to_string() + "/uploads/default_user.jpeg";
-    let key = "/uploads/".to_owned()+&caller.to_string()+"_user.jpeg";
+    let key = "/uploads/".to_owned() + &caller.to_string() + "_user.jpeg";
 
     fn default_profile_picture(full_url: &str) -> Vec<u8> {
         // base64::decode(DEFAULT_USER_AVATAR_BASE64).expect("Failed to decode base64 image")
@@ -213,21 +205,21 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
 
     if info_with_default.profile_picture.is_none() {
         info_with_default.profile_picture = Some(default_profile_picture(&full_url));
-    }else{
-        let arg = StoreArg{
+    } else {
+        let arg = StoreArg {
             key: key.clone(),
             content_type: "image/*".to_string(),
             content_encoding: "identity".to_string(),
             content: ByteBuf::from(info_with_default.profile_picture.clone().unwrap()),
             sha256: None,
         };
-        let (result,): ((),) = call(canister_id, "store", (arg, )).await.unwrap();
-        info_with_default.profile_picture = Some((canister_id.to_string()+&key).as_bytes().to_vec());
+        let (result,): ((),) = call(canister_id, "store", (arg,)).await.unwrap();
+        info_with_default.profile_picture =
+            Some((canister_id.to_string() + &key).as_bytes().to_vec());
     }
 
     //convert_to_lowercase
     info_with_default.type_of_profile = info_with_default.type_of_profile.map(|s| s.to_lowercase());
-
 
     let user_info_internal = UserInfoInternal {
         uid: new_id.clone(),
@@ -300,12 +292,12 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
     format!("User registered successfully with ID: {}", new_id)
 }
 
-// #[query]
+// #[query(guard = "is_user_anonymous")]
 // pub fn get_role_status() -> Vec<Role> {
 //     ROLE_STATUS_ARRAY.with(|r| r.borrow().get(&caller()).expect("couldn't get role status array").clone())
 // }
 
-// #[query]
+// #[query(guard = "is_user_anonymous")]
 // pub fn get_role_status() -> Vec<Role> {
 //     ROLE_STATUS_ARRAY.with(|r|{
 
@@ -320,7 +312,10 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
 //  )
 // }
 
-pub async fn update_data_for_roles(principal_id: Principal, user_data: UserInformation) -> Result<(), String> {
+pub async fn update_data_for_roles(
+    principal_id: Principal,
+    user_data: UserInformation,
+) -> Result<(), String> {
     let roles = get_roles_for_principal(principal_id);
     for role in roles {
         match role.name.as_str() {
@@ -333,12 +328,16 @@ pub async fn update_data_for_roles(principal_id: Principal, user_data: UserInfor
     }
     Ok(())
 }
-#[update]
+#[update(guard = "is_user_anonymous")]
 async fn update_user_data(user_id: Principal, user_data: UserInformation) -> Result<(), String> {
     mutate_state(|state| {
-        if let Some(Candid(mut user_info_internal)) = state.user_storage.get(&StoredPrincipal(user_id)) {
+        if let Some(Candid(mut user_info_internal)) =
+            state.user_storage.get(&StoredPrincipal(user_id))
+        {
             user_info_internal.params = user_data;
-            state.user_storage.insert(StoredPrincipal(user_id), Candid(user_info_internal));
+            state
+                .user_storage
+                .insert(StoredPrincipal(user_id), Candid(user_info_internal));
             Ok(())
         } else {
             Err("User not found. Please register before updating.".to_string())
@@ -346,7 +345,10 @@ async fn update_user_data(user_id: Principal, user_data: UserInformation) -> Res
     })
 }
 
-async fn update_project_data(principal: Principal, user_data: UserInformation) -> Result<(), String> {
+async fn update_project_data(
+    principal: Principal,
+    user_data: UserInformation,
+) -> Result<(), String> {
     APPLICATION_FORM.with(|app_form| {
         let mut app_form = app_form.borrow_mut();
         if let Some(projects) = app_form.get_mut(&principal) {
@@ -384,7 +386,7 @@ async fn update_vc_data(user_id: Principal, user_data: UserInformation) -> Resul
     })
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_roles_for_principal(principal_id: Principal) -> Vec<Role> {
     read_state(|state| {
         if let Some(Candid(role_status)) = state.role_status.get(&StoredPrincipal(principal_id)) {
@@ -424,7 +426,7 @@ pub fn get_roles_for_principal(principal_id: Principal) -> Vec<Role> {
     })
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_role_status() -> Vec<Role> {
     read_state(|state| {
         if let Some(Candid(role_status)) = state.role_status.get(&StoredPrincipal(caller())) {
@@ -464,7 +466,7 @@ pub fn get_role_status() -> Vec<Role> {
     })
 }
 
-// #[update]
+// #[update(guard = "is_user_anonymous")]
 // pub fn switch_role(role : String, status: String){
 //     ROLE_STATUS_ARRAY.with(|status_arr|{
 //         let mut status_arr = status_arr.borrow_mut();
@@ -477,7 +479,7 @@ pub fn get_role_status() -> Vec<Role> {
 //     });
 // }
 
-#[update]
+#[update(guard = "is_user_anonymous")]
 pub fn switch_role(role_to_switch: String, new_status: String) {
     mutate_state(|state| {
         let caller_id = StoredPrincipal(caller());
@@ -514,36 +516,39 @@ pub fn switch_role(role_to_switch: String, new_status: String) {
             }
         } else {
             // Insert default roles if the user does not have any roles
-            state.role_status.insert(caller_id.clone(), Candid(vec![
-                Role {
-                    name: "user".to_string(),
-                    status: "default".to_string(),
-                    requested_on: None,
-                    approved_on: None,
-                    rejected_on: None,
-                },
-                Role {
-                    name: "project".to_string(),
-                    status: "default".to_string(),
-                    requested_on: None,
-                    approved_on: None,
-                    rejected_on: None,
-                },
-                Role {
-                    name: "mentor".to_string(),
-                    status: "default".to_string(),
-                    requested_on: None,
-                    approved_on: None,
-                    rejected_on: None,
-                },
-                Role {
-                    name: "vc".to_string(),
-                    status: "default".to_string(),
-                    requested_on: None,
-                    approved_on: None,
-                    rejected_on: None,
-                },
-            ]));
+            state.role_status.insert(
+                caller_id.clone(),
+                Candid(vec![
+                    Role {
+                        name: "user".to_string(),
+                        status: "default".to_string(),
+                        requested_on: None,
+                        approved_on: None,
+                        rejected_on: None,
+                    },
+                    Role {
+                        name: "project".to_string(),
+                        status: "default".to_string(),
+                        requested_on: None,
+                        approved_on: None,
+                        rejected_on: None,
+                    },
+                    Role {
+                        name: "mentor".to_string(),
+                        status: "default".to_string(),
+                        requested_on: None,
+                        approved_on: None,
+                        rejected_on: None,
+                    },
+                    Role {
+                        name: "vc".to_string(),
+                        status: "default".to_string(),
+                        requested_on: None,
+                        approved_on: None,
+                        rejected_on: None,
+                    },
+                ]),
+            );
         }
     });
 }
@@ -605,7 +610,7 @@ pub fn get_user_info_for_testimonial() -> Option<UserInformation> {
     })
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_user_info_struct() -> Option<UserInformation> {
     let caller = StoredPrincipal(caller());
 
@@ -617,7 +622,7 @@ pub fn get_user_info_struct() -> Option<UserInformation> {
     })
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_member_id() -> String {
     let caller = StoredPrincipal(caller());
 
@@ -630,7 +635,7 @@ pub fn get_member_id() -> String {
     })
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_users_with_all_info() -> UserInfoInternal {
     let caller = StoredPrincipal(caller());
 
@@ -649,7 +654,7 @@ pub struct PaginationUser {
     page_size: usize,
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn list_all_users(pagination: PaginationUser) -> Vec<UserInformation> {
     read_state(|state| {
         let user_storage = &state.user_storage;
@@ -669,7 +674,7 @@ pub fn list_all_users(pagination: PaginationUser) -> Vec<UserInformation> {
 
 pub fn delete_user() -> std::string::String {
     let caller = caller();
-    
+
     mutate_state(|state| {
         let user_storage = &mut state.user_storage;
         if let Some(mut founder) = user_storage.get(&StoredPrincipal(caller)) {
@@ -725,7 +730,6 @@ pub async fn update_user(info: UserInformation) -> std::string::String {
 
     result
 }
-
 
 // pub fn pre_upgrade_user_modules() {
 //     USER_STORAGE.with(|user_storage| {
@@ -788,14 +792,17 @@ pub fn get_user_info_by_principal(caller: Principal) -> Result<UserInformation, 
     })
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_user_info_using_principal(caller: Principal) -> Option<UserInfoInternal> {
     read_state(|state| {
-        state.user_storage.get(&StoredPrincipal(caller)).map(|candid| candid.0.clone())
+        state
+            .user_storage
+            .get(&StoredPrincipal(caller))
+            .map(|candid| candid.0.clone())
     })
 }
 
-#[update]
+#[update(guard = "is_user_anonymous")]
 fn add_testimonial(message: String) -> String {
     let principal_id = caller();
 
@@ -812,8 +819,13 @@ fn add_testimonial(message: String) -> String {
                 .user_testimonial
                 .get(&StoredPrincipal(principal_id))
                 .unwrap_or_else(|| {
-                    state.user_testimonial.insert(StoredPrincipal(principal_id), Candid(Vec::new()));
-                    state.user_testimonial.get(&StoredPrincipal(principal_id)).unwrap()
+                    state
+                        .user_testimonial
+                        .insert(StoredPrincipal(principal_id), Candid(Vec::new()));
+                    state
+                        .user_testimonial
+                        .get(&StoredPrincipal(principal_id))
+                        .unwrap()
                 });
             testimonial_list.0.push(testimony);
         });
@@ -824,8 +836,7 @@ fn add_testimonial(message: String) -> String {
     }
 }
 
-
-#[query]
+#[query(guard = "is_user_anonymous")]
 fn get_testimonials(principal_id: Principal) -> Result<Vec<Testimonial>, &'static str> {
     read_state(|state| {
         state
@@ -836,7 +847,7 @@ fn get_testimonials(principal_id: Principal) -> Result<Vec<Testimonial>, &'stati
     })
 }
 
-// #[query]
+// #[query(guard = "is_user_anonymous")]
 // fn get_latest_testimonials(principal_id: Principal) -> Result<Vec<Testimonial>, &'static str>{
 //     USER_TESTIMONIAL.with(|registry| {
 //         let registry = registry.borrow();
@@ -850,7 +861,7 @@ fn get_testimonials(principal_id: Principal) -> Result<Vec<Testimonial>, &'stati
 //     })
 // }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 fn get_latest_testimonials() -> Vec<Testimonial> {
     read_state(|state| {
         let mut testimonials = Vec::new();
@@ -862,7 +873,7 @@ fn get_latest_testimonials() -> Vec<Testimonial> {
     })
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 fn get_review(principal_id: Principal) -> Result<Vec<Review>, &'static str> {
     let principal_id_stored = StoredPrincipal(principal_id);
     read_state(|state| {
@@ -874,7 +885,7 @@ fn get_review(principal_id: Principal) -> Result<Vec<Review>, &'static str> {
     })
 }
 
-#[update]
+#[update(guard = "is_user_anonymous")]
 fn add_review(rating: f32, message: String) -> String {
     let principal_id = ic_cdk::caller();
     let principal_id_stored = StoredPrincipal(principal_id);
@@ -899,7 +910,9 @@ fn add_review(rating: f32, message: String) -> String {
         match user_ratings {
             Some(mut ratings) => ratings.0.push(review),
             None => {
-                state.user_rating.insert(principal_id_stored, Candid(vec![review]));
+                state
+                    .user_rating
+                    .insert(principal_id_stored, Candid(vec![review]));
             }
         }
     });
@@ -909,25 +922,26 @@ fn add_review(rating: f32, message: String) -> String {
 
 //new_additions
 
-
 #[derive(CandidType)]
 pub struct UserType {
     pub id: i32,
     pub role_type: String,
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn type_of_user_profile() -> Vec<UserType> {
-
-    vec![UserType {
-        id: 1,
-        role_type: "Individual".to_string(),
-    },UserType{
-        id :2,
-        role_type : "DAO".to_string()
-    },UserType{
-        id :2,
-        role_type : "Company".to_string()
-    }
+    vec![
+        UserType {
+            id: 1,
+            role_type: "Individual".to_string(),
+        },
+        UserType {
+            id: 2,
+            role_type: "DAO".to_string(),
+        },
+        UserType {
+            id: 2,
+            role_type: "Company".to_string(),
+        },
     ]
 }

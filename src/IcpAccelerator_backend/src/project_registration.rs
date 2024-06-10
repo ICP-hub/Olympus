@@ -1,33 +1,33 @@
 use crate::mentor::MentorProfile;
 
-use crate::state_handler::{read_state, StoredPrincipal, mutate_state, Candid};
+use crate::state_handler::{mutate_state, read_state, Candid, StoredPrincipal};
 use crate::user_module::*;
 
 use crate::ratings::{RatingAverages, RatingSystem};
 use crate::user_module::{UserInfoInternal, UserInformation};
 
 use crate::admin::send_approval_request;
+use crate::is_user_anonymous;
 use crate::ratings::calculate_average_api;
 use crate::vc_registration::VentureCapitalist;
 use bincode::{self, DefaultOptions, Options};
 use candid::{CandidType, Principal};
+use ic_cdk::api::call::call;
 use ic_cdk::api::caller;
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::api::stable::{StableReader, StableWriter};
 use ic_cdk::api::time;
 use ic_cdk::storage;
 use ic_cdk_macros::*;
+use ic_certified_assets::types::Key;
 use ic_stable_structures::vec;
 use serde::{Deserialize, Serialize};
+use serde_bytes::ByteBuf;
 use serde_cbor::Value::Null;
 use sha2::{Digest, Sha256};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::io::Read;
-use ic_certified_assets::{types::Key};
-use serde_bytes::ByteBuf;
-use ic_cdk::api::call::call;
-
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct TeamMember {
     pub member_uid: String,
@@ -104,9 +104,9 @@ pub struct ProjectInfo {
     pub dapp_link: Option<String>,
     pub weekly_active_users: Option<u64>,
     pub revenue: Option<u64>,
-    pub is_your_project_registered : Option<bool>,
-    pub type_of_registration : Option<String>,
-    pub country_of_registration : Option<String>,
+    pub is_your_project_registered: Option<bool>,
+    pub type_of_registration: Option<String>,
+    pub country_of_registration: Option<String>,
 }
 
 impl ProjectInfo {
@@ -122,7 +122,7 @@ impl ProjectInfo {
         //         return Err("Field cannot be empty".into());
         //     }
         // }
-        
+
         // if let Some(ref multichain) = self.multichain {
         //     if multichain.trim().is_empty() {
         //         return Err("Field cannot be empty".into());
@@ -338,7 +338,6 @@ pub struct SpotlightDetails {
     pub approval_time: u64,
 }
 
-
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct AccessRequest {
     sender: Principal,
@@ -368,7 +367,6 @@ pub struct ProjectReview {
     tag: String,
     rating: u32,
 }
-
 
 #[derive(CandidType, Clone, Serialize, Deserialize)]
 pub struct ProjectRatingStruct {
@@ -456,7 +454,8 @@ thread_local! {
 pub fn pre_upgrade_project_registration() {
     PROJECT_ACCESS_NOTIFICATIONS.with(|data| {
         let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save PROJECT_ACCESS_NOTIFICATIONS");
+        ic_cdk::storage::stable_save((&cloned_data,))
+            .expect("Failed to save PROJECT_ACCESS_NOTIFICATIONS");
     });
     APPLICATION_FORM.with(|data| {
         let cloned_data = data.borrow().clone();
@@ -476,7 +475,8 @@ pub fn pre_upgrade_project_registration() {
     });
     PROJECT_ANNOUNCEMENTS.with(|data| {
         let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save PROJECT_ANNOUNCEMENTS");
+        ic_cdk::storage::stable_save((&cloned_data,))
+            .expect("Failed to save PROJECT_ANNOUNCEMENTS");
     });
     BLOG_POST.with(|data| {
         let cloned_data = data.borrow().clone();
@@ -484,19 +484,23 @@ pub fn pre_upgrade_project_registration() {
     });
     PROJECT_AWAITS_RESPONSE.with(|data| {
         let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save PROJECT_AWAITS_RESPONSE");
+        ic_cdk::storage::stable_save((&cloned_data,))
+            .expect("Failed to save PROJECT_AWAITS_RESPONSE");
     });
     DECLINED_PROJECT_REQUESTS.with(|data| {
         let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save DECLINED_PROJECT_REQUESTS");
+        ic_cdk::storage::stable_save((&cloned_data,))
+            .expect("Failed to save DECLINED_PROJECT_REQUESTS");
     });
     PENDING_PROJECT_UPDATES.with(|data| {
         let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save PENDING_PROJECT_UPDATES");
+        ic_cdk::storage::stable_save((&cloned_data,))
+            .expect("Failed to save PENDING_PROJECT_UPDATES");
     });
     DECLINED_PROJECT_UPDATES.with(|data| {
         let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save DECLINED_PROJECT_UPDATES");
+        ic_cdk::storage::stable_save((&cloned_data,))
+            .expect("Failed to save DECLINED_PROJECT_UPDATES");
     });
     POST_JOB.with(|data| {
         let cloned_data = data.borrow().clone();
@@ -524,20 +528,22 @@ pub fn pre_upgrade_project_registration() {
     });
     MONEY_ACCESS_REQUESTS.with(|data| {
         let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save MONEY_ACCESS_REQUESTS");
+        ic_cdk::storage::stable_save((&cloned_data,))
+            .expect("Failed to save MONEY_ACCESS_REQUESTS");
     });
     PRIVATE_DOCS_ACCESS_REQUESTS.with(|data| {
         let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save PRIVATE_DOCS_ACCESS_REQUESTS");
+        ic_cdk::storage::stable_save((&cloned_data,))
+            .expect("Failed to save PRIVATE_DOCS_ACCESS_REQUESTS");
     });
 }
 
 pub fn post_upgrade_project_registration() {
-    let (project_access_notifications,): (HashMap<String, Vec<ProjectNotification>>, ) =
+    let (project_access_notifications,): (HashMap<String, Vec<ProjectNotification>>,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore PROJECT_ACCESS_NOTIFICATIONS");
     PROJECT_ACCESS_NOTIFICATIONS.with(|data| *data.borrow_mut() = project_access_notifications);
 
-    let (application_form,): (ApplicationDetails, ) =
+    let (application_form,): (ApplicationDetails,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore APPLICATION_FORM");
     APPLICATION_FORM.with(|data| *data.borrow_mut() = application_form);
 
@@ -545,70 +551,69 @@ pub fn post_upgrade_project_registration() {
     //     ic_cdk::storage::stable_restore().expect("Failed to restore PROJECT_DETAILS");
     // PROJECT_DETAILS.with(|data| *data.borrow_mut() = project_details);
 
-    let (notifications,): (Notifications, ) =
+    let (notifications,): (Notifications,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore NOTIFICATIONS");
     NOTIFICATIONS.with(|data| *data.borrow_mut() = notifications);
 
-    let (owner_notifications,): (HashMap<Principal, Vec<NotificationForOwner>>, ) =
+    let (owner_notifications,): (HashMap<Principal, Vec<NotificationForOwner>>,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore OWNER_NOTIFICATIONS");
     OWNER_NOTIFICATIONS.with(|data| *data.borrow_mut() = owner_notifications);
 
-    let (project_announcements,): (ProjectAnnouncements, ) =
+    let (project_announcements,): (ProjectAnnouncements,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore PROJECT_ANNOUNCEMENTS");
     PROJECT_ANNOUNCEMENTS.with(|data| *data.borrow_mut() = project_announcements);
 
-    let (blog_post,): (BlogPost, ) =
+    let (blog_post,): (BlogPost,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore BLOG_POST");
     BLOG_POST.with(|data| *data.borrow_mut() = blog_post);
 
-    let (project_awaits_response,): (ProjectDetails, ) =
+    let (project_awaits_response,): (ProjectDetails,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore PROJECT_AWAITS_RESPONSE");
     PROJECT_AWAITS_RESPONSE.with(|data| *data.borrow_mut() = project_awaits_response);
 
-    let (declined_project_requests,): (ProjectDetails, ) =
+    let (declined_project_requests,): (ProjectDetails,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore DECLINED_PROJECT_REQUESTS");
     DECLINED_PROJECT_REQUESTS.with(|data| *data.borrow_mut() = declined_project_requests);
 
-    let (pending_project_updates,): (PendingDetails, ) =
+    let (pending_project_updates,): (PendingDetails,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore PENDING_PROJECT_UPDATES");
     PENDING_PROJECT_UPDATES.with(|data| *data.borrow_mut() = pending_project_updates);
 
-    let (declined_project_updates,): (DeclinedDetails, ) =
+    let (declined_project_updates,): (DeclinedDetails,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore DECLINED_PROJECT_UPDATES");
     DECLINED_PROJECT_UPDATES.with(|data| *data.borrow_mut() = declined_project_updates);
 
-    let (post_job,): (JobDetails, ) =
+    let (post_job,): (JobDetails,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore POST_JOB");
     POST_JOB.with(|data| *data.borrow_mut() = post_job);
 
-    let (job_type,): (Vec<String>, ) =
+    let (job_type,): (Vec<String>,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore JOB_TYPE");
     JOB_TYPE.with(|data| *data.borrow_mut() = job_type);
 
-    let (spotlight_projects,): (SpotlightProjects, ) =
+    let (spotlight_projects,): (SpotlightProjects,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore SPOTLIGHT_PROJECTS");
     SPOTLIGHT_PROJECTS.with(|data| *data.borrow_mut() = spotlight_projects);
 
-    let (money_access,): (HashMap<String, Vec<Principal>>, ) =
+    let (money_access,): (HashMap<String, Vec<Principal>>,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore MONEY_ACCESS");
     MONEY_ACCESS.with(|data| *data.borrow_mut() = money_access);
 
-    let (private_docs_access,): (HashMap<String, Vec<Principal>>, ) =
+    let (private_docs_access,): (HashMap<String, Vec<Principal>>,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore PRIVATE_DOCS_ACCESS");
     PRIVATE_DOCS_ACCESS.with(|data| *data.borrow_mut() = private_docs_access);
 
-    let (project_rating,): (HashMap<String, Vec<(Principal, ProjectReview)>>, ) =
+    let (project_rating,): (HashMap<String, Vec<(Principal, ProjectReview)>>,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore PROJECT_RATING");
     PROJECT_RATING.with(|data| *data.borrow_mut() = project_rating);
 
-    let (money_access_requests,): (MoneyAccess, ) =
+    let (money_access_requests,): (MoneyAccess,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore MONEY_ACCESS_REQUESTS");
     MONEY_ACCESS_REQUESTS.with(|data| *data.borrow_mut() = money_access_requests);
 
-    let (private_docs_access_requests,): (PrivateDocsAccess, ) =
+    let (private_docs_access_requests,): (PrivateDocsAccess,) =
         ic_cdk::storage::stable_restore().expect("Failed to restore PRIVATE_DOCS_ACCESS_REQUESTS");
     PRIVATE_DOCS_ACCESS_REQUESTS.with(|data| *data.borrow_mut() = private_docs_access_requests);
-
 }
 
 pub async fn create_project(info: ProjectInfo) -> String {
@@ -632,9 +637,7 @@ pub async fn create_project(info: ProjectInfo) -> String {
 
     // Check if the caller has already registered a project or has one awaiting response
     let already_registered = read_state(|state| {
-        state
-            .project_storage
-            .contains_key(&StoredPrincipal(caller))
+        state.project_storage.contains_key(&StoredPrincipal(caller))
             || state
                 .project_awaits_response
                 .contains_key(&StoredPrincipal(caller))
@@ -698,87 +701,89 @@ pub async fn create_project(info: ProjectInfo) -> String {
     // let user_data_for_updation = info.clone();
     // crate::user_module::update_data_for_roles(caller, user_data_for_updation.user_data).await;
 
-
     //let info_clone = info.clone();
     //let user_uid = crate::user_module::update_user(info_clone.user_data).await;
     match info.validate() {
-    Ok(_)=>{let uuids = raw_rand().await.unwrap().0;
-    let uid = format!("{:x}", Sha256::digest(&uuids));
-    let new_id = uid.clone().to_string();
+        Ok(_) => {
+            let uuids = raw_rand().await.unwrap().0;
+            let uid = format!("{:x}", Sha256::digest(&uuids));
+            let new_id = uid.clone().to_string();
 
-    let canister_id = crate::asset_manager::get_asset_canister();
-    let full_url_logo = canister_id.to_string() + "/uploads/default_project_logo.jpeg";
-    let key_logo = "/uploads/".to_owned()+&caller.to_string()+"_project_logo.jpeg";
+            let canister_id = crate::asset_manager::get_asset_canister();
+            let full_url_logo = canister_id.to_string() + "/uploads/default_project_logo.jpeg";
+            let key_logo = "/uploads/".to_owned() + &caller.to_string() + "_project_logo.jpeg";
 
-    let full_url_cover = canister_id.to_string() + "/uploads/default_project_cover.jpeg";
-    let key_cover = "/uploads/".to_owned()+&caller.to_string()+"_project_cover.jpeg";
+            let full_url_cover = canister_id.to_string() + "/uploads/default_project_cover.jpeg";
+            let key_cover = "/uploads/".to_owned() + &caller.to_string() + "_project_cover.jpeg";
 
-    fn default_profile_picture(full_url: &str) -> Vec<u8> {
-        // base64::decode(DEFAULT_USER_AVATAR_BASE64).expect("Failed to decode base64 image")
-        full_url.as_bytes().to_vec()
+            fn default_profile_picture(full_url: &str) -> Vec<u8> {
+                // base64::decode(DEFAULT_USER_AVATAR_BASE64).expect("Failed to decode base64 image")
+                full_url.as_bytes().to_vec()
+            }
+
+            let mut info_with_default = info.clone();
+
+            if info_with_default.project_logo.is_none() {
+                info_with_default.project_logo = Some(default_profile_picture(&full_url_logo));
+            } else {
+                let arg_logo = StoreArg {
+                    key: key_logo.clone(),
+                    content_type: "image/*".to_string(),
+                    content_encoding: "identity".to_string(),
+                    content: ByteBuf::from(info_with_default.project_logo.clone().unwrap()),
+                    sha256: None,
+                };
+                let (result,): ((),) = call(canister_id, "store", (arg_logo,)).await.unwrap();
+                info_with_default.project_logo =
+                    Some((canister_id.to_string() + &key_logo).as_bytes().to_vec());
+            }
+
+            if info_with_default.project_cover.is_none() {
+                info_with_default.project_cover = Some(default_profile_picture(&full_url_cover));
+            } else {
+                let arg_cover = StoreArg {
+                    key: key_cover.clone(),
+                    content_type: "image/*".to_string(),
+                    content_encoding: "identity".to_string(),
+                    content: ByteBuf::from(info_with_default.project_cover.clone().unwrap()),
+                    sha256: None,
+                };
+                let (result,): ((),) = call(canister_id, "store", (arg_cover,)).await.unwrap();
+                info_with_default.project_cover =
+                    Some((canister_id.to_string() + &key_cover).as_bytes().to_vec());
+            }
+
+            let new_project = ProjectInfoInternal {
+                params: info_with_default,
+                uid: new_id,
+                is_active: true,
+                is_verified: false,
+                creation_date: time(),
+            };
+
+            mutate_state(|state| {
+                state
+                    .project_awaits_response
+                    .insert(StoredPrincipal(caller), Candid(new_project.clone()));
+            });
+
+            let res = send_approval_request(
+                info.user_data.profile_picture.unwrap_or_else(|| Vec::new()),
+                info.user_data.full_name,
+                info.user_data.country,
+                info.project_area_of_focus,
+                "project".to_string(),
+                info.user_data.bio.unwrap_or("no bio".to_string()),
+            )
+            .await;
+
+            format!("{}", res)
+        }
+        Err(e) => format!("Validation error: {}", e),
     }
-
-    let mut info_with_default = info.clone();
-
-    if info_with_default.project_logo.is_none() {
-        info_with_default.project_logo = Some(default_profile_picture(&full_url_logo));
-    }else{
-        let arg_logo = StoreArg{
-            key: key_logo.clone(),
-            content_type: "image/*".to_string(),
-            content_encoding: "identity".to_string(),
-            content: ByteBuf::from(info_with_default.project_logo.clone().unwrap()),
-            sha256: None,
-        };
-        let (result,): ((),) = call(canister_id, "store", (arg_logo, )).await.unwrap();
-        info_with_default.project_logo = Some((canister_id.to_string()+&key_logo).as_bytes().to_vec());
-    }
-
-    if info_with_default.project_cover.is_none() {
-        info_with_default.project_cover = Some(default_profile_picture(&full_url_cover));
-    }else{
-        let arg_cover = StoreArg{
-            key: key_cover.clone(),
-            content_type: "image/*".to_string(),
-            content_encoding: "identity".to_string(),
-            content: ByteBuf::from(info_with_default.project_cover.clone().unwrap()),
-            sha256: None,
-        };
-        let (result,): ((),) = call(canister_id, "store", (arg_cover, )).await.unwrap();
-        info_with_default.project_cover = Some((canister_id.to_string()+&key_cover).as_bytes().to_vec());
-    }
-
-    let new_project = ProjectInfoInternal {
-        params: info_with_default,
-        uid: new_id,
-        is_active: true,
-        is_verified: false,
-        creation_date: time(),
-    };
-
-
-    mutate_state(|state| {
-        state
-            .project_awaits_response
-            .insert(StoredPrincipal(caller), Candid(new_project.clone()));
-    });
-
-
-    let res = send_approval_request(
-        info.user_data.profile_picture.unwrap_or_else(|| Vec::new()),
-        info.user_data.full_name,
-        info.user_data.country,
-        info.project_area_of_focus,
-        "project".to_string(),
-        info.user_data.bio.unwrap_or("no bio".to_string()),
-    )
-    .await;
-
-    format!("{}", res)}
-        Err(e) => format!("Validation error: {}", e), }
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_project_info_using_principal(caller: Principal) -> Option<ProjectInfoInternal> {
     read_state(|state| {
         state
@@ -788,7 +793,7 @@ pub fn get_project_info_using_principal(caller: Principal) -> Option<ProjectInfo
     })
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_project_awaiting_info_using_principal(caller: Principal) -> Option<ProjectInfoInternal> {
     read_state(|state| {
         state
@@ -798,7 +803,7 @@ pub fn get_project_awaiting_info_using_principal(caller: Principal) -> Option<Pr
     })
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_project_declined_info_using_principal(caller: Principal) -> Option<ProjectInfoInternal> {
     read_state(|state| {
         state
@@ -825,7 +830,7 @@ pub fn get_projects_for_caller() -> Vec<ProjectInfo> {
 }
 
 //get_my_project; firstly created project || all_pub_plus_private_info
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_my_project() -> ProjectInfoInternal {
     let caller = ic_cdk::caller();
     read_state(|state| {
@@ -838,7 +843,7 @@ pub fn get_my_project() -> ProjectInfoInternal {
 }
 
 // all created projects
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_projects_with_all_info() -> Vec<ProjectInfoInternal> {
     let caller = ic_cdk::caller();
     read_state(|state| {
@@ -850,7 +855,7 @@ pub fn get_projects_with_all_info() -> Vec<ProjectInfoInternal> {
     })
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_project_id() -> String {
     let caller = ic_cdk::caller();
     read_state(|state| {
@@ -875,7 +880,7 @@ pub fn find_project_by_id(project_id: &str) -> Option<ProjectInfoInternal> {
 }
 
 //newbie api shows restricted info!
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_project_details_for_mentor_and_investor(
     project_id: String,
 ) -> ProjectPublicInfoInternal {
@@ -926,11 +931,8 @@ pub fn get_project_details_for_mentor_and_investor(
     project_internal
 }
 
-
-#[query]
-pub fn get_project_public_information_using_id(
-    project_id: String,
-) -> ProjectPublicInfoInternal {
+#[query(guard = "is_user_anonymous")]
+pub fn get_project_public_information_using_id(project_id: String) -> ProjectPublicInfoInternal {
     let project_details = find_project_by_id(project_id.as_str()).expect("project not found");
     let project_id = project_id.to_string().clone();
 
@@ -972,13 +974,13 @@ pub fn get_project_public_information_using_id(
         uid: project_details.uid,
         is_active: project_details.is_active,
         is_verified: project_details.is_verified,
-        creation_date: project_details.creation_date
+        creation_date: project_details.creation_date,
     };
 
     project_internal
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn list_all_projects_for_admin() -> HashMap<Principal, ProjectVecWithRoles> {
     read_state(|state| {
         let mut project_with_roles_map: HashMap<Principal, ProjectVecWithRoles> = HashMap::new();
@@ -1012,7 +1014,7 @@ pub struct ListAllProjects {
     overall_average: Option<f64>,
 }
 
-// #[query]
+// #[query(guard = "is_user_anonymous")]
 // pub fn list_all_projects() -> Vec<ListAllProjects> {
 //     APPLICATION_FORM.with(|projects: &RefCell<ApplicationDetails>| {
 //         let projects = projects.borrow();
@@ -1036,8 +1038,7 @@ pub struct ListAllProjects {
 //     })
 // }
 
-
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn list_all_projects() -> Vec<ListAllProjects> {
     // Access the global state to retrieve the projects storage
     read_state(|state| {
@@ -1089,8 +1090,10 @@ pub struct PaginationParams {
     pub page_size: usize,
 }
 
-#[query]
-pub fn list_all_projects_with_pagination(pagination_params: PaginationParams) -> Vec<ListAllProjects> {
+#[query(guard = "is_user_anonymous")]
+pub fn list_all_projects_with_pagination(
+    pagination_params: PaginationParams,
+) -> Vec<ListAllProjects> {
     read_state(|state| {
         let projects = &state.project_storage;
         let mut list_all_projects: Vec<ListAllProjects> = Vec::new();
@@ -1111,7 +1114,10 @@ pub fn list_all_projects_with_pagination(pagination_params: PaginationParams) ->
             }
         }
 
-        let start = std::cmp::min((pagination_params.page - 1) * pagination_params.page_size, list_all_projects.len());
+        let start = std::cmp::min(
+            (pagination_params.page - 1) * pagination_params.page_size,
+            list_all_projects.len(),
+        );
         let end = std::cmp::min(start + pagination_params.page_size, list_all_projects.len());
 
         list_all_projects[start..end].to_vec()
@@ -1122,9 +1128,12 @@ pub async fn update_project(project_id: String, updated_project: ProjectInfo) ->
     let caller = ic_cdk::caller();
 
     let is_owner = read_state(|state| {
-        state.project_storage.iter().any(|(stored_principal, project_infos)| {
-            stored_principal.0 == caller && project_infos.0.iter().any(|p| p.uid == project_id)
-        })
+        state
+            .project_storage
+            .iter()
+            .any(|(stored_principal, project_infos)| {
+                stored_principal.0 == caller && project_infos.0.iter().any(|p| p.uid == project_id)
+            })
     });
 
     if !is_owner {
@@ -1132,7 +1141,9 @@ pub async fn update_project(project_id: String, updated_project: ProjectInfo) ->
     }
 
     let exists = read_state(|state| {
-        state.project_declined_request.contains_key(&StoredPrincipal(caller))
+        state
+            .project_declined_request
+            .contains_key(&StoredPrincipal(caller))
     });
 
     if exists {
@@ -1143,13 +1154,11 @@ pub async fn update_project(project_id: String, updated_project: ProjectInfo) ->
         return "Error: Only the project owner can request updates.".to_string();
     }
 
-    let original_info = read_state(|state| {
-        state.project_storage.get(&StoredPrincipal(caller))
-    });
+    let original_info = read_state(|state| state.project_storage.get(&StoredPrincipal(caller)));
 
     let mut approved_timestamp = 0;
     let mut rejected_timestamp = 0;
-    
+
     mutate_state(|state| {
         if let Some(mut role_status) = state.role_status.get(&StoredPrincipal(caller)) {
             if let Some(role) = role_status.0.iter_mut().find(|r| r.name == "project") {
@@ -1168,24 +1177,30 @@ pub async fn update_project(project_id: String, updated_project: ProjectInfo) ->
         Some(orig_infos) => {
             if let Some(orig_info) = orig_infos.0.iter().find(|p| p.uid == project_id) {
                 mutate_state(|state| {
-                    state.pending_project_details.insert(orig_info.uid.clone(), Candid(ProjectUpdateRequest {
-                        project_id: project_id.clone(),
-                        original_info: orig_info.params.clone(),  
-                        updated_info: updated_project.clone(),
-                        principal: caller,
-                        accepted_at: approved_timestamp,
-                        rejected_at: rejected_timestamp,
+                    state.pending_project_details.insert(
+                        orig_info.uid.clone(),
+                        Candid(ProjectUpdateRequest {
+                            project_id: project_id.clone(),
+                            original_info: orig_info.params.clone(),
+                            updated_info: updated_project.clone(),
+                            principal: caller,
+                            accepted_at: approved_timestamp,
+                            rejected_at: rejected_timestamp,
 
-                        sent_at: time(),
-                    }));
+                            sent_at: time(),
+                        }),
+                    );
                 });
             }
-        },
+        }
         None => return "No original project info found.".to_string(),
     }
 
     let res = send_approval_request(
-        updated_project.user_data.profile_picture.unwrap_or_else(Vec::new),
+        updated_project
+            .user_data
+            .profile_picture
+            .unwrap_or_else(Vec::new),
         updated_project.user_data.full_name,
         updated_project.user_data.country,
         updated_project.project_area_of_focus,
@@ -1269,7 +1284,9 @@ pub fn get_notifications_for_caller() -> Vec<NotificationProject> {
     let caller_principal = ic_cdk::caller();
 
     read_state(|state| {
-        state.notifications.get(&StoredPrincipal(caller_principal))
+        state
+            .notifications
+            .get(&StoredPrincipal(caller_principal))
             .map_or_else(Vec::new, |notifications| notifications.0.clone())
     })
 }
@@ -1289,14 +1306,19 @@ pub fn get_notifications_for_owner() -> Vec<NotificationForOwner> {
     let owner_principal = ic_cdk::caller();
 
     read_state(|state| {
-        state.owner_notification.get(&StoredPrincipal(owner_principal))
+        state
+            .owner_notification
+            .get(&StoredPrincipal(owner_principal))
             .map_or_else(Vec::new, |notifications| notifications.0.clone())
     })
 }
 
 pub async fn update_team_member(project_id: &str, member_principal_id: Principal) -> String {
     let member_uid = read_state(|state| {
-        match state.user_storage.get(&StoredPrincipal(member_principal_id)) {
+        match state
+            .user_storage
+            .get(&StoredPrincipal(member_principal_id))
+        {
             Some(user_internal) => user_internal.0.uid.clone(),
             None => panic!("You are not a user"),
         }
@@ -1360,7 +1382,7 @@ pub async fn update_team_member(project_id: &str, member_principal_id: Principal
     }
 }
 
-#[update]
+#[update(guard = "is_user_anonymous")]
 pub fn add_announcement(mut announcement_details: Announcements) -> String {
     let caller_id = caller();
 
@@ -1369,7 +1391,8 @@ pub fn add_announcement(mut announcement_details: Announcements) -> String {
     let project_id_exists = read_state(|state| {
         state.project_storage.iter().any(|(_, projects)| {
             projects
-                .0.iter()
+                .0
+                .iter()
                 .any(|project_info| project_info.uid == announcement_details.project_id)
         })
     });
@@ -1396,16 +1419,22 @@ pub fn add_announcement(mut announcement_details: Announcements) -> String {
             .project_announcement
             .get(&StoredPrincipal(caller_id))
             .unwrap_or_else(|| {
-                state.project_announcement.insert(StoredPrincipal(caller_id), Candid(Vec::new()));
-                state.project_announcement.get(&StoredPrincipal(caller_id)).unwrap()
+                state
+                    .project_announcement
+                    .insert(StoredPrincipal(caller_id), Candid(Vec::new()));
+                state
+                    .project_announcement
+                    .get(&StoredPrincipal(caller_id))
+                    .unwrap()
             })
-            .0.push(new_announcement);
+            .0
+            .push(new_announcement);
         format!("Announcement added successfully at {}", current_time)
     })
 }
 
 //for testing purpose
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_announcements() -> HashMap<Principal, Vec<AnnouncementsInternal>> {
     read_state(|state| {
         let mut hashmap = HashMap::new();
@@ -1417,9 +1446,9 @@ pub fn get_announcements() -> HashMap<Principal, Vec<AnnouncementsInternal>> {
     })
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_latest_announcements() -> HashMap<Principal, Vec<AnnouncementsInternal>> {
-   read_state(|state| {
+    read_state(|state| {
         let mut hashmap = HashMap::new();
         for (stored_principal, announcement_internals) in state.project_announcement.iter() {
             let principal = stored_principal.0.clone();
@@ -1431,13 +1460,16 @@ pub fn get_latest_announcements() -> HashMap<Principal, Vec<AnnouncementsInterna
     })
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_announcements_by_project_id(project_id: String) -> Vec<AnnouncementsInternal> {
     read_state(|state| {
-        state.project_announcement
+        state
+            .project_announcement
             .iter()
             .flat_map(|(_, announcements)| {
-                announcements.0.clone() // Clone the entire Vec<AnnouncementsInternal>
+                announcements
+                    .0
+                    .clone() // Clone the entire Vec<AnnouncementsInternal>
                     .into_iter()
                     .filter(|announcement| announcement.announcement_data.project_id == project_id)
             })
@@ -1445,17 +1477,22 @@ pub fn get_announcements_by_project_id(project_id: String) -> Vec<AnnouncementsI
     })
 }
 
-#[update]
+#[update(guard = "is_user_anonymous")]
 pub fn add_BlogPost(url: String) -> String {
     let caller_id = caller();
     let current_time = time();
 
     mutate_state(|state| {
         // Ensure the caller's blog post vector exists
-        let mut blog_posts = state.blog_post.get(&StoredPrincipal(caller_id)).unwrap_or_else(|| {
-            state.blog_post.insert(StoredPrincipal(caller_id.clone()), Candid(Vec::new()));
-            state.blog_post.get(&StoredPrincipal(caller_id)).unwrap()
-        });
+        let mut blog_posts = state
+            .blog_post
+            .get(&StoredPrincipal(caller_id))
+            .unwrap_or_else(|| {
+                state
+                    .blog_post
+                    .insert(StoredPrincipal(caller_id.clone()), Candid(Vec::new()));
+                state.blog_post.get(&StoredPrincipal(caller_id)).unwrap()
+            });
 
         // Add the new blog post
         let new_blog = Blog {
@@ -1469,16 +1506,18 @@ pub fn add_BlogPost(url: String) -> String {
 }
 
 //for testing purpose
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_blog_post() -> HashMap<Principal, Vec<Blog>> {
     read_state(|state| {
-        state.blog_post.iter().map(|(principal, candid_vec)| {
-            (principal.0, candid_vec.0.clone())
-        }).collect()
+        state
+            .blog_post
+            .iter()
+            .map(|(principal, candid_vec)| (principal.0, candid_vec.0.clone()))
+            .collect()
     })
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn filter_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
     read_state(|projects| {
         projects
@@ -1522,18 +1561,14 @@ pub fn filter_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
                         })
                 });
 
-                country_match
-                    && rating_match
-                    && focus_match
-                    && mentor_match
-                    && vc_match
+                country_match && rating_match && focus_match && mentor_match && vc_match
             })
             .map(|project_internal| project_internal.params.clone())
             .collect()
     })
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUserInternal> {
     let announcements_project = get_announcements();
     let jobs_opportunity_posted = get_jobs_posted_by_project(project_id.clone());
@@ -1578,7 +1613,7 @@ pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUse
     })
 }
 
-#[update]
+#[update(guard = "is_user_anonymous")]
 pub fn make_project_active_inactive(p_id: Principal, project_id: String) -> String {
     let principal_id = caller();
     if p_id == principal_id || ic_cdk::api::is_controller(&principal_id) {
@@ -1685,7 +1720,6 @@ pub fn make_project_active_inactive(p_id: Principal, project_id: String) -> Stri
 //     }
 // }
 
-
 // pub fn get_dummy_jon_opportunity() -> Jobs {
 //     Jobs {
 //         title: ("Example Job Title".to_string()),
@@ -1699,7 +1733,7 @@ pub fn make_project_active_inactive(p_id: Principal, project_id: String) -> Stri
 //     }
 // }
 
-// #[query]
+// #[query(guard = "is_user_anonymous")]
 // pub fn get_dummy_data_for_project_details_for_users() -> ProjectInfoForUser {
 //     ProjectInfoForUser {
 //         date_of_joining: Some("2024-01-01".to_string()),
@@ -1716,7 +1750,7 @@ pub fn make_project_active_inactive(p_id: Principal, project_id: String) -> Stri
 //     }
 // }
 
-#[update]
+#[update(guard = "is_user_anonymous")]
 pub fn post_job(params: Jobs) -> String {
     let principal_id = ic_cdk::api::caller();
     let is_owner = read_state(|state| {
@@ -1724,7 +1758,8 @@ pub fn post_job(params: Jobs) -> String {
             .project_storage
             .iter()
             .any(|(owner_principal, projects)| {
-                owner_principal == StoredPrincipal(principal_id) && projects.0.iter().any(|p| p.uid == params.project_id)
+                owner_principal == StoredPrincipal(principal_id)
+                    && projects.0.iter().any(|p| p.uid == params.project_id)
             })
     });
 
@@ -1745,7 +1780,7 @@ pub fn post_job(params: Jobs) -> String {
                         project_desc: project_data_for_job.project_description.clone(),
                         project_logo: project_data_for_job.project_logo.clone(),
                     });
-                }  else {
+                } else {
                     state.post_job.insert(
                         StoredPrincipal(principal_id),
                         Candid(vec![JobsInternal {
@@ -1780,10 +1815,10 @@ pub fn get_jobs_for_project(project_id: String) -> Vec<JobsInternal> {
     })
 }
 
-// #[query]
+// #[query(guard = "is_user_anonymous")]
 // pub fn get_latest_jobs() -> Vec<Jobs> {
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_all_jobs() -> Vec<JobsInternal> {
     read_state(|state| {
         let mut all_jobs = Vec::new();
@@ -1800,7 +1835,7 @@ pub fn get_all_jobs() -> Vec<JobsInternal> {
     })
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_jobs_posted_by_project(project_id: String) -> Vec<JobsInternal> {
     read_state(|state| {
         let mut jobs_for_project = Vec::new();
@@ -1823,7 +1858,7 @@ pub struct JobCategory {
     name: String,
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_job_category() -> Vec<JobCategory> {
     vec![
         JobCategory {
@@ -1841,7 +1876,7 @@ pub fn get_job_category() -> Vec<JobCategory> {
     ]
 }
 
-#[update]
+#[update(guard = "is_user_anonymous")]
 pub async fn send_money_access_request(project_id: String) -> String {
     let caller = caller();
     let mut has_pending_request = false;
@@ -1851,7 +1886,8 @@ pub async fn send_money_access_request(project_id: String) -> String {
         if let Some(request_vec) = state.money_access_request.get(&StoredPrincipal(caller)) {
             // Iterate through the Vec<AccessRequest> to find a matching and pending project_id request
             has_pending_request = request_vec
-                .0.iter()
+                .0
+                .iter()
                 .any(|request| request.project_id == project_id && request.status == "pending");
         }
         has_pending_request
@@ -1880,7 +1916,10 @@ pub async fn send_money_access_request(project_id: String) -> String {
         if let Some(mut request_vec) = state.money_access_request.get(&StoredPrincipal(caller)) {
             request_vec.0.push(access_request.clone());
         } else {
-            state.money_access_request.insert(StoredPrincipal(caller), Candid(vec![access_request.clone()]));
+            state.money_access_request.insert(
+                StoredPrincipal(caller),
+                Candid(vec![access_request.clone()]),
+            );
         }
     });
 
@@ -1894,7 +1933,9 @@ pub async fn send_money_access_request(project_id: String) -> String {
         if let Some(mut notifications) = state.project_access_notifications.get(&project_id) {
             notifications.0.push(notification_to_send);
         } else {
-            state.project_access_notifications.insert(project_id.clone(), Candid(vec![notification_to_send]));
+            state
+                .project_access_notifications
+                .insert(project_id.clone(), Candid(vec![notification_to_send]));
         }
     });
 
@@ -1905,15 +1946,21 @@ pub async fn send_money_access_request(project_id: String) -> String {
 
 // }
 
-#[update]
+#[update(guard = "is_user_anonymous")]
 pub async fn send_private_docs_access_request(project_id: String) -> String {
     //sender
     let caller = caller();
 
     let has_pending_request = read_state(|state| {
-        if let Some(request_vec) = state.private_docs_access_request.get(&StoredPrincipal(caller)) {
+        if let Some(request_vec) = state
+            .private_docs_access_request
+            .get(&StoredPrincipal(caller))
+        {
             // Iterate through the Vec<AccessRequest> to find a matching and pending project_id request
-            request_vec.0.iter().any(|request| request.project_id == project_id && request.status == "pending")
+            request_vec
+                .0
+                .iter()
+                .any(|request| request.project_id == project_id && request.status == "pending")
         } else {
             false
         }
@@ -1939,12 +1986,18 @@ pub async fn send_private_docs_access_request(project_id: String) -> String {
 
     // Add request to the MONEY_ACCESS_REQUESTS hashmap
     mutate_state(|state| {
-        if let Some(mut request_vec) = state.private_docs_access_request.get(&StoredPrincipal(caller)) {
+        if let Some(mut request_vec) = state
+            .private_docs_access_request
+            .get(&StoredPrincipal(caller))
+        {
             // If the caller already has requests, append the new one
             request_vec.0.push(access_request.clone());
         } else {
             // If the caller doesn't have any requests yet, create a new vector
-            state.private_docs_access_request.insert(StoredPrincipal(caller.clone()), Candid(vec![access_request.clone()]));
+            state.private_docs_access_request.insert(
+                StoredPrincipal(caller.clone()),
+                Candid(vec![access_request.clone()]),
+            );
         }
     });
 
@@ -1958,156 +2011,174 @@ pub async fn send_private_docs_access_request(project_id: String) -> String {
         if let Some(mut notifications) = state.project_access_notifications.get(&project_id) {
             notifications.0.push(notification_to_send.clone());
         } else {
-            state.project_access_notifications.insert(project_id.clone(), Candid(vec![notification_to_send.clone()]));
+            state.project_access_notifications.insert(
+                project_id.clone(),
+                Candid(vec![notification_to_send.clone()]),
+            );
         }
     });
 
     "Your access request has been sent and is pending approval.".to_string()
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_all_pending_requests() -> Vec<ProjectNotification> {
     read_state(|state| {
         state
             .project_access_notifications
             .iter()
             .flat_map(|(_, notifications)| {
-                notifications.0.iter().filter_map(|notification| {
-                    match &notification.notification_type {
+                notifications
+                    .0
+                    .iter()
+                    .filter_map(|notification| match &notification.notification_type {
                         ProjectNotificationType::AccessRequest(access_request)
                             if access_request.status == "pending" =>
                         {
                             Some(notification.clone())
                         }
                         _ => None,
-                    }
-                }).collect::<Vec<_>>()
+                    })
+                    .collect::<Vec<_>>()
             })
             .collect()
     })
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_all_pending_docs_access_requests() -> Vec<ProjectNotification> {
     read_state(|state| {
         state
             .project_access_notifications
             .iter()
             .flat_map(|(_, notifications)| {
-                notifications.0.iter().filter_map(|notification| {
-                    match &notification.notification_type {
+                notifications
+                    .0
+                    .iter()
+                    .filter_map(|notification| match &notification.notification_type {
                         ProjectNotificationType::AccessRequest(access_request)
-                            if access_request.request_type == "private_docs_access" && access_request.status == "pending" =>
+                            if access_request.request_type == "private_docs_access"
+                                && access_request.status == "pending" =>
                         {
                             Some(notification.clone())
                         }
                         _ => None,
-                    }
-                }).collect::<Vec<_>>()
+                    })
+                    .collect::<Vec<_>>()
             })
             .collect()
     })
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_all_approved_docs_access_requests() -> Vec<ProjectNotification> {
     read_state(|state| {
         state
             .project_access_notifications
             .iter()
             .flat_map(|(_, notifications)| {
-                notifications.0.iter().filter_map(|notification| {
-                    match &notification.notification_type {
+                notifications
+                    .0
+                    .iter()
+                    .filter_map(|notification| match &notification.notification_type {
                         ProjectNotificationType::AccessRequest(access_request)
-                            if access_request.request_type == "private_docs_access" && access_request.status == "approved" =>
+                            if access_request.request_type == "private_docs_access"
+                                && access_request.status == "approved" =>
                         {
                             Some(notification.clone())
                         }
                         _ => None,
-                    }
-                }).collect::<Vec<_>>()
+                    })
+                    .collect::<Vec<_>>()
             })
             .collect()
     })
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_all_declined_docs_access_requests() -> Vec<ProjectNotification> {
     read_state(|state| {
         state
             .project_access_notifications
             .iter()
             .flat_map(|(_, notifications)| {
-                notifications.0.iter().filter_map(|notification| {
-                    match &notification.notification_type {
+                notifications
+                    .0
+                    .iter()
+                    .filter_map(|notification| match &notification.notification_type {
                         ProjectNotificationType::AccessRequest(access_request)
-                            if access_request.request_type == "private_docs_access" && access_request.status == "declined" =>
+                            if access_request.request_type == "private_docs_access"
+                                && access_request.status == "declined" =>
                         {
                             Some(notification.clone())
                         }
                         _ => None,
-                    }
-                }).collect::<Vec<_>>()
+                    })
+                    .collect::<Vec<_>>()
             })
             .collect()
     })
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_all_declined_requests() -> Vec<ProjectNotification> {
     read_state(|state| {
         state
             .project_access_notifications
             .iter()
             .flat_map(|(_, notifications)| {
-                notifications.0.iter().filter_map(|notification| {
-                    match &notification.notification_type {
+                notifications
+                    .0
+                    .iter()
+                    .filter_map(|notification| match &notification.notification_type {
                         ProjectNotificationType::AccessRequest(access_request)
                             if access_request.status == "declined" =>
                         {
                             Some(notification.clone())
                         }
                         _ => None,
-                    }
-                }).collect::<Vec<_>>()
+                    })
+                    .collect::<Vec<_>>()
             })
             .collect()
     })
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_all_approved_requests() -> Vec<ProjectNotification> {
     read_state(|state| {
         state
             .project_access_notifications
             .iter()
             .flat_map(|(_, notifications)| {
-                notifications.0.iter().filter_map(|notification| {
-                    match &notification.notification_type {
+                notifications
+                    .0
+                    .iter()
+                    .filter_map(|notification| match &notification.notification_type {
                         ProjectNotificationType::AccessRequest(access_request)
                             if access_request.status == "approved" =>
                         {
                             Some(notification.clone())
                         }
                         _ => None,
-                    }
-                }).collect::<Vec<_>>()
+                    })
+                    .collect::<Vec<_>>()
             })
             .collect()
     })
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_pending_money_requestes(project_id: String) -> Vec<ProjectNotification> {
-    read_state(|state| {
-        match state.project_access_notifications.get(&project_id) {
+    read_state(
+        |state| match state.project_access_notifications.get(&project_id) {
             Some(info) => info.0.iter().map(|notif| notif.clone()).collect(),
             None => Vec::new(),
-        }
-    })
+        },
+    )
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_dapp_link(project_id: String) -> String {
     match find_project_by_id(&project_id) {
         Some(project_data_internal) => match project_data_internal.params.dapp_link {
@@ -2134,12 +2205,14 @@ fn add_user_to_private_docs_access(project_id: String, user: Principal) {
         if let Some(mut access_list) = state.private_docs_access.get(&project_id) {
             access_list.0.push(user);
         } else {
-            state.private_docs_access.insert(project_id, Candid(vec![user]));
+            state
+                .private_docs_access
+                .insert(project_id, Candid(vec![user]));
         }
     });
 }
 
-#[update]
+#[update(guard = "is_user_anonymous")]
 pub async fn approve_money_access_request(project_id: String, sender_id: Principal) -> String {
     let mut request_found_and_updated = false;
 
@@ -2188,7 +2261,7 @@ pub async fn approve_money_access_request(project_id: String, sender_id: Princip
 // Placeholder for the function to add the sender's Principal to the money_access vector
 // Implement this function based on how your application manages the money_access data
 
-#[update]
+#[update(guard = "is_user_anonymous")]
 pub async fn approve_private_docs_access_request(
     project_id: String,
     sender_id: Principal,
@@ -2197,7 +2270,10 @@ pub async fn approve_private_docs_access_request(
 
     // Update the status in MONEY_ACCESS_REQUESTS
     mutate_state(|state| {
-        if let Some(mut request_vec) = state.private_docs_access_request.get(&StoredPrincipal(sender_id)) {
+        if let Some(mut request_vec) = state
+            .private_docs_access_request
+            .get(&StoredPrincipal(sender_id))
+        {
             for request in request_vec.0.iter_mut() {
                 if request.project_id == project_id && request.status == "pending" {
                     request.status = "approved".to_string();
@@ -2237,7 +2313,7 @@ pub async fn approve_private_docs_access_request(
     "Private docs access request approved successfully.".to_string()
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn access_money_details(project_id: String) -> Result<MoneyRaised, CustomError> {
     let caller = ic_cdk::api::caller();
 
@@ -2248,12 +2324,15 @@ pub fn access_money_details(project_id: String) -> Result<MoneyRaised, CustomErr
     });
 
     // Check if the caller is approved to access the money details for this project
-    let is_approved = is_owner || read_state(|state| {
-        state.money_access
-            .get(&project_id)
-            .map_or(false, |principals| principals.0.contains(&Principal::from(caller)))
-    });
-
+    let is_approved = is_owner
+        || read_state(|state| {
+            state
+                .money_access
+                .get(&project_id)
+                .map_or(false, |principals| {
+                    principals.0.contains(&Principal::from(caller))
+                })
+        });
 
     if !is_approved {
         return Err(CustomError {
@@ -2271,7 +2350,8 @@ pub fn access_money_details(project_id: String) -> Result<MoneyRaised, CustomErr
                         return Ok(money_raised.clone());
                     } else {
                         return Err(CustomError {
-                            message: "Money raised details not available for this project.".to_string(),
+                            message: "Money raised details not available for this project."
+                                .to_string(),
                             is_owner,
                         });
                     }
@@ -2291,7 +2371,7 @@ pub struct CustomError {
     is_owner: bool,
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn access_private_docs(project_id: String) -> Result<Vec<Docs>, CustomError> {
     let caller = ic_cdk::api::caller();
 
@@ -2301,11 +2381,15 @@ pub fn access_private_docs(project_id: String) -> Result<Vec<Docs>, CustomError>
         })
     });
 
-    let is_approved = is_owner || read_state(|state| {
-        state.private_docs_access
-            .get(&project_id)
-            .map_or(false, |principals| principals.0.contains(&Principal::from(caller)))
-    });
+    let is_approved = is_owner
+        || read_state(|state| {
+            state
+                .private_docs_access
+                .get(&project_id)
+                .map_or(false, |principals| {
+                    principals.0.contains(&Principal::from(caller))
+                })
+        });
 
     if !is_approved {
         return Err(CustomError {
@@ -2323,7 +2407,8 @@ pub fn access_private_docs(project_id: String) -> Result<Vec<Docs>, CustomError>
                         return Ok(private_docs.clone());
                     } else {
                         return Err(CustomError {
-                            message: "Private Docs details not available for this project.".to_string(),
+                            message: "Private Docs details not available for this project."
+                                .to_string(),
                             is_owner,
                         });
                     }
@@ -2337,7 +2422,7 @@ pub fn access_private_docs(project_id: String) -> Result<Vec<Docs>, CustomError>
     })
 }
 
-#[update]
+#[update(guard = "is_user_anonymous")]
 pub fn decline_money_access_request(project_id: String, sender_id: Principal) -> String {
     let mut request_found_and_updated = false;
 
@@ -2380,13 +2465,16 @@ pub fn decline_money_access_request(project_id: String, sender_id: Principal) ->
     "Money access request declined successfully.".to_string()
 }
 
-#[update]
+#[update(guard = "is_user_anonymous")]
 pub fn decline_private_docs_access_request(project_id: String, sender_id: Principal) -> String {
     let mut request_found_and_updated = false;
 
     // Update the status in PRIVATE_DOCS_ACCESS_REQUESTS
     mutate_state(|state| {
-        if let Some(mut request_vec) = state.private_docs_access_request.get(&StoredPrincipal(sender_id)) {
+        if let Some(mut request_vec) = state
+            .private_docs_access_request
+            .get(&StoredPrincipal(sender_id))
+        {
             for request in request_vec.0.iter_mut() {
                 if request.project_id == project_id && request.status == "pending" {
                     request.status = "declined".to_string();
@@ -2427,7 +2515,7 @@ pub fn check_project_exists(project_id: String) -> bool {
     find_project_by_id(&project_id).is_some()
 }
 
-#[update]
+#[update(guard = "is_user_anonymous")]
 pub fn add_project_rating(ratings: ProjectRatingStruct) -> Result<String, String> {
     let principal = caller(); // Assuming `caller()` correctly retrieves the principal of the caller
     let user_data = get_user_info().clone().unwrap();
@@ -2438,7 +2526,8 @@ pub fn add_project_rating(ratings: ProjectRatingStruct) -> Result<String, String
     if project_exists {
         // Check if the current user has already submitted a review for this project
         let already_rated = read_state(|state| {
-            state.project_rating
+            state
+                .project_rating
                 .get(&ratings.project_id)
                 .map_or(false, |reviews| {
                     reviews
@@ -2474,7 +2563,7 @@ pub fn add_project_rating(ratings: ProjectRatingStruct) -> Result<String, String
     }
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 fn get_project_ratings(
     project_id: String,
 ) -> Result<(Option<Vec<(Principal, ProjectReview)>>, f32, bool), String> {
@@ -2489,7 +2578,8 @@ fn get_project_ratings(
                 } else {
                     let sum_ratings: u32 = ratings.0.iter().map(|(_, review)| review.rating).sum();
                     let average_rating = sum_ratings as f32 / total_ratings;
-                    let caller_present = ratings.0.iter().any(|(principal, _)| principal == &caller);
+                    let caller_present =
+                        ratings.0.iter().any(|(principal, _)| principal == &caller);
                     (Some(ratings.0.clone()), average_rating, caller_present)
                 }
             }
@@ -2503,7 +2593,7 @@ fn get_project_ratings(
     }
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_frequent_reviewers() -> Vec<UserInfoInternal> {
     let mut review_count: HashMap<Principal, usize> = HashMap::new();
 
@@ -2529,9 +2619,6 @@ pub fn get_frequent_reviewers() -> Vec<UserInfoInternal> {
     frequent_reviewers
 }
 
-pub fn get_type_of_registration() -> Vec<String>{
-    vec![
-        "Company".to_string(),
-        "DAO".to_string()
-    ]
+pub fn get_type_of_registration() -> Vec<String> {
+    vec!["Company".to_string(), "DAO".to_string()]
 }

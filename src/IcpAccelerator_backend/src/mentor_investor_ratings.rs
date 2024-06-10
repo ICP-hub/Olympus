@@ -1,9 +1,9 @@
+use crate::is_user_anonymous;
 use crate::state_handler::*;
 use candid::{CandidType, Deserialize, Principal};
 use ic_cdk::api::time;
 use ic_cdk_macros::{query, update};
 use serde::Serialize;
-
 #[derive(Clone, CandidType, Deserialize, Debug, Serialize)]
 pub struct RatingMentorInvestor {
     pub value: f64,
@@ -19,7 +19,7 @@ pub struct TimestampedRatingMentorInvestor {
 // pub type IndividualRatings = HashMap<Principal, Vec<TimestampedRatingMentorInvestor>>;
 // pub type AverageRatingStorage = HashMap<Principal, f64>;
 
-#[update]
+#[update(guard = "is_user_anonymous")]
 pub fn update_mentor_ratings(principal_id: Principal, new_rating: RatingMentorInvestor) {
     let current_timestamp = time();
     mutate_state(|sys| {
@@ -34,7 +34,7 @@ pub fn update_mentor_ratings(principal_id: Principal, new_rating: RatingMentorIn
     });
 }
 
-#[update]
+#[update(guard = "is_user_anonymous")]
 pub fn update_vc_ratings(principal_id: Principal, new_rating: RatingMentorInvestor) {
     let current_timestamp = time();
     mutate_state(|sys| {
@@ -49,12 +49,12 @@ pub fn update_vc_ratings(principal_id: Principal, new_rating: RatingMentorInvest
     });
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn calculate_mentor_average_rating(principal_id: Principal) -> Result<f64, String> {
     calculate_and_store_average_rating_mentor(principal_id)
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn calculate_vc_average_rating(principal_id: Principal) -> Result<f64, String> {
     calculate_and_store_average_rating_investor(principal_id)
 }
