@@ -19,6 +19,7 @@ import { useCountries } from "react-countries";
 import ReactSelect from "react-select";
 import toast, { Toaster } from "react-hot-toast";
 import { twitterSvg } from "../../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
+import { Principal } from "@dfinity/principal";
 
 const validationSchema = yup
   .object()
@@ -167,6 +168,9 @@ const UserUpdate = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+   console.log('location',location.state)
+
+  const principalId =location.state
   const {
     register,
     handleSubmit,
@@ -181,6 +185,9 @@ const UserUpdate = () => {
   } = useForm({
     resolver: yupResolver(validationSchema),
     mode: "all",
+    defaultValues: {
+      bio: "", 
+    },
   });
 
   // image creation function compression and uintarray creator
@@ -220,23 +227,19 @@ const UserUpdate = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
+      const convertedPrincipal = await Principal.fromText(principalId);
       try {
-        let data = await actor.get_total_approved_list_with_user_data();
+         await actor.get_user_info_using_principal(convertedPrincipal).then((data) => {
+          console.log("Received data in user update:", data);
 
-        console.log("Received data in user update:", data);
-
-        const originalInfo = data[0][1].user_data;
-        const updatedInfo = data[0][1].user_data;
-        const principalId = data[0][0];
+        const originalInfo = data[0]?.params;
+        const updatedInfo = data[0]?.params;
         console.log("Original Info:", originalInfo);
         console.log("updated Info:", updatedInfo);
-        console.log("principalId:", principalId);
-        setPrincipal(principalId);
+        
         if (
           data &&
-          data.length > 0 &&
-          data[0].length > 1 &&
-          data[0][1].user_data
+          data.length > 0 
         ) {
           setOrignalData({
             areaOfInterest: originalInfo?.area_of_interest,
@@ -279,6 +282,10 @@ const UserUpdate = () => {
           setOrignalData({});
           setUpdatedData({});
         }
+        }).catch((error)=>{
+        console.error("Error fetching project data:", error);
+          
+        })
       } catch (error) {
         console.error("Error fetching project data:", error);
       }
@@ -294,8 +301,8 @@ const UserUpdate = () => {
     setInterestedDomainsSelectedOptions(
       val
         ? val
-            .split(", ")
-            .map((interest) => ({ value: interest, label: interest }))
+            ?.split(", ")
+            ?.map((interest) => ({ value: interest, label: interest }))
         : []
     );
   };
@@ -304,7 +311,7 @@ const UserUpdate = () => {
   const setReasonOfJoiningSelectedOptionsHandler = (val) => {
     setReasonOfJoiningSelectedOptions(
       val && val.length > 0
-        ? val.map((reason) => ({ value: reason, label: reason }))
+        ? val?.map((reason) => ({ value: reason, label: reason }))
         : []
     );
   };
@@ -327,7 +334,9 @@ const UserUpdate = () => {
       //     ? uint8ArrayToBase64(val?.profile_picture)
       //     : ""
       // );
-      setImageData(val?.profilePicture ?? "");
+      setImageData( val?.profile_picture instanceof Uint8Array
+        ? uint8ArrayToBase64(val?.profile_picture)
+        : "");
       setValue("type_of_profile", val?.typeOfProfile);
       setValue(
         "reasons_to_join_platform",
@@ -337,11 +346,12 @@ const UserUpdate = () => {
     }
   };
 
+  console.log('imageData',imageData)
   // Get data from redux useEffect
   useEffect(() => {
     if (areaOfExpertise) {
       setInterestedDomainsOptions(
-        areaOfExpertise.map((expert) => ({
+        areaOfExpertise?.map((expert) => ({
           value: expert.name,
           label: expert.name,
         }))
@@ -354,7 +364,7 @@ const UserUpdate = () => {
   useEffect(() => {
     if (typeOfProfile) {
       setTypeOfProfileOptions(
-        typeOfProfile.map((type) => ({
+        typeOfProfile?.map((type) => ({
           value: type.role_type.toLowerCase(),
           label: type.role_type,
         }))
@@ -377,13 +387,12 @@ const UserUpdate = () => {
   // form submit handler func
   const onSubmitHandler = async (data) => {
     console.log("data", data);
-    let principal_id = principal;
+    let principal_id = principalId;
     console.log("principal_id", principal_id);
     if (actor) {
       const user_data = {
-        // user data
-        user_data: {
-          bio: data?.bio ?? [""],
+     
+          bio: data?.bio ? [data.bio] : [""],
           full_name: data?.full_name,
           email: [data?.email],
           telegram_id: [data?.telegram_id.toString()],
@@ -394,23 +403,28 @@ const UserUpdate = () => {
           type_of_profile: [data?.type_of_profile || ""],
           reason_to_join: [
             data?.reasons_to_join_platform
-              .split(",")
-              .map((val) => val.trim()) || [""],
+              ?.split(",")
+              ?.map((val) => val.trim()) || [""],
           ],
           profile_picture: imageData ? [imageData] : [],
-        },
+ 
       };
       try {
         console.log("user_data", user_data);
         await actor.update_user_data(principal_id, user_data).then((result) => {
-          console.log(result);
+          console.log('update_user_data',result);
           if (result && result.includes("User profile updated successfully")) {
             toast.success("User profile updated successfully");
             window.location.href = "/";
           } else {
+            console.log('error')
             toast.error(result);
           }
-        });
+        })
+        .catch((error)=>{
+          console.log('Error===>',error)
+        }
+        )
       } catch (error) {
         toast.error(error);
         console.error("Error sending data to the backend:", error);
@@ -420,6 +434,7 @@ const UserUpdate = () => {
       window.location.href = "/";
     }
   };
+  
 
   // form error handler func
   const onErrorHandler = (val) => {
@@ -612,6 +627,7 @@ const UserUpdate = () => {
               </div>
 
               <div className="flex flex-col ml-4  mt-2 w-auto justify-start md:mb-0 mb-6">
+                
                 <div className="flex flex-col mb-2">
                   <div className="flex space-x-2 items-center flex-row">
                     <span className="w-2 h-2 bg-red-700 rounded-full"></span>
@@ -802,7 +818,7 @@ const UserUpdate = () => {
                     <div className="flex flex-row  text-gray-600 space-x-2 items-center">
                       <span className="w-2 h-2 bg-red-700 rounded-full"></span>
 
-                      <div className="ml-2">{orignalData?.bio}</div>
+                      <div className="ml-2">{orignalData?.bio ?? "Bio not available"}</div>
                     </div>
                     <div className="flex space-x-2 items-center flex-row text-gray-600 mt-1">
                       <span className="w-2 h-2 bg-green-700 rounded-full"></span>
@@ -825,9 +841,7 @@ const UserUpdate = () => {
                         </div>
                       ) : (
                         <h1 className="md:text-base md:h-[8rem] h-[12rem] flex-wrap text-sm bg-black break-all text-transparent bg-clip-text">
-                          {typeof updatedData?.bio === "string"
-                            ? updatedData.bio
-                            : "Bio not available"}
+                      {updatedData?.bio ?? "Bio not available"}
                         </h1>
                       )}
                     </div>
@@ -1030,9 +1044,9 @@ const UserUpdate = () => {
                       <div className="flex gap-2 text-xs flex-wrap items-center">
                         <span className="inline-block w-1.5 p-0.5 h-1.5 bg-red-700 rounded-full"></span>
                         {orignalData?.areaOfInterest
-                          .split(",")
-                          .slice(0, 3)
-                          .map((tag, index) => (
+                          ?.split(",")
+                          ?.slice(0, 3)
+                          ?.map((tag, index) => (
                             <div
                               key={index}
                               className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
@@ -1089,7 +1103,7 @@ const UserUpdate = () => {
                                       setValue(
                                         "domains_interested_in",
                                         selectedOptions
-                                          .map((option) => option.value)
+                                          ?.map((option) => option.value)
                                           .join(", "),
                                         { shouldValidate: true }
                                       );
@@ -1121,9 +1135,9 @@ const UserUpdate = () => {
                                 <div className="flex gap-2 text-xs items-center flex-wrap">
                                   {updatedData?.areaOfInterest &&
                                     updatedData?.areaOfInterest
-                                      .split(",")
-                                      .slice(0, 3)
-                                      .map((tag, index) => (
+                                      ?.split(",")
+                                      ?.slice(0, 3)
+                                      ?.map((tag, index) => (
                                         <div
                                           key={index}
                                           className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
@@ -1179,7 +1193,7 @@ const UserUpdate = () => {
                     <div className="flex flex-col text-gray-600">
                       <div className="flex gap-2 text-xs flex-wrap items-center">
                         <span className="inline-block w-1.5 p-0.5 h-1.5 bg-red-700 rounded-full"></span>
-                        {orignalData?.reasonToJoin.map((reason, index) => (
+                        {orignalData?.reasonToJoin?.map((reason, index) => (
                           <p
                             key={index}
                             className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
@@ -1237,7 +1251,7 @@ const UserUpdate = () => {
                                       setValue(
                                         "reasons_to_join_platform",
                                         selectedOptions
-                                          .map((option) => option.value)
+                                          ?.map((option) => option.value)
                                           .join(", "),
                                         { shouldValidate: true }
                                       );
