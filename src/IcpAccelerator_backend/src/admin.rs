@@ -1189,23 +1189,23 @@ pub fn remove_project_from_spotlight(project_id: String) -> Result<(), String> {
     })
 }
 
-#[query(guard = "is_admin")]
-pub fn get_spotlight_projects() -> Vec<SpotlightDetails> {
-    // Borrow the HashMap, clone its values into a Vec
-    let mut projects: Vec<SpotlightDetails> = read_state(|state| {
-        state
-            .spotlight_projects
-            .iter()
-            .map(|(_, value)| value.0.clone())
-            .collect()
-    });
+// #[query(guard = "is_admin")]
+// pub fn get_spotlight_projects() -> Vec<SpotlightDetails> {
+//     // Collect values from the StableBTreeMap into a vector
+//     let mut projects: Vec<SpotlightDetails> = read_state(|state| {
+//         let mut collected_projects = Vec::new();
+//         for (_, candid_value) in state.spotlight_projects.iter() {
+//             let SpotlightDetails_list = &candid_value.0;
+//             for project in SpotlightDetails_list {
+//                 collected_projects.push(project.clone());
+//             }
+//         }
+//         collected_projects
+//     });
 
-    // Sort the projects by approval_time in descending order
-    projects.sort_by(|a, b| b.approval_time.cmp(&a.approval_time));
-
-    projects
-}
-
+//     // Sort the projects by approval_time in descending order
+//     projects.sort_by(|a, b| b.approval_time.cmp(&a.approval_time));
+// }
 #[query(guard = "is_admin")]
 pub fn get_spotlight_project_uids() -> Vec<String> {
     SPOTLIGHT_PROJECTS.with(|spotlight| {
@@ -1257,10 +1257,16 @@ fn get_principals_by_role(role_name: &str) -> HashSet<Principal> {
     })
 }
 
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+pub struct PaginationReturnUserData {
+    pub data: HashMap<Principal, ApprovedList>,
+    pub count: usize,
+}
+
 #[query(guard = "is_admin")]
 fn get_total_approved_list_with_user_data(
     pagination_params: PaginationParams,
-) -> (HashMap<Principal, ApprovedList>, usize) {
+) -> PaginationReturnUserData {
     let roles_to_check = vec!["user", "mentor", "vc", "project"];
 
     let mut principals_roles: HashMap<StoredPrincipal, Vec<String>> = HashMap::new();
@@ -1303,15 +1309,15 @@ fn get_total_approved_list_with_user_data(
     );
     let end = std::cmp::min(start + pagination_params.page_size, approved_list_map.len());
 
-    let mut approved_list_vec: Vec<_> = approved_list_map.into_iter().collect();
+    let mut approved_list_vec: Vec<_> = approved_list_map.clone().into_iter().collect();
     approved_list_vec.sort_by_key(|k| k.0); // Optional: sort by Principal for consistent pagination
 
     let sliced_vec = &approved_list_vec[start..end];
 
-    (
-        sliced_vec.iter().cloned().collect(),
-        approved_list_map.len(),
-    )
+    PaginationReturnUserData {
+        data: sliced_vec.iter().cloned().collect(),
+        count: approved_list_map.len(), // Return the total count of active mentors
+    }
 }
 
 #[query(guard = "is_admin")]

@@ -1090,10 +1090,16 @@ pub struct PaginationParams {
     pub page_size: usize,
 }
 
+#[derive(CandidType, Clone)]
+pub struct PaginationReturnProjectData {
+    pub data: Vec<ListAllProjects>,
+    pub count: usize,
+}
+
 #[query(guard = "is_user_anonymous")]
 pub fn list_all_projects_with_pagination(
     pagination_params: PaginationParams,
-) -> Vec<ListAllProjects> {
+) -> PaginationReturnProjectData {
     read_state(|state| {
         let projects = &state.project_storage;
         let mut list_all_projects: Vec<ListAllProjects> = Vec::new();
@@ -1105,7 +1111,7 @@ pub fn list_all_projects_with_pagination(
                 let project_info_struct = ListAllProjects {
                     principal: stored_principal,
                     params: project_info.clone(),
-                    overall_average: get_rating.overall_average.get(0).cloned(),
+                    overall_average: get_rating.overall_average.first().copied(),
                 };
 
                 if project_info.is_active {
@@ -1120,7 +1126,10 @@ pub fn list_all_projects_with_pagination(
         );
         let end = std::cmp::min(start + pagination_params.page_size, list_all_projects.len());
 
-        list_all_projects[start..end].to_vec()
+        PaginationReturnProjectData {
+            data: list_all_projects[start..end].to_vec(),
+            count: list_all_projects.len(),
+        }
     })
 }
 

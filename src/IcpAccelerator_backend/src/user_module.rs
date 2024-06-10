@@ -2,7 +2,7 @@ use crate::default_images::*;
 use crate::mentor::MENTOR_REGISTRY;
 use crate::project_registration::APPLICATION_FORM;
 use crate::state_handler::{mutate_state, read_state, Candid, StoredPrincipal};
-use crate::vc_registration::VENTURECAPITALIST_STORAGE;
+use crate::vc_registration::*;
 use candid::{CandidType, Principal};
 use ic_cdk::api::call::call;
 use ic_cdk::api::caller;

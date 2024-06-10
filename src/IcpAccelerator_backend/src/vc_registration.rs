@@ -127,6 +127,14 @@ pub type VentureCapitalistStorage = HashMap<Principal, VentureCapitalistInternal
 pub type VentureCapitalistParams = HashMap<Principal, VentureCapitalist>;
 pub type VentureCapitalistEditParams = HashMap<Principal, UpdateInfoStruct>;
 
+thread_local! {
+    pub static VENTURECAPITALIST_STORAGE: RefCell<VentureCapitalistStorage> = RefCell::new(VentureCapitalistStorage::new());
+    pub static VC_AWAITS_RESPONSE: RefCell<VentureCapitalistStorage> = RefCell::new(VentureCapitalistStorage::new());
+    pub static DECLINED_VC_REQUESTS: RefCell<VentureCapitalistStorage> = RefCell::new(VentureCapitalistStorage::new());
+    pub static VC_PROFILE_EDIT_AWAITS :RefCell<VentureCapitalistEditParams> = RefCell::new(VentureCapitalistEditParams::new());
+    pub static DECLINED_VC_PROFILE_EDIT_REQUEST :RefCell<VentureCapitalistEditParams> = RefCell::new(VentureCapitalistEditParams::new());
+    pub static VC_ANNOUNCEMENTS:RefCell<VcAnnouncements> = RefCell::new(VcAnnouncements::new());
+}
 #[update(guard = "is_user_anonymous")]
 pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::string::String {
     let caller = caller();
@@ -297,10 +305,14 @@ pub fn list_all_vcs() -> HashMap<Principal, VcWithRoles> {
     })
 }
 
+#[derive(CandidType, Clone)]
+pub struct PaginationReturnVcData {
+    pub data: HashMap<Principal, VcWithRoles>,
+    pub count: usize,
+}
+
 #[query(guard = "is_user_anonymous")]
-pub fn list_all_vcs_with_pagination(
-    pagination_params: PaginationParams,
-) -> HashMap<Principal, VcWithRoles> {
+pub fn list_all_vcs_with_pagination(pagination_params: PaginationParams) -> PaginationReturnVcData {
     read_state(|state| {
         let mut vc_list: Vec<(Principal, VcWithRoles)> = Vec::new();
 
@@ -327,7 +339,10 @@ pub fn list_all_vcs_with_pagination(
 
         // Guard against cases where the pagination request exceeds the list bounds
         if start >= vc_list.len() {
-            return HashMap::new();
+            return PaginationReturnVcData {
+                data: HashMap::new(),
+                count: vc_list.len(),
+            };
         }
 
         // Convert the appropriately sliced list segment to a HashMap
@@ -335,7 +350,10 @@ pub fn list_all_vcs_with_pagination(
         let paginated_vc_map: HashMap<Principal, VcWithRoles> =
             paginated_vc_list.into_iter().collect();
 
-        paginated_vc_map
+        PaginationReturnVcData {
+            data: paginated_vc_map,
+            count: vc_list.len(),
+        }
     })
 }
 
