@@ -52,6 +52,11 @@ pub struct StoreArg {
     pub sha256: Option<ByteBuf>,
 }
 
+#[derive(Clone, Debug, CandidType, Deserialize)]
+pub struct DeleteAsset {
+    pub key: Key
+}
+
 #[derive(CandidType, Clone, Serialize, Deserialize, Debug)]
 pub struct Role {
     pub name: String,
@@ -221,6 +226,10 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
             content: ByteBuf::from(info_with_default.profile_picture.clone().unwrap()),
             sha256: None,
         };
+        let delete_asset = DeleteAsset {
+            key: key.clone()
+        };
+        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset, )).await.unwrap();
         let (result,): ((),) = call(canister_id, "store", (arg, )).await.unwrap();
         info_with_default.profile_picture = Some((canister_id.to_string()+&key).as_bytes().to_vec());
     }
@@ -334,7 +343,38 @@ pub async fn update_data_for_roles(principal_id: Principal, user_data: UserInfor
     Ok(())
 }
 #[update]
-async fn update_user_data(user_id: Principal, user_data: UserInformation) -> Result<(), String> {
+async fn update_user_data(user_id: Principal, mut user_data: UserInformation) -> Result<(), String> {
+    let temp_image = user_data.profile_picture.clone();
+    let canister_id = crate::asset_manager::get_asset_canister();
+    
+    if temp_image.is_none() {
+        let full_url = canister_id.to_string() + "/uploads/default_user.jpeg";
+        user_data.profile_picture = Some((full_url).as_bytes().to_vec());
+    }
+    else if temp_image.clone().unwrap().len() < 300 {
+        ic_cdk::println!("Profile image is already uploaded");
+    }else{
+        
+        let key = "/uploads/".to_owned()+&user_id.to_string()+"_user.jpeg";
+        
+        let arg = StoreArg{
+            key: key.clone(),
+            content_type: "image/*".to_string(),
+            content_encoding: "identity".to_string(),
+            content: ByteBuf::from(temp_image.unwrap()),
+            sha256: None,
+        };
+
+        let delete_asset = DeleteAsset {
+            key: key.clone()
+        };
+
+        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset, )).await.unwrap();
+
+        let (result,): ((),) = call(canister_id, "store", (arg, )).await.unwrap();
+
+        user_data.profile_picture = Some((canister_id.to_string()+&key).as_bytes().to_vec());
+    }
     mutate_state(|state| {
         if let Some(Candid(mut user_info_internal)) = state.user_storage.get(&StoredPrincipal(user_id)) {
             user_info_internal.params = user_data;
