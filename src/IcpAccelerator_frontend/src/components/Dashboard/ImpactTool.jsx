@@ -83,10 +83,10 @@ const ImpactTool = () => {
                 key={item.label}
               >
                 <div className="flex flex-col items-center justify-between">
-                  <div className="text-center text-violet-800 md:text-4xl xl:text-5xl text-4xl font-extrabold">
+                  <div className="text-center text-violet-800 md:text-2xl lgx:text-4xl xl:text-5xl text-4xl font-extrabold">
                     <span ref={refs.current[index]}>{values[index]}</span>
                   </div>
-                  <div className="text-center text-neutral-500 md:text-lg font-normal line-clamp-2 text-wrap">
+                  <div className="text-center text-neutral-500 md:text-sm  lgx:text-lg font-normal line-clamp-1 text-wrap">
                     {item.label}
                   </div>
                 </div>

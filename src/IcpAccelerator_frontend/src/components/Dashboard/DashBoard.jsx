@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
@@ -39,6 +39,27 @@ const DashBoard = () => {
     (currState) => currState.currentRoleStatus.activeRole
   );
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
+  //<<<---- numSkeletons setting condition for mentor , investor card ---->>>
+  const [numSkeletons, setNumSkeletons] = useState(1);
+
+  const updateNumSkeletons = () => {
+    if (window.innerWidth >= 1280) {
+      setNumSkeletons(3);
+    } else if (window.innerWidth >= 936) {
+      setNumSkeletons(2);
+    } else {
+      setNumSkeletons(1);
+    }
+  };
+
+  useEffect(() => {
+    updateNumSkeletons();
+    window.addEventListener("resize", updateNumSkeletons);
+    return () => {
+      window.removeEventListener("resize", updateNumSkeletons);
+    };
+  }, []);
+
   function getNameOfCurrentStatus(rolesStatusArray) {
     const currentStatus = rolesStatusArray.find(
       (role) => role.status === "active"
@@ -197,11 +218,11 @@ const DashBoard = () => {
   };
   switch (userCurrentRoleStatusActiveRole) {
     case "project":
-      return <ProjectDashboard />;
+      return <ProjectDashboard numSkeletons={numSkeletons} />;
     case "mentor":
-      return <MentorDashboard />;
+      return <MentorDashboard numSkeletons={numSkeletons} />;
     case "vc":
-      return <InvestorDashboard />;
+      return <InvestorDashboard numSkeletons={numSkeletons} />;
     default:
       return (
         <>
@@ -240,22 +261,22 @@ const DashBoard = () => {
                     >
                       <circle cx="9" cy="9" r="7.5" stroke="#fff" />
                       <path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
+                        fillRule="evenodd"
+                        clipRule="evenodd"
                         d="M8.99326 11.25H9H8.99326Z"
                         fill="#fff"
                       />
                       <path
                         d="M8.99326 11.25H9"
                         stroke="#fff"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                       />
                       <path
                         d="M9 9L9 6"
                         stroke="#fff"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                       />
                     </svg>
                     <span className="ml-1">Use with caution.</span>
@@ -279,7 +300,7 @@ const DashBoard = () => {
                   </h1>
                 </div>
                 <div className="mb-4 z-20 fade-in">
-                  <SpotLight />
+                  <SpotLight numSkeletons={numSkeletons} />
                 </div>
                 </div> */}
                 {/* <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
@@ -302,7 +323,7 @@ const DashBoard = () => {
                   </button>
                 </div>
                 <div className="mb-4 fade-in">
-                  <LiveProjects progress={false} />
+                  <LiveProjects progress={false} numSkeletons={numSkeletons} />
                 </div>
                 <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px] mt-3">
                   <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl sxxs:text-lg">
@@ -331,10 +352,10 @@ const DashBoard = () => {
                 </div>
 
                 <div className="flex max-md:flex-col -mx-4 mb-4 items-stretch fade-in">
-                  <div className="w-full md:w-3/4 px-4 md:flex md:gap-4 sm:flex sm:gap-4">
-                    <InvestorCard />
+                  <div className="w-full md3:w-2/3 dxl:w-3/4 px-4 md:flex md:gap-4 sm:flex sm:gap-4">
+                    <InvestorCard numSkeletons={numSkeletons} />
                   </div>
-                  <div className="w-full md:w-1/4 sm:pr-4 md:flex md:gap-4 px-4">
+                  <div className="w-full md:1/2 md3:w-1/3 dxl:w-1/4 sm:pr-4 md:flex md:gap-4 px-4">
                     <RegisterCard categories={investorCategories} />
                   </div>
                 </div>
@@ -350,10 +371,10 @@ const DashBoard = () => {
                   </button>
                 </div>
                 <div className="flex max-md:flex-col -mx-4 mb-4 items-stretch fade-in">
-                  <div className="w-full md:w-3/4 px-4 md:flex md:gap-4 sm:flex sm:gap-4">
-                    <MentorCard />
+                  <div className="w-full md3:w-2/3 dxl:w-3/4 px-4 md:flex md:gap-4 sm:flex sm:gap-4">
+                    <MentorCard numSkeletons={numSkeletons} />
                   </div>
-                  <div className="w-full md:w-1/4 sm:pr-4 md:flex md:gap-4 px-4">
+                  <div className="w-full md:1/2 md3:w-1/3 dxl:w-1/4 sm:pr-4 md:flex md:gap-4 px-4">
                     <RegisterCard categories={mentorCategories} />
                   </div>
                 </div>

@@ -16,6 +16,7 @@ import { useForm, Controller } from "react-hook-form";
 import { useCountries } from "react-countries";
 import ReactSelect from "react-select";
 import toast, { Toaster } from "react-hot-toast";
+import CompressedImage from "../../../../IcpAccelerator_frontend/src/components/ImageCompressed/CompressedImage";
 
 const validationSchema = yup
   .object()

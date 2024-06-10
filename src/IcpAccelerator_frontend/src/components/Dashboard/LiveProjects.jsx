@@ -12,8 +12,9 @@ import { useInView } from "react-intersection-observer";
 import { useSpring, animated, useTrail } from "react-spring";
 import NoDataCard from "../Mentors/Event/NoDataCard";
 import NoData from "../../../assets/images/file_not_found.png";
+import { LiveProjectSkeleton } from "./Skeleton/Liveprojectskeleton";
 
-const LiveProjects = ({ progress }) => {
+const LiveProjects = ({ progress, numSkeletons }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
   const userCurrentRoleStatusActiveRole = useSelector(
@@ -23,6 +24,7 @@ const LiveProjects = ({ progress }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [percent, setPercent] = useState(0);
   const [showLine, setShowLine] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
   const tm = useRef(null);
   const navigate = useNavigate();
 
@@ -88,15 +90,21 @@ const LiveProjects = ({ progress }) => {
     let isMounted = true;
 
     const getAllProject = async (caller) => {
+      setIsLoading(true);
+      console.log("working");
       await caller
         .list_all_projects()
         .then((result) => {
+          console.log("working here also");
+          console.log("list_all_projects line 97 ===>>>", result);
           if (isMounted) {
             if (!result || result.length === 0) {
               setNoData(true);
+              setIsLoading(false);
               setAllProjectData([]);
             } else {
               setAllProjectData(result);
+              setIsLoading(false);
               setNoData(false);
             }
           }
@@ -104,7 +112,9 @@ const LiveProjects = ({ progress }) => {
         .catch((error) => {
           if (isMounted) {
             setNoData(true);
+            setIsLoading(false);
             setAllProjectData([]);
+            console.log("Error in list_all_project", error);
           }
         });
     };
@@ -152,88 +162,118 @@ const LiveProjects = ({ progress }) => {
   return (
     <>
       <div className="flex max-md:flex-col -mx-4 mb-4 items-stretch">
-        <div className=" md:w-3/4 content-center">
-          <div className="w-full items-center px-4 md:gap-4 sm:gap-4">
-            {noData ||
-            (allProjectData &&
-              allProjectData.filter(
-                (val) =>
-                  val?.params?.params?.live_on_icp_mainnet[0] &&
-                  val?.params?.params?.live_on_icp_mainnet[0] === true
-              ).length == 0) ? (
-              <NoDataCard image={NoData} desc={"No featured projects yet"} />
-            ) : (
-              
-          <div className="w-full grid gap-2 grid-cols-1 md:grid-cols-3 md:px-4 md:gap-4 sm:gap-4">
-                {allProjectData &&
-                  allProjectData
-                    .filter(
-                      (val) =>
-                        val?.params?.params?.live_on_icp_mainnet[0] &&
-                        val?.params?.params?.live_on_icp_mainnet[0] === true
-                    )
-                    .slice(0, 3)
-                    .map((data, index) => {
-                      let projectName =
-                        data?.params?.params?.project_name ?? "";
-                      let projectId = data?.params?.uid ?? "";
-                      let projectImage = data?.params?.params?.project_logo
-                        ? uint8ArrayToBase64(data?.params?.params?.project_logo[0])
-                        : "";
-                      let userName = data?.params?.params?.user_data?.full_name
-                        ? data?.params?.params?.user_data?.full_name
-                        : "";
-                      let userImage = data?.params?.params?.user_data
-                        ?.profile_picture[0]
-                        ? uint8ArrayToBase64(
-                            data?.params?.params?.user_data?.profile_picture[0]
-                          )
-                        : "";
-                      let principalId = data?.principal
-                        ? data?.principal.toText()
-                        : "";
-                      let projectDescription =
-                        data?.params?.params?.project_description ?? "";
-                      let projectAreaOfFocus =
-                        data?.params?.params?.project_area_of_focus ?? "";
-                      let projectData = data?.params ? data?.params : null;
-                      let projectRubricStatus =
-                        data?.overall_average.length > 0
-                          ? data?.overall_average[
-                              data?.overall_average.length - 1
-                            ]
-                          : 0;
+        {" "}
+        {isLoading ? (
+          <>
+            <div className=" md:w-3/4 content-center">
+              <div className="w-full items-center px-4 md:gap-4 sm:gap-4">
+                <div className="w-full grid gap-2 grid-cols-1 md3:grid-cols-2 dxl:grid-cols-3 md:px-4 md:gap-4 sm:gap-4">
+                  {" "}
+                  {Array(numSkeletons)
+                    .fill(0)
+                    .map((_, index) => (
+                      <div
+                        className="w-full hover:scale-105 transition-transform duration-300 ease-in-out"
+                        key={index}
+                      >
+                        <LiveProjectSkeleton key={index} />
+                      </div>
+                    ))}{" "}
+                </div>
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className=" md:w-3/4 content-center">
+              <div className="w-full items-center px-4 md:gap-4 sm:gap-4">
+                {noData ||
+                (allProjectData &&
+                  allProjectData.filter(
+                    (val) =>
+                      val?.params?.params?.live_on_icp_mainnet[0] &&
+                      val?.params?.params?.live_on_icp_mainnet[0] === true
+                  ).length == 0) ? (
+                  <NoDataCard
+                    image={NoData}
+                    desc={"No featured projects yet"}
+                  />
+                ) : (
+                  <div className="w-full grid gap-2 grid-cols-1 md3:grid-cols-2 dxl:grid-cols-3  md:px-4 md:gap-4 sm:gap-4">
+                    {allProjectData &&
+                      allProjectData
+                        .filter(
+                          (val) =>
+                            val?.params?.params?.live_on_icp_mainnet[0] &&
+                            val?.params?.params?.live_on_icp_mainnet[0] === true
+                        )
+                        .slice(0, numSkeletons)
+                        .map((data, index) => {
+                          let projectName =
+                            data?.params?.params?.project_name ?? "";
+                          let projectId = data?.params?.uid ?? "";
+                          let projectImage = data?.params?.params?.project_logo
+                            ? uint8ArrayToBase64(
+                                data?.params?.params?.project_logo
+                              )
+                            : "";
+                          let userName = data?.params?.params?.user_data
+                            ?.full_name
+                            ? data?.params?.params?.user_data?.full_name
+                            : "";
+                          let userImage = data?.params?.params?.user_data
+                            ?.profile_picture[0]
+                            ? uint8ArrayToBase64(
+                                data?.params?.params?.user_data
+                                  ?.profile_picture[0]
+                              )
+                            : "";
+                          let principalId = data?.principal
+                            ? data?.principal.toText()
+                            : "";
+                          let projectDescription =
+                            data?.params?.params?.project_description ?? "";
+                          let projectAreaOfFocus =
+                            data?.params?.params?.project_area_of_focus ?? "";
+                          let projectData = data?.params ? data?.params : null;
+                          let projectRubricStatus =
+                            data?.overall_average.length > 0
+                              ? data?.overall_average[
+                                  data?.overall_average.length - 1
+                                ]
+                              : 0;
 
-                      return (
-                        <div
-                          className="w-full hover:scale-105 transition-transform duration-300 ease-in-out"
-                          key={index}
-                        >
-                          <div className="justify-between items-baseline flex-wrap bg-white overflow-hidden rounded-lg shadow-lg mb-5 md:mb-0">
-                            <div className="p-4">
-                              <div className="flex justify-between items-baseline flex-wrap w-fit">
-                                <div className="flex items-center w-full">
-                                  <img
-                                    className="rounded-full w-12 h-12 object-cover border-black border-2 p-1"
-                                    src={projectImage}
-                                    alt="profile"
-                                  />
-                                  <h1 className="ms-2 font-bold text-nowrap truncate w-[220px]">
-                                    {projectName}
-                                  </h1>
-                                </div>
-                                <div className="flex items-center m-2 w-full">
-                                  <img
-                                    className="h-7 w-7 rounded-full mr-2 object-cover"
-                                    src={userImage}
-                                    alt="not found"
-                                  />
-                                  <p className="text-base truncate w-1/2">
-                                    {userName}
-                                  </p>
-                                </div>
-                              </div>
-                              {/* {progress && (
+                          return (
+                            <div
+                              className="w-full hover:scale-105 transition-transform duration-300 ease-in-out"
+                              key={index}
+                            >
+                              {" "}
+                              <div className="justify-between items-baseline flex-wrap bg-white overflow-hidden rounded-lg shadow-lg mb-5 md:mb-0">
+                                <div className="p-4">
+                                  <div className="flex justify-between items-baseline flex-wrap w-fit">
+                                    <div className="flex items-center w-full">
+                                      <img
+                                        className="rounded-full w-12 h-12 object-cover border-black border-2 p-1"
+                                        src={projectImage}
+                                        alt="profile"
+                                      />
+                                      <h1 className="ms-2 font-bold text-nowrap truncate w-[220px]">
+                                        {projectName}
+                                      </h1>
+                                    </div>
+                                    <div className="flex items-center m-2 w-full">
+                                      <img
+                                        className="h-7 w-7 rounded-full mr-2 object-cover"
+                                        src={userImage}
+                                        alt="not found"
+                                      />
+                                      <p className="text-base truncate w-1/2">
+                                        {userName}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  {/* {progress && (
                                 <div className="mb-4 flex items-baseline w-fit">
                                   <svg
                                     width="100%"
@@ -277,11 +317,11 @@ const LiveProjects = ({ progress }) => {
                                   </div>
                                 </div>
                               )} */}
-                              <p className="text-gray-700 text-sm p-2  min-h-48 break-all min-w-16 line-clamp-6 sxxs:w-11/12">
-                                {projectDescription}
-                              </p>
+                                  <p className="text-gray-700 text-sm p-2  min-h-48 break-all min-w-16 line-clamp-6 sxxs:w-11/12">
+                                    {projectDescription}
+                                  </p>
 
-                              {/* {projectAreaOfFocus ? (
+                                  {/* {projectAreaOfFocus ? (
                               <div className="flex gap-2 mt-2 text-xs items-center">
                                 {projectAreaOfFocus
                                   .split(",")
@@ -311,24 +351,26 @@ const LiveProjects = ({ progress }) => {
                               ""
                             )} */}
 
-                              <button
-                                className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"
-                                onClick={() =>
-                                  handleNavigate(projectId, projectData)
-                                }
-                              >
-                                KNOW MORE
-                              </button>
+                                  <button
+                                    className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"
+                                    onClick={() =>
+                                      handleNavigate(projectId, projectData)
+                                    }
+                                  >
+                                    KNOW MORE
+                                  </button>
+                                </div>
+                              </div>
                             </div>
-                          </div>
-                        </div>
-                      );
-                    })}
+                          );
+                        })}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        </div>
-        <div className="w-full md:w-1/4 md:flex md:gap-4">
+            </div>
+          </>
+        )}
+        <div className="w-full md:1/2 md3:w-1/3 dxl:w-1/4 md:flex md:gap-4">
           <RegisterCard categories={projectCategories} />
         </div>
       </div>
