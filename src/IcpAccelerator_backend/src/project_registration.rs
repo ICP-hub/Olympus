@@ -1099,31 +1099,35 @@ pub struct PaginationParams {
 
 #[query]
 pub fn list_all_projects_with_pagination(pagination_params: PaginationParams) -> Vec<ListAllProjects> {
-    read_state(|state| {
-        let projects = &state.project_storage;
-        let mut list_all_projects: Vec<ListAllProjects> = Vec::new();
+    let projects_snapshot = read_state(|state| {
+        // Clone the necessary parts of the state to reduce the duration of the borrow.
+        state.project_storage.iter().map(|(principal, project_infos)| {
+            (principal.clone(), project_infos.0.clone())
+        }).collect::<Vec<_>>()
+    });
 
-        for (stored_principal, project_infos) in projects.iter() {
-            for project_info in project_infos.0.iter() {
-                let get_rating = calculate_average_api(&project_info.uid);
+    let mut list_all_projects: Vec<ListAllProjects> = Vec::new();
 
+    // Process data outside the read_state closure to avoid nested borrows.
+    for (stored_principal, project_infos) in projects_snapshot {
+        for project_info in project_infos {
+            if project_info.is_active {
+                let get_rating = calculate_average_api(&project_info.uid);  // Assumes this function might mutate global state.
                 let project_info_struct = ListAllProjects {
                     principal: stored_principal,
-                    params: project_info.clone(),
+                    params: project_info,
                     overall_average: get_rating.overall_average.get(0).cloned(),
                 };
-
-                if project_info.is_active {
-                    list_all_projects.push(project_info_struct);
-                }
+                list_all_projects.push(project_info_struct);
             }
         }
+    }
 
-        let start = std::cmp::min((pagination_params.page - 1) * pagination_params.page_size, list_all_projects.len());
-        let end = std::cmp::min(start + pagination_params.page_size, list_all_projects.len());
+    // Apply pagination
+    let start = (pagination_params.page - 1) * pagination_params.page_size;
+    let end = std::cmp::min(start + pagination_params.page_size, list_all_projects.len());
 
-        list_all_projects[start..end].to_vec()
-    })
+    list_all_projects[start..end].to_vec()
 }
 
 pub async fn change_project_images(caller: Principal, mut updated_project: ProjectInfo) -> ProjectInfo {
