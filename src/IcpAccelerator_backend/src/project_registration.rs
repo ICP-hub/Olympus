@@ -1104,20 +1104,21 @@ pub fn list_all_projects_with_pagination(
         let projects = &state.project_storage;
         let mut list_all_projects: Vec<ListAllProjects> = Vec::new();
 
-    // Process data outside the read_state closure to avoid nested borrows.
-    for (stored_principal, project_infos) in projects_snapshot {
-        for project_info in project_infos {
-            if project_info.is_active {
-                let get_rating = calculate_average_api(&project_info.uid);  // Assumes this function might mutate global state.
+        for (stored_principal, project_infos) in projects.iter() {
+            for project_info in project_infos.0.iter() {
+                let get_rating = calculate_average_api(&project_info.uid);
+
                 let project_info_struct = ListAllProjects {
                     principal: stored_principal,
                     params: project_info.clone(),
                     overall_average: get_rating.overall_average.first().copied(),
                 };
-                list_all_projects.push(project_info_struct);
+
+                if project_info.is_active {
+                    list_all_projects.push(project_info_struct);
+                }
             }
         }
-    }
 
         let start = std::cmp::min(
             (pagination_params.page - 1) * pagination_params.page_size,
