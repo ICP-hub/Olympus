@@ -2,14 +2,16 @@ import React, { useEffect, useState } from "react";
 import image from "../../../assets/images/samya.jpg";
 import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
 import { useSelector } from "react-redux";
-import { useNavigate } from 'react-router-dom';
-import uint8ArrayToBase64 from '../Utils/uint8ArrayToBase64';
+import { useNavigate } from "react-router-dom";
+import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import NoDataCard from "../Mentors/Event/NoDataCard";
-import NoData from "../../../assets/images/search_not_found.png"
+import NoData from "../../../assets/images/search_not_found.png";
+import { MentorlistSkeleton } from "./Skeleton/Mentorlistskeleton";
 
-const MentorCard = () => {
+const MentorCard = ({ numSkeletons }) => {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [noData, setNoData] = useState(null);
 
   const actor = useSelector((currState) => currState.actors.actor);
@@ -41,58 +43,60 @@ const MentorCard = () => {
   //   }
   // }, [actor]);
 
-
-
   useEffect(() => {
-    let isMounted = true; 
-  
+    let isMounted = true;
+
     const getAllMentors = async (caller) => {
+      setIsLoading(true);
       await caller
         .get_all_mentors_candid()
         .then((result) => {
           if (isMounted) {
-          if (!result || result.length == 0) {
-            setNoData(true);
-            setData([]);
-          } else {
-            console.log("all mentors", result);
-            setData(result);
-            setNoData(false);
+            if (!result || result.length == 0) {
+              setNoData(true);
+              setIsLoading(false);
+              setData([]);
+            } else {
+              console.log("all mentors", result);
+              setData(result);
+              setIsLoading(false);
+              setNoData(false);
+            }
           }
-        }
         })
         .catch((error) => {
           if (isMounted) {
-          setNoData(true);
-          setData([]);
+            setNoData(true);
+            setIsLoading(false);
+            setData([]);
           }
         });
     };
-  
+
     if (actor) {
       getAllMentors(actor);
     } else {
       getAllMentors(IcpAccelerator_backend);
     }
-  
+
     return () => {
-      isMounted = false; 
+      isMounted = false;
     };
   }, [actor]);
 
-
-
-  if (noData) {
-    return (
-      <div className="items-center w-full flex justify-center">
-        <NoDataCard image={NoData} desc={'Mentors not found at the moment'}/>
-      </div>
-    );
-  }
   return (
     <>
-      {data &&
-        data.slice(0, 3).map((mentor, index) => {
+      {isLoading ? (
+        Array(numSkeletons)
+          .fill(0)
+          .map((_, index) => <MentorlistSkeleton key={index} />)
+      ) : noData ? (
+        <div className="items-center w-full flex justify-center">
+          <NoDataCard image={NoData} desc={"Mentors not found at the moment"} />
+        </div>
+      ) : (
+        data &&
+        data.slice(0, numSkeletons).map((mentor, index) => {
           let id = null;
           let img = "";
           let name = "";
@@ -120,7 +124,7 @@ const MentorCard = () => {
           return (
             <div
               key={index}
-              className="bg-white  hover:scale-105 w-full sm:w-1/2 md:w-1/3 rounded-lg mb-5 md:mb-0 p-6"
+              className="bg-white  hover:scale-105 w-full md3:w-1/2 dxl:w-1/3 rounded-lg mb-5 md:mb-0 p-6"
             >
               <div className="justify-center flex items-center">
                 <div
@@ -169,7 +173,8 @@ const MentorCard = () => {
               </div>
             </div>
           );
-        })}
+        })
+      )}
     </>
   );
 };

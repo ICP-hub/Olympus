@@ -5,6 +5,7 @@ import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
 import NoDataCard from "./Event/NoDataCard";
 import MentorCard from "./MentorCard";
+import { MentorlistSkeleton } from "../Dashboard/Skeleton/Mentorlistskeleton";
 
 function SearchMentors() {
   const navigate = useNavigate();
@@ -13,11 +14,13 @@ function SearchMentors() {
   const [noData, setNoData] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [filter, setFilter] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   const itemsPerPage = 12;
   const actor = useSelector((currState) => currState.actors.actor);
 
   const getAllMentors = async (caller, page) => {
     console.log("Fetching data for page:", page);
+    setIsLoading(true);
     await caller
       .get_all_mentors_with_pagination({
         page_size: itemsPerPage,
@@ -29,16 +32,19 @@ function SearchMentors() {
           setAllMentorData(result.data);
           setCountData(result.count);
           setNoData(false);
+          setIsLoading(false);
         } else {
           setAllMentorData([]);
           setCountData(0);
           setNoData(true);
+          setIsLoading(false);
         }
       })
       .catch((error) => {
         setAllMentorData([]);
         setCountData(0);
         setNoData(true);
+        setIsLoading(false);
         console.log("error-in-get-all-mentors", error);
       });
   };
@@ -76,7 +82,9 @@ function SearchMentors() {
     setCurrentPage((prev) => {
       const nextPage = prev + 1;
       console.log("Navigating to page:", nextPage);
-      return nextPage <= Math.ceil(Number(countData) / itemsPerPage) ? nextPage : prev;
+      return nextPage <= Math.ceil(Number(countData) / itemsPerPage)
+        ? nextPage
+        : prev;
     });
   };
 
@@ -118,7 +126,11 @@ function SearchMentors() {
             </svg>
           </div>
         </div>
-        {noData ? (
+        {isLoading ? (
+          Array(1)
+            .fill(0)
+            .map((_, index) => <MentorlistSkeleton key={index} />)
+        ) : noData ? (
           <NoDataCard />
         ) : (
           <>
@@ -245,7 +257,8 @@ function SearchMentors() {
                   <button
                     onClick={handleNext}
                     disabled={
-                      currentPage === Math.ceil(Number(countData) / itemsPerPage)
+                      currentPage ===
+                      Math.ceil(Number(countData) / itemsPerPage)
                     }
                     className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                     type="button"

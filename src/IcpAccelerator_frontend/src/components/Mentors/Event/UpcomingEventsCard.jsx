@@ -4,28 +4,52 @@ import { useSelector } from "react-redux";
 import NoDataCard from "./NoDataCard";
 import SecondEventCard from "../Event/SecondEventCard";
 import NoData from "../../../../assets/images/file_not_found.png";
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom";
+import OngoingAcceleratorSkeleton from "../../Dashboard/Skeleton/OngoingAcceleratorskeleton";
 
 const UpcomingEventsCard = ({ wrap, register }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [noData, setNoData] = useState(null);
   const [allLiveEventsData, setAllLiveEventsData] = useState([]);
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
+  const [numSkeletons, setNumSkeletons] = useState(1);
+
+  const updateNumSkeletons = () => {
+    if (window.innerWidth >= 1100) {
+      setNumSkeletons(3);
+    } else if (window.innerWidth >= 768) {
+      setNumSkeletons(2);
+    } else {
+      setNumSkeletons(1);
+    }
+  };
+  useEffect(() => {
+    updateNumSkeletons();
+    window.addEventListener("resize", updateNumSkeletons);
+    return () => {
+      window.removeEventListener("resize", updateNumSkeletons);
+    };
+  }, []);
   const getAllLiveEvents = async (caller) => {
+    setIsLoading(true);
     await caller
       .get_all_cohorts()
       .then((result) => {
         console.log("cohort result", result);
         if (!result || result.length === 0) {
           setNoData(true);
+          setIsLoading(false);
           setAllLiveEventsData([]);
         } else {
           setAllLiveEventsData(result);
           setNoData(false);
+          setIsLoading(false);
         }
       })
       .catch((error) => {
         setNoData(true);
+        setIsLoading(false);
         setAllLiveEventsData([]);
       });
   };
@@ -65,7 +89,27 @@ const UpcomingEventsCard = ({ wrap, register }) => {
           wrap === true ? "" : "min-h-screen"
         }`}
       >
-        {noData || filteredEvents.length === 0 ? (
+        {isLoading ? (
+          <div
+            className={`${
+              wrap === true
+                ? "flex flex-row overflow-x-auto w-full"
+                : "flex flex-row flex-wrap w-full px-8"
+            }`}
+          >
+            {Array(numSkeletons)
+              .fill(0)
+              .map((_, index) => (
+                <div
+                  key={index}
+                  className="px-2 w-full md:min-w-[50%] lg1:min-w-[33.33%] md:max-w-[50%] lg1:max-w-[33.33%]"
+                >
+                  {" "}
+                  <OngoingAcceleratorSkeleton key={index} />
+                </div>
+              ))}
+          </div>
+        ) : noData || filteredEvents.length === 0 ? (
           <NoDataCard image={NoData} desc={"There is no ongoing accelerator"} />
         ) : (
           <div
