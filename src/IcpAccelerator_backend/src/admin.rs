@@ -566,57 +566,45 @@ pub fn decline_vc_creation_request(requester: Principal, decline: bool) -> Strin
 
 #[update]
 pub fn approve_vc_creation_request(requester: Principal, approve: bool) -> String {
-    mutate_state(|state| {
-        if let Some(mut vc_internal) = state.vc_awaits_response.get(&StoredPrincipal(requester)) {
-            if approve || vc_internal.0.approve {
-                vc_internal.0.decline = false;
-                vc_internal.0.approve = approve;
+    let (vc_internal, should_update) = read_state(|state| {
+        state.vc_awaits_response.get(&StoredPrincipal(requester))
+            .map(|vc| (Some(vc.clone()), !vc.0.decline))  // Ensure Some is wrapped around the vc.clone()
+            .unwrap_or((None, false))  // This is now correct as the first element of the tuple is an Option
+    });
 
-                match state.vc_awaits_response.get(&StoredPrincipal(requester)) {
-                    Some(res) => {
-                        state
-                            .vc_storage
-                            .insert(StoredPrincipal(requester), Candid(res.0.clone()));
+    // Process the read data
+    if let Some(mut vc) = vc_internal {
+        if should_update && approve {
+            vc.0.approve = true;
+            vc.0.decline = false;
+            mutate_state(|state| {
+                // Updating vc_storage to reflect approval status
+                state.vc_storage.insert(StoredPrincipal(requester), Candid(vc.0.clone()));
+                
+                // Remove the vc request from awaits response as it's now processed
+                state.vc_awaits_response.remove(&StoredPrincipal(requester));
 
-                        if let Some(user_roles) = state.role_status.get(&StoredPrincipal(requester))
-                        {
-                            let mut roles_clone = user_roles.0.clone();
-                            if let Some(user_role) = roles_clone.iter_mut().find(|r| r.name == "vc")
-                            {
-                                user_role.status = "approved".to_string();
-                                user_role.approved_on = Some(time());
-                            }
+                // Update role status if applicable
+                if let Some(mut roles) = state.role_status.get(&StoredPrincipal(requester)) {
+                    for role in roles.0.iter_mut() {
+                        if role.name == "vc" {
+                            role.status = "approved".to_string();
+                            break;
                         }
-
-                        state.vc_awaits_response.remove(&StoredPrincipal(requester));
-                        change_notification_status(
-                            requester,
-                            "vc".to_string(),
-                            "approved".to_string(),
-                        )
                     }
-                    None => {
-                        return format!(
-                            "Requester with principal id {} has not registered",
-                            requester
-                        );
-                    }
+                    state.role_status.insert(StoredPrincipal(requester), Candid(roles.0.clone()));
                 }
+            });
 
-                format!("Requester with principal id {} is approved", requester)
-            } else {
-                format!(
-                    "Requester with principal id {} could not be approved",
-                    requester
-                )
-            }
+            // Send notification about the approval
+            change_notification_status(requester, "vc".to_string(), "approved".to_string());
+            return format!("Requester with principal id {} is approved", requester);
         } else {
-            format!(
-                "Requester with principal id {} has not registered",
-                requester
-            )
+            return format!("Requester with principal id {} could not be approved", requester);
         }
-    })
+    } else {
+        return format!("Requester with principal id {} has not registered", requester);
+    }
 }
 
 #[update]
