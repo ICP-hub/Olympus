@@ -15,6 +15,8 @@ use ic_cdk::api::{caller, id};
 use ic_cdk::api::{canister_balance128, time};
 use ic_cdk::storage;
 use ic_cdk::storage::stable_restore;
+use ic_cdk::api::call::call;
+use serde_bytes::ByteBuf;
 use ic_cdk_macros::*;
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
@@ -1718,9 +1720,41 @@ fn count_live_projects() -> usize {
 }
 
 #[update]
-pub fn update_vc_profile(requester: Principal, vc_internal: VentureCapitalist) -> String {
+pub async fn update_vc_profile(requester: Principal, mut vc_internal: VentureCapitalist) -> String {
+    let temp_image = vc_internal.user_data.profile_picture.clone();
+    let canister_id = crate::asset_manager::get_asset_canister();
+    
+    if temp_image.is_none() {
+        let full_url = canister_id.to_string() + "/uploads/default_user.jpeg";
+        vc_internal.user_data.profile_picture = Some((full_url).as_bytes().to_vec());
+    }
+    else if temp_image.clone().unwrap().len() < 300 {
+        ic_cdk::println!("Profile image is already uploaded");
+    }else{
+        
+        let key = "/uploads/".to_owned()+&requester.to_string()+"_user.jpeg";
+        
+        let arg = StoreArg{
+            key: key.clone(),
+            content_type: "image/*".to_string(),
+            content_encoding: "identity".to_string(),
+            content: ByteBuf::from(temp_image.unwrap()),
+            sha256: None,
+        };
+
+        let delete_asset = DeleteAsset {
+            key: key.clone()
+        };
+
+        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset, )).await.unwrap();
+
+        let (result,): ((),) = call(canister_id, "store", (arg, )).await.unwrap();
+
+        vc_internal.user_data.profile_picture = Some((canister_id.to_string()+&key).as_bytes().to_vec());
+    }
     mutate_state(|state| {
         if let Some(mut existing_vc_internal) = state.vc_storage.get(&StoredPrincipal(requester)) {
+
             existing_vc_internal.0.params.registered_under_any_hub = vc_internal
                 .registered_under_any_hub
                 .clone()
@@ -1789,7 +1823,38 @@ pub fn update_vc_profile(requester: Principal, vc_internal: VentureCapitalist) -
 }
 
 #[update]
-pub fn update_mentor_profile(requester: Principal, updated_profile: MentorProfile) -> String {
+pub async fn update_mentor_profile(requester: Principal, mut updated_profile: MentorProfile) -> String {
+    let temp_image = updated_profile.user_data.profile_picture.clone();
+    let canister_id = crate::asset_manager::get_asset_canister();
+    
+    if temp_image.is_none() {
+        let full_url = canister_id.to_string() + "/uploads/default_user.jpeg";
+        updated_profile.user_data.profile_picture = Some((full_url).as_bytes().to_vec());
+    }
+    else if temp_image.clone().unwrap().len() < 300 {
+        ic_cdk::println!("Profile image is already uploaded");
+    }else{
+        
+        let key = "/uploads/".to_owned()+&requester.to_string()+"_user.jpeg";
+        
+        let arg = StoreArg{
+            key: key.clone(),
+            content_type: "image/*".to_string(),
+            content_encoding: "identity".to_string(),
+            content: ByteBuf::from(temp_image.unwrap()),
+            sha256: None,
+        };
+
+        let delete_asset = DeleteAsset {
+            key: key.clone()
+        };
+
+        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset, )).await.unwrap();
+
+        let (result,): ((),) = call(canister_id, "store", (arg, )).await.unwrap();
+
+        updated_profile.user_data.profile_picture = Some((canister_id.to_string()+&key).as_bytes().to_vec());
+    }
     mutate_state(|state| {
         if let Some(mut mentor_internal) = state.mentor_storage.get(&StoredPrincipal(requester)) {
             mentor_internal.0.profile.preferred_icp_hub = updated_profile
