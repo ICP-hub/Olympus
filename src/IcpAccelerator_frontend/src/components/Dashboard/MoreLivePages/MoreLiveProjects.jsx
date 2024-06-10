@@ -7,6 +7,7 @@ import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import NoDataCard from "../../Mentors/Event/NoDataCard";
+import { LiveProjectSkeleton } from "../Skeleton/Liveprojectskeleton";
 
 const MoreLiveProjects = () => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -22,9 +23,11 @@ const MoreLiveProjects = () => {
   const [countData, setCountData] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [filter, setFilter] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   const itemsPerPage = 12;
 
   const getAllProject = async (caller) => {
+    setIsLoading(true);
     await caller
       .list_all_projects_with_pagination({
         page_size: itemsPerPage,
@@ -35,16 +38,19 @@ const MoreLiveProjects = () => {
 
         if (!result || result.length == 0) {
           setNoData(true);
+          setIsLoading(false);
           setAllProjectData([]);
           setCountData("");
         } else {
           setAllProjectData(result.project_data);
           setCountData(result.count);
+          setIsLoading(false);
           setNoData(false);
         }
       })
       .catch((error) => {
         setNoData(true);
+        setIsLoading(false);
         setAllProjectData([]);
         setCountData();
         console.log("error-in-get-all-projects", error);
@@ -189,71 +195,86 @@ const MoreLiveProjects = () => {
           </div>
         </div>
         <div className="flex justify-center mt-4">
-          {noData ||
-          (currentProjectsData && currentProjectsData.length === 0) ? (
-            <div className="h-screen">
-              <NoDataCard />
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 w-full gap-4  flex-wrap">
-              {currentProjectsData &&
-                currentProjectsData.map((data, index) => {
-                  console.log("data,");
-                  let projectName = data?.params?.params?.project_name ?? "";
-                  let projectId = data?.params?.uid ?? "";
-                  let projectImage = data?.params?.params?.project_logo
-                    ? uint8ArrayToBase64(data?.params?.params?.project_logo[0])
-                    : "";
-                  let userImage = data?.params?.params?.user_data
-                    ?.profile_picture[0]
-                    ? uint8ArrayToBase64(
-                        data?.params?.params?.user_data?.profile_picture[0]
-                      )
-                    : "";
-                  let userName = data?.params?.params?.user_data?.full_name
-                    ? data?.params?.params?.user_data?.full_name
-                    : "";
-                  let principalId = data?.principal
-                    ? data?.principal.toText()
-                    : "";
-                  let projectDescription =
-                    data?.params?.params?.project_description ?? "";
-                  let projectAreaOfFocus =
-                    data?.params?.params?.project_area_of_focus ?? "";
-                  let projectData = data?.params ? data?.params : null;
-                  let projectRubricStatus =
-                    data?.overall_average.length > 0
-                      ? data?.overall_average[data?.overall_average.length - 1]
-                      : 0;
+          <>
+            {isLoading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 w-full gap-4  flex-wrap">
+                {Array(1)
+                  .fill(0)
+                  .map((_, index) => (
+                    <LiveProjectSkeleton key={index} />
+                  ))}
+              </div>
+            ) : noData ||
+              (currentProjectsData && currentProjectsData.length === 0) ? (
+              <div className="h-screen">
+                <NoDataCard />
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 w-full gap-4  flex-wrap">
+                {currentProjectsData &&
+                  currentProjectsData.map((data, index) => {
+                    console.log("data,");
+                    let projectName = data?.params?.params?.project_name ?? "";
+                    let projectId = data?.params?.uid ?? "";
+                    let projectImage = data?.params?.params?.project_logo
+                      ? uint8ArrayToBase64(
+                          data?.params?.params?.project_logo[0]
+                        )
+                      : "";
+                    let userImage = data?.params?.params?.user_data
+                      ?.profile_picture[0]
+                      ? uint8ArrayToBase64(
+                          data?.params?.params?.user_data?.profile_picture[0]
+                        )
+                      : "";
+                    let userName = data?.params?.params?.user_data?.full_name
+                      ? data?.params?.params?.user_data?.full_name
+                      : "";
+                    let principalId = data?.principal
+                      ? data?.principal.toText()
+                      : "";
+                    let projectDescription =
+                      data?.params?.params?.project_description ?? "";
+                    let projectAreaOfFocus =
+                      data?.params?.params?.project_area_of_focus ?? "";
+                    let projectData = data?.params ? data?.params : null;
+                    let projectRubricStatus =
+                      data?.overall_average.length > 0
+                        ? data?.overall_average[
+                            data?.overall_average.length - 1
+                          ]
+                        : 0;
 
-                  return (
-                    <div
-                      className="w-full  hover:scale-105 transition-transform duration-300 ease-in-out"
-                      key={index}
-                    >
-                      <div className="w-fit flex justify-between items-baseline flex-wrap bg-white overflow-hidden rounded-lg shadow-lg mb-5 md:mb-0">
-                        <div className="p-4">
-                          <div className="flex justify-between items-baseline flex-wrap w-fit">
-                            <div className="flex items-center w-full">
-                              <img
-                                className="rounded-full w-12 h-12 object-cover"
-                                src={projectImage}
-                                alt="profile"
-                              />
-                              <h1 className="ms-2 font-bold text-nowrap truncate w-[220px]">
-                                {projectName}
-                              </h1>
+                    return (
+                      <div
+                        className="w-full  hover:scale-105 transition-transform duration-300 ease-in-out"
+                        key={index}
+                      >
+                        <div className="w-fit flex justify-between items-baseline flex-wrap bg-white overflow-hidden rounded-lg shadow-lg mb-5 md:mb-0">
+                          <div className="p-4">
+                            <div className="flex justify-between items-baseline flex-wrap w-fit">
+                              <div className="flex items-center w-full">
+                                <img
+                                  className="rounded-full w-12 h-12 object-cover"
+                                  src={projectImage}
+                                  alt="profile"
+                                />
+                                <h1 className="ms-2 font-bold text-nowrap truncate w-[220px]">
+                                  {projectName}
+                                </h1>
+                              </div>
+                              <div className="flex items-center m-2 w-full">
+                                <img
+                                  className="h-5 w-5 rounded-full mr-2"
+                                  src={userImage}
+                                  alt="not found"
+                                />
+                                <p className="text-xs line-clamp-1">
+                                  {userName}
+                                </p>
+                              </div>
                             </div>
-                            <div className="flex items-center m-2 w-full">
-                              <img
-                                className="h-5 w-5 rounded-full mr-2"
-                                src={userImage}
-                                alt="not found"
-                              />
-                              <p className="text-xs line-clamp-1">{userName}</p>
-                            </div>
-                          </div>
-                          {/* {projectRubricStatus && (
+                            {/* {projectRubricStatus && (
                             <div className="mb-4 flex items-baseline">
                               <svg
                                 width="100%"
@@ -295,19 +316,19 @@ const MoreLiveProjects = () => {
                               </div>
                             </div>
                           )} */}
-                          <p
-                            className="text-gray-700 text-sm p-2 overflow-hidden line-clamp-8 truncate text-wrap h-48"
-                            style={{
-                              overflow: "scroll",
-                              display: "-webkit-box",
-                              WebkitBoxOrient: "vertical",
-                              WebkitLineClamp: 8,
-                            }}
-                          >
-                            {projectDescription}
-                          </p>
+                            <p
+                              className="text-gray-700 text-sm p-2 overflow-hidden line-clamp-8 truncate text-wrap h-48"
+                              style={{
+                                overflow: "scroll",
+                                display: "-webkit-box",
+                                WebkitBoxOrient: "vertical",
+                                WebkitLineClamp: 8,
+                              }}
+                            >
+                              {projectDescription}
+                            </p>
 
-                          {/* {projectAreaOfFocus ? (
+                            {/* {projectAreaOfFocus ? (
                               <div className="flex gap-2 mt-2 text-xs items-center">
                                 {projectAreaOfFocus
                                   .split(",")
@@ -337,21 +358,22 @@ const MoreLiveProjects = () => {
                               ""
                             )} */}
 
-                          <button
-                            className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"
-                            onClick={() =>
-                              handleNavigate(projectId, projectData)
-                            }
-                          >
-                            KNOW MORE
-                          </button>
+                            <button
+                              className="mt-4 bg-transparent text-black px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-[#3505B2] hover:text-white transition-colors duration-200 ease-in-out"
+                              onClick={() =>
+                                handleNavigate(projectId, projectData)
+                              }
+                            >
+                              KNOW MORE
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
-            </div>
-          )}
+                    );
+                  })}
+              </div>
+            )}
+          </>
         </div>
         {Number(countData) > 0 && (
           <div className="flex items-center gap-4 justify-center mt-8">

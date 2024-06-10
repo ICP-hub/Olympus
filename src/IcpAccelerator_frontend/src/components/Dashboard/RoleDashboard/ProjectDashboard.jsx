@@ -8,26 +8,32 @@ import AnnouncementCard from "../AnnouncementCard";
 import LiveProjectBar from "../liveProjectBar";
 import LiveEventsCards from "../../Mentors/Event/LiveEventsCards";
 import UpcomingEventsCard from "../../Mentors/Event/UpcomingEventsCard";
+import { ProjectBarSkeleton } from "../Skeleton/Projectbarskeleton";
 
-const ProjectDashboard = () => {
+const ProjectDashboard = ({ numSkeletons }) => {
   const navigate = useNavigate();
   const actor = useSelector((currState) => currState.actors.actor);
   const [projectData, setProjectData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchProjectData = async () => {
+    setIsLoading(true);
     await actor
       .get_my_project()
       .then((result) => {
         console.log("result-in-get_my_project", result);
         if (result && Object.keys(result).length > 0) {
           setProjectData(result);
+          setIsLoading(false);
         } else {
           setProjectData(null);
+          setIsLoading(false);
         }
       })
       .catch((error) => {
         console.log("error-in-get_my_project", error);
         setProjectData(null);
+        setIsLoading(false);
       });
   };
 
@@ -48,7 +54,11 @@ const ProjectDashboard = () => {
           </h1>
         </div>
         <div className="mb-4 md:md-8">
-          <LiveProjectBar data={projectData} />
+          {isLoading ? (
+            <ProjectBarSkeleton />
+          ) : (
+            <LiveProjectBar data={projectData} />
+          )}
         </div>
         <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
           <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
@@ -76,7 +86,7 @@ const ProjectDashboard = () => {
             Spotlight of the month
           </h1>
         </div>
-        <SpotLight />
+        <SpotLight numSkeletons={numSkeletons} />
         {/* <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
           <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
             Event Announcement

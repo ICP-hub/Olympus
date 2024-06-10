@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { IcpAccelerator_backend } from "../../../../../declarations/IcpAccelerator_backend/index";
 import NoDataCard from "../../Mentors/Event/NoDataCard";
+import { InvestorlistSkeleton } from "../Skeleton/Investorslistskeleton";
 
 const ViewInvestor = () => {
   const navigate = useNavigate();
@@ -12,27 +13,32 @@ const ViewInvestor = () => {
   const [noData, setNoData] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [filter, setFilter] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   const itemsPerPage = 12;
   const actor = useSelector((currState) => currState.actors.actor);
 
-  const getAllInvestors = async (caller) => {
+  const getAllInvestors = async (caller, page) => {
+    setIsLoading(true);
     try {
       const result = await caller.list_all_vcs_with_pagination({
         page_size: itemsPerPage,
-        page: currentPage,
+        page,
       });
       console.log("result-in-get-all-investors", result);
       if (!result || result.vcs.length === 0) {
         setNoData(true);
+        setIsLoading(false);
         setAllInvestorData([]);
         setCountData("");
       } else {
         setNoData(false);
+        setIsLoading(false);
         setAllInvestorData(result.vcs);
         setCountData(result.total_count);
       }
     } catch (error) {
       setNoData(true);
+      setIsLoading(false);
       setAllInvestorData([]);
       setCountData("");
       console.log("error-in-get-all-investors", error);
@@ -41,7 +47,7 @@ const ViewInvestor = () => {
 
   useEffect(() => {
     if (actor) {
-      getAllInvestors(actor);
+      getAllInvestors(actor, currentPage);
     } else {
       getAllInvestors(IcpAccelerator_backend);
     }
@@ -61,9 +67,9 @@ const ViewInvestor = () => {
   }, [filter, allInvestorData]);
 
   // Determine the investors to show on the current page
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentInvestors = filteredInvestors.slice(startIndex, endIndex);
+  // const startIndex = (currentPage - 1) * itemsPerPage;
+  // const endIndex = startIndex + itemsPerPage;
+  // const currentInvestors = filteredInvestors.slice(startIndex, endIndex);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -109,7 +115,6 @@ const ViewInvestor = () => {
   console.log("countData:", countData);
   console.log("currentPage:", currentPage);
   console.log("filteredInvestors:", filteredInvestors);
-  console.log("currentInvestors:", currentInvestors);
 
   return (
     <div className="container mx-auto min-h-screen">
@@ -142,84 +147,92 @@ const ViewInvestor = () => {
             </svg>
           </div>
         </div>
-        {noData || filter === null ? (
+        {isLoading ? (
+          Array(1)
+            .fill(0)
+            .map((_, index) => <InvestorlistSkeleton key={index} />)
+        ) : noData || filter === null ? (
           <div className="flex justify-center items-center">
             <NoDataCard />
           </div>
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 mb-4 gap-4 items-center flex-wrap ">
-              {currentInvestors.map((investor, index) => {
-                let id = investor[0].toText();
-                let img = uint8ArrayToBase64(
-                  investor[1]?.vc_profile?.params?.user_data?.profile_picture[0]
-                );
-                let name =
-                  investor[1]?.vc_profile?.params?.user_data?.full_name;
-                let company = investor[1]?.vc_profile?.params?.name_of_fund;
-                let role = "Investor";
-                let website_link =
-                  investor[1]?.vc_profile?.params?.website_link;
-                let category_of_investment =
-                  investor[1]?.vc_profile?.params?.category_of_investment ?? "";
+              {filteredInvestors &&
+                filteredInvestors.map((investor, index) => {
+                  let id = investor[0].toText();
+                  let img = uint8ArrayToBase64(
+                    investor[1]?.vc_profile?.params?.user_data
+                      ?.profile_picture[0]
+                  );
+                  let name =
+                    investor[1]?.vc_profile?.params?.user_data?.full_name;
+                  let company = investor[1]?.vc_profile?.params?.name_of_fund;
+                  let role = "Investor";
+                  let website_link =
+                    investor[1]?.vc_profile?.params?.website_link;
+                  let category_of_investment =
+                    investor[1]?.vc_profile?.params?.category_of_investment ??
+                    "";
 
-                return (
-                  <div
-                    key={index}
-                    className="bg-white  hover:scale-105 w-full rounded-lg mb-5 md:mb-0 p-6"
-                  >
-                    <div className="justify-center flex items-center">
-                      <div
-                        className="size-48  rounded-full bg-no-repeat bg-center bg-cover relative p-1 bg-blend-overlay border-2 border-gray-300"
-                        style={{
-                          backgroundImage: `url(${img}), linear-gradient(168deg, rgba(255, 255, 255, 0.25) -0.86%, rgba(255, 255, 255, 0) 103.57%)`,
-                          backdropFilter: "blur(20px)",
-                        }}
-                      >
-                        <img
-                          className="object-cover size-48 max-h-44 rounded-full"
-                          src={img}
-                          alt=""
-                        />
+                  return (
+                    <div
+                      key={index}
+                      className="bg-white  hover:scale-105 w-full rounded-lg mb-5 md:mb-0 p-6"
+                    >
+                      <div className="justify-center flex items-center">
+                        <div
+                          className="size-48  rounded-full bg-no-repeat bg-center bg-cover relative p-1 bg-blend-overlay border-2 border-gray-300"
+                          style={{
+                            backgroundImage: `url(${img}), linear-gradient(168deg, rgba(255, 255, 255, 0.25) -0.86%, rgba(255, 255, 255, 0) 103.57%)`,
+                            backdropFilter: "blur(20px)",
+                          }}
+                        >
+                          <img
+                            className="object-cover size-48 max-h-44 rounded-full"
+                            src={img}
+                            alt=""
+                          />
+                        </div>
+                      </div>
+                      <div className="text-black text-start">
+                        <div className="text-start my-3">
+                          <span className="font-semibold text-lg truncate">
+                            {name}
+                          </span>
+                          <span className="block text-gray-500 truncate">
+                            {company}
+                          </span>
+                        </div>
+                        <div className="flex overflow-x-auto gap-2 pb-4 max-md:justify-center">
+                          {category_of_investment &&
+                          category_of_investment !== ""
+                            ? category_of_investment
+                                .split(",")
+                                .map((item, index) => {
+                                  return (
+                                    <span
+                                      key={index}
+                                      className="bg-[#E7E7E8] rounded-full text-gray-600 text-xs font-bold px-3 py-1 leading-none flex items-center"
+                                    >
+                                      {item.trim()}
+                                    </span>
+                                  );
+                                })
+                            : ""}
+                        </div>
+                        <button
+                          onClick={() =>
+                            id ? navigate(`/view-investor-details/${id}`) : ""
+                          }
+                          className="text-white px-4 py-1 rounded-lg uppercase w-full text-center border border-gray-300 font-bold bg-[#3505B2] transition-colors duration-200 ease-in-out"
+                        >
+                          View Profile
+                        </button>
                       </div>
                     </div>
-                    <div className="text-black text-start">
-                      <div className="text-start my-3">
-                        <span className="font-semibold text-lg truncate">
-                          {name}
-                        </span>
-                        <span className="block text-gray-500 truncate">
-                          {company}
-                        </span>
-                      </div>
-                      <div className="flex overflow-x-auto gap-2 pb-4 max-md:justify-center">
-                        {category_of_investment && category_of_investment !== ""
-                          ? category_of_investment
-                              .split(",")
-                              .map((item, index) => {
-                                return (
-                                  <span
-                                    key={index}
-                                    className="bg-[#E7E7E8] rounded-full text-gray-600 text-xs font-bold px-3 py-1 leading-none flex items-center"
-                                  >
-                                    {item.trim()}
-                                  </span>
-                                );
-                              })
-                          : ""}
-                      </div>
-                      <button
-                        onClick={() =>
-                          id ? navigate(`/view-investor-details/${id}`) : ""
-                        }
-                        className="text-white px-4 py-1 rounded-lg uppercase w-full text-center border border-gray-300 font-bold bg-[#3505B2] transition-colors duration-200 ease-in-out"
-                      >
-                        View Profile
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
             </div>
             <div className="flex flex-row  w-full gap-4 justify-center">
               {Number(countData) > 0 && (
