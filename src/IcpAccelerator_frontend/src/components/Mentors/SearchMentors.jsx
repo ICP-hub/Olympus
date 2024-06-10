@@ -9,34 +9,35 @@ import MentorCard from "./MentorCard";
 function SearchMentors() {
   const navigate = useNavigate();
   const [allMentorData, setAllMentorData] = useState([]);
-  const [countData, setCountData] = useState("");
+  const [countData, setCountData] = useState(0);
   const [noData, setNoData] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [filter, setFilter] = useState("");
   const itemsPerPage = 12;
   const actor = useSelector((currState) => currState.actors.actor);
 
-  const getAllMentors = async (caller) => {
+  const getAllMentors = async (caller, page) => {
+    console.log("Fetching data for page:", page);
     await caller
       .get_all_mentors_with_pagination({
         page_size: itemsPerPage,
-        page: currentPage,
+        page,
       })
       .then((result) => {
         console.log("result-in-get-all-mentors", result);
-        if (result.length > 0) {
-          setAllMentorData(result);
-          setCountData(result.total_count);
+        if (result.data.length > 0) {
+          setAllMentorData(result.data);
+          setCountData(result.count);
           setNoData(false);
         } else {
           setAllMentorData([]);
-          setCountData("");
+          setCountData(0);
           setNoData(true);
         }
       })
       .catch((error) => {
         setAllMentorData([]);
-        setCountData("");
+        setCountData(0);
         setNoData(true);
         console.log("error-in-get-all-mentors", error);
       });
@@ -44,19 +45,18 @@ function SearchMentors() {
 
   useEffect(() => {
     if (actor) {
-      getAllMentors(actor);
+      getAllMentors(actor, currentPage);
     } else {
-      getAllMentors(IcpAccelerator_backend);
+      getAllMentors(IcpAccelerator_backend, currentPage);
     }
-  }, [actor]);
+  }, [actor, currentPage]);
 
-  const filteredInvestors = React.useMemo(() => {
+  const filteredMentors = React.useMemo(() => {
     return allMentorData.filter((user) => {
-      console.log("user", user);
       const fullName =
         user[1]?.mentor_profile?.profile?.user_data?.full_name?.toLowerCase() ||
         "";
-      const areaoFInterest =
+      const areaOfInterest =
         user[1]?.mentor_profile?.profile?.user_data?.area_of_interest?.toLowerCase() ||
         "";
       const categoryOfMentoring =
@@ -64,35 +64,34 @@ function SearchMentors() {
         "";
       return (
         fullName.includes(filter.toLowerCase()) ||
-        areaoFInterest.includes(filter.toLowerCase()) ||
+        areaOfInterest.includes(filter.toLowerCase()) ||
         categoryOfMentoring.includes(filter.toLowerCase())
       );
     });
   }, [filter, allMentorData]);
 
-  const indexOfLastUser = currentPage * itemsPerPage;
-  const indexOfFirstUser = indexOfLastUser - itemsPerPage;
-  const currentMentors = filteredInvestors.slice(
-    indexOfFirstUser,
-    indexOfLastUser
-  );
-
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  const handlePrevious = () => {
-    setCurrentPage((prev) => (prev > 1 ? prev - 1 : prev));
+  const handleNext = () => {
+    setCurrentPage((prev) => {
+      const nextPage = prev + 1;
+      console.log("Navigating to page:", nextPage);
+      return nextPage <= Math.ceil(Number(countData) / itemsPerPage) ? nextPage : prev;
+    });
   };
 
-  const handleNext = () => {
-    setCurrentPage((prev) =>
-      prev < Math.ceil(Number(countData) / itemsPerPage) ? prev + 1 : prev
-    );
+  const handlePrevious = () => {
+    setCurrentPage((prev) => {
+      const prevPage = prev > 1 ? prev - 1 : prev;
+      console.log("Navigating to page:", prevPage);
+      return prevPage;
+    });
   };
 
   return (
     <div className="container mx-auto min-h-screen">
       <div className="px-[4%] pb-[4%] pt-[1%]">
-        <div className="flex items-center justify-between sm:flex-col sxxs:flex-col md:flex-row">
+        <div className="flex items-center justify-between sm:flex-col sxxs:flex-col md:flex-row mb-8">
           <div
             className="w-full bg-gradient-to-r from-purple-900 to-blue-500 text-transparent bg-clip-text text-3xl font-extrabold py-4 
        font-fontUse"
@@ -123,8 +122,8 @@ function SearchMentors() {
           <NoDataCard />
         ) : (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 mb-4 gap-4 items-center flex-wrap ">
-              {currentMentors.map((mentor, index) => {
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 mb-8 gap-8 items-center flex-wrap ">
+              {filteredMentors.map((mentor, index) => {
                 let id = mentor[0] ? mentor[0].toText() : "";
                 let img = uint8ArrayToBase64(
                   mentor[1]?.mentor_profile?.profile?.user_data
@@ -246,8 +245,7 @@ function SearchMentors() {
                   <button
                     onClick={handleNext}
                     disabled={
-                      currentPage ===
-                      Math.ceil(Number(countData) / itemsPerPage)
+                      currentPage === Math.ceil(Number(countData) / itemsPerPage)
                     }
                     className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                     type="button"

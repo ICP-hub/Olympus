@@ -28,6 +28,7 @@ const Adminalluser = () => {
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [principalId, setPrincipalId] = useState(null);
+  const [countData, setCountData] = useState(0);
 
   const handleOpenDeleteModal = (id) => {
     setPrincipalId(id);
@@ -41,7 +42,6 @@ const Adminalluser = () => {
 
   const handleDelete = async () => {
     const covertedPrincipal = await Principal.fromText(principalId);
-    console.log("principalId ==>>>", covertedPrincipal);
     setIsSubmitting(true);
     let result = [];
     try {
@@ -88,7 +88,10 @@ const Adminalluser = () => {
     try {
       switch (filterOption) {
         case "Users":
-          data = await actor.get_total_approved_list_with_user_data();
+          data = await actor.get_total_approved_list_with_user_data({
+            page_size: itemsPerPage,
+            page: currentPage,
+          });
           break;
         case "Mentors":
           data = await actor.mentor_profile_edit_awaiting_approval();
@@ -102,114 +105,86 @@ const Adminalluser = () => {
         default:
           data = [];
       }
+
       if (filterOption === "Users") {
-        const userProcessedData = [];
-        data.forEach((item) => {
-          console.log("datasssss", data);
-          let principal = "";
-          if (data && data?.[0]?.[1]?.principal) {
-            principal = principalToText(data?.[0]?.[1]?.principal);
-          } else if (data && data?.[0]?.[0]) {
-            principal = principalToText(data?.[0]?.[0]);
-          }
+        const userProcessedData = data?.data?.map((item) => {
+          const principal = principalToText(item[0]);
           const userDetails = item[1];
           const profilePictureBase64 = userDetails.user_data.profile_picture[0]
             ? uint8ArrayToBase64(userDetails.user_data.profile_picture[0])
             : null;
 
-          userDetails.approved_type.forEach((type) => {
-            if (type === "user") {
-              userProcessedData.push({
-                approvedType: type,
-                fullName: userDetails.user_data.full_name.trim(),
-                country: userDetails.user_data.country,
-                telegram: userDetails.user_data.telegram_id[0],
-                profilePictureURL: profilePictureBase64,
-                principalId: principal,
-              });
-            }
-          });
+          return {
+            approvedType: "user",
+            fullName: userDetails.user_data.full_name.trim(),
+            country: userDetails.user_data.country,
+            telegram: userDetails.user_data.telegram_id[0] || "N/A",
+            profilePictureURL: profilePictureBase64,
+            principalId: principal,
+          };
         });
-        setAllData(userProcessedData);
-      } else {
-        const processedData = data.map((item, index) => {
-          console.log("data", data);
 
+        setAllData(userProcessedData);
+        setCountData(data?.count);
+      } else {
+        const processedData = data?.map((item, index) => {
           const updatedInfo = item[1]?.updated_info || {};
 
-          let principal = "";
-          if (data && data?.[0]?.[1]?.principal) {
-            principal = principalToText(data?.[0]?.[1]?.principal);
-          } else if (data && data?.[0]?.[0]) {
-            principal = principalToText(data?.[0]?.[0]);
-          }
+          const principal = principalToText(item[0]);
 
-          const profilePicture =
-            uint8ArrayToBase64(updatedInfo.user_data?.profile_picture[0]) ||
-            uint8ArrayToBase64(updatedInfo[0].user_data?.profile_picture[0]) ||
-            uint8ArrayToBase64(updatedInfo.project_logo[0]);
+          const profilePicture = uint8ArrayToBase64(
+            updatedInfo.user_data?.profile_picture[0] ||
+              updatedInfo[0]?.user_data?.profile_picture[0] ||
+              updatedInfo.project_logo[0]
+          );
 
-          const commonData = {
+          return {
             fullName: (
               updatedInfo.user_data?.full_name ||
-              updatedInfo[0].user_data?.full_name ||
+              updatedInfo[0]?.user_data?.full_name ||
               "No Name"
             ).trim(),
             country:
               updatedInfo.user_data?.country ||
-              updatedInfo[0].user_data?.country ||
+              updatedInfo[0]?.user_data?.country ||
               "No Country",
             profilePictureURL: profilePicture,
             telegram:
               updatedInfo.user_data?.telegram_id ||
-              updatedInfo[0].user_data?.telegram_id ||
+              updatedInfo[0]?.user_data?.telegram_id ||
               "N/A",
             hub:
               updatedInfo?.preferred_icp_hub?.[0] ||
-              updatedInfo?.[0]?.preferred_icp_hub ||
-              updatedInfo?.[0]?.preferred_icp_hub?.[0] ||
+              updatedInfo[0]?.preferred_icp_hub ||
+              updatedInfo[0]?.preferred_icp_hub?.[0] ||
               "N/A",
             principalId: principal,
             index: index + 1,
           };
-
-          return commonData;
         });
         setAllData(processedData);
+        setCountData(data?.length);
       }
     } catch (error) {
       console.error("Failed to fetch data:", error);
       setAllData([]);
+      setCountData(0);
     }
-  }, [actor, filterOption]);
+  }, [actor, filterOption, currentPage]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
-  let filteredData;
-  filteredData = allData.filter((item) => {
-    const fullName = item.fullName?.toLowerCase() || "";
-    const country = item.country?.toLowerCase() || "";
-    return (
-      fullName.includes(filter.toLowerCase()) ||
-      country.includes(filter.toLowerCase())
-    );
-  });
-  filteredData = React.useMemo(
+  const filteredData = useMemo(
     () =>
-      allData.filter(
+      allData?.filter(
         (user) =>
-          user.fullName.toLowerCase().includes(filter.toLowerCase()) ||
-          user.approvedType.toLowerCase().includes(filter.toLowerCase()) ||
-          user.country.toLowerCase().includes(filter.toLowerCase())
+          user?.fullName?.toLowerCase().includes(filter.toLowerCase()) ||
+          user?.country?.toLowerCase().includes(filter.toLowerCase())
       ),
     [filter, allData]
   );
-
-  const indexOfLastUser = currentPage * itemsPerPage;
-  const indexOfFirstUser = indexOfLastUser - itemsPerPage;
-  const currentData = filteredData.slice(indexOfFirstUser, indexOfLastUser);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -218,26 +193,26 @@ const Adminalluser = () => {
   };
 
   const handleNext = () => {
-    setCurrentPage((prev) =>
-      prev < Math.ceil(filteredData.length / itemsPerPage) ? prev + 1 : prev
-    );
+    setCurrentPage((prev) => {
+      const nextPage = prev + 1;
+      return nextPage <= Math.ceil(Number(countData) / itemsPerPage)
+        ? nextPage
+        : prev;
+    });
   };
 
   const handleRowClick = (principalId) => {
-    const routePath =
-      filterOption === "Users"
-        ? "/userupdate"
-        : filterOption === "Mentors"
-        ? "/userProfileMentorUpdate"
-        : filterOption === "Investors"
-        ? "/userProfileInvestorUpdate"
-        : "/userProfileProjectUpdate";
+    const routePath = {
+      Users: "/userupdate",
+      Mentors: "/userProfileMentorUpdate",
+      Investors: "/userProfileInvestorUpdate",
+      Projects: "/userProfileProjectUpdate",
+    }[filterOption];
     navigate(routePath, { state: principalId });
   };
 
-  // New logic for rendering pagination numbers
   const renderPaginationNumbers = () => {
-    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+    const totalPages = Math.ceil(Number(countData) / itemsPerPage);
     const maxPageNumbers = 10;
     const startPage =
       Math.floor((currentPage - 1) / maxPageNumbers) * maxPageNumbers + 1;
@@ -290,20 +265,17 @@ const Adminalluser = () => {
       </div>
 
       <div className="flex justify-end mb-4 items-center w-full">
+        <div className="w-full bg-gradient-to-r from-purple-900 to-blue-500 text-transparent bg-clip-text text-xl md:text-3xl font-extrabold py-4 font-fontUse">
+          {filterOption === "Users" ? "All Users" : "All Updates"}
+        </div>
         <div
-          className="w-full bg-gradient-to-r from-purple-900 to-blue-500 text-transparent bg-clip-text text-xl md:text-3xl font-extrabold py-4 
-       font-fontUse"
-        >
-          All Updates
-        </div>{" "}
-        <div
-          className="border-2 border-blue-900 p-1 w-auto  font-bold rounded-md text-blue-900 px-2 capitalize"
+          className="border-2 border-blue-900 p-1 w-auto font-bold rounded-md text-blue-900 px-2 capitalize"
           style={{ whiteSpace: "nowrap" }}
         >
           {filterOption}
         </div>
         <div className="flex items-center justify-between ml-2">
-          <div className="flex justify-end gap-4 relative " ref={dropdownRef}>
+          <div className="flex justify-end gap-4 relative" ref={dropdownRef}>
             <div
               className="cursor-pointer"
               onClick={() => setIsPopupOpen((curr) => !curr)}
@@ -314,36 +286,31 @@ const Adminalluser = () => {
                   <ul className="flex flex-col">
                     <li>
                       <button
-                        className="border-[#9C9C9C] w-[230px]  hover:text-indigo-800 border-b-2 py-2 px-4 focus:outline-none text-base flex justify-start font-fontUse"
-                        onClick={() => {
-                          setFilterOption("Users");
-                        }}
+                        className="border-[#9C9C9C] w-[230px] hover:text-indigo-800 border-b-2 py-2 px-4 focus:outline-none text-base flex justify-start font-fontUse"
+                        onClick={() => setFilterOption("Users")}
                       >
                         All Users
                       </button>
                     </li>
                     <li>
                       <button
-                        className="border-[#9C9C9C] w-[230px]  hover:text-indigo-800 border-b-2 py-2 px-4 focus:outline-none text-base flex justify-start font-fontUse"
-                        onClick={() => {
-                          setFilterOption("Projects");
-                        }}
+                        className="border-[#9C9C9C] w-[230px] hover:text-indigo-800 border-b-2 py-2 px-4 focus:outline-none text-base flex justify-start font-fontUse"
+                        onClick={() => setFilterOption("Projects")}
                       >
                         Projects
                       </button>
                     </li>
                     <li>
                       <button
-                        className="border-[#9C9C9C] w-[230px]  hover:text-indigo-800 border-b-2 py-2 px-4 focus:outline-none text-base flex justify-start font-fontUse"
+                        className="border-[#9C9C9C] w-[230px] hover:text-indigo-800 border-b-2 py-2 px-4 focus:outline-none text-base flex justify-start font-fontUse"
                         onClick={() => setFilterOption("Mentors")}
                       >
                         Mentors
                       </button>
                     </li>
-                    
                     <li>
                       <button
-                        className="border-[#9C9C9C] w-[230px]  hover:text-indigo-800 border-b-2 py-2 px-4 focus:outline-none text-base flex justify-start font-fontUse"
+                        className="border-[#9C9C9C] w-[230px] hover:text-indigo-800 border-b-2 py-2 px-4 focus:outline-none text-base flex justify-start font-fontUse"
                         onClick={() => setFilterOption("Investors")}
                       >
                         Investors
@@ -354,10 +321,10 @@ const Adminalluser = () => {
               )}
             </div>
           </div>
-        </div>{" "}
+        </div>
       </div>
 
-      {currentData.length > 0 ? (
+      {Number(countData) > 0 ? (
         <div className="flex flex-col bg-white rounded-lg p-8 text-lg overflow-auto mb-8">
           <div className="min-w-[600px]">
             <table className="w-full table-fixed">
@@ -374,20 +341,22 @@ const Adminalluser = () => {
                 </tr>
               </thead>
               <tbody className="text-base text-gray-700 font-fontUse">
-                {currentData.map((user, index) => (
+                {filteredData?.map((user, index) => (
                   <tr
                     key={`${user.fullName}-${user.country}-${index}`}
                     className="hover:bg-gray-100 cursor-pointer mt-1"
                   >
                     <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                    <td className="py-2 ">
+                    <td className="py-2">
                       <div className="flex items-center">
                         <img
                           className="w-10 h-10 rounded-full border-black border-2 p-1"
                           src={user.profilePictureURL}
                           alt="Profile"
                         />
-                        <div className="ml-2">{user.fullName}</div>
+                        <div className="ml-2 truncate w-4/6">
+                          {user.fullName}
+                        </div>
                       </div>
                     </td>
                     <td>
@@ -395,7 +364,7 @@ const Adminalluser = () => {
                     </td>
                     <td>{user.country}</td>
                     <td className="truncate max-w-xs">
-                      {user.telegram ? (
+                      {user.telegram !== "N/A" ? (
                         <a
                           href={`https://t.me/${user.telegram}`}
                           target="_blank"
@@ -405,12 +374,12 @@ const Adminalluser = () => {
                           {user.telegram}
                         </a>
                       ) : (
-                        <p>N/A</p>
+                        <p className="truncate w-4/6">{user.telegram}</p>
                       )}
                     </td>
                     <td>
                       <button
-                        className="p-2 bg-white rounded-lg border-2 border-gray-300 hover:bg-gray-300"
+                        className="p-2 bg-white rounded-lg border-2 border-gray-300 hover:bg-gray-300 mr-2"
                         onClick={() => handleRowClick(user.principalId)}
                       >
                         <svg
@@ -452,7 +421,7 @@ const Adminalluser = () => {
         <NoDataCard image={NoData} desc={"No data yet"} />
       )}
 
-      {currentData.length > 0 && (
+      {Number(countData) > 0 && (
         <div className="flex items-center gap-4 justify-center mb-4">
           <button
             onClick={handlePrevious}
@@ -473,7 +442,7 @@ const Adminalluser = () => {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
-              ></path>
+              />
             </svg>
             Previous
           </button>
@@ -481,7 +450,7 @@ const Adminalluser = () => {
           <button
             onClick={handleNext}
             disabled={
-              currentPage === Math.ceil(filteredData.length / itemsPerPage)
+              currentPage === Math.ceil(Number(countData) / itemsPerPage)
             }
             className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
             type="button"
@@ -500,7 +469,7 @@ const Adminalluser = () => {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-              ></path>
+              />
             </svg>
           </button>
         </div>
