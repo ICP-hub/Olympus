@@ -13,8 +13,9 @@ import { useNavigate } from "react-router-dom";
 import ment from "../../../assets/images/ment.jpg";
 import girl from "../../../assets/images/girl.jpeg";
 import NoData from "../../../assets/images/file_not_found.png";
+import SpotlightSkeleton from "./Skeleton/Spotlightskeleton";
 
-const SpotLight = () => {
+const SpotLight = ({ numSkeletons }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
   const userCurrentRoleStatusActiveRole = useSelector(
@@ -22,21 +23,25 @@ const SpotLight = () => {
   );
   const [noData, setNoData] = useState(null);
   const [spotLightData, setSpotLightData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     let isMounted = true;
 
     const fetchSpotLight = async (caller) => {
+      setIsLoading(true);
       await caller
         .get_spotlight_projects()
         .then((result) => {
           if (isMounted) {
             if (result && result.length > 0) {
               setSpotLightData(result);
+              setIsLoading(false);
               setNoData(false);
             } else {
               setSpotLightData([]);
+              setIsLoading(false);
               setNoData(true);
             }
           }
@@ -44,6 +49,7 @@ const SpotLight = () => {
         .catch((error) => {
           if (isMounted) {
             setNoData(true);
+            setIsLoading(false);
             setSpotLightData([]);
           }
         });
@@ -92,7 +98,15 @@ const SpotLight = () => {
   return (
     <div className="py-4">
       <div className="gap-4 overflow-x-auto">
-        {noData ? (
+        {isLoading ? (
+          <div className="w-full grid gap-2 grid-cols-1 md3:grid-cols-2 dxl:grid-cols-3 md:px-4 md:gap-4 sm:gap-4">
+            {Array(numSkeletons)
+              .fill(0)
+              .map((_, index) => (
+                <SpotlightSkeleton key={index} />
+              ))}
+          </div>
+        ) : noData ? (
           <NoDataCard image={NoData} desc={"No featured projects yet"} />
         ) : (
           <Swiper

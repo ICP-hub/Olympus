@@ -801,11 +801,11 @@ export const walletModalSvg = [
               y2="39.206"
               gradientUnits="userSpaceOnUse"
             >
-              <stop stop-color="#CC5CDC" />
-              <stop offset=".245" stop-color="#7B66FF" />
-              <stop offset=".521" stop-color="#1F8AF0" />
-              <stop offset=".76" stop-color="#00D1FF" />
-              <stop offset="1" stop-color="#3DEDD7" />
+              <stop stopColor="#CC5CDC" />
+              <stop offset=".245" stopColor="#7B66FF" />
+              <stop offset=".521" stopColor="#1F8AF0" />
+              <stop offset=".76" stopColor="#00D1FF" />
+              <stop offset="1" stopColor="#3DEDD7" />
             </linearGradient>
           </defs>
         </svg>
