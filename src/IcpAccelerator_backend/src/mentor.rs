@@ -144,6 +144,7 @@ pub async fn register_mentor(mut profile: MentorProfile) -> String {
             for role in role_status_vec.iter_mut() {
                 if role.name == "mentor" {
                     role.status = "requested".to_string();
+                    role.requested_on = Some(time());
                     break;
                 }
             }

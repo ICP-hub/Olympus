@@ -189,11 +189,18 @@ pub fn approve_mentor_creation_request(requester: Principal, approve: bool) -> S
                 // Update various parts of the state
                 state.mentor_storage.insert(StoredPrincipal(requester), mentor.clone());
                 state.mentor_awaits_response.remove(&StoredPrincipal(requester));
-                if let Some(mut user_roles) = state.role_status.get(&StoredPrincipal(requester)) {
-                    if let Some(role) = user_roles.0.iter_mut().find(|r| r.name == "mentor") {
-                        role.status = "approved".to_string();
-                        role.approved_on = Some(time());
+                let role_status = &mut state.role_status;
+
+                if let Some(mut role_status_vec_candid) = role_status.get(&StoredPrincipal(requester)) {
+                    let mut role_status_vec = role_status_vec_candid.0;
+                    for role in role_status_vec.iter_mut() {
+                        if role.name == "mentor" {
+                            role.status = "approved".to_string();
+                            role.approved_on = Some(time());
+                            break;
+                        }
                     }
+                    role_status.insert(StoredPrincipal(requester), Candid(role_status_vec));
                 }
             });
 
@@ -586,15 +593,18 @@ pub fn approve_vc_creation_request(requester: Principal, approve: bool) -> Strin
                 // Remove the vc request from awaits response as it's now processed
                 state.vc_awaits_response.remove(&StoredPrincipal(requester));
 
-                // Update role status if applicable
-                if let Some(mut roles) = state.role_status.get(&StoredPrincipal(requester)) {
-                    for role in roles.0.iter_mut() {
+                let role_status = &mut state.role_status;
+
+                if let Some(mut role_status_vec_candid) = role_status.get(&StoredPrincipal(requester)) {
+                    let mut role_status_vec = role_status_vec_candid.0;
+                    for role in role_status_vec.iter_mut() {
                         if role.name == "vc" {
                             role.status = "approved".to_string();
+                            role.approved_on = Some(time());
                             break;
                         }
                     }
-                    state.role_status.insert(StoredPrincipal(requester), Candid(roles.0.clone()));
+                    role_status.insert(StoredPrincipal(requester), Candid(role_status_vec));
                 }
             });
 
@@ -1215,8 +1225,16 @@ fn get_principals_by_role(role_name: &str) -> HashSet<Principal> {
     })
 }
 
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+pub struct PaginationReturnUserData {
+    pub data: HashMap<Principal, ApprovedList>,
+    pub count: usize,
+}
+
 #[query]
-fn get_total_approved_list_with_user_data() -> HashMap<Principal, ApprovedList> {
+fn get_total_approved_list_with_user_data(
+    pagination_params: PaginationParams,
+) -> PaginationReturnUserData {
     let roles_to_check = vec!["user", "mentor", "vc", "project"];
 
     let mut principals_roles: HashMap<StoredPrincipal, Vec<String>> = HashMap::new();
@@ -1253,7 +1271,21 @@ fn get_total_approved_list_with_user_data() -> HashMap<Principal, ApprovedList> 
             .collect()
     });
 
-    approved_list_map
+    let start = std::cmp::min(
+        (pagination_params.page - 1) * pagination_params.page_size,
+        approved_list_map.len(),
+    );
+    let end = std::cmp::min(start + pagination_params.page_size, approved_list_map.len());
+
+    let mut approved_list_vec: Vec<_> = approved_list_map.clone().into_iter().collect();
+    approved_list_vec.sort_by_key(|k| k.0); // Optional: sort by Principal for consistent pagination
+
+    let sliced_vec = &approved_list_vec[start..end];
+
+    PaginationReturnUserData {
+        data: sliced_vec.iter().cloned().collect(),
+        count: approved_list_map.len(), // Return the total count of active mentors
+    }
 }
 
 

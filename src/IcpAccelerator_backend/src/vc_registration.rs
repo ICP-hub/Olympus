@@ -231,6 +231,7 @@ pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::
             for role in role_status_vec.iter_mut() {
                 if role.name == "vc" {
                     role.status = "requested".to_string();
+                    role.requested_on = Some(time());
                     break;
                 }
             }
@@ -434,9 +435,14 @@ pub fn list_all_vcs() -> HashMap<Principal, VcWithRoles> {
 }
 
 
+#[derive(CandidType, Clone)]
+pub struct PaginationReturnVcData {
+    pub data: HashMap<Principal, VcWithRoles>,
+    pub count: usize,
+}
 
-#[query]
-pub fn list_all_vcs_with_pagination(pagination_params: PaginationParams) -> HashMap<Principal, VcWithRoles> {
+#[query()]
+pub fn list_all_vcs_with_pagination(pagination_params: PaginationParams) -> PaginationReturnVcData {
     read_state(|state| {
         let mut vc_list: Vec<(Principal, VcWithRoles)> = Vec::new();
 
@@ -463,14 +469,21 @@ pub fn list_all_vcs_with_pagination(pagination_params: PaginationParams) -> Hash
 
         // Guard against cases where the pagination request exceeds the list bounds
         if start >= vc_list.len() {
-            return HashMap::new();
+            return PaginationReturnVcData {
+                data: HashMap::new(),
+                count: vc_list.len(),
+            };
         }
 
         // Convert the appropriately sliced list segment to a HashMap
         let paginated_vc_list = vc_list[start..end].to_vec();
-        let paginated_vc_map: HashMap<Principal, VcWithRoles> = paginated_vc_list.into_iter().collect();
+        let paginated_vc_map: HashMap<Principal, VcWithRoles> =
+            paginated_vc_list.into_iter().collect();
 
-        paginated_vc_map
+        PaginationReturnVcData {
+            data: paginated_vc_map,
+            count: vc_list.len(),
+        }
     })
 }
 

@@ -25,7 +25,7 @@ const ViewInvestor = () => {
         page,
       });
       console.log("result-in-get-all-investors", result);
-      if (!result || result.vcs.length === 0) {
+      if (!result || result.data.length === 0) {
         setNoData(true);
         setIsLoading(false);
         setAllInvestorData([]);
@@ -33,7 +33,7 @@ const ViewInvestor = () => {
       } else {
         setNoData(false);
         setIsLoading(false);
-        setAllInvestorData(result.vcs);
+        setAllInvestorData(result.data);
         setCountData(result.total_count);
       }
     } catch (error) {
@@ -54,14 +54,14 @@ const ViewInvestor = () => {
   }, [actor, currentPage]);
 
   const filteredInvestors = React.useMemo(() => {
-    return allInvestorData.filter((user) => {
+    return allInvestorData?.filter((user) => {
       const fullName =
         user[1]?.vc_profile?.params?.user_data?.full_name?.toLowerCase() || "";
       const companyName =
         user[1]?.vc_profile?.params?.name_of_fund?.toLowerCase() || "";
       return (
-        fullName.includes(filter.toLowerCase()) ||
-        companyName.includes(filter.toLowerCase())
+        fullName.includes(filter?.toLowerCase()) ||
+        companyName.includes(filter?.toLowerCase())
       );
     });
   }, [filter, allInvestorData]);
