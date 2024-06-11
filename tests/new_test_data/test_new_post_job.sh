@@ -27,15 +27,6 @@ descriptions=(
     "Yumi is proud to unveil the first decentralized marketplace built on the Internet Computer Protocol, offering a secure and transparent platform for buying and selling goods and services. With Yumi, users enjoy lower transaction fees, faster settlement times, and enhanced security features, all while maintaining complete control over their data. Whether you are a buyer looking for unique items or a seller aiming to reach a global audience, Yumi provides the perfect ecosystem to connect and transact. Join Yumi today and be part of the future of e-commerce."
 )
 
-# Get project IDs dynamically
-project_ids=()
-for i in $(seq $START $NUM_MENTORS); do
-    identity_name="user$i"
-    project_id=$(dfx --identity "$identity_name" canister call $CANISTER get_project_id '()' | sed 's/[()]//g' | tr -d '[:space:]')
-    project_ids+=($project_id)
-
-    echo "the project id is $project_id"
-done
 
 # Loop through users and create announcements dynamically
 for i in $(seq $START $NUM_MENTORS); do
@@ -43,14 +34,20 @@ for i in $(seq $START $NUM_MENTORS); do
     dfx identity use "$identity_name"
     CURRENT_PRINCIPAL=$(dfx identity get-principal)
     echo "Using identity $identity_name with principal $CURRENT_PRINCIPAL"
-
-    # Create Candid data for the announcement
-    PROJECT_DATA="(record {
-        project_id = ${project_ids[$((i-1))]};
-        announcement_title = \"${titles[$((i-1))]}\";
-        announcement_description = \"${descriptions[$((i-1))]}\";
-    })"
+    project_id=$(dfx --identity "$identity_name" canister call $CANISTER get_project_id '()' | sed 's/[()]//g' | tr -d '[:space:]')
+    echo "the project id is $project_id"
     
+
+    PROJECT_DATA="(record {
+        project_id = $project_id;
+        link = \"https://w.com\";
+        location = \"India\";
+        category = \"Technical\";
+        title = \"${titles[$((i-1))]}\";
+        description = \"${descriptions[$((i-1))]}\";
+    })"
+
     # Call the register_user function with the current identity and its unique data
-    dfx canister call $CANISTER add_announcement "$PROJECT_DATA"
+    dfx canister call $CANISTER post_job "$PROJECT_DATA"
+    echo "job posted for project $project_id"
 done
