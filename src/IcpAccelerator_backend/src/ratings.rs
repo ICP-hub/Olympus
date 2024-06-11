@@ -1,3 +1,4 @@
+use crate::is_user_anonymous;
 use crate::state_handler::*;
 use candid::types::principal;
 use candid::{CandidType, Principal};
@@ -10,7 +11,6 @@ use serde::{Deserialize, Serialize};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::fmt;
-
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct RatingTypes {
     peer: Vec<TimestampedRating>,
@@ -364,7 +364,7 @@ pub fn calculate_average_api(project_id: &str) -> RatingAverages {
     })
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_ratings_by_principal(project_id: String) -> Result<Vec<RatingView>, String> {
     let caller_id = caller();
     println!(

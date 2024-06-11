@@ -1,10 +1,10 @@
 mod admin;
+mod asset_manager;
 mod latest_popular_projects;
 mod leaderboard;
 mod manage_focus_expertise;
 mod manage_hubs;
 mod mentor;
-mod asset_manager;
 
 mod investor_offer_to_project;
 mod notification_to_mentor;
@@ -72,16 +72,28 @@ use project_registration::{
     NotificationForOwner, NotificationProject, ProjectInfo, ProjectInfoInternal, TeamMember,
 };
 
-
 use crate::ratings::RatingView;
 use vc_registration::VentureCapitalist;
 use vc_registration::*;
 
-// private function to check if the caller is one of the controllers of the canister
-fn check_admin() {
-    if !ic_cdk::api::is_controller(&caller()) {
-        ic_cdk::api::trap("This user is unauthorised to use this function");
-    }
+pub fn is_admin() -> Result<(), String> {
+    Ok(())
+    // if !ic_cdk::api::is_controller(&caller()) {
+    //     Err("Only Admin can use these functions".to_string())
+    // } else {
+    //     Ok(())
+    // }
+}
+
+pub fn is_user_anonymous() -> Result<(), String> {
+    Ok(())
+    // let caller = caller();
+
+    // if caller.to_string() != "2vxsx-fae" {
+    //     Ok(())
+    // } else {
+    //     Err("login with your identity to use functions".to_string())
+    // }
 }
 
 // #[init]
@@ -90,19 +102,19 @@ fn check_admin() {
 //     //ic_cdk::println!("initialization done");
 // }
 
-#[update]
+#[update(guard = "is_admin")]
 fn approve_mentor_creation_request_candid(requester: Principal, approve: bool) -> String {
     // check_admin();
     approve_mentor_creation_request(requester, approve)
 }
 
-#[update]
+#[update(guard = "is_admin")]
 fn decline_mentor_creation_request_candid(requester: Principal, decline: bool) -> String {
     // check_admin();
     decline_mentor_creation_request(requester, decline)
 }
 
-#[update]
+#[update(guard = "is_admin")]
 fn approve_project_details_updation_request(
     requester: Principal,
     project_id: String,
@@ -111,27 +123,27 @@ fn approve_project_details_updation_request(
     admin::approve_project_update(requester, project_id, approve)
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub async fn get_user_information_using_uid(uid: String) -> Result<UserInformation, &'static str> {
     user_module::get_user_info_by_id(uid).await
 }
 
-#[update]
+#[update(guard = "is_user_anonymous")]
 pub async fn register_user(profile: UserInformation) -> String {
     user_module::register_user_role(profile).await
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_user_information() -> Result<UserInformation, &'static str> {
     user_module::get_user_info()
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_all_users_information(pagination: PaginationUser) -> Vec<UserInformation> {
     user_module::list_all_users(pagination)
 }
 
-#[update]
+#[update(guard = "is_user_anonymous")]
 pub fn make_user_inactive() -> String {
     user_module::delete_user()
 }
@@ -141,14 +153,13 @@ pub fn make_user_inactive() -> String {
 //     register_user::get_founder_info()
 // }
 
-
-#[update]
+#[update(guard = "is_user_anonymous")]
 
 async fn register_project(params: ProjectInfo) -> String {
     project_registration::create_project(params).await
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 fn filter_out_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
     project_registration::filter_projects(criteria)
 }
@@ -158,7 +169,7 @@ fn filter_out_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
 //     project_registration::get_projects_for_caller()
 // }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 fn get_project_using_id(project_id: String) -> Option<ProjectInfoInternal> {
     project_registration::find_project_by_id(&project_id)
 }
@@ -168,39 +179,37 @@ fn get_project_using_id(project_id: String) -> Option<ProjectInfoInternal> {
 //     project_registration::list_all_projects()
 // }
 
-#[update]
+#[update(guard = "is_user_anonymous")]
 async fn update_project(project_id: String, updated_project: ProjectInfo) -> String {
     project_registration::update_project(project_id, updated_project).await
 }
 
-#[update]
+#[update(guard = "is_user_anonymous")]
 async fn update_team_member(project_id: String, member_principal_id: Principal) -> String {
     project_registration::update_team_member(&project_id, member_principal_id).await
 }
 
-#[update]
+#[update(guard = "is_user_anonymous")]
 fn delete_project(id: String) -> std::string::String {
     project_registration::delete_project(id)
 }
 
-// #[update]
+// #[update(guard = "is_admin")]
 // fn verify_project_under_your_hub(project_id: String) -> String {
 //     project_registration::verify_project(&project_id)
 // }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 fn get_your_project_notifications() -> Vec<NotificationForOwner> {
     project_registration::get_notifications_for_owner()
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 fn get_notifications_for_hubs() -> Vec<NotificationProject> {
     project_registration::get_notifications_for_caller()
 }
 
-
-
-// #[update]
+// #[update(guard = "is_admin")]
 // fn add_suggestion_caller(
 //     content: String,
 //     project_id: String,
@@ -208,15 +217,12 @@ fn get_notifications_for_hubs() -> Vec<NotificationProject> {
 //     roadmap_suggestion::add_suggestion(content, project_id)
 // }
 
-
-
-
-#[query]
+#[query(guard = "is_user_anonymous")]
 fn get_all_roles() -> RolesResponse {
     get_roles() // Call the get_roles function from the roles module
 }
 
-#[update]
+#[update(guard = "is_user_anonymous")]
 async fn register_mentor_candid(profile: MentorProfile) -> String {
     mentor::register_mentor(profile).await
     //"request has been made to admin".to_string()
@@ -228,70 +234,69 @@ async fn register_mentor_candid(profile: MentorProfile) -> String {
 //     mentor::get_mentor()
 // }
 
-#[update]
+#[update(guard = "is_admin")]
 fn delete_mentor_candid() -> String {
     mentor::delete_mentor()
 }
 
-#[update]
+#[update(guard = "is_user_anonymous")]
 
 fn make_active_inactive_mentor(id: Principal) -> String {
     mentor::make_active_inactive(id)
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 
 fn get_all_mentors_candid() -> HashMap<Principal, MentorWithRoles> {
     mentor::get_all_mentors()
 }
 
-
-#[query]
+#[query(guard = "is_user_anonymous")]
 
 fn get_venture_capitalist_info() -> Option<VentureCapitalist> {
     vc_registration::get_vc_info()
 }
 
-#[update]
+#[update(guard = "is_admin")]
 
 async fn update_venture_capitalist_caller(params: VentureCapitalist) -> String {
     vc_registration::update_venture_capitalist(params).await
 }
 
-#[update]
+#[update(guard = "is_admin")]
 
 fn delete_venture_capitalist_caller() -> std::string::String {
     vc_registration::delete_venture_capitalist()
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 fn get_icp_hubs_candid() -> Vec<IcpHub> {
     get_icp_hubs()
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 fn get_area_focus_expertise() -> Vec<Areas> {
     get_areas()
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 fn greet(name: String) -> String {
     format!("Hello! {}", name)
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 
 fn get_leaderboard_using_ratings() -> Vec<LeaderboardEntryForRatings> {
     leaderboard::get_leaderboard_by_ratings()
 }
 
-#[update]
+#[update(guard = "is_admin")]
 
 fn update_rating(rating_data: RatingUpdate) -> String {
     ratings::update_rating_api(rating_data)
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 
 fn calculate_average(project_id: String) -> RatingAverages {
     ratings::calculate_average_api(&project_id)
@@ -303,7 +308,6 @@ fn calculate_average(project_id: String) -> RatingAverages {
 //     ratings::get_ratings_by_project_id(&project_id)
 // }
 
-
 //made for admin side.....
 // #[query]
 //  fn get_role() -> RolesResponse {
@@ -311,24 +315,23 @@ fn calculate_average(project_id: String) -> RatingAverages {
 // }
 // made for admin side.....
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 fn get_role() -> RolesResponse {
     roles::get_roles()
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 
 fn get_my_id() -> Principal {
     caller()
 }
 
-#[query]
+#[query(guard = "is_admin")]
 fn get_admin_notifications() -> Vec<admin::Notification> {
-    check_admin();
     admin::get_admin_notifications()
 }
 
-// #[update]
+// #[update(guard = "is_admin")]
 //  fn add_roles(name: String) -> Role {
 //     roles::add_role(name)
 // }

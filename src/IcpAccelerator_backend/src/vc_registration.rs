@@ -1,9 +1,12 @@
 use crate::admin::*;
-use crate::state_handler::{read_state, StoredPrincipal, mutate_state, Candid};
+use crate::state_handler::{mutate_state, read_state, Candid, StoredPrincipal};
 use crate::user_module::*;
 
+use crate::is_user_anonymous;
+use crate::PaginationParams;
 use bincode;
 use candid::{CandidType, Principal};
+use ic_cdk::api::call::call;
 use ic_cdk::api::caller;
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::api::stable::{StableReader, StableWriter};
@@ -11,16 +14,13 @@ use ic_cdk::api::time;
 use ic_cdk::storage;
 use ic_cdk::storage::stable_restore;
 use ic_cdk_macros::*;
-use ic_cdk::api::call::call;
-use serde_bytes::ByteBuf;
 use serde::{Deserialize, Serialize};
+use serde_bytes::ByteBuf;
 use sha2::{Digest, Sha256};
 use std::borrow::BorrowMut;
 use std::cell::RefCell;
 use std::io::Read;
 use std::{collections::HashMap, io::Write};
-use crate::PaginationParams;
-
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct VentureCapitalist {
     pub name_of_fund: String,
@@ -45,9 +45,9 @@ pub struct VentureCapitalist {
     pub website_link: Option<String>,
     pub linkedin_link: String,
     pub registered: bool,
-    pub registered_country: Option<String>, 
+    pub registered_country: Option<String>,
     pub stage: Option<String>,
-    pub range_of_check_size : Option<String>
+    pub range_of_check_size: Option<String>,
 }
 
 #[derive(Clone, CandidType)]
@@ -115,7 +115,7 @@ pub struct Announcements {
 }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
-pub struct UpdateInfoStruct{
+pub struct UpdateInfoStruct {
     pub original_info: Option<VentureCapitalist>,
     pub updated_info: Option<VentureCapitalist>,
     pub approved_at: u64,
@@ -137,69 +137,7 @@ thread_local! {
     pub static DECLINED_VC_PROFILE_EDIT_REQUEST :RefCell<VentureCapitalistEditParams> = RefCell::new(VentureCapitalistEditParams::new());
     pub static VC_ANNOUNCEMENTS:RefCell<VcAnnouncements> = RefCell::new(VcAnnouncements::new());
 }
-
-pub fn pre_upgrade_venture_capitalist() {
-    VENTURECAPITALIST_STORAGE.with(|data| {
-        match storage::stable_save((data.borrow().clone(),)) {
-            Ok(_) => ic_cdk::println!("VENTURECAPITALIST_STORAGE saved successfully."),
-            Err(e) => ic_cdk::println!("Failed to save VENTURECAPITALIST_STORAGE: {:?}", e),
-        }
-    });
-
-    VC_AWAITS_RESPONSE.with(|data| {
-        match storage::stable_save((data.borrow().clone(),)) {
-            Ok(_) => ic_cdk::println!("VC_AWAITS_RESPONSE saved successfully."),
-            Err(e) => ic_cdk::println!("Failed to save VC_AWAITS_RESPONSE: {:?}", e),
-        }
-    });
-
-    DECLINED_VC_REQUESTS.with(|data| {
-        match storage::stable_save((data.borrow().clone(),)) {
-            Ok(_) => ic_cdk::println!("DECLINED_VC_REQUESTS saved successfully."),
-            Err(e) => ic_cdk::println!("Failed to save DECLINED_VC_REQUESTS: {:?}", e),
-        }
-    });
-
-    VC_PROFILE_EDIT_AWAITS.with(|data| {
-        match storage::stable_save((data.borrow().clone(),)) {
-            Ok(_) => ic_cdk::println!("VC_PROFILE_EDIT_AWAITS saved successfully."),
-            Err(e) => ic_cdk::println!("Failed to save VC_PROFILE_EDIT_AWAITS: {:?}", e),
-        }
-    });
-
-    DECLINED_VC_PROFILE_EDIT_REQUEST.with(|data| {
-        match storage::stable_save((data.borrow().clone(),)) {
-            Ok(_) => ic_cdk::println!("DECLINED_VC_PROFILE_EDIT_REQUEST saved successfully."),
-            Err(e) => ic_cdk::println!("Failed to save DECLINED_VC_PROFILE_EDIT_REQUEST: {:?}", e),
-        }
-    });
-
-    VC_ANNOUNCEMENTS.with(|data| {
-        match storage::stable_save((data.borrow().clone(),)) {
-            Ok(_) => ic_cdk::println!("VC_ANNOUNCEMENTS saved successfully."),
-            Err(e) => ic_cdk::println!("Failed to save VC_ANNOUNCEMENTS: {:?}", e),
-        }
-    });
-}
-
-
-pub fn post_upgrade_venture_capitalist() {
-    match stable_restore::<(VentureCapitalistStorage, VentureCapitalistStorage, VentureCapitalistStorage, VentureCapitalistEditParams, VentureCapitalistEditParams, VcAnnouncements)>() {
-        Ok((restored_vc_storage, restored_vc_awaits_response, restored_declined_vc_requests, restored_vc_profile_edit_awaits, restored_declined_vc_profile_edit_request, restored_vc_announcements)) => {
-            VENTURECAPITALIST_STORAGE.with(|data| *data.borrow_mut() = restored_vc_storage);
-            VC_AWAITS_RESPONSE.with(|data| *data.borrow_mut() = restored_vc_awaits_response);
-            DECLINED_VC_REQUESTS.with(|data| *data.borrow_mut() = restored_declined_vc_requests);
-            VC_PROFILE_EDIT_AWAITS.with(|data| *data.borrow_mut() = restored_vc_profile_edit_awaits);
-            DECLINED_VC_PROFILE_EDIT_REQUEST.with(|data| *data.borrow_mut() = restored_declined_vc_profile_edit_request);
-            VC_ANNOUNCEMENTS.with(|data| *data.borrow_mut() = restored_vc_announcements);
-
-            ic_cdk::println!("VC modules restored successfully.");
-        },
-        Err(e) => ic_cdk::println!("Failed to restore VC modules: {:?}", e),
-    }
-}
-
-#[update]
+#[update(guard = "is_user_anonymous")]
 pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::string::String {
     let caller = caller();
     let uuids = raw_rand().await.unwrap().0;
@@ -208,16 +146,17 @@ pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::
 
     // Check if the request was declined earlier
     let request_declined = read_state(|state| {
-        state.vc_declined_request.contains_key(&StoredPrincipal(caller))
+        state
+            .vc_declined_request
+            .contains_key(&StoredPrincipal(caller))
     });
     if request_declined {
         return "You had got your request declined earlier".to_string();
     }
 
     // Check if the VC is already registered
-    let already_registered = read_state(|state| {
-        state.vc_storage.contains_key(&StoredPrincipal(caller))
-    });
+    let already_registered =
+        read_state(|state| state.vc_storage.contains_key(&StoredPrincipal(caller)));
     if already_registered {
         ic_cdk::println!("This Principal is already registered");
         return "This Principal is already registered.".to_string();
@@ -274,18 +213,16 @@ pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::
 
     let temp_image = params.user_data.profile_picture.clone();
     let canister_id = crate::asset_manager::get_asset_canister();
-    
+
     if temp_image.is_none() {
         let full_url = canister_id.to_string() + "/uploads/default_user.jpeg";
         params.user_data.profile_picture = Some((full_url).as_bytes().to_vec());
-    }
-    else if temp_image.clone().unwrap().len() < 300 {
+    } else if temp_image.clone().unwrap().len() < 300 {
         ic_cdk::println!("Profile image is already uploaded");
-    }else{
-        
-        let key = "/uploads/".to_owned()+&caller.to_string()+"_user.jpeg";
-        
-        let arg = StoreArg{
+    } else {
+        let key = "/uploads/".to_owned() + &caller.to_string() + "_user.jpeg";
+
+        let arg = StoreArg {
             key: key.clone(),
             content_type: "image/*".to_string(),
             content_encoding: "identity".to_string(),
@@ -293,15 +230,16 @@ pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::
             sha256: None,
         };
 
-        let delete_asset = DeleteAsset {
-            key: key.clone()
-        };
+        let delete_asset = DeleteAsset { key: key.clone() };
 
-        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset, )).await.unwrap();
+        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
+            .await
+            .unwrap();
 
-        let (result,): ((),) = call(canister_id, "store", (arg, )).await.unwrap();
+        let (result,): ((),) = call(canister_id, "store", (arg,)).await.unwrap();
 
-        params.user_data.profile_picture = Some((canister_id.to_string()+&key).as_bytes().to_vec());
+        params.user_data.profile_picture =
+            Some((canister_id.to_string() + &key).as_bytes().to_vec());
     }
 
     let user_data_for_updation = params.clone();
@@ -322,7 +260,9 @@ pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::
 
             // Add the new VC to the awaiting response list
             mutate_state(|state| {
-                state.vc_awaits_response.insert(StoredPrincipal(caller), Candid(new_vc.clone()));
+                state
+                    .vc_awaits_response
+                    .insert(StoredPrincipal(caller), Candid(new_vc.clone()));
             });
 
             let res = send_approval_request(
@@ -344,7 +284,7 @@ pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::
     }
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_vc_info() -> Option<VentureCapitalist> {
     let caller = ic_cdk::caller();
     println!("Fetching venture capitalist info for caller: {:?}", caller);
@@ -357,7 +297,7 @@ pub fn get_vc_info() -> Option<VentureCapitalist> {
     })
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_vc_info_by_principal(caller: Principal) -> HashMap<Principal, VentureCapitalistAll> {
     read_state(|state| {
         let profile = state
@@ -379,7 +319,7 @@ pub fn get_vc_info_by_principal(caller: Principal) -> HashMap<Principal, Venture
     })
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_vc_info_using_principal(caller: Principal) -> Option<VentureCapitalistInternal> {
     read_state(|state| {
         state
@@ -389,7 +329,7 @@ pub fn get_vc_info_using_principal(caller: Principal) -> Option<VentureCapitalis
     })
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_vc_awaiting_info_using_principal(
     caller: Principal,
 ) -> Option<VentureCapitalistInternal> {
@@ -401,7 +341,7 @@ pub fn get_vc_awaiting_info_using_principal(
     })
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_vc_declined_info_using_principal(
     caller: Principal,
 ) -> Option<VentureCapitalistInternal> {
@@ -413,7 +353,7 @@ pub fn get_vc_declined_info_using_principal(
     })
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn list_all_vcs() -> HashMap<Principal, VcWithRoles> {
     read_state(|state| {
         let mut vc_with_roles_map: HashMap<Principal, VcWithRoles> = HashMap::new();
@@ -434,14 +374,13 @@ pub fn list_all_vcs() -> HashMap<Principal, VcWithRoles> {
     })
 }
 
-
 #[derive(CandidType, Clone)]
 pub struct PaginationReturnVcData {
     pub data: HashMap<Principal, VcWithRoles>,
     pub count: usize,
 }
 
-#[query()]
+#[query(guard = "is_user_anonymous")]
 pub fn list_all_vcs_with_pagination(pagination_params: PaginationParams) -> PaginationReturnVcData {
     read_state(|state| {
         let mut vc_list: Vec<(Principal, VcWithRoles)> = Vec::new();
@@ -487,8 +426,7 @@ pub fn list_all_vcs_with_pagination(pagination_params: PaginationParams) -> Pagi
     })
 }
 
-
-#[update]
+#[update(guard = "is_user_anonymous")]
 pub fn delete_venture_capitalist() -> std::string::String {
     let caller = ic_cdk::caller();
     println!("Attempting to deactivate founder for caller: {:?}", caller);
@@ -509,18 +447,27 @@ pub fn delete_venture_capitalist() -> std::string::String {
 pub async fn update_venture_capitalist(mut params: VentureCapitalist) -> String {
     let caller = ic_cdk::caller();
 
-    let declined_request_exists = read_state(|state| state.vc_profile_edit_declined.contains_key(&StoredPrincipal(caller)));
+    let declined_request_exists = read_state(|state| {
+        state
+            .vc_profile_edit_declined
+            .contains_key(&StoredPrincipal(caller))
+    });
     if declined_request_exists {
         panic!("You had got your request declined earlier");
     }
 
-    let already_registered = read_state(|state| state.vc_storage.contains_key(&StoredPrincipal(caller)));
+    let already_registered =
+        read_state(|state| state.vc_storage.contains_key(&StoredPrincipal(caller)));
     if !already_registered {
         ic_cdk::println!("This Principal is not registered");
         return "This Principal is not registered.".to_string();
     }
 
-    let profile_edit_request_already_sent = read_state(|state| state.vc_profile_edit_awaits.contains_key(&StoredPrincipal(caller)));
+    let profile_edit_request_already_sent = read_state(|state| {
+        state
+            .vc_profile_edit_awaits
+            .contains_key(&StoredPrincipal(caller))
+    });
     if profile_edit_request_already_sent {
         ic_cdk::println!("Wait for your previous request to get approved");
         return "Wait for your previous request to get approved.".to_string();
@@ -538,18 +485,16 @@ pub async fn update_venture_capitalist(mut params: VentureCapitalist) -> String 
 
     let temp_image = params.user_data.profile_picture.clone();
     let canister_id = crate::asset_manager::get_asset_canister();
-    
+
     if temp_image.is_none() {
         let full_url = canister_id.to_string() + "/uploads/default_user.jpeg";
         params.user_data.profile_picture = Some((full_url).as_bytes().to_vec());
-    }
-    else if temp_image.clone().unwrap().len() < 300 {
+    } else if temp_image.clone().unwrap().len() < 300 {
         ic_cdk::println!("Profile image is already uploaded");
-    }else{
-        
-        let key = "/uploads/".to_owned()+&caller.to_string()+"_user.jpeg";
-        
-        let arg = StoreArg{
+    } else {
+        let key = "/uploads/".to_owned() + &caller.to_string() + "_user.jpeg";
+
+        let arg = StoreArg {
             key: key.clone(),
             content_type: "image/*".to_string(),
             content_encoding: "identity".to_string(),
@@ -557,15 +502,16 @@ pub async fn update_venture_capitalist(mut params: VentureCapitalist) -> String 
             sha256: None,
         };
 
-        let delete_asset = DeleteAsset {
-            key: key.clone()
-        };
+        let delete_asset = DeleteAsset { key: key.clone() };
 
-        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset, )).await.unwrap();
+        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
+            .await
+            .unwrap();
 
-        let (result,): ((),) = call(canister_id, "store", (arg, )).await.unwrap();
+        let (result,): ((),) = call(canister_id, "store", (arg,)).await.unwrap();
 
-        params.user_data.profile_picture = Some((canister_id.to_string()+&key).as_bytes().to_vec());
+        params.user_data.profile_picture =
+            Some((canister_id.to_string() + &key).as_bytes().to_vec());
     }
 
     mutate_state(|state| {
@@ -589,11 +535,17 @@ pub async fn update_venture_capitalist(mut params: VentureCapitalist) -> String 
             sent_at: ic_cdk::api::time(),
         };
 
-        state.vc_profile_edit_awaits.insert(StoredPrincipal(caller), Candid(update_data_to_store.clone()));
+        state.vc_profile_edit_awaits.insert(
+            StoredPrincipal(caller),
+            Candid(update_data_to_store.clone()),
+        );
     });
 
     let res = send_approval_request(
-        params.user_data.profile_picture.unwrap_or_else(|| Vec::new()),
+        params
+            .user_data
+            .profile_picture
+            .unwrap_or_else(|| Vec::new()),
         params.user_data.full_name,
         params.user_data.country,
         params.category_of_investment,
@@ -605,7 +557,7 @@ pub async fn update_venture_capitalist(mut params: VentureCapitalist) -> String 
     format!("{}", res)
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_multichain_list() -> Vec<String> {
     let chains = vec![
         "Ethereum".to_string(),
@@ -648,7 +600,7 @@ pub fn get_multichain_list() -> Vec<String> {
     chains
 }
 
-#[update]
+#[update(guard = "is_user_anonymous")]
 pub fn add_vc_announcement(name: String, announcement_message: String) -> String {
     let caller_id = ic_cdk::caller();
     let current_time = ic_cdk::api::time();
@@ -661,19 +613,23 @@ pub fn add_vc_announcement(name: String, announcement_message: String) -> String
             timestamp: current_time,
         };
 
-        let mut announcements = state.vc_announcement.get(&stored_principal)
+        let mut announcements = state
+            .vc_announcement
+            .get(&stored_principal)
             .map(|candid_vec| candid_vec.0.clone())
             .unwrap_or_else(Vec::new);
 
         announcements.push(new_vc);
-        state.vc_announcement.insert(stored_principal, Candid(announcements));
+        state
+            .vc_announcement
+            .insert(stored_principal, Candid(announcements));
 
         format!("Announcement added successfully at {}", current_time)
     })
 }
 
 //for testing purpose
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_vc_announcements() -> HashMap<Principal, Vec<Announcements>> {
     read_state(|state| {
         let announcements_map = &state.vc_announcement;
@@ -690,7 +646,7 @@ pub fn get_vc_announcements() -> HashMap<Principal, Vec<Announcements>> {
     })
 }
 
-#[update]
+#[update(guard = "is_user_anonymous")]
 pub fn make_vc_active_inactive(p_id: Principal) -> String {
     let principal_id = caller();
     if p_id == principal_id || ic_cdk::api::is_controller(&principal_id) {
@@ -718,28 +674,26 @@ pub fn make_vc_active_inactive(p_id: Principal) -> String {
     }
 }
 
-
 //backside_additions
 
-
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_investment_stage() -> Vec<String> {
     vec![
         "Pre-MVP".to_string(),
         "MVP to initial traction".to_string(),
         "Growing traction".to_string(),
-        "We do NOT currently invest".to_string()
+        "We do NOT currently invest".to_string(),
     ]
 }
 
-#[query]
-pub fn get_range_of_check_size() -> Vec<String>{
+#[query(guard = "is_user_anonymous")]
+pub fn get_range_of_check_size() -> Vec<String> {
     vec![
         "<$500k".to_string(),
         "$500k-$2M".to_string(),
         "$2-5M".to_string(),
         "$5-10M".to_string(),
-        "Above $10M".to_string()
+        "Above $10M".to_string(),
     ]
 }
 
@@ -747,39 +701,62 @@ pub fn get_range_of_check_size() -> Vec<String>{
 pub struct VcFilterCriteria {
     pub country: Option<String>,
     pub category_of_investment: Option<String>,
-    pub money_invested_range: Option<(f64, f64)>,  // Minimum and maximum investment range
+    pub money_invested_range: Option<(f64, f64)>, // Minimum and maximum investment range
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn filter_venture_capitalists(criteria: VcFilterCriteria) -> Vec<VentureCapitalist> {
     read_state(|state| {
-        state.vc_storage
+        state
+            .vc_storage
             .iter()
             .filter(|(_, vc_internal)| {
                 let country_match = match &criteria.country {
                     Some(c) => &vc_internal.0.params.user_data.country == c,
-                    None => true, 
+                    None => true,
                 };
 
-                let category_match = criteria.category_of_investment.as_ref()
-                    .map_or(true, |category| &vc_internal.0.params.category_of_investment == category);
+                let category_match = criteria
+                    .category_of_investment
+                    .as_ref()
+                    .map_or(true, |category| {
+                        &vc_internal.0.params.category_of_investment == category
+                    });
 
-                let money_invested_match = criteria.money_invested_range.map_or(true, |(min, max)| {
-                    vc_internal.0.params.range_of_check_size.as_ref().map_or(false, |range_str| {
-                        let parts = range_str.trim_start_matches('$').split('-').collect::<Vec<_>>();
-                        if parts.len() == 2 {
-                            let min_range = parts[0].trim_end_matches('m').parse::<f64>().unwrap_or(0.0);
-                            let max_range = parts[1].trim_start_matches('$').trim_end_matches('m').parse::<f64>().unwrap_or(0.0);
-                            min <= max_range && max >= min_range
-                        } else {
-                            false
-                        }
-                    })
-                });
+                let money_invested_match =
+                    criteria.money_invested_range.map_or(true, |(min, max)| {
+                        vc_internal.0.params.range_of_check_size.as_ref().map_or(
+                            false,
+                            |range_str| {
+                                let parts = range_str
+                                    .trim_start_matches('$')
+                                    .split('-')
+                                    .collect::<Vec<_>>();
+                                if parts.len() == 2 {
+                                    let min_range = parts[0]
+                                        .trim_end_matches('m')
+                                        .parse::<f64>()
+                                        .unwrap_or(0.0);
+                                    let max_range = parts[1]
+                                        .trim_start_matches('$')
+                                        .trim_end_matches('m')
+                                        .parse::<f64>()
+                                        .unwrap_or(0.0);
+                                    min <= max_range && max >= min_range
+                                } else {
+                                    false
+                                }
+                            },
+                        )
+                    });
 
                 // Only include active and approved VCs
-                vc_internal.0.is_active && vc_internal.0.approve && !vc_internal.0.decline
-                    && country_match && category_match && money_invested_match
+                vc_internal.0.is_active
+                    && vc_internal.0.approve
+                    && !vc_internal.0.decline
+                    && country_match
+                    && category_match
+                    && money_invested_match
             })
             .map(|(_, vc_internal)| vc_internal.0.params.clone())
             .collect()

@@ -9,7 +9,8 @@ use sha2::{Digest, Sha256};
 use std::collections::HashMap;
 extern crate serde_cbor;
 use crate::admin::*;
-use crate::state_handler::{StoredPrincipal, read_state, mutate_state, Candid};
+use crate::is_user_anonymous;
+use crate::state_handler::{mutate_state, read_state, Candid, StoredPrincipal};
 use crate::user_module::*;
 use ic_cdk::api::stable::{StableReader, StableWriter};
 use ic_cdk::api::time;
@@ -46,7 +47,7 @@ impl MentorProfile {
         //         return Err("Field cannot be empty".into());
         //     }
         // }
-        
+
         // if let Some(ref multichain) = self.multichain {
         //     if multichain.trim().is_empty() {
         //         return Err("Field cannot be empty".into());
@@ -98,39 +99,53 @@ thread_local! {
 
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_mentor_info_using_principal(caller: Principal) -> Option<MentorInternal> {
     let stored_principal = StoredPrincipal(caller);
     read_state(|state| {
-        state.mentor_storage.get(&stored_principal).map(|candid| candid.0.clone())
+        state
+            .mentor_storage
+            .get(&stored_principal)
+            .map(|candid| candid.0.clone())
     })
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_mentor_awaiting_info_using_principal(caller: Principal) -> Option<MentorInternal> {
     let stored_principal = StoredPrincipal(caller);
     read_state(|state| {
-        state.mentor_awaits_response.get(&stored_principal).map(|candid| candid.0.clone())
+        state
+            .mentor_awaits_response
+            .get(&stored_principal)
+            .map(|candid| candid.0.clone())
     })
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_mentor_declined_info_using_principal(caller: Principal) -> Option<MentorInternal> {
     let stored_principal = StoredPrincipal(caller);
     read_state(|state| {
-        state.mentor_declined_request.get(&stored_principal).map(|candid| candid.0.clone())
+        state
+            .mentor_declined_request
+            .get(&stored_principal)
+            .map(|candid| candid.0.clone())
     })
 }
 
 pub async fn register_mentor(mut profile: MentorProfile) -> String {
     let caller = caller();
 
-    let request_declined = read_state(|state| state.mentor_declined_request.contains_key(&StoredPrincipal(caller)));
+    let request_declined = read_state(|state| {
+        state
+            .mentor_declined_request
+            .contains_key(&StoredPrincipal(caller))
+    });
     if request_declined {
         return "You had got your request declined earlier".to_string();
     }
 
-    let already_registered = read_state(|state| state.mentor_storage.contains_key(&StoredPrincipal(caller)));
+    let already_registered =
+        read_state(|state| state.mentor_storage.contains_key(&StoredPrincipal(caller)));
     if already_registered {
         ic_cdk::println!("This Principal is already registered");
         return "you are a mentor already".to_string();
@@ -238,11 +253,16 @@ pub async fn register_mentor(mut profile: MentorProfile) -> String {
             };
 
             mutate_state(|state| {
-                state.mentor_awaits_response.insert(StoredPrincipal(caller), Candid(mentor_internal));
+                state
+                    .mentor_awaits_response
+                    .insert(StoredPrincipal(caller), Candid(mentor_internal));
             });
 
             let res = send_approval_request(
-                profile.user_data.profile_picture.unwrap_or_else(|| Vec::new()),
+                profile
+                    .user_data
+                    .profile_picture
+                    .unwrap_or_else(|| Vec::new()),
                 profile.user_data.full_name,
                 profile.user_data.country,
                 profile.area_of_expertise,
@@ -259,38 +279,42 @@ pub async fn register_mentor(mut profile: MentorProfile) -> String {
     }
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_mentor() -> Option<MentorProfile> {
     let caller = ic_cdk::caller();
     read_state(|state| {
-        state.mentor_storage
+        state
+            .mentor_storage
             .get(&StoredPrincipal(caller))
             .map(|mentor_internal| mentor_internal.0.profile.clone())
     })
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_mentor_by_principal(id: Principal) -> Option<MentorProfile> {
     read_state(|state| {
-        state.mentor_storage
+        state
+            .mentor_storage
             .get(&StoredPrincipal(id))
             .map(|mentor_internal| mentor_internal.0.profile.clone())
     })
 }
 
-#[update]
+#[update(guard = "is_user_anonymous")]
 pub async fn update_mentor(mut updated_profile: MentorProfile) -> String {
     let caller = ic_cdk::caller();
 
     read_state(|state| {
-        if state.mentor_profile_edit_declined.contains_key(&StoredPrincipal(caller)) {
+        if state
+            .mentor_profile_edit_declined
+            .contains_key(&StoredPrincipal(caller))
+        {
             panic!("You had got your request declined earlier");
         }
     });
 
-    let already_registered = read_state(|state| {
-        state.mentor_storage.contains_key(&StoredPrincipal(caller))
-    });
+    let already_registered =
+        read_state(|state| state.mentor_storage.contains_key(&StoredPrincipal(caller)));
 
     if !already_registered {
         ic_cdk::println!("This Principal is not registered");
@@ -298,7 +322,9 @@ pub async fn update_mentor(mut updated_profile: MentorProfile) -> String {
     }
 
     let profile_edit_request_already_sent = read_state(|state| {
-        state.mentor_profile_edit_awaits.contains_key(&StoredPrincipal(caller))
+        state
+            .mentor_profile_edit_awaits
+            .contains_key(&StoredPrincipal(caller))
     });
 
     if profile_edit_request_already_sent {
@@ -400,7 +426,10 @@ pub fn delete_mentor() -> String {
     let caller = ic_cdk::caller();
 
     let removed = mutate_state(|state| {
-        state.mentor_storage.remove(&StoredPrincipal(caller)).is_some()
+        state
+            .mentor_storage
+            .remove(&StoredPrincipal(caller))
+            .is_some()
     });
 
     if removed {
@@ -410,7 +439,7 @@ pub fn delete_mentor() -> String {
     }
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_all_mentors() -> HashMap<Principal, MentorWithRoles> {
     read_state(|state| {
         let mentor_registry = state.mentor_storage.iter().collect::<Vec<_>>();
@@ -435,7 +464,6 @@ pub fn get_all_mentors() -> HashMap<Principal, MentorWithRoles> {
     })
 }
 
-
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct PaginationParamMentor {
     pub page: usize,
@@ -443,13 +471,15 @@ pub struct PaginationParamMentor {
 }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
-pub struct PaginationReturnMentor{
+pub struct PaginationReturnMentor {
     pub data: HashMap<Principal, MentorWithRoles>,
     pub count: usize,
 }
 
-#[query]
-pub fn get_all_mentors_with_pagination(pagination_params: PaginationParamMentor) -> PaginationReturnMentor {
+#[query(guard = "is_user_anonymous")]
+pub fn get_all_mentors_with_pagination(
+    pagination_params: PaginationParamMentor,
+) -> PaginationReturnMentor {
     read_state(|state| {
         let mentor_registry = state.mentor_storage.iter().collect::<Vec<_>>();
 
@@ -474,22 +504,22 @@ pub fn get_all_mentors_with_pagination(pagination_params: PaginationParamMentor)
         mentor_list.sort_by_key(|(principal, _)| *principal);
 
         // Calculate start and end indices for pagination, ensuring they're within the bounds of the vector
-        let start = std::cmp::min(pagination_params.page.saturating_sub(1) * pagination_params.page_size, mentor_list.len());
+        let start = std::cmp::min(
+            pagination_params.page.saturating_sub(1) * pagination_params.page_size,
+            mentor_list.len(),
+        );
         let end = std::cmp::min(start + pagination_params.page_size, mentor_list.len());
 
         // Convert the slice of mentor data to a HashMap for the output
-        let paginated_mentor_map: HashMap<Principal, MentorWithRoles> = mentor_list[start..end]
-            .iter()
-            .cloned()
-            .collect();
+        let paginated_mentor_map: HashMap<Principal, MentorWithRoles> =
+            mentor_list[start..end].iter().cloned().collect();
 
         PaginationReturnMentor {
             data: paginated_mentor_map,
-            count: mentor_list.len(),  // Return the total count of active mentors
+            count: mentor_list.len(), // Return the total count of active mentors
         }
     })
 }
-
 
 pub fn make_active_inactive(p_id: Principal) -> String {
     let principal_id = ic_cdk::caller();
@@ -512,22 +542,24 @@ pub fn make_active_inactive(p_id: Principal) -> String {
     }
 }
 
-
-#[update]
+#[update(guard = "is_user_anonymous")]
 pub fn add_mentor_announcement(name: String, announcement_message: String) -> String {
     let caller_id = ic_cdk::caller();
 
     let current_time = ic_cdk::api::time();
 
     mutate_state(|state| {
-        let mut announcements = state.mentor_announcement
+        let mut announcements = state
+            .mentor_announcement
             .get(&StoredPrincipal(caller_id))
             .unwrap_or_else(|| {
-                state.mentor_announcement.insert(
-                    StoredPrincipal(caller_id),
-                    Candid(Vec::new())
-                );
-                state.mentor_announcement.get(&StoredPrincipal(caller_id)).unwrap()
+                state
+                    .mentor_announcement
+                    .insert(StoredPrincipal(caller_id), Candid(Vec::new()));
+                state
+                    .mentor_announcement
+                    .get(&StoredPrincipal(caller_id))
+                    .unwrap()
             });
 
         announcements.0.push(MAnnouncements {
@@ -541,14 +573,13 @@ pub fn add_mentor_announcement(name: String, announcement_message: String) -> St
 }
 
 //for testing purpose
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_mentor_announcements() -> HashMap<Principal, Vec<MAnnouncements>> {
     read_state(|state| {
-        state.mentor_announcement
+        state
+            .mentor_announcement
             .iter()
-            .map(|(principal, announcements)| {
-                (principal.0, announcements.0.clone())
-            })
+            .map(|(principal, announcements)| (principal.0, announcements.0.clone()))
             .collect()
     })
 }
@@ -559,30 +590,32 @@ pub struct MentorFilterCriteria {
     pub area_of_expertise: Option<String>,
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn filter_mentors(criteria: MentorFilterCriteria) -> Vec<MentorProfile> {
     read_state(|state| {
-        state.mentor_storage
+        state
+            .mentor_storage
             .iter()
             .filter(|(_, mentor_internal)| {
                 let country_match = match &criteria.country {
                     Some(c) => &mentor_internal.0.profile.user_data.country == c,
-                    None => true, 
+                    None => true,
                 };
 
                 let expertise_match = criteria.area_of_expertise.as_ref().map_or(true, |exp| {
                     &mentor_internal.0.profile.area_of_expertise == exp
                 });
 
-                mentor_internal.0.active && mentor_internal.0.approve && !mentor_internal.0.decline
-                    && country_match && expertise_match
+                mentor_internal.0.active
+                    && mentor_internal.0.approve
+                    && !mentor_internal.0.decline
+                    && country_match
+                    && expertise_match
             })
             .map(|(_, mentor_internal)| mentor_internal.0.profile.clone())
             .collect()
     })
 }
-
-
 
 // pub fn pre_upgrade_mentor() {
 //     MENTOR_REGISTRY.with(|data| {

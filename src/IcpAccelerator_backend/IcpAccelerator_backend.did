@@ -598,12 +598,6 @@ type Role = record {
 };
 type Role_1 = record { id : int32; name : text };
 type RolesResponse = record { roles : vec Role_1 };
-type SpotlightDetails = record {
-  project_details : ProjectInfoInternal;
-  added_by : principal;
-  project_id : text;
-  approval_time : nat64;
-};
 type TeamMember = record { member_data : UserInformation; member_uid : text };
 type Testimonial = record {
   name : text;
@@ -996,7 +990,6 @@ service : {
   get_self_declined_requests_for_project : () -> (vec OfferToMentor) query;
   get_self_declined_requests_of_project : (text) -> (vec OfferToInvestor) query;
   get_spotlight_project_uids : () -> (vec text) query;
-  get_spotlight_projects : () -> (vec SpotlightDetails) query;
   get_stored_average_rating : (text, text) -> (Result_4) query;
   get_testimonials : (principal) -> (Result_14) query;
   get_top_5_mentors : () -> (vec record { principal; TopData; nat64 }) query;
