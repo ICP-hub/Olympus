@@ -1,8 +1,8 @@
+use crate::is_user_anonymous;
 use crate::project_registration::*;
-use ic_cdk_macros::{query, update};
 use crate::state_handler::*;
-
-#[update]
+use ic_cdk_macros::{query, update};
+#[update(guard = "is_user_anonymous")]
 pub fn update_project_status_live_incubated(
     project: ProjectInfoInternal,
 ) -> Result<&'static str, &'static str> {
@@ -24,7 +24,7 @@ pub fn update_project_status_live_incubated(
     }
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_all_live_projects() -> Vec<ProjectInfoInternal> {
     read_state(|state| {
         state
@@ -35,7 +35,7 @@ pub fn get_all_live_projects() -> Vec<ProjectInfoInternal> {
     })
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub fn get_all_incubated_projects() -> Vec<ProjectInfoInternal> {
     read_state(|state| {
         state

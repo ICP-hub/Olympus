@@ -22,8 +22,10 @@ for i in $(seq $START $NUM_MENTORS); do
     CURRENT_PRINCIPAL=$(dfx identity get-principal)
     echo "Using identity $identity_name with principal $CURRENT_PRINCIPAL."
 
-    full_name="user $i "
-    email="user$i@example.com"
+    # Fetch random user data
+    response=$(curl -s "https://randomuser.me/api/")
+    full_name=$(echo $response | jq -r '.results[0].name.first + " " + .results[0].name.last')
+    email=$(echo $response | jq -r '.results[0].email')
 
     profile_image_url="$ASSET_CANISTER/uploads/"$CURRENT_PRINCIPAL"_user.jpeg";
     # echo "profile_image url is $profile_image_url";

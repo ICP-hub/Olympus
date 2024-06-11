@@ -317,7 +317,7 @@ const DashBoard = () => {
                   </h1>
                   <button
                     onClick={handleNavigateProject}
-                    className="border border-violet-800 cursor-pointer px-4 py-2 rounded-md text-violet-800 sxxs:px-2 sxxs:py-1 sxxs:text-xs sm:text-lg"
+                    className="border border-violet-800 cursor-pointer px-4 py-2 rounded-md text-violet-800 sxxs:px-2 sxxs:py-1 sxxs:text-xs sm:text-lg z-50"
                   >
                     View More
                   </button>
