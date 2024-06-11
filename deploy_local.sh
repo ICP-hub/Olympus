@@ -1,7 +1,7 @@
 set -e
 
 # use your identities here
-dfx identity use ic_admin
+dfx identity use default
 
 dfx deploy
 

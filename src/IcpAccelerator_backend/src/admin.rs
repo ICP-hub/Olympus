@@ -11,6 +11,7 @@ use crate::user_module::*;
 use crate::vc_registration::*;
 use crate::CohortRequest;
 use candid::{CandidType, Principal};
+use ic_cdk::api::call::call;
 use ic_cdk::api::management_canister::main::{canister_info, CanisterInfoRequest};
 use ic_cdk::api::{caller, id};
 use ic_cdk::api::{canister_balance128, time};
@@ -18,6 +19,7 @@ use ic_cdk::storage;
 use ic_cdk::storage::stable_restore;
 use ic_cdk_macros::*;
 use serde::{Deserialize, Serialize};
+use serde_bytes::ByteBuf;
 use std::borrow::Cow;
 use std::cell::RefCell;
 use std::collections::{HashMap, HashSet};
@@ -175,11 +177,20 @@ pub fn approve_mentor_creation_request(requester: Principal, approve: bool) -> S
                 state
                     .mentor_awaits_response
                     .remove(&StoredPrincipal(requester));
-                if let Some(mut user_roles) = state.role_status.get(&StoredPrincipal(requester)) {
-                    if let Some(role) = user_roles.0.iter_mut().find(|r| r.name == "mentor") {
-                        role.status = "approved".to_string();
-                        role.approved_on = Some(time());
+                let role_status = &mut state.role_status;
+
+                if let Some(mut role_status_vec_candid) =
+                    role_status.get(&StoredPrincipal(requester))
+                {
+                    let mut role_status_vec = role_status_vec_candid.0;
+                    for role in role_status_vec.iter_mut() {
+                        if role.name == "mentor" {
+                            role.status = "approved".to_string();
+                            role.approved_on = Some(time());
+                            break;
+                        }
                     }
+                    role_status.insert(StoredPrincipal(requester), Candid(role_status_vec));
                 }
             });
 
@@ -559,9 +570,11 @@ pub fn decline_vc_creation_request(requester: Principal, decline: bool) -> Strin
 #[update(guard = "is_admin")]
 pub fn approve_vc_creation_request(requester: Principal, approve: bool) -> String {
     let (vc_internal, should_update) = read_state(|state| {
-        state.vc_awaits_response.get(&StoredPrincipal(requester))
-            .map(|vc| (Some(vc.clone()), !vc.0.decline))  // Ensure Some is wrapped around the vc.clone()
-            .unwrap_or((None, false))  // This is now correct as the first element of the tuple is an Option
+        state
+            .vc_awaits_response
+            .get(&StoredPrincipal(requester))
+            .map(|vc| (Some(vc.clone()), !vc.0.decline)) // Ensure Some is wrapped around the vc.clone()
+            .unwrap_or((None, false)) // This is now correct as the first element of the tuple is an Option
     });
 
     // Process the read data
@@ -571,20 +584,27 @@ pub fn approve_vc_creation_request(requester: Principal, approve: bool) -> Strin
             vc.0.decline = false;
             mutate_state(|state| {
                 // Updating vc_storage to reflect approval status
-                state.vc_storage.insert(StoredPrincipal(requester), Candid(vc.0.clone()));
-                
+                state
+                    .vc_storage
+                    .insert(StoredPrincipal(requester), Candid(vc.0.clone()));
+
                 // Remove the vc request from awaits response as it's now processed
                 state.vc_awaits_response.remove(&StoredPrincipal(requester));
 
-                // Update role status if applicable
-                if let Some(mut roles) = state.role_status.get(&StoredPrincipal(requester)) {
-                    for role in roles.0.iter_mut() {
+                let role_status = &mut state.role_status;
+
+                if let Some(mut role_status_vec_candid) =
+                    role_status.get(&StoredPrincipal(requester))
+                {
+                    let mut role_status_vec = role_status_vec_candid.0;
+                    for role in role_status_vec.iter_mut() {
                         if role.name == "vc" {
                             role.status = "approved".to_string();
+                            role.approved_on = Some(time());
                             break;
                         }
                     }
-                    state.role_status.insert(StoredPrincipal(requester), Candid(roles.0.clone()));
+                    role_status.insert(StoredPrincipal(requester), Candid(role_status_vec));
                 }
             });
 
@@ -592,10 +612,16 @@ pub fn approve_vc_creation_request(requester: Principal, approve: bool) -> Strin
             change_notification_status(requester, "vc".to_string(), "approved".to_string());
             return format!("Requester with principal id {} is approved", requester);
         } else {
-            return format!("Requester with principal id {} could not be approved", requester);
+            return format!(
+                "Requester with principal id {} could not be approved",
+                requester
+            );
         }
     } else {
-        return format!("Requester with principal id {} has not registered", requester);
+        return format!(
+            "Requester with principal id {} has not registered",
+            requester
+        );
     }
 }
 
@@ -1779,7 +1805,37 @@ fn count_live_projects() -> usize {
 }
 
 #[update(guard = "is_admin")]
-pub fn update_vc_profile(requester: Principal, vc_internal: VentureCapitalist) -> String {
+pub async fn update_vc_profile(requester: Principal, mut vc_internal: VentureCapitalist) -> String {
+    let temp_image = vc_internal.user_data.profile_picture.clone();
+    let canister_id = crate::asset_manager::get_asset_canister();
+
+    if temp_image.is_none() {
+        let full_url = canister_id.to_string() + "/uploads/default_user.jpeg";
+        vc_internal.user_data.profile_picture = Some((full_url).as_bytes().to_vec());
+    } else if temp_image.clone().unwrap().len() < 300 {
+        ic_cdk::println!("Profile image is already uploaded");
+    } else {
+        let key = "/uploads/".to_owned() + &requester.to_string() + "_user.jpeg";
+
+        let arg = StoreArg {
+            key: key.clone(),
+            content_type: "image/*".to_string(),
+            content_encoding: "identity".to_string(),
+            content: ByteBuf::from(temp_image.unwrap()),
+            sha256: None,
+        };
+
+        let delete_asset = DeleteAsset { key: key.clone() };
+
+        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
+            .await
+            .unwrap();
+
+        let (result,): ((),) = call(canister_id, "store", (arg,)).await.unwrap();
+
+        vc_internal.user_data.profile_picture =
+            Some((canister_id.to_string() + &key).as_bytes().to_vec());
+    }
     mutate_state(|state| {
         if let Some(mut existing_vc_internal) = state.vc_storage.get(&StoredPrincipal(requester)) {
             existing_vc_internal.0.params.registered_under_any_hub = vc_internal
@@ -1856,7 +1912,40 @@ pub fn update_vc_profile(requester: Principal, vc_internal: VentureCapitalist) -
 }
 
 #[update(guard = "is_admin")]
-pub fn update_mentor_profile(requester: Principal, updated_profile: MentorProfile) -> String {
+pub async fn update_mentor_profile(
+    requester: Principal,
+    mut updated_profile: MentorProfile,
+) -> String {
+    let temp_image = updated_profile.user_data.profile_picture.clone();
+    let canister_id = crate::asset_manager::get_asset_canister();
+
+    if temp_image.is_none() {
+        let full_url = canister_id.to_string() + "/uploads/default_user.jpeg";
+        updated_profile.user_data.profile_picture = Some((full_url).as_bytes().to_vec());
+    } else if temp_image.clone().unwrap().len() < 300 {
+        ic_cdk::println!("Profile image is already uploaded");
+    } else {
+        let key = "/uploads/".to_owned() + &requester.to_string() + "_user.jpeg";
+
+        let arg = StoreArg {
+            key: key.clone(),
+            content_type: "image/*".to_string(),
+            content_encoding: "identity".to_string(),
+            content: ByteBuf::from(temp_image.unwrap()),
+            sha256: None,
+        };
+
+        let delete_asset = DeleteAsset { key: key.clone() };
+
+        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
+            .await
+            .unwrap();
+
+        let (result,): ((),) = call(canister_id, "store", (arg,)).await.unwrap();
+
+        updated_profile.user_data.profile_picture =
+            Some((canister_id.to_string() + &key).as_bytes().to_vec());
+    }
     mutate_state(|state| {
         if let Some(mut mentor_internal) = state.mentor_storage.get(&StoredPrincipal(requester)) {
             mentor_internal.0.profile.preferred_icp_hub = updated_profile

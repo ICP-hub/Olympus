@@ -123,7 +123,7 @@ fn approve_project_details_updation_request(
     admin::approve_project_update(requester, project_id, approve)
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 pub async fn get_user_information_using_uid(uid: String) -> Result<UserInformation, &'static str> {
     user_module::get_user_info_by_id(uid).await
 }
@@ -169,7 +169,7 @@ fn filter_out_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
 //     project_registration::get_projects_for_caller()
 // }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 fn get_project_using_id(project_id: String) -> Option<ProjectInfoInternal> {
     project_registration::find_project_by_id(&project_id)
 }
@@ -245,13 +245,13 @@ fn make_active_inactive_mentor(id: Principal) -> String {
     mentor::make_active_inactive(id)
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 
 fn get_all_mentors_candid() -> HashMap<Principal, MentorWithRoles> {
     mentor::get_all_mentors()
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 
 fn get_venture_capitalist_info() -> Option<VentureCapitalist> {
     vc_registration::get_vc_info()
@@ -269,22 +269,22 @@ fn delete_venture_capitalist_caller() -> std::string::String {
     vc_registration::delete_venture_capitalist()
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 fn get_icp_hubs_candid() -> Vec<IcpHub> {
     get_icp_hubs()
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 fn get_area_focus_expertise() -> Vec<Areas> {
     get_areas()
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 fn greet(name: String) -> String {
     format!("Hello! {}", name)
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 
 fn get_leaderboard_using_ratings() -> Vec<LeaderboardEntryForRatings> {
     leaderboard::get_leaderboard_by_ratings()
@@ -296,7 +296,7 @@ fn update_rating(rating_data: RatingUpdate) -> String {
     ratings::update_rating_api(rating_data)
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 
 fn calculate_average(project_id: String) -> RatingAverages {
     ratings::calculate_average_api(&project_id)
@@ -315,12 +315,12 @@ fn calculate_average(project_id: String) -> RatingAverages {
 // }
 // made for admin side.....
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 fn get_role() -> RolesResponse {
     roles::get_roles()
 }
 
-#[query]
+#[query(guard = "is_user_anonymous")]
 
 fn get_my_id() -> Principal {
     caller()
