@@ -426,6 +426,35 @@ pub fn list_all_vcs_with_pagination(pagination_params: PaginationParams) -> Pagi
     })
 }
 
+#[derive(CandidType, Clone)]
+pub struct ListAllVC {
+    principal: StoredPrincipal,
+    params: VentureCapitalistInternal,
+}
+
+#[query]
+pub fn get_top_three_vc() -> Vec<ListAllVC> {
+    let vcs_snapshot = read_state(|state| {
+        state.vc_storage.iter().map(|(principal, vc_info)| {
+            (principal.clone(), vc_info.0.clone())
+        }).collect::<Vec<_>>()
+    });
+
+    let mut list_all_vc: Vec<ListAllVC> = Vec::new();
+
+    for (stored_principal, vc_info) in vcs_snapshot {
+        if vc_info.is_active {
+            let vc_info_struct = ListAllVC {
+                principal: stored_principal,
+                params: vc_info, 
+            };
+            list_all_vc.push(vc_info_struct);
+        }
+    }
+    // Return only the top 3 venture capitalists
+    list_all_vc.into_iter().take(3).collect()
+}
+
 #[update(guard = "is_user_anonymous")]
 pub fn delete_venture_capitalist() -> std::string::String {
     let caller = ic_cdk::caller();

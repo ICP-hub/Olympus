@@ -1174,6 +1174,38 @@ pub fn list_all_projects_with_pagination(
     }
 }
 
+#[query]
+pub fn get_top_three_projects() -> Vec<ListAllProjects> {
+    let projects_snapshot = read_state(|state| {
+        // Clone the necessary parts of the state to reduce the duration of the borrow.
+        state.project_storage.iter().map(|(principal, project_infos)| {
+            (principal.clone(), project_infos.0.clone())
+        }).collect::<Vec<_>>()
+    });
+
+    let mut list_all_projects: Vec<ListAllProjects> = Vec::new();
+
+    for (stored_principal, project_infos) in projects_snapshot {
+        for project_info in project_infos {
+            if project_info.is_active {
+                let get_rating = calculate_average_api(&project_info.uid);  // Assumes this function might mutate global state.
+                let project_info_struct = ListAllProjects {
+                    principal: stored_principal,
+                    params: project_info,
+                    overall_average: get_rating.overall_average.get(0).cloned(),
+                };
+                list_all_projects.push(project_info_struct);
+            }
+        }
+    }
+
+    // Sort the projects by the overall average rating in descending order
+    list_all_projects.sort_by(|a, b| b.overall_average.partial_cmp(&a.overall_average).unwrap_or(std::cmp::Ordering::Equal));
+
+    // Return only the top 3 projects
+    list_all_projects.into_iter().take(3).collect()
+}
+
 pub async fn change_project_images(
     caller: Principal,
     mut updated_project: ProjectInfo,

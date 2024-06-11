@@ -464,6 +464,37 @@ pub fn get_all_mentors() -> HashMap<Principal, MentorWithRoles> {
     })
 }
 
+#[derive(CandidType, Clone)]
+pub struct ListAllMentors {
+    principal: StoredPrincipal,
+    params: MentorInternal,
+}
+
+#[query]
+pub fn get_top_three_vc() -> Vec<ListAllMentors> {
+    let mentor_snapshot = read_state(|state| {
+        state.mentor_storage.iter().map(|(principal, vc_info)| {
+            (principal.clone(), vc_info.0.clone())
+        }).collect::<Vec<_>>()
+    });
+
+    let mut list_all_mentor: Vec<ListAllMentors> = Vec::new();
+
+    for (stored_principal, mentor_info) in mentor_snapshot {
+        if mentor_info.active {
+            let vc_info_struct = ListAllMentors {
+                principal: stored_principal,
+                params: mentor_info, 
+            };
+            list_all_mentor.push(vc_info_struct);
+        }
+    }
+    // Return only the top 3 venture capitalists
+    list_all_mentor.into_iter().take(3).collect()
+}
+
+
+
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct PaginationParamMentor {
     pub page: usize,
