@@ -98,7 +98,7 @@ export const CategorySkeleton = () => {
 export const LiveProjectSkeleton = () => {
   return (
     <SkeletonTheme baseColor="#e3e3e3" highlightColor="#c8c8c873">
-      <div className="justify-between items-baseline flex-wrap bg-white overflow-hidden rounded-lg shadow-lg mb-5 md:mb-0 p-4 lg:ml-2">
+      <div className="justify-between items-baseline flex-wrap bg-white overflow-hidden rounded-lg shadow-lg mb-5 md:mb-0 p-4 py-7 lg:ml-2">
         <div className="flex justify-between items-center flex-wrap w-full">
           <div className="flex items-center w-full mb-4 sm:mb-0">
             <Skeleton circle={true} height={45} width={45} />

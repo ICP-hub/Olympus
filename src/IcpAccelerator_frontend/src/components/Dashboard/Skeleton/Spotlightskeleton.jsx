@@ -7,7 +7,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 export const SpotlightSkeleton = () => {
   return (
     <div className="flex  justify-start items-center py-4 ml-2">
-      <div className="shadow-md rounded-xl h-[200px] w-full max-w-[370px] bg-white p-4">
+      <div className="shadow-md rounded-xl h-[200px] w-full max-w- [370px] bg-white p-4">
         <div className="flex flex-row gap-2">
           <Skeleton height={50} width={50} className="rounded-lg" />
           <div className="flex flex-col justify-center">

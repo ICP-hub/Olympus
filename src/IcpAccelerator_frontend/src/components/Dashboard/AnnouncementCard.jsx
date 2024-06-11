@@ -12,31 +12,55 @@ import useFormatDateFromBigInt from "../hooks/useFormatDateFromBigInt";
 import NoDataCard from "../Mentors/Event/NoDataCard";
 import { formatFullDateFromBigInt } from "../Utils/formatter/formatDateFromBigInt";
 import NoData from "../../../assets/images/file_not_found.png";
+import { AnnouncementSkeleton } from "./Skeleton/Announcementskeleton";
 
 const AnnouncementCard = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [noData, setNoData] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [latestAnnouncementData, setLatestAnnouncementData] = useState([]);
   const [timeAgo] = useFormatDateFromBigInt();
+  const [numSkeletons, setNumSkeletons] = useState(1);
 
+  const updateNumSkeletons = () => {
+    if (window.innerWidth >= 1100) {
+      setNumSkeletons(3);
+    } else if (window.innerWidth >= 768) {
+      setNumSkeletons(2);
+    } else {
+      setNumSkeletons(1);
+    }
+  };
+
+  useEffect(() => {
+    updateNumSkeletons();
+    window.addEventListener("resize", updateNumSkeletons);
+    return () => {
+      window.removeEventListener("resize", updateNumSkeletons);
+    };
+  }, []);
   useEffect(() => {
     let isMounted = true;
 
     const fetchLatestAnnouncement = async (caller) => {
+      setIsLoading(true);
       try {
         const result = await caller.get_latest_announcements();
         if (isMounted) {
           if (result && result.length > 0) {
             setLatestAnnouncementData(result);
             setNoData(false);
+            setIsLoading(false);
           } else {
             setNoData(true);
+            setIsLoading(false);
             setLatestAnnouncementData([]);
           }
         }
       } catch (error) {
         if (isMounted) {
           setNoData(true);
+          setIsLoading(false);
           setLatestAnnouncementData([]);
         }
       }
@@ -56,7 +80,15 @@ const AnnouncementCard = () => {
   console.log("noData", noData);
   return (
     <>
-      {noData ? (
+      {isLoading ? (
+        <div className="w-full grid gap-2 grid-cols-1 md:grid-cols-2 lg1:grid-cols-3 md:px-4 md:gap-4 sm:gap-4">
+          {Array(numSkeletons)
+            .fill(0)
+            .map((_, index) => (
+              <AnnouncementSkeleton key={index} />
+            ))}
+        </div>
+      ) : noData ? (
         <NoDataCard image={NoData} desc={"No active announcement found"} />
       ) : (
         <div className="gap-2 overflow-x-auto">
