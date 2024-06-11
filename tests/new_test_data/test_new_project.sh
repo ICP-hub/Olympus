@@ -5,7 +5,7 @@ set -e
 # Number of mentors and projects you want to register (ensure this matches the number of existing identities)
 
 NUM_PROJECTS=5
-START=2
+START=1
 echo "Using existing User Identities to Register as Mentors and Projects..."
 CANISTER=$(dfx canister id IcpAccelerator_backend)
 echo "Canister ID: $CANISTER"
