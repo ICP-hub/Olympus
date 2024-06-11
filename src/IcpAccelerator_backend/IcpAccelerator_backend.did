@@ -346,6 +346,18 @@ type PaginationReturnMentor = record {
   data : vec record { principal; MentorWithRoles };
   count : nat64;
 };
+type PaginationReturnProjectData = record {
+  data : vec ListAllProjects;
+  count : nat64;
+};
+type PaginationReturnUserData = record {
+  data : vec record { principal; ApprovedList };
+  count : nat64;
+};
+type PaginationReturnVcData = record {
+  data : vec record { principal; VcWithRoles };
+  count : nat64;
+};
 type PeerRatingUpdate = record {
   ratings : vec Rating;
   cohort_id : text;
@@ -990,8 +1002,8 @@ service : {
   get_top_5_mentors : () -> (vec record { principal; TopData; nat64 }) query;
   get_top_5_projects : () -> (vec record { text; TopDataProject; nat64 }) query;
   get_top_5_vcs : () -> (vec record { principal; TopData; nat64 }) query;
-  get_total_approved_list_with_user_data : () -> (
-      vec record { principal; ApprovedList },
+  get_total_approved_list_with_user_data : (Pagination) -> (
+      PaginationReturnUserData,
     ) query;
   get_total_count : () -> (Counts) query;
   get_total_pending_request : () -> (nat64) query;
@@ -1038,13 +1050,11 @@ service : {
       vec record { principal; ProjectVecWithRoles },
     ) query;
   list_all_projects_with_pagination : (Pagination) -> (
-      vec ListAllProjects,
+      PaginationReturnProjectData,
     ) query;
   list_all_users : (Pagination) -> (vec UserInformation) query;
   list_all_vcs : () -> (vec record { principal; VcWithRoles }) query;
-  list_all_vcs_with_pagination : (Pagination) -> (
-      vec record { principal; VcWithRoles },
-    ) query;
+  list_all_vcs_with_pagination : (Pagination) -> (PaginationReturnVcData) query;
   make_active_inactive_mentor : (principal) -> (text);
   make_project_active_inactive : (principal, text) -> (text);
   make_user_inactive : () -> (text);

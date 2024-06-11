@@ -707,6 +707,10 @@ pub async fn create_project(info: ProjectInfo) -> String {
     let new_id = uid.clone().to_string();
 
     let canister_id = crate::asset_manager::get_asset_canister();
+    // change ids
+    let full_url = canister_id.to_string() + "/uploads/default_user.jpeg";
+    let key = "/uploads/".to_owned()+&caller.to_string()+"_user.jpeg";
+    
     let full_url_logo = canister_id.to_string() + "/uploads/default_project_logo.jpeg";
     let key_logo = "/uploads/".to_owned()+&caller.to_string()+"_project_logo.jpeg";
 
@@ -720,6 +724,24 @@ pub async fn create_project(info: ProjectInfo) -> String {
 
     let mut info_with_default = info.clone();
 
+    if info_with_default.user_data.profile_picture.is_none() {
+        info_with_default.user_data.profile_picture = Some(default_profile_picture(&full_url));
+    }else{
+        let arg_logo = StoreArg{
+            key: key.clone(),
+            content_type: "image/*".to_string(),
+            content_encoding: "identity".to_string(),
+            content: ByteBuf::from(info_with_default.user_data.profile_picture.clone().unwrap()),
+            sha256: None,
+        };
+        let delete_asset = DeleteAsset {
+            key: key.clone()
+        };
+        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset, )).await.unwrap();
+        let (result,): ((),) = call(canister_id, "store", (arg_logo, )).await.unwrap();
+        info_with_default.user_data.profile_picture = Some((canister_id.to_string()+&key).as_bytes().to_vec());
+    }
+
     if info_with_default.project_logo.is_none() {
         info_with_default.project_logo = Some(default_profile_picture(&full_url_logo));
     }else{
@@ -730,6 +752,10 @@ pub async fn create_project(info: ProjectInfo) -> String {
             content: ByteBuf::from(info_with_default.project_logo.clone().unwrap()),
             sha256: None,
         };
+        let delete_asset = DeleteAsset {
+            key: key_logo.clone()
+        };
+        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset, )).await.unwrap();
         let (result,): ((),) = call(canister_id, "store", (arg_logo, )).await.unwrap();
         info_with_default.project_logo = Some((canister_id.to_string()+&key_logo).as_bytes().to_vec());
     }
@@ -744,6 +770,10 @@ pub async fn create_project(info: ProjectInfo) -> String {
             content: ByteBuf::from(info_with_default.project_cover.clone().unwrap()),
             sha256: None,
         };
+        let delete_asset = DeleteAsset {
+            key: key_cover.clone()
+        };
+        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset, )).await.unwrap();
         let (result,): ((),) = call(canister_id, "store", (arg_cover, )).await.unwrap();
         info_with_default.project_cover = Some((canister_id.to_string()+&key_cover).as_bytes().to_vec());
     }
@@ -1122,7 +1152,103 @@ pub fn list_all_projects_with_pagination(pagination_params: PaginationParams) ->
     list_all_projects[start..end].to_vec()
 }
 
-pub async fn update_project(project_id: String, updated_project: ProjectInfo) -> String {
+pub async fn change_project_images(caller: Principal, mut updated_project: ProjectInfo) -> ProjectInfo {
+    let temp_image = updated_project.user_data.profile_picture.clone();
+    let canister_id = crate::asset_manager::get_asset_canister();
+    let project_logo = updated_project.project_logo.clone();
+    let project_cover = updated_project.project_cover.clone();
+    
+    if temp_image.is_none() {
+        let full_url = canister_id.to_string() + "/uploads/default_user.jpeg";
+        updated_project.user_data.profile_picture = Some((full_url).as_bytes().to_vec());
+    }
+    else if temp_image.clone().unwrap().len() < 300 {
+        ic_cdk::println!("Profile image is already uploaded");
+    }else{
+        
+        let key = "/uploads/".to_owned()+&caller.to_string()+"_user.jpeg";
+        
+        let arg = StoreArg{
+            key: key.clone(),
+            content_type: "image/*".to_string(),
+            content_encoding: "identity".to_string(),
+            content: ByteBuf::from(temp_image.unwrap()),
+            sha256: None,
+        };
+
+        let delete_asset = DeleteAsset {
+            key: key.clone()
+        };
+
+        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset, )).await.unwrap();
+
+        let (result,): ((),) = call(canister_id, "store", (arg, )).await.unwrap();
+
+        updated_project.user_data.profile_picture = Some((canister_id.to_string()+&key).as_bytes().to_vec());
+    }
+
+    if project_logo.is_none() {
+        let full_url = canister_id.to_string() + "/uploads/default_project_logo.jpeg";
+        updated_project.project_logo = Some((full_url).as_bytes().to_vec());
+    }
+    else if project_logo.clone().unwrap().len() < 300 {
+        ic_cdk::println!("Project logo is already uploaded");
+    }else{
+        
+        let project_logo_key = "/uploads/".to_owned()+&caller.to_string()+"_project_logo.jpeg";
+        
+        let project_logo_arg = StoreArg{
+            key: project_logo_key.clone(),
+            content_type: "image/*".to_string(),
+            content_encoding: "identity".to_string(),
+            content: ByteBuf::from(project_logo.unwrap()),
+            sha256: None,
+        };
+
+        let delete_asset = DeleteAsset {
+            key: project_logo_key.clone()
+        };
+
+        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset, )).await.unwrap();
+
+        let (result,): ((),) = call(canister_id, "store", (project_logo_arg, )).await.unwrap();
+
+        updated_project.project_logo = Some((canister_id.to_string()+&project_logo_key).as_bytes().to_vec());
+    }
+
+    if project_cover.is_none() {
+        let full_url = canister_id.to_string() + "/uploads/default_project_cover.jpeg";
+        updated_project.project_cover = Some((full_url).as_bytes().to_vec());
+    }
+    else if project_cover.clone().unwrap().len() < 300 {
+        ic_cdk::println!("Project logo is already uploaded");
+    }else{
+        
+        let project_cover_key = "/uploads/".to_owned()+&caller.to_string()+"_project_cover.jpeg";
+        
+        let project_cover_arg = StoreArg{
+            key: project_cover_key.clone(),
+            content_type: "image/*".to_string(),
+            content_encoding: "identity".to_string(),
+            content: ByteBuf::from(project_cover.unwrap()),
+            sha256: None,
+        };
+
+        let delete_asset = DeleteAsset {
+            key: project_cover_key.clone()
+        };
+
+        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset, )).await.unwrap();
+
+        let (result,): ((),) = call(canister_id, "store", (project_cover_arg, )).await.unwrap();
+
+        updated_project.project_cover = Some((canister_id.to_string()+&project_cover_key).as_bytes().to_vec());
+    }
+
+    updated_project
+}
+
+pub async fn update_project(project_id: String, mut updated_project: ProjectInfo) -> String {
     let caller = ic_cdk::caller();
 
     let is_owner = read_state(|state| {
@@ -1167,6 +1293,8 @@ pub async fn update_project(project_id: String, updated_project: ProjectInfo) ->
             }
         }
     });
+
+    updated_project = change_project_images(caller, updated_project.clone()).await;
 
     match original_info {
         Some(orig_infos) => {

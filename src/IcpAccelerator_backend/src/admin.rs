@@ -15,6 +15,8 @@ use ic_cdk::api::{caller, id};
 use ic_cdk::api::{canister_balance128, time};
 use ic_cdk::storage;
 use ic_cdk::storage::stable_restore;
+use ic_cdk::api::call::call;
+use serde_bytes::ByteBuf;
 use ic_cdk_macros::*;
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
@@ -187,11 +189,18 @@ pub fn approve_mentor_creation_request(requester: Principal, approve: bool) -> S
                 // Update various parts of the state
                 state.mentor_storage.insert(StoredPrincipal(requester), mentor.clone());
                 state.mentor_awaits_response.remove(&StoredPrincipal(requester));
-                if let Some(mut user_roles) = state.role_status.get(&StoredPrincipal(requester)) {
-                    if let Some(role) = user_roles.0.iter_mut().find(|r| r.name == "mentor") {
-                        role.status = "approved".to_string();
-                        role.approved_on = Some(time());
+                let role_status = &mut state.role_status;
+
+                if let Some(mut role_status_vec_candid) = role_status.get(&StoredPrincipal(requester)) {
+                    let mut role_status_vec = role_status_vec_candid.0;
+                    for role in role_status_vec.iter_mut() {
+                        if role.name == "mentor" {
+                            role.status = "approved".to_string();
+                            role.approved_on = Some(time());
+                            break;
+                        }
                     }
+                    role_status.insert(StoredPrincipal(requester), Candid(role_status_vec));
                 }
             });
 
@@ -584,15 +593,18 @@ pub fn approve_vc_creation_request(requester: Principal, approve: bool) -> Strin
                 // Remove the vc request from awaits response as it's now processed
                 state.vc_awaits_response.remove(&StoredPrincipal(requester));
 
-                // Update role status if applicable
-                if let Some(mut roles) = state.role_status.get(&StoredPrincipal(requester)) {
-                    for role in roles.0.iter_mut() {
+                let role_status = &mut state.role_status;
+
+                if let Some(mut role_status_vec_candid) = role_status.get(&StoredPrincipal(requester)) {
+                    let mut role_status_vec = role_status_vec_candid.0;
+                    for role in role_status_vec.iter_mut() {
                         if role.name == "vc" {
                             role.status = "approved".to_string();
+                            role.approved_on = Some(time());
                             break;
                         }
                     }
-                    state.role_status.insert(StoredPrincipal(requester), Candid(roles.0.clone()));
+                    role_status.insert(StoredPrincipal(requester), Candid(role_status_vec));
                 }
             });
 
@@ -1213,8 +1225,16 @@ fn get_principals_by_role(role_name: &str) -> HashSet<Principal> {
     })
 }
 
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+pub struct PaginationReturnUserData {
+    pub data: HashMap<Principal, ApprovedList>,
+    pub count: usize,
+}
+
 #[query]
-fn get_total_approved_list_with_user_data() -> HashMap<Principal, ApprovedList> {
+fn get_total_approved_list_with_user_data(
+    pagination_params: PaginationParams,
+) -> PaginationReturnUserData {
     let roles_to_check = vec!["user", "mentor", "vc", "project"];
 
     let mut principals_roles: HashMap<StoredPrincipal, Vec<String>> = HashMap::new();
@@ -1251,7 +1271,21 @@ fn get_total_approved_list_with_user_data() -> HashMap<Principal, ApprovedList> 
             .collect()
     });
 
-    approved_list_map
+    let start = std::cmp::min(
+        (pagination_params.page - 1) * pagination_params.page_size,
+        approved_list_map.len(),
+    );
+    let end = std::cmp::min(start + pagination_params.page_size, approved_list_map.len());
+
+    let mut approved_list_vec: Vec<_> = approved_list_map.clone().into_iter().collect();
+    approved_list_vec.sort_by_key(|k| k.0); // Optional: sort by Principal for consistent pagination
+
+    let sliced_vec = &approved_list_vec[start..end];
+
+    PaginationReturnUserData {
+        data: sliced_vec.iter().cloned().collect(),
+        count: approved_list_map.len(), // Return the total count of active mentors
+    }
 }
 
 
@@ -1718,9 +1752,41 @@ fn count_live_projects() -> usize {
 }
 
 #[update]
-pub fn update_vc_profile(requester: Principal, vc_internal: VentureCapitalist) -> String {
+pub async fn update_vc_profile(requester: Principal, mut vc_internal: VentureCapitalist) -> String {
+    let temp_image = vc_internal.user_data.profile_picture.clone();
+    let canister_id = crate::asset_manager::get_asset_canister();
+    
+    if temp_image.is_none() {
+        let full_url = canister_id.to_string() + "/uploads/default_user.jpeg";
+        vc_internal.user_data.profile_picture = Some((full_url).as_bytes().to_vec());
+    }
+    else if temp_image.clone().unwrap().len() < 300 {
+        ic_cdk::println!("Profile image is already uploaded");
+    }else{
+        
+        let key = "/uploads/".to_owned()+&requester.to_string()+"_user.jpeg";
+        
+        let arg = StoreArg{
+            key: key.clone(),
+            content_type: "image/*".to_string(),
+            content_encoding: "identity".to_string(),
+            content: ByteBuf::from(temp_image.unwrap()),
+            sha256: None,
+        };
+
+        let delete_asset = DeleteAsset {
+            key: key.clone()
+        };
+
+        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset, )).await.unwrap();
+
+        let (result,): ((),) = call(canister_id, "store", (arg, )).await.unwrap();
+
+        vc_internal.user_data.profile_picture = Some((canister_id.to_string()+&key).as_bytes().to_vec());
+    }
     mutate_state(|state| {
         if let Some(mut existing_vc_internal) = state.vc_storage.get(&StoredPrincipal(requester)) {
+
             existing_vc_internal.0.params.registered_under_any_hub = vc_internal
                 .registered_under_any_hub
                 .clone()
@@ -1789,7 +1855,38 @@ pub fn update_vc_profile(requester: Principal, vc_internal: VentureCapitalist) -
 }
 
 #[update]
-pub fn update_mentor_profile(requester: Principal, updated_profile: MentorProfile) -> String {
+pub async fn update_mentor_profile(requester: Principal, mut updated_profile: MentorProfile) -> String {
+    let temp_image = updated_profile.user_data.profile_picture.clone();
+    let canister_id = crate::asset_manager::get_asset_canister();
+    
+    if temp_image.is_none() {
+        let full_url = canister_id.to_string() + "/uploads/default_user.jpeg";
+        updated_profile.user_data.profile_picture = Some((full_url).as_bytes().to_vec());
+    }
+    else if temp_image.clone().unwrap().len() < 300 {
+        ic_cdk::println!("Profile image is already uploaded");
+    }else{
+        
+        let key = "/uploads/".to_owned()+&requester.to_string()+"_user.jpeg";
+        
+        let arg = StoreArg{
+            key: key.clone(),
+            content_type: "image/*".to_string(),
+            content_encoding: "identity".to_string(),
+            content: ByteBuf::from(temp_image.unwrap()),
+            sha256: None,
+        };
+
+        let delete_asset = DeleteAsset {
+            key: key.clone()
+        };
+
+        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset, )).await.unwrap();
+
+        let (result,): ((),) = call(canister_id, "store", (arg, )).await.unwrap();
+
+        updated_profile.user_data.profile_picture = Some((canister_id.to_string()+&key).as_bytes().to_vec());
+    }
     mutate_state(|state| {
         if let Some(mut mentor_internal) = state.mentor_storage.get(&StoredPrincipal(requester)) {
             mentor_internal.0.profile.preferred_icp_hub = updated_profile
