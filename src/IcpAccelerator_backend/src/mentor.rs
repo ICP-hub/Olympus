@@ -137,13 +137,50 @@ pub async fn register_mentor(mut profile: MentorProfile) -> String {
     }
 
     mutate_state(|state| {
-        if let Some(mut role_status) = state.role_status.get(&StoredPrincipal(caller)) {
-            for role in &mut role_status.0 {
+        let role_status = &mut state.role_status;
+
+        if let Some(mut role_status_vec_candid) = role_status.get(&StoredPrincipal(caller)) {
+            let mut role_status_vec = role_status_vec_candid.0;
+            for role in role_status_vec.iter_mut() {
                 if role.name == "mentor" {
                     role.status = "requested".to_string();
-                    role.requested_on = Some(ic_cdk::api::time());
+                    break;
                 }
             }
+            role_status.insert(StoredPrincipal(caller), Candid(role_status_vec));
+        } else {
+            // If the role_status doesn't exist for the caller, insert the initial roles
+            let initial_roles = vec![
+                Role {
+                    name: "user".to_string(),
+                    status: "active".to_string(),
+                    requested_on: None,
+                    approved_on: Some(time()),
+                    rejected_on: None,
+                },
+                Role {
+                    name: "project".to_string(),
+                    status: "default".to_string(),
+                    requested_on: None,
+                    approved_on: None,
+                    rejected_on: None,
+                },
+                Role {
+                    name: "mentor".to_string(),
+                    status: "default".to_string(),
+                    requested_on: None,
+                    approved_on: None,
+                    rejected_on: None,
+                },
+                Role {
+                    name: "vc".to_string(),
+                    status: "default".to_string(),
+                    requested_on: None,
+                    approved_on: None,
+                    rejected_on: None,
+                },
+            ];
+            role_status.insert(StoredPrincipal(caller), Candid(initial_roles));
         }
     });
 
