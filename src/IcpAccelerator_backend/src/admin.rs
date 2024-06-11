@@ -1246,7 +1246,7 @@ pub fn add_job_type(job_type: String) -> String {
 
 #[update(guard = "is_admin")]
 pub async fn add_project_to_spotlight(project_id: String) -> Result<(), String> {
-    let caller = caller();
+    let caller: Principal = caller();
 
     // Uncomment and use the following block if admin validation is needed
     // let admin_principals = match get_info().await {
@@ -1328,11 +1328,11 @@ pub fn remove_project_from_spotlight(project_id: String) -> Result<(), String> {
 // }
 #[query(guard = "is_admin")]
 pub fn get_spotlight_project_uids() -> Vec<String> {
-    SPOTLIGHT_PROJECTS.with(|spotlight| {
-        spotlight
-            .borrow()
+    read_state(|state| {
+        let spotlight_hashmap = &state.spotlight_projects;
+        spotlight_hashmap
             .iter()
-            .map(|details| details.project_id.clone())
+            .map(|(key, _)| key.clone())
             .collect()
     })
 }
