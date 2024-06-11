@@ -1,14 +1,13 @@
 use crate::mentor::MentorProfile;
 
-use crate::state_handler::{mutate_state, read_state, Candid, StoredPrincipal};
-use crate::user_module::*;
-
-use crate::ratings::{RatingAverages, RatingSystem};
-use crate::user_module::{UserInfoInternal, UserInformation};
-
 use crate::admin::send_approval_request;
+use crate::is_admin;
 use crate::is_user_anonymous;
 use crate::ratings::calculate_average_api;
+use crate::ratings::{RatingAverages, RatingSystem};
+use crate::state_handler::{mutate_state, read_state, Candid, StoredPrincipal};
+use crate::user_module::*;
+use crate::user_module::{UserInfoInternal, UserInformation};
 use crate::vc_registration::VentureCapitalist;
 use bincode::{self, DefaultOptions, Options};
 use candid::{CandidType, Principal};
@@ -26,6 +25,7 @@ use serde_bytes::ByteBuf;
 use serde_cbor::Value::Null;
 use sha2::{Digest, Sha256};
 use std::cell::RefCell;
+use std::cmp;
 use std::collections::HashMap;
 use std::io::Read;
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
@@ -1018,8 +1018,16 @@ pub fn get_project_public_information_using_id(project_id: String) -> ProjectPub
     project_internal
 }
 
-#[query(guard = "is_user_anonymous")]
-pub fn list_all_projects_for_admin() -> HashMap<Principal, ProjectVecWithRoles> {
+#[derive(CandidType, Clone)]
+pub struct PaginationReturnProjectDataList {
+    pub data: HashMap<Principal, ProjectVecWithRoles>,
+    pub count: usize,
+}
+
+#[query(guard = "is_admin")]
+pub fn list_all_projects_for_admin(
+    pagination_params: PaginationParams,
+) -> PaginationReturnProjectDataList {
     read_state(|state| {
         let mut project_with_roles_map: HashMap<Principal, ProjectVecWithRoles> = HashMap::new();
 
@@ -1041,7 +1049,24 @@ pub fn list_all_projects_for_admin() -> HashMap<Principal, ProjectVecWithRoles> 
             project_with_roles_map.insert(principal, project_with_roles);
         }
 
-        project_with_roles_map
+        // Convert the map to a vector to apply pagination
+        let project_with_roles_vec: Vec<(Principal, ProjectVecWithRoles)> =
+            project_with_roles_map.into_iter().collect();
+
+        let start = (pagination_params.page - 1) * pagination_params.page_size;
+        let end = cmp::min(
+            start + pagination_params.page_size,
+            project_with_roles_vec.len(),
+        );
+
+        // Apply slicing and convert back to a HashMap
+        let paginated_slice: HashMap<Principal, ProjectVecWithRoles> =
+            project_with_roles_vec[start..end].iter().cloned().collect();
+
+        PaginationReturnProjectDataList {
+            data: paginated_slice,
+            count: project_with_roles_vec.len(),
+        }
     })
 }
 

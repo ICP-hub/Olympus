@@ -22,6 +22,7 @@ use serde::{Deserialize, Serialize};
 use serde_bytes::ByteBuf;
 use std::borrow::Cow;
 use std::cell::RefCell;
+use std::cmp;
 use std::collections::{HashMap, HashSet};
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
@@ -342,7 +343,7 @@ pub struct MentorWithRoles {
     pub mentor_profile: MentorInternal,
     pub roles: Vec<Role>,
 }
-#[derive(Serialize, Deserialize, Clone, CandidType)]
+#[derive(Debug, Serialize, Deserialize, Clone, CandidType)]
 pub struct VcWithRoles {
     pub vc_profile: VentureCapitalistInternal,
     pub roles: Vec<Role>,
@@ -354,8 +355,16 @@ pub struct ProjectWithRoles {
     pub roles: Vec<Role>,
 }
 
+#[derive(CandidType, Clone)]
+pub struct PaginationReturnMentorDataRequest {
+    pub data: HashMap<Principal, MentorWithRoles>,
+    pub count: usize,
+}
+
 #[query(guard = "is_admin")]
-pub fn mentors_awaiting_approval() -> HashMap<Principal, MentorWithRoles> {
+pub fn mentors_awaiting_approval(
+    pagination_params: PaginationParams,
+) -> PaginationReturnMentorDataRequest {
     read_state(|state| {
         let mentor_awaiters = &state.mentor_awaits_response;
 
@@ -371,12 +380,34 @@ pub fn mentors_awaiting_approval() -> HashMap<Principal, MentorWithRoles> {
             mentor_with_roles_map.insert(principal.0, mentor_with_roles);
         }
         ic_cdk::println!("Mentors awaiting approval: {:?}", mentor_with_roles_map);
-        mentor_with_roles_map
+        let mentor_with_roles_vec: Vec<(Principal, MentorWithRoles)> =
+            mentor_with_roles_map.into_iter().collect();
+
+        let start = (pagination_params.page - 1) * pagination_params.page_size;
+        let end = cmp::min(
+            start + pagination_params.page_size,
+            mentor_with_roles_vec.len(),
+        );
+
+        // Apply slicing and convert back to a HashMap
+        let paginated_slice: HashMap<Principal, MentorWithRoles> =
+            mentor_with_roles_vec[start..end].iter().cloned().collect();
+
+        PaginationReturnMentorDataRequest {
+            data: paginated_slice,
+            count: mentor_with_roles_vec.len(),
+        }
     })
 }
 
+#[derive(CandidType, Clone)]
+pub struct PaginationReturnVcDataRequest {
+    pub data: HashMap<Principal, VcWithRoles>,
+    pub count: usize,
+}
+
 #[query(guard = "is_admin")]
-pub fn vc_awaiting_approval() -> HashMap<Principal, VcWithRoles> {
+pub fn vc_awaiting_approval(pagination_params: PaginationParams) -> PaginationReturnVcDataRequest {
     read_state(|state| {
         let vc_awaiters = &state.vc_awaits_response;
 
@@ -391,13 +422,34 @@ pub fn vc_awaiting_approval() -> HashMap<Principal, VcWithRoles> {
 
             vc_with_roles_map.insert(principal.0, vc_with_roles);
         }
+        ic_cdk::println!("Vc awaiting approval: {:?}", vc_with_roles_map);
+        let vc_with_roles_vec: Vec<(Principal, VcWithRoles)> =
+            vc_with_roles_map.into_iter().collect();
 
-        vc_with_roles_map
+        let start = (pagination_params.page - 1) * pagination_params.page_size;
+        let end = cmp::min(start + pagination_params.page_size, vc_with_roles_vec.len());
+
+        // Apply slicing and convert back to a HashMap
+        let paginated_slice: HashMap<Principal, VcWithRoles> =
+            vc_with_roles_vec[start..end].iter().cloned().collect();
+
+        PaginationReturnVcDataRequest {
+            data: paginated_slice,
+            count: vc_with_roles_vec.len(),
+        }
     })
 }
 
+#[derive(CandidType, Clone)]
+pub struct PaginationReturnProjectDataRequest {
+    pub data: HashMap<Principal, ProjectWithRoles>,
+    pub count: usize,
+}
+
 #[query(guard = "is_admin")]
-pub fn project_awaiting_approval() -> HashMap<Principal, ProjectWithRoles> {
+pub fn project_awaiting_approval(
+    pagination_params: PaginationParams,
+) -> PaginationReturnProjectDataRequest {
     read_state(|state| {
         let project_awaiters = &state.project_awaits_response;
 
@@ -413,12 +465,29 @@ pub fn project_awaiting_approval() -> HashMap<Principal, ProjectWithRoles> {
             project_with_roles_map.insert(principal.0, project_with_roles);
         }
 
-        project_with_roles_map
+        // Convert the map to a vector to apply pagination
+        let project_with_roles_vec: Vec<(Principal, ProjectWithRoles)> =
+            project_with_roles_map.into_iter().collect();
+
+        let start = (pagination_params.page - 1) * pagination_params.page_size;
+        let end = cmp::min(
+            start + pagination_params.page_size,
+            project_with_roles_vec.len(),
+        );
+
+        // Apply slicing and convert back to a HashMap
+        let paginated_slice: HashMap<Principal, ProjectWithRoles> =
+            project_with_roles_vec[start..end].iter().cloned().collect();
+
+        PaginationReturnProjectDataRequest {
+            data: paginated_slice,
+            count: project_with_roles_vec.len(),
+        }
     })
 }
 
 #[query(guard = "is_admin")]
-pub fn project_declined() -> HashMap<Principal, ProjectWithRoles> {
+pub fn project_declined(pagination_params: PaginationParams) -> PaginationReturnProjectDataRequest {
     read_state(|state| {
         let project_awaiters = &state.project_declined_request;
 
@@ -434,12 +503,28 @@ pub fn project_declined() -> HashMap<Principal, ProjectWithRoles> {
             project_with_roles_map.insert(principal.0, project_with_roles);
         }
 
-        project_with_roles_map
+        // Convert the map to a vector to apply pagination
+        let project_with_roles_vec: Vec<(Principal, ProjectWithRoles)> =
+            project_with_roles_map.into_iter().collect();
+
+        let start = (pagination_params.page - 1) * pagination_params.page_size;
+        let end = cmp::min(
+            start + pagination_params.page_size,
+            project_with_roles_vec.len(),
+        );
+
+        let paginated_slice: HashMap<Principal, ProjectWithRoles> =
+            project_with_roles_vec[start..end].iter().cloned().collect();
+
+        PaginationReturnProjectDataRequest {
+            data: paginated_slice,
+            count: project_with_roles_vec.len(),
+        }
     })
 }
 
 #[query(guard = "is_admin")]
-pub fn vc_declined() -> HashMap<Principal, VcWithRoles> {
+pub fn vc_declined(pagination_params: PaginationParams) -> PaginationReturnVcDataRequest {
     read_state(|state| {
         let vc_awaiters = &state.vc_declined_request;
 
@@ -454,13 +539,26 @@ pub fn vc_declined() -> HashMap<Principal, VcWithRoles> {
 
             vc_with_roles_map.insert(principal.0, vc_with_roles);
         }
+        ic_cdk::println!("Vc awaiting approval: {:?}", vc_with_roles_map);
+        let vc_with_roles_vec: Vec<(Principal, VcWithRoles)> =
+            vc_with_roles_map.into_iter().collect();
 
-        vc_with_roles_map
+        let start = (pagination_params.page - 1) * pagination_params.page_size;
+        let end = cmp::min(start + pagination_params.page_size, vc_with_roles_vec.len());
+
+        // Apply slicing and convert back to a HashMap
+        let paginated_slice: HashMap<Principal, VcWithRoles> =
+            vc_with_roles_vec[start..end].iter().cloned().collect();
+
+        PaginationReturnVcDataRequest {
+            data: paginated_slice,
+            count: vc_with_roles_vec.len(),
+        }
     })
 }
 
 #[query(guard = "is_admin")]
-pub fn mentor_declined() -> HashMap<Principal, MentorWithRoles> {
+pub fn mentor_declined(pagination_params: PaginationParams) -> PaginationReturnMentorDataRequest {
     read_state(|state| {
         let mentor_awaiters = &state.mentor_declined_request;
 
@@ -475,8 +573,24 @@ pub fn mentor_declined() -> HashMap<Principal, MentorWithRoles> {
 
             mentor_with_roles_map.insert(principal.0, mentor_with_roles);
         }
+        ic_cdk::println!("Mentors awaiting approval: {:?}", mentor_with_roles_map);
+        let mentor_with_roles_vec: Vec<(Principal, MentorWithRoles)> =
+            mentor_with_roles_map.into_iter().collect();
 
-        mentor_with_roles_map
+        let start = (pagination_params.page - 1) * pagination_params.page_size;
+        let end = cmp::min(
+            start + pagination_params.page_size,
+            mentor_with_roles_vec.len(),
+        );
+
+        // Apply slicing and convert back to a HashMap
+        let paginated_slice: HashMap<Principal, MentorWithRoles> =
+            mentor_with_roles_vec[start..end].iter().cloned().collect();
+
+        PaginationReturnMentorDataRequest {
+            data: paginated_slice,
+            count: mentor_with_roles_vec.len(),
+        }
     })
 }
 
