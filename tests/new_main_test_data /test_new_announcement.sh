@@ -3,12 +3,12 @@
 set -e
 
 # Number of mentors you want to register (ensure this matches the number of existing identities)
-NUM_MENTORS=1000
+NUM_MENTORS=5000
 START=1
 
 
 echo "Using existing User Identities to Register as Mentors..."
-CANISTER=$"wut7y-2iaaa-aaaag-qj24q-cai"
+CANISTER="wut7y-2iaaa-aaaag-qj24q-cai"
 echo "Canister ID: $CANISTER"
 
 # Define announcement titles and descriptions
@@ -32,18 +32,18 @@ descriptions=(
 
 for i in $(seq $START $NUM_MENTORS); do
     identity_name="user$i"
-    dfx identity use "$identity_name" --network ic
-    project_id=$(dfx --identity "$identity_name" canister call $CANISTER get_project_id '()' | sed 's/[()]//g' | tr -d '[:space:]')
+    # dfx identity use "$identity_name" --network ic
+    project_id=$(dfx --identity "$identity_name" canister call $CANISTER get_project_id '()' --network ic | sed 's/[()]//g' | tr -d '[:space:]')
     echo "the project id is $project_id"
     
-     CURRENT_PRINCIPAL=$(dfx identity get-principal --identity "user$i")
+     CURRENT_PRINCIPAL=$(dfx identity get-principal --identity "$identity_name")
     echo "Using identity $identity_name with principal $CURRENT_PRINCIPAL"
     PROJECT_DATA="(record {
         project_id = $project_id;
         announcement_title = \"${titles[$((i-1))]}\";
         announcement_description = \"${descriptions[$((i-1))]}\";
     })"
-    dfx canister call $CANISTER add_announcement "$PROJECT_DATA" --network ic --identity "user$i"
+    dfx canister call $CANISTER add_announcement "$PROJECT_DATA" --network ic --identity "$identity_name"
     echo "announcement created"
 
 

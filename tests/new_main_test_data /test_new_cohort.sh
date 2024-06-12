@@ -4,10 +4,10 @@
 set -e
 
 # Number of mentors/cohorts you want to register (ensure this matches the number of existing identities)
-NUM_MENTORS=1000
+NUM_MENTORS=5000
 START=1
 echo "Using existing User Identities to Register as Mentors..."
-CANISTER=$"wut7y-2iaaa-aaaag-qj24q-cai"
+CANISTER="wut7y-2iaaa-aaaag-qj24q-cai"
 echo "Canister ID: $CANISTER"
 
 # Define cohort titles, descriptions, and other data
@@ -37,7 +37,7 @@ cohort_launch_date="2024-06-03"
 cohort_end_date="2024-08-30"
 
 for i in $(seq $START $NUM_MENTORS); do
-    # identity_name="user$i"
+    identity_name="user$i"
     # dfx identity use "$identity_name" --network ic
      CURRENT_PRINCIPAL=$(dfx identity get-principal --identity "user$i")
     echo "Using identity $identity_name with principal $CURRENT_PRINCIPAL."
@@ -76,7 +76,7 @@ for i in $(seq $START $NUM_MENTORS); do
     echo "Output from creating cohort: $output"
 
     # Extract the cohort_id from the output
-    response=$(dfx --identity "$identity_name" canister call $CANISTER get_my_pending_cohort_creation_requests '()' | sed 's/[()]//g' | tr -d '[:space:]')
+    response=$(dfx canister call $CANISTER get_my_pending_cohort_creation_requests '()' --network ic --identity "$identity_name" | sed 's/[()]//g' | tr -d '[:space:]')
     cohort_id=$(echo "$response" | grep -oP 'cohort_id="\K[^"]+')
     echo "the cohort id is $cohort_id"
 

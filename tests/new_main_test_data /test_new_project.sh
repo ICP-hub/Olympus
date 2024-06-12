@@ -4,10 +4,10 @@ set -e
 
 # Number of mentors and projects you want to register (ensure this matches the number of existing identities)
 
-NUM_PROJECTS=1000
+NUM_PROJECTS=5000
 START=1
 echo "Using existing User Identities to Register as Mentors and Projects..."
-CANISTER= 'wut7y-2iaaa-aaaag-qj24q-cai'
+CANISTER='wut7y-2iaaa-aaaag-qj24q-cai'
 echo "Canister ID: $CANISTER"
 ASSET_CANISTER="wpwd5-aqaaa-aaaag-qj26a-cai"
 echo "Canister ID: $ASSET_CANISTER"
@@ -113,5 +113,5 @@ for i in $(seq $START $NUM_PROJECTS); do
     # Optiona
     # Optionally approve the project
     echo "Approving the project request"
-    dfx canister call --identity default $CANISTER approve_project_creation_request "(principal \"$CURRENT_PRINCIPAL\", true)" --network ic --identity "user$i"
+    dfx canister call $CANISTER approve_project_creation_request "(principal \"$CURRENT_PRINCIPAL\", true)" --network ic --identity "user$i"
 done
