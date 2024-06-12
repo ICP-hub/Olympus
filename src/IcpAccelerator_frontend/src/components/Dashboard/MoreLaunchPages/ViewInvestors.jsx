@@ -9,7 +9,7 @@ import { InvestorlistSkeleton } from "../Skeleton/Investorslistskeleton";
 const ViewInvestor = () => {
   const navigate = useNavigate();
   const [allInvestorData, setAllInvestorData] = useState([]);
-  const [countData, setCountData] = useState("");
+  const [countData, setCountData] = useState(0);
   const [noData, setNoData] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [filter, setFilter] = useState("");
@@ -34,7 +34,7 @@ const ViewInvestor = () => {
         setNoData(false);
         setIsLoading(false);
         setAllInvestorData(result.data);
-        setCountData(result.total_count);
+        setCountData(result.count);
       }
     } catch (error) {
       setNoData(true);
@@ -119,7 +119,7 @@ const ViewInvestor = () => {
   return (
     <div className="container mx-auto min-h-screen">
       <div className="px-[4%] pb-[4%] pt-[1%]">
-        <div className="flex items-center justify-between sm:flex-col sxxs:flex-col md:flex-row">
+        <div className="flex items-center justify-between sm:flex-col sxxs:flex-col md:flex-row mb-8">
           <div
             className="w-full bg-gradient-to-r from-purple-900 to-blue-500 text-transparent bg-clip-text text-3xl font-extrabold py-4 
        font-fontUse"
@@ -157,7 +157,7 @@ const ViewInvestor = () => {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 mb-4 gap-4 items-center flex-wrap ">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 mb-8 gap-8 items-center flex-wrap ">
               {filteredInvestors &&
                 filteredInvestors.map((investor, index) => {
                   let id = investor[0].toText();
