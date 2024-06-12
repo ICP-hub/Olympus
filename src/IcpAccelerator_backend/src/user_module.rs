@@ -384,44 +384,36 @@ async fn update_user_data(user_id: Principal, mut user_data: UserInformation) ->
     })
 }
 
-async fn update_project_data(
-    principal: Principal,
-    user_data: UserInformation,
-) -> Result<(), String> {
-    APPLICATION_FORM.with(|app_form| {
-        let mut app_form = app_form.borrow_mut();
-        if let Some(projects) = app_form.get_mut(&principal) {
-            for project in projects.iter_mut() {
-                project.params.user_data = user_data.clone();
+async fn update_project_data(principal: Principal, user_data: UserInformation) -> Result<(), String> {
+    mutate_state(|state| {
+        if let Some(mut projects) = state.project_storage.get(&StoredPrincipal(principal)) {
+            for project in projects.0.iter_mut() {
+                project.params.user_data = user_data.clone(); 
             }
-            Ok(())
+            Ok(()) 
         } else {
-            Err("No project found for the specified project ID.".to_string())
+            Err("No project found for the specified project ID.".to_string()) 
         }
     })
 }
 
 async fn update_mentor_data(user_id: Principal, user_data: UserInformation) -> Result<(), String> {
-    MENTOR_REGISTRY.with(|registry| {
-        let mut registry = registry.borrow_mut();
-        if let Some(mentor) = registry.get_mut(&user_id) {
-            mentor.profile.user_data = user_data;
-            Ok(())
-        } else {
-            Err("No mentor found for the specified ID.".to_string())
+    mutate_state(|state| {
+        if let Some(mut mentor) = state.mentor_storage.get(&&StoredPrincipal(user_id)) {
+            mentor.0.profile.user_data = user_data;
+            return Ok(());
         }
+        Err("No mentor found for the specified ID.".to_string())
     })
 }
 
 async fn update_vc_data(user_id: Principal, user_data: UserInformation) -> Result<(), String> {
-    VENTURECAPITALIST_STORAGE.with(|storage| {
-        let mut storage = storage.borrow_mut();
-        if let Some(vc) = storage.get_mut(&user_id) {
-            vc.params.user_data = user_data;
-            Ok(())
-        } else {
-            Err("No venture capitalist found for the specified ID.".to_string())
+    mutate_state(|state| {
+        if let Some(mut vc) = state.vc_storage.get(&&StoredPrincipal(user_id)) {
+            vc.0.params.user_data = user_data;
+            return Ok(());
         }
+        Err("No venture capitalist found for the specified ID.".to_string())
     })
 }
 
