@@ -14,33 +14,6 @@ const InvestorsList = ({ numSkeletons }) => {
   const [noData, setNoData] = useState(null);
 
   const actor = useSelector((currState) => currState.actors.actor);
-
-  // const getAllInvestors = async (caller) => {
-  //   await caller
-  //     .list_all_vcs()
-  //     .then((result) => {
-  //       if (!result || result.length == 0) {
-  //         setNoData(true);
-  //         setData([]);
-  //       } else {
-  //         setData(result);
-  //         setNoData(false);
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       setData([]);
-  //       setNoData(true);
-  //     });
-  // };
-
-  // useEffect(() => {
-  //   if (actor) {
-  //     getAllInvestors(actor);
-  //   } else {
-  //     getAllInvestors(IcpAccelerator_backend);
-  //   }
-  // }, [actor]);
-
   useEffect(() => {
     let isMounted = true;
 

@@ -54,7 +54,7 @@ const SecondEventCard = ({ data, register }) => {
         deadline.getDate()
       );
 
-      if (deadlineDateOnly < todayDateOnly) {
+      if (deadlineDateOnly > todayDateOnly) {
         setIsModalOpen(true);
       } else {
         try {

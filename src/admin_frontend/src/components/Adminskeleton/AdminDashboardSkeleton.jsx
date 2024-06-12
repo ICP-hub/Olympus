@@ -235,55 +235,54 @@ export const AdminDashboardSkeleton = () => {
                 </div>
 
                 <div className="overflow-y-auto">
-                  <div className="overflow-y-auto">
-                    <div className="flex flex-row flex-wrap w-full items-center justify-between mb-2 text-sm border p-2 rounded-lg border-gray-200">
-                      <div className="md:space-x-4 md:flex-nowrap flex-wrap flex flex-row items-center md:justify-around justify-start w-full">
-                        <Skeleton height={50} width={50} circle={true}>
-                          {" "}
-                        </Skeleton>
-                        <div className="flex flex-col md:ml-0 ml-4 justify-around items-start">
-                          <p className="font-extrabold truncate text-sm">
-                            <Skeleton height={25} width={80}>
-                              {" "}
-                            </Skeleton>
-                            {/* {item.name} */}
-                          </p>
-                          <p className=" md:text-[9px] text-[8px] items-center  rounded-xl text-white  px-2">
-                            {/* {item.requestedFor} */}
-                            <Skeleton height={25} width={80}>
-                              {" "}
-                            </Skeleton>
-                          </p>
-                        </div>
-                        <p className="truncate md:mt-0 md:mb-4 mt-2 text-xs overflow-hidden text-ellipsis group-hover:text-left ">
-                          <Skeleton height={25} width={80}>
+                  {[...Array(5)].map((_, index) => (
+                    <div key={index} className="overflow-y-auto">
+                      <div className="flex flex-row flex-wrap w-full items-center justify-between mb-2 text-sm border p-2 rounded-lg border-gray-200">
+                        <div className="md:space-x-4 md:flex-nowrap flex-wrap flex flex-row items-center md:justify-around justify-start w-full">
+                          <Skeleton height={50} width={50} circle={true}>
                             {" "}
                           </Skeleton>
-                          {/* {item.sender} */}
-                        </p>
-                        <p className="text-blue-600 text-xs flex flex-row md:mb-4">
-                          <span className="text-gray-500 size-4 mr-2">
+                          <div className="flex flex-col md:ml-0 ml-4 justify-around items-start">
+                            <p className="font-extrabold truncate text-sm">
+                              <Skeleton height={25} width={80}>
+                                {" "}
+                              </Skeleton>
+                              {/* {item.name} */}
+                            </p>
+                            <p className="md:text-[9px] text-[8px] items-center rounded-xl text-white px-2">
+                              <Skeleton height={25} width={80}>
+                                {" "}
+                              </Skeleton>
+                              {/* {item.requestedFor} */}
+                            </p>
+                          </div>
+                          <p className="truncate md:mt-0 md:mb-4 mt-2 text-xs overflow-hidden text-ellipsis group-hover:text-left">
                             <Skeleton height={25} width={80}>
                               {" "}
                             </Skeleton>
-                            {/* <DateSvg /> */}
-                          </span>
-                          <span className="font-bold ">
-                            {/* {item.timestamp} */}
-                          </span>
-                        </p>
+                            {/* {item.sender} */}
+                          </p>
+                          <p className="text-blue-600 text-xs flex flex-row md:mb-4">
+                            <span className="text-gray-500 size-4 mr-2">
+                              <Skeleton height={25} width={80}>
+                                {" "}
+                              </Skeleton>
+                              {/* <DateSvg /> */}
+                            </span>
+                            <span className="font-bold">
+                              {/* {item.timestamp} */}
+                            </span>
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  ))}
                 </div>
-           
               </div>
             </div>
-           
-
           </div>
 
-        {/* main side vala yha se h  */}
+          {/* main side vala yha se h  */}
           <div className="flex flex-col md:w-3/12 w-full space-y-6">
             <div className="flex flex-col justify-between shadow-md rounded-3xl bg-white mt-4 md:mt-0  w-full h-[300px] px-[2%] overflow-y-auto">
               <div className="p-4">
@@ -298,9 +297,11 @@ export const AdminDashboardSkeleton = () => {
                   <div className="flex flex-col justify-between border border-gray-200 rounded-xl pt-3 px-[2%]">
                     <div className="flex justify-between items-start ">
                       <div className="flex items-center">
-                        <Skeleton height={55} width={55} className="rounded-xl">
-                      
-                        </Skeleton>
+                        <Skeleton
+                          height={55}
+                          width={55}
+                          className="rounded-xl"
+                        ></Skeleton>
 
                         <div className="pl-2">
                           <p
@@ -353,20 +354,14 @@ export const AdminDashboardSkeleton = () => {
                               className="rounded-xl"
                             />
                           </p>
-
-                     
                         </div>
-                      
                       </div>
                     </div>
                   </div>
                 </div>
-              
-              
               </div>
-              
             </div>
-           
+
             {/* <div className="flex flex-col md:w-3/12 w-full space-y-6"> */}
             <div className="flex flex-col justify-between shadow-md rounded-3xl bg-white mt-4 md:mt-0  w-full h-[300px] px-[2%] overflow-y-auto">
               <div className="p-4">
@@ -451,7 +446,7 @@ export const AdminDashboardSkeleton = () => {
                 <div className="flex justify-center items-center h-full w-full"></div>
               </div>
             </div>
-          
+
             {/* <div className="flex flex-col md:w-3/12 w-full space-y-6"> */}
             <div className="flex flex-col justify-between shadow-md rounded-3xl bg-white mt-4 md:mt-0  w-full h-[300px] px-[2%] overflow-y-auto">
               <div className="p-4">
@@ -536,7 +531,7 @@ export const AdminDashboardSkeleton = () => {
                 <div className="flex justify-center items-center h-full w-full"></div>
               </div>
             </div>
-        </div>
+          </div>
         </div>
       </>
     </SkeletonTheme>
