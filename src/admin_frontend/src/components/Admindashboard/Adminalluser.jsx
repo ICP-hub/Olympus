@@ -16,6 +16,7 @@ import NoData from "../../../../IcpAccelerator_frontend/assets/images/file_not_f
 import DeleteModel from "../../../../IcpAccelerator_frontend/src/models/DeleteModel";
 import { Principal } from "@dfinity/principal";
 import toast from "react-hot-toast";
+import {AdminUserDashboardSkeleton} from "../Adminskeleton/AdminUserDashboardSkeleton"
 
 const Adminalluser = () => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -29,7 +30,7 @@ const Adminalluser = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [principalId, setPrincipalId] = useState(null);
   const [countData, setCountData] = useState(0);
-
+  const [isloading, setloading] = useState(true);
   const handleOpenDeleteModal = (id) => {
     setPrincipalId(id);
     setDeleteModalOpen(true);
@@ -84,6 +85,7 @@ const Adminalluser = () => {
   OutSideClickHandler(dropdownRef, () => setIsPopupOpen(false));
 
   const fetchData = useCallback(async () => {
+    setloading(true);
     let data = [];
     try {
       switch (filterOption) {
@@ -169,6 +171,9 @@ const Adminalluser = () => {
       console.error("Failed to fetch data:", error);
       setAllData([]);
       setCountData(0);
+    }
+    finally {
+      setloading(false);    //change this if you want to test skeleton condition
     }
   }, [actor, filterOption, currentPage]);
 
@@ -323,7 +328,10 @@ const Adminalluser = () => {
           </div>
         </div>
       </div>
-
+      {isloading ? (
+        <AdminUserDashboardSkeleton />
+      ) : (
+        <>
       {Number(countData) > 0 ? (
         <div className="flex flex-col bg-white rounded-lg p-8 text-lg overflow-auto mb-8">
           <div className="min-w-[600px]">
@@ -420,6 +428,8 @@ const Adminalluser = () => {
       ) : (
         <NoDataCard image={NoData} desc={"No data yet"} />
       )}
+      </>
+      )}
 
       {Number(countData) > 0 && (
         <div className="flex items-center gap-4 justify-center mb-4">
@@ -484,6 +494,7 @@ const Adminalluser = () => {
           Id={principalId}
         />
       )}
+     
     </div>
   );
 };

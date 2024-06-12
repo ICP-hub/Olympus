@@ -5,16 +5,20 @@ import { Principal } from "@dfinity/principal";
 import NoDataCard from "../../../../../IcpAccelerator_frontend/src/components/Mentors/Event/NoDataCard";
 import NoData from "../../../../../IcpAccelerator_frontend/assets/images/NoData.png";
 import CohortDeleteCard from "./CohortDeleteCard";
-
+import { AdminDashboardCohortSkeleton } from "../../Adminskeleton/AdminDashboardCohortskeleton";
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 const DeleteCohort = () => {
   const actor = useSelector((currState) => currState.actors.actor);
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  // const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState("Delete");
   const [requestedData, setRequestedData] = useState([]);
 
   const [noData, setNoData] = useState(null);
+  const [isloading, setloading] = useState(true);
 
   const fetchCohortRequests = async (status) => {
+    setloading(true);
+    await delay(500);
     if (!actor) {
       console.log("Actor not found");
       return null;
@@ -47,8 +51,9 @@ const DeleteCohort = () => {
       setNoData(true);
       setRequestedData([]);
       setIsPopupOpen(false);
-      throw new Error("Invalid response format");
     }
+      setloading(false);
+    
     // .catch((error) => {
     //   setNoData(true);
     //   setRequestedData([]);
@@ -156,18 +161,19 @@ const DeleteCohort = () => {
             </div>
           </div>*/}
         </div>
-        {noData ? (
-          <NoDataCard image={NoData} desc={"No Cohorts"} />
-        ) : (
-          requestedData &&
-          requestedData.map((data, index) => {
-            return (
-              <div key={index}>
-                <CohortDeleteCard data={data} deleteCohort={deleteCohort} />
-              </div>
-            );
-          })
-        )}
+        {isloading ? (<AdminDashboardCohortSkeleton />)
+          : noData ? (
+            <NoDataCard image={NoData} desc={"No Cohorts"} />
+          ) : (
+            requestedData &&
+            requestedData.map((data, index) => {
+              return (
+                <div key={index}>
+                  <CohortDeleteCard data={data} deleteCohort={deleteCohort} />
+                </div>
+              );
+            })
+          )}
       </div>
 
       <Toaster />
