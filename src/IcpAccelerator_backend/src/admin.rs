@@ -1309,23 +1309,48 @@ pub fn remove_project_from_spotlight(project_id: String) -> Result<(), String> {
     })
 }
 
-// #[query(guard = "is_admin")]
-// pub fn get_spotlight_projects() -> Vec<SpotlightDetails> {
-//     // Collect values from the StableBTreeMap into a vector
-//     let mut projects: Vec<SpotlightDetails> = read_state(|state| {
-//         let mut collected_projects = Vec::new();
-//         for (_, candid_value) in state.spotlight_projects.iter() {
-//             let SpotlightDetails_list = &candid_value.0;
-//             for project in SpotlightDetails_list {
-//                 collected_projects.push(project.clone());
-//             }
-//         }
-//         collected_projects
-//     });
+#[derive(CandidType, Clone)]
+pub struct PaginationReturnSpotlightProject {
+    pub data: Vec<SpotlightDetails>,
+    pub count: usize,
+}
 
-//     // Sort the projects by approval_time in descending order
-//     projects.sort_by(|a, b| b.approval_time.cmp(&a.approval_time));
-// }
+#[query(guard = "is_admin")]
+pub fn get_spotlight_projects(
+    pagination_params: PaginationParams,
+) -> PaginationReturnSpotlightProject {
+    // Collect values from the StableBTreeMap into a vector
+    let mut projects: Vec<SpotlightDetails> = read_state(|state| {
+        let mut collected_projects = Vec::new();
+        for (_, candid_value) in state.spotlight_projects.iter() {
+            let spotlight_details_list = &candid_value.0;
+            for project in spotlight_details_list {
+                collected_projects.push(project.clone());
+            }
+        }
+        collected_projects
+    });
+
+    // Sort the projects by approval_time in descending order
+    projects.sort_by(|a, b| b.approval_time.cmp(&a.approval_time));
+
+    // Return the sorted projects
+    let start = (pagination_params.page - 1) * pagination_params.page_size;
+    let end = cmp::min(start + pagination_params.page_size, projects.len());
+
+    // Create a paginated slice and convert it to a Vec
+    let paginated_projects = if start < projects.len() {
+        projects[start..end].to_vec()
+    } else {
+        Vec::new()
+    };
+
+    PaginationReturnSpotlightProject {
+        data: paginated_projects,
+        count: projects.len(),
+    }
+}
+
 #[query(guard = "is_admin")]
 pub fn get_spotlight_project_uids() -> Vec<String> {
     read_state(|state| {
@@ -2465,18 +2490,18 @@ pub fn remove_vc_from_cohort(
                         count = count.saturating_sub(1);
                     }
 
-                    return Ok(format!(
+                    Ok(format!(
                         "Venture capitalist successfully removed from the cohort with cohort id {}",
                         cohort_id
-                    ));
+                    ))
                 } else {
-                    return Err("You are not part of this cohort".to_string());
+                    Err("You are not part of this cohort".to_string())
                 }
             } else {
-                return Err("No venture capitalists found for this cohort".to_string());
+                Err("No venture capitalists found for this cohort".to_string())
             }
         } else {
-            return Err("Invalid venture capitalist record".to_string());
+            Err("Invalid venture capitalist record".to_string())
         }
     })
 }
