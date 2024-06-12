@@ -77,7 +77,7 @@ for i in $(seq $START $NUM_MENTORS); do
 
     # Extract the cohort_id from the output
     response=$(dfx canister call $CANISTER get_my_pending_cohort_creation_requests '()' --network ic --identity "$identity_name" | sed 's/[()]//g' | tr -d '[:space:]')
-    cohort_id=$(echo "$response" | grep -oP 'cohort_id="\K[^"]+')
+    cohort_id=$(echo "$response"| awk -F'cohort_id="' '{print $2}' | awk -F'"' '{print $1}')
     echo "the cohort id is $cohort_id"
 
     # Perform another action using the extracted cohort_id

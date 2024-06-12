@@ -4,7 +4,7 @@ set -e
 
 # Number of mentors you want to register
 NUM_MENTORS=5000
-START_NUM=238
+START_NUM=362
 echo "Creating User Identities..."
 
 CANISTER='wut7y-2iaaa-aaaag-qj24q-cai'

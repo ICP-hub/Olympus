@@ -4,7 +4,7 @@ set -e
 
 # Number of mentors you want to register (ensure this matches the number of existing identities)
 NUM_MENTORS=5000
-START=1
+START=393
 echo "Using existing User Identities to Register as Mentors..."
 CANISTER="wut7y-2iaaa-aaaag-qj24q-cai"
 echo "Canister ID: $CANISTER"
