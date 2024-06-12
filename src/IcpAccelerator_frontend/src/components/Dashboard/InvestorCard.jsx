@@ -98,10 +98,7 @@ const InvestorsList = ({ numSkeletons }) => {
         data &&
         data.map((investor, index) => {
           let id = investor?.principal?.toText();
-          let img=''
-          if (investor?.params?.params?.user_data?.profile_picture[0] instanceof ArrayBuffer) {
-             img = uint8ArrayToBase64(investor.params.params.user_data.profile_picture[0]);
-          }          
+          let  img = investor?.params?.params?.user_data?.profile_picture ? uint8ArrayToBase64(investor?.params?.params?.user_data?.profile_picture[0]):'';
           let name =  investor?.params?.params?.user_data?.full_name;
           let company =  investor?.params?.params?.name_of_fund;
           let role = "Investor";
