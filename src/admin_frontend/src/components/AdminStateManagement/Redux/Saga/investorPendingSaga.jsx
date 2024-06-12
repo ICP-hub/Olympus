@@ -12,18 +12,22 @@ import {
 
 const selectActor = (currState) => currState.actors.actor;
 
-function* fetchInvestorPendingHandler() {
+function* fetchInvestorPendingHandler(action) {
   try {
+    const { currentPage, itemsPerPage } = action.payload;
     const actor = yield select(selectActor);
     // console.log('actor in investor pending saga:', actor);
 
-    const allInvestorPendingStatus = yield call([
-      actor,
-      actor.vc_awaiting_approval,
-    ]);
-    // console.log("allInvestorPendingStatus:", allInvestorPendingStatus);
+    const allInvestorPendingStatus = yield call(
+      [actor, actor.vc_awaiting_approval],
+      {
+        page_size: itemsPerPage,
+        page: currentPage,
+      }
+    );
+    console.log("allInvestorPendingStatus:", allInvestorPendingStatus);
 
-    const updatedInvestorProfiles = allInvestorPendingStatus.map(
+    const updatedInvestorProfiles = allInvestorPendingStatus?.data.map(
       ([principal, { vc_profile, roles }]) => {
         // const profilePictureBase64 = uint8ArrayToBase64(
         //   vc_profile.params.user_data.profile_picture
@@ -96,7 +100,12 @@ function* fetchInvestorPendingHandler() {
     );
     // console.log("updatedInvestorProfiles", updatedInvestorProfiles);
 
-    yield put(investorPendingSuccess(updatedInvestorProfiles));
+    yield put(
+      investorPendingSuccess({
+        profiles: updatedInvestorProfiles,
+        count: Number(allInvestorPendingStatus.count),
+      })
+    );
   } catch (error) {
     console.error("Error fetching investor pending data:", error);
     yield put(investorPendingFailure(error.toString()));

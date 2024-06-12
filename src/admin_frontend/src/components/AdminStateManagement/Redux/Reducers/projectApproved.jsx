@@ -16,7 +16,8 @@ const projectApprovedSlice = createSlice({
     },
     projectApprovedSuccess: (state, action) => {
       state.loading = false;
-      state.data = action.payload;
+      state.data = action.payload.profiles;
+      state.count = action.payload.count;
     },
     projectApprovedFailure: (state, action) => {
       state.loading = false;

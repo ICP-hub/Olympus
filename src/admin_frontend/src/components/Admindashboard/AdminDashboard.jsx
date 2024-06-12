@@ -87,6 +87,21 @@ const AdminDashboard = () => {
       window.location.href = "/";
     }
   }, [actor]);
+
+  function convrt(number) {
+    const postfixes = ["", "k", "M", "B", "T"];
+    let count = 0;
+    let isNegative = number < 0;
+    number = Math.abs(number);
+
+    while (number >= 1000 && count < postfixes.length) {
+      number /= 1000;
+      count++;
+    }
+
+    return (isNegative ? "-" : "") + number.toFixed(1) + postfixes[count];
+  }
+
   return (
     <>
       {isReloading ? (
@@ -103,7 +118,7 @@ const AdminDashboard = () => {
                   <div className="flex flex-col items-center justify-start font-bold text-lg text-white z-10">
                     <p className="flex justify-start">Cycles Pending</p>
                     <p className="font-extrabold -[59px] h-[62px] text-white flex justify-center xl:lg:text-5xl text-2xl">
-                      {cycles.toLocaleString()}
+                      {convrt(cycles)}
                     </p>
                   </div>
                 </div>

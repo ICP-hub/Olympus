@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import NoDataCard from "../../Mentors/Event/NoDataCard";
 import { LiveProjectSkeleton } from "../Skeleton/Liveprojectskeleton";
 
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 const MoreLiveProjects = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
@@ -28,6 +29,7 @@ const MoreLiveProjects = () => {
 
   const getAllProject = async (caller) => {
     setIsLoading(true);
+    await delay(500);
     await caller
       .list_all_projects_with_pagination({
         page_size: itemsPerPage,

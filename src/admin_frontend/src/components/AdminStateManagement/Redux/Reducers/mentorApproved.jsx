@@ -16,7 +16,8 @@ const mentorApprovedSlice = createSlice({
     },
     mentorApprovedSuccess: (state, action) => {
       state.loading = false;
-      state.data = action.payload;
+      state.data = action.payload.profiles;
+      state.count = action.payload.count;
     },
     mentorApprovedFailure: (state, action) => {
       state.loading = false;

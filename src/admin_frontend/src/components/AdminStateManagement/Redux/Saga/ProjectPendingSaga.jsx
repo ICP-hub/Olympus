@@ -12,16 +12,20 @@ import {
 
 const selectActor = (currState) => currState.actors.actor;
 
-function* fetchProjectPendingHandler() {
+function* fetchProjectPendingHandler(action) {
   try {
+    const { currentPage, itemsPerPage } = action.payload;
     const actor = yield select(selectActor);
-    const allProjectPendingStatus = yield call([
-      actor,
-      actor.project_awaiting_approval,
-    ]);
+    const allProjectPendingStatus = yield call(
+      [actor, actor.project_awaiting_approval],
+      {
+        page_size: itemsPerPage,
+        page: currentPage,
+      }
+    );
 
-    // console.log("allProjectPendingStatus =>",allProjectPendingStatus);
-    const updatedProjectProfiles = allProjectPendingStatus.map(
+    console.log("allProjectPendingStatus =>", allProjectPendingStatus);
+    const updatedProjectProfiles = allProjectPendingStatus?.data.map(
       ([principal, { project_profile, roles }]) => {
         const principalText = principalToText(principal);
         const profilePictureURL =
@@ -85,7 +89,12 @@ function* fetchProjectPendingHandler() {
     );
 
     // console.log("updatedProjectProfiles =>>>>>", updatedProjectProfiles);
-    yield put(projectPendingSuccess(updatedProjectProfiles));
+    yield put(
+      projectPendingSuccess({
+        profiles: updatedProjectProfiles,
+        count: Number(allProjectPendingStatus.count),
+      })
+    );
   } catch (error) {
     console.error("Error in fetchProjectPendingHandler:", error);
     yield put(projectPendingFailure(error.toString()));
