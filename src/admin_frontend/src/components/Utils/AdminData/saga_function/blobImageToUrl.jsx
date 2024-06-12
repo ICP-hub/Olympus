@@ -19,7 +19,7 @@ export function uint8ArrayToBase64(uint8Arr) {
     // var string = new TextDecoder().decode(new Uint8Array(uint8Arr));
     // // console.log('string', string)
     // return string
-    console.log('uint8ArrayToBase64', uint8Arr)
+    // console.log('uint8ArrayToBase64', uint8Arr)
     try{
       var rawString = new TextDecoder().decode(uint8Arr);
       // console.log('string in userSagea', rawString)

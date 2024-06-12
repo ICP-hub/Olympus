@@ -1,6 +1,6 @@
 export default function uint8ArrayToBase64(uint8Arr) {
   // Ensure the input is not null or undefined
-  if (uint8Arr) {
+  if (uint8Arr && uint8Arr instanceof Uint8Array) {
     // Create a Buffer from the entire Uint8Array
     // let buffer = Buffer.from(uint8Arr);
     // // Assuming the content is an image, you can specify the MIME type accordingly

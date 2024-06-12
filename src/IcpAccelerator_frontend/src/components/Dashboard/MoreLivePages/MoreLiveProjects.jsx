@@ -96,15 +96,15 @@ const MoreLiveProjects = () => {
 
   const filteredUsers = React.useMemo(
     () =>
-      allProjectData.filter((user) => {
+      allProjectData?.filter((user) => {
         if (!filter) return true; // If no filter is set, show all users.
         const projectName =
           user?.params?.params?.project_name?.toLowerCase() || "";
         const userName =
           user?.params?.params?.user_data?.fullName?.toLowerCase() || "";
         return (
-          projectName.includes(filter.toLowerCase()) ||
-          userName.includes(filter.toLowerCase())
+          projectName.includes(filter?.toLowerCase()) ||
+          userName.includes(filter?.toLowerCase())
         );
       }),
     [filter, allProjectData]
@@ -112,7 +112,7 @@ const MoreLiveProjects = () => {
 
   const indexOfLastUser = currentPage * itemsPerPage;
   const indexOfFirstUser = indexOfLastUser - itemsPerPage;
-  const currentProjects = filteredUsers.slice(
+  const currentProjects = filteredUsers?.slice(
     indexOfFirstUser,
     indexOfLastUser
   );
@@ -129,7 +129,7 @@ const MoreLiveProjects = () => {
     );
   };
 
-  const currentProjectsData = filteredUsers.filter((val) => {
+  const currentProjectsData = filteredUsers?.filter((val) => {
     const liveStatus = val?.params?.params?.live_on_icp_mainnet;
     return Array.isArray(liveStatus) && liveStatus[0] === true;
   });
