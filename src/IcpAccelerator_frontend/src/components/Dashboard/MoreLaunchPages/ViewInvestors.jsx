@@ -148,9 +148,13 @@ const ViewInvestor = () => {
           </div>
         </div>
         {isLoading ? (
-          Array(1)
-            .fill(0)
-            .map((_, index) => <InvestorlistSkeleton key={index} />)
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 mb-8 gap-8 items-center flex-wrap ">
+            {Array(12)
+              .fill(0)
+              .map((_, index) => (
+                <InvestorlistSkeleton key={index} />
+              ))}
+          </div>
         ) : noData || filter === null ? (
           <div className="flex justify-center items-center">
             <NoDataCard />

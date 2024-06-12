@@ -5,7 +5,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 export const InvestorlistSkeleton = () => {
   return (
     <SkeletonTheme baseColor="#e3e3e3" highlightColor="#c8c8c873">
-      <div className="bg-white  hover:scale-105 w-full sm:w-1/2 md:w-1/3 drop-shadow-xl rounded-lg mb-5 md:mb-0 p-6 lg:ml-2">
+      <div className="bg-white  hover:scale-105 w-full  drop-shadow-xl rounded-lg mb-5 md:mb-0 p-6 lg:ml-2">
         <div className="justify-center flex items-center">
           <div className="size-48  rounded-full bg-no-repeat bg-center bg-cover relative p-1 bg-blend-overlay ">
             {" "}
