@@ -93,10 +93,10 @@ const LiveProjects = ({ progress, numSkeletons }) => {
       setIsLoading(true);
       console.log("working");
       await caller
-        .list_all_projects()
+        .get_top_three_projects()
         .then((result) => {
           console.log("working here also");
-          console.log("list_all_projects line 97 ===>>>", result);
+          console.log("get_top_three_projects line 97 ===>>>", result);
           if (isMounted) {
             if (!result || result.length === 0) {
               setNoData(true);
@@ -207,7 +207,6 @@ const LiveProjects = ({ progress, numSkeletons }) => {
                             val?.params?.params?.live_on_icp_mainnet[0] &&
                             val?.params?.params?.live_on_icp_mainnet[0] === true
                         )
-                        .slice(0, numSkeletons)
                         .map((data, index) => {
                           let projectName =
                             data?.params?.params?.project_name ?? "";

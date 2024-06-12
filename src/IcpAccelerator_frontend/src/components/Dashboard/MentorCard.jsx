@@ -49,15 +49,15 @@ const MentorCard = ({ numSkeletons }) => {
     const getAllMentors = async (caller) => {
       setIsLoading(true);
       await caller
-        .get_all_mentors_candid()
+        .get_top_three_mentors()
         .then((result) => {
+          console.log("get_top_three_mentors", result);
           if (isMounted) {
             if (!result || result.length == 0) {
               setNoData(true);
               setIsLoading(false);
               setData([]);
             } else {
-              console.log("all mentors", result);
               setData(result);
               setIsLoading(false);
               setNoData(false);
@@ -96,7 +96,7 @@ const MentorCard = ({ numSkeletons }) => {
         </div>
       ) : (
         data &&
-        data.slice(0, numSkeletons).map((mentor, index) => {
+        data?.map((mentor, index) => {
           let id = null;
           let img = "";
           let name = "";
@@ -104,15 +104,16 @@ const MentorCard = ({ numSkeletons }) => {
           let category_of_mentoring_service = "";
           let role = "Mentor";
           if (noData === false) {
-            id = mentor[0].toText();
-            img = uint8ArrayToBase64(
-              mentor[1]?.mentor_profile?.profile?.user_data?.profile_picture[0]
-            );
-            name = mentor[1]?.mentor_profile?.profile?.user_data?.full_name;
+            id = mentor?.principal?.toText();
+            let img=''
+            if (mentor?.params?.params?.user_data?.profile_picture[0] instanceof ArrayBuffer) {
+               img = uint8ArrayToBase64(mentor.params.params.user_data.profile_picture[0]);
+            } 
+            name = mentor?.params?.profile?.user_data?.full_name;
             skills =
-              mentor[1]?.mentor_profile?.profile?.user_data?.area_of_interest;
+              mentor?.params?.profile?.user_data?.area_of_interest;
             category_of_mentoring_service =
-              mentor[1]?.mentor_profile?.profile?.category_of_mentoring_service;
+              mentor?.params?.profile?.category_of_mentoring_service;
             role = "Mentor";
           } else {
             id = mentor.id;
