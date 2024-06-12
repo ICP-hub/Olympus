@@ -22,6 +22,7 @@ use serde::{Deserialize, Serialize};
 use serde_bytes::ByteBuf;
 use std::borrow::Cow;
 use std::cell::RefCell;
+use std::cmp;
 use std::collections::{HashMap, HashSet};
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
@@ -342,7 +343,7 @@ pub struct MentorWithRoles {
     pub mentor_profile: MentorInternal,
     pub roles: Vec<Role>,
 }
-#[derive(Serialize, Deserialize, Clone, CandidType)]
+#[derive(Debug, Serialize, Deserialize, Clone, CandidType)]
 pub struct VcWithRoles {
     pub vc_profile: VentureCapitalistInternal,
     pub roles: Vec<Role>,
@@ -354,8 +355,16 @@ pub struct ProjectWithRoles {
     pub roles: Vec<Role>,
 }
 
+#[derive(CandidType, Clone)]
+pub struct PaginationReturnMentorDataRequest {
+    pub data: HashMap<Principal, MentorWithRoles>,
+    pub count: usize,
+}
+
 #[query(guard = "is_admin")]
-pub fn mentors_awaiting_approval() -> HashMap<Principal, MentorWithRoles> {
+pub fn mentors_awaiting_approval(
+    pagination_params: PaginationParams,
+) -> PaginationReturnMentorDataRequest {
     read_state(|state| {
         let mentor_awaiters = &state.mentor_awaits_response;
 
@@ -371,12 +380,34 @@ pub fn mentors_awaiting_approval() -> HashMap<Principal, MentorWithRoles> {
             mentor_with_roles_map.insert(principal.0, mentor_with_roles);
         }
         ic_cdk::println!("Mentors awaiting approval: {:?}", mentor_with_roles_map);
-        mentor_with_roles_map
+        let mentor_with_roles_vec: Vec<(Principal, MentorWithRoles)> =
+            mentor_with_roles_map.into_iter().collect();
+
+        let start = (pagination_params.page - 1) * pagination_params.page_size;
+        let end = cmp::min(
+            start + pagination_params.page_size,
+            mentor_with_roles_vec.len(),
+        );
+
+        // Apply slicing and convert back to a HashMap
+        let paginated_slice: HashMap<Principal, MentorWithRoles> =
+            mentor_with_roles_vec[start..end].iter().cloned().collect();
+
+        PaginationReturnMentorDataRequest {
+            data: paginated_slice,
+            count: mentor_with_roles_vec.len(),
+        }
     })
 }
 
+#[derive(CandidType, Clone)]
+pub struct PaginationReturnVcDataRequest {
+    pub data: HashMap<Principal, VcWithRoles>,
+    pub count: usize,
+}
+
 #[query(guard = "is_admin")]
-pub fn vc_awaiting_approval() -> HashMap<Principal, VcWithRoles> {
+pub fn vc_awaiting_approval(pagination_params: PaginationParams) -> PaginationReturnVcDataRequest {
     read_state(|state| {
         let vc_awaiters = &state.vc_awaits_response;
 
@@ -391,13 +422,34 @@ pub fn vc_awaiting_approval() -> HashMap<Principal, VcWithRoles> {
 
             vc_with_roles_map.insert(principal.0, vc_with_roles);
         }
+        ic_cdk::println!("Vc awaiting approval: {:?}", vc_with_roles_map);
+        let vc_with_roles_vec: Vec<(Principal, VcWithRoles)> =
+            vc_with_roles_map.into_iter().collect();
 
-        vc_with_roles_map
+        let start = (pagination_params.page - 1) * pagination_params.page_size;
+        let end = cmp::min(start + pagination_params.page_size, vc_with_roles_vec.len());
+
+        // Apply slicing and convert back to a HashMap
+        let paginated_slice: HashMap<Principal, VcWithRoles> =
+            vc_with_roles_vec[start..end].iter().cloned().collect();
+
+        PaginationReturnVcDataRequest {
+            data: paginated_slice,
+            count: vc_with_roles_vec.len(),
+        }
     })
 }
 
+#[derive(CandidType, Clone)]
+pub struct PaginationReturnProjectDataRequest {
+    pub data: HashMap<Principal, ProjectWithRoles>,
+    pub count: usize,
+}
+
 #[query(guard = "is_admin")]
-pub fn project_awaiting_approval() -> HashMap<Principal, ProjectWithRoles> {
+pub fn project_awaiting_approval(
+    pagination_params: PaginationParams,
+) -> PaginationReturnProjectDataRequest {
     read_state(|state| {
         let project_awaiters = &state.project_awaits_response;
 
@@ -413,12 +465,29 @@ pub fn project_awaiting_approval() -> HashMap<Principal, ProjectWithRoles> {
             project_with_roles_map.insert(principal.0, project_with_roles);
         }
 
-        project_with_roles_map
+        // Convert the map to a vector to apply pagination
+        let project_with_roles_vec: Vec<(Principal, ProjectWithRoles)> =
+            project_with_roles_map.into_iter().collect();
+
+        let start = (pagination_params.page - 1) * pagination_params.page_size;
+        let end = cmp::min(
+            start + pagination_params.page_size,
+            project_with_roles_vec.len(),
+        );
+
+        // Apply slicing and convert back to a HashMap
+        let paginated_slice: HashMap<Principal, ProjectWithRoles> =
+            project_with_roles_vec[start..end].iter().cloned().collect();
+
+        PaginationReturnProjectDataRequest {
+            data: paginated_slice,
+            count: project_with_roles_vec.len(),
+        }
     })
 }
 
 #[query(guard = "is_admin")]
-pub fn project_declined() -> HashMap<Principal, ProjectWithRoles> {
+pub fn project_declined(pagination_params: PaginationParams) -> PaginationReturnProjectDataRequest {
     read_state(|state| {
         let project_awaiters = &state.project_declined_request;
 
@@ -434,12 +503,28 @@ pub fn project_declined() -> HashMap<Principal, ProjectWithRoles> {
             project_with_roles_map.insert(principal.0, project_with_roles);
         }
 
-        project_with_roles_map
+        // Convert the map to a vector to apply pagination
+        let project_with_roles_vec: Vec<(Principal, ProjectWithRoles)> =
+            project_with_roles_map.into_iter().collect();
+
+        let start = (pagination_params.page - 1) * pagination_params.page_size;
+        let end = cmp::min(
+            start + pagination_params.page_size,
+            project_with_roles_vec.len(),
+        );
+
+        let paginated_slice: HashMap<Principal, ProjectWithRoles> =
+            project_with_roles_vec[start..end].iter().cloned().collect();
+
+        PaginationReturnProjectDataRequest {
+            data: paginated_slice,
+            count: project_with_roles_vec.len(),
+        }
     })
 }
 
 #[query(guard = "is_admin")]
-pub fn vc_declined() -> HashMap<Principal, VcWithRoles> {
+pub fn vc_declined(pagination_params: PaginationParams) -> PaginationReturnVcDataRequest {
     read_state(|state| {
         let vc_awaiters = &state.vc_declined_request;
 
@@ -454,13 +539,26 @@ pub fn vc_declined() -> HashMap<Principal, VcWithRoles> {
 
             vc_with_roles_map.insert(principal.0, vc_with_roles);
         }
+        ic_cdk::println!("Vc awaiting approval: {:?}", vc_with_roles_map);
+        let vc_with_roles_vec: Vec<(Principal, VcWithRoles)> =
+            vc_with_roles_map.into_iter().collect();
 
-        vc_with_roles_map
+        let start = (pagination_params.page - 1) * pagination_params.page_size;
+        let end = cmp::min(start + pagination_params.page_size, vc_with_roles_vec.len());
+
+        // Apply slicing and convert back to a HashMap
+        let paginated_slice: HashMap<Principal, VcWithRoles> =
+            vc_with_roles_vec[start..end].iter().cloned().collect();
+
+        PaginationReturnVcDataRequest {
+            data: paginated_slice,
+            count: vc_with_roles_vec.len(),
+        }
     })
 }
 
 #[query(guard = "is_admin")]
-pub fn mentor_declined() -> HashMap<Principal, MentorWithRoles> {
+pub fn mentor_declined(pagination_params: PaginationParams) -> PaginationReturnMentorDataRequest {
     read_state(|state| {
         let mentor_awaiters = &state.mentor_declined_request;
 
@@ -475,8 +573,24 @@ pub fn mentor_declined() -> HashMap<Principal, MentorWithRoles> {
 
             mentor_with_roles_map.insert(principal.0, mentor_with_roles);
         }
+        ic_cdk::println!("Mentors awaiting approval: {:?}", mentor_with_roles_map);
+        let mentor_with_roles_vec: Vec<(Principal, MentorWithRoles)> =
+            mentor_with_roles_map.into_iter().collect();
 
-        mentor_with_roles_map
+        let start = (pagination_params.page - 1) * pagination_params.page_size;
+        let end = cmp::min(
+            start + pagination_params.page_size,
+            mentor_with_roles_vec.len(),
+        );
+
+        // Apply slicing and convert back to a HashMap
+        let paginated_slice: HashMap<Principal, MentorWithRoles> =
+            mentor_with_roles_vec[start..end].iter().cloned().collect();
+
+        PaginationReturnMentorDataRequest {
+            data: paginated_slice,
+            count: mentor_with_roles_vec.len(),
+        }
     })
 }
 
@@ -1132,7 +1246,7 @@ pub fn add_job_type(job_type: String) -> String {
 
 #[update(guard = "is_admin")]
 pub async fn add_project_to_spotlight(project_id: String) -> Result<(), String> {
-    let caller = caller();
+    let caller: Principal = caller();
 
     // Uncomment and use the following block if admin validation is needed
     // let admin_principals = match get_info().await {
@@ -1195,30 +1309,55 @@ pub fn remove_project_from_spotlight(project_id: String) -> Result<(), String> {
     })
 }
 
-// #[query(guard = "is_admin")]
-// pub fn get_spotlight_projects() -> Vec<SpotlightDetails> {
-//     // Collect values from the StableBTreeMap into a vector
-//     let mut projects: Vec<SpotlightDetails> = read_state(|state| {
-//         let mut collected_projects = Vec::new();
-//         for (_, candid_value) in state.spotlight_projects.iter() {
-//             let SpotlightDetails_list = &candid_value.0;
-//             for project in SpotlightDetails_list {
-//                 collected_projects.push(project.clone());
-//             }
-//         }
-//         collected_projects
-//     });
+#[derive(CandidType, Clone)]
+pub struct PaginationReturnSpotlightProject {
+    pub data: Vec<SpotlightDetails>,
+    pub count: usize,
+}
 
-//     // Sort the projects by approval_time in descending order
-//     projects.sort_by(|a, b| b.approval_time.cmp(&a.approval_time));
-// }
+#[query(guard = "is_admin")]
+pub fn get_spotlight_projects(
+    pagination_params: PaginationParams,
+) -> PaginationReturnSpotlightProject {
+    // Collect values from the StableBTreeMap into a vector
+    let mut projects: Vec<SpotlightDetails> = read_state(|state| {
+        let mut collected_projects = Vec::new();
+        for (_, candid_value) in state.spotlight_projects.iter() {
+            let spotlight_details_list = &candid_value.0;
+            for project in spotlight_details_list {
+                collected_projects.push(project.clone());
+            }
+        }
+        collected_projects
+    });
+
+    // Sort the projects by approval_time in descending order
+    projects.sort_by(|a, b| b.approval_time.cmp(&a.approval_time));
+
+    // Return the sorted projects
+    let start = (pagination_params.page - 1) * pagination_params.page_size;
+    let end = cmp::min(start + pagination_params.page_size, projects.len());
+
+    // Create a paginated slice and convert it to a Vec
+    let paginated_projects = if start < projects.len() {
+        projects[start..end].to_vec()
+    } else {
+        Vec::new()
+    };
+
+    PaginationReturnSpotlightProject {
+        data: paginated_projects,
+        count: projects.len(),
+    }
+}
+
 #[query(guard = "is_admin")]
 pub fn get_spotlight_project_uids() -> Vec<String> {
-    SPOTLIGHT_PROJECTS.with(|spotlight| {
-        spotlight
-            .borrow()
+    read_state(|state| {
+        let spotlight_hashmap = &state.spotlight_projects;
+        spotlight_hashmap
             .iter()
-            .map(|details| details.project_id.clone())
+            .map(|(key, _)| key.clone())
             .collect()
     })
 }
@@ -2351,18 +2490,18 @@ pub fn remove_vc_from_cohort(
                         count = count.saturating_sub(1);
                     }
 
-                    return Ok(format!(
+                    Ok(format!(
                         "Venture capitalist successfully removed from the cohort with cohort id {}",
                         cohort_id
-                    ));
+                    ))
                 } else {
-                    return Err("You are not part of this cohort".to_string());
+                    Err("You are not part of this cohort".to_string())
                 }
             } else {
-                return Err("No venture capitalists found for this cohort".to_string());
+                Err("No venture capitalists found for this cohort".to_string())
             }
         } else {
-            return Err("Invalid venture capitalist record".to_string());
+            Err("Invalid venture capitalist record".to_string())
         }
     })
 }

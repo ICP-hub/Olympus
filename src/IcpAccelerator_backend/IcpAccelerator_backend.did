@@ -350,11 +350,27 @@ type PaginationReturnProjectData = record {
   data : vec ListAllProjects;
   count : nat64;
 };
+type PaginationReturnProjectDataList = record {
+  data : vec record { principal; ProjectVecWithRoles };
+  count : nat64;
+};
+type PaginationReturnProjectDataRequest = record {
+  data : vec record { principal; ProjectWithRoles };
+  count : nat64;
+};
+type PaginationReturnSpotlightProject = record {
+  data : vec SpotlightDetails;
+  count : nat64;
+};
 type PaginationReturnUserData = record {
   data : vec record { principal; ApprovedList };
   count : nat64;
 };
 type PaginationReturnVcData = record {
+  data : vec record { principal; VcWithRoles };
+  count : nat64;
+};
+type PaginationReturnVcDataRequest = record {
   data : vec record { principal; VcWithRoles };
   count : nat64;
 };
@@ -598,6 +614,12 @@ type Role = record {
 };
 type Role_1 = record { id : int32; name : text };
 type RolesResponse = record { roles : vec Role_1 };
+type SpotlightDetails = record {
+  project_details : ProjectInfoInternal;
+  added_by : principal;
+  project_id : text;
+  approval_time : nat64;
+};
 type TeamMember = record { member_data : UserInformation; member_uid : text };
 type Testimonial = record {
   name : text;
@@ -926,7 +948,6 @@ service : {
   get_no_of_individuals_applied_for_cohort_using_id : (text) -> (
       Result_9,
     ) query;
-  get_notifications_check : () -> (vec Notification) query;
   get_notifications_for_hubs : () -> (vec NotificationProject) query;
   get_pending_admin_notifications : () -> (vec Notification) query;
   get_pending_cohort_enrollment_requests : (principal) -> (
@@ -990,6 +1011,9 @@ service : {
   get_self_declined_requests_for_project : () -> (vec OfferToMentor) query;
   get_self_declined_requests_of_project : (text) -> (vec OfferToInvestor) query;
   get_spotlight_project_uids : () -> (vec text) query;
+  get_spotlight_projects : (Pagination) -> (
+      PaginationReturnSpotlightProject,
+    ) query;
   get_stored_average_rating : (text, text) -> (Result_4) query;
   get_testimonials : (principal) -> (Result_14) query;
   get_top_5_mentors : () -> (vec record { principal; TopData; nat64 }) query;
@@ -1039,8 +1063,8 @@ service : {
   get_your_project_notifications : () -> (vec NotificationForOwner) query;
   greet : (text) -> (text) query;
   list_all_projects : () -> (vec ListAllProjects) query;
-  list_all_projects_for_admin : () -> (
-      vec record { principal; ProjectVecWithRoles },
+  list_all_projects_for_admin : (Pagination) -> (
+      PaginationReturnProjectDataList,
     ) query;
   list_all_projects_with_pagination : (Pagination) -> (
       PaginationReturnProjectData,
@@ -1052,18 +1076,16 @@ service : {
   make_project_active_inactive : (principal, text) -> (text);
   make_user_inactive : () -> (text);
   make_vc_active_inactive : (principal) -> (text);
-  mentor_declined : () -> (vec record { principal; MentorWithRoles }) query;
+  mentor_declined : (Pagination) -> (PaginationReturnMentor) query;
   mentor_profile_edit_awaiting_approval : () -> (
       vec record { principal; MentorUpdateRequest },
     ) query;
-  mentors_awaiting_approval : () -> (
-      vec record { principal; MentorWithRoles },
-    ) query;
+  mentors_awaiting_approval : (Pagination) -> (PaginationReturnMentor) query;
   post_job : (Jobs) -> (text);
-  project_awaiting_approval : () -> (
-      vec record { principal; ProjectWithRoles },
+  project_awaiting_approval : (Pagination) -> (
+      PaginationReturnProjectDataRequest,
     ) query;
-  project_declined : () -> (vec record { principal; ProjectWithRoles }) query;
+  project_declined : (Pagination) -> (PaginationReturnProjectDataRequest) query;
   project_update_awaiting_approval : () -> (
       vec record { text; ProjectUpdateRequest },
     ) query;
@@ -1110,8 +1132,8 @@ service : {
   update_vc_ratings : (principal, RatingMentorInvestor) -> ();
   update_venture_capitalist : (VentureCapitalist) -> (text);
   update_venture_capitalist_caller : (VentureCapitalist) -> (text);
-  vc_awaiting_approval : () -> (vec record { principal; VcWithRoles }) query;
-  vc_declined : () -> (vec record { principal; VcWithRoles }) query;
+  vc_awaiting_approval : (Pagination) -> (PaginationReturnVcDataRequest) query;
+  vc_declined : (Pagination) -> (PaginationReturnVcDataRequest) query;
   vc_profile_edit_awaiting_approval : () -> (
       vec record { principal; UpdateInfoStruct },
     ) query;

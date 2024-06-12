@@ -1,14 +1,15 @@
 use crate::admin::*;
+use crate::cohort::*;
 use crate::cohort_rating::*;
 use crate::vc_registration::Announcements;
 use crate::{admin::*, mentor::*, project_registration::*, user_module::*, vc_registration::*};
 use candid::{CandidType, Principal};
-use crate::cohort::*;
 use ic_cdk::api::management_canister::main::{
     canister_status, CanisterIdRecord, CanisterStatusResponse, CanisterStatusType,
     DefiniteCanisterSettings,
 };
 use ic_stable_structures::StableVec;
+
 use ic_stable_structures::{
     memory_manager::{MemoryId, MemoryManager, VirtualMemory},
     storable::{Blob, Bound, Storable},
@@ -234,16 +235,19 @@ const PROJECTS_APPLIED_FOR_COHORT_MEMORY_ID: MemoryId = MemoryId::new(61);
 pub type ApplierCount = StableBTreeMap<String, u64, VMem>;
 const APPLIER_COUNT_MEMORY_ID: MemoryId = MemoryId::new(62);
 
-pub type CapitalistAppliedForCohort = StableBTreeMap<String, Candid<Vec<VentureCapitalistInternal>>, VMem>;
+pub type CapitalistAppliedForCohort =
+    StableBTreeMap<String, Candid<Vec<VentureCapitalistInternal>>, VMem>;
 const CAPITALIST_APPLIED_FOR_COHORT_MEMORY_ID: MemoryId = MemoryId::new(63);
 
 pub type CohortsAssociated = StableBTreeMap<String, Candid<Vec<String>>, VMem>;
 const ASSOCIATED_COHORTS_WITH_PROJECT_MEMORY_ID: MemoryId = MemoryId::new(64);
 
-pub type CohortEnrollmentRequests = StableBTreeMap<StoredPrincipal, Candid<Vec<CohortEnrollmentRequest>>, VMem>;
+pub type CohortEnrollmentRequests =
+    StableBTreeMap<StoredPrincipal, Candid<Vec<CohortEnrollmentRequest>>, VMem>;
 const COHORT_ENROLLMENT_REQUESTS_MEMORY_ID: MemoryId = MemoryId::new(65);
 
-pub type MentorsRemovedFromCohort = StableBTreeMap<String, Candid<Vec<(Principal, MentorInternal)>>, VMem>;
+pub type MentorsRemovedFromCohort =
+    StableBTreeMap<String, Candid<Vec<(Principal, MentorInternal)>>, VMem>;
 const MENTOR_REMOVED_FROM_COHORT_MEMORY_ID: MemoryId = MemoryId::new(66);
 
 pub type MentorsInviteRequest = StableBTreeMap<String, Candid<InviteRequest>, VMem>;
@@ -252,8 +256,8 @@ const PENDING_MENTOR_CONFIRMATION_TO_REJOIN_MEMORY_ID: MemoryId = MemoryId::new(
 pub type MySentCohortRequest = StableBTreeMap<StoredPrincipal, Candid<Vec<CohortRequest>>, VMem>;
 const MY_SENT_COHORT_REQUEST_MEMORY_ID: MemoryId = MemoryId::new(68);
 
-
-
+pub type AssetManager = StableCell<StoredPrincipal, VMem>;
+const ASSET_CANISTER_STORAGE_MEMORY_ID: MemoryId = MemoryId::new(69);
 
 pub struct State {
     pub admin_notifications: AdminNotification,
@@ -317,17 +321,17 @@ pub struct State {
     pub money_access_request: MoneyAccessRequest,
     pub private_docs_access_request: PrivateDocsAccessRequest,
 
-    
     pub cohort_info: CohortInfo,
     pub project_applied_for_cohort: ProjectsAppliedForCohort,
     pub applier_count: ApplierCount,
-    pub vc_applied_for_cohort:CapitalistAppliedForCohort,
+    pub vc_applied_for_cohort: CapitalistAppliedForCohort,
     pub mentor_applied_for_cohort: MentorsAppliedForCohort,
     pub cohorts_associated: CohortsAssociated,
     pub cohort_enrollment_request: CohortEnrollmentRequests,
     pub mentor_removed_from_cohort: MentorsRemovedFromCohort,
     pub mentor_invite_request: MentorsInviteRequest,
     pub my_sent_cohort_request: MySentCohortRequest,
+    pub asset_canister_storage: AssetManager,
 }
 
 thread_local! {
@@ -363,7 +367,10 @@ thread_local! {
             cohort_request_admin: CohortRequestNotification::init(mm.borrow().get(COHORT_REQUEST_MEMORY_ID)),
             accepted_cohorts:AcceptedCohorts::init(mm.borrow().get(ACCEPTED_COHORTS_MEMORY_ID)),
             declined_cohorts:DeclinedCohorts::init(mm.borrow().get(DECLINED_COHORTS_MEMORY_ID)),
-
+            asset_canister_storage: AssetManager::init(
+                mm.borrow().get(ASSET_CANISTER_STORAGE_MEMORY_ID),
+                StoredPrincipal(Principal::anonymous())
+            ).expect("Failed to initialize AssetManager storage"),
 
 
 
@@ -481,14 +488,12 @@ impl Storable for StoredPrincipal {
     }
 }
 
-#[ic_cdk::query]
 pub fn get_notifications_check() -> Vec<Notification> {
     read_state(|state| {
         state
             .admin_notifications
             .iter()
-            .map(|(_, notifications)| notifications.0.clone())
-            .flatten()
+            .flat_map(|(_, notifications)| notifications.0.clone())
             .collect()
     })
 }
