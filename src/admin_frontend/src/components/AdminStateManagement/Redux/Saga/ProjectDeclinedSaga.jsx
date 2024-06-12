@@ -12,20 +12,24 @@ import {
 
 const selectActor = (currState) => currState.actors.actor;
 
-function* fetchProjectDeclinedHandler() {
+function* fetchProjectDeclinedHandler(action) {
   try {
+    const { currentPage, itemsPerPage } = action.payload;
     const actor = yield select(selectActor);
-    const allProjectDeclinedStatus = yield call([
-      actor,
-      actor.project_declined,
-    ]);
+    const allProjectDeclinedStatus = yield call(
+      [actor, actor.project_declined],
+      {
+        page_size: itemsPerPage,
+        page: currentPage,
+      }
+    );
 
-    // console.log(
-    //   "allProjectDeclinedStatus =>CCCCCCCCCCCC",
-    //   allProjectDeclinedStatus
-    // );
+    console.log(
+      "allProjectDeclinedStatus =>CCCCCCCCCCCC",
+      allProjectDeclinedStatus
+    );
 
-    const updatedProjectProfiles = allProjectDeclinedStatus.map(
+    const updatedProjectProfiles = allProjectDeclinedStatus?.data.map(
       ([principal, { project_profile, roles }]) => {
         const principalText = principalToText(principal);
 
@@ -105,7 +109,12 @@ function* fetchProjectDeclinedHandler() {
     //   updatedProjectProfiles
     // );
 
-    yield put(projectDeclinedSuccess(updatedProjectProfiles));
+    yield put(
+      projectDeclinedSuccess({
+        profiles: updatedProjectProfiles,
+        count: Number(allProjectDeclinedStatus.count),
+      })
+    );
   } catch (error) {
     console.error("Error in fetchProjectDeclinedHandler:", error);
     yield put(projectDeclinedFailure(error.toString()));

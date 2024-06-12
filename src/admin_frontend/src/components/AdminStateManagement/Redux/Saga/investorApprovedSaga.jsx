@@ -12,12 +12,19 @@ import {
 
 const selectActor = (currState) => currState.actors.actor;
 
-function* fetchInvestorApprovedHandler() {
+function* fetchInvestorApprovedHandler(action) {
   try {
+    const { currentPage, itemsPerPage } = action.payload;
     const actor = yield select(selectActor);
-    const allInvestorApprovedStatus = yield call([actor, actor.list_all_vcs]);
+    const allInvestorApprovedStatus = yield call(
+      [actor, actor.list_all_vcs_with_pagination],
+      {
+        page_size: itemsPerPage,
+        page: currentPage,
+      }
+    );
 
-    const updatedInvestorProfiles = allInvestorApprovedStatus.map(
+    const updatedInvestorProfiles = allInvestorApprovedStatus?.data.map(
       ([principal, { vc_profile, roles }]) => {
         const principalText = principalToText(principal);
         // const profilePictureBase64 = vc_profile.params.user_data.profile_picture
@@ -91,7 +98,12 @@ function* fetchInvestorApprovedHandler() {
       }
     );
 
-    yield put(investorApprovedSuccess(updatedInvestorProfiles));
+    yield put(
+      investorApprovedSuccess({
+        profiles: updatedInvestorProfiles,
+        count: Number(allInvestorApprovedStatus.count),
+      })
+    );
   } catch (error) {
     console.error("Error in fetchInvestorApprovedHandler:", error);
     yield put(investorApprovedFailure(error.toString()));

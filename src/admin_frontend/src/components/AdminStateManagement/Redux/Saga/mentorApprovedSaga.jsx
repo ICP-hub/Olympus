@@ -12,15 +12,20 @@ import {
 
 const selectActor = (currState) => currState.actors.actor;
 
-function* fetchMentorApprovedHandler() {
+function* fetchMentorApprovedHandler(action) {
   try {
+    const { currentPage, itemsPerPage } = action.payload;
     const actor = yield select(selectActor);
-    const allMentorApprovedStatus = yield call([
-      actor,
-      actor.get_all_mentors_candid,
-    ]);
+    const allMentorApprovedStatus = yield call(
+      [actor, actor.get_all_mentors_with_pagination],
+      {
+        page_size: itemsPerPage,
+        page: currentPage,
+      }
+    );
 
-    const updatedMentorProfiles = allMentorApprovedStatus.map(
+    // console.log("allMentorApprovedStatus =>", allMentorApprovedStatus);
+    const updatedMentorProfiles = allMentorApprovedStatus?.data.map(
       ([principal, { mentor_profile, roles }]) => {
         const principalText = principalToText(principal);
 
@@ -81,7 +86,12 @@ function* fetchMentorApprovedHandler() {
       }
     );
 
-    yield put(mentorApprovedSuccess(updatedMentorProfiles));
+    yield put(
+      mentorApprovedSuccess({
+        profiles: updatedMentorProfiles,
+        count: Number(allMentorApprovedStatus.count),
+      })
+    );
   } catch (error) {
     console.error(error);
     yield put(mentorApprovedFailure(error.toString()));

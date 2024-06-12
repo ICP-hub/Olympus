@@ -6,6 +6,7 @@ import { IcpAccelerator_backend } from "../../../../../declarations/IcpAccelerat
 import NoDataCard from "../../Mentors/Event/NoDataCard";
 import { InvestorlistSkeleton } from "../Skeleton/Investorslistskeleton";
 
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 const ViewInvestor = () => {
   const navigate = useNavigate();
   const [allInvestorData, setAllInvestorData] = useState([]);
@@ -19,6 +20,7 @@ const ViewInvestor = () => {
 
   const getAllInvestors = async (caller, page) => {
     setIsLoading(true);
+    await delay(500);
     try {
       const result = await caller.list_all_vcs_with_pagination({
         page_size: itemsPerPage,

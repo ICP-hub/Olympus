@@ -125,7 +125,7 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
   return (
     <div className="py-4 gap-2 overflow-x-auto">
       <Swiper
-        modules={[Pagination, Autoplay]}
+        modules={[Autoplay]}
         // centeredSlides={true}
         loop={latestJobs.length <= 3}
         autoplay={
@@ -136,9 +136,9 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
               }
             : {}
         }
-        pagination={{
-          clickable: true,
-        }}
+        // pagination={{
+        //   clickable: true,
+        // }}
         spaceBetween={30}
         slidesPerView="auto"
         slidesOffsetAfter={100}
