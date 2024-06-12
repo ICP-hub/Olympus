@@ -1100,51 +1100,34 @@ pub struct ListAllProjects {
 //         list_all_projects
 //     })
 // }
-
 #[query(guard = "is_user_anonymous")]
 pub fn list_all_projects() -> Vec<ListAllProjects> {
-    // Access the global state to retrieve the projects storage
-    read_state(|state| {
-        let projects = &state.project_storage;
+    let projects_snapshot = read_state(|state| {
+        state.project_storage.iter().map(|(principal, project_infos)| {
+            (principal.clone(), project_infos.0.clone())  // Clone the data to use outside the state borrow
+        }).collect::<Vec<_>>()
+    });
 
-        // Check if the projects storage is empty
-        if projects.is_empty() {
-            return Vec::new();
-        }
+    let mut list_all_projects: Vec<ListAllProjects> = Vec::new();
 
-        let mut list_all_projects: Vec<ListAllProjects> = Vec::new();
+    // Process the projects outside of the state borrow
+    for (stored_principal, project_infos) in projects_snapshot {
+        for project_info in project_infos {
+            if project_info.is_active {
+                // Here, replace calculate_average_api with the actual function or logic you use to fetch the average
+                let get_rating = calculate_average_api(&project_info.uid);  // Assume this function doesn't mutate the global state.
 
-        // Iterate through all projects stored in the stable structure
-        for (principal, project_infos) in projects.iter() {
-            // Iterate through each project info stored for a principal
-            for project_info in project_infos.0.iter() {
-                // Calculate the average rating for the project
-                let get_rating = calculate_average_api(&project_info.uid);
-
-                // Create project info structure depending on whether rating is available
-                let project_info = if let Some(average) = get_rating.overall_average.get(0) {
-                    ListAllProjects {
-                        principal: principal.clone(),
-                        params: project_info.clone(),
-                        overall_average: Some(*average),
-                    }
-                } else {
-                    ListAllProjects {
-                        principal: principal.clone(),
-                        params: project_info.clone(),
-                        overall_average: None,
-                    }
+                let project_struct = ListAllProjects {
+                    principal: stored_principal,
+                    params: project_info,
+                    overall_average: get_rating.overall_average.get(0).cloned(),
                 };
-
-                // Only add active projects
-                if project_info.params.is_active {
-                    list_all_projects.push(project_info);
-                }
+                list_all_projects.push(project_struct);
             }
         }
+    }
 
-        list_all_projects
-    })
+    list_all_projects
 }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
@@ -1156,25 +1139,30 @@ pub struct PaginationParams {
 #[derive(CandidType, Clone)]
 pub struct PaginationReturnProjectData {
     pub data: Vec<ListAllProjects>,
-    pub count: usize,
+    pub count: u64,
 }
 
 #[query(guard = "is_user_anonymous")]
 pub fn list_all_projects_with_pagination(
     pagination_params: PaginationParams,
 ) -> PaginationReturnProjectData {
+    let project_count = read_state(|state| state.project_storage.len());
+
+    // Calculate pagination bounds
+    let start = (pagination_params.page - 1) * pagination_params.page_size;
+    let end = std::cmp::min(start + pagination_params.page_size, project_count.try_into().unwrap());
+
+    // Fetch only the necessary projects
     let projects_snapshot = read_state(|state| {
-        // Clone the necessary parts of the state to reduce the duration of the borrow.
-        state
-            .project_storage
-            .iter()
+        state.project_storage.iter()
+            .skip(start)
+            .take(end - start)
             .map(|(principal, project_infos)| (principal.clone(), project_infos.0.clone()))
             .collect::<Vec<_>>()
     });
 
     let mut list_all_projects: Vec<ListAllProjects> = Vec::new();
 
-    // Process data outside the read_state closure to avoid nested borrows.
     for (stored_principal, project_infos) in projects_snapshot {
         for project_info in project_infos {
             if project_info.is_active {
@@ -1189,13 +1177,9 @@ pub fn list_all_projects_with_pagination(
         }
     }
 
-    // Apply pagination
-    let start = (pagination_params.page - 1) * pagination_params.page_size;
-    let end = std::cmp::min(start + pagination_params.page_size, list_all_projects.len());
-
     PaginationReturnProjectData {
-        data: list_all_projects[start..end].to_vec(),
-        count: list_all_projects.len(),
+        data: list_all_projects,
+        count: project_count,
     }
 }
 
