@@ -3,8 +3,8 @@
 set -e
 
 # Number of mentors you want to register (ensure this matches the number of existing identities)
-NUM_MENTORS=1000
-START=1
+NUM_MENTORS=5000
+START=57
 
 echo "Using existing User Identities to Register as Mentors..."
 CANISTER="wut7y-2iaaa-aaaag-qj24q-cai"
@@ -30,11 +30,11 @@ descriptions=(
 
 # Loop through users and create announcements dynamically
 for i in $(seq $START $NUM_MENTORS); do
-    # identity_name="user$i"
+    identity_name="user$i"
     # dfx identity use "$identity_name" --network ic
       CURRENT_PRINCIPAL=$(dfx identity get-principal --identity "user$i")
     echo "Using identity $identity_name with principal $CURRENT_PRINCIPAL"
-    project_id=$(dfx --identity "$identity_name" canister call $CANISTER get_project_id '()' | sed 's/[()]//g' | tr -d '[:space:]')
+    project_id=$(dfx canister call $CANISTER get_project_id '()'  --identity "$identity_name" --network ic | sed 's/[()]//g' | tr -d '[:space:]')
     echo "the project id is $project_id"
     
 

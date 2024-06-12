@@ -3,7 +3,7 @@
 set -e
 
 # Number of mentors you want to register (ensure this matches the number of existing identities)
-NUM_MENTORS=1000
+NUM_MENTORS=5000
 START=1
 
 
@@ -74,5 +74,5 @@ for i in $(seq $START $NUM_MENTORS); do
 
     # Optionally approve the mentor
     echo "Approving the request"
-    dfx canister call --identity default $CANISTER approve_vc_creation_request "(principal \"$CURRENT_PRINCIPAL\", true)" --network ic --identity "user$i"
+    dfx canister call $CANISTER approve_vc_creation_request "(principal \"$CURRENT_PRINCIPAL\", true)" --network ic --identity "user$i"
 done
