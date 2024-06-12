@@ -471,7 +471,7 @@ pub struct ListAllMentors {
 }
 
 #[query]
-pub fn get_top_three_vc() -> Vec<ListAllMentors> {
+pub fn get_top_three_mentors() -> Vec<ListAllMentors> {
     let mentor_snapshot = read_state(|state| {
         state.mentor_storage.iter().map(|(principal, vc_info)| {
             (principal.clone(), vc_info.0.clone())
