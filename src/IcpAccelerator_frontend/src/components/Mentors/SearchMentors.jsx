@@ -95,7 +95,35 @@ function SearchMentors() {
       return prevPage;
     });
   };
+  // Logic to limit the displayed page numbers to 10 at a time
+  const renderPaginationNumbers = () => {
+    const totalPages = Math.ceil(Number(countData) / itemsPerPage);
+    const maxPageNumbers = 10;
+    const startPage =
+      Math.floor((currentPage - 1) / maxPageNumbers) * maxPageNumbers + 1;
+    const endPage = Math.min(startPage + maxPageNumbers - 1, totalPages);
 
+    const pageNumbers = [];
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(
+        <button
+          key={i}
+          onClick={() => paginate(i)}
+          className={`relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-full text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all ${
+            currentPage === i
+              ? "bg-gray-900 text-white"
+              : "hover:bg-gray-900/10 active:bg-gray-900/20"
+          }`}
+          type="button"
+        >
+          <span className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+            {i}
+          </span>
+        </button>
+      );
+    }
+    return pageNumbers;
+  };
   return (
     <div className="container mx-auto min-h-screen">
       <div className="px-[4%] pb-[4%] pt-[1%]">
@@ -127,9 +155,13 @@ function SearchMentors() {
           </div>
         </div>
         {isLoading ? (
-          Array(1)
-            .fill(0)
-            .map((_, index) => <MentorlistSkeleton key={index} />)
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 mb-8 gap-8 items-center flex-wrap ">
+            {Array(12)
+              .fill(0)
+              .map((_, index) => (
+                <MentorlistSkeleton key={index} />
+              ))}
+          </div>
         ) : noData ? (
           <NoDataCard />
         ) : (
@@ -233,27 +265,8 @@ function SearchMentors() {
                     </svg>
                     Previous
                   </button>
-                  {Array.from(
-                    {
-                      length: Math.ceil(Number(countData) / itemsPerPage),
-                    },
-                    (_, i) => i + 1
-                  ).map((number) => (
-                    <button
-                      key={number}
-                      onClick={() => paginate(number)}
-                      className={`relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-full text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all ${
-                        currentPage === number
-                          ? "bg-gray-900 text-white"
-                          : "hover:bg-gray-900/10 active:bg-gray-900/20"
-                      }`}
-                      type="button"
-                    >
-                      <span className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
-                        {number}
-                      </span>
-                    </button>
-                  ))}
+
+                  {renderPaginationNumbers()}
                   <button
                     onClick={handleNext}
                     disabled={

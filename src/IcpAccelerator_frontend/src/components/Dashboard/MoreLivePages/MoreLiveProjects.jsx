@@ -198,7 +198,7 @@ const MoreLiveProjects = () => {
           <>
             {isLoading ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 w-full gap-4  flex-wrap">
-                {Array(1)
+                {Array(12)
                   .fill(0)
                   .map((_, index) => (
                     <LiveProjectSkeleton key={index} />

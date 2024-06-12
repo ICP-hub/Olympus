@@ -6,7 +6,7 @@ export const MentorlistSkeleton =() => {
         <SkeletonTheme baseColor="#e3e3e3" highlightColor="#c8c8c873">
        <div
             //   key={index}
-              className="bg-white  hover:scale-105 w-full sm:w-1/2 md:w-1/3 rounded-lg mb-5 md:mb-0 p-6 drop-shadow-xl lg:ml-2"
+              className="bg-white  hover:scale-105 w-full rounded-lg mb-5 md:mb-0 p-6 drop-shadow-xl lg:ml-2"
             >
               <div className="justify-center flex items-center">
               <div className="size-48  rounded-full bg-no-repeat bg-center bg-cover relative p-1 bg-blend-overlay "
