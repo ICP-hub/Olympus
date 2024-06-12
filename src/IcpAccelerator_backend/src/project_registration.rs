@@ -710,86 +710,87 @@ pub async fn create_project(info: ProjectInfo) -> String {
             let new_id = uid.clone().to_string();
 
             let canister_id = crate::asset_manager::get_asset_canister();
+            let mut info_with_default = change_project_images(caller, info.clone()).await;
             // change ids
-            let full_url = canister_id.to_string() + "/uploads/default_user.jpeg";
-            let key = "/uploads/".to_owned() + &caller.to_string() + "_user.jpeg";
+            // let full_url = canister_id.to_string() + "/uploads/default_user.jpeg";
+            // let key = "/uploads/".to_owned() + &caller.to_string() + "_user.jpeg";
 
-            let full_url_logo = canister_id.to_string() + "/uploads/default_project_logo.jpeg";
-            let key_logo = "/uploads/".to_owned() + &caller.to_string() + "_project_logo.jpeg";
+            // let full_url_logo = canister_id.to_string() + "/uploads/default_project_logo.jpeg";
+            // let key_logo = "/uploads/".to_owned() + &caller.to_string() + "_project_logo.jpeg";
 
-            let full_url_cover = canister_id.to_string() + "/uploads/default_project_cover.jpeg";
-            let key_cover = "/uploads/".to_owned() + &caller.to_string() + "_project_cover.jpeg";
+            // let full_url_cover = canister_id.to_string() + "/uploads/default_project_cover.jpeg";
+            // let key_cover = "/uploads/".to_owned() + &caller.to_string() + "_project_cover.jpeg";
 
-            fn default_profile_picture(full_url: &str) -> Vec<u8> {
-                // base64::decode(DEFAULT_USER_AVATAR_BASE64).expect("Failed to decode base64 image")
-                full_url.as_bytes().to_vec()
-            }
+            // fn default_profile_picture(full_url: &str) -> Vec<u8> {
+            //     // base64::decode(DEFAULT_USER_AVATAR_BASE64).expect("Failed to decode base64 image")
+            //     full_url.as_bytes().to_vec()
+            // }
 
-            let mut info_with_default = info.clone();
+            // let mut info_with_default = info.clone();
 
-            if info_with_default.user_data.profile_picture.is_none() {
-                info_with_default.user_data.profile_picture =
-                    Some(default_profile_picture(&full_url));
-            } else {
-                let arg_logo = StoreArg {
-                    key: key.clone(),
-                    content_type: "image/*".to_string(),
-                    content_encoding: "identity".to_string(),
-                    content: ByteBuf::from(
-                        info_with_default.user_data.profile_picture.clone().unwrap(),
-                    ),
-                    sha256: None,
-                };
-                let delete_asset = DeleteAsset { key: key.clone() };
-                let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
-                    .await
-                    .unwrap();
-                let (result,): ((),) = call(canister_id, "store", (arg_logo,)).await.unwrap();
-                info_with_default.user_data.profile_picture =
-                    Some((canister_id.to_string() + &key).as_bytes().to_vec());
-            }
+            // if info_with_default.user_data.profile_picture.is_none() {
+            //     info_with_default.user_data.profile_picture =
+            //         Some(default_profile_picture(&full_url));
+            // } else {
+            //     let arg_logo = StoreArg {
+            //         key: key.clone(),
+            //         content_type: "image/*".to_string(),
+            //         content_encoding: "identity".to_string(),
+            //         content: ByteBuf::from(
+            //             info_with_default.user_data.profile_picture.clone().unwrap(),
+            //         ),
+            //         sha256: None,
+            //     };
+            //     let delete_asset = DeleteAsset { key: key.clone() };
+            //     let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
+            //         .await
+            //         .unwrap();
+            //     let (result,): ((),) = call(canister_id, "store", (arg_logo,)).await.unwrap();
+            //     info_with_default.user_data.profile_picture =
+            //         Some((canister_id.to_string() + &key).as_bytes().to_vec());
+            // }
 
-            if info_with_default.project_logo.is_none() {
-                info_with_default.project_logo = Some(default_profile_picture(&full_url_logo));
-            } else {
-                let arg_logo = StoreArg {
-                    key: key_logo.clone(),
-                    content_type: "image/*".to_string(),
-                    content_encoding: "identity".to_string(),
-                    content: ByteBuf::from(info_with_default.project_logo.clone().unwrap()),
-                    sha256: None,
-                };
-                let delete_asset = DeleteAsset {
-                    key: key_logo.clone(),
-                };
-                let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
-                    .await
-                    .unwrap();
-                let (result,): ((),) = call(canister_id, "store", (arg_logo,)).await.unwrap();
-                info_with_default.project_logo =
-                    Some((canister_id.to_string() + &key_logo).as_bytes().to_vec());
-            }
+            // if info_with_default.project_logo.is_none() {
+            //     info_with_default.project_logo = Some(default_profile_picture(&full_url_logo));
+            // } else {
+            //     let arg_logo = StoreArg {
+            //         key: key_logo.clone(),
+            //         content_type: "image/*".to_string(),
+            //         content_encoding: "identity".to_string(),
+            //         content: ByteBuf::from(info_with_default.project_logo.clone().unwrap()),
+            //         sha256: None,
+            //     };
+            //     let delete_asset = DeleteAsset {
+            //         key: key_logo.clone(),
+            //     };
+            //     let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
+            //         .await
+            //         .unwrap();
+            //     let (result,): ((),) = call(canister_id, "store", (arg_logo,)).await.unwrap();
+            //     info_with_default.project_logo =
+            //         Some((canister_id.to_string() + &key_logo).as_bytes().to_vec());
+            // }
 
-            if info_with_default.project_cover.is_none() {
-                info_with_default.project_cover = Some(default_profile_picture(&full_url_cover));
-            } else {
-                let arg_cover = StoreArg {
-                    key: key_cover.clone(),
-                    content_type: "image/*".to_string(),
-                    content_encoding: "identity".to_string(),
-                    content: ByteBuf::from(info_with_default.project_cover.clone().unwrap()),
-                    sha256: None,
-                };
-                let delete_asset = DeleteAsset {
-                    key: key_cover.clone(),
-                };
-                let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
-                    .await
-                    .unwrap();
-                let (result,): ((),) = call(canister_id, "store", (arg_cover,)).await.unwrap();
-                info_with_default.project_cover =
-                    Some((canister_id.to_string() + &key_cover).as_bytes().to_vec());
-            }
+            // if info_with_default.project_cover.is_none() {
+            //     info_with_default.project_cover = Some(default_profile_picture(&full_url_cover));
+            // } else {
+            //     let arg_cover = StoreArg {
+            //         key: key_cover.clone(),
+            //         content_type: "image/*".to_string(),
+            //         content_encoding: "identity".to_string(),
+            //         content: ByteBuf::from(info_with_default.project_cover.clone().unwrap()),
+            //         sha256: None,
+            //     };
+            //     let delete_asset = DeleteAsset {
+            //         key: key_cover.clone(),
+            //     };
+            //     let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
+            //         .await
+            //         .unwrap();
+            //     let (result,): ((),) = call(canister_id, "store", (arg_cover,)).await.unwrap();
+            //     info_with_default.project_cover =
+            //         Some((canister_id.to_string() + &key_cover).as_bytes().to_vec());
+            // }
 
             let new_project = ProjectInfoInternal {
                 params: info_with_default,

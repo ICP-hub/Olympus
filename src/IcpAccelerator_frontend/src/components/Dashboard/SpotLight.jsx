@@ -145,7 +145,7 @@ const SpotLight = ({ numSkeletons }) => {
                   data?.project_details?.params?.project_name ?? "";
                 let projectImage = data?.project_details?.params?.project_logo
                   ? uint8ArrayToBase64(
-                      data?.project_details?.params?.project_logo
+                      data?.project_details?.params?.project_logo[0]
                     )
                   : ment;
                 let userImage = data?.project_details?.params?.user_data

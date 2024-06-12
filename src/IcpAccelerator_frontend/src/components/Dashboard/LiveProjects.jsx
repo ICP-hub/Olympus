@@ -213,7 +213,7 @@ const LiveProjects = ({ progress, numSkeletons }) => {
                           let projectId = data?.params?.uid ?? "";
                           let projectImage = data?.params?.params?.project_logo
                             ? uint8ArrayToBase64(
-                                data?.params?.params?.project_logo
+                                data?.params?.params?.project_logo[0]
                               )
                             : "";
                           let userName = data?.params?.params?.user_data
