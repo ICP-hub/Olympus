@@ -13,6 +13,9 @@ const UpcomingEventsCard = ({ wrap, register }) => {
   const [allLiveEventsData, setAllLiveEventsData] = useState([]);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
+  const [countData, setCountData] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 3;
   const [numSkeletons, setNumSkeletons] = useState(1);
 
   const updateNumSkeletons = () => {
@@ -31,36 +34,53 @@ const UpcomingEventsCard = ({ wrap, register }) => {
       window.removeEventListener("resize", updateNumSkeletons);
     };
   }, []);
-  const getAllLiveEvents = async (caller) => {
-    setIsLoading(true);
-    await caller
-      .get_all_cohorts()
-      .then((result) => {
-        console.log("cohort result", result);
-        if (!result || result.length === 0) {
-          setNoData(true);
-          setIsLoading(false);
-          setAllLiveEventsData([]);
-        } else {
-          setAllLiveEventsData(result);
-          setNoData(false);
-          setIsLoading(false);
-        }
-      })
-      .catch((error) => {
-        setNoData(true);
-        setIsLoading(false);
-        setAllLiveEventsData([]);
-      });
-  };
-
   useEffect(() => {
+    let isMounted = true;
+
+    const getAllLiveEvents = async (caller, page) => {
+      setIsLoading(true);
+      await caller
+        .get_all_cohorts({
+          page_size: itemsPerPage,
+          page,
+        })
+        .then((result) => {
+          console.log(" in get_all_cohort", result);
+          if (isMounted) {
+            if (!result || result.length == 0) {
+              setNoData(true);
+              setIsLoading(false);
+              setAllLiveEventsData([]);
+              setCountData("");
+            } else {
+              setNoData(false);
+              setIsLoading(false);
+              setAllLiveEventsData(result.data);
+              setCountData(result.total_count);
+            }
+          }
+        })
+        .catch((error) => {
+          if (isMounted) {
+            setNoData(true);
+            setIsLoading(false);
+            setCountData("");
+            setAllLiveEventsData([]);
+            console.log("Error in get_all_cohort", error);
+          }
+        });
+    };
+
     if (actor) {
-      getAllLiveEvents(actor);
+      getAllLiveEvents(actor, currentPage);
     } else {
       getAllLiveEvents(IcpAccelerator_backend);
     }
-  }, [actor]);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [actor, currentPage]);
 
   const today = new Date();
   const filteredEvents = allLiveEventsData.filter((val) => {
@@ -119,14 +139,15 @@ const UpcomingEventsCard = ({ wrap, register }) => {
                 : "flex flex-row flex-wrap w-full px-8"
             }`}
           >
-            {filteredEvents.map((val, index) => (
-              <div
-                key={index}
-                className="px-2 w-full sm:min-w-[50%] lg:min-w-[33.33%] sm:max-w-[50%] lg:max-w-[33.33%]"
-              >
-                <SecondEventCard data={val} register={register} />
-              </div>
-            ))}
+            {filteredEvents &&
+              filteredEvents?.slice(0, numSkeletons).map((val, index) => (
+                <div
+                  key={index}
+                  className="px-2 w-full sm:min-w-[50%] lg:min-w-[33.33%] sm:max-w-[50%] lg:max-w-[33.33%]"
+                >
+                  <SecondEventCard data={val} register={register} />
+                </div>
+              ))}
           </div>
         )}
       </div>
