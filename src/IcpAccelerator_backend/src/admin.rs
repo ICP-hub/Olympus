@@ -61,12 +61,12 @@ pub struct UpdateCounts {
     vc_update: Option<u32>,
 }
 
-thread_local! {
-    static ADMIN_NOTIFICATIONS : RefCell<HashMap<Principal, Vec<Notification>>> = RefCell::new(HashMap::new());
-    static COHORT_REQUEST : RefCell<HashMap<String, Vec<CohortRequest>>> = RefCell::new(HashMap::new());
-    static ACCEPTED_COHORTS : RefCell<HashMap<String, Vec<CohortRequest>>> = RefCell::new(HashMap::new());
-    static DECLINED_COHORTS: RefCell<HashMap<String, Vec<CohortRequest>>> = RefCell::new(HashMap::new());
-}
+// thread_local! {
+//     static ADMIN_NOTIFICATIONS : RefCell<HashMap<Principal, Vec<Notification>>> = RefCell::new(HashMap::new());
+//     static COHORT_REQUEST : RefCell<HashMap<String, Vec<CohortRequest>>> = RefCell::new(HashMap::new());
+//     static ACCEPTED_COHORTS : RefCell<HashMap<String, Vec<CohortRequest>>> = RefCell::new(HashMap::new());
+//     static DECLINED_COHORTS: RefCell<HashMap<String, Vec<CohortRequest>>> = RefCell::new(HashMap::new());
+// }
 
 fn change_notification_status(requester: Principal, requested_for: String, changed_status: String) {
     mutate_state(|admin_notifications| {
@@ -358,240 +358,200 @@ pub struct ProjectWithRoles {
 #[derive(CandidType, Clone)]
 pub struct PaginationReturnMentorDataRequest {
     pub data: HashMap<Principal, MentorWithRoles>,
-    pub count: usize,
+    pub count: u64,
 }
 
 #[query(guard = "is_admin")]
 pub fn mentors_awaiting_approval(
     pagination_params: PaginationParams,
 ) -> PaginationReturnMentorDataRequest {
-    read_state(|state| {
-        let mentor_awaiters = &state.mentor_awaits_response;
+    let mentors_count = read_state(|state| state.mentor_awaits_response.len());
 
-        let mut mentor_with_roles_map: HashMap<Principal, MentorWithRoles> = HashMap::new();
+    let start = (pagination_params.page - 1) * pagination_params.page_size;
+    let end = std::cmp::min(start + pagination_params.page_size, mentors_count.try_into().unwrap());
 
-        for (principal, mentor_internal) in mentor_awaiters.iter() {
-            let roles = get_roles_for_principal(principal.0);
-            let mentor_with_roles = MentorWithRoles {
-                mentor_profile: mentor_internal.0.clone(),
-                roles,
-            };
+    let mentors_snapshot = read_state(|state| {
+        state.mentor_awaits_response.iter()
+            .skip(start)
+            .take(end - start)
+            .map(|(principal, mentor_internal)| {
+                let roles = get_roles_for_principal(principal.0); 
+                (principal.0, MentorWithRoles { 
+                    mentor_profile: mentor_internal.0.clone(),
+                    roles,
+                })
+            })
+            .collect::<HashMap<Principal, MentorWithRoles>>() 
+    });
 
-            mentor_with_roles_map.insert(principal.0, mentor_with_roles);
-        }
-        ic_cdk::println!("Mentors awaiting approval: {:?}", mentor_with_roles_map);
-        let mentor_with_roles_vec: Vec<(Principal, MentorWithRoles)> =
-            mentor_with_roles_map.into_iter().collect();
-
-        let start = (pagination_params.page - 1) * pagination_params.page_size;
-        let end = cmp::min(
-            start + pagination_params.page_size,
-            mentor_with_roles_vec.len(),
-        );
-
-        // Apply slicing and convert back to a HashMap
-        let paginated_slice: HashMap<Principal, MentorWithRoles> =
-            mentor_with_roles_vec[start..end].iter().cloned().collect();
-
-        PaginationReturnMentorDataRequest {
-            data: paginated_slice,
-            count: mentor_with_roles_vec.len(),
-        }
-    })
+    PaginationReturnMentorDataRequest {
+        data: mentors_snapshot,
+        count: mentors_count,
+    }
 }
 
 #[derive(CandidType, Clone)]
 pub struct PaginationReturnVcDataRequest {
     pub data: HashMap<Principal, VcWithRoles>,
-    pub count: usize,
+    pub count: u64,
 }
 
 #[query(guard = "is_admin")]
 pub fn vc_awaiting_approval(pagination_params: PaginationParams) -> PaginationReturnVcDataRequest {
-    read_state(|state| {
-        let vc_awaiters = &state.vc_awaits_response;
+    let vc_count = read_state(|state| state.vc_awaits_response.len());
 
-        let mut vc_with_roles_map: HashMap<Principal, VcWithRoles> = HashMap::new();
+    let start = (pagination_params.page - 1) * pagination_params.page_size;
+    let end = std::cmp::min(start + pagination_params.page_size, vc_count.try_into().unwrap());
 
-        for (principal, vc_internal) in vc_awaiters.iter() {
-            let roles = get_roles_for_principal(principal.0);
-            let vc_with_roles = VcWithRoles {
-                vc_profile: vc_internal.0.clone(),
-                roles,
-            };
+    let vcs_snapshot = read_state(|state| {
+        state.vc_awaits_response.iter()
+            .skip(start)
+            .take(end - start)
+            .map(|(principal, vc_internal)| {
+                let roles = get_roles_for_principal(principal.0);
+                let vc_with_roles = VcWithRoles {
+                    vc_profile: vc_internal.0.clone(),
+                    roles,
+                };
+                (principal.0, vc_with_roles)
+            })
+            .collect::<Vec<_>>()
+    });
 
-            vc_with_roles_map.insert(principal.0, vc_with_roles);
-        }
-        ic_cdk::println!("Vc awaiting approval: {:?}", vc_with_roles_map);
-        let vc_with_roles_vec: Vec<(Principal, VcWithRoles)> =
-            vc_with_roles_map.into_iter().collect();
+    let paginated_vcs: HashMap<Principal, VcWithRoles> = vcs_snapshot.into_iter().collect();
 
-        let start = (pagination_params.page - 1) * pagination_params.page_size;
-        let end = cmp::min(start + pagination_params.page_size, vc_with_roles_vec.len());
-
-        // Apply slicing and convert back to a HashMap
-        let paginated_slice: HashMap<Principal, VcWithRoles> =
-            vc_with_roles_vec[start..end].iter().cloned().collect();
-
-        PaginationReturnVcDataRequest {
-            data: paginated_slice,
-            count: vc_with_roles_vec.len(),
-        }
-    })
+    PaginationReturnVcDataRequest {
+        data: paginated_vcs,
+        count: vc_count,
+    }
 }
 
 #[derive(CandidType, Clone)]
 pub struct PaginationReturnProjectDataRequest {
     pub data: HashMap<Principal, ProjectWithRoles>,
-    pub count: usize,
+    pub count: u64,
 }
 
 #[query(guard = "is_admin")]
 pub fn project_awaiting_approval(
     pagination_params: PaginationParams,
 ) -> PaginationReturnProjectDataRequest {
-    read_state(|state| {
-        let project_awaiters = &state.project_awaits_response;
+    let project_count = read_state(|state| state.project_awaits_response.len());
 
-        let mut project_with_roles_map: HashMap<Principal, ProjectWithRoles> = HashMap::new();
+    let start = (pagination_params.page - 1) * pagination_params.page_size;
+    let end = std::cmp::min(start + pagination_params.page_size, project_count.try_into().unwrap());
 
-        for (principal, project_internal) in project_awaiters.iter() {
-            let roles = get_roles_for_principal(principal.0);
-            let project_with_roles = ProjectWithRoles {
-                project_profile: project_internal.0.clone(),
-                roles,
-            };
+    let projects_snapshot = read_state(|state| {
+        state.project_awaits_response.iter()
+            .skip(start)
+            .take(end - start)
+            .map(|(principal, project_internal)| {
+                let roles = get_roles_for_principal(principal.0);
+                let project_with_roles = ProjectWithRoles {
+                    project_profile: project_internal.0.clone(),
+                    roles,
+                };
+                (principal.0, project_with_roles)
+            })
+            .collect::<Vec<_>>()
+    });
 
-            project_with_roles_map.insert(principal.0, project_with_roles);
-        }
+    let paginated_projects: HashMap<Principal, ProjectWithRoles> = projects_snapshot.into_iter().collect();
 
-        // Convert the map to a vector to apply pagination
-        let project_with_roles_vec: Vec<(Principal, ProjectWithRoles)> =
-            project_with_roles_map.into_iter().collect();
-
-        let start = (pagination_params.page - 1) * pagination_params.page_size;
-        let end = cmp::min(
-            start + pagination_params.page_size,
-            project_with_roles_vec.len(),
-        );
-
-        // Apply slicing and convert back to a HashMap
-        let paginated_slice: HashMap<Principal, ProjectWithRoles> =
-            project_with_roles_vec[start..end].iter().cloned().collect();
-
-        PaginationReturnProjectDataRequest {
-            data: paginated_slice,
-            count: project_with_roles_vec.len(),
-        }
-    })
+    PaginationReturnProjectDataRequest {
+        data: paginated_projects,
+        count: project_count,
+    }
 }
 
 #[query(guard = "is_admin")]
 pub fn project_declined(pagination_params: PaginationParams) -> PaginationReturnProjectDataRequest {
-    read_state(|state| {
-        let project_awaiters = &state.project_declined_request;
+    let project_count = read_state(|state| state.project_declined_request.len());
 
-        let mut project_with_roles_map: HashMap<Principal, ProjectWithRoles> = HashMap::new();
+    let start = (pagination_params.page - 1) * pagination_params.page_size;
+    let end = std::cmp::min(start + pagination_params.page_size, project_count.try_into().unwrap());
 
-        for (principal, project_internal) in project_awaiters.iter() {
-            let roles = get_roles_for_principal(principal.0);
-            let project_with_roles = ProjectWithRoles {
-                project_profile: project_internal.0.clone(),
-                roles,
-            };
+    let projects_snapshot = read_state(|state| {
+        state.project_declined_request.iter()
+            .skip(start)
+            .take(end - start)
+            .map(|(principal, project_internal)| {
+                let roles = get_roles_for_principal(principal.0);
+                let project_with_roles = ProjectWithRoles {
+                    project_profile: project_internal.0.clone(),
+                    roles,
+                };
+                (principal.0, project_with_roles)
+            })
+            .collect::<Vec<_>>()
+    });
 
-            project_with_roles_map.insert(principal.0, project_with_roles);
-        }
+    let paginated_projects: HashMap<Principal, ProjectWithRoles> = projects_snapshot.into_iter().collect();
 
-        // Convert the map to a vector to apply pagination
-        let project_with_roles_vec: Vec<(Principal, ProjectWithRoles)> =
-            project_with_roles_map.into_iter().collect();
-
-        let start = (pagination_params.page - 1) * pagination_params.page_size;
-        let end = cmp::min(
-            start + pagination_params.page_size,
-            project_with_roles_vec.len(),
-        );
-
-        let paginated_slice: HashMap<Principal, ProjectWithRoles> =
-            project_with_roles_vec[start..end].iter().cloned().collect();
-
-        PaginationReturnProjectDataRequest {
-            data: paginated_slice,
-            count: project_with_roles_vec.len(),
-        }
-    })
+    PaginationReturnProjectDataRequest {
+        data: paginated_projects,
+        count: project_count,
+    }
 }
 
 #[query(guard = "is_admin")]
 pub fn vc_declined(pagination_params: PaginationParams) -> PaginationReturnVcDataRequest {
-    read_state(|state| {
-        let vc_awaiters = &state.vc_declined_request;
+    let vc_count = read_state(|state| state.vc_declined_request.len());
 
-        let mut vc_with_roles_map: HashMap<Principal, VcWithRoles> = HashMap::new();
+    let start = (pagination_params.page - 1) * pagination_params.page_size;
+    let end = std::cmp::min(start + pagination_params.page_size, vc_count.try_into().unwrap());
 
-        for (principal, vc_internal) in vc_awaiters.iter() {
-            let roles = get_roles_for_principal(principal.0);
-            let vc_with_roles = VcWithRoles {
-                vc_profile: vc_internal.0.clone(),
-                roles,
-            };
+    let vcs_snapshot = read_state(|state| {
+        state.vc_declined_request.iter()
+            .skip(start)
+            .take(end - start)
+            .map(|(principal, vc_internal)| {
+                let roles = get_roles_for_principal(principal.0);
+                let vc_with_roles = VcWithRoles {
+                    vc_profile: vc_internal.0.clone(),
+                    roles,
+                };
+                (principal.0, vc_with_roles)
+            })
+            .collect::<Vec<_>>()
+    });
 
-            vc_with_roles_map.insert(principal.0, vc_with_roles);
-        }
-        ic_cdk::println!("Vc awaiting approval: {:?}", vc_with_roles_map);
-        let vc_with_roles_vec: Vec<(Principal, VcWithRoles)> =
-            vc_with_roles_map.into_iter().collect();
+    let paginated_vcs: HashMap<Principal, VcWithRoles> = vcs_snapshot.into_iter().collect();
 
-        let start = (pagination_params.page - 1) * pagination_params.page_size;
-        let end = cmp::min(start + pagination_params.page_size, vc_with_roles_vec.len());
-
-        // Apply slicing and convert back to a HashMap
-        let paginated_slice: HashMap<Principal, VcWithRoles> =
-            vc_with_roles_vec[start..end].iter().cloned().collect();
-
-        PaginationReturnVcDataRequest {
-            data: paginated_slice,
-            count: vc_with_roles_vec.len(),
-        }
-    })
+    PaginationReturnVcDataRequest {
+        data: paginated_vcs,
+        count: vc_count,
+    }
 }
 
 #[query(guard = "is_admin")]
 pub fn mentor_declined(pagination_params: PaginationParams) -> PaginationReturnMentorDataRequest {
-    read_state(|state| {
-        let mentor_awaiters = &state.mentor_declined_request;
+    let mentor_count = read_state(|state| state.mentor_declined_request.len());
 
-        let mut mentor_with_roles_map: HashMap<Principal, MentorWithRoles> = HashMap::new();
+    let start = (pagination_params.page - 1) * pagination_params.page_size;
+    let end = std::cmp::min(start + pagination_params.page_size, mentor_count.try_into().unwrap());
 
-        for (principal, mentor_internal) in mentor_awaiters.iter() {
-            let roles = get_roles_for_principal(principal.0);
-            let mentor_with_roles = MentorWithRoles {
-                mentor_profile: mentor_internal.0.clone(),
-                roles,
-            };
+    let mentors_snapshot = read_state(|state| {
+        state.mentor_declined_request.iter()
+            .skip(start)
+            .take(end - start)
+            .map(|(principal, mentor_internal)| {
+                let roles = get_roles_for_principal(principal.0);
+                let mentor_with_roles = MentorWithRoles {
+                    mentor_profile: mentor_internal.0.clone(),
+                    roles,
+                };
+                (principal.0, mentor_with_roles)
+            })
+            .collect::<Vec<_>>()
+    });
 
-            mentor_with_roles_map.insert(principal.0, mentor_with_roles);
-        }
-        ic_cdk::println!("Mentors awaiting approval: {:?}", mentor_with_roles_map);
-        let mentor_with_roles_vec: Vec<(Principal, MentorWithRoles)> =
-            mentor_with_roles_map.into_iter().collect();
+    let paginated_mentors: HashMap<Principal, MentorWithRoles> = mentors_snapshot.into_iter().collect();
 
-        let start = (pagination_params.page - 1) * pagination_params.page_size;
-        let end = cmp::min(
-            start + pagination_params.page_size,
-            mentor_with_roles_vec.len(),
-        );
-
-        // Apply slicing and convert back to a HashMap
-        let paginated_slice: HashMap<Principal, MentorWithRoles> =
-            mentor_with_roles_vec[start..end].iter().cloned().collect();
-
-        PaginationReturnMentorDataRequest {
-            data: paginated_slice,
-            count: mentor_with_roles_vec.len(),
-        }
-    })
+    PaginationReturnMentorDataRequest {
+        data: paginated_mentors,
+        count: mentor_count,
+    }
 }
 
 #[query(guard = "is_admin")]
@@ -1258,13 +1218,10 @@ pub async fn add_project_to_spotlight(project_id: String) -> Result<(), String> 
     //     return Err("Unauthorized: Caller is not an admin.".to_string());
     // }
 
-    let project_creator_and_info = APPLICATION_FORM.with(|details| {
-        details
-            .borrow()
-            .iter()
+    let project_creator_and_info = read_state(|state| {
+        state.project_storage.iter()
             .find_map(|(creator_principal, projects)| {
-                projects
-                    .iter()
+                projects.0.iter()
                     .find(|project| project.uid == project_id)
                     .map(|project_info| (creator_principal.clone(), project_info.clone()))
             })
@@ -1273,7 +1230,7 @@ pub async fn add_project_to_spotlight(project_id: String) -> Result<(), String> 
     match project_creator_and_info {
         Some((project_creator, project_info)) => {
             let spotlight_details = SpotlightDetails {
-                added_by: project_creator,
+                added_by: project_creator.0,
                 project_id: project_id.clone(),
                 project_details: project_info,
                 approval_time: time(),
@@ -1319,37 +1276,39 @@ pub struct PaginationReturnSpotlightProject {
 pub fn get_spotlight_projects(
     pagination_params: PaginationParams,
 ) -> PaginationReturnSpotlightProject {
-    // Collect values from the StableBTreeMap into a vector
-    let mut projects: Vec<SpotlightDetails> = read_state(|state| {
-        let mut collected_projects = Vec::new();
-        for (_, candid_value) in state.spotlight_projects.iter() {
-            let spotlight_details_list = &candid_value.0;
-            for project in spotlight_details_list {
-                collected_projects.push(project.clone());
-            }
-        }
-        collected_projects
+    // First, get the total count to calculate proper pagination bounds.
+    let total_count = read_state(|state| state.spotlight_projects.iter().map(|(_, details)| details.0.len()).sum());
+
+    // Calculate indices for pagination
+    let start_index = (pagination_params.page - 1) * pagination_params.page_size;
+    let end_index = start_index + pagination_params.page_size;
+
+    // Early exit if start_index is out of bounds
+    if start_index >= total_count {
+        return PaginationReturnSpotlightProject {
+            data: Vec::new(),
+            count: total_count,
+        };
+    }
+
+    // Now, fetch and process only the necessary slice of projects
+    let mut projects_snapshot = read_state(|state| {
+        state.spotlight_projects.iter()
+            .flat_map(|(_, candid_value)| candid_value.0.clone()) // Clone each project details here
+            .skip(start_index)
+            .take(end_index - start_index)
+            .collect::<Vec<SpotlightDetails>>()
     });
 
     // Sort the projects by approval_time in descending order
-    projects.sort_by(|a, b| b.approval_time.cmp(&a.approval_time));
-
-    // Return the sorted projects
-    let start = (pagination_params.page - 1) * pagination_params.page_size;
-    let end = cmp::min(start + pagination_params.page_size, projects.len());
-
-    // Create a paginated slice and convert it to a Vec
-    let paginated_projects = if start < projects.len() {
-        projects[start..end].to_vec()
-    } else {
-        Vec::new()
-    };
+    projects_snapshot.sort_by(|a, b| b.approval_time.cmp(&a.approval_time));
 
     PaginationReturnSpotlightProject {
-        data: paginated_projects,
-        count: projects.len(),
+        data: projects_snapshot,
+        count: total_count,
     }
 }
+
 
 #[query(guard = "is_admin")]
 pub fn get_spotlight_project_uids() -> Vec<String> {
@@ -1413,12 +1372,10 @@ fn get_total_approved_list_with_user_data(
     pagination_params: PaginationParams,
 ) -> PaginationReturnUserData {
     let roles_to_check = vec!["user", "mentor", "vc", "project"];
-
     let mut principals_roles: HashMap<StoredPrincipal, Vec<String>> = HashMap::new();
 
-    // Collect principals for each role
     for role_name in roles_to_check.iter() {
-        let principals = get_principals_by_role(role_name); // Assuming this function exists and works as described
+        let principals = get_principals_by_role(role_name); 
         for principal in principals {
             let stored_principal = StoredPrincipal(principal);
             principals_roles
@@ -1428,42 +1385,35 @@ fn get_total_approved_list_with_user_data(
         }
     }
 
-    // Fetch user data once for each unique principal and create ApprovedList
+    let total_count = principals_roles.len();
+    let start = std::cmp::min((pagination_params.page - 1) * pagination_params.page_size, total_count);
+    let end = std::cmp::min(start + pagination_params.page_size, total_count);
+
+    let sliced_principals: Vec<_> = principals_roles.keys().skip(start).take(end - start).cloned().collect();
+
     let approved_list_map: HashMap<Principal, ApprovedList> = read_state(|state| {
-        principals_roles
-            .iter()
-            .filter_map(|(stored_principal, roles)| {
-                state
-                    .user_storage
-                    .get(stored_principal)
-                    .map(|user_info_internal| {
-                        let principal = stored_principal.0; // Extract Principal from StoredPrincipal
-                        let approved_list = ApprovedList {
-                            approved_type: roles.clone(),
-                            user_data: user_info_internal.0.params.clone(), // Directly use UserInformation
-                        };
-                        (principal, approved_list)
-                    })
+        sliced_principals.into_iter()
+            .filter_map(|stored_principal| {
+                let binding = Vec::new();
+                let roles = principals_roles.get(&stored_principal).unwrap_or(&binding);
+                state.user_storage.get(&stored_principal).map(|user_info_internal| {
+                    let principal = stored_principal.0; // Extract Principal
+                    let approved_list = ApprovedList {
+                        approved_type: roles.clone(),
+                        user_data: user_info_internal.0.params.clone(),
+                    };
+                    (principal, approved_list)
+                })
             })
             .collect()
     });
 
-    let start = std::cmp::min(
-        (pagination_params.page - 1) * pagination_params.page_size,
-        approved_list_map.len(),
-    );
-    let end = std::cmp::min(start + pagination_params.page_size, approved_list_map.len());
-
-    let mut approved_list_vec: Vec<_> = approved_list_map.clone().into_iter().collect();
-    approved_list_vec.sort_by_key(|k| k.0); // Optional: sort by Principal for consistent pagination
-
-    let sliced_vec = &approved_list_vec[start..end];
-
     PaginationReturnUserData {
-        data: sliced_vec.iter().cloned().collect(),
-        count: approved_list_map.len(), // Return the total count of active mentors
+        data: approved_list_map.into_iter().collect(),
+        count: total_count, 
     }
 }
+
 
 #[query(guard = "is_admin")]
 pub fn get_total_count() -> Counts {
@@ -1567,78 +1517,68 @@ fn get_joined_on_(principal: &Principal, roletype: String) -> Option<u64> {
 }
 
 #[query(guard = "is_admin")]
-fn get_top_5_mentors() -> Vec<(Principal, TopData, usize)> {
-    let mentor_vec = MENTOR_REGISTRY.with(|registry| {
-        registry
-            .borrow()
-            .keys()
-            .cloned()
-            .collect::<Vec<Principal>>()
+pub fn get_top_5_mentors() -> Vec<(Principal, TopData, usize)> {
+    let mentor_data = read_state(|state| {
+        state.mentor_storage.iter()
+            .map(|(stored_principal, mentor_internal)| {
+                let principal = stored_principal.0; 
+                let project_count = get_projects_associated_with_mentor(principal).len(); 
+                let joined_on = get_joined_on_(&principal, "mentor".to_string()).unwrap_or(0);
+
+                let top_data = TopData {
+                    full_name: mentor_internal.0.profile.user_data.full_name.clone(),
+                    profile_picture: mentor_internal.0.profile.user_data.profile_picture.clone(),
+                    area_of_interest: mentor_internal.0.profile.area_of_expertise.clone(),
+                    country: mentor_internal.0.profile.user_data.country.clone(),
+                    joined_on,
+                };
+
+                (principal, top_data, project_count)
+            })
+            .collect::<Vec<_>>()
     });
 
-    let mut mentor_project_counts: Vec<(Principal, TopData, usize)> = mentor_vec
-        .into_iter()
-        .map(|principal| {
-            let project_count = get_projects_associated_with_mentor(principal.clone()).len();
-            let joined_on = get_joined_on_(&principal, "mentor".to_string()).unwrap_or(0); // Fetch the joined_on date
-            let mentor_data = MENTOR_REGISTRY.with(|registry| {
-                registry
-                    .borrow()
-                    .get(&principal)
-                    .map(|full_mentor_data| TopData {
-                        full_name: full_mentor_data.profile.user_data.full_name.clone(),
-                        profile_picture: full_mentor_data.profile.user_data.profile_picture.clone(),
-                        area_of_interest: full_mentor_data.profile.area_of_expertise.clone(),
-                        country: full_mentor_data.profile.user_data.country.clone(),
-                        joined_on,
-                    })
-                    .unwrap_or_default() // Provide a default in case data is missing
-            });
-            (principal, mentor_data, project_count)
-        })
-        .collect();
-
-    // Sort by the number of associated projects in descending order and take the top 5
-    mentor_project_counts.sort_by_key(|k| std::cmp::Reverse(k.2));
-    mentor_project_counts.into_iter().take(5).collect()
+    let mut sorted_mentor_data = mentor_data;
+    sorted_mentor_data.sort_by_key(|k| std::cmp::Reverse(k.2));
+    sorted_mentor_data.into_iter().take(5).collect()
 }
+
 
 #[query(guard = "is_admin")]
 fn get_top_5_vcs() -> Vec<(Principal, TopData, usize)> {
-    let vc_vec = VENTURECAPITALIST_STORAGE.with(|registry| {
-        registry
-            .borrow()
-            .keys()
-            .cloned()
-            .collect::<Vec<Principal>>()
+    let vcs_snapshot = read_state(|state| {
+        state.vc_storage.iter()
+            .map(|(principal, vc_data)| {
+                let principal = principal.0;  
+                let vc_data_clone = vc_data.0.clone();  
+                (principal, vc_data_clone)
+            })
+            .collect::<Vec<_>>()
     });
 
-    let mut mentor_project_counts: Vec<(Principal, TopData, usize)> = vc_vec
-        .into_iter()
-        .map(|principal| {
-            let project_count = get_projects_associated_with_investor(principal.clone()).len();
-            let joined_on = get_joined_on_(&principal, "vc".to_string()).unwrap_or(0); // Fetch the joined_on date
-            let mentor_data = VENTURECAPITALIST_STORAGE.with(|registry| {
-                registry
-                    .borrow()
-                    .get(&principal)
-                    .map(|full_mentor_data| TopData {
-                        full_name: full_mentor_data.params.user_data.full_name.clone(),
-                        profile_picture: full_mentor_data.params.user_data.profile_picture.clone(),
-                        area_of_interest: full_mentor_data.params.category_of_investment.clone(),
-                        country: full_mentor_data.params.user_data.country.clone(),
-                        joined_on,
-                    })
-                    .unwrap_or_default() // Provide a default in case data is missing
-            });
-            (principal, mentor_data, project_count)
+    let mut vc_details: Vec<(Principal, TopData, usize)> = vcs_snapshot
+        .iter()
+        .map(|(principal, vc_data)| {
+            let project_count = get_projects_associated_with_investor(*principal).len();  
+            let joined_on = get_joined_on_(&principal, "vc".to_string()).unwrap_or(0);  
+
+            let top_data = TopData {
+                full_name: vc_data.params.user_data.full_name.clone(),
+                profile_picture: vc_data.params.user_data.profile_picture.clone(),
+                area_of_interest: vc_data.params.category_of_investment.clone(),
+                country: vc_data.params.user_data.country.clone(),
+                joined_on,
+            };
+
+            (*principal, top_data, project_count)
         })
         .collect();
 
     // Sort by the number of associated projects in descending order and take the top 5
-    mentor_project_counts.sort_by_key(|k| std::cmp::Reverse(k.2));
-    mentor_project_counts.into_iter().take(5).collect()
+    vc_details.sort_by_key(|k| std::cmp::Reverse(k.2));
+    vc_details.into_iter().take(5).collect()
 }
+
 
 // #[query(guard = "is_admin")]
 // fn get_top_5_projects() -> Vec<(String, TopData, usize)> {
@@ -2774,28 +2714,23 @@ pub struct NameDetails {
 
 #[query(guard = "is_admin")]
 pub fn get_vc_and_mentor_name() -> NameDetails {
-    let mut vc_new: Vec<String> = Vec::new();
-    VENTURECAPITALIST_STORAGE.with(|state| {
-        let vc_details = state.borrow();
-        for (_, vc) in vc_details.iter() {
-            vc_new.push(vc.params.user_data.full_name.clone());
-        }
+    let vc_names = read_state(|state| {
+        state.vc_storage.iter()
+            .map(|(_, vc_data)| vc_data.0.params.user_data.full_name.clone())  
+            .collect::<Vec<String>>()
     });
 
-    let mut mentor_new: Vec<String> = Vec::new();
-    MENTOR_REGISTRY.with(|state| {
-        let mentor_details = state.borrow();
-        for (_, mentor) in mentor_details.iter() {
-            mentor_new.push(mentor.profile.user_data.full_name.clone());
-        }
+    let mentor_names = read_state(|state| {
+        state.mentor_storage.iter()
+            .map(|(_, mentor_data)| mentor_data.0.profile.user_data.full_name.clone())  
+            .collect::<Vec<String>>()
     });
 
-    let new_details = NameDetails {
-        vc_name: vc_new,
-        mentor_name: mentor_new,
-    };
-
-    new_details
+    NameDetails {
+        vc_name: vc_names,
+        mentor_name: mentor_names,
+    }
 }
+
 
 //b5pqo-yef5a-lut3t-kmrpc-h7dnp-v3d2t-ls6di-y33wa-clrtb-xdhl4-dae

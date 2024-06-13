@@ -123,20 +123,21 @@ pub struct UpdateInfoStruct {
     pub sent_at: u64,
 }
 
-pub type VcAnnouncements = HashMap<Principal, Vec<Announcements>>;
+// pub type VcAnnouncements = HashMap<Principal, Vec<Announcements>>;
 
-pub type VentureCapitalistStorage = HashMap<Principal, VentureCapitalistInternal>;
-pub type VentureCapitalistParams = HashMap<Principal, VentureCapitalist>;
-pub type VentureCapitalistEditParams = HashMap<Principal, UpdateInfoStruct>;
+// // pub type VentureCapitalistStorage = HashMap<Principal, VentureCapitalistInternal>;
+// pub type VentureCapitalistParams = HashMap<Principal, VentureCapitalist>;
+// pub type VentureCapitalistEditParams = HashMap<Principal, UpdateInfoStruct>;
 
-thread_local! {
-    pub static VENTURECAPITALIST_STORAGE: RefCell<VentureCapitalistStorage> = RefCell::new(VentureCapitalistStorage::new());
-    pub static VC_AWAITS_RESPONSE: RefCell<VentureCapitalistStorage> = RefCell::new(VentureCapitalistStorage::new());
-    pub static DECLINED_VC_REQUESTS: RefCell<VentureCapitalistStorage> = RefCell::new(VentureCapitalistStorage::new());
-    pub static VC_PROFILE_EDIT_AWAITS :RefCell<VentureCapitalistEditParams> = RefCell::new(VentureCapitalistEditParams::new());
-    pub static DECLINED_VC_PROFILE_EDIT_REQUEST :RefCell<VentureCapitalistEditParams> = RefCell::new(VentureCapitalistEditParams::new());
-    pub static VC_ANNOUNCEMENTS:RefCell<VcAnnouncements> = RefCell::new(VcAnnouncements::new());
-}
+// thread_local! {
+//     pub static VENTURECAPITALIST_STORAGE: RefCell<VentureCapitalistStorage> = RefCell::new(VentureCapitalistStorage::new());
+//     pub static VC_AWAITS_RESPONSE: RefCell<VentureCapitalistStorage> = RefCell::new(VentureCapitalistStorage::new());
+//     pub static DECLINED_VC_REQUESTS: RefCell<VentureCapitalistStorage> = RefCell::new(VentureCapitalistStorage::new());
+//     pub static VC_PROFILE_EDIT_AWAITS :RefCell<VentureCapitalistEditParams> = RefCell::new(VentureCapitalistEditParams::new());
+//     pub static DECLINED_VC_PROFILE_EDIT_REQUEST :RefCell<VentureCapitalistEditParams> = RefCell::new(VentureCapitalistEditParams::new());
+//     pub static VC_ANNOUNCEMENTS:RefCell<VcAnnouncements> = RefCell::new(VcAnnouncements::new());
+// }
+
 #[update(guard = "is_user_anonymous")]
 pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::string::String {
     let caller = caller();
@@ -383,48 +384,35 @@ pub struct PaginationReturnVcData {
 #[query(guard = "is_user_anonymous")]
 pub fn list_all_vcs_with_pagination(pagination_params: PaginationParams) -> PaginationReturnVcData {
     read_state(|state| {
-        let mut vc_list: Vec<(Principal, VcWithRoles)> = Vec::new();
+        let total_active_vcs = state.vc_storage.iter().filter(|(_, vc)| vc.0.is_active).count();
 
-        for (stored_principal, candid_vc_internal) in state.vc_storage.iter() {
-            let vc_internal = &candid_vc_internal.0;
-            if vc_internal.is_active {
+        let start = (pagination_params.page - 1) * pagination_params.page_size;
+        let end = std::cmp::min(start + pagination_params.page_size, total_active_vcs);
+
+        let vc_list: Vec<(Principal, VcWithRoles)> = state.vc_storage.iter()
+            .filter(|(_, vc)| vc.0.is_active)
+            .map(|(stored_principal, candid_vc_internal)| {
                 let principal = stored_principal.0;
                 let roles = get_roles_for_principal(principal);
                 let vc_with_roles = VcWithRoles {
-                    vc_profile: vc_internal.clone(),
+                    vc_profile: candid_vc_internal.0.clone(),
                     roles,
                 };
+                (principal, vc_with_roles)
+            })
+            .skip(start)  
+            .take(end - start)  
+            .collect();
 
-                vc_list.push((principal, vc_with_roles));
-            }
-        }
-
-        // Ensure the list is sorted for consistent pagination
-        vc_list.sort_by_key(|(principal, _)| *principal);
-
-        // Calculate the start and end indices for the pagination, ensuring the indices are within the bounds of the list
-        let start = (pagination_params.page - 1) * pagination_params.page_size;
-        let end = std::cmp::min(start + pagination_params.page_size, vc_list.len());
-
-        // Guard against cases where the pagination request exceeds the list bounds
-        if start >= vc_list.len() {
-            return PaginationReturnVcData {
-                data: HashMap::new(),
-                count: vc_list.len(),
-            };
-        }
-
-        // Convert the appropriately sliced list segment to a HashMap
-        let paginated_vc_list = vc_list[start..end].to_vec();
-        let paginated_vc_map: HashMap<Principal, VcWithRoles> =
-            paginated_vc_list.into_iter().collect();
+        let paginated_vc_map: HashMap<Principal, VcWithRoles> = vc_list.into_iter().collect();
 
         PaginationReturnVcData {
             data: paginated_vc_map,
-            count: vc_list.len(),
+            count: total_active_vcs,  
         }
     })
 }
+
 
 #[derive(CandidType, Clone)]
 pub struct ListAllVC {

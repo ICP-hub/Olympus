@@ -89,15 +89,15 @@ pub struct MAnnouncements {
 
 pub type MentorAnnouncements = HashMap<Principal, Vec<MAnnouncements>>;
 
-thread_local! {
-    pub static MENTOR_REGISTRY: RefCell<MentorRegistry> = RefCell::new(MentorRegistry::new());
-    pub static MENTOR_AWAITS_RESPONSE: RefCell<MentorRegistry> = RefCell::new(MentorRegistry::new());
-    pub static DECLINED_MENTOR_REQUESTS: RefCell<MentorRegistry> = RefCell::new(MentorRegistry::new());
-    pub static MENTOR_PROFILE_EDIT_AWAITS :RefCell<MentorUpdateParams> = RefCell::new(MentorUpdateParams::new());
-    pub static DECLINED_MENTOR_PROFILE_EDIT_REQUEST :RefCell<MentorUpdateParams> = RefCell::new(MentorUpdateParams::new());
-    pub static MENTOR_ANNOUNCEMENTS:RefCell<MentorAnnouncements> = RefCell::new(MentorAnnouncements::new());
+// thread_local! {
+//     pub static MENTOR_REGISTRY: RefCell<MentorRegistry> = RefCell::new(MentorRegistry::new());
+//     pub static MENTOR_AWAITS_RESPONSE: RefCell<MentorRegistry> = RefCell::new(MentorRegistry::new());
+//     pub static DECLINED_MENTOR_REQUESTS: RefCell<MentorRegistry> = RefCell::new(MentorRegistry::new());
+//     pub static MENTOR_PROFILE_EDIT_AWAITS :RefCell<MentorUpdateParams> = RefCell::new(MentorUpdateParams::new());
+//     pub static DECLINED_MENTOR_PROFILE_EDIT_REQUEST :RefCell<MentorUpdateParams> = RefCell::new(MentorUpdateParams::new());
+//     pub static MENTOR_ANNOUNCEMENTS:RefCell<MentorAnnouncements> = RefCell::new(MentorAnnouncements::new());
 
-}
+// }
 
 #[query(guard = "is_user_anonymous")]
 pub fn get_mentor_info_using_principal(caller: Principal) -> Option<MentorInternal> {
@@ -504,53 +504,44 @@ pub struct PaginationParamMentor {
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct PaginationReturnMentor {
     pub data: HashMap<Principal, MentorWithRoles>,
-    pub count: usize,
+    pub count: u64,
 }
 
 #[query(guard = "is_user_anonymous")]
 pub fn get_all_mentors_with_pagination(
     pagination_params: PaginationParamMentor,
 ) -> PaginationReturnMentor {
-    read_state(|state| {
-        let mentor_registry = state.mentor_storage.iter().collect::<Vec<_>>();
+    let start = (pagination_params.page - 1) * pagination_params.page_size;
 
-        let mut mentor_list: Vec<(Principal, MentorWithRoles)> = Vec::new();
+    let mentors_snapshot = read_state(|state| {
+        state.mentor_storage.iter()
+            .skip(start)
+            .take(pagination_params.page_size)
+            .filter_map(|(stored_principal, mentor_info)| {
+                if mentor_info.0.active {
+                    let roles = get_roles_for_principal(stored_principal.0);
+                    Some((stored_principal.0.clone(), MentorWithRoles {
+                        mentor_profile: mentor_info.0.clone(),
+                        roles,
+                    }))
+                } else {
+                    None
+                }
+            })
+            .collect::<Vec<_>>()
+    });
 
-        for (stored_principal, candid_mentor_internal) in mentor_registry.iter() {
-            let mentor_internal = candid_mentor_internal.0.clone(); // Get the inner MentorInternal
-            let principal = stored_principal.0; // Get the inner Principal
+    let total_count = read_state(|state| state.mentor_storage.len());
 
-            if mentor_internal.active {
-                let roles = get_roles_for_principal(principal);
-                let mentor_with_roles = MentorWithRoles {
-                    mentor_profile: mentor_internal,
-                    roles,
-                };
+    let paginated_mentor_map: HashMap<Principal, MentorWithRoles> = 
+        mentors_snapshot.into_iter().map(|(principal, mentor_roles)| (principal, mentor_roles)).collect();
 
-                mentor_list.push((principal, mentor_with_roles));
-            }
-        }
-
-        // Sort the list to ensure consistent pagination
-        mentor_list.sort_by_key(|(principal, _)| *principal);
-
-        // Calculate start and end indices for pagination, ensuring they're within the bounds of the vector
-        let start = std::cmp::min(
-            pagination_params.page.saturating_sub(1) * pagination_params.page_size,
-            mentor_list.len(),
-        );
-        let end = std::cmp::min(start + pagination_params.page_size, mentor_list.len());
-
-        // Convert the slice of mentor data to a HashMap for the output
-        let paginated_mentor_map: HashMap<Principal, MentorWithRoles> =
-            mentor_list[start..end].iter().cloned().collect();
-
-        PaginationReturnMentor {
-            data: paginated_mentor_map,
-            count: mentor_list.len(), // Return the total count of active mentors
-        }
-    })
+    PaginationReturnMentor {
+        data: paginated_mentor_map,
+        count: total_count, 
+    }
 }
+
 
 pub fn make_active_inactive(p_id: Principal) -> String {
     let principal_id = ic_cdk::caller();

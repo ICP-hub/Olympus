@@ -409,212 +409,49 @@ impl ProjectReview {
     }
 }
 
-pub type ProjectAnnouncements = HashMap<Principal, Vec<AnnouncementsInternal>>;
-pub type Notifications = HashMap<Principal, Vec<NotificationProject>>;
-pub type BlogPost = HashMap<Principal, Vec<Blog>>;
+// pub type ProjectAnnouncements = HashMap<Principal, Vec<AnnouncementsInternal>>;
+// pub type Notifications = HashMap<Principal, Vec<NotificationProject>>;
+// pub type BlogPost = HashMap<Principal, Vec<Blog>>;
 
-pub type ApplicationDetails = HashMap<Principal, Vec<ProjectInfoInternal>>;
-pub type PendingDetails = HashMap<String, ProjectUpdateRequest>;
-pub type DeclinedDetails = HashMap<String, ProjectUpdateRequest>;
+// pub type ApplicationDetails = HashMap<Principal, Vec<ProjectInfoInternal>>;
+// pub type PendingDetails = HashMap<String, ProjectUpdateRequest>;
+// pub type DeclinedDetails = HashMap<String, ProjectUpdateRequest>;
 
-pub type ProjectDetails = HashMap<Principal, ProjectInfoInternal>;
-pub type JobDetails = HashMap<Principal, Vec<JobsInternal>>;
-pub type SpotlightProjects = Vec<SpotlightDetails>;
-pub type MoneyAccess = HashMap<Principal, Vec<AccessRequest>>;
-pub type PrivateDocsAccess = HashMap<Principal, Vec<AccessRequest>>;
+// pub type ProjectDetails = HashMap<Principal, ProjectInfoInternal>;
+// pub type JobDetails = HashMap<Principal, Vec<JobsInternal>>;
+// pub type SpotlightProjects = Vec<SpotlightDetails>;
+// pub type MoneyAccess = HashMap<Principal, Vec<AccessRequest>>;
+// pub type PrivateDocsAccess = HashMap<Principal, Vec<AccessRequest>>;
 
-thread_local! {
-    pub static PROJECT_ACCESS_NOTIFICATIONS : RefCell<HashMap<String, Vec<ProjectNotification>>> = RefCell::new(HashMap::new());
-    pub static  APPLICATION_FORM: RefCell<ApplicationDetails> = RefCell::new(ApplicationDetails::new());
-    //pub static PROJECT_DETAILS: RefCell<ProjectDetails> = RefCell::new(ProjectDetails::new());
-    pub static NOTIFICATIONS: RefCell<Notifications> = RefCell::new(Notifications::new());
-    pub static OWNER_NOTIFICATIONS: RefCell<HashMap<Principal, Vec<NotificationForOwner>>> = RefCell::new(HashMap::new());
-    pub static PROJECT_ANNOUNCEMENTS:RefCell<ProjectAnnouncements> = RefCell::new(ProjectAnnouncements::new());
-    pub static BLOG_POST:RefCell<BlogPost> = RefCell::new(BlogPost::new());
+// thread_local! {
+//     pub static PROJECT_ACCESS_NOTIFICATIONS : RefCell<HashMap<String, Vec<ProjectNotification>>> = RefCell::new(HashMap::new());
+//     pub static  APPLICATION_FORM: RefCell<ApplicationDetails> = RefCell::new(ApplicationDetails::new());
+//     //pub static PROJECT_DETAILS: RefCell<ProjectDetails> = RefCell::new(ProjectDetails::new());
+//     pub static NOTIFICATIONS: RefCell<Notifications> = RefCell::new(Notifications::new());
+//     pub static OWNER_NOTIFICATIONS: RefCell<HashMap<Principal, Vec<NotificationForOwner>>> = RefCell::new(HashMap::new());
+//     pub static PROJECT_ANNOUNCEMENTS:RefCell<ProjectAnnouncements> = RefCell::new(ProjectAnnouncements::new());
+//     pub static BLOG_POST:RefCell<BlogPost> = RefCell::new(BlogPost::new());
 
-    pub static PROJECT_AWAITS_RESPONSE: RefCell<ProjectDetails> = RefCell::new(ProjectDetails::new());
-    pub static DECLINED_PROJECT_REQUESTS: RefCell<ProjectDetails> = RefCell::new(ProjectDetails::new());
+//     pub static PROJECT_AWAITS_RESPONSE: RefCell<ProjectDetails> = RefCell::new(ProjectDetails::new());
+//     pub static DECLINED_PROJECT_REQUESTS: RefCell<ProjectDetails> = RefCell::new(ProjectDetails::new());
 
-    pub static PENDING_PROJECT_UPDATES: RefCell<PendingDetails> = RefCell::new(PendingDetails::new());
-    pub static DECLINED_PROJECT_UPDATES: RefCell<DeclinedDetails> = RefCell::new(DeclinedDetails::new());
-    pub static POST_JOB: RefCell<JobDetails> = RefCell::new(JobDetails::new());
-    pub static JOB_TYPE: RefCell<Vec<String>> = RefCell::new(vec!["BOUNTY".to_string(),"JOBS".to_string(),"RFP".to_string()]);
-    pub static SPOTLIGHT_PROJECTS: RefCell<SpotlightProjects> = RefCell::new(SpotlightProjects::new());
-    pub static MONEY_ACCESS: RefCell<HashMap<String, Vec<Principal>>> = RefCell::new(HashMap::new());
-    pub static PRIVATE_DOCS_ACCESS: RefCell<HashMap<String, Vec<Principal>>> = RefCell::new(HashMap::new());
+//     pub static PENDING_PROJECT_UPDATES: RefCell<PendingDetails> = RefCell::new(PendingDetails::new());
+//     pub static DECLINED_PROJECT_UPDATES: RefCell<DeclinedDetails> = RefCell::new(DeclinedDetails::new());
+//     pub static POST_JOB: RefCell<JobDetails> = RefCell::new(JobDetails::new());
+//     pub static JOB_TYPE: RefCell<Vec<String>> = RefCell::new(vec!["BOUNTY".to_string(),"JOBS".to_string(),"RFP".to_string()]);
+//     pub static SPOTLIGHT_PROJECTS: RefCell<SpotlightProjects> = RefCell::new(SpotlightProjects::new());
+//     pub static MONEY_ACCESS: RefCell<HashMap<String, Vec<Principal>>> = RefCell::new(HashMap::new());
+//     pub static PRIVATE_DOCS_ACCESS: RefCell<HashMap<String, Vec<Principal>>> = RefCell::new(HashMap::new());
 
-    pub static PROJECT_RATING : RefCell<HashMap<String, Vec<(Principal,ProjectReview)>>> = RefCell::new(HashMap::new());
+//     pub static PROJECT_RATING : RefCell<HashMap<String, Vec<(Principal,ProjectReview)>>> = RefCell::new(HashMap::new());
 
-    pub static  MONEY_ACCESS_REQUESTS :RefCell<MoneyAccess> = RefCell::new(MoneyAccess::new());
+//     pub static  MONEY_ACCESS_REQUESTS :RefCell<MoneyAccess> = RefCell::new(MoneyAccess::new());
 
-    pub static PRIVATE_DOCS_ACCESS_REQUESTS :RefCell<PrivateDocsAccess> = RefCell::new(PrivateDocsAccess::new());
+//     pub static PRIVATE_DOCS_ACCESS_REQUESTS :RefCell<PrivateDocsAccess> = RefCell::new(PrivateDocsAccess::new());
 
-}
+// }
 
-pub fn pre_upgrade_project_registration() {
-    PROJECT_ACCESS_NOTIFICATIONS.with(|data| {
-        let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,))
-            .expect("Failed to save PROJECT_ACCESS_NOTIFICATIONS");
-    });
-    APPLICATION_FORM.with(|data| {
-        let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save APPLICATION_FORM");
-    });
-    // PROJECT_DETAILS.with(|data| {
-    //     let cloned_data = data.borrow().clone();
-    //     ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save PROJECT_DETAILS");
-    // });
-    NOTIFICATIONS.with(|data| {
-        let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save NOTIFICATIONS");
-    });
-    OWNER_NOTIFICATIONS.with(|data| {
-        let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save OWNER_NOTIFICATIONS");
-    });
-    PROJECT_ANNOUNCEMENTS.with(|data| {
-        let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,))
-            .expect("Failed to save PROJECT_ANNOUNCEMENTS");
-    });
-    BLOG_POST.with(|data| {
-        let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save BLOG_POST");
-    });
-    PROJECT_AWAITS_RESPONSE.with(|data| {
-        let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,))
-            .expect("Failed to save PROJECT_AWAITS_RESPONSE");
-    });
-    DECLINED_PROJECT_REQUESTS.with(|data| {
-        let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,))
-            .expect("Failed to save DECLINED_PROJECT_REQUESTS");
-    });
-    PENDING_PROJECT_UPDATES.with(|data| {
-        let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,))
-            .expect("Failed to save PENDING_PROJECT_UPDATES");
-    });
-    DECLINED_PROJECT_UPDATES.with(|data| {
-        let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,))
-            .expect("Failed to save DECLINED_PROJECT_UPDATES");
-    });
-    POST_JOB.with(|data| {
-        let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save POST_JOB");
-    });
-    JOB_TYPE.with(|data| {
-        let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save JOB_TYPE");
-    });
-    SPOTLIGHT_PROJECTS.with(|data| {
-        let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save SPOTLIGHT_PROJECTS");
-    });
-    MONEY_ACCESS.with(|data| {
-        let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save MONEY_ACCESS");
-    });
-    PRIVATE_DOCS_ACCESS.with(|data| {
-        let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save PRIVATE_DOCS_ACCESS");
-    });
-    PROJECT_RATING.with(|data| {
-        let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,)).expect("Failed to save PROJECT_RATING");
-    });
-    MONEY_ACCESS_REQUESTS.with(|data| {
-        let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,))
-            .expect("Failed to save MONEY_ACCESS_REQUESTS");
-    });
-    PRIVATE_DOCS_ACCESS_REQUESTS.with(|data| {
-        let cloned_data = data.borrow().clone();
-        ic_cdk::storage::stable_save((&cloned_data,))
-            .expect("Failed to save PRIVATE_DOCS_ACCESS_REQUESTS");
-    });
-}
 
-pub fn post_upgrade_project_registration() {
-    let (project_access_notifications,): (HashMap<String, Vec<ProjectNotification>>,) =
-        ic_cdk::storage::stable_restore().expect("Failed to restore PROJECT_ACCESS_NOTIFICATIONS");
-    PROJECT_ACCESS_NOTIFICATIONS.with(|data| *data.borrow_mut() = project_access_notifications);
-
-    let (application_form,): (ApplicationDetails,) =
-        ic_cdk::storage::stable_restore().expect("Failed to restore APPLICATION_FORM");
-    APPLICATION_FORM.with(|data| *data.borrow_mut() = application_form);
-
-    // let (project_details,): (ProjectDetails, ) =
-    //     ic_cdk::storage::stable_restore().expect("Failed to restore PROJECT_DETAILS");
-    // PROJECT_DETAILS.with(|data| *data.borrow_mut() = project_details);
-
-    let (notifications,): (Notifications,) =
-        ic_cdk::storage::stable_restore().expect("Failed to restore NOTIFICATIONS");
-    NOTIFICATIONS.with(|data| *data.borrow_mut() = notifications);
-
-    let (owner_notifications,): (HashMap<Principal, Vec<NotificationForOwner>>,) =
-        ic_cdk::storage::stable_restore().expect("Failed to restore OWNER_NOTIFICATIONS");
-    OWNER_NOTIFICATIONS.with(|data| *data.borrow_mut() = owner_notifications);
-
-    let (project_announcements,): (ProjectAnnouncements,) =
-        ic_cdk::storage::stable_restore().expect("Failed to restore PROJECT_ANNOUNCEMENTS");
-    PROJECT_ANNOUNCEMENTS.with(|data| *data.borrow_mut() = project_announcements);
-
-    let (blog_post,): (BlogPost,) =
-        ic_cdk::storage::stable_restore().expect("Failed to restore BLOG_POST");
-    BLOG_POST.with(|data| *data.borrow_mut() = blog_post);
-
-    let (project_awaits_response,): (ProjectDetails,) =
-        ic_cdk::storage::stable_restore().expect("Failed to restore PROJECT_AWAITS_RESPONSE");
-    PROJECT_AWAITS_RESPONSE.with(|data| *data.borrow_mut() = project_awaits_response);
-
-    let (declined_project_requests,): (ProjectDetails,) =
-        ic_cdk::storage::stable_restore().expect("Failed to restore DECLINED_PROJECT_REQUESTS");
-    DECLINED_PROJECT_REQUESTS.with(|data| *data.borrow_mut() = declined_project_requests);
-
-    let (pending_project_updates,): (PendingDetails,) =
-        ic_cdk::storage::stable_restore().expect("Failed to restore PENDING_PROJECT_UPDATES");
-    PENDING_PROJECT_UPDATES.with(|data| *data.borrow_mut() = pending_project_updates);
-
-    let (declined_project_updates,): (DeclinedDetails,) =
-        ic_cdk::storage::stable_restore().expect("Failed to restore DECLINED_PROJECT_UPDATES");
-    DECLINED_PROJECT_UPDATES.with(|data| *data.borrow_mut() = declined_project_updates);
-
-    let (post_job,): (JobDetails,) =
-        ic_cdk::storage::stable_restore().expect("Failed to restore POST_JOB");
-    POST_JOB.with(|data| *data.borrow_mut() = post_job);
-
-    let (job_type,): (Vec<String>,) =
-        ic_cdk::storage::stable_restore().expect("Failed to restore JOB_TYPE");
-    JOB_TYPE.with(|data| *data.borrow_mut() = job_type);
-
-    let (spotlight_projects,): (SpotlightProjects,) =
-        ic_cdk::storage::stable_restore().expect("Failed to restore SPOTLIGHT_PROJECTS");
-    SPOTLIGHT_PROJECTS.with(|data| *data.borrow_mut() = spotlight_projects);
-
-    let (money_access,): (HashMap<String, Vec<Principal>>,) =
-        ic_cdk::storage::stable_restore().expect("Failed to restore MONEY_ACCESS");
-    MONEY_ACCESS.with(|data| *data.borrow_mut() = money_access);
-
-    let (private_docs_access,): (HashMap<String, Vec<Principal>>,) =
-        ic_cdk::storage::stable_restore().expect("Failed to restore PRIVATE_DOCS_ACCESS");
-    PRIVATE_DOCS_ACCESS.with(|data| *data.borrow_mut() = private_docs_access);
-
-    let (project_rating,): (HashMap<String, Vec<(Principal, ProjectReview)>>,) =
-        ic_cdk::storage::stable_restore().expect("Failed to restore PROJECT_RATING");
-    PROJECT_RATING.with(|data| *data.borrow_mut() = project_rating);
-
-    let (money_access_requests,): (MoneyAccess,) =
-        ic_cdk::storage::stable_restore().expect("Failed to restore MONEY_ACCESS_REQUESTS");
-    MONEY_ACCESS_REQUESTS.with(|data| *data.borrow_mut() = money_access_requests);
-
-    let (private_docs_access_requests,): (PrivateDocsAccess,) =
-        ic_cdk::storage::stable_restore().expect("Failed to restore PRIVATE_DOCS_ACCESS_REQUESTS");
-    PRIVATE_DOCS_ACCESS_REQUESTS.with(|data| *data.borrow_mut() = private_docs_access_requests);
-}
 
 pub async fn create_project(info: ProjectInfo) -> String {
     if info.private_docs.is_some() && info.upload_private_documents != Some(true) {
@@ -1022,54 +859,44 @@ pub fn get_project_public_information_using_id(project_id: String) -> ProjectPub
 #[derive(CandidType, Clone)]
 pub struct PaginationReturnProjectDataList {
     pub data: HashMap<Principal, ProjectVecWithRoles>,
-    pub count: usize,
+    pub count: u64,
 }
 
 #[query(guard = "is_admin")]
 pub fn list_all_projects_for_admin(
     pagination_params: PaginationParams,
 ) -> PaginationReturnProjectDataList {
-    read_state(|state| {
-        let mut project_with_roles_map: HashMap<Principal, ProjectVecWithRoles> = HashMap::new();
+    let project_count = read_state(|state| state.project_storage.len());
 
-        // Iterate through the project_storage, where keys are StoredPrincipal
-        for (stored_principal, project_info) in state.project_storage.iter() {
-            // Convert StoredPrincipal to Principal
-            let principal = stored_principal.0;
+    let start = (pagination_params.page - 1) * pagination_params.page_size;
+    let end = std::cmp::min(start + pagination_params.page_size, project_count.try_into().unwrap());
 
-            // Assume get_roles_for_principal expects a Principal
-            let roles = get_roles_for_principal(principal);
+    let projects_snapshot = read_state(|state| {
+        state.project_storage.iter()
+            .skip(start)
+            .take(end - start)
+            .map(|(stored_principal, project_info)| {
+                let principal = stored_principal.0; 
+                let roles = get_roles_for_principal(principal); 
+                let project_with_roles = ProjectVecWithRoles {
+                    project_profile: project_info.0.clone(),
+                    roles,
+                };
+                (principal, project_with_roles)
+            })
+            .collect::<Vec<_>>()
+    });
 
-            // Prepare the project with roles data
-            let project_with_roles = ProjectVecWithRoles {
-                project_profile: project_info.0.clone(),
-                roles,
-            };
+    let paginated_map: HashMap<Principal, ProjectVecWithRoles> = projects_snapshot
+        .into_iter()
+        .collect();
 
-            // Insert into the map with the Principal as the key
-            project_with_roles_map.insert(principal, project_with_roles);
-        }
-
-        // Convert the map to a vector to apply pagination
-        let project_with_roles_vec: Vec<(Principal, ProjectVecWithRoles)> =
-            project_with_roles_map.into_iter().collect();
-
-        let start = (pagination_params.page - 1) * pagination_params.page_size;
-        let end = cmp::min(
-            start + pagination_params.page_size,
-            project_with_roles_vec.len(),
-        );
-
-        // Apply slicing and convert back to a HashMap
-        let paginated_slice: HashMap<Principal, ProjectVecWithRoles> =
-            project_with_roles_vec[start..end].iter().cloned().collect();
-
-        PaginationReturnProjectDataList {
-            data: paginated_slice,
-            count: project_with_roles_vec.len(),
-        }
-    })
+    PaginationReturnProjectDataList {
+        data: paginated_map,
+        count: project_count,
+    }
 }
+
 
 #[derive(CandidType, Clone)]
 pub struct ListAllProjects {
@@ -1149,11 +976,9 @@ pub fn list_all_projects_with_pagination(
 ) -> PaginationReturnProjectData {
     let project_count = read_state(|state| state.project_storage.len());
 
-    // Calculate pagination bounds
     let start = (pagination_params.page - 1) * pagination_params.page_size;
     let end = std::cmp::min(start + pagination_params.page_size, project_count.try_into().unwrap());
 
-    // Fetch only the necessary projects
     let projects_snapshot = read_state(|state| {
         state.project_storage.iter()
             .skip(start)
@@ -1167,7 +992,7 @@ pub fn list_all_projects_with_pagination(
     for (stored_principal, project_infos) in projects_snapshot {
         for project_info in project_infos {
             if project_info.is_active {
-                let get_rating = calculate_average_api(&project_info.uid); // Assumes this function might mutate global state.
+                let get_rating = calculate_average_api(&project_info.uid); 
                 let project_info_struct = ListAllProjects {
                     principal: stored_principal,
                     params: project_info,
@@ -1626,7 +1451,7 @@ pub fn add_announcement(mut announcement_details: Announcements) -> String {
             .unwrap_or_else(|| {
                 state
                     .project_announcement
-                    .insert(StoredPrincipal(caller_id), Candid(Vec::new()));
+                    .insert(StoredPrincipal(caller_id), Candid(vec![new_announcement.clone()]));
                 state
                     .project_announcement
                     .get(&StoredPrincipal(caller_id))
@@ -2044,15 +1869,13 @@ pub fn get_all_jobs() -> Vec<JobsInternal> {
 pub fn get_jobs_posted_by_project(project_id: String) -> Vec<JobsInternal> {
     read_state(|state| {
         let mut jobs_for_project = Vec::new();
-
         for (_, job_list) in state.post_job.iter() {
-            for job_internal in job_list.0.iter() {
-                if job_internal.job_data.project_id == project_id {
-                    jobs_for_project.push(job_internal.clone());
-                }
-            }
+            jobs_for_project.extend(
+                job_list.0.iter()
+                         .filter(|job_internal| job_internal.job_data.project_id == project_id)
+                         .cloned()
+            );
         }
-
         jobs_for_project
     })
 }
@@ -2827,3 +2650,5 @@ pub fn get_frequent_reviewers() -> Vec<UserInfoInternal> {
 pub fn get_type_of_registration() -> Vec<String> {
     vec!["Company".to_string(), "DAO".to_string()]
 }
+
+
