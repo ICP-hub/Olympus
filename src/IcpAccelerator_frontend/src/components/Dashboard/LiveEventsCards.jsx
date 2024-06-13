@@ -82,7 +82,6 @@ const LiveEventsCards = ({ wrap, register }) => {
     };
   }, [actor, currentPage]);
 
- 
   return (
     <div
       className={`flex mb-4 items-start ${wrap === true ? "" : "min-h-screen"}`}
@@ -119,8 +118,8 @@ const LiveEventsCards = ({ wrap, register }) => {
             }`}
           >
             {allLiveEventsData &&
-              allLiveEventsData.map((val, index) => {
-                console.log('val',val)
+              allLiveEventsData?.slice(0, numSkeletons).map((val, index) => {
+                console.log("val", val);
                 return (
                   <div
                     key={index}

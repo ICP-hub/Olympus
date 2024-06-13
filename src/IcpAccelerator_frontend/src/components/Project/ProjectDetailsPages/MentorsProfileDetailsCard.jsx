@@ -16,9 +16,12 @@ const MentorsProfileDetailsCard = ({
   filter,
 }) => {
   const navigate = useNavigate();
+  console.log('MentorsProfileDetailsCard',data)
 
-  if (!data) {
-    return null;
+  if (!data?.mentors_assigned) {
+    return <div className="w-full">
+    <NoDataCard />
+  </div>
   }
 
   return (

@@ -202,6 +202,7 @@ const LiveProjects = ({ progress, numSkeletons }) => {
                   <div className="w-full grid gap-2 grid-cols-1 md3:grid-cols-2 dxl:grid-cols-3  md:px-4 md:gap-4 sm:gap-4">
                     {allProjectData &&
                       allProjectData
+                        .slice(0, numSkeletons)
                         .filter(
                           (val) =>
                             val?.params?.params?.live_on_icp_mainnet[0] &&

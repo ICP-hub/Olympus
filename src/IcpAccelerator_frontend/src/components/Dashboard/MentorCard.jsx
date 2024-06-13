@@ -96,7 +96,7 @@ const MentorCard = ({ numSkeletons }) => {
         </div>
       ) : (
         data &&
-        data?.map((mentor, index) => {
+        data?.slice(0, numSkeletons).map((mentor, index) => {
           let id = null;
           let img = "";
           let name = "";

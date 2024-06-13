@@ -54,13 +54,10 @@ const LiveEventViewAll = () => {
     }
   }, [actor, currentPage]);
 
-   const filteredInvestors = React.useMemo(() => {
+  const filteredInvestors = React.useMemo(() => {
     return allLiveEventsData?.filter((user) => {
-      const fullName =
-      user?.cohort?.title?.toLowerCase() || "";
-      return (
-        fullName.includes(filter?.toLowerCase()) 
-      );
+      const fullName = user?.cohort?.title?.toLowerCase() || "";
+      return fullName.includes(filter?.toLowerCase());
     });
   }, [filter, allLiveEventsData]);
 
@@ -75,11 +72,32 @@ const LiveEventViewAll = () => {
       prev < Math.ceil(Number(countData) / itemsPerPage) ? prev + 1 : prev
     );
   };
+  const [maxPageNumbers, setMaxPageNumbers] = useState(10);
 
+  useEffect(() => {
+    const updateMaxPageNumbers = () => {
+      if (window.innerWidth <= 430) {
+        setMaxPageNumbers(1); // For mobile view
+      } else if (window.innerWidth <= 530) {
+        setMaxPageNumbers(3); // For tablet view
+      } else if (window.innerWidth <= 640) {
+        setMaxPageNumbers(5); // For tablet view
+      } else if (window.innerWidth <= 810) {
+        setMaxPageNumbers(7); // For tablet view
+      } else {
+        setMaxPageNumbers(10); // For desktop view
+      }
+    };
+
+    updateMaxPageNumbers(); // Set initial value
+    window.addEventListener("resize", updateMaxPageNumbers); // Update on resize
+
+    return () => window.removeEventListener("resize", updateMaxPageNumbers);
+  }, []);
   // Logic to limit the displayed page numbers to 10 at a time
   const renderPaginationNumbers = () => {
     const totalPages = Math.ceil(Number(countData) / itemsPerPage);
-    const maxPageNumbers = 10;
+    // const maxPageNumbers = 10;
     const startPage =
       Math.floor((currentPage - 1) / maxPageNumbers) * maxPageNumbers + 1;
     const endPage = Math.min(startPage + maxPageNumbers - 1, totalPages);
@@ -108,12 +126,12 @@ const LiveEventViewAll = () => {
   return (
     <div className="container mx-auto min-h-screen">
       <div className="px-[4%] pb-[4%] pt-[1%]">
-      <div className="flex items-center justify-between sm:flex-col sxxs:flex-col md:flex-row mb-8">
+        <div className="flex items-center justify-between sm:flex-col sxxs:flex-col md:flex-row mb-8">
           <div
             className="w-full bg-gradient-to-r from-purple-900 to-blue-500 text-transparent bg-clip-text text-3xl font-extrabold py-4 
        font-fontUse"
           >
-           Cohorts
+            Cohorts
           </div>
 
           <div className="relative flex items-center md:max-w-xs bg-white rounded-xl sxxs:w-full">
@@ -137,9 +155,7 @@ const LiveEventViewAll = () => {
           </div>
         </div>
 
-        <div
-          className=" mb-4 items-start min-h-screen"
-        >
+        <div className=" mb-4 items-start min-h-screen">
           <>
             {isLoading ? (
               Array(itemsPerPage)
@@ -171,7 +187,7 @@ const LiveEventViewAll = () => {
             )}
             <div className="flex flex-row  w-full gap-4 justify-center">
               {Number(countData) > 0 && (
-                <div className="flex items-center gap-4 justify-center">
+                <div className="flex items-center justify-center">
                   <button
                     onClick={handlePrevious}
                     disabled={currentPage === 1}

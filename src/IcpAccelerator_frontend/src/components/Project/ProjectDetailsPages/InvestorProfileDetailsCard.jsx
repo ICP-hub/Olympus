@@ -17,8 +17,10 @@ const InvestorProfileDetailsCard = ({
 }) => {
   const navigate = useNavigate();
 
-  if (!data) {
-    return null;
+  if (!data?.vc_assigned) {
+    return <div className="w-full">
+    <NoDataCard />
+  </div>
   }
   return (
     <>

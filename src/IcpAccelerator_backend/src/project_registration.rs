@@ -1414,28 +1414,26 @@ pub async fn update_team_member(project_id: &str, member_principal_id: Principal
 }
 
 #[update(guard = "is_user_anonymous")]
-pub fn add_announcement(mut announcement_details: Announcements) -> String {
+pub fn add_announcement(announcement_details: Announcements) -> String {
     let caller_id = caller();
-
     let current_time = time();
 
-    let project_id_exists = read_state(|state| {
-        state.project_storage.iter().any(|(_, projects)| {
-            projects
-                .0
-                .iter()
-                .any(|project_info| project_info.uid == announcement_details.project_id)
-        })
-    });
+    ic_cdk::println!("Caller ID: {:?}", caller_id);
+    ic_cdk::println!("Current Time: {}", current_time);
 
     let project_info_internal = match find_project_by_id(&announcement_details.project_id) {
-        Some(project_info) => project_info,
-        None => return "Project ID does not exist in application forms.".to_string(),
+        Some(info) => {
+            ic_cdk::println!("Project info fetched successfully: {:?}", info);
+            info
+        }
+        None => {
+            ic_cdk::println!(
+                "Failed to fetch project info for project ID: {}",
+                &announcement_details.project_id
+            );
+            return "Project ID does not exist in application forms.".to_string();
+        }
     };
-
-    if !project_id_exists {
-        return "Project ID does not exist in application forms.".to_string();
-    }
 
     let new_announcement = AnnouncementsInternal {
         announcement_data: announcement_details,
@@ -1445,23 +1443,28 @@ pub fn add_announcement(mut announcement_details: Announcements) -> String {
         project_logo: project_info_internal.params.project_logo.clone(),
     };
 
-    mutate_state(|state| {
-        state
-            .project_announcement
-            .get(&StoredPrincipal(caller_id))
-            .unwrap_or_else(|| {
-                state
-                    .project_announcement
-                    .insert(StoredPrincipal(caller_id), Candid(vec![new_announcement.clone()]));
-                state
-                    .project_announcement
-                    .get(&StoredPrincipal(caller_id))
-                    .unwrap()
-            })
-            .0
-            .push(new_announcement);
-        format!("Announcement added successfully at {}", current_time)
-    })
+    ic_cdk::println!("New Announcement Details: {:?}", new_announcement);
+
+    let result = mutate_state(|state| {
+        let announcement_storage = &mut state.project_announcement;
+        if let Some(caller_announcements) = announcement_storage.get(&StoredPrincipal(caller_id)) {
+            ic_cdk::println!("Existing announcement entry found.");
+            ic_cdk::println!("State before addition: {:?}", caller_announcements.0);
+            let mut caller_announcements = caller_announcements.clone(); // Clone to mutate
+            caller_announcements.0.push(new_announcement);
+            ic_cdk::println!("State after addition: {:?}", caller_announcements.0);
+            announcement_storage.insert(StoredPrincipal(caller_id), caller_announcements);
+            format!("Announcement added successfully at {}", current_time)
+        } else {
+            ic_cdk::println!("No announcement entry found for this caller.");
+            ic_cdk::println!("State before addition: None"); 
+            announcement_storage.insert(StoredPrincipal(caller_id), Candid(vec![new_announcement]));
+            
+            format!("Announcement added successfully at {}", current_time)
+        }
+    });
+
+    result
 }
 
 //for testing purpose
