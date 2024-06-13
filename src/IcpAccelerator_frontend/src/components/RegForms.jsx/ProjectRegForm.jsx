@@ -2601,7 +2601,7 @@ function ProjectRegForm() {
                     fieldsPrivate.map((field, index) => (
                       <div key={field.id}>
                         <div className="relative z-0 group mb-4">
-                          <div className="sm0:flex sm:block block dlg:flex flex-row items-center">
+                          <div className="sm0:flex sm:block block dlg:flex flex-row items- center">
                             <div className="w-full">
                               <label className="block mb-2 text-lg font-medium text-gray-500 text-start">
                                 Title {index + 1}
@@ -2635,7 +2635,7 @@ function ProjectRegForm() {
                             <button
                               type="button"
                               onClick={() => handleremovePrivate(index)}
-                              className="self-end bg-red-600 hover:bg-red-700 text-white rounded-lg px-4 py-3 sm0:ml-2 mt-1 sm0:mt-1"
+                              className=" bg-red-600 hover:bg-red-700 text-white self-center rounded-lg px-4 py-3 sm0:ml-2 mt-1 sm0:mt-1"
                             >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -2697,7 +2697,7 @@ function ProjectRegForm() {
                     fields.map((field, index) => (
                       <div className="relative z-0 group mb-6">
                         <div
-                          className="sm0:flex sm:block block dlg:flex flex-row items-center"
+                          className="sm0:flex sm:block block dlg:flex flex-row items -center"
                           key={field.id}
                         >
                           <div className="w-full">
@@ -2733,7 +2733,7 @@ function ProjectRegForm() {
                           <button
                             type="button"
                             onClick={() => removePublic(index)}
-                            className="self-end bg-red-600 hover:bg-red-700 text-white rounded-lg px-4 py-3 sm0:ml-2 mt-1 sm0:mt-1"
+                            className="self-center bg-red-600 hover:bg-red-700 text-white rounded-lg px-4 py-3 sm0:ml-2 mt-1 sm0:mt-1"
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"

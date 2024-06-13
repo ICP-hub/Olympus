@@ -109,7 +109,12 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-
+input, select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
+  appearance: none;
+}
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;

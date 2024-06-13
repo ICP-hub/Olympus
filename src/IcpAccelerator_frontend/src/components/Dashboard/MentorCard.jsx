@@ -163,15 +163,8 @@ const MentorCard = ({ numSkeletons }) => {
                     })}
                   </div>
                   <button
-                    // onClick={() =>
-                    //   id ? navigate(`/view-mentor-details/${id}`) : ""
-                    // }
                     onClick={() =>
-                      id
-                        ? navigate(
-                            `/view-mentors/93bb0f88796d5e848be77f458354848db1638f36227c1a2e0c7978a8dec20e35`
-                          )
-                        : ""
+                      id ? navigate(`/view-mentor-details/${id}`) : ""
                     }
                     className="text-white px-4 py-1 rounded-lg uppercase w-full text-center border border-gray-300 font-bold bg-[#3505B2] transition-colors duration-200 ease-in-out"
                   >
