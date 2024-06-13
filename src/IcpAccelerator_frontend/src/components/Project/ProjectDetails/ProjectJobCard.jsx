@@ -112,7 +112,7 @@ const ProjectJobCard = ({ image, website, tags, country }) => {
               640: {
                 slidesPerView: 1,
               },
-              768: {
+              1024: {
                 slidesPerView: 2,
               },
               1024: {

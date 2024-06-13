@@ -218,13 +218,13 @@ const Adminalluser = () => {
 
   useEffect(() => {
     const updateMaxPageNumbers = () => {
-      if (window.innerWidth <= 380) {
+      if (window.innerWidth <= 430) {
         setMaxPageNumbers(1); // For mobile view
-      } else if (window.innerWidth <= 496) {
+      } else if (window.innerWidth <= 530) {
         setMaxPageNumbers(3); // For tablet view
-      } else if (window.innerWidth <= 620) {
+      } else if (window.innerWidth <= 640) {
         setMaxPageNumbers(5); // For tablet view
-      } else if (window.innerWidth <= 768) {
+      } else if (window.innerWidth <= 810) {
         setMaxPageNumbers(7); // For tablet view
       } else {
         setMaxPageNumbers(10); // For desktop view
@@ -458,7 +458,7 @@ const Adminalluser = () => {
       )}
 
       {Number(countData) > 0 && (
-        <div className="flex items-center gap-4 justify-center mb-4">
+        <div className="flex items-center justify-center mb-4">
           <button
             onClick={handlePrevious}
             disabled={currentPage === 1}
