@@ -279,6 +279,7 @@ const AnnouncementDetailsCard = ({ data }) => {
           onClose={handleCloseModal}
           onSubmitHandler={handleUpdateAnnouncement}
           isSubmitting={isSubmitting}
+          isUpdate={true}
         />
       )}
       {isDeleteModalOpen && (

@@ -290,7 +290,7 @@ fn get_leaderboard_using_ratings() -> Vec<LeaderboardEntryForRatings> {
     leaderboard::get_leaderboard_by_ratings()
 }
 
-#[update(guard = "is_admin")]
+#[update(guard = "is_user_anonymous")]
 
 fn update_rating(rating_data: RatingUpdate) -> String {
     ratings::update_rating_api(rating_data)

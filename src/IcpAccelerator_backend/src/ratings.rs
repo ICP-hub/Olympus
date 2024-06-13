@@ -223,43 +223,52 @@ pub fn update_rating_api(rating_data: RatingUpdate) -> String {
             thirteen_days_in_seconds,
         )
     });
-    ic_cdk::println!("CAN RATE AGAIN FUNTION RETURNED {}", can_rate);
+    ic_cdk::println!("CAN RATE AGAIN FUNCTION RETURNED {}", can_rate);
 
     if !can_rate {
         ic_cdk::println!("Debug: User cannot rate again due to the 13-day rule.");
         return "You cannot rate this project for the next 13 days".to_string();
     }
 
-    mutate_state(|system| {
+    // Extract project_ratings and role_ratings
+    let (mut project_ratings, current_role) = mutate_state(|system| {
         let mut system = &mut system.rating_system;
-        let mut project_ratings = system
+        let project_ratings = system
             .get(&rating_data.project_id.clone())
             .map_or_else(HashMap::new, |candid_res| candid_res.0);
-        let role_ratings = project_ratings.entry(principal_id).or_insert_with(Vec::new);
-
-        for rating in rating_data.ratings {
-            let new_rating = (
-                rating_data.current_role.clone(),
-                TimestampedRating {
-                    rating,
-                    timestamp: current_timestamp,
-                },
-            );
-
-            match rating_data.current_role.as_str() {
-                "vc" => role_ratings.push(new_rating),
-                "mentor" => role_ratings.push(new_rating),
-                "project" => role_ratings.push(new_rating),
-                _ => println!(
-                    "Debug: Encountered unknown role: '{}'.",
-                    rating_data.current_role
-                ),
-            }
-            response_message = "Ratings updated successfully".to_string();
-        }
-
-        update_last_rating_time(&rating_data.project_id, &principal_id, current_timestamp);
+        (project_ratings, rating_data.current_role.clone())
     });
+
+    let role_ratings = project_ratings.entry(principal_id).or_insert_with(Vec::new);
+
+    for rating in rating_data.ratings {
+        let new_rating = (
+            current_role.clone(),
+            TimestampedRating {
+                rating,
+                timestamp: current_timestamp,
+            },
+        );
+
+        match current_role.as_str() {
+            "vc" => role_ratings.push(new_rating),
+            "mentor" => role_ratings.push(new_rating),
+            "project" => role_ratings.push(new_rating),
+            _ => println!(
+                "Debug: Encountered unknown role: '{}'.",
+                current_role
+            ),
+        }
+        response_message = "Ratings updated successfully".to_string();
+    }
+
+    // Update the state with the new project_ratings
+    mutate_state(|system| {
+        system.rating_system.insert(rating_data.project_id.clone(), Candid(project_ratings));
+    });
+
+    // Call update_last_rating_time outside of mutate_state
+    update_last_rating_time(&rating_data.project_id, &principal_id, current_timestamp);
 
     response_message
 }

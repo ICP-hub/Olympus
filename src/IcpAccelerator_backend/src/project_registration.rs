@@ -1365,42 +1365,58 @@ pub async fn update_team_member(project_id: &str, member_principal_id: Principal
     let (project_found, member_added_or_updated) = mutate_state(|storage| {
         let mut project_found = false;
         let mut member_added_or_updated = false;
+        let mut updated_project_info_list = None;
 
-        // Iterate over mutable references to the values in the storage map
-        for (_, mut project_info_list) in storage.project_storage.iter() {
-            for project_internal in project_info_list.0.iter_mut() {
+        // Iterate over the storage map to find the project
+        for (project_owner, project_info_list) in storage.project_storage.iter() {
+            for project_internal in project_info_list.0.iter() {
                 if project_internal.uid == project_id {
                     project_found = true;
 
-                    // Check if the project already has a team member list
-                    if let Some(team) = &mut project_internal.params.project_team {
-                        // Look for an existing team member with the same UID
-                        if let Some(member) = team.iter_mut().find(|m| m.member_uid == member_uid) {
-                            // If the member exists, update their info
-                            member.member_data = user_info.clone();
-                            member_added_or_updated = true;
-                        } else {
-                            // If the member doesn't exist, add them to the list
-                            let new_team_member = TeamMember {
-                                member_uid: member_uid.clone(),
-                                member_data: user_info.clone(),
-                            };
-                            team.push(new_team_member);
-                            member_added_or_updated = true;
+                    // Clone the project_info_list to modify it
+                    let mut project_info_list_clone = project_info_list.clone();
+
+                    // Find the project within the cloned list
+                    for project_internal in project_info_list_clone.0.iter_mut() {
+                        if project_internal.uid == project_id {
+                            // Check if the project already has a team member list
+                            if let Some(team) = &mut project_internal.params.project_team {
+                                // Look for an existing team member with the same UID
+                                if let Some(member) = team.iter_mut().find(|m| m.member_uid == member_uid) {
+                                    // If the member exists, update their info
+                                    member.member_data = user_info.clone();
+                                    member_added_or_updated = true;
+                                } else {
+                                    // If the member doesn't exist, add them to the list
+                                    let new_team_member = TeamMember {
+                                        member_uid: member_uid.clone(),
+                                        member_data: user_info.clone(),
+                                    };
+                                    team.push(new_team_member);
+                                    member_added_or_updated = true;
+                                }
+                            } else {
+                                // If the project does not have any team members yet, create a new list
+                                let new_team_member = TeamMember {
+                                    member_uid: member_uid.clone(),
+                                    member_data: user_info.clone(),
+                                };
+                                project_internal.params.project_team = Some(vec![new_team_member]);
+                                member_added_or_updated = true;
+                            }
                         }
-                    } else {
-                        // If the project does not have any team members yet, create a new list
-                        let new_team_member = TeamMember {
-                            member_uid: member_uid.clone(),
-                            member_data: user_info.clone(),
-                        };
-                        project_internal.params.project_team = Some(vec![new_team_member]);
-                        member_added_or_updated = true;
                     }
-                    // Break the loop once the project is found
+
+                    // Store the modified project_info_list to update the storage after the loop
+                    updated_project_info_list = Some((project_owner.clone(), project_info_list_clone));
                     break;
                 }
             }
+        }
+
+        // Update the storage outside the loop
+        if let Some((project_owner, project_info_list_clone)) = updated_project_info_list {
+            storage.project_storage.insert(project_owner, project_info_list_clone);
         }
 
         (project_found, member_added_or_updated)

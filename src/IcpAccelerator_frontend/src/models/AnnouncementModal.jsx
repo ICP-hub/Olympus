@@ -26,7 +26,7 @@ const schema = yup
       ),
   })
   .required();
-const AnnouncementModal = ({ onClose, onSubmitHandler, isSubmitting }) => {
+const AnnouncementModal = ({ onClose, onSubmitHandler, isSubmitting ,isUpdate}) => {
   const {
     register,
     handleSubmit,
@@ -49,7 +49,7 @@ const AnnouncementModal = ({ onClose, onSubmitHandler, isSubmitting }) => {
           <div className="relative bg-white rounded-lg shadow">
             <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t ">
               <h3 className="text-xl font-semibold text-gray-900 ">
-                Add Annoucement
+                {isUpdate ===true ?'Update Annoucement':'Add Annoucement'}
               </h3>
               <button
                 type="button"

@@ -233,6 +233,7 @@ const ProjectDetailsForOwnerProject = () => {
             fetchProjectData();
             setIsSubmitting(false);
             toast.success("announcement added successfully");
+            window.location.reload()
           } else {
             handleCloseModal();
             setIsSubmitting(false);
@@ -447,6 +448,7 @@ const ProjectDetailsForOwnerProject = () => {
           onClose={handleCloseModal}
           onSubmitHandler={handleAddAnnouncement}
           isSubmitting={isSubmitting}
+          isUpdate={false}
         />
       )}
       {isJobsModalOpen && (

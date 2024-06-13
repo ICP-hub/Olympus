@@ -79,33 +79,44 @@ const Header = ({ setModalOpen, gradient }) => {
     });
   }
 
-  const initialApi = async () => {
+ 
+  const initialApi = async (isMounted) => {
     try {
       const currentRoleArray = await actor.get_role_status();
-      if (currentRoleArray && currentRoleArray.length !== 0) {
-        const currentActiveRole = getNameOfCurrentStatus(currentRoleArray);
-        dispatch(
-          setCurrentRoleStatus(cloneArrayWithModifiedValues(currentRoleArray))
-        );
-        dispatch(setCurrentActiveRole(currentActiveRole));
-      } else {
-        dispatch(
-          getCurrentRoleStatusFailureHandler("error-in-fetching-role-at-header")
-        );
-        dispatch(setCurrentActiveRole(null));
+      if (isMounted) {
+        if (currentRoleArray && currentRoleArray.length !== 0) {
+          const currentActiveRole = getNameOfCurrentStatus(currentRoleArray);
+          dispatch(
+            setCurrentRoleStatus(cloneArrayWithModifiedValues(currentRoleArray))
+          );
+          dispatch(setCurrentActiveRole(currentActiveRole));
+        } else {
+          dispatch(
+            getCurrentRoleStatusFailureHandler("error-in-fetching-role-at-header")
+          );
+          dispatch(setCurrentActiveRole(null));
+        }
       }
     } catch (error) {
-      dispatch(getCurrentRoleStatusFailureHandler(error.toString()));
-      dispatch(setCurrentActiveRole(null));
+      if (isMounted) {
+        dispatch(getCurrentRoleStatusFailureHandler(error.toString()));
+        dispatch(setCurrentActiveRole(null));
+      }
     }
   };
 
   useEffect(() => {
+    let isMounted = true;
+
     if (actor && principal && isAuthenticated) {
       if (!userCurrentRoleStatus.length) {
-        initialApi();
+        initialApi(isMounted);
       }
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [
     actor,
     principal,
@@ -114,6 +125,7 @@ const Header = ({ setModalOpen, gradient }) => {
     userCurrentRoleStatus,
     userCurrentRoleStatusActiveRole,
   ]);
+
 
   return (
     <header
