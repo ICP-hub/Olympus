@@ -1787,6 +1787,9 @@ pub fn make_project_active_inactive(p_id: Principal, project_id: String) -> Stri
 #[update(guard = "is_user_anonymous")]
 pub fn post_job(params: Jobs) -> String {
     let principal_id = ic_cdk::api::caller();
+
+    ic_cdk::println!("Principal ID: {:?}", principal_id);
+
     let is_owner = read_state(|state| {
         state
             .project_storage
@@ -1798,39 +1801,59 @@ pub fn post_job(params: Jobs) -> String {
     });
 
     if !is_owner {
-        return "Error: Only the project owner can request updates.".to_string();
+        let error_message = format!(
+            "Error: Principal {:?} is not the owner of project ID: {}",
+            principal_id, params.project_id
+        );
+        ic_cdk::println!("{}", error_message);
+        return error_message;
     }
 
-    match find_project_by_id(&params.project_id) {
-        Some(project_data_internal) => {
-            let current_time = ic_cdk::api::time();
-            let project_data_for_job = project_data_internal.params;
-            mutate_state(|state| {
-                if let Some(mut jobs) = state.post_job.get(&StoredPrincipal(principal_id)) {
-                    jobs.0.push(JobsInternal {
-                        job_data: params,
-                        timestamp: current_time,
-                        project_name: project_data_for_job.project_name.clone(),
-                        project_desc: project_data_for_job.project_description.clone(),
-                        project_logo: project_data_for_job.project_logo.clone(),
-                    });
-                } else {
-                    state.post_job.insert(
-                        StoredPrincipal(principal_id),
-                        Candid(vec![JobsInternal {
-                            job_data: params,
-                            timestamp: current_time,
-                            project_name: project_data_for_job.project_name.clone(),
-                            project_desc: project_data_for_job.project_description.clone(),
-                            project_logo: project_data_for_job.project_logo.clone(),
-                        }]),
-                    );
-                }
-                format!("Job Post added successfully at {}", current_time)
-            })
+    let project_info_internal = match find_project_by_id(&params.project_id) {
+        Some(info) => info,
+        None => {
+            let error_message = format!("Error: Project ID: {} not found.", params.project_id);
+            ic_cdk::println!("{}", error_message);
+            return error_message;
         }
-        None => "Error: Project not found.".to_string(),
-    }
+    };
+
+    let current_time = ic_cdk::api::time();
+    let project_data_for_job = project_info_internal.params;
+
+    ic_cdk::println!("Project data for job posting: {:?}", project_data_for_job);
+
+    let new_job = JobsInternal {
+        job_data: params.clone(),
+        timestamp: current_time,
+        project_name: project_data_for_job.project_name.clone(),
+        project_desc: project_data_for_job.project_description.clone(),
+        project_logo: project_data_for_job.project_logo.clone(),
+    };
+
+    ic_cdk::println!("New Job Details: {:?}", new_job);
+
+    let result = mutate_state(|state| {
+        let announcement_storage = &mut state.post_job;
+        if let Some(caller_announcements) = announcement_storage.get(&StoredPrincipal(principal_id))
+        {
+            ic_cdk::println!("Existing job entry found.");
+            ic_cdk::println!("State before addition: {:?}", caller_announcements.0);
+            let mut caller_announcements = caller_announcements.clone(); // Clone to mutate
+            caller_announcements.0.push(new_job);
+            ic_cdk::println!("State after addition: {:?}", caller_announcements.0);
+            announcement_storage.insert(StoredPrincipal(principal_id), caller_announcements);
+            format!("Job post added successfully at {}", current_time)
+        } else {
+            ic_cdk::println!("No job entry found for this caller.");
+            ic_cdk::println!("State before addition: None");
+            announcement_storage.insert(StoredPrincipal(principal_id), Candid(vec![new_job]));
+
+            format!("Job Post added successfully at {}", current_time)
+        }
+    });
+
+    result
 }
 
 pub fn get_jobs_for_project(project_id: String) -> Vec<JobsInternal> {
