@@ -203,14 +203,15 @@ function ProjectDetailsCard({
                     </button>
                   </a>
                 ) : (
-                  live && (
-                    <button
-                      className="font-[950] border text-[#3505B2] py-[7px] px-[9px] rounded-md border-[#C7C7C7] bg-[#FFFFFF] text-nowrap"
-                      onClick={() => toggleAcceptModal(data?.uid)}
-                    >
-                      Live Now
-                    </button>
-                  )
+                  ""
+                  // live && (
+                  //   <button
+                  //     className="font-[950] border text-[#3505B2] py-[7px] px-[9px] rounded-md border-[#C7C7C7] bg-[#FFFFFF] text-nowrap"
+                  //     onClick={() => toggleAcceptModal(data?.uid)}
+                  //   >
+                  //     Live Now
+                  //   </button>
+                  // )
                 ))}
             </div>
           </div>
@@ -324,11 +325,12 @@ function ProjectDetailsCard({
                           </button>
                         </a>
                       ) : (
-                        live && (
-                          <button className="font-[950] border text-[#3505B2] py-[7px] px-[9px] rounded-md border-[#C7C7C7] bg-[#FFFFFF] text-nowrap">
-                            Live Now
-                          </button>
-                        )
+                        ""
+                        // live && (
+                        //   <button className="font-[950] border text-[#3505B2] py-[7px] px-[9px] rounded-md border-[#C7C7C7] bg-[#FFFFFF] text-nowrap">
+                        //     Live Now
+                        //   </button>
+                        // )
                       ))}
                   </div>
                 </div>
@@ -407,9 +409,10 @@ function ProjectDetailsCard({
                   </button>
                 </a>
               ) : (
-                <button className="font-[950] border text-[#3505B2] py-[7px] px-[9px] rounded-md border-[#C7C7C7] bg-[#FFFFFF] text-nowrap">
-                  Live Now
-                </button>
+                ""
+                // <button className="font-[950] border text-[#3505B2] py-[7px] px-[9px] rounded-md border-[#C7C7C7] bg-[#FFFFFF] text-nowrap">
+                //   Live Now
+                // </button>
               ))}
           </div>
           {/* <div className="flex flex-row flex-wrap gap-2 text-xs md:text-sm text-right justify-around">

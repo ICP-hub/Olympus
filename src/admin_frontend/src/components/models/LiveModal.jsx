@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { ThreeDots } from "react-loader-spinner";
 
@@ -8,7 +8,13 @@ const LiveModal = ({ onClose, id }) => {
   const [isAccepting, setIsAccepting] = useState(false);
   const [projectUrl, setProjectUrl] = useState("");
   const [error, setError] = useState("");
+  const isMounted = useRef(true);
 
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
   const isValidUrl = (urlString) => {
     try {
       new URL(urlString);
@@ -20,26 +26,41 @@ const LiveModal = ({ onClose, id }) => {
 
   const incubateToLiveHandler = async (id, status, projectUrl) => {
     if (!isValidUrl(projectUrl)) {
-      setError("Invalid URL provided. Please enter a valid URL.");
+      if (isMounted.current) {
+        setError("Invalid URL provided. Please enter a valid URL.");
+      }
       return;
     }
-    setIsAccepting(true);
-    setError("");
+    if (isMounted.current) {
+      setIsAccepting(true);
+      setError("");
+    }
     try {
       const newProjectUrl = projectUrl.toString();
-      await actor.admin_update_project(id, status, [newProjectUrl]);
-      //   console.log("Project updated successfully.");
+      const updateResult = await actor.admin_update_project(id, status, [
+        newProjectUrl,
+      ]);
+      console.log("Project update API call result:", updateResult);
 
-      await actor.remove_project_from_incubated(id);
-      //   console.log("Project removed from incubated status successfully.");
+      const removeResult = await actor.remove_project_from_incubated(id);
+      console.log(
+        "Project remove from incubated API call result:",
+        removeResult
+      );
 
-      onClose();
+      if (isMounted.current) {
+        onClose();
+      }
     } catch (error) {
       console.error("Error processing the project update:", error);
-      setError("Failed to update the project. Please try again.");
+      if (isMounted.current) {
+        setError("Failed to update the project. Please try again.");
+      }
     } finally {
-      setIsAccepting(false);
-      window.location.reload();
+      if (isMounted.current) {
+        setIsAccepting(false);
+        // window.location.reload();
+      }
     }
   };
 

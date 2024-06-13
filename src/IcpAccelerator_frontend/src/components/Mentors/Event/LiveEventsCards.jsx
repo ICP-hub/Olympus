@@ -11,6 +11,9 @@ const LiveEventsCards = ({ wrap, register }) => {
   const [noData, setNoData] = useState(null);
   const [allLiveEventsData, setAllLiveEventsData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [countData, setCountData] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 3;
   const [numSkeletons, setNumSkeletons] = useState(1);
 
   const updateNumSkeletons = () => {
@@ -29,44 +32,54 @@ const LiveEventsCards = ({ wrap, register }) => {
       window.removeEventListener("resize", updateNumSkeletons);
     };
   }, []);
-  const getAllLiveEvents = async (caller) => {
-    setIsLoading(true);
-    try {
-      const result = await caller.get_all_cohorts();
-      console.log("cohort result", result);
-
-      if (result && Array.isArray(result)) {
-        if (
-          result.length > 0 ||
-          (result.length === 0 && JSON.stringify(result) !== JSON.stringify([]))
-        ) {
-          setAllLiveEventsData(result);
-          setIsLoading(false);
-          setNoData(false);
-        } else {
-          setNoData(true);
-          setIsLoading(false);
-          setAllLiveEventsData([]);
-        }
-      } else {
-        setNoData(true);
-        setIsLoading(false);
-        setAllLiveEventsData([]);
-      }
-    } catch (error) {
-      setNoData(true);
-      setIsLoading(false);
-      setAllLiveEventsData([]);
-    }
-  };
-
   useEffect(() => {
+    let isMounted = true;
+
+    const getAllLiveEvents = async (caller, page) => {
+      setIsLoading(true);
+      await caller
+        .get_all_cohorts({
+          page_size: itemsPerPage,
+          page,
+        })
+        .then((result) => {
+          console.log(" in get_all_cohort", result);
+          if (isMounted) {
+            if (!result || result.length == 0) {
+              setNoData(true);
+              setIsLoading(false);
+              setAllLiveEventsData([]);
+              setCountData("");
+            } else {
+              setNoData(false);
+              setIsLoading(false);
+              setAllLiveEventsData(result.data);
+              setCountData(result.total_count);
+            }
+          }
+        })
+        .catch((error) => {
+          if (isMounted) {
+            setNoData(true);
+            setIsLoading(false);
+            setCountData("");
+            setAllLiveEventsData([]);
+            console.log("Error in get_all_cohort", error);
+          }
+        });
+    };
+
     if (actor) {
-      getAllLiveEvents(actor);
+      getAllLiveEvents(actor, currentPage);
     } else {
       getAllLiveEvents(IcpAccelerator_backend);
     }
-  }, [actor]);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [actor, currentPage]);
+
   const today = new Date();
   const todayStr = today.toISOString().split("T")[0]; // Get only the date part in 'YYYY-MM-DD' format
 
@@ -121,7 +134,7 @@ const LiveEventsCards = ({ wrap, register }) => {
               }`}
             >
               {filteredEvents &&
-                filteredEvents.map((val, index) => {
+                filteredEvents?.slice(0, numSkeletons).map((val, index) => {
                   return (
                     <div
                       key={index}
