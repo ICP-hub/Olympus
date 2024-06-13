@@ -34,6 +34,7 @@ const RequestCheck = () => {
 
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
+  const [filter, setFilter] = useState("");
   const itemsPerPage = 12;
 
   const dropdownRef = useRef(null);
@@ -181,7 +182,17 @@ const RequestCheck = () => {
 
     const currentData = categoryMapping[activeCategory][selectedStatus];
     // console.log("currentData =>", currentData);
-    setFilteredNotifications(currentData);
+    const filteredData = currentData.filter((item) => {
+      console.log(item);
+      const fullName = item?.profile?.user_data?.full_name?.toLowerCase() || "";
+      const country = item?.profile?.user_data?.country?.toLowerCase() || "";
+      return (
+        fullName.includes(filter.toLowerCase()) ||
+        country.includes(filter.toLowerCase())
+      );
+    });
+
+    setFilteredNotifications(filteredData);
   }, [
     activeCategory,
     selectedStatus,
@@ -194,6 +205,7 @@ const RequestCheck = () => {
     investorPending,
     investorApproved,
     investorDeclined,
+    filter,
   ]);
 
   const totalPages = Math.ceil(
@@ -276,11 +288,32 @@ const RequestCheck = () => {
   };
   return (
     <div className="px-[4%] py-[4%] w-full bg-gray-100 h-screen overflow-y-scroll">
-      {/* <div className="text-2xl font-semibold text-left my-4 pb-2">
-        <span className="inline-block bg-[#3505B2] text-transparent bg-clip-text">
-          {selectedStatus}
-        </span>
-      </div> */}
+      <div className="flex flex-wrap justify-between mb-10">
+        <div className="text-2xl font-semibold text-left pb-2">
+          <span className="inline-block bg-[#3505B2] text-transparent bg-clip-text">
+            {selectedStatus}
+          </span>
+        </div>
+        <div className="relative flex items-center max-w-xs bg-white rounded-xl">
+          <input
+            type="text"
+            value={filter}
+            onChange={(e) => {
+              setFilter(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="form-input rounded-xl px-4 py-2 bg-white text-gray-600 placeholder-gray-600 placeholder-ml-4 max-w-md"
+            placeholder="Search..."
+          />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 512 512"
+            className="w-5 h-5 absolute right-2 text-gray-600"
+          >
+            <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
+          </svg>
+        </div>
+      </div>
       <div className="flex justify-between">
         <div>
           {[

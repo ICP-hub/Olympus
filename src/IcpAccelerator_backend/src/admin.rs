@@ -1101,71 +1101,57 @@ pub fn decline_project_creation_request(requester: Principal) -> String {
 
 #[update(guard = "is_admin")]
 pub fn approve_project_update(requester: Principal, project_id: String, approve: bool) -> String {
-    mutate_state(|state| {
-        if let Some(project_update_request) = state.pending_project_details.remove(&project_id) {
-            if approve {
-                if let Some(mut project_list) =
-                    state.project_storage.get(&StoredPrincipal(requester))
-                {
+    ic_cdk::println!("1");
+    let project_update_request = mutate_state(|state| state.pending_project_details.remove(&project_id));
+    ic_cdk::println!("2");
+    if let Some(project_update_request) = project_update_request {
+        ic_cdk::println!("3");
+        if approve {
+            ic_cdk::println!("4");
+            let mut result = String::new();
+            ic_cdk::println!("5");
+            mutate_state(|state| {
+                ic_cdk::println!("6");
+                if let Some( mut project_list) = state.project_storage.get(&StoredPrincipal(requester)) {
+                    ic_cdk::println!("7");
                     if let Some(project) = project_list.0.iter_mut().find(|p| p.uid == project_id) {
-                        project.params.project_name =
-                            project_update_request.0.updated_info.project_name;
-                        project.params.project_logo =
-                            project_update_request.0.updated_info.project_logo;
-                        project.params.preferred_icp_hub =
-                            project_update_request.0.updated_info.preferred_icp_hub;
-                        project.params.live_on_icp_mainnet =
-                            project_update_request.0.updated_info.live_on_icp_mainnet;
-                        project.params.money_raised_till_now =
-                            project_update_request.0.updated_info.money_raised_till_now;
-                        project.params.supports_multichain =
-                            project_update_request.0.updated_info.supports_multichain;
-                        project.params.project_elevator_pitch =
-                            project_update_request.0.updated_info.project_elevator_pitch;
-                        project.params.project_area_of_focus =
-                            project_update_request.0.updated_info.project_area_of_focus;
-                        project.params.promotional_video =
-                            project_update_request.0.updated_info.promotional_video;
-                        project.params.github_link =
-                            project_update_request.0.updated_info.github_link;
-                        project.params.reason_to_join_incubator = project_update_request
-                            .0
-                            .updated_info
-                            .reason_to_join_incubator;
-                        project.params.project_description =
-                            project_update_request.0.updated_info.project_description;
-                        project.params.project_cover =
-                            project_update_request.0.updated_info.project_cover;
-                        project.params.project_team =
-                            project_update_request.0.updated_info.project_team;
-                        project.params.token_economics =
-                            project_update_request.0.updated_info.token_economics;
-                        project.params.technical_docs =
-                            project_update_request.0.updated_info.technical_docs;
-                        project.params.long_term_goals =
-                            project_update_request.0.updated_info.long_term_goals;
-                        project.params.target_market =
-                            project_update_request.0.updated_info.target_market;
-                        project.params.self_rating_of_project =
-                            project_update_request.0.updated_info.self_rating_of_project;
+                        ic_cdk::println!("8");
+                        project.params.project_name = project_update_request.0.updated_info.project_name;
+                        project.params.project_logo = project_update_request.0.updated_info.project_logo;
+                        project.params.preferred_icp_hub = project_update_request.0.updated_info.preferred_icp_hub;
+                        project.params.live_on_icp_mainnet = project_update_request.0.updated_info.live_on_icp_mainnet;
+                        project.params.money_raised_till_now = project_update_request.0.updated_info.money_raised_till_now;
+                        project.params.supports_multichain = project_update_request.0.updated_info.supports_multichain;
+                        project.params.project_elevator_pitch = project_update_request.0.updated_info.project_elevator_pitch;
+                        project.params.project_area_of_focus = project_update_request.0.updated_info.project_area_of_focus;
+                        project.params.promotional_video = project_update_request.0.updated_info.promotional_video;
+                        project.params.github_link = project_update_request.0.updated_info.github_link;
+                        project.params.reason_to_join_incubator = project_update_request.0.updated_info.reason_to_join_incubator;
+                        project.params.project_description = project_update_request.0.updated_info.project_description;
+                        project.params.project_cover = project_update_request.0.updated_info.project_cover;
+                        project.params.project_team = project_update_request.0.updated_info.project_team;
+                        project.params.token_economics = project_update_request.0.updated_info.token_economics;
+                        project.params.technical_docs = project_update_request.0.updated_info.technical_docs;
+                        project.params.long_term_goals = project_update_request.0.updated_info.long_term_goals;
+                        project.params.target_market = project_update_request.0.updated_info.target_market;
+                        project.params.self_rating_of_project = project_update_request.0.updated_info.self_rating_of_project;
                         project.params.user_data = project_update_request.0.updated_info.user_data;
-                        project.params.mentors_assigned =
-                            project_update_request.0.updated_info.mentors_assigned;
-                        project.params.vc_assigned =
-                            project_update_request.0.updated_info.vc_assigned;
+                        project.params.mentors_assigned = project_update_request.0.updated_info.mentors_assigned;
+                        project.params.vc_assigned = project_update_request.0.updated_info.vc_assigned;
+                        ic_cdk::println!("9");
 
-                        change_notification_status(
-                            requester,
-                            "project".to_string(),
-                            "approved".to_string(),
-                        );
-
-                        return format!(
+                        result = format!(
                             "Project update for ID {} has been approved and applied.",
                             project_id
                         );
+                        state.project_storage.insert(StoredPrincipal(requester), project_list.clone());
+                        ic_cdk::println!("11");
                     }
                 }
+            });
+            ic_cdk::println!("12");
+            if result.is_empty() {
+                ic_cdk::println!("13");
                 return format!(
                     "Failed to apply update: Project ID {} not found under requester.",
                     project_id
@@ -1174,14 +1160,26 @@ pub fn approve_project_update(requester: Principal, project_id: String, approve:
                 change_notification_status(
                     requester,
                     "project".to_string(),
-                    "declined".to_string(),
+                    "approved".to_string(),
                 );
-                // Optionally handle declined updates, such as logging or notifying the requester.
-                return format!("Project update for ID {} was declined.", project_id);
+                ic_cdk::println!("14");
+                return result;
             }
+        } else {
+            ic_cdk::println!("15");
+            change_notification_status(
+                requester,
+                "project".to_string(),
+                "declined".to_string(),
+            );
+            ic_cdk::println!("16");
+            // Optionally handle declined updates, such as logging or notifying the requester.
+            return format!("Project update for ID {} was declined.", project_id);
         }
+    } else {
+        ic_cdk::println!("17");
         return format!("No pending update found for project ID {}.", project_id);
-    })
+    }
 }
 
 #[update(guard = "is_admin")]

@@ -58,7 +58,6 @@ const UpdateAllRequest = () => {
     return action ? await action() : [];
   }
 
-
   const fetchData = useCallback(async () => {
     setloading(true);
     try {
@@ -163,24 +162,24 @@ const UpdateAllRequest = () => {
     );
   };
 
-  const handleRowClick = (principalId ,selectionOption) => {
+  const handleRowClick = (principalId, selectionOption) => {
     const routePath =
       filterOption === "Mentors"
         ? "/mentorupdate"
         : filterOption === "Investors"
-          ? "/investorupdate"
-          : "/projectupdate";
+        ? "/investorupdate"
+        : "/projectupdate";
     navigate(routePath, {
       state: {
         principalId: principalId,
-        selectionOption: selectionOption
-      }
+        selectionOption: selectionOption,
+      },
     });
   };
 
   return (
     <div className="px-[4%] py-[3%] w-full bg-gray-100">
-      <div className="flex justify-between mb-10">
+      <div className="flex flex-wrap justify-between mb-10">
         <div
           className="w-full bg-gradient-to-r from-purple-900 to-blue-500 text-transparent bg-clip-text text-xl md:text-3xl font-extrabold 
        font-fontUse"
@@ -218,10 +217,11 @@ const UpdateAllRequest = () => {
             <button
               key={item.name}
               onClick={() => setFilterOption(item.name)}
-              className={`mr-4 text-sm font-medium transition-colors duration-300 ease-in-out ${filterOption === item.name
+              className={`mr-4 text-sm font-medium transition-colors duration-300 ease-in-out ${
+                filterOption === item.name
                   ? "pb-1 border-b-2 border-gray-700 font-bold text-gray-700"
                   : "text-gray-500"
-                }`}
+              }`}
             >
               <span className="md:block hidden">{item.name}</span>
               <img
@@ -286,114 +286,114 @@ const UpdateAllRequest = () => {
 
       {isloading ? (
         <AdminRequestSkeleton />
-      ) : (
-        currentData.length > 0 ? (
-          <div className="px-[2%]  py-[1.5%] w-full flex flex-col mb-6 bg-white rounded-lg shadow border border-gray-200">
-            {currentData.map((user, index) => (
-              <div
-                className="w-full mb-2 justify-between items-center  flex flex-row flex-wrap"
-                key={index}
-              >
-                <div className="space-x-3 flex flex-row items-center">
-                  <img
-                    src={user.profilePictureURL} // Use user.profilePictureURL instead of currentData.profilePictureURL
-                    alt="profile"
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                  <h4 className="md:text-2xl text-md font-extrabold text-[#3505B2]">
-                    {user.fullName}{" "}
-                    {/* Use user.fullName instead of currentData.fullName */}
-                  </h4>
-                  <div>
-                    {filterOption && (
-                      <p className="bg-[#2A353D] md:text-[10px] text-[8px] items-center  rounded-full text-white py-0.5 px-2">
-                        {filterOption}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className=" hidden md:flex md:flex-row">
-                  <span className="text-gray-500 mr-2">
-                    <DateSvg />
-                  </span>
-                  <p className="md:text-sm text-xs md:text-md text-[#3505B2]">
-                    {user.requestTime}{" "}
-                    {/* Use user.requestTime instead of currentData.requestTime */}
-                  </p>
-                </div>
-
-                <div className="flex md:flex-row flex-col w-full">
-                  <div className="flex flex-col md:w-3/4 w-full mb-3 md:mb-0">
-                    <div className="md:hidden mt-2 block">
-                      {user.requestTime && (
-                        <div className="flex flex-row mt-2 items-center text-sm mb-1 font-medium text-gray-600">
-                          <span className="text-gray-500 min-w-[40px] ml-3">
-                            <DateSvg />
-                          </span>
-                          <span className="truncate md:text-sm text-xs">
-                            {user.requestTime}{" "}
-                            {/* Use user.requestTime instead of currentData.requestTime */}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-
-                    {user.country && (
-                      <div className="flex flex-row items-center text-sm mb-1 md:mt-2 font-medium text-gray-600">
-                        <span className="text-gray-500 min-w-[40px] ml-3">
-                          {place}
-                        </span>
-                        <span className="truncate">
-                          {user.country}{" "}
-                          {/* Use user.country instead of currentData.country */}
-                        </span>
-                      </div>
-                    )}
-                    {user.description ? (
-                      <div className="flex flex-row items-center text-sm font-medium text-gray-600 break-words">
-                        <span className="text-gray-500 min-w-[40px] ml-3">
-                          <BioSvg />
-                        </span>
-                        <span className="truncate md:text-sm text-xs">
-                          {user.description}
-                        </span>
-                      </div>
-                    ) : user.bio ? (
-                      <div className="flex flex-row items-center text-sm font-medium text-gray-600 break-words">
-                        <span className="text-gray-500 min-w-[40px] ml-3">
-                          <BioSvg />
-                        </span>
-                        <span className="truncate md:text-sm text-xs">
-                          {user.bio}
-                        </span>
-                      </div>
-                    ) : (
-                      <div className="flex flex-row items-center text-sm font-medium text-gray-600 break-words">
-                        <span className="text-gray-500 min-w-[40px] ml-3.5">
-                          {noDataPresentSvg}
-                        </span>
-                        <span className="truncate md:text-sm text-xs">
-                          No Data
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="md:w-1/4 w-full flex justify-end items-end space-x-2 md:h-10">
-                    <button
-                      onClick={() => handleRowClick(user.principalId ,selectionOption)}
-                      className="capitalize border-2 font-semibold bg-[#3505B2] border-[#3505B2] md:text-xs text-[9px]  text-white md:px-1 px-2 rounded-md md:h-8 h-7 hover:text-[#3505B2] hover:bg-white"
-                    >
-                      View User Profile
-                    </button>
-                  </div>
+      ) : currentData.length > 0 ? (
+        <div className="px-[2%]  py-[1.5%] w-full flex flex-col mb-6 bg-white rounded-lg shadow border border-gray-200">
+          {currentData.map((user, index) => (
+            <div
+              className="w-full mb-2 justify-between items-center  flex flex-row flex-wrap"
+              key={index}
+            >
+              <div className="space-x-3 flex flex-row items-center">
+                <img
+                  src={user.profilePictureURL} // Use user.profilePictureURL instead of currentData.profilePictureURL
+                  alt="profile"
+                  className="w-10 h-10 rounded-full object-cover"
+                />
+                <h4 className="md:text-2xl text-md font-extrabold text-[#3505B2]">
+                  {user.fullName}{" "}
+                  {/* Use user.fullName instead of currentData.fullName */}
+                </h4>
+                <div>
+                  {filterOption && (
+                    <p className="bg-[#2A353D] md:text-[10px] text-[8px] items-center  rounded-full text-white py-0.5 px-2">
+                      {filterOption}
+                    </p>
+                  )}
                 </div>
               </div>
-            ))}
-          </div>
-        ) : (
-          <NoDataCard image={NoData} desc={"No Update Requests"} />
-        )
+
+              <div className=" hidden md:flex md:flex-row">
+                <span className="text-gray-500 mr-2">
+                  <DateSvg />
+                </span>
+                <p className="md:text-sm text-xs md:text-md text-[#3505B2]">
+                  {user.requestTime}{" "}
+                  {/* Use user.requestTime instead of currentData.requestTime */}
+                </p>
+              </div>
+
+              <div className="flex md:flex-row flex-col w-full">
+                <div className="flex flex-col md:w-3/4 w-full mb-3 md:mb-0">
+                  <div className="md:hidden mt-2 block">
+                    {user.requestTime && (
+                      <div className="flex flex-row mt-2 items-center text-sm mb-1 font-medium text-gray-600">
+                        <span className="text-gray-500 min-w-[40px] ml-3">
+                          <DateSvg />
+                        </span>
+                        <span className="truncate md:text-sm text-xs">
+                          {user.requestTime}{" "}
+                          {/* Use user.requestTime instead of currentData.requestTime */}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {user.country && (
+                    <div className="flex flex-row items-center text-sm mb-1 md:mt-2 font-medium text-gray-600">
+                      <span className="text-gray-500 min-w-[40px] ml-3">
+                        {place}
+                      </span>
+                      <span className="truncate">
+                        {user.country}{" "}
+                        {/* Use user.country instead of currentData.country */}
+                      </span>
+                    </div>
+                  )}
+                  {user.description ? (
+                    <div className="flex flex-row items-center text-sm font-medium text-gray-600 break-words">
+                      <span className="text-gray-500 min-w-[40px] ml-3">
+                        <BioSvg />
+                      </span>
+                      <span className="truncate md:text-sm text-xs">
+                        {user.description}
+                      </span>
+                    </div>
+                  ) : user.bio ? (
+                    <div className="flex flex-row items-center text-sm font-medium text-gray-600 break-words">
+                      <span className="text-gray-500 min-w-[40px] ml-3">
+                        <BioSvg />
+                      </span>
+                      <span className="truncate md:text-sm text-xs">
+                        {user.bio}
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="flex flex-row items-center text-sm font-medium text-gray-600 break-words">
+                      <span className="text-gray-500 min-w-[40px] ml-3.5">
+                        {noDataPresentSvg}
+                      </span>
+                      <span className="truncate md:text-sm text-xs">
+                        No Data
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <div className="md:w-1/4 w-full flex justify-end items-end space-x-2 md:h-10">
+                  <button
+                    onClick={() =>
+                      handleRowClick(user.principalId, selectionOption)
+                    }
+                    className="capitalize border-2 font-semibold bg-[#3505B2] border-[#3505B2] md:text-xs text-[9px]  text-white md:px-1 px-2 rounded-md md:h-8 h-7 hover:text-[#3505B2] hover:bg-white"
+                  >
+                    View User Profile
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <NoDataCard image={NoData} desc={"No Update Requests"} />
       )}
 
       {currentData.length > 0 && (
@@ -432,7 +432,7 @@ const UpdateAllRequest = () => {
                 currentPage === number
                   ? "bg-gray-900 text-white"
                   : "hover:bg-gray-900/10 active:bg-gray-900/20"
-                }`}
+              }`}
               type="button"
             >
               <span className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
