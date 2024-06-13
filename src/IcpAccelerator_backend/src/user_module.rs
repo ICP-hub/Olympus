@@ -250,6 +250,7 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
             for role in role_status_vec.iter_mut() {
                 if role.name == "user" {
                     role.status = "active".to_string();
+                    role.requested_on = Some(time());
                     break;
                 }
             }
@@ -412,8 +413,9 @@ async fn update_vc_data(user_id: Principal, user_data: UserInformation) -> Resul
 #[query(guard = "is_user_anonymous")]
 pub fn get_roles_for_principal(principal_id: Principal) -> Vec<Role> {
     read_state(|state| {
-        if let Some(Candid(role_status)) = state.role_status.get(&StoredPrincipal(principal_id)) {
-            role_status.clone()
+        if let Some(roles_candid) = state.role_status.get(&StoredPrincipal(principal_id)) {
+            println!("Retrieving roles for principal {}: {:?}", principal_id, roles_candid.0);
+            roles_candid.0.clone()
         } else {
             vec![
                 Role {
@@ -503,78 +505,41 @@ pub fn get_role_status() -> Vec<Role> {
 // }
 
 #[update(guard = "is_user_anonymous")]
-pub fn switch_role(role_to_switch: String, new_status: String) {
+pub fn switch_role(role_to_switch: String, new_status: String){
+    let caller_id = StoredPrincipal(caller());
+
     mutate_state(|state| {
-        let caller_id = StoredPrincipal(caller());
-        let roles_opt = state.role_status.get(&caller_id);
+        if let Some(mut roles_candid) = state.role_status.get(&caller_id) {
+            let mut active_role_index = None;
+            let mut role_to_update_index = None;
 
-        if let Some(mut roles) = roles_opt {
-            if new_status == "active" {
-                let mut active_role_index = None;
-                let mut approved_role_index = None;
-
-                // Find indices of the active role and the role to be switched if approved
-                for (index, role) in roles.0.iter().enumerate() {
-                    if role.status == "active" {
-                        active_role_index = Some(index);
-                    }
-                    if role.name == role_to_switch && role.status == "approved" {
-                        approved_role_index = Some(index);
-                    }
+            // Find the indices of the roles to update
+            for (index, role) in roles_candid.0.iter().enumerate() {
+                if role.status == "active" {
+                    active_role_index = Some(index);
                 }
-
-                if let Some(approved_index) = approved_role_index {
-                    // Set the approved role to active
-                    roles.0[approved_index].status = "active".to_string();
-
-                    if let Some(active_index) = active_role_index {
-                        // Change the previously active role to approved
-                        roles.0[active_index].status = "approved".to_string();
-                    }
-                } else {
-                    ic_cdk::println!("The role to switch is not approved or doesn't exist.");
+                if role.name == role_to_switch {
+                    role_to_update_index = Some(index);
                 }
-            } else {
-                ic_cdk::println!("Only roles with 'approved' status can be set to 'active'");
             }
+
+            // Update the statuses
+            if let Some(index) = active_role_index {
+                roles_candid.0[index].status = "approved".to_string();
+            }
+            if let Some(index) = role_to_update_index {
+                roles_candid.0[index].status = new_status.clone();
+            }
+
+            state.role_status.insert(caller_id.clone(), roles_candid.clone());
+
         } else {
-            // Insert default roles if the user does not have any roles
-            state.role_status.insert(
-                caller_id.clone(),
-                Candid(vec![
-                    Role {
-                        name: "user".to_string(),
-                        status: "default".to_string(),
-                        requested_on: None,
-                        approved_on: None,
-                        rejected_on: None,
-                    },
-                    Role {
-                        name: "project".to_string(),
-                        status: "default".to_string(),
-                        requested_on: None,
-                        approved_on: None,
-                        rejected_on: None,
-                    },
-                    Role {
-                        name: "mentor".to_string(),
-                        status: "default".to_string(),
-                        requested_on: None,
-                        approved_on: None,
-                        rejected_on: None,
-                    },
-                    Role {
-                        name: "vc".to_string(),
-                        status: "default".to_string(),
-                        requested_on: None,
-                        approved_on: None,
-                        rejected_on: None,
-                    },
-                ]),
-            );
+            println!("Principal not found: {}", caller_id.0);
         }
     });
 }
+
+
 
 // pub fn switch_role(role: String, new_status: String) {
 //     ROLE_STATUS_ARRAY.with(|status_arr| {
