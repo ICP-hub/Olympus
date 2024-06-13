@@ -207,7 +207,7 @@ const UpdateInvestorProfile = () => {
       console.error("Error processing request:", error);
     } finally {
       setIsAccepting(false);
-      window.location.reload();
+      // window.location.reload();
     }
   };
 
