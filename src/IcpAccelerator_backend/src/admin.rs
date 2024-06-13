@@ -214,60 +214,55 @@ pub fn approve_mentor_creation_request(requester: Principal, approve: bool) -> S
 }
 
 pub fn decline_mentor_creation_request(requester: Principal, decline: bool) -> String {
-    mutate_state(|state| {
-        if let Some(mut mentor_internal) = state
-            .mentor_awaits_response
-            .get(&StoredPrincipal(requester))
-        {
-            if decline {
-                mentor_internal.0.decline = decline;
-                mentor_internal.0.approve = false;
+    // Step 1: Read all necessary data
+    let (mentor_internal_opt, res_opt, user_roles_opt) = read_state(|state| {
+        let mentor_internal = state.mentor_awaits_response.get(&StoredPrincipal(requester)).map(|mentor| mentor.0.clone());
+        let res = state.mentor_awaits_response.get(&StoredPrincipal(requester)).map(|res| res.0.clone());
+        let user_roles = state.role_status.get(&StoredPrincipal(requester)).map(|roles| roles.0.clone());
+        (mentor_internal, res, user_roles)
+    });
 
-                if let Some(res) = state
-                    .mentor_awaits_response
-                    .get(&StoredPrincipal(requester))
-                {
-                    state
-                        .mentor_declined_request
-                        .insert(StoredPrincipal(requester), res);
-                    if let Some(user_roles) = state.role_status.get(&StoredPrincipal(requester)) {
-                        let mut roles_clone = user_roles.0.clone();
-                        if let Some(user_role) = roles_clone.iter_mut().find(|r| r.name == "mentor")
-                        {
+    // Check if the mentor_internal is available
+    if let Some(mut mentor_internal) = mentor_internal_opt {
+        if decline {
+            mentor_internal.decline = true;
+            mentor_internal.approve = false;
+
+            // Step 2: Perform the state mutations
+            mutate_state(|state| {
+                if let Some(res) = res_opt {
+                    state.mentor_declined_request.insert(StoredPrincipal(requester), Candid(res));
+
+                    if let Some(mut roles_clone) = user_roles_opt {
+                        if let Some(user_role) = roles_clone.iter_mut().find(|r| r.name == "mentor") {
                             user_role.status = "default".to_string();
                             user_role.rejected_on = Some(time());
                         }
+                        state.role_status.insert(StoredPrincipal(requester), Candid(roles_clone));
                     }
 
-                    state
-                        .mentor_awaits_response
-                        .remove(&StoredPrincipal(requester));
-                    change_notification_status(
-                        requester,
-                        "mentor".to_string(),
-                        "declined".to_string(),
-                    )
-                } else {
-                    return "Requester has not registered".to_string();
+                    state.mentor_awaits_response.remove(&StoredPrincipal(requester));
                 }
+            });
 
-                return format!("Requester with principal id {} is declined", requester);
-            } else {
-                return format!(
-                    "Requester with principal id {} could not be declined",
-                    requester
-                );
-            }
+            // Step 3: Call change_notification_status after other mutations
+            change_notification_status(requester, "mentor".to_string(), "declined".to_string());
+
+            format!("Requester with principal id {} is declined", requester)
         } else {
-            return format!(
-                "Requester with principal id {} has not registered",
+            format!(
+                "Requester with principal id {} could not be declined",
                 requester
-            );
+            )
         }
-    });
-
-    "".to_string() // Return an empty string in case no other value is returned
+    } else {
+        format!(
+            "Requester with principal id {} has not registered",
+            requester
+        )
+    }
 }
+
 
 pub fn get_admin_notifications() -> Vec<Notification> {
     let caller = caller();
@@ -589,57 +584,55 @@ fn project_update_awaiting_approval() -> HashMap<String, ProjectUpdateRequest> {
 
 #[update(guard = "is_admin")]
 pub fn decline_vc_creation_request(requester: Principal, decline: bool) -> String {
-    mutate_state(|state| {
-        if let Some(mut vc_internal) = state.vc_awaits_response.get(&StoredPrincipal(requester)) {
-            if decline {
-                vc_internal.0.decline = decline;
-                vc_internal.0.approve = false;
+    // Step 1: Read all necessary data
+    let (vc_internal_opt, res_opt, user_roles_opt) = read_state(|state| {
+        let vc_internal = state.vc_awaits_response.get(&StoredPrincipal(requester)).map(|vc| vc.0.clone());
+        let res = state.vc_awaits_response.get(&StoredPrincipal(requester)).map(|res| res.0.clone());
+        let user_roles = state.role_status.get(&StoredPrincipal(requester)).map(|roles| roles.0.clone());
+        (vc_internal, res, user_roles)
+    });
 
-                match state.vc_awaits_response.get(&StoredPrincipal(requester)) {
-                    Some(res) => {
-                        state
-                            .vc_declined_request
-                            .insert(StoredPrincipal(requester), Candid(res.0.clone()));
-                        if let Some(user_roles) = state.role_status.get(&StoredPrincipal(requester))
-                        {
-                            let mut roles_clone = user_roles.0.clone();
-                            if let Some(user_role) = roles_clone.iter_mut().find(|r| r.name == "vc")
-                            {
-                                user_role.status = "default".to_string();
-                                user_role.rejected_on = Some(time());
-                            }
+    // Check if the vc_internal is available
+    if let Some(mut vc_internal) = vc_internal_opt {
+        if decline {
+            vc_internal.decline = true;
+            vc_internal.approve = false;
+
+            // Step 2: Perform the state mutations
+            mutate_state(|state| {
+                if let Some(res) = res_opt {
+                    state.vc_declined_request.insert(StoredPrincipal(requester), Candid(res));
+
+                    if let Some(mut roles_clone) = user_roles_opt {
+                        if let Some(user_role) = roles_clone.iter_mut().find(|r| r.name == "vc") {
+                            user_role.status = "default".to_string();
+                            user_role.rejected_on = Some(time());
                         }
+                        state.role_status.insert(StoredPrincipal(requester), Candid(roles_clone));
+                    }
 
-                        state.vc_awaits_response.remove(&StoredPrincipal(requester));
-                        change_notification_status(
-                            requester,
-                            "vc".to_string(),
-                            "declined".to_string(),
-                        )
-                    }
-                    None => {
-                        return format!(
-                            "Requester with principal id {} has not registered",
-                            requester
-                        );
-                    }
+                    state.vc_awaits_response.remove(&StoredPrincipal(requester));
                 }
+            });
 
-                format!("Requester with principal id {} is declined", requester)
-            } else {
-                format!(
-                    "Requester with principal id {} could not be declined",
-                    requester
-                )
-            }
+            // Step 3: Call change_notification_status after other mutations
+            change_notification_status(requester, "vc".to_string(), "declined".to_string());
+
+            format!("Requester with principal id {} is declined", requester)
         } else {
             format!(
-                "Requester with principal id {} has not registered",
+                "Requester with principal id {} could not be declined",
                 requester
             )
         }
-    })
+    } else {
+        format!(
+            "Requester with principal id {} has not registered",
+            requester
+        )
+    }
 }
+
 
 #[update(guard = "is_admin")]
 pub fn approve_vc_creation_request(requester: Principal, approve: bool) -> String {
@@ -1063,54 +1056,49 @@ pub fn approve_project_creation_request(requester: Principal) -> String {
 
 #[update(guard = "is_admin")]
 pub fn decline_project_creation_request(requester: Principal) -> String {
-    mutate_state(|state| {
-        if let Some(mut project_internal) = state
-            .project_awaits_response
-            .get(&StoredPrincipal(requester))
-        {
-            project_internal.0.is_verified = false;
+    // Step 1: Read all necessary data
+    let (project_internal_opt, res_opt, user_roles_opt) = read_state(|state| {
+        let project_internal = state.project_awaits_response.get(&StoredPrincipal(requester)).map(|pi| pi.0.clone());
+        let res = state.project_awaits_response.get(&StoredPrincipal(requester)).map(|res| res.0.clone());
+        let user_roles = state.role_status.get(&StoredPrincipal(requester)).map(|roles| roles.0.clone());
+        (project_internal, res, user_roles)
+    });
 
-            if let Some(res) = state
-                .project_awaits_response
-                .get(&StoredPrincipal(requester))
-            {
-                state
-                    .project_declined_request
-                    .insert(StoredPrincipal(requester), Candid(res.0.clone()));
+    // Check if the project_internal is available
+    if let Some(mut project_internal) = project_internal_opt {
+        project_internal.is_verified = false;
 
-                if let Some(user_roles) = state.role_status.get(&StoredPrincipal(requester)) {
-                    let mut roles_clone = user_roles.0.clone();
+        // Step 2: Perform the state mutations
+        mutate_state(|state| {
+            if let Some(res) = res_opt {
+                state.project_declined_request.insert(StoredPrincipal(requester), Candid(res));
+
+                if let Some(mut roles_clone) = user_roles_opt {
                     if let Some(user_role) = roles_clone.iter_mut().find(|r| r.name == "project") {
                         user_role.status = "default".to_string();
                         user_role.rejected_on = Some(time());
                     }
+                    state.role_status.insert(StoredPrincipal(requester), Candid(roles_clone));
                 }
 
-                state
-                    .project_awaits_response
-                    .remove(&StoredPrincipal(requester));
-                change_notification_status(
-                    requester,
-                    "project".to_string(),
-                    "declined".to_string(),
-                );
-
-                format!("Requester with principal id {} is declined", requester)
-            } else {
-                format!(
-                    "Requester with principal id {} has not registered",
-                    requester
-                )
+                state.project_awaits_response.remove(&StoredPrincipal(requester));
             }
-        } else {
-            format!(
-                "Requester with principal id {} could not be declined",
-                requester
-            )
-        }
-    })
+        });
+
+        // Step 3: Call change_notification_status after other mutations
+        change_notification_status(requester, "project".to_string(), "declined".to_string());
+
+        format!("Requester with principal id {} is declined", requester)
+    } else {
+        format!(
+            "Requester with principal id {} has not registered or could not be declined",
+            requester
+        )
+    }
 }
-//todo:- change the function according to new struct
+
+
+
 #[update(guard = "is_admin")]
 pub fn approve_project_update(requester: Principal, project_id: String, approve: bool) -> String {
     mutate_state(|state| {
