@@ -47,7 +47,7 @@ const LiveEventsCards = ({ wrap, register }) => {
         .then((result) => {
           console.log(" in get_all_cohort", result);
           if (isMounted) {
-            if (!result || result.length == 0) {
+            if (!result || result.data.length === 0) {
               setNoData(true);
               setIsLoading(false);
               setAllLiveEventsData([]);
@@ -74,7 +74,7 @@ const LiveEventsCards = ({ wrap, register }) => {
     if (actor) {
       getAllLiveEvents(actor, currentPage);
     } else {
-      getAllLiveEvents(IcpAccelerator_backend);
+      getAllLiveEvents(IcpAccelerator_backend, currentPage);
     }
 
     return () => {
@@ -95,9 +95,7 @@ const LiveEventsCards = ({ wrap, register }) => {
                 : "flex flex-row flex-wrap w-full px-8"
             }`}
           >
-            {Array(numSkeletons)
-              .fill(0)
-              .map((_, index) => (
+              {Array.from({ length: numSkeletons }).map((_, index) => (
                 <div
                   key={index}
                   className=" w-full md:min-w-[50%] lg1:min-w-[33.33%] md:max-w-[50%] lg1:max-w-[33.33%]"
