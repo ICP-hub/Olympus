@@ -88,13 +88,13 @@ const ViewInvestor = () => {
 
   useEffect(() => {
     const updateMaxPageNumbers = () => {
-      if (window.innerWidth <= 380) {
+      if (window.innerWidth <= 430) {
         setMaxPageNumbers(1); // For mobile view
-      } else if (window.innerWidth <= 496) {
+      } else if (window.innerWidth <= 530) {
         setMaxPageNumbers(3); // For tablet view
-      } else if (window.innerWidth <= 620) {
+      } else if (window.innerWidth <= 640) {
         setMaxPageNumbers(5); // For tablet view
-      } else if (window.innerWidth <= 768) {
+      } else if (window.innerWidth <= 810) {
         setMaxPageNumbers(7); // For tablet view
       } else {
         setMaxPageNumbers(10); // For desktop view
@@ -171,7 +171,7 @@ const ViewInvestor = () => {
           </div>
         </div>
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 mb-8 gap-8 items-center flex-wrap ">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md1:grid-cols-3 lg1:grid-cols-4 mb-8 gap-8 items-center flex-wrap ">
             {Array(12)
               .fill(0)
               .map((_, index) => (
@@ -184,7 +184,7 @@ const ViewInvestor = () => {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 mb-8 gap-8 items-center flex-wrap ">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md1:grid-cols-3 lg1:grid-cols-4 mb-8 gap-8 items-center flex-wrap ">
               {filteredInvestors &&
                 filteredInvestors.map((investor, index) => {
                   let id = investor[0].toText();
@@ -263,7 +263,7 @@ const ViewInvestor = () => {
             </div>
             <div className="flex flex-row  w-full gap-4 justify-center">
               {Number(countData) > 0 && (
-                <div className="flex items-center gap-4 justify-center">
+                <div className="flex items-center justify-center">
                   <button
                     onClick={handlePrevious}
                     disabled={currentPage === 1}

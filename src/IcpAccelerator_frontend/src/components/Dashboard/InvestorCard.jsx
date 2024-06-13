@@ -22,7 +22,7 @@ const InvestorsList = ({ numSkeletons }) => {
       await caller
         .get_top_three_vc()
         .then((result) => {
-          console.log('get_top_three_vc ==>',result)
+          console.log("get_top_three_vc ==>", result);
           if (isMounted) {
             if (!result || result.length == 0) {
               setNoData(true);
@@ -69,14 +69,19 @@ const InvestorsList = ({ numSkeletons }) => {
         </div>
       ) : (
         data &&
-        data.map((investor, index) => {
+        data?.slice(0, numSkeletons).map((investor, index) => {
           let id = investor?.principal?.toText();
-          let  img = investor?.params?.params?.user_data?.profile_picture ? uint8ArrayToBase64(investor?.params?.params?.user_data?.profile_picture[0]):'';
-          let name =  investor?.params?.params?.user_data?.full_name;
-          let company =  investor?.params?.params?.name_of_fund;
+          let img = investor?.params?.params?.user_data?.profile_picture
+            ? uint8ArrayToBase64(
+                investor?.params?.params?.user_data?.profile_picture[0]
+              )
+            : "";
+          let name = investor?.params?.params?.user_data?.full_name;
+          let company = investor?.params?.params?.name_of_fund;
           let role = "Investor";
-          let website_link =  investor?.params?.params?.website_link;
-          let category_of_investment =investor?.params?.params?.category_of_investment ?? "";
+          let website_link = investor?.params?.params?.website_link;
+          let category_of_investment =
+            investor?.params?.params?.category_of_investment ?? "";
 
           return (
             <div

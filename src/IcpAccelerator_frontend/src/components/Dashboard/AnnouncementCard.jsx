@@ -113,7 +113,7 @@ const AnnouncementCard = () => {
               640: {
                 slidesPerView: 1,
               },
-              768: {
+              1024: {
                 slidesPerView: 2,
               },
               1024: {
