@@ -224,9 +224,31 @@ const RequestCheck = () => {
   const handleNext = () => {
     setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev));
   };
+  const [maxPageNumbers, setMaxPageNumbers] = useState(10);
+
+  useEffect(() => {
+    const updateMaxPageNumbers = () => {
+      if (window.innerWidth <= 380) {
+        setMaxPageNumbers(1); // For mobile view
+      } else if (window.innerWidth <= 496) {
+        setMaxPageNumbers(3); // For tablet view
+      } else if (window.innerWidth <= 620) {
+        setMaxPageNumbers(5); // For tablet view
+      } else if (window.innerWidth <= 768) {
+        setMaxPageNumbers(7); // For tablet view
+      } else {
+        setMaxPageNumbers(10); // For desktop view
+      }
+    };
+
+    updateMaxPageNumbers(); // Set initial value
+    window.addEventListener("resize", updateMaxPageNumbers); // Update on resize
+
+    return () => window.removeEventListener("resize", updateMaxPageNumbers);
+  }, []);
   const renderPaginationNumbers = () => {
     // const totalPages = totalPages;
-    const maxPageNumbers = 10;
+    // const maxPageNumbers = 10;
     const startPage =
       Math.floor((currentPage - 1) / maxPageNumbers) * maxPageNumbers + 1;
     const endPage = Math.min(startPage + maxPageNumbers - 1, totalPages);

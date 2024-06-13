@@ -7,7 +7,7 @@ import NoDataCard from "./Event/NoDataCard";
 import MentorCard from "./MentorCard";
 import { MentorlistSkeleton } from "../Dashboard/Skeleton/Mentorlistskeleton";
 
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 function SearchMentors() {
   const navigate = useNavigate();
   const [allMentorData, setAllMentorData] = useState([]);
@@ -97,10 +97,32 @@ function SearchMentors() {
       return prevPage;
     });
   };
+  const [maxPageNumbers, setMaxPageNumbers] = useState(10);
+
+  useEffect(() => {
+    const updateMaxPageNumbers = () => {
+      if (window.innerWidth <= 380) {
+        setMaxPageNumbers(1); // For mobile view
+      } else if (window.innerWidth <= 496) {
+        setMaxPageNumbers(3); // For tablet view
+      } else if (window.innerWidth <= 620) {
+        setMaxPageNumbers(5); // For tablet view
+      } else if (window.innerWidth <= 768) {
+        setMaxPageNumbers(7); // For tablet view
+      } else {
+        setMaxPageNumbers(10); // For desktop view
+      }
+    };
+
+    updateMaxPageNumbers(); // Set initial value
+    window.addEventListener("resize", updateMaxPageNumbers); // Update on resize
+
+    return () => window.removeEventListener("resize", updateMaxPageNumbers);
+  }, []);
   // Logic to limit the displayed page numbers to 10 at a time
   const renderPaginationNumbers = () => {
     const totalPages = Math.ceil(Number(countData) / itemsPerPage);
-    const maxPageNumbers = 10;
+    // const maxPageNumbers = 10;
     const startPage =
       Math.floor((currentPage - 1) / maxPageNumbers) * maxPageNumbers + 1;
     const endPage = Math.min(startPage + maxPageNumbers - 1, totalPages);

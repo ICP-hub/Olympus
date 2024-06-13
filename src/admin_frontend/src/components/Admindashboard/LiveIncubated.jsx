@@ -23,8 +23,9 @@ const LiveIncubated = () => {
   const [displayedProjects, setDisplayedProjects] = useState([]);
   const [noData, setNoData] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const projectsPerPage = 12;
+  const itemsPerPage = 12;
   const [modalData, setModalData] = useState(null);
+  const [countData, setCountData] = useState(0);
 
   const [isAcceptModalOpen, setIsAcceptModalOpen] = useState(false);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
@@ -56,16 +57,16 @@ const LiveIncubated = () => {
 
   console.log("nodata => ", noData);
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = async (page) => {
       setloading(true);
       try {
         const result = await actor.list_all_projects_with_pagination({
-          page_size: projectsPerPage,
-          page: currentPage,
+          page_size: itemsPerPage,
+          page,
         });
         const spotlightProjects = await actor.get_spotlight_projects({
-          page_size: projectsPerPage,
-          page: currentPage,
+          page_size: itemsPerPage,
+          page,
         });
 
         console.log("list_all_projects_with_pagination");
@@ -83,9 +84,11 @@ const LiveIncubated = () => {
         }));
 
         setAllProjectData(enhancedProjects);
+        setCountData(result.count);
         setNoData(enhancedProjects.length === 0);
       } catch (error) {
         console.error("Error fetching data:", error);
+        setCountData(0);
         setNoData(true);
       } finally {
         setloading(false); //change this when you want to test skeleton
@@ -93,9 +96,9 @@ const LiveIncubated = () => {
     };
 
     if (actor) {
-      fetchData();
+      fetchData(currentPage);
     }
-  }, [actor]);
+  }, [actor, currentPage]);
 
   useEffect(() => {
     const filteredProjects = allProjectData.filter((project) => {
@@ -154,23 +157,23 @@ const LiveIncubated = () => {
     setIsLoadingRemove((prevState) => ({ ...prevState, [id]: false }));
   };
 
-  const indexOfLastProject = currentPage * projectsPerPage;
-  const indexOfFirstProject = indexOfLastProject - projectsPerPage;
+  const indexOfLastProject = currentPage * itemsPerPage;
+  const indexOfFirstProject = indexOfLastProject - itemsPerPage;
   const currentProjects = displayedProjects.slice(
     indexOfFirstProject,
     indexOfLastProject
   );
 
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  // const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  const pageNumbers = [];
-  for (
-    let i = 1;
-    i <= Math.ceil(displayedProjects.length / projectsPerPage);
-    i++
-  ) {
-    pageNumbers.push(i);
-  }
+  // const pageNumbers = [];
+  // for (
+  //   let i = 1;
+  //   i <= Math.ceil(displayedProjects.length / itemsPerPage);
+  //   i++
+  // ) {
+  //   pageNumbers.push(i);
+  // }
 
   // const addToSpotLightHandler = async (id, live) => {
   //   if (live) {
@@ -196,8 +199,77 @@ const LiveIncubated = () => {
   //     console.error("Error removing from spotlight:", err);
   //   }
   // };
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  console.log("currentProjects =>", currentProjects);
+  const handleNext = () => {
+    setCurrentPage((prev) => {
+      const nextPage = prev + 1;
+      console.log("Navigating to page:", nextPage);
+      return nextPage <= Math.ceil(Number(countData) / itemsPerPage)
+        ? nextPage
+        : prev;
+    });
+  };
+
+  const handlePrevious = () => {
+    setCurrentPage((prev) => {
+      const prevPage = prev > 1 ? prev - 1 : prev;
+      console.log("Navigating to page:", prevPage);
+      return prevPage;
+    });
+  };
+  const [maxPageNumbers, setMaxPageNumbers] = useState(10);
+
+  useEffect(() => {
+    const updateMaxPageNumbers = () => {
+      if (window.innerWidth <= 380) {
+        setMaxPageNumbers(1); // For mobile view
+      } else if (window.innerWidth <= 496) {
+        setMaxPageNumbers(3); // For tablet view
+      } else if (window.innerWidth <= 620) {
+        setMaxPageNumbers(5); // For tablet view
+      } else if (window.innerWidth <= 768) {
+        setMaxPageNumbers(7); // For tablet view
+      } else {
+        setMaxPageNumbers(10); // For desktop view
+      }
+    };
+
+    updateMaxPageNumbers(); // Set initial value
+    window.addEventListener("resize", updateMaxPageNumbers); // Update on resize
+
+    return () => window.removeEventListener("resize", updateMaxPageNumbers);
+  }, []);
+  // Logic to limit the displayed page numbers to 10 at a time
+  const renderPaginationNumbers = () => {
+    const totalPages = Math.ceil(Number(countData) / itemsPerPage);
+    // const maxPageNumbers = 10;
+    const startPage =
+      Math.floor((currentPage - 1) / maxPageNumbers) * maxPageNumbers + 1;
+    const endPage = Math.min(startPage + maxPageNumbers - 1, totalPages);
+
+    const pageNumbers = [];
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(
+        <button
+          key={i}
+          onClick={() => paginate(i)}
+          className={`relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-full text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all ${
+            currentPage === i
+              ? "bg-gray-900 text-white"
+              : "hover:bg-gray-900/10 active:bg-gray-900/20"
+          }`}
+          type="button"
+        >
+          <span className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+            {i}
+          </span>
+        </button>
+      );
+    }
+    return pageNumbers;
+  };
+  console.log("currentProjects =>", displayedProjects);
   return (
     <div className="w-full flex flex-col px-[5%] py-[5%]">
       <div className="flex justify-end mb-4 items-center w-full">
@@ -286,13 +358,15 @@ const LiveIncubated = () => {
         className="flex justify-start w-full space-x-2"
         style={{ minHeight: "60vh" }}
       >
-        {noData ? (
+        {isloading ? (
+          <AdminProjectSkeleton />
+        ) : noData ? (
           <NoDataCard image={NoData} desc={"No Projects"} />
-        ) : currentProjects.length === 0 ? (
+        ) : displayedProjects.length === 0 ? (
           <NoDataCard image={NoData} desc={"No Projects"} />
         ) : (
-          <div className="flex-wrap flex flex-row w-full">
-            {currentProjects.map((project, index) => {
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full">
+            {displayedProjects.map((project, index) => {
               const {
                 project_name,
                 project_logo,
@@ -313,7 +387,6 @@ const LiveIncubated = () => {
                 : "";
               const principalId = principalToText(project.principal);
               const projectDescription = project_description ?? "";
-              // const statusLabel = project.isLive ? "Live" : "Incubated";
               const isLiveOnMainnet =
                 live_on_icp_mainnet && live_on_icp_mainnet[0] === true;
               let projectRubricStatus =
@@ -323,160 +396,109 @@ const LiveIncubated = () => {
               let isLive_On = project?.params?.params?.live_on_icp_mainnet[0];
               const isInSpotlight = spotlightProjectIds.has(projectId);
 
-              {
-                isloading ? (
-                  <AdminProjectSkeleton />
-                ) : (
-                  <>
-                    return (
-                    <div
-                      className="w-full sm:w-1/2 md:w-1/3 mb-2 hover:scale-105 transition-transform duration-300 ease-in-out px-[1%]"
-                      key={index}
-                    >
-                      <div className="justify-between items-baseline mb-4 flex-wrap bg-white overflow-hidden rounded-lg shadow-lg w-auto">
-                        <div className="p-4">
-                          <div className="flex mb-2 items-center w-full">
-                            <img
-                              src={projectImage}
-                              alt="Project Logo"
-                              className="rounded-full w-12 h-12 object-cover"
-                            />
-                            <h1 className="font-bold pl-2 text-nowrap truncate w-[196px]">
-                              {projectName}
-                            </h1>
-                          </div>
-                          <div className="flex mb-4 pl-2 items-center justify-start w-full">
-                            <img
-                              src={userImage}
-                              alt="User Profile"
-                              className="h-5 w-5 rounded-full mr-2"
-                            />
-                            <p className="text-xs truncate w-[14rem]">{name}</p>
-                          </div>
-                          {/* <div className="mb-4 flex items-baseline px-2">
-                        <svg
-                          width="100%"
-                          height="8"
-                          className="bg-[#B2B1B6] rounded-lg"
-                        >
-                          <defs>
-                            <linearGradient
-                              id={`gradient-${projectId}`}
-                              x1="0%"
-                              y1="0%"
-                              x2="100%"
-                              y2="0%"
-                            >
-                              <stop
-                                offset="0%"
-                                stopColor={"#4087BF"}
-                                stopOpacity="1"
-                              />
-                              <stop
-                                offset={`${(projectRubricStatus * 100) / 9}%`}
-                                stopColor={"#3C04BA"}
-                                stopOpacity="1"
-                              />
-                            </linearGradient>
-                          </defs>
-                          <rect
-                            x="0"
-                            y="0"
-                            width={`${(projectRubricStatus * 100) / 9}%`}
-                            height="10"
-                            fill={`url(#gradient-${projectId})`}
-                          />
-                        </svg>
-                        <div className="ml-2 text-nowrap text-sm">
-                          {" "}
-                          {`${projectRubricStatus}/9`}
-                        </div>
-                      </div> */}
-                          <p className="px-3 text-gray-700 text-sm md:line-clamp-8 sxs:line-clamp-4 sm:line-clamp-6 line-clamp-8 h-36">
-                            {projectDescription}
-                          </p>
-
-                          <button
-                            className="mt-4 bg-transparent text-blue-900 px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-blue-900 hover:text-white transition-colors duration-200 ease-in-out"
-                            onClick={() =>
-                              navigate("/all", { state: principalId })
-                            }
-                          >
-                            KNOW MORE
-                          </button>
-                          {!spotlightProjectIds.has(projectId) ? (
-                            <button
-                              className="mt-2 bg-green-500 text-white px-4 py-1 rounded uppercase w-full text-center hover:bg-green-700 transition-colors duration-200 ease-in-out"
-                              onClick={() =>
-                                addToSpotLightHandler(projectId, isLive_On)
-                              }
-                              disabled={isLoadingAdd[projectId]} // Use specific loading state for adding
-                            >
-                              {isLoadingAdd[projectId] ? (
-                                <div className="relative flex items-center justify-center">
-                                  <div className="absolute">
-                                    <div className="w-6 h-6 border-4 rounded-full animate-spin border-t-transparent border-green-300"></div>
-                                  </div>
-                                  <span className="opacity-0 ml-2">
-                                    Add to Spotlight
-                                  </span>
-                                </div>
-                              ) : (
-                                "Add to Spotlight"
-                              )}
-                            </button>
-                          ) : (
-                            <button
-                              className="mt-2 bg-yellow-500 text-white px-4 py-1 rounded uppercase w-full text-center hover:bg-yellow-600 transition-colors duration-200 ease-in-out"
-                              onClick={() =>
-                                removeFromSpotLightHandler(projectId)
-                              }
-                              disabled={isLoadingRemove[projectId]} // Use specific loading state for removing
-                            >
-                              {isLoadingRemove[projectId] ? (
-                                <div className="relative flex items-center justify-center">
-                                  <div className="absolute">
-                                    <div className="w-6 h-6 border-4 rounded-full animate-spin border-t-transparent border-yellow-300"></div>
-                                  </div>
-                                  <span className="opacity-0 ml-2">
-                                    Remove from Spotlight
-                                  </span>
-                                </div>
-                              ) : (
-                                "Remove from Spotlight"
-                              )}
-                            </button>
-                          )}
-
-                          {!isLiveOnMainnet ? (
-                            <button
-                              className="mt-2 bg-teal-500 text-white px-4 py-1 rounded uppercase w-full text-center hover:bg-teal-600 transition-colors duration-200 ease-in-out"
-                              onClick={() => toggleAcceptModal(projectId)}
-                            >
-                              Live Now
-                            </button>
-                          ) : (
-                            <button
-                              className="mt-2 bg-gray-500 text-white px-4 py-1 rounded uppercase w-full text-center hover:bg-gray-600 transition-colors duration-200 ease-in-out"
-                              onClick={() => toggleRejectModal(projectId)}
-                            >
-                              Incubated
-                            </button>
-                          )}
-                        </div>
+              return (
+                <div
+                  className="w-full mb-2 hover:scale-105 transition-transform duration-300 ease-in-out px-[1%]"
+                  key={index}
+                >
+                  <div className="justify-between items-baseline mb-4 flex-wrap bg-white overflow-hidden rounded-lg shadow-lg w-auto">
+                    <div className="p-4">
+                      <div className="flex mb-2 items-center w-full">
+                        <img
+                          src={projectImage}
+                          alt="Project Logo"
+                          className="rounded-full w-12 h-12 object-cover"
+                        />
+                        <h1 className="font-bold pl-2 text-nowrap truncate w-[196px]">
+                          {projectName}
+                        </h1>
                       </div>
+                      <div className="flex mb-4 pl-2 items-center justify-start w-full">
+                        <img
+                          src={userImage}
+                          alt="User Profile"
+                          className="h-5 w-5 rounded-full mr-2"
+                        />
+                        <p className="text-xs truncate w-[14rem]">{name}</p>
+                      </div>
+                      <p className="px-3 text-gray-700 text-sm md:line-clamp-8 sxs:line-clamp-4 sm:line-clamp-6 line-clamp-8 h-36">
+                        {projectDescription}
+                      </p>
+
+                      <button
+                        className="mt-4 bg-transparent text-blue-900 px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-blue-900 hover:text-white transition-colors duration-200 ease-in-out"
+                        onClick={() => navigate("/all", { state: principalId })}
+                      >
+                        KNOW MORE
+                      </button>
+                      {!spotlightProjectIds.has(projectId) ? (
+                        <button
+                          className="mt-2 bg-green-500 text-white px-4 py-1 rounded uppercase w-full text-center hover:bg-green-700 transition-colors duration-200 ease-in-out"
+                          onClick={() =>
+                            addToSpotLightHandler(projectId, isLive_On)
+                          }
+                          disabled={isLoadingAdd[projectId]} // Use specific loading state for adding
+                        >
+                          {isLoadingAdd[projectId] ? (
+                            <div className="relative flex items-center justify-center">
+                              <div className="absolute">
+                                <div className="w-6 h-6 border-4 rounded-full animate-spin border-t-transparent border-green-300"></div>
+                              </div>
+                              <span className="opacity-0 ml-2">
+                                Add to Spotlight
+                              </span>
+                            </div>
+                          ) : (
+                            "Add to Spotlight"
+                          )}
+                        </button>
+                      ) : (
+                        <button
+                          className="mt-2 bg-yellow-500 text-white px-4 py-1 rounded uppercase w-full text-center hover:bg-yellow-600 transition-colors duration-200 ease-in-out"
+                          onClick={() => removeFromSpotLightHandler(projectId)}
+                          disabled={isLoadingRemove[projectId]} // Use specific loading state for removing
+                        >
+                          {isLoadingRemove[projectId] ? (
+                            <div className="relative flex items-center justify-center">
+                              <div className="absolute">
+                                <div className="w-6 h-6 border-4 rounded-full animate-spin border-t-transparent border-yellow-300"></div>
+                              </div>
+                              <span className="opacity-0 ml-2">
+                                Remove from Spotlight
+                              </span>
+                            </div>
+                          ) : (
+                            "Remove from Spotlight"
+                          )}
+                        </button>
+                      )}
+
+                      {!isLiveOnMainnet ? (
+                        <button
+                          className="mt-2 bg-teal-500 text-white px-4 py-1 rounded uppercase w-full text-center hover:bg-teal-600 transition-colors duration-200 ease-in-out"
+                          onClick={() => toggleAcceptModal(projectId)}
+                        >
+                          Live Now
+                        </button>
+                      ) : (
+                        <button
+                          className="mt-2 bg-gray-500 text-white px-4 py-1 rounded uppercase w-full text-center hover:bg-gray-600 transition-colors duration-200 ease-in-out"
+                          onClick={() => toggleRejectModal(projectId)}
+                        >
+                          Incubated
+                        </button>
+                      )}
                     </div>
-                    );
-                  </>
-                );
-              }
+                  </div>
+                </div>
+              );
             })}
           </div>
         )}
       </div>
 
       {/* {pageNumbers.length > 1 && ( */}
-      <div className="flex items-center gap-4 justify-center">
+      {/* <div className="flex items-center gap-4 justify-center">
         {currentPage > 1 && (
           <button
             onClick={() => paginate(currentPage - 1)}
@@ -543,9 +565,64 @@ const LiveIncubated = () => {
             </svg>
           </button>
         )}
-      </div>
+      </div> */}
       {/* )} */}
+      <div className="flex flex-row  w-full gap-4 justify-center">
+        {Number(countData) > 0 && (
+          <div className="flex items-center gap-4 justify-center">
+            <button
+              onClick={handlePrevious}
+              disabled={currentPage === 1}
+              className="flex items-center gap-2 p-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+              type="button"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+                stroke="currentColor"
+                aria-hidden="true"
+                className="w-4 h-4"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+                ></path>
+              </svg>
+              Previous
+            </button>
 
+            {renderPaginationNumbers()}
+            <button
+              onClick={handleNext}
+              disabled={
+                currentPage === Math.ceil(Number(countData) / itemsPerPage)
+              }
+              className="flex items-center gap-2 p-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+              type="button"
+            >
+              Next
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+                stroke="currentColor"
+                aria-hidden="true"
+                className="w-4 h-4"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                ></path>
+              </svg>
+            </button>
+          </div>
+        )}
+      </div>
       {isRejectModalOpen && (
         <IncubatedModal
           id={modalData}
