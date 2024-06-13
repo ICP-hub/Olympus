@@ -7,6 +7,7 @@ import NoDataCard from "./Event/NoDataCard";
 import MentorCard from "./MentorCard";
 import { MentorlistSkeleton } from "../Dashboard/Skeleton/Mentorlistskeleton";
 
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 function SearchMentors() {
   const navigate = useNavigate();
   const [allMentorData, setAllMentorData] = useState([]);
@@ -21,6 +22,7 @@ function SearchMentors() {
   const getAllMentors = async (caller, page) => {
     console.log("Fetching data for page:", page);
     setIsLoading(true);
+    await delay(500);
     await caller
       .get_all_mentors_with_pagination({
         page_size: itemsPerPage,

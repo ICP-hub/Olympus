@@ -12,15 +12,21 @@ import {
 
 const selectActor = (currState) => currState.actors.actor;
 
-function* fetchProjectApprovedHandler() {
+function* fetchProjectApprovedHandler(action) {
   try {
+    const { currentPage, itemsPerPage } = action.payload;
     const actor = yield select(selectActor);
-    const allProjectApprovedStatus = yield call([
-      actor,
-      actor.list_all_projects_for_admin,
-    ]);
+    const allProjectApprovedStatus = yield call(
+      [actor, actor.list_all_projects_for_admin],
+      {
+        page_size: itemsPerPage,
+        page: currentPage,
+      }
+    );
 
-    const updatedProjectProfiles = allProjectApprovedStatus.map(
+    console.log("allProjectApprovedStatus =>", allProjectApprovedStatus);
+
+    const updatedProjectProfiles = allProjectApprovedStatus?.data.map(
       ([principal, { project_profile, roles }]) => {
         const principalText = principalToText(principal);
         const profilePictureBase64 =
@@ -89,8 +95,13 @@ function* fetchProjectApprovedHandler() {
       }
     );
 
-    // console.log("updatedProjectProfiles =>", updatedProjectProfiles);
-    yield put(projectApprovedSuccess(updatedProjectProfiles));
+    console.log("updatedProjectProfiles =>", updatedProjectProfiles);
+    yield put(
+      projectApprovedSuccess({
+        profiles: updatedProjectProfiles,
+        count: Number(allProjectApprovedStatus.count),
+      })
+    );
   } catch (error) {
     console.error("Error in fetchProjectApprovedHandler:", error);
     yield put(projectApprovedFailure(error.toString()));

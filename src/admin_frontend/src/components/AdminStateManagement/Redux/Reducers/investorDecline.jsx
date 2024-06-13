@@ -16,7 +16,8 @@ const investorDeclinedSlice = createSlice({
     },
     investorDeclinedSuccess: (state, action) => {
       state.loading = false;
-      state.data = action.payload;
+      state.data = action.payload.profiles;
+      state.count = action.payload.count;
     },
     investorDeclinedFailure: (state, action) => {
       state.loading = false;

@@ -3,7 +3,7 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
 
-export const AdminUserDashboardSkeleton = () => {
+export const AdminUserDashboardSkeleton = ({itemsPerPage}) => {
   return (
     <div className="flex flex-col bg-white rounded-lg p-8 text-lg overflow-auto mb-8">
     <div className="min-w-[600px]">
@@ -21,7 +21,7 @@ export const AdminUserDashboardSkeleton = () => {
           </tr>
         </thead>
         <tbody className="text-base text-gray-700 font-fontUse">
-          {[...Array(5)].map((_, index) => (
+          {[...Array(itemsPerPage)].map((_, index) => (
             <tr key={index} className="hover:bg-gray-100 cursor-pointer mt-1">
               <td>
                 <Skeleton height={30} width={30} />

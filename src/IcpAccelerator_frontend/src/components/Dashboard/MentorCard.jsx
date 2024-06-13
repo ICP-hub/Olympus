@@ -105,13 +105,13 @@ const MentorCard = ({ numSkeletons }) => {
           let role = "Mentor";
           if (noData === false) {
             id = mentor?.principal?.toText();
-            let img=''
-            if (mentor?.params?.params?.user_data?.profile_picture[0] instanceof ArrayBuffer) {
-               img = uint8ArrayToBase64(mentor.params.params.user_data.profile_picture[0]);
-            } 
+            img = mentor?.params?.profile?.user_data?.profile_picture
+              ? uint8ArrayToBase64(
+                  mentor?.params?.profile?.user_data?.profile_picture[0]
+                )
+              : "";
             name = mentor?.params?.profile?.user_data?.full_name;
-            skills =
-              mentor?.params?.profile?.user_data?.area_of_interest;
+            skills = mentor?.params?.profile?.user_data?.area_of_interest;
             category_of_mentoring_service =
               mentor?.params?.profile?.category_of_mentoring_service;
             role = "Mentor";

@@ -329,7 +329,7 @@ const Adminalluser = () => {
         </div>
       </div>
       {isloading ? (
-        <AdminUserDashboardSkeleton />
+        <AdminUserDashboardSkeleton itemsPerPage={itemsPerPage}/>
       ) : (
         <>
       {Number(countData) > 0 ? (

@@ -12,12 +12,17 @@ import {
 
 const selectActor = (currState) => currState.actors.actor;
 
-function* fetchInvestorDeclinedHandler() {
+function* fetchInvestorDeclinedHandler(action) {
   try {
+    const { currentPage, itemsPerPage } = action.payload;
     const actor = yield select(selectActor);
-    const allInvestorDeclinedStatus = yield call([actor, actor.vc_declined]);
+    const allInvestorDeclinedStatus = yield call([actor, actor.vc_declined], {
+      page_size: itemsPerPage,
+      page: currentPage,
+    });
 
-    const updatedInvestorProfiles = allInvestorDeclinedStatus.map(
+    console.log("allInvestorDeclinedStatus:", allInvestorDeclinedStatus);
+    const updatedInvestorProfiles = allInvestorDeclinedStatus?.data.map(
       ([principal, { vc_profile, roles }]) => {
         const principalText = principalToText(principal);
         // const profilePictureBase64 = vc_profile.params.user_data.profile_picture
@@ -91,7 +96,12 @@ function* fetchInvestorDeclinedHandler() {
       }
     );
 
-    yield put(investorDeclinedSuccess(updatedInvestorProfiles));
+    yield put(
+      investorDeclinedSuccess({
+        profiles: updatedInvestorProfiles,
+        count: Number(allInvestorDeclinedStatus.count),
+      })
+    );
   } catch (error) {
     console.error("Error in fetchInvestorDeclinedHandler:", error);
     yield put(investorDeclinedFailure(error.toString()));

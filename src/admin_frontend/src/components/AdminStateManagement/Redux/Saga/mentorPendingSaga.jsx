@@ -12,22 +12,23 @@ import {
 
 const selectActor = (currState) => currState.actors.actor;
 
-function* fetchMentorPendingHandler() {
+function* fetchMentorPendingHandler(action) {
   try {
+    const { currentPage, itemsPerPage } = action.payload;
     const actor = yield select(selectActor);
-    const allMentorPendingStatus = yield call([
-      actor,
-      actor.mentors_awaiting_approval,
-    ]);
+
+    const allMentorPendingStatus = yield call(
+      [actor, actor.mentors_awaiting_approval],
+      {
+        page_size: itemsPerPage,
+        page: currentPage,
+      }
+    );
 
     // console.log("allMentorPendingStatus =>", allMentorPendingStatus);
 
-    const updatedMentorProfiles = allMentorPendingStatus.map(
+    const updatedMentorProfiles = allMentorPendingStatus?.data.map(
       ([principal, { mentor_profile, roles }]) => {
-        // const profilePictureBase64 = uint8ArrayToBase64(
-        //   mentor_profile.profile.user_data.profile_picture
-        // );
-
         const profilePictureBase64 =
           mentor_profile.profile.user_data.profile_picture[0] &&
           mentor_profile.profile.user_data.profile_picture[0] instanceof
@@ -38,12 +39,9 @@ function* fetchMentorPendingHandler() {
               )
             : null;
 
-        // console.log("profilePictureBase64 in allMentorPendingStatus =>", mentor_profile.profile.user_data.profile_picture[0]);
-
         const principalText = principalToText(principal);
 
         const mentorRole = roles.find((role) => role.name === "mentor");
-        // const mentorRole = roles;
 
         const updatedRoles = roles.map((role) => ({
           ...role,
@@ -81,8 +79,12 @@ function* fetchMentorPendingHandler() {
       }
     );
 
-    // console.log("updatedMentorProfiles ,,,,,,,,,,,,,,,,", updatedMentorProfiles);
-    yield put(mentorPendingSuccess(updatedMentorProfiles));
+    yield put(
+      mentorPendingSuccess({
+        profiles: updatedMentorProfiles,
+        count: Number(allMentorPendingStatus.count),
+      })
+    );
   } catch (error) {
     console.error(error);
     yield put(mentorPendingFailure(error.toString()));

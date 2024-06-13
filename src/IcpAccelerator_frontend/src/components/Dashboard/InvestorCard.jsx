@@ -14,33 +14,6 @@ const InvestorsList = ({ numSkeletons }) => {
   const [noData, setNoData] = useState(null);
 
   const actor = useSelector((currState) => currState.actors.actor);
-
-  // const getAllInvestors = async (caller) => {
-  //   await caller
-  //     .list_all_vcs()
-  //     .then((result) => {
-  //       if (!result || result.length == 0) {
-  //         setNoData(true);
-  //         setData([]);
-  //       } else {
-  //         setData(result);
-  //         setNoData(false);
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       setData([]);
-  //       setNoData(true);
-  //     });
-  // };
-
-  // useEffect(() => {
-  //   if (actor) {
-  //     getAllInvestors(actor);
-  //   } else {
-  //     getAllInvestors(IcpAccelerator_backend);
-  //   }
-  // }, [actor]);
-
   useEffect(() => {
     let isMounted = true;
 
@@ -98,10 +71,7 @@ const InvestorsList = ({ numSkeletons }) => {
         data &&
         data.map((investor, index) => {
           let id = investor?.principal?.toText();
-          let img=''
-          if (investor?.params?.params?.user_data?.profile_picture[0] instanceof ArrayBuffer) {
-             img = uint8ArrayToBase64(investor.params.params.user_data.profile_picture[0]);
-          }          
+          let  img = investor?.params?.params?.user_data?.profile_picture ? uint8ArrayToBase64(investor?.params?.params?.user_data?.profile_picture[0]):'';
           let name =  investor?.params?.params?.user_data?.full_name;
           let company =  investor?.params?.params?.name_of_fund;
           let role = "Investor";

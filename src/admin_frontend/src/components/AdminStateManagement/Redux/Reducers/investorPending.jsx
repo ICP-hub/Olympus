@@ -16,7 +16,8 @@ const investorPendingSlice = createSlice({
     },
     investorPendingSuccess: (state, action) => {
       state.loading = false;
-      state.data = action.payload;
+      state.data = action.payload.profiles;
+      state.count = action.payload.count;
     },
     investorPendingFailure: (state, action) => {
       state.loading = false;

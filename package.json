@@ -37,6 +37,7 @@
     "date-fns": "^3.6.0",
     "file-loader": "^6.2.0",
     "gsap": "^3.12.5",
+    "ic": "^0.0.1",
     "rc-progress": "^3.5.1",
     "react": "^17.0.2",
     "react-apexcharts": "^1.4.1",

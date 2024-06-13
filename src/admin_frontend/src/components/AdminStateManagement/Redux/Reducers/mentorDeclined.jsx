@@ -16,7 +16,8 @@ const mentorDeclinedSlice = createSlice({
     },
     mentorDeclinedSuccess: (state, action) => {
       state.loading = false;
-      state.data = action.payload;
+      state.data = action.payload.profiles;
+      state.count = action.payload.count;
     },
     mentorDeclinedFailure: (state, action) => {
       state.loading = false;

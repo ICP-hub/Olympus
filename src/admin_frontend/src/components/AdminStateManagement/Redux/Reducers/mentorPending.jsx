@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialMentorPendingState = {
   data: [],
+  count: 0,
   loading: false,
   error: null,
 };
@@ -16,7 +17,8 @@ const mentorPendingSlice = createSlice({
     },
     mentorPendingSuccess: (state, action) => {
       state.loading = false;
-      state.data = action.payload;
+      state.data = action.payload.profiles;
+      state.count = action.payload.count;
     },
     mentorPendingFailure: (state, action) => {
       state.loading = false;

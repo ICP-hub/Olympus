@@ -167,7 +167,7 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
     userData[0].params.user_data.profile_picture[0]
   );
   const logo =
-    userData && userData[0].params.logo[0].length > 0
+    userData && userData[0]?.params.logo[0]?.length > 0
       ? uint8ArrayToBase64(userData[0].params.logo[0])
       : null;
 

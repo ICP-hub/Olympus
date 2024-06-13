@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { projectFilterSvg } from "../Utils/AdminData/SvgData";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import NotificationCard from "../Notification/NotificationCard";
 import Loader from "../Loader/Loader";
 import NoDataCard from "../../../../IcpAccelerator_frontend/src/components/Mentors/Event/NoDataCard";
@@ -8,8 +8,19 @@ import proj from "../../../../IcpAccelerator_frontend/assets/images/founder.png"
 import vc from "../../../../IcpAccelerator_frontend/assets/images/vc.png";
 import mentor from "../../../../IcpAccelerator_frontend/assets/images/mentor.png";
 import { OutSideClickHandler } from "../../../../IcpAccelerator_frontend/src/components/hooks/OutSideClickHandler";
-import NoData from "../../../../IcpAccelerator_frontend/assets/images/NoData.png"
-
+import NoData from "../../../../IcpAccelerator_frontend/assets/images/NoData.png";
+import {
+  mentorPendingFailure,
+  mentorPendingRequest,
+} from "../AdminStateManagement/Redux/Reducers/mentorPending";
+import { mentorDeclinedRequest } from "../AdminStateManagement/Redux/Reducers/mentorDeclined";
+import { mentorApprovedRequest } from "../AdminStateManagement/Redux/Reducers/mentorApproved";
+import { projectPendingRequest } from "../AdminStateManagement/Redux/Reducers/projectPending";
+import { projectApprovedRequest } from "../AdminStateManagement/Redux/Reducers/projectApproved";
+import { projectDeclinedRequest } from "../AdminStateManagement/Redux/Reducers/projectDeclined";
+import { investorPendingRequest } from "../AdminStateManagement/Redux/Reducers/investorPending";
+import { investorApprovedRequest } from "../AdminStateManagement/Redux/Reducers/investorApproved";
+import { investorDeclinedRequest } from "../AdminStateManagement/Redux/Reducers/investorDecline";
 
 const RequestCheck = () => {
   // const principal = useSelector((currState) => currState.internet.principal);
@@ -21,42 +32,101 @@ const RequestCheck = () => {
   const [filteredNotifications, setFilteredNotifications] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const dispatch = useDispatch();
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
+
   const dropdownRef = useRef(null);
   OutSideClickHandler(dropdownRef, () => setIsPopupOpen(false));
 
   const mentorPending = useSelector(
     (currState) => currState.mentor_pending.data
   );
+  const mentorPendingCount = useSelector(
+    (currState) => currState.mentor_pending.count
+  );
   const mentorApproved = useSelector(
     (currState) => currState.mentor_approved.data
+  );
+  const mentorApprovedCount = useSelector(
+    (currState) => currState.mentor_approved.count
   );
   const mentorDeclined = useSelector(
     (currState) => currState.mentor_declined.data
   );
 
+  const mentorDeclinedCount = useSelector(
+    (currState) => currState.mentor_declined.count
+  );
+
   const projectPending = useSelector(
     (currState) => currState.project_pending.data
+  );
+  const projectPendingCount = useSelector(
+    (currState) => currState.project_pending.count
   );
   const projectApproved = useSelector(
     (currState) => currState.project_approved.data
   );
+  const projectApprovedCount = useSelector(
+    (currState) => currState.project_approved.count
+  );
   const projectDeclined = useSelector(
     (currState) => currState.project_declined.data
+  );
+  const projectDeclinedCount = useSelector(
+    (currState) => currState.project_declined.count
   );
 
   const investorPending = useSelector(
     (currState) => currState.investor_pending.data
   );
+  const investorPendingCount = useSelector(
+    (currState) => currState.investor_pending.count
+  );
   const investorApproved = useSelector(
     (currState) => currState.investor_approved.data
+  );
+  const investorApprovedCount = useSelector(
+    (currState) => currState.investor_approved.count
   );
   const investorDeclined = useSelector(
     (currState) => currState.investor_declined.data
   );
+  const investorDeclinedCount = useSelector(
+    (currState) => currState.investor_declined.count
+  );
 
-  // console.log("data in =>=>>>>>> requestcheck", filteredNotifications)
+  console.log("data in =>=>>>>>> mentorPending", mentorPending);
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  useEffect(() => {
+    if (activeCategory === "Mentor") {
+      if (selectedStatus === "Pending") {
+        dispatch(mentorPendingRequest({ currentPage, itemsPerPage }));
+      } else if (selectedStatus === "Approved") {
+        dispatch(mentorApprovedRequest({ currentPage, itemsPerPage }));
+      } else if (selectedStatus === "Declined") {
+        dispatch(mentorDeclinedRequest({ currentPage, itemsPerPage }));
+      }
+    } else if (activeCategory === "Project") {
+      if (selectedStatus === "Pending") {
+        dispatch(projectPendingRequest({ currentPage, itemsPerPage }));
+      } else if (selectedStatus === "Approved") {
+        dispatch(projectApprovedRequest({ currentPage, itemsPerPage }));
+      } else if (selectedStatus === "Declined") {
+        dispatch(projectDeclinedRequest({ currentPage, itemsPerPage }));
+      }
+    } else if (activeCategory === "Investor") {
+      if (selectedStatus === "Pending") {
+        dispatch(investorPendingRequest({ currentPage, itemsPerPage }));
+      } else if (selectedStatus === "Approved") {
+        dispatch(investorApprovedRequest({ currentPage, itemsPerPage }));
+      } else if (selectedStatus === "Declined") {
+        dispatch(investorDeclinedRequest({ currentPage, itemsPerPage }));
+      }
+    }
+  }, [dispatch, activeCategory, selectedStatus, currentPage, itemsPerPage]);
 
   useEffect(() => {
     const isDataLoaded =
@@ -126,6 +196,62 @@ const RequestCheck = () => {
     investorDeclined,
   ]);
 
+  const totalPages = Math.ceil(
+    activeCategory === "Mentor"
+      ? selectedStatus === "Pending"
+        ? mentorPendingCount / itemsPerPage
+        : selectedStatus === "Approved"
+        ? mentorApprovedCount / itemsPerPage
+        : mentorDeclinedCount / itemsPerPage
+      : activeCategory === "Project"
+      ? selectedStatus === "Pending"
+        ? projectPendingCount / itemsPerPage
+        : selectedStatus === "Approved"
+        ? projectApprovedCount / itemsPerPage
+        : projectDeclinedCount / itemsPerPage
+      : selectedStatus === "Pending"
+      ? investorPendingCount / itemsPerPage
+      : selectedStatus === "Approved"
+      ? investorApprovedCount / itemsPerPage
+      : investorDeclinedCount / itemsPerPage
+  );
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  const handlePrevious = () => {
+    setCurrentPage((prev) => (prev > 1 ? prev - 1 : prev));
+  };
+
+  const handleNext = () => {
+    setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev));
+  };
+  const renderPaginationNumbers = () => {
+    // const totalPages = totalPages;
+    const maxPageNumbers = 10;
+    const startPage =
+      Math.floor((currentPage - 1) / maxPageNumbers) * maxPageNumbers + 1;
+    const endPage = Math.min(startPage + maxPageNumbers - 1, totalPages);
+
+    const pageNumbers = [];
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(
+        <button
+          key={i}
+          onClick={() => paginate(i)}
+          className={`relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-full text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all ${
+            currentPage === i
+              ? "bg-gray-900 text-white"
+              : "hover:bg-gray-900/10 active:bg-gray-900/20"
+          }`}
+          type="button"
+        >
+          <span className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+            {i}
+          </span>
+        </button>
+      );
+    }
+    return pageNumbers;
+  };
   return (
     <div className="px-[4%] py-[4%] w-full bg-gray-100 h-screen overflow-y-scroll">
       {/* <div className="text-2xl font-semibold text-left my-4 pb-2">
@@ -133,7 +259,6 @@ const RequestCheck = () => {
           {selectedStatus}
         </span>
       </div> */}
-
       <div className="flex justify-between">
         <div>
           {[
@@ -193,7 +318,6 @@ const RequestCheck = () => {
           </div>
         </div>
       </div>
-
       {isLoading && isAuthenticated ? (
         <Loader />
       ) : filteredNotifications.length > 0 ? (
@@ -216,9 +340,62 @@ const RequestCheck = () => {
         </div>
       ) : (
         <div className="mt-8 text-center py-4">
-            <NoDataCard image={NoData} desc={'No Pending Requests'}/>
+          <NoDataCard image={NoData} desc={"No Pending Requests"} />
         </div>
-      )}
+      )}{" "}
+      <div className="flex flex-row  w-full gap-4 justify-center">
+        {totalPages > 0 && (
+          <div className="flex items-center gap-4 justify-center">
+            <button
+              onClick={handlePrevious}
+              disabled={currentPage === 1}
+              className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+              type="button"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+                stroke="currentColor"
+                aria-hidden="true"
+                className="w-4 h-4"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+                ></path>
+              </svg>
+              Previous
+            </button>
+            {renderPaginationNumbers()}
+            <button
+              onClick={handleNext}
+              disabled={currentPage === totalPages}
+              className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+              type="button"
+            >
+              Next
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+                stroke="currentColor"
+                aria-hidden="true"
+                className="w-4 h-4"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                ></path>
+              </svg>
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

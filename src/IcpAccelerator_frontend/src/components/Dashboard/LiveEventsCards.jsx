@@ -8,10 +8,14 @@ import OngoingAcceleratorSkeleton from "./Skeleton/OngoingAcceleratorskeleton";
 
 const LiveEventsCards = ({ wrap, register }) => {
   const actor = useSelector((currState) => currState.actors.actor);
+  const [countData, setCountData] = useState(0);
   const [noData, setNoData] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [filter, setFilter] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const itemsPerPage = 3;
   const [allLiveEventsData, setAllLiveEventsData] = useState([]);
-  const [numSkeletons, setNumSkeletons] = useState(1);
+  const [numSkeletons, setNumSkeletons] = useState(itemsPerPage);
 
   const updateNumSkeletons = () => {
     if (window.innerWidth >= 1100) {
@@ -29,50 +33,30 @@ const LiveEventsCards = ({ wrap, register }) => {
       window.removeEventListener("resize", updateNumSkeletons);
     };
   }, []);
-  // const getAllLiveEvents = async (caller) => {
-  //     await caller
-  //         .get_all_cohorts()
-  //         .then((result) => {
-  //             console.log('cohort result',result)
-  //             if (!result || result.length == 0) {
-  //                 setNoData(true);
-  //                 setAllLiveEventsData([]);
-  //             } else {
-  //                 setAllLiveEventsData(result);
-  //                 setNoData(false);
-  //             }
-  //         })
-  //         .catch((error) => {
-  //             setNoData(true);
-  //             setAllLiveEventsData([]);
-  //         });
-  // };
-
-  // useEffect(() => {
-  //     if (actor) {
-  //         getAllLiveEvents(actor);
-  //     } else {
-  //         getAllLiveEvents(IcpAccelerator_backend);
-  //     }
-  // }, [actor]);
 
   useEffect(() => {
     let isMounted = true;
 
-    const getAllLiveEvents = async (caller) => {
+    const getAllLiveEvents = async (caller, page) => {
       setIsLoading(true);
       await caller
-        .get_all_cohorts()
+        .get_all_cohorts({
+          page_size: itemsPerPage,
+          page,
+        })
         .then((result) => {
+          console.log(" in get_all_cohort", result);
           if (isMounted) {
             if (!result || result.length == 0) {
               setNoData(true);
               setIsLoading(false);
               setAllLiveEventsData([]);
+              setCountData("");
             } else {
-              setAllLiveEventsData(result);
-              setIsLoading(false);
               setNoData(false);
+              setIsLoading(false);
+              setAllLiveEventsData(result.data);
+              setCountData(result.total_count);
             }
           }
         })
@@ -80,14 +64,15 @@ const LiveEventsCards = ({ wrap, register }) => {
           if (isMounted) {
             setNoData(true);
             setIsLoading(false);
-            console.log("Error in get_all_cohort", error);
+            setCountData("");
             setAllLiveEventsData([]);
+            console.log("Error in get_all_cohort", error);
           }
         });
     };
 
     if (actor) {
-      getAllLiveEvents(actor);
+      getAllLiveEvents(actor, currentPage);
     } else {
       getAllLiveEvents(IcpAccelerator_backend);
     }
@@ -95,7 +80,9 @@ const LiveEventsCards = ({ wrap, register }) => {
     return () => {
       isMounted = false;
     };
-  }, [actor]);
+  }, [actor, currentPage]);
+
+ 
   return (
     <div
       className={`flex mb-4 items-start ${wrap === true ? "" : "min-h-screen"}`}
@@ -105,7 +92,7 @@ const LiveEventsCards = ({ wrap, register }) => {
           <div
             className={`${
               wrap === true
-                ? "flex flex-row overflow-x-auto w-full"
+                ? "flex flex-row w-full gap-4"
                 : "flex flex-row flex-wrap w-full px-8"
             }`}
           >
@@ -114,7 +101,7 @@ const LiveEventsCards = ({ wrap, register }) => {
               .map((_, index) => (
                 <div
                   key={index}
-                  className="px-2 w-full md:min-w-[50%] lg1:min-w-[33.33%] md:max-w-[50%] lg1:max-w-[33.33%]"
+                  className=" w-full md:min-w-[50%] lg1:min-w-[33.33%] md:max-w-[50%] lg1:max-w-[33.33%]"
                 >
                   {" "}
                   <OngoingAcceleratorSkeleton key={index} />
@@ -127,16 +114,17 @@ const LiveEventsCards = ({ wrap, register }) => {
           <div
             className={`${
               wrap === true
-                ? "flex flex-row overflow-x-auto w-full"
+                ? "flex flex-row w-full gap-4"
                 : "flex flex-row flex-wrap w-full px-8"
             }`}
           >
             {allLiveEventsData &&
               allLiveEventsData.map((val, index) => {
+                console.log('val',val)
                 return (
                   <div
                     key={index}
-                    className="px-2 w-full md:min-w-[50%] lg1:min-w-[33.33%] md:max-w-[50%] lg1:max-w-[33.33%]"
+                    className=" w-full md:min-w-[50%] lg1:min-w-[33.33%] md:max-w-[50%] lg1:max-w-[33.33%]"
                   >
                     <SecondEventCard data={val} register={register} />
                   </div>
