@@ -1,23 +1,15 @@
-use crate::default_images::*;
-use crate::mentor::MENTOR_REGISTRY;
-use crate::project_registration::APPLICATION_FORM;
 use crate::state_handler::{mutate_state, read_state, Candid, StoredPrincipal};
-use crate::vc_registration::*;
 use candid::{CandidType, Principal};
 use ic_cdk::api::call::call;
 use ic_cdk::api::caller;
 use ic_cdk::api::management_canister::main::raw_rand;
-use ic_cdk::api::stable::{StableReader, StableWriter};
 use ic_cdk::api::time;
 use ic_cdk_macros::*;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
-use std::cell::RefCell;
 use std::collections::HashMap;
-use std::io::Read;
 // use ic_cdk::storage;
 use crate::is_user_anonymous;
-use ic_cdk::storage::{self, stable_restore, stable_save};
 use ic_certified_assets::types::Key;
 use serde_bytes::ByteBuf;
 
@@ -125,10 +117,10 @@ pub struct RegisterResponse {
     roles_array_status: Vec<Role>,
 }
 
-pub type UserInfoStorage = HashMap<Principal, UserInfoInternal>;
+// pub type UserInfoStorage = HashMap<Principal, UserInfoInternal>;
 
-pub type UserTestimonial = HashMap<Principal, Vec<Testimonial>>;
-pub type UserRating = HashMap<Principal, Vec<Review>>;
+// pub type UserTestimonial = HashMap<Principal, Vec<Testimonial>>;
+// pub type UserRating = HashMap<Principal, Vec<Review>>;
 
 pub fn initialize_roles() {
     let caller = caller();
@@ -689,19 +681,23 @@ pub struct PaginationUser {
 pub fn list_all_users(pagination: PaginationUser) -> Vec<UserInformation> {
     read_state(|state| {
         let user_storage = &state.user_storage;
-        let users_info: Vec<_> = user_storage
+        
+        let total_users = user_storage.len();
+
+        let start = pagination.page.saturating_sub(1) * pagination.page_size;
+        let end = std::cmp::min(start + pagination.page_size, total_users.try_into().unwrap());
+
+        let users_info: Vec<UserInformation> = user_storage
             .iter()
+            .skip(start)  
+            .take(end - start)  
             .map(|(_, candid_user_internal)| candid_user_internal.0.params.clone())
             .collect();
 
-        // Calculate the range to slice the vector for pagination
-        let start = pagination.page.saturating_sub(1) * pagination.page_size;
-        let end = std::cmp::min(start + pagination.page_size, users_info.len());
-
-        // Return the slice of users for the current page
-        users_info[start..end].to_vec()
+        users_info
     })
 }
+
 
 pub fn delete_user() -> std::string::String {
     let caller = caller();

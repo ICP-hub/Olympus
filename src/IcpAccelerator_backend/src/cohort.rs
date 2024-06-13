@@ -265,35 +265,24 @@ pub struct PaginationReturnCohort {
 
 #[query(guard = "is_user_anonymous")]
 pub fn get_all_cohorts(pagination_params: Pagination) -> PaginationReturnCohort {
-    read_state(|state| {
-        let all_cohorts: Vec<CohortDetails> = state
-            .cohort_info
-            .iter()
+    let start = (pagination_params.page - 1) * pagination_params.page_size;
+
+    let cohorts_snapshot = read_state(|state| {
+        state.cohort_info.iter()
+            .skip(start)
+            .take(pagination_params.page_size)
             .map(|(_key, candid_cohort_details)| candid_cohort_details.0.clone())
-            .collect();
+            .collect::<Vec<_>>()
+    });
 
-        // Sorting the vector if necessary, e.g., by name or creation date
-        // all_cohorts.sort_by(|a, b| a.name.cmp(&b.name));
+    let total_count = read_state(|state| state.cohort_info.len());
 
-        let total_count = all_cohorts.len();
-
-        // Calculate start and end indices for pagination
-        let start = pagination_params.page.saturating_sub(1) * pagination_params.page_size;
-        let end = std::cmp::min(start + pagination_params.page_size, total_count);
-
-        // Slice the vector to obtain the paginated items
-        let paginated_cohorts = if start < total_count {
-            all_cohorts[start..end].to_vec()
-        } else {
-            Vec::new() // If start is out of range, return empty vector
-        };
-
-        PaginationReturnCohort {
-            data: paginated_cohorts,
-            total_count,
-        }
-    })
+    PaginationReturnCohort {
+        data: cohorts_snapshot,
+        total_count: total_count.try_into().unwrap(),
+    }
 }
+
 
 #[update(guard = "is_user_anonymous")]
 pub fn send_enrollment_request_as_mentor(cohort_id: String, user_info: MentorInternal) -> String {
