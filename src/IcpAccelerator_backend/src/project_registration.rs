@@ -493,6 +493,7 @@ pub async fn create_project(info: ProjectInfo) -> String {
             for role in role_status_vec.iter_mut() {
                 if role.name == "project" {
                     role.status = "requested".to_string();
+                    role.requested_on = Some(time());
                     break;
                 }
             }

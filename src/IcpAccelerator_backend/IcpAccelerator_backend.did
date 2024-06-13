@@ -155,10 +155,18 @@ type LeaderboardEntryForRatings = record {
   average_rating : opt float64;
   project_id : opt text;
 };
+type ListAllMentors = record {
+  "principal" : principal;
+  params : MentorInternal;
+};
 type ListAllProjects = record {
   "principal" : principal;
   overall_average : opt float64;
   params : ProjectInfoInternal;
+};
+type ListAllVC = record {
+  "principal" : principal;
+  params : VentureCapitalistInternal;
 };
 type MAnnouncements = record {
   announcement_message : text;
@@ -635,7 +643,7 @@ type TopData = record {
   full_name : text;
 };
 type TopDataProject = record {
-  "principal" : text;
+  "principal" : principal;
   country : text;
   profile_picture : opt vec nat8;
   area_of_interest : text;
@@ -1019,6 +1027,9 @@ service : {
   get_top_5_mentors : () -> (vec record { principal; TopData; nat64 }) query;
   get_top_5_projects : () -> (vec record { text; TopDataProject; nat64 }) query;
   get_top_5_vcs : () -> (vec record { principal; TopData; nat64 }) query;
+  get_top_three_mentors : () -> (vec ListAllMentors) query;
+  get_top_three_projects : () -> (vec ListAllProjects) query;
+  get_top_three_vc : () -> (vec ListAllVC) query;
   get_total_approved_list_with_user_data : (Pagination) -> (
       PaginationReturnUserData,
     ) query;
