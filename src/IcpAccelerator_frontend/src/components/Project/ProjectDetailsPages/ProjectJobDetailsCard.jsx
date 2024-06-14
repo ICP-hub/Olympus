@@ -80,7 +80,7 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
       project_id: project_id,
     };
     console.log("argument", new_details);
-    await actor.update_job(currentJobId, new_details).then((result) => {
+    await actor.update_job_post_by_id(currentJobId, new_details).then((result) => {
       if (result) {
         handleJobsCloseModal();
         toast.success(result);
@@ -101,7 +101,7 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
   const handleDelete = async () => {
     console.log("currentJobId===>>>>>>>>>", currentJobId);
     setIsSubmitting(true);
-    await actor.delete_job(currentJobId).then((result) => {
+    await actor.delete_job_post_by_id(currentJobId).then((result) => {
       if (result) {
         setDeleteModalOpen();
         toast.success(result);
