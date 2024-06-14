@@ -69,13 +69,14 @@ pub fn get_all_sent_request_from_investor_to_project() -> Vec<OfferToProjectByIn
 
 pub fn notify_project_with_offer(project_id: String, offer: OfferToSendToProjectByInvestor) {
     mutate_state(|state| {
-        state
-            .project_alerts_of_investor
-            .get(&project_id)
-            .map(|candid_res| candid_res.0)
-            .unwrap_or_else(Vec::new)
-            .push(offer);
-    })
+        if let Some(offers) = state.project_alerts_of_investor.get(&project_id) {
+            let mut new_offers = offers.0.clone();
+            new_offers.push(offer);
+            state.project_alerts_of_investor.insert(project_id, Candid(new_offers));
+        } else {
+            state.project_alerts_of_investor.insert(project_id, Candid(vec![offer]));
+        }
+    });
 }
 
 #[query]

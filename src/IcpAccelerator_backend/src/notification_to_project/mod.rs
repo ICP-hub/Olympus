@@ -67,13 +67,15 @@ pub fn get_all_sent_request_for_mentor() -> Vec<OfferToProject> {
 }
 
 pub fn notify_project_with_offer(project_id: String, offer: OfferToSendToProject) {
-    mutate_state(|store| {
-        store
-            .project_alerts
-            .get(&project_id)
-            .map_or_else(Vec::new, |offer_res| offer_res.0)
-            .push(offer);
-    })
+    mutate_state(|state| {
+        if let Some(offers) = state.project_alerts.get(&project_id) {
+            let mut new_offers = offers.0.clone();
+            new_offers.push(offer);
+            state.project_alerts.insert(project_id, Candid(new_offers));
+        } else {
+            state.project_alerts.insert(project_id, Candid(vec![offer]));
+        }
+    });
 }
 
 #[query]

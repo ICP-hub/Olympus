@@ -72,12 +72,14 @@ pub fn store_request_sent_by_project_to_investor(project_id: String, offer: Offe
 
 pub fn notify_investor_with_offer(mentor_id: Principal, offer: OfferToSendToInvestor) {
     mutate_state(|state| {
-        state
-            .investor_alerts
-            .get(&StoredPrincipal(mentor_id))
-            .map_or_else(Vec::new, |candid_res| candid_res.0)
-            .push(offer);
-    })
+        if let Some(offers) = state.investor_alerts.get(&StoredPrincipal(mentor_id)) {
+            let mut new_offers = offers.0.clone();
+            new_offers.push(offer);
+            state.investor_alerts.insert(StoredPrincipal(mentor_id), Candid(new_offers));
+        } else {
+            state.investor_alerts.insert(StoredPrincipal(mentor_id), Candid(vec![offer]));
+        }
+    });
 }
 
 // #[query]
