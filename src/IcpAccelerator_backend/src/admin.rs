@@ -694,165 +694,107 @@ pub fn approve_vc_creation_request(requester: Principal, approve: bool) -> Strin
 
 #[update(guard = "is_admin")]
 pub fn approve_vc_profile_update(requester: Principal, approve: bool) -> String {
-    mutate_state(|state| {
-        if let Some(vc_internal) = state
-            .vc_profile_edit_awaits
-            .get(&StoredPrincipal(requester))
-        {
+    let mut notification_needed = false;
+
+    let update_result = mutate_state(|state| {
+        if let Some(vc_internal) = state.vc_profile_edit_awaits.remove(&StoredPrincipal(requester)) {
             if approve {
-                if let Some(mut existing_vc_internal) =
-                    state.vc_storage.get(&StoredPrincipal(requester))
-                {
+                if let Some(mut existing_vc_internal) = state.vc_storage.get(&StoredPrincipal(requester)) {
                     if let Some(update) = &vc_internal.0.updated_info {
-                        existing_vc_internal.0.params.registered_under_any_hub = update
-                            .registered_under_any_hub
-                            .clone()
-                            .or(existing_vc_internal
-                                .0
-                                .params
-                                .registered_under_any_hub
-                                .clone());
-
-                        existing_vc_internal.0.params.project_on_multichain = update
-                            .project_on_multichain
-                            .clone()
+                        existing_vc_internal.0.params.registered_under_any_hub = update.registered_under_any_hub.clone()
+                            .or(existing_vc_internal.0.params.registered_under_any_hub.clone());
+                        existing_vc_internal.0.params.project_on_multichain = update.project_on_multichain.clone()
                             .or(existing_vc_internal.0.params.project_on_multichain.clone());
-
-                        existing_vc_internal.0.params.money_invested = update
-                            .money_invested
-                            .clone()
+                        existing_vc_internal.0.params.money_invested = update.money_invested.clone()
                             .or(existing_vc_internal.0.params.money_invested.clone());
-
-                        existing_vc_internal.0.params.existing_icp_portfolio = update
-                            .existing_icp_portfolio
-                            .clone()
+                        existing_vc_internal.0.params.existing_icp_portfolio = update.existing_icp_portfolio.clone()
                             .or(existing_vc_internal.0.params.existing_icp_portfolio.clone());
-
-                        existing_vc_internal.0.params.announcement_details = update
-                            .announcement_details
-                            .clone()
+                        existing_vc_internal.0.params.announcement_details = update.announcement_details.clone()
                             .or(existing_vc_internal.0.params.announcement_details.clone());
-
-                        existing_vc_internal.0.params.registered_country = update
-                            .registered_country
-                            .clone()
+                        existing_vc_internal.0.params.registered_country = update.registered_country.clone()
                             .or(existing_vc_internal.0.params.registered_country.clone());
-
-                        existing_vc_internal.0.params.fund_size = Some(
-                            update
-                                .fund_size
-                                .map(|size| (size * 100.0).round() / 100.0)
-                                .unwrap_or(0.0),
-                        );
-
-                        existing_vc_internal.0.params.assets_under_management =
-                            update.assets_under_management.clone();
-
-                        existing_vc_internal.0.params.category_of_investment =
-                            update.category_of_investment.clone();
-
+                        existing_vc_internal.0.params.fund_size = Some(update.fund_size.unwrap_or(0.0));
+                        existing_vc_internal.0.params.assets_under_management = update.assets_under_management.clone();
+                        existing_vc_internal.0.params.category_of_investment = update.category_of_investment.clone();
                         existing_vc_internal.0.params.logo = update.logo.clone();
-
-                        existing_vc_internal.0.params.average_check_size =
-                            (update.average_check_size * 100.0).round() / 100.0;
-
-                        existing_vc_internal.0.params.existing_icp_investor =
-                            update.existing_icp_investor;
-
+                        existing_vc_internal.0.params.average_check_size = update.average_check_size;
+                        existing_vc_internal.0.params.existing_icp_investor = update.existing_icp_investor;
                         existing_vc_internal.0.params.investor_type = update.investor_type.clone();
-
-                        existing_vc_internal.0.params.number_of_portfolio_companies =
-                            update.number_of_portfolio_companies;
-
-                        existing_vc_internal.0.params.portfolio_link =
-                            update.portfolio_link.clone();
-
-                        existing_vc_internal.0.params.reason_for_joining =
-                            update.reason_for_joining.clone();
-
+                        existing_vc_internal.0.params.number_of_portfolio_companies = update.number_of_portfolio_companies;
+                        existing_vc_internal.0.params.portfolio_link = update.portfolio_link.clone();
+                        existing_vc_internal.0.params.reason_for_joining = update.reason_for_joining.clone();
                         existing_vc_internal.0.params.name_of_fund = update.name_of_fund.clone();
-
-                        existing_vc_internal.0.params.preferred_icp_hub =
-                            update.preferred_icp_hub.clone();
-
-                        existing_vc_internal.0.params.type_of_investment =
-                            update.type_of_investment.clone();
-
+                        existing_vc_internal.0.params.preferred_icp_hub = update.preferred_icp_hub.clone();
+                        existing_vc_internal.0.params.type_of_investment = update.type_of_investment.clone();
                         existing_vc_internal.0.params.user_data = update.user_data.clone();
-
                         existing_vc_internal.0.params.linkedin_link = update.linkedin_link.clone();
-
                         existing_vc_internal.0.params.website_link = update.website_link.clone();
-
                         existing_vc_internal.0.params.registered = update.registered.clone();
+
+                        notification_needed = true; 
+                        state.vc_storage.insert(StoredPrincipal(requester), existing_vc_internal);
+                        return Ok("Profile updated successfully and ready for notification.");
                     }
                 }
+                return Err("No existing VC profile found to update.");
             }
-
-            state
-                .vc_profile_edit_awaits
-                .remove(&StoredPrincipal(requester));
-            change_notification_status(requester, "vc".to_string(), "approved".to_string());
-
-            if approve {
-                format!("Requester with principal id {} is approved", requester)
-            } else {
-                format!(
-                    "Requester with principal id {} could not be approved",
-                    requester
-                )
-            }
-        } else {
-            format!(
-                "Requester with principal id {} has not registered",
-                requester
-            )
         }
-    })
+        Err("No pending approval request found.")
+    });
+
+    match update_result {
+        Ok(message) => {
+            if notification_needed {
+                change_notification_status(requester, "vc".to_string(), "approved".to_string());
+            }
+            format!("{} Notification sent.", message)
+        },
+        Err(error) => format!("Error processing request: {}", error),
+    }
 }
+
 
 #[update(guard = "is_admin")]
 pub fn decline_vc_profile_update_request(requester: Principal, decline: bool) -> String {
-    mutate_state(|state| {
-        let previous_profile = state
-            .vc_storage
-            .get(&StoredPrincipal(requester))
-            .map(|vc_internal| vc_internal.0.params.clone());
+    let mut declined_data: Option<UpdateInfoStruct> = None;
 
-        if let Some(vc_internal) = state
-            .vc_profile_edit_awaits
-            .get(&StoredPrincipal(requester))
-        {
-            let declined_data = UpdateInfoStruct {
+
+    let update_result = mutate_state(|state| {
+        if let Some(vc_internal) = state.vc_profile_edit_awaits.remove(&StoredPrincipal(requester)) {
+            let previous_profile = state
+                .vc_storage
+                .get(&StoredPrincipal(requester))
+                .map(|vc_internal| vc_internal.0.params.clone());
+
+            declined_data = Some(UpdateInfoStruct {
                 original_info: previous_profile,
                 updated_info: vc_internal.0.updated_info.clone(),
                 approved_at: 0,
-                rejected_at: time(),
-                sent_at: 0,
-            };
-            if decline {
-                state
-                    .vc_profile_edit_declined
-                    .insert(StoredPrincipal(requester), Candid(declined_data.clone()));
-                state
-                    .vc_profile_edit_awaits
-                    .remove(&StoredPrincipal(requester));
-                change_notification_status(requester, "vc".to_string(), "declined".to_string());
-                format!("Requester with principal id {} is declined", requester)
-            } else {
-                format!(
-                    "Requester with principal id {} could not be declined",
-                    requester
-                )
-            }
+                rejected_at: ic_cdk::api::time(),
+                sent_at: vc_internal.0.sent_at,
+            });
+
+            ic_cdk::println!("VC profile update request for {} has been declined.", requester);
+            Ok("Decline processed successfully, ready for notification.")
         } else {
-            format!(
-                "Requester with principal id {} has not registered",
-                requester
-            )
+            Err("No pending approval request found for decline.")
         }
-    })
+    });
+
+    match update_result {
+        Ok(message) => {
+            if let Some(data) = declined_data {
+                mutate_state(|state| {
+                    state.vc_profile_edit_declined.insert(StoredPrincipal(requester), Candid(data));
+                });
+                change_notification_status(requester, "vc".to_string(), "declined".to_string());
+            }
+            format!("{} Notification sent.", message)
+        },
+        Err(error) => format!("Error processing request: {}", error),
+    }
 }
+
 
 #[update(guard = "is_admin")]
 pub fn decline_project_profile_update_request(requester: String, decline: bool) -> String {
@@ -882,90 +824,67 @@ pub fn decline_project_profile_update_request(requester: String, decline: bool) 
 #[update(guard = "is_admin")]
 
 pub fn approve_mentor_profile_update(requester: Principal, approve: bool) -> String {
-    mutate_state(|state| {
-        if let Some(updated_profile) = state
-            .mentor_profile_edit_awaits
-            .get(&StoredPrincipal(requester))
-        {
-            if approve {
-                if let Some(mut mentor_internal) =
-                    state.mentor_storage.get(&StoredPrincipal(requester))
-                {
-                    if let Some(ref updated_info) = updated_profile.0.updated_info {
-                        mentor_internal.0.profile.preferred_icp_hub = updated_info
-                            .preferred_icp_hub
-                            .clone()
-                            .or(mentor_internal.0.profile.preferred_icp_hub.clone());
+    let mut updated_profile_data: Option<MentorProfile> = None;
 
-                        mentor_internal.0.profile.multichain = updated_info
-                            .multichain
-                            .clone()
-                            .or(mentor_internal.0.profile.multichain.clone());
-
-                        mentor_internal.0.profile.existing_icp_project_porfolio = updated_info
-                            .existing_icp_project_porfolio
-                            .clone()
-                            .or(mentor_internal
-                                .0
-                                .profile
-                                .existing_icp_project_porfolio
-                                .clone());
-
-                        mentor_internal.0.profile.area_of_expertise =
-                            updated_info.area_of_expertise.clone();
-                        mentor_internal.0.profile.category_of_mentoring_service =
-                            updated_info.category_of_mentoring_service.clone();
-
-                        mentor_internal.0.profile.existing_icp_mentor =
-                            updated_info.existing_icp_mentor;
-                        mentor_internal.0.profile.icp_hub_or_spoke = updated_info.icp_hub_or_spoke;
-                        mentor_internal.0.profile.linkedin_link =
-                            updated_info.linkedin_link.clone();
-                        mentor_internal.0.profile.website = updated_info.website.clone();
-                        mentor_internal.0.profile.years_of_mentoring =
-                            updated_info.years_of_mentoring.clone();
-                        mentor_internal.0.profile.reason_for_joining =
-                            updated_info.reason_for_joining.clone();
-                        mentor_internal.0.profile.user_data = updated_info.user_data.clone();
-                        mentor_internal.0.profile.hub_owner = updated_info
-                            .hub_owner
-                            .clone()
-                            .or(mentor_internal.0.profile.hub_owner.clone());
-                    }
+    let update_result = mutate_state(|state| {
+        if let Some(updated_profile) = state.mentor_profile_edit_awaits.remove(&StoredPrincipal(requester)) {
+            if let Some(mut mentor_internal) = state.mentor_storage.get(&StoredPrincipal(requester)) {
+                if let Some(ref updated_info) = updated_profile.0.updated_info {
+                    mentor_internal.0.profile.preferred_icp_hub = updated_info.preferred_icp_hub.clone()
+                        .or_else(|| mentor_internal.0.profile.preferred_icp_hub.clone());
+                    mentor_internal.0.profile.multichain = updated_info.multichain.clone()
+                        .or_else(|| mentor_internal.0.profile.multichain.clone());
+                    mentor_internal.0.profile.existing_icp_project_porfolio = updated_info.existing_icp_project_porfolio.clone()
+                        .or_else(|| mentor_internal.0.profile.existing_icp_project_porfolio.clone());
+                    mentor_internal.0.profile.area_of_expertise = updated_info.area_of_expertise.clone();
+                    mentor_internal.0.profile.category_of_mentoring_service = updated_info.category_of_mentoring_service.clone();
+                    mentor_internal.0.profile.existing_icp_mentor = updated_info.existing_icp_mentor;
+                    mentor_internal.0.profile.icp_hub_or_spoke = updated_info.icp_hub_or_spoke;
+                    mentor_internal.0.profile.linkedin_link = updated_info.linkedin_link.clone();
+                    mentor_internal.0.profile.website = updated_info.website.clone();
+                    mentor_internal.0.profile.years_of_mentoring = updated_info.years_of_mentoring.clone();
+                    mentor_internal.0.profile.reason_for_joining = updated_info.reason_for_joining.clone();
+                    mentor_internal.0.profile.user_data = updated_info.user_data.clone();
+                    mentor_internal.0.profile.hub_owner = updated_info.hub_owner.clone()
+                        .or_else(|| mentor_internal.0.profile.hub_owner.clone());
                 }
+                updated_profile_data = Some(mentor_internal.0.profile.clone());
+                state.mentor_storage.insert(StoredPrincipal(requester), mentor_internal);
 
-                state
-                    .mentor_profile_edit_awaits
-                    .remove(&StoredPrincipal(requester));
-                change_notification_status(requester, "mentor".to_string(), "approved".to_string());
-                format!("Requester with principal id {} is approved", requester)
+                ic_cdk::println!("Mentor profile for {} has been approved and updated.", requester);
+                Ok("Approval processed successfully, ready for notification.")
             } else {
-                format!(
-                    "Requester with principal id {} could not be approved",
-                    requester
-                )
+                Err("Mentor profile not found in storage.")
             }
         } else {
-            format!(
-                "Requester with principal id {} has not registered",
-                requester
-            )
+            Err("No mentor profile edit request found.")
         }
-    })
+    });
+
+    match update_result {
+        Ok(message) => {
+            if let Some(profile_data) = updated_profile_data {
+                change_notification_status(requester, "mentor".to_string(), "approved".to_string());
+                println!("Updated mentor profile after approval: {:?}", profile_data);
+                format!("{} Notification sent.", message)
+            } else {
+                format!("Error: Mentor profile data was not available after update.")
+            }
+        },
+        Err(error) => format!("Error processing approval: {}", error),
+    }
 }
+
 
 #[update(guard = "is_admin")]
 pub fn decline_mentor_profile_update_request(requester: Principal, decline: bool) -> String {
-    mutate_state(|state| {
-        let previous_profile = state
-            .mentor_storage
-            .get(&StoredPrincipal(requester))
-            .map(|mentor_internal| mentor_internal.0.profile.clone());
+    let result = mutate_state(|state| {
+        if let Some(updated_profile) = state.mentor_profile_edit_awaits.remove(&StoredPrincipal(requester)) {
+            let previous_profile = state
+                .mentor_storage
+                .get(&StoredPrincipal(requester))
+                .map(|mentor_internal| mentor_internal.0.profile.clone());
 
-        if let Some(updated_profile) = state
-            .mentor_profile_edit_awaits
-            .get(&StoredPrincipal(requester))
-        {
             let declined_data = MentorUpdateRequest {
                 original_info: previous_profile,
                 updated_info: updated_profile.0.updated_info.clone(),
@@ -974,30 +893,22 @@ pub fn decline_mentor_profile_update_request(requester: Principal, decline: bool
                 sent_at: 0,
             };
 
-            if decline {
-                state
-                    .mentor_profile_edit_declined
-                    .insert(StoredPrincipal(requester), Candid(declined_data.clone()));
-                state
-                    .mentor_profile_edit_awaits
-                    .remove(&StoredPrincipal(requester));
-                change_notification_status(requester, "mentor".to_string(), "declined".to_string());
-
-                format!("Requester with principal id {} is declined", requester)
-            } else {
-                format!(
-                    "Requester with principal id {} could not be declined",
-                    requester
-                )
-            }
+            state.mentor_profile_edit_declined.insert(StoredPrincipal(requester), Candid(declined_data));
+            Ok("Profile update declined successfully.")
         } else {
-            format!(
-                "Requester with principal id {} has not registered",
-                requester
-            )
+            Err("Requester has not registered or does not have a pending update request.")
         }
-    })
+    });
+
+    match result {
+        Ok(_) => {
+            change_notification_status(requester, "mentor".to_string(), "declined".to_string());
+            format!("Requester with principal id {} is declined", requester)
+        },
+        Err(msg) => msg.to_string(),
+    }
 }
+
 
 #[update(guard = "is_admin")]
 pub fn approve_project_creation_request(requester: Principal) -> String {
