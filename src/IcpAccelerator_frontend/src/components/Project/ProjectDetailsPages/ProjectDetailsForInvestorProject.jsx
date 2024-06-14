@@ -10,41 +10,62 @@ import AnnouncementDetailsCard from "./AnnouncementDetailsCard";
 import ProjectJobDetailsCard from "./ProjectJobDetailsCard";
 import ProjectDetailsCommunityRatings from "./ProjectDetailsCommunityRatings";
 import toast, { Toaster } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ProjectDocuments from "../../Resources/ProjectDocuments";
 import ProjectMoneyRaising from "../../Resources/ProjectMoneyRaising";
 import DonerMenu from "../../../models/DonerMenu";
 import RubricRating from "../RubricRating";
+import { Principal } from "@dfinity/principal";
+import AddAMentorRequestModal from "../../../models/AddAMentorRequestModal";
+
 const ProjectDetailsForOwnerProject = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
   const actor = useSelector((currState) => currState.actors.actor);
+  const principal = useSelector((currState) => currState.internet.principal);
   const [projectData, setProjectData] = useState(null);
   const [isProjectLive, setIsProjectLive] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const fetchProjectData = async () => {
+  const [isAddProjectModalOpenAsInvestor, setIsAddProjectModalOpenAsInvestor] =
+    useState(false);
+
+  const handleProjectCloseModalAsInvestor = () =>
+    setIsAddProjectModalOpenAsInvestor(false);
+  const handleProjectOpenModalAsInvestor = () =>
+    setIsAddProjectModalOpenAsInvestor(true);
+
+  const fetchProjectData = async (isMounted) => {
     await actor
-      .get_my_project()
+      .get_project_details_for_mentor_and_investor(id)
       .then((result) => {
-        console.log("result-in-get_my_project", result);
+        console.log(
+          "result-in-get_project_details_for_mentor_and_investor",
+          result
+        );
+        if (isMounted) {
         if (result && Object.keys(result).length > 0) {
           setProjectData(result);
           setIsProjectLive(
-            result?.params?.dapp_link[0] &&
-              result?.params?.dapp_link[0].trim() !== ""
-              ? result?.params?.dapp_link[0]
-              : null
-          );
+            result?.params?.dapp_link[0] && result?.params?.dapp_link[0].trim() !== ""
+               ? result?.params?.dapp_link[0]
+               : null
+           ); 
         } else {
           setProjectData(null);
           setIsProjectLive(null);
         }
-      })
+      }})
       .catch((error) => {
-        console.log("error-in-get_my_project", error);
+        if (isMounted) {
+        console.log(
+          "error-in-get_project_details_for_mentor_and_investor",
+          error
+        );
         setProjectData(null);
         setIsProjectLive(null);
-      });
+
+      }});
   };
 
   const headerData = [
@@ -79,17 +100,12 @@ const ProjectDetailsForOwnerProject = () => {
   ];
 
   const [activeTab, setActiveTab] = useState(headerData[0].id);
-  const [isAnnouncementModalOpen, setAnnouncementModalOpen] = useState(false);
-  const [isJobsModalOpen, setJobsModalOpen] = useState(false);
   const [showList, setShowList] = useState(false); // State to manage the visibility of the list
 
   const handleHamburgerClick = () => {
     setShowList(!showList);
   };
-  const handleCloseModal = () => setAnnouncementModalOpen(false);
-  const handleOpenModal = () => setAnnouncementModalOpen(true);
-  const handleJobsCloseModal = () => setJobsModalOpen(false);
-  const handleJobsOpenModal = () => setJobsModalOpen(true);
+
   const tabObject = headerData.find((tab) => tab.id === activeTab);
 
   // If tabObject is found, use its label; otherwise, use a default value
@@ -209,109 +225,65 @@ const ProjectDetailsForOwnerProject = () => {
         return null;
     }
   };
-
-  const handleAddAnnouncement = async ({
-    announcementTitle,
-    announcementDescription,
-  }) => {
-    console.log("add announcement");
-    setIsSubmitting(true);
-    if (actor) {
-      let argument = {
-        project_id: projectData?.uid,
-        announcement_title: announcementTitle,
-        announcement_description: announcementDescription,
-        timestamp: Date.now(),
-      };
-      console.log("argument", argument);
-      await actor
-        .add_announcement(argument)
-        .then((result) => {
-          console.log("result-in-add_announcement", result);
-          if (result && Object.keys(result).length > 0) {
-            handleCloseModal();
-            fetchProjectData();
-            setIsSubmitting(false);
-            toast.success("announcement added successfully");
-          } else {
-            handleCloseModal();
-            setIsSubmitting(false);
-            toast.error("something got wrong");
-          }
-        })
-        .catch((error) => {
-          console.log("error-in-add_announcement", error);
-          toast.error("something got wrong");
-          setIsSubmitting(false);
-          handleCloseModal();
-        });
-    }
+  const fetchRubricRating = async (val) => {
+    await actor
+      .calculate_average(val?.uid)
+      .then((result) => {
+        console.log("result-in-calculate_average", result);
+      })
+      .catch((error) => {
+        console.log("error-in-calculate_average", error);
+      });
   };
 
-  const handleAddJob = async ({
-    jobTitle,
-    jobLink,
-    jobDescription,
-    jobCategory,
-    jobLocation,
-  }) => {
-    console.log("add job");
+  // ASSOCIATE IN A PROJECT HANDLER AS A MENTOR
+  const handleAddProjectAsInvestor = async ({ message }) => {
     setIsSubmitting(true);
-    if (actor) {
-      let argument = {
-        title: jobTitle,
-        description: jobDescription,
-        category: jobCategory,
-        location: jobLocation,
-        link: jobLink,
-        project_id: projectData?.uid,
-      };
-      console.log("argument", argument);
+    console.log("add into a project AS INVESTOR");
+    if (actor && principal) {
+      let project_id = id;
+      let msg = message;
+
       await actor
-        .post_job(argument)
+        .send_offer_to_project_by_investor(project_id, msg)
         .then((result) => {
-          console.log("result-in-post_job", result);
+          console.log("result-in-send_offer_to_project_by_investor", result);
           if (result) {
-            handleJobsCloseModal();
-            fetchProjectData();
+            handleProjectCloseModalAsInvestor();
             setIsSubmitting(false);
-            toast.success("job posted successfully");
+            fetchProjectData();
+            toast.success("offer sent to project successfully");
           } else {
-            handleJobsCloseModal();
+            handleProjectCloseModalAsInvestor();
             setIsSubmitting(false);
             toast.error("something got wrong");
           }
         })
         .catch((error) => {
-          console.log("error-in-post_job", error);
+          console.log("error-in-send_offer_to_project_by_investor", error);
+          handleProjectCloseModalAsInvestor();
           setIsSubmitting(false);
           toast.error("something got wrong");
-          handleJobsCloseModal();
         });
     }
   };
-
-  // const fetchRubricRating = async (val) => {
-  //     await actor.calculate_average(val?.uid)
-  //         .then((result) => {
-  //             console.log('result-in-calculate_average', result)
-  //         })
-  //         .catch((error) => {
-  //             console.log('error-in-calculate_average', error)
-  //         })
-  // }
 
   useEffect(() => {
+    let isMounted = true;
     if (actor) {
       if (!projectData) {
-        fetchProjectData();
+        fetchProjectData(isMounted);
       } else {
-        // fetchRubricRating(projectData);
+        fetchRubricRating(projectData);
       }
     } else {
       navigate("/");
     }
-  }, [actor, projectData]);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [actor,projectData]);
 
   return (
     <section className="text-black bg-gray-100 pb-4 font-fontUse">
@@ -338,19 +310,13 @@ const ProjectDetailsForOwnerProject = () => {
               <div className="flex justify-between w-full">
                 <p className="capitalize pb-2 font-bold text-xl">overview</p>
                 <button
-                  onClick={() => navigate("/project-association-requests")}
-                  className="border-2 xxs:hidden block xxs:text-base text-xs truncate font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900"
+                  onClick={handleProjectOpenModalAsInvestor}
+                  className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900"
                 >
-                  View Requests
-                </button>
-                <button
-                  onClick={() => navigate("/project-association-requests")}
-                  className="border-2 hidden xxs:block xxs:text-base text-xs truncate font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900"
-                >
-                  View Association Requests
+                  Reach Out
                 </button>
               </div>
-              <p className="text-base text-gray-500 max-h-32 mt-3 overflow-y-scroll">
+              <p className="text-base text-gray-500 max-h-32 overflow-y-scroll">
                 {projectData?.params?.project_description}
               </p>
             </div>
@@ -441,20 +407,11 @@ const ProjectDetailsForOwnerProject = () => {
           </div>
         </div>
       </div>
-
-      {isAnnouncementModalOpen && (
-        <AnnouncementModal
-          onClose={handleCloseModal}
-          onSubmitHandler={handleAddAnnouncement}
-          isSubmitting={isSubmitting}
-        />
-      )}
-      {isJobsModalOpen && (
-        <AddJobsModal
-          jobbutton={"Add"}
-          jobtitle={"Add Job"}
-          onJobsClose={handleJobsCloseModal}
-          onSubmitHandler={handleAddJob}
+      {isAddProjectModalOpenAsInvestor && (
+        <AddAMentorRequestModal
+          title={"Associate Project"}
+          onClose={handleProjectCloseModalAsInvestor}
+          onSubmitHandler={handleAddProjectAsInvestor}
           isSubmitting={isSubmitting}
         />
       )}
