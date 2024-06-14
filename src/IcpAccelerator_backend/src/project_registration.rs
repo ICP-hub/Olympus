@@ -1527,6 +1527,64 @@ pub fn get_announcements_by_project_id(project_id: String) -> Vec<AnnouncementsI
     })
 }
 
+pub async fn update_project_announcement_by_id(
+    timestamp: u64,
+    new_details: Announcements,
+) -> String {
+    mutate_state(|state| {
+        let announcement_storage = &mut state.project_announcement;
+        if let Some(mut caller_announcements) = announcement_storage.get(&StoredPrincipal(caller()))
+        {
+            let mut caller_announcements = caller_announcements.clone();
+            ic_cdk::println!("state before update {:?}", caller_announcements.0);
+            for announcement in caller_announcements.0.iter_mut() {
+                if announcement.timestamp == timestamp {
+                    ic_cdk::println!("announcement before update: {:?}", announcement);
+                    // Update announcement details
+                    announcement.announcement_data = new_details;
+                    ic_cdk::println!("State after update: {:?}", announcement);
+                    announcement_storage.insert(StoredPrincipal(caller()), caller_announcements);
+
+                    return format!("Announcement updated successfully for {}", timestamp);
+                }
+            }
+
+            format!("No announcement found with timestamp {}", timestamp)
+        } else {
+            ic_cdk::println!("No announcement entry found for this caller.");
+            format!("No announcement entry found for this caller.")
+        }
+    })
+}
+
+pub async fn delete_project_announcement_by_id(timestamp: u64) -> String {
+    mutate_state(|state| {
+        let announcement_storage = &mut state.project_announcement;
+        if let Some(mut caller_announcements) = announcement_storage.get(&StoredPrincipal(caller()))
+        {
+            let mut caller_announcements = caller_announcements.clone();
+            ic_cdk::println!("state before update {:?}", caller_announcements.0);
+
+            let original_len = caller_announcements.0.len();
+            caller_announcements
+                .0
+                .retain(|announcement| announcement.timestamp != timestamp);
+
+            if caller_announcements.0.len() < original_len {
+                announcement_storage.insert(StoredPrincipal(caller()), caller_announcements);
+                ic_cdk::println!("Announcement deleted successfully for {}", timestamp);
+                format!("Announcement deleted successfully for {}", timestamp)
+            } else {
+                ic_cdk::println!("No announcement found with timestamp {}", timestamp);
+                format!("No announcement found with timestamp {}", timestamp)
+            }
+        } else {
+            ic_cdk::println!("No announcement entry found for this caller.");
+            format!("No announcement entry found for this caller.")
+        }
+    })
+}
+
 #[update(guard = "is_user_anonymous")]
 pub fn add_BlogPost(url: String) -> String {
     let caller_id = caller();
@@ -1920,6 +1978,63 @@ pub fn get_jobs_posted_by_project(project_id: String) -> Vec<JobsInternal> {
             );
         }
         jobs_for_project
+    })
+}
+
+#[update(guard = "is_user_anonymous")]
+pub async fn update_job_post_by_id(timestamp: u64, new_details: Jobs) -> String {
+    mutate_state(|state| {
+        let announcement_storage = &mut state.post_job;
+        if let Some(mut caller_announcements) = announcement_storage.get(&StoredPrincipal(caller()))
+        {
+            let mut caller_announcements = caller_announcements.clone();
+            ic_cdk::println!("state before update {:?}", caller_announcements.0);
+            for announcement in caller_announcements.0.iter_mut() {
+                if announcement.timestamp == timestamp {
+                    ic_cdk::println!("job post before update: {:?}", announcement);
+                    // Update announcement details
+                    announcement.job_data = new_details;
+                    ic_cdk::println!("State after update: {:?}", announcement);
+                    announcement_storage.insert(StoredPrincipal(caller()), caller_announcements);
+
+                    return format!("job post updated successfully for {}", timestamp);
+                }
+            }
+
+            format!("No job post found with timestamp {}", timestamp)
+        } else {
+            ic_cdk::println!("No job post entry found for this caller.");
+            format!("No job post entry found for this caller.")
+        }
+    })
+}
+
+#[update(guard = "is_user_anonymous")]
+pub async fn delete_job_post_by_id(timestamp: u64) -> String {
+    mutate_state(|state| {
+        let announcement_storage = &mut state.post_job;
+        if let Some(mut caller_announcements) = announcement_storage.get(&StoredPrincipal(caller()))
+        {
+            let mut caller_announcements = caller_announcements.clone();
+            ic_cdk::println!("state before update {:?}", caller_announcements.0);
+
+            let original_len = caller_announcements.0.len();
+            caller_announcements
+                .0
+                .retain(|announcement| announcement.timestamp != timestamp);
+
+            if caller_announcements.0.len() < original_len {
+                announcement_storage.insert(StoredPrincipal(caller()), caller_announcements);
+                ic_cdk::println!("job post deleted successfully for {}", timestamp);
+                format!("job post deleted successfully for {}", timestamp)
+            } else {
+                ic_cdk::println!("No job post found with timestamp {}", timestamp);
+                format!("No job post found with timestamp {}", timestamp)
+            }
+        } else {
+            ic_cdk::println!("No job post entry found for this caller.");
+            format!("No job post entry found for this caller.")
+        }
     })
 }
 
