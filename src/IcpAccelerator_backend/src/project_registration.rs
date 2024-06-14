@@ -1526,7 +1526,7 @@ pub fn get_announcements_by_project_id(project_id: String) -> Vec<AnnouncementsI
             .collect() // Collect the filtered announcements into a vector
     })
 }
-
+#[query(guard = "is_user_anonymous")]
 pub async fn update_project_announcement_by_id(
     timestamp: u64,
     new_details: Announcements,
@@ -1556,7 +1556,7 @@ pub async fn update_project_announcement_by_id(
         }
     })
 }
-
+#[query(guard = "is_user_anonymous")]
 pub async fn delete_project_announcement_by_id(timestamp: u64) -> String {
     mutate_state(|state| {
         let announcement_storage = &mut state.project_announcement;

@@ -46,6 +46,7 @@ const AddJobsModal = ({
   isSubmitting,
   jobtitle,
   jobbutton,
+  data
 }) => {
   const dispatch = useDispatch();
   const actor = useSelector((currState) => currState.actors.actor);
@@ -61,10 +62,21 @@ const AddJobsModal = ({
     register,
     handleSubmit,
     formState: { errors },
+    setValue
   } = useForm({
     resolver: yupResolver(schema),
     mode: "all",
   });
+
+  useEffect(() => {
+    if (data) {
+      setValue("jobTitle", data?.job_data?.title ?? "");
+      setValue("jobLocation", data?.job_data?.location ?? "");
+      setValue("jobLink", data?.job_data?.link ?? "");
+      setValue("jobCategory", data?.job_data?.category ?? "");
+      setValue("jobDescription", data?.job_data?.description ?? "");
+    }
+  }, [data, setValue]);
 
   const onSubmit = (data) => {
     console.log(data);

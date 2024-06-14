@@ -21,7 +21,7 @@ const ProjectDashboard = ({ numSkeletons }) => {
     await actor
       .get_my_project()
       .then((result) => {
-        console.log("result-in-get_my_project", result);
+        // console.log("result-in-get_my_project", result);
         if (result && Object.keys(result).length > 0) {
           setProjectData(result);
           setIsLoading(false);

@@ -22,16 +22,17 @@ const ProjectDetailsForOwnerProject = () => {
   const [isProjectLive, setIsProjectLive] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const fetchProjectData = async () => {
-    await actor
-      .get_my_project()
-      .then((result) => {
-        console.log("result-in-get_my_project", result);
+
+
+  const fetchProjectData = async (isMounted) => {
+    try {
+      const result = await actor.get_my_project();
+      // console.log("result-in-get_my_project", result);
+      if (isMounted) {
         if (result && Object.keys(result).length > 0) {
           setProjectData(result);
           setIsProjectLive(
-            result?.params?.dapp_link[0] &&
-              result?.params?.dapp_link[0].trim() !== ""
+            result?.params?.dapp_link[0] && result?.params?.dapp_link[0].trim() !== ""
               ? result?.params?.dapp_link[0]
               : null
           );
@@ -39,13 +40,30 @@ const ProjectDetailsForOwnerProject = () => {
           setProjectData(null);
           setIsProjectLive(null);
         }
-      })
-      .catch((error) => {
+      }
+    } catch (error) {
+      if (isMounted) {
         console.log("error-in-get_my_project", error);
+        setError(error);
         setProjectData(null);
         setIsProjectLive(null);
-      });
+      }
+    }
   };
+
+
+  useEffect(() => {
+    let isMounted = true;
+    if (actor) {
+      fetchProjectData(isMounted);
+    }else{
+      navigate("/");
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [actor]);
 
   const headerData = [
     {
@@ -214,7 +232,7 @@ const ProjectDetailsForOwnerProject = () => {
     announcementTitle,
     announcementDescription,
   }) => {
-    console.log("add announcement");
+    // console.log("add announcement");
     setIsSubmitting(true);
     if (actor) {
       let argument = {
@@ -223,11 +241,11 @@ const ProjectDetailsForOwnerProject = () => {
         announcement_description: announcementDescription,
         timestamp: Date.now(),
       };
-      console.log("argument", argument);
+      // console.log("argument", argument);
       await actor
         .add_announcement(argument)
         .then((result) => {
-          console.log("result-in-add_announcement", result);
+          // console.log("result-in-add_announcement", result);
           if (result && Object.keys(result).length > 0) {
             handleCloseModal();
             fetchProjectData();
@@ -256,7 +274,7 @@ const ProjectDetailsForOwnerProject = () => {
     jobCategory,
     jobLocation,
   }) => {
-    console.log("add job");
+    // console.log("add job");
     setIsSubmitting(true);
     if (actor) {
       let argument = {
@@ -267,11 +285,11 @@ const ProjectDetailsForOwnerProject = () => {
         link: jobLink,
         project_id: projectData?.uid,
       };
-      console.log("argument", argument);
+      // console.log("argument", argument);
       await actor
         .post_job(argument)
         .then((result) => {
-          console.log("result-in-post_job", result);
+          // console.log("result-in-post_job", result);
           if (result) {
             handleJobsCloseModal();
             fetchProjectData();
@@ -292,27 +310,6 @@ const ProjectDetailsForOwnerProject = () => {
     }
   };
 
-  // const fetchRubricRating = async (val) => {
-  //     await actor.calculate_average(val?.uid)
-  //         .then((result) => {
-  //             console.log('result-in-calculate_average', result)
-  //         })
-  //         .catch((error) => {
-  //             console.log('error-in-calculate_average', error)
-  //         })
-  // }
-
-  useEffect(() => {
-    if (actor) {
-      if (!projectData) {
-        fetchProjectData();
-      } else {
-        // fetchRubricRating(projectData);
-      }
-    } else {
-      navigate("/");
-    }
-  }, [actor, projectData]);
 
   return (
     <section className="text-black bg-gray-100 pb-4 font-fontUse">

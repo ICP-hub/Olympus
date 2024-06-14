@@ -25,22 +25,22 @@ const AnnouncementDetailsCard = ({ data }) => {
   const [isAnnouncementModalOpen, setAnnouncementModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [currentAnnouncementId, setCurrentAnnouncementId] = useState(null);
-  const handleOpenModal = (id) => {
-    setCurrentAnnouncementId(id);
+  const [currentAnnouncementData, setcurrentAnnouncementData] = useState(null);
+  const handleOpenModal = (card) => {
+    setcurrentAnnouncementData(card);
     setAnnouncementModalOpen(true);
   };
   const handleCloseModal = () => {
     setAnnouncementModalOpen(false);
-    setCurrentAnnouncementId(null);
+    setcurrentAnnouncementData(null);
   };
   const handleOpenDeleteModal = (id) => {
-    setCurrentAnnouncementId(id);
+    setcurrentAnnouncementData(id);
     setDeleteModalOpen(true);
   };
   const handleClose = () => {
     setDeleteModalOpen(false);
-    setCurrentAnnouncementId(null);
+    setcurrentAnnouncementData(null);
   };
 
   const fetchLatestAnnouncement = async (caller) => {
@@ -80,13 +80,13 @@ const AnnouncementDetailsCard = ({ data }) => {
       };
       // console.log("new_details", new_details);
       await actor
-        .update_project_announcement_by_id(currentAnnouncementId, new_details)
+        .update_project_announcement_by_id(currentAnnouncementData?.timestamp, new_details)
         .then((result) => {
-          // console.log("result-in-update_announcement", result);
+           console.log("result-in-update_announcement", result);
           if (
             result &&
             result.includes(
-              `Announcement with ID ${currentAnnouncementId} updated successfully`
+              `Announcement with ID ${currentAnnouncementData} updated successfully`
             )
           ) {
             handleCloseModal();
@@ -112,16 +112,16 @@ const AnnouncementDetailsCard = ({ data }) => {
   // <<<<<<----- Deleting the announcement_data -------->>>>>>
 
   const handleDelete = async () => {
-    // console.log("project_id===>>>>>>>>>", currentAnnouncementId);
+    // console.log("project_id===>>>>>>>>>", currentAnnouncementData);
     setIsSubmitting(true);
     await actor
-      .delete_project_announcement_by_id(currentAnnouncementId)
+      .delete_project_announcement_by_id(currentAnnouncementData?.timestamp)
       .then((result) => {
         // console.log("result-in-get_announcements_by_project_id", result);
         if (
           result &&
           result.includes(
-            `Announcement with ID ${currentAnnouncementId} deleted successfully`
+            `Announcement with ID ${currentAnnouncementData} deleted successfully`
           )
         ) {
           setIsSubmitting(false);
@@ -184,7 +184,7 @@ const AnnouncementDetailsCard = ({ data }) => {
         ) : (
           latestAnnouncementData &&
           latestAnnouncementData.map((card, index) => {
-            // console.log("card", card);
+             console.log("card", card);
             let ann_name = card?.announcement_data?.announcement_title ?? "";
             let project_id = card?.announcement_data?.project_id ?? "";
             let ann_time = card?.timestamp
@@ -209,7 +209,7 @@ const AnnouncementDetailsCard = ({ data }) => {
                           {" "}
                           <p className="text-black font-bold">{ann_name}</p>
                           <div
-                            onClick={() => handleOpenModal(announcement_id)}
+                            onClick={() => handleOpenModal(card)}
                             className="flex items-center"
                           >
                             {" "}
@@ -280,6 +280,8 @@ const AnnouncementDetailsCard = ({ data }) => {
           onSubmitHandler={handleUpdateAnnouncement}
           isSubmitting={isSubmitting}
           isUpdate={true}
+          data={currentAnnouncementData}
+
         />
       )}
       {isDeleteModalOpen && (
@@ -289,7 +291,7 @@ const AnnouncementDetailsCard = ({ data }) => {
           heading={"Are you sure to delete this announcement"}
           onSubmitHandler={handleDelete}
           isSubmitting={isSubmitting}
-          Id={currentAnnouncementId}
+          data={currentAnnouncementData}
         />
       )}
     </div>

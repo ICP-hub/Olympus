@@ -18,11 +18,11 @@ const MentorsProfileDetailsCard = ({
   const navigate = useNavigate();
   console.log('MentorsProfileDetailsCard',data)
 
-  if (!data?.mentors_assigned) {
-    return <div className="w-full">
-    <NoDataCard />
-  </div>
-  }
+  // if (!data?.mentors_assigned) {
+  //   return <div className="w-full">
+  //   <NoDataCard />
+  // </div>
+  // }
 
   return (
     <>

@@ -72,7 +72,7 @@ const LiveProjectBar = ({ data }) => {
     setIsAcceptModalOpen(!isAcceptModalOpen);
   };
   const navigate = useNavigate();
-  console.log("data ===>", data);
+  // console.log("data ===>", data);
   // const projectProgress = 50;
   let logo = data?.params?.project_logo
     ? uint8ArrayToBase64(data?.params?.project_logo[0])

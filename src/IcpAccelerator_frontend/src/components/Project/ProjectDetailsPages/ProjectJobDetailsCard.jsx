@@ -27,22 +27,22 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
   const [isJobsModalOpen, setJobsModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [currentJobId, setCurrentJobId] = useState(null);
-  const handleJobsOpenModal = (id) => {
-    setCurrentJobId(id);
+  const [currentJobData, setcurrentJobData] = useState(null);
+  const handleJobsOpenModal = (data) => {
+    setcurrentJobData(data);
     setJobsModalOpen(true);
   };
   const handleJobsCloseModal = () => {
     setJobsModalOpen(false);
-    setCurrentJobId(null);
+    setcurrentJobData(null);
   };
-  const handleOpenDeleteModal = (id) => {
-    setCurrentJobId(id);
+  const handleOpenDeleteModal = (data) => {
+    setcurrentJobData(data);
     setDeleteModalOpen(true);
   };
   const handleClose = () => {
     setDeleteModalOpen(false);
-    setCurrentJobId(null);
+    setcurrentJobData(null);
   };
 
   const fetchPostedJobs = async () => {
@@ -68,7 +68,7 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
 
   // <<<<<------- Job Updates ----->>>>>
   const handleEdit = async (job_data) => {
-    console.log("currentJobId===>>>>>>>>>", currentJobId);
+    console.log("currentJobData===>>>>>>>>>", currentJobData);
     let project_id = data?.uid;
     setIsSubmitting(true);
     let new_details = {
@@ -80,7 +80,7 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
       project_id: project_id,
     };
     console.log("argument", new_details);
-    await actor.update_job_post_by_id(currentJobId, new_details).then((result) => {
+    await actor.update_job_post_by_id(currentJobData?.timestamp , new_details).then((result) => {
       if (result) {
         handleJobsCloseModal();
         toast.success(result);
@@ -99,15 +99,15 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
 
   // <<<<<------- Job Delete ----->>>>>
   const handleDelete = async () => {
-    console.log("currentJobId===>>>>>>>>>", currentJobId);
+    console.log("currentJobData===>>>>>>>>>", currentJobData);
     setIsSubmitting(true);
-    await actor.delete_job_post_by_id(currentJobId).then((result) => {
+    await actor.delete_job_post_by_id(currentJobData?.timestamp).then((result) => {
       if (result) {
         setDeleteModalOpen();
         toast.success(result);
         setIsSubmitting(false);
         setTimeout(() => {
-          window.location.reload();
+          window.location.reload();       
         }, 2000);
         console.log("result-in-get_announcements_by_project_id", result);
       } else {
@@ -186,7 +186,7 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
                       </h3>
                       <div className="flex items-center">
                         {" "}
-                        <div onClick={() => handleJobsOpenModal(job_uid)}>
+                        <div onClick={() => handleJobsOpenModal(card)}>
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 16 16"
@@ -197,7 +197,7 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
                             <path d="M4.75 3.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h6.5c.69 0 1.25-.56 1.25-1.25V9A.75.75 0 0 1 14 9v2.25A2.75 2.75 0 0 1 11.25 14h-6.5A2.75 2.75 0 0 1 2 11.25v-6.5A2.75 2.75 0 0 1 4.75 2H7a.75.75 0 0 1 0 1.5H4.75Z" />
                           </svg>
                         </div>
-                        <div onClick={() => handleOpenDeleteModal(job_uid)}>
+                        <div onClick={() => handleOpenDeleteModal(card)}>
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 16 16"
@@ -294,6 +294,8 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
           onJobsClose={handleJobsCloseModal}
           onSubmitHandler={handleEdit}
           isSubmitting={isSubmitting}
+          data={currentJobData}
+
         />
       )}
 
@@ -304,7 +306,7 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
           heading={"Are you sure to delete this job"}
           onSubmitHandler={handleDelete}
           isSubmitting={isSubmitting}
-          Id={currentJobId}
+          data={currentJobData}
         />
       )}
     </div>

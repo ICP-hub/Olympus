@@ -17,11 +17,11 @@ const InvestorProfileDetailsCard = ({
 }) => {
   const navigate = useNavigate();
 
-  if (!data?.vc_assigned) {
-    return <div className="w-full">
-    <NoDataCard />
-  </div>
-  }
+  // if (!data?.vc_assigned) {
+  //   return <div className="w-full">
+  //   <NoDataCard />
+  // </div>
+  // }
   return (
     <>
       {addButton && isProjectLive && (

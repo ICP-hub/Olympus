@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useEffect} from "react";
 import { useForm } from "react-hook-form";
 import { ThreeDots } from "react-loader-spinner";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -26,15 +26,23 @@ const schema = yup
       ),
   })
   .required();
-const AnnouncementModal = ({ onClose, onSubmitHandler, isSubmitting ,isUpdate}) => {
+const AnnouncementModal = ({ onClose, onSubmitHandler, isSubmitting ,isUpdate ,data}) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setValue
   } = useForm({
     resolver: yupResolver(schema),
     mode: "all",
   });
+
+  useEffect(() => {
+    if (isUpdate && data) {
+      setValue("announcementTitle", data?.announcement_data?.announcement_title ?? "");
+      setValue("announcementDescription", data?.announcement_data?.announcement_description ?? "");
+    }
+  }, [isUpdate, data, setValue]);
 
   const onSubmit = (data) => {
     console.log(data);
@@ -140,7 +148,7 @@ const AnnouncementModal = ({ onClose, onSubmitHandler, isSubmitting ,isUpdate}) 
                     wrapperclassName=""
                   />
                 ) : (
-                  "Add new Announcement"
+                  isUpdate ? 'Update Announcement' : 'Add new Announcement'
                 )}
               </button>
             </form>

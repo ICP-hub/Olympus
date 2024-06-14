@@ -77,7 +77,7 @@ const AnnouncementCard = () => {
     };
   }, [actor]);
 
-  console.log("noData", noData);
+  // console.log("noData", noData);
   return (
     <>
       {isLoading ? (
