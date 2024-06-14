@@ -10,41 +10,48 @@ import AnnouncementDetailsCard from "./AnnouncementDetailsCard";
 import ProjectJobDetailsCard from "./ProjectJobDetailsCard";
 import ProjectDetailsCommunityRatings from "./ProjectDetailsCommunityRatings";
 import toast, { Toaster } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate ,useParams} from "react-router-dom";
 import ProjectDocuments from "../../Resources/ProjectDocuments";
 import ProjectMoneyRaising from "../../Resources/ProjectMoneyRaising";
 import DonerMenu from "../../../models/DonerMenu";
 import RubricRating from "../RubricRating";
+import AddAMentorRequestModal from "../../../models/AddAMentorRequestModal";
+import { Principal } from "@dfinity/principal";
+
 const ProjectDetailsForOwnerProject = () => {
   const navigate = useNavigate();
   const actor = useSelector((currState) => currState.actors.actor);
   const [projectData, setProjectData] = useState(null);
   const [isProjectLive, setIsProjectLive] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const principal = useSelector((currState) => currState.internet.principal);
+  const { id } = useParams();
 
-  const fetchProjectData = async () => {
+  const fetchProjectData = async (isMounted) => {
     await actor
-      .get_my_project()
+      .get_project_details_for_mentor_and_investor(id)
       .then((result) => {
         console.log("result-in-get_my_project", result);
+        if (isMounted) {
         if (result && Object.keys(result).length > 0) {
           setProjectData(result);
           setIsProjectLive(
-            result?.params?.dapp_link[0] &&
-              result?.params?.dapp_link[0].trim() !== ""
+           result?.params?.dapp_link[0] && result?.params?.dapp_link[0].trim() !== ""
               ? result?.params?.dapp_link[0]
               : null
-          );
+          ); 
         } else {
           setProjectData(null);
           setIsProjectLive(null);
         }
-      })
+      }})
       .catch((error) => {
+        if (isMounted) {
         console.log("error-in-get_my_project", error);
         setProjectData(null);
         setIsProjectLive(null);
-      });
+
+      }});
   };
 
   const headerData = [
@@ -79,17 +86,12 @@ const ProjectDetailsForOwnerProject = () => {
   ];
 
   const [activeTab, setActiveTab] = useState(headerData[0].id);
-  const [isAnnouncementModalOpen, setAnnouncementModalOpen] = useState(false);
-  const [isJobsModalOpen, setJobsModalOpen] = useState(false);
   const [showList, setShowList] = useState(false); // State to manage the visibility of the list
 
   const handleHamburgerClick = () => {
     setShowList(!showList);
   };
-  const handleCloseModal = () => setAnnouncementModalOpen(false);
-  const handleOpenModal = () => setAnnouncementModalOpen(true);
-  const handleJobsCloseModal = () => setJobsModalOpen(false);
-  const handleJobsOpenModal = () => setJobsModalOpen(true);
+
   const tabObject = headerData.find((tab) => tab.id === activeTab);
 
   // If tabObject is found, use its label; otherwise, use a default value
@@ -210,108 +212,73 @@ const ProjectDetailsForOwnerProject = () => {
     }
   };
 
-  const handleAddAnnouncement = async ({
-    announcementTitle,
-    announcementDescription,
-  }) => {
-    console.log("add announcement");
-    setIsSubmitting(true);
-    if (actor) {
-      let argument = {
-        project_id: projectData?.uid,
-        announcement_title: announcementTitle,
-        announcement_description: announcementDescription,
-        timestamp: Date.now(),
-      };
-      console.log("argument", argument);
-      await actor
-        .add_announcement(argument)
-        .then((result) => {
-          console.log("result-in-add_announcement", result);
-          if (result && Object.keys(result).length > 0) {
-            handleCloseModal();
-            fetchProjectData();
-            setIsSubmitting(false);
-            toast.success("announcement added successfully");
-          } else {
-            handleCloseModal();
-            setIsSubmitting(false);
-            toast.error("something got wrong");
-          }
-        })
-        .catch((error) => {
-          console.log("error-in-add_announcement", error);
-          toast.error("something got wrong");
-          setIsSubmitting(false);
-          handleCloseModal();
-        });
-    }
-  };
+  const [isAddProjectModalOpen, setIsAddProjectModalOpen] = useState(false);
 
-  const handleAddJob = async ({
-    jobTitle,
-    jobLink,
-    jobDescription,
-    jobCategory,
-    jobLocation,
-  }) => {
-    console.log("add job");
+  const handleProjectCloseModal = () => setIsAddProjectModalOpen(false);
+  const handleProjectOpenModal = () => setIsAddProjectModalOpen(true);
+
+  // ASSOCIATE IN A PROJECT HANDLER AS A MENTOR
+  const handleAddProject = async ({ message }) => {
     setIsSubmitting(true);
-    if (actor) {
-      let argument = {
-        title: jobTitle,
-        description: jobDescription,
-        category: jobCategory,
-        location: jobLocation,
-        link: jobLink,
-        project_id: projectData?.uid,
-      };
-      console.log("argument", argument);
+    console.log("add into a project");
+    if (actor && principal) {
+      let project_id = id;
+      let msg = message;
+      let mentor_id = Principal.fromText(principal);
+
       await actor
-        .post_job(argument)
+        .send_offer_to_project(project_id, msg, mentor_id)
         .then((result) => {
-          console.log("result-in-post_job", result);
+          console.log("result-in-send_offer_to_project", result);
           if (result) {
-            handleJobsCloseModal();
+            handleProjectCloseModal();
             fetchProjectData();
             setIsSubmitting(false);
-            toast.success("job posted successfully");
+            toast.success("offer sent to project successfully");
           } else {
-            handleJobsCloseModal();
+            handleProjectCloseModal();
             setIsSubmitting(false);
             toast.error("something got wrong");
           }
         })
         .catch((error) => {
-          console.log("error-in-post_job", error);
+          console.log("error-in-send_offer_to_project", error);
           setIsSubmitting(false);
+          handleProjectCloseModal();
           toast.error("something got wrong");
-          handleJobsCloseModal();
         });
     }
   };
 
-  // const fetchRubricRating = async (val) => {
-  //     await actor.calculate_average(val?.uid)
-  //         .then((result) => {
-  //             console.log('result-in-calculate_average', result)
-  //         })
-  //         .catch((error) => {
-  //             console.log('error-in-calculate_average', error)
-  //         })
-  // }
+
+  const fetchRubricRating = async (val) => {
+    await actor
+      .calculate_average(val?.uid)
+      .then((result) => {
+        console.log("result-in-calculate_average", result);
+      })
+      .catch((error) => {
+        console.log("error-in-calculate_average", error);
+      });
+  };
+  
 
   useEffect(() => {
+    let isMounted = true;
     if (actor) {
       if (!projectData) {
-        fetchProjectData();
+        fetchProjectData(isMounted);
       } else {
-        // fetchRubricRating(projectData);
+        fetchRubricRating(projectData);
       }
     } else {
       navigate("/");
     }
-  }, [actor, projectData]);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [actor,projectData]);
 
   return (
     <section className="text-black bg-gray-100 pb-4 font-fontUse">
@@ -338,19 +305,13 @@ const ProjectDetailsForOwnerProject = () => {
               <div className="flex justify-between w-full">
                 <p className="capitalize pb-2 font-bold text-xl">overview</p>
                 <button
-                  onClick={() => navigate("/project-association-requests")}
-                  className="border-2 xxs:hidden block xxs:text-base text-xs truncate font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900"
+                  onClick={handleProjectOpenModal}
+                  className="border-2 font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900"
                 >
-                  View Requests
-                </button>
-                <button
-                  onClick={() => navigate("/project-association-requests")}
-                  className="border-2 hidden xxs:block xxs:text-base text-xs truncate font-semibold bg-white border-blue-900 text-blue-900 px-2 py-1 rounded-md  hover:text-white hover:bg-blue-900"
-                >
-                  View Association Requests
+                  Reach Out
                 </button>
               </div>
-              <p className="text-base text-gray-500 max-h-32 mt-3 overflow-y-scroll">
+              <p className="text-base text-gray-500 max-h-32 overflow-y-scroll">
                 {projectData?.params?.project_description}
               </p>
             </div>
@@ -441,24 +402,14 @@ const ProjectDetailsForOwnerProject = () => {
           </div>
         </div>
       </div>
-
-      {isAnnouncementModalOpen && (
-        <AnnouncementModal
-          onClose={handleCloseModal}
-          onSubmitHandler={handleAddAnnouncement}
+      {isAddProjectModalOpen && (
+        <AddAMentorRequestModal
+          title={"Associate Project"}
+          onClose={handleProjectCloseModal}
+          onSubmitHandler={handleAddProject}
           isSubmitting={isSubmitting}
         />
       )}
-      {isJobsModalOpen && (
-        <AddJobsModal
-          jobbutton={"Add"}
-          jobtitle={"Add Job"}
-          onJobsClose={handleJobsCloseModal}
-          onSubmitHandler={handleAddJob}
-          isSubmitting={isSubmitting}
-        />
-      )}
-
       <Toaster />
     </section>
   );
