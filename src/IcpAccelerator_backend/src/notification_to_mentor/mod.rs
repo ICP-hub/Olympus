@@ -68,21 +68,22 @@ pub fn get_all_sent_request() -> Vec<OfferToMentor> {
 }
 
 pub fn notify_mentor_with_offer(mentor_id: Principal, offer: OfferToSendToMentor) {
-    mutate_state(|store| {
-        store
-            .mentor_alerts
-            .get(&StoredPrincipal(caller()))
-            .map_or_else(Vec::new, |offer_res| offer_res.0)
-            .push(offer);
+    mutate_state(|state| {
+        if let Some(offers) = state.mentor_alerts.get(&StoredPrincipal(mentor_id)) {
+            let mut new_offers = offers.0.clone();
+            new_offers.push(offer);
+            state.mentor_alerts.insert(StoredPrincipal(mentor_id), Candid(new_offers));
+        } else {
+            state.mentor_alerts.insert(StoredPrincipal(mentor_id), Candid(vec![offer]));
+        }
+        ic_cdk::println!("Offer added for mentor {}: current count {}", mentor_id, state.mentor_alerts.get(&StoredPrincipal(mentor_id)).map_or(0, |o| o.0.len()));
     });
 }
 
 #[query]
 pub fn get_all_mentor_notification(id: Principal) -> Vec<OfferToSendToMentor> {
     read_state(|state| {
-        state
-            .mentor_alerts
-            .get(&StoredPrincipal(caller()))
+        state.mentor_alerts.get(&StoredPrincipal(id))
             .map(|candid_res| candid_res.0.clone())
             .unwrap_or_else(Vec::new)
     })
