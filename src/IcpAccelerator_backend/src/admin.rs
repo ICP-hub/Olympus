@@ -2462,12 +2462,13 @@ pub fn admin_update_project(
     let mut project_to_classify = None;
 
     mutate_state(|state| {
-        for (_, mut project_list) in state.project_storage.iter() {
+        for (_key, mut project_list) in state.project_storage.iter() {
             if let Some(project_pos) = project_list.0.iter_mut().position(|p| p.uid == uid) {
                 let project = &mut project_list.0[project_pos];
                 project.params.live_on_icp_mainnet = Some(is_live);
                 project.params.dapp_link = dapp_link.clone();
                 project_to_classify = Some(project.clone());
+                state.project_storage.insert(_key, project_list);
                 break;
             }
         }
@@ -2495,6 +2496,7 @@ pub fn deactivate_and_remove_project(project_id: String) -> Result<&'static str,
                 project.params.live_on_icp_mainnet = Some(false);
                 project.params.dapp_link = None;
                 found_and_updated_in_application = true;
+                state.project_storage.insert(_key, project_list);
                 break;
             }
         }
