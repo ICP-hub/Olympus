@@ -6,9 +6,8 @@ use ic_cdk::{query, update};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 
-
 use crate::state_handler::*;
-#[derive(Clone, CandidType, Deserialize, Serialize)]
+#[derive(Clone, CandidType, Deserialize, Serialize, Debug)]
 pub struct OfferToProject {
     offer_id: String, // Added field
     project_id: String,
@@ -23,7 +22,7 @@ pub struct OfferToProject {
     response: String,
 }
 
-#[derive(Clone, CandidType, Deserialize, Serialize)]
+#[derive(Debug, Clone, CandidType, Deserialize, Serialize)]
 pub struct MentorInfo {
     mentor_id: Principal,
     mentor_name: String,
@@ -31,7 +30,7 @@ pub struct MentorInfo {
     mentor_image: Vec<u8>,
 }
 
-#[derive(Clone, CandidType, Deserialize, Serialize)]
+#[derive(Debug, Clone, CandidType, Deserialize, Serialize)]
 pub struct OfferToSendToProject {
     offer_id: String, // Added field
     mentor_info: MentorInfo,
@@ -210,7 +209,11 @@ pub async fn send_offer_to_project(
 // }
 
 #[update]
-pub fn accept_offer_of_mentor(offer_id: String, response_message: String, project_id: String) -> String {
+pub fn accept_offer_of_mentor(
+    offer_id: String,
+    response_message: String,
+    project_id: String,
+) -> String {
     let mut already_accepted = false;
 
     // Check if the offer has already been accepted
@@ -226,41 +229,100 @@ pub fn accept_offer_of_mentor(offer_id: String, response_message: String, projec
         }
     });
 
+    ic_cdk::println!("is offer already accepted {}", already_accepted);
+
     if already_accepted {
         return "Offer has already been accepted.".to_string();
     }
 
     mutate_state(|state| {
-        if let Some(mut offers) = state.project_alerts.get(&project_id) {
-            if let Some(offer) = offers.0.iter_mut().find(|o| o.offer_id == offer_id) {
+        if let Some(offers) = state.project_alerts.get(&project_id) {
+            ic_cdk::println!("offer to send to project before : {:?}", offers.0);
+
+            if let Some(offer) = offers.0.iter_mut().find(|o| o.offer_id == &offer_id) {
                 // Mark the offer as accepted
                 offer.request_status = "accepted".to_string();
                 offer.response = response_message.clone();
                 offer.accepted_at = ic_cdk::api::time();
 
-                if let Some(mut sent_status_vector) = state.my_sent_notifications_project.get(&StoredPrincipal(offer.sender_principal)) {
-                    if let Some(project_offer) = sent_status_vector.0.iter_mut().find(|o| o.offer_id == offer_id) {
+                ic_cdk::println!("offer to send to project after : {:?}", offers.0);
+                state
+                    .project_alerts
+                    .insert(project_id.clone(), offers.clone());
+
+                if let Some(sent_status_vector) = state
+                    .my_sent_notifications_project
+                    .get(&StoredPrincipal(offer.sender_principal))
+                {
+                    ic_cdk::println!("sent_status_vector before : {:?}", sent_status_vector.0);
+
+                    if let Some(project_offer) = sent_status_vector
+                        .0
+                        .iter_mut()
+                        .find(|o| o.offer_id == &offer_id)
+                    {
                         project_offer.request_status = "accepted".to_string();
                         project_offer.response = response_message.clone();
                         project_offer.accepted_at = ic_cdk::api::time();
 
-                        if let Some(mentor_profile) = state.mentor_storage.get(&StoredPrincipal(offer.sender_principal)) {
-                            if let Some(mut projects) = state.project_storage.get(&StoredPrincipal(ic_cdk::api::caller())) {
-                                if let Some(project) = projects.0.iter_mut().find(|p| p.uid == project_offer.project_id) {
+                        ic_cdk::println!("sent_status_vector after : {:?}", sent_status_vector.0);
+
+                        state.my_sent_notifications_project.insert(
+                            StoredPrincipal(offer.sender_principal),
+                            sent_status_vector.clone(),
+                        );
+
+                        if let Some(mentor_profile) = state
+                            .mentor_storage
+                            .get(&StoredPrincipal(offer.sender_principal))
+                        {
+                            if let Some(projects) = state
+                                .project_storage
+                                .get(&StoredPrincipal(ic_cdk::api::caller()))
+                            {
+                                ic_cdk::println!("project state before : {:?}", projects.0);
+                                if let Some(project) = projects
+                                    .0
+                                    .iter_mut()
+                                    .find(|p| p.uid == project_offer.project_id)
+                                {
                                     if project.params.mentors_assigned.is_none() {
                                         project.params.mentors_assigned = Some(Vec::new());
                                     }
 
-                                    let mentors_assigned = project.params.mentors_assigned.as_mut().unwrap();
+                                    let mentors_assigned =
+                                        project.params.mentors_assigned.as_mut().unwrap();
 
                                     if !mentors_assigned.contains(&mentor_profile.0.profile) {
                                         mentors_assigned.push(mentor_profile.0.profile.clone());
                                     }
 
-                                    let mut associated_projects = state.projects_associated_with_mentor.get(&StoredPrincipal(offer.sender_principal)).map(|candid_res| candid_res.0.clone()).unwrap_or_else(Vec::new);
-                                    if !associated_projects.contains(&project) {
+                                    ic_cdk::println!("project state after : {:?}", projects.0);
+                                    state.project_storage.insert(
+                                        StoredPrincipal(ic_cdk::api::caller()),
+                                        projects.clone(),
+                                    );
+
+                                    let mut associated_projects = state
+                                        .projects_associated_with_mentor
+                                        .get(&StoredPrincipal(offer.sender_principal))
+                                        .map(|candid_res| candid_res.0.clone())
+                                        .unwrap_or_else(Vec::new);
+
+                                    ic_cdk::println!(
+                                        "project associated with mentor state before : {:?}",
+                                        associated_projects
+                                    );
+                                    if !associated_projects.iter().any(|p| p.uid == project.uid) {
                                         associated_projects.push(project.clone());
-                                        state.projects_associated_with_mentor.insert(StoredPrincipal(offer.sender_principal), Candid(associated_projects));
+                                        ic_cdk::println!(
+                                            "project associated with mentor state after : {:?}",
+                                            associated_projects
+                                        );
+                                        state.projects_associated_with_mentor.insert(
+                                            StoredPrincipal(offer.sender_principal),
+                                            Candid(associated_projects),
+                                        );
                                     }
                                 }
                             }

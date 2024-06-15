@@ -784,10 +784,12 @@ service : {
   decline_rejoin_invitation : (text) -> (Result_5);
   decline_vc_creation_request : (principal, bool) -> (text);
   decline_vc_profile_update_request : (principal, bool) -> (text);
+  delete_job_post_by_id : (nat64) -> (text);
   delete_mentor_announcement_by_index : (principal, nat64) -> (text);
   delete_mentor_candid : () -> (text);
   delete_mentor_using_principal : (principal) -> (text);
   delete_project : (text) -> (text);
+  delete_project_announcement_by_id : (nat64) -> (text) query;
   delete_project_announcement_by_index : (principal, nat64) -> (text);
   delete_project_using_principal : (principal) -> (text);
   delete_user_using_principal : (principal) -> (text);
@@ -1130,11 +1132,13 @@ service : {
   switch_role : (text, text) -> ();
   type_of_user_profile : () -> (vec UserType) query;
   update_dapp_link : (text, text) -> (text);
+  update_job_post_by_id : (nat64, Jobs) -> (text);
   update_mentor : (MentorProfile) -> (text);
   update_mentor_profile : (principal, MentorProfile) -> (text);
   update_mentor_ratings : (principal, RatingMentorInvestor) -> ();
   update_peer_rating_api : (PeerRatingUpdate) -> (text);
   update_project : (text, ProjectInfo) -> (text);
+  update_project_announcement_by_id : (nat64, Announcements) -> (text) query;
   update_project_status_live_incubated : (ProjectInfoInternal) -> (Result_5);
   update_rating : (RatingUpdate) -> (text);
   update_team_member : (text, principal) -> (text);
