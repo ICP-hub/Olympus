@@ -1145,7 +1145,7 @@ function ProjectRegForm() {
             setImageData(
               result?.params?.user_data?.profile_picture?.[0] ?? null
             );
-            setLogoData(result?.params?.project_logo?.[0] ?? []);
+            setLogoData(result?.params?.project_logo?.[0] ?? []); 
             setCoverData(result?.params?.project_cover?.[0] ?? []);
             setValue(
               "type_of_profile",

@@ -22,8 +22,6 @@ const ProjectDetailsForOwnerProject = () => {
   const [isProjectLive, setIsProjectLive] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-
-
   const fetchProjectData = async (isMounted) => {
     try {
       const result = await actor.get_my_project();
@@ -32,7 +30,8 @@ const ProjectDetailsForOwnerProject = () => {
         if (result && Object.keys(result).length > 0) {
           setProjectData(result);
           setIsProjectLive(
-            result?.params?.dapp_link[0] && result?.params?.dapp_link[0].trim() !== ""
+            result?.params?.dapp_link[0] &&
+              result?.params?.dapp_link[0].trim() !== ""
               ? result?.params?.dapp_link[0]
               : null
           );
@@ -51,12 +50,11 @@ const ProjectDetailsForOwnerProject = () => {
     }
   };
 
-
   useEffect(() => {
     let isMounted = true;
     if (actor) {
       fetchProjectData(isMounted);
-    }else{
+    } else {
       navigate("/");
     }
 
@@ -251,7 +249,7 @@ const ProjectDetailsForOwnerProject = () => {
             fetchProjectData();
             setIsSubmitting(false);
             toast.success("announcement added successfully");
-            window.location.reload()
+            window.location.reload();
           } else {
             handleCloseModal();
             setIsSubmitting(false);
@@ -294,6 +292,9 @@ const ProjectDetailsForOwnerProject = () => {
             handleJobsCloseModal();
             fetchProjectData();
             setIsSubmitting(false);
+            setTimeout(() => {
+              window.location.reload();
+            }, 2000);
             toast.success("job posted successfully");
           } else {
             handleJobsCloseModal();
@@ -309,7 +310,6 @@ const ProjectDetailsForOwnerProject = () => {
         });
     }
   };
-
 
   return (
     <section className="text-black bg-gray-100 pb-4 font-fontUse">
