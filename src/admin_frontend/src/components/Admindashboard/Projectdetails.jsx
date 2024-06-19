@@ -894,7 +894,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
               )}
             </div>
 
-            <div className="bg-[#D2D5F2] flex  flex-col p-6 h-[312px] overflow-y-auto shadow-md shadow-gray-400 rounded-lg  w-full mb-4">
+            <div className="bg-[#D2D5F2] flex  flex-col p-6 h-[312px] overflow-y-auto shadow-md shadow-gray-400 rounded-lg  w-full">
               <h1 className="text-xl font-bold text-gray-800  mb-2">
                 Public Documents
               </h1>

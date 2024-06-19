@@ -352,164 +352,169 @@ const Adminalluser = () => {
         <AdminUserDashboardSkeleton itemsPerPage={itemsPerPage} />
       ) : (
         <>
-          {Number(countData) > 0 ? (
-            <div className="flex flex-col bg-white rounded-lg p-8 text-lg overflow-auto mb-8">
-              <div className="min-w-[600px]">
-                <table className="w-full table-fixed">
-                  <thead className="border-b-2 border-gray-300">
-                    <tr className="text-left text-xl font-fontUse uppercase">
-                      <th className="w-24 pb-2">S.No</th>
-                      <th className="w-1/4 pb-2">Name</th>
-                      <th className="w-1/4 pb-2">
-                        {filterOption && filterOption === "Users"
-                          ? "Role"
-                          : "Hub"}
-                      </th>
-                      <th className="w-1/4 pb-2">Country</th>
-                      <th className="w-1/4 pb-2">Telegram</th>
-                      <th className="w-1/4 pb-2">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="text-base text-gray-700 font-fontUse">
-                    {filteredData?.map((user, index) => (
-                      <tr
-                        key={`${user.fullName}-${user.country}-${index}`}
-                        className="hover:bg-gray-100 cursor-pointer mt-1"
-                      >
-                        <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                        <td className="py-2">
-                          <div className="flex items-center">
-                            <img
-                              className="w-10 h-10 rounded-full border-black border-2 p-1"
-                              src={user.profilePictureURL}
-                              alt="Profile"
-                            />
-                            <div className="ml-2 truncate w-4/6">
-                              {user.fullName}
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          {filterOption === "Users"
-                            ? user.approvedType
-                            : user.hub}
-                        </td>
-                        <td>{user.country}</td>
-                        <td className="truncate max-w-xs">
-                          {user.telegram !== "N/A" ? (
-                            <a
-                              href={`https://t.me/${user.telegram}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-700 hover:text-blue-900"
-                            >
-                              {user.telegram}
-                            </a>
-                          ) : (
-                            <p className="truncate w-4/6">{user.telegram}</p>
-                          )}
-                        </td>
-                        <td>
-                          <button
-                            className="p-2 bg-white rounded-lg border-2 border-gray-300 hover:bg-gray-300 mr-2"
-                            onClick={() => handleRowClick(user.principalId)}
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 512 512"
-                              className="size-4 text-green-500"
-                              fill="currentColor"
-                            >
-                              <path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160V416c0 53 43 96 96 96H352c53 0 96-43 96-96V320c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H96z" />
-                            </svg>
-                          </button>
-                          <button
-                            className="p-2 bg-white rounded-lg border-2 border-gray-300 hover:bg-gray-300"
-                            onClick={() =>
-                              handleOpenDeleteModal(user.principalId)
-                            }
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth="1.5"
-                              stroke="currentColor"
-                              className="size-4 text-red-500"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-                              />
-                            </svg>
-                          </button>
-                        </td>
+          {filteredData ? (
+            <>
+              <div className="flex flex-col bg-white rounded-lg p-8 text-lg overflow-auto mb-8">
+                <div className="min-w-[600px]">
+                  <table className="w-full table-fixed">
+                    <thead className="border-b-2 border-gray-300">
+                      <tr className="text-left text-xl font-fontUse uppercase">
+                        <th className="w-24 pb-2">S.No</th>
+                        <th className="w-1/4 pb-2">Name</th>
+                        <th className="w-1/4 pb-2">
+                          {filterOption && filterOption === "Users"
+                            ? "Role"
+                            : "Hub"}
+                        </th>
+                        <th className="w-1/4 pb-2">Country</th>
+                        <th className="w-1/4 pb-2">Telegram</th>
+                        <th className="w-1/4 pb-2">Action</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="text-base text-gray-700 font-fontUse">
+                      {filteredData?.map((user, index) => (
+                        <tr
+                          key={`${user.fullName}-${user.country}-${index}`}
+                          className="hover:bg-gray-100 cursor-pointer mt-1"
+                        >
+                          <td>
+                            {(currentPage - 1) * itemsPerPage + index + 1}
+                          </td>
+                          <td className="py-2">
+                            <div className="flex items-center">
+                              <img
+                                className="w-10 h-10 rounded-full border-black border-2 p-1"
+                                src={user.profilePictureURL}
+                                alt="Profile"
+                              />
+                              <div className="ml-2 truncate w-4/6">
+                                {user.fullName}
+                              </div>
+                            </div>
+                          </td>
+                          <td>
+                            {filterOption === "Users"
+                              ? user.approvedType
+                              : user.hub}
+                          </td>
+                          <td>{user.country}</td>
+                          <td className="truncate max-w-xs">
+                            {user.telegram !== "N/A" ? (
+                              <a
+                                href={`https://t.me/${user.telegram}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-700 hover:text-blue-900"
+                              >
+                                {user.telegram}
+                              </a>
+                            ) : (
+                              <p className="truncate w-4/6">{user.telegram}</p>
+                            )}
+                          </td>
+                          <td>
+                            <button
+                              className="p-2 bg-white rounded-lg border-2 border-gray-300 hover:bg-gray-300 mr-2"
+                              onClick={() => handleRowClick(user.principalId)}
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 512 512"
+                                className="size-4 text-green-500"
+                                fill="currentColor"
+                              >
+                                <path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160V416c0 53 43 96 96 96H352c53 0 96-43 96-96V320c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H96z" />
+                              </svg>
+                            </button>
+                            <button
+                              className="p-2 bg-white rounded-lg border-2 border-gray-300 hover:bg-gray-300"
+                              onClick={() =>
+                                handleOpenDeleteModal(user.principalId)
+                              }
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth="1.5"
+                                stroke="currentColor"
+                                className="size-4 text-red-500"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+                                />
+                              </svg>
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
+              {Number(countData) > 0 && (
+                <div className="flex items-center justify-center mb-4">
+                  <button
+                    onClick={handlePrevious}
+                    disabled={currentPage === 1}
+                    className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                    type="button"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth="2"
+                      stroke="currentColor"
+                      aria-hidden="true"
+                      className="w-4 h-4"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+                      />
+                    </svg>
+                    Previous
+                  </button>
+                  {renderPaginationNumbers()}
+                  <button
+                    onClick={handleNext}
+                    disabled={
+                      currentPage ===
+                      Math.ceil(Number(countData) / itemsPerPage)
+                    }
+                    className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                    type="button"
+                  >
+                    Next
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth="2"
+                      stroke="currentColor"
+                      aria-hidden="true"
+                      className="w-4 h-4"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              )}
+            </>
           ) : (
             <NoDataCard image={NoData} desc={"No data yet"} />
           )}
         </>
       )}
 
-      {Number(countData) > 0 && (
-        <div className="flex items-center justify-center mb-4">
-          <button
-            onClick={handlePrevious}
-            disabled={currentPage === 1}
-            className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-            type="button"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="2"
-              stroke="currentColor"
-              aria-hidden="true"
-              className="w-4 h-4"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
-              />
-            </svg>
-            Previous
-          </button>
-          {renderPaginationNumbers()}
-          <button
-            onClick={handleNext}
-            disabled={
-              currentPage === Math.ceil(Number(countData) / itemsPerPage)
-            }
-            className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-            type="button"
-          >
-            Next
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="2"
-              stroke="currentColor"
-              aria-hidden="true"
-              className="w-4 h-4"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-              />
-            </svg>
-          </button>
-        </div>
-      )}
       {isDeleteModalOpen && (
         <DeleteModel
           onClose={handleClose}

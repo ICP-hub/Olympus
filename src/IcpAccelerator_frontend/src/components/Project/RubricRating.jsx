@@ -26,6 +26,7 @@ const RubricRating = ({ data }) => {
   );
   const [sendingData, setSendingData] = useState([]);
   const [showSubmit, setShowSubmit] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const handleNext = () => {
     console.log("rating 25 ==>", rating);
@@ -123,12 +124,23 @@ const RubricRating = ({ data }) => {
         // navigate('/')
       });
   };
+
   useEffect(() => {
     if (data) {
       fetchMyRatings(data);
     } else {
       navigate("/");
     }
+
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
   }, [data]);
 
   console.log("rubric_table_data", rubric_table_data);
@@ -162,7 +174,7 @@ const RubricRating = ({ data }) => {
       ) : (
         <div className="container">
           <div className="flex justify-center items-center flex-row m-auto mb-[50px]">
-            {rubric_table_data.map((item, i) => (
+            {/* {rubric_table_data.map((item, i) => (
               <React.Fragment key={item.id}>
                 <div className="relative">
                   <div
@@ -190,7 +202,81 @@ const RubricRating = ({ data }) => {
                   </div>
                 )}
               </React.Fragment>
-            ))}
+            ))} */}
+            {windowWidth >= 548 ? (
+              rubric_table_data.map((item, i) => (
+                <React.Fragment key={item.id}>
+                  <div className="relative">
+                    <div
+                      className={`w-[30px] h-[30px] rounded-full ${
+                        rating >= item.id
+                          ? "bg-[#4A3AFF] text-white"
+                          : "bg-[#D9E6FF]"
+                      } flex justify-center items-center text-sm flex-shrink-0`}
+                    >
+                      {item.id}
+                    </div>
+                  </div>
+                  {item.id !== rubric_table_data.length && (
+                    <div className="h-[4px] w-full flex-shrink bg-[#D9E6FF] mx-4">
+                      <div
+                        className={`h-full duration-500 mr-auto ${
+                          rating > item.id
+                            ? "w-[100%] bg-[#4A3AFF]"
+                            : "w-0 bg-[#D9E6FF]"
+                        }`}
+                      ></div>
+                    </div>
+                  )}
+                </React.Fragment>
+              ))
+            ) : (
+              <>
+                {rating > 1 && (
+                  <>
+                    <div className="relative">
+                      <div
+                        className={`w-[30px] h-[30px] rounded-full ${
+                          rating - 1 > 0
+                            ? "bg-[#4A3AFF] text-white"
+                            : "bg-[#D9E6FF]"
+                        } flex justify-center items-center text-sm flex-shrink-0`}
+                      >
+                        {rating - 1}
+                      </div>
+                    </div>
+                    <div className="h-[4px] w-full flex-shrink bg-[#D9E6FF] mx-4">
+                      <div
+                        className={`h-full duration-500 mr-auto w-[100%] bg-[#4A3AFF]`}
+                      ></div>
+                    </div>
+                  </>
+                )}
+                <div className="relative">
+                  <div
+                    className={`w-[30px] h-[30px] rounded-full bg-[#4A3AFF] text-white flex justify-center items-center text-sm flex-shrink-0`}
+                  >
+                    {rating}
+                  </div>
+                </div>
+                {rating < rubric_table_data.length && (
+                  <>
+                    <div className="h-[4px] w-full flex-shrink bg-[#D9E6FF] mx-4">
+                      <div
+                        className={`h-full duration-500 mr-auto w-[100%] bg-[#4A3AFF]`}
+                      ></div>
+                    </div>
+                    <div className="relative">
+                      <div
+                        className={`w-[30px] h-[30px] rounded-full bg-[#D9E6FF] flex justify-center items-center text-sm flex-shrink-0`}
+                      >
+                        {rating + 1}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </>
+            )}
           </div>
           <div className="mix-blend-darken bg-[#B9C0F3] text-gray-800 my-4 rounded shadow-md w-full mx-auto p-8">
             <div className="flex items-center justify-between cursor-pointer">

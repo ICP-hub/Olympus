@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { projectFilterSvg } from "../Utils/AdminData/SvgData";
 import { useDispatch, useSelector } from "react-redux";
 import NotificationCard from "../Notification/NotificationCard";
@@ -35,6 +35,7 @@ const RequestCheck = () => {
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
   const [filter, setFilter] = useState("");
+  const [isFiltering, setIsFiltering] = useState(false);
   const itemsPerPage = 12;
 
   const dropdownRef = useRef(null);
@@ -161,7 +162,7 @@ const RequestCheck = () => {
     investorDeclined,
   ]);
 
-  useEffect(() => {
+  const filteredData = useMemo(() => {
     const categoryMapping = {
       Mentor: {
         Pending: mentorPending,
@@ -181,9 +182,7 @@ const RequestCheck = () => {
     };
 
     const currentData = categoryMapping[activeCategory][selectedStatus];
-    // console.log("currentData =>", currentData);
-    const filteredData = currentData.filter((item) => {
-      console.log(item);
+    return currentData.filter((item) => {
       const fullName = item?.profile?.user_data?.full_name?.toLowerCase() || "";
       const country = item?.profile?.user_data?.country?.toLowerCase() || "";
       return (
@@ -191,8 +190,6 @@ const RequestCheck = () => {
         country.includes(filter.toLowerCase())
       );
     });
-
-    setFilteredNotifications(filteredData);
   }, [
     activeCategory,
     selectedStatus,
@@ -207,7 +204,18 @@ const RequestCheck = () => {
     investorDeclined,
     filter,
   ]);
+  useEffect(() => {
+    setFilteredNotifications(filteredData);
+  }, [filteredData]);
 
+  useEffect(() => {
+    if (filter) {
+      setIsFiltering(true);
+      setCurrentPage(1);
+    } else {
+      setIsFiltering(false);
+    }
+  }, [filter]);
   const totalPages = Math.ceil(
     activeCategory === "Mentor"
       ? selectedStatus === "Pending"
@@ -227,15 +235,15 @@ const RequestCheck = () => {
       ? investorApprovedCount / itemsPerPage
       : investorDeclinedCount / itemsPerPage
   );
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  // const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  const handlePrevious = () => {
-    setCurrentPage((prev) => (prev > 1 ? prev - 1 : prev));
-  };
+  // const handlePrevious = () => {
+  //   setCurrentPage((prev) => (prev > 1 ? prev - 1 : prev));
+  // };
 
-  const handleNext = () => {
-    setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev));
-  };
+  // const handleNext = () => {
+  //   setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev));
+  // };
   const [maxPageNumbers, setMaxPageNumbers] = useState(10);
 
   useEffect(() => {
@@ -258,33 +266,36 @@ const RequestCheck = () => {
 
     return () => window.removeEventListener("resize", updateMaxPageNumbers);
   }, []);
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const handlePrevious = () =>
+    setCurrentPage((prev) => (prev > 1 ? prev - 1 : prev));
+  const handleNext = () =>
+    setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev));
+
   const renderPaginationNumbers = () => {
-    // const totalPages = totalPages;
-    // const maxPageNumbers = 10;
     const startPage =
       Math.floor((currentPage - 1) / maxPageNumbers) * maxPageNumbers + 1;
     const endPage = Math.min(startPage + maxPageNumbers - 1, totalPages);
 
-    const pageNumbers = [];
-    for (let i = startPage; i <= endPage; i++) {
-      pageNumbers.push(
-        <button
-          key={i}
-          onClick={() => paginate(i)}
-          className={`relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-full text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all ${
-            currentPage === i
-              ? "bg-gray-900 text-white"
-              : "hover:bg-gray-900/10 active:bg-gray-900/20"
-          }`}
-          type="button"
-        >
-          <span className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
-            {i}
-          </span>
-        </button>
-      );
-    }
-    return pageNumbers;
+    return Array.from(
+      { length: endPage - startPage + 1 },
+      (_, i) => startPage + i
+    ).map((i) => (
+      <button
+        key={i}
+        onClick={() => paginate(i)}
+        className={`relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-full text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all ${
+          currentPage === i
+            ? "bg-gray-900 text-white"
+            : "hover:bg-gray-900/10 active:bg-gray-900/20"
+        }`}
+        type="button"
+      >
+        <span className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+          {i}
+        </span>
+      </button>
+    ));
   };
   return (
     <div className="px-[4%] py-[4%] w-full bg-gray-100 h-screen overflow-y-scroll">
@@ -399,55 +410,57 @@ const RequestCheck = () => {
         </div>
       )}{" "}
       <div className="flex flex-row  w-full gap-4 justify-center">
-        {totalPages > 0 && (
-          <div className="flex items-center justify-center">
-            <button
-              onClick={handlePrevious}
-              disabled={currentPage === 1}
-              className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-              type="button"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="2"
-                stroke="currentColor"
-                aria-hidden="true"
-                className="w-4 h-4"
+        {!isFiltering && totalPages > 0 && (
+          <div className="flex flex-row  w-full gap-4 justify-center">
+            <div className="flex items-center justify-center">
+              <button
+                onClick={handlePrevious}
+                disabled={currentPage === 1}
+                className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                type="button"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
-                ></path>
-              </svg>
-              Previous
-            </button>
-            {renderPaginationNumbers()}
-            <button
-              onClick={handleNext}
-              disabled={currentPage === totalPages}
-              className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-              type="button"
-            >
-              Next
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="2"
-                stroke="currentColor"
-                aria-hidden="true"
-                className="w-4 h-4"
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                  className="w-4 h-4"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+                  ></path>
+                </svg>
+                Previous
+              </button>
+              {renderPaginationNumbers()}
+              <button
+                onClick={handleNext}
+                disabled={currentPage === totalPages}
+                className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                type="button"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                ></path>
-              </svg>
-            </button>
+                Next
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                  className="w-4 h-4"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                  ></path>
+                </svg>
+              </button>
+            </div>
           </div>
         )}
       </div>

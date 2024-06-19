@@ -114,6 +114,8 @@ input, select {
   -moz-appearance: none;
   -ms-appearance: none;
   appearance: none;
+  background-color: white;
+  color: black; 
 }
 /* Firefox */
 input[type=number] {

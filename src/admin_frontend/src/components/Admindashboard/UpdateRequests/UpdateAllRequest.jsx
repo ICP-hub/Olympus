@@ -179,7 +179,7 @@ const UpdateAllRequest = () => {
 
   return (
     <div className="px-[4%] py-[3%] w-full bg-gray-100">
-      <div className="flex flex-wrap justify-between mb-10">
+      <div className="block xxs1:flex justify-between mb-10">
         <div
           className="w-full bg-gradient-to-r from-purple-900 to-blue-500 text-transparent bg-clip-text text-xl md:text-3xl font-extrabold 
        font-fontUse"

@@ -28,7 +28,9 @@ const EventCard = ({ data, approveAndRejectCohort }) => {
     } finally {
       setIsSubmitting(false);
       setModalOpen(false);
-      window.location.href = "/";
+      // setTimeout(() => {
+      //   window.location.href = "/";
+      // }, 500);
     }
   };
   const handleCloseModal = () => {
@@ -62,7 +64,7 @@ const EventCard = ({ data, approveAndRejectCohort }) => {
           onClick={handleClick}
           // handleClick={approveAndRejectCohort(`${decision}`, cohortId)}
         />
-        <div className="lgx:w-[70%] w-full relative">
+        <div className="lgx:w-[60%] xl:w-[70%] w-full relative">
           <img
             className="h-full object-cover rounded-lg w-full"
             src={hover}
@@ -72,8 +74,8 @@ const EventCard = ({ data, approveAndRejectCohort }) => {
             {winner}
           </div>
         </div>
-        <div className="lgx:w-[30%] w-full">
-          <div className="px-8">
+        <div className="lgx:w-[40%] xl:w-[30%] w-full">
+          <div className="sm4:px-8">
             <div className="w-full mt-4">
               <div className="w-1/2 flex-col text-[#737373] flex  ">
                 <h1 className="font-bold text-black text-xl truncate capitalize">
@@ -125,7 +127,7 @@ const EventCard = ({ data, approveAndRejectCohort }) => {
                     </div>
                   ))}
               </div>
-              <div className="flex flex-row flex-wrap lg:justify-between md:justify-center space-x-8 mt-2">
+              <div className="flex flex-row flex-wrap md:justify-between space-x-8 mt-2">
                 <div className="flex lg:justify-start gap-4 ">
                   <div className="flex flex-col font-bold">
                     <p className="text-[#7283EA]">Seats</p>
@@ -141,46 +143,48 @@ const EventCard = ({ data, approveAndRejectCohort }) => {
                   </div>
                 </div>
               </div>
-              <div className="flex flex-wrap md:flex-nowrap mt-2">
+              <div className="sm4:flex block flex-wrap md:flex-nowrap mt-2">
                 {status === "pending" && (
                   <button className="px-4 py-1 bg-[#3505B2] text-white font-bold rounded-full uppercase text-base">
                     {status}
                   </button>
                 )}
-                {status === "accepted" || status === "declined" ? (
-                  <button className="px-4 py-1 bg-[#3505B2] text-white font-bold rounded-full w-full uppercase text-base">
-                    {status}
-                  </button>
-                ) : (
-                  <>
-                    <button
-                      className="px-4 py-1 bg-white text-blue-800 font-bold rounded-lg border-2 border-blue-800 ml-12"
-                      // onClick={() =>
-                      //   approveAndRejectCohort("Decline", cohortId)
-                      // }
+                <div className="flex flex-wrap md:flex-nowrap mt-2">
+                  {status === "accepted" || status === "declined" ? (
+                    <button className="px-4 py-1 bg-[#3505B2] text-white font-bold rounded-full w-full uppercase text-base">
+                      {status}
+                    </button>
+                  ) : (
+                    <>
+                      <button
+                        className="px-4 py-1 bg-white text-blue-800 font-bold rounded-lg border-2 border-blue-800 sm4:ml-12"
+                        // onClick={() =>
+                        //   approveAndRejectCohort("Decline", cohortId)
+                        // }
 
-                      onClick={() =>
-                        handleOpenModal(
-                          "Are you sure you want to decline request?",
-                          "Decline"
-                        )
-                      }
-                    >
-                      Reject
-                    </button>
-                    <button
-                      className="px-4 py-1 bg-[#3505B2] text-white font-bold rounded-lg ml-3"
-                      onClick={() =>
-                        handleOpenModal(
-                          "Are you sure you want to accept cohort request?",
-                          "Accept"
-                        )
-                      }
-                    >
-                      Accept
-                    </button>
-                  </>
-                )}
+                        onClick={() =>
+                          handleOpenModal(
+                            "Are you sure you want to decline request?",
+                            "Decline"
+                          )
+                        }
+                      >
+                        Reject
+                      </button>
+                      <button
+                        className="px-4 py-1 bg-[#3505B2] text-white font-bold rounded-lg ml-3"
+                        onClick={() =>
+                          handleOpenModal(
+                            "Are you sure you want to accept cohort request?",
+                            "Accept"
+                          )
+                        }
+                      >
+                        Accept
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
               {/* <div className="flex justify-center items-center">
                 <button className="mb-2 uppercase w-full bg-[#3505B2] mr-2 text-white  px-4 py-2 rounded-md  items-center font-extrabold text-sm mt-2 ">

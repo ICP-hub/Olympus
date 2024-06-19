@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { projectFilterSvg } from "../Utils/AdminData/SvgData";
 import toast, { Toaster } from "react-hot-toast";
@@ -14,6 +14,7 @@ const RequestCohort = () => {
   const [selectedOption, setSelectedOption] = useState("Pending");
   const [requestedData, setRequestedData] = useState([]);
 
+  const [filter, setFilter] = useState("");
   // const fetchData = async () => {
   //   try {
   //     const result = await actor.get_pending_cohort_requests_for_admin();
@@ -118,6 +119,9 @@ const RequestCohort = () => {
         // Assuming result contains some success indication
 
         toast.success(`Request ${value.toLowerCase()}d successfully.`);
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 500);
       } else if (
         result &&
         result.includes(
@@ -125,21 +129,63 @@ const RequestCohort = () => {
         )
       ) {
         toast.success(`Request ${value.toLowerCase()}d successfully.`);
-        window.location.href = "/";
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 500);
       } else {
         toast.error(`Failed to ${value.toLowerCase()} the request.`);
-        window.location.href = "/";
+        // setTimeout(() => {
+        //   window.location.href = "/";
+        // }, 500);
       }
     } catch (error) {
       console.error("Error processing document request action:", error);
       toast.error("An error occurred during processing.");
     }
   };
-
-  console.log(noData);
+  const filteredData = useMemo(
+    () =>
+      requestedData?.filter(
+        (user) =>
+          user?.cohort_details?.cohort?.title
+            ?.toLowerCase()
+            .includes(filter.toLowerCase()) ||
+          user?.cohort_details?.cohort?.country
+            ?.toLowerCase()
+            .includes(filter.toLowerCase())
+      ),
+    [filter, requestedData]
+  );
+  // console.log(filteredData);
+  // console.log(requestedData);
   return (
     <>
       <div className="px-[4%] py-[4%] w-full bg-gray-100 h-screen overflow-y-scroll">
+        <div className="items-center mb-6">
+          {/* <h1 className="text-3xl font-bold bg-gradient-to-r from-black to-gray-800 text-transparent bg-clip-text">
+            Cohort requests
+          </h1> */}
+          <div className="flex justify-end mb-4">
+            <div className="relative flex items-center max-w-xs bg-white rounded-xl">
+              <input
+                type="text"
+                value={filter}
+                onChange={(e) => {
+                  setFilter(e.target.value);
+                }}
+                className="form-input rounded-xl px-4 py-2 bg-white text-gray-600 placeholder-gray-600 placeholder-ml-4 max-w-md"
+                placeholder="Search..."
+              />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 512 512"
+                className="w-5 h-5 absolute right-2 text-gray-600"
+              >
+                <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
+              </svg>
+            </div>
+          </div>
+        </div>
         <div className="flex items-center justify-between mb-8">
           {selectedOption && (
             <div className="left-4 lg:left-auto bg-gradient-to-r from-purple-900 to-blue-500 text-transparent bg-clip-text text-2xl font-extrabold">
@@ -190,8 +236,8 @@ const RequestCohort = () => {
         {noData ? (
           <NoDataCard image={NoData} desc={"No Cohorts"} />
         ) : (
-          requestedData &&
-          requestedData.map((data, index) => {
+          filteredData &&
+          filteredData.map((data, index) => {
             return (
               <div key={index}>
                 <EventCard
