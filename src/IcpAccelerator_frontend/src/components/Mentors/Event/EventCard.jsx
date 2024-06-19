@@ -62,7 +62,7 @@ const EventCard = ({ data, approveAndRejectCohort }) => {
           onClick={handleClick}
           // handleClick={approveAndRejectCohort(`${decision}`, cohortId)}
         />
-        <div className="lgx:w-[70%] w-full relative">
+        <div className="lgx:w-[60%] xl:w-[70%] w-full relative">
           <img
             className="h-full object-cover rounded-lg w-full"
             src={hover}
@@ -72,7 +72,7 @@ const EventCard = ({ data, approveAndRejectCohort }) => {
             {winner}
           </div>
         </div>
-        <div className="lgx:w-[30%] w-full">
+        <div className="lgx:w-[40%] xl:w-[30%] w-full">
           <div className="px-8">
             <div className="w-full mt-4">
               <div className="w-1/2 flex-col text-[#737373] flex  ">
