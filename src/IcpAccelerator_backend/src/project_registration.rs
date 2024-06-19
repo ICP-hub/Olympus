@@ -2355,10 +2355,18 @@ pub fn get_all_approved_requests() -> Vec<ProjectNotification> {
 }
 
 #[query(guard = "is_user_anonymous")]
-pub fn get_pending_money_requestes(project_id: String) -> Vec<ProjectNotification> {
+pub fn get_pending_money_requests(project_id: String) -> Vec<ProjectNotification> {
     read_state(
         |state| match state.project_access_notifications.get(&project_id) {
-            Some(info) => info.0.iter().map(|notif| notif.clone()).collect(),
+            Some(info) => info.0.iter()
+                .filter(|notif| match &notif.notification_type {
+                    ProjectNotificationType::AccessRequest(access_request) => 
+                        access_request.request_type == "money_details_access" && 
+                        access_request.status == "pending",
+                    _ => false,
+                })
+                .cloned()
+                .collect(),
             None => Vec::new(),
         },
     )
