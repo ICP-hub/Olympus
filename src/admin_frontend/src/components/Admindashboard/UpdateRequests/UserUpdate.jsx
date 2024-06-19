@@ -229,6 +229,7 @@ const UserUpdate = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       const convertedPrincipal = await Principal.fromText(principalId);
+      console.log("convertedPrincipal", convertedPrincipal);
       try {
         await actor
           .get_user_info_using_principal(convertedPrincipal)
@@ -389,8 +390,8 @@ const UserUpdate = () => {
   // form submit handler func
   const onSubmitHandler = async (data) => {
     console.log("data", data);
-    let principal_id = principalId;
-    console.log("principal_id", principal_id);
+    const convertedPrincipal = await Principal.fromText(principalId);
+    console.log("convertedPrincipal", convertedPrincipal);
     if (actor) {
       const user_data = {
         bio: data?.bio ? [data.bio] : [""],
@@ -412,15 +413,14 @@ const UserUpdate = () => {
       try {
         console.log("user_data", user_data);
         await actor
-          .update_user_data(principal_id, user_data)
+          .update_user_data(convertedPrincipal, user_data)
           .then((result) => {
             console.log("update_user_data", result);
-            if (
-              result &&
-              result.includes("User profile updated successfully")
-            ) {
+            if ("Ok" in result) {
               toast.success("User profile updated successfully");
-              window.location.href = "/";
+              setTimeout(() => {
+                window.location.href = "/";
+              }, 500);
             } else {
               console.log("error");
               toast.error(result);
@@ -454,7 +454,7 @@ const UserUpdate = () => {
   return (
     <>
       <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
-        <div className="container mx-auto p-6 bg-[#D2D5F2] rounded-lg shadow-lg">
+        <div className="container mx-auto p-6 bg-[#D2D5F2] my-4 rounded-lg shadow-lg">
           <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
             <h1 className="text-3xl font-bold bg-gradient-to-r from-black to-gray-800 text-transparent bg-clip-text">
               User Profile
@@ -476,7 +476,7 @@ const UserUpdate = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-6">
-            <div className="w-full sm:w-1/3 bg-white p-6 rounded-lg shadow-md">
+            <div className="w-full sm:w-1/3 bg-transparent p-6 rounded-lg shadow-md">
               <div className="flex flex-col items-center">
                 <div
                   className="relative w-44 h-44 rounded-full bg-cover bg-center mb-4"
@@ -503,13 +503,13 @@ const UserUpdate = () => {
               </div>
             </div>
 
-            <div className="w-full sm:w-2/3 bg-white p-6 rounded-lg shadow-md">
+            <div className="w-full sm:w-2/3 bg-transparent p-6 rounded-lg shadow-md">
               <div className="flex flex-col space-y-4">
                 <div className="flex flex-col">
                   <label className="flex items-center space-x-2">
                     <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                     <h1 className="text-2xl font-bold bg-black text-transparent bg-clip-text">
-                      {orignalData?.fullName}
+                      {orignalData?.fullName ?? "Not available"}
                     </h1>
                   </label>
                   {editMode && (
@@ -535,7 +535,9 @@ const UserUpdate = () => {
                     >
                       <path d="M256 64C150 64 64 150 64 256s86 192 192 192c17.7 0 32 14.3 32 32s-14.3 32-32 32C114.6 512 0 397.4 0 256S114.6 0 256 0S512 114.6 512 256v32c0 53-43 96-96 96c-29.3 0-55.6-13.2-73.2-33.9C320 371.1 289.5 384 256 384c-70.7 0-128-57.3-128-128s57.3-128 128-128c27.9 0 53.7 8.9 74.7 24.1c5.7-5 13.1-8.1 21.3-8.1c17.7 0 32 14.3 32 32v80 32c0 17.7 14.3 32 32 32s32-14.3 32-32V256c0-106-86-192-192-192zm64 192a64 64 0 1 0 -128 0 64 64 0 1 0 128 0z" />
                     </svg>
-                    <span>{orignalData?.email}</span>
+                    <span className="line-clamp-1">
+                      {orignalData?.email ?? "Not available"}
+                    </span>
                   </label>
                   {editMode && (
                     <input
@@ -553,7 +555,9 @@ const UserUpdate = () => {
                   <label className="flex items-center space-x-2">
                     <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                     <span>{place}</span>
-                    <span className="underline">{orignalData?.country}</span>
+                    <span className="underline">
+                      {orignalData?.country ?? "Not available"}
+                    </span>
                   </label>
                   {editMode && (
                     <select
@@ -576,9 +580,8 @@ const UserUpdate = () => {
                   <label className="flex items-center space-x-2">
                     <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                     <span>OpenChat Username:</span>
-                    <span>{orignalData?.openchatUsername}</span>
                   </label>
-                  {editMode && (
+                  {editMode ? (
                     <input
                       type="text"
                       {...register("openchat_user_name")}
@@ -589,6 +592,10 @@ const UserUpdate = () => {
                       }`}
                       placeholder="Enter openchat username"
                     />
+                  ) : (
+                    <span>
+                      {orignalData?.openchatUsername ?? "Not available"}
+                    </span>
                   )}
                 </div>
 
@@ -606,7 +613,7 @@ const UserUpdate = () => {
                       placeholder="Enter your bio"
                     ></textarea>
                   ) : (
-                    <p className="mt-2 p-2 border-2 rounded-lg bg-gray-100">
+                    <p className="mt-2 p-2 ">
                       {orignalData?.bio ?? "Bio not available"}
                     </p>
                   )}
@@ -724,7 +731,7 @@ const UserUpdate = () => {
                           >
                             {skill.trim()}
                           </span>
-                        ))}
+                        )) ?? "Not available"}
                     </div>
                   )}
                 </div>
@@ -793,9 +800,43 @@ const UserUpdate = () => {
                         >
                           {reason.replace(/_/g, " ")}
                         </span>
-                      ))}
+                      )) ?? "Not available"}
                     </div>
                   )}
+                </div>
+                <div className="flex flex-col">
+                  <label className="flex items-center space-x-2">
+                    <span className="w-2 h-2 bg-red-700 rounded-full"></span>
+                    <span>What type of profile are you referring to?</span>
+                  </label>
+                  {editMode ? (
+                    <select
+                      {...register("type_of_profile")}
+                      className={`mt-2 p-2 border-2 rounded-lg ${
+                        errors.type_of_profile
+                          ? "border-red-500"
+                          : "border-gray-300"
+                      }`}
+                    >
+                      <option className="text-lg font-bold" value="">
+                        Select profile type
+                      </option>
+                      {typeOfProfileOptions &&
+                        typeOfProfileOptions.map((val, index) => {
+                          return (
+                            <option
+                              className="text-lg font-bold"
+                              key={index}
+                              value={val?.value}
+                            >
+                              {val?.label}
+                            </option>
+                          );
+                        })}
+                    </select>
+                  ) : (
+                    <span>{orignalData?.typeOfProfile ?? "Not available"}</span>
+                  )}{" "}
                 </div>
               </div>
             </div>

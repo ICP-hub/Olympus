@@ -50,7 +50,7 @@ const AdminDashboard = () => {
   const [currentNotificationForReject, setCurrentNotificationForReject] =
     useState(null);
 
-  // console.log("allNotification in dahboard", allNotification);
+  console.log("allNotification in dahboard", allNotification);
   const navigate = useNavigate();
   const [isReloading, setIsReloading] = useState(true);
 
