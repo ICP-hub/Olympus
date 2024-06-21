@@ -189,7 +189,7 @@ const LiveEventsViewAllUpcoming = () => {
                   filteredInvestors?.map((val, index) => {
                     return (
                       <div key={index} className="w-min-w-[33%] sm:w-full ">
-                        <SecondEventCard data={val} register={false} />
+                        <SecondEventCard data={val} register={true} />
                       </div>
                     );
                   })}
