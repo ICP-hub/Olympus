@@ -50,10 +50,21 @@ const schema = yup.object({
     )
     .required("Selecting an interest is required"),
 
-    deadline: yup.date()
+    deadline: yup
+    .date()
     .required("Must be a date")
     .typeError("Must be a valid date")
-    .max(yup.ref("cohort_launch_date"), "Application Deadline must be before the Cohort Launch date"),
+    .max(
+      yup.ref('cohort_launch_date'), 
+      "Application Deadline must be before the Cohort Launch date"
+    )
+    .test(
+      'is-before-today', 
+      "Application Deadline must be before today", 
+      function(value) {
+        return value < startOfToday();
+      }
+    ),
   eligibility: yup
     .string()
     .typeError("You must enter a eligibility")

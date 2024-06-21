@@ -181,7 +181,7 @@ const LiveEventsViewAllUpcoming = () => {
             ) : noData ? (
               <NoDataCard
                 image={NoData}
-                desc={"There is no ongoing accelerator"}
+                desc={"There is no Upcoming accelerator"}
               />
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 flex-wrap w-full gap-6">

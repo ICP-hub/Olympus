@@ -82,11 +82,10 @@ const LiveEventsCards = ({ wrap, register }) => {
     };
   }, [actor, currentPage]);
 
-
   const filteredEvents = allLiveEventsData.filter((val) => {
     const launchDate = new Date(val?.cohort?.cohort_launch_date);
     const today = new Date();
-    return launchDate.toDateString() === today.toDateString();
+    return launchDate >= today.setHours(0, 0, 0, 0);
   });
   
 

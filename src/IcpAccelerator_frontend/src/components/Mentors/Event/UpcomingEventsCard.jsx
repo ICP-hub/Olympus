@@ -131,7 +131,7 @@ const UpcomingEventsCard = ({ wrap, register }) => {
               ))}
           </div>
         ) : noData || filteredEvents.length === 0 ? (
-          <NoDataCard image={NoData} desc={"There is no ongoing accelerator"} />
+          <NoDataCard image={NoData} desc={"There is no Upcoming accelerator"} />
         ) : (
           <div
             className={`${
