@@ -28,13 +28,13 @@ export const formFields = [
     required: true,
     label: "Cohort end date",
   },
-  {
-    id: "cohort_start_date",
-    type: "date",
-    name: "cohort_start_date",
-    required: true,
-    label: "Cohort start date",
-  },
+  // {
+  //   id: "cohort_start_date",
+  //   type: "date",
+  //   name: "cohort_start_date",
+  //   required: true,
+  //   label: "Cohort start date",
+  // },
   {
     id: "deadline",
     type: "date",

@@ -34,6 +34,7 @@ import CohortPage from "./components/Mentors/Event/CohortPage";
 import EventMentorProfile from "./components/Mentors/Event/EventMentorProfile";
 import LiveEventViewAll from "./components/Mentors/Event/LiveEventViewAll";
 import EventProjectDetail from "./components/Mentors/Event/EventProjectDetail";
+import LiveEventsViewAllUpcoming from "./components/Mentors/Event/LiveEventsViewAllUpcoming";
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
 // const ProjectDetails = lazy(() =>
@@ -69,7 +70,7 @@ const AppRoutes = () => {
     { path: "/create-project", element: <ProjectRegForm /> },
     // { path: "/create-investor", element: <InvestorRegistration /> },
     { path: "/create-investor", element: <InvestorRegForm /> },
-    { path: "/event-form", element: <EventForm /> },
+    { path: "/cohort-form", element: <EventForm /> },
     { path: "/update-project", element: <ProjectRegForm /> },
     // { path: "/project-details", element: <ProjectDetails /> },
     { path: "/profile", element: <UserProfile /> },
@@ -105,7 +106,9 @@ const AppRoutes = () => {
       path: "/project-money-raising-requests/:id",
       element: <RequestMoneyRaising />,
     },
-    { path: "/all-live-events", element: <LiveEventViewAll /> },
+    { path: "/all-live-ongoing-cohort", element: <LiveEventViewAll /> },
+    { path: "/all-live-upcoming-cohort", element: <LiveEventsViewAllUpcoming /> },
+
     { path: "/event-details/:id", element: <CohortPage /> },
   ];
 

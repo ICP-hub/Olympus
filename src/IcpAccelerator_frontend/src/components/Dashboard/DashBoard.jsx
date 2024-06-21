@@ -194,7 +194,7 @@ const DashBoard = () => {
   };
   const handleNavigateCohort = () => {
     if (isAuthenticated) {
-      navigate(`/all-live-events`);
+      navigate(`/all-live-ongoing-cohort`);
     } else {
       toast.error("Please Sign Up !!!");
       window.scrollTo({ top: 0, behavior: "smooth" });

@@ -144,7 +144,7 @@ const InvestorDashboard = ({ numSkeletons }) => {
             Ongoing Accelerator
           </h1>
           <button
-            onClick={() => navigate(`/all-live-events`)}
+            onClick={() => navigate(`/all-live-ongoing-cohort`)}
             className="border border-violet-800 px-4 py-2 rounded-md text-violet-800"
           >
             View More

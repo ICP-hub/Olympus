@@ -6,7 +6,7 @@ import SecondEventCard from "./SecondEventCard";
 import NoData from "../../../../assets/images/file_not_found.png";
 import OngoingAcceleratorSkeleton from "../../Dashboard/Skeleton/OngoingAcceleratorskeleton";
 
-const LiveEventViewAll = () => {
+const LiveEventsViewAllUpcoming = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [noData, setNoData] = useState(null);
   const [allLiveEventsData, setAllLiveEventsData] = useState([]);
@@ -57,8 +57,8 @@ const LiveEventViewAll = () => {
 
   const filteredEvents = allLiveEventsData.filter((val) => {
     const launchDate = new Date(val?.cohort?.cohort_launch_date);
-    const today = new Date();
-    return launchDate.toDateString() === today.toDateString();
+    const applicationDeadline = new Date(val?.cohort?.deadline);
+    return applicationDeadline <= launchDate;
   });
   const filteredInvestors = React.useMemo(() => {
     return filteredEvents?.filter((user) => {
@@ -141,7 +141,7 @@ const LiveEventViewAll = () => {
             className="w-full bg-gradient-to-r from-purple-900 to-blue-500 text-transparent bg-clip-text text-3xl font-extrabold py-4 
        font-fontUse"
           >
-          All Ongoing Cohorts
+          All Upcoming Cohorts
           </div>
 
           <div className="relative flex items-center md:max-w-xs bg-white rounded-xl sxxs:w-full">
@@ -258,4 +258,4 @@ const LiveEventViewAll = () => {
   );
 };
 
-export default LiveEventViewAll;
+export default LiveEventsViewAllUpcoming;

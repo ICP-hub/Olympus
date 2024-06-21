@@ -34,7 +34,7 @@ const AssociatedProjects = ({ data }) => {
               <div className="flex flex-col">
                 <div className="flex flex-col lg:flex-row justify-between lg:items-end">
                   <img className="w-14 h-14 rounded-lg object-cover" src={projectImage} alt="logo" />
-                  <p className="font-bold truncate w-full">{projectName}</p>
+                  <p className="font-bold truncate w-full ml-2">{projectName}</p>
                 </div>
                 <div className="flex flex-col sm:flex-row py-2 justify-between">
                   <div className="flex items-center">

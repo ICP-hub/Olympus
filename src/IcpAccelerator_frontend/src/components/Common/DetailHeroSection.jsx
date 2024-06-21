@@ -42,7 +42,7 @@ const DetailHeroSection = () => {
         "z-10 w-[500px] md:w-[250px] md:h-[210px] sm:w-[250px] sxs:w-[170px] md:h-56 relative sxs:-right-3 right-16 md:right-0 sm:right-0 top-10",
       text: "Sign Up As User",
     },
-    "/event-form": {
+    "/cohort-form": {
       src: Event,
       alt: "Astronaut",
       className:

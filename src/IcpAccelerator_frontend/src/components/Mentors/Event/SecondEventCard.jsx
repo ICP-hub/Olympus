@@ -20,7 +20,7 @@ const SecondEventCard = ({ data, register }) => {
   }
   // console.log("data ====???>>>>>>>", data);
   let image = hover;
-  let name = data?.cohort?.title ?? "";
+  let name = data?.cohort?.title ?? "No Title...";
   let launch_date = data?.cohort?.cohort_launch_date
     ? formatFullDateFromSimpleDate(data?.cohort?.cohort_launch_date)
     : "";
@@ -235,7 +235,7 @@ const SecondEventCard = ({ data, register }) => {
                 })}
               </ul> */}
               {tags ? (
-                <div className="flex gap-2 mt-2 text-xs items-center pb-2">
+                <div className="flex gap-2 mt-2 text-xs items-center pb-2 flex-wrap">
                   {tags
                     .split(",")
                     .map((tag, index) => (
@@ -268,7 +268,7 @@ const SecondEventCard = ({ data, register }) => {
                   </div>
                   <div className="flex flex-col font-bold">
                     <p className="text-[#7283EA]">Seats</p>
-                    <p className="flex text-black w-20">{seats}</p>
+                    <p className="flex text-black w-20">{Number(seats)}</p>
                   </div>
                   {/* <div className="flex flex-col font-bold">
                     <p className="text-[#7283EA]">Duration</p>

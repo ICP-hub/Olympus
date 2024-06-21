@@ -82,6 +82,14 @@ const LiveEventsCards = ({ wrap, register }) => {
     };
   }, [actor, currentPage]);
 
+
+  const filteredEvents = allLiveEventsData.filter((val) => {
+    const launchDate = new Date(val?.cohort?.cohort_launch_date);
+    const today = new Date();
+    return launchDate.toDateString() === today.toDateString();
+  });
+  
+
   return (
     <div
       className={`flex mb-4 items-start ${wrap === true ? "" : "min-h-screen"}`}
@@ -115,8 +123,8 @@ const LiveEventsCards = ({ wrap, register }) => {
                 : "flex flex-row flex-wrap w-full px-8"
             }`}
           >
-            {allLiveEventsData &&
-              allLiveEventsData?.slice(0, numSkeletons).map((val, index) => {
+            {filteredEvents &&
+              filteredEvents?.slice(0, numSkeletons).map((val, index) => {
                 console.log("val", val);
                 return (
                   <div
