@@ -192,9 +192,7 @@ const SecondEventCard = ({ data, register }) => {
       )}
       <div className="block w-full drop-shadow-xl rounded-lg bg-gray-200 mb-8">
         <div
-          onClick={() =>
-            navigate("/event-page", { state: { cohort_id: data?.cohort_id } })
-          }
+         
           className="w-full relative"
         >
           <img
@@ -279,10 +277,12 @@ const SecondEventCard = ({ data, register }) => {
               <div className="flex justify-center items-center ">
                 {register && (
                   <button
-                    onClick={registerHandler}
+                  onClick={() =>
+                    navigate("/cohort-details-page", { state: { cohort_id: data?.cohort_id } })
+                  }
                     className="mb-2 uppercase w-full bg-[#3505B2] mr-2 text-white  px-4 py-2 rounded-md  items-center font-extrabold text-sm mt-2 "
                   >
-                    Register now
+                     Know More
                   </button>
                 )}
               </div>

@@ -144,7 +144,7 @@ const MentorDashboard = ({ numSkeletons }) => {
           <LiveEventsCards wrap={true} register={true} />
         </div>
         <div className="mb-4 fade-in">
-          <UpcomingEventsCard wrap={true} register={false} />
+          <UpcomingEventsCard wrap={true} register={true} />
         </div>
       </div>
     </section>

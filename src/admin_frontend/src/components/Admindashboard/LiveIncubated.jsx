@@ -390,8 +390,8 @@ const LiveIncubated = () => {
               const isLiveOnMainnet =
                 live_on_icp_mainnet && live_on_icp_mainnet[0] === true;
               let projectRubricStatus =
-                project?.overall_average.length > 0
-                  ? project?.overall_average[data?.overall_average.length - 1]
+                project?.overall_average?.length > 0
+                  ? project?.overall_average[project?.overall_average.length - 1]
                   : 0;
               let isLive_On = project?.params?.params?.live_on_icp_mainnet[0];
               const isInSpotlight = spotlightProjectIds.has(projectId);

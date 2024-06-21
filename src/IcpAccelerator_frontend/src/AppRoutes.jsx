@@ -63,7 +63,7 @@ const AppRoutes = () => {
     },
     { path: "/association", element: <ProjectAssociation /> },
     { path: "/event-register-request", element: <EventRegistration /> },
-    { path: "/event-page", element: <CohortPage /> },
+    { path: "/cohort-details-page", element: <CohortPage /> },
     { path: "/cohort-project-detail/:id", element: <EventProjectDetail /> },
     { path: "/create-user", element: <UserRegForm /> },
     { path: "/create-project", element: <ProjectRegForm /> },
