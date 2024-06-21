@@ -127,13 +127,13 @@ const MentorDashboard = ({ numSkeletons }) => {
           </h1>
           <div className="flex gap-2">
             <button
-              onClick={() => navigate(`/all-live-events`)}
+              onClick={() => navigate(`/all-live-ongoing-cohort`)}
               className="border border-violet-800 px-4 py-2 rounded-md text-violet-800"
             >
               View More
             </button>
             <button
-              onClick={() => navigate(`/event-form`)}
+              onClick={() => navigate(`/cohort-form`)}
               className="border border-violet-800 px-4 py-2 rounded-md text-violet-800"
             >
               Start Your Cohort
@@ -144,7 +144,7 @@ const MentorDashboard = ({ numSkeletons }) => {
           <LiveEventsCards wrap={true} register={true} />
         </div>
         <div className="mb-4 fade-in">
-          <UpcomingEventsCard wrap={true} register={false} />
+          <UpcomingEventsCard wrap={true} register={true} />
         </div>
       </div>
     </section>

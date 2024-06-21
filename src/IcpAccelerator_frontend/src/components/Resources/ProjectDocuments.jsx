@@ -5,7 +5,7 @@ import toast, { Toaster } from "react-hot-toast";
 import NoDataCard from "../Mentors/Event/DocumentNoDataCard";
 import { useNavigate } from "react-router-dom";
 
-const ProjectDocuments = ({ data, allowAccess }) => {
+const ProjectDocuments = ({ data }) => {
   console.log("data", data);
   const navigate = useNavigate();
   const actor = useSelector((currState) => currState.actors.actor);
@@ -13,7 +13,7 @@ const ProjectDocuments = ({ data, allowAccess }) => {
   const [noData, setNoData] = useState(null);
   const [isChecked, setIsChecked] = useState(false);
   const [documents, setDocuments] = useState([]);
-  // const [allowAccess, setAllowAccess] = useState(null);
+  const [allowAccess, setAllowAccess] = useState(null);
 
   const handleToggleChange = () => setIsChecked(!isChecked);
 
@@ -27,10 +27,10 @@ const ProjectDocuments = ({ data, allowAccess }) => {
         if ("Ok" in result) {
           setDocuments(Array.isArray(result.Ok) ? result.Ok : [result.Ok]);
           setNoData(false);
-          // setAllowAccess(result.Ok.is_owner);
+          setAllowAccess(Object.keys(result.Ok).length > 0 ? true : false);
         } else if ("Err" in result) {
           toast.error(result.Err.message);
-          // setAllowAccess(result.Err.is_owner);
+          setAllowAccess(result.Err.is_owner);
           setDocuments([]);
           setNoData(true);
         }
@@ -108,7 +108,7 @@ const ProjectDocuments = ({ data, allowAccess }) => {
           <label
             htmlFor="toggle"
             className={`flex items-center cursor-pointer ${
-              allowAccess === null ? "float-right" : ""
+              allowAccess === false ? "float-right" : ""
             }`}
           >
             <div className="relative">
@@ -122,7 +122,7 @@ const ProjectDocuments = ({ data, allowAccess }) => {
               <div className="block bg-gray-600 w-14 h-8 rounded-full">
                 <span
                   className={` text-[#737373] absolute -top-7 ${
-                    allowAccess === null ? "right-0" : "left-0"
+                    allowAccess === false ? "right-0" : "left-0"
                   } font-bold text-base mb-2 text-nowrap`}
                 >
                   {isChecked ? "Switch to Public" : "Switch to Private"}

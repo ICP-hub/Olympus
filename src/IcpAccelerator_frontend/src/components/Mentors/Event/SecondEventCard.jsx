@@ -20,7 +20,7 @@ const SecondEventCard = ({ data, register }) => {
   }
   // console.log("data ====???>>>>>>>", data);
   let image = hover;
-  let name = data?.cohort?.title ?? "";
+  let name = data?.cohort?.title ?? "No Title...";
   let launch_date = data?.cohort?.cohort_launch_date
     ? formatFullDateFromSimpleDate(data?.cohort?.cohort_launch_date)
     : "";
@@ -192,9 +192,7 @@ const SecondEventCard = ({ data, register }) => {
       )}
       <div className="block w-full drop-shadow-xl rounded-lg bg-gray-200 mb-8">
         <div
-          onClick={() =>
-            navigate("/event-page", { state: { cohort_id: data?.cohort_id } })
-          }
+         
           className="w-full relative"
         >
           <img
@@ -235,7 +233,7 @@ const SecondEventCard = ({ data, register }) => {
                 })}
               </ul> */}
               {tags ? (
-                <div className="flex gap-2 mt-2 text-xs items-center pb-2">
+                <div className="flex gap-2 mt-2 text-xs items-center pb-2 flex-wrap">
                   {tags
                     .split(",")
                     .map((tag, index) => (
@@ -268,7 +266,7 @@ const SecondEventCard = ({ data, register }) => {
                   </div>
                   <div className="flex flex-col font-bold">
                     <p className="text-[#7283EA]">Seats</p>
-                    <p className="flex text-black w-20">{seats}</p>
+                    <p className="flex text-black w-20">{Number(seats)}</p>
                   </div>
                   {/* <div className="flex flex-col font-bold">
                     <p className="text-[#7283EA]">Duration</p>
@@ -279,10 +277,12 @@ const SecondEventCard = ({ data, register }) => {
               <div className="flex justify-center items-center ">
                 {register && (
                   <button
-                    onClick={registerHandler}
+                  onClick={() =>
+                    navigate("/cohort-details-page", { state: { cohort_id: data?.cohort_id } })
+                  }
                     className="mb-2 uppercase w-full bg-[#3505B2] mr-2 text-white  px-4 py-2 rounded-md  items-center font-extrabold text-sm mt-2 "
                   >
-                    Register now
+                     Know More
                   </button>
                 )}
               </div>

@@ -34,14 +34,14 @@ const schema = yup.object({
     .date()
     .required()
     .typeError("Must be a date")
-    .min(startOfToday(), "Launch date cannot be before today"),
+    .min(startOfToday(), "Cohort Launch date cannot be before today"),
   cohort_end_date: yup
     .date()
     .required()
     .typeError("Must be a date")
     .min(
       yup.ref("cohort_launch_date"),
-      "End date cannot be before launch date"
+      "Cohort End date cannot be before Cohort launch date"
     ),
   tags: yup
     .string()
@@ -50,9 +50,21 @@ const schema = yup.object({
     )
     .required("Selecting an interest is required"),
 
-  deadline: yup.date().required().typeError("Must be a date"),
-  // .min(yup.ref("cohort_launch_date"), "Deadline cannot be before Launch date")
-  // .max(yup.ref("cohort_end_date"), "Deadline cannot be after end date")
+    deadline: yup
+    .date()
+    .required("Must be a date")
+    .typeError("Must be a valid date")
+    .max(
+      yup.ref('cohort_launch_date'), 
+      "Application Deadline must be before the Cohort Launch date"
+    )
+    .test(
+      'is-before-today', 
+      "Application Deadline must be before today", 
+      function(value) {
+        return value < startOfToday();
+      }
+    ),
   eligibility: yup
     .string()
     .typeError("You must enter a eligibility")
@@ -229,7 +241,7 @@ const EventForm = () => {
         new Date(data.cohort_launch_date),
         "yyyy-MM-dd"
       ),
-      start_date: format(new Date(data.cohort_start_date), "yyyy-MM-dd"),
+      start_date: format(new Date(data.cohort_launch_date), "yyyy-MM-dd"),
       cohort_end_date: format(new Date(data.cohort_end_date), "yyyy-MM-dd"),
       deadline: format(new Date(data.deadline), "yyyy-MM-dd"),
       tags: data.tags,

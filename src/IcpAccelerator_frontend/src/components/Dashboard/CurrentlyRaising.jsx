@@ -12,10 +12,7 @@ const CurrentlyRaising = ({ progress }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
   const navigate = useNavigate();
-  const [isHovered, setIsHovered] = useState(false);
   const [percent, setPercent] = useState(0);
-  const [showLine, setShowLine] = useState({});
-  const [isLoading, setIsLoading] = useState(true);
   const tm = useRef(null);
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
@@ -46,12 +43,12 @@ const CurrentlyRaising = ({ progress }) => {
   //   ? { stop1: "#4087BF", stop2: "#3C04BA" }
   //   : { stop1: "#B5B5B5", stop2: "#5B5B5B" };
 
-  useEffect(() => {
-    if (percent < 100) {
-      tm.current = setTimeout(increase, 30);
-    }
-    return () => clearTimeout(tm.current);
-  }, [percent]);
+  // useEffect(() => {
+  //   if (percent < 100) {
+  //     tm.current = setTimeout(increase, 30);
+  //   }
+  //   return () => clearTimeout(tm.current);
+  // }, [percent]);
 
   const handleClickPlusOne = (id) => {
     setShowLine((prevShowLine) => ({
@@ -72,38 +69,57 @@ const CurrentlyRaising = ({ progress }) => {
 
   const [noData, setNoData] = useState(null);
   const [allProjectData, setAllProjectData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const itemsPerPage = 4;
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const getAllProject = async (caller) => {
+  const getAllProject = async (caller,isMounted) => {
     setIsLoading(true);
     await caller
-      .list_all_projects()
+      .list_all_projects_with_pagination({
+        page_size: itemsPerPage,
+        page: currentPage,
+      })
       .then((result) => {
-        console.log("result-in-get-all-projects", result);
-        if (!result || result.length == 0) {
+        if (isMounted) {
+          console.log("result-in-get-all-projects", result);
+          if (!result || result.length == 0) {
+            setNoData(true);
+            setAllProjectData([]);
+          } else {
+            setAllProjectData(result.data);
+            // setCountData(result.count);
+            setNoData(false);
+          }
           setIsLoading(false);
-          setNoData(true);
-          setAllProjectData([]);
-        } else {
-          setAllProjectData(result);
-          setIsLoading(false);
-          setNoData(false);
         }
       })
       .catch((error) => {
-        setNoData(true);
-        setIsLoading(false);
-        setAllProjectData([]);
-        console.log("error-in-get-all-projects", error);
+        if (isMounted) {
+          setNoData(true);
+          setAllProjectData([]);
+          setIsLoading(false);
+          // setCountData();
+          console.log("error-in-get-all-projects", error);
+        }
       });
-  };
+};
 
-  useEffect(() => {
-    if (actor) {
-      getAllProject(actor);
-    } else {
-      getAllProject(IcpAccelerator_backend);
-    }
-  }, [actor, userCurrentRoleStatusActiveRole]);
+console.log(' currently allProjectData', allProjectData);
+
+useEffect(() => {
+  let isMounted = true; 
+
+  if (actor) {
+    getAllProject(actor,isMounted);
+  } else {
+    getAllProject(IcpAccelerator_backend);
+  }
+
+  return () => {
+    isMounted = false; 
+  };
+}, [actor, userCurrentRoleStatusActiveRole, currentPage]);
 
   const handleNavigate = (projectId, projectData) => {
     if (isAuthenticated) {
@@ -165,7 +181,6 @@ const CurrentlyRaising = ({ progress }) => {
                   val?.params?.params?.money_raised_till_now[0] &&
                   val?.params?.params?.money_raised_till_now[0] == true
               )
-              .slice(0, 4)
               .map((data, index) => {
                 let projectName = data?.params?.params?.project_name ?? "";
                 let projectId = data?.params?.uid ?? "";
@@ -187,7 +202,7 @@ const CurrentlyRaising = ({ progress }) => {
                   data?.params?.params?.project_area_of_focus ?? "";
                 let projectData = data?.params ? data?.params : null;
                 let projectRubricStatus =
-                  data?.overall_average.length > 0
+                  data?.overall_average?.length > 0
                     ? data?.overall_average[data?.overall_average.length - 1]
                     : 0;
 

@@ -80,18 +80,14 @@ const LiveEventsCards = ({ wrap, register }) => {
     };
   }, [actor, currentPage]);
 
-  const today = new Date();
-  const todayStr = today.toISOString().split("T")[0]; // Get only the date part in 'YYYY-MM-DD' format
 
   const filteredEvents = allLiveEventsData.filter((val) => {
-    const launchDateStr = new Date(val?.cohort?.cohort_launch_date)
-      .toISOString()
-      .split("T")[0];
-    console.log("filteredEvents launchDateStr", launchDateStr);
-    return launchDateStr <= todayStr;
+    const launchDate = new Date(val?.cohort?.cohort_launch_date);
+    const today = new Date();
+    return launchDate >= today.setHours(0, 0, 0, 0);
   });
-  console.log("filteredEvents", filteredEvents);
-  console.log("filteredEvents today", todayStr);
+
+
   return (
     <>
       {filteredEvents && (

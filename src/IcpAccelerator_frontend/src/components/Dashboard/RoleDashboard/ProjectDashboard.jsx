@@ -15,34 +15,45 @@ const ProjectDashboard = ({ numSkeletons }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [projectData, setProjectData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-
-  const fetchProjectData = async () => {
+  const fetchProjectData = async (isMounted) => {
     setIsLoading(true);
     await actor
       .get_my_project()
       .then((result) => {
         // console.log("result-in-get_my_project", result);
         if (result && Object.keys(result).length > 0) {
-          setProjectData(result);
-          setIsLoading(false);
+          if (isMounted) {
+            setProjectData(result);
+            setIsLoading(false);
+          }
         } else {
-          setProjectData(null);
-          setIsLoading(false);
+          if (isMounted) {
+            setProjectData(null);
+            setIsLoading(false);
+          }
         }
       })
       .catch((error) => {
         console.log("error-in-get_my_project", error);
-        setProjectData(null);
-        setIsLoading(false);
+        if (isMounted) {
+          setProjectData(null);
+          setIsLoading(false);
+        }
       });
   };
 
   useEffect(() => {
+    let isMounted = true;
+
     if (actor) {
-      fetchProjectData();
+      fetchProjectData(isMounted);
     } else {
       window.location.href = "/";
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [actor]);
 
   return (
@@ -98,7 +109,7 @@ const ProjectDashboard = ({ numSkeletons }) => {
             Ongoing Accelerator
           </h1>
           <button
-            onClick={() => navigate(`/all-live-events`)}
+            onClick={() => navigate(`/all-live-ongoing-cohort`)}
             className="border border-violet-800 px-4 py-2 rounded-md text-violet-800"
           >
             View More
@@ -108,7 +119,7 @@ const ProjectDashboard = ({ numSkeletons }) => {
           <LiveEventsCards wrap={true} register={true} />
         </div>
         <div className="mb-4 fade-in">
-          <UpcomingEventsCard wrap={true} register={false} />
+          <UpcomingEventsCard wrap={true} register={true} />
         </div>
       </div>
     </section>

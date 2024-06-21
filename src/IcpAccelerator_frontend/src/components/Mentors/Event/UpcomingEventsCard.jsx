@@ -82,11 +82,12 @@ const UpcomingEventsCard = ({ wrap, register }) => {
     };
   }, [actor, currentPage]);
 
-  const today = new Date();
   const filteredEvents = allLiveEventsData.filter((val) => {
     const launchDate = new Date(val?.cohort?.cohort_launch_date);
-    return launchDate > today;
+    const applicationDeadline = new Date(val?.cohort?.deadline);
+    return applicationDeadline <= launchDate;
   });
+  
 
   return (
     <>
@@ -96,7 +97,7 @@ const UpcomingEventsCard = ({ wrap, register }) => {
         </h1>
         {filteredEvents && filteredEvents.length > 0 && (
           <button
-            onClick={() => navigate(`/all-live-events`)}
+            onClick={() => navigate(`/all-live-upcoming-cohort`)}
             className="border border-violet-800 px-4 py-2 rounded-md text-violet-800 sxxs:px-2 sxxs:py-1 sxxs:text-xs sm:text-lg"
           >
             View More
@@ -130,7 +131,7 @@ const UpcomingEventsCard = ({ wrap, register }) => {
               ))}
           </div>
         ) : noData || filteredEvents.length === 0 ? (
-          <NoDataCard image={NoData} desc={"There is no ongoing accelerator"} />
+          <NoDataCard image={NoData} desc={"There is no Upcoming accelerator"} />
         ) : (
           <div
             className={`${

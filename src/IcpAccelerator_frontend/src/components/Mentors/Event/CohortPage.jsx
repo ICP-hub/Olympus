@@ -174,6 +174,19 @@ function CohortPage() {
   const closeModal = () => {
     setIsModalOpen(false);
   };
+
+  const getButtonText = (role) => {
+    switch (role) {
+      case "project":
+        return "Join as Project";
+      case "vc":
+        return "Join as Investor";
+      case "mentor":
+        return "Join as Mentor";
+      default:
+        return "Join";
+    }
+  };
   console.log("cohort", cohortData);
   return (
     <section className="bg-gray-100 w-full h-full lg1:px-[4%] py-[2%] px-[5%]">
@@ -373,7 +386,7 @@ function CohortPage() {
                         className="uppercase w-full bg-[#3505B2] text-white  px-4 py-2 rounded-md  items-center font-extrabold text-xl sxxs:text-sm"
                         onClick={registerHandler}
                       >
-                        Apply
+                       {getButtonText(userCurrentRoleStatusActiveRole)}
                       </button>
                     </div>
                   </div>
