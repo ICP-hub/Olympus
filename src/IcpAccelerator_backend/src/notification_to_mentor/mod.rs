@@ -217,74 +217,93 @@ pub fn accept_offer_of_project(offer_id: String, response_message: String) -> St
         }
     });
 
-    // If the offer has already been accepted, return early with a message
     if already_accepted {
         return format!("Offer with id: {} has already been accepted.", offer_id);
     }
 
     mutate_state(|state| {
         if let Some(mut offers) = state.mentor_alerts.get(&StoredPrincipal(mentor_id)) {
-            if let Some(offer) = offers.0.iter_mut().find(|o| o.offer_id == offer_id) {
-                // Proceed with the logic to accept the offer here
-                offer.request_status = "accepted".to_string();
-                offer.response = response_message.clone();
-                offer.accepted_at = ic_cdk::api::time();
+            let offer_index = offers.0.iter().position(|o| o.offer_id == offer_id);
+            if let Some(index) = offer_index {
 
-                // Logic to update the mentor registry and application form
-                if let Some(mentor_profile) = state.mentor_storage.get(&StoredPrincipal(mentor_id)) {
-                    if let Some(mut projects) = state.project_storage.get(&StoredPrincipal(offer.sender_principal)) {
-                        if let Some(project) = projects.0.iter_mut().find(|p| p.uid == offer.project_info.project_id) {
+                let sender_principal = offers.0[index].sender_principal.clone();
+                let project_id = offers.0[index].project_info.project_id.clone();
+
+                if offers.0[index].request_status != "accepted" {
+                    offers.0[index].request_status = "accepted".to_string();
+                    offers.0[index].response = response_message.clone();
+                    offers.0[index].accepted_at = ic_cdk::api::time();
+
+                    state.mentor_alerts.insert(StoredPrincipal(mentor_id), offers.clone());
+
+                    if let Some(mut projects) = state.project_storage.get(&StoredPrincipal(sender_principal)) {
+                        if let Some(proj_index) = projects.0.iter_mut().position(|p| p.uid == project_id) {
+                            let project = &mut projects.0[proj_index];
                             if project.params.mentors_assigned.is_none() {
                                 project.params.mentors_assigned = Some(Vec::new());
                             }
 
-                            let mentors_assigned = project.params.mentors_assigned.as_mut().unwrap();
-
-                            if !mentors_assigned.contains(&mentor_profile.0.profile) {
-                                mentors_assigned.push(mentor_profile.0.profile.clone());
+                            if let Some(mentor_profile) = state.mentor_storage.get(&StoredPrincipal(mentor_id)) {
+                                let mentors_assigned = project.params.mentors_assigned.as_mut().unwrap();
+                                if !mentors_assigned.contains(&mentor_profile.0.profile) {
+                                    mentors_assigned.push(mentor_profile.0.profile.clone());
+                                }
                             }
 
-                            let mut associated_projects = state.projects_associated_with_mentor.get(&StoredPrincipal(mentor_id)).map(|candid_res| candid_res.0.clone()).unwrap_or_else(Vec::new);
-                            if !associated_projects.contains(&project) {
+                            // Associated projects update
+                            let mut associated_projects = state.projects_associated_with_mentor
+                                .get(&StoredPrincipal(mentor_id))
+                                .map(|candid_res| candid_res.0.clone())
+                                .unwrap_or_else(Vec::new);
+                            if !associated_projects.contains(project) {
                                 associated_projects.push(project.clone());
                                 state.projects_associated_with_mentor.insert(StoredPrincipal(mentor_id), Candid(associated_projects));
                             }
                         }
-                    }
-                }
 
-                // Update any sent notifications as necessary
-                if let Some(mut sent_status_vector) = state.my_sent_notifications.get(&StoredPrincipal(offer.sender_principal)) {
-                    if let Some(project_offer) = sent_status_vector.0.iter_mut().find(|o| o.offer_id == offer_id) {
-                        project_offer.request_status = "accepted".to_string();
-                        project_offer.response = response_message.clone();
-                        project_offer.accepted_at = ic_cdk::api::time();
+                        // Reinsert the modified projects back into state after all changes are done
+                        state.project_storage.insert(StoredPrincipal(sender_principal), projects.clone());
+                    }
+
+                    if let Some(mut sent_status_vector) = state.my_sent_notifications.get(&StoredPrincipal(sender_principal)) {
+                        if let Some(notif_index) = sent_status_vector.0.iter_mut().position(|o| o.offer_id == offer_id) {
+                            sent_status_vector.0[notif_index].request_status = "accepted".to_string();
+                            sent_status_vector.0[notif_index].response = response_message.clone();
+                            sent_status_vector.0[notif_index].accepted_at = ic_cdk::api::time();
+                            // Insert notifications back after modifications
+                            state.my_sent_notifications.insert(StoredPrincipal(sender_principal), sent_status_vector.clone());
+                        }
                     }
                 }
             }
+            // Insert the offers back after all modifications are completed within the block
+            state.mentor_alerts.insert(StoredPrincipal(mentor_id), offers.clone());
         }
     });
 
     format!("You have accepted the offer with offer id: {}", offer_id)
 }
 
+
 #[update]
 pub fn decline_offer_of_project(offer_id: String, response_message: String) -> String {
     let mentor_id = caller();
 
     mutate_state(|state| {
-        if let Some(offers) = &mut state.mentor_alerts.get(&StoredPrincipal(mentor_id)) {
+        // Update offers related to the mentor
+        if let Some(mut offers) = state.mentor_alerts.get(&StoredPrincipal(mentor_id)) {
             if let Some(offer) = offers.0.iter_mut().find(|o| o.offer_id == offer_id) {
                 offer.request_status = "declined".to_string();
                 offer.response = response_message.clone();
-                offer.declined_at = time()
+                offer.declined_at = time();
+
+                // Save the changes immediately back to the state
+                state.mentor_alerts.insert(StoredPrincipal(mentor_id), offers.clone());
             }
         }
-    });
 
-    mutate_state(|sent_state| {
-        let my_noti = &mut sent_state.my_sent_notifications;
-        for (_, mut sent_status_vector) in my_noti.iter() {
+        // Update sent notifications
+        for (_, mut sent_status_vector) in state.my_sent_notifications.iter() {
             if let Some(project_offer) = sent_status_vector
                 .0
                 .iter_mut()
@@ -292,12 +311,16 @@ pub fn decline_offer_of_project(offer_id: String, response_message: String) -> S
             {
                 project_offer.request_status = "declined".to_string();
                 project_offer.response = response_message.clone();
-                project_offer.declined_at = time()
+                project_offer.declined_at = time();
+
+                // Since `sent_status_vector` is already a mutable reference from iter_mut(), we do not need to re-insert it
             }
         }
     });
-    format!("you have declined the offer with offer id: {}", offer_id)
+
+    format!("You have declined the offer with offer id: {}", offer_id)
 }
+
 
 #[query]
 pub fn get_pending_request_for_mentor(mentor_id: Principal) -> Vec<OfferToSendToMentor> {
