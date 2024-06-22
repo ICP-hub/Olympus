@@ -15,6 +15,7 @@ const LiveEventsCards = ({ wrap, register }) => {
   const [isLoading, setIsLoading] = useState(true);
   const itemsPerPage = 3;
   const [allLiveEventsData, setAllLiveEventsData] = useState([]);
+  const [filteredLiveEventsData, setFilteredLiveEventsData] = useState([]);
   const [numSkeletons, setNumSkeletons] = useState(itemsPerPage);
 
   const updateNumSkeletons = () => {
@@ -26,6 +27,7 @@ const LiveEventsCards = ({ wrap, register }) => {
       setNumSkeletons(1);
     }
   };
+
   useEffect(() => {
     updateNumSkeletons();
     window.addEventListener("resize", updateNumSkeletons);
@@ -82,13 +84,31 @@ const LiveEventsCards = ({ wrap, register }) => {
     };
   }, [actor, currentPage]);
 
-  const filteredEvents = allLiveEventsData.filter((val) => {
-    const launchDate = new Date(val?.cohort?.cohort_launch_date);
-    const today = new Date();
-    return launchDate >= today.setHours(0, 0, 0, 0);
-  });
+  useEffect(() => {
+    console.log("useEffect triggered for filtering live events");
+    console.log("allLiveEventsData", allLiveEventsData);
   
-
+    const today = new Date();
+    console.log('today', today);
+    today.setHours(0, 0, 0, 0);
+  
+    const filteredEvents = allLiveEventsData.filter((val) => {
+      const launchDate = new Date(val?.cohort?.cohort_launch_date);
+      console.log('launchDate', launchDate);
+      console.log('launchDate > today:', launchDate > today);
+  
+      return launchDate > today;
+    });
+  
+    setFilteredLiveEventsData(filteredEvents);
+  
+    if (filteredEvents.length === 0) {
+      setNoData(true);
+    } else {
+      setNoData(false);
+    }
+  }, [allLiveEventsData]);
+  
   return (
     <div
       className={`flex mb-4 items-start ${wrap === true ? "" : "min-h-screen"}`}
@@ -102,15 +122,14 @@ const LiveEventsCards = ({ wrap, register }) => {
                 : "flex flex-row flex-wrap w-full px-8"
             }`}
           >
-              {Array.from({ length: numSkeletons }).map((_, index) => (
-                <div
-                  key={index}
-                  className=" w-full md:min-w-[50%] lg1:min-w-[33.33%] md:max-w-[50%] lg1:max-w-[33.33%]"
-                >
-                  {" "}
-                  <OngoingAcceleratorSkeleton key={index} />
-                </div>
-              ))}
+            {Array.from({ length: numSkeletons }).map((_, index) => (
+              <div
+                key={index}
+                className=" w-full md:min-w-[50%] lg1:min-w-[33.33%] md:max-w-[50%] lg1:max-w-[33.33%]"
+              >
+                <OngoingAcceleratorSkeleton key={index} />
+              </div>
+            ))}
           </div>
         ) : noData ? (
           <NoDataCard image={NoData} desc={"There is no ongoing accelerator"} />
@@ -122,8 +141,8 @@ const LiveEventsCards = ({ wrap, register }) => {
                 : "flex flex-row flex-wrap w-full px-8"
             }`}
           >
-            {filteredEvents &&
-              filteredEvents?.slice(0, numSkeletons).map((val, index) => {
+            {filteredLiveEventsData &&
+              filteredLiveEventsData?.slice(0, numSkeletons).map((val, index) => {
                 console.log("val", val);
                 return (
                   <div

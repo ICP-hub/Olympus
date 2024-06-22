@@ -165,15 +165,10 @@ pub fn accept_offer_of_investor(
 ) -> String {
     let mut already_accepted = false;
 
+    // Check if the offer has already been accepted
     read_state(|state| {
         if let Some(offers) = state.project_alerts_of_investor.get(&project_id) {
-            if offers
-                .0
-                .iter()
-                .any(|o| o.offer_id == offer_id && o.request_status == "accepted")
-            {
-                already_accepted = true;
-            }
+            already_accepted = offers.0.iter().any(|o| o.offer_id == offer_id && o.request_status == "accepted");
         }
     });
 
@@ -183,36 +178,48 @@ pub fn accept_offer_of_investor(
 
     mutate_state(|state| {
         if let Some(mut offers) = state.project_alerts_of_investor.get(&project_id) {
-            if let Some(offer) = offers.0.iter_mut().find(|o| o.offer_id == offer_id) {
-                offer.request_status = "accepted".to_string();
-                offer.response = response_message.clone();
-                offer.accepted_at = ic_cdk::api::time();
+            if let Some(index) = offers.0.iter().position(|o| o.offer_id == offer_id) {
+                let offer = &mut offers.0[index];
+                
+                if offer.request_status != "accepted" {
+                    offer.request_status = "accepted".to_string();
+                    offer.response = response_message.clone();
+                    offer.accepted_at = ic_cdk::api::time();
 
-                if let Some(mut sent_status_vector) = state.offers_sent_by_investor.get(&StoredPrincipal(offer.sender_principal)) {
-                    if let Some(project_offer) = sent_status_vector.0.iter_mut().find(|offer| offer.offer_id == offer_id) {
-                        project_offer.request_status = "accepted".to_string();
-                        project_offer.response = response_message.clone();
-                        project_offer.accepted_at = ic_cdk::api::time();
+                    let sender_principal = offer.sender_principal.clone();
 
-                        if let Some(capitalist) = state.vc_storage.get(&StoredPrincipal(offer.sender_principal)) {
-                            if let Some(mut projects) = state.project_storage.get(&StoredPrincipal(ic_cdk::api::caller())) {
-                                if let Some(project) = projects.0.iter_mut().find(|project| project.uid == project_offer.project_id) {
-                                    if project.params.vc_assigned.is_none() {
-                                        project.params.vc_assigned = Some(Vec::new());
-                                    }
+                    // Immediate commit to state after modification
+                    state.project_alerts_of_investor.insert(project_id.clone(), offers.clone());
 
-                                    let vc_assigned = project.params.vc_assigned.as_mut().unwrap();
+                    // Handling updates in sent notifications
+                    if let Some(mut sent_status_vector) = state.offers_sent_by_investor.get(&StoredPrincipal(sender_principal)) {
+                        if let Some(pos) = sent_status_vector.0.iter().position(|offer| offer.offer_id == offer_id) {
+                            let project_offer = &mut sent_status_vector.0[pos];
+                            project_offer.request_status = "accepted".to_string();
+                            project_offer.response = response_message.clone();
+                            project_offer.accepted_at = ic_cdk::api::time();
 
-                                    if !vc_assigned.contains(&capitalist.0.params) {
-                                        vc_assigned.push(capitalist.0.params.clone());
-                                    }
+                            // Immediate commit to state
+                            state.offers_sent_by_investor.insert(StoredPrincipal(sender_principal.clone()), sent_status_vector.clone());
+                        }
+                    }
 
-                                    let mut projects = state.projects_associated_with_vc.get(&StoredPrincipal(offer.sender_principal)).map(|candid_res| candid_res.0.clone()).unwrap_or_else(Vec::new);
-                                    if !projects.contains(&project) {
-                                        projects.push(project.clone());
-                                        state.projects_associated_with_vc.insert(StoredPrincipal(offer.sender_principal), Candid(projects));
-                                    }
+                    // Handling project and VC association updates
+                    if let Some(mut projects) = state.project_storage.get(&StoredPrincipal(sender_principal)) {
+                        if let Some(proj_index) = projects.0.iter().position(|p| p.uid == project_id) {
+                            let project = &mut projects.0[proj_index];
+                            if project.params.vc_assigned.is_none() {
+                                project.params.vc_assigned = Some(Vec::new());
+                            }
+                            
+                            if let Some(capitalist) = state.vc_storage.get(&StoredPrincipal(sender_principal)) {
+                                let vc_assigned = project.params.vc_assigned.as_mut().unwrap();
+                                if !vc_assigned.contains(&capitalist.0.params) {
+                                    vc_assigned.push(capitalist.0.params.clone());
                                 }
+
+                                // Immediate commit to state
+                                state.project_storage.insert(StoredPrincipal(sender_principal), projects.clone());
                             }
                         }
                     }
@@ -221,8 +228,10 @@ pub fn accept_offer_of_investor(
         }
     });
 
-    format!("you have accepted the offer with offer id: {}", offer_id)
+    format!("You have accepted the offer with offer id: {}", offer_id)
 }
+
+
 
 #[update]
 pub fn decline_offer_of_investor(
@@ -231,17 +240,20 @@ pub fn decline_offer_of_investor(
     project_id: String,
 ) -> String {
     mutate_state(|state| {
+        // Decline the offer in project alerts of investor
         if let Some(mut offers) = state.project_alerts_of_investor.get(&project_id) {
             if let Some(offer) = offers.0.iter_mut().find(|o| o.offer_id == offer_id) {
                 offer.request_status = "declined".to_string();
                 offer.response = response_message.clone();
-                offer.declined_at = time()
+                offer.declined_at = ic_cdk::api::time();
+
+                // Commit the changes to project alerts of investor
+                state.project_alerts_of_investor.insert(project_id.clone(), offers.clone());
             }
         }
-    });
 
-    mutate_state(|sent_state| {
-        for (_key, mut sent_status_vector) in sent_state.offers_sent_by_investor.iter() {
+        // Decline the offer in offers sent by investor
+        for (_key, mut sent_status_vector) in state.offers_sent_by_investor.iter() {
             if let Some(project_offer) = sent_status_vector
                 .0
                 .iter_mut()
@@ -249,12 +261,14 @@ pub fn decline_offer_of_investor(
             {
                 project_offer.request_status = "declined".to_string();
                 project_offer.response = response_message.clone();
-                project_offer.declined_at = time()
+                project_offer.declined_at = ic_cdk::api::time();
             }
         }
     });
-    format!("you have declined the offer with offer id: {}", offer_id)
+
+    format!("You have declined the offer with offer id: {}", offer_id)
 }
+
 
 #[query]
 pub fn get_all_offers_which_are_pending_for_project_from_investor(

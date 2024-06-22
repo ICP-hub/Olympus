@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
 import { formatFullDateFromSimpleDate } from "../../Utils/formatter/formatDateFromBigInt";
 import { useNavigate } from "react-router-dom";
+import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 const SecondEventCard = ({ data, register }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const principal = useSelector((currState) => currState.internet.principal);
@@ -19,7 +20,11 @@ const SecondEventCard = ({ data, register }) => {
     return null;
   }
   // console.log("data ====???>>>>>>>", data);
-  let image = hover;
+  let image =data?.cohort?.cohort_banner[0]
+  ? uint8ArrayToBase64(
+    data?.cohort?.cohort_banner[0]
+    )
+  : hover;
   let name = data?.cohort?.title ?? "No Title...";
   let launch_date = data?.cohort?.cohort_launch_date
     ? formatFullDateFromSimpleDate(data?.cohort?.cohort_launch_date)
@@ -196,8 +201,8 @@ const SecondEventCard = ({ data, register }) => {
           className="w-full relative"
         >
           <img
-            className="w-full object-cover rounded-lg "
-            src={hover}
+            className="w-full object-cover rounded-lg h-48"
+            src={image}
             alt="not found"
           />
           <div className="absolute h-12 w-12 -bottom-1 right-[20px]">
