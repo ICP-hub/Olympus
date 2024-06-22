@@ -549,7 +549,7 @@ const MentorProfile = ({ userData, Allrole, principal, currentRole }) => {
         <div className="w-full flex gap-4 sxxs:flex-col sm:flex-row mt-4">
           <div className="flex flex-col  w-full   md:w-[26%] sxxs:w-full"></div>
           <div className="flex flex-row justify-between bg-[#D2D5F2] shadow-md shadow-gray-400 p-6 rounded-lg md:w-3/4 sxxs:w-fulll">
-            <ul className="grid grid-cols-2 gap-4 w-full ">
+            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full ">
               <li className="list-disc ml-4 md:ml-12">
                 <div className=" flex flex-col text-gray-600">
                   <p className="text-black font-semibold mb-1">

@@ -50,20 +50,20 @@ const schema = yup.object({
     )
     .required("Selecting an interest is required"),
 
-    deadline: yup
+  deadline: yup
     .date()
     .required("Must be a date")
     .typeError("Must be a valid date")
     .max(
-      yup.ref('cohort_launch_date'), 
+      yup.ref("cohort_launch_date"),
       "Application Deadline must be before the Cohort Launch date"
-    )
-    .test(
-      'is-before-today', 
-      "Application Deadline must be before today", 
-      function(value) {
-        return value < startOfToday();
-      }
+      // )
+      // .test(
+      //   "is-before-today",
+      //   "Application Deadline must be before today",
+      //   function (value) {
+      //     return value < startOfToday();
+      // }
     ),
   eligibility: yup
     .string()
@@ -152,6 +152,8 @@ const EventForm = () => {
   const { countries } = useCountries();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [imagePreview, setImagePreview] = useState(null);
+  const [imageData, setImageData] = useState(null);
 
   // const {
   //   register,
@@ -181,45 +183,41 @@ const EventForm = () => {
     mode: "all",
   });
 
-  //   async (file) => {
-  //     clearErrors("imageData");
-  //     if (!["image/jpeg", "image/png", "image/gif"].includes(file.type))
-  //       return setError("imageData", {
-  //         type: "manual",
-  //         message: "Unsupported file format",
-  //       });
-  //     if (file.size > 1024 * 1024)
-  //       // 1MB
-  //       return setError("imageData", {
-  //         type: "manual",
-  //         message: "The file is too large",
-  //       });
+  // image creation function compression and uintarray creator
+  const imageCreationFunc = async (file) => {
+    const result = await trigger("image");
+    if (result) {
+      try {
+        const compressedFile = await CompressedImage(file);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImagePreview(reader.result);
+        };
+        reader.readAsDataURL(compressedFile);
+        const byteArray = await compressedFile.arrayBuffer();
+        setImageData(Array.from(new Uint8Array(byteArray)));
+      } catch (error) {
+        setError("image", {
+          type: "manual",
+          message: "Could not process image, please try another.",
+        });
+      }
+    } else {
+      console.log("ERROR--imageCreationFunc-file", file);
+    }
+  };
 
-  //     setIsLoading(true);
-  //     try {
-  //       const compressedFile = await CompressedImage(file);
-  //       const reader = new FileReader();
-  //       reader.onloadend = () => {
-  //         setImagePreview(reader.result);
-  //         setIsLoading(false);
-  //       };
-  //       reader.readAsDataURL(compressedFile);
+  // clear image func
+  const clearImageFunc = (val) => {
+    let field_id = val;
+    setValue(field_id, null);
+    clearErrors(field_id);
+    setImageData(null);
+    setImagePreview(null);
+  };
 
-  //       const byteArray = await compressedFile.arrayBuffer();
-  //       setImageData(Array.from(new Uint8Array(byteArray)));
-  //       console.log("imageData", Array.from(new Uint8Array(byteArray)));
-  //       clearErrors("imageData");
-  //     } catch (error) {
-  //       console.error("Error processing the image:", error);
-  //       setError("imageData", {
-  //         type: "manual",
-  //         message: "Could not process image, please try another.",
-  //       });
-  //       setIsLoading(false);
-  //     }
-  //   },
-  //   [setError, clearErrors, setIsLoading, setImagePreview, setImageData]
-  // );
+  console.log("imageData", imageData);
+  console.log("imagePreview", imagePreview);
   const onSubmitHandler = async (data) => {
     const areaValue = selectedArea === "global" ? "global" : selectedCountry;
     console.log("data aaya data aaya ", data);
@@ -332,6 +330,80 @@ const EventForm = () => {
               onSubmit={handleSubmit(onSubmitHandler, errorsFunc)}
               className="w-full px-4"
             >
+              <div className="flex flex-col mb-4">
+                <div className="flex-col w-full sm3:flex block justify-start gap-4 items-start">
+                  <div className="sm:mb-4 mb-6 sm:ml-6 h-40 sm:w-1/3 dlg:w-1/4 rounded-3xl w-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
+                    {imagePreview && !errors.image ? (
+                      <img
+                        src={imagePreview}
+                        alt="Profile"
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="size-11"
+                      >
+                        <path
+                          fill="#BBBBBB"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z"
+                        />
+                      </svg>
+                    )}
+                  </div>
+
+                  <Controller
+                    name="image"
+                    control={control}
+                    render={({ field }) => (
+                      <>
+                        <input
+                          type="file"
+                          className="hidden"
+                          id="image"
+                          name="image"
+                          onChange={(e) => {
+                            field.onChange(e.target.files[0]);
+                            imageCreationFunc(e.target.files[0]);
+                          }}
+                          accept=".jpg, .jpeg, .png"
+                        />
+                        <div className="flex">
+                          <label
+                            htmlFor="image"
+                            className="p-2 border-2 border-blue-800 items-center sm:ml-6 rounded-md text-md bg-transparent text-blue-800 cursor-pointer font-semibold"
+                          >
+                            {imagePreview && !errors.image
+                              ? "Change banner picture"
+                              : "Upload banner picture"}
+                          </label>
+                          {imagePreview || errors.image ? (
+                            <button
+                              className="p-2 border-2 border-red-500 ml-2 items-center rounded-md text-md bg-transparent text-red-500 cursor-pointer font-semibold capitalize"
+                              onClick={() => clearImageFunc("image")}
+                            >
+                              clear
+                            </button>
+                          ) : (
+                            ""
+                          )}
+                        </div>
+                      </>
+                    )}
+                  />
+                </div>
+                {errors.image && (
+                  <span className="mt-1 text-sm text-red-500 font-bold text-start px-4">
+                    {errors?.image?.message}
+                  </span>
+                )}
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {formFields?.map((field) => (
                   <div key={field.id} className="relative z-0 group mb-6">
