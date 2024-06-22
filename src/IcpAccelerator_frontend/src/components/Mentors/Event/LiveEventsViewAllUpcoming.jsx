@@ -54,7 +54,6 @@ const LiveEventsViewAllUpcoming = () => {
     }
   }, [actor, currentPage]);
 
-
   const filteredEvents = allLiveEventsData.filter((val) => {
     const launchDate = new Date(val?.cohort?.cohort_launch_date);
     const applicationDeadline = new Date(val?.cohort?.deadline);
@@ -141,7 +140,7 @@ const LiveEventsViewAllUpcoming = () => {
             className="w-full bg-gradient-to-r from-purple-900 to-blue-500 text-transparent bg-clip-text text-3xl font-extrabold py-4 
        font-fontUse"
           >
-          All Upcoming Cohorts
+            All Upcoming Cohorts
           </div>
 
           <div className="relative flex items-center md:max-w-xs bg-white rounded-xl sxxs:w-full">

@@ -161,7 +161,7 @@ const TopInvestors = () => {
           <div className="flex justify-center items-center h-full w-full">
             <img
               src={NoData}
-              className="object-cover object-center w-[50%] pt-[2.5rem]"
+              className="object-cover object-center w-[40%] sm4:w-[30%] md:w-[20%] lg:w-[50%] pt-[2.5rem]"
               alt="No data found"
             />
           </div>

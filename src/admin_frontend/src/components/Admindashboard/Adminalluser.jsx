@@ -11,7 +11,7 @@ import { OutSideClickHandler } from "../../../../IcpAccelerator_frontend/src/com
 import { projectFilterSvg } from "../Utils/AdminData/SvgData";
 import NoDataCard from "../../../../IcpAccelerator_frontend/src/components/Mentors/Event/NoDataCard";
 import { principalToText } from "../Utils/AdminData/saga_function/blobImageToUrl";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import NoData from "../../../../IcpAccelerator_frontend/assets/images/file_not_found.png";
 import DeleteModel from "../../../../IcpAccelerator_frontend/src/models/DeleteModel";
 import { Principal } from "@dfinity/principal";
@@ -23,7 +23,9 @@ const Adminalluser = () => {
   const navigate = useNavigate();
   const [allData, setAllData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [filterOption, setFilterOption] = useState("Users");
+  const location = useLocation();
+  const initialFilterOption = location.state?.filterOption || "Users";
+  const [filterOption, setFilterOption] = useState(initialFilterOption);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [filter, setFilter] = useState("");
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -84,101 +86,193 @@ const Adminalluser = () => {
   const dropdownRef = useRef(null);
   OutSideClickHandler(dropdownRef, () => setIsPopupOpen(false));
 
-  const fetchData = useCallback(async () => {
-    setloading(true);
-    let data = [];
-    try {
-      switch (filterOption) {
-        case "Users":
-          data = await actor.get_total_approved_list_with_user_data({
-            page_size: itemsPerPage,
-            page: currentPage,
+  const fetchData = useCallback(
+    async (page) => {
+      setloading(true);
+      let data = [];
+      try {
+        switch (filterOption) {
+          case "Users":
+            data = await actor.get_total_approved_list_with_user_data({
+              page_size: itemsPerPage,
+              page,
+            });
+            break;
+          case "Mentors":
+            data = await actor.get_all_mentors_with_pagination({
+              page_size: itemsPerPage,
+              page,
+            });
+            break;
+          case "Projects":
+            data = await actor.list_all_projects_with_pagination({
+              page_size: itemsPerPage,
+              page,
+            });
+            break;
+          case "Investors":
+            data = await actor.list_all_vcs_with_pagination({
+              page_size: itemsPerPage,
+              page,
+            });
+            break;
+          default:
+            data = [];
+        }
+        console.log(data);
+        if (filterOption === "Users") {
+          const userProcessedData = data?.data?.map((item) => {
+            const principal = principalToText(item[0]);
+            const userDetails = item[1];
+            const profilePictureBase64 = userDetails.user_data
+              .profile_picture[0]
+              ? uint8ArrayToBase64(userDetails.user_data.profile_picture[0])
+              : null;
+
+            return {
+              approvedType: "user",
+              fullName: userDetails.user_data.full_name.trim(),
+              country: userDetails.user_data.country,
+              telegram: userDetails.user_data.telegram_id[0] || "N/A",
+              profilePictureURL: profilePictureBase64,
+              principalId: principal,
+            };
           });
-          break;
-        case "Mentors":
-          data = await actor.mentor_profile_edit_awaiting_approval();
-          break;
-        case "Projects":
-          data = await actor.project_update_awaiting_approval();
-          break;
-        case "Investors":
-          data = await actor.vc_profile_edit_awaiting_approval();
-          break;
-        default:
-          data = [];
+
+          setAllData(userProcessedData);
+          setCountData(data?.count);
+        } else if (filterOption === "Projects") {
+          const processedData = data?.data?.map((item, index) => {
+            const updatedInfo = item?.params?.params || {};
+            console.log("updatedInfo", updatedInfo);
+            const principal = principalToText(item?.principal);
+
+            const profilePicture = uint8ArrayToBase64(
+              updatedInfo.user_data?.profile_picture[0] ||
+                updatedInfo[0]?.user_data?.profile_picture[0] ||
+                updatedInfo.project_logo[0]
+            );
+
+            return {
+              approvedType: "project",
+              fullName: (
+                updatedInfo.user_data?.full_name ||
+                updatedInfo[0]?.user_data?.full_name ||
+                "No Name"
+              ).trim(),
+              country:
+                updatedInfo.user_data?.country ||
+                updatedInfo[0]?.user_data?.country ||
+                "No Country",
+              profilePictureURL: profilePicture,
+              telegram:
+                updatedInfo.user_data?.telegram_id ||
+                updatedInfo[0]?.user_data?.telegram_id ||
+                "N/A",
+              hub:
+                updatedInfo?.preferred_icp_hub?.[0] ||
+                updatedInfo[0]?.preferred_icp_hub ||
+                updatedInfo[0]?.preferred_icp_hub?.[0] ||
+                "N/A",
+              principalId: principal,
+              index: index + 1,
+            };
+          });
+          setAllData(processedData);
+          setCountData(data?.count);
+        } else if (filterOption === "Mentors") {
+          const processedData = data?.data?.map((item, index) => {
+            const updatedInfo = item[1]?.mentor_profile?.profile || {};
+            console.log("updatedInfo", updatedInfo);
+            const principal = principalToText(item[0]);
+
+            const profilePicture = uint8ArrayToBase64(
+              updatedInfo.user_data?.profile_picture[0] ||
+                updatedInfo[0]?.user_data?.profile_picture[0] ||
+                updatedInfo.project_logo[0]
+            );
+
+            return {
+              approvedType: "mentor",
+              fullName: (
+                updatedInfo.user_data?.full_name ||
+                updatedInfo[0]?.user_data?.full_name ||
+                "No Name"
+              ).trim(),
+              country:
+                updatedInfo.user_data?.country ||
+                updatedInfo[0]?.user_data?.country ||
+                "No Country",
+              profilePictureURL: profilePicture,
+              telegram:
+                updatedInfo.user_data?.telegram_id ||
+                updatedInfo[0]?.user_data?.telegram_id ||
+                "N/A",
+              hub:
+                updatedInfo?.preferred_icp_hub?.[0] ||
+                updatedInfo[0]?.preferred_icp_hub ||
+                updatedInfo[0]?.preferred_icp_hub?.[0] ||
+                "N/A",
+              principalId: principal,
+              index: index + 1,
+            };
+          });
+          setAllData(processedData);
+          setCountData(data?.count);
+        } else if (filterOption === "Investors") {
+          const processedData = data?.data?.map((item, index) => {
+            const updatedInfo = item[1]?.vc_profile?.params || {};
+            console.log("updatedInfo", updatedInfo);
+            const principal = principalToText(item[0]);
+
+            const profilePicture = uint8ArrayToBase64(
+              updatedInfo.user_data?.profile_picture[0] ||
+                updatedInfo[0]?.user_data?.profile_picture[0] ||
+                updatedInfo.project_logo[0]
+            );
+
+            return {
+              approvedType: "investor",
+              fullName: (
+                updatedInfo.user_data?.full_name ||
+                updatedInfo[0]?.user_data?.full_name ||
+                "No Name"
+              ).trim(),
+              country:
+                updatedInfo.user_data?.country ||
+                updatedInfo[0]?.user_data?.country ||
+                "No Country",
+              profilePictureURL: profilePicture,
+              telegram:
+                updatedInfo.user_data?.telegram_id ||
+                updatedInfo[0]?.user_data?.telegram_id ||
+                "N/A",
+              hub:
+                updatedInfo?.preferred_icp_hub?.[0] ||
+                updatedInfo[0]?.preferred_icp_hub ||
+                updatedInfo[0]?.preferred_icp_hub?.[0] ||
+                "N/A",
+              principalId: principal,
+              index: index + 1,
+            };
+          });
+          setAllData(processedData);
+          setCountData(data?.count);
+        }
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+        setAllData([]);
+        setCountData(0);
+      } finally {
+        setloading(false); //change this if you want to test skeleton condition
       }
-
-      if (filterOption === "Users") {
-        const userProcessedData = data?.data?.map((item) => {
-          const principal = principalToText(item[0]);
-          const userDetails = item[1];
-          const profilePictureBase64 = userDetails.user_data.profile_picture[0]
-            ? uint8ArrayToBase64(userDetails.user_data.profile_picture[0])
-            : null;
-
-          return {
-            approvedType: "user",
-            fullName: userDetails.user_data.full_name.trim(),
-            country: userDetails.user_data.country,
-            telegram: userDetails.user_data.telegram_id[0] || "N/A",
-            profilePictureURL: profilePictureBase64,
-            principalId: principal,
-          };
-        });
-
-        setAllData(userProcessedData);
-        setCountData(data?.count);
-      } else {
-        const processedData = data?.map((item, index) => {
-          const updatedInfo = item[1]?.updated_info || {};
-
-          const principal = principalToText(item[0]);
-
-          const profilePicture = uint8ArrayToBase64(
-            updatedInfo.user_data?.profile_picture[0] ||
-              updatedInfo[0]?.user_data?.profile_picture[0] ||
-              updatedInfo.project_logo[0]
-          );
-
-          return {
-            fullName: (
-              updatedInfo.user_data?.full_name ||
-              updatedInfo[0]?.user_data?.full_name ||
-              "No Name"
-            ).trim(),
-            country:
-              updatedInfo.user_data?.country ||
-              updatedInfo[0]?.user_data?.country ||
-              "No Country",
-            profilePictureURL: profilePicture,
-            telegram:
-              updatedInfo.user_data?.telegram_id ||
-              updatedInfo[0]?.user_data?.telegram_id ||
-              "N/A",
-            hub:
-              updatedInfo?.preferred_icp_hub?.[0] ||
-              updatedInfo[0]?.preferred_icp_hub ||
-              updatedInfo[0]?.preferred_icp_hub?.[0] ||
-              "N/A",
-            principalId: principal,
-            index: index + 1,
-          };
-        });
-        setAllData(processedData);
-        setCountData(data?.length);
-      }
-    } catch (error) {
-      console.error("Failed to fetch data:", error);
-      setAllData([]);
-      setCountData(0);
-    } finally {
-      setloading(false); //change this if you want to test skeleton condition
-    }
-  }, [actor, filterOption, currentPage]);
+    },
+    [actor, filterOption]
+  );
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    fetchData(currentPage);
+  }, [fetchData, currentPage]);
 
   const filteredData = useMemo(
     () =>
@@ -291,7 +385,15 @@ const Adminalluser = () => {
 
       <div className="flex justify-end mb-4 items-center w-full">
         <div className="w-full bg-gradient-to-r from-purple-900 to-blue-500 text-transparent bg-clip-text text-xl md:text-3xl font-extrabold py-4 font-fontUse">
-          {filterOption === "Users" ? "All Users" : "All Updates"}
+          {filterOption === "Users"
+            ? "All Users"
+            : filterOption === "Projects"
+            ? "All Projects"
+            : filterOption === "Mentors"
+            ? "All Mentors"
+            : filterOption === "Investors"
+            ? "All Investors"
+            : "Select Option"}
         </div>
         <div
           className="border-2 border-blue-900 p-1 w-auto font-bold rounded-md text-blue-900 px-2 capitalize"
@@ -352,7 +454,7 @@ const Adminalluser = () => {
         <AdminUserDashboardSkeleton itemsPerPage={itemsPerPage} />
       ) : (
         <>
-          {filteredData ? (
+          {Number(countData)  ? (
             <>
               <div className="flex flex-col bg-white rounded-lg p-8 text-lg overflow-auto mb-8">
                 <div className="min-w-[600px]">
@@ -362,9 +464,10 @@ const Adminalluser = () => {
                         <th className="w-24 pb-2">S.No</th>
                         <th className="w-1/4 pb-2">Name</th>
                         <th className="w-1/4 pb-2">
-                          {filterOption && filterOption === "Users"
+                          {/* {filterOption && filterOption === "Users"
                             ? "Role"
-                            : "Hub"}
+                            : "Hub"} */}
+                          Role
                         </th>
                         <th className="w-1/4 pb-2">Country</th>
                         <th className="w-1/4 pb-2">Telegram</th>
@@ -393,9 +496,10 @@ const Adminalluser = () => {
                             </div>
                           </td>
                           <td>
-                            {filterOption === "Users"
+                            {/* {filterOption === "Users"
                               ? user.approvedType
-                              : user.hub}
+                              : user.hub} */}
+                            {user.approvedType}
                           </td>
                           <td>{user.country}</td>
                           <td className="truncate max-w-xs">
