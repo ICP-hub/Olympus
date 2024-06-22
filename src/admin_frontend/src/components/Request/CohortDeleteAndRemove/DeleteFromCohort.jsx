@@ -364,12 +364,12 @@ function DeleteFromCohort() {
                   <div className="flex flex-row flex-wrap lg:justify-between md:justify-center space-x-8"></div>
                   <div className="flex justify-center items-center">
                     <div className="flex justify-center items-center">
-                      <button
+                      {/* <button
                         className="uppercase w-full bg-[#3505B2] text-white  px-4 py-2 rounded-md  items-center font-extrabold text-xl sxxs:text-sm"
                         onClick={registerHandler}
                       >
                         Apply
-                      </button>
+                      </button> */}
                     </div>
                   </div>
                 </div>
