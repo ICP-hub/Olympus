@@ -6,10 +6,13 @@ use crate::state_handler::{mutate_state, read_state, Candid, StoredPrincipal};
 use crate::vc_registration::get_vc_info_using_principal;
 use crate::{get_roles_for_principal, MentorInternal, VentureCapitalistInternal};
 use candid::{CandidType, Principal};
+use ic_cdk::api::call::call;
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::caller;
 use ic_cdk_macros::{query, update};
+use ic_certified_assets::types::Key;
 use serde::{Deserialize, Serialize};
+use serde_bytes::ByteBuf;
 use sha2::{Digest, Sha256};
 
 #[derive(Clone, CandidType, Deserialize, Debug, Serialize)]
@@ -32,6 +35,8 @@ pub struct Cohort {
     deadline: String,
     cohort_launch_date: String,
     cohort_end_date: String,
+    cohort_banner: Option<Vec<u8>>,
+    host_name: String,
 }
 
 #[derive(Clone, CandidType, Deserialize, Debug, Serialize)]
@@ -79,6 +84,19 @@ pub struct InviteRequest {
     pub invite_message: String,
 }
 
+#[derive(Clone, Debug, CandidType, Deserialize)]
+pub struct StoreArg {
+    pub key: Key,
+    pub content_type: String,
+    pub content_encoding: String,
+    pub content: ByteBuf,
+    pub sha256: Option<ByteBuf>,
+}
+#[derive(Clone, Debug, CandidType, Deserialize)]
+pub struct DeleteAsset {
+    pub key: Key
+}
+
 // pub type MentorsAppliedForCohort = HashMap<String, Vec<MentorInternal>>;
 // pub type CohortInfo = HashMap<String, CohortDetails>;
 // pub type ProjectsAppliedForCohort = HashMap<String, Vec<ProjectInfoInternal>>;
@@ -104,7 +122,7 @@ pub struct InviteRequest {
 
 //a. create_cohort
 #[update(guard = "is_user_anonymous")]
-pub async fn create_cohort(params: Cohort) -> Result<String, String> {
+pub async fn create_cohort(mut params: Cohort) -> Result<String, String> {
     let caller_principal = caller();
 
     let is_mentor_or_investor = read_state(|state| {
@@ -130,6 +148,41 @@ pub async fn create_cohort(params: Cohort) -> Result<String, String> {
             .map(|r| r.name.clone())
             .collect::<Vec<String>>()
     });
+    let canister_id = crate::asset_manager::get_asset_canister();
+    if params.cohort_banner.is_none() {
+        let full_url = canister_id.to_string() + "/uploads/default_cohort_logo.jpeg";
+        params.cohort_banner = Some((full_url).as_bytes().to_vec());
+    } else if params.cohort_banner.clone().unwrap().len() < 300 {
+        ic_cdk::println!("Project logo is already uploaded");
+    } else {
+        let cohort_logo_key = "/uploads/".to_owned() + &caller_principal.to_string() + "_project_logo.jpeg";
+
+        let cohort_logo_arg = StoreArg {
+            key: cohort_logo_key.clone(),
+            content_type: "image/*".to_string(),
+            content_encoding: "identity".to_string(),
+            content: ByteBuf::from(params.cohort_banner.unwrap()),
+            sha256: None,
+        };
+
+        let delete_asset = DeleteAsset {
+            key: cohort_logo_key.clone(),
+        };
+
+        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
+            .await
+            .unwrap();
+
+        let (result,): ((),) = call(canister_id, "store", (cohort_logo_arg,))
+            .await
+            .unwrap();
+
+        params.cohort_banner = Some(
+            (canister_id.to_string() + &cohort_logo_key)
+                .as_bytes()
+                .to_vec(),
+        );
+    }
 
     let cohort_details = CohortDetails {
         cohort_id: cohort_id.clone(),
@@ -542,7 +595,7 @@ pub fn approve_enrollment_request(cohort_id: String, enroller_principal: Princip
     let caller = ic_cdk::api::caller();
 
     // Check if there's a pending request and current applier count
-    let (is_request_pending, current_count, max_seats) = read_state(|state| {
+    let (is_request_pending, mut current_count, max_seats) = read_state(|state| {
         let is_request_pending = state
             .cohort_enrollment_request
             .get(&StoredPrincipal(caller))
@@ -571,100 +624,62 @@ pub fn approve_enrollment_request(cohort_id: String, enroller_principal: Princip
     }
 
     // Update the request status to accepted
-    let mut data_added = false;
     mutate_state(|state| {
-        if let Some(mut reqs) = state
-            .cohort_enrollment_request
-            .get(&StoredPrincipal(caller))
-        {
-            if let Some(request) = reqs.0.iter_mut().find(|req| {
-                req.enroller_principal == enroller_principal && req.request_status == "pending"
-            }) {
-                request.request_status = "accepted".to_string();
-                request.accepted_at = ic_cdk::api::time();
-
-                // Add user based on their role
-                match request.enroller_data.clone() {
-                    EnrollerDataInternal {
-                        project_data: Some(project_data),
-                        ..
-                    } => {
-                        let cohort_id_cloned = cohort_id.clone();
-                        let mut projects = match state
-                            .project_applied_for_cohort
-                            .get(&cohort_id_cloned.clone())
-                        {
-                            Some(projects) => projects, // If exists, use it directly
-                            None => {
-                                state
-                                    .project_applied_for_cohort
-                                    .insert(cohort_id_cloned.clone(), Candid(Vec::new()));
-                                state
-                                    .project_applied_for_cohort
-                                    .get(&cohort_id_cloned.clone())
-                                    .unwrap() // It is safe to unwrap here since we just inserted it
-                            }
-                        };
-                        projects.0.push(project_data);
-                        data_added = true;
-                    }
-                    EnrollerDataInternal {
-                        mentor_data: Some(mentor_data),
-                        ..
-                    } => {
-                        let cohort_id_cloned = cohort_id.clone();
-                        let mut mentors = match state
-                            .mentor_applied_for_cohort
-                            .get(&cohort_id_cloned.clone())
-                        {
-                            Some(mentors) => mentors,
-                            None => {
-                                state
-                                    .mentor_applied_for_cohort
-                                    .insert(cohort_id_cloned.clone(), Candid(Vec::new()));
-                                state
-                                    .mentor_applied_for_cohort
-                                    .get(&cohort_id_cloned)
-                                    .unwrap()
-                            }
-                        };
-                        mentors.0.push(mentor_data);
-                        data_added = true;
-                    }
-                    EnrollerDataInternal {
-                        vc_data: Some(vc_data),
-                        ..
-                    } => {
-                        let cohort_id_cloned = cohort_id.clone();
-                        let mut vcs =
-                            match state.vc_applied_for_cohort.get(&cohort_id_cloned.clone()) {
-                                Some(vcs) => vcs,
-                                None => {
-                                    state
-                                        .vc_applied_for_cohort
-                                        .insert(cohort_id_cloned.clone(), Candid(Vec::new()));
-                                    state.vc_applied_for_cohort.get(&cohort_id_cloned).unwrap()
-                                }
-                            };
-                        vcs.0.push(vc_data);
-                        data_added = true;
-                    }
-                    _ => {}
+        if let Some(mut reqs) = state.cohort_enrollment_request.get(&StoredPrincipal(caller)) {
+            let mut found = false;
+            for request in reqs.0.iter_mut() {
+                if request.enroller_principal == enroller_principal && request.request_status == "pending" {
+                    request.request_status = "accepted".to_string();
+                    request.accepted_at = ic_cdk::api::time();
+                    found = true;
+                    break;
                 }
-
-                // Increase applier count
-                let mut count = state.applier_count.get(&cohort_id).unwrap_or(0);
-                count += 1;
+            }
+            if found {
+                state.cohort_enrollment_request.insert(StoredPrincipal(caller), reqs.clone());
             }
         }
+
+        if let Some(reqs) = state.cohort_enrollment_request.get(&StoredPrincipal(caller)) {
+            for request in reqs.0.iter() {
+                if request.enroller_principal == enroller_principal {
+                    match &request.enroller_data {
+                        EnrollerDataInternal { project_data: Some(project_data), .. } => {
+                            if let Some(mut projects) = state.project_applied_for_cohort.get(&cohort_id) {
+                                projects.0.push(project_data.clone());
+                            } else {
+                                state.project_applied_for_cohort.insert(cohort_id.clone(), Candid(vec![project_data.clone()]));
+                            }
+                        },
+                        EnrollerDataInternal { mentor_data: Some(mentor_data), .. } => {
+                            if let Some(mut mentors) = state.mentor_applied_for_cohort.get(&cohort_id) {
+                                mentors.0.push(mentor_data.clone());
+                            } else {
+                                state.mentor_applied_for_cohort.insert(cohort_id.clone(), Candid(vec![mentor_data.clone()]));
+                            }
+                        },
+                        EnrollerDataInternal { vc_data: Some(vc_data), .. } => {
+                            if let Some(mut vcs) = state.vc_applied_for_cohort.get(&cohort_id) {
+                                vcs.0.push(vc_data.clone());
+                            } else {
+                                state.vc_applied_for_cohort.insert(cohort_id.clone(), Candid(vec![vc_data.clone()]));
+                            }
+                        },
+                        _ => {}
+                    }
+                    break;
+                }
+            }
+        }
+
+        // Increase applier count and update the state
+        current_count += 1;
+        state.applier_count.insert(cohort_id, current_count);
     });
 
-    if data_added {
-        "Request approved successfully".to_string()
-    } else {
-        "User role not recognized or missing necessary data to add to cohort".to_string()
-    }
+    "Request approved successfully".to_string()
 }
+
 
 #[update(guard = "is_user_anonymous")]
 pub fn reject_enrollment_request(

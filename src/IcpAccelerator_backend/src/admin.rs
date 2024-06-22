@@ -1997,68 +1997,51 @@ pub fn get_pending_cohort_requests_for_admin() -> Vec<CohortRequest> {
 
 #[update(guard = "is_admin")]
 pub fn accept_cohort_creation_request(cohort_id: String) -> String {
-    let mut response_message = String::new();
-
     let already_accepted = read_state(|state| {
         state
             .accepted_cohorts
             .get(&cohort_id)
-            .map_or(false, |requests| {
-                requests.0.iter().any(|r| r.request_status == "accepted")
-            })
+            .map_or(false, |requests| requests.0.iter().any(|r| r.request_status == "accepted"))
     });
 
     if already_accepted {
-        return format!(
-            "Cohort request with id: {} has already been accepted.",
-            cohort_id
-        );
+        return format!("Cohort request with id: {} has already been accepted.", cohort_id);
     }
 
+    let mut response_message = String::new();
     mutate_state(|state| {
         let mut request_found_and_updated = false;
 
-        for (_principal, mut requests) in state.cohort_request_admin.iter() {
-            if let Some(index) = requests.0.iter().position(|r| {
-                r.cohort_details.cohort_id == cohort_id && r.request_status == "pending"
-            }) {
+        // Check and update the request status to accepted
+        if let Some(mut requests) = state.cohort_request_admin.get(&cohort_id) {
+            if let Some(index) = requests.0.iter().position(|r| r.request_status == "pending") {
                 let mut request = requests.0.remove(index);
                 request.request_status = "accepted".to_string();
                 request.accepted_at = ic_cdk::api::time();
 
-                state
-                    .cohort_info
-                    .insert(cohort_id.clone(), Candid(request.cohort_details.clone()));
+                // Add updated request to cohort_info
+                state.cohort_info.insert(cohort_id.clone(), Candid(request.cohort_details.clone()));
 
-                let accepted_requests = state.accepted_cohorts.get(&cohort_id);
-                match accepted_requests {
-                    Some(mut candid_requests) => {
-                        candid_requests.0.push(request);
-                    }
-                    None => {
-                        state
-                            .accepted_cohorts
-                            .insert(cohort_id.clone(), Candid(vec![request]));
-                    }
+                // Add or update the accepted_cohorts list
+                if let Some(mut existing) = state.accepted_cohorts.get(&cohort_id) {
+                    existing.0.push(request);
+                } else {
+                    state.accepted_cohorts.insert(cohort_id.clone(), Candid(vec![request]));
                 }
 
                 request_found_and_updated = true;
-                response_message =
-                    format!("Cohort request with id: {} has been accepted.", cohort_id);
-                break;
+                response_message = format!("Cohort request with id: {} has been accepted.", cohort_id);
             }
         }
 
         if !request_found_and_updated {
-            response_message = format!(
-                "No pending cohort request found with cohort id: {}",
-                cohort_id
-            );
+            response_message = format!("No pending cohort request found with cohort id: {}", cohort_id);
         }
     });
 
     response_message
 }
+
 
 #[update(guard = "is_admin")]
 pub fn decline_cohort_creation_request(cohort_id: String) -> String {
@@ -2067,29 +2050,22 @@ pub fn decline_cohort_creation_request(cohort_id: String) -> String {
     mutate_state(|state| {
         let mut request_found_and_updated = false;
 
+        // Access and modify the pending request
         if let Some(mut requests) = state.cohort_request_admin.get(&cohort_id) {
-            if let Some(index) = requests
-                .0
-                .iter()
-                .position(|r| r.request_status == "pending")
-            {
+            if let Some(index) = requests.0.iter().position(|r| r.request_status == "pending") {
                 let mut request = requests.0.remove(index);
                 request.request_status = "declined".to_string();
                 request.rejected_at = ic_cdk::api::time();
-                request_found_and_updated = true;
 
-                let declined_requests = state.declined_cohorts.get(&cohort_id);
-                match declined_requests {
-                    Some(mut candid_requests) => {
-                        candid_requests.0.push(request);
-                    }
-                    None => {
-                        state
-                            .declined_cohorts
-                            .insert(cohort_id.clone(), Candid(vec![request]));
-                    }
+                // Check if there is an existing list for declined cohorts
+                if let Some(mut existing) = state.declined_cohorts.get(&cohort_id) {
+                    existing.0.push(request);
+                } else {
+                    // If no list exists, create one and add the declined request
+                    state.declined_cohorts.insert(cohort_id.clone(), Candid(vec![request]));
                 }
 
+                request_found_and_updated = true;
                 response_message = format!(
                     "You have declined the cohort creation request: {}",
                     cohort_id
@@ -2107,6 +2083,7 @@ pub fn decline_cohort_creation_request(cohort_id: String) -> String {
 
     response_message
 }
+
 
 #[query(guard = "is_admin")]
 pub fn get_accepted_cohort_creation_request_for_admin() -> Vec<CohortRequest> {
