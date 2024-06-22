@@ -1,3 +1,4 @@
+
 require("dotenv").config();
 const path = require("path");
 const webpack = require("webpack");
@@ -7,14 +8,18 @@ const CopyPlugin = require("copy-webpack-plugin");
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
-module.exports = (env) => {
-  const frontendDirectory = env.frontend;
+// Define frontend directories
+const frontendDirectories = ["IcpAccelerator_frontend", "admin_frontend"];
+// const frontendDirectories = ["admin_frontend","IcpAccelerator_frontend", ];
+module.exports = frontendDirectories.map(frontendDirectory => {
   const frontend_entry = path.join("src", frontendDirectory, "src", "index.html");
 
   return {
     target: "web",
     mode: isDevelopment ? "development" : "production",
     entry: {
+      // The frontend.entrypoint points to the HTML file for this build, so we need
+      // to replace the extension to `.js`.
       index: path.join(__dirname, frontend_entry).replace(/\.html$/, ".jsx"),
     },
     devtool: isDevelopment ? "source-map" : false,
@@ -87,7 +92,6 @@ module.exports = (env) => {
       hot: true,
       watchFiles: [path.resolve(__dirname, "src", frontendDirectory)],
       liveReload: true,
-      port: frontendDirectory === "IcpAccelerator_frontend" ? 8080 : 8081,
     },
   };
-};
+});
