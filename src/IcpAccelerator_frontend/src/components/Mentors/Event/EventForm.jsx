@@ -216,8 +216,8 @@ const EventForm = () => {
     setImagePreview(null);
   };
 
-  console.log("imageData", imageData);
-  console.log("imagePreview", imagePreview);
+  // console.log("imageData", imageData);
+  // console.log("imagePreview", imagePreview);
   const onSubmitHandler = async (data) => {
     const areaValue = selectedArea === "global" ? "global" : selectedCountry;
     console.log("data aaya data aaya ", data);

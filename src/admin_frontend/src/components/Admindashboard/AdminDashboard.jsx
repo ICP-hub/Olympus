@@ -207,7 +207,11 @@ const AdminDashboard = () => {
               >
                 <div className="flex  flex-row  flex-wrap justify-around  font-bold text-lg text-black items-center ">
                   <div
-                    onClick={() => navigate("/alluser")}
+                    onClick={() =>
+                      navigate("/alluser", {
+                        state: { filterOption: "Users" },
+                      })
+                    }
                     className="gap-2 flex flex-row items-center w-2/3"
                   >
                     {userSvg}
@@ -240,7 +244,14 @@ const AdminDashboard = () => {
             <div className="flex md:flex-row flex-col  w-full md:mb-6 mb-2  mt-2 justify-between gap-2 md:gap-0 md:space-x-4 ">
               <div className="rounded-[1rem]  space-x-2 flex px-4  justify-center  flex-col  w-full  bg-white drop-shadow-xl border-2">
                 <div className="flex  flex-row  flex-wrap justify-around font-bold text-lg text-black items-center ">
-                  <div className="gap-2 flex flex-row items-center w-2/3">
+                  <div
+                    onClick={() =>
+                      navigate("/alluser", {
+                        state: { filterOption: "Mentors" },
+                      })
+                    }
+                    className="gap-2 flex flex-row items-center w-2/3"
+                  >
                     <img src={mentor} alt="mentors" className="h-10 w-10" />
                     <p className="flex font-semibold justify-start text-sm">
                       Mentors
@@ -254,7 +265,14 @@ const AdminDashboard = () => {
 
               <div className="rounded-[1rem] space-x-2 flex  px-4    justify-center  flex-col  w-full  bg-white drop-shadow-xl border-2 ">
                 <div className="flex  flex-row  flex-wrap justify-around font-bold text-lg text-black items-center ">
-                  <div className="gap-2 flex-row flex items-center w-2/3">
+                  <div
+                    onClick={() =>
+                      navigate("/alluser", {
+                        state: { filterOption: "Investors" },
+                      })
+                    }
+                    className="gap-2 flex-row flex items-center w-2/3"
+                  >
                     <img src={vc} alt="founder" className="h-10 w-10" />
                     <p className="flex font-semibold justify-start text-sm">
                       Investors
