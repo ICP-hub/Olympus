@@ -95,6 +95,7 @@ const EventForm = () => {
     interestedDomainsSelectedOptions,
     setInterestedDomainsSelectedOptions,
   ] = useState([]);
+  const userFullData = useSelector((currState) => currState.userData.data.Ok);
   const [rubricEligibilityOptions, setRubricEligibilityOptions] = useState([
     {
       value: "1",
@@ -248,6 +249,8 @@ const EventForm = () => {
         level_on_rubric: parseFloat(data.rubric_eligibility),
       },
       no_of_seats: parseInt(data.no_of_seats),
+      cohort_banner: imageData ? [imageData] : [],
+      host_name: userFullData ? [userFullData.full_name] : []
     };
     console.log("eventData ===>>>", eventData);
     try {

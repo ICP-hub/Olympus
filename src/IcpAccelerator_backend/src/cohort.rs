@@ -36,7 +36,7 @@ pub struct Cohort {
     cohort_launch_date: String,
     cohort_end_date: String,
     cohort_banner: Option<Vec<u8>>,
-    host_name: String,
+    host_name: Option<String>,
 }
 
 #[derive(Clone, CandidType, Deserialize, Debug, Serialize)]

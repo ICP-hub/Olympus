@@ -9,6 +9,8 @@ import EventMentor from "./EventMentor";
 import EventInvestor from "./EventInvestor";
 import EventProjectLeads from "./EventProjectLeads";
 import toast, { Toaster } from "react-hot-toast";
+import { ThreeDots } from "react-loader-spinner";
+
 function CohortPage() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -21,6 +23,7 @@ function CohortPage() {
   const [allProjectData, setAllProjectData] = useState([]);
   const [allMentorData, setAllMentorData] = useState([]);
   const [allInvestorData, setAllInvestorData] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
@@ -111,66 +114,72 @@ function CohortPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const registerHandler = async () => {
+    setIsSubmitting(true);
     if (actor) {
       const today = new Date();
       const deadline = new Date(
         formatFullDateFromSimpleDate(cohortData?.cohort?.deadline)
       );
 
-      if (deadline < today) {
-        setIsModalOpen(true);
-      } else {
-        try {
-          if (userCurrentRoleStatusActiveRole === "project") {
-            let cohort_id = cohortData?.cohort_id;
-            await actor
-              .apply_for_a_cohort_as_a_project(cohort_id)
-              .then((result) => {
-                if (
-                  result &&
-                  result.includes(`Request Has Been Sent To Cohort Creator`)
-                ) {
-                  toast.success(result);
-                  // window.location.href = "/";
-                } else {
-                  toast.error(result);
-                }
-              });
-          } else if (userCurrentRoleStatusActiveRole === "vc") {
-            let cohort_id = cohortData?.cohort_id;
-            await actor
-              .apply_for_a_cohort_as_a_investor(cohort_id)
-              .then((result) => {
-                if (result) {
-                  toast.success(result);
-                  // window.location.href = "/";
-                } else {
-                  toast.error(result);
-                }
-              });
-          } else if (userCurrentRoleStatusActiveRole === "mentor") {
-            let cohort_id = cohortData?.cohort_id;
-            await actor
-              .apply_for_a_cohort_as_a_mentor(cohort_id)
-              .then((result) => {
-                if (result) {
-                  toast.success(result);
-                  // window.location.href = "/";
-                } else {
-                  toast.error(result);
-                }
-              });
-          }
-        } catch (error) {
-          toast.error(error);
-          console.error("Error sending data to the backend:", error);
+      // if (deadline < today) {
+      //   setIsSubmitting(false);
+      //   // setIsModalOpen(true);
+      // } else {
+      try {
+        let cohort_id = cohortData?.cohort_id;
+        if (userCurrentRoleStatusActiveRole === "project") {
+          await actor
+            .apply_for_a_cohort_as_a_project(cohort_id)
+            .then((result) => {
+              setIsSubmitting(false);
+              if (
+                result &&
+                result.includes(`Request Has Been Sent To Cohort Creator`)
+              ) {
+                toast.success(result);
+                // window.location.href = "/";
+              } else {
+                toast.error(result);
+              }
+            });
+        } else if (userCurrentRoleStatusActiveRole === "vc") {
+          await actor
+            .apply_for_a_cohort_as_a_investor(cohort_id)
+            .then((result) => {
+              setIsSubmitting(false);
+              if (result) {
+                toast.success(result);
+                // window.location.href = "/";
+              } else {
+                toast.error(result);
+              }
+            });
+        } else if (userCurrentRoleStatusActiveRole === "mentor") {
+          await actor
+            .apply_for_a_cohort_as_a_mentor(cohort_id)
+            .then((result) => {
+              setIsSubmitting(false);
+              if (result) {
+                toast.success(result);
+                // window.location.href = "/";
+              } else {
+                toast.error(result);
+              }
+            });
         }
+      } catch (error) {
+        setIsSubmitting(false);
+        toast.error(error);
+        console.error("Error sending data to the backend:", error);
       }
+      // }
     } else {
+      setIsSubmitting(false);
       toast.error("Please signup with internet identity first");
       window.location.href = "/";
     }
   };
+
   const closeModal = () => {
     setIsModalOpen(false);
   };
@@ -386,7 +395,22 @@ function CohortPage() {
                         className="uppercase w-full bg-[#3505B2] text-white  px-4 py-2 rounded-md  items-center font-extrabold text-xl sxxs:text-sm"
                         onClick={registerHandler}
                       >
-                       {getButtonText(userCurrentRoleStatusActiveRole)}
+                        {isSubmitting ? (
+                          <button className="uppercase w-full bg-[#3505B2] text-white  px-6  rounded-md  items-center font-extrabold text-xl sxxs:text-sm">
+                            <ThreeDots
+                              visible={true}
+                              height="24"
+                              width="24"
+                              color="#FFFFFF"
+                              radius="9"
+                              ariaLabel="three-dots-loading"
+                              wrapperStyle={{}}
+                              wrapperClassName=""
+                            />
+                          </button>
+                        ) : (
+                          getButtonText(userCurrentRoleStatusActiveRole)
+                        )}
                       </button>
                     </div>
                   </div>
