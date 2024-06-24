@@ -843,7 +843,7 @@ const ProjectUpdate = () => {
                       {orignalData?.areaOfInterest &&
                         orignalData?.areaOfInterest
                           .split(",")
-                          .slice(0, 3)
+                          // .slice(0, 3)
                           .map((tag, index) => (
                             <div
                               key={index}
@@ -867,7 +867,7 @@ const ProjectUpdate = () => {
                           {updatedData?.areaOfInterest &&
                             updatedData?.areaOfInterest
                               .split(",")
-                              .slice(0, 3)
+                              // .slice(0, 3)
                               .map((tag, index) => (
                                 <div
                                   key={index}
@@ -1811,7 +1811,7 @@ const ProjectUpdate = () => {
                         {orignalData?.supportsMultichain &&
                           orignalData?.supportsMultichain
                             .split(",")
-                            .slice(0, 3)
+                            // .slice(0, 3)
                             .map((tag, index) => (
                               <div
                                 key={index}
@@ -1838,7 +1838,7 @@ const ProjectUpdate = () => {
                         {updatedData?.supportsMultichain &&
                           updatedData?.supportsMultichain
                             .split(",")
-                            .slice(0, 3)
+                            // .slice(0, 3)
                             .map((tag, index) => (
                               <div
                                 key={index}
