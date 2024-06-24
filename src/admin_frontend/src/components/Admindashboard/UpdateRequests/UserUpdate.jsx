@@ -619,7 +619,7 @@ const UserUpdate = () => {
                   )}
                 </div>
 
-                <div className="flex flex-col">
+                <div className="flex flex-col line-clamp-1">
                   <label className="flex items-center space-x-2">
                     <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                     <span>Telegram:</span>
@@ -636,13 +636,13 @@ const UserUpdate = () => {
                       placeholder="Enter your telegram id"
                     />
                   ) : (
-                    <span className="mt-2">
+                    <a href={orignalData?.telegram} className="mt-2">
                       {orignalData?.telegram ?? "Not available"}
-                    </span>
+                    </a>
                   )}
                 </div>
 
-                <div className="flex flex-col">
+                <div className="flex flex-col line-clamp-1">
                   <label className="flex items-center space-x-2">
                     <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                     <span>Twitter:</span>
@@ -659,9 +659,9 @@ const UserUpdate = () => {
                       placeholder="Enter your twitter url"
                     />
                   ) : (
-                    <span className="mt-2">
+                    <a href={orignalData?.twitter} className="mt-2">
                       {orignalData?.twitter ?? "Not available"}
-                    </span>
+                    </a>
                   )}
                 </div>
 
@@ -721,7 +721,7 @@ const UserUpdate = () => {
                       }}
                     />
                   ) : (
-                    <div className="flex gap-2 mt-2">
+                    <div className="flex flex-wrap gap-2 mt-2">
                       {orignalData?.areaOfInterest
                         ?.split(",")
                         .map((skill, index) => (
@@ -792,7 +792,7 @@ const UserUpdate = () => {
                       }}
                     />
                   ) : (
-                    <div className="flex gap-2 mt-2">
+                    <div className="flex flex-wrap gap-2 mt-2">
                       {orignalData?.reasonToJoin?.map((reason, index) => (
                         <span
                           key={index}

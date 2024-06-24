@@ -8,6 +8,7 @@ import NoDataCard from "./Event/NoDataCard";
 import AddAMentorRequestModal from "../../models/AddAMentorRequestModal";
 import toast, { Toaster } from "react-hot-toast";
 import { Principal } from "@dfinity/principal";
+import NoData from "../../../assets/images/search_not_found.png";
 import { MentorlistSkeleton } from "../Dashboard/Skeleton/Mentorlistskeleton";
 
 function SearchMentorsByProjectId() {
@@ -231,8 +232,8 @@ function SearchMentorsByProjectId() {
               <MentorlistSkeleton key={index} />
             ))}
         </div>
-      ) : noData ? (
-        <NoDataCard />
+      ) : Number(countData) <= 0 ? (
+        <NoDataCard desc="No Investor to display yet" image={NoData} />
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 md1:grid-cols-3 lg1:grid-cols-4 mb-8 gap-8 items-center flex-wrap ">
