@@ -225,7 +225,7 @@ useEffect(() => {
                           </div>
                           <div className="flex items-baseline w-1/2">
                             <img
-                              className="h-5 w-5 rounded-full mx-2 mt-2"
+                              className="h-8 w-8 rounded-full mx-2 mt-2"
                               src={userImage}
                               alt="not found"
                             />

@@ -12,6 +12,7 @@ const LiveEventsCards = ({ wrap, register }) => {
   const [allLiveEventsData, setAllLiveEventsData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [countData, setCountData] = useState(0);
+  const [filteredLiveEventsData, setFilteredLiveEventsData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 3;
   const [numSkeletons, setNumSkeletons] = useState(1);
@@ -43,7 +44,7 @@ const LiveEventsCards = ({ wrap, register }) => {
           page,
         })
         .then((result) => {
-          console.log(" in get_all_cohort", result);
+          // console.log(" in get_all_cohort", result);
           if (isMounted) {
             if (!result || result.length == 0) {
               setNoData(true);
@@ -80,68 +81,73 @@ const LiveEventsCards = ({ wrap, register }) => {
     };
   }, [actor, currentPage]);
 
+  useEffect(() => {
+    // console.log("useEffect triggered for filtering live events");
+    // console.log("allLiveEventsData", allLiveEventsData);
 
-  const filteredEvents = allLiveEventsData.filter((val) => {
-    const launchDate = new Date(val?.cohort?.cohort_launch_date);
     const today = new Date();
-    return launchDate >= today.setHours(0, 0, 0, 0);
-  });
+    // console.log("today", today);
+    today.setHours(0, 0, 0, 0);
 
+    const filteredEvents = allLiveEventsData.filter((val) => {
+      const launchDate = new Date(val?.cohort?.cohort_launch_date);
+      // console.log("launchDate", launchDate);
+      // console.log("launchDate < today:", launchDate < today);
 
+      return launchDate < today;
+    });
+
+    setFilteredLiveEventsData(filteredEvents);
+
+    if (filteredEvents.length === 0) {
+      setNoData(true);
+    } else {
+      setNoData(false);
+    }
+  }, [allLiveEventsData]);
+  // console.log("allLiveEventsData", allLiveEventsData);
+  // console.log("filteredLiveEventsData", filteredLiveEventsData);
   return (
     <>
-      {filteredEvents && (
+      {isLoading ? (
         <div
-          className={`flex mb-4 items-start ${
-            wrap === true ? "" : "min-h-screen"
+          className={`${
+            wrap === true
+              ? "flex flex-row w-full gap-4"
+              : "flex flex-row flex-wrap w-full px-8"
           }`}
         >
-          {isLoading ? (
+          {Array.from({ length: numSkeletons }).map((_, index) => (
             <div
-              className={`${
-                wrap === true
-                  ? "flex flex-row overflow-x-auto w-full"
-                  : "flex flex-row flex-wrap w-full px-8"
-              }`}
+              key={index}
+              className=" w-full md:min-w-[50%] lg1:min-w-[33.33%] md:max-w-[50%] lg1:max-w-[33.33%]"
             >
-              {Array(numSkeletons)
-                .fill(0)
-                .map((_, index) => (
-                  <div
-                    key={index}
-                    className="px-2 w-full md:min-w-[50%] lg1:min-w-[33.33%] md:max-w-[50%] lg1:max-w-[33.33%]"
-                  >
-                    {" "}
-                    <OngoingAcceleratorSkeleton key={index} />
-                  </div>
-                ))}
+              <OngoingAcceleratorSkeleton key={index} />
             </div>
-          ) : noData ? (
-            <NoDataCard
-              image={NoData}
-              desc={"There is no ongoing accelerator"}
-            />
-          ) : (
-            <div
-              className={`${
-                wrap === true
-                  ? "flex flex-row overflow-x-auto w-full"
-                  : "flex flex-row flex-wrap w-full px-8"
-              }`}
-            >
-              {filteredEvents &&
-                filteredEvents?.slice(0, numSkeletons).map((val, index) => {
-                  return (
-                    <div
-                      key={index}
-                      className="px-2 w-full sm:min-w-[50%] lg:min-w-[33.33%] sm:max-w-[50%] lg:max-w-[33.33%]"
-                    >
-                      <SecondEventCard data={val} register={register} />
-                    </div>
-                  );
-                })}
-            </div>
-          )}
+          ))}
+        </div>
+      ) : noData ? (
+        <NoDataCard image={NoData} desc={"There is no ongoing accelerator"} />
+      ) : (
+        <div
+          className={`${
+            wrap === true
+              ? "flex flex-row w-full gap-4"
+              : "flex flex-row flex-wrap w-full px-8"
+          }`}
+        >
+          {filteredLiveEventsData &&
+            filteredLiveEventsData?.slice(0, numSkeletons).map((val, index) => {
+              console.log("val", val);
+              return (
+                <div
+                  key={index}
+                  className=" w-full md:min-w-[50%] lg1:min-w-[33.33%] md:max-w-[50%] lg1:max-w-[33.33%]"
+                >
+                  <SecondEventCard data={val} register={register} />
+                </div>
+              );
+            })}
         </div>
       )}
     </>

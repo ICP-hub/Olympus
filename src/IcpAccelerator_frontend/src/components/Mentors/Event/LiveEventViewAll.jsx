@@ -58,7 +58,7 @@ const LiveEventViewAll = () => {
   const filteredEvents = allLiveEventsData.filter((val) => {
     const launchDate = new Date(val?.cohort?.cohort_launch_date);
     const today = new Date();
-    return launchDate >= today.setHours(0, 0, 0, 0);
+    return launchDate <= today.setHours(0, 0, 0, 0);
   });
   const filteredInvestors = React.useMemo(() => {
     return filteredEvents?.filter((user) => {

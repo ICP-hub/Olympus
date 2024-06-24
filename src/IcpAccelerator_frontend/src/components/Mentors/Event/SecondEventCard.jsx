@@ -20,11 +20,10 @@ const SecondEventCard = ({ data, register }) => {
     return null;
   }
   // console.log("data ====???>>>>>>>", data);
-  let image =data?.cohort?.cohort_banner[0]
-  ? uint8ArrayToBase64(
-    data?.cohort?.cohort_banner[0]
-    )
-  : hover;
+  let image =
+    data?.cohort?.cohort_banner instanceof Uint8Array
+      ? uint8ArrayToBase64(data?.cohort?.cohort_banner?.[0])
+      : hover;
   let name = data?.cohort?.title ?? "No Title...";
   let launch_date = data?.cohort?.cohort_launch_date
     ? formatFullDateFromSimpleDate(data?.cohort?.cohort_launch_date)
@@ -86,9 +85,7 @@ const SecondEventCard = ({ data, register }) => {
                   }
                 });
             } else {
-              toast.error(
-                "Cohort creator cannot apply"
-              );
+              toast.error("Cohort creator cannot apply");
             }
           } else if (userCurrentRoleStatusActiveRole === "vc") {
             let cohort_id = data?.cohort_id;
@@ -196,10 +193,7 @@ const SecondEventCard = ({ data, register }) => {
         </>
       )}
       <div className="block w-full drop-shadow-xl rounded-lg bg-gray-200 mb-8">
-        <div
-         
-          className="w-full relative"
-        >
+        <div className="w-full relative">
           <img
             className="w-full object-cover rounded-lg h-48"
             src={image}
@@ -238,17 +232,15 @@ const SecondEventCard = ({ data, register }) => {
                 })}
               </ul> */}
               {tags ? (
-                <div className="flex gap-2 mt-2 text-xs items-center pb-2 flex-wrap">
-                  {tags
-                    .split(",")
-                    .map((tag, index) => (
-                      <div
-                        key={index}
-                        className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-gray-100"
-                      >
-                        {tag.trim()}
-                      </div>
-                    ))}
+                <div className="flex gap-2 mt-2 text-xs items-center pb-2 flex-wrap h-10 overflow-y-scroll line-clamp-1">
+                  {tags.split(",").map((tag, index) => (
+                    <div
+                      key={index}
+                      className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-gray-100"
+                    >
+                      {tag.trim()}
+                    </div>
+                  ))}
                   {/* {tags.split(",").length > 3 && (
                     <p
                       // onClick={() =>
@@ -282,12 +274,14 @@ const SecondEventCard = ({ data, register }) => {
               <div className="flex justify-center items-center ">
                 {register && (
                   <button
-                  onClick={() =>
-                    navigate("/cohort-details-page", { state: { cohort_id: data?.cohort_id } })
-                  }
+                    onClick={() =>
+                      navigate("/cohort-details-page", {
+                        state: { cohort_id: data?.cohort_id },
+                      })
+                    }
                     className="mb-2 uppercase w-full bg-[#3505B2] mr-2 text-white  px-4 py-2 rounded-md  items-center font-extrabold text-sm mt-2 "
                   >
-                     Know More
+                    Know More
                   </button>
                 )}
               </div>
