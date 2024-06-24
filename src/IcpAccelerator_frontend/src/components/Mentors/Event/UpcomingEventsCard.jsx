@@ -14,8 +14,9 @@ const UpcomingEventsCard = ({ wrap, register }) => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [countData, setCountData] = useState(0);
+  const [filteredLiveEventsData, setFilteredLiveEventsData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 3;
+  const itemsPerPage = 12;
   const [numSkeletons, setNumSkeletons] = useState(1);
 
   const updateNumSkeletons = () => {
@@ -82,12 +83,26 @@ const UpcomingEventsCard = ({ wrap, register }) => {
     };
   }, [actor, currentPage]);
 
-  const filteredEvents = allLiveEventsData.filter((val) => {
-    const launchDate = new Date(val?.cohort?.cohort_launch_date);
-    const applicationDeadline = new Date(val?.cohort?.deadline);
-    return applicationDeadline <= launchDate;
-  });
-  
+  useEffect(() => {
+    console.log("useEffect triggered for filtering live events");
+    console.log("allLiveEventsData", allLiveEventsData);
+
+    const filteredEvents = allLiveEventsData.filter((val) => {
+      const launchDate = new Date(val?.cohort?.cohort_launch_date);
+      const applicationDeadline = new Date(val?.cohort?.deadline);
+      return applicationDeadline <= launchDate;
+    });
+
+    setFilteredLiveEventsData(filteredEvents);
+
+    if (filteredEvents.length === 0) {
+      setNoData(true);
+    } else {
+      setNoData(false);
+    }
+  }, [allLiveEventsData]);
+  console.log("allLiveEventsData", allLiveEventsData);
+  console.log("filteredLiveEventsData", filteredLiveEventsData);
 
   return (
     <>
@@ -95,7 +110,7 @@ const UpcomingEventsCard = ({ wrap, register }) => {
         <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl sxxs:text-lg">
           Upcoming Accelerator
         </h1>
-        {filteredEvents && filteredEvents.length > 0 && (
+        {filteredLiveEventsData && filteredLiveEventsData.length > 0 && (
           <button
             onClick={() => navigate(`/all-live-upcoming-cohort`)}
             className="border border-violet-800 px-4 py-2 rounded-md text-violet-800 sxxs:px-2 sxxs:py-1 sxxs:text-xs sm:text-lg"
@@ -130,8 +145,11 @@ const UpcomingEventsCard = ({ wrap, register }) => {
                 </div>
               ))}
           </div>
-        ) : noData || filteredEvents.length === 0 ? (
-          <NoDataCard image={NoData} desc={"There is no Upcoming accelerator"} />
+        ) : noData || filteredLiveEventsData.length === 0 ? (
+          <NoDataCard
+            image={NoData}
+            desc={"There is no Upcoming accelerator"}
+          />
         ) : (
           <div
             className={`${
@@ -140,15 +158,17 @@ const UpcomingEventsCard = ({ wrap, register }) => {
                 : "flex flex-row flex-wrap w-full px-8"
             }`}
           >
-            {filteredEvents &&
-              filteredEvents?.slice(0, numSkeletons).map((val, index) => (
-                <div
-                  key={index}
-                  className="px-2 w-full sm:min-w-[50%] lg:min-w-[33.33%] sm:max-w-[50%] lg:max-w-[33.33%]"
-                >
-                  <SecondEventCard data={val} register={register} />
-                </div>
-              ))}
+            {filteredLiveEventsData &&
+              filteredLiveEventsData
+                ?.slice(0, numSkeletons)
+                .map((val, index) => (
+                  <div
+                    key={index}
+                    className="px-2 w-full sm:min-w-[50%] lg:min-w-[33.33%] sm:max-w-[50%] lg:max-w-[33.33%]"
+                  >
+                    <SecondEventCard data={val} register={register} />
+                  </div>
+                ))}
           </div>
         )}
       </div>
