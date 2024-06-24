@@ -87,8 +87,17 @@ const ProjectMoneyRaising = ({ data }) => {
       console.log("error-in-send-access-private-docs", error);
     }
   };
-  // console.log("money", data);
+  const raisedFromOtherEcosystem = moneyRaised[0]?.raised_from_other_ecosystem[0] ?? 0;
+  const sns = moneyRaised[0]?.sns[0] ?? 0;
+  const investors = moneyRaised[0]?.investors[0] ?? 0;
+  const icpGrants = moneyRaised[0]?.icp_grants[0] ?? 0;
+  const targetAmount = moneyRaised[0]?.target_amount[0] ?? 1; 
 
+
+  const totalRaised = raisedFromOtherEcosystem + sns + investors + icpGrants;
+
+  const percentage = (totalRaised / targetAmount) * 100;
+  const simplePercentage = Math.min(percentage, 100).toFixed(2);
   return (
     <>
       {noData ? (
@@ -122,7 +131,7 @@ const ProjectMoneyRaising = ({ data }) => {
                     Targeted Funds
                   </h1>
                   <h1 className="font-extrabold text-xl mb-2">
-                    ${moneyRaised[0]?.target_amount[0]}
+                    ${moneyRaised[0]?.target_amount[0]}<span className="ml-2">M</span>
                   </h1>
                 </div>
                 <div className="flex items-center mb-4 mt-2">
@@ -156,7 +165,7 @@ const ProjectMoneyRaising = ({ data }) => {
                         <rect
                           x="0"
                           y="0"
-                          width={`${percent}%`}
+                          width={`${simplePercentage}%`}
                           height="10"
                           fill={`url(#gradient-)`}
                         />
@@ -165,12 +174,12 @@ const ProjectMoneyRaising = ({ data }) => {
                     <div
                       className="absolute w-5 h-5 rounded-full border-2 border-white -top-[6px]"
                       style={{
-                        left: circlePosition(percent),
+                        left: circlePosition(simplePercentage),
                         backgroundImage: gradient,
                       }}
                     ></div>
                   </div>
-                  <p className="text-sm text-gray-500 ml-2">{percent}%</p>
+                  <p className="text-sm text-gray-500 ml-2">{simplePercentage}%</p>
                 </div>
               </div>
               <div className="flex flex-wrap justify-between mr-[4%] gap-12">
@@ -179,6 +188,7 @@ const ProjectMoneyRaising = ({ data }) => {
                     <h6 className="text-base font-bold">Grants</h6>
                     <h1 className="text-4xl font-extrabold">
                       ${moneyRaised[0]?.icp_grants[0] ? moneyRaised[0]?.icp_grants[0] : 0}
+                      <span className="ml-2">M</span>
                     </h1>
                   </div>
                 </div>
@@ -187,6 +197,7 @@ const ProjectMoneyRaising = ({ data }) => {
                     <h6 className="text-base font-bold">Investors</h6>
                     <h1 className="text-4xl font-extrabold">
                       ${moneyRaised[0]?.investors[0] ? moneyRaised[0]?.investors[0] : 0}
+                      <span className="ml-2">M</span>
                     </h1>
                   </div>
                 </div>
@@ -195,6 +206,7 @@ const ProjectMoneyRaising = ({ data }) => {
                     <h6 className="text-base font-bold">Tokens</h6>
                     <h1 className="text-4xl font-extrabold">
                       ${moneyRaised[0]?.sns[0] ? moneyRaised[0]?.sns[0] : 0}
+                      <span className="ml-2">M</span>
                     </h1>
                   </div>
                 </div>
@@ -205,7 +217,7 @@ const ProjectMoneyRaising = ({ data }) => {
                       $
                       {moneyRaised[0]?.raised_from_other_ecosystem[0]
                         ? moneyRaised[0]?.raised_from_other_ecosystem[0]
-                        : 0}
+                        : 0} <span className="ml-2">M</span>
                     </h1>
                   </div>
                 </div>
