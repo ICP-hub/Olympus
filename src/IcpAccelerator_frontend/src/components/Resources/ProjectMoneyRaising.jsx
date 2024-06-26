@@ -87,12 +87,12 @@ const ProjectMoneyRaising = ({ data }) => {
       console.log("error-in-send-access-private-docs", error);
     }
   };
-  const raisedFromOtherEcosystem = moneyRaised[0]?.raised_from_other_ecosystem[0] ?? 0;
+  const raisedFromOtherEcosystem =
+    moneyRaised[0]?.raised_from_other_ecosystem[0] ?? 0;
   const sns = moneyRaised[0]?.sns[0] ?? 0;
   const investors = moneyRaised[0]?.investors[0] ?? 0;
   const icpGrants = moneyRaised[0]?.icp_grants[0] ?? 0;
-  const targetAmount = moneyRaised[0]?.target_amount[0] ?? 1; 
-
+  const targetAmount = moneyRaised[0]?.target_amount[0] ?? 1;
 
   const totalRaised = raisedFromOtherEcosystem + sns + investors + icpGrants;
 
@@ -100,38 +100,43 @@ const ProjectMoneyRaising = ({ data }) => {
   const simplePercentage = Math.min(percentage, 100).toFixed(2);
   return (
     <>
-      {noData ? (
-        <NoDataCard />
-      ) : (
-        moneyRaised[0] &&
-          <div className="flex flex-col">
-            <div className="flex justify-end text-xs xxs:text-base">
-              {allowAccess === true ? (
-                <button
-                  className="text-white bg-blue-700 font-bold py-2 px-4 rounded-xl"
-                  onClick={() =>
-                    navigate(`/project-money-raising-requests/${projectId}`)
-                  }
-                >
-                  View Money Raising Requsets
-                </button>
-              ) : (
-                <button
-                  className="text-white bg-blue-700 font-bold py-2 px-4 rounded-xl"
-                  onClick={sendMoneyRaisingRequest}
-                >
-                  Ask for permission
-                </button>
-              )}
-            </div>
+      <div className="flex flex-col">
+        <div className="flex justify-end text-xs xxs:text-base">
+          {allowAccess === true ? (
+            <button
+              className="text-white bg-blue-700 font-bold py-2 px-4 rounded-xl"
+              onClick={() =>
+                navigate(`/project-money-raising-requests/${projectId}`)
+              }
+            >
+              View Money Raising Requsets
+            </button>
+          ) : (
+            <button
+              className="text-white bg-blue-700 font-bold py-2 px-4 rounded-xl"
+              onClick={sendMoneyRaisingRequest}
+            >
+              Ask for permission
+            </button>
+          )}
+        </div>
+        {noData ? (
+          <NoDataCard />
+        ) : (
+          moneyRaised[0] && (
             <div className="flex flex-col">
-              <div className={`bg-[#D9DBF3] border my-4 mr-[4%] pt-4 px-10 rounded-3xl w-[80%] mb-12 ${allowAccess === true?'':'blur-sm'}`}>
+              <div
+                className={`bg-[#D9DBF3] border my-4 mr-[4%] pt-4 px-10 rounded-3xl w-[80%] mb-12 ${
+                  allowAccess === true ? "" : "blur-sm"
+                }`}
+              >
                 <div className="flex justify-between">
                   <h1 className="font-extrabold text-base xxs:text-xl mb-2">
                     Targeted Funds
                   </h1>
                   <h1 className="font-extrabold text-xl mb-2">
-                    ${moneyRaised[0]?.target_amount[0]}<span className="ml-2">M</span>
+                    ${moneyRaised[0]?.target_amount[0]}
+                    <span className="ml-2">M</span>
                   </h1>
                 </div>
                 <div className="flex items-center mb-4 mt-2">
@@ -179,29 +184,49 @@ const ProjectMoneyRaising = ({ data }) => {
                       }}
                     ></div>
                   </div>
-                  <p className="text-sm text-gray-500 ml-2">{simplePercentage}%</p>
+                  <p className="text-sm text-gray-500 ml-2">
+                    {simplePercentage}%
+                  </p>
                 </div>
               </div>
               <div className="flex flex-wrap justify-between mr-[4%] gap-12">
-                <div className={`bg-white rounded-3xl p-6 mb-4 flex-auto ${allowAccess === true?'':'blur-sm'}`}>
+                <div
+                  className={`bg-white rounded-3xl p-6 mb-4 flex-auto ${
+                    allowAccess === true ? "" : "blur-sm"
+                  }`}
+                >
                   <div className="flex justify-between mb-2 items-center">
                     <h6 className="text-base font-bold">Grants</h6>
                     <h1 className="text-4xl font-extrabold">
-                      ${moneyRaised[0]?.icp_grants[0] ? moneyRaised[0]?.icp_grants[0] : 0}
+                      $
+                      {moneyRaised[0]?.icp_grants[0]
+                        ? moneyRaised[0]?.icp_grants[0]
+                        : 0}
                       <span className="ml-2">M</span>
                     </h1>
                   </div>
                 </div>
-                <div className={`bg-white rounded-3xl p-6 mb-4 flex-auto ${allowAccess === true?'':'blur-sm'}`}>
+                <div
+                  className={`bg-white rounded-3xl p-6 mb-4 flex-auto ${
+                    allowAccess === true ? "" : "blur-sm"
+                  }`}
+                >
                   <div className="flex justify-between mb-2 items-center">
                     <h6 className="text-base font-bold">Investors</h6>
                     <h1 className="text-4xl font-extrabold">
-                      ${moneyRaised[0]?.investors[0] ? moneyRaised[0]?.investors[0] : 0}
+                      $
+                      {moneyRaised[0]?.investors[0]
+                        ? moneyRaised[0]?.investors[0]
+                        : 0}
                       <span className="ml-2">M</span>
                     </h1>
                   </div>
                 </div>
-                <div className={`bg-white rounded-3xl p-6 mb-4 flex-auto ${allowAccess === true?'':'blur-sm'}`}>
+                <div
+                  className={`bg-white rounded-3xl p-6 mb-4 flex-auto ${
+                    allowAccess === true ? "" : "blur-sm"
+                  }`}
+                >
                   <div className="flex justify-between mb-2 items-center">
                     <h6 className="text-base font-bold">Tokens</h6>
                     <h1 className="text-4xl font-extrabold">
@@ -210,22 +235,27 @@ const ProjectMoneyRaising = ({ data }) => {
                     </h1>
                   </div>
                 </div>
-              <div className= {`bg-white rounded-3xl p-6 mb-4 flex-auto ${allowAccess === true?'':'blur-sm'}`}>
+                <div
+                  className={`bg-white rounded-3xl p-6 mb-4 flex-auto ${
+                    allowAccess === true ? "" : "blur-sm"
+                  }`}
+                >
                   <div className="flex justify-between mb-2 items-center">
                     <h6 className="text-base font-bold">Others</h6>
                     <h1 className="text-4xl font-extrabold">
                       $
                       {moneyRaised[0]?.raised_from_other_ecosystem[0]
                         ? moneyRaised[0]?.raised_from_other_ecosystem[0]
-                        : 0} <span className="ml-2">M</span>
+                        : 0}{" "}
+                      <span className="ml-2">M</span>
                     </h1>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-      
-      )}
+          )
+        )}
+      </div>
       <Toaster />
     </>
   );

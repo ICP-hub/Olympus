@@ -1145,7 +1145,7 @@ function ProjectRegForm() {
             setImageData(
               result?.params?.user_data?.profile_picture?.[0] ?? null
             );
-            setLogoData(result?.params?.project_logo?.[0] ?? []); 
+            setLogoData(result?.params?.project_logo?.[0] ?? []);
             setCoverData(result?.params?.project_cover?.[0] ?? []);
             setValue(
               "type_of_profile",
@@ -2149,7 +2149,7 @@ function ProjectRegForm() {
                                                  ? "border-red-500 "
                                                  : "border-[#737373]"
                                              } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                        placeholder="Enter your dApp Link"
+                        placeholder="https://"
                       />
                       {errors?.dapp_link && (
                         <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
