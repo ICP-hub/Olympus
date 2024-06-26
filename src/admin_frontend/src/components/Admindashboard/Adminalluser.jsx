@@ -454,7 +454,7 @@ const Adminalluser = () => {
         <AdminUserDashboardSkeleton itemsPerPage={itemsPerPage} />
       ) : (
         <>
-          {Number(countData)  ? (
+          {Number(countData) ? (
             <>
               <div className="flex flex-col bg-white rounded-lg p-8 text-lg overflow-auto mb-8">
                 <div className="min-w-[600px]">
@@ -480,6 +480,7 @@ const Adminalluser = () => {
                           key={`${user.fullName}-${user.country}-${index}`}
                           className="hover:bg-gray-100 cursor-pointer mt-1"
                         >
+                          {console.log("filteredData 483: ", filteredData)}
                           <td>
                             {(currentPage - 1) * itemsPerPage + index + 1}
                           </td>

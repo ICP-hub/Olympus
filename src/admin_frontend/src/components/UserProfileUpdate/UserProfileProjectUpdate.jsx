@@ -329,26 +329,29 @@ const validationSchema = yup
       .string()
       .nullable(true)
       .optional()
-      .matches(
-        /^(https?:\/\/)?(www\.)?(discord\.(gg|com)\/(invite\/)?[a-zA-Z0-9\-_]+|discordapp\.com\/invite\/[a-zA-Z0-9\-_]+)$/,
-        "Invalid Discord URL"
-      ),
+      // .matches(
+      //   /^(https?:\/\/)?(www\.)?(discord\.(gg|com)\/(invite\/)?[a-zA-Z0-9\-_]+|discordapp\.com\/invite\/[a-zA-Z0-9\-_]+)$/,
+      //   "Invalid Discord URL"
+      // ),
+      .url("Invalid url"),
     project_linkedin: yup
       .string()
       .nullable(true)
       .optional()
-      .matches(
-        /^(https?:\/\/)?(www\.)?linkedin\.com\/(in\/[a-zA-Z0-9_-]+|company\/[a-zA-Z0-9_-]+|groups\/[a-zA-Z0-9_-]+)$/,
-        "Invalid LinkedIn URL"
-      ),
+      // .matches(
+      //   /^(https?:\/\/)?(www\.)?linkedin\.com\/(in\/[a-zA-Z0-9_-]+|company\/[a-zA-Z0-9_-]+|groups\/[a-zA-Z0-9_-]+)$/,
+      //   "Invalid LinkedIn URL"
+      // ),
+      .url("Invalid url"),
     github_link: yup
       .string()
       .nullable(true)
       .optional()
-      .matches(
-        /^(https?:\/\/)?(www\.)?github\.com\/[a-zA-Z0-9_\-]+(\/[a-zA-Z0-9_\-]+)?(\/)?$/,
-        "Invalid GitHub URL"
-      ),
+      // .matches(
+      //   /^(https?:\/\/)?(www\.)?github\.com\/[a-zA-Z0-9_\-]+(\/[a-zA-Z0-9_\-]+)?(\/)?$/,
+      //   "Invalid GitHub URL"
+      // ),
+      .url("Invalid url"),
     token_economics: yup.string().nullable(true).optional().url("Invalid url"),
     white_paper: yup.string().nullable(true).optional().url("Invalid url"),
     upload_public_documents: yup
@@ -709,6 +712,7 @@ const UserProfileProjectUpdate = () => {
     const fetchProjectData = async () => {
       try {
         const data = await actor.project_update_awaiting_approval();
+        console.log("Received data from actor:", data);
         if (
           data &&
           data.length > 0 &&
@@ -718,6 +722,7 @@ const UserProfileProjectUpdate = () => {
           const originalInfo = data[0][1].original_info;
           const updatedInfo = data[0][1].updated_info;
 
+          console.log("data:", data);
           console.log("Original Info:", originalInfo);
           console.log("updated Info:", updatedInfo);
 
@@ -1785,6 +1790,7 @@ const UserProfileProjectUpdate = () => {
                                   menuPortal: (base) => ({
                                     ...base,
                                     zIndex: 9999,
+                                    maxHeight: "38px",
                                   }),
                                   control: (provided, state) => ({
                                     ...provided,
@@ -2950,7 +2956,7 @@ const UserProfileProjectUpdate = () => {
                 </div>
                 <div className="flex flex-col space-y-2">
                   <div className="overflow-hidden space-y-2 ">
-                    {orignalData?.privateDocs.map((doc, index) => (
+                    {orignalData?.privateDocs?.map((doc, index) => (
                       <div
                         className="flex flex-row  p-2 items-center border-2 rounded-xl"
                         key={index}
@@ -3062,7 +3068,7 @@ const UserProfileProjectUpdate = () => {
                       </div>
                     ) : (
                       <div className="overflow-hidden space-y-2">
-                        {updatedData?.privateDocs.map((doc, index) => (
+                        {updatedData?.privateDocs?.map((doc, index) => (
                           <div
                             className="flex flex-row gap-2  p-2 items-center border-2 rounded-xl"
                             key={index}
@@ -3192,7 +3198,7 @@ const UserProfileProjectUpdate = () => {
                 </div>
                 <div className="flex flex-col space-y-2">
                   <div className="overflow-hidden space-y-2">
-                    {orignalData?.publicDocs.map((doc, index) => (
+                    {orignalData?.publicDocs?.map((doc, index) => (
                       <div
                         className="flex flex-row gap-2  p-2 items-center border-2 rounded-xl"
                         key={index}
@@ -3303,7 +3309,7 @@ const UserProfileProjectUpdate = () => {
                       </div>
                     ) : (
                       <div className="overflow-hidden space-y-2">
-                        {updatedData?.publicDocs.map((doc, index) => (
+                        {updatedData?.publicDocs?.map((doc, index) => (
                           <div
                             className="flex flex-row gap-2  p-2 items-center border-2 rounded-xl"
                             key={index}
@@ -4389,6 +4395,72 @@ const UserProfileProjectUpdate = () => {
                       <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
                         {updatedSnsGrants ? (
                           <span>{updatedSnsGrants}</span>
+                        ) : (
+                          <span className="flex items-center">
+                            {noDataPresentSvg}
+                            Data Not Available
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
+                  <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
+                    What type of profile are you referring to?
+                  </h2>
+                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                    <span className="w-2 h-2 bg-red-700 rounded-full"></span>
+                    <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
+                      {orignalData?.type_of_profile ? (
+                        <span>{orignalData?.type_of_profile}</span>
+                      ) : (
+                        <span className="flex items-center">
+                          {noDataPresentSvg}
+                          Data Not Available
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex space-x-2 items-center flex-row ml-3">
+                    <span className="w-2 h-2 bg-green-700 rounded-full"></span>
+                    {editMode ? (
+                      <div className="flex flex-col mt-1 w-3/4">
+                        <select
+                          {...register("type_of_profile")}
+                          defaultValue={getValues("type_of_profile")}
+                          className={`bg-gray-50 border-2 ${
+                            errors.type_of_profile
+                              ? "border-red-500 "
+                              : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
+                        >
+                          <option className="text-lg font-bold" value="">
+                            Select profile type
+                          </option>
+                          {typeOfProfileOptions &&
+                            typeOfProfileOptions.map((val, index) => {
+                              return (
+                                <option
+                                  className="text-lg font-bold"
+                                  key={index}
+                                  value={val?.value}
+                                >
+                                  {val?.label}
+                                </option>
+                              );
+                            })}
+                        </select>
+                        {errors.typeOfProfile && (
+                          <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                            {errors.typeOfProfile.message}
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-md font-normal text-gray-600 break-all flex-wrap">
+                        {updatedData?.typeOfProfile ? (
+                          <span>{updatedData?.typeOfProfile}</span>
                         ) : (
                           <span className="flex items-center">
                             {noDataPresentSvg}

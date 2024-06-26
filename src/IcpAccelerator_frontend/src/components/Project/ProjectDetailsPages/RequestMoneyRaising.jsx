@@ -28,7 +28,7 @@ const RequestMoneyRaising = () => {
       let result;
       switch (status) {
         case "Pending":
-          result = actor.get_pending_money_requestes(id);
+          result = actor.get_pending_money_requests(id);
           break;
         case "Accepted":
         //   result = actor.get_all_approved_requests();
