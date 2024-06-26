@@ -277,7 +277,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
   return (
     <>
       <div className="w-full flex flex-col">
-        <div className="w-full flex gap-4 sxxs:flex-col sm:flex-row">
+        <div className="w-full flex gap-4 sxxs:flex-col md:flex-row">
           <div className=" bg-[#D2D5F2]  shadow-md shadow-gray-400 p-6 rounded-lg md:w-1/4 sxxs:w-full">
             <div className="justify-center flex items-center">
               <div
@@ -836,7 +836,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
           </div>
         </div>
 
-        <div className="w-full flex gap-4 sxxs:flex-col sm:flex-row mt-4">
+        <div className="w-full flex gap-4 sxxs:flex-col md:flex-row mt-4">
           <div className="flex flex-col  w-full   md:w-[26%] sxxs:w-full">
             <div className="w-full bg-[#D2D5F2] flex p-6 flex-col h-[312px] overflow-y-auto shadow-md shadow-gray-400 rounded-lg mb-4">
               <h1 className="text-xl font-bold text-gray-800  mb-2">
@@ -1027,7 +1027,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                   <p className="text-black font-semibold mb-1">
                     Area Of Interest :
                   </p>
-                  <div className="flex gap-2 text-xs items-center flex-wrap">
+                  <div className="flex gap-2 text-xs items-center overflow-y-scroll h-14 flex-wrap">
                     {userData[0]?.params?.user_data?.area_of_interest &&
                     userData[0].params.user_data.area_of_interest !== "" ? (
                       userData[0]?.params?.user_data?.area_of_interest
@@ -1036,7 +1036,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                         .map((tag, index) => (
                           <div
                             key={index}
-                            className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                            className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]" 
                           >
                             {tag.trim()}
                           </div>

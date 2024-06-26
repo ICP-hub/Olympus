@@ -80,13 +80,16 @@ const AnnouncementDetailsCard = ({ data }) => {
       };
       // console.log("new_details", new_details);
       await actor
-        .update_project_announcement_by_id(currentAnnouncementData?.timestamp, new_details)
+        .update_project_announcement_by_id(
+          currentAnnouncementData?.timestamp,
+          new_details
+        )
         .then((result) => {
-           console.log("result-in-update_announcement", result);
+          console.log("result-in-update_announcement", result);
           if (
             result &&
             result.includes(
-              `Announcement with ID ${currentAnnouncementData} updated successfully`
+              `Announcement updated successfully for ${currentAnnouncementData?.timestamp}`
             )
           ) {
             handleCloseModal();
@@ -121,7 +124,7 @@ const AnnouncementDetailsCard = ({ data }) => {
         if (
           result &&
           result.includes(
-            `Announcement with ID ${currentAnnouncementData} deleted successfully`
+            `Announcement deleted successfully for ${currentAnnouncementData?.timestamp}`
           )
         ) {
           setIsSubmitting(false);
@@ -184,7 +187,7 @@ const AnnouncementDetailsCard = ({ data }) => {
         ) : (
           latestAnnouncementData &&
           latestAnnouncementData.map((card, index) => {
-             console.log("card", card);
+            console.log("card", card);
             let ann_name = card?.announcement_data?.announcement_title ?? "";
             let project_id = card?.announcement_data?.project_id ?? "";
             let ann_time = card?.timestamp
@@ -281,7 +284,6 @@ const AnnouncementDetailsCard = ({ data }) => {
           isSubmitting={isSubmitting}
           isUpdate={true}
           data={currentAnnouncementData}
-
         />
       )}
       {isDeleteModalOpen && (

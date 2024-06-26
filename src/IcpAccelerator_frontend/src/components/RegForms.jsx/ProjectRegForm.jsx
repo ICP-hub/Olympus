@@ -2635,7 +2635,16 @@ function ProjectRegForm() {
                             <button
                               type="button"
                               onClick={() => handleremovePrivate(index)}
-                              className=" bg-red-600 hover:bg-red-700 text-white self-center rounded-lg px-4 py-3 sm0:ml-2 mt-1 sm0:mt-1"
+                              className={`bg-red-600 hover:bg-red-700 text-white rounded-lg px-4 py-3 sm0:ml-2  ${
+                                errors.privateDocs?.[index]?.title
+                                  ? "self-center mt-1 sm0:mt-3"
+                                  : "self-end"
+                              }
+                              ${
+                                errors.privateDocs?.[index]?.link
+                                  ? "self-center mt-1 sm0:mt-3"
+                                  : "self-end"
+                              }`}
                             >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -2733,7 +2742,17 @@ function ProjectRegForm() {
                           <button
                             type="button"
                             onClick={() => removePublic(index)}
-                            className="self-center bg-red-600 hover:bg-red-700 text-white rounded-lg px-4 py-3 sm0:ml-2 mt-1 sm0:mt-1"
+                            className={` bg-red-600 hover:bg-red-700 text-white rounded-lg px-4 py-3 sm0:ml-2
+                              ${
+                                errors.publicDocs?.[index]?.title
+                                  ? "self-center mt-1 sm0:mt-3"
+                                  : "self-end"
+                              }
+                              ${
+                                errors.publicDocs?.[index]?.link
+                                  ? "self-center mt-1 sm0:mt-3"
+                                  : "self-end"
+                              }`}
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"

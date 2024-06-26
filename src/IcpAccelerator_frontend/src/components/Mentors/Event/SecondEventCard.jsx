@@ -19,11 +19,10 @@ const SecondEventCard = ({ data, register }) => {
   if (!data) {
     return null;
   }
-  // console.log("data ====???>>>>>>>", data);
-  let image =
-    data?.cohort?.cohort_banner instanceof Uint8Array
-      ? uint8ArrayToBase64(data?.cohort?.cohort_banner?.[0])
-      : hover;
+  console.log("data ====???>>>>>>>", data);
+  let image = data?.cohort?.cohort_banner
+    ? uint8ArrayToBase64(data?.cohort?.cohort_banner?.[0])
+    : hover;
   let name = data?.cohort?.title ?? "No Title...";
   let launch_date = data?.cohort?.cohort_launch_date
     ? formatFullDateFromSimpleDate(data?.cohort?.cohort_launch_date)
