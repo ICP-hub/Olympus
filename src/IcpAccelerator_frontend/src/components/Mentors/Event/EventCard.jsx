@@ -3,6 +3,7 @@ import hover from "../../../../assets/images/1.png";
 import { winner } from "../../Utils/Data/SvgData";
 import girl from "../../../../assets/images/girl.jpeg";
 import FunctionalityModel from "../../../models/FunctionalityModel";
+import { uint8ArrayToBase64 } from "../../../../../admin_frontend/src/components/Utils/AdminData/saga_function/blobImageToUrl";
 
 const EventCard = ({ data, approveAndRejectCohort }) => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -39,7 +40,10 @@ const EventCard = ({ data, approveAndRejectCohort }) => {
 
   const request = data?.cohort_details;
   if (!request) return null;
-  // const image = uint8ArrayToBase64(request?.cohort_creator?._arr);
+  console.log("request", request);
+  const image = request?.cohort?.cohort_banner
+    ? uint8ArrayToBase64(request?.cohort?.cohort_banner?.[0])
+    : hover;
   const name = request?.cohort?.title;
   const tags = request?.cohort?.tags;
   const description = request?.cohort?.description;
@@ -67,7 +71,7 @@ const EventCard = ({ data, approveAndRejectCohort }) => {
         <div className="lgx:w-[60%] xl:w-[70%] w-full relative">
           <img
             className="h-full object-cover rounded-lg w-full"
-            src={hover}
+            src={image}
             alt="not found"
           />
           <div className="absolute h-12 w-12 -bottom-1 lgx:top-0 lgx:right-[-8px] right-[20px]">
@@ -114,10 +118,10 @@ const EventCard = ({ data, approveAndRejectCohort }) => {
                 <p className="flex text-black w-20">{eligibility}</p>
               </div> */}
               <p className="text-[#7283EA] font-semibold">Tags</p>
-              <div className="flex gap-2 mt-2 text-xs items-center pb-2">
+              <div className="flex gap-2 text-xs items-center overflow-x-scroll">
                 {tags
                   .split(",")
-                  .slice(0, 3)
+                  // .slice(0, 3)
                   .map((tag, index) => (
                     <div
                       key={index}

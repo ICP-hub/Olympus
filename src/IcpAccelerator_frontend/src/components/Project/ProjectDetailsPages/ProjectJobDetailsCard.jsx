@@ -80,42 +80,57 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
       project_id: project_id,
     };
     console.log("argument", new_details);
-    await actor.update_job_post_by_id(currentJobData?.timestamp , new_details).then((result) => {
-      if (result) {
-        handleJobsCloseModal();
-        toast.success(result);
-        setIsSubmitting(false);
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);
-        console.log("result-in-get_announcements_by_project_id", result);
-      } else {
-        handleJobsCloseModal();
-        setIsSubmitting(false);
-        toast.error(result);
-      }
-    });
+    await actor
+      .update_job_post_by_id(currentJobData?.timestamp, new_details)
+      .then((result) => {
+        if (
+          result &&
+          result.includes(
+            `job post updated successfully for ${currentJobData?.timestamp}`
+          )
+        ) {
+          handleJobsCloseModal();
+          toast.success("Job post updated successfully");
+          setIsSubmitting(false);
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+          console.log("result-in-get_announcements_by_project_id", result);
+        } else {
+          handleJobsCloseModal();
+          setIsSubmitting(false);
+          toast.error(result);
+        }
+      });
   };
 
   // <<<<<------- Job Delete ----->>>>>
   const handleDelete = async () => {
     console.log("currentJobData===>>>>>>>>>", currentJobData);
     setIsSubmitting(true);
-    await actor.delete_job_post_by_id(currentJobData?.timestamp).then((result) => {
-      if (result) {
-        setDeleteModalOpen();
-        toast.success(result);
-        setIsSubmitting(false);
-        setTimeout(() => {
-          window.location.reload();       
-        }, 2000);
-        console.log("result-in-get_announcements_by_project_id", result);
-      } else {
-        setDeleteModalOpen();
-        setIsSubmitting(false);
-        toast.error(result);
-      }
-    });
+    await actor
+      .delete_job_post_by_id(currentJobData?.timestamp)
+      .then((result) => {
+        console.log("delete_job_post_by_id", result);
+        if (
+          result &&
+          result.includes(
+            `job post deleted successfully for ${currentJobData?.timestamp}`
+          )
+        ) {
+          setDeleteModalOpen();
+          toast.success("Job post deleted successfully");
+          setIsSubmitting(false);
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+          console.log("result-in-get_announcements_by_project_id", result);
+        } else {
+          setDeleteModalOpen();
+          setIsSubmitting(false);
+          toast.error(result);
+        }
+      });
   };
   useEffect(() => {
     if (actor && data) {
@@ -295,7 +310,6 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
           onSubmitHandler={handleEdit}
           isSubmitting={isSubmitting}
           data={currentJobData}
-
         />
       )}
 

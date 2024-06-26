@@ -174,7 +174,7 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
   return (
     <>
       <div className="w-full flex flex-col">
-        <div className="w-full flex gap-4 sxxs:flex-col sm:flex-row">
+        <div className="w-full flex gap-4 sxxs:flex-col md:flex-row">
           <div className=" bg-[#D2D5F2]  shadow-md shadow-gray-400 p-6 rounded-lg md:w-1/4 sxxs:w-full">
             <div className="justify-center flex items-center">
               <div
@@ -577,7 +577,7 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
           </div>
         </div>
 
-        <div className="w-full flex gap-4 sxxs:flex-col sm:flex-row mt-4">
+        <div className="w-full flex gap-4 sxxs:flex-col md:flex-row mt-4">
           <div className="flex flex-col  w-full   md:w-[26%] sxxs:w-full"></div>
           <div className="flex flex-row justify-between bg-[#D2D5F2] shadow-md shadow-gray-400 p-6 rounded-lg md:w-3/4 sxxs:w-fulll">
             <ul className="grid grid-cols-2 gap-4 w-full px-[3%]">
@@ -587,12 +587,12 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
                     Support Multichain :
                   </p>
 
-                  <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap">
+                  <div className="flex gap-2 text-xs text-gray-600 items-center overflow-y-scroll h-14 flex-wrap">
                     {userData[0]?.params?.project_on_multichain?.[0] &&
                     userData[0].params.project_on_multichain[0] !== "" ? (
                       userData[0]?.params?.project_on_multichain?.[0]
                         .split(",")
-                        .slice(0, 3)
+                        // .slice(0, 3)
                         .map((tag, index) => (
                           <div
                             key={index}
@@ -617,12 +617,12 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
                     Areas of Invest :
                   </p>
 
-                  <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap">
+                  <div className="flex gap-2 text-xs text-gray-600 items-center overflow-y-scroll h-14 flex-wrap">
                     {userData[0]?.params?.category_of_investment &&
                     userData[0].params.category_of_investment !== "" ? (
                       userData[0]?.params?.category_of_investment
                         .split(",")
-                        .slice(0, 3)
+                        // .slice(0, 3)
                         .map((tag, index) => (
                           <div
                             key={index}
