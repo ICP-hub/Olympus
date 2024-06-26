@@ -17,33 +17,33 @@ const ProjectDocuments = ({ data }) => {
 
   const handleToggleChange = () => setIsChecked(!isChecked);
 
-  useEffect(() => {
-    const fetchAccessPrivateData = async () => {
-      if (!projectId) return false;
+  const fetchAccessPrivateData = async () => {
+    if (!projectId) return false;
 
-      try {
-        const result = await actor.access_private_docs(projectId);
-        console.log("result ====>", result);
-        if ("Ok" in result) {
-          setDocuments(Array.isArray(result.Ok) ? result.Ok : [result.Ok]);
-          setNoData(false);
-          setAllowAccess(Object.keys(result.Ok).length > 0 ? true : false);
-        } else if ("Err" in result) {
-          toast.error(result.Err.message);
-          setAllowAccess(result.Err.is_owner);
-          setDocuments([]);
-          setNoData(true);
-        }
-      } catch (error) {
-        toast.error(
-          "An unexpected error occurred while fetching private documents"
-        );
-        // setAllowAccess(false);
-        setNoData(true);
+    try {
+      const result = await actor.access_private_docs(projectId);
+      console.log("result ====>", result);
+      if ("Ok" in result) {
+        setDocuments(Array.isArray(result.Ok) ? result.Ok : [result.Ok]);
+        setNoData(false);
+        setAllowAccess(Object.keys(result.Ok).length > 0 ? true : false);
+      } else if ("Err" in result) {
+        toast.error(result.Err.message);
+        setAllowAccess(result.Err.is_owner);
         setDocuments([]);
+        setNoData(true);
       }
-    };
-
+    } catch (error) {
+      toast.error(
+        "An unexpected error occurred while fetching private documents"
+      );
+      // setAllowAccess(false);
+      setNoData(true);
+      setDocuments([]);
+    }
+  };
+  useEffect(() => {
+  
     if (isChecked) {
       fetchAccessPrivateData();
     } else {
@@ -66,6 +66,12 @@ const ProjectDocuments = ({ data }) => {
       // );
     }
   }, [isChecked, actor, projectId, data?.params?.public_docs]);
+
+
+  useEffect(()=>{
+    fetchAccessPrivateData();
+
+  },[projectId,actor])
 
   const sendPrivateDocumentRequest = async () => {
     if (!projectId) {
@@ -108,7 +114,7 @@ const ProjectDocuments = ({ data }) => {
           <label
             htmlFor="toggle"
             className={`flex items-center cursor-pointer ${
-              allowAccess === false ? "float-right" : ""
+              allowAccess === false ? "float-left" : ""
             }`}
           >
             <div className="relative">
@@ -122,7 +128,7 @@ const ProjectDocuments = ({ data }) => {
               <div className="block bg-gray-600 w-14 h-8 rounded-full">
                 <span
                   className={` text-[#737373] absolute -top-7 ${
-                    allowAccess === false ? "right-0" : "left-0"
+                    allowAccess === false ? "" : "left-0"
                   } font-bold text-base mb-2 text-nowrap`}
                 >
                   {isChecked ? "Switch to Public" : "Switch to Private"}
@@ -154,7 +160,7 @@ const ProjectDocuments = ({ data }) => {
           </label>
         </div>
         {noData ? (
-          <NoDataCard />
+          <NoDataCard allowAccess={allowAccess}/>
         ) : (
           documents?.map((doc, index) => (
             <div

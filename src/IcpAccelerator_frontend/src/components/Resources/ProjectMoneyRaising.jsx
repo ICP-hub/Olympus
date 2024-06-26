@@ -121,7 +121,7 @@ const ProjectMoneyRaising = ({ data }) => {
           )}
         </div>
         {noData ? (
-          <NoDataCard />
+          <NoDataCard allowAccess={allowAccess}/>
         ) : (
           moneyRaised[0] && (
             <div className="flex flex-col">
