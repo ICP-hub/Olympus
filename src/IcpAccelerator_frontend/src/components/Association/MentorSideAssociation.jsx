@@ -18,6 +18,8 @@ const MentorSideAssociation = () => {
   const [activeTab, setActiveTab] = useState("pending");
   const [data, setData] = useState([]);
   const [noData, setNoData] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(null);
+
   const headerData = [
     {
       id: "pending",
@@ -140,27 +142,35 @@ const MentorSideAssociation = () => {
 
   // POST API HANDLER TO APPROVE THE PENDING REQUEST BY MENTOR WHERE PROJECT APPROCHES MENTOR
   const handleAcceptOffer = async ({ message }) => {
+    setIsSubmitting(true);
     try {
       const result = await actor.accept_offer_of_project(offerId, message);
       console.log(`result-in-accept_offer_of_project`, result);
       handleAcceptModalCloseHandler();
       fetchPendingRequestFromProjectToMentor();
+    setIsSubmitting(false);
     } catch (error) {
       console.log(`error-in-accept_offer_of_project`, error);
       handleAcceptModalCloseHandler();
+    setIsSubmitting(false);
+
     }
   };
 
   // POST API HANDLER TO DECLINE THE PENDING REQUEST BY MENTOR WHERE PROJECT APPROCHES MENTOR
   const handleDeclineOffer = async ({ message }) => {
+    setIsSubmitting(true);
     try {
       const result = await actor.decline_offer_of_project(offerId, message);
       console.log(`result-in-decline_offer_of_project`, result);
       handleDeclineModalCloseHandler();
       fetchPendingRequestFromProjectToMentor();
+    setIsSubmitting(false);
     } catch (error) {
       console.log(`error-in-decline_offer_of_project`, error);
       handleDeclineModalCloseHandler();
+    setIsSubmitting(false);
+
     }
   };
 
@@ -702,6 +712,8 @@ const MentorSideAssociation = () => {
           title={"Accept Offer"}
           onClose={handleAcceptModalCloseHandler}
           onSubmitHandler={handleAcceptOffer}
+          isSubmitting={isSubmitting}
+
         />
       )}
       {isDeclineOfferModal && (
@@ -709,6 +721,8 @@ const MentorSideAssociation = () => {
           title={"Decline Offer"}
           onClose={handleDeclineModalCloseHandler}
           onSubmitHandler={handleDeclineOffer}
+          isSubmitting={isSubmitting}
+
         />
       )}
     </div>

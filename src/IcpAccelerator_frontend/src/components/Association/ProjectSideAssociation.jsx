@@ -18,6 +18,8 @@ const ProjectSideAssociation = () => {
   const [activeTab, setActiveTab] = useState("pending");
   const [data, setData] = useState([]);
   const [noData, setNoData] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(null);
+
   const headerData = [
     {
       id: "pending",
@@ -283,6 +285,7 @@ const ProjectSideAssociation = () => {
 
   // POST API HANDLER TO APPROVE THE PENDING REQUEST BY PROJECT WHERE MENTOR APPROCHES PROJECT
   const handleAcceptMentorOffer = async ({ message }) => {
+    setIsSubmitting(true);
     try {
       const result = await actor.accept_offer_of_mentor(
         offerId,
@@ -292,14 +295,17 @@ const ProjectSideAssociation = () => {
       console.log(`result-in-accept_offer_of_mentor`, result);
       handleMentorAcceptModalCloseHandler();
       fetchPendingRequestFromMentorToProject();
+      setIsSubmitting(false);
     } catch (error) {
       console.log(`error-in-accept_offer_of_mentor`, error);
       handleMentorAcceptModalCloseHandler();
+      setIsSubmitting(false);
     }
   };
 
   // POST API HANDLER TO DECLINE THE PENDING REQUEST BY PROJECT WHERE MENTOR APPROCHES PROJECT
   const handleDeclineMentorOffer = async ({ message }) => {
+    setIsSubmitting(true);
     try {
       const result = await actor.decline_offer_of_mentor(
         offerId,
@@ -309,9 +315,11 @@ const ProjectSideAssociation = () => {
       console.log(`result-in-decline_offer_of_mentor`, result);
       handleMentorDeclineModalCloseHandler();
       fetchPendingRequestFromMentorToProject();
+      setIsSubmitting(false);
     } catch (error) {
       console.log(`error-in-decline_offer_of_mentor`, error);
       handleMentorDeclineModalCloseHandler();
+      setIsSubmitting(false);
     }
   };
 
@@ -492,6 +500,7 @@ const ProjectSideAssociation = () => {
 
   // POST API HANDLER TO APPROVE THE PENDING REQUEST BY PROJECT WHERE INVESTOR APPROCHES PROJECT
   const handleAcceptInvestorOffer = async ({ message }) => {
+    setIsSubmitting(true);
     try {
       const result = await actor.accept_offer_of_investor(
         offerId,
@@ -501,14 +510,17 @@ const ProjectSideAssociation = () => {
       console.log(`result-in-accept_offer_of_investor`, result);
       handleInvestorAcceptModalCloseHandler();
       fetchPendingRequestFromInvestorToProject();
+      setIsSubmitting(false);
     } catch (error) {
       console.log(`error-in-accept_offer_of_investor`, error);
       handleInvestorAcceptModalCloseHandler();
+      setIsSubmitting(false);
     }
   };
 
   // POST API HANDLER TO DECLINE THE PENDING REQUEST BY PROJECT WHERE INVESTOR APPROCHES PROJECT
   const handleDeclineInvestorOffer = async ({ message }) => {
+    setIsSubmitting(true);
     try {
       const result = await actor.decline_offer_of_investor(
         offerId,
@@ -518,9 +530,11 @@ const ProjectSideAssociation = () => {
       console.log(`result-in-decline_offer_of_investor`, result);
       handleInvestorDeclineModalCloseHandler();
       fetchPendingRequestFromInvestorToProject();
+      setIsSubmitting(true);
     } catch (error) {
       console.log(`error-in-decline_offer_of_investor`, error);
       handleInvestorDeclineModalCloseHandler();
+      setIsSubmitting(true);
     }
   };
 
@@ -1147,6 +1161,7 @@ const ProjectSideAssociation = () => {
           title={"Accept Offer"}
           onClose={handleMentorAcceptModalCloseHandler}
           onSubmitHandler={handleAcceptMentorOffer}
+          isSubmitting={isSubmitting}
         />
       )}
       {isDeclineMentorOfferModal && (
@@ -1154,6 +1169,7 @@ const ProjectSideAssociation = () => {
           title={"Decline Offer"}
           onClose={handleMentorDeclineModalCloseHandler}
           onSubmitHandler={handleDeclineMentorOffer}
+          isSubmitting={isSubmitting}
         />
       )}
 
@@ -1162,6 +1178,7 @@ const ProjectSideAssociation = () => {
           title={"Accept Offer"}
           onClose={handleInvestorAcceptModalCloseHandler}
           onSubmitHandler={handleAcceptInvestorOffer}
+          isSubmitting={isSubmitting}
         />
       )}
       {isDeclineInvestorOfferModal && (
@@ -1169,6 +1186,7 @@ const ProjectSideAssociation = () => {
           title={"Decline Offer"}
           onClose={handleInvestorDeclineModalCloseHandler}
           onSubmitHandler={handleDeclineInvestorOffer}
+          isSubmitting={isSubmitting}
         />
       )}
     </div>

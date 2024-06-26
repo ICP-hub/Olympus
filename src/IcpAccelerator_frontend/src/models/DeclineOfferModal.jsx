@@ -7,7 +7,7 @@ const schema = yup.object({
   message: yup.string().required('Required'),
 }).required();
 
-const DeclineOfferModal = ({ title, onClose, onSubmitHandler }) => {
+const DeclineOfferModal = ({ title, onClose, onSubmitHandler,isSubmitting }) => {
  
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema), mode: 'all'
@@ -72,7 +72,20 @@ const DeclineOfferModal = ({ title, onClose, onSubmitHandler }) => {
                 type="submit"
                 className="text-white inline-flex items-center bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
               >
-                Decline Offer
+                {isSubmitting ? (
+                    <ThreeDots
+                      visible={true}
+                      height="35"
+                      width="35"
+                      color="#FFFEFF"
+                      radius="9"
+                      ariaLabel="three-dots-loading"
+                      wrapperStyle={{}}
+                      wrapperclassName=""
+                    />
+                  ) : (
+                    "Decline Offer"
+                  )}
               </button>
               </div>
             </form>
