@@ -1,11 +1,53 @@
-import React from "react";
+import React,{useState} from "react";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import { useNavigate } from "react-router-dom";
 import NoDataCard from "../../Mentors/Event/NoDataCard";
 import NoData from "../../../../assets/images/search_not_found.png";
+import AddMentorRatingModal from "../../../models/AddMentorAndInvestorRatingModal";
+import toast, { Toaster } from "react-hot-toast";
+import { useSelector } from "react-redux";
 
 function EventInvestor({ allInvestorData, noData }) {
   const navigate = useNavigate();
+
+  const [isRatingModalOpen, setRatingModalOpen] = useState(false);
+  const handleRatingCloseModal = () => setRatingModalOpen(false);
+  const handleRatingOpenModal = () => setRatingModalOpen(true);
+  // const [noData, setNoData] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(null);
+  const actor = useSelector((currState) => currState.actors.actor);
+  const handleAddRating = async ({ rating, ratingDescription }) => {
+    console.log("add job");
+    setIsSubmitting(true);
+    if (actor) {
+      let argument = {
+        value:rating,
+        comment: ratingDescription,
+        principal_id: '',
+      };
+
+      await actor
+        .update_vc_ratings(argument)
+        .then((result) => {
+          console.log("result-in-add_vc_rating", result);
+          if (result) {
+            handleRatingCloseModal();
+            setIsSubmitting(false);
+            toast.success("review added successfully");
+          } else {
+            handleRatingCloseModal();
+            setIsSubmitting(false);
+            toast.error("something got wrong");
+          }
+        })
+        .catch((error) => {
+          console.log("error-in-add_vc_rating", error);
+          toast.error("something got wrong");
+          setIsSubmitting(false);
+          handleRatingCloseModal();
+        });
+    }
+  };
 
   if (noData || !allInvestorData?.Ok?.length) {
     return (
@@ -19,6 +61,7 @@ function EventInvestor({ allInvestorData, noData }) {
   }
 
   return (
+    <>
     <div className="items-center w-full flex justify-start gap-4">
       {allInvestorData.Ok.map((investor, index) => {
         let img = uint8ArrayToBase64(
@@ -71,11 +114,27 @@ function EventInvestor({ allInvestorData, noData }) {
               >
                 View Profile
               </button>
+              <button
+                    className="text-white px-4 py-1 mt-2 rounded-lg uppercase w-full text-center border border-gray-300 font-bold bg-[#3505B2] transition-colors duration-200 ease-in-out"
+                    onClick={handleRatingOpenModal}
+                  >
+                    Add Mentor Rating
+                  </button>
             </div>
           </div>
         );
       })}
     </div>
+    {isRatingModalOpen && (
+        <AddMentorRatingModal
+          onRatingClose={handleRatingCloseModal}
+          onSubmitHandler={handleAddRating}
+          isSubmitting={isSubmitting}
+          isMentor={false}
+        />
+      )}
+      <Toaster />
+    </>
   );
 }
 
