@@ -103,6 +103,21 @@ pub async fn send_offer_to_project(
     let uid = format!("{:x}", Sha256::digest(&uids));
     let offer_id = uid.clone().to_string();
 
+    let mut offer_exists = false;  // Flag to check if an offer exists
+
+    let _ = read_state(|state| {
+        if let Some(offers) = state.project_alerts.get(&project_id) {
+            if !offers.0.is_empty() {
+                ic_cdk::println!("An offer already exists for project {}. No more offers can be sent.", project_id);
+                offer_exists = true;  // Set flag if an offer exists
+            }
+        }
+    });
+
+    if offer_exists {
+        return "An offer already exists. No more offers can be sent.".to_string();
+    }
+
     let offer_to_project = OfferToProject {
         offer_id: offer_id.clone(),
         project_id: project_id.clone(),
@@ -211,67 +226,83 @@ pub async fn send_offer_to_project(
 
 #[update]
 pub fn accept_offer_of_mentor(offer_id: String, response_message: String, project_id: String) -> String {
-    let mut already_accepted = false;
+    let caller_principal = ic_cdk::api::caller();
+    ic_cdk::println!("Caller Principal: {:?}", caller_principal);
 
     // Check if the offer has already been accepted
+    let mut already_accepted = false;
     read_state(|state| {
+        ic_cdk::println!("Reading state to check if offer with ID '{}' has already been accepted for project '{}'", offer_id, project_id);
         if let Some(offers) = state.project_alerts.get(&project_id) {
             already_accepted = offers.0.iter().any(|o| o.offer_id == offer_id && o.request_status == "accepted");
+            ic_cdk::println!("Offer already accepted: {}", already_accepted);
+        } else {
+            ic_cdk::println!("No offers found for project ID: {}", project_id);
         }
     });
 
     if already_accepted {
+        ic_cdk::println!("Exiting because offer is already accepted");
         return "Offer has already been accepted.".to_string();
     }
 
     mutate_state(|state| {
+        ic_cdk::println!("Mutating state to accept offer with ID '{}' for project '{}'", offer_id, project_id);
         if let Some(mut offers) = state.project_alerts.get(&project_id) {
             if let Some(index) = offers.0.iter().position(|o| o.offer_id == offer_id) {
                 let offer = &mut offers.0[index];
-
-                // Mark the offer as accepted
+                ic_cdk::println!("Found offer, updating status to accepted");
                 offer.request_status = "accepted".to_string();
                 offer.response = response_message.clone();
                 offer.accepted_at = ic_cdk::api::time();
-                let sender_principal = offer.sender_principal.clone();
 
-                // Commit changes to project alerts immediately
-                state.project_alerts.insert(project_id.clone(), offers.clone());
+                // state.project_alerts.insert(project_id.clone(), offers.clone());
 
-                if let Some(mut sent_status_vector) = state.my_sent_notifications_project.get(&StoredPrincipal(sender_principal)) {
+                if let Some(mut sent_status_vector) = state.my_sent_notifications_project.get(&StoredPrincipal(offer.sender_principal)) {
                     if let Some(pos) = sent_status_vector.0.iter_mut().position(|o| o.offer_id == offer_id) {
                         let project_offer = &mut sent_status_vector.0[pos];
                         project_offer.request_status = "accepted".to_string();
                         project_offer.response = response_message.clone();
                         project_offer.accepted_at = ic_cdk::api::time();
 
-
-                        if let Some(mentor_profile) = state.mentor_storage.get(&StoredPrincipal(sender_principal)) {
-                            if let Some(mut projects) = state.project_storage.get(&StoredPrincipal(ic_cdk::api::caller())) {
-                                if let Some(proj_index) = projects.0.iter_mut().position(|p| p.uid == project_offer.project_id) {
-                                    let project = &mut projects.0[proj_index];
-                                    if project.params.mentors_assigned.is_none() {
-                                        project.params.mentors_assigned = Some(Vec::new());
-                                    }
-
-                                    let mentors_assigned = project.params.mentors_assigned.as_mut().unwrap();
-                                    if !mentors_assigned.contains(&mentor_profile.0.profile) {
-                                        mentors_assigned.push(mentor_profile.0.profile.clone());
-                                    }
-
-                                    // Commit project changes immediately
-                                    state.project_storage.insert(StoredPrincipal(ic_cdk::api::caller()), projects.clone());
-                                }
-                            }
-                        }
+                        state.my_sent_notifications_project.insert(StoredPrincipal(offer.sender_principal), sent_status_vector.clone());
                     }
                 }
-            }
-        }
-    });
 
-    format!("You have accepted the offer with offer id: {}", offer_id)
+                if let Some(mentor_profile) = state.mentor_storage.get(&StoredPrincipal(offer.sender_principal)) {
+                    if let Some(mut projects) = state.project_storage.get(&StoredPrincipal(caller_principal)) {
+                        if let Some(proj_index) = projects.0.iter_mut().position(|p| p.uid == project_id) {
+                            let project = &mut projects.0[proj_index];
+                            if project.params.mentors_assigned.is_none() {
+                                project.params.mentors_assigned = Some(Vec::new());
+                            }
+
+                            let mentors_assigned = project.params.mentors_assigned.as_mut().unwrap();
+                            if !mentors_assigned.contains(&mentor_profile.0.profile) {
+                                mentors_assigned.push(mentor_profile.0.profile.clone());
+                                ic_cdk::println!("Mentor added to project's assigned mentor list");
+                            }
+
+                            state.project_storage.insert(StoredPrincipal(caller_principal), projects.clone());
+                        } else {
+                            // ic_cdk::println!("No project found with ID '{}' to update", project_id);
+                        }
+                    }
+                } else {
+                    // ic_cdk::println!("No mentor profile found for principal: {}", offer.sender_principal);
+                }
+            } else {
+                // ic_cdk::println!("Offer with ID '{}' not found in offers list for project '{}'", offer_id, project_id);
+            }
+            state.project_alerts.insert(project_id.clone(), offers.clone());
+        } else {
+            // ic_cdk::println!("No offers list found for project ID: {}", project_id);
+        }
+        
+    });
+    "You have accepted the offer with offer id: {}".to_string().replace("{}", &offer_id)
 }
+
 
 
 #[update]

@@ -93,6 +93,20 @@ pub fn get_all_mentor_notification(id: Principal) -> Vec<OfferToSendToMentor> {
 pub async fn send_offer_to_mentor(mentor_id: Principal, msg: String, project_id: String) -> String {
     let mentor = get_mentor_by_principal(mentor_id).expect("mentor doesn't exist");
 
+    let mut offer_exists = false;  // Flag to check if an offer exists
+
+    let _ = read_state(|state| {
+        if let Some(offers) = state.mentor_alerts.get(&StoredPrincipal(mentor_id)) {
+            if !offers.0.is_empty() {
+                offer_exists = true;  // Set flag if an offer exists
+            }
+        }
+    });
+
+    if offer_exists {
+        return "An offer already exists. No more offers can be sent.".to_string();
+    }
+
     let uids = raw_rand().await.unwrap().0;
     let uid = format!("{:x}", Sha256::digest(&uids));
     let offer_id = uid.clone().to_string();

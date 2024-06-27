@@ -2021,6 +2021,12 @@ pub fn accept_cohort_creation_request(cohort_id: String) -> String {
 
                 // Add updated request to cohort_info
                 state.cohort_info.insert(cohort_id.clone(), Candid(request.cohort_details.clone()));
+                if !requests.0.is_empty() {
+                    state.cohort_request_admin.insert(cohort_id.clone(), Candid(requests.0.clone()));
+                } else {
+                    // Otherwise, remove the entry if no requests are left
+                    state.cohort_request_admin.remove(&cohort_id);
+                }
 
                 // Add or update the accepted_cohorts list
                 if let Some(mut existing) = state.accepted_cohorts.get(&cohort_id) {
