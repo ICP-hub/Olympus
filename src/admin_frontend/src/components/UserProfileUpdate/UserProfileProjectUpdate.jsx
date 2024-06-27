@@ -474,6 +474,7 @@ const UserProfileProjectUpdate = () => {
   const location = useLocation();
   const dispatch = useDispatch();
 
+  const ProjectId =location.state
   const defaultValues = {
     upload_public_documents: "false",
     publicDocs: [],
@@ -710,17 +711,20 @@ const UserProfileProjectUpdate = () => {
 
   useEffect(() => {
     const fetchProjectData = async () => {
+    const covertedPrincipal = await Principal.fromText(ProjectId);
       try {
-        const data = await actor.project_update_awaiting_approval();
+        // const data = await actor.project_update_awaiting_approval();
+         const data = await actor.get_project_info_using_principal(covertedPrincipal);
         console.log("Received data from actor:", data);
         if (
           data &&
-          data.length > 0 &&
-          data[0].length > 1 &&
-          data[0][1].original_info
+          data.length > 0
+          //  &&
+          // data[0].length > 1 &&
+          // data[0][1].original_info
         ) {
-          const originalInfo = data[0][1].original_info;
-          const updatedInfo = data[0][1].updated_info;
+          const originalInfo = data[0]?.params
+          const updatedInfo = data[0]?.params
 
           console.log("data:", data);
           console.log("Original Info:", originalInfo);
@@ -806,7 +810,7 @@ const UserProfileProjectUpdate = () => {
                 ? uint8ArrayToBase64(updatedInfo.project_logo[0])
                 : null,
             projectCover:
-              updatedInfo?.project_cove && updatedInfo?.project_cover.length > 0
+              updatedInfo?.project_cover && updatedInfo?.project_cover.length > 0
                 ? uint8ArrayToBase64(updatedInfo.project_cover[0])
                 : null,
             projectDescription:
@@ -894,7 +898,7 @@ const UserProfileProjectUpdate = () => {
     if (val) {
       setProjectId(val?.projectId ?? "");
       setValue("full_name", val?.userFullName ?? "");
-      setValue("email", val?.email ?? "");
+      setValue("email", val?.userEmail[0] ?? "");
       setValue("telegram_id", val?.userTelegram ?? "");
       setValue("twitter_url", val?.userTwitter ?? "");
       setValue("openchat_user_name", val?.openchatUsername ?? "");
@@ -936,7 +940,7 @@ const UserProfileProjectUpdate = () => {
       } else {
         setValue("is_your_project_registered", "false");
       }
-      setValue("type_of_registration", val?.typeOfRegistration ?? "");
+      setValue("type_of_registration", val?.typeOfRegistration ? val?.typeOfRegistration : "");
       setValue("country_of_registration", val?.countryOfRegistration ?? "");
       setValue("live_on_icp_mainnet", val?.liveOnIcpMainnet ?? "");
       if (val?.liveOnIcpMainnet === true) {
@@ -978,7 +982,7 @@ const UserProfileProjectUpdate = () => {
       setValue("promotional_video", val?.promotionalVideo ?? "");
       setValue("project_discord", val?.projectDiscord ?? "");
       setValue("project_linkedin", val?.projectLinkedin ?? "");
-      setValue("github_link", val?.githubLink ?? "");
+      setValue("github_link", val?.githubLink ?? "No Available");
       setValue("token_economics", val?.tokenEconomics ?? "");
       setValue("white_paper", val?.longTermGoals ?? "");
       setValue("upload_private_documents", val?.uploadPrivateDocuments ?? "");
@@ -2486,7 +2490,7 @@ const UserProfileProjectUpdate = () => {
                           <div className="flex space-x-2 items-center  flex-row ml-3">
                             <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                             <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {orignalData?.projectLinkedin ?? "Not available"}
+                              {orignalData?.projectLinkedin ?orignalData?.projectLinkedin : "Not available"}
                             </div>
                           </div>
                           <div className="flex space-x-2 items-center flex-row ml-3">
@@ -2512,7 +2516,7 @@ const UserProfileProjectUpdate = () => {
                               </div>
                             ) : (
                               <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                                {updatedData?.projectLinkedin ??
+                                {updatedData?.projectLinkedin ?updatedData?.projectLinkedin:
                                   "Not available"}
                               </div>
                             )}
@@ -2526,7 +2530,7 @@ const UserProfileProjectUpdate = () => {
                           <div className="flex space-x-2 items-center  flex-row ml-3">
                             <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                             <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {orignalData?.userTwitter ?? "Not available"}
+                              {orignalData?.userTwitter ? orignalData?.userTwitter :"Not available"}
                             </div>
                           </div>
                           <div className="flex space-x-2 items-center flex-row ml-3">
@@ -2552,7 +2556,7 @@ const UserProfileProjectUpdate = () => {
                               </div>
                             ) : (
                               <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                                {updatedData?.userTwitter ?? "Not available"}
+                                {updatedData?.userTwitter ?updatedData?.userTwitter: "Not available"}
                               </div>
                             )}
                           </div>
@@ -2565,7 +2569,7 @@ const UserProfileProjectUpdate = () => {
                           <div className="flex space-x-2 items-center  flex-row ml-3">
                             <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                             <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {orignalData?.projectElevatorPitch ??
+                              {orignalData?.projectElevatorPitch ?orignalData?.projectElevatorPitch:
                                 "Not available"}
                             </div>
                           </div>
@@ -2592,7 +2596,7 @@ const UserProfileProjectUpdate = () => {
                               </div>
                             ) : (
                               <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                                {updatedData?.projectElevatorPitch ??
+                                {updatedData?.projectElevatorPitch ?updatedData?.projectElevatorPitch:
                                   "Not available"}
                               </div>
                             )}
@@ -2606,7 +2610,7 @@ const UserProfileProjectUpdate = () => {
                           <div className="flex space-x-2 items-center  flex-row ml-3">
                             <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                             <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {orignalData?.promotionalVideo ?? "Not available"}
+                              {orignalData?.promotionalVideo ?orignalData?.promotionalVideo: "Not available"}
                             </div>
                           </div>
                           <div className="flex space-x-2 items-center flex-row ml-3">
@@ -2632,7 +2636,7 @@ const UserProfileProjectUpdate = () => {
                               </div>
                             ) : (
                               <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                                {updatedData?.promotionalVideo ??
+                                {updatedData?.promotionalVideo ?updatedData?.promotionalVideo:
                                   "Not available"}
                               </div>
                             )}
@@ -2648,7 +2652,7 @@ const UserProfileProjectUpdate = () => {
                           <div className="flex space-x-2 items-center  flex-row ml-3">
                             <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                             <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {orignalData?.githubLink ?? "Not available"}
+                              {orignalData?.githubLink ? orignalData?.githubLink :"Not available"}
                             </div>
                           </div>
                           <div className="flex space-x-2 items-center flex-row ml-3">
@@ -2674,7 +2678,7 @@ const UserProfileProjectUpdate = () => {
                               </div>
                             ) : (
                               <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                                {updatedData?.githubLink ?? "Not available"}
+                                {updatedData?.githubLink ?updatedData?.githubLink : "Not available"}
                               </div>
                             )}
                           </div>
@@ -2687,7 +2691,7 @@ const UserProfileProjectUpdate = () => {
                           <div className="flex space-x-2 items-center  flex-row ml-3">
                             <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                             <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {orignalData?.projectDiscord ?? "Not available"}
+                              {orignalData?.projectDiscord ?orignalData?.projectDiscord :"Not available"}
                             </div>
                           </div>
                           <div className="flex space-x-2 items-center flex-row ml-3">
@@ -2713,7 +2717,7 @@ const UserProfileProjectUpdate = () => {
                               </div>
                             ) : (
                               <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                                {updatedData?.projectDiscord ?? "Not available"}
+                                {updatedData?.projectDiscord ?updatedData?.projectDiscord: "Not available"}
                               </div>
                             )}
                           </div>
@@ -2726,7 +2730,7 @@ const UserProfileProjectUpdate = () => {
                           <div className="flex space-x-2 items-center  flex-row ml-3">
                             <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                             <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {orignalData?.projectWebsite ?? "Not available"}
+                              {orignalData?.projectWebsite ?orignalData?.projectWebsite : "Not available"}
                             </div>
                           </div>
                           <div className="flex space-x-2 items-center flex-row ml-3">
@@ -2752,7 +2756,7 @@ const UserProfileProjectUpdate = () => {
                               </div>
                             ) : (
                               <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                                {updatedData?.projectWebsite ?? "Not available"}
+                                {updatedData?.projectWebsite ?updatedData?.projectWebsite :"Not available"}
                               </div>
                             )}
                           </div>
@@ -2765,7 +2769,7 @@ const UserProfileProjectUpdate = () => {
                           <div className="flex space-x-2 items-center  flex-row ml-3">
                             <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                             <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {orignalData?.longTermGoals ?? "Not available"}
+                              {orignalData?.longTermGoals ?orignalData?.longTermGoals: "Not available"}
                             </div>
                           </div>
                           <div className="flex space-x-2 items-center flex-row ml-3">
@@ -2791,7 +2795,7 @@ const UserProfileProjectUpdate = () => {
                               </div>
                             ) : (
                               <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                                {updatedData?.longTermGoals ?? "Not available"}
+                          {updatedData?.longTermGoals ?updatedData?.longTermGoals: "Not available"}
                               </div>
                             )}
                           </div>
@@ -2804,7 +2808,7 @@ const UserProfileProjectUpdate = () => {
                           <div className="flex space-x-2 items-center  flex-row ml-3">
                             <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                             <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {orignalData?.tokenEconomics ?? "Not available"}
+                              {orignalData?.tokenEconomics ?orignalData?.tokenEconomics:"Not available"}
                             </div>
                           </div>
                           <div className="flex space-x-2 items-center flex-row ml-3">
@@ -2830,7 +2834,7 @@ const UserProfileProjectUpdate = () => {
                               </div>
                             ) : (
                               <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                                {updatedData?.tokenEconomics ?? "Not available"}
+                                {updatedData?.tokenEconomics ?updatedData?.tokenEconomics :"Not available"}
                               </div>
                             )}
                           </div>
@@ -3863,7 +3867,7 @@ const UserProfileProjectUpdate = () => {
                   <div className="flex space-x-2 items-center  flex-row ml-3">
                     <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                     <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                      {orignalData?.dappLink ?? "Not available"}
+                      {orignalData?.dappLink ?orignalData?.dappLink: "Not available"}
                     </div>
                   </div>
                   <div className="flex space-x-2 items-center flex-row ml-3">
@@ -3888,7 +3892,7 @@ const UserProfileProjectUpdate = () => {
                       </div>
                     ) : (
                       <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                        {updatedData?.dappLink ?? "Not available"}
+                        {updatedData?.dappLink ?updatedData?.dappLink :"Not available"}
                       </div>
                     )}
                   </div>

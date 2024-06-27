@@ -22,6 +22,7 @@ import * as yup from "yup";
 import { useCountries } from "react-countries";
 import ReactSelect from "react-select";
 import CompressedImage from "../../../../IcpAccelerator_frontend/src/components/ImageCompressed/CompressedImage";
+import { Principal } from "@dfinity/principal";
 
 //  USER & MENTOR reg form validation schema
 const validationSchema = yup
@@ -323,7 +324,9 @@ const UserProfileInvestorUpdate = () => {
 
   //   console.log("userData in investor profile", originalInfo);
   // console.log("Allrole in investor profile", Allrole);
-
+  const location = useLocation();
+  console.log('loca',location)
+  const investorId =location?.state
   const {
     register,
     handleSubmit,
@@ -375,22 +378,33 @@ const UserProfileInvestorUpdate = () => {
   useEffect(() => {
     const fetchProjectData = async () => {
       try {
-        let data = await actor.vc_profile_edit_awaiting_approval();
+        if (!investorId) {
+          console.error("investorId is not defined");
+          return;
+        }
+    const covertedPrincipal = await Principal.fromText(investorId);
+        if (!actor || typeof actor.get_vc_info_using_principal !== 'function') {
+          console.error("caller is not defined or does not have the method 'get_vc_info_using_principal'");
+          return;
+        }
+        // let data = await actor.vc_profile_edit_awaiting_approval();
+       let data = await actor.get_vc_info_using_principal(covertedPrincipal)
         console.log("Received data in investor update:", data);
 
-        const originalInfo = data[0][1].original_info[0];
-        const updatedInfo = data[0][1].updated_info[0];
-        const approveAt = data[0][1].approved_at;
-        const rejectAt = data[0][1].rejected_at;
-        const sentAt = data[0][1].sent_at;
-        const principalId = data[0][0];
-        setPrincipal(principalId);
+        const originalInfo = data[0]?.profile
+        const updatedInfo = data[0]?.profile
+        // const approveAt = data[0][1].approved_at;
+        // const rejectAt = data[0][1].rejected_at;
+        // const sentAt = data[0][1].sent_at;
+        // const principalId = data[0][0];
+        setPrincipal(investorId);
 
         if (
           data &&
-          data.length > 0 &&
-          data[0].length > 1 &&
-          data[0][1].original_info
+          data.length > 0 
+          // &&
+          // data[0].length > 1 &&
+          // data[0][1].original_info
         ) {
           setOrignalData({
             announcementDetails: originalInfo?.announcement_details?.[0],

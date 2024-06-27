@@ -17,6 +17,7 @@ import { useCountries } from "react-countries";
 import ReactSelect from "react-select";
 import toast, { Toaster } from "react-hot-toast";
 import CompressedImage from "../../../../IcpAccelerator_frontend/src/components/ImageCompressed/CompressedImage";
+import { Principal } from "@dfinity/principal";
 
 const validationSchema = yup
   .object()
@@ -250,6 +251,9 @@ const UserProfileMentorUpdate = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  console.log('location',location)
+
+  const mentorId =location.state
   // console.log("userData in mentor profile", userData);
   // console.log("Allrole in mentor profile", Allrole);
 
@@ -305,23 +309,27 @@ const UserProfileMentorUpdate = () => {
   };
 
   useEffect(() => {
+
     const fetchProjectData = async () => {
+    const covertedPrincipal = await Principal.fromText(mentorId);
       try {
-        let data = await actor.mentor_profile_edit_awaiting_approval();
+        // let data = await actor.mentor_profile_edit_awaiting_approval();
+        let data = await actor.get_mentor_info_using_principal(covertedPrincipal);
 
         console.log("Received data in mentor update:", data);
 
-        const originalInfo = data[0][1].original_info[0];
-        const updatedInfo = data[0][1].updated_info[0];
-        const principalId = data[0][0];
+        const originalInfo = data[0]?.profile
+        const updatedInfo = data[0]?.profile        ;
+        // const principalId = data[0][0];
         // console.log("Original Info:", originalInfo);
         // console.log("updated Info:", updatedInfo);
-        setPrincipal(principalId);
+        setPrincipal(mentorId);
         if (
           data &&
-          data.length > 0 &&
-          data[0].length > 1 &&
-          data[0][1].original_info
+          data.length > 0 
+          // &&
+          // data[0].length > 1 &&
+          // data[0][1].original_info
         ) {
           setOrignalData({
             categoryOfMentoring: originalInfo?.category_of_mentoring_service,

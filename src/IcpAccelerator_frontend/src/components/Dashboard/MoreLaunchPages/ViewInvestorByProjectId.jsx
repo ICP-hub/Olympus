@@ -195,7 +195,7 @@ const ViewInvestorByProjectId = () => {
           </button>
         </div> */}
       </div>
-      <div className="flex flex-wrap justify-center">
+      <div className="container mx-auto">
         {Number(countData) <= 0 ? (
           <NoDataCard desc="No Investor to display yet" image={NoData} />
         ) : (
