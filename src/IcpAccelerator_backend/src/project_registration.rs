@@ -358,7 +358,7 @@ pub struct ProjectNotification {
     timestamp: u64,
 }
 
-#[derive(CandidType, Clone, Serialize, Deserialize)]
+#[derive(CandidType, Clone, Serialize, Deserialize, Debug)]
 pub struct ProjectReview {
     name: String,
     profile_pic: Vec<u8>,
@@ -1526,7 +1526,7 @@ pub fn get_announcements_by_project_id(project_id: String) -> Vec<AnnouncementsI
             .collect() // Collect the filtered announcements into a vector
     })
 }
-#[query(guard = "is_user_anonymous")]
+#[update(guard = "is_user_anonymous")]
 pub async fn update_project_announcement_by_id(
     timestamp: u64,
     new_details: Announcements,
@@ -2712,10 +2712,14 @@ pub fn check_project_exists(project_id: String) -> bool {
 #[update(guard = "is_user_anonymous")]
 pub fn add_project_rating(ratings: ProjectRatingStruct) -> Result<String, String> {
     let principal = caller(); // Assuming `caller()` correctly retrieves the principal of the caller
-    let user_data = get_user_info().clone().unwrap();
+
+    // Attempt to retrieve user data or return an error message if unavailable
+    let user_data = get_user_info().clone().map_err(|e| e.to_string())?;
+    ic_cdk::println!("User data retrieved: {:?}", user_data);
 
     // Check if the project ID exists
-    let project_exists = read_state(|state| state.project_rating.contains_key(&ratings.project_id));
+    let project_exists = check_project_exists(ratings.project_id.clone());
+    ic_cdk::println!("Project exists: {}", project_exists); 
 
     if project_exists {
         // Check if the current user has already submitted a review for this project
@@ -2744,10 +2748,17 @@ pub fn add_project_rating(ratings: ProjectRatingStruct) -> Result<String, String
             ratings.rating,
         )
         .map_err(|e| e.to_string())?; // Gracefully handle the error
+     ic_cdk::println!("Project review created: {:?}", project_review);
 
         mutate_state(|state| {
             if let Some(mut reviews) = state.project_rating.get(&ratings.project_id) {
-                reviews.0.push((principal, project_review));
+                // Project exists and has reviews, add new review
+                reviews.0.push((principal, project_review.clone()));
+                ic_cdk::println!("Review added to existing project ID: {}", ratings.project_id);
+            } else {
+                // Project does not exist, create new vector and add review
+                state.project_rating.insert(ratings.project_id.clone(), Candid(vec![(principal, project_review.clone())]));
+                ic_cdk::println!("New reviews vector created and review added for project ID: {}", ratings.project_id);
             }
         });
 

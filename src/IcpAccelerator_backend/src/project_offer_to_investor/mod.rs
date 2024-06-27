@@ -99,6 +99,20 @@ pub async fn send_offer_to_investor(
         .expect("investor doesn't exist")
         .clone();
 
+    let mut offer_exists = false;  // Flag to check if an offer exists
+
+    let _ = read_state(|state| {
+        if let Some(offers) = state.project_alerts_of_investor.get(&project_id) {
+            if !offers.0.is_empty() {
+                offer_exists = true;  // Set flag if an offer exists
+            }
+        }
+    });
+
+    if offer_exists {
+        return "An offer already exists. No more offers can be sent.".to_string();
+    }
+
     let uids = raw_rand().await.unwrap().0;
     let uid = format!("{:x}", Sha256::digest(&uids));
     let offer_id = uid.clone().to_string();
