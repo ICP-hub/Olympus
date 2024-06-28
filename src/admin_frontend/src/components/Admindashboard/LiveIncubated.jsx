@@ -391,7 +391,9 @@ const LiveIncubated = () => {
                 live_on_icp_mainnet && live_on_icp_mainnet[0] === true;
               let projectRubricStatus =
                 project?.overall_average?.length > 0
-                  ? project?.overall_average[project?.overall_average.length - 1]
+                  ? project?.overall_average[
+                      project?.overall_average.length - 1
+                    ]
                   : 0;
               let isLive_On = project?.params?.params?.live_on_icp_mainnet[0];
               const isInSpotlight = spotlightProjectIds.has(projectId);
@@ -427,8 +429,16 @@ const LiveIncubated = () => {
 
                       <button
                         className="mt-4 bg-transparent text-blue-900 px-4 py-1 rounded uppercase w-full text-center border border-gray-300 font-bold hover:bg-blue-900 hover:text-white transition-colors duration-200 ease-in-out"
-                        onClick={() => navigate("/all", { state: principalId })}
+                        onClick={() =>
+                          navigate("/all", {
+                            state: {
+                              principal: principalId,
+                              activeCategory: "Project",
+                            },
+                          })
+                        }
                       >
+                        {console.log(principalId)}
                         KNOW MORE
                       </button>
                       {!spotlightProjectIds.has(projectId) ? (
