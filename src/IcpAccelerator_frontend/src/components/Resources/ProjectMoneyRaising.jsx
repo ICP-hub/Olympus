@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Line } from "rc-progress";
-import NoDataCard from "../Mentors/Event/MoneyNoDataCard";
+import NoDataCard from "../../components/Mentors/Event/NoDataCard";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import NoData from "../../../assets/images/file_not_found.png";
 import toast, { Toaster } from "react-hot-toast";
 
 const ProjectMoneyRaising = ({ data }) => {
@@ -121,7 +122,7 @@ const ProjectMoneyRaising = ({ data }) => {
           )}
         </div>
         {noData ? (
-          <NoDataCard allowAccess={allowAccess}/>
+          <NoDataCard image={NoData} desc={"No Data yet"} />
         ) : (
           moneyRaised[0] && (
             <div className="flex flex-col">

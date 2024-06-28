@@ -585,7 +585,7 @@ const ProjectUpdate = () => {
       console.error("Error processing request:", error);
     } finally {
       setIsDeclining(false);
-      // window.location.reload();
+      window.location.reload();
     }
   };
 
@@ -602,7 +602,7 @@ const ProjectUpdate = () => {
       console.error("Error processing request:", error);
     } finally {
       setIsAccepting(false);
-      // window.location.reload();
+      window.location.reload();
     }
   };
 
