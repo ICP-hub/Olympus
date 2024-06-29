@@ -1,4 +1,4 @@
-import React, { useEffect, useState ,useRef} from "react";
+import React, { useEffect, useState, useRef } from "react";
 import internetIdentity from "../../assets/WalletLogo/IcpWallet1.png";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
@@ -12,6 +12,7 @@ import { useCallback } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { beforeCopySvg } from "../components/Utils/Data/SvgData";
 import { afterCopySvg } from "../components/Utils/Data/SvgData";
+import { userRegisteredHandlerRequest } from "../components/StateManagement/Redux/Reducers/userRegisteredData";
 const LogoutModal = () => {
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
   const principal = useSelector((currState) => currState.internet.principal);
@@ -42,6 +43,10 @@ const LogoutModal = () => {
 
   const profileHandler = async (userCurrentRoleStatusActiveRole) => {
     switch (userCurrentRoleStatusActiveRole) {
+      case "user":
+        dispatch(userRegisteredHandlerRequest());
+        setDropdownOpen(false);
+        break;
       case "project":
         dispatch(founderRegisteredHandlerRequest());
         setDropdownOpen(false);
@@ -74,7 +79,7 @@ const LogoutModal = () => {
   const modalRef = useRef(null);
   const handleClickOutside = (event) => {
     if (modalRef.current && !modalRef.current.contains(event.target)) {
-    setDropdownOpen(false);
+      setDropdownOpen(false);
     }
   };
 
@@ -92,7 +97,10 @@ const LogoutModal = () => {
   return (
     <>
       <Toaster />
-      <div className="relative z-50 justify-end flex rounded-full" ref={modalRef}>
+      <div
+        className="relative z-50 justify-end flex rounded-full"
+        ref={modalRef}
+      >
         {isAuthenticated && (
           <img
             id="avatarButton"
@@ -164,7 +172,7 @@ const LogoutModal = () => {
                 userCurrentRoleStatusActiveRole &&
                 userCurrentRoleStatusActiveRole !== "user" ? (
                   <li
-                    onClick={() =>{
+                    onClick={() => {
                       navigate(
                         userCurrentRoleStatusActiveRole === "project"
                           ? "/project-association-requests"
@@ -173,10 +181,9 @@ const LogoutModal = () => {
                           : userCurrentRoleStatusActiveRole === "vc"
                           ? "/investor-association-requests"
                           : ""
-                      )
+                      );
                       setDropdownOpen(false);
-                    }
-                    }
+                    }}
                     className="block px-4 py-2 cursor-pointer hover:bg-gray-200 hover:text-black"
                   >
                     Associations
@@ -190,15 +197,14 @@ const LogoutModal = () => {
                 userCurrentRoleStatusActiveRole !== "project" &&
                 userCurrentRoleStatusActiveRole !== "vc" ? (
                   <li
-                    onClick={() =>{
+                    onClick={() => {
                       navigate(
                         userCurrentRoleStatusActiveRole === "mentor"
                           ? "/event-register-request"
                           : ""
-                      )
+                      );
                       setDropdownOpen(false);
-                    }
-                    }
+                    }}
                     className="block px-4 py-2 cursor-pointer hover:bg-gray-200 hover:text-black"
                   >
                     Cohort Request
@@ -219,7 +225,7 @@ const LogoutModal = () => {
             )}
             <div className="text-sm text-black font-bold">
               {userCurrentRoleStatus &&
-                userCurrentRoleStatusActiveRole !== "user" &&
+                // userCurrentRoleStatusActiveRole !== "user" &&
                 userCurrentRoleStatusActiveRole !== null && (
                   <p
                     onClick={() =>

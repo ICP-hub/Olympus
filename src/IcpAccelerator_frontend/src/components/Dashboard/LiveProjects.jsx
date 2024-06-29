@@ -373,7 +373,7 @@ const LiveProjects = ({ progress, numSkeletons, onNoDataChange  }) => {
             </div>
           </>
         )}
-        <div className="w-full md:1/2 md3:w-1/3 dxl:w-1/4 md:flex md:gap-4">
+        <div className="w-full md:1/2 md3:w-1/3 dxl:w-1/4 md:flex md:gap-4 sm:pr-4 px-4">
           <RegisterCard categories={projectCategories} />
         </div>
       </div>

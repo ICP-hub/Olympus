@@ -63,12 +63,12 @@ const validationSchema = yup
       .nullable(true)
       .test(
         "is-valid-username",
-        "Username must be between 6 and 20 characters and can only contain letters, numbers, and underscores",
+        "Username must be between 5 and 20 characters, and cannot start or contain spaces",
         (value) => {
           if (!value) return true;
-          const isValidLength = value.length >= 6 && value.length <= 20;
-          const hasValidChars = /^(?=.*[A-Z0-9_])[a-zA-Z0-9_]+$/.test(value);
-          return isValidLength && hasValidChars;
+          const isValidLength = value.length >= 5 && value.length <= 20;
+          const hasNoSpaces = !/\s/.test(value) && !value.startsWith(" ");
+          return isValidLength && hasNoSpaces;
         }
       ),
     bio: yup
@@ -79,6 +79,11 @@ const validationSchema = yup
         "Bio must not exceed 50 words",
         (value) =>
           !value || value.trim().split(/\s+/).filter(Boolean).length <= 50
+      )
+      .test(
+        "no-leading-spaces",
+        "Bio should not have leading spaces",
+        (value) => !value || value.trimStart() === value
       )
       .test(
         "maxChars",
@@ -325,8 +330,8 @@ const UserProfileInvestorUpdate = () => {
   //   console.log("userData in investor profile", originalInfo);
   // console.log("Allrole in investor profile", Allrole);
   const location = useLocation();
-  console.log('loca',location)
-  const investorId =location?.state
+  console.log("loca", location);
+  const investorId = location?.state;
   const {
     register,
     handleSubmit,
@@ -382,17 +387,19 @@ const UserProfileInvestorUpdate = () => {
           console.error("investorId is not defined");
           return;
         }
-    const covertedPrincipal = await Principal.fromText(investorId);
-        if (!actor || typeof actor.get_vc_info_using_principal !== 'function') {
-          console.error("caller is not defined or does not have the method 'get_vc_info_using_principal'");
+        const covertedPrincipal = await Principal.fromText(investorId);
+        if (!actor || typeof actor.get_vc_info_using_principal !== "function") {
+          console.error(
+            "caller is not defined or does not have the method 'get_vc_info_using_principal'"
+          );
           return;
         }
         // let data = await actor.vc_profile_edit_awaiting_approval();
-       let data = await actor.get_vc_info_using_principal(covertedPrincipal)
+        let data = await actor.get_vc_info_using_principal(covertedPrincipal);
         console.log("Received data in investor update:", data);
 
-        const originalInfo = data[0]?.profile
-        const updatedInfo = data[0]?.profile
+        const originalInfo = data[0]?.profile;
+        const updatedInfo = data[0]?.profile;
         // const approveAt = data[0][1].approved_at;
         // const rejectAt = data[0][1].rejected_at;
         // const sentAt = data[0][1].sent_at;
@@ -401,7 +408,7 @@ const UserProfileInvestorUpdate = () => {
 
         if (
           data &&
-          data.length > 0 
+          data.length > 0
           // &&
           // data[0].length > 1 &&
           // data[0][1].original_info
