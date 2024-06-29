@@ -60,29 +60,33 @@ const DetailHeroSection = () => {
   const { src, alt, className, text } = currentRouteSettings;
 
   const handleNavigate = () => {
-    if (window.location.pathname.includes('/create-user')) {
+    if (window.location.pathname.includes("/create-user")) {
       logout();
       dispatch(removeActor());
     }
-    navigate(-1)
-  }
+    navigate(-1);
+  };
   return (
     <>
       <section className="text-black bg-gray-100">
         <div className="w-full px-[4%] lg1:px-[5%]">
           <div className="flex flex-col space-y-4">
-            <span className="p-2 cursor-pointer" onClick={() => handleNavigate()}>
+            <span
+              className="p-2 cursor-pointer"
+              onClick={() => handleNavigate()}
+            >
               {closeSwitchBlackModalSvg}
             </span>
             <div className="flex justify-center  lg:flex-row lg:justify-between items-center md:flex-col-reverse sxs:flex-col-reverse ">
-              <div className="relative center-text lg:static sxs:top-20 md:-left-24 md:top-20 lg:top-24 lg:-left-32 sm:-left-12">
+              <div className="relative lg:static sxs:top-20 md:-left-24 md:top-20 lg:top-24 lg:-left-32 sm:-left-12">
                 {/* <div className="w-[500px] xl2:w-[900px] xl:w-[700px] dxl:w-[630px] lgx:w-[600px] lg1:w-[550px] dlg:w-[525px] lg:w-[500px] md3:w-[470px] md2:w-[460px] md1:w-[450px]  md:w-[440px] sm:w-[430px] sm3:w-[400px] sm2:w-[390px] sm4:w-[380px] sm1:w-[360px] xxs1:w-[340px] xxs:w-[310px] dxs:w-[290px] ss4:w-[280px] ss3:w-[270px] ss2:w-[260px] ss1:w-[250px] ss:w-[240px] sxs3:w-[230px] sxs2:w-[220px] sxs1:w-[210px] sxs:w-[200px] sxxs:w-[190px]  h-[380px] left-[400px] top-[100px] absolute bg-fuchsia-800 rounded-full blur-[169px] xl2:left-[260px] xl:left-[280px] dxl:left-[230px] lgx:left-[200px] lg1:left-[180px] dlg:left-[170px] lg:left-[160px] md3:left-[150px] md2:left-[140px] md1:left-[130px] md:left-[120px] sm:left-[110px] sm3:left-[70px] sm2:left-[60px] sm4:left-[50px] sm1:left-[50px] xxs1:left-[45px] xxs:left-[40px] dxs:left-[35px] ss4:left-[30px] ss3:left-[25px] ss2:left-[20px] ss1:left-[15px] ss:left-[15px] sxs3:left-[15px] sxs2:left-[10px] sxs1:left-[10px] sxs:left-[5px] sxxs:left-[5px]"></div> */}
                 <h1 className="left-[19px] pb-2 bg-gradient-to-r from-purple-800 to-blue-500 text-transparent bg-clip-text text-2xl sm:text-3xl md:text-3xl lg:text-5xl xl:text-7xl 2xl:text-8xl font-fontUse font-bold">
                   {text}
                 </h1>
 
                 <div className="line-clamp-2 text-black text-[14.5px] sm:text-[15px] md:text-[16px] lg:text-[17px] xl:text-[19px] 2xl:text-[20px] top-[95px] sm:top-[140px] md:top-[160px] lg:top-[163px] xl:top-[168px] 2xl:top-[170px] left-[20px] font-extrabold font-circular">
-                  Supercharging Web3 startups for breakthrough success
+                  Supercharging Web3 startups
+                  <br></br> for breakthrough success
                 </div>
 
                 {/* <button className="rounded-md my-2 bg-indigo-600 absolute w-[210px] left-[19px] top-[210px] xl2:top-[209.5px] xl:top-[225px] dxl:top-[225px] lgx:top-[220px] lg1:top-[215px] dlg:top-[215px] lg:top-[210px] md3:top-[210px] md2:top-[205px] md1:top-[205px] md:top-[204.5px] sm:top-[204px] sm3:top-[195px] sm2:top-[190px] sm4:top-[185px] sm1:top-[185px] xxs1:top-[191px] xxs:top-[191px] dxs:top-[191px] ss4:top-[151px] ss3:top-[150px] ss2:top-[145px] ss1:top-[160px] ss:top-[155px] sxs3:top-[140px] sxs2:top-[140px] sxs1:top-[190px] sxs:top-[135px] sxxs:top-[135px]">

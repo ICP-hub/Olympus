@@ -39,6 +39,21 @@ const DashBoard = () => {
     (currState) => currState.currentRoleStatus.activeRole
   );
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
+
+  const [noDataStates, setNoDataStates] = useState({
+    projects: false,
+    ongoingcohort: false,
+    investors: false,
+    mentors: false,
+  });
+
+  const handleNoDataChange = (key, value) => {
+    setNoDataStates((prevState) => ({
+      ...prevState,
+      [key]: value,
+    }));
+  };
+
   //<<<---- numSkeletons setting condition for mentor , investor card ---->>>
   const [numSkeletons, setNumSkeletons] = useState(1);
 
@@ -315,45 +330,69 @@ const DashBoard = () => {
                   <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl sxxs:text-lg">
                     Upcoming Projects
                   </h1>
-                  <button
-                    onClick={handleNavigateProject}
-                    className="border border-violet-800 cursor-pointer px-4 py-2 rounded-md text-violet-800 sxxs:px-2 sxxs:py-1 sxxs:text-xs sm:text-lg"
-                  >
-                    View More
-                  </button>
+
+                  {!noDataStates.projects && (
+                    <button
+                      onClick={handleNavigateProject}
+                      className="border border-violet-800 cursor-pointer px-4 py-2 rounded-md text-violet-800 sxxs:px-2 sxxs:py-1 sxxs:text-xs sm:text-lg"
+                    >
+                      View More
+                    </button>
+                  )}
                 </div>
                 <div className="mb-4 fade-in">
-                  <LiveProjects progress={false} numSkeletons={numSkeletons} />
+                  <LiveProjects
+                    progress={false}
+                    numSkeletons={numSkeletons}
+                    onNoDataChange={(value) =>
+                      handleNoDataChange("projects", value)
+                    }
+                  />
                 </div>
                 <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px] mt-3">
                   <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl sxxs:text-lg">
                     Ongoing Accelerator
                   </h1>
-                  <button
-                    onClick={handleNavigateCohort}
-                    className="border border-violet-800 px-4 py-2 rounded-md text-violet-800 sxxs:px-2 sxxs:py-1 sxxs:text-xs sm:text-lg"
-                  >
-                    View More
-                  </button>
+                  {!noDataStates.ongoingcohort && (
+                    <button
+                      onClick={handleNavigateCohort}
+                      className="border border-violet-800 px-4 py-2 rounded-md text-violet-800 sxxs:px-2 sxxs:py-1 sxxs:text-xs sm:text-lg"
+                    >
+                      View More
+                    </button>
+                  )}
                 </div>
                 <div className="mb-4 fade-in">
-                  <LiveEventsCards wrap={true} register={true} />
+                  <LiveEventsCards
+                    wrap={true}
+                    register={true}
+                    onNoDataChange={(value) =>
+                      handleNoDataChange("ongoingcohort", value)
+                    }
+                  />
                 </div>
                 <div className="flex items-center justify-between mb-4  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px] mt-3">
                   <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl sxxs:text-lg">
                     Investors
                   </h1>
-                  <button
-                    onClick={handleNavigateInvestor}
-                    className="border border-violet-800 px-4 py-2 rounded-md text-violet-800 sxxs:px-2 sxxs:py-1 sxxs:text-xs sm:text-lg"
-                  >
-                    View More
-                  </button>
+                  {!noDataStates.investors && (
+                    <button
+                      onClick={handleNavigateInvestor}
+                      className="border border-violet-800 px-4 py-2 rounded-md text-violet-800 sxxs:px-2 sxxs:py-1 sxxs:text-xs sm:text-lg"
+                    >
+                      View More
+                    </button>
+                  )}
                 </div>
 
                 <div className="flex max-md:flex-col -mx-4 mb-4 items-stretch fade-in">
                   <div className="w-full md3:w-2/3 dxl:w-3/4 px-4 md:flex md:gap-4 sm:flex sm:gap-4">
-                    <InvestorCard numSkeletons={numSkeletons} />
+                    <InvestorCard
+                      numSkeletons={numSkeletons}
+                      onNoDataChange={(value) =>
+                        handleNoDataChange("investors", value)
+                      }
+                    />
                   </div>
                   <div className="w-full md:1/2 md3:w-1/3 dxl:w-1/4 sm:pr-4 md:flex md:gap-4 px-4">
                     <RegisterCard categories={investorCategories} />
@@ -363,16 +402,23 @@ const DashBoard = () => {
                   <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl sxxs:text-lg">
                     Mentors
                   </h1>
-                  <button
-                    onClick={handleNavigateMentor}
-                    className="border border-violet-800 px-4 py-2 rounded-md text-violet-800 sxxs:px-2 sxxs:py-1 sxxs:text-xs sm:text-lg"
-                  >
-                    View More
-                  </button>
+                  {!noDataStates.mentors && (
+                    <button
+                      onClick={handleNavigateMentor}
+                      className="border border-violet-800 px-4 py-2 rounded-md text-violet-800 sxxs:px-2 sxxs:py-1 sxxs:text-xs sm:text-lg"
+                    >
+                      View More
+                    </button>
+                  )}
                 </div>
                 <div className="flex max-md:flex-col -mx-4 mb-4 items-stretch fade-in">
                   <div className="w-full md3:w-2/3 dxl:w-3/4 px-4 md:flex md:gap-4 sm:flex sm:gap-4">
-                    <MentorCard numSkeletons={numSkeletons} />
+                    <MentorCard
+                      numSkeletons={numSkeletons}
+                      onNoDataChange={(value) =>
+                        handleNoDataChange("mentors", value)
+                      }
+                    />
                   </div>
                   <div className="w-full md:1/2 md3:w-1/3 dxl:w-1/4 sm:pr-4 md:flex md:gap-4 px-4">
                     <RegisterCard categories={mentorCategories} />
