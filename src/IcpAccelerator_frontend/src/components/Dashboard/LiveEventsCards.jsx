@@ -6,7 +6,7 @@ import NoData from "../../../assets/images/file_not_found.png";
 import SecondEventCard from "../Mentors/Event/SecondEventCard";
 import OngoingAcceleratorSkeleton from "./Skeleton/OngoingAcceleratorskeleton";
 
-const LiveEventsCards = ({ wrap, register }) => {
+const LiveEventsCards = ({ wrap, register, onNoDataChange }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [countData, setCountData] = useState(0);
   const [noData, setNoData] = useState(null);
@@ -51,12 +51,14 @@ const LiveEventsCards = ({ wrap, register }) => {
           if (isMounted) {
             if (!result || result.data.length === 0) {
               setNoData(true);
+              onNoDataChange(true);
               setIsLoading(false);
               setAllLiveEventsData([]);
               console.log("here in false");
               setCountData("");
             } else {
               setNoData(false);
+              onNoDataChange(false);
               setIsLoading(false);
               console.log("here in true");
               setAllLiveEventsData(result.data);
@@ -67,6 +69,7 @@ const LiveEventsCards = ({ wrap, register }) => {
         .catch((error) => {
           if (isMounted) {
             setNoData(true);
+            onNoDataChange(true);
             setIsLoading(false);
             setCountData("");
             setAllLiveEventsData([]);
