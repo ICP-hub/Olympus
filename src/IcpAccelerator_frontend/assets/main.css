@@ -21,7 +21,7 @@
   }
 
   /* React Select Css changed from here */
-  .css-11uhmi3-control {
+  /* .css-11uhmi3-control {
     max-height: 42px !important;
   }
   .css-3w2yfm-ValueContainer {
@@ -37,8 +37,14 @@
   }
   .css-ovqh0o-control {
     border: 2px solid #737373 !important;
+  } */
+  .css-1hb7zxy-IndicatorsContainer {
+    padding-block: 3px !important;
   }
-
+  .css-ovqh0o-control{
+    border: 2px solid #737373 !important;
+  }
+  
   .swiper-pagination-bullet-active {
     background: white !important; /* Or any other color you want for the active bullet */
   }
