@@ -690,7 +690,7 @@ function ProjectRegForm() {
     setLogoPreview(null);
   };
   // clear cover func
-  const clearCoverFunc = (values) => {
+  const clearCoverFunc = (val) => {
     let field_ids = val;
     setValue(field_ids, null);
     clearErrors(field_ids);
