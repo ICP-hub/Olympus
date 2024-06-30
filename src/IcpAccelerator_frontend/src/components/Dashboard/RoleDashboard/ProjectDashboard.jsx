@@ -15,6 +15,12 @@ const ProjectDashboard = ({ numSkeletons }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [projectData, setProjectData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [noDataStates, setNoDataStates] = useState({
+    ongoingcohort: false,
+    upcomingcohort: false,
+  
+  });
   const fetchProjectData = async (isMounted) => {
     setIsLoading(true);
     await actor
@@ -56,6 +62,13 @@ const ProjectDashboard = ({ numSkeletons }) => {
     };
   }, [actor]);
 
+
+  const handleNoDataChange = (key, value) => {
+    setNoDataStates((prevState) => ({
+      ...prevState,
+      [key]: value,
+    }));
+  };
   return (
     <section className="overflow-hidden relative bg-gray-100">
       <div className="font-fontUse flex flex-col w-full h-fit px-[5%] lg1:px-[4%] py-[4%]">
@@ -108,18 +121,31 @@ const ProjectDashboard = ({ numSkeletons }) => {
           <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
             Ongoing Accelerator
           </h1>
+          {noDataStates.ongoingcohort && (
           <button
             onClick={() => navigate(`/all-live-ongoing-cohort`)}
             className="border border-violet-800 px-4 py-2 rounded-md text-violet-800"
           >
             View More
-          </button>
+          </button>)}
         </div>
         <div className="mb-4">
-          <LiveEventsCards wrap={true} register={true} />
+        <LiveEventsCards
+                    wrap={true}
+                    register={true}
+                    onNoDataChange={(value) =>
+                      handleNoDataChange("ongoingcohort", value)
+                    }
+                  />
         </div>
         <div className="mb-4 fade-in">
-          <UpcomingEventsCard wrap={true} register={true} />
+          <UpcomingEventsCard
+                    wrap={true}
+                    register={true}
+                    onNoDataChange={(value) =>
+                      handleNoDataChange("upcomingcohort", value)
+                    }
+                  />
         </div>
       </div>
     </section>

@@ -11,8 +11,18 @@ const schema = yup
     jobTitle: yup
       .string()
       .required("Job Title is required")
-      .min(5, "Title must be at least 5 characters"),
-    jobLocation: yup.string().required("Job Location is required"),
+      .min(5, "Title must be at least 5 characters")
+      .test(
+        "no-leading-spaces",
+        "Job Title should not have leading spaces",
+        (value) => !value || value.trimStart() === value
+      ),
+    jobLocation: yup.string().required("Job Location is required")
+    .test(
+      "no-leading-spaces",
+      "Job Location should not have leading spaces",
+      (value) => !value || value.trimStart() === value
+    ),
     jobLink: yup
       .string()
       .url("Invalid website URL")
@@ -37,6 +47,11 @@ const schema = yup
         "maxChars",
         "Job description must not exceed 500 characters",
         (value) => !value || value.length <= 500
+      )
+      .test(
+        "no-leading-spaces",
+        "Job description should not have leading spaces",
+        (value) => !value || value.trimStart() === value
       ),
   })
   .required();

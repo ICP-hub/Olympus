@@ -9,7 +9,12 @@ const schema = yup
     announcementTitle: yup
       .string()
       .required("Announcement title is required")
-      .min(5, "Title must be at least 5 characters"),
+      .min(5, "Title must be at least 5 characters")
+      .test(
+        "no-leading-spaces",
+        "Announcement title should not have leading spaces",
+        (value) => !value || value.trimStart() === value
+      ),
     announcementDescription: yup
       .string()
       .required("Description is required")
@@ -23,6 +28,10 @@ const schema = yup
         "maxChars",
         "Announcement description must not exceed 500 characters",
         (value) => !value || value.length <= 500
+      ).test(
+        "no-leading-spaces",
+        "Announcement description should not have leading spaces",
+        (value) => !value || value.trimStart() === value
       ),
   })
   .required();

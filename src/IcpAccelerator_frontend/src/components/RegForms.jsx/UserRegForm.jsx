@@ -131,11 +131,6 @@ console.log('principal',principal)
           (value) => !value || value.trimStart() === value
         )
         .test(
-          "no-leading-spaces",
-          "Bio should not have leading spaces",
-          (value) => !value || value.trimStart() === value
-        )
-        .test(
           "maxChars",
           "Bio must not exceed 500 characters",
           (value) => !value || value.length <= 500
