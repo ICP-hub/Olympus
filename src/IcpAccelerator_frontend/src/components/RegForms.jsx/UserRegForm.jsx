@@ -9,6 +9,7 @@ import { ThreeDots } from "react-loader-spinner";
 import { useCountries } from "react-countries";
 import ReactSelect from "react-select";
 import CompressedImage from "../ImageCompressed/CompressedImage";
+import { Principal } from "@dfinity/principal";
 
 const UserRegForm = () => {
   const { countries } = useCountries();
@@ -20,7 +21,12 @@ const UserRegForm = () => {
     (currState) => currState.profileTypes.profiles
   );
   const userFullData = useSelector((currState) => currState.userData.data.Ok);
+  const userCurrentRoleStatusActiveRole = useSelector(
+    (currState) => currState.currentRoleStatus.activeRole
+  );
+  const principal = useSelector((currState) => currState.internet.principal);
 
+console.log('principal',principal)
   // STATES
 
   // user image states
@@ -250,6 +256,24 @@ const UserRegForm = () => {
         profile_picture: imageData ? [imageData] : [],
       };
       try {
+   const covertedPrincipal = await Principal.fromText(principal);
+        if (userCurrentRoleStatusActiveRole === "user") {
+          await actor.update_user_data(covertedPrincipal,userData).then((result) => {
+            if ("Ok" in result) {
+              toast.success("Approval request is sent");
+              setTimeout(() => {
+                window.location.href = "/";
+              }, 500);
+            } else {
+              toast.error(result);
+            }
+          });
+        } else if (
+          userCurrentRoleStatusActiveRole === null ||
+          userCurrentRoleStatusActiveRole === "mentor" ||
+          userCurrentRoleStatusActiveRole === "project" ||
+          userCurrentRoleStatusActiveRole === "vc"
+        ) {
         await actor.register_user(userData).then((result) => {
           if (result && result.includes("User registered successfully")) {
             toast.success("Registered as a User");
@@ -257,7 +281,9 @@ const UserRegForm = () => {
           } else {
             toast.error("Something got wrong");
           }
+        
         });
+      }
       } catch (error) {
         toast.error(error);
         console.error("Error sending data to the backend:", error);

@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import MentorRegForm from "../RegForms.jsx/MentorRegForm";
 import InvestorRegForm from "../RegForms.jsx/InvestorRegForm";
 import ProjectRegForm from "../RegForms.jsx/ProjectRegForm";
+import UserRegForm from "../RegForms.jsx/UserRegForm";
 
 const UserProfile = () => {
   const userCurrentRoleStatusActiveRole = useSelector(
@@ -157,6 +158,7 @@ const UserProfile = () => {
               <ProjectRegForm />
             )}
             {userCurrentRoleStatusActiveRole === "vc" && <InvestorRegForm />}
+            {userCurrentRoleStatusActiveRole === "user" && <UserRegForm />}
           </div>
         </div>
       </section>
