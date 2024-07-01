@@ -668,7 +668,7 @@ console.log('principal',principal)
                       valueContainer: (provided, state) => ({
                         ...provided,
                         overflow: "scroll",
-                        maxHeight: "38px",
+                        maxHeight: "40px",
                         scrollbarWidth: "none",
                       }),
                       placeholder: (provided, state) => ({
@@ -800,7 +800,7 @@ console.log('principal',principal)
                       valueContainer: (provided, state) => ({
                         ...provided,
                         overflow: "scroll",
-                        maxHeight: "38px",
+                        maxHeight: "40px",
                         scrollbarWidth: "none",
                       }),
                       placeholder: (provided, state) => ({

@@ -695,6 +695,37 @@ const UserUpdate = () => {
                               ? "#ef4444"
                               : "currentColor",
                           },
+                          display: "flex",
+                          overflowX: "auto",
+                          maxHeight: "43px",
+                          "&::-webkit-scrollbar": {
+                            display: "none",
+                          },
+                        }),
+                        valueContainer: (provided, state) => ({
+                          ...provided,
+                          overflow: "scroll",
+                          maxHeight: "40px",
+                          scrollbarWidth: "none",
+                        }),
+                        placeholder: (provided, state) => ({
+                          ...provided,
+                          color: errors.domains_interested_in
+                            ? "#ef4444"
+                            : "rgb(107 114 128)",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }),
+                        multiValue: (provided) => ({
+                          ...provided,
+                          display: "inline-flex",
+                          alignItems: "center",
+                        }),
+                        multiValueRemove: (provided) => ({
+                          ...provided,
+                          display: "inline-flex",
+                          alignItems: "center",
                         }),
                       }}
                       value={interestedDomainsSelectedOptions}
@@ -766,6 +797,37 @@ const UserUpdate = () => {
                               ? "#ef4444"
                               : "currentColor",
                           },
+                          display: "flex",
+                          overflowX: "auto",
+                          maxHeight: "43px",
+                          "&::-webkit-scrollbar": {
+                            display: "none",
+                          },
+                        }),
+                        valueContainer: (provided, state) => ({
+                          ...provided,
+                          overflow: "scroll",
+                          maxHeight: "40px",
+                          scrollbarWidth: "none",
+                        }),
+                        placeholder: (provided, state) => ({
+                          ...provided,
+                          color: errors.reasons_to_join_platform
+                            ? "#ef4444"
+                            : "rgb(107 114 128)",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }),
+                        multiValue: (provided) => ({
+                          ...provided,
+                          display: "inline-flex",
+                          alignItems: "center",
+                        }),
+                        multiValueRemove: (provided) => ({
+                          ...provided,
+                          display: "inline-flex",
+                          alignItems: "center",
                         }),
                       }}
                       value={reasonOfJoiningSelectedOptions}

@@ -273,7 +273,9 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
       ? uint8ArrayToBase64(userData[0]?.params?.project_logo[0])
       : null;
 
-  const Project_cover = uint8ArrayToBase64(userData[0]?.params?.project_cover[0]);
+  const Project_cover = uint8ArrayToBase64(
+    userData[0]?.params?.project_cover[0]
+  );
   return (
     <>
       <div className="w-full flex flex-col">
@@ -952,7 +954,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
           </div>
 
           <div className="flex flex-row justify-between bg-[#D2D5F2] shadow-md shadow-gray-400 p-6 rounded-lg md:w-3/4 sxxs:w-fulll">
-            <ul className="grid grid-cols-2 gap-4 w-full md:pl-[7.5rem]">
+            <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full md:pl-[7.5rem]">
               <li className="list-disc">
                 <div className="flex flex-col items-start justify-start sm:text-left ">
                   <h2 className=" font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
@@ -975,7 +977,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                 </div>
               </li>
 
-              <li className="list-disc ml-4">
+              <li className="list-disc md:ml-4">
                 <div className="flex flex-col items-start justify-start sm:text-left">
                   <h2 className=" font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
                     Uploaded Private Docs :
@@ -1022,7 +1024,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                 </div>
               </li>
 
-              <li className="list-disc ml-4">
+              <li className="list-disc md:ml-4">
                 <div className="flex flex-col items-start justify-start sm:text-left">
                   <p className="text-black font-semibold mb-1">
                     Area Of Interest :
@@ -1036,7 +1038,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                         .map((tag, index) => (
                           <div
                             key={index}
-                            className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]" 
+                            className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
                           >
                             {tag.trim()}
                           </div>
@@ -1072,7 +1074,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                   </div>
                 </div>
               </li>
-              <li className="list-disc ml-4">
+              <li className="list-disc md:ml-4">
                 <div className="flex flex-col items-start justify-start sm:text-left">
                   <h2 className=" font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
                     Revenue:
@@ -1110,7 +1112,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                   </div>
                 </div>
               </li>
-              <li className="list-disc ml-4">
+              <li className="list-disc md:ml-4">
                 <div className="flex flex-col items-start justify-start sm:text-left">
                   <h2 className=" font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
                     Investors :
@@ -1153,7 +1155,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                 </div>
               </li>
 
-              <li className="list-disc ml-4">
+              <li className="list-disc md:ml-4">
                 <div className=" flex flex-col text-gray-600">
                   <p className="text-black font-semibold mb-1">
                     Support Multichain :
@@ -1202,7 +1204,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                   </div>
                 </div>
               </li>
-              <li className="list-disc ml-4">
+              <li className="list-disc md:ml-4">
                 <div className="flex flex-col items-start justify-start sm:text-left">
                   <h2 className=" font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
                     Weekly Active:
@@ -1240,7 +1242,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                   </div>
                 </div>
               </li>
-              <li className="list-disc ml-4">
+              <li className="list-disc md:ml-4">
                 <div className="flex flex-col items-start justify-start sm:text-left">
                   <h2 className=" font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
                     Targeted Amount:
@@ -1279,7 +1281,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                 </div>
               </li>
 
-              {/* <li className="list-disc ml-4">
+              {/* <li className="list-disc md:ml-4">
                 <div className="flex flex-col items-start justify-start sm:text-left">
                   <h2 className=" font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
                     Project Area Of Focus :
@@ -1318,7 +1320,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                   </div>
                 </div>
               </li> */}
-              {/* <li className="list-disc ml-4">
+              {/* <li className="list-disc md:ml-4">
                 <div className="flex flex-col items-start justify-start sm:text-left">
                   <h2 className=" font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
                     Project Team :
@@ -1358,7 +1360,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                   </div>
                 </div>
               </li> */}
-              {/* <li className="list-disc ml-4">
+              {/* <li className="list-disc md:ml-4">
                 <div className="flex flex-col items-start justify-start sm:text-left">
                   <h2 className=" font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
                     VC's assigned :

@@ -333,50 +333,65 @@ function ProjectRegForm() {
       ),
       weekly_active_users: yup.number().nullable(true).optional(),
       revenue: yup.number().nullable(true).optional(),
-      
+
       money_raising: yup
-      .string()
-      .required("Required")
-      .oneOf(["true", "false"], "Invalid value"),
+        .string()
+        .required("Required")
+        .oneOf(["true", "false"], "Invalid value"),
       money_raised_till_now: yup
-      .string()
-      .required("Required")
-      .oneOf(["true", "false"], "Invalid value"),
-  
-       icp_grants :yup.mixed().test(
-        "is-required-or-nullable",
-        "You must enter a number",
-        function (value) {
-          const { money_raised_till_now } = this.parent;
-          if (money_raised_till_now === "true") {
-            return yup.number().min(0, "Must be a non-negative number").isValidSync(value);
+        .string()
+        .required("Required")
+        .oneOf(["true", "false"], "Invalid value"),
+
+      icp_grants: yup
+        .mixed()
+        .test(
+          "is-required-or-nullable",
+          "You must enter a number",
+          function (value) {
+            const { money_raised_till_now } = this.parent;
+            if (money_raised_till_now === "true") {
+              return yup
+                .number()
+                .min(0, "Must be a non-negative number")
+                .isValidSync(value);
+            }
+            return value === null || value === "" || value === 0;
           }
-          return value === null || value === "" || value === 0;
-        }
-      ),
-       investors : yup.mixed().test(
-        "is-required-or-nullable",
-        "You must enter a number",
-        function (value) {
-          const { money_raised_till_now } = this.parent;
-          if (money_raised_till_now === "true") {
-            return yup.number().min(0, "Must be a non-negative number").isValidSync(value);
+        ),
+      investors: yup
+        .mixed()
+        .test(
+          "is-required-or-nullable",
+          "You must enter a number",
+          function (value) {
+            const { money_raised_till_now } = this.parent;
+            if (money_raised_till_now === "true") {
+              return yup
+                .number()
+                .min(0, "Must be a non-negative number")
+                .isValidSync(value);
+            }
+            return value === null || value === "" || value === 0;
           }
-          return value === null || value === "" || value === 0;
-        }
-      ),
-      
-       raised_from_other_ecosystem : yup.mixed().test(
-        "is-required-or-nullable",
-        "You must enter a number",
-        function (value) {
-          const { money_raised_till_now } = this.parent;
-          if (money_raised_till_now === "true") {
-            return yup.number().min(0, "Must be a non-negative number").isValidSync(value);
+        ),
+
+      raised_from_other_ecosystem: yup
+        .mixed()
+        .test(
+          "is-required-or-nullable",
+          "You must enter a number",
+          function (value) {
+            const { money_raised_till_now } = this.parent;
+            if (money_raised_till_now === "true") {
+              return yup
+                .number()
+                .min(0, "Must be a non-negative number")
+                .isValidSync(value);
+            }
+            return value === null || value === "" || value === 0;
           }
-          return value === null || value === "" || value === 0;
-        }
-      ),
+        ),
       target_amount: yup
         .number()
         .when("money_raising", (val, schema) =>
@@ -476,12 +491,14 @@ function ProjectRegForm() {
         .oneOf(["true", "false"], "Invalid value"),
       publicDocs: yup.array().of(
         yup.object().shape({
-          title: yup.string().required("Title is required")
-          .test(
-            "no-leading-spaces",
-            "Title should not have leading spaces",
-            (value) => !value || value.trimStart() === value
-          ),
+          title: yup
+            .string()
+            .required("Title is required")
+            .test(
+              "no-leading-spaces",
+              "Title should not have leading spaces",
+              (value) => !value || value.trimStart() === value
+            ),
           link: yup
             .string()
             .url("Must be a valid URL")
@@ -494,12 +511,14 @@ function ProjectRegForm() {
         .oneOf(["true", "false"], "Invalid value"),
       privateDocs: yup.array().of(
         yup.object().shape({
-          title: yup.string().required("Title is required")
-          .test(
-            "no-leading-spaces",
-            "Title should not have leading spaces",
-            (value) => !value || value.trimStart() === value
-          ),
+          title: yup
+            .string()
+            .required("Title is required")
+            .test(
+              "no-leading-spaces",
+              "Title should not have leading spaces",
+              (value) => !value || value.trimStart() === value
+            ),
           link: yup
             .string()
             .url("Must be a valid URL")
@@ -1489,6 +1508,37 @@ function ProjectRegForm() {
                             ? "#ef4444"
                             : "currentColor",
                         },
+                        display: "flex",
+                        overflowX: "auto",
+                        maxHeight: "43px",
+                        "&::-webkit-scrollbar": {
+                          display: "none",
+                        },
+                      }),
+                      valueContainer: (provided, state) => ({
+                        ...provided,
+                        overflow: "scroll",
+                        maxHeight: "40px",
+                        scrollbarWidth: "none",
+                      }),
+                      placeholder: (provided, state) => ({
+                        ...provided,
+                        color: errors.domains_interested_in
+                          ? "#ef4444"
+                          : "rgb(107 114 128)",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }),
+                      multiValue: (provided) => ({
+                        ...provided,
+                        display: "inline-flex",
+                        alignItems: "center",
+                      }),
+                      multiValueRemove: (provided) => ({
+                        ...provided,
+                        display: "inline-flex",
+                        alignItems: "center",
                       }),
                     }}
                     value={interestedDomainsSelectedOptions}
@@ -1595,6 +1645,37 @@ function ProjectRegForm() {
                             ? "#ef4444"
                             : "currentColor",
                         },
+                        display: "flex",
+                        overflowX: "auto",
+                        maxHeight: "43px",
+                        "&::-webkit-scrollbar": {
+                          display: "none",
+                        },
+                      }),
+                      valueContainer: (provided, state) => ({
+                        ...provided,
+                        overflow: "scroll",
+                        maxHeight: "40px",
+                        scrollbarWidth: "none",
+                      }),
+                      placeholder: (provided, state) => ({
+                        ...provided,
+                        color: errors.reasons_to_join_platform
+                          ? "#ef4444"
+                          : "rgb(107 114 128)",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }),
+                      multiValue: (provided) => ({
+                        ...provided,
+                        display: "inline-flex",
+                        alignItems: "center",
+                      }),
+                      multiValueRemove: (provided) => ({
+                        ...provided,
+                        display: "inline-flex",
+                        alignItems: "center",
                       }),
                     }}
                     value={reasonOfJoiningSelectedOptions}
@@ -2071,6 +2152,37 @@ function ProjectRegForm() {
                               ? "#ef4444"
                               : "currentColor",
                           },
+                          display: "flex",
+                          overflowX: "auto",
+                          maxHeight: "43px",
+                          "&::-webkit-scrollbar": {
+                            display: "none",
+                          },
+                        }),
+                        valueContainer: (provided, state) => ({
+                          ...provided,
+                          overflow: "scroll",
+                          maxHeight: "40px",
+                          scrollbarWidth: "none",
+                        }),
+                        placeholder: (provided, state) => ({
+                          ...provided,
+                          color: errors.multi_chain_names
+                            ? "#ef4444"
+                            : "rgb(107 114 128)",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }),
+                        multiValue: (provided) => ({
+                          ...provided,
+                          display: "inline-flex",
+                          alignItems: "center",
+                        }),
+                        multiValueRemove: (provided) => ({
+                          ...provided,
+                          display: "inline-flex",
+                          alignItems: "center",
                         }),
                       }}
                       value={multiChainSelectedOptions}
@@ -2610,42 +2722,42 @@ function ProjectRegForm() {
                   {uploadPrivateDocuments === "true" &&
                     fieldsPrivate.map((field, index) => (
                       <div key={field.id}>
-                      <div className="relative z-0 group mb-4">
-                        <div className="sm:flex sm:flex-row sm:space-x-4 block">
-                          <div className="w-full">
-                            <label className="block mb-2 text-lg font-medium text-gray-500 text-start">
-                              Title {index + 1}
-                            </label>
-                            <input
-                              {...register(`privateDocs.${index}.title`)}
-                              className="bg-gray-50 border-2 border-black rounded-lg block w-full p-2.5 text-black"
-                              type="text"
-                            />
-                            {errors.privateDocs?.[index]?.title && (
-                              <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                                {errors.privateDocs[index].title.message}
-                              </p>
-                            )}
-                          </div>
-                          <div className="w-full">
-                            <label className="block mb-2 text-lg font-medium text-gray-500 text-start">
-                              Link {index + 1}
-                            </label>
-                            <input
-                              {...register(`privateDocs.${index}.link`)}
-                              className="bg-gray-50 border-2 border-black rounded-lg block w-full p-2.5 text-black"
-                              type="text"
-                            />
-                            {errors.privateDocs?.[index]?.link && (
-                              <p className="mt-1 text-sm text-red-500 font-bold text-left line-clamp-1">
-                                {errors.privateDocs[index].link.message}
-                              </p>
-                            )}
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => handleremovePrivate(index)}
-                            className={` bg-red-600 hover:bg-red-700 text-white rounded-lg px-4 py-3 sm0:ml-2
+                        <div className="relative z-0 group mb-4">
+                          <div className="sm:flex sm:flex-row sm:space-x-4 block">
+                            <div className="w-full">
+                              <label className="block mb-2 text-lg font-medium text-gray-500 text-start">
+                                Title {index + 1}
+                              </label>
+                              <input
+                                {...register(`privateDocs.${index}.title`)}
+                                className="bg-gray-50 border-2 border-black rounded-lg block w-full p-2.5 text-black"
+                                type="text"
+                              />
+                              {errors.privateDocs?.[index]?.title && (
+                                <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                                  {errors.privateDocs[index].title.message}
+                                </p>
+                              )}
+                            </div>
+                            <div className="w-full">
+                              <label className="block mb-2 text-lg font-medium text-gray-500 text-start">
+                                Link {index + 1}
+                              </label>
+                              <input
+                                {...register(`privateDocs.${index}.link`)}
+                                className="bg-gray-50 border-2 border-black rounded-lg block w-full p-2.5 text-black"
+                                type="text"
+                              />
+                              {errors.privateDocs?.[index]?.link && (
+                                <p className="mt-1 text-sm text-red-500 font-bold text-left line-clamp-1">
+                                  {errors.privateDocs[index].link.message}
+                                </p>
+                              )}
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => handleremovePrivate(index)}
+                              className={` bg-red-600 hover:bg-red-700 text-white rounded-lg px-4 py-3 sm0:ml-2
                               ${
                                 errors.privateDocs?.[index]?.title
                                   ? "self-center mt-1 sm0:mt-3"
@@ -2656,31 +2768,33 @@ function ProjectRegForm() {
                                   ? "self-center mt-1 sm0:mt-3"
                                   : "self-end"
                               }`}
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 384 512"
-                              fill="white"
-                              className="w-5 h-5"
                             >
-                              <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
-                            </svg>
-                          </button>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 384 512"
+                                fill="white"
+                                className="w-5 h-5"
+                              >
+                                <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
+                              </svg>
+                            </button>
+                          </div>
                         </div>
+                        {uploadPrivateDocuments === "true" &&
+                          index === fieldsPrivate.length - 1 && (
+                            <div className="flex justify-end items-center">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  appendPrivate({ title: "", link: "" })
+                                }
+                                className="text-white bg-blue-800 rounded-md px-5 py-2"
+                              >
+                                Add Private Docs
+                              </button>
+                            </div>
+                          )}
                       </div>
-                      {uploadPrivateDocuments === "true" && index === fieldsPrivate.length - 1 && (
-                        <div className="flex justify-end items-center">
-                          <button
-                            type="button"
-                            onClick={() => appendPrivate({ title: "", link: "" })}
-                            className="text-white bg-blue-800 rounded-md px-5 py-2"
-                          >
-                            Add Private Docs
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                    
                     ))}
                 </React.Fragment>
 
@@ -2714,7 +2828,8 @@ function ProjectRegForm() {
                   {uploadPublicDocuments === "true" &&
                     fields.map((field, index) => (
                       <div className="relative z-0 group mb-6">
-                        <div className="sm:flex sm:flex-row sm:space-x-4 block"
+                        <div
+                          className="sm:flex sm:flex-row sm:space-x-4 block"
                           key={field.id}
                         >
                           <div className="w-full">
