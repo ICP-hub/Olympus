@@ -433,7 +433,7 @@ pub fn mutate_state<R>(f: impl FnOnce(&mut State) -> R) -> R {
     STATE.with(|cell| f(&mut cell.borrow_mut()))
 }
 
-#[derive(Default, Clone)]
+#[derive(Default, Clone, Debug)]
 pub struct Candid<T>(pub T)
 where
     T: CandidType + for<'de> Deserialize<'de>;

@@ -169,13 +169,11 @@ pub async fn create_cohort(mut params: Cohort) -> Result<String, String> {
             key: cohort_logo_key.clone(),
         };
 
-        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
-            .await
-            .unwrap();
+        // let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
+        //     .await
+        //     .unwrap();
 
-        let (result,): ((),) = call(canister_id, "store", (cohort_logo_arg,))
-            .await
-            .unwrap();
+        let result = call(canister_id, "store", (cohort_logo_arg,)).await.map_err(|e| format!("Error storing asset: {:?}", e))?;
 
         params.cohort_banner = Some(
             (canister_id.to_string() + &cohort_logo_key)
@@ -406,13 +404,19 @@ pub fn send_enrollment_request_as_investor(
     let caller = ic_cdk::api::caller();
     let now = ic_cdk::api::time();
 
+    ic_cdk::println!("Caller Principal: {:?}", caller);
+    ic_cdk::println!("Sending enrollment request for cohort ID: {}", cohort_id);
+
     // Retrieve the cohort creator's Principal and check for existing pending requests
     let (cohort_creator_principal, is_pending) = read_state(|state| {
         let cohort_creator_principal = state
             .cohort_info
             .get(&cohort_id)
             .map(|c| c.0.cohort_creator)
-            .unwrap_or(Principal::anonymous());
+            .unwrap_or_else(|| {
+                ic_cdk::println!("Cohort ID {} not found, using anonymous principal.", cohort_id);
+                Principal::anonymous()
+            });
 
         let is_pending = state
             .cohort_enrollment_request
@@ -423,15 +427,19 @@ pub fn send_enrollment_request_as_investor(
                     .any(|req| req.request_status == "pending" && req.enroller_principal == caller)
             });
 
+        ic_cdk::println!("Cohort creator principal: {:?}", cohort_creator_principal);
+        ic_cdk::println!("Is there a pending request already? {}", is_pending);
+
         (cohort_creator_principal, is_pending)
     });
 
     if is_pending {
+        ic_cdk::println!("Rejected: Existing pending enrollment request found for cohort ID {}", cohort_id);
         return "There is already a pending enrollment request for this cohort.".to_string();
     }
 
     let enrollment_request = CohortEnrollmentRequest {
-        cohort_details: get_cohort(cohort_id),
+        cohort_details: get_cohort(cohort_id.clone()),
         sent_at: now,
         accepted_at: 0,
         rejected_at: 0,
@@ -444,20 +452,33 @@ pub fn send_enrollment_request_as_investor(
         enroller_principal: caller,
     };
 
+    ic_cdk::println!("Created enrollment request: {:?}", enrollment_request);
+
     mutate_state(|state| {
-        if let Some(mut requests) = state
+        let stored_principal = StoredPrincipal(cohort_creator_principal);
+        let mut updated_requests = state
             .cohort_enrollment_request
-            .get(&StoredPrincipal(cohort_creator_principal))
-        {
-            requests.0.push(enrollment_request);
-        } else {
-            state.cohort_enrollment_request.insert(
-                StoredPrincipal(cohort_creator_principal),
-                Candid(vec![enrollment_request]),
+            .get(&stored_principal)
+            .map_or_else(
+                || Vec::new(),
+                |reqs| reqs.0.clone(),
+            );
+
+        updated_requests.push(enrollment_request.clone());
+        state.cohort_enrollment_request.insert(stored_principal.clone(), Candid(updated_requests.clone()));
+
+        ic_cdk::println!("State after mutation:");
+        for (key, value) in state.cohort_enrollment_request.iter() {
+            ic_cdk::println!(
+                "Principal: {:?}, Number of Requests: {}, Requests: {:?}",
+                key,
+                value.0.len(),
+                value
             );
         }
     });
 
+    ic_cdk::println!("Enrollment request sent successfully for cohort ID {}", cohort_id);
     "Enrollment request sent successfully".to_string()
 }
 
@@ -528,23 +549,35 @@ pub fn send_enrollment_request_as_project(
 pub fn get_pending_cohort_enrollment_requests(
     mentor_principal: Principal,
 ) -> Vec<CohortEnrollmentRequest> {
-    read_state(|state| {
+    ic_cdk::println!("Fetching pending cohort enrollment requests for principal: {:?}", mentor_principal);
+
+    let pending_requests = read_state(|state| {
         state
             .cohort_enrollment_request
             .get(&StoredPrincipal(mentor_principal))
             .map_or_else(
-                || Vec::new(),
+                || {
+                    ic_cdk::println!("No enrollment requests found for principal: {:?}", mentor_principal);
+                    Vec::new()
+                },
                 |request_list| {
-                    request_list
+                    let pending: Vec<_> = request_list
                         .0
                         .iter()
                         .filter(|request| request.request_status == "pending")
                         .cloned()
-                        .collect()
+                        .collect();
+
+                    ic_cdk::println!("Found {} pending requests for principal: {:?}", pending.len(), mentor_principal);
+                    pending
                 },
             )
-    })
+    });
+
+    ic_cdk::println!("Total pending requests returned: {}", pending_requests.len());
+    pending_requests
 }
+
 
 #[query(guard = "is_user_anonymous")]
 pub fn get_accepted_cohort_enrollment_requests(
@@ -837,26 +870,38 @@ pub fn get_mentors_applied_for_cohort(cohort_id: String) -> Result<Vec<MentorInt
 #[query(guard = "is_user_anonymous")]
 pub fn get_vcs_applied_for_cohort(
     cohort_id: String,
-) -> Result<Vec<VentureCapitalistInternal>, String> {
+) -> Result<Vec<(VentureCapitalistInternal, Principal)>, String> {
     let caller = caller();
 
     let cohort: Option<Candid<CohortDetails>> =
         read_state(|state| state.cohort_info.get(&cohort_id).map(|c| c.clone()));
 
-    let concerned_cohort: CohortDetails = match cohort {
-        Some(candid_cohort) => candid_cohort.0,
-        None => return Err("Cohort doesn't exist".to_string()),
-    };
+    // let concerned_cohort: CohortDetails = match cohort {
+    //     Some(candid_cohort) => candid_cohort.0,
+    //     None => return Err("Cohort doesn't exist".to_string()),
+    // };
 
     // if concerned_cohort.cohort_creator != caller {
     //     return Err("You must be the cohort creator to see venture capitalist details of individuals".to_string());
     // }
 
-    let vcs_in_cohort: Vec<VentureCapitalistInternal> = read_state(|state| {
-        state
-            .vc_applied_for_cohort
-            .get(&cohort_id)
-            .map_or_else(Vec::new, |candid_mentors| candid_mentors.0.clone())
+    let vcs_in_cohort: Vec<(VentureCapitalistInternal, Principal)> = read_state(|state| {
+        state.vc_applied_for_cohort.get(&cohort_id)
+            .map_or_else(Vec::new, |candid_vcs| {
+                candid_vcs.0.iter()
+                    .filter_map(|mentor_uid| {
+                        // Iterate over vc_storage to find the corresponding Principal for each mentor_uid
+                        state.vc_storage.iter()
+                            .find_map(|(principal, vc)| {
+                                if vc.0.uid == *mentor_uid.uid {
+                                    Some((vc.0.clone(), principal.0)) // vc is already of type VentureCapitalistInternal
+                                } else {
+                                    None
+                                }
+                            })
+                    })
+                    .collect()
+            })
     });
 
     Ok(vcs_in_cohort)
