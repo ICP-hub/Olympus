@@ -6,7 +6,7 @@ import SecondEventCard from "./SecondEventCard";
 import NoData from "../../../../assets/images/file_not_found.png";
 import OngoingAcceleratorSkeleton from "../../Dashboard/Skeleton/OngoingAcceleratorskeleton";
 
-const LiveEventsCards = ({ wrap, register }) => {
+const LiveEventsCards = ({ wrap, register,onNoDataChange }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [noData, setNoData] = useState(null);
   const [allLiveEventsData, setAllLiveEventsData] = useState([]);
@@ -51,11 +51,13 @@ const LiveEventsCards = ({ wrap, register }) => {
               setIsLoading(false);
               setAllLiveEventsData([]);
               setCountData("");
+              onNoDataChange(true);
             } else {
               setNoData(false);
               setIsLoading(false);
               setAllLiveEventsData(result.data);
               setCountData(result.total_count);
+              onNoDataChange(false);
             }
           }
         })
@@ -65,6 +67,7 @@ const LiveEventsCards = ({ wrap, register }) => {
             setIsLoading(false);
             setCountData("");
             setAllLiveEventsData([]);
+            onNoDataChange(true);
             console.log("Error in get_all_cohort", error);
           }
         });

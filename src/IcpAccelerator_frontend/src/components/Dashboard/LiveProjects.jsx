@@ -106,7 +106,6 @@ const LiveProjects = ({ progress, numSkeletons, onNoDataChange  }) => {
             } else {
               setAllProjectData(result);
               onNoDataChange(false);
-              onNoDataChange(true);
               setIsLoading(false);
               setNoData(false);
             }

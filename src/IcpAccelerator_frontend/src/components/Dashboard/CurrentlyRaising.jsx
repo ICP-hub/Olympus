@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 import NoDataCard from "../Mentors/Event/RaisingNoDataCard";
 import { CurrentlyRaisingSkeleton } from "./Skeleton/Currentlyraisingskeleton";
 
-const CurrentlyRaising = ({ progress }) => {
+const CurrentlyRaising = ({ progress, numSkeleton, onNoDataChange }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ const CurrentlyRaising = ({ progress }) => {
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
-  const [numSkeletons, setNumSkeletons] = useState(1);
+  const [numSkeletons, setNumSkeletons] = useState(numSkeleton);
 
   const updateNumSkeletons = () => {
     if (window.innerWidth >= 1240) {
@@ -86,10 +86,12 @@ const CurrentlyRaising = ({ progress }) => {
           if (!result || result.length == 0) {
             setNoData(true);
             setAllProjectData([]);
+            onNoDataChange(true);
           } else {
             setAllProjectData(result.data);
             // setCountData(result.count);
             setNoData(false);
+            onNoDataChange(false);
           }
           setIsLoading(false);
         }
@@ -99,6 +101,7 @@ const CurrentlyRaising = ({ progress }) => {
           setNoData(true);
           setAllProjectData([]);
           setIsLoading(false);
+          onNoDataChange(true);
           // setCountData();
           console.log("error-in-get-all-projects", error);
         }
