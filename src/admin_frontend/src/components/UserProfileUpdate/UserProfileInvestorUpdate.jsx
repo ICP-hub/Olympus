@@ -1273,6 +1273,37 @@ const UserProfileInvestorUpdate = () => {
                                             ? "#ef4444"
                                             : "currentColor",
                                         },
+                                        display: "flex",
+                                        overflowX: "auto",
+                                        maxHeight: "43px",
+                                        "&::-webkit-scrollbar": {
+                                          display: "none",
+                                        },
+                                      }),
+                                      valueContainer: (provided, state) => ({
+                                        ...provided,
+                                        overflow: "scroll",
+                                        maxHeight: "40px",
+                                        scrollbarWidth: "none",
+                                      }),
+                                      placeholder: (provided, state) => ({
+                                        ...provided,
+                                        color: errors.domains_interested_in
+                                          ? "#ef4444"
+                                          : "rgb(107 114 128)",
+                                        whiteSpace: "nowrap",
+                                        overflow: "hidden",
+                                        textOverflow: "ellipsis",
+                                      }),
+                                      multiValue: (provided) => ({
+                                        ...provided,
+                                        display: "inline-flex",
+                                        alignItems: "center",
+                                      }),
+                                      multiValueRemove: (provided) => ({
+                                        ...provided,
+                                        display: "inline-flex",
+                                        alignItems: "center",
                                       }),
                                     }}
                                     value={interestedDomainsSelectedOptions}
@@ -1423,6 +1454,37 @@ const UserProfileInvestorUpdate = () => {
                                             ? "#ef4444"
                                             : "currentColor",
                                         },
+                                        display: "flex",
+                                        overflowX: "auto",
+                                        maxHeight: "43px",
+                                        "&::-webkit-scrollbar": {
+                                          display: "none",
+                                        },
+                                      }),
+                                      valueContainer: (provided, state) => ({
+                                        ...provided,
+                                        overflow: "scroll",
+                                        maxHeight: "40px",
+                                        scrollbarWidth: "none",
+                                      }),
+                                      placeholder: (provided, state) => ({
+                                        ...provided,
+                                        color: errors.reasons_to_join_platform
+                                          ? "#ef4444"
+                                          : "rgb(107 114 128)",
+                                        whiteSpace: "nowrap",
+                                        overflow: "hidden",
+                                        textOverflow: "ellipsis",
+                                      }),
+                                      multiValue: (provided) => ({
+                                        ...provided,
+                                        display: "inline-flex",
+                                        alignItems: "center",
+                                      }),
+                                      multiValueRemove: (provided) => ({
+                                        ...provided,
+                                        display: "inline-flex",
+                                        alignItems: "center",
                                       }),
                                     }}
                                     value={reasonOfJoiningSelectedOptions}
@@ -2080,6 +2142,37 @@ const UserProfileInvestorUpdate = () => {
                                     ? "#ef4444"
                                     : "currentColor",
                                 },
+                                display: "flex",
+                                overflowX: "auto",
+                                maxHeight: "43px",
+                                "&::-webkit-scrollbar": {
+                                  display: "none",
+                                },
+                              }),
+                              valueContainer: (provided, state) => ({
+                                ...provided,
+                                overflow: "scroll",
+                                maxHeight: "40px",
+                                scrollbarWidth: "none",
+                              }),
+                              placeholder: (provided, state) => ({
+                                ...provided,
+                                color: errors.invested_in_multi_chain_names
+                                  ? "#ef4444"
+                                  : "rgb(107 114 128)",
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                              }),
+                              multiValue: (provided) => ({
+                                ...provided,
+                                display: "inline-flex",
+                                alignItems: "center",
+                              }),
+                              multiValueRemove: (provided) => ({
+                                ...provided,
+                                display: "inline-flex",
+                                alignItems: "center",
                               }),
                             }}
                             value={investedInMultiChainSelectedOptions}
@@ -2204,6 +2297,37 @@ const UserProfileInvestorUpdate = () => {
                                         ? "#ef4444"
                                         : "currentColor",
                                     },
+                                    display: "flex",
+                                    overflowX: "auto",
+                                    maxHeight: "43px",
+                                    "&::-webkit-scrollbar": {
+                                      display: "none",
+                                    },
+                                  }),
+                                  valueContainer: (provided, state) => ({
+                                    ...provided,
+                                    overflow: "scroll",
+                                    maxHeight: "40px",
+                                    scrollbarWidth: "none",
+                                  }),
+                                  placeholder: (provided, state) => ({
+                                    ...provided,
+                                    color: errors.investment_categories
+                                      ? "#ef4444"
+                                      : "rgb(107 114 128)",
+                                    whiteSpace: "nowrap",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                  }),
+                                  multiValue: (provided) => ({
+                                    ...provided,
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                  }),
+                                  multiValueRemove: (provided) => ({
+                                    ...provided,
+                                    display: "inline-flex",
+                                    alignItems: "center",
                                   }),
                                 }}
                                 value={investmentCategoriesSelectedOptions}
@@ -2329,6 +2453,37 @@ const UserProfileInvestorUpdate = () => {
                                       ? "#ef4444"
                                       : "currentColor",
                                   },
+                                  display: "flex",
+                                  overflowX: "auto",
+                                  maxHeight: "43px",
+                                  "&::-webkit-scrollbar": {
+                                    display: "none",
+                                  },
+                                }),
+                                valueContainer: (provided, state) => ({
+                                  ...provided,
+                                  overflow: "scroll",
+                                  maxHeight: "40px",
+                                  scrollbarWidth: "none",
+                                }),
+                                placeholder: (provided, state) => ({
+                                  ...provided,
+                                  color: errors.investment_stage
+                                    ? "#ef4444"
+                                    : "rgb(107 114 128)",
+                                  whiteSpace: "nowrap",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                }),
+                                multiValue: (provided) => ({
+                                  ...provided,
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                }),
+                                multiValueRemove: (provided) => ({
+                                  ...provided,
+                                  display: "inline-flex",
+                                  alignItems: "center",
                                 }),
                               }}
                               value={investStageSelectedOptions}
@@ -2454,6 +2609,37 @@ const UserProfileInvestorUpdate = () => {
                                       ? "#ef4444"
                                       : "currentColor",
                                   },
+                                  display: "flex",
+                                  overflowX: "auto",
+                                  maxHeight: "43px",
+                                  "&::-webkit-scrollbar": {
+                                    display: "none",
+                                  },
+                                }),
+                                valueContainer: (provided, state) => ({
+                                  ...provided,
+                                  overflow: "scroll",
+                                  maxHeight: "40px",
+                                  scrollbarWidth: "none",
+                                }),
+                                placeholder: (provided, state) => ({
+                                  ...provided,
+                                  color: errors.investment_stage_range
+                                    ? "#ef4444"
+                                    : "rgb(107 114 128)",
+                                  whiteSpace: "nowrap",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                }),
+                                multiValue: (provided) => ({
+                                  ...provided,
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                }),
+                                multiValueRemove: (provided) => ({
+                                  ...provided,
+                                  display: "inline-flex",
+                                  alignItems: "center",
                                 }),
                               }}
                               value={investStageRangeSelectedOptions}
@@ -2653,6 +2839,37 @@ const UserProfileInvestorUpdate = () => {
                                       ? "#ef4444"
                                       : "currentColor",
                                   },
+                                  display: "flex",
+                                  overflowX: "auto",
+                                  maxHeight: "43px",
+                                  "&::-webkit-scrollbar": {
+                                    display: "none",
+                                  },
+                                }),
+                                valueContainer: (provided, state) => ({
+                                  ...provided,
+                                  overflow: "scroll",
+                                  maxHeight: "40px",
+                                  scrollbarWidth: "none",
+                                }),
+                                placeholder: (provided, state) => ({
+                                  ...provided,
+                                  color: errors.investment_type
+                                    ? "#ef4444"
+                                    : "rgb(107 114 128)",
+                                  whiteSpace: "nowrap",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                }),
+                                multiValue: (provided) => ({
+                                  ...provided,
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                }),
+                                multiValueRemove: (provided) => ({
+                                  ...provided,
+                                  display: "inline-flex",
+                                  alignItems: "center",
                                 }),
                               }}
                               value={typeOfInvestSelectedOptions}

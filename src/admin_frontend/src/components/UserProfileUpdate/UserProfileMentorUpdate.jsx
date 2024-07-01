@@ -1075,6 +1075,37 @@ const UserProfileMentorUpdate = () => {
                                             ? "#ef4444"
                                             : "currentColor",
                                         },
+                                        display: "flex",
+                                        overflowX: "auto",
+                                        maxHeight: "43px",
+                                        "&::-webkit-scrollbar": {
+                                          display: "none",
+                                        },
+                                      }),
+                                      valueContainer: (provided, state) => ({
+                                        ...provided,
+                                        overflow: "scroll",
+                                        maxHeight: "40px",
+                                        scrollbarWidth: "none",
+                                      }),
+                                      placeholder: (provided, state) => ({
+                                        ...provided,
+                                        color: errors.domains_interested_in
+                                          ? "#ef4444"
+                                          : "rgb(107 114 128)",
+                                        whiteSpace: "nowrap",
+                                        overflow: "hidden",
+                                        textOverflow: "ellipsis",
+                                      }),
+                                      multiValue: (provided) => ({
+                                        ...provided,
+                                        display: "inline-flex",
+                                        alignItems: "center",
+                                      }),
+                                      multiValueRemove: (provided) => ({
+                                        ...provided,
+                                        display: "inline-flex",
+                                        alignItems: "center",
                                       }),
                                     }}
                                     value={interestedDomainsSelectedOptions}
@@ -1225,6 +1256,37 @@ const UserProfileMentorUpdate = () => {
                                             ? "#ef4444"
                                             : "currentColor",
                                         },
+                                        display: "flex",
+                                        overflowX: "auto",
+                                        maxHeight: "43px",
+                                        "&::-webkit-scrollbar": {
+                                          display: "none",
+                                        },
+                                      }),
+                                      valueContainer: (provided, state) => ({
+                                        ...provided,
+                                        overflow: "scroll",
+                                        maxHeight: "40px",
+                                        scrollbarWidth: "none",
+                                      }),
+                                      placeholder: (provided, state) => ({
+                                        ...provided,
+                                        color: errors.reasons_to_join_platform
+                                          ? "#ef4444"
+                                          : "rgb(107 114 128)",
+                                        whiteSpace: "nowrap",
+                                        overflow: "hidden",
+                                        textOverflow: "ellipsis",
+                                      }),
+                                      multiValue: (provided) => ({
+                                        ...provided,
+                                        display: "inline-flex",
+                                        alignItems: "center",
+                                      }),
+                                      multiValueRemove: (provided) => ({
+                                        ...provided,
+                                        display: "inline-flex",
+                                        alignItems: "center",
                                       }),
                                     }}
                                     value={reasonOfJoiningSelectedOptions}
@@ -1804,6 +1866,37 @@ const UserProfileMentorUpdate = () => {
                                     ? "#ef4444"
                                     : "currentColor",
                                 },
+                                display: "flex",
+                                overflowX: "auto",
+                                maxHeight: "43px",
+                                "&::-webkit-scrollbar": {
+                                  display: "none",
+                                },
+                              }),
+                              valueContainer: (provided, state) => ({
+                                ...provided,
+                                overflow: "scroll",
+                                maxHeight: "40px",
+                                scrollbarWidth: "none",
+                              }),
+                              placeholder: (provided, state) => ({
+                                ...provided,
+                                color: errors.multi_chain_names
+                                  ? "#ef4444"
+                                  : "rgb(107 114 128)",
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                              }),
+                              multiValue: (provided) => ({
+                                ...provided,
+                                display: "inline-flex",
+                                alignItems: "center",
+                              }),
+                              multiValueRemove: (provided) => ({
+                                ...provided,
+                                display: "inline-flex",
+                                alignItems: "center",
                               }),
                             }}
                             value={multiChainSelectedOptions}
@@ -1927,6 +2020,37 @@ const UserProfileMentorUpdate = () => {
                                           ? "#ef4444"
                                           : "currentColor",
                                     },
+                                    display: "flex",
+                                    overflowX: "auto",
+                                    maxHeight: "43px",
+                                    "&::-webkit-scrollbar": {
+                                      display: "none",
+                                    },
+                                  }),
+                                  valueContainer: (provided, state) => ({
+                                    ...provided,
+                                    overflow: "scroll",
+                                    maxHeight: "40px",
+                                    scrollbarWidth: "none",
+                                  }),
+                                  placeholder: (provided, state) => ({
+                                    ...provided,
+                                    color: errors.category_of_mentoring_service
+                                      ? "#ef4444"
+                                      : "rgb(107 114 128)",
+                                    whiteSpace: "nowrap",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                  }),
+                                  multiValue: (provided) => ({
+                                    ...provided,
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                  }),
+                                  multiValueRemove: (provided) => ({
+                                    ...provided,
+                                    display: "inline-flex",
+                                    alignItems: "center",
                                   }),
                                 }}
                                 value={
@@ -2419,6 +2543,37 @@ const UserProfileMentorUpdate = () => {
                                       ? "#ef4444"
                                       : "currentColor",
                                   },
+                                  display: "flex",
+                                  overflowX: "auto",
+                                  maxHeight: "43px",
+                                  "&::-webkit-scrollbar": {
+                                    display: "none",
+                                  },
+                                }),
+                                valueContainer: (provided, state) => ({
+                                  ...provided,
+                                  overflow: "scroll",
+                                  maxHeight: "40px",
+                                  scrollbarWidth: "none",
+                                }),
+                                placeholder: (provided, state) => ({
+                                  ...provided,
+                                  color: errors.category_of_mentoring_service
+                                    ? "#ef4444"
+                                    : "rgb(107 114 128)",
+                                  whiteSpace: "nowrap",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                }),
+                                multiValue: (provided) => ({
+                                  ...provided,
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                }),
+                                multiValueRemove: (provided) => ({
+                                  ...provided,
+                                  display: "inline-flex",
+                                  alignItems: "center",
                                 }),
                               }}
                               value={categoryOfMentoringServiceSelectedOptions}
