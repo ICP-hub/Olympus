@@ -44,11 +44,8 @@ const TestimonialModal = ({ onClose, categories }) => {
       <div className=" overflow-y-auto overflow-x-hidden  top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full fixed flex">
         <div className="relative p-4 w-full max-w-md max-h-full">
           <div className="relative bg-white   border-2 rounded-lg shadow-lg">
-            <div className="flex items-center justify-between p-4 md:p-5 rounded-t ">
-              <h3 className="text-3xl font-bold text-black">
-                {categories[0].title}
-              </h3>
-              <button
+            <div className="flex flex-col p-4">
+            <button
                 type="button"
                 className="text-black bg-transparent rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
                 onClick={onClose}
@@ -69,11 +66,16 @@ const TestimonialModal = ({ onClose, categories }) => {
                   />
                 </svg>
               </button>
+            <div className="rounded-t ">
+              <h3 className="text-3xl font-bold text-black text-center">
+                {categories[0].title}
+              </h3>
+             
             </div>
-
+            <p className="text-start mx-4 mt-4">{categories[0].description}</p>
             <form className="p-4 md:p-5"
               onSubmit={() => handleSubmit(categories[0])}>
-              <div className="grid gap-4 mb-4 grid-cols-2">
+              <div className="grid gap-4 grid-cols-2">
                 {categories[0].id === "addTestimonial" ? (
                   <div className="col-span-2">
                     <textarea
@@ -93,6 +95,7 @@ const TestimonialModal = ({ onClose, categories }) => {
                 {categories[0].buttonText}
               </button>
             </form>
+            </div>
           </div>
         </div>
       </div>

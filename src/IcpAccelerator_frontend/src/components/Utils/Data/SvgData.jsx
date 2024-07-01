@@ -868,19 +868,12 @@ export const closeModalSvg = (
 );
 
 export const closeSwitchBlackModalSvg = (
-  <svg
-    width="56"
-    height="23"
-    viewBox="0 0 56 23"
-    fill="#000000"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      id="Arrow 2"
-      d="M53.837 13.3223C54.6654 13.3228 55.3374 12.6516 55.3379 11.8232C55.3384 10.9947 54.6672 10.3228 53.8388 10.3223L53.837 13.3223ZM1.08727 10.7299C0.501131 11.3153 0.500559 12.2651 1.08599 12.8512L10.6262 22.4029C11.2116 22.989 12.1614 22.9896 12.7475 22.4042C13.3336 21.8187 13.3342 20.869 12.7488 20.2828L4.26861 11.7925L12.759 3.31228C13.3451 2.72684 13.3457 1.7771 12.7603 1.19096C12.1748 0.604819 11.2251 0.604248 10.639 1.18968L1.08727 10.7299ZM53.8388 10.3223L2.14819 10.2912L2.14639 13.2912L53.837 13.3223L53.8388 10.3223Z"
-      fill="black"
-    />
-  </svg>
+  <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M11 18L26 18" stroke="#2A353D" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+<path d="M15 23L10.7071 18.7071C10.3738 18.3738 10.2071 18.2071 10.2071 18C10.2071 17.7929 10.3738 17.6262 10.7071 17.2929L15 13" stroke="#2A353D" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+<circle cx="18" cy="18" r="17" transform="rotate(-180 18 18)" stroke="#2A353D" strokeWidth="1.5"/>
+</svg>
+
 );
 export const closeSwitchModalSvg = (
   <svg

@@ -45,12 +45,12 @@ const validationSchema = yup
       .nullable(true)
       .test(
         "is-valid-username",
-        "Username must be between 6 and 20 characters and can only contain letters, numbers, and underscores",
+        "Username must be between 5 and 20 characters, and cannot start or contain spaces",
         (value) => {
           if (!value) return true;
-          const isValidLength = value.length >= 6 && value.length <= 20;
-          const hasValidChars = /^(?=.*[A-Z0-9_])[a-zA-Z0-9_]+$/.test(value);
-          return isValidLength && hasValidChars;
+          const isValidLength = value.length >= 5 && value.length <= 20;
+          const hasNoSpaces = !/\s/.test(value) && !value.startsWith(" ");
+          return isValidLength && hasNoSpaces;
         }
       ),
     bio: yup
@@ -61,6 +61,11 @@ const validationSchema = yup
         "Bio must not exceed 50 words",
         (value) =>
           !value || value.trim().split(/\s+/).filter(Boolean).length <= 50
+      )
+      .test(
+        "no-leading-spaces",
+        "Bio should not have leading spaces",
+        (value) => !value || value.trimStart() === value
       )
       .test(
         "maxChars",
@@ -585,7 +590,7 @@ const ProjectUpdate = () => {
       console.error("Error processing request:", error);
     } finally {
       setIsDeclining(false);
-      // window.location.reload();
+      window.location.reload();
     }
   };
 
@@ -602,7 +607,7 @@ const ProjectUpdate = () => {
       console.error("Error processing request:", error);
     } finally {
       setIsAccepting(false);
-      // window.location.reload();
+      window.location.reload();
     }
   };
 

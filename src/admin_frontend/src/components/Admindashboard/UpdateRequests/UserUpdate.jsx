@@ -60,12 +60,12 @@ const validationSchema = yup
       .nullable(true)
       .test(
         "is-valid-username",
-        "Username must be between 6 and 20 characters and can only contain letters, numbers, and underscores",
+        "Username must be between 5 and 20 characters, and cannot start or contain spaces",
         (value) => {
           if (!value) return true;
-          const isValidLength = value.length >= 6 && value.length <= 20;
-          const hasValidChars = /^(?=.*[A-Z0-9_])[a-zA-Z0-9_]+$/.test(value);
-          return isValidLength && hasValidChars;
+          const isValidLength = value.length >= 5 && value.length <= 20;
+          const hasNoSpaces = !/\s/.test(value) && !value.startsWith(" ");
+          return isValidLength && hasNoSpaces;
         }
       ),
     bio: yup
@@ -76,6 +76,11 @@ const validationSchema = yup
         "Bio must not exceed 50 words",
         (value) =>
           !value || value.trim().split(/\s+/).filter(Boolean).length <= 50
+      )
+      .test(
+        "no-leading-spaces",
+        "Bio should not have leading spaces",
+        (value) => !value || value.trimStart() === value
       )
       .test(
         "maxChars",
@@ -690,6 +695,37 @@ const UserUpdate = () => {
                               ? "#ef4444"
                               : "currentColor",
                           },
+                          display: "flex",
+                          overflowX: "auto",
+                          maxHeight: "43px",
+                          "&::-webkit-scrollbar": {
+                            display: "none",
+                          },
+                        }),
+                        valueContainer: (provided, state) => ({
+                          ...provided,
+                          overflow: "scroll",
+                          maxHeight: "40px",
+                          scrollbarWidth: "none",
+                        }),
+                        placeholder: (provided, state) => ({
+                          ...provided,
+                          color: errors.domains_interested_in
+                            ? "#ef4444"
+                            : "rgb(107 114 128)",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }),
+                        multiValue: (provided) => ({
+                          ...provided,
+                          display: "inline-flex",
+                          alignItems: "center",
+                        }),
+                        multiValueRemove: (provided) => ({
+                          ...provided,
+                          display: "inline-flex",
+                          alignItems: "center",
                         }),
                       }}
                       value={interestedDomainsSelectedOptions}
@@ -761,6 +797,37 @@ const UserUpdate = () => {
                               ? "#ef4444"
                               : "currentColor",
                           },
+                          display: "flex",
+                          overflowX: "auto",
+                          maxHeight: "43px",
+                          "&::-webkit-scrollbar": {
+                            display: "none",
+                          },
+                        }),
+                        valueContainer: (provided, state) => ({
+                          ...provided,
+                          overflow: "scroll",
+                          maxHeight: "40px",
+                          scrollbarWidth: "none",
+                        }),
+                        placeholder: (provided, state) => ({
+                          ...provided,
+                          color: errors.reasons_to_join_platform
+                            ? "#ef4444"
+                            : "rgb(107 114 128)",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }),
+                        multiValue: (provided) => ({
+                          ...provided,
+                          display: "inline-flex",
+                          alignItems: "center",
+                        }),
+                        multiValueRemove: (provided) => ({
+                          ...provided,
+                          display: "inline-flex",
+                          alignItems: "center",
                         }),
                       }}
                       value={reasonOfJoiningSelectedOptions}

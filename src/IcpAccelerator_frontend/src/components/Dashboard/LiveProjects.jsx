@@ -14,7 +14,7 @@ import NoDataCard from "../Mentors/Event/NoDataCard";
 import NoData from "../../../assets/images/file_not_found.png";
 import { LiveProjectSkeleton } from "./Skeleton/Liveprojectskeleton";
 
-const LiveProjects = ({ progress, numSkeletons }) => {
+const LiveProjects = ({ progress, numSkeletons, onNoDataChange  }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
   const userCurrentRoleStatusActiveRole = useSelector(
@@ -101,9 +101,12 @@ const LiveProjects = ({ progress, numSkeletons }) => {
             if (!result || result.length === 0) {
               setNoData(true);
               setIsLoading(false);
+              onNoDataChange(true);
               setAllProjectData([]);
             } else {
               setAllProjectData(result);
+              onNoDataChange(false);
+              onNoDataChange(true);
               setIsLoading(false);
               setNoData(false);
             }
@@ -370,7 +373,7 @@ const LiveProjects = ({ progress, numSkeletons }) => {
             </div>
           </>
         )}
-        <div className="w-full md:1/2 md3:w-1/3 dxl:w-1/4 md:flex md:gap-4">
+        <div className="w-full md:1/2 md3:w-1/3 dxl:w-1/4 md:flex md:gap-4 sm:pr-4 px-4">
           <RegisterCard categories={projectCategories} />
         </div>
       </div>

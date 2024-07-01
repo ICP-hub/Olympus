@@ -145,12 +145,12 @@ function ProjectRegForm() {
         .nullable(true)
         .test(
           "is-valid-username",
-          "Username must be between 5 and 20 characters",
+          "Username must be between 5 and 20 characters, and cannot start or contain spaces",
           (value) => {
             if (!value) return true;
             const isValidLength = value.length >= 5 && value.length <= 20;
-            // const hasValidChars = /^(?=.*[A-Z0-9_])[a-zA-Z0-9_]+$/.test(value);
-            return isValidLength;
+            const hasNoSpaces = !/\s/.test(value) && !value.startsWith(" ");
+            return isValidLength && hasNoSpaces;
           }
         ),
       bio: yup
@@ -161,6 +161,11 @@ function ProjectRegForm() {
           "Bio must not exceed 50 words",
           (value) =>
             !value || value.trim().split(/\s+/).filter(Boolean).length <= 50
+        )
+        .test(
+          "no-leading-spaces",
+          "Bio should not have leading spaces",
+          (value) => !value || value.trimStart() === value
         )
         .test(
           "maxChars",
@@ -254,6 +259,11 @@ function ProjectRegForm() {
         .test("is-non-empty", "Project name is required", (value) =>
           /\S/.test(value)
         )
+        .test(
+          "no-leading-spaces",
+          "Project name should not have leading spaces",
+          (value) => !value || value.trimStart() === value
+        )
         .required("Project name is required"),
       project_description: yup
         .string()
@@ -323,59 +333,64 @@ function ProjectRegForm() {
       ),
       weekly_active_users: yup.number().nullable(true).optional(),
       revenue: yup.number().nullable(true).optional(),
-      money_raised_till_now: yup
-        .string()
-        .required("Required")
-        .oneOf(["true", "false"], "Invalid value"),
+
       money_raising: yup
         .string()
         .required("Required")
         .oneOf(["true", "false"], "Invalid value"),
+      money_raised_till_now: yup
+        .string()
+        .required("Required")
+        .oneOf(["true", "false"], "Invalid value"),
+
       icp_grants: yup
-        .number()
-        .nullable(true)
-        .optional()
-        .when("money_raised_till_now", (val, schema) =>
-          val && val[0] === "true"
-            ? schema
-                .typeError("You must enter a number")
+        .mixed()
+        .test(
+          "is-required-or-nullable",
+          "You must enter a number",
+          function (value) {
+            const { money_raised_till_now } = this.parent;
+            if (money_raised_till_now === "true") {
+              return yup
+                .number()
                 .min(0, "Must be a non-negative number")
-            : schema.test({
-                test: (value) =>
-                  value === undefined || value === null || value === "",
-                message: null,
-              })
+                .isValidSync(value);
+            }
+            return value === null || value === "" || value === 0;
+          }
         ),
       investors: yup
-        .number()
-        .optional()
-        .nullable(true)
-        .when("money_raised_till_now", (val, schema) =>
-          val && val[0] === "true"
-            ? schema
-                .typeError("You must enter a number")
+        .mixed()
+        .test(
+          "is-required-or-nullable",
+          "You must enter a number",
+          function (value) {
+            const { money_raised_till_now } = this.parent;
+            if (money_raised_till_now === "true") {
+              return yup
+                .number()
                 .min(0, "Must be a non-negative number")
-            : schema.test({
-                test: (value) =>
-                  value === undefined || value === null || value === "",
-                message: null,
-              })
+                .isValidSync(value);
+            }
+            return value === null || value === "" || value === 0;
+          }
         ),
-      raised_from_other_ecosystem: yup
-        .number()
-        .optional()
-        .nullable(true)
 
-        .when("money_raised_till_now", (val, schema) =>
-          val && val[0] === "true"
-            ? schema
-                .typeError("You must enter a number")
+      raised_from_other_ecosystem: yup
+        .mixed()
+        .test(
+          "is-required-or-nullable",
+          "You must enter a number",
+          function (value) {
+            const { money_raised_till_now } = this.parent;
+            if (money_raised_till_now === "true") {
+              return yup
+                .number()
                 .min(0, "Must be a non-negative number")
-            : schema.test({
-                test: (value) =>
-                  value === undefined || value === null || value === "",
-                message: null,
-              })
+                .isValidSync(value);
+            }
+            return value === null || value === "" || value === 0;
+          }
         ),
       target_amount: yup
         .number()
@@ -476,7 +491,14 @@ function ProjectRegForm() {
         .oneOf(["true", "false"], "Invalid value"),
       publicDocs: yup.array().of(
         yup.object().shape({
-          title: yup.string().required("Title is required"),
+          title: yup
+            .string()
+            .required("Title is required")
+            .test(
+              "no-leading-spaces",
+              "Title should not have leading spaces",
+              (value) => !value || value.trimStart() === value
+            ),
           link: yup
             .string()
             .url("Must be a valid URL")
@@ -489,7 +511,14 @@ function ProjectRegForm() {
         .oneOf(["true", "false"], "Invalid value"),
       privateDocs: yup.array().of(
         yup.object().shape({
-          title: yup.string().required("Title is required"),
+          title: yup
+            .string()
+            .required("Title is required")
+            .test(
+              "no-leading-spaces",
+              "Title should not have leading spaces",
+              (value) => !value || value.trimStart() === value
+            ),
           link: yup
             .string()
             .url("Must be a valid URL")
@@ -690,7 +719,7 @@ function ProjectRegForm() {
     setLogoPreview(null);
   };
   // clear cover func
-  const clearCoverFunc = (values) => {
+  const clearCoverFunc = (val) => {
     let field_ids = val;
     setValue(field_ids, null);
     clearErrors(field_ids);
@@ -1479,6 +1508,37 @@ function ProjectRegForm() {
                             ? "#ef4444"
                             : "currentColor",
                         },
+                        display: "flex",
+                        overflowX: "auto",
+                        maxHeight: "43px",
+                        "&::-webkit-scrollbar": {
+                          display: "none",
+                        },
+                      }),
+                      valueContainer: (provided, state) => ({
+                        ...provided,
+                        overflow: "scroll",
+                        maxHeight: "40px",
+                        scrollbarWidth: "none",
+                      }),
+                      placeholder: (provided, state) => ({
+                        ...provided,
+                        color: errors.domains_interested_in
+                          ? "#ef4444"
+                          : "rgb(107 114 128)",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }),
+                      multiValue: (provided) => ({
+                        ...provided,
+                        display: "inline-flex",
+                        alignItems: "center",
+                      }),
+                      multiValueRemove: (provided) => ({
+                        ...provided,
+                        display: "inline-flex",
+                        alignItems: "center",
                       }),
                     }}
                     value={interestedDomainsSelectedOptions}
@@ -1585,6 +1645,37 @@ function ProjectRegForm() {
                             ? "#ef4444"
                             : "currentColor",
                         },
+                        display: "flex",
+                        overflowX: "auto",
+                        maxHeight: "43px",
+                        "&::-webkit-scrollbar": {
+                          display: "none",
+                        },
+                      }),
+                      valueContainer: (provided, state) => ({
+                        ...provided,
+                        overflow: "scroll",
+                        maxHeight: "40px",
+                        scrollbarWidth: "none",
+                      }),
+                      placeholder: (provided, state) => ({
+                        ...provided,
+                        color: errors.reasons_to_join_platform
+                          ? "#ef4444"
+                          : "rgb(107 114 128)",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }),
+                      multiValue: (provided) => ({
+                        ...provided,
+                        display: "inline-flex",
+                        alignItems: "center",
+                      }),
+                      multiValueRemove: (provided) => ({
+                        ...provided,
+                        display: "inline-flex",
+                        alignItems: "center",
                       }),
                     }}
                     value={reasonOfJoiningSelectedOptions}
@@ -2061,6 +2152,37 @@ function ProjectRegForm() {
                               ? "#ef4444"
                               : "currentColor",
                           },
+                          display: "flex",
+                          overflowX: "auto",
+                          maxHeight: "43px",
+                          "&::-webkit-scrollbar": {
+                            display: "none",
+                          },
+                        }),
+                        valueContainer: (provided, state) => ({
+                          ...provided,
+                          overflow: "scroll",
+                          maxHeight: "40px",
+                          scrollbarWidth: "none",
+                        }),
+                        placeholder: (provided, state) => ({
+                          ...provided,
+                          color: errors.multi_chain_names
+                            ? "#ef4444"
+                            : "rgb(107 114 128)",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }),
+                        multiValue: (provided) => ({
+                          ...provided,
+                          display: "inline-flex",
+                          alignItems: "center",
+                        }),
+                        multiValueRemove: (provided) => ({
+                          ...provided,
+                          display: "inline-flex",
+                          alignItems: "center",
                         }),
                       }}
                       value={multiChainSelectedOptions}
@@ -2573,7 +2695,7 @@ function ProjectRegForm() {
                 <div className="relative z-0 group mb-6">
                   <label
                     htmlFor="upload_private_documents"
-                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black text-start"
+                    className="block mb-2 text-lg font-medium text-gray-500 hover:text-black text-start truncate line-clamp-1"
                   >
                     Upload due diligence documents{" "}
                     <span className="text-red-500">*</span>
@@ -2601,7 +2723,7 @@ function ProjectRegForm() {
                     fieldsPrivate.map((field, index) => (
                       <div key={field.id}>
                         <div className="relative z-0 group mb-4">
-                          <div className="sm0:flex sm:block block dlg:flex flex-row items- center">
+                          <div className="sm:flex sm:flex-row sm:space-x-4 block">
                             <div className="w-full">
                               <label className="block mb-2 text-lg font-medium text-gray-500 text-start">
                                 Title {index + 1}
@@ -2617,7 +2739,7 @@ function ProjectRegForm() {
                                 </p>
                               )}
                             </div>
-                            <div className="w-full sm0:ml-2">
+                            <div className="w-full">
                               <label className="block mb-2 text-lg font-medium text-gray-500 text-start">
                                 Link {index + 1}
                               </label>
@@ -2627,7 +2749,7 @@ function ProjectRegForm() {
                                 type="text"
                               />
                               {errors.privateDocs?.[index]?.link && (
-                                <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                                <p className="mt-1 text-sm text-red-500 font-bold text-left line-clamp-1">
                                   {errors.privateDocs[index].link.message}
                                 </p>
                               )}
@@ -2635,7 +2757,8 @@ function ProjectRegForm() {
                             <button
                               type="button"
                               onClick={() => handleremovePrivate(index)}
-                              className={`bg-red-600 hover:bg-red-700 text-white rounded-lg px-4 py-3 sm0:ml-2  ${
+                              className={` bg-red-600 hover:bg-red-700 text-white rounded-lg px-4 py-3 sm0:ml-2
+                              ${
                                 errors.privateDocs?.[index]?.title
                                   ? "self-center mt-1 sm0:mt-3"
                                   : "self-end"
@@ -2679,7 +2802,7 @@ function ProjectRegForm() {
                 <div className="relative z-0 mb-6">
                   <label
                     htmlFor="upload_public_documents"
-                    className="block mb-2 text-lg font-medium text-gray-500 text-start"
+                    className="block mb-2 text-lg font-medium text-gray-500 text-start truncate line-clamp-1"
                   >
                     Upload Public documents{" "}
                     <span className="text-red-600">*</span>
@@ -2706,7 +2829,7 @@ function ProjectRegForm() {
                     fields.map((field, index) => (
                       <div className="relative z-0 group mb-6">
                         <div
-                          className="sm0:flex sm:block block dlg:flex flex-row items -center"
+                          className="sm:flex sm:flex-row sm:space-x-4 block"
                           key={field.id}
                         >
                           <div className="w-full">
@@ -2719,7 +2842,7 @@ function ProjectRegForm() {
                               type="text"
                             />
                             {errors.publicDocs?.[index]?.title && (
-                              <p className="mt-1 text-sm text-red-600 font-medium">
+                              <p className="mt-1 text-sm text-red-600 font-medium line-clamp-1">
                                 {errors.publicDocs[index].title.message}
                               </p>
                             )}
@@ -2734,7 +2857,7 @@ function ProjectRegForm() {
                               type="text"
                             />
                             {errors.publicDocs?.[index]?.link && (
-                              <p className="mt-1 text-sm text-red-600 font-medium">
+                              <p className="mt-1 text-sm text-red-600 font-medium line-clamp-1">
                                 {errors.publicDocs[index].link.message}
                               </p>
                             )}

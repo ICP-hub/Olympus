@@ -60,12 +60,12 @@ const validationSchema = yup
       .nullable(true)
       .test(
         "is-valid-username",
-        "Username must be between 6 and 20 characters and can only contain letters, numbers, and underscores",
+        "Username must be between 5 and 20 characters, and cannot start or contain spaces",
         (value) => {
           if (!value) return true;
-          const isValidLength = value.length >= 6 && value.length <= 20;
-          const hasValidChars = /^(?=.*[A-Z0-9_])[a-zA-Z0-9_]+$/.test(value);
-          return isValidLength && hasValidChars;
+          const isValidLength = value.length >= 5 && value.length <= 20;
+          const hasNoSpaces = !/\s/.test(value) && !value.startsWith(" ");
+          return isValidLength && hasNoSpaces;
         }
       ),
     bio: yup
@@ -76,6 +76,11 @@ const validationSchema = yup
         "Bio must not exceed 50 words",
         (value) =>
           !value || value.trim().split(/\s+/).filter(Boolean).length <= 50
+      )
+      .test(
+        "no-leading-spaces",
+        "Bio should not have leading spaces",
+        (value) => !value || value.trimStart() === value
       )
       .test(
         "maxChars",
@@ -474,7 +479,7 @@ const UserProfileProjectUpdate = () => {
   const location = useLocation();
   const dispatch = useDispatch();
 
-  const ProjectId =location.state
+  const ProjectId = location.state;
   const defaultValues = {
     upload_public_documents: "false",
     publicDocs: [],
@@ -711,10 +716,12 @@ const UserProfileProjectUpdate = () => {
 
   useEffect(() => {
     const fetchProjectData = async () => {
-    const covertedPrincipal = await Principal.fromText(ProjectId);
+      const covertedPrincipal = await Principal.fromText(ProjectId);
       try {
         // const data = await actor.project_update_awaiting_approval();
-         const data = await actor.get_project_info_using_principal(covertedPrincipal);
+        const data = await actor.get_project_info_using_principal(
+          covertedPrincipal
+        );
         console.log("Received data from actor:", data);
         if (
           data &&
@@ -723,8 +730,8 @@ const UserProfileProjectUpdate = () => {
           // data[0].length > 1 &&
           // data[0][1].original_info
         ) {
-          const originalInfo = data[0]?.params
-          const updatedInfo = data[0]?.params
+          const originalInfo = data[0]?.params;
+          const updatedInfo = data[0]?.params;
 
           console.log("data:", data);
           console.log("Original Info:", originalInfo);
@@ -810,7 +817,8 @@ const UserProfileProjectUpdate = () => {
                 ? uint8ArrayToBase64(updatedInfo.project_logo[0])
                 : null,
             projectCover:
-              updatedInfo?.project_cover && updatedInfo?.project_cover.length > 0
+              updatedInfo?.project_cover &&
+              updatedInfo?.project_cover.length > 0
                 ? uint8ArrayToBase64(updatedInfo.project_cover[0])
                 : null,
             projectDescription:
@@ -940,7 +948,10 @@ const UserProfileProjectUpdate = () => {
       } else {
         setValue("is_your_project_registered", "false");
       }
-      setValue("type_of_registration", val?.typeOfRegistration ? val?.typeOfRegistration : "");
+      setValue(
+        "type_of_registration",
+        val?.typeOfRegistration ? val?.typeOfRegistration : ""
+      );
       setValue("country_of_registration", val?.countryOfRegistration ?? "");
       setValue("live_on_icp_mainnet", val?.liveOnIcpMainnet ?? "");
       if (val?.liveOnIcpMainnet === true) {
@@ -1809,6 +1820,37 @@ const UserProfileProjectUpdate = () => {
                                         ? "#ef4444"
                                         : "currentColor",
                                     },
+                                    display: "flex",
+                                    overflowX: "auto",
+                                    maxHeight: "43px",
+                                    "&::-webkit-scrollbar": {
+                                      display: "none",
+                                    },
+                                  }),
+                                  valueContainer: (provided, state) => ({
+                                    ...provided,
+                                    overflow: "scroll",
+                                    maxHeight: "40px",
+                                    scrollbarWidth: "none",
+                                  }),
+                                  placeholder: (provided, state) => ({
+                                    ...provided,
+                                    color: errors.domains_interested_in
+                                      ? "#ef4444"
+                                      : "rgb(107 114 128)",
+                                    whiteSpace: "nowrap",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                  }),
+                                  multiValue: (provided) => ({
+                                    ...provided,
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                  }),
+                                  multiValueRemove: (provided) => ({
+                                    ...provided,
+                                    display: "inline-flex",
+                                    alignItems: "center",
                                   }),
                                 }}
                                 value={interestedDomainsSelectedOptions}
@@ -1931,6 +1973,37 @@ const UserProfileProjectUpdate = () => {
                                       ? "#ef4444"
                                       : "currentColor",
                                   },
+                                  display: "flex",
+                                  overflowX: "auto",
+                                  maxHeight: "43px",
+                                  "&::-webkit-scrollbar": {
+                                    display: "none",
+                                  },
+                                }),
+                                valueContainer: (provided, state) => ({
+                                  ...provided,
+                                  overflow: "scroll",
+                                  maxHeight: "40px",
+                                  scrollbarWidth: "none",
+                                }),
+                                placeholder: (provided, state) => ({
+                                  ...provided,
+                                  color: errors.reasons_to_join_platform
+                                    ? "#ef4444"
+                                    : "rgb(107 114 128)",
+                                  whiteSpace: "nowrap",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                }),
+                                multiValue: (provided) => ({
+                                  ...provided,
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                }),
+                                multiValueRemove: (provided) => ({
+                                  ...provided,
+                                  display: "inline-flex",
+                                  alignItems: "center",
                                 }),
                               }}
                               value={reasonOfJoiningSelectedOptions}
@@ -2490,7 +2563,9 @@ const UserProfileProjectUpdate = () => {
                           <div className="flex space-x-2 items-center  flex-row ml-3">
                             <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                             <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {orignalData?.projectLinkedin ?orignalData?.projectLinkedin : "Not available"}
+                              {orignalData?.projectLinkedin
+                                ? orignalData?.projectLinkedin
+                                : "Not available"}
                             </div>
                           </div>
                           <div className="flex space-x-2 items-center flex-row ml-3">
@@ -2516,8 +2591,9 @@ const UserProfileProjectUpdate = () => {
                               </div>
                             ) : (
                               <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                                {updatedData?.projectLinkedin ?updatedData?.projectLinkedin:
-                                  "Not available"}
+                                {updatedData?.projectLinkedin
+                                  ? updatedData?.projectLinkedin
+                                  : "Not available"}
                               </div>
                             )}
                           </div>
@@ -2530,7 +2606,9 @@ const UserProfileProjectUpdate = () => {
                           <div className="flex space-x-2 items-center  flex-row ml-3">
                             <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                             <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {orignalData?.userTwitter ? orignalData?.userTwitter :"Not available"}
+                              {orignalData?.userTwitter
+                                ? orignalData?.userTwitter
+                                : "Not available"}
                             </div>
                           </div>
                           <div className="flex space-x-2 items-center flex-row ml-3">
@@ -2556,7 +2634,9 @@ const UserProfileProjectUpdate = () => {
                               </div>
                             ) : (
                               <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                                {updatedData?.userTwitter ?updatedData?.userTwitter: "Not available"}
+                                {updatedData?.userTwitter
+                                  ? updatedData?.userTwitter
+                                  : "Not available"}
                               </div>
                             )}
                           </div>
@@ -2569,8 +2649,9 @@ const UserProfileProjectUpdate = () => {
                           <div className="flex space-x-2 items-center  flex-row ml-3">
                             <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                             <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {orignalData?.projectElevatorPitch ?orignalData?.projectElevatorPitch:
-                                "Not available"}
+                              {orignalData?.projectElevatorPitch
+                                ? orignalData?.projectElevatorPitch
+                                : "Not available"}
                             </div>
                           </div>
                           <div className="flex space-x-2 items-center flex-row ml-3">
@@ -2596,8 +2677,9 @@ const UserProfileProjectUpdate = () => {
                               </div>
                             ) : (
                               <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                                {updatedData?.projectElevatorPitch ?updatedData?.projectElevatorPitch:
-                                  "Not available"}
+                                {updatedData?.projectElevatorPitch
+                                  ? updatedData?.projectElevatorPitch
+                                  : "Not available"}
                               </div>
                             )}
                           </div>
@@ -2610,7 +2692,9 @@ const UserProfileProjectUpdate = () => {
                           <div className="flex space-x-2 items-center  flex-row ml-3">
                             <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                             <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {orignalData?.promotionalVideo ?orignalData?.promotionalVideo: "Not available"}
+                              {orignalData?.promotionalVideo
+                                ? orignalData?.promotionalVideo
+                                : "Not available"}
                             </div>
                           </div>
                           <div className="flex space-x-2 items-center flex-row ml-3">
@@ -2636,8 +2720,9 @@ const UserProfileProjectUpdate = () => {
                               </div>
                             ) : (
                               <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                                {updatedData?.promotionalVideo ?updatedData?.promotionalVideo:
-                                  "Not available"}
+                                {updatedData?.promotionalVideo
+                                  ? updatedData?.promotionalVideo
+                                  : "Not available"}
                               </div>
                             )}
                           </div>
@@ -2652,7 +2737,9 @@ const UserProfileProjectUpdate = () => {
                           <div className="flex space-x-2 items-center  flex-row ml-3">
                             <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                             <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {orignalData?.githubLink ? orignalData?.githubLink :"Not available"}
+                              {orignalData?.githubLink
+                                ? orignalData?.githubLink
+                                : "Not available"}
                             </div>
                           </div>
                           <div className="flex space-x-2 items-center flex-row ml-3">
@@ -2678,7 +2765,9 @@ const UserProfileProjectUpdate = () => {
                               </div>
                             ) : (
                               <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                                {updatedData?.githubLink ?updatedData?.githubLink : "Not available"}
+                                {updatedData?.githubLink
+                                  ? updatedData?.githubLink
+                                  : "Not available"}
                               </div>
                             )}
                           </div>
@@ -2691,7 +2780,9 @@ const UserProfileProjectUpdate = () => {
                           <div className="flex space-x-2 items-center  flex-row ml-3">
                             <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                             <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {orignalData?.projectDiscord ?orignalData?.projectDiscord :"Not available"}
+                              {orignalData?.projectDiscord
+                                ? orignalData?.projectDiscord
+                                : "Not available"}
                             </div>
                           </div>
                           <div className="flex space-x-2 items-center flex-row ml-3">
@@ -2717,7 +2808,9 @@ const UserProfileProjectUpdate = () => {
                               </div>
                             ) : (
                               <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                                {updatedData?.projectDiscord ?updatedData?.projectDiscord: "Not available"}
+                                {updatedData?.projectDiscord
+                                  ? updatedData?.projectDiscord
+                                  : "Not available"}
                               </div>
                             )}
                           </div>
@@ -2730,7 +2823,9 @@ const UserProfileProjectUpdate = () => {
                           <div className="flex space-x-2 items-center  flex-row ml-3">
                             <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                             <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {orignalData?.projectWebsite ?orignalData?.projectWebsite : "Not available"}
+                              {orignalData?.projectWebsite
+                                ? orignalData?.projectWebsite
+                                : "Not available"}
                             </div>
                           </div>
                           <div className="flex space-x-2 items-center flex-row ml-3">
@@ -2756,7 +2851,9 @@ const UserProfileProjectUpdate = () => {
                               </div>
                             ) : (
                               <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                                {updatedData?.projectWebsite ?updatedData?.projectWebsite :"Not available"}
+                                {updatedData?.projectWebsite
+                                  ? updatedData?.projectWebsite
+                                  : "Not available"}
                               </div>
                             )}
                           </div>
@@ -2769,7 +2866,9 @@ const UserProfileProjectUpdate = () => {
                           <div className="flex space-x-2 items-center  flex-row ml-3">
                             <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                             <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {orignalData?.longTermGoals ?orignalData?.longTermGoals: "Not available"}
+                              {orignalData?.longTermGoals
+                                ? orignalData?.longTermGoals
+                                : "Not available"}
                             </div>
                           </div>
                           <div className="flex space-x-2 items-center flex-row ml-3">
@@ -2795,7 +2894,9 @@ const UserProfileProjectUpdate = () => {
                               </div>
                             ) : (
                               <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                          {updatedData?.longTermGoals ?updatedData?.longTermGoals: "Not available"}
+                                {updatedData?.longTermGoals
+                                  ? updatedData?.longTermGoals
+                                  : "Not available"}
                               </div>
                             )}
                           </div>
@@ -2808,7 +2909,9 @@ const UserProfileProjectUpdate = () => {
                           <div className="flex space-x-2 items-center  flex-row ml-3">
                             <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                             <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {orignalData?.tokenEconomics ?orignalData?.tokenEconomics:"Not available"}
+                              {orignalData?.tokenEconomics
+                                ? orignalData?.tokenEconomics
+                                : "Not available"}
                             </div>
                           </div>
                           <div className="flex space-x-2 items-center flex-row ml-3">
@@ -2834,7 +2937,9 @@ const UserProfileProjectUpdate = () => {
                               </div>
                             ) : (
                               <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                                {updatedData?.tokenEconomics ?updatedData?.tokenEconomics :"Not available"}
+                                {updatedData?.tokenEconomics
+                                  ? updatedData?.tokenEconomics
+                                  : "Not available"}
                               </div>
                             )}
                           </div>
@@ -3732,6 +3837,37 @@ const UserProfileProjectUpdate = () => {
                                   ? "#ef4444"
                                   : "currentColor",
                               },
+                              display: "flex",
+                              overflowX: "auto",
+                              maxHeight: "43px",
+                              "&::-webkit-scrollbar": {
+                                display: "none",
+                              },
+                            }),
+                            valueContainer: (provided, state) => ({
+                              ...provided,
+                              overflow: "scroll",
+                              maxHeight: "40px",
+                              scrollbarWidth: "none",
+                            }),
+                            placeholder: (provided, state) => ({
+                              ...provided,
+                              color: errors.multi_chain_names
+                                ? "#ef4444"
+                                : "rgb(107 114 128)",
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                            }),
+                            multiValue: (provided) => ({
+                              ...provided,
+                              display: "inline-flex",
+                              alignItems: "center",
+                            }),
+                            multiValueRemove: (provided) => ({
+                              ...provided,
+                              display: "inline-flex",
+                              alignItems: "center",
                             }),
                           }}
                           value={multiChainSelectedOptions}
@@ -3867,7 +4003,9 @@ const UserProfileProjectUpdate = () => {
                   <div className="flex space-x-2 items-center  flex-row ml-3">
                     <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                     <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                      {orignalData?.dappLink ?orignalData?.dappLink: "Not available"}
+                      {orignalData?.dappLink
+                        ? orignalData?.dappLink
+                        : "Not available"}
                     </div>
                   </div>
                   <div className="flex space-x-2 items-center flex-row ml-3">
@@ -3892,7 +4030,9 @@ const UserProfileProjectUpdate = () => {
                       </div>
                     ) : (
                       <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                        {updatedData?.dappLink ?updatedData?.dappLink :"Not available"}
+                        {updatedData?.dappLink
+                          ? updatedData?.dappLink
+                          : "Not available"}
                       </div>
                     )}
                   </div>

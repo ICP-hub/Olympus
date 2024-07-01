@@ -8,7 +8,7 @@ import NoDataCard from "../Mentors/Event/NoDataCard";
 import NoData from "../../../assets/images/search_not_found.png";
 import { MentorlistSkeleton } from "./Skeleton/Mentorlistskeleton";
 
-const MentorCard = ({ numSkeletons }) => {
+const MentorCard = ({ numSkeletons, onNoDataChange }) => {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -55,18 +55,21 @@ const MentorCard = ({ numSkeletons }) => {
           if (isMounted) {
             if (!result || result.length == 0) {
               setNoData(true);
+              onNoDataChange(true);
               setIsLoading(false);
               setData([]);
             } else {
               setData(result);
               setIsLoading(false);
               setNoData(false);
+              onNoDataChange(false);
             }
           }
         })
         .catch((error) => {
           if (isMounted) {
             setNoData(true);
+            onNoDataChange(true);
             setIsLoading(false);
             setData([]);
           }

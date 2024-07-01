@@ -57,12 +57,12 @@ const validationSchema = yup
       .nullable(true)
       .test(
         "is-valid-username",
-        "Username must be between 6 and 20 characters and can only contain letters, numbers, and underscores",
+        "Username must be between 5 and 20 characters, and cannot start or contain spaces",
         (value) => {
           if (!value) return true;
-          const isValidLength = value.length >= 6 && value.length <= 20;
-          const hasValidChars = /^(?=.*[A-Z0-9_])[a-zA-Z0-9_]+$/.test(value);
-          return isValidLength && hasValidChars;
+          const isValidLength = value.length >= 5 && value.length <= 20;
+          const hasNoSpaces = !/\s/.test(value) && !value.startsWith(" ");
+          return isValidLength && hasNoSpaces;
         }
       ),
     bio: yup
@@ -73,6 +73,11 @@ const validationSchema = yup
         "Bio must not exceed 50 words",
         (value) =>
           !value || value.trim().split(/\s+/).filter(Boolean).length <= 50
+      )
+      .test(
+        "no-leading-spaces",
+        "Bio should not have leading spaces",
+        (value) => !value || value.trimStart() === value
       )
       .test(
         "maxChars",
@@ -251,9 +256,9 @@ const UserProfileMentorUpdate = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  console.log('location',location)
+  console.log("location", location);
 
-  const mentorId =location.state
+  const mentorId = location.state;
   // console.log("userData in mentor profile", userData);
   // console.log("Allrole in mentor profile", Allrole);
 
@@ -309,24 +314,25 @@ const UserProfileMentorUpdate = () => {
   };
 
   useEffect(() => {
-
     const fetchProjectData = async () => {
-    const covertedPrincipal = await Principal.fromText(mentorId);
+      const covertedPrincipal = await Principal.fromText(mentorId);
       try {
         // let data = await actor.mentor_profile_edit_awaiting_approval();
-        let data = await actor.get_mentor_info_using_principal(covertedPrincipal);
+        let data = await actor.get_mentor_info_using_principal(
+          covertedPrincipal
+        );
 
         console.log("Received data in mentor update:", data);
 
-        const originalInfo = data[0]?.profile
-        const updatedInfo = data[0]?.profile        ;
+        const originalInfo = data[0]?.profile;
+        const updatedInfo = data[0]?.profile;
         // const principalId = data[0][0];
         // console.log("Original Info:", originalInfo);
         // console.log("updated Info:", updatedInfo);
         setPrincipal(mentorId);
         if (
           data &&
-          data.length > 0 
+          data.length > 0
           // &&
           // data[0].length > 1 &&
           // data[0][1].original_info
@@ -1069,6 +1075,37 @@ const UserProfileMentorUpdate = () => {
                                             ? "#ef4444"
                                             : "currentColor",
                                         },
+                                        display: "flex",
+                                        overflowX: "auto",
+                                        maxHeight: "43px",
+                                        "&::-webkit-scrollbar": {
+                                          display: "none",
+                                        },
+                                      }),
+                                      valueContainer: (provided, state) => ({
+                                        ...provided,
+                                        overflow: "scroll",
+                                        maxHeight: "40px",
+                                        scrollbarWidth: "none",
+                                      }),
+                                      placeholder: (provided, state) => ({
+                                        ...provided,
+                                        color: errors.domains_interested_in
+                                          ? "#ef4444"
+                                          : "rgb(107 114 128)",
+                                        whiteSpace: "nowrap",
+                                        overflow: "hidden",
+                                        textOverflow: "ellipsis",
+                                      }),
+                                      multiValue: (provided) => ({
+                                        ...provided,
+                                        display: "inline-flex",
+                                        alignItems: "center",
+                                      }),
+                                      multiValueRemove: (provided) => ({
+                                        ...provided,
+                                        display: "inline-flex",
+                                        alignItems: "center",
                                       }),
                                     }}
                                     value={interestedDomainsSelectedOptions}
@@ -1219,6 +1256,37 @@ const UserProfileMentorUpdate = () => {
                                             ? "#ef4444"
                                             : "currentColor",
                                         },
+                                        display: "flex",
+                                        overflowX: "auto",
+                                        maxHeight: "43px",
+                                        "&::-webkit-scrollbar": {
+                                          display: "none",
+                                        },
+                                      }),
+                                      valueContainer: (provided, state) => ({
+                                        ...provided,
+                                        overflow: "scroll",
+                                        maxHeight: "40px",
+                                        scrollbarWidth: "none",
+                                      }),
+                                      placeholder: (provided, state) => ({
+                                        ...provided,
+                                        color: errors.reasons_to_join_platform
+                                          ? "#ef4444"
+                                          : "rgb(107 114 128)",
+                                        whiteSpace: "nowrap",
+                                        overflow: "hidden",
+                                        textOverflow: "ellipsis",
+                                      }),
+                                      multiValue: (provided) => ({
+                                        ...provided,
+                                        display: "inline-flex",
+                                        alignItems: "center",
+                                      }),
+                                      multiValueRemove: (provided) => ({
+                                        ...provided,
+                                        display: "inline-flex",
+                                        alignItems: "center",
                                       }),
                                     }}
                                     value={reasonOfJoiningSelectedOptions}
@@ -1798,6 +1866,37 @@ const UserProfileMentorUpdate = () => {
                                     ? "#ef4444"
                                     : "currentColor",
                                 },
+                                display: "flex",
+                                overflowX: "auto",
+                                maxHeight: "43px",
+                                "&::-webkit-scrollbar": {
+                                  display: "none",
+                                },
+                              }),
+                              valueContainer: (provided, state) => ({
+                                ...provided,
+                                overflow: "scroll",
+                                maxHeight: "40px",
+                                scrollbarWidth: "none",
+                              }),
+                              placeholder: (provided, state) => ({
+                                ...provided,
+                                color: errors.multi_chain_names
+                                  ? "#ef4444"
+                                  : "rgb(107 114 128)",
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                              }),
+                              multiValue: (provided) => ({
+                                ...provided,
+                                display: "inline-flex",
+                                alignItems: "center",
+                              }),
+                              multiValueRemove: (provided) => ({
+                                ...provided,
+                                display: "inline-flex",
+                                alignItems: "center",
                               }),
                             }}
                             value={multiChainSelectedOptions}
@@ -1921,6 +2020,37 @@ const UserProfileMentorUpdate = () => {
                                           ? "#ef4444"
                                           : "currentColor",
                                     },
+                                    display: "flex",
+                                    overflowX: "auto",
+                                    maxHeight: "43px",
+                                    "&::-webkit-scrollbar": {
+                                      display: "none",
+                                    },
+                                  }),
+                                  valueContainer: (provided, state) => ({
+                                    ...provided,
+                                    overflow: "scroll",
+                                    maxHeight: "40px",
+                                    scrollbarWidth: "none",
+                                  }),
+                                  placeholder: (provided, state) => ({
+                                    ...provided,
+                                    color: errors.category_of_mentoring_service
+                                      ? "#ef4444"
+                                      : "rgb(107 114 128)",
+                                    whiteSpace: "nowrap",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                  }),
+                                  multiValue: (provided) => ({
+                                    ...provided,
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                  }),
+                                  multiValueRemove: (provided) => ({
+                                    ...provided,
+                                    display: "inline-flex",
+                                    alignItems: "center",
                                   }),
                                 }}
                                 value={
@@ -2413,6 +2543,37 @@ const UserProfileMentorUpdate = () => {
                                       ? "#ef4444"
                                       : "currentColor",
                                   },
+                                  display: "flex",
+                                  overflowX: "auto",
+                                  maxHeight: "43px",
+                                  "&::-webkit-scrollbar": {
+                                    display: "none",
+                                  },
+                                }),
+                                valueContainer: (provided, state) => ({
+                                  ...provided,
+                                  overflow: "scroll",
+                                  maxHeight: "40px",
+                                  scrollbarWidth: "none",
+                                }),
+                                placeholder: (provided, state) => ({
+                                  ...provided,
+                                  color: errors.category_of_mentoring_service
+                                    ? "#ef4444"
+                                    : "rgb(107 114 128)",
+                                  whiteSpace: "nowrap",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                }),
+                                multiValue: (provided) => ({
+                                  ...provided,
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                }),
+                                multiValueRemove: (provided) => ({
+                                  ...provided,
+                                  display: "inline-flex",
+                                  alignItems: "center",
                                 }),
                               }}
                               value={categoryOfMentoringServiceSelectedOptions}

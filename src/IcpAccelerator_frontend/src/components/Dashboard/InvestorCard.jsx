@@ -7,7 +7,7 @@ import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_
 import NoDataCard from "../Mentors/Event/NoDataCard";
 import NoData from "../../../assets/images/search_not_found.png";
 import { InvestorlistSkeleton } from "./Skeleton/Investorslistskeleton";
-const InvestorsList = ({ numSkeletons }) => {
+const InvestorsList = ({ numSkeletons, onNoDataChange }) => {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -26,12 +26,14 @@ const InvestorsList = ({ numSkeletons }) => {
           if (isMounted) {
             if (!result || result.length == 0) {
               setNoData(true);
+              onNoDataChange(true);
               setIsLoading(false);
               setData([]);
             } else {
               setData(result);
               setIsLoading(false);
               setNoData(false);
+              onNoDataChange(false);
             }
           }
         })
@@ -40,6 +42,7 @@ const InvestorsList = ({ numSkeletons }) => {
             setData([]);
             setIsLoading(false);
             setNoData(true);
+            onNoDataChange(true);
           }
         });
     };

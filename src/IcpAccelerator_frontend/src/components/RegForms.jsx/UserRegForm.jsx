@@ -9,6 +9,7 @@ import { ThreeDots } from "react-loader-spinner";
 import { useCountries } from "react-countries";
 import ReactSelect from "react-select";
 import CompressedImage from "../ImageCompressed/CompressedImage";
+import { Principal } from "@dfinity/principal";
 
 const UserRegForm = () => {
   const { countries } = useCountries();
@@ -20,7 +21,12 @@ const UserRegForm = () => {
     (currState) => currState.profileTypes.profiles
   );
   const userFullData = useSelector((currState) => currState.userData.data.Ok);
+  const userCurrentRoleStatusActiveRole = useSelector(
+    (currState) => currState.currentRoleStatus.activeRole
+  );
+  const principal = useSelector((currState) => currState.internet.principal);
 
+console.log('principal',principal)
   // STATES
 
   // user image states
@@ -59,7 +65,21 @@ const UserRegForm = () => {
           /\S/.test(value)
         )
         .required("Full name is required"),
-      email: yup.string().email("Invalid email").nullable(true).optional(),
+      email: yup
+        .string()
+        .email("Invalid email")
+        .nullable(true)
+        .optional()
+        .test(
+          "no-leading-trailing-spaces",
+          "Email should not have leading or trailing spaces",
+          function (value) {
+            if (value !== undefined && value !== null) {
+              return value.trim() === value;
+            }
+            return true;
+          }
+        ),
       telegram_id: yup
         .string()
         .nullable(true)
@@ -88,12 +108,12 @@ const UserRegForm = () => {
         .nullable(true)
         .test(
           "is-valid-username",
-          "Username must be between 5 and 20 characters",
+          "Username must be between 5 and 20 characters, and cannot start or contain spaces",
           (value) => {
             if (!value) return true;
             const isValidLength = value.length >= 5 && value.length <= 20;
-            // const hasValidChars = /^(?=.*[A-Z0-9_])[a-zA-Z0-9_]+$/.test(value);
-            return isValidLength;
+            const hasNoSpaces = !/\s/.test(value) && !value.startsWith(" ");
+            return isValidLength && hasNoSpaces;
           }
         ),
       bio: yup
@@ -104,6 +124,11 @@ const UserRegForm = () => {
           "Bio must not exceed 50 words",
           (value) =>
             !value || value.trim().split(/\s+/).filter(Boolean).length <= 50
+        )
+        .test(
+          "no-leading-spaces",
+          "Bio should not have leading spaces",
+          (value) => !value || value.trimStart() === value
         )
         .test(
           "maxChars",
@@ -226,6 +251,24 @@ const UserRegForm = () => {
         profile_picture: imageData ? [imageData] : [],
       };
       try {
+   const covertedPrincipal = await Principal.fromText(principal);
+        if (userCurrentRoleStatusActiveRole === "user") {
+          await actor.update_user_data(covertedPrincipal,userData).then((result) => {
+            if ("Ok" in result) {
+              toast.success("Approval request is sent");
+              setTimeout(() => {
+                window.location.href = "/";
+              }, 500);
+            } else {
+              toast.error(result);
+            }
+          });
+        } else if (
+          userCurrentRoleStatusActiveRole === null ||
+          userCurrentRoleStatusActiveRole === "mentor" ||
+          userCurrentRoleStatusActiveRole === "project" ||
+          userCurrentRoleStatusActiveRole === "vc"
+        ) {
         await actor.register_user(userData).then((result) => {
           if (result && result.includes("User registered successfully")) {
             toast.success("Registered as a User");
@@ -233,7 +276,9 @@ const UserRegForm = () => {
           } else {
             toast.error("Something got wrong");
           }
+        
         });
+      }
       } catch (error) {
         toast.error(error);
         console.error("Error sending data to the backend:", error);
@@ -613,6 +658,37 @@ const UserRegForm = () => {
                             ? "#ef4444"
                             : "currentColor",
                         },
+                        display: "flex",
+                        overflowX: "auto",
+                        maxHeight: "43px",
+                        "&::-webkit-scrollbar": {
+                          display: "none",
+                        },
+                      }),
+                      valueContainer: (provided, state) => ({
+                        ...provided,
+                        overflow: "scroll",
+                        maxHeight: "40px",
+                        scrollbarWidth: "none",
+                      }),
+                      placeholder: (provided, state) => ({
+                        ...provided,
+                        color: errors.domains_interested_in
+                          ? "#ef4444"
+                          : "rgb(107 114 128)",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }),
+                      multiValue: (provided) => ({
+                        ...provided,
+                        display: "inline-flex",
+                        alignItems: "center",
+                      }),
+                      multiValueRemove: (provided) => ({
+                        ...provided,
+                        display: "inline-flex",
+                        alignItems: "center",
                       }),
                     }}
                     value={interestedDomainsSelectedOptions}
@@ -714,6 +790,37 @@ const UserRegForm = () => {
                             ? "#ef4444"
                             : "currentColor",
                         },
+                        display: "flex",
+                        overflowX: "auto",
+                        maxHeight: "43px",
+                        "&::-webkit-scrollbar": {
+                          display: "none",
+                        },
+                      }),
+                      valueContainer: (provided, state) => ({
+                        ...provided,
+                        overflow: "scroll",
+                        maxHeight: "40px",
+                        scrollbarWidth: "none",
+                      }),
+                      placeholder: (provided, state) => ({
+                        ...provided,
+                        color: errors.reasons_to_join_platform
+                          ? "#ef4444"
+                          : "rgb(107 114 128)",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }),
+                      multiValue: (provided) => ({
+                        ...provided,
+                        display: "inline-flex",
+                        alignItems: "center",
+                      }),
+                      multiValueRemove: (provided) => ({
+                        ...provided,
+                        display: "inline-flex",
+                        alignItems: "center",
                       }),
                     }}
                     value={reasonOfJoiningSelectedOptions}
