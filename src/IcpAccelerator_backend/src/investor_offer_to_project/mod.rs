@@ -219,7 +219,7 @@ pub fn accept_offer_of_investor(
                     }
 
                     // Handling project and VC association updates
-                    if let Some(mut projects) = state.project_storage.get(&StoredPrincipal(sender_principal)) {
+                    if let Some(mut projects) = state.project_storage.get(&StoredPrincipal(caller())) {
                         if let Some(proj_index) = projects.0.iter().position(|p| p.uid == project_id) {
                             let project = &mut projects.0[proj_index];
                             if project.params.vc_assigned.is_none() {
@@ -233,7 +233,7 @@ pub fn accept_offer_of_investor(
                                 }
 
                                 // Immediate commit to state
-                                state.project_storage.insert(StoredPrincipal(sender_principal), projects.clone());
+                                state.project_storage.insert(StoredPrincipal(caller()), projects.clone());
                             }
                         }
                     }

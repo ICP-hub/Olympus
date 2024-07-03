@@ -2,6 +2,8 @@ use crate::associations::*;
 use crate::cohort::InviteRequest;
 use crate::is_admin;
 use crate::mentor::*;
+use crate::mentor_investor_ratings::find_mentor_by_uid;
+use crate::mentor_investor_ratings::find_vc_by_uid;
 use crate::project_registration::*;
 use crate::state_handler::mutate_state;
 use crate::state_handler::read_state;
@@ -2116,14 +2118,16 @@ pub fn get_declined_cohort_creation_request_for_admin() -> Vec<CohortRequest> {
 #[update(guard = "is_admin")]
 pub fn remove_mentor_from_cohort(
     cohort_id: String,
-    mentor_principal: Principal,
+    uid: String,
     passphrase_key: String,
 ) -> Result<String, String> {
-    let required_key = format!("delete/{}", mentor_principal);
+    let required_key = format!("delete/{}", uid);
 
     if passphrase_key != required_key {
         return Err("Unauthorized attempt: Incorrect passphrase key.".to_string());
     }
+    let stored_mentor_principal = find_mentor_by_uid(uid.clone());
+    let mentor_principal = stored_mentor_principal.0;
     mutate_state(|state| {
         if let Some(mentor_up_for_cohort) =
             state.mentor_storage.get(&StoredPrincipal(mentor_principal))
@@ -2281,14 +2285,18 @@ pub fn get_left_mentors_of_cohort(cohort_id: String) -> Vec<MentorInternal> {
 #[update(guard = "is_admin")]
 pub fn remove_vc_from_cohort(
     cohort_id: String,
-    vc_principal: Principal,
+    uid: String,
     passphrase_key: String,
 ) -> Result<String, String> {
-    let required_key = format!("delete/{}", vc_principal);
+    let required_key = format!("delete/{}", uid);
 
     if passphrase_key != required_key {
         return Err("Unauthorized attempt: Incorrect passphrase key.".to_string());
     }
+
+    let stored_vc_principal = find_vc_by_uid(uid.clone());
+    let vc_principal = stored_vc_principal.0;
+
     mutate_state(|state| {
         if let Some(vc_up_for_cohort) = state.vc_storage.get(&StoredPrincipal(vc_principal)) {
             let vc_clone = vc_up_for_cohort.0.clone();
