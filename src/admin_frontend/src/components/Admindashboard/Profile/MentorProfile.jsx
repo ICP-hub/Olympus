@@ -170,10 +170,10 @@ const MentorProfile = ({ userData, Allrole, principal, currentRole }) => {
     <>
       <div className="w-full flex flex-col">
         <div className="w-full flex gap-4 sxxs:flex-col md:flex-row">
-          <div className=" bg-[#D2D5F2]  shadow-md shadow-gray-400 p-6 rounded-lg md:w-1/4 sxxs:w-full">
+          <div className=" bg-[#D2D5F2] shadow-md shadow-gray-400 p-6 rounded-lg md:w-1/4 sxxs:w-full">
             <div className="justify-center flex items-center">
               <div
-                className="size-fit  rounded-full bg-no-repeat bg-center bg-cover relative p-1 bg-blend-overlay border-2 border-gray-300"
+                className="size-fit rounded-full bg-no-repeat bg-center bg-cover relative p-1 bg-blend-overlay border-2 border-gray-300"
                 style={{
                   backgroundImage: `url(${profile}), linear-gradient(168deg, rgba(255, 255, 255, 0.25) -0.86%, rgba(255, 255, 255, 0) 103.57%)`,
                   backdropFilter: "blur(20px)",
@@ -281,10 +281,9 @@ const MentorProfile = ({ userData, Allrole, principal, currentRole }) => {
 
                   {isSkillsOpen && (
                     <div className="flex flex-col text-gray-600">
-                      <div className="flex gap-2 text-xs flex-wrap items-center">
+                      <div className="flex gap-2 text-xs flex-wrap overflow-y-scroll h-14 items-center">
                         {userData[0].profile.user_data.area_of_interest
                           .split(",")
-                          .slice(0, 3)
                           .map((tag, index) => (
                             <div
                               key={index}
@@ -561,7 +560,6 @@ const MentorProfile = ({ userData, Allrole, principal, currentRole }) => {
                     userData[0].profile.multichain[0] !== "" ? (
                       userData[0]?.profile?.multichain?.[0]
                         .split(",")
-                        // .slice(0, 3)
                         .map((tag, index) => (
                           <div
                             key={index}
@@ -591,7 +589,6 @@ const MentorProfile = ({ userData, Allrole, principal, currentRole }) => {
                     userData[0].profile.user_data.area_of_interest !== "" ? (
                       userData[0]?.profile?.user_data?.area_of_interest
                         .split(",")
-                        // .slice(0, 3)
                         .map((tag, index) => (
                           <div
                             key={index}
@@ -784,7 +781,6 @@ const MentorProfile = ({ userData, Allrole, principal, currentRole }) => {
                     userData[0].profile.category_of_mentoring_service !== "" ? (
                       userData[0]?.profile?.category_of_mentoring_service
                         .split(",")
-                        // .slice(0, 3)
                         .map((tag, index) => (
                           <div
                             key={index}

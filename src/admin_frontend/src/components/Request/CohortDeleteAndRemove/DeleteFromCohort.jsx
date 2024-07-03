@@ -312,18 +312,15 @@ function DeleteFromCohort() {
                     Tags
                   </p>
                   {cohortData?.cohort?.tags ? (
-                    <div className="flex gap-2 mt-2 text-xs items-center pb-2 flex-wrap">
-                      {cohortData?.cohort?.tags
-                        .split(",")
-                        .slice(0, 3)
-                        .map((tag, index) => (
-                          <div
-                            key={index}
-                            className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-gray-100"
-                          >
-                            {tag.trim()}
-                          </div>
-                        ))}
+                    <div className="flex gap-2 mt-2 text-xs items-center pb-2 overflow-y-scroll h-14 flex-wrap">
+                      {cohortData?.cohort?.tags.split(",").map((tag, index) => (
+                        <div
+                          key={index}
+                          className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-gray-100"
+                        >
+                          {tag.trim()}
+                        </div>
+                      ))}
                     </div>
                   ) : (
                     ""

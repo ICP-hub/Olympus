@@ -193,7 +193,7 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
             </div>
 
             <div className="flex flex-col ml-4  mt-2 w-auto justify-start md:mb-0 mb-6">
-              <div className="flex flex-row  gap-4 items-center">
+              <div className="flex flex-row flex-wrap mb-3 gap-4 items-center">
                 <h1 className="md:text-[21px] text-xl md:font-bold font-bold  bg-black text-transparent bg-clip-text">
                   {userData[0].params.user_data.full_name}
                 </h1>
@@ -285,10 +285,9 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
 
                   {isSkillsOpen && (
                     <div className="flex flex-col text-gray-600">
-                      <div className="flex gap-2 text-xs flex-wrap items-center">
+                      <div className="flex gap-2 text-xs flex-wrap overflow-y-scroll h-14 items-center">
                         {userData[0].params.user_data.area_of_interest
                           .split(",")
-                          .slice(0, 3)
                           .map((tag, index) => (
                             <div
                               key={index}
@@ -580,7 +579,7 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
         <div className="w-full flex gap-4 sxxs:flex-col md:flex-row mt-4">
           <div className="flex flex-col  w-full   md:w-[26%] sxxs:w-full"></div>
           <div className="flex flex-row justify-between bg-[#D2D5F2] shadow-md shadow-gray-400 p-6 rounded-lg md:w-3/4 sxxs:w-fulll">
-            <ul className="grid grid-cols-2 gap-4 w-full px-[3%]">
+            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full px-[3%]">
               <li className="list-disc md:ml-4">
                 <div className=" flex flex-col text-gray-600">
                   <p className="text-black font-semibold mb-1">
@@ -592,7 +591,6 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
                     userData[0].params.project_on_multichain[0] !== "" ? (
                       userData[0]?.params?.project_on_multichain?.[0]
                         .split(",")
-                        // .slice(0, 3)
                         .map((tag, index) => (
                           <div
                             key={index}
@@ -622,7 +620,6 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
                     userData[0].params.category_of_investment !== "" ? (
                       userData[0]?.params?.category_of_investment
                         .split(",")
-                        // .slice(0, 3)
                         .map((tag, index) => (
                           <div
                             key={index}
@@ -647,12 +644,11 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
                     At what stage of investment are you currently focusing on?
                   </p>
 
-                  <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap">
+                  <div className="flex gap-2 text-xs text-gray-600 items-center overflow-y-scroll h-14 flex-wrap">
                     {userData[0]?.params?.stage[0] &&
                     userData[0].params.stage[0] !== "" ? (
                       userData[0]?.params?.stage[0]
                         .split(",")
-                        .slice(0, 3)
                         .map((tag, index) => (
                           <div
                             key={index}
@@ -678,12 +674,11 @@ const InvestorProfile = ({ userData, Allrole, principal }) => {
                     investments?
                   </p>
 
-                  <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap">
+                  <div className="flex gap-2 text-xs text-gray-600 items-center overflow-y-scroll h-14 flex-wrap">
                     {userData[0]?.params?.range_of_check_size?.[0] &&
                     userData[0].params.range_of_check_size[0] !== "" ? (
                       userData[0]?.params?.range_of_check_size?.[0]
                         .split(",")
-                        .slice(0, 3)
                         .map((tag, index) => (
                           <div
                             key={index}

@@ -1034,7 +1034,6 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                     userData[0].params.user_data.area_of_interest !== "" ? (
                       userData[0]?.params?.user_data?.area_of_interest
                         .split(",")
-                        // .slice(0, 3)
                         .map((tag, index) => (
                           <div
                             key={index}
@@ -1166,7 +1165,6 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                     userData[0].params.supports_multichain[0] !== "" ? (
                       userData[0]?.params?.supports_multichain?.[0]
                         .split(",")
-                        // .slice(0, 3)
                         .map((tag, index) => (
                           <div
                             key={index}
