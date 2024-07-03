@@ -380,15 +380,25 @@ pub fn send_enrollment_request_as_mentor(cohort_id: String, user_info: MentorInt
     };
 
     mutate_state(|state| {
-        if let Some(mut requests) = state
+        let stored_principal = StoredPrincipal(cohort_creator_principal);
+        let mut updated_requests = state
             .cohort_enrollment_request
-            .get(&StoredPrincipal(cohort_creator_principal))
-        {
-            requests.0.push(enrollment_request);
-        } else {
-            state.cohort_enrollment_request.insert(
-                StoredPrincipal(cohort_creator_principal),
-                Candid(vec![enrollment_request]),
+            .get(&stored_principal)
+            .map_or_else(
+                || Vec::new(),
+                |reqs| reqs.0.clone(),
+            );
+
+        updated_requests.push(enrollment_request.clone());
+        state.cohort_enrollment_request.insert(stored_principal.clone(), Candid(updated_requests.clone()));
+
+        ic_cdk::println!("State after mutation:");
+        for (key, value) in state.cohort_enrollment_request.iter() {
+            ic_cdk::println!(
+                "Principal: {:?}, Number of Requests: {}, Requests: {:?}",
+                key,
+                value.0.len(),
+                value
             );
         }
     });
@@ -870,38 +880,26 @@ pub fn get_mentors_applied_for_cohort(cohort_id: String) -> Result<Vec<MentorInt
 #[query(guard = "is_user_anonymous")]
 pub fn get_vcs_applied_for_cohort(
     cohort_id: String,
-) -> Result<Vec<(VentureCapitalistInternal, Principal)>, String> {
+) -> Result<Vec<VentureCapitalistInternal>, String> {
     let caller = caller();
 
     let cohort: Option<Candid<CohortDetails>> =
         read_state(|state| state.cohort_info.get(&cohort_id).map(|c| c.clone()));
 
-    // let concerned_cohort: CohortDetails = match cohort {
-    //     Some(candid_cohort) => candid_cohort.0,
-    //     None => return Err("Cohort doesn't exist".to_string()),
-    // };
+    let concerned_cohort: CohortDetails = match cohort {
+        Some(candid_cohort) => candid_cohort.0,
+        None => return Err("Cohort doesn't exist".to_string()),
+    };
 
     // if concerned_cohort.cohort_creator != caller {
     //     return Err("You must be the cohort creator to see venture capitalist details of individuals".to_string());
     // }
 
-    let vcs_in_cohort: Vec<(VentureCapitalistInternal, Principal)> = read_state(|state| {
-        state.vc_applied_for_cohort.get(&cohort_id)
-            .map_or_else(Vec::new, |candid_vcs| {
-                candid_vcs.0.iter()
-                    .filter_map(|mentor_uid| {
-                        // Iterate over vc_storage to find the corresponding Principal for each mentor_uid
-                        state.vc_storage.iter()
-                            .find_map(|(principal, vc)| {
-                                if vc.0.uid == *mentor_uid.uid {
-                                    Some((vc.0.clone(), principal.0)) // vc is already of type VentureCapitalistInternal
-                                } else {
-                                    None
-                                }
-                            })
-                    })
-                    .collect()
-            })
+    let vcs_in_cohort: Vec<VentureCapitalistInternal> = read_state(|state| {
+        state
+            .vc_applied_for_cohort
+            .get(&cohort_id)
+            .map_or_else(Vec::new, |candid_mentors| candid_mentors.0.clone())
     });
 
     Ok(vcs_in_cohort)
