@@ -2755,6 +2755,7 @@ pub fn add_project_rating(ratings: ProjectRatingStruct) -> Result<String, String
                 // Project exists and has reviews, add new review
                 reviews.0.push((principal, project_review.clone()));
                 ic_cdk::println!("Review added to existing project ID: {}", ratings.project_id);
+                state.project_rating.insert(ratings.project_id.clone(), reviews.clone()); // Ensure the updated reviews are inserted back
             } else {
                 // Project does not exist, create new vector and add review
                 state.project_rating.insert(ratings.project_id.clone(), Candid(vec![(principal, project_review.clone())]));
