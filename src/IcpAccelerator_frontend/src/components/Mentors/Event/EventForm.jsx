@@ -24,12 +24,21 @@ const schema = yup.object({
   title: yup
     .string()
     .required("Required")
-    .test("is-non-empty", null, (value) => value && value.trim().length > 0),
+    .test(
+      "is-non-empty",
+      "Title cannot be empty",
+      (value) => value && value.trim().length > 0
+    ),
   description: yup
     .string()
     .trim()
     .required("Description is required")
-    .matches(/^[^\s].*$/, "Cannot start with a space"),
+    .matches(/^[^\s].*$/, "Cannot start with a space")
+    .test(
+      "no-leading-spaces",
+      "Bio should not have leading spaces",
+      (value) => !value || value.trimStart() === value
+    ),
   cohort_launch_date: yup
     .date()
     .required()
@@ -78,6 +87,14 @@ const schema = yup.object({
     .required("Required"),
   // area: yup.string().typeError("You must select area").required(),
   no_of_seats: yup.number().typeError("You must enter a number").required(),
+  funding_type: yup
+    .string()
+    .typeError("You must enter a funding type")
+    .required("Required"),
+  funding_amount: yup
+    .string()
+    .typeError("You must enter a funding amount")
+    .required("Required"),
 });
 
 const EventForm = () => {

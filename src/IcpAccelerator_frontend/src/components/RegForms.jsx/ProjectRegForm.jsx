@@ -534,6 +534,10 @@ function ProjectRegForm() {
     privateDocs: [],
     weekly_active_users: 0,
     revenue: 0,
+    money_raised_till_now: "false",
+    icp_grants: 0,
+    investors: 0,
+    raised_from_other_ecosystem: 0,
   };
 
   const {

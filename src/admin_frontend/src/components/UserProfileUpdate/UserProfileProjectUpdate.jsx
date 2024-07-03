@@ -485,6 +485,10 @@ const UserProfileProjectUpdate = () => {
     publicDocs: [],
     upload_private_documents: "false",
     privateDocs: [],
+    money_raised_till_now: "false",
+    icp_grants: 0,
+    investors: 0,
+    raised_from_other_ecosystem: 0,
   };
 
   const {
@@ -1776,11 +1780,10 @@ const UserProfileProjectUpdate = () => {
 
                         <div className="text-black font-semibold">Skill :</div>
                       </div>
-                      <div className="flex gap-2 text-xs items-center flex-wrap">
+                      <div className="flex gap-2 text-xs items-center overflow-y-scroll h-14 flex-wrap">
                         {orignalData?.areaOfInterest &&
                           orignalData?.areaOfInterest
                             .split(",")
-                            .slice(0, 3)
                             .map((tag, index) => (
                               <div
                                 key={index}
@@ -1903,11 +1906,10 @@ const UserProfileProjectUpdate = () => {
                                 Skill :
                               </div>
                             </div>
-                            <div className="flex gap-2 text-xs items-center flex-wrap">
+                            <div className="flex gap-2 text-xs items-center overflow-y-scroll h-14 flex-wrap">
                               {updatedData?.areaOfInterest &&
                                 updatedData?.areaOfInterest
                                   .split(",")
-                                  .slice(0, 3)
                                   .map((tag, index) => (
                                     <div
                                       key={index}
@@ -3790,13 +3792,12 @@ const UserProfileProjectUpdate = () => {
                   </h2>
                   <div className="flex space-x-2 items-center  flex-row ml-3">
                     <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                    <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
+                    <div className="text-md  font-normal text-gray-600 overflow-y-scroll h-14 break-all flex-wrap">
                       {orignalData?.supportsMultichain ? (
                         <span className="flex flex-wrap gap-2 mb-1">
                           {orignalData?.supportsMultichain &&
                             orignalData?.supportsMultichain
                               .split(",")
-                              .slice(0, 3)
                               .map((tag, index) => (
                                 <div
                                   key={index}
@@ -3906,13 +3907,12 @@ const UserProfileProjectUpdate = () => {
                         )}
                       </div>
                     ) : (
-                      <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
+                      <div className="text-md  font-normal text-gray-600  break-all overflow-y-scroll h-14 flex-wrap">
                         {updatedData?.supportsMultichain ? (
                           <span className="flex flex-wrap gap-2">
                             {updatedData?.supportsMultichain &&
                               updatedData?.supportsMultichain
                                 .split(",")
-                                .slice(0, 3)
                                 .map((tag, index) => (
                                   <div
                                     key={index}

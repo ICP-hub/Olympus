@@ -85,7 +85,7 @@ export const AdminDashboardCohortSkeleton = () => {
                 <div className="flex gap-2 mt-2 text-xs items-center pb-2">
                   {/* {tags
                   .split(",")
-                  .slice(0, 3)
+                 
                   .map((tag, index) => (
                     <div
                       key={index}

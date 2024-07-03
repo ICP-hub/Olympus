@@ -73,7 +73,7 @@ const CurrentlyRaising = ({ progress, numSkeleton, onNoDataChange }) => {
   const itemsPerPage = 4;
   const [currentPage, setCurrentPage] = useState(1);
 
-  const getAllProject = async (caller,isMounted) => {
+  const getAllProject = async (caller, isMounted) => {
     setIsLoading(true);
     await caller
       .list_all_projects_with_pagination({
@@ -83,15 +83,15 @@ const CurrentlyRaising = ({ progress, numSkeleton, onNoDataChange }) => {
       .then((result) => {
         if (isMounted) {
           console.log("result-in-get-all-projects", result);
-          if (!result || result.length == 0) {
+          if (!result || result.length === 0) {
             setNoData(true);
             setAllProjectData([]);
-            onNoDataChange(true);
+            onNoDataChange(false);
           } else {
             setAllProjectData(result.data);
             // setCountData(result.count);
             setNoData(false);
-            onNoDataChange(false);
+            onNoDataChange(true);
           }
           setIsLoading(false);
         }
@@ -101,28 +101,28 @@ const CurrentlyRaising = ({ progress, numSkeleton, onNoDataChange }) => {
           setNoData(true);
           setAllProjectData([]);
           setIsLoading(false);
-          onNoDataChange(true);
+          onNoDataChange(false);
           // setCountData();
           console.log("error-in-get-all-projects", error);
         }
       });
-};
-
-console.log(' currently allProjectData', allProjectData);
-
-useEffect(() => {
-  let isMounted = true; 
-
-  if (actor) {
-    getAllProject(actor,isMounted);
-  } else {
-    getAllProject(IcpAccelerator_backend);
-  }
-
-  return () => {
-    isMounted = false; 
   };
-}, [actor, userCurrentRoleStatusActiveRole, currentPage]);
+
+  console.log(" currently allProjectData", allProjectData);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    if (actor) {
+      getAllProject(actor, isMounted);
+    } else {
+      getAllProject(IcpAccelerator_backend);
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [actor, userCurrentRoleStatusActiveRole, currentPage]);
 
   const handleNavigate = (projectId, projectData) => {
     if (isAuthenticated) {
@@ -286,7 +286,6 @@ useEffect(() => {
                           <div className="flex gap-2 mt-2 text-xs items-center">
                             {projectAreaOfFocus
                               .split(",")
-                              .slice(0, 3)
                               .map((tag, index) => (
                                 <div
                                   key={index}

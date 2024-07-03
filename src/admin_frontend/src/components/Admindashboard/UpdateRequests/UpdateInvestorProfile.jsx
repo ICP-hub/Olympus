@@ -394,11 +394,10 @@ const UpdateInvestorProfile = () => {
 
                   {isSkillsOpen && (
                     <div className="flex flex-col text-gray-600">
-                      <div className="flex gap-2 text-xs flex-wrap items-center">
+                      <div className="flex gap-2 text-xs flex-wrap overflow-y-scroll h-14 items-center">
                         <span className="inline-block w-1.5 p-0.5 h-1.5 bg-red-700 rounded-full"></span>
                         {orignalData?.areaOfInterest
                           .split(",")
-                          .slice(0, 3)
                           .map((tag, index) => (
                             <div
                               key={index}
@@ -408,11 +407,10 @@ const UpdateInvestorProfile = () => {
                             </div>
                           ))}
                       </div>
-                      <div className="flex gap-2 mt-2 text-xs flex-wrap items-center">
+                      <div className="flex gap-2 mt-2 text-xs flex-wrap overflow-y-scroll h-14 items-center">
                         <span className="inline-block w-1.5 p-0.5 h-1.5 bg-green-700 rounded-full"></span>
                         {updatedData?.areaOfInterest
                           .split(",")
-                          .slice(0, 3)
                           .map((tag, index) => (
                             <div
                               key={index}
@@ -863,12 +861,11 @@ const UpdateInvestorProfile = () => {
                 {orignalData?.multichain && (
                   <p className="text-gray-800 font-semibold ">Multichain :</p>
                 )}
-                <div className="flex gap-2 mt-1 text-xs text-gray-600 items-center flex-wrap">
+                <div className="flex gap-2 mt-1 text-xs text-gray-600 items-center overflow-y-scroll h-14 flex-wrap">
                     <span className="inline-block w-1.5 mr-2 p-0.5 h-1.5 bg-red-700 rounded-full"></span>
                     {orignalData?.multichain && orignalData.multichain !== "" ? (
                       orignalData.multichain
                         .split(",")
-                        .slice(0, 3)
                         .map((tag, index) => (
                           <div
                             key={index}
@@ -884,12 +881,11 @@ const UpdateInvestorProfile = () => {
                       </div>
                     )}
                   </div>
-                <div className="flex gap-2 mt-1 text-xs text-gray-600 items-center flex-wrap">
+                <div className="flex gap-2 mt-1 text-xs text-gray-600 items-center overflow-y-scroll h-14 flex-wrap">
                     <span className="inline-block w-1.5 mr-2 p-0.5 h-1.5 bg-green-700 rounded-full"></span>
                     {updatedData?.multichain && updatedData.multichain !== "" ? (
                       updatedData.multichain
                         .split(",")
-                        .slice(0, 3)
                         .map((tag, index) => (
                           <div
                             key={index}
@@ -913,12 +909,11 @@ const UpdateInvestorProfile = () => {
                     <p className="font-semibold mb-1 text-gray-800">
                       Area of Invest :
                     </p>
-                    <div className="flex gap-2 mt-1 text-xs text-gray-600 items-center flex-wrap">
+                    <div className="flex gap-2 mt-1 text-xs text-gray-600 items-center overflow-y-scroll h-14 flex-wrap">
                     <span className="inline-block w-1.5 mr-2 p-0.5 h-1.5 bg-red-700 rounded-full"></span>
                     {orignalData?.categoryOfInvestment && orignalData.categoryOfInvestment !== "" ? (
                       orignalData.categoryOfInvestment
                         .split(",")
-                        .slice(0, 3)
                         .map((tag, index) => (
                           <div
                             key={index}
@@ -934,12 +929,11 @@ const UpdateInvestorProfile = () => {
                       </div>
                     )}
                   </div>
-                  <div className="flex gap-2 mt-1 text-xs text-gray-600 items-center flex-wrap">
+                  <div className="flex gap-2 mt-1 text-xs text-gray-600 items-center overflow-y-scroll h-14 flex-wrap">
                     <span className="inline-block w-1.5 mr-2 p-0.5 h-1.5 bg-green-700 rounded-full"></span>
                     {updatedData?.categoryOfInvestment && updatedData.categoryOfInvestment !== "" ? (
                       updatedData.categoryOfInvestment
                         .split(",")
-                        .slice(0, 3)
                         .map((tag, index) => (
                           <div
                             key={index}
@@ -964,12 +958,11 @@ const UpdateInvestorProfile = () => {
                   <p className="font-semibold text-gray-800 mb-2 sm:mb-0 mr-2">
                     At what stage of investment are you currently focusing on?
                   </p>
-                  <div className="flex gap-2 mt-1 text-xs text-gray-600 items-center flex-wrap">
+                  <div className="flex gap-2 mt-1 text-xs text-gray-600 items-center overflow-y-scroll h-14 flex-wrap">
                     <span className="inline-block w-1.5 mr-2 p-0.5 h-1.5 bg-red-700 rounded-full"></span>
                     {orignalData?.stage && orignalData.stage !== "" ? (
                       orignalData.stage
                         .split(",")
-                        .slice(0, 3)
                         .map((tag, index) => (
                           <div
                             key={index}
@@ -985,12 +978,11 @@ const UpdateInvestorProfile = () => {
                       </div>
                     )}
                   </div>
-                  <div className="flex gap-2 mt-1 text-xs text-gray-600 items-center flex-wrap">
+                  <div className="flex gap-2 mt-1 text-xs text-gray-600 items-center overflow-y-scroll h-14 flex-wrap">
                     <span className="inline-block w-1.5 mr-2 p-0.5 h-1.5 bg-green-700 rounded-full"></span>
                     {updatedData?.stage && updatedData.stage !== "" ? (
                       updatedData.stage
                         .split(",")
-                        .slice(0, 3)
                         .map((tag, index) => (
                           <div
                             key={index}
@@ -1015,12 +1007,11 @@ const UpdateInvestorProfile = () => {
                     What is the typical range of check sizes for your
                     investments?
                   </h2>
-                  <div className="flex gap-2 mt-1 text-xs text-gray-600 items-center flex-wrap">
+                  <div className="flex gap-2 mt-1 text-xs text-gray-600 items-center overflow-y-scroll h-14 flex-wrap">
                     <span className="inline-block w-1.5 mr-2 p-0.5 h-1.5 bg-red-700 rounded-full"></span>
                     {orignalData?.checkSize && orignalData.checkSize !== "" ? (
                       orignalData.checkSize
                         .split(",")
-                        .slice(0, 3)
                         .map((tag, index) => (
                           <div
                             key={index}
@@ -1036,12 +1027,11 @@ const UpdateInvestorProfile = () => {
                       </div>
                     )}
                   </div>
-                  <div className="flex gap-2 mt-1 text-xs text-gray-600 items-center flex-wrap">
+                  <div className="flex gap-2 mt-1 text-xs text-gray-600 items-center overflow-y-scroll h-14 flex-wrap">
                     <span className="inline-block w-1.5 mr-2 p-0.5 h-1.5 bg-green-700 rounded-full"></span>
                     {updatedData?.checkSize && updatedData.checkSize !== "" ? (
                       updatedData.checkSize
                         .split(",")
-                        .slice(0, 3)
                         .map((tag, index) => (
                           <div
                             key={index}
@@ -1514,12 +1504,11 @@ const UpdateInvestorProfile = () => {
                   <h2 className=" font-semibold text-gray-800 mb-2 sm:mb-0 mr-2">
                     What type of Investor you are ?
                   </h2>
-                  <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap">
+                  <div className="flex gap-2 text-xs text-gray-600 items-center overflow-y-scroll h-14 flex-wrap">
                     <span className="inline-block w-1.5 mr-2 p-0.5 h-1.5 bg-red-700 rounded-full"></span>
                     {orignalData?.investorType && orignalData.investorType !== "" ? (
                       orignalData.investorType
                         .split(",")
-                        .slice(0, 3)
                         .map((tag, index) => (
                           <div
                             key={index}
@@ -1536,12 +1525,11 @@ const UpdateInvestorProfile = () => {
                     )}
                   </div>
 
-                  <div className="flex gap-2 mt-1 text-xs text-gray-600 items-center flex-wrap">
+                  <div className="flex gap-2 mt-1 text-xs text-gray-600 items-center overflow-y-scroll h-14 flex-wrap">
                     <span className="inline-block w-1.5 mr-2 p-0.5 h-1.5 bg-green-700 rounded-full"></span>
                     {updatedData?.investorType && updatedData.investorType !== "" ? (
                       updatedData.investorType
                         .split(",")
-                        .slice(0, 3)
                         .map((tag, index) => (
                           <div
                             key={index}

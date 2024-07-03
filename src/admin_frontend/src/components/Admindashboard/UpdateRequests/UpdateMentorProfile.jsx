@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "react-circular-progressbar/dist/styles.css";
 
-import {
-  place1,
-  telegramSVg,
-  websiteSvg,
-} from "../../Utils/AdminData/SvgData";
+import { place1, telegramSVg, websiteSvg } from "../../Utils/AdminData/SvgData";
 import {
   numberToDate,
   uint8ArrayToBase64,
@@ -30,15 +26,14 @@ const UpdateMentorProfile = () => {
   const [updatedData, setUpdatedData] = useState(null);
   const [isSkillsOpen, setIsSkillsOpen] = useState(false);
   const [isReasonToJoinOpen, setIsReasonToJoinOpen] = useState(false);
-  const [principal, setPrincipal] =useState(null)
-
+  const [principal, setPrincipal] = useState(null);
 
   // const navigate = useNavigate();
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const updateStatus =location.state
+  const updateStatus = location.state;
 
   // console.log("userData in mentor profile", userData);
   // console.log("Allrole in mentor profile", Allrole);
@@ -52,10 +47,10 @@ const UpdateMentorProfile = () => {
 
         const originalInfo = data[0][1].original_info[0];
         const updatedInfo = data[0][1].updated_info[0];
-        const principalId = data[0][0]
+        const principalId = data[0][0];
         // console.log("Original Info:", originalInfo);
         // console.log("updated Info:", updatedInfo);
-          setPrincipal(principalId)
+        setPrincipal(principalId);
         if (
           data &&
           data.length > 0 &&
@@ -199,18 +194,15 @@ const UpdateMentorProfile = () => {
     return baseMessage;
   }
 
-  const declineUserRoleHandler = async (
-    principle,
-    boolean
-  ) => {
+  const declineUserRoleHandler = async (principle, boolean) => {
     setIsDeclining(true);
     try {
       const covertedPrincipal = await Principal.fromText(principle);
 
-            await actor.decline_mentor_profile_update_request(
-              covertedPrincipal,
-              boolean
-            );
+      await actor.decline_mentor_profile_update_request(
+        covertedPrincipal,
+        boolean
+      );
     } catch (error) {
       console.error("Error processing request:", error);
     } finally {
@@ -219,14 +211,11 @@ const UpdateMentorProfile = () => {
     }
   };
 
-  const allowUserRoleHandler = async ( principle,boolean) => {
+  const allowUserRoleHandler = async (principle, boolean) => {
     setIsAccepting(true);
     try {
-       const covertedPrincipal = await Principal.fromText(principle);
-            await actor.approve_mentor_profile_update(
-              covertedPrincipal,
-              boolean
-            );
+      const covertedPrincipal = await Principal.fromText(principle);
+      await actor.approve_mentor_profile_update(covertedPrincipal, boolean);
     } catch (error) {
       console.error("Error processing request:", error);
     } finally {
@@ -419,11 +408,10 @@ const UpdateMentorProfile = () => {
 
                   {isSkillsOpen && (
                     <div className="flex flex-col text-gray-600">
-                      <div className="flex gap-2 text-xs flex-wrap items-center">
+                      <div className="flex gap-2 text-xs flex-wrap overflow-y-scroll h-14 items-center">
                         <span className="inline-block w-1.5 p-0.5 h-1.5 bg-red-700 rounded-full"></span>
                         {orignalData?.areaOfInterest
                           .split(",")
-                          .slice(0, 3)
                           .map((tag, index) => (
                             <div
                               key={index}
@@ -433,11 +421,10 @@ const UpdateMentorProfile = () => {
                             </div>
                           ))}
                       </div>
-                      <div className="flex gap-2 mt-2 text-xs flex-wrap items-center">
+                      <div className="flex gap-2 mt-2 text-xs flex-wrap overflow-y-scroll h-14 items-center">
                         <span className="inline-block w-1.5 p-0.5 h-1.5 bg-green-700 rounded-full"></span>
                         {updatedData?.areaOfInterest
                           .split(",")
-                          .slice(0, 3)
                           .map((tag, index) => (
                             <div
                               key={index}
@@ -487,7 +474,7 @@ const UpdateMentorProfile = () => {
 
                   {isReasonToJoinOpen && (
                     <div className="flex flex-col text-gray-600">
-                      <div className="flex gap-2 text-xs flex-wrap items-center">
+                      <div className="flex gap-2 text-xs flex-wrap overflow-y-scroll h-14 items-center">
                         <span className="inline-block w-1.5 p-0.5 h-1.5 bg-red-700 rounded-full"></span>
                         {orignalData?.reasonToJoin.map((reason, index) => (
                           <p
@@ -499,7 +486,7 @@ const UpdateMentorProfile = () => {
                         ))}
                       </div>
 
-                      <div className="flex gap-2 text-xs mt-2 flex-wrap items-center">
+                      <div className="flex gap-2 text-xs mt-2 flex-wrap overflow-y-scroll h-14 items-center">
                         <span className="inline-block w-1.5 p-0.5 h-1.5 bg-green-700 rounded-full"></span>
                         {updatedData?.reasonToJoin.map((reason, index) => (
                           <p
@@ -574,7 +561,7 @@ const UpdateMentorProfile = () => {
             <div className="flex flex-row space-x-4 mt-4 justify-start items-start">
               <span className="inline-block w-1.5  md:ml-8 p-1 h-1.5 mt-2 bg-red-700 rounded-full"></span>
               <div className="text-gray-600 flex flex-row items-start md:text-sm text-xs break-all line-clamp-6">
-                {orignalData?.bio ?(
+                {orignalData?.bio ? (
                   orignalData?.bio
                 ) : (
                   <p className="flex items-center">
@@ -836,20 +823,17 @@ const UpdateMentorProfile = () => {
                   <p className="text-black font-semibold ">Multichain :</p>
                 )}
 
-                <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap">
+                <div className="flex gap-2 text-xs text-gray-600 items-center overflow-y-scroll h-14 flex-wrap">
                   <span className="inline-block w-1.5  p-0.5 h-1.5 mr-2  bg-red-700 rounded-full"></span>
                   {orignalData?.multichain && orignalData.multichain !== "" ? (
-                    orignalData.multichain
-                      .split(",")
-                      .slice(0, 3)
-                      .map((tag, index) => (
-                        <div
-                          key={index}
-                          className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
-                        >
-                          {tag.trim()}
-                        </div>
-                      ))
+                    orignalData.multichain.split(",").map((tag, index) => (
+                      <div
+                        key={index}
+                        className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                      >
+                        {tag.trim()}
+                      </div>
+                    ))
                   ) : (
                     <div className="flex items-center">
                       {noDataPresentSvg}
@@ -857,20 +841,17 @@ const UpdateMentorProfile = () => {
                     </div>
                   )}
                 </div>
-                <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap  space-y-1">
+                <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap overflow-y-scroll h-14 space-y-1">
                   <span className="inline-block w-1.5  p-0.5 h-1.5 mr-2  bg-green-700 rounded-full"></span>
                   {updatedData?.multichain && updatedData.multichain !== "" ? (
-                    updatedData.multichain
-                      .split(",")
-                      .slice(0, 3)
-                      .map((tag, index) => (
-                        <div
-                          key={index}
-                          className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
-                        >
-                          {tag.trim()}
-                        </div>
-                      ))
+                    updatedData.multichain.split(",").map((tag, index) => (
+                      <div
+                        key={index}
+                        className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                      >
+                        {tag.trim()}
+                      </div>
+                    ))
                   ) : (
                     <div className="flex items-center">
                       {noDataPresentSvg}
@@ -886,50 +867,48 @@ const UpdateMentorProfile = () => {
                     <p className="text-black font-semibold mb-1">
                       Area Of Expertise :
                     </p>
-                    <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap">
-                  <span className="inline-block w-1.5  p-0.5 h-1.5 mr-2  bg-red-700 rounded-full"></span>
-                  {orignalData?.areaOfInterest && orignalData.areaOfInterest !== "" ? (
-                    orignalData.areaOfInterest
-                      .split(",")
-                      .slice(0, 3)
-                      .map((tag, index) => (
-                        <div
-                          key={index}
-                          className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
-                        >
-                          {tag.trim()}
+                    <div className="flex gap-2 text-xs text-gray-600 items-center overflow-y-scroll h-14 flex-wrap">
+                      <span className="inline-block w-1.5  p-0.5 h-1.5 mr-2  bg-red-700 rounded-full"></span>
+                      {orignalData?.areaOfInterest &&
+                      orignalData.areaOfInterest !== "" ? (
+                        orignalData.areaOfInterest
+                          .split(",")
+                          .map((tag, index) => (
+                            <div
+                              key={index}
+                              className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                            >
+                              {tag.trim()}
+                            </div>
+                          ))
+                      ) : (
+                        <div className="flex items-center">
+                          {noDataPresentSvg}
+                          <span className="ml-2 text-xs">No Data</span>
                         </div>
-                      ))
-                  ) : (
-                    <div className="flex items-center">
-                      {noDataPresentSvg}
-                      <span className="ml-2 text-xs">No Data</span>
+                      )}
                     </div>
-                  )}
-                </div>
-                <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap  space-y-1">
-                  <span className="inline-block w-1.5  p-0.5 h-1.5 mr-2  bg-green-700 rounded-full"></span>
-                  {updatedData?.areaOfInterest && updatedData.areaOfInterest !== "" ? (
-                    updatedData.areaOfInterest
-                      .split(",")
-                      .slice(0, 3)
-                      .map((tag, index) => (
-                        <div
-                          key={index}
-                          className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
-                        >
-                          {tag.trim()}
+                    <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap overflow-y-scroll h-14 space-y-1">
+                      <span className="inline-block w-1.5  p-0.5 h-1.5 mr-2  bg-green-700 rounded-full"></span>
+                      {updatedData?.areaOfInterest &&
+                      updatedData.areaOfInterest !== "" ? (
+                        updatedData.areaOfInterest
+                          .split(",")
+                          .map((tag, index) => (
+                            <div
+                              key={index}
+                              className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                            >
+                              {tag.trim()}
+                            </div>
+                          ))
+                      ) : (
+                        <div className="flex items-center">
+                          {noDataPresentSvg}
+                          <span className="ml-2 text-xs">No Data</span>
                         </div>
-                      ))
-                  ) : (
-                    <div className="flex items-center">
-                      {noDataPresentSvg}
-                      <span className="ml-2 text-xs">No Data</span>
+                      )}
                     </div>
-                  )}
-                </div>
-
-                  
                   </div>
                 )}
               </li>
@@ -1235,89 +1214,85 @@ const UpdateMentorProfile = () => {
                     What types of mentoring services are you offering?
                   </p>
 
-                  <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap">
-                  <span className="inline-block w-1.5  p-0.5 h-1.5 mr-2  bg-red-700 rounded-full"></span>
-                  {orignalData?.categoryOfMentoring && orignalData.categoryOfMentoring !== "" ? (
-                    orignalData.categoryOfMentoring
-                      .split(",")
-                      .slice(0, 3)
-                      .map((tag, index) => (
-                        <div
-                          key={index}
-                          className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
-                        >
-                          {tag.trim()}
-                        </div>
-                      ))
-                  ) : (
-                    <div className="flex items-center">
-                      {noDataPresentSvg}
-                      <span className="ml-2 text-xs">No Data</span>
-                    </div>
-                  )}
-                </div>
-                <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap space-y-1">
-                  <span className="inline-block w-1.5  p-0.5 h-1.5 mr-2  bg-green-700 rounded-full"></span>
-                  {updatedData?.categoryOfMentoring && updatedData.categoryOfMentoring !== "" ? (
-                    updatedData.categoryOfMentoring
-                      .split(",")
-                      .slice(0, 3)
-                      .map((tag, index) => (
-                        <div
-                          key={index}
-                          className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
-                        >
-                          {tag.trim()}
-                        </div>
-                      ))
-                  ) : (
-                    <div className="flex items-center">
-                      {noDataPresentSvg}
-                      <span className="ml-2 text-xs">No Data</span>
-                    </div>
-                  )}
-                </div>
-
-               
-
-                
+                  <div className="flex gap-2 text-xs text-gray-600 items-center overflow-y-scroll h-14 flex-wrap">
+                    <span className="inline-block w-1.5  p-0.5 h-1.5 mr-2  bg-red-700 rounded-full"></span>
+                    {orignalData?.categoryOfMentoring &&
+                    orignalData.categoryOfMentoring !== "" ? (
+                      orignalData.categoryOfMentoring
+                        .split(",")
+                        .map((tag, index) => (
+                          <div
+                            key={index}
+                            className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                          >
+                            {tag.trim()}
+                          </div>
+                        ))
+                    ) : (
+                      <div className="flex items-center">
+                        {noDataPresentSvg}
+                        <span className="ml-2 text-xs">No Data</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap overflow-y-scroll h-14 space-y-1">
+                    <span className="inline-block w-1.5  p-0.5 h-1.5 mr-2  bg-green-700 rounded-full"></span>
+                    {updatedData?.categoryOfMentoring &&
+                    updatedData.categoryOfMentoring !== "" ? (
+                      updatedData.categoryOfMentoring
+                        .split(",")
+                        .map((tag, index) => (
+                          <div
+                            key={index}
+                            className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                          >
+                            {tag.trim()}
+                          </div>
+                        ))
+                    ) : (
+                      <div className="flex items-center">
+                        {noDataPresentSvg}
+                        <span className="ml-2 text-xs">No Data</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </li>
             </ul>
           </div>
         </div>
-        {updateStatus.selectionOption === "Pending"?
-        <div className="flex justify-end gap-2 mt-6">
-                <button
-                  onClick={() =>
-                    declineUserRoleHandler(
-                      updateStatus.principalId,
-                      true,  
-                    )
-                  }
-                  disabled={isDeclining}
-                  className="px-5 py-2.5 text-sm font-medium text-white bg-[#C60404] hover:bg-[#8b2a2a] rounded-lg focus:outline-none focus:ring-4 focus:ring-gray-100"
-                >
-                  {isDeclining ? (
-                    <ThreeDots color="#FFF" height={13} width={51} />
-                  ) : (
-                    "Decline"
-                  )}
-                </button>{" "}
-                <button
-                  onClick={() =>
-                    allowUserRoleHandler(updateStatus.principalId, true)
-                  }
-                  disabled={isAccepting}
-                  className="px-5 py-2.5 text-sm font-medium text-white bg-[#3505B2] hover:bg-[#482b90] rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-300"
-                >
-                  {isAccepting ? (
-                    <ThreeDots color="#FFF" height={13} width={51} />
-                  ) : (
-                    "Accept"
-                  )}
-                </button>
-              </div>:""}
+        {updateStatus.selectionOption === "Pending" ? (
+          <div className="flex justify-end gap-2 mt-6">
+            <button
+              onClick={() =>
+                declineUserRoleHandler(updateStatus.principalId, true)
+              }
+              disabled={isDeclining}
+              className="px-5 py-2.5 text-sm font-medium text-white bg-[#C60404] hover:bg-[#8b2a2a] rounded-lg focus:outline-none focus:ring-4 focus:ring-gray-100"
+            >
+              {isDeclining ? (
+                <ThreeDots color="#FFF" height={13} width={51} />
+              ) : (
+                "Decline"
+              )}
+            </button>{" "}
+            <button
+              onClick={() =>
+                allowUserRoleHandler(updateStatus.principalId, true)
+              }
+              disabled={isAccepting}
+              className="px-5 py-2.5 text-sm font-medium text-white bg-[#3505B2] hover:bg-[#482b90] rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-300"
+            >
+              {isAccepting ? (
+                <ThreeDots color="#FFF" height={13} width={51} />
+              ) : (
+                "Accept"
+              )}
+            </button>
+          </div>
+        ) : (
+          ""
+        )}
       </div>
     </>
   );

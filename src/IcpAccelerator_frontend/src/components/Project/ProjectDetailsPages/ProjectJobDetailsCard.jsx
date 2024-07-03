@@ -140,17 +140,17 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
   return (
     <div className="py-4 gap-2 overflow-x-auto">
       <Swiper
-        modules={[Autoplay]}
+        // modules={[Autoplay]}
         // centeredSlides={true}
         loop={latestJobs.length <= 3}
-        autoplay={
-          latestJobs.length <= 3
-            ? {
-                delay: 2500,
-                disableOnInteraction: false,
-              }
-            : {}
-        }
+        // autoplay={
+        //   latestJobs.length <= 3
+        //     ? {
+        //         delay: 2500,
+        //         disableOnInteraction: false,
+        //       }
+        //     : {}
+        // }
         // pagination={{
         //   clickable: true,
         // }}

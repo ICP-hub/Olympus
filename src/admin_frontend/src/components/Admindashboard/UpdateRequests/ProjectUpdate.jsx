@@ -697,8 +697,8 @@ const ProjectUpdate = () => {
             Project Profile
           </h1>
         </div>
-        <div className="w-full flex gap-4  md:flex-row flex-col mt-4">
-          <div className=" bg-[#D2D5F2]  shadow-md shadow-gray-400 p-6 rounded-lg md:w-1/4 w-full">
+        <div className="w-full flex gap-4  md1:flex-row flex-col mt-4">
+          <div className=" bg-[#D2D5F2]  shadow-md shadow-gray-400 p-6 rounded-lg md1:w-1/4 w-full">
             <div className="div">
               {showOriginalProfile ? (
                 <div className="justify-center flex items-center">
@@ -844,11 +844,10 @@ const ProjectUpdate = () => {
 
                       <div className="text-black font-semibold">Skill :</div>
                     </div>
-                    <div className="flex gap-2 text-xs items-center flex-wrap">
+                    <div className="flex gap-2 text-xs items-center overflow-y-scroll h-14 flex-wrap">
                       {orignalData?.areaOfInterest &&
                         orignalData?.areaOfInterest
                           .split(",")
-                          // .slice(0, 3)
                           .map((tag, index) => (
                             <div
                               key={index}
@@ -868,11 +867,10 @@ const ProjectUpdate = () => {
                             Skill :
                           </div>
                         </div>
-                        <div className="flex gap-2 text-xs items-center flex-wrap">
+                        <div className="flex gap-2 text-xs items-center overflow-y-scroll h-14 flex-wrap">
                           {updatedData?.areaOfInterest &&
                             updatedData?.areaOfInterest
                               .split(",")
-                              // .slice(0, 3)
                               .map((tag, index) => (
                                 <div
                                   key={index}
@@ -896,7 +894,7 @@ const ProjectUpdate = () => {
                     </div>
                   </div>
                   <div className="flex gap-2 text-xs items-center flex-wrap">
-                    <div className="flex text-gray-700 flex-row gap-2 flex-wrap text-xs">
+                    <div className="flex text-gray-700 flex-row gap-2 flex-wrap overflow-y-scroll h-14 text-xs">
                       {orignalData?.reasonToJoin?.map((reason, index) => (
                         <div
                           key={index}
@@ -917,7 +915,7 @@ const ProjectUpdate = () => {
                           Reason to join:
                         </div>
                       </div>
-                      <div className="flex text-gray-700 flex-row gap-2 flex-wrap text-xs">
+                      <div className="flex text-gray-700 flex-row gap-2 flex-wrap overflow-y-scroll h-14 text-xs">
                         {orignalData?.reasonToJoin?.map((reason, index) => (
                           <div
                             key={index}
@@ -934,7 +932,7 @@ const ProjectUpdate = () => {
             </div>
           </div>
 
-          <div className=" bg-[#D2D5F2]  shadow-md shadow-gray-400 pb-6 pt-4 rounded-lg md:w-3/4 w-full">
+          <div className=" bg-[#D2D5F2]  shadow-md shadow-gray-400 pb-6 pt-4 rounded-lg md1:w-3/4 w-full">
             <div className="w-full flex flex-col  justify-around px-[4%] py-4">
               <div className="w-full flex flex-row justify-between items-center">
                 {showOriginalBioAndDescription ? (
@@ -1340,8 +1338,8 @@ const ProjectUpdate = () => {
           </div>
         </div>
 
-        <div className="w-full flex gap-4  md:flex-row flex-col mt-4">
-          <div className="flex flex-col md:w-1/4 w-full">
+        <div className="w-full flex gap-4  md1:flex-row flex-col mt-4">
+          <div className="flex flex-col md1:w-1/4 w-full">
             <div className=" bg-[#D2D5F2] flex  flex-col h-[310px] overflow-y-auto shadow-md shadow-gray-400 p-6 rounded-lg  w-full mb-4">
               <div className="flex flex-col md:pl-0 pl-4">
                 <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
@@ -1626,7 +1624,7 @@ const ProjectUpdate = () => {
               </div>
             </div>
           </div>
-          <div className=" bg-[#D2D5F2] md:px-[4%] flex md:flex-row flex-col shadow-md shadow-gray-400 pb-6 pt-4 rounded-lg md:w-3/4 w-full">
+          <div className=" bg-[#D2D5F2] md:px-[4%] flex md:flex-row flex-col shadow-md shadow-gray-400 pb-6 pt-4 rounded-lg md1:w-3/4 w-full">
             <div className="grid md:grid-cols-2 w-full">
               <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
                 <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
@@ -1810,13 +1808,12 @@ const ProjectUpdate = () => {
                 </h2>
                 <div className="flex space-x-2 items-center  flex-row ml-3">
                   <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                  <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
+                  <div className="text-md  font-normal text-gray-600 overflow-y-scroll h-14 break-all flex-wrap">
                     {orignalData?.supportsMultichain ? (
                       <span className="flex flex-wrap gap-2 mb-1">
                         {orignalData?.supportsMultichain &&
                           orignalData?.supportsMultichain
                             .split(",")
-                            // .slice(0, 3)
                             .map((tag, index) => (
                               <div
                                 key={index}
@@ -1834,16 +1831,15 @@ const ProjectUpdate = () => {
                     )}
                   </div>
                 </div>
-                <div className="flex space-x-2 items-center  flex-row ml-3">
+                <div className="flex space-x-2 items-center  flex-row ml-3 mt-3">
                   <span className="w-2 h-2 bg-green-700 rounded-full"></span>
                   {/* {supportsMultichain.length > 0  && */}
-                  <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
+                  <div className="text-md  font-normal text-gray-600 overflow-y-scroll h-14 break-all flex-wrap">
                     {updatedData?.supportsMultichain ? (
                       <span className="flex flex-wrap gap-2">
                         {updatedData?.supportsMultichain &&
                           updatedData?.supportsMultichain
                             .split(",")
-                            // .slice(0, 3)
                             .map((tag, index) => (
                               <div
                                 key={index}
@@ -1902,20 +1898,20 @@ const ProjectUpdate = () => {
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col mb-4 md:mb-6">
+              <div className="flex flex-col mb-4 md:mb-6 md:pl-0 line-clamp-1 pl-4">
                 <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
                   Daap Link:
                 </h2>
                 <div className="flex space-x-2 items-center  flex-row ml-3">
                   <span className="w-2 h-2 bg-red-700 rounded-full"></span>
-                  <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
+                  <div className="text-[#7283EA] text-xs font-semibold md:text-sm line-clamp-1 px-4">
                     {orignalData?.dappLink || "Not available"}
                   </div>
                 </div>
                 <div className="flex space-x-2 items-center flex-row ml-3">
                   <span className="w-2 h-2 bg-green-700 rounded-full"></span>
                   {/* {liveOnIcpMainnet.length>0( */}
-                  <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
+                  <div className="text-[#7283EA] text-xs font-semibold md:text-sm line-clamp-1 px-4">
                     {updatedData?.dappLink || "Not available"}
                   </div>
                   {/* )} */}

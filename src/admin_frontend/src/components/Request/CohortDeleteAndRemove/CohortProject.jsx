@@ -189,7 +189,6 @@ function CohortProject({ allProjectData, noData, cohortId }) {
                             <div className="flex gap-2 mt-2 text-xs items-center">
                               {projectAreaOfFocus
                                 .split(",")
-                                .slice(0, 3)
                                 .map((tag, index) => (
                                   <div
                                     key={index}

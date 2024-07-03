@@ -205,10 +205,9 @@ const UserProfile = ({ userData, Allrole }) => {
 
               {isSkillsOpen && (
                 <div className="flex flex-col text-gray-600">
-                  <div className="flex gap-2 text-xs flex-wrap items-center">
+                  <div className="flex gap-2 text-xs flex-wrap overflow-y-scroll h-14 items-center">
                     {userData[0]?.params?.area_of_interest
                       .split(",")
-                      .slice(0, 3)
                       .map((tag, index) => (
                         <div
                           key={index}
@@ -261,7 +260,6 @@ const UserProfile = ({ userData, Allrole }) => {
                   <div className="flex gap-2 break-all text-xs flex-wrap items-center">
                     {userData[0]?.params?.reason_to_join?.[0]
                       // .split(",")
-                      // .slice(0, 3)
                       .map((tag, index) => (
                         <div
                           key={index}

@@ -48,7 +48,7 @@ const MoreCurrentlyRaisingProjects = () => {
       .then((result) => {
         console.log("result-in-get-all-projects", result);
 
-        if (!result || result.length == 0) {
+        if (!result || result.length === 0) {
           setNoData(true);
           setIsLoading(false);
           setAllProjectData([]);
