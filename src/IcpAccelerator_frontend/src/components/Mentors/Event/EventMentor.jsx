@@ -1,14 +1,16 @@
-import React ,{useState}from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import NoDataCard from "../../Mentors/Event/NoDataCard";
 import NoData from "../../../../assets/images/search_not_found.png";
 import AddMentorRatingModal from "../../../models/AddMentorAndInvestorRatingModal";
 import toast, { Toaster } from "react-hot-toast";
+import { Principal } from "@dfinity/principal";
 import { useSelector } from "react-redux";
 function EventMentor({ allMentorData, noData }) {
   const navigate = useNavigate();
   const [isRatingModalOpen, setRatingModalOpen] = useState(false);
+  const principal = useSelector((currState) => currState.internet.principal);
   const handleRatingCloseModal = () => setRatingModalOpen(false);
   const handleRatingOpenModal = () => setRatingModalOpen(true);
   // const [noData, setNoData] = useState(null);
@@ -17,15 +19,15 @@ function EventMentor({ allMentorData, noData }) {
   const handleAddRating = async ({ rating, ratingDescription }) => {
     console.log("add job");
     setIsSubmitting(true);
+    const covertedPrincipal = await Principal.fromText(principal);
     if (actor) {
       let argument = {
-        value:rating,
-        comment: ratingDescription,
-        principal_id: '',
+        value: rating,
+        comment: [ratingDescription],
       };
 
       await actor
-        .update_mentor_ratings(argument)
+        .update_mentor_ratings(covertedPrincipal, argument)
         .then((result) => {
           console.log("result-in-add_mentor_rating", result);
           if (result) {
@@ -47,14 +49,14 @@ function EventMentor({ allMentorData, noData }) {
     }
   };
 
-  if (noData|| !allMentorData?.Ok?.length) {
+  if (noData || !allMentorData?.Ok?.length) {
     return (
       <div className="items-center w-full flex justify-center">
         <NoDataCard image={NoData} desc={"Mentors not found at the moment"} />
       </div>
     );
   }
-  console.log('allMentorData',allMentorData)
+  console.log("allMentorData", allMentorData);
   return (
     <>
       {allMentorData &&
@@ -151,7 +153,7 @@ function EventMentor({ allMentorData, noData }) {
             </div>
           );
         })}
-        {isRatingModalOpen && (
+      {isRatingModalOpen && (
         <AddMentorRatingModal
           onRatingClose={handleRatingCloseModal}
           onSubmitHandler={handleAddRating}

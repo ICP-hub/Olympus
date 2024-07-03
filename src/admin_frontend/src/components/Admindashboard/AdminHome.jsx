@@ -49,7 +49,7 @@ function AdminDashboard({ setModalOpen }) {
       <div className="font-fontUse flex flex-col w-full h-fit py-[2%]">
         <div>
           <div className="relative bg-white p-8 pt-16 rounded-lg">
-            <h1 className="font-extrabold text-transparent lg:text-6xl text-3xl bg-gradient-to-r from-[#3C04BA] to-[#4087BF] bg-clip-text mb-3">
+            <h1 className="font-extrabold text-transparent lg:text-6xl ss3:text-3xl text-2xl bg-gradient-to-r from-[#3C04BA] to-[#4087BF] bg-clip-text mb-3">
               Effortless Administration Made Possible with Our Olympus
             </h1>
             <h6 className="text-xl font-[450] lg:w-[50%] w-[90%] mb-6">
@@ -77,8 +77,8 @@ function AdminDashboard({ setModalOpen }) {
               <p className="md:text-5xl text-2xl md:my-0 my-4 justify-start text-transparent bg-gradient-to-r from-[#3C04BA] to-[#4087BF] bg-clip-text flex font-extrabold mx-auto pb-4">
                 How we work
               </p>
-              <div className="h-[200px] md:w-[450px] ">
-                <p className="text-left md:text-xl  text-md font-normal flex flex-wrap">
+              <div>
+                <p className="text-left md:text-xl text-md font-normal flex flex-wrap">
                   Welcome to the Olympus Admin Dashboard on the Internet
                   Computer. This dashboard is designed to streamline your
                   administrative tasks, providing a robust interface for

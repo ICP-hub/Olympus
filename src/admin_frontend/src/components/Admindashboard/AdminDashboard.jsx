@@ -111,7 +111,7 @@ const AdminDashboard = () => {
           <div className="flex flex-col lg:w-9/12 w-full">
             <div className="w-full flex lg:flex-row flex-col justify-between">
               <div className="w-full  flex lg:flex-row flex-col  gap-4">
-                <div className="rounded-[2rem] flex justify-center flex-col h-[200px] w-full bg-[#B9C0F2] drop-shadow-xl border-2">
+                <div className="relative rounded-[2rem] flex justify-center flex-col h-[200px] w-full bg-[#B9C0F2] drop-shadow-xl border-2">
                   <div className="absolute bottom-0 left-0 w-36 h-40 bg-gradient-to-r from-purple-300 via-purple-500 to-purple-800 ellipse-quarter-left rounded-[2rem]"></div>
                   <div className="absolute top-0 right-0 bg-gradient-to-br from-indigo-100 to-purple-700 w-28 h-28 ellipse-quarter-right rounded-[2rem]"></div>
 
@@ -124,7 +124,7 @@ const AdminDashboard = () => {
                 </div>
                 <div
                   onClick={() => navigate("/live")}
-                  className="rounded-[2rem] cursor-pointer flex justify-center  flex-col h-[200px] w-full bg-[#B9C0F2] drop-shadow-xl border-2"
+                  className="relative rounded-[2rem] cursor-pointer flex justify-center  flex-col h-[200px] w-full bg-[#B9C0F2] drop-shadow-xl border-2"
                 >
                   <div className="absolute bottom-0 left-0 w-36 h-40 bg-gradient-to-r from-purple-300 via-purple-500 to-purple-800 ellipse-quarter-left rounded-[2rem]"></div>
                   <div className="absolute top-0 right-0 bg-gradient-to-br from-indigo-100 to-purple-700 w-28 h-28 ellipse-quarter-right rounded-[2rem]"></div>

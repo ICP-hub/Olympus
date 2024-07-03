@@ -1033,11 +1033,10 @@ const UserProfileMentorUpdate = () => {
 
                     {isSkillsOpen && (
                       <div className="flex flex-col text-gray-600">
-                        <div className="flex gap-2 text-xs flex-wrap items-center">
+                        <div className="flex gap-2 text-xs flex-wrap overflow-y-scroll h-14 items-center">
                           <span className="inline-block w-1.5 p-0.5 h-1.5 bg-red-700 rounded-full"></span>
                           {orignalData?.areaOfInterest
                             .split(",")
-                            .slice(0, 3)
                             .map((tag, index) => (
                               <div
                                 key={index}
@@ -1155,11 +1154,10 @@ const UserProfileMentorUpdate = () => {
                                 <div className="flex flex-row  text-gray-600 space-x-2 items-center">
                                   <span className="w-2 h-2 bg-green-700 rounded-full"></span>
 
-                                  <div className="flex gap-2 text-xs items-center flex-wrap">
+                                  <div className="flex gap-2 text-xs items-center overflow-y-scroll h-14 flex-wrap">
                                     {updatedData?.areaOfInterest &&
                                       updatedData?.areaOfInterest
                                         .split(",")
-                                        .slice(0, 3)
                                         .map((tag, index) => (
                                           <div
                                             key={index}
@@ -1820,21 +1818,18 @@ const UserProfileMentorUpdate = () => {
                     </p>
                   )}
 
-                  <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap">
+                  <div className="flex gap-2 text-xs text-gray-600 items-center overflow-y-scroll h-14 flex-wrap">
                     <span className="inline-block w-1.5  p-0.5 h-1.5 mr-2  bg-red-700 rounded-full"></span>
                     {orignalData?.multichain &&
                     orignalData.multichain !== "" ? (
-                      orignalData.multichain
-                        .split(",")
-                        .slice(0, 3)
-                        .map((tag, index) => (
-                          <div
-                            key={index}
-                            className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
-                          >
-                            {tag.trim()}
-                          </div>
-                        ))
+                      orignalData.multichain.split(",").map((tag, index) => (
+                        <div
+                          key={index}
+                          className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                        >
+                          {tag.trim()}
+                        </div>
+                      ))
                     ) : (
                       <div className="flex items-center">
                         {noDataPresentSvg}
@@ -1939,13 +1934,12 @@ const UserProfileMentorUpdate = () => {
                         )}
                       </div>
                     ) : (
-                      <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap  space-y-1">
+                      <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap overflow-y-scroll h-14 space-y-1">
                         <span className="inline-block w-1.5  p-0.5 h-1.5 mr-2  bg-green-700 rounded-full"></span>
                         {updatedData?.multichain &&
                         updatedData.multichain !== "" ? (
                           updatedData.multichain
                             .split(",")
-                            .slice(0, 3)
                             .map((tag, index) => (
                               <div
                                 key={index}
@@ -1970,13 +1964,12 @@ const UserProfileMentorUpdate = () => {
                       <p className="text-black font-semibold mb-1 text-base">
                         Area Of Expertise :
                       </p>
-                      <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap">
+                      <div className="flex gap-2 text-xs text-gray-600 items-center overflow-y-scroll h-14 flex-wrap">
                         <span className="inline-block w-1.5  p-0.5 h-1.5 mr-2  bg-red-700 rounded-full"></span>
                         {orignalData?.areaOfInterest &&
                         orignalData.areaOfInterest !== "" ? (
                           orignalData.areaOfInterest
                             .split(",")
-                            .slice(0, 3)
                             .map((tag, index) => (
                               <div
                                 key={index}
@@ -2106,13 +2099,12 @@ const UserProfileMentorUpdate = () => {
                             )}
                           </div>
                         ) : (
-                          <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap  space-y-1">
+                          <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap overflow-y-scroll h-14 space-y-1">
                             <span className="inline-block w-1.5  p-0.5 h-1.5 mr-2  bg-green-700 rounded-full"></span>
                             {updatedData?.areaOfInterest &&
                             updatedData.areaOfInterest !== "" ? (
                               updatedData.areaOfInterest
                                 .split(",")
-                                .slice(0, 3)
                                 .map((tag, index) => (
                                   <div
                                     key={index}
@@ -2494,13 +2486,12 @@ const UserProfileMentorUpdate = () => {
                       What types of mentoring services are you offering?
                     </p>
 
-                    <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap">
+                    <div className="flex gap-2 text-xs text-gray-600 items-center overflow-y-scroll h-14 flex-wrap">
                       <span className="inline-block w-1.5  p-0.5 h-1.5 mr-2  bg-red-700 rounded-full"></span>
                       {orignalData?.categoryOfMentoring &&
                       orignalData.categoryOfMentoring !== "" ? (
                         orignalData.categoryOfMentoring
                           .split(",")
-                          .slice(0, 3)
                           .map((tag, index) => (
                             <div
                               key={index}
@@ -2625,13 +2616,12 @@ const UserProfileMentorUpdate = () => {
                           )}
                         </div>
                       ) : (
-                        <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap space-y-1">
+                        <div className="flex gap-2 text-xs text-gray-600 items-center flex-wrap overflow-y-scroll h-14 space-y-1">
                           <span className="inline-block w-1.5  p-0.5 h-1.5 mr-2  bg-green-700 rounded-full"></span>
                           {updatedData?.categoryOfMentoring &&
                           updatedData.categoryOfMentoring !== "" ? (
                             updatedData.categoryOfMentoring
                               .split(",")
-                              .slice(0, 3)
                               .map((tag, index) => (
                                 <div
                                   key={index}

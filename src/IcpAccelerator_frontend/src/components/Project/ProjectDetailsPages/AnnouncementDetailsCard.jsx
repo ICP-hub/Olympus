@@ -153,17 +153,17 @@ const AnnouncementDetailsCard = ({ data }) => {
     <div className="gap-2 overflow-x-auto">
       <Swiper
         // className="custom-swiper"
-        modules={[Pagination, Autoplay]}
+        modules={[Pagination]}
         // centeredSlides={true}
         loop={latestAnnouncementData.length <= 3}
-        autoplay={
-          latestAnnouncementData.length <= 3
-            ? {
-                delay: 2500,
-                disableOnInteraction: false,
-              }
-            : {}
-        }
+        // autoplay={
+        //   latestAnnouncementData.length <= 3
+        //     ? {
+        //         delay: 2500,
+        //         disableOnInteraction: false,
+        //       }
+        //     : {}
+        // }
         pagination={{
           clickable: true,
         }}

@@ -113,18 +113,15 @@ const CohortDeleteCard = ({ data, deleteCohort }) => {
                 <p className="flex text-black w-20">{eligibility}</p>
               </div> */}
               <p className="text-[#7283EA] font-semibold">Tags</p>
-              <div className="flex gap-2 mt-2 text-xs items-center pb-2">
-                {tags
-                  .split(",")
-                  .slice(0, 3)
-                  .map((tag, index) => (
-                    <div
-                      key={index}
-                      className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-gray-100"
-                    >
-                      {tag.trim()}
-                    </div>
-                  ))}
+              <div className="flex gap-2 mt-2 text-xs items-center overflow-y-scroll h-14 pb-2">
+                {tags.split(",").map((tag, index) => (
+                  <div
+                    key={index}
+                    className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-gray-100"
+                  >
+                    {tag.trim()}
+                  </div>
+                ))}
               </div>
               <div className="flex flex-row flex-wrap lg:justify-between md:justify-center space-x-8 mt-2">
                 <div className="flex lg:justify-start gap-4 ">
