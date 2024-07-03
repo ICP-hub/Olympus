@@ -20,7 +20,7 @@ pub struct TimestampedRatingMentorInvestor {
 // pub type IndividualRatings = HashMap<Principal, Vec<TimestampedRatingMentorInvestor>>;
 // pub type AverageRatingStorage = HashMap<Principal, f64>;
 
-fn find_mentor_by_uid(uid: String) -> StoredPrincipal {
+pub fn find_mentor_by_uid(uid: String) -> StoredPrincipal {
     read_state(|state| {
         for (stored_principal, candid_value) in state.mentor_storage.iter() {
             if candid_value.0.uid == uid {
@@ -31,7 +31,7 @@ fn find_mentor_by_uid(uid: String) -> StoredPrincipal {
     })
 }
 
-fn find_vc_by_uid(uid: String) -> StoredPrincipal {
+pub fn find_vc_by_uid(uid: String) -> StoredPrincipal {
     read_state(|state| {
         for (stored_principal, candid_value) in state.vc_storage.iter() {
             if candid_value.0.uid == uid {
