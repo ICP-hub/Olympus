@@ -17,7 +17,7 @@ const schema = yup
   })
   .required();
 
-const AddMentorRatingModal = ({ onRatingClose, onSubmitHandler, isSubmitting ,isMentor}) => {
+const AddMentorRatingModal = ({ onRatingClose, onSubmitHandler, isSubmitting ,isMentor,id}) => {
   const [rating, setRating] = useState(0);
   const {
     register,
@@ -67,8 +67,8 @@ const AddMentorRatingModal = ({ onRatingClose, onSubmitHandler, isSubmitting ,is
   // console.log(errors);
 
   const onSubmit = (data) => {
-    console.log(data);
-    onSubmitHandler(data);
+    const formData = { ...data, id };
+    onSubmitHandler(formData);
   };
   return (
     <>

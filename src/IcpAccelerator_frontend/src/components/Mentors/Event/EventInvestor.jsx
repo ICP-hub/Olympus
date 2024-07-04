@@ -16,38 +16,35 @@ function EventInvestor({ allInvestorData, noData }) {
   // const [noData, setNoData] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(null);
   const actor = useSelector((currState) => currState.actors.actor);
-  const handleAddRating = async ({ rating, ratingDescription }) => {
-    console.log("add job");
+  const handleAddRating = async ({ rating, ratingDescription, id }) => {
     setIsSubmitting(true);
     if (actor) {
-      let argument = {
-        value:rating,
-        comment: ratingDescription,
-        principal_id: '',
-      };
+        let newRating = {
+            value: rating,
+            comment:ratingDescription? [ratingDescription]:[],
+        };
 
-      await actor
-        .update_vc_ratings(argument)
-        .then((result) => {
-          console.log("result-in-add_vc_rating", result);
-          if (result) {
-            handleRatingCloseModal();
-            setIsSubmitting(false);
-            toast.success("review added successfully");
-          } else {
-            handleRatingCloseModal();
-            setIsSubmitting(false);
-            toast.error("something got wrong");
-          }
-        })
-        .catch((error) => {
-          console.log("error-in-add_vc_rating", error);
-          toast.error("something got wrong");
-          setIsSubmitting(false);
-          handleRatingCloseModal();
-        });
+        await actor.update_vc_ratings(id, newRating)
+            .then((result) => {
+                console.log("result-in-add_vc_rating", result);
+                if (result) {
+                    handleRatingCloseModal();
+                    setIsSubmitting(false);
+                    toast.success("review added successfully");
+                } else {
+                    handleRatingCloseModal();
+                    setIsSubmitting(false);
+                    toast.error("something went wrong");
+                }
+            })
+            .catch((error) => {
+                console.log("error-in-add_vc_rating", error);
+                toast.error("something went wrong");
+                setIsSubmitting(false);
+                handleRatingCloseModal();
+            });
     }
-  };
+};
 
   if (noData || !allInvestorData?.Ok?.length) {
     return (
@@ -108,12 +105,12 @@ function EventInvestor({ allInvestorData, noData }) {
                     </span>
                   ))}
               </div>
-              <button
+              {/* <button
                 // onClick={() => navigate(`/view-investor-details`)}
                 className="text-white px-4 py-1 rounded-lg uppercase w-full text-center border border-gray-300 font-bold bg-[#3505B2] transition-colors duration-200 ease-in-out"
               >
                 View Profile
-              </button>
+              </button> */}
               <button
                     className="text-white px-4 py-1 mt-2 rounded-lg uppercase w-full text-center border border-gray-300 font-bold bg-[#3505B2] transition-colors duration-200 ease-in-out"
                     onClick={handleRatingOpenModal}
@@ -131,6 +128,7 @@ function EventInvestor({ allInvestorData, noData }) {
           onSubmitHandler={handleAddRating}
           isSubmitting={isSubmitting}
           isMentor={false}
+          id={allInvestorData?.Ok[0]?.uid}
         />
       )}
       <Toaster />

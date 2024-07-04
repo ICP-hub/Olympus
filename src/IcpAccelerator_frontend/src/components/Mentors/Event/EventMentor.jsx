@@ -16,18 +16,17 @@ function EventMentor({ allMentorData, noData }) {
   // const [noData, setNoData] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(null);
   const actor = useSelector((currState) => currState.actors.actor);
-  const handleAddRating = async ({ rating, ratingDescription }) => {
+  const handleAddRating = async ({ rating, ratingDescription ,id}) => {
     console.log("add job");
     setIsSubmitting(true);
-    const covertedPrincipal = await Principal.fromText(principal);
     if (actor) {
       let argument = {
         value: rating,
-        comment: [ratingDescription],
+        comment:ratingDescription? [ratingDescription]:[],
       };
 
       await actor
-        .update_mentor_ratings(covertedPrincipal, argument)
+        .update_mentor_ratings(id, argument)
         .then((result) => {
           console.log("result-in-add_mentor_rating", result);
           if (result) {
@@ -127,7 +126,7 @@ function EventMentor({ allMentorData, noData }) {
                       );
                     })}
                   </div>
-                  <button
+                  {/* <button
                     // onClick={() =>
                     //   navigate(`/view-mentor-details`, {
                     //     state: { mentorProfileData: { allMentorData } },
@@ -136,7 +135,7 @@ function EventMentor({ allMentorData, noData }) {
                     className="text-white px-4 py-1 rounded-lg uppercase w-full text-center border border-gray-300 font-bold bg-[#3505B2] transition-colors duration-200 ease-in-out"
                   >
                     View Profile
-                  </button>
+                  </button> */}
                   <button
                     // onClick={() =>
                     //   navigate(`/view-mentor-details`, {
@@ -159,6 +158,8 @@ function EventMentor({ allMentorData, noData }) {
           onSubmitHandler={handleAddRating}
           isSubmitting={isSubmitting}
           isMentor={true}
+          id={allMentorData?.Ok[0]?.uid}
+
         />
       )}
       <Toaster />

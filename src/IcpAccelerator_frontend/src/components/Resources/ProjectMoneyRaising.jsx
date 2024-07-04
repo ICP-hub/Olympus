@@ -122,7 +122,7 @@ const ProjectMoneyRaising = ({ data }) => {
           )}
         </div>
         {noData ? (
-          <NoDataCard image={NoData} desc={"No Data yet"} />
+          <NoDataCard image={NoData} desc={"No Data yet"}allowAccess={allowAccess} />
         ) : (
           moneyRaised[0] && (
             <div className="flex flex-col">

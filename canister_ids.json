@@ -1,11 +1,14 @@
 {
   "IcpAccelerator_backend": {
-    "ic": "3kpvx-eiaaa-aaaag-qjxzq-cai"
+    "ic": "wut7y-2iaaa-aaaag-qj24q-cai"
   },
   "IcpAccelerator_frontend": {
-    "ic": "37ie2-faaaa-aaaag-qjx2a-cai"
+    "ic": "w5que-maaaa-aaaag-qj25a-cai"
   },
   "admin_frontend": {
-    "ic": "3yjco-iyaaa-aaaag-qjx2q-cai"
+    "ic": "ocljg-gqaaa-aaaag-qj7zq-cai"
+  },
+  "asset_canister_backend": {
+    "ic": "wpwd5-aqaaa-aaaag-qj26a-cai"
   }
 }

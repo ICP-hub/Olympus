@@ -272,8 +272,8 @@ const MentorsProfile = () => {
                 <path
                   d="M3.7832 11.7237C3.7832 11.7237 5.18276 11.541 6.2713 13.916C6.2713 13.916 9.41801 7.97852 12.4915 6.79102"
                   stroke="#2A353D"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
               </svg>
 
@@ -296,13 +296,13 @@ const MentorsProfile = () => {
                 <path
                   d="M4.17578 2.63542C4.17578 1.87027 4.79605 1.25 5.5612 1.25H9.91536C10.6805 1.25 11.3008 1.87027 11.3008 2.63542C11.3008 3.40056 10.6805 4.02083 9.91536 4.02083H5.5612C4.79605 4.02083 4.17578 3.40056 4.17578 2.63542Z"
                   stroke="#2A353D"
-                  stroke-linejoin="round"
+                  strokeLinejoin="round"
                 />
                 <path
                   d="M3.7832 11.7237C3.7832 11.7237 5.18276 11.541 6.2713 13.916C6.2713 13.916 9.41801 7.97852 12.4915 6.79102"
                   stroke="#2A353D"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
               </svg>
               <h6 className="ml-2">Interested in {areaOfExpertise}</h6>
