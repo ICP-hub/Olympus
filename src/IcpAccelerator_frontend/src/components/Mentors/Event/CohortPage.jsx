@@ -434,7 +434,9 @@ function CohortPage() {
                Associate Projects in Cohort
               </h1>
               <button
-                onClick={() => navigate("/live-projects")}
+                onClick={() => navigate("/event-applied-projects", {
+                  state: { allProjectData: allInvestorData},
+                })}
                 className="border border-violet-800 px-4 py-2 rounded-md text-violet-800 sxxs:px-2 sxxs:py-1 sxxs:text-xs sm:text-lg"
               >
                 View More

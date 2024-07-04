@@ -61,7 +61,7 @@ function EventProject({ allProjectData, noData, cohortId }) {
                   (val) =>
                     val?.params?.live_on_icp_mainnet[0] &&
                     val?.params?.live_on_icp_mainnet[0] === true
-                ).map((data, index) => {
+                ).slice(0,4).map((data, index) => {
                   let projectName = data?.params?.project_name ?? "";
                   let projectId = data?.uid ?? "";
                   let projectImage = data?.params?.project_logo

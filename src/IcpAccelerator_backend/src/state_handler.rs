@@ -224,7 +224,7 @@ type PrivateDocsAccessRequest = StableBTreeMap<StoredPrincipal, Candid<Vec<Acces
 const PRIVATE_DOCS_ACCESS_REQUEST_MEMORY_ID: MemoryId = MemoryId::new(58);
 
 pub type MentorsAppliedForCohort = StableBTreeMap<String, Candid<Vec<MentorInternal>>, VMem>;
-const MENTORS_APPLIED_FOR_COHORT_MEMORY_ID: MemoryId = MemoryId::new(59);
+const MENTORS_APPLIED_FOR_COHORT_MEMORY_ID: MemoryId = MemoryId::new(70);
 
 pub type CohortInfo = StableBTreeMap<String, Candid<CohortDetails>, VMem>;
 const COHORT_MEMORY_ID: MemoryId = MemoryId::new(60);

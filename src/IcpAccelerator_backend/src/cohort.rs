@@ -520,6 +520,11 @@ pub fn send_enrollment_request_as_project(
         (cohort_creator_principal, is_pending)
     });
 
+    ic_cdk::println!(
+        "check cohort pending and principal {:?} ",
+        (cohort_creator_principal, is_pending)
+    );
+
     if is_pending {
         return "There is already a pending enrollment request for this cohort.".to_string();
     }
@@ -538,16 +543,27 @@ pub fn send_enrollment_request_as_project(
         enroller_principal: caller,
     };
 
+    ic_cdk::println!("enrollment request {:?}", enrollment_request);
+
     mutate_state(|state| {
-        if let Some(mut requests) = state
+        let stored_principal = StoredPrincipal(cohort_creator_principal);
+        let mut updated_requests = state
             .cohort_enrollment_request
-            .get(&StoredPrincipal(cohort_creator_principal))
-        {
-            requests.0.push(enrollment_request);
-        } else {
-            state.cohort_enrollment_request.insert(
-                StoredPrincipal(cohort_creator_principal),
-                Candid(vec![enrollment_request]),
+            .get(&stored_principal)
+            .map_or_else(|| Vec::new(), |reqs| reqs.0.clone());
+
+        updated_requests.push(enrollment_request.clone());
+        state
+            .cohort_enrollment_request
+            .insert(stored_principal.clone(), Candid(updated_requests.clone()));
+
+        ic_cdk::println!("State after mutation:");
+        for (key, value) in state.cohort_enrollment_request.iter() {
+            ic_cdk::println!(
+                "Principal: {:?}, Number of Requests: {}, Requests: {:?}",
+                key,
+                value.0.len(),
+                value
             );
         }
     });
@@ -810,14 +826,23 @@ pub fn get_no_of_individuals_applied_for_cohort_using_id(cohort_id: String) -> R
 pub fn apply_for_a_cohort_as_a_project(cohort_id: String) -> String {
     let caller = ic_cdk::api::caller();
 
-    let project_data_option = get_project_info_using_principal(caller);
-    let project_data = match project_data_option {
-        Some(data) => data,
-        None => return "Project data is required but not found.".to_string(),
-    };
+    let is_he_project =
+        read_state(|state| state.project_storage.contains_key(&StoredPrincipal(caller)));
 
-    send_enrollment_request_as_project(cohort_id, project_data);
-    "Request Has Been Sent To Cohort Creator".to_string()
+    ic_cdk::println!(" is_he_project {}", is_he_project);
+    if is_he_project {
+        let project_data_option = get_project_info_using_principal(caller);
+
+        let project_data = match project_data_option {
+            Some(data) => data,
+            None => return "Project data is required but not found.".to_string(),
+        };
+        ic_cdk::println!(" project data  {:?}", project_data);
+        send_enrollment_request_as_project(cohort_id, project_data);
+        "Request Has Been Sent To Cohort Creator".to_string()
+    } else {
+        "You should either be a project to register yourself in a cohort".to_string()
+    }
 }
 
 #[query(guard = "is_user_anonymous")]

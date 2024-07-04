@@ -34,6 +34,7 @@ import EventMentorProfile from "./components/Mentors/Event/EventMentorProfile";
 import LiveEventViewAll from "./components/Mentors/Event/LiveEventViewAll";
 import EventProjectDetail from "./components/Mentors/Event/EventProjectDetail";
 import LiveEventsViewAllUpcoming from "./components/Mentors/Event/LiveEventsViewAllUpcoming";
+import EventProjectViewMore from "./components/Mentors/Event/EventProjectViewMore";
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
 // const ProjectDetails = lazy(() =>
@@ -109,6 +110,8 @@ const AppRoutes = () => {
     { path: "/all-live-upcoming-cohort", element: <LiveEventsViewAllUpcoming /> },
 
     { path: "/event-details/:id", element: <CohortPage /> },
+    { path: "/event-applied-projects", element: <EventProjectViewMore /> },
+
   ];
 
   return (
