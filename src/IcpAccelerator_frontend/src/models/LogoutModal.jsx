@@ -200,7 +200,7 @@ const LogoutModal = () => {
                     onClick={() => {
                       navigate(
                         userCurrentRoleStatusActiveRole === "mentor"
-                          ? "/event-register-request"
+                          ? "/cohort-register-request"
                           : ""
                       );
                       setDropdownOpen(false);

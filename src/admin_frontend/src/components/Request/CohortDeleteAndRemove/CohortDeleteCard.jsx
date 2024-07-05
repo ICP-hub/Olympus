@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import hover from "../../../../../IcpAccelerator_frontend/assets/images/1.png";
 import { winner } from "../../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
 import FunctionalityModel from "../../../../../IcpAccelerator_frontend/src/models/FunctionalityModel";
+import uint8ArrayToBase64 from "../../../../../IcpAccelerator_frontend/src/components/Utils/uint8ArrayToBase64";
 
 const CohortDeleteCard = ({ data, deleteCohort }) => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -38,7 +39,9 @@ const CohortDeleteCard = ({ data, deleteCohort }) => {
 
   const request = data;
   if (!request) return null;
-  // const image = uint8ArrayToBase64(request?.cohort_creator?._arr);
+  const image = request?.cohort?.cohort_banner
+    ? uint8ArrayToBase64(request?.cohort?.cohort_banner?.[0])
+    : hover;
   const name = request?.cohort?.title;
   const tags = request?.cohort?.tags;
   const description = request?.cohort?.description;
@@ -66,7 +69,7 @@ const CohortDeleteCard = ({ data, deleteCohort }) => {
         <div className="lgx:w-[60%] xl:w-[70%] w-full relative">
           <img
             className="h-full object-cover rounded-lg w-full"
-            src={hover}
+            src={image}
             alt="not found"
           />
           <div className="absolute h-12 w-12 -bottom-1 lgx:top-0 lgx:right-[-8px] right-[20px]">

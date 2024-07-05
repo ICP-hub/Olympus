@@ -113,7 +113,9 @@ function ProjectDetailsCard({
               <div className="flex items-center">
                 {title && (
                   <div className="flex items-center">
-                    <p className="font-bold text-lg pr-2">{name}</p>
+                    <p className="font-bold text-lg pr-2 w-1/2 line-clamp-1 break-all">
+                      {name}
+                    </p>
                     {rubric && (
                       <CircularProgressbar
                         value={
@@ -271,8 +273,10 @@ function ProjectDetailsCard({
               <div className="sm1:px-2 w-full">
                 <div className="flex items-center justify-center sm1:justify-between">
                   {title && (
-                    <div className="flex items-center">
-                      <p className="font-bold truncate text-lg pr-2">{name}</p>
+                    <div className="flex items-center w-11/12">
+                      <p className="font-bold truncate text-lg pr-2 line-clamp-1 break-all">
+                        {name}
+                      </p>
                       {rubric && (
                         <CircularProgressbar
                           value={
@@ -352,9 +356,9 @@ function ProjectDetailsCard({
                   )}
                 </div>
                 <div className="flex justify-center sm1:justify-start text-gray-500">
-                  <div className="flex items-center">
+                  <div className="flex items-center w-11/12">
                     {country && (
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-1 w-11/12 line-clamp-1">
                         <span className="capitalize text-xs md:text-sm">
                           {pro_country}
                         </span>
@@ -420,7 +424,7 @@ function ProjectDetailsCard({
               <div className="flex">
                 <div className="flex">
                   <div className="flex items-center">
-                    <p className="font-bold text-lg pr-2">{name}</p>
+                    <p className="font-bold text-lg pr-2 w-1/2 line-clamp-1 break-all">{name}</p>
                    
                   </div>
                 </div>

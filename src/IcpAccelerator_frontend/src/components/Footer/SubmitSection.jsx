@@ -20,7 +20,7 @@ const SubmitSection = () => {
             </div>
             <div className="w-fit h-20 text-white text-lg font-light font-fontUse mb-4 md:lg:line-clamp-1 line-clamp-3 text-wrap mt-2 md:ml-14 z-10">
               Get a weekly overview of the crypto market, updates about Outlier
-              Ventures,<br></br>exclusive invites to upcoming events, plus a
+              Ventures,<br></br>exclusive invites to upcoming cohorts, plus a
               selection of fresh job opportunities <br></br>from our OV
               Ecosystem Careers page.
             </div>

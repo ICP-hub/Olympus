@@ -41,7 +41,7 @@ const EventCard = ({ data, approveAndRejectCohort }) => {
   const request = data?.cohort_details;
   if (!request) return null;
   console.log("request", request);
-  const image = request?.cohort?.cohort_banner
+  const image = request?.cohort?.cohort_banner?.[0]
     ? uint8ArrayToBase64(request?.cohort?.cohort_banner?.[0])
     : hover;
   const name = request?.cohort?.title;

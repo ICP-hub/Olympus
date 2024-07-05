@@ -235,7 +235,7 @@ function CohortPage() {
 
                 <div className=" items-center justify-center p-4 md:p-5 border-b rounded-t ">
                   <p className="text-lg font-semibold text-gray-900 ">
-                    You cannot register for this event because the deadline has
+                    You cannot register for this cohort because the deadline has
                     passed.
                   </p>
                 </div>
@@ -431,12 +431,14 @@ function CohortPage() {
           <div>
             <div className="flex items-center justify-between my-8 font-fontUse capitalize  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px]">
               <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 font-extrabold font-fontUse text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl sxxs:text-lg">
-               Associate Projects in Cohort
+                Associate Projects in Cohort
               </h1>
               <button
-                onClick={() => navigate("/event-applied-projects", {
-                  state: { allProjectData: allInvestorData},
-                })}
+                onClick={() =>
+                  navigate("/cohort-applied-projects", {
+                    state: { allProjectData: allInvestorData },
+                  })
+                }
                 className="border border-violet-800 px-4 py-2 rounded-md text-violet-800 sxxs:px-2 sxxs:py-1 sxxs:text-xs sm:text-lg"
               >
                 View More
@@ -451,7 +453,7 @@ function CohortPage() {
             </div>
             <div className="flex items-center justify-between mb-4 capitalize font-fontUse flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px] mt-3">
               <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 font-extrabold font-fontUse text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl sxxs:text-lg">
-              Associate Mentors in Cohort
+                Associate Mentors in Cohort
               </h1>
               <button
                 onClick={() => navigate("/view-mentors")}
@@ -465,7 +467,7 @@ function CohortPage() {
             </div>
             <div className="flex items-center justify-between mb-4 font-fontUse  flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px] mt-3">
               <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 font-extrabold font-fontUse text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl sxxs:text-lg">
-              Associate Investors in Cohort
+                Associate Investors in Cohort
               </h1>
               <button
                 onClick={() => navigate("/view-investor")}
@@ -485,7 +487,7 @@ function CohortPage() {
             </div>
             <div className="flex items-center justify-between mb-4 font-fontUse flex-row font-bold bg-clip-text text-transparent text-[13px] xxs1:text-[13px] xxs:text-[9.5px] dxs:text-[9.5px] ss4:text-[9.5px] ss3:text-[9.5px] ss2:text-[9.5px] ss1:text-[9.5px] ss:text-[9.5px] sxs3:text-[9.5px] sxs2:text-[9.5px] sxs1:text-[9.5px] sxs:text-[9.5px] sxxs:text-[9.5px] mt-3">
               <h1 className="bg-gradient-to-r from-indigo-900 to-sky-400 font-fontUse font-extrabold text-transparent bg-clip-text text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl sxxs:text-lg">
-              Leading Peers in Cohort
+                Leading Peers in Cohort
               </h1>
               {/* <button
                 onClick={() => navigate("/view-investor")}
