@@ -34,6 +34,7 @@ import EventMentorProfile from "./components/Mentors/Event/EventMentorProfile";
 import LiveEventViewAll from "./components/Mentors/Event/LiveEventViewAll";
 import EventProjectDetail from "./components/Mentors/Event/EventProjectDetail";
 import LiveEventsViewAllUpcoming from "./components/Mentors/Event/LiveEventsViewAllUpcoming";
+import UserDetailPage from "./components/UserProfile/UserDetailPage";
 import EventProjectViewMore from "./components/Mentors/Event/EventProjectViewMore";
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));
@@ -63,7 +64,7 @@ const AppRoutes = () => {
       element: <ProjectDetailsForInvestor />,
     },
     { path: "/association", element: <ProjectAssociation /> },
-    { path: "/event-register-request", element: <EventRegistration /> },
+    { path: "/cohort-register-request", element: <EventRegistration /> },
     { path: "/cohort-details-page", element: <CohortPage /> },
     { path: "/cohort-project-detail/:id", element: <EventProjectDetail /> },
     { path: "/create-user", element: <UserRegForm /> },
@@ -77,6 +78,7 @@ const AppRoutes = () => {
     // { path: "/create-mentor", element: <MentorRegistration /> },
     { path: "/create-mentor", element: <MentorRegForm /> },
     { path: "/view-mentor-details", element: <EventMentorProfile /> },
+    { path: "/view-user-details", element: <UserDetailPage /> },
     { path: "/view-mentor-details/:id", element: <MentorsProfile /> },
     { path: "/view-investor-details/:id", element: <InvestorProfile /> },
     { path: "/view-mentors", element: <SearchMentors /> },
@@ -107,11 +109,13 @@ const AppRoutes = () => {
       element: <RequestMoneyRaising />,
     },
     { path: "/all-live-ongoing-cohort", element: <LiveEventViewAll /> },
-    { path: "/all-live-upcoming-cohort", element: <LiveEventsViewAllUpcoming /> },
+    {
+      path: "/all-live-upcoming-cohort",
+      element: <LiveEventsViewAllUpcoming />,
+    },
 
-    { path: "/event-details/:id", element: <CohortPage /> },
-    { path: "/event-applied-projects", element: <EventProjectViewMore /> },
-
+    { path: "/cohort-details/:id", element: <CohortPage /> },
+    { path: "/cohort-applied-projects", element: <EventProjectViewMore /> },
   ];
 
   return (

@@ -21,7 +21,7 @@ export const InvestorCardSkeleton = () => {
             <div className=" absolute top-1/2 left-1/5 transform -translate-y-1/2 flex flex-row gap-4 ml-5">
               <Skeleton height={65} width={65} circle={true} />
 
-              <div class="flex-col flex mt-2 mx-auto">
+              <div className="flex-col flex mt-2 mx-auto">
                 <p className="text-black font-bold tex-lg md:text-xl">
                   <Skeleton height={25} width={130} />
                 </p>

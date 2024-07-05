@@ -173,7 +173,7 @@ const SecondEventCard = ({ data, register }) => {
 
                 <div className=" items-center justify-center p-4 md:p-5 border-b rounded-t ">
                   <p className="text-lg font-semibold text-gray-900 ">
-                    You cannot register for this event because the deadline has
+                    You cannot register for this cohort because the deadline has
                     passed.
                   </p>
                 </div>

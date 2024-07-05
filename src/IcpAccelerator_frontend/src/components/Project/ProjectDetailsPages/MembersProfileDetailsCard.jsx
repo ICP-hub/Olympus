@@ -5,6 +5,7 @@ import { Principal } from "@dfinity/principal";
 import AddTeamMember from "../../../models/AddTeamMember";
 import toast, { Toaster } from "react-hot-toast";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
+import { useNavigate } from "react-router-dom";
 
 const MembersProfileDetailsCard = ({
   data,
@@ -23,6 +24,7 @@ const MembersProfileDetailsCard = ({
 
   const actor = useSelector((currState) => currState.actors.actor);
   const [isAddTeamModalOpen, setIsAddTeamModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const handleTeamMemberCloseModal = () => setIsAddTeamModalOpen(false);
@@ -41,6 +43,9 @@ const MembersProfileDetailsCard = ({
           if (result) {
             handleTeamMemberCloseModal();
             setIsSubmitting(false);
+            setTimeout(() => {
+              window.location.reload();
+            }, 500);
             toast.success("team member added successfully");
           } else {
             handleTeamMemberCloseModal();
@@ -128,15 +133,21 @@ const MembersProfileDetailsCard = ({
             </div>
           )}
         </div>
+        {console.log("data", data)}
         {
           data?.params?.project_team && data?.params?.project_team.length > 0
             ? data?.params?.project_team.map((val, index) => {
-                let data = val[0]?.member_data;
-                console.log(data);
+                let result = val[0]?.member_data;
+                console.log(result);
                 return (
                   <div
                     key={index}
                     className={`w-[100%] md1:w-[calc(100%/2-40px)] dxl:w-[calc(100%/3-40px)] xl2:w-[calc(25%-10px)] rounded-[10px] shadow-lg md:m-1 mb-10 p-6 bg-white`}
+                    onClick={() =>
+                      data?.uid
+                        ? navigate("/view-user-details", { state: data?.uid })
+                        : ""
+                    }
                   >
                     <div className="flex w-full justify-between">
                       {profile && (
@@ -145,30 +156,30 @@ const MembersProfileDetailsCard = ({
                           style={{
                             boxSizing: "border-box",
                             background: `url(${uint8ArrayToBase64(
-                              data?.profile_picture[0]
+                              result?.profile_picture[0]
                             )}) center / cover, linear-gradient(168deg, rgba(255, 255, 255, 0.25) -0.86%, rgba(255, 255, 255, 0) 103.57%)`,
                             backdropFilter: "blur(20px)",
                           }}
                         >
                           <img
                             className="rounded-full object-cover w-20 h-20"
-                            src={uint8ArrayToBase64(data?.profile_picture[0])}
+                            src={uint8ArrayToBase64(result?.profile_picture[0])}
                             alt={"img"}
                           />
                         </div>
                       )}
                       {socials && (
                         <div className="flex gap-3">
-                          {data?.linkedin && (
+                          {result?.linkedin && (
                             <div className="w-4 h-4">
-                              <a href={data?.linkedin} target="_blank">
+                              <a href={result?.linkedin} target="_blank">
                                 {linkedInSvg}
                               </a>
                             </div>
                           )}
-                          {data?.twitter_id && (
+                          {result?.twitter_id && (
                             <div className="w-4 h-4">
-                              <a href={data?.twitter_id} target="_blank">
+                              <a href={result?.twitter_id} target="_blank">
                                 {twitterSvg}
                               </a>
                             </div>
@@ -179,14 +190,14 @@ const MembersProfileDetailsCard = ({
                     {/* {
                                 type && (
                                     <span className="text-sm font-bold text-gray-500 mb-2 px-4 uppercase">
-                                        {data?.type ?? ""}
+                                        {result?.type ?? ""}
                                     </span>
                                 )
                             } */}
                     {name && role && (
                       <div className="pt-4 pb-4 sm:pb-2 md:pb-0">
                         <div className="font-extrabold text-lg md:text-2xl mb-1">
-                          {data?.full_name ?? ""}
+                          {result?.full_name ?? ""}
                         </div>
                         {/* <p className="text-gray-700 text-base capitalize">{index === 0 ? 'Author' : 'project member'}</p> */}
                         <p className="text-gray-700 text-base capitalize">
@@ -199,7 +210,7 @@ const MembersProfileDetailsCard = ({
               })
             : null
           // <div>
-          //     <h1>No Data</h1>
+          //     <h1>No result</h1>
           // </div>
         }
       </div>
