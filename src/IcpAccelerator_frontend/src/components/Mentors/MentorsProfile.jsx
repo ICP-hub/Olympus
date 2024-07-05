@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   checktab,
-  location,
+  locations,
   star,
   star2,
   twitterSvg,
@@ -209,7 +209,7 @@ const MentorsProfile = () => {
         <div className="text-[#737373] text-xs my-4 grid sm:grid-cols-2">
           <div className="sm:col">
             <div className="flex items-center my-2">
-              {location}
+              {locations}
               <h6 className="undeline ml-2">{mentorLocation}</h6>
             </div>
             {icpHubOrSpoke === true ? (

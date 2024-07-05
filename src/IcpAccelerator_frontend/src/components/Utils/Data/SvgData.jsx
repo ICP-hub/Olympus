@@ -1384,7 +1384,7 @@ export const roleTick = (
     />
   </svg>
 );
-export const location = (
+export const locations = (
   <svg
     width="16"
     height="17"

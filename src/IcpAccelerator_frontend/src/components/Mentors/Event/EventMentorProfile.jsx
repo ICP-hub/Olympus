@@ -1,7 +1,7 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
-
+import { locations } from "../../Utils/Data/SvgData";
 function EventMentorProfile() {
   const location = useLocation();
   const { mentorProfileData } = location.state || {};
@@ -96,7 +96,7 @@ function EventMentorProfile() {
         <div className="text-[#737373] text-xs my-4 grid grid-cols-2">
           <div className="col">
             <div className="flex items-center my-2">
-              {location}
+              {locations}
               <h6 className="undeline ml-2">{mentorLocation}</h6>
             </div>
             {icpHubOrSpoke === true ? (

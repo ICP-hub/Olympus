@@ -50,41 +50,50 @@ const RequestCohort = () => {
       return null;
     }
     setSelectedOption(status);
-    let result;
-    switch (status) {
-      case "Pending":
-        result = await actor.get_pending_cohort_requests_for_admin();
-        break;
-      case "Accepted":
-        result = await actor.get_accepted_cohort_creation_request_for_admin();
-        break;
-      case "Declined":
-        result = await actor.get_declined_cohort_creation_request_for_admin();
-        break;
-      default:
-        console.log("Unknown status");
-        toast.error("Unknown status");
-        return;
-    }
-    console.log(result);
-    console.log(status);
-    if (result && result.length > 0) {
-      setNoData(false);
-      setRequestedData(result);
-      setIsPopupOpen(false);
-    } else {
+  
+    try {
+      let result;
+      switch (status) {
+        case "Pending":
+          result = await actor.get_pending_cohort_requests_for_admin();
+          break;
+        case "Accepted":
+          result = await actor.get_accepted_cohort_creation_request_for_admin();
+          break;
+        case "Declined":
+          result = await actor.get_declined_cohort_creation_request_for_admin();
+          break;
+        default:
+          console.log("Unknown status");
+          toast.error("Unknown status");
+          return;
+      }
+  
+      console.log(result);
+      console.log(status);
+  
+      if (Array.isArray(result)) {
+        if (result.length > 0) {
+          setNoData(false);
+          setRequestedData(result);
+        } else {
+          setNoData(true);
+          setRequestedData([]);
+        }
+      } else {
+        console.error("Invalid response format: result is not an array", result);
+        toast.error("Invalid response format");
+      }
+    } catch (error) {
+      console.error("Error fetching cohort requests:", error);
       setNoData(true);
       setRequestedData([]);
+      toast.error("Failed to fetch cohort requests");
+    } finally {
       setIsPopupOpen(false);
-      throw new Error("Invalid response format");
     }
-    // .catch((error) => {
-    //   setNoData(true);
-    //   setRequestedData([]);
-    //   setIsPopupOpen(false);
-    //   console.error("Error fetching document requests:", error);
-    // });
   };
+  
 
   useEffect(() => {
     fetchCohortRequests(selectedOption);

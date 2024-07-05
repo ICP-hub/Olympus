@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   checktab,
-  location,
+  locations,
   star,
   star2,
   twitterSvg,
@@ -232,7 +232,7 @@ const InvestorProfile = () => {
         <div className="text-[#737373] text-xs my-4 grid sm:grid-cols-2">
           <div className="col">
             <div className="flex items-center my-2">
-              {location}
+              {locations}
               <h6 className="undeline ml-2">
                 <span className="font-bold">Location:</span>
                 <span className="ml-2">{investorLocation}</span>

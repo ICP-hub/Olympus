@@ -138,14 +138,14 @@ const MembersProfileDetailsCard = ({
           data?.params?.project_team && data?.params?.project_team.length > 0
             ? data?.params?.project_team.map((val, index) => {
                 let result = val[0]?.member_data;
-                console.log(result);
+                let member_uid =val[0]?.member_uid
                 return (
                   <div
                     key={index}
                     className={`w-[100%] md1:w-[calc(100%/2-40px)] dxl:w-[calc(100%/3-40px)] xl2:w-[calc(25%-10px)] rounded-[10px] shadow-lg md:m-1 mb-10 p-6 bg-white`}
                     onClick={() =>
-                      data?.uid
-                        ? navigate("/view-user-details", { state: data?.uid })
+                      member_uid
+                        ? navigate("/view-user-details", { state: member_uid})
                         : ""
                     }
                   >

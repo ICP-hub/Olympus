@@ -16,6 +16,7 @@ const LiveEventViewAll = () => {
   const [filter, setFilter] = useState("");
   const itemsPerPage = 12;
 
+  console.log('noData',noData)
   const getAllLiveEvents = async (caller, page) => {
     setIsLoading(true);
     await caller
@@ -25,7 +26,7 @@ const LiveEventViewAll = () => {
       })
       .then((result) => {
         console.log("cohort result", result);
-        if (result && result?.data?.length >= 0) {
+        if (result && result?.data?.length > 0) {
           setNoData(false);
           setIsLoading(false);
           setAllLiveEventsData(result.data);
