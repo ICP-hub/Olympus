@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
 import uint8ArrayToBase64 from "../../../../../IcpAccelerator_frontend/src/components/Utils/uint8ArrayToBase64";
 import NoDataCard from "../../../../../IcpAccelerator_frontend/src/components/Mentors/Event/NoDataCard";
 import NoData from "../../../../../IcpAccelerator_frontend/assets/images/search_not_found.png";
@@ -10,35 +11,48 @@ function CohortMentor({ allMentorData, noData, cohortId }) {
   const navigate = useNavigate();
   const actor = useSelector((currState) => currState.actors.actor);
   const [inputValue, setInputValue] = useState("");
+  const [selectedMentorId, setSelectedMentorId] = useState(null);
 
   const handleInputChange = (value) => {
     setInputValue(value);
   };
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
-  const handleOpenDeleteModal = () => setDeleteModalOpen(true);
+  const handleOpenDeleteModal = (id) => {
+    setSelectedMentorId(id);
+    setDeleteModalOpen(true);
+  };
   const handleClose = () => setDeleteModalOpen(false);
   const handleSubmit = async () => {
     console.log("Submitted value:", inputValue);
-    // setIsSubmitting(true);
+    setIsSubmitting(true);
     let passphrase_key = `delete/${inputValue}`;
     let cohort_id = cohortId;
-    let mentor_principal = inputValue;
-    console.log("mentor_principal ====>>>", mentor_principal);
+    let uid = inputValue;
+    console.log("uid ====>>>", uid);
     console.log("mentor_principal ====>>>", passphrase_key);
     console.log("mentor_principal ====>>>", cohort_id);
     await actor
-      .remove_mentor_from_cohort(cohort_id, mentor_principal, passphrase_key)
+      .remove_mentor_from_cohort(cohort_id, uid, passphrase_key)
       .then((result) => {
-        if (result && result?.Ok) {
-          console.log("result-in-remove_mentor_from_cohort", result);
-          toast.success(result?.Ok);
+        if (
+          result &&
+          result?.Ok.includes(
+            `Mentor successfully removed from the cohort with cohort id ${selectedMentorId}`
+          )
+        ) {
+          toast.success("Mentor successfully removed");
           setIsSubmitting(false);
-          navigate("/");
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
         } else {
           console.log("result-in-remove_mentor_from_cohort", result);
           toast.error(result?.Err);
           setIsSubmitting(false);
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
         }
       });
   };
@@ -62,6 +76,7 @@ function CohortMentor({ allMentorData, noData, cohortId }) {
           let role = "Mentor";
           if (noData === false) {
             console.log("Mentor Data line no 31 ====>>>>", mentor);
+            id = mentor?.uid;
             img = mentor?.profile?.user_data?.profile_picture[0]
               ? uint8ArrayToBase64(
                   mentor?.profile?.user_data?.profile_picture[0]
@@ -84,7 +99,10 @@ function CohortMentor({ allMentorData, noData, cohortId }) {
               key={index}
               className="bg-white  hover:scale-105 w-full sm:w-1/2 md:w-1/4 rounded-lg mb-5 md:mb-0 p-6"
             >
-              <div onClick={handleOpenDeleteModal} className="right-text">
+              <div
+                onClick={() => handleOpenDeleteModal(id)}
+                className="right-text"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 16 16"
@@ -152,9 +170,10 @@ function CohortMentor({ allMentorData, noData, cohortId }) {
         <CohortRemoveButton
           heading="Remove Cohort"
           onClose={handleClose}
-          isSubmitting={false}
+          isSubmitting={isSubmitting}
           onSubmitHandler={handleSubmit}
           onInputChange={handleInputChange}
+          Id={selectedMentorId}
         />
       )}
     </>

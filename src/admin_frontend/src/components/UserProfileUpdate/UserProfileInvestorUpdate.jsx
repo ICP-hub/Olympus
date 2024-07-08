@@ -398,8 +398,8 @@ const UserProfileInvestorUpdate = () => {
         let data = await actor.get_vc_info_using_principal(covertedPrincipal);
         console.log("Received data in investor update:", data);
 
-        const originalInfo = data[0]?.profile;
-        const updatedInfo = data[0]?.profile;
+        const originalInfo = data[0]?.params;
+        const updatedInfo = data[0]?.params;
         // const approveAt = data[0][1].approved_at;
         // const rejectAt = data[0][1].rejected_at;
         // const sentAt = data[0][1].sent_at;
@@ -1562,7 +1562,7 @@ const UserProfileInvestorUpdate = () => {
             <div className=" bg-[#D2D5F2] shadow-md shadow-gray-400 p-6 rounded-lg md:w-[74%] sxxs:w-full">
               <div className="w-full flex flex-row justify-between items-center">
                 <h1 className="md:text-lg text-sm font-bold text-gray-800 truncate">
-                  About mentor
+                  About investor
                 </h1>
                 <div className="flex justify-center p-2 gap-2">
                   <span
@@ -2098,16 +2098,14 @@ const UserProfileInvestorUpdate = () => {
                     <span className="inline-block w-1.5 mr-2 p-0.5 h-1.5 bg-red-700 rounded-full"></span>
                     {orignalData?.multichain &&
                     orignalData.multichain !== "" ? (
-                      orignalData.multichain
-                        .split(",")
-                        .map((tag, index) => (
-                          <div
-                            key={index}
-                            className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
-                          >
-                            {tag.trim()}
-                          </div>
-                        ))
+                      orignalData.multichain.split(",").map((tag, index) => (
+                        <div
+                          key={index}
+                          className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                        >
+                          {tag.trim()}
+                        </div>
+                      ))
                     ) : (
                       <div className="flex items-center">
                         {noDataPresentSvg}
@@ -2402,16 +2400,14 @@ const UserProfileInvestorUpdate = () => {
                     <div className="flex gap-2 mt-1 text-xs text-gray-600 items-center overflow-y-scroll h-14 flex-wrap">
                       <span className="inline-block w-1.5 mr-2 p-0.5 h-1.5 bg-red-700 rounded-full"></span>
                       {orignalData?.stage && orignalData.stage !== "" ? (
-                        orignalData.stage
-                          .split(",")
-                          .map((tag, index) => (
-                            <div
-                              key={index}
-                              className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
-                            >
-                              {tag.trim()}
-                            </div>
-                          ))
+                        orignalData.stage.split(",").map((tag, index) => (
+                          <div
+                            key={index}
+                            className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                          >
+                            {tag.trim()}
+                          </div>
+                        ))
                       ) : (
                         <div className="flex items-center">
                           {noDataPresentSvg}
@@ -2524,16 +2520,14 @@ const UserProfileInvestorUpdate = () => {
                         <div className="flex gap-2 mt-1 text-xs text-gray-600 items-center overflow-y-scroll h-14 flex-wrap">
                           <span className="inline-block w-1.5 mr-2 p-0.5 h-1.5 bg-green-700 rounded-full"></span>
                           {updatedData?.stage && updatedData.stage !== "" ? (
-                            updatedData.stage
-                              .split(",")
-                              .map((tag, index) => (
-                                <div
-                                  key={index}
-                                  className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
-                                >
-                                  {tag.trim()}
-                                </div>
-                              ))
+                            updatedData.stage.split(",").map((tag, index) => (
+                              <div
+                                key={index}
+                                className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                              >
+                                {tag.trim()}
+                              </div>
+                            ))
                           ) : (
                             <div className="flex items-center">
                               {noDataPresentSvg}
@@ -2555,16 +2549,14 @@ const UserProfileInvestorUpdate = () => {
                       <span className="inline-block w-1.5 mr-2 p-0.5 h-1.5 bg-red-700 rounded-full"></span>
                       {orignalData?.checkSize &&
                       orignalData.checkSize !== "" ? (
-                        orignalData.checkSize
-                          .split(",")
-                          .map((tag, index) => (
-                            <div
-                              key={index}
-                              className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
-                            >
-                              {tag.trim()}
-                            </div>
-                          ))
+                        orignalData.checkSize.split(",").map((tag, index) => (
+                          <div
+                            key={index}
+                            className="text-xs border-2 rounded-2xl px-2 py-1 font-bold bg-[#c9c5c5]"
+                          >
+                            {tag.trim()}
+                          </div>
+                        ))
                       ) : (
                         <div className="flex items-center">
                           {noDataPresentSvg}
