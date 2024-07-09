@@ -1380,7 +1380,7 @@ const UserProfileProjectUpdate = () => {
                       }}
                     >
                       <img
-                        className="object-cover size-44 max-h-44 rounded-full"
+                        className="object-cover max-h-44 rounded-full"
                         src={orignalData?.userProfilePicture}
                         alt=""
                       />
@@ -1503,7 +1503,7 @@ const UserProfileProjectUpdate = () => {
                           }}
                         >
                           <img
-                            className="object-cover size-44 max-h-44 rounded-full"
+                            className="object-cover max-h-44 rounded-full"
                             src={updatedData?.userProfilePicture}
                             alt=""
                           />
@@ -2526,7 +2526,7 @@ const UserProfileProjectUpdate = () => {
                           <div className="flex space-x-2 items-center  flex-row ml-3">
                             <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                             <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                              {orignalData?.project_name ?? "Not available"}
+                              {orignalData?.projectName ?? "Not available"}
                             </div>
                           </div>
                           <div className="flex space-x-2 items-center flex-row ml-3">
@@ -2552,7 +2552,7 @@ const UserProfileProjectUpdate = () => {
                               </div>
                             ) : (
                               <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                                {updatedData?.project_name ?? "Not available"}
+                                {updatedData?.projectName ?? "Not available"}
                               </div>
                             )}
                           </div>
@@ -3729,11 +3729,11 @@ const UserProfileProjectUpdate = () => {
                   <div className="flex space-x-2 items-center  flex-row ml-3">
                     <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                     <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                      {orignalData?.supports_multichain ? (
+                      {orignalData?.supportsMultichain ? (
                         "Yes"
                       ) : "No" ? (
                         <span>
-                          {orignalData?.supports_multichain ? "Yes" : "No"}
+                          {orignalData?.supportsMultichain ? "Yes" : "No"}
                         </span>
                       ) : (
                         <span className="flex items-center">
@@ -3743,7 +3743,7 @@ const UserProfileProjectUpdate = () => {
                       )}
                     </div>
                   </div>
-                  <div className="flex space-x-2 items-center  flex-row ml-3">
+                  <div className="flex space-x-2 items-center mt-2 flex-row ml-3">
                     <span className="w-2 h-2 bg-green-700 rounded-full"></span>
                     {editMode ? (
                       <div className="flex flex-col mt-1 w-3/4">
@@ -3770,11 +3770,11 @@ const UserProfileProjectUpdate = () => {
                       </div>
                     ) : (
                       <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                        {updatedData?.supports_multichain ? (
+                        {updatedData?.supportsMultichain ? (
                           "Yes"
                         ) : "No" ? (
                           <span>
-                            {updatedData?.supports_multichain ? "Yes" : "No"}
+                            {updatedData?.supportsMultichain ? "Yes" : "No"}
                           </span>
                         ) : (
                           <span className="flex items-center">
@@ -4378,11 +4378,13 @@ const UserProfileProjectUpdate = () => {
                   <div className="flex space-x-2 items-center  flex-row ml-3">
                     <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                     <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                      {orignalData.money_raised && orignalData?.money_raised ? (
+                      {orignalData.moneyRaisedTillNow &&
+                      orignalData?.moneyRaisedTillNow ? (
                         "Yes"
                       ) : "No" ? (
                         <span>
-                          {orignalData.money_raised && orignalData?.money_raised
+                          {orignalData.moneyRaisedTillNow &&
+                          orignalData?.moneyRaisedTillNow
                             ? "Yes"
                             : "No"}
                         </span>
@@ -4421,13 +4423,13 @@ const UserProfileProjectUpdate = () => {
                       </div>
                     ) : (
                       <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                        {updatedData?.money_raised &&
-                        updatedData?.money_raised ? (
+                        {updatedData?.moneyRaisedTillNow &&
+                        updatedData?.moneyRaisedTillNow ? (
                           "Yes"
                         ) : "No" ? (
                           <span>
-                            {updatedData?.money_raised &&
-                            updatedData?.money_raised
+                            {updatedData?.moneyRaisedTillNow &&
+                            updatedData?.moneyRaisedTillNow
                               ? "Yes"
                               : "No"}
                           </span>
@@ -4556,8 +4558,8 @@ const UserProfileProjectUpdate = () => {
                   <div className="flex space-x-2 items-center  flex-row ml-3">
                     <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                     <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                      {orignalData?.type_of_profile ? (
-                        <span>{orignalData?.type_of_profile}</span>
+                      {orignalData?.userProfileType ? (
+                        <span>{orignalData?.userProfileType}</span>
                       ) : (
                         <span className="flex items-center">
                           {noDataPresentSvg}
@@ -4603,8 +4605,8 @@ const UserProfileProjectUpdate = () => {
                       </div>
                     ) : (
                       <div className="text-md font-normal text-gray-600 break-all flex-wrap">
-                        {updatedData?.typeOfProfile ? (
-                          <span>{updatedData?.typeOfProfile}</span>
+                        {updatedData?.userProfileType ? (
+                          <span>{updatedData?.userProfileType}</span>
                         ) : (
                           <span className="flex items-center">
                             {noDataPresentSvg}

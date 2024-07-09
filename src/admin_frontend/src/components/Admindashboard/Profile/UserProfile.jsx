@@ -98,7 +98,7 @@ const UserProfile = ({ userData, Allrole }) => {
   // console.log(profile);
 
   return (
-    <div className="w-full flex gap-4 sxxs:flex-col sm:flex-row">
+    <div className="w-full flex gap-4 sxxs:flex-col md:flex-row">
       <div className=" bg-[#D2D5F2]  shadow-md shadow-gray-400 p-6 rounded-lg md:w-1/4 sxxs:w-full">
         <div className="justify-center flex items-center">
           <div
@@ -109,7 +109,7 @@ const UserProfile = ({ userData, Allrole }) => {
             }}
           >
             <img
-              className="object-cover size-44 max-h-44 rounded-full"
+              className="object-cover max-h-44 rounded-full"
               src={profile}
               alt=""
             />
@@ -345,12 +345,12 @@ const UserProfile = ({ userData, Allrole }) => {
         <div className="pl-[4%]">
           <p className="w-full mb-4 border border-[#C5C5C5]"></p>
         </div>
-        <div className="grid md:grid-cols-2 gap-4 w-full px-[3%]">
-          <div className="md:w-1/2 w-3/4 flex flex-col items-start justify-start sm:text-left px-[4%]">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full px-[3%]">
+          <div className=" flex flex-col items-start justify-start sm:text-left px-[4%]">
             <h2 className="font-bold mb-2 mr-2 text-gray-800 text-lg">
               Telegram :
             </h2>
-            <div className="flex flex-grow items-center truncate">
+            <div className="flex flex-grow items-center w-full truncate">
               <div
                 onClick={() => {
                   const telegramUsername = userData[0].params.telegram_id[0];
@@ -378,11 +378,11 @@ const UserProfile = ({ userData, Allrole }) => {
             </div>
           </div>
 
-          <div className="flex flex-col md:w-1/2 w-3/4 items-start text-center sm:text-left px-[4%]">
+          <div className="flex flex-col items-start text-center sm:text-left px-[4%]">
             <h2 className="text-lg font-bold text-gray-800 mb-2 mr-2">
               Twitter :
             </h2>
-            <div className="flex flex-grow items-center truncate">
+            <div className="flex flex-grow items-center w-full truncate">
               <div
                 onClick={() => {
                   const twitterUrl = userData[0].params.twitter_id[0];

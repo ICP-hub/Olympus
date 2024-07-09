@@ -40,7 +40,7 @@ const MentorProfile = ({ userData, Allrole, principal, currentRole }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // console.log("userData in mentor profile", userData);
+  console.log("userData in mentor profile", userData);
   console.log("Allrole in mentor profile", Allrole);
 
   useEffect(() => {
@@ -180,7 +180,7 @@ const MentorProfile = ({ userData, Allrole, principal, currentRole }) => {
                 }}
               >
                 <img
-                  className="object-cover size-44 max-h-44 rounded-full"
+                  className="object-cover max-h-44 rounded-full"
                   src={profile}
                   alt=""
                 />
@@ -519,10 +519,10 @@ const MentorProfile = ({ userData, Allrole, principal, currentRole }) => {
                     LinkedIn:
                   </h2>
                   <div className="flex flex-grow mt-1.5 truncate items-start">
-                    {userData[0]?.params?.linkedin_id ? (
+                    {userData[0]?.profile?.linkedin_link ? (
                       <div
                         onClick={() => {
-                          const url = userData[0]?.params?.linkedin_id;
+                          const url = userData[0]?.profile?.linkedin_link;
                           window.open(url, "_blank");
                         }}
                         className="cursor-pointer mr-2"
@@ -536,7 +536,7 @@ const MentorProfile = ({ userData, Allrole, principal, currentRole }) => {
                     )}
 
                     <p className="text-[#7283EA] text-xs  md:text-sm truncate">
-                      {userData[0]?.params?.linkedin_id || "Not available"}
+                      {userData[0]?.profile?.linkedin_link || "Not available"}
                     </p>
                   </div>
                 </div>
@@ -549,7 +549,7 @@ const MentorProfile = ({ userData, Allrole, principal, currentRole }) => {
           <div className="flex flex-col  w-full   md:w-[26%] sxxs:w-full"></div>
           <div className="flex flex-row justify-between bg-[#D2D5F2] shadow-md shadow-gray-400 p-6 rounded-lg md:w-3/4 sxxs:w-fulll">
             <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full ">
-              <li className="list-disc ml-4 md:ml-12">
+              <li className="list-disc md:ml-12">
                 <div className=" flex flex-col text-gray-600">
                   <p className="text-black font-semibold mb-1">
                     Support Multichain :
@@ -607,7 +607,7 @@ const MentorProfile = ({ userData, Allrole, principal, currentRole }) => {
                 </div>
               </li>
 
-              <li className="list-disc ml-4 md:ml-12">
+              <li className="list-disc md:ml-12">
                 <div className="flex flex-col items-start justify-start sm:text-left ">
                   <h2 className=" font-semibold text-gray-800 mb-2 sm:mb-0 mr-2">
                     How many Years of Mentoring ?
@@ -655,7 +655,7 @@ const MentorProfile = ({ userData, Allrole, principal, currentRole }) => {
                   </div>
                 </div>
               </li>
-              <li className="list-disc ml-4 md:ml-12">
+              <li className="list-disc md:ml-12">
                 <div className="flex flex-col items-start justify-start sm:text-left">
                   <h2 className=" font-semibold text-gray-800 mb-2 sm:mb-0 mr-2">
                     What is the scope and status of the Existing ICP Project
@@ -693,7 +693,7 @@ const MentorProfile = ({ userData, Allrole, principal, currentRole }) => {
                 </div>
               </li>
 
-              <li className="list-disc ml-4 md:ml-12">
+              <li className="list-disc md:ml-12">
                 <div className="flex flex-col items-start justify-start sm:text-left">
                   <h2 className=" font-semibold text-gray-800 mb-2 sm:mb-0 mr-2">
                     Have you previously been involved with any ICP hubs ?
@@ -733,7 +733,7 @@ const MentorProfile = ({ userData, Allrole, principal, currentRole }) => {
                   </div>
                 </div>
               </li>
-              <li className="list-disc ml-4 md:ml-12">
+              <li className="list-disc md:ml-12">
                 <div className="flex flex-col items-start justify-start sm:text-left">
                   <h2 className=" font-semibold text-gray-800 mb-2 sm:mb-0 mr-2">
                     What motivated you to join the ICP hub?
@@ -770,7 +770,7 @@ const MentorProfile = ({ userData, Allrole, principal, currentRole }) => {
                 </div>
               </li>
 
-              <li className="list-disc ml-4 md:ml-12">
+              <li className="list-disc md:ml-12">
                 <div className=" flex flex-col text-gray-600">
                   <p className="text-black font-semibold mb-1">
                     What types of mentoring services are you offering?

@@ -290,7 +290,7 @@ const Projectdetails = ({ userData, Allrole, principal }) => {
                 }}
               >
                 <img
-                  className="object-cover size-44 max-h-44 rounded-full"
+                  className="object-cover max-h-44 rounded-full"
                   src={profile}
                   alt=""
                 />

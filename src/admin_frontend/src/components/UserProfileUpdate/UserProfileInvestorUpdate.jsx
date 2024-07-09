@@ -216,15 +216,16 @@ const validationSchema = yup
       .url("Invalid url"),
     investor_linkedin_url: yup
       .string()
-      .required("LinkedIn URL is required")
+      // .required("LinkedIn URL is required")
       .test("is-non-empty", "LinkedIn URL is required", (value) =>
         /\S/.test(value)
       )
-      .matches(
-        /^(https?:\/\/)?(www\.)?linkedin\.com\/(in\/[a-zA-Z0-9_-]+|company\/[a-zA-Z0-9_-]+|groups\/[a-zA-Z0-9_-]+)\/?$/,
-        "Invalid LinkedIn URL"
-      )
-      .required("LinkedIn url is required"),
+      // .matches(
+      //   /^(https?:\/\/)?(www\.)?linkedin\.com\/(in\/[a-zA-Z0-9_-]+|company\/[a-zA-Z0-9_-]+|groups\/[a-zA-Z0-9_-]+)\/?$/,
+      //   "Invalid LinkedIn URL"
+      // )
+      .required("LinkedIn url is required")
+      .url("Invalid url"),
     investment_stage: yup
       .string()
       .test("is-non-empty", "Investment stage is required", (value) =>
@@ -332,6 +333,7 @@ const UserProfileInvestorUpdate = () => {
   const location = useLocation();
   console.log("loca", location);
   const investorId = location?.state;
+  console.log("investorId", investorId);
   const {
     register,
     handleSubmit,
@@ -803,15 +805,16 @@ const UserProfileInvestorUpdate = () => {
       };
       console.log(investorData);
       try {
+        const covertedPrincipal = await Principal.fromText(principal);
         await actor
-          .update_vc_profile(principal, investorData)
+          .update_vc_profile(covertedPrincipal, investorData)
           .then((result) => {
             if (
               result &&
               result.includes("Venture Capitalist profile updated successfully")
             ) {
               toast.success("Investor profile updated successfully");
-              window.location.href = "/";
+              // window.location.href = "/";
             } else {
               toast.error("something got wrong");
             }
@@ -822,7 +825,7 @@ const UserProfileInvestorUpdate = () => {
       }
     } else {
       toast.error("Please signup with internet identity first");
-      window.location.href = "/";
+      // window.location.href = "/";
     }
   };
 
@@ -851,7 +854,7 @@ const UserProfileInvestorUpdate = () => {
               </svg>
             </div>
           </div>
-          <div className="w-full flex gap-4 sxxs:flex-col sm:flex-row">
+          <div className="w-full flex gap-4 flex-col md:flex-row">
             <div className=" bg-[#D2D5F2]  shadow-md shadow-gray-400 p-6 rounded-lg md:w-1/4 sxxs:w-full">
               <div className="div">
                 {showOriginalProfile ? (
@@ -865,7 +868,7 @@ const UserProfileInvestorUpdate = () => {
                     >
                       {console.log("imagePreview 1320 ===>>>>s", imagePreview)}
                       <img
-                        className="object-cover size-44 max-h-44 rounded-full"
+                        className="object-cover max-h-44 rounded-full"
                         src={orignalData?.profilePicture}
                         alt=""
                       />
@@ -988,7 +991,7 @@ const UserProfileInvestorUpdate = () => {
                           }}
                         >
                           <img
-                            className="object-cover size-44 max-h-44 rounded-full"
+                            className="object-cover max-h-44 rounded-full"
                             src={updatedData?.profilePicture}
                             alt=""
                           />
@@ -1046,7 +1049,7 @@ const UserProfileInvestorUpdate = () => {
                   </div>
                 </div>
                 <div className="text-gray-500 md:text-md text-sm font-normal flex mb-2">
-                  <div className="flex flex-col mb-2">
+                  <div className="flex flex-col w-full mb-2">
                     <div className="flex space-x-2 items-center flex-row">
                       <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                       <svg
@@ -1142,7 +1145,7 @@ const UserProfileInvestorUpdate = () => {
                       ) : (
                         <>
                           {place}
-                          <div className="underline ">
+                          <div className="underline w-full truncate">
                             {updatedData?.country}
                           </div>
                         </>
@@ -1189,7 +1192,7 @@ const UserProfileInvestorUpdate = () => {
                             alt="openchat_username"
                             className="size-5"
                           />
-                          <div className="ml-2">
+                          <div className="ml-2 w-full truncate">
                             {updatedData?.openchatUsername}
                           </div>
                         </>
@@ -1429,7 +1432,7 @@ const UserProfileInvestorUpdate = () => {
                             {editMode ? (
                               <div className="flex flex-row mt-1 items-center">
                                 <span className="w-2 h-2 bg-green-700 rounded-full"></span>
-                                <div className="flex flex-col">
+                                <div className="flex flex-col w-11/12">
                                   <ReactSelect
                                     isMulti
                                     menuPortalTarget={document.body}
@@ -2011,10 +2014,10 @@ const UserProfileInvestorUpdate = () => {
             </div>
           </div>
 
-          <div className="w-full flex gap-4 sxxs:flex-col sm:flex-row mt-4">
+          <div className="w-full flex gap-4 flex-col md:flex-row mt-4">
             <div className="flex flex-col  w-full   md:w-[26%] sxxs:w-full"></div>
-            <div className="flex flex-row justify-between bg-[#D2D5F2] shadow-md shadow-gray-400 p-6 rounded-lg md:w-3/4 sxxs:w-fulll">
-              <ul className="grid grid-cols-2 gap-4 w-full px-[3%]">
+            <div className="flex flex-row justify-between bg-[#D2D5F2] shadow-md shadow-gray-400 md:p-6 p-3 rounded-lg md:w-3/4 sxxs:w-fulll">
+              <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full px-[3%]">
                 <li className="list-disc">
                   <div className="flex flex-col items-start justify-start sm:text-left text-base">
                     <p className="font-semibold text-gray-800 mb-2 sm:mb-0 mr-2">
@@ -2034,7 +2037,7 @@ const UserProfileInvestorUpdate = () => {
                         </span>
                       )}
                     </div>
-                    <div className="w-3/4">
+                    <div className="mt-2 w-3/4">
                       {editMode ? (
                         <div className="flex flex-col mt-1">
                           <div className="flex items-center">
@@ -2113,7 +2116,7 @@ const UserProfileInvestorUpdate = () => {
                       </div>
                     )}
                   </div>
-                  <div className="w-3/4">
+                  <div className="mt-2 w-3/4">
                     {editMode && watch("invested_in_multi_chain") === "true" ? (
                       <div className="flex flex-col mt-1">
                         <div className="flex items-center">
@@ -2263,7 +2266,7 @@ const UserProfileInvestorUpdate = () => {
                           </div>
                         )}
                       </div>
-                      <div className="w-3/4">
+                      <div className="mt-2 w-3/4">
                         {editMode ? (
                           <div className="flex flex-col mt-1">
                             <div className="flex items-center">
@@ -2415,7 +2418,7 @@ const UserProfileInvestorUpdate = () => {
                         </div>
                       )}
                     </div>
-                    <div className="w-3/4">
+                    <div className="mt-2 w-3/4">
                       {editMode ? (
                         <div className="flex flex-col mt-1">
                           <div className="flex items-center">
