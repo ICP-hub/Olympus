@@ -727,7 +727,7 @@ const ProjectUpdate = () => {
                       }}
                     >
                       <img
-                        className="object-cover size-44 max-h-44 rounded-full"
+                        className="object-cover max-h-44 rounded-full"
                         src={updatedData?.userProfilePicture}
                         alt=""
                       />
@@ -762,7 +762,7 @@ const ProjectUpdate = () => {
                 </div>
               </div>
               <div className="text-gray-500 md:text-md text-sm font-normal flex mb-2">
-                <div className="flex flex-col mb-2">
+                <div className="flex flex-col w-full mb-2">
                   <div className="flex space-x-2 items-center flex-row">
                     <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                     <svg
@@ -1119,7 +1119,7 @@ const ProjectUpdate = () => {
 
                   <div className="border border-gray-400 w-full mt-2 mb-4 relative " />
 
-                  <div className="grid md:grid-cols-2 gap-3 text-sm w-full">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm w-full">
                     <div className="flex flex-col w-full md:w-4/5">
                       <div className="flex flex-col mb-4 md:mb-6">
                         <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
@@ -1129,13 +1129,13 @@ const ProjectUpdate = () => {
                         <div className="flex space-x-2 items-center  flex-row ml-3">
                           <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                           <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                            {orignalData?.project_name || "Not available"}
+                            {orignalData?.projectName || "Not available"}
                           </div>
                         </div>
                         <div className="flex space-x-2 items-center flex-row ml-3">
                           <span className="w-2 h-2 bg-green-700 rounded-full"></span>
                           <div className="text-[#7283EA] text-xs font-semibold md:text-sm truncate px-4">
-                            {updatedData?.project_name || "Not available"}
+                            {updatedData?.projectName || "Not available"}
                           </div>
                         </div>
                       </div>
@@ -1625,7 +1625,7 @@ const ProjectUpdate = () => {
             </div>
           </div>
           <div className=" bg-[#D2D5F2] md:px-[4%] flex md:flex-row flex-col shadow-md shadow-gray-400 pb-6 pt-4 rounded-lg md1:w-3/4 w-full">
-            <div className="grid md:grid-cols-2 w-full">
+            <div className="grid grid-cols-1 md:grid-cols-2 w-full">
               <div className="flex flex-col mb-4 md:mb-6 md:pl-0 pl-4">
                 <h2 className="text-xl sm:text-xl font-extrabold text-gray-800 mb-2 sm:mb-0 mr-2">
                   Preferred ICP Hub :
@@ -1770,11 +1770,11 @@ const ProjectUpdate = () => {
                 <div className="flex space-x-2 items-center  flex-row ml-3">
                   <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                   <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                    {orignalData?.supports_multichain ? (
+                    {orignalData?.supportsMultichain ? (
                       "Yes"
                     ) : "No" ? (
                       <span>
-                        {orignalData?.supports_multichain ? "Yes" : "No"}
+                        {orignalData?.supportsMultichain ? "Yes" : "No"}
                       </span>
                     ) : (
                       <span className="flex items-center">
@@ -1787,11 +1787,11 @@ const ProjectUpdate = () => {
                 <div className="flex space-x-2 items-center  flex-row ml-3">
                   <span className="w-2 h-2 bg-green-700 rounded-full"></span>
                   <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                    {updatedData?.supports_multichain ? (
+                    {updatedData?.supportsMultichain ? (
                       "Yes"
                     ) : "No" ? (
                       <span>
-                        {updatedData?.supports_multichain ? "Yes" : "No"}
+                        {updatedData?.supportsMultichain ? "Yes" : "No"}
                       </span>
                     ) : (
                       <span className="flex items-center">
@@ -2128,11 +2128,13 @@ const ProjectUpdate = () => {
                 <div className="flex space-x-2 items-center  flex-row ml-3">
                   <span className="w-2 h-2 bg-red-700 rounded-full"></span>
                   <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                    {orignalData.money_raised && orignalData?.money_raised ? (
+                    {orignalData.moneyRaisedTillNow &&
+                    orignalData?.moneyRaisedTillNow ? (
                       "Yes"
                     ) : "No" ? (
                       <span>
-                        {orignalData.money_raised && orignalData?.money_raised
+                        {orignalData.moneyRaisedTillNow &&
+                        orignalData?.moneyRaisedTillNow
                           ? "Yes"
                           : "No"}
                       </span>
@@ -2147,11 +2149,13 @@ const ProjectUpdate = () => {
                 <div className="flex space-x-2 items-center  flex-row ml-3">
                   <span className="w-2 h-2 bg-green-700 rounded-full"></span>
                   <div className="text-md  font-normal text-gray-600  break-all flex-wrap">
-                    {updatedData?.money_raised && updatedData?.money_raised ? (
+                    {updatedData?.moneyRaisedTillNow &&
+                    updatedData?.moneyRaisedTillNow ? (
                       "Yes"
                     ) : "No" ? (
                       <span>
-                        {updatedData?.money_raised && updatedData?.money_raised
+                        {updatedData?.moneyRaisedTillNow &&
+                        updatedData?.moneyRaisedTillNow
                           ? "Yes"
                           : "No"}
                       </span>

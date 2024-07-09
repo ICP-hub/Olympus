@@ -1004,13 +1004,13 @@ function ProjectRegForm() {
       );
       setReasonOfJoiningSelectedOptionsHandler(val?.user_data?.reason_to_join);
       setLogoPreview(
-        val?.project_logo instanceof Uint8Array
-          ? uint8ArrayToBase64(val?.project_logo[0])
+        val?.project_logo?.[0] instanceof Uint8Array
+          ? uint8ArrayToBase64(val?.project_logo?.[0])
           : ""
       );
       setCoverPreview(
-        val?.project_cover instanceof Uint8Array
-          ? uint8ArrayToBase64(val?.project_cover[0])
+        val?.project_cover?.[0] instanceof Uint8Array
+          ? uint8ArrayToBase64(val?.project_cover?.[0])
           : ""
       );
       setValue("preferred_icp_hub", val?.preferred_icp_hub?.[0]);
@@ -1112,6 +1112,8 @@ function ProjectRegForm() {
     }
   };
   console.log("imagePreview", imagePreview);
+  console.log("logoPreview", logoPreview);
+  console.log("coverPreview", coverPreview);
 
   // Get data from redux useEffect
   useEffect(() => {

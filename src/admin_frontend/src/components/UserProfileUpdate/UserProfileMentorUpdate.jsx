@@ -179,11 +179,12 @@ const validationSchema = yup
       .test("is-non-empty", "LinkedIn url is required", (value) =>
         /\S/.test(value)
       )
-      .matches(
-        /^(https?:\/\/)?(www\.)?linkedin\.com\/(in\/[a-zA-Z0-9_-]+|company\/[a-zA-Z0-9_-]+|groups\/[a-zA-Z0-9_-]+)$/,
-        "Invalid LinkedIn URL"
-      )
-      .required("LinkedIn url is required"),
+      // .matches(
+      //   /^(https?:\/\/)?(www\.)?linkedin\.com\/(in\/[a-zA-Z0-9_-]+|company\/[a-zA-Z0-9_-]+|groups\/[a-zA-Z0-9_-]+)$/,
+      //   "Invalid LinkedIn URL"
+      // )
+      .required("LinkedIn url is required")
+      .url("Invalid url"),
   })
   .required();
 
@@ -466,7 +467,7 @@ const UserProfileMentorUpdate = () => {
           ? uint8ArrayToBase64(val?.profilePicture)
           : ""
       );
-      setImageData(val?.profilePicture ?? "");
+      // setImageData(val?.profilePicture ?? "");
       setValue("type_of_profile", val?.typeOfProfile);
       setValue(
         "reasons_to_join_platform",
@@ -598,8 +599,9 @@ const UserProfileMentorUpdate = () => {
         reason_for_joining: [""],
       };
       try {
+        const covertedPrincipal = await Principal.fromText(principal);
         await actor
-          .update_mentor_profile(principal, mentorData)
+          .update_mentor_profile(covertedPrincipal, mentorData)
           .then((result) => {
             if (
               result &&
@@ -1411,7 +1413,7 @@ const UserProfileMentorUpdate = () => {
                   <p className="w-full mb-4 border border-[#C5C5C5]"></p>
                 </div>
 
-                <div className="grid grid-cols-2 w-full">
+                <div className="grid grid-cols-1 md:grid-cols-2 w-full">
                   <div className="flex flex-col mb-4 md:mb-6">
                     <h2 className="text-lg font-bold text-gray-800 mb-2 sm:mb-0 mr-2">
                       Telegram:
@@ -1734,8 +1736,8 @@ const UserProfileMentorUpdate = () => {
 
           <div className="w-full flex gap-4 sxxs:flex-col sm:flex-row mt-4">
             <div className="flex flex-col  w-full   md:w-[26%] sxxs:w-full"></div>
-            <div className="flex flex-row justify-between bg-[#D2D5F2] shadow-md shadow-gray-400 p-6 rounded-lg md:w-3/4 sxxs:w-fulll">
-              <ul className="grid grid-cols-2 gap-3 w-full p-6 justify-center items-center">
+            <div className="flex flex-row justify-between bg-[#D2D5F2] shadow-md shadow-gray-400 md:p-6 rounded-lg md:w-3/4 sxxs:w-fulll">
+              <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full p-6 justify-center items-center">
                 <li className="list-disc">
                   <div className="flex flex-col items-start justify-start sm:text-left ">
                     <h2 className=" font-semibold text-gray-800 mb-2 sm:mb-0 mr-2 text-base">
@@ -1837,7 +1839,7 @@ const UserProfileMentorUpdate = () => {
                       </div>
                     )}
                   </div>
-                  <div className="w-3/4">
+                  <div className="mt-2 w-3/4">
                     {editMode && watch("multi_chain") === "true" ? (
                       <div className="flex flex-col mt-1">
                         <div className="flex items-center">
@@ -1985,7 +1987,7 @@ const UserProfileMentorUpdate = () => {
                           </div>
                         )}
                       </div>
-                      <div className="w-3/4">
+                      <div className="mt-2 w-3/4">
                         {editMode ? (
                           <div className="flex flex-col mt-1">
                             <div className="flex items-center">
@@ -2003,15 +2005,14 @@ const UserProfileMentorUpdate = () => {
                                     ...provided,
                                     paddingBlock: "0px",
                                     borderRadius: "8px",
-                                    border: errors.category_of_mentoring_service
+                                    border: errors.domains_interested_in
                                       ? "2px solid #ef4444"
                                       : "2px solid #737373",
                                     backgroundColor: "rgb(249 250 251)",
                                     "&::placeholder": {
-                                      color:
-                                        errors.category_of_mentoring_service
-                                          ? "#ef4444"
-                                          : "currentColor",
+                                      color: errors.domains_interested_in
+                                        ? "#ef4444"
+                                        : "currentColor",
                                     },
                                     display: "flex",
                                     overflowX: "auto",
@@ -2028,7 +2029,7 @@ const UserProfileMentorUpdate = () => {
                                   }),
                                   placeholder: (provided, state) => ({
                                     ...provided,
-                                    color: errors.category_of_mentoring_service
+                                    color: errors.domains_interested_in
                                       ? "#ef4444"
                                       : "rgb(107 114 128)",
                                     whiteSpace: "nowrap",
@@ -2046,44 +2047,34 @@ const UserProfileMentorUpdate = () => {
                                     alignItems: "center",
                                   }),
                                 }}
-                                value={
-                                  categoryOfMentoringServiceSelectedOptions
-                                }
-                                options={categoryOfMentoringServiceOptions}
+                                value={interestedDomainsSelectedOptions}
+                                options={interestedDomainsOptions}
                                 classNamePrefix="select"
                                 className="basic-multi-select w-full text-start text-xs text-nowrap"
                                 placeholder="Select a service"
-                                name="category_of_mentoring_service"
+                                name="domains_interested_in"
                                 onChange={(selectedOptions) => {
                                   if (
                                     selectedOptions &&
                                     selectedOptions.length > 0
                                   ) {
-                                    setCategoryOfMentoringServiceSelectedOptions(
+                                    setInterestedDomainsSelectedOptions(
                                       selectedOptions
                                     );
-                                    clearErrors(
-                                      "category_of_mentoring_service"
-                                    );
+                                    clearErrors("domains_interested_in");
                                     setValue(
-                                      "category_of_mentoring_service",
+                                      "domains_interested_in",
                                       selectedOptions
                                         .map((option) => option.value)
                                         .join(", "),
                                       { shouldValidate: true }
                                     );
                                   } else {
-                                    setCategoryOfMentoringServiceSelectedOptions(
-                                      []
-                                    );
-                                    setValue(
-                                      "category_of_mentoring_service",
-                                      "",
-                                      {
-                                        shouldValidate: true,
-                                      }
-                                    );
-                                    setError("category_of_mentoring_service", {
+                                    setInterestedDomainsSelectedOptions([]);
+                                    setValue("domains_interested_in", "", {
+                                      shouldValidate: true,
+                                    });
+                                    setError("domains_interested_in", {
                                       type: "required",
                                       message:
                                         "Atleast one service name required",
@@ -2092,9 +2083,9 @@ const UserProfileMentorUpdate = () => {
                                 }}
                               />
                             </div>
-                            {errors.category_of_mentoring_service && (
+                            {errors.domains_interested_in && (
                               <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                                {errors.category_of_mentoring_service.message}
+                                {errors.domains_interested_in.message}
                               </p>
                             )}
                           </div>
@@ -2507,7 +2498,7 @@ const UserProfileMentorUpdate = () => {
                         </div>
                       )}
                     </div>
-                    <div className="w-3/4">
+                    <div className="mt-2 w-3/4">
                       {editMode ? (
                         <div className="flex flex-col mt-1">
                           <div className="flex items-center">
