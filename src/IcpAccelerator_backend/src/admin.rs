@@ -1051,6 +1051,7 @@ pub fn approve_project_update(requester: Principal, project_id: String, approve:
                         project.params.user_data = project_update_request.0.updated_info.user_data;
                         project.params.mentors_assigned = project_update_request.0.updated_info.mentors_assigned;
                         project.params.vc_assigned = project_update_request.0.updated_info.vc_assigned;
+                        project.params.project_website = project_update_request.0.updated_info.project_website;
                         ic_cdk::println!("9");
 
                         result = format!(

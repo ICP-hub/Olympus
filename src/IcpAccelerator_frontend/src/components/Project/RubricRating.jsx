@@ -147,7 +147,16 @@ const RubricRating = ({ data }) => {
   return (
     <section className="bg-gray-100 w-full h-full lg1:px-[4%] py-[2%] px-[5%]">
       {ratingDone ? (
-        <div className="container">
+        <div className="container flex flex-col">
+          {" "}
+          <div className="flex-col items-end justify-end w-full">
+            <button
+              className="text-white bg-blue-700 font-bold py-2 px-4 mb-2 rounded-xl float-right"
+              onClick={() => setRatingDone(false)}
+            >
+              Add Another Rating
+            </button>
+          </div>
           <div className="relative flex items-center bg-[#B9C0F3] p-4 w-3/4 flex-col rounded-lg border-2 overflow-hidden border-gray-300 backdrop-blur-3xl m-auto ">
             {/* <div className="absolute rounded-full bg-[#7283EA] bg-opacity-8 w-1/4 h-3/4 -top-[5%] -left-[10%]"></div> */}
             {ratings &&

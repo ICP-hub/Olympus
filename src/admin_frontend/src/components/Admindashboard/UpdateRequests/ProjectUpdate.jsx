@@ -503,7 +503,7 @@ const ProjectUpdate = () => {
             projectWebsite: updatedInfo?.project_website?.[0],
             projectDiscord: updatedInfo?.project_discord?.[0],
             projectLinkedin: updatedInfo?.project_linkedin?.[0],
-            userTwitter: originalInfo?.user_data.twitter_id?.[0],
+            userTwitter: updatedInfo?.user_data.twitter_id?.[0],
             dappLink: updatedInfo?.dapp_link?.[0],
             privateDocs: updatedInfo?.private_docs?.[0] || [],
             publicDocs: updatedInfo?.public_docs?.[0] || [],
@@ -598,16 +598,18 @@ const ProjectUpdate = () => {
     setIsAccepting(true);
     try {
       const covertedPrincipal = await Principal.fromText(principalId);
-      await actor.approve_project_update(
+      console.log("covertedPrincipal", covertedPrincipal);
+      const result = await actor.approve_project_update(
         covertedPrincipal,
         orignalData.projectId,
         boolean
       );
+      console.log("approve_project_update", result);
     } catch (error) {
       console.error("Error processing request:", error);
     } finally {
       setIsAccepting(false);
-      window.location.reload();
+      // window.location.reload();
     }
   };
 
