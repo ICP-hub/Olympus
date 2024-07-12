@@ -215,8 +215,8 @@ const LiveProjectBar = ({ data }) => {
             alt={`Author`}
           />
           {data?.params?.project_team && data?.params?.project_team.length > 0
-            ? data?.params?.project_team.map((val, index) => {
-                let data = val[0]?.member_data;
+            ? data?.params?.project_team?.[0].map((val, index) => {
+                let data = val?.member_data;
                 return (
                   <img
                     key={index}

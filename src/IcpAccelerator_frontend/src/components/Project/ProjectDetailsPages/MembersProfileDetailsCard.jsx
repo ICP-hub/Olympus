@@ -5,6 +5,11 @@ import { Principal } from "@dfinity/principal";
 import AddTeamMember from "../../../models/AddTeamMember";
 import toast, { Toaster } from "react-hot-toast";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
+import { Pagination, Autoplay } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/autoplay";
 import { useNavigate } from "react-router-dom";
 
 const MembersProfileDetailsCard = ({
@@ -74,145 +79,182 @@ const MembersProfileDetailsCard = ({
           </button>
         </div>
       )}
-      <div className="md1:flex flex-wrap gap-10">
-        <div
-          className={`w-[100%] md1:w-[calc(100%/2-40px)] dxl:w-[calc(100%/3-40px)] xl2:w-[calc(25%-10px)] rounded-[10px] shadow-lg md:m-1 mb-10 p-6 bg-blue-200`}
+      <div className="gap-2 overflow-x-auto">
+        <Swiper
+          // className="custom-swiper"
+          modules={[Pagination]}
+          // centeredSlides={true}
+          loop={latestAnnouncementData.length <= 3}
+          // autoplay={
+          //   latestAnnouncementData.length <= 3
+          //     ? {
+          //         delay: 2500,
+          //         disableOnInteraction: false,
+          //       }
+          //     : {}
+          // }
+          pagination={{
+            clickable: true,
+          }}
+          spaceBetween={30}
+          slidesPerView="auto"
+          slidesOffsetAfter={100}
+          breakpoints={{
+            640: {
+              slidesPerView: 1,
+            },
+            768: {
+              slidesPerView: 2,
+            },
+            1024: {
+              slidesPerView: 3,
+            },
+          }}
         >
-          <div className="flex w-full justify-between">
-            {profile && (
-              <div
-                className="p-[3px] rounded-full flex bg-blend-overlay "
-                style={{
-                  boxSizing: "border-box",
-                  background: `url(${uint8ArrayToBase64(
-                    data?.params?.user_data?.profile_picture[0]
-                  )}) center / cover, linear-gradient(168deg, rgba(255, 255, 255, 0.25) -0.86%, rgba(255, 255, 255, 0) 103.57%)`,
-                  backdropFilter: "blur(20px)",
-                }}
-              >
-                <img
-                  className="rounded-full object-cover w-20 h-20"
-                  src={uint8ArrayToBase64(
-                    data?.params?.user_data?.profile_picture[0]
+          <div
+            className={`w-[100%] md1:w-[calc(100%/2-40px)] dxl:w-[calc(100%/3-40px)] xl2:w-[calc(25%-10px)] rounded-[10px] shadow-lg md:m-1 mb-10 p-6 bg-blue-200`}
+          >
+            <div className="flex w-full justify-between">
+              {profile && (
+                <div
+                  className="p-[3px] rounded-full flex bg-blend-overlay "
+                  style={{
+                    boxSizing: "border-box",
+                    background: `url(${uint8ArrayToBase64(
+                      data?.params?.user_data?.profile_picture[0]
+                    )}) center / cover, linear-gradient(168deg, rgba(255, 255, 255, 0.25) -0.86%, rgba(255, 255, 255, 0) 103.57%)`,
+                    backdropFilter: "blur(20px)",
+                  }}
+                >
+                  <img
+                    className="rounded-full object-cover w-20 h-20"
+                    src={uint8ArrayToBase64(
+                      data?.params?.user_data?.profile_picture[0]
+                    )}
+                    alt={"img"}
+                  />
+                </div>
+              )}
+              {socials && (
+                <div className="flex gap-3">
+                  {data?.params?.user_data?.linkedin_link && (
+                    <div className="w-4 h-4">
+                      <a
+                        href={data?.params?.user_data?.linkedin_link}
+                        target="_blank"
+                      >
+                        {linkedInSvg}
+                      </a>
+                    </div>
                   )}
-                  alt={"img"}
-                />
-              </div>
-            )}
-            {socials && (
-              <div className="flex gap-3">
-                {data?.params?.user_data?.linkedin_link && (
-                  <div className="w-4 h-4">
-                    <a
-                      href={data?.params?.user_data?.linkedin_link}
-                      target="_blank"
-                    >
-                      {linkedInSvg}
-                    </a>
-                  </div>
-                )}
-                {data?.params?.user_data?.twitter_id[0] && (
-                  <div className="w-4 h-4">
-                    <a
-                      href={data?.params?.user_data?.twitter_id[0]}
-                      target="_blank"
-                    >
-                      {twitterSvg}
-                    </a>
-                  </div>
-                )}
+                  {data?.params?.user_data?.twitter_id[0] && (
+                    <div className="w-4 h-4">
+                      <a
+                        href={data?.params?.user_data?.twitter_id[0]}
+                        target="_blank"
+                      >
+                        {twitterSvg}
+                      </a>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+            {name && role && (
+              <div className="pt-4 pb-4 sm:pb-2 md:pb-0">
+                <div className="font-extrabold text-lg md:text-2xl mb-1">
+                  {data?.params?.user_data?.full_name ?? ""}
+                </div>
+                <p className="text-gray-700 text-base capitalize">Author</p>
               </div>
             )}
           </div>
-          {name && role && (
-            <div className="pt-4 pb-4 sm:pb-2 md:pb-0">
-              <div className="font-extrabold text-lg md:text-2xl mb-1">
-                {data?.params?.user_data?.full_name ?? ""}
-              </div>
-              <p className="text-gray-700 text-base capitalize">Author</p>
-            </div>
-          )}
-        </div>
-        {console.log("data", data)}
-        {
-          data?.params?.project_team && data?.params?.project_team.length > 0
-            ? data?.params?.project_team.map((val, index) => {
-                let result = val[0]?.member_data;
-                let member_uid =val[0]?.member_uid
-                return (
-                  <div
-                    key={index}
-                    className={`w-[100%] md1:w-[calc(100%/2-40px)] dxl:w-[calc(100%/3-40px)] xl2:w-[calc(25%-10px)] rounded-[10px] shadow-lg md:m-1 mb-10 p-6 bg-white`}
-                    onClick={() =>
-                      member_uid
-                        ? navigate("/view-user-details", { state: member_uid})
-                        : ""
-                    }
-                  >
-                    <div className="flex w-full justify-between">
-                      {profile && (
-                        <div
-                          className="p-[3px] rounded-full flex bg-blend-overlay "
-                          style={{
-                            boxSizing: "border-box",
-                            background: `url(${uint8ArrayToBase64(
-                              result?.profile_picture[0]
-                            )}) center / cover, linear-gradient(168deg, rgba(255, 255, 255, 0.25) -0.86%, rgba(255, 255, 255, 0) 103.57%)`,
-                            backdropFilter: "blur(20px)",
-                          }}
-                        >
-                          <img
-                            className="rounded-full object-cover w-20 h-20"
-                            src={uint8ArrayToBase64(result?.profile_picture[0])}
-                            alt={"img"}
-                          />
-                        </div>
-                      )}
-                      {socials && (
-                        <div className="flex gap-3">
-                          {result?.linkedin && (
-                            <div className="w-4 h-4">
-                              <a href={result?.linkedin} target="_blank">
-                                {linkedInSvg}
-                              </a>
+          {console.log("data", data)}
+          {
+            data?.params?.project_team && data?.params?.project_team.length > 0
+              ? data?.params?.project_team?.[0].map((val, index) => {
+                  let result = val?.member_data;
+                  let member_uid = val?.member_uid;
+                  return (
+                    <SwiperSlide key={index}>
+                      <div
+                        className={`w-[100%] md1:w-[calc(100%/2-40px)] dxl:w-[calc(100%/3-40px)] xl2:w-[calc(25%-10px)] rounded-[10px] shadow-lg md:m-1 mb-10 p-6 bg-white`}
+                        onClick={() =>
+                          member_uid
+                            ? navigate("/view-user-details", {
+                                state: member_uid,
+                              })
+                            : ""
+                        }
+                      >
+                        <div className="flex w-full justify-between">
+                          {profile && (
+                            <div
+                              className="p-[3px] rounded-full flex bg-blend-overlay "
+                              style={{
+                                boxSizing: "border-box",
+                                background: `url(${uint8ArrayToBase64(
+                                  result?.profile_picture[0]
+                                )}) center / cover, linear-gradient(168deg, rgba(255, 255, 255, 0.25) -0.86%, rgba(255, 255, 255, 0) 103.57%)`,
+                                backdropFilter: "blur(20px)",
+                              }}
+                            >
+                              <img
+                                className="rounded-full object-cover w-20 h-20"
+                                src={uint8ArrayToBase64(
+                                  result?.profile_picture[0]
+                                )}
+                                alt={"img"}
+                              />
                             </div>
                           )}
-                          {result?.twitter_id && (
-                            <div className="w-4 h-4">
-                              <a href={result?.twitter_id} target="_blank">
-                                {twitterSvg}
-                              </a>
+                          {socials && (
+                            <div className="flex gap-3">
+                              {result?.linkedin && (
+                                <div className="w-4 h-4">
+                                  <a href={result?.linkedin} target="_blank">
+                                    {linkedInSvg}
+                                  </a>
+                                </div>
+                              )}
+                              {result?.twitter_id && (
+                                <div className="w-4 h-4">
+                                  <a href={result?.twitter_id} target="_blank">
+                                    {twitterSvg}
+                                  </a>
+                                </div>
+                              )}
                             </div>
                           )}
                         </div>
-                      )}
-                    </div>
-                    {/* {
+                        {/* {
                                 type && (
                                     <span className="text-sm font-bold text-gray-500 mb-2 px-4 uppercase">
                                         {result?.type ?? ""}
                                     </span>
                                 )
                             } */}
-                    {name && role && (
-                      <div className="pt-4 pb-4 sm:pb-2 md:pb-0">
-                        <div className="font-extrabold text-lg md:text-2xl mb-1">
-                          {result?.full_name ?? ""}
-                        </div>
-                        {/* <p className="text-gray-700 text-base capitalize">{index === 0 ? 'Author' : 'project member'}</p> */}
-                        <p className="text-gray-700 text-base capitalize">
-                          {"project member"}
-                        </p>
+                        {name && role && (
+                          <div className="pt-4 pb-4 sm:pb-2 md:pb-0">
+                            <div className="font-extrabold text-lg md:text-2xl mb-1">
+                              {result?.full_name ?? ""}
+                            </div>
+                            {/* <p className="text-gray-700 text-base capitalize">{index === 0 ? 'Author' : 'project member'}</p> */}
+                            <p className="text-gray-700 text-base capitalize">
+                              {"project member"}
+                            </p>
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-                );
-              })
-            : null
-          // <div>
-          //     <h1>No result</h1>
-          // </div>
-        }
+                    </SwiperSlide>
+                  );
+                })
+              : null
+            // <div>
+            //     <h1>No result</h1>
+            // </div>
+          }
+        </Swiper>
       </div>
       {isAddTeamModalOpen && (
         <AddTeamMember
