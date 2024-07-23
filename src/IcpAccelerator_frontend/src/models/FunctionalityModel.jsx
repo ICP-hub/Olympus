@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { ThreeDots } from "react-loader-spinner";
 import Animation from "../../../admin_frontend/assets/image/Animation.gif";
-import { close } from "../components/Utils/Data/SvgData";
+import { close } from "../component/Utils/Data/SvgData";
 
 function FunctionalityModel({
   onModal,

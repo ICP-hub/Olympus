@@ -12,7 +12,7 @@ import {
   uint8ArrayToBase64,
 } from "../../Utils/AdminData/saga_function/blobImageToUrl";
 import openchat_username from "../../../../assets/image/spinner.png";
-import { twitterSvg } from "../../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
+import { twitterSvg } from "../../../../../IcpAccelerator_frontend/src/component/Utils/Data/SvgData";
 import { Pagination, Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";

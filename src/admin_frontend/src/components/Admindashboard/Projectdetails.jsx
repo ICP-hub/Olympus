@@ -15,7 +15,7 @@ import {
   githubSvg,
   linkedInSvg,
   twitterSvg,
-} from "../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
+} from "../../../../IcpAccelerator_frontend/src/component/Utils/Data/SvgData";
 import {
   Profile2,
   noDataPresentSvg,

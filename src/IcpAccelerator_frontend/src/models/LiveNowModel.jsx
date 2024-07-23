@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
-import { founderRegisteredHandlerRequest } from "../components/StateManagement/Redux/Reducers/founderRegisteredData";
+import { founderRegisteredHandlerRequest } from "../component/StateManagement/Redux/Reducers/founderRegisteredData";
 
 function LiveNowModel({ onClose, projectId }) {
   const navigate = useNavigate();

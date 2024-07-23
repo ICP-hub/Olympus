@@ -3,6 +3,7 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 import Loader from "./components/Loader/Loader";
 import Breadcrumbs from "./components/Layout/Breadcrumbs/BreadCrumbs";
 import ProjectDetailsForUserRole from "./components/Project/ProjectDetailsPages/ProjectDetailsForUserRole";
+import Home from "./components/Home/Home";
 
 
 const DashBoard = lazy(() => import("./components/Dashboard/DashBoard"));

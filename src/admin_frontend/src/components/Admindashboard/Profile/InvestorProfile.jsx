@@ -21,13 +21,13 @@ import { useDispatch } from "react-redux";
 import { investorApprovedRequest } from "../../AdminStateManagement/Redux/Reducers/investorApproved";
 import { investorDeclinedRequest } from "../../AdminStateManagement/Redux/Reducers/investorDecline";
 import openchat_username from "../../../../assets/image/spinner.png";
-import { linkedInSvg } from "../../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
+import { linkedInSvg } from "../../../../../IcpAccelerator_frontend/src/component/Utils/Data/SvgData";
 import { Pagination, Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/autoplay";
-import { twitterSvg } from "../../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
+import { twitterSvg } from "../../../../../IcpAccelerator_frontend/src/component/Utils/Data/SvgData";
 
 const InvestorProfile = ({ userData, Allrole, principal }) => {
   const actor = useSelector((currState) => currState.actors.actor);

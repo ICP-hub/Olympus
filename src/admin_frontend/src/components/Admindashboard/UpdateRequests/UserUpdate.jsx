@@ -18,9 +18,9 @@ import { useForm, Controller } from "react-hook-form";
 import { useCountries } from "react-countries";
 import ReactSelect from "react-select";
 import toast, { Toaster } from "react-hot-toast";
-import { twitterSvg } from "../../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
+import { twitterSvg } from "../../../../../IcpAccelerator_frontend/src/component/Utils/Data/SvgData";
 import { Principal } from "@dfinity/principal";
-import CompressedImage from "../../../../../IcpAccelerator_frontend/src/components/ImageCompressed/CompressedImage";
+import CompressedImage from "../../../../../IcpAccelerator_frontend/src/component/ImageCompressed/CompressedImage";
 
 const validationSchema = yup
   .object()

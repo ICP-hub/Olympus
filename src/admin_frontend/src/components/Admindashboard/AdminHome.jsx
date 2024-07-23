@@ -3,9 +3,9 @@ import adminGif from "../../../../IcpAccelerator_frontend/assets/images/adminGif
 
 import admin from "../../../../IcpAccelerator_frontend/assets/images/admin.gif";
 import adminPI from "../../../../IcpAccelerator_frontend/assets/images/adminPerformanceIndicator.png";
-import SubmitSection from "../../../../IcpAccelerator_frontend/src/components/Footer/SubmitSection";
+import SubmitSection from "../../../../IcpAccelerator_frontend/src/component/Footer/SubmitSection";
 import { useSelector } from "react-redux";
-import ImpactTool from "../../../../IcpAccelerator_frontend/src/components/Dashboard/ImpactTool";
+import ImpactTool from "../../../../IcpAccelerator_frontend/src/component/Dashboard/ImpactTool";
 
 function AdminDashboard({ setModalOpen }) {
   const principal = useSelector((currState) => currState.internet.principal);

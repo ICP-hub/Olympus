@@ -7,8 +7,8 @@ import { ThreeDots } from "react-loader-spinner";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import openchat_username from "../../../assets/image/spinner.png";
-import { linkedInSvg } from "../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
-import { twitterSvg } from "../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
+import { linkedInSvg } from "../../../../IcpAccelerator_frontend/src/component/Utils/Data/SvgData";
+import { twitterSvg } from "../../../../IcpAccelerator_frontend/src/component/Utils/Data/SvgData";
 import { noDataPresentSvg } from "../Utils/AdminData/SvgData";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -16,7 +16,7 @@ import { useForm, Controller } from "react-hook-form";
 import { useCountries } from "react-countries";
 import ReactSelect from "react-select";
 import toast, { Toaster } from "react-hot-toast";
-import CompressedImage from "../../../../IcpAccelerator_frontend/src/components/ImageCompressed/CompressedImage";
+import CompressedImage from "../../../../IcpAccelerator_frontend/src/component/ImageCompressed/CompressedImage";
 import { Principal } from "@dfinity/principal";
 
 const validationSchema = yup

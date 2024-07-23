@@ -15,7 +15,7 @@ import AcceptModal from "../models/AcceptModal";
 import { DateSvg, bellSvg } from "../Utils/AdminData/SvgData";
 import pending from "../../../assets/image/pending.png";
 import { userSvg } from "../Utils/AdminData/SvgData";
-import NoDataCard from "../../../../IcpAccelerator_frontend/src/components/Mentors/Event/NoDataCard";
+import NoDataCard from "../../../../IcpAccelerator_frontend/src/component/Mentors/Event/NoDataCard";
 import NoData from "../../../../IcpAccelerator_frontend/assets/images/file_not_found.png";
 import { AdminDashboardSkeleton } from "../Adminskeleton/AdminDashboardSkeleton";
 const AdminDashboard = () => {

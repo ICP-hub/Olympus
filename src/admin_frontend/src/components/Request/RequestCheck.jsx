@@ -3,11 +3,11 @@ import { projectFilterSvg } from "../Utils/AdminData/SvgData";
 import { useDispatch, useSelector } from "react-redux";
 import NotificationCard from "../Notification/NotificationCard";
 import Loader from "../Loader/Loader";
-import NoDataCard from "../../../../IcpAccelerator_frontend/src/components/Mentors/Event/NoDataCard";
+import NoDataCard from "../../../../IcpAccelerator_frontend/src/component/Mentors/Event/NoDataCard";
 import proj from "../../../../IcpAccelerator_frontend/assets/images/founder.png";
 import vc from "../../../../IcpAccelerator_frontend/assets/images/vc.png";
 import mentor from "../../../../IcpAccelerator_frontend/assets/images/mentor.png";
-import { OutSideClickHandler } from "../../../../IcpAccelerator_frontend/src/components/hooks/OutSideClickHandler";
+import { OutSideClickHandler } from "../../../../IcpAccelerator_frontend/src/component/hooks/OutSideClickHandler";
 import NoData from "../../../../IcpAccelerator_frontend/assets/images/NoData.png";
 import {
   mentorPendingFailure,
