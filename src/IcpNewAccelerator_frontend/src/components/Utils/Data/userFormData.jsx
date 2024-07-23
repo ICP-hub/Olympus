@@ -1,0 +1,51 @@
+export const formFields = [
+    {
+      id: "full_name",
+      type: "text",
+      name: "full_name",
+      required: true,
+      label: "Full name *",
+      onFocus: null,
+      onBlur: null,
+    },
+    {
+      id: "email",
+      type: "email",
+      name: "email",
+      label: "Email address",
+      onFocus: null,
+      onBlur: null,
+    },
+     {
+      id: "telegram_id",
+      type: "text",
+      name: "telegram_id",
+      label: "Telegram ID",
+      onFocus: null,
+      onBlur: null,
+    },
+     {
+      id: "bio",
+      type: "text",
+      name: "bio",
+      label: "Bio (50 words)",
+      onFocus: null,
+      onBlur: null,
+    },
+    {
+      id: "twitter_id",
+      type: "text",
+      name: "twitter_id",
+      label: "Twitter ID",
+      onFocus: null,
+      onBlur: null,
+    },
+    {
+      id: "user_name",
+      type: "text",
+      name: "user_name",
+      label: "OpenChat username",
+      onFocus: null,
+      onBlur: null,
+    }
+  ];

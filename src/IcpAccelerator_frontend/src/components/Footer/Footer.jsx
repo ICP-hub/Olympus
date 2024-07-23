@@ -18,61 +18,62 @@ const Footer = () => {
               </li>
             </ul>
           </div>
-          {/* <div className="mb-4">
-            <h4 className="text-xl font-bold mb-2 text-white">Services</h4>
-            <ul className="list-none text-sm p-0 m-0 text-white underline">
-              <li className="mb-2">
-                <a href="#">Base Camp</a>
-              </li>
-              <li className="mb-2">
-                <a href="#">Ascent</a>
-              </li>
-              <li className="mb-2">
-                <a href="#">Elevate</a>
-              </li>
-              <li className="mb-2">
-                <a href="#">Investors</a>
-              </li>
-              <li className="mb-2">
-                <a href="#">Partners</a>
-              </li>
-            </ul>
-          </div>
-          <div className="mb-4">
-            <h4 className="text-xl font-bold mb-2 text-white">Company</h4>
-            <ul className="list-none text-sm p-0 m-0 text-white underline">
-              <li className="mb-2">
-                <a href="#">About us </a>
-              </li>
-              <li className="mb-2">
-                <a href="#">Offices </a>
-              </li>
-              <li className="mb-2">
-                <a href="#">News </a>
-              </li>
-              <li className="mb-2">
-                <a href="#">Mission & Values </a>
-              </li>
-              <li className="mb-2">
-                <a href="#">Careers </a>
-              </li>
-            </ul>
-          </div>
-          <div className="mb-4">
-            <h4 className="text-xl font-bold mb-2 text-white">Legal</h4>
-            <ul className="list-none text-sm p-0 m-0 text-white underline">
-              <li className="mb-2">
-                <a href="#">Privacy Policy</a>
-              </li>
-              <li className="mb-2">
-                <a href="#">Terms & Conditions</a>
-              </li>
-            </ul>
-          </div> */}
-        {/* </div> */}
-      </div>
-    </footer>
+//           {/* <div className="mb-4">
+//             <h4 className="text-xl font-bold mb-2 text-white">Services</h4>
+//             <ul className="list-none text-sm p-0 m-0 text-white underline">
+//               <li className="mb-2">
+//                 <a href="#">Base Camp</a>
+//               </li>
+//               <li className="mb-2">
+//                 <a href="#">Ascent</a>
+//               </li>
+//               <li className="mb-2">
+//                 <a href="#">Elevate</a>
+//               </li>
+//               <li className="mb-2">
+//                 <a href="#">Investors</a>
+//               </li>
+//               <li className="mb-2">
+//                 <a href="#">Partners</a>
+//               </li>
+//             </ul>
+//           </div>
+//           <div className="mb-4">
+//             <h4 className="text-xl font-bold mb-2 text-white">Company</h4>
+//             <ul className="list-none text-sm p-0 m-0 text-white underline">
+//               <li className="mb-2">
+//                 <a href="#">About us </a>
+//               </li>
+//               <li className="mb-2">
+//                 <a href="#">Offices </a>
+//               </li>
+//               <li className="mb-2">
+//                 <a href="#">News </a>
+//               </li>
+//               <li className="mb-2">
+//                 <a href="#">Mission & Values </a>
+//               </li>
+//               <li className="mb-2">
+//                 <a href="#">Careers </a>
+//               </li>
+//             </ul>
+//           </div>
+//           <div className="mb-4">
+//             <h4 className="text-xl font-bold mb-2 text-white">Legal</h4>
+//             <ul className="list-none text-sm p-0 m-0 text-white underline">
+//               <li className="mb-2">
+//                 <a href="#">Privacy Policy</a>
+//               </li>
+//               <li className="mb-2">
+//                 <a href="#">Terms & Conditions</a>
+//               </li>
+//             </ul>
+//           </div> */}
+//         {/* </div> */}
+//       </div>
+//     </footer>
   );
 };
 
 export default Footer;
+
