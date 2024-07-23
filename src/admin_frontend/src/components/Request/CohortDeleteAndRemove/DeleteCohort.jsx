@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
 import { Principal } from "@dfinity/principal";
-import NoDataCard from "../../../../../IcpAccelerator_frontend/src/components/Mentors/Event/NoDataCard";
+import NoDataCard from "../../../../../IcpAccelerator_frontend/src/component/Mentors/Event/NoDataCard";
 import NoData from "../../../../../IcpAccelerator_frontend/assets/images/NoData.png";
 import CohortDeleteCard from "./CohortDeleteCard";
 import { AdminDashboardCohortSkeleton } from "../../Adminskeleton/AdminDashboardCohortskeleton";

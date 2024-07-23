@@ -2,10 +2,10 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { projectFilterSvg } from "../Utils/AdminData/SvgData";
 import toast, { Toaster } from "react-hot-toast";
-import uint8ArrayToBase64 from "../../../../IcpAccelerator_frontend/src/components/Utils/uint8ArrayToBase64";
+import uint8ArrayToBase64 from "../../../../IcpAccelerator_frontend/src/component/Utils/uint8ArrayToBase64";
 import { Principal } from "@dfinity/principal";
-import NoDataCard from "../../../../IcpAccelerator_frontend/src/components/Mentors/Event/NoDataCard";
-import EventCard from "../../../../IcpAccelerator_frontend/src/components/Mentors/Event/EventCard";
+import NoDataCard from "../../../../IcpAccelerator_frontend/src/component/Mentors/Event/NoDataCard";
+import EventCard from "../../../../IcpAccelerator_frontend/src/component/Mentors/Event/EventCard";
 import NoData from "../../../../IcpAccelerator_frontend/assets/images/NoData.png";
 
 const RequestCohort = () => {

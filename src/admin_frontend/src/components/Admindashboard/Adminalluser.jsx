@@ -6,10 +6,10 @@ import React, {
   useMemo,
 } from "react";
 import { useSelector } from "react-redux";
-import uint8ArrayToBase64 from "../../../../IcpAccelerator_frontend/src/components/Utils/uint8ArrayToBase64";
-import { OutSideClickHandler } from "../../../../IcpAccelerator_frontend/src/components/hooks/OutSideClickHandler";
+import uint8ArrayToBase64 from "../../../../IcpAccelerator_frontend/src/component/Utils/uint8ArrayToBase64";
+import { OutSideClickHandler } from "../../../../IcpAccelerator_frontend/src/component/hooks/OutSideClickHandler";
 import { projectFilterSvg } from "../Utils/AdminData/SvgData";
-import NoDataCard from "../../../../IcpAccelerator_frontend/src/components/Mentors/Event/NoDataCard";
+import NoDataCard from "../../../../IcpAccelerator_frontend/src/component/Mentors/Event/NoDataCard";
 import { principalToText } from "../Utils/AdminData/saga_function/blobImageToUrl";
 import { useLocation, useNavigate } from "react-router-dom";
 import NoData from "../../../../IcpAccelerator_frontend/assets/images/file_not_found.png";

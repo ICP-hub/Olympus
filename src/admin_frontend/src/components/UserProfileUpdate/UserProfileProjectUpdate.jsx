@@ -14,13 +14,13 @@ import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import ReactSelect from "react-select";
-import CompressedImage from "../../../../IcpAccelerator_frontend/src/components/ImageCompressed/CompressedImage";
+import CompressedImage from "../../../../IcpAccelerator_frontend/src/component/ImageCompressed/CompressedImage";
 import { noDataPresentSvg, place } from "../Utils/AdminData/SvgData";
 import pdfSvg from "../../../assets/image/pdfimage.png";
 import openchat_username from "../../../assets/image/spinner.png";
 import { useCountries } from "react-countries";
 import toast, { Toaster } from "react-hot-toast";
-import { blobToArrayBuffer } from "../../../../IcpAccelerator_frontend/src/components/Utils/formatter/blobToArrayBuffer";
+import { blobToArrayBuffer } from "../../../../IcpAccelerator_frontend/src/component/Utils/formatter/blobToArrayBuffer";
 
 const validationSchema = yup
   .object()

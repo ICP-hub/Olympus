@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from "react";
-import { closeSwitchModalSvg } from "../components/Utils/Data/SvgData";
+import { closeSwitchModalSvg } from "../component/Utils/Data/SvgData";
 import { useSelector } from "react-redux";
-import TabsDiv from "../components/Layout/Tabs/TabsDiv";
-import { OutSideClickHandler } from "../components/hooks/OutSideClickHandler";
+import TabsDiv from "../component/Layout/Tabs/TabsDiv";
+import { OutSideClickHandler } from "../component/hooks/OutSideClickHandler";
 
 const SwitchRole = ({ isModalOpen, onClose }) => {
   const modalRef = useRef(null);

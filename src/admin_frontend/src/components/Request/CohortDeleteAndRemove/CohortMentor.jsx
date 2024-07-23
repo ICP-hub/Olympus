@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
-import uint8ArrayToBase64 from "../../../../../IcpAccelerator_frontend/src/components/Utils/uint8ArrayToBase64";
-import NoDataCard from "../../../../../IcpAccelerator_frontend/src/components/Mentors/Event/NoDataCard";
+import uint8ArrayToBase64 from "../../../../../IcpAccelerator_frontend/src/component/Utils/uint8ArrayToBase64";
+import NoDataCard from "../../../../../IcpAccelerator_frontend/src/component/Mentors/Event/NoDataCard";
 import NoData from "../../../../../IcpAccelerator_frontend/assets/images/search_not_found.png";
 import CohortRemoveButton from "../../models/CohortRemoveButton";
 

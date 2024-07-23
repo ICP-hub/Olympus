@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import NoDataCard from "../../../../IcpAccelerator_frontend/src/components/Mentors/Event/NoDataCard";
-import uint8ArrayToBase64 from "../../../../IcpAccelerator_frontend/src/components/Utils/uint8ArrayToBase64";
+import NoDataCard from "../../../../IcpAccelerator_frontend/src/component/Mentors/Event/NoDataCard";
+import uint8ArrayToBase64 from "../../../../IcpAccelerator_frontend/src/component/Utils/uint8ArrayToBase64";
 import { principalToText } from "../Utils/AdminData/saga_function/blobImageToUrl";
 import LiveModal from "../models/LiveModal";
 import IncubatedModal from "../models/IncubatedModal";
 import { useNavigate } from "react-router-dom";
-import { projectFilterSvg } from "../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
+import { projectFilterSvg } from "../../../../IcpAccelerator_frontend/src/component/Utils/Data/SvgData";
 import { useRef } from "react";
-import { OutSideClickHandler } from "../../../../IcpAccelerator_frontend/src/components/hooks/OutSideClickHandler";
+import { OutSideClickHandler } from "../../../../IcpAccelerator_frontend/src/component/hooks/OutSideClickHandler";
 import toast, { Toaster } from "react-hot-toast";
 import NoData from "../../../../IcpAccelerator_frontend/assets/images/NoData.png";
 import { AdminProjectSkeleton } from "../Adminskeleton/AdminProjectDashboardSkeleton";

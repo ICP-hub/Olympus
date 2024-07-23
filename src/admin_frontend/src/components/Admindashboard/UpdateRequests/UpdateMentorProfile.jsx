@@ -13,8 +13,8 @@ import { ThreeDots } from "react-loader-spinner";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import openchat_username from "../../../../assets/image/spinner.png";
-import { linkedInSvg } from "../../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
-import { twitterSvg } from "../../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
+import { linkedInSvg } from "../../../../../IcpAccelerator_frontend/src/component/Utils/Data/SvgData";
+import { twitterSvg } from "../../../../../IcpAccelerator_frontend/src/component/Utils/Data/SvgData";
 import { noDataPresentSvg } from "../../Utils/AdminData/SvgData";
 const UpdateMentorProfile = () => {
   const actor = useSelector((currState) => currState.actors.actor);

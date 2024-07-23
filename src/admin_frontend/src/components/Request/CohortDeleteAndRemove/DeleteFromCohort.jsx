@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import hover from "../../../../../IcpAccelerator_frontend/assets/images/1.png";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { formatFullDateFromSimpleDate } from "../../../../../IcpAccelerator_frontend/src/components/Utils/formatter/formatDateFromBigInt";
+import { formatFullDateFromSimpleDate } from "../../../../../IcpAccelerator_frontend/src/component/Utils/formatter/formatDateFromBigInt";
 import toast, { Toaster } from "react-hot-toast";
 import CohortInvestor from "./CohortInvestor";
 import CohortMentor from "./CohortMentor";
 import CohortProject from "./CohortProject";
-import uint8ArrayToBase64 from "../../../../../IcpAccelerator_frontend/src/components/Utils/uint8ArrayToBase64";
+import uint8ArrayToBase64 from "../../../../../IcpAccelerator_frontend/src/component/Utils/uint8ArrayToBase64";
 function DeleteFromCohort() {
   const location = useLocation();
   const navigate = useNavigate();

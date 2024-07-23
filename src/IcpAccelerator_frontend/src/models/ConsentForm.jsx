@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { closeModalSvg } from "../components/Utils/Data/SvgData";
+import { closeModalSvg } from "../component/Utils/Data/SvgData";
 import { useSelector } from "react-redux";
-import TabsDiv from "../components/Layout/Tabs/TabsDiv";
+import TabsDiv from "../component/Layout/Tabs/TabsDiv";
 
 const ConsentForm = ({
   isModalOpen,

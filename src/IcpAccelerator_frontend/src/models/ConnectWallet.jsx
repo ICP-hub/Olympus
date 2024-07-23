@@ -2,10 +2,10 @@ import React, { useEffect, useRef } from "react";
 import {
   closeModalSvg,
   walletModalSvg,
-} from "../components/Utils/Data/SvgData";
+} from "../component/Utils/Data/SvgData";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../components/StateManagement/useContext/useAuth";
+import { useAuth } from "../component/StateManagement/useContext/useAuth";
 
 const ConnectWallet = ({ isModalOpen, onClose }) => {
   const isAuthenticated = useSelector(

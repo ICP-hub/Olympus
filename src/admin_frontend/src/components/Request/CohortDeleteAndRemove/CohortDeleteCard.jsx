@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import hover from "../../../../../IcpAccelerator_frontend/assets/images/1.png";
-import { winner } from "../../../../../IcpAccelerator_frontend/src/components/Utils/Data/SvgData";
+import { winner } from "../../../../../IcpAccelerator_frontend/src/component/Utils/Data/SvgData";
 import FunctionalityModel from "../../../../../IcpAccelerator_frontend/src/models/FunctionalityModel";
-import uint8ArrayToBase64 from "../../../../../IcpAccelerator_frontend/src/components/Utils/uint8ArrayToBase64";
+import uint8ArrayToBase64 from "../../../../../IcpAccelerator_frontend/src/component/Utils/uint8ArrayToBase64";
 
 const CohortDeleteCard = ({ data, deleteCohort }) => {
   const [modalOpen, setModalOpen] = useState(false);
