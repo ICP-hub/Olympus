@@ -13,9 +13,9 @@ import { multiChainHandlerRequest } from "./component/StateManagement/Redux/Redu
 import NewHeader from "./component/Layout/Header/NewHeader";
 import Header from "./component/Layout/Header/Header";
 import AppRoutes from "./AppRoutes";
-import Footer from "./component/Footer/Footer";
 import ConnectWallet from "./models/ConnectWallet";
 import Loader from "./component/Loader/Loader";
+import Footer from "./components/Footer/Footer";
 
 const App = () => {
   const actor = useSelector((currState) => currState.actors.actor);
