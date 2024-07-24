@@ -16,6 +16,7 @@ import AppRoutes from "./AppRoutes";
 import ConnectWallet from "./models/ConnectWallet";
 import Loader from "./component/Loader/Loader";
 import Footer from "./components/Footer/Footer";
+import Navbar from "./components/Layout/Header/Navbar";
 
 const App = () => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -117,24 +118,26 @@ const App = () => {
   }
   return (
     <>
-    {actor ? (
-        <Header setModalOpen={setModalOpen} gradient={"bg-gray-100"} />
-    ) : (
-      <div>
-        <NewHeader setModalOpen={setModalOpen} gradient={"bg-gray-100"} />
+      {actor ? (
+        // <Header setModalOpen={setModalOpen} gradient={"bg-gray-100"} />
+        <Navbar />
+      ) : (
+        <div>
+          {/* <NewHeader setModalOpen={setModalOpen} gradient={"bg-gray-100"} /> */}
+          <Navbar />
+        </div>
+      )}
+      <div className="bg-gray-100">
+        <div className="container-xl mx-auto">
+          <ConnectWallet
+            isModalOpen={isModalOpen}
+            onClose={() => setModalOpen(false)}
+          />
+          <AppRoutes />
+        </div>
       </div>
-    )}
-  <div className="bg-gray-100">
-    <div className="container-xl mx-auto">
-      <ConnectWallet
-        isModalOpen={isModalOpen}
-        onClose={() => setModalOpen(false)}
-      />
-      <AppRoutes />
-    </div>
-  </div>
-  <Footer />
-</>
+      <Footer />
+    </>
   );
 };
 
