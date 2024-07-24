@@ -37,6 +37,7 @@ import LiveEventsViewAllUpcoming from "./component/Mentors/Event/LiveEventsViewA
 import UserDetailPage from "./component/UserProfile/UserDetailPage";
 import EventProjectViewMore from "./component/Mentors/Event/EventProjectViewMore";
 import NewHome from "./components/Home/Home";
+import DashboardHomePage from "./components/Dashboard/DashboardHomePage/DashboardHomePage";
 
 const DashBoard = lazy(() => import("./component/Dashboard/DashBoard"));
 // const ProjectDetails = lazy(() =>
@@ -47,7 +48,7 @@ const Error404 = lazy(() => import("./component/Error404/Error404"));
 
 const AppRoutes = () => {
   const publicRoutes = [
-    { path: "/", element: <NewHome /> },
+    { path: "/", element: <DashboardHomePage /> },
     // {
     //   path: "/individual-project-details-user/:id",
     //   element: <ProjectDetailsForUserRole />,
