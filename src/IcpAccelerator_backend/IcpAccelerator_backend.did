@@ -3,7 +3,7 @@ type AccessRequest = record {
   request_type : text;
   name : text;
   sender : principal;
-  image : vec nat8;
+  image : blob;
   project_id : text;
 };
 type Announcements = record {
@@ -15,7 +15,7 @@ type AnnouncementsInternal = record {
   announcement_data : Announcements;
   timestamp : nat64;
   project_desc : opt text;
-  project_logo : opt vec nat8;
+  project_logo : opt blob;
   project_name : text;
 };
 type ApprovalRequest = record {
@@ -25,7 +25,7 @@ type ApprovalRequest = record {
   name : text;
   sender : principal;
   requested_for : text;
-  photo : vec nat8;
+  photo : blob;
   tag_used : text;
   receiver : principal;
 };
@@ -41,7 +41,7 @@ type CanisterStatusResponse = record {
   settings : DefiniteCanisterSettings;
   query_stats : QueryStats;
   idle_cycles_burned_per_day : nat;
-  module_hash : opt vec nat8;
+  module_hash : opt blob;
   reserved_cycles : nat;
 };
 type CanisterStatusType = variant { stopped; stopping; running };
@@ -56,7 +56,7 @@ type Cohort = record {
   host_name : opt text;
   funding_type : text;
   criteria : Eligibility;
-  cohort_banner : opt vec nat8;
+  cohort_banner : opt blob;
   funding_amount : text;
   no_of_seats : nat64;
   cohort_launch_date : text;
@@ -125,7 +125,7 @@ type InvestorInfo = record {
   investor_name : text;
   investor_description : text;
   investor_id : principal;
-  investor_image : vec nat8;
+  investor_image : blob;
 };
 type InviteRequest = record {
   invite_message : text;
@@ -145,7 +145,7 @@ type JobsInternal = record {
   timestamp : nat64;
   job_data : Jobs;
   project_desc : opt text;
-  project_logo : opt vec nat8;
+  project_logo : opt blob;
   project_name : text;
 };
 type LeaderboardEntryForCohorts = record {
@@ -180,7 +180,7 @@ type MentorFilterCriteria = record {
   area_of_expertise : opt text;
 };
 type MentorInfo = record {
-  mentor_image : vec nat8;
+  mentor_image : blob;
   mentor_description : text;
   mentor_id : principal;
   mentor_name : text;
@@ -231,7 +231,7 @@ type Notification = record {
   timestamp : nat64;
 };
 type NotificationForOwner = record {
-  sender_image : vec nat8;
+  sender_image : blob;
   message : text;
   timestamp : nat64;
   sender_name : text;
@@ -245,7 +245,7 @@ type NotificationProject = record {
   timestamp : nat64;
   project_id : text;
 };
-type NotificationSender = record { name : text; image : vec nat8 };
+type NotificationSender = record { name : text; image : blob };
 type NotificationType = variant { ApprovalRequest : ApprovalRequest };
 type OfferToInvestor = record {
   request_status : text;
@@ -258,10 +258,10 @@ type OfferToInvestor = record {
   response : text;
   time_of_request : nat64;
   self_declined_at : nat64;
-  investor_image : opt vec nat8;
+  investor_image : opt blob;
 };
 type OfferToMentor = record {
-  mentor_image : opt vec nat8;
+  mentor_image : opt blob;
   request_status : text;
   accepted_at : nat64;
   declined_at : nat64;
@@ -275,7 +275,7 @@ type OfferToMentor = record {
 };
 type OfferToProject = record {
   request_status : text;
-  project_image : opt vec nat8;
+  project_image : opt blob;
   accepted_at : nat64;
   declined_at : nat64;
   offer_i_have_written : text;
@@ -288,7 +288,7 @@ type OfferToProject = record {
 };
 type OfferToProjectByInvestor = record {
   request_status : text;
-  project_image : opt vec nat8;
+  project_image : opt blob;
   accepted_at : nat64;
   declined_at : nat64;
   offer_i_have_written : text;
@@ -392,7 +392,7 @@ type PeerRatingUpdate = record {
 type ProjectInf = record {
   project_description : opt text;
   project_id : text;
-  project_logo : opt vec nat8;
+  project_logo : opt blob;
   project_name : text;
 };
 type ProjectInfo = record {
@@ -422,12 +422,12 @@ type ProjectInfo = record {
   github_link : opt text;
   type_of_registration : opt text;
   public_docs : opt vec Docs;
-  project_cover : opt vec nat8;
+  project_cover : opt blob;
   project_website : opt text;
   promotional_video : opt text;
   money_raised_till_now : opt bool;
   supports_multichain : opt text;
-  project_logo : opt vec nat8;
+  project_logo : opt blob;
   project_name : text;
   is_your_project_registered : opt bool;
   money_raised : opt MoneyRaised;
@@ -450,10 +450,10 @@ type ProjectInfoForUser = record {
   mentor_associated : opt vec MentorProfile;
   github_link : opt text;
   country_of_project : opt text;
-  project_cover : opt vec nat8;
+  project_cover : opt blob;
   project_website : opt text;
   promotional_video : opt text;
-  project_logo : opt vec nat8;
+  project_logo : opt blob;
   project_name : opt text;
   project_team : opt vec TeamMember;
   announcements : vec record { principal; vec AnnouncementsInternal };
@@ -471,7 +471,7 @@ type ProjectInfoInternal = record {
 type ProjectInfoo = record {
   project_description : opt text;
   project_id : text;
-  project_logo : opt vec nat8;
+  project_logo : opt blob;
   project_name : text;
 };
 type ProjectNotification = record {
@@ -501,13 +501,13 @@ type ProjectPublicInfo = record {
   technical_docs : opt text;
   github_link : opt text;
   public_docs : opt vec Docs;
-  project_cover : opt vec nat8;
+  project_cover : opt blob;
   project_id : text;
   project_website : opt text;
   promotional_video : opt text;
   money_raised_till_now : opt bool;
   supports_multichain : opt text;
-  project_logo : opt vec nat8;
+  project_logo : opt blob;
   project_name : text;
   project_team : opt vec TeamMember;
 };
@@ -529,7 +529,7 @@ type ProjectReview = record {
   message : text;
   timestamp : nat64;
   rating : nat32;
-  profile_pic : vec nat8;
+  profile_pic : blob;
 };
 type ProjectUpdateRequest = record {
   rejected_at : nat64;
@@ -613,7 +613,7 @@ type Review = record {
   message : text;
   timestamp : nat64;
   rating : float32;
-  profile_pic : vec nat8;
+  profile_pic : blob;
 };
 type Role = record {
   status : text;
@@ -635,11 +635,11 @@ type Testimonial = record {
   name : text;
   message : text;
   timestamp : nat64;
-  profile_pic : vec nat8;
+  profile_pic : blob;
 };
 type TopData = record {
   country : text;
-  profile_picture : opt vec nat8;
+  profile_picture : opt blob;
   area_of_interest : text;
   joined_on : nat64;
   full_name : text;
@@ -647,7 +647,7 @@ type TopData = record {
 type TopDataProject = record {
   "principal" : principal;
   country : text;
-  profile_picture : opt vec nat8;
+  profile_picture : opt blob;
   area_of_interest : text;
   joined_on : nat64;
   full_name : text;
@@ -673,7 +673,7 @@ type UserInfoInternal = record {
 type UserInformation = record {
   bio : opt text;
   country : text;
-  profile_picture : opt vec nat8;
+  profile_picture : opt blob;
   telegram_id : opt text;
   twitter_id : opt text;
   area_of_interest : text;
@@ -701,7 +701,7 @@ type VentureCapitalist = record {
   registered_under_any_hub : opt bool;
   name_of_fund : text;
   reason_for_joining : opt text;
-  logo : opt vec nat8;
+  logo : opt blob;
   average_check_size : float64;
   money_invested : opt float64;
   existing_icp_investor : bool;
@@ -766,8 +766,8 @@ service : {
   approve_vc_profile_update : (principal, bool) -> (text);
   calculate_and_store_average_rating : (text, text) -> (Result_4);
   calculate_average : (text) -> (RatingAverages) query;
-  calculate_mentor_average_rating : (principal) -> (Result_4) query;
-  calculate_vc_average_rating : (principal) -> (Result_4) query;
+  calculate_mentor_average_rating : (text) -> (Result_4) query;
+  calculate_vc_average_rating : (text) -> (Result_4) query;
   change_live_status : (principal, text, bool, opt text) -> (Result) query;
   count_live_projects : () -> (nat64) query;
   create_cohort : (Cohort) -> (Result);
@@ -1109,11 +1109,11 @@ service : {
   register_user : (UserInformation) -> (text);
   register_venture_capitalist : (VentureCapitalist) -> (text);
   reject_enrollment_request : (principal, principal) -> (text);
-  remove_mentor_from_cohort : (text, principal, text) -> (Result_5);
+  remove_mentor_from_cohort : (text, text, text) -> (Result_5);
   remove_project_from_cohort : (text, text, text) -> (Result_5);
   remove_project_from_incubated : (text) -> (Result_5);
   remove_project_from_spotlight : (text) -> (Result_3);
-  remove_vc_from_cohort : (text, principal, text) -> (Result_5);
+  remove_vc_from_cohort : (text, text, text) -> (Result_5);
   self_decline_request : (text) -> (text);
   self_decline_request_for_investor : (text) -> (text);
   self_decline_request_for_mentor : (text) -> (text);
@@ -1137,7 +1137,7 @@ service : {
   update_job_post_by_id : (nat64, Jobs) -> (text);
   update_mentor : (MentorProfile) -> (text);
   update_mentor_profile : (principal, MentorProfile) -> (text);
-  update_mentor_ratings : (principal, RatingMentorInvestor) -> ();
+  update_mentor_ratings : (text, RatingMentorInvestor) -> ();
   update_peer_rating_api : (PeerRatingUpdate) -> (text);
   update_project : (text, ProjectInfo) -> (text);
   update_project_announcement_by_id : (nat64, Announcements) -> (text);
@@ -1146,7 +1146,7 @@ service : {
   update_team_member : (text, principal) -> (text);
   update_user_data : (principal, UserInformation) -> (Result_3);
   update_vc_profile : (principal, VentureCapitalist) -> (text);
-  update_vc_ratings : (principal, RatingMentorInvestor) -> ();
+  update_vc_ratings : (text, RatingMentorInvestor) -> ();
   update_venture_capitalist : (VentureCapitalist) -> (text);
   update_venture_capitalist_caller : (VentureCapitalist) -> (text);
   vc_awaiting_approval : (Pagination) -> (PaginationReturnVcDataRequest) query;
