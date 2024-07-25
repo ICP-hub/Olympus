@@ -16,7 +16,6 @@ const MobileMenuDrawer = ({ openMenu, setOpenMenu }) => {
                 <li className='ml-3 p-1 border-b'>Blogs</li>
                 <li className='ml-3 p-1 border-b'>Company <span><NavigateNextIcon /></span></li>
             </ul>
-
         </div>
     )
 }

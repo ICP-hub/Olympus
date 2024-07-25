@@ -16,20 +16,18 @@ const Navbar = () => {
     const [openMenu, setOpenMenu] = useState(false)
     return (
         <>
-            <nav className='hidden h-20 md:flex items-center '>
+            <nav className='hidden h-20 md:flex items-center bg-[#FEF5EE] '>
                 <div className='container mx-auto h-11 flex items-center justify-around '>
                     <div className=''>
                         <img src={logo} alt='Olympus' className='cursor-pointer' />
                     </div>
                     <div className='flex gap-2 '>
                         <div onClick={() => setDiscoverMenu(!discoverMenu)} className='flex items-center p-2 font-semibold cursor-pointer relative'>Discover <span className='pl-1'><ExpandMoreIcon /></span> {discoverMenu && <DiscoverMenu discoverMenu={discoverMenu} setDiscoverMenu={setDiscoverMenu} />}</div>
-
                         <div className='p-2 font-semibold cursor-pointer'>Events</div>
                         <div className='p-2 font-semibold cursor-pointer'>Blog</div>
                         <div onClick={() => setCompanyMenu(!companyMenu)} className='flex items-center p-2 font-semibold cursor-pointer relative'>Company <span className='px-2'><ExpandMoreIcon /></span>
                             {companyMenu && <CompanyMenu companyMenu={companyMenu} setCompanyMenu={setCompanyMenu} />}
                         </div>
-
                     </div>
                     <div className='flex gap-4'>
                         <button className=' p-2 font-semibold'>Log in </button>
