@@ -2,41 +2,40 @@ import React, { lazy, Suspense, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import Loader from "./component/Loader/Loader";
-import MentorsProfile from "./component/Mentors/MentorsProfile";
-import InvestorProfile from "./component/Dashboard/Investor/InvestorProfile";
-import SearchMentors from "./component/Mentors/SearchMentors";
-import EventForm from "./component/Mentors/Event/EventForm";
-import MoreProjectLaunchPage from "./component/Dashboard/MoreLaunchPages/MoreProjectLaunchPage";
-import MoreCurrentlyRaisingProjects from "./component/Dashboard/MoreLaunchPages/MoreCurrentlyRaisingProjects";
+// import MentorsProfile from "./component/Mentors/MentorsProfile";
+// import InvestorProfile from "./component/Dashboard/Investor/InvestorProfile";
+// import SearchMentors from "./component/Mentors/SearchMentors";
+// import EventForm from "./component/Mentors/Event/EventForm";
+// import MoreProjectLaunchPage from "./component/Dashboard/MoreLaunchPages/MoreProjectLaunchPage";
+// import MoreCurrentlyRaisingProjects from "./component/Dashboard/MoreLaunchPages/MoreCurrentlyRaisingProjects";
 import ViewInvestor from "./component/Dashboard/MoreLaunchPages/ViewInvestors";
 import Breadcrumbs from "./component/Layout/Breadcrumbs/BreadCrumbs";
-import ProjectAssociation from "./component/Association/ProjectAssociation";
-import ProjectDetailsForOwnerProject from "./component/Project/ProjectDetailsPages/ProjectDetailsForOwnerProject";
-import ProjectSideAssociation from "./component/Association/ProjectSideAssociation";
-import MentorSideAssociation from "./component/Association/MentorSideAssociation";
-import SearchMentorsByProjectId from "./component/Mentors/SearchMentorsByProjectId";
-import InvestorSideAssociation from "./component/Association/InvestorSideAssociation";
-import ViewInvestorByProjectId from "./component/Dashboard/MoreLaunchPages/ViewInvestorByProjectId";
-import RequestsPrivateDocument from "./component/Project/ProjectDetailsPages/RequestsPrivateDocument";
-import ProjectDetailsForMentor from "./component/Project/ProjectDetailsPages/ProjectDetailsForMentorProject";
-import ProjectDetailsForInvestor from "./component/Project/ProjectDetailsPages/ProjectDetailsForInvestorProject";
-import ProjectDetailsForUserRole from "./component/Project/ProjectDetailsPages/ProjectDetailsForUserRole";
-import MoreLiveProjects from "./component/Dashboard/MoreLivePages/MoreLiveProjects";
-import UserRegForm from "./component/RegForms.jsx/UserRegForm";
-import MentorRegForm from "./component/RegForms.jsx/MentorRegForm";
-import InvestorRegForm from "./component/RegForms.jsx/InvestorRegForm";
-import ProjectRegForm from "./component/RegForms.jsx/ProjectRegForm";
-import RequestMoneyRaising from "./component/Project/ProjectDetailsPages/RequestMoneyRaising";
-import Home from "./component/Home/Home";
-import EventRegistration from "./component/Mentors/Event/EventRegistration";
-import CohortPage from "./component/Mentors/Event/CohortPage";
-import EventMentorProfile from "./component/Mentors/Event/EventMentorProfile";
-import LiveEventViewAll from "./component/Mentors/Event/LiveEventViewAll";
-import EventProjectDetail from "./component/Mentors/Event/EventProjectDetail";
-import LiveEventsViewAllUpcoming from "./component/Mentors/Event/LiveEventsViewAllUpcoming";
-import UserDetailPage from "./component/UserProfile/UserDetailPage";
-import EventProjectViewMore from "./component/Mentors/Event/EventProjectViewMore";
-import NewHome from "./components/Home/Home";
+// import ProjectAssociation from "./component/Association/ProjectAssociation";
+// import ProjectDetailsForOwnerProject from "./component/Project/ProjectDetailsPages/ProjectDetailsForOwnerProject";
+// import ProjectSideAssociation from "./component/Association/ProjectSideAssociation";
+// import MentorSideAssociation from "./component/Association/MentorSideAssociation";
+// import SearchMentorsByProjectId from "./component/Mentors/SearchMentorsByProjectId";
+// import InvestorSideAssociation from "./component/Association/InvestorSideAssociation";
+// import ViewInvestorByProjectId from "./component/Dashboard/MoreLaunchPages/ViewInvestorByProjectId";
+// import RequestsPrivateDocument from "./component/Project/ProjectDetailsPages/RequestsPrivateDocument";
+// import ProjectDetailsForMentor from "./component/Project/ProjectDetailsPages/ProjectDetailsForMentorProject";
+// import ProjectDetailsForInvestor from "./component/Project/ProjectDetailsPages/ProjectDetailsForInvestorProject";
+// import ProjectDetailsForUserRole from "./component/Project/ProjectDetailsPages/ProjectDetailsForUserRole";
+// import MoreLiveProjects from "./component/Dashboard/MoreLivePages/MoreLiveProjects";
+// import UserRegForm from "./component/RegForms.jsx/UserRegForm";
+// import MentorRegForm from "./component/RegForms.jsx/MentorRegForm";
+// import InvestorRegForm from "./component/RegForms.jsx/InvestorRegForm";
+// import ProjectRegForm from "./component/RegForms.jsx/ProjectRegForm";
+// import RequestMoneyRaising from "./component/Project/ProjectDetailsPages/RequestMoneyRaising";
+// import EventRegistration from "./component/Mentors/Event/EventRegistration";
+// import CohortPage from "./component/Mentors/Event/CohortPage";
+// import EventMentorProfile from "./component/Mentors/Event/EventMentorProfile";
+// import LiveEventViewAll from "./component/Mentors/Event/LiveEventViewAll";
+// import EventProjectDetail from "./component/Mentors/Event/EventProjectDetail";
+// import LiveEventsViewAllUpcoming from "./component/Mentors/Event/LiveEventsViewAllUpcoming";
+// import UserDetailPage from "./component/UserProfile/UserDetailPage";
+// import EventProjectViewMore from "./component/Mentors/Event/EventProjectViewMore";
+import Home from "./components/Home/Home";
 
 const DashBoard = lazy(() => import("./component/Dashboard/DashBoard"));
 // const ProjectDetails = lazy(() =>
@@ -47,7 +46,7 @@ const Error404 = lazy(() => import("./component/Error404/Error404"));
 
 const AppRoutes = () => {
   const publicRoutes = [
-    { path: "/", element: <NewHome /> },
+    { path: "/", element: <Home /> },
     // {
     //   path: "/individual-project-details-user/:id",
     //   element: <ProjectDetailsForUserRole />,
