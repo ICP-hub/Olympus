@@ -12,6 +12,7 @@ import {
   Close as CloseIcon
 } from '@mui/icons-material';
 
+
 function DashboardSidebar({ isOpen, onClose }) {
   return (
     <>
@@ -46,7 +47,7 @@ function DashboardSidebar({ isOpen, onClose }) {
             <h3 className="px-6 mb-2 text-xs font-semibold text-gray-500 uppercase">IDENTITY</h3>
             <ul>
               <li>
-                <Link to="/profile" className="flex items-center px-6 py-2 text-gray-700 hover:bg-[#e4e3e2b1]">
+                <Link to="/dashboard/profile-cards" className="flex items-center px-6 py-2 text-gray-700 hover:bg-[#e4e3e2b1]">
                   <ProfileIcon className="mr-3" />
                   <span>Profile</span>
                 </Link>
