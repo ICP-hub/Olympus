@@ -3,7 +3,7 @@ import DashboardHomeNavbar from './DashboardHomeNavbar'
 import DashboardHomeSidebar from './DashboardHomeSidebar'
 import DashboardHomeWelcomeSection from './DashboardHomeWelcomeSection'
 import DashboardHomeProfileCards from './DashboardHomeProfileCards'
-
+import { Routes, Route } from 'react-router-dom';
 function DashboardHomePage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -15,11 +15,16 @@ function DashboardHomePage() {
       <div className="flex flex-col flex-1 overflow-hidden">
         <DashboardHomeNavbar onMenuClick={toggleSidebar} />
         <main className="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6">
-          <DashboardHomeWelcomeSection
+          {/* <DashboardHomeWelcomeSection
             userName={"Matt"}
             profileCompletion={"20"}
           />
-          <DashboardHomeProfileCards />
+          <DashboardHomeProfileCards /> */}
+           <Routes>
+            <Route path="/" element={<DashboardHomeWelcomeSection userName={"Matt"} profileCompletion={"20"} />} />
+            <Route path="/profile-cards" element={<DashboardHomeProfileCards />} />
+            
+          </Routes>
         </main>
       </div>
     </div>

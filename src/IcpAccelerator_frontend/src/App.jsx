@@ -118,15 +118,13 @@ const App = () => {
   }
   return (
     <>
-      {actor ? (
-        // <Header setModalOpen={setModalOpen} gradient={"bg-gray-100"} />
+      {/* {actor ? (
         <Navbar />
       ) : (
         <div>
-          {/* <NewHeader setModalOpen={setModalOpen} gradient={"bg-gray-100"} /> */}
           <Navbar />
         </div>
-      )}
+      )} */}
       <div className="bg-gray-100">
         <div className="container-xl mx-auto">
           <ConnectWallet
@@ -136,7 +134,7 @@ const App = () => {
           <AppRoutes />
         </div>
       </div>
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };
