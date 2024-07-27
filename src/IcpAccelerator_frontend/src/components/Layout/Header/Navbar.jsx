@@ -45,7 +45,7 @@ const Navbar = ({setModalOpen}) => {
                     <div className='flex gap-2 '>
                         <div onClick={() => setDiscoverMenu(!discoverMenu)} className='flex items-center p-2 font-semibold cursor-pointer relative'>Discover <span className='pl-1'><ExpandMoreIcon /></span> {discoverMenu && <DiscoverMenu discoverMenu={discoverMenu} setDiscoverMenu={setDiscoverMenu} />}</div>
                         <div className='p-2 font-semibold cursor-pointer'>Events</div>
-                        <div className='p-2 font-semibold cursor-pointer'>Blog</div>
+                        <div className='p-2 font-semibold cursor-pointer'><Link to='/sign-up'>Blog</Link></div>
                         <div onClick={() => setCompanyMenu(!companyMenu)} className='flex items-center p-2 font-semibold cursor-pointer relative'>Company <span className='px-2'><ExpandMoreIcon /></span>
                             {companyMenu && <CompanyMenu companyMenu={companyMenu} setCompanyMenu={setCompanyMenu} />}
                         </div>

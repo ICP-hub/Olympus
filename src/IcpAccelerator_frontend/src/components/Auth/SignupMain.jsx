@@ -1,7 +1,9 @@
 import React from 'react';
 import Layer1 from "../../../assets/Logo/Layer1.png";
 import nfidrightside from "../../../assets/Logo/nfidrightside.png";
-
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import {Link } from "react-router-dom"
 const Signupmain1 = () => {
     return (
         <>
@@ -11,7 +13,13 @@ const Signupmain1 = () => {
                         <div className="mb-6">
                             <img src={Layer1} alt="logo" />
                         </div>
+                        <div className='flex justify-between'>
+                                <button type="submit" className=" py-2 px-4  text-gray-600 rounded hover:text-black justify-end  "> <ArrowBackIcon fontSize="medium" className="mr-2" />Back</button>
+                              <Link to='/sign-up-step1'> <button type="submit" className=" py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 justify-end border-2 border-[#B2CCFF]">Continue <ArrowForwardIcon fontSize="medium" className="ml-2" /></button></Link>
+
+                            </div>
                     </div>
+                   
                     <div className="w-1/2 h-screen bg-gradient-to-r from-[#ECE9FE] to-[#FFFFFF] items-center justify-center rounded-r-2xl relative">
                         <div className="flex justify-center ">
                             <img src={nfidrightside} alt="Olympus Key" className='w-[355px] h-[355px] mt-8' />

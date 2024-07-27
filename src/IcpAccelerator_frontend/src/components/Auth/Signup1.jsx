@@ -4,7 +4,7 @@ import Layer1 from "../../../assets/Logo/Layer1.png";
 import Aboutcard from "../Auth/Aboutcard"
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-
+import {Link } from "react-router-dom"
 const Signupmain = () => {
     return (
         <>
@@ -37,7 +37,7 @@ const Signupmain = () => {
                             </div>
                             <div className='flex justify-between'>
                                 <button type="submit" className=" py-2 px-4  text-gray-600 rounded hover:text-black justify-end  "> <ArrowBackIcon fontSize="medium" className="mr-2" />Back</button>
-                                <button type="submit" className=" py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 justify-end border-2 border-[#B2CCFF]">Continue <ArrowForwardIcon fontSize="medium" className="ml-2" /></button>
+                              <Link to='/sign-up-step2'> <button type="submit" className=" py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 justify-end border-2 border-[#B2CCFF]">Continue <ArrowForwardIcon fontSize="medium" className="ml-2" /></button></Link>
 
                             </div>
                         </form>
