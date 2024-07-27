@@ -2,16 +2,36 @@ import React, { useState, useEffect } from 'react';
 import createprojectabc from "../../../../assets/Logo/createprojectabc.png";
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import Dropdown from "../../../../assets/Logo/Dropdown.png"
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CheckIcon from '@mui/icons-material/Check';
-import CreateProjectModal from "../../Home/modal2";
+import Select from 'react-select';
 
+const selectStyles = {
+    control: (provided) => ({
+        ...provided,
+        borderColor: '#CDD5DF', // Tailwind border-gray-300
+        borderRadius: '0.375rem', // Tailwind rounded-md
+    }),
+    controlIsFocused: (provided) => ({
+        ...provided,
+        borderColor: 'black', // Tailwind border-blue-500
+        boxShadow: 'none',
+    }),
+    multiValue: (provided) => ({
+        ...provided,
+        borderColor: '#CDD5DF', // Tailwind bg-gray-200
+    }),
+    multiValueLabel: (provided) => ({
+        ...provided,
+        color: '#1f2937', // Tailwind text-gray-700
+    }),
 
-const CreateProjectModal2 = ({ isOpen, onClose, onBack }) => {
+};
+
+const Foundermodal3 = ({ isOpen, onClose, onBack }) => {
     const [categories, setCategories] = useState([]);
-    const [stage, setStage] = useState("");
+    const [stage, setstage] = useState('');
     const [formData, setFormData] = useState({
         tagline: '',
         about: '',
@@ -45,7 +65,6 @@ const CreateProjectModal2 = ({ isOpen, onClose, onBack }) => {
 
         // Add more options as needed
     ];
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({
@@ -62,6 +81,7 @@ const CreateProjectModal2 = ({ isOpen, onClose, onBack }) => {
             links: newLinks,
         }));
     };
+
 
     const handleAddLink = () => {
         setFormData((prevData) => ({
@@ -87,7 +107,7 @@ const CreateProjectModal2 = ({ isOpen, onClose, onBack }) => {
                 <div className="flex justify-end mr-4">
                     <button className='text-2xl text-[#121926]' onClick={() => setModalOpen(false)}>&times;</button>
                 </div>
-                <h2 className="text-xs text-[#364152]">Step 2 of 2</h2>
+                <h2 className="text-xs text-[#364152]">Step 3 of 3</h2>
                 <h1 className="text-3xl text-[#121926] font-bold mb-3">Create a project</h1>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-2">
@@ -154,19 +174,21 @@ const CreateProjectModal2 = ({ isOpen, onClose, onBack }) => {
                             className="basic-multi-select"
                             classNamePrefix="select"
                             placeholder="Add Relevant Categories"
-                        />  </div>
+                        />
+
+                    </div>
                     <div className="mb-2 relative">
                         <label className="block text-sm font-medium mb-1">Stage<span className='text-[#155EEF]'>*</span></label>
                         <Select
 
                             options={stageOptions}
                             value={stage}
-                            onChange={setStage}
+                            onChange={setstage}
                             styles={selectStyles}
                             className="basic-multi-select"
                             classNamePrefix="select"
                             placeholder="Add Relevant Categories"
-                        />    </div>
+                        />   </div>
                     <div className="mb-2 relative">
                         <label className="text-sm font-medium mb-1 flex items-center">Links</label>
                         {formData.links.map((link, index) => (
@@ -212,4 +234,4 @@ const CreateProjectModal2 = ({ isOpen, onClose, onBack }) => {
     );
 };
 
-export default CreateProjectModal2;
+export default Foundermodal3;
