@@ -4,7 +4,7 @@ import Layer1 from "../../../assets/Logo/Layer1.png";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-
+import {Link} from "react-router-dom"
 
 const ProfileForm = () => {
     const [formData, setFormData] = useState({
@@ -149,7 +149,7 @@ const ProfileForm = () => {
 
                         <div className='flex justify-between'>
                             <button type="submit" className=" py-2 px-4  text-gray-600 rounded hover:text-black justify-end  "> <ArrowBackIcon fontSize="medium" className="mr-2" />Back </button>
-                            <button type="submit" className=" py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 justify-end border-2 border-[#B2CCFF]">Complete </button>
+                           <Link to='/dashboard'><button type="submit" className=" py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 justify-end border-2 border-[#B2CCFF]">Complete </button></Link> 
 
                         </div>
                     </div>
