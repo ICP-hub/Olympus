@@ -10,7 +10,6 @@ const Modal1 = ({ isOpen, onClose }) => {
     const [selectedRole, setSelectedRole] = useState(null);
     const [showCreateProjectModal, setShowCreateProjectModal] = useState(false);
 
-    // Effect to handle body scroll
     useEffect(() => {
         if (modalOpen) {
             document.body.style.overflow = 'hidden';
