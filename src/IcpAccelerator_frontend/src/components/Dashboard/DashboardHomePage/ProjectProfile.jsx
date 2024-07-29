@@ -10,6 +10,10 @@ import NorthEastOutlinedIcon from '@mui/icons-material/NorthEastOutlined';
 import DocumentSection from './DocumentSection';
 import TeamSection from './TeamSection';
 import JobSection from './JobSection';
+import ServiceSection from './ServiceSection';
+import ServiceDetailPage from './ServiceDetailPage';
+import WorksSection from './WorksSection';
+import WorkSectionDetailPage from './WorkSectionDetailPage';
 
 function ProjectProfile() {
   return (
@@ -136,7 +140,12 @@ function ProjectProfile() {
 
         {/* Document Section */}
         {/* <div className="md:w-2/3"><DocumentSection /></div> */}
-        <div className="md:w-2/3"><JobSection /></div>
+        {/* <div className="md:w-2/3"><JobSection /></div> */}
+        {/* <div className="md:w-2/3"><ServiceSection /></div> */}
+        {/* <div className="md:w-2/3"><ServiceDetailPage /></div> */}
+        {/* <div className="md:w-2/3"><WorksSection /></div> */}
+        <div className="md:w-2/3"><WorkSectionDetailPage /></div>
+
         {/* <div className="md:w-2/3"><TeamSection /></div> */}
 
       </div>
