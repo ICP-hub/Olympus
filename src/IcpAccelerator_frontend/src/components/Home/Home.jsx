@@ -13,6 +13,11 @@ import DashboardModal1 from "../Modals/Dashboard Modal/Dashboardmodal1"
 import ExpertiseModal from "../Modals/Founder Modal/Foundermodal1"
 import Foundermodal2 from '../Modals/Founder Modal/Foundermodal2'
 import Foundermodal3 from '../Modals/Founder Modal/Foundermodal3'
+import Mentormodal1 from '../Modals/Mentor Modal/Mentormodal1'
+import Mentormodal2 from '../Modals/Mentor Modal/Mentormodal2'
+import Mentormodal3 from '../Modals/Mentor Modal/Mentormodal3'
+import Mentormodal4 from '../Modals/Mentor Modal/Mentormodal4'
+import Mentormodal5 from '../Modals/Mentor Modal/Mentormodal5'
 
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -22,6 +27,14 @@ export default function Home() {
   };
   return (
     <>
+
+
+
+      {/* <Mentormodal1 /> */}
+      {/* <Mentormodal2 /> */}
+      {/* <Mentormodal3 /> */}
+      {/* <Mentormodal4 /> */}
+      {/* <Mentormodal5 /> */}
       {/* <ExpertiseModal isOpen={isModalOpen} onClose={handleClose} /> */}
       {/* <Foundermodal2 /> */}
       {/* <Foundermodal3 /> */}

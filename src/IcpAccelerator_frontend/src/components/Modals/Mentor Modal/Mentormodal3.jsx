@@ -1,23 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import createprojectabc from "../../../../assets/Logo/createprojectabc.png";
+import Foldericon from "../../../../assets/Logo/Foldericon.png";
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import Dropdown from "../../../../assets/Logo/Dropdown.png"
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CheckIcon from '@mui/icons-material/Check';
-import CreateProjectModal from "../../Home/modal2";
 import Select from 'react-select';
 
 
-const CreateProjectModal2 = ({ isOpen, onClose, onBack }) => {
+const Mentormodal3 = ({ isOpen, onClose }) => {
     const [categories, setCategories] = useState([]);
-    const [stage, setStage] = useState("");
     const [formData, setFormData] = useState({
-        tagline: '',
-        about: '',
-        category: 'Infrastructure',
-        stage: 'MVP',
-        links: ['']
+        Servicetitle: '',
+        Servicedescription: '',
+
     });
     // Ensure the modal is open by default if `isOpen` is not provided
     const [modalOpen, setModalOpen] = useState(isOpen || true);
@@ -56,16 +52,14 @@ const CreateProjectModal2 = ({ isOpen, onClose, onBack }) => {
             document.body.style.overflow = 'auto';
         };
     }, [modalOpen]);
-    const categoryOptions = [
-        { value: 'Infrastructure', label: 'Infrastructure' },
+    const DurationOptions = [
+        { value: 'Weeks', label: 'Weeks' },
+        { value: 'Months', label: 'Months' },
+        { value: 'Years', label: 'Years' }
 
         // Add more options as needed
     ];
-    const stageOptions = [
-        { value: 'MVP', label: 'MVP' },
 
-        // Add more options as needed
-    ];
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -75,21 +69,22 @@ const CreateProjectModal2 = ({ isOpen, onClose, onBack }) => {
         }));
     };
 
-    const handleLinkChange = (index, value) => {
-        const newLinks = [...formData.links];
-        newLinks[index] = value;
-        setFormData((prevData) => ({
-            ...prevData,
-            links: newLinks,
-        }));
+    const [duration, setDuration] = useState(1);
+    const [unit, setUnit] = useState('Week(s)');
+    const [notLimited, setNotLimited] = useState(false);
+
+    const incrementDuration = () => {
+        setDuration(duration + 1);
     };
 
-    const handleAddLink = () => {
-        setFormData((prevData) => ({
-            ...prevData,
-            links: [...prevData.links, ''],
-        }));
+    const decrementDuration = () => {
+        if (duration > 1) {
+            setDuration(duration - 1);
+        }
     };
+
+
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -97,10 +92,10 @@ const CreateProjectModal2 = ({ isOpen, onClose, onBack }) => {
         onClose();
     };
 
-    const handleBack = () => {
-        onBack();
-        setModalOpen(false);
-    };
+    // const handleBack = () => {
+    //     onBack();
+    //     setModalOpen(false);
+    // };
 
     return (
         <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${modalOpen ? 'block' : 'hidden'}`}>
@@ -108,13 +103,13 @@ const CreateProjectModal2 = ({ isOpen, onClose, onBack }) => {
                 <div className="flex justify-end mr-4">
                     <button className='text-2xl text-[#121926]' onClick={() => setModalOpen(false)}>&times;</button>
                 </div>
-                <h2 className="text-xs text-[#364152]">Step 2 of 2</h2>
-                <h1 className="text-3xl text-[#121926] font-bold mb-3">Create a project</h1>
+                <h2 className="text-xs text-[#364152]">Step 3 of 5</h2>
+                <h1 className="text-3xl text-[#121926] font-bold mb-3">Service details</h1>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-2">
-                        <label className="block text-sm font-medium mb-1">Upload a logo<span className='text-[#155EEF]'>*</span></label>
+                        <label className="block text-sm font-medium mb-1">Cover image<span className='text-[#155EEF]'>*</span></label>
                         <div className='flex gap-2'>
-                            <img src={createprojectabc} alt="projectimg" />
+                            <img src={Foldericon} alt="projectimg" className='border-2 border-dashed border-[#E3E8EF] p-4 rounded-md' />
                             <div className='flex gap-1 items-center justify-center'>
                                 <div className="flex gap-1">
                                     <label htmlFor="file-upload" className="block font-medium text-gray-700 border border-gray-500 px-1 cursor-pointer rounded">
@@ -142,89 +137,85 @@ const CreateProjectModal2 = ({ isOpen, onClose, onBack }) => {
                         </div>
                     </div>
                     <div className="mb-2">
-                        <label className="block text-sm font-medium mb-1">Tagline<span className='text-[#155EEF]'>*</span></label>
+                        <label className="block text-sm font-medium mb-1">Service title<span className='text-[#155EEF]'>*</span></label>
                         <input
                             type="text"
-                            name="tagline"
-                            value={formData.tagline}
+                            name="Servicetitle"
+                            value={formData.Servicetitle}
                             onChange={handleChange}
                             maxLength={50}
                             className="block w-full border border-gray-300 rounded-md p-2"
                             required
+                            placeholder='Clear and concise service title'
                         />
                     </div>
                     <div className="mb-2">
-                        <label className="block text-sm font-medium mb-1">About<span className='text-[#155EEF]'>*</span></label>
+                        <label className="block text-sm font-medium mb-1">Service description<span className='text-[#155EEF]'>*</span></label>
                         <textarea
-                            name="about"
-                            value={formData.about}
+                            name="Servicedescription"
+                            value={formData.Servicedescription}
                             onChange={handleChange}
                             maxLength={500}
                             className="block w-full border border-gray-300 rounded-md p-2"
                             required
+                            placeholder='this is about section '
                         />
                     </div>
                     <div className="mb-2 relative">
-                        <label className="block text-sm font-medium mb-1">Category<span className='text-[#155EEF]'>*</span></label>
-                        <Select
-
-                            options={categoryOptions}
-                            value={categories}
-                            onChange={setCategories}
-                            styles={selectStyles}
-                            className="basic-multi-select"
-                            classNamePrefix="select"
-                            placeholder="Add Relevant Categories"
-                        />  </div>
-                    <div className="mb-2 relative">
-                        <label className="block text-sm font-medium mb-1">Stage<span className='text-[#155EEF]'>*</span></label>
-                        <Select
-
-                            options={stageOptions}
-                            value={stage}
-                            onChange={setStage}
-                            styles={selectStyles}
-                            className="basic-multi-select"
-                            classNamePrefix="select"
-                            placeholder="Add Relevant Categories"
-                        />    </div>
-                    <div className="mb-2 relative">
-                        <label className="text-sm font-medium mb-1 flex items-center">Links</label>
-                        {formData.links.map((link, index) => (
-                            <div key={index} className="relative">
+                        <label className="block text-sm font-medium mb-1">Service duration<span className='text-[#155EEF]'>*</span></label>
+                        <div className='flex space-x-3'>
+                            <div className='border border-gray-300 rounded'>
+                                <button
+                                    className="px-2 py-1  rounded"
+                                    onClick={decrementDuration}
+                                    disabled={duration <= 1}
+                                >
+                                    &minus;
+                                </button>
                                 <input
-                                    type="url"
-                                    value={link}
-                                    onChange={(e) => handleLinkChange(index, e.target.value)}
-                                    className="block w-full border border-gray-300 rounded-md p-2 pr-10"
-                                    required
+                                    type="text"
+                                    id="duration"
+                                    value={duration}
+                                    onChange={(e) => setDuration(parseInt(e.target.value) || 1)}
+                                    className="w-12 text-center  rounded"
+                                    disabled={notLimited}
                                 />
-                                {/* <ArrowDropDownIcon className="absolute right-2 top-1/2 transform w-5 h-5 text-gray-400 pointer-events-none" /> */}
-                                <img src={Dropdown} alt="img" className="absolute  top-1/2 transform -translate-y-1/2  " />
+                                <button
+                                    className="px-2 py-1  rounded"
+                                    onClick={incrementDuration}
+                                >
+                                    +
+                                </button>
                             </div>
-                        ))}
-                        <button
-                            type="button"
-                            onClick={handleAddLink}
-                            className="text-blue-500 text-sm"
-                        >
-                            Add another link
-                        </button>
+                            <div>
+                                <Select
+
+                                    options={DurationOptions}
+                                    value={categories}
+                                    onChange={setCategories}
+                                    styles={selectStyles}
+                                    className="basic-multi-select"
+                                    classNamePrefix="select"
+                                    placeholder="Add Duration"
+                                />  </div>
+                        </div>
+
                     </div>
+
                     <div className="flex justify-between">
                         <button
                             type="button"
-                            onClick={handleBack}
+                            // onClick={handleBack}
                             className="mr-2 bg-gray-200 text-gray-700 px-4 py-2 rounded-md"
                         >
                             <ArrowBackIcon fontSize="medium" className="ml-2" /> Back
                         </button>
                         <button
-                            onClick={onClose}
+                            // onClick={onClose}
                             type="submit"
                             className="bg-blue-500 text-white px-4 py-2 rounded-md"
                         >
-                            Complete <CheckIcon fontSize="medium" className="ml-2" />
+                            Continue <ArrowForwardIcon fontSize="medium" className="ml-2" />
                         </button>
                     </div>
                 </form>
@@ -233,4 +224,4 @@ const CreateProjectModal2 = ({ isOpen, onClose, onBack }) => {
     );
 };
 
-export default CreateProjectModal2;
+export default Mentormodal3;
