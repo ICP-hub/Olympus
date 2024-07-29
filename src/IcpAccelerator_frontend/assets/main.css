@@ -177,3 +177,11 @@ input[type="number"] {
   background: transparent;
   /* Darker color on hover */
 }
+
+
+#bgimage{
+  background-image: url(../assets/images/Backgroundpattern.png);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}

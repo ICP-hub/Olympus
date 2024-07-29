@@ -1,9 +1,10 @@
 import React from 'react';
 import { AccountCircle, Star, Group, InfoOutlined, StarBorderOutlined} from '@mui/icons-material';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-
+import nodata from "../../../../assets/images/nodata.png"
 function DashboardHomeProfileCards() {
   return (
+    <>
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
       {/* Main profile card */}
       <div className="bg-white rounded-lg shadow-sm p-6">
@@ -99,6 +100,15 @@ function DashboardHomeProfileCards() {
         </div>
       </div>
     </div>
+    <div className="bg-white rounded-lg shadow-sm p-6 mt-8">
+      <div className='border border-dashed border-gray-300 p-6 '>
+      <div className="flex  items-center justify-center h-full text-center">
+      <img src={nodata} alt="" className='h-full '/>
+    </div>
+      </div>
+   
+  </div>
+ </>
   );
 }
 
