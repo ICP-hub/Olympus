@@ -29,7 +29,7 @@ function DashboardHomePage() {
           {/* <ProjectProfile /> */}
           {/* <UserSection /> */}
            <Routes>
-            <Route path="/" element={<ProjectProfile userName={"Matt"} profileCompletion={"20"} />} />
+            <Route path="/" element={<DashboardHomeWelcomeSection userName={"Matt"} profileCompletion={"20"} />} />
             <Route path="/jobs" element={<Jobs />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/user" element={<UserSection />} />

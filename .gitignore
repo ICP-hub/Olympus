@@ -19,6 +19,7 @@ target/
 # frontend code
 node_modules/
 dist/
+package-lock.json
 
 # environment variables
 .env

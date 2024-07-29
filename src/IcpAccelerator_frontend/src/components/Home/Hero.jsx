@@ -1,15 +1,22 @@
 import React from "react";
 import heroImage from "../../../assets/images/banner_1.png";
 import df_logo from "../../../assets/Logo/df_logo.png";
+import Backgroundpattern from "../../../assets/images/Backgroundpattern.png";
+
 import HalfAstro from "../../../assets/images/astroRegular.png";
 import FullAstro from "../../../assets/images/astro1.png";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useNavigate,Link } from "react-router-dom";
 const HeroSection = () => {
   return (
-    <section className=" bg-[#FEF6EE] pt-12">
-      <div className="container mx-auto">
-        <div className="max-w-6xl w-full py-8 px-4 sm:px-6 lg:px-8  mx-auto">
+    <section className="bg-[#FEF5EE] pt-12">
+      <div className="container mx-auto" style={{
+        backgroundImage: `url(${Backgroundpattern})`,
+        backgroundPosition: 'center', 
+        backgroundSize: 'cover', 
+        backgroundRepeat: 'no-repeat' 
+      }}>
+        <div className="max-w-6xl w-full py-8 px-4 sm:px-6 lg:px-8  mx-auto "   >
           <div className="flex flex-col md:flex-row  justify-evenly">
             <div className="">
               <div className=" max-w-[704px]">
@@ -44,11 +51,11 @@ const HeroSection = () => {
               </div>
             </div>
             <div className="w-1/2 flex justify-center items-center">
-              <img
-                src={FullAstro}
+              {/* <img
+                src={Backgroundpattern}
                 alt="Astronaut"
                 className={` w-[500px] md:w-[400px] sm:w-[300px] sxs:w-[295px] object-cover object-center`}
-              />
+              /> */}
             </div>
           </div>
         </div>
