@@ -49,10 +49,11 @@ const Jobs = () => {
         }
     ]
     const [open, setOpen] = useState(false)
-    return (
+    return (<>
+
         <div className='container mx-auto bg-white'>
-            <div className="flex mx-auto mb-5">
-                <h2 className='text-3xl font-bold'>Jobs</h2>
+            <div className="flex mx-auto -top-10 mb-5 sticky ">
+                <h2 className='text-3xl font-bold p-5 bg-white w-full '>Jobs</h2>
             </div>
             <div className="flex mx-auto justify-evenly">
                 <div className="my-5 w-[65%] ">
@@ -84,13 +85,12 @@ const Jobs = () => {
                                 {open && job.id === "1" ? <JobDetails setOpen={setOpen} /> : ""}
                                 <hr />
                             </>
-
                         )
                     })}
 
                 </div>
 
-                <div className="w-[30%] ">
+                <div className="w-[30%]">
                     <div className="p-4 bg-white sticky top-0  max-w-sm">
                         <h2 className="text-xl font-semibold mb-4">Filters</h2>
 
@@ -145,6 +145,7 @@ const Jobs = () => {
                 </div>
             </div>
         </div>
+    </>
     )
 }
 

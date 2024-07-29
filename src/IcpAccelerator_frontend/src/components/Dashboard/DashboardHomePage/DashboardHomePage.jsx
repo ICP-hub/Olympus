@@ -6,6 +6,7 @@ import DashboardHomeProfileCards from './DashboardHomeProfileCards'
 import { Routes, Route } from 'react-router-dom';
 import ProjectProfile from './ProjectProfile'
 import UserSection from './UserSection'
+import Jobs from '../../jobs/Jobs'
 
 function DashboardHomePage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -25,11 +26,11 @@ function DashboardHomePage() {
           <DashboardHomeProfileCards /> */}
           <ProjectProfile />
           {/* <UserSection /> */}
-           {/* <Routes>
+          <Routes>
             <Route path="/" element={<DashboardHomeWelcomeSection userName={"Matt"} profileCompletion={"20"} />} />
             <Route path="/profile-cards" element={<DashboardHomeProfileCards />} />
-            
-          </Routes> */}
+            <Route path="/jobs" element={<Jobs />} />
+          </Routes>
         </main>
       </div>
     </div>
