@@ -15,7 +15,7 @@ const ProfilePage = () => {
     }
 
     return (
-        <div className='container mx-auto mb-5'>
+        <div className='container mx-auto mb-5 bg-white'>
             <div className='flex justify-between items-center mx-[3%] h-11 my-5'>
                 <div className=''>
                     <h2 className='text-2xl font-bold'>Profile</h2>

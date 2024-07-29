@@ -14,6 +14,7 @@ import Signupmain2 from "./components/Auth/Signup2";
 import Signupmain3 from "./components/Auth/Signup3";
 import ProfileForm from "./components/Auth/Signup4";
 import SignupMaster from "./components/Auth/Signup-Master";
+import Jobs from "./components/jobs/Jobs";
 
 const DashBoard = lazy(() => import("./component/Dashboard/DashBoard"));
 // const Home = lazy(() =>
@@ -45,7 +46,7 @@ const AppRoutes = () => {
   );
   const authenticatedRoutes = [
     { path: "dashboard/*", element: <DashboardHomePage /> },
-    { path: "profile", element: <UserProfile /> },
+  
   ];
   return (
     <>
