@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ProfileImage from "../../../../assets/Logo/ProfileImage.png";
 import NeilProfileImages from "../../../../assets/Logo/NeilProfileImages.png";
 import LeonProfileImage from "../../../../assets/Logo/LeonProfileImage.png";
 import BlancheProfileImage from "../../../../assets/Logo/BlancheProfileImage.png";
 import CypherpunkLabLogo from "../../../../assets/Logo/CypherpunkLabLogo.png";
 import { FavoriteBorder, LocationOn, Star } from '@mui/icons-material';
+import Tabs from '../../Tabs/Tabs';
 
 
 const UserCard = ({ name, username, tags, role, description, rating, skills, location, avatar }) => {
@@ -17,9 +18,9 @@ const UserCard = ({ name, username, tags, role, description, rating, skills, loc
     };
   
     return (
-      <div className="bg-gray-50 p-6 rounded-lg shadow-sm mb-4 flex">
-        <div className="w-1/4 mr-6">
-          <div className="bg-gray-100 rounded-lg flex flex-col justify-between h-full relative overflow-hidden">
+      <div className=" p-6 w-[750px] rounded-lg shadow-sm mb-4 flex">
+        <div className="w-[272px]  ">
+          <div className="max-w-[250px] w-[250px] bg-gray-100 rounded-lg flex flex-col justify-between h-full relative overflow-hidden">
             <div className="absolute inset-0 flex items-center justify-center">
               <img
                 src={avatar}
@@ -28,14 +29,14 @@ const UserCard = ({ name, username, tags, role, description, rating, skills, loc
               />
             </div>
             {rating && (
-              <div className="absolute bottom-0 right-0 flex items-center bg-gray-100 p-1">
+              <div className="absolute bottom-0 right-[6px] flex items-center bg-gray-100 p-1">
                 <Star className="text-yellow-400 w-4 h-4" />
                 <span className="text-sm font-medium">{rating}</span>
               </div>
             )}
           </div>
         </div>
-        <div className="flex-grow">
+        <div className="flex-grow ml-[25px] w-[544px]">
           <div className="flex justify-between items-start mb-2">
             <div>
               <h3 className="text-xl font-bold">{name}</h3>
@@ -80,6 +81,11 @@ const UserCard = ({ name, username, tags, role, description, rating, skills, loc
   };
 
 const UsersSection = () => {
+  const [currentTab, setCurrentTab] = useState('Users');
+  const tabs = ['All', 'Users', 'Projects', 'Mentors', 'Talent', 'Investors'];
+  const handleTabChange = (tab) => {
+    setCurrentTab(tab);
+  };
  const users = [
    {
      name: "Matt Bowers",
@@ -145,9 +151,10 @@ const UsersSection = () => {
  ];
 
  return (
-   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-white">
      <h1 className="text-3xl font-bold mb-6">Discover</h1>
-     <div className="border-b border-gray-200 mb-6">
+     <Tabs tabs={tabs} currentTab={currentTab} onTabChange={handleTabChange} />
+     {/* <div className="border-b border-gray-200 mb-6">
        <nav className="-mb-px flex space-x-8">
          <a href="#" className="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">All</a>
          <a href="#" className="border-blue-500 text-blue-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Users</a>
@@ -156,15 +163,18 @@ const UsersSection = () => {
          <a href="#" className="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Talent</a>
          <a href="#" className="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Investors</a>
        </nav>
-     </div>
+     </div> */}
      <div className="flex">
-       <div className="w-3/4 pr-6">
-         {users.map((user, index) => (
+       <div className=" pr-6">
+         {/* {users.map((user, index) => (
            <UserCard key={index} {...user} />
-         ))}
+         ))} */}
+          {currentTab === 'Users' && users.map((user, index) => (
+            <UserCard key={index} {...user} />
+          ))}
        </div>
-       <div className="w-1/4">
-         <div className="bg-white p-6 rounded-lg shadow-sm">
+       <div className="max-w-[320px] w-[320px]">
+         <div className="bg-white py-6 rounded-lg shadow-sm sticky top-0" >
            <h2 className="text-lg font-semibold mb-4">Filters</h2>
            <div className="mb-4">
              <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>

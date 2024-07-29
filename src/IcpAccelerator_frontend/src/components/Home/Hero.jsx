@@ -47,7 +47,7 @@ const HeroSection = () => {
               <img
                 src={FullAstro}
                 alt="Astronaut"
-                className={`z-20 w-[500px] md:w-[400px] sm:w-[300px] sxs:w-[295px] object-cover object-center`}
+                className={` w-[500px] md:w-[400px] sm:w-[300px] sxs:w-[295px] object-cover object-center`}
               />
             </div>
           </div>

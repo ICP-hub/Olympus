@@ -15,7 +15,7 @@ import Foundermodal2 from '../Modals/Founder Modal/Foundermodal2'
 import Foundermodal3 from '../Modals/Founder Modal/Foundermodal3'
 
 export default function Home() {
-  const [isModalOpen, setIsModalOpen] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleClose = () => {
     setIsModalOpen(false);
@@ -24,7 +24,7 @@ export default function Home() {
     <>
       {/* <ExpertiseModal isOpen={isModalOpen} onClose={handleClose} /> */}
       {/* <Foundermodal2 /> */}
-      <Foundermodal3 />
+      {/* <Foundermodal3 /> */}
 
       {/* <DashboardModal1 isOpen={isModalOpen} onClose={handleClose} /> */}
       {/* <Modal1 /> */}

@@ -47,7 +47,7 @@ function DashboardSidebar({ isOpen, onClose }) {
             <h3 className="px-6 mb-2 text-xs font-semibold text-gray-500 uppercase">IDENTITY</h3>
             <ul>
               <li>
-                <Link to="/dashboard/profile-cards" className="flex items-center px-6 py-2 text-gray-700 hover:bg-[#e4e3e2b1]">
+                <Link to="/dashboard/profile" className="flex items-center px-6 py-2 text-gray-700 hover:bg-[#e4e3e2b1]">
                   <ProfileIcon className="mr-3" />
                   <span>Profile</span>
                 </Link>
@@ -59,13 +59,13 @@ function DashboardSidebar({ isOpen, onClose }) {
             <h3 className="px-6 mb-2 text-xs font-semibold text-gray-500 uppercase">DISCOVER</h3>
             <ul>
               <li>
-                <Link to="/users" className="flex items-center px-6 py-2 text-gray-700 hover:bg-[#e4e3e2b1]">
+                <Link to="/dashboard/user" className="flex items-center px-6 py-2 text-gray-700 hover:bg-[#e4e3e2b1]">
                   <UsersIcon className="mr-3" />
                   <span>Users</span>
                 </Link>
               </li>
               <li>
-                <Link to="/events" className="flex items-center px-6 py-2 text-gray-700 hover:bg-[#e4e3e2b1]">
+                <Link to="/dashboard/event" className="flex items-center px-6 py-2 text-gray-700 hover:bg-[#e4e3e2b1]">
                   <EventsIcon className="mr-3" />
                   <span>Events</span>
                 </Link>
