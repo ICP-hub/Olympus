@@ -138,3 +138,35 @@ select {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+<<<<<<< Updated upstream
+=======
+
+/* scroll hidden css  */
+
+::-webkit-scrollbar {
+  width: 0px;
+  /* Adjust the width of the scrollbar */
+}
+
+/* Customize the scrollbar thumb */
+::-webkit-scrollbar-thumb {
+  background: transparent;
+  /* Color of the scrollbar thumb */
+  border-radius: 5px;
+  /* Roundness of the scrollbar thumb */
+}
+
+/* Change the scrollbar thumb color when hovered over */
+::-webkit-scrollbar-thumb:hover {
+  background: transparent;
+  /* Darker color on hover */
+}
+
+#bgimage {
+  background-image: url(../assets/images/Backgroundpattern.png);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+@import url("https://fonts.googleapis.com/css2?family=TT+Firs+Neue:wght@400;700&display=swap");
+>>>>>>> Stashed changes
