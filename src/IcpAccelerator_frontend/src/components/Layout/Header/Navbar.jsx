@@ -14,24 +14,10 @@ const Navbar = ({setModalOpen}) => {
     const [discoverMenu, setDiscoverMenu] = useState(false);
     const [companyMenu, setCompanyMenu] = useState(false);
     const [openMenu, setOpenMenu] = useState(false)
-    const navigate = useNavigate();
 
     const dispatch = useDispatch();
-    const actor = useSelector((currState) => currState.actors.actor);
     const principal = useSelector((currState) => currState.internet.principal);
-    const isAuthenticated = useSelector(
-      (currState) => currState.internet.isAuthenticated
-    );
-    const userCurrentRoleStatus = useSelector(
-      (currState) => currState.currentRoleStatus.rolesStatusArray
-    );
-    const userCurrentRoleStatusActiveRole = useSelector(
-      (currState) => currState.currentRoleStatus.activeRole
-    );
-  
-    const [showSwitchRole, setShowSwitchRole] = useState(false);
-    // console.log("principal in header", connectedWalletPrincipal);
-  
+   
     const manageHandler = () => {
       !principal ? setModalOpen(true) : setModalOpen(false);
     };
