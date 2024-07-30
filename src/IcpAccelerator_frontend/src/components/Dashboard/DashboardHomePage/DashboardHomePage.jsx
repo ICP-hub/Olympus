@@ -9,6 +9,7 @@ import UserSection from './UserSection'
 import Jobs from '../../jobs/Jobs'
 import ProfilePage from '../../profile/ProfilePage'
 import EventMain from '../DashboardEvents/EventMain'
+import ServiceDetailPage from './ServiceDetailPage'
 
 function DashboardHomePage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -34,6 +35,8 @@ function DashboardHomePage() {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/user" element={<UserSection />} />
             <Route path="/event" element={<EventMain />} />
+            <Route path="/project" element={<ProjectProfile />} />
+            <Route path="/single-project" element={<ServiceDetailPage />} />
           </Routes>
         </main>
       </div>

@@ -83,7 +83,7 @@ function DashboardSidebar({ isOpen, onClose }) {
                 </Link>
               </li>
               <li>
-                <Link to="/perks" className="flex items-center px-6 py-2 text-gray-700 hover:bg-[#e4e3e2b1]">
+                <Link to="/dashboard/project" className="flex items-center px-6 py-2 text-gray-700 hover:bg-[#e4e3e2b1]">
                   <PerksIcon className="mr-3" />
                   <span>Perks</span>
                 </Link>
