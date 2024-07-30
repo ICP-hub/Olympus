@@ -25,7 +25,7 @@ const Signupmain2 = () => {
 
                             <div className='flex justify-between'>
                                 <button type="submit" className=" py-2 px-4  text-gray-600 rounded hover:text-black justify-end  "> <ArrowBackIcon fontSize="medium" className="mr-2" />Back </button>
-                               <Link to='/sign-up-step2-verify-email'><button type="submit" className=" py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 justify-end border-2 border-[#B2CCFF]">Continue <ArrowForwardIcon fontSize="medium" className="ml-2" /></button></Link> 
+                               <Link to='/sign-up-step3-complete-profile'><button type="submit" className=" py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 justify-end border-2 border-[#B2CCFF]">Continue <ArrowForwardIcon fontSize="medium" className="ml-2" /></button></Link> 
 
                             </div>
                         </form>

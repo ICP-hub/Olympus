@@ -6,8 +6,16 @@ import Backgroundpattern from "../../../assets/images/Backgroundpattern.png";
 import HalfAstro from "../../../assets/images/astroRegular.png";
 import FullAstro from "../../../assets/images/astro1.png";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import { useNavigate,Link } from "react-router-dom";
+import { Link, useOutletContext } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 const HeroSection = () => {
+  const { setModalOpen } = useOutletContext();
+  const dispatch = useDispatch();
+    const principal = useSelector((currState) => currState.internet.principal);
+
+    const manageHandler = () => {
+        setModalOpen(!principal);
+    };
   return (
     <section className="bg-[#FEF5EE] pt-12">
       <div className="container mx-auto" style={{
@@ -43,7 +51,7 @@ const HeroSection = () => {
                   different ecosystems.
                 </p>
                 <Link
-                  to={"/sign-up"}
+                  onClick={manageHandler}
                   className="inline-block px-5 py-3 mt-6 text-white bg-blue-600 rounded-[4px]  hover:bg-blue-700"
                 >
                   Get started <ArrowForwardIcon />
