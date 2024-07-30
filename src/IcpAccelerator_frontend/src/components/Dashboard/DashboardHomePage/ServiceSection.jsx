@@ -33,18 +33,20 @@ const ServiceSection = () => {
       {/* Service Card */}
       <div className="bg-white rounded-lg shadow-md p-4 flex">
         {/* Left side - Image */}
-        <div className="w-1/3 pr-4">
-          <img
-            src={LandingPageDesign}
-            alt="Landing page design"
-            className="w-full h-auto rounded-lg"
-          />
-        </div>
+
+          <div className="w-1/3 pr-4">
+            <img
+              src={LandingPageDesign}
+              alt="Landing page design"
+              className="w-full h-auto rounded-lg"
+            />
+          </div>
+
 
         {/* Right side - Content */}
         <div className="w-2/3 relative">
           <IconButton className="absolute top-0 right-0">
-            <MoreVertIcon />
+            <MoreVertIcon className="flex space-between" />
           </IconButton>
 
           <h2 className="text-2xl font-bold mb-2">Landing page design</h2>
