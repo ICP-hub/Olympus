@@ -21,12 +21,12 @@ export const userPlusIcon = (
   </svg>
 )
 export const animatedLeftSvgIcon = (
-  <svg width="199" height="122" viewBox="0 0 199 122" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg width="199" height="100" viewBox="0 0 199 122" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M198 0V46.6316C198 59.8864 187.255 70.6316 174 70.6316H25C11.7452 70.6316 1 81.3768 1 94.6316V122" stroke="#E3E8EF" stroke-width="2" />
   </svg>
 )
 export const animatedRightSvgIcon = (
-  <svg width="214" height="122" viewBox="0 0 214 122" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg width="214" height="100" viewBox="0 0 214 122" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M1 0V46.6316C1 59.8864 11.7452 70.6316 25 70.6316H189C202.255 70.6316 213 81.3768 213 94.6316V122" stroke="#E3E8EF" stroke-width="2" />
   </svg>
 )
