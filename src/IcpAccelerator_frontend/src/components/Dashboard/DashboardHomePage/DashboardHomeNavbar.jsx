@@ -16,11 +16,28 @@ import {
   Work as JobsIcon,
   Star as PerksIcon
 } from '@mui/icons-material';
+import { useDispatch } from 'react-redux';
+import { logoutStart } from '../../StateManagement/Redux/Reducers/InternetIdentityReducer';
 
 function DashboardHomeNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
+
+  const handleLogout = async () => {
+    setIsLoading(true);
+    try {
+      await dispatch(logoutStart());
+      setIsLoading(false);
+      window.location.href = '/';
+    } catch (error) {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <nav className="bg-[#FFF4ED] py-3 px-4 md:px-6 flex items-center justify-between shadow-sm relative">
@@ -57,7 +74,24 @@ function DashboardHomeNavbar() {
           src={bigLogo}
           alt="User"
           className="h-[20px] w-[30px] rounded-full"
-        />
+          onClick={toggleDropdown}
+       />
+         {dropdownOpen && (
+        <div className="absolute right-[20px] top-[40px] mt-2  bg-white border rounded-md shadow-lg z-20">
+          <Link
+            to="/dashboard/profile"
+            className="block px-4 py-2 text-gray-800 hover:bg-gray-200"
+          >
+            Profile
+          </Link>
+          <button
+            onClick={() => { !isLoading && handleLogout() }}
+            className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-200"
+          >
+            Logout
+          </button>
+        </div>
+      )}
       </div>
 
       {/* Mobile Menu */}

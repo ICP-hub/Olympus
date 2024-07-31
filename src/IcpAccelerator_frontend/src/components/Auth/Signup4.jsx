@@ -4,6 +4,7 @@ import Layer1 from "../../../assets/Logo/Layer1.png";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+
 import DoneIcon from '@mui/icons-material/Done';
 import { Link, useNavigate } from "react-router-dom";
 import Select from 'react-select';
@@ -29,6 +30,8 @@ const selectStyles = {
         color: '#1f2937', // Tailwind text-gray-700
     }),
 };
+
+
 
 const ProfileForm = () => {
     const [Categories, setCategories] = useState([]);
@@ -237,12 +240,14 @@ const ProfileForm = () => {
                             </div> */}
                         </div>
                         <div className='flex justify-between'>
+
                             <button type="button" onClick={() => navigate(-1)} className=" py-2  pr-4  text-gray-600 rounded hover:text-black justify-end hover:bg-gray-100 ">
                                 <ArrowBackIcon fontSize="medium" className='mr-2' />Back
                             </button>
                             <Link to='/dashboard'>
                                 <button type="submit" className="px-4 py-2  bg-[#D1E0FF] text-white rounded hover:bg-blue-600 justify-end border-2 border-[#B2CCFF]">Complete <DoneIcon fontSize="medium" /></button>
                             </Link>
+
                         </div>
                     </div>
                 </div>

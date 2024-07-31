@@ -33,7 +33,7 @@ const MainLayout = () => {
             isModalOpen={isModalOpen}
             onClose={() => setModalOpen(false)}
           />
-                <Outlet />
+                <Outlet context={{ setModalOpen }}/>
             </main>
             <Footer/>
         </div>

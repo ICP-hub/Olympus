@@ -4,7 +4,9 @@ import Layer1 from "../../../assets/Logo/Layer1.png";
 import Aboutcard from "../Auth/Aboutcard";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+
 import { Link, useNavigate } from "react-router-dom";
+
 
 
 
@@ -28,8 +30,10 @@ const Signupmain2 = () => {
                             </div>
 
                             <div className='flex justify-between'>
+
                                 <button type="button" onClick={() => navigate(-1)} className=" py-2  pr-4  text-gray-600 rounded hover:text-black justify-end hover:bg-gray-100 "> <ArrowBackIcon fontSize="medium" className='mr-2' />Back </button>
                                 <Link to='/sign-up-step3-complete-profile'><button type="submit" className="px-4 py-2  bg-[#D1E0FF] text-white rounded hover:bg-blue-600 justify-end border-2 border-[#B2CCFF]">Continue <ArrowForwardIcon fontSize="medium" className="ml-2" /></button></Link>
+
 
                             </div>
                         </form>

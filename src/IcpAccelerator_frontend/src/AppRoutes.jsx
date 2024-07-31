@@ -8,6 +8,13 @@ import MainLayout from "./components/Layout/MainLayout";
 import { useAuth } from "./component/StateManagement/useContext/useAuth";
 import Terms from "./components/Home/Terms";
 import DashboardHomePage from "./components/Dashboard/DashboardHomePage/DashboardHomePage";
+import Signupmain from "./components/Auth/Signup1";
+import Signupmain1 from "./components/Auth/SignupMain";
+import Signupmain2 from "./components/Auth/Signup2";
+import Signupmain3 from "./components/Auth/Signup3";
+import ProfileForm from "./components/Auth/Signup4";
+import SignupMaster from "./components/Auth/Signup-Master";
+import Jobs from "./components/jobs/Jobs";
 
 const DashBoard = lazy(() => import("./component/Dashboard/DashBoard"));
 // const Home = lazy(() =>
@@ -18,17 +25,26 @@ const Error404 = lazy(() => import("./component/Error404/Error404"));
 
 const AppRoutes = () => {
   const { isAuthenticated } = useAuth();
+  // const isAuthenticated = true;
 
-  useEffect(() => {}, [isAuthenticated]);
+  // useEffect(() => {}, [isAuthenticated]);
   const renderCommonRoutes = () => (
+    <>
     <Route path="/" element={<MainLayout />}>
       <Route index element={<Home />} />
       <Route path="*" element={<Error404 />} />
     </Route>
+      <Route path="sign-up" element={<Signupmain1 />} />
+      {/* <Route path="sign-up-step1" element={<Signupmain />} />
+        <Route path="sign-up-step2" element={<Signupmain2 />} />
+        <Route path="sign-up-step3-complete-profile" element={<ProfileForm />} /> */}
+    </>
   );
   const authenticatedRoutes = [
     { path: "dashboard/*", element: <DashboardHomePage /> },
-    { path: "profile", element: <UserProfile /> },
+    { path: "sign-up-step1", element: <Signupmain /> },
+    { path: "sign-up-step2", element: <Signupmain2 /> },
+    { path: "sign-up-step3-complete-profile", element: <ProfileForm /> },
   ];
   return (
     <>

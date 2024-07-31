@@ -1,3 +1,5 @@
+
+
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -29,7 +31,9 @@ const Mentormodal5 = ({ isOpen, onClose }) => {
     const [modalOpen, setModalOpen] = useState(isOpen || true);
     const [acceptTokens, setAcceptTokens] = useState(null); // State for radio buttons
     const [currencyCategories, setcurrencyCategories] = useState([]);
+
     const [contactCategories, setcontactCategories] = useState([]);
+
 
     const PricingtypeOptions = [
         { value: 'Flat Rate', label: 'Flat Rate' },
@@ -42,12 +46,14 @@ const Mentormodal5 = ({ isOpen, onClose }) => {
         { value: 'BTC', label: 'BTC' }
         // Add more options as needed
     ];
+
     const ContacttypeOptions = [
         { value: 'Chirag', label: 'Chirag' },
         { value: 'Chandan', label: 'Chandan' },
         { value: 'Mohit', label: 'Mohit' }
         // Add more options as needed
     ];
+
 
     useEffect(() => {
         if (modalOpen) {
@@ -142,6 +148,7 @@ const Mentormodal5 = ({ isOpen, onClose }) => {
                     />
                 </div>
                 <div className='mb-4'><label className="block text-sm text-[#364152] font-medium mb-1">Contact method<span className="text-[#155EEF]">*</span></label>
+
                     <Select
                         options={ContacttypeOptions}
                         value={contactCategories}
@@ -151,6 +158,7 @@ const Mentormodal5 = ({ isOpen, onClose }) => {
                         classNamePrefix="select"
                         placeholder="Select a contact method"
                     />
+
                 </div>
                 <div className="flex justify-between">
                     <button

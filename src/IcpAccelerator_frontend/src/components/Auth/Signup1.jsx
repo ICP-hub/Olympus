@@ -4,12 +4,10 @@ import Layer1 from "../../../assets/Logo/Layer1.png";
 import Aboutcard from "../Auth/Aboutcard"
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-<<<<<<< Updated upstream
 
-=======
 import { Link } from "react-router-dom"
 import AboutcardSkeleton from '../LatestSkeleton/AbourcardSkeleton';
->>>>>>> Stashed changes
+
 const Signupmain = () => {
     return (
         <>
@@ -40,18 +38,12 @@ const Signupmain = () => {
                                     <input type="text" className="p-2 w-full" placeholder="Username" />
                                 </div>
                             </div>
-<<<<<<< Updated upstream
-                            <div className='flex justify-between'>
-                                <button type="submit" className=" py-2 px-4  text-gray-600 rounded hover:text-black justify-end  "> <ArrowBackIcon fontSize="medium" className="mr-2" />Back</button>
-                                <button type="submit" className=" py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 justify-end border-2 border-[#B2CCFF]">Continue <ArrowForwardIcon fontSize="medium" className="ml-2" /></button>
-=======
+
                             <div className='flex justify-end'>
                                 {/* <button type="submit" className=" py-2 px-4  text-gray-600 rounded hover:text-black justify-end  "> <ArrowBackIcon fontSize="medium" className="mr-2" />Back</button> */}
                                 <Link to='/sign-up-step2'> <button type="submit" className=" py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 justify-end border-2 border-[#B2CCFF]">Continue <ArrowForwardIcon fontSize="medium" className="" /></button></Link>
->>>>>>> Stashed changes
 
-                            </div>
-                        </form>
+                     </form>
                     </div>
                     {/* <Aboutcard /> */}
                     <AboutcardSkeleton />

@@ -1,25 +1,51 @@
-import React from 'react'
+import React, { useState } from 'react'
+import RedoIcon from '@mui/icons-material/Redo';
 import ProfileDetail from './ProfileDetail';
-// import forward from "../../../../assets/images/icons/Icon.png"
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Box from '@mui/material/Box';
+import Role from './Role';
+
 
 const ProfilePage = () => {
+    const [value, setValue] = useState("roles");
+
+    const handleChange = (e, newVal) => {
+        setValue(newVal)
+    }
+
     return (
-        <div className='container mx-auto'>
-            <div className='flex mx-auto justify-between items-center h-11 my-5'>
+        <div className='container mx-auto mb-5 bg-white'>
+            <div className='flex justify-between items-center mx-[3%] h-11 my-5'>
                 <div className=''>
                     <h2 className='text-2xl font-bold'>Profile</h2>
                 </div>
                 <div className='flex gap-4'>
                     <button className='border py-1 px-2'>View public profile </button>
-                    <button className='border py-1 px-2'>Share <span><img src="" alt='forward' /></span> </button>
+                    <button className='border py-1 px-2'>Share <span><RedoIcon /></span> </button>
                 </div>
             </div>
-            <div className='container'>
-                <div className=''>
+            <div className='container flex justify-evenly'>
+                <div className='w-[30%] '>
                     <ProfileDetail />
                 </div>
-                <div className=''>
-
+                <div className='w-[60%] '>
+                    <div className=''>
+                        <Box sx={{}}>
+                            <Tabs
+                                value={value}
+                                onChange={handleChange}
+                                textColor="secondary"
+                                indicatorColor="secondary"
+                            >
+                                <Tab value="roles" label="Roles" />
+                                <Tab value="rating" label="Rating" />
+                            </Tabs>
+                        </Box>
+                    </div>
+                    <div className='w-full'>
+                        {value === "roles" ? <Role /> : ""}
+                    </div>
                 </div>
             </div>
         </div>
