@@ -1,17 +1,16 @@
 import React, { useState } from 'react'
 import RedoIcon from '@mui/icons-material/Redo';
 import ProfileDetail from './ProfileDetail';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import Box from '@mui/material/Box';
+
 import Role from './Role';
+import { shareSvgIcon } from '../Utils/Data/SvgData';
 
 
 const ProfilePage = () => {
-    const [value, setValue] = useState("roles");
+    const [activeTab, setActiveTab] = useState("roles");
 
-    const handleChange = (e, newVal) => {
-        setValue(newVal)
+    const handleChange = (tab) => {
+        setActiveTab(tab)
     }
 
     return (
@@ -21,8 +20,9 @@ const ProfilePage = () => {
                     <h2 className='text-2xl font-bold'>Profile</h2>
                 </div>
                 <div className='flex gap-4'>
-                    <button className='border py-1 px-2'>View public profile </button>
-                    <button className='border py-1 px-2'>Share <span><RedoIcon /></span> </button>
+                    <button className='border py-1 px-2 border-b-2 font-medium'>View public profile </button>
+                    <button className='border border-b-2 py-1 flex items-center gap-2 px-2 font-medium'>Share <span>{shareSvgIcon}
+                    </span> </button>
                 </div>
             </div>
             <div className='container flex justify-evenly'>
@@ -30,21 +30,22 @@ const ProfilePage = () => {
                     <ProfileDetail />
                 </div>
                 <div className='w-[60%] '>
-                    <div className=''>
-                        <Box sx={{}}>
-                            <Tabs
-                                value={value}
-                                onChange={handleChange}
-                                textColor="secondary"
-                                indicatorColor="secondary"
-                            >
-                                <Tab value="roles" label="Roles" />
-                                <Tab value="rating" label="Rating" />
-                            </Tabs>
-                        </Box>
+                    <div className="flex justify-start border-b">
+                        <button
+                            className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === 'roles' ? 'border-b-2 border-blue-500 text-blue-500 font-medium' : 'text-gray-400'}`}
+                            onClick={() => handleChange('roles')}
+                        >
+                            Roles
+                        </button>
+                        <button
+                            className={`px-4 py-2 focus:outline-none font-medium ${activeTab === 'rating' ? 'border-b-2 border-blue-500 text-blue-500 font-medium' : 'text-gray-400'}`}
+                            onClick={() => handleChange('rating')}
+                        >
+                            Rating
+                        </button>
                     </div>
                     <div className='w-full'>
-                        {value === "roles" ? <Role /> : ""}
+                        {activeTab === "roles" ? <Role /> : ""}
                     </div>
                 </div>
             </div>

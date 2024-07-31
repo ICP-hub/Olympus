@@ -49,7 +49,7 @@ const Modal1 = ({ isOpen, onClose }) => {
             <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${modalOpen ? 'block' : 'hidden'}`}>
                 <div className="bg-white rounded-lg overflow-hidden shadow-lg w-[500px]">
                     <div className="flex justify-end mr-4">
-                        <button className='text-3xl text-[#121926]' onClick={() => setModalOpen(false)}>&times;</button>
+                        <button className='text-3xl text-[#121926]' onClick={() => onClose(false)}>&times;</button>
                     </div>
                     <div className="p-6">
                         <h2 className="text-2xl font-bold mb-4">Choose a role</h2>
@@ -63,7 +63,7 @@ const Modal1 = ({ isOpen, onClose }) => {
                                         <img src={role.image} alt={role.name} className="rounded-full mr-4" />
                                         <div>
                                             <span className="ml-4">
-                                                <span className="block font-semibold -mt-2">{role.name}</span>
+                                                <span className=" font-semibold -mt-2 justify-start flex">{role.name}</span>
                                                 <span className="block text-gray-600 text-sm">{role.description}</span>
                                             </span>
                                         </div>

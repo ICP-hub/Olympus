@@ -7,6 +7,7 @@ import { Link } from "react-router-dom"
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import TelegramIcon from '@mui/icons-material/Telegram';
+import { locationSvgIcon } from '../Utils/Data/SvgData';
 
 const ProfileDetail = () => {
     return (
@@ -59,7 +60,7 @@ const ProfileDetail = () => {
                 </div>
                 <div className='p-1 mt-2'>
                     <h3 className='text-xs pb-2 text-gray-400 font-normal'>LOCATION</h3>
-                    <p className='text-sm font-medium'><span className='mr-2'><LocationOnOutlinedIcon sx={{ color: "gray" }} /></span>San Diego,CA</p>
+                    <p className='text-sm font-medium flex items-center gap-2'><span className=''>{locationSvgIcon}</span>San Diego,CA</p>
                 </div>
                 <div className='p-1 mt-2'>
                     <h3 className='text-xs pb-2 text-gray-400 font-normal'>TIMEZONE</h3>
