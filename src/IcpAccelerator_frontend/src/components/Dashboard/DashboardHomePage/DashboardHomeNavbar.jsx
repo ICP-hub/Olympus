@@ -17,6 +17,8 @@ import {
   Star as PerksIcon
 } from '@mui/icons-material';
 import { briefcaseSvgIcon, calenderSvgIcon, homeSvgIcon, locationHubSvgIcon, staroutlineSvgIcon, userCircleSvgIcon, userSvgIcon } from '../../Utils/Data/SvgData';
+import { logoutStart } from '../../StateManagement/Redux/Reducers/InternetIdentityReducer';
+import { useDispatch } from 'react-redux';
 
 function DashboardHomeNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -73,7 +75,24 @@ function DashboardHomeNavbar() {
           src={bigLogo}
           alt="User"
           className="h-[20px] w-[30px] rounded-full"
-        />
+          onClick={toggleDropdown}
+            />
+            {dropdownOpen && (
+              <div className="absolute right-[20px] top-[40px] mt-2  bg-white border rounded-md shadow-lg z-20">
+                <Link
+                  to="/dashboard/profile"
+                  className="block px-4 py-2 text-gray-800 hover:bg-gray-200"
+                >
+                  Profile
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-200"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
       </div>
 
       {/* Mobile Menu */}
