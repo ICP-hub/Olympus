@@ -17,9 +17,7 @@ const Navbar = ({ setModalOpen }) => {
 
     const dispatch = useDispatch();
     const principal = useSelector((currState) => currState.internet.principal);
-<<<<<<< Updated upstream
-   
-=======
+
     const isAuthenticated = useSelector(
         (currState) => currState.internet.isAuthenticated
     );
@@ -33,7 +31,6 @@ const Navbar = ({ setModalOpen }) => {
     const [showSwitchRole, setShowSwitchRole] = useState(false);
     // console.log("principal in header", connectedWalletPrincipal);
 
->>>>>>> Stashed changes
     const manageHandler = () => {
         !principal ? setModalOpen(true) : setModalOpen(false);
     };
