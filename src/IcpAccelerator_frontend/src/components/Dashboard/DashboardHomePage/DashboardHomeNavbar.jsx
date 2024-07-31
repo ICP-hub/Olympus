@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import bigLogo from "../../../../assets/Logo/bigLogo.png";
 import topLogo from "../../../../assets/Logo/topLogo.png";
-import { 
-  SearchOutlined, 
-  MailOutline, 
-  NotificationsNone, 
+import {
+  SearchOutlined,
+  MailOutline,
+  NotificationsNone,
   Menu as MenuIcon,
   Close as CloseIcon,
   Home as DashboardIcon,
@@ -16,8 +16,7 @@ import {
   Work as JobsIcon,
   Star as PerksIcon
 } from '@mui/icons-material';
-import { useDispatch } from 'react-redux';
-import { logoutStart } from '../../StateManagement/Redux/Reducers/InternetIdentityReducer';
+import { briefcaseSvgIcon, calenderSvgIcon, homeSvgIcon, locationHubSvgIcon, staroutlineSvgIcon, userCircleSvgIcon, userSvgIcon } from '../../Utils/Data/SvgData';
 
 function DashboardHomeNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -74,24 +73,7 @@ function DashboardHomeNavbar() {
           src={bigLogo}
           alt="User"
           className="h-[20px] w-[30px] rounded-full"
-          onClick={toggleDropdown}
-       />
-         {dropdownOpen && (
-        <div className="absolute right-[20px] top-[40px] mt-2  bg-white border rounded-md shadow-lg z-20">
-          <Link
-            to="/dashboard/profile"
-            className="block px-4 py-2 text-gray-800 hover:bg-gray-200"
-          >
-            Profile
-          </Link>
-          <button
-            onClick={() => { !isLoading && handleLogout() }}
-            className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-200"
-          >
-            Logout
-          </button>
-        </div>
-      )}
+        />
       </div>
 
       {/* Mobile Menu */}
@@ -117,50 +99,50 @@ function DashboardHomeNavbar() {
                 to="/dashboard"
                 className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
               >
-                <DashboardIcon className="mr-3" />
-                <span>Dashboard</span>
+                {homeSvgIcon}
+                <span className='ml-3'>Dashboard</span>
               </Link>
               <Link
                 to="/profile"
                 className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
               >
-                <ProfileIcon className="mr-3" />
-                <span>Profile</span>
+                {userCircleSvgIcon}
+                <span className='ml-3'>Profile</span>
               </Link>
               <Link
                 to="/users"
                 className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
               >
-                <UsersIcon className="mr-3" />
-                <span>Users</span>
+                {userSvgIcon}
+                <span className='ml-3'>Users</span>
               </Link>
               <Link
                 to="/events"
                 className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
               >
-                <EventsIcon className="mr-3" />
-                <span>Events</span>
+                {calenderSvgIcon}
+                <span className='ml-3'>Events</span>
               </Link>
               <Link
                 to="/regional-hubs"
                 className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
               >
-                <RegionalHubsIcon className="mr-3" />
-                <span>Regional Hubs</span>
+                {locationHubSvgIcon}
+                <span className='ml-3'>Regional Hubs</span>
               </Link>
               <Link
                 to="/jobs"
                 className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
               >
-                <JobsIcon className="mr-3" />
-                <span>Jobs</span>
+                {briefcaseSvgIcon}
+                <span className='ml-3'>Jobs</span>
               </Link>
               <Link
                 to="/perks"
                 className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
               >
-                <PerksIcon className="mr-3" />
-                <span>Perks</span>
+                {staroutlineSvgIcon}
+                <span className='ml-3'>Perks</span>
               </Link>
             </nav>
           </div>

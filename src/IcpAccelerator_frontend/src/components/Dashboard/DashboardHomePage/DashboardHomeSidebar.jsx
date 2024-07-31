@@ -11,6 +11,7 @@ import {
   Star as PerksIcon,
   Close as CloseIcon
 } from '@mui/icons-material';
+import { briefcaseSvgIcon, calenderSvgIcon, homeSvgIcon, locationHubSvgIcon, star, staroutlineSvgIcon, userCircleSvgIcon, userSvgIcon } from '../../Utils/Data/SvgData';
 
 
 function DashboardSidebar({ isOpen, onClose }) {
@@ -38,8 +39,8 @@ function DashboardSidebar({ isOpen, onClose }) {
         <nav className="flex-1 py-6">
           <div className="px-4 mb-6">
             <Link to="/dashboard" className="flex items-center px-4 py-2 bg-[#e4e3e2b1] rounded-lg">
-              <DashboardIcon className="mr-3" />
-              <span>Dashboard</span>
+              {homeSvgIcon}
+              <span className='ml-3'>Dashboard</span>
             </Link>
           </div>
 
@@ -48,8 +49,8 @@ function DashboardSidebar({ isOpen, onClose }) {
             <ul>
               <li>
                 <Link to="/dashboard/profile" className="flex items-center px-6 py-2 text-gray-700 hover:bg-[#e4e3e2b1]">
-                  <ProfileIcon className="mr-3" />
-                  <span>Profile</span>
+                  {userCircleSvgIcon}
+                  <span className='ml-3'>Profile</span>
                 </Link>
               </li>
             </ul>
@@ -60,32 +61,32 @@ function DashboardSidebar({ isOpen, onClose }) {
             <ul>
               <li>
                 <Link to="/dashboard/user" className="flex items-center px-6 py-2 text-gray-700 hover:bg-[#e4e3e2b1]">
-                  <UsersIcon className="mr-3" />
-                  <span>Users</span>
+                  {userSvgIcon}
+                  <span className='ml-3'>Users</span>
                 </Link>
               </li>
               <li>
                 <Link to="/dashboard/event" className="flex items-center px-6 py-2 text-gray-700 hover:bg-[#e4e3e2b1]">
-                  <EventsIcon className="mr-3" />
-                  <span>Events</span>
+                  {calenderSvgIcon}
+                  <span className='ml-3'>Events</span>
                 </Link>
               </li>
               <li>
                 <Link to="/regional-hubs" className="flex items-center px-6 py-2 text-gray-700 hover:bg-[#e4e3e2b1]">
-                  <RegionalHubsIcon className="mr-3" />
-                  <span>Regional Hubs</span>
+                  {locationHubSvgIcon}
+                  <span className='ml-3'>Regional Hubs</span>
                 </Link>
               </li>
               <li>
                 <Link to="/dashboard/jobs" className="flex items-center px-6 py-2 text-gray-700 hover:bg-[#e4e3e2b1]">
-                  <JobsIcon className="mr-3" />
-                  <span>Jobs</span>
+                  {briefcaseSvgIcon}
+                  <span className='ml-3'>Jobs</span>
                 </Link>
               </li>
               <li>
-                <Link to="/dashboard/project" className="flex items-center px-6 py-2 text-gray-700 hover:bg-[#e4e3e2b1]">
-                  <PerksIcon className="mr-3" />
-                  <span>Perks</span>
+                <Link to="/perks" className="flex items-center px-6 py-2 text-gray-700 hover:bg-[#e4e3e2b1]">
+                  {staroutlineSvgIcon}
+                  <span className='ml-3'>Perks</span>
                 </Link>
               </li>
             </ul>

@@ -5,6 +5,7 @@ import PeopleOutlineOutlinedIcon from '@mui/icons-material/PeopleOutlineOutlined
 import RocketLaunchOutlinedIcon from '@mui/icons-material/RocketLaunchOutlined';
 import WorkspacePremiumOutlinedIcon from '@mui/icons-material/WorkspacePremiumOutlined';
 import TrendingUpOutlinedIcon from '@mui/icons-material/TrendingUpOutlined';
+import { briefcaseSvgIcon, userSvgIcon } from '../Utils/Data/SvgData';
 
 
 const DiscoverMenu = ({ setDiscoverMenu, discoverMenu }) => {
@@ -32,7 +33,7 @@ const DiscoverMenu = ({ setDiscoverMenu, discoverMenu }) => {
                     </div>
                 </div>
                 <div className='flex gap-3 p-2 hover:bg-slate-100  rounded-md '>
-                    <WorkOutlineOutlinedIcon sx={{ color: "gray" }} />
+                    <p className='text-lg'>{briefcaseSvgIcon}</p>
                     <div className=''>
                         <h3 className='font-bold'>Investors</h3>
                         <p className='text-sm'>Lorem, ipsum dolor consectetur adipisicing elit</p>
@@ -46,7 +47,7 @@ const DiscoverMenu = ({ setDiscoverMenu, discoverMenu }) => {
                     </div>
                 </div>
                 <div className='flex gap-3 p-2 hover:bg-slate-100  rounded-md '>
-                    <PeopleOutlineOutlinedIcon sx={{ color: "gray" }} />
+                    <p className='text-xl'>{userSvgIcon}</p>
                     <div className=''>
                         <h3 className='font-bold'>Talent</h3>
                         <p className='text-sm'>Lorem, ipsum dolor consectetur adipisicing elit.</p>

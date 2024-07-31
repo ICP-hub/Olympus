@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import CloseIcon from '@mui/icons-material/Close';
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
+import awtar from "../../../assets/images/icons/_Avatar.png"
 
 
 const JobDetails = ({ setOpen }) => {
@@ -8,13 +9,13 @@ const JobDetails = ({ setOpen }) => {
     return (
         <div className='w-full bg-fixed h-screen fixed inset-0 bg-black bg-opacity-30 backdrop-blur-xs z-50'>
             <div className=' mx-auto w-[83%] absolute right-0 top-0 z-10 bg-white h-screen'>
-                <div className=' p-5 mb-5'><CloseIcon onClick={() => setOpen(false)} /></div>
+                <div className=' p-5 mb-5'><CloseIcon sx={{ cursor: "pointer" }} onClick={() => setOpen(false)} /></div>
                 <div className='container'>
                     <div className='flex justify-evenly px-[1%] '>
                         <div className="border h-fit rounded-lg w-[30%] ">
                             <div className='py-6 px-5 border rounded-t-lg bg-[#EEF2F6]'>
-                                <div className='flex gap-2 '>
-                                    <span className=''>icon</span>
+                                <div className='flex gap-2 items-center'>
+                                    <span className=''><img src={awtar} alt='icon' /></span>
                                     <p className=''>Cypherpunk Labs</p>
                                 </div>
                                 <div className="">
@@ -28,24 +29,24 @@ const JobDetails = ({ setOpen }) => {
                             </div>
                             <div className="p-3 ">
                                 <div className='p-2'>
-                                    <h3 className='text-gray-400 mb-2'>DATE</h3>
-                                    <h4 className=''>22 july,2024</h4>
+                                    <h3 className='text-gray-400 mb-2 text-sm'>DATE</h3>
+                                    <h4 className='text-sm font-medium'>22 july,2024</h4>
                                 </div>
                                 <div className='p-2'>
-                                    <h3 className='text-gray-400 mb-2'>DEPARTMENT</h3>
-                                    <h4 className=''>Porducts</h4>
+                                    <h3 className='text-gray-400 mb-2 text-sm'>DEPARTMENT</h3>
+                                    <h4 className='text-sm font-medium'>Porducts</h4>
                                 </div>
                                 <div className='p-2'>
-                                    <h3 className='text-gray-400 mb-2'>LOCATION</h3>
-                                    <h4 className=''>Remote</h4>
+                                    <h3 className='text-gray-400 mb-2 text-sm'>LOCATION</h3>
+                                    <h4 className='text-sm font-medium'>Remote</h4>
                                 </div>
                                 <div className='p-2'>
-                                    <h3 className='text-gray-400 mb-2'>OCCUPATION</h3>
-                                    <h4 className=''>Full-time</h4>
+                                    <h3 className='text-gray-400 mb-2 text-sm'>OCCUPATION</h3>
+                                    <h4 className='text-sm font-medium'>Full-time</h4>
                                 </div>
                                 <div className='p-2'>
-                                    <h3 className='text-gray-400 mb-2'>SALARY</h3>
-                                    <h4 className=''>$80k-100k</h4>
+                                    <h3 className='text-gray-400 mb-2 text-sm'>SALARY</h3>
+                                    <h4 className='text-sm font-medium'>$80k-100k</h4>
                                 </div>
                             </div>
                         </div>
