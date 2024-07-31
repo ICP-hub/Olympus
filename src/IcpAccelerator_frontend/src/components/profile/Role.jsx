@@ -35,11 +35,11 @@ const Role = () => {
                 </div>
 
             </div>
-            <div className='flex justify-center gap-4'>
+            <div className='flex justify-center  '>
                 <div className="">{animatedLeftSvgIcon} </div>
                 <div className="">{animatedRightSvgIcon} </div>
             </div>
-            <div className="flex justify-around items-center gap-[12%] ">
+            <div className="flex justify-around items-center">
                 <div className='border-2 rounded-lg text-center min-w-[220px] max-w-[350px] '>
                     <div className='p-3 flex justify-center mt-5 '>
                         <AvatarGroup max={4}>
