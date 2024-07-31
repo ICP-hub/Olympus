@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react';
 import createprojectabc from "../../../../assets/Logo/createprojectabc.png";
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import Dropdown from "../../../../assets/Logo/Dropdown.png";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import CheckIcon from '@mui/icons-material/Check';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import Select from 'react-select';
 
-const CreateProjectModal2 = ({ isOpen, onClose, onBack }) => {
+const ProjectRegister3 = ({ isOpen, onClose, onBack }) => {
 
     const [formData, setFormData] = useState({
         tagline: '',
@@ -109,7 +108,7 @@ const CreateProjectModal2 = ({ isOpen, onClose, onBack }) => {
                 <div className="flex justify-end mr-4">
                     <button className='text-2xl text-[#121926]' onClick={() => setModalOpen(false)}>&times;</button>
                 </div>
-                <h2 className="text-xs text-[#364152] mb-3">Step 2 of 4</h2>
+                <h2 className="text-xs text-[#364152] mb-3">Step 3 of 6</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-2">
                         <label className="block text-sm font-medium mb-2">Upload a Cover Photo<span className='text-[#155EEF]'>*</span></label>
@@ -231,7 +230,7 @@ const CreateProjectModal2 = ({ isOpen, onClose, onBack }) => {
                             type="submit"
                             className="bg-blue-500 text-white px-4 py-2 rounded-md"
                         >
-                            Complete <CheckIcon fontSize="medium" className="ml-2" />
+                            Continue <ArrowForwardIcon fontSize="medium" className="ml-2" />
                         </button>
                     </div>
                 </form>
@@ -240,5 +239,4 @@ const CreateProjectModal2 = ({ isOpen, onClose, onBack }) => {
     );
 };
 
-export default CreateProjectModal2;
-
+export default ProjectRegister3;
