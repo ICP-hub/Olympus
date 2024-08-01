@@ -19,7 +19,7 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
   useEffect(() => {
     if (isAuthenticated) {
       onClose();
-      navigate("register-user");
+      navigate("project-main");
     }
   }, [isAuthenticated]);
 

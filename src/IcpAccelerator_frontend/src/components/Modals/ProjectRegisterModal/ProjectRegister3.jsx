@@ -105,36 +105,7 @@ const ProjectRegister3 = ({ isOpen, onClose, onBack }) => {
     return (
         <>
 
-            <div className="mb-2">
-                <label className="block text-sm font-medium mb-2">Upload a Cover Photo<span className='text-[#155EEF]'>*</span></label>
-                <div className='flex gap-2'>
-                    <img src={createprojectabc} alt="projectimg" />
-                    <div className='flex gap-1 items-center justify-center'>
-                        <div className="flex gap-1">
-                            <label htmlFor="file-upload" className="block font-medium text-gray-700 border border-gray-500 px-1 cursor-pointer rounded">
-                                <ControlPointIcon fontSize="small" className="items-center -mt-1" /> Upload
-                            </label>
-                            <input
-                                id="file-upload"
-                                type="file"
-                                name="photo"
-                                className="mt-2 hidden"
-                                onChange={handleChange}
-                            />
-                            <label htmlFor="file-upload" className="block font-medium text-gray-700 border border-gray-500 px-1 cursor-pointer rounded">
-                                <AutoAwesomeIcon fontSize="small" className="mr-2" />Generate Image
-                            </label>
-                            <input
-                                id="file-upload"
-                                type="file"
-                                name="photo"
-                                className="mt-2 hidden"
-                                onChange={handleChange}
-                            />
-                        </div>
-                    </div>
-                </div>
-            </div>
+
             <div className="mb-2">
                 <label className="block text-sm font-medium mb-1">Are you also multi-chain<span className='text-[#155EEF]'>*</span></label>
                 <Select
