@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Aboutcard from "../Auth/Aboutcard";
+import Aboutcard from "../UserRegistration/Aboutcard";
 import Layer1 from "../../../assets/Logo/Layer1.png";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';

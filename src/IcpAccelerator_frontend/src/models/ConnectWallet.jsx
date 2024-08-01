@@ -19,7 +19,7 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
   useEffect(() => {
     if (isAuthenticated) {
       onClose();
-      navigate("sign-up-step1");
+      navigate("register-user");
     }
   }, [isAuthenticated]);
 
@@ -71,9 +71,9 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
                 <div className="p-4 md:p-5">
                   <ul className="cursor-pointer">
                     {walletModalSvg.map((wallet, index) => (
-                      <div key={index} onClick={() => loginHandler(wallet.id)}>
+                      <a key={index} onClick={() => loginHandler(wallet.id)} target="_self">
                         {wallet.content}
-                      </div>
+                      </a>
                     ))}
                   </ul>
                   <div></div>

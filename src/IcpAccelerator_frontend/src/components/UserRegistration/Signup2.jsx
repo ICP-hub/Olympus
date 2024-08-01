@@ -1,7 +1,7 @@
 
 import React from 'react';
 import Layer1 from "../../../assets/Logo/Layer1.png";
-import Aboutcard from "../Auth/Aboutcard";
+import Aboutcard from "../UserRegistration/Aboutcard";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
