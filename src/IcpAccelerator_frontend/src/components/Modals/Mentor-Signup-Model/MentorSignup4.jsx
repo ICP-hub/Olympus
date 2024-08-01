@@ -132,21 +132,6 @@ const MentorSignup4 = ({ isOpen, onClose, onBack }) => {
               classNamePrefix="select"
             />
           </div>
-          <div className="mb-2">
-            <label className="block mb-1">
-              Do you mentor multiple ecosystems *
-            </label>
-            <select
-              name="multipleEcosystems"
-              value={formData.multipleEcosystems}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded"
-              required
-            >
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>
-            </select>
-          </div>
           {formData.liveOnICP === "yes" && (
             <div className="mb-2">
               <label className="block mb-1">Hub Owner *</label>
@@ -164,6 +149,22 @@ const MentorSignup4 = ({ isOpen, onClose, onBack }) => {
               </select>
             </div>
           )}
+          {/* <div className="mb-2">
+            <label className="block mb-1">
+              Do you mentor multiple ecosystems *
+            </label>
+            <select
+              name="multipleEcosystems"
+              value={formData.multipleEcosystems}
+              onChange={handleChange}
+              className="w-full p-2 border border-gray-300 rounded"
+              required
+            >
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div> */}
+       
           <div className="mb-2">
             <label className="block mb-1">Website link</label>
             <input
