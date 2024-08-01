@@ -7,6 +7,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CheckIcon from "@mui/icons-material/Check";
 import Select from "react-select";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import MentorSignup1 from "./MentoSignup1";
 const MentorSignup2 = () => {
 
   return (
@@ -25,27 +26,50 @@ const MentorSignup2 = () => {
           </button>
         </div>
         <h2 className="text-xs text-[#364152] mb-3">Step 2 of 3</h2>
-        <form onSubmit={handleSubmit}>
-         
-
-          <div className="flex justify-between">
-            <button
-              type="button"
-              onClick={handleBack}
-              className="mr-2 bg-gray-200 text-gray-700 px-4 py-2 rounded-md"
-            >
-              <ArrowBackIcon fontSize="medium" className="ml-2" /> Back
-            </button>
-            <button
-              onClick={onClose}
-              type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded-md"
-            >
-              Continue
-              <ArrowForwardIcon fontSize="small" className="mr-2" />
-            </button>
-          </div>
-        </form>
+        <FormProvider {...methods}>
+              <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
+                {index === 0 && <MentorSignup1 />}
+                <div className="flex justify-between mt-4">
+                  <button
+                    type="button"
+                    className="py-2 px-4 text-gray-600 rounded hover:text-black"
+                    onClick={handleBack}
+                    disabled={index === 0}
+                  >
+                    Back
+                  </button>
+                  {index === 3 ? (
+                    <button
+                      type="submit"
+                      className="py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 border-2 border-[#B2CCFF]"
+                    >
+                      {isSubmitting ? (
+                        <ThreeDots
+                          visible={true}
+                          height="35"
+                          width="35"
+                          color="#FFFEFF"
+                          radius="9"
+                          ariaLabel="three-dots-loading"
+                          wrapperStyle={{}}
+                        />
+                      ) : (
+                        "Submit"
+                      )}
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 border-2 border-[#B2CCFF] flex items-center"
+                      onClick={handleNext}
+                    >
+                      Continue
+                      <ArrowForwardIcon fontSize="medium" className="ml-2" />
+                    </button>
+                  )}
+                </div>
+              </form>
+            </FormProvider>
       </div>
     </div>
   );

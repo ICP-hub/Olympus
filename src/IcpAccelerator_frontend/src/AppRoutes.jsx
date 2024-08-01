@@ -2,11 +2,9 @@ import React, { lazy, Suspense, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import Loader from "./component/Loader/Loader";
-import Breadcrumbs from "./component/Layout/Breadcrumbs/BreadCrumbs";
 import Home from "./components/Home/Home";
 import MainLayout from "./components/Layout/MainLayout";
 import { useAuth } from "./component/StateManagement/useContext/useAuth";
-import Terms from "./components/Home/Terms";
 import DashboardHomePage from "./components/Dashboard/DashboardHomePage/DashboardHomePage";
 
 
