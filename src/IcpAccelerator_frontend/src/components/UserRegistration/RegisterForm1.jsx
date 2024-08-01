@@ -73,12 +73,12 @@ const RegisterForm1 = () => {
             </div>
           </div>
           {suggestions.length > 0 && (
-        <ul>
-          {suggestions.map((suggestion, index) => (
-            <li key={index}>{suggestion}</li>
-          ))}
-        </ul>
-      )}
+            <ul>
+              {suggestions.map((suggestion, index) => (
+                <li key={index}>{suggestion}</li>
+              ))}
+            </ul>
+          )}
         </form>
       </div>
     </>

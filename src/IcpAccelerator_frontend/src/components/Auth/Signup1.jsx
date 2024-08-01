@@ -1,21 +1,18 @@
 import { setUncaughtExceptionCaptureCallback } from 'process';
 import React from 'react';
 import Layer1 from "../../../assets/Logo/Layer1.png";
-import Aboutcard from "../Auth/Aboutcard"
+// import Aboutcard from "../Auth/Aboutcard"
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 import { Link } from "react-router-dom"
 import AboutcardSkeleton from '../LatestSkeleton/AbourcardSkeleton';
-import MentorSignup1 from "../Modals/Mentor-Signup-Model/MentoSignup"
-import MentorSignup2 from '../Modals/Mentor-Signup-Model/MentorSignup2';
-import MentorSignup3 from '../Modals/Mentor-Signup-Model/MentorSignUp3';
-import MentorSignup4 from '../Modals/Mentor-Signup-Model/MentorSignup4';
+import ProjectRegister1 from '../Modals/ProjectRegisterModal/ProjectRegister1';
+
 const Signupmain = () => {
     return (
         <>
-        <MentorSignup3/>
-            {/* <div className="py-16 flex items-center justify-center bg-[#FFF4ED] rounded-xl">
+            <div className="py-16 flex items-center justify-center bg-[#FFF4ED] rounded-xl">
                 <div className="bg-white shadow-xl rounded-2xl flex w-full max-w-6xl">
                     <div className="w-1/2 p-8">
                         <div className="mb-6">
@@ -44,18 +41,21 @@ const Signupmain = () => {
                             </div>
 
                             <div className='flex justify-end'>
+                                {/* <button type="submit" className=" py-2 px-4  text-gray-600 rounded hover:text-black justify-end  "> <ArrowBackIcon fontSize="medium" className="mr-2" />Back</button> */}
                                 <Link to='/sign-up-step2'> <button type="submit" className=" py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 justify-end border-2 border-[#B2CCFF]">Continue <ArrowForwardIcon fontSize="medium" className="" /></button></Link>
                             </div>
 
                         </form>
                     </div>
+                    {/* <Aboutcard /> */}
                     <AboutcardSkeleton />
                 </div>
 
-            </div> */}
+            </div>
 
 
         </>
+        // <ProjectRegister1 />
 
 
     )
