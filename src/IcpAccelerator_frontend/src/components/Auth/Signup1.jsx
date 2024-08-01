@@ -1,4 +1,4 @@
-import { setUncaughtExceptionCaptureCallback } from 'process';
+
 import React from 'react';
 import Layer1 from "../../../assets/Logo/Layer1.png";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -6,10 +6,6 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 import { Link } from "react-router-dom"
 import AboutcardSkeleton from '../LatestSkeleton/AbourcardSkeleton';
-import MentorSignup1 from "../Modals/Mentor-Signup-Model/MentoSignup1"
-import MentorSignup2 from '../Modals/Mentor-Signup-Model/MentorSignup2';
-import MentorSignup3 from '../Modals/Mentor-Signup-Model/MentorSignUp3';
-import MentorSignup4 from '../Modals/Mentor-Signup-Model/MentorSignup4';
 const Signupmain = () => {
     return (
         <>
@@ -48,7 +44,6 @@ const Signupmain = () => {
 
                         </form>
                     </div>
-                    {/* <Aboutcard /> */}
                     <AboutcardSkeleton />
                 </div>
 
@@ -56,7 +51,6 @@ const Signupmain = () => {
 
 
         </>
-        // <ProjectRegister1 />
 
 
     )

@@ -105,7 +105,7 @@ const MentorSignup3 = ({ isOpen, onClose, onBack }) => {
    <>
        
           <div className="mb-2">
-            <label className="block mb-1">Country *</label>
+            <label className="block mb-1">Preferred ICP Hub you would like to be associated with *</label>
             <select
               name="country"
               value={formData.country}
@@ -173,23 +173,7 @@ const MentorSignup3 = ({ isOpen, onClose, onBack }) => {
               classNamePrefix="select"
             />
           </div>
-          <div className="flex justify-between">
-            <button
-              type="button"
-              onClick={handleBack}
-              className="mr-2 bg-gray-200 text-gray-700 px-4 py-2 rounded-md"
-            >
-              <ArrowBackIcon fontSize="medium" className="ml-2" /> Back
-            </button>
-            <button
-              onClick={onClose}
-              type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded-md"
-            >
-              Continue
-              <ArrowForwardIcon fontSize="small" className="mr-2" />
-            </button>
-          </div>
+         
         </>
   );
 };
