@@ -45,10 +45,10 @@ const AppRoutes = () => {
   );
   const authenticatedRoutes = [
     { path: "dashboard/*", element: <DashboardHomePage /> },
+
     { path: "sign-up-step1", element: <Signupmain /> },
     { path: "sign-up-step2", element: <Signupmain2 /> },
     { path: "sign-up-step3-complete-profile", element: <ProfileForm /> },
-    { path: "project-main", element: <ProjectRegisterMain /> },
   ];
   return (
     <>

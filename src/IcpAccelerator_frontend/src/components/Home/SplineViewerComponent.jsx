@@ -1,25 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Spline from '@splinetool/react-spline';
 
 function SplineViewerComponent() {
   const [loaded, setLoaded] = useState(false);
 
-  // Function to handle the scene load
   const onSceneLoad = () => {
     setLoaded(true);
   };
 
   return (
-    <div style={{ width: '100%', height: '400px', overflow: 'hidden' }}>
-      {!loaded && <div>Loading...</div>}
-      <Spline 
-        scene="https://prod.spline.design/JhrdO2mGId5b5RrS/scene.splinecode" 
+    <div className="w-full h-full absolute top-0 right-0 overflow-hidden">
+      {!loaded && (
+        <div className="absolute inset-0 flex items-center justify-center bg-[#FEF5EE]">
+          <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+        </div>
+      )}
+      <Spline
+        scene="https://prod.spline.design/JhrdO2mGId5b5RrS/scene.splinecode"
         onLoad={onSceneLoad}
-        style={{
-          visibility: loaded ? 'visible' : 'hidden',
-          width: '100%',
-          height: '100%'
-        }}
+        className={`w-full h-full ${loaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500 translate-x-[10%] translate-y-[-10%] scale-125`}
       />
     </div>
   );
