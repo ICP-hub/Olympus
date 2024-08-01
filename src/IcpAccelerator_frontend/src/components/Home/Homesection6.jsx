@@ -1,48 +1,46 @@
-// src/App.js
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import RemoveCircleOutlineOutlinedIcon from "@mui/icons-material/RemoveCircleOutlineOutlined";
+import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
 
-const AccordionItem = ({ title, content, isOpen, onClick }) => (
-  <div className="border-b border-gray-200">
-    <button
-      className="w-full flex justify-between items-center p-4 focus:outline-none"
-      onClick={onClick}
-    >
-      <span className="text-[#4B5565] text-base font-medium">{title}</span>
-      <div
-        className={`w-8 h-8 flex items-center justify-center rounded-full border border-gray-300 transition-transform duration-300 ${isOpen ? 'transform rotate-180' : ''}`}
+const AccordionItem = ({ title, content, isOpen, onClick }) => {
+  const contentRef = useRef(null);
+  const [height, setHeight] = useState(0);
+
+  useEffect(() => {
+    if (isOpen) {
+      setHeight(contentRef.current.scrollHeight);
+    } else {
+      setHeight(0);
+    }
+  }, [isOpen]);
+
+  return (
+    <div className="border-b border-gray-200">
+      <button
+        className="w-full flex justify-between items-center p-4 focus:outline-none"
+        onClick={onClick}
       >
-        <svg
-          className="w-4 h-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
+        <span className="text-[#4B5565] text-base font-medium">{title}</span>
+        <div className="transition-transform duration-300 ease-in-out">
           {isOpen ? (
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M18 12H6"
-            />
+            <RemoveCircleOutlineOutlinedIcon className="text-gray-500" />
           ) : (
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M12 6v12m6-6H6"
-            />
+            <AddCircleOutlineOutlinedIcon className="text-gray-500" />
           )}
-        </svg>
+        </div>
+      </button>
+      <div 
+        ref={contentRef}
+        style={{ height: `${height}px` }}
+        className="overflow-hidden transition-all duration-300 ease-in-out"
+      >
+        <p className="p-4 text-[#4B5565] text-xs font-normal">
+          {content}
+        </p>
       </div>
-    </button>
-    {isOpen && (
-      <p className="p-4 text-[#4B5565] text-xs font-normal">
-        {content}
-      </p>
-    )}
-  </div>
-);
+    </div>
+  );
+};
 
 function HomeSection6() {
   const [openIndex, setOpenIndex] = useState(null);
@@ -57,19 +55,23 @@ function HomeSection6() {
       content: 'Kadena binance harmony helium aave revain hive dai nexo. Bitcoin fantom horizen cosmos golem gala harmony USD. Amp golem terra hedera litecoin aave audius harmony cosmos monero.'
     },
     {
-      title: 'Eiusmod tempor',
+      title: 'Tether secret helium BitTorrent BitTorrent quant.',
       content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac dolor non ligula gravida.'
     },
     {
-      title: 'Incididunt ut labore',
+      title: 'ECash golem elrond THETA horizen.',
       content: 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
     },
     {
-      title: 'Ut enim ad minim',
+      title: 'Ox helium horizen fantom ren enjin EOS aave.',
       content: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo.'
     },
     {
-      title: 'Duis aute irure dolor',
+      title: 'Secret holo THETA kadena decentraland IOTA.',
+      content: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'
+    },
+    {
+      title: 'Digibyte compound PancakeSwap enjin PancakeSwap zcash bitcoin.',
       content: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'
     }
   ];
