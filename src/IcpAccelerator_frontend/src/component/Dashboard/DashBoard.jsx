@@ -14,7 +14,7 @@ import InvestorCard from "./InvestorCard";
 import MentorCard from "./MentorCard";
 import RegisterCard from "./RegisterCard";
 import investor from "../../../assets/images/investors.png";
-import mentor from "../../../assets/images/mentors.png";
+// import mentor from "../../../assets/images/mentors.png";
 import testimonial from "../../../assets/images/testimonial.png";
 import Testimonial from "./Testimonial";
 import ProjectDashboard from "./RoleDashboard/ProjectDashboard";

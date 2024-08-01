@@ -1,12 +1,17 @@
-import React from "react";
-import WorkSectionImage from "../../../../assets/Logo/WorkSectionImage.png";
+import React from 'react'
+import { useState } from "react";
 import ProfileImage from "../../../../assets/Logo/ProfileImage.png";
 import LandingPageDesign from "../../../../assets/Logo/LandingPageDesign.png";
 import CurrencyBitcoinIcon from "@mui/icons-material/CurrencyBitcoin";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
+import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
+import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
+import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
 import AddIcon from '@mui/icons-material/Add';
+import { Link } from "react-router-dom";
+import { Folder } from '@mui/icons-material';
 import {
   ArrowBack,
   ArrowForward,
@@ -20,17 +25,79 @@ import {
   Add,
   LocationOn,
 } from "@mui/icons-material";
-import { Link } from "react-router-dom";
 
-function WorksSection() {
+
+function AddNewWork() {
+
+    const FAQItem = ({ question, answer }) => {
+        const [isOpen, setIsOpen] = useState(false);
+    
+        return (
+          <div className="border-b border-gray-200">
+            <button
+              className="flex justify-between items-center w-full text-left py-4"
+              onClick={() => setIsOpen(!isOpen)}
+            >
+              <span className="text-lg font-semibold">{question}</span>
+              {isOpen ? (
+                <RemoveCircleOutlineOutlinedIcon className="text-gray-500" />
+              ) : (
+                <AddCircleOutlineOutlinedIcon className="text-gray-500" />
+              )}
+            </button>
+            {isOpen && (
+              <p className="mt-2 text-gray-600 pb-4">{answer}</p>
+            )}
+          </div>
+        );
+      };
+    
+      const FAQ = () => {
+        const faqData = [
+          {
+            question:
+              "Est quis ornare proin quisque lacinia ac tincidunt massa?",
+            answer:
+              "Est malesuada ac elit gravida vel aliquam nec. Arcu pelle ntesque convallis quam feugiat non viverra massa fringilla. Est malesuada ac elit gravida vel aliquam nec. Arcu pelle ntesque convallis quam feugiat non viverra massa fringilla.",
+          },
+          {
+            question: "Gravida quis pellentesque mauris in fringilla?",
+            answer:
+              "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+          },
+          {
+            question: "Lacus iaculis vitae pretium integer?",
+            answer:
+              "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+          },
+        ];
+
+        return (
+          <div>
+            <h2 className="text-2xl font-semibold mb-4">FAQ</h2>
+            <div className="border-t border-gray-200">
+              {faqData.map((item, index) => (
+                <FAQItem
+                  key={index}
+                  question={item.question}
+                  answer={item.answer}
+                />
+              ))}
+            </div>
+          </div>
+        );
+      };
+
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm">
       {/* Top navigation */}
       <div className="flex justify-between items-center mb-6">
-        <button className="flex items-center text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
-          <ArrowBack className="mr-2" fontSize="small" />
-          Back to profile
-        </button>
+        <Link to="/project">
+          <button className="flex items-center text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
+            <ArrowBack className="mr-2" fontSize="small" />
+            Back to profile
+          </button>
+        </Link>
         <div className="flex items-center">
           <button className="mr-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
             View public profile
@@ -184,66 +251,61 @@ function WorksSection() {
 
         {/*---------------------Service Section------------------------------- */}
         <div className="md:w-2/3">
-          <div className="flex flex-col mb-6">
-            <div className="flex justify-between items-center">
-              <div className="flex space-x-4">
-                <button className="text-gray-500 py-2">Roles</button>
-                <button className="text-gray-500 py-2">
-                  Services
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#155EEF]"></div>
-                </button>
-
-                <button className="text-[#155EEF] flex py-2 items-center relative">
-                  Works
-                  <span className="ml-1 bg-[#EFF4FF] border-[#B2CCFF] border text-[#004EEB] text-xs rounded-full w-6 h-4 flex items-center justify-center">
-                    1
-                  </span>
-                </button>
-                <button className="text-gray-500 py-2">Rating</button>
+          <div className="flex justify-between items-center mb-6">
+            <div className="flex flex-col mb-6">
+              <div className="flex justify-between items-center">
+                <div className="flex space-x-4 relative pb-0.5">
+                  <button className="text-gray-500 py-2">Roles</button>
+                  <Link to="/dashboard/project">
+                    <button className="text-gray-500 py-2 flex items-center">
+                      Services
+                      <span className="ml-1 bg-[#EFF4FF] border-[#E3E8EF] border text-[#364152] text-xs rounded-full w-6 h-4 flex items-center justify-center">
+                        1
+                      </span>
+                    </button>
+                  </Link>
+                  <Link to="/dashboard/single-add-new-work">
+                    <button className="text-[#155EEF] py-2 relative">
+                      Works
+                      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#155EEF]"></div>
+                    </button>
+                  </Link>
+                  <button className="text-gray-500 py-2">Rating</button>
+                </div>
               </div>
-            </div>
-            <hr className="w-full border-t border-gray-200 mt-0" />
-            <div className="flex justify-end mt-4">
-              <button className="bg-[#155EEF] text-white px-4 py-2 rounded-md flex items-center space-x-2 text-sm font-medium hover:bg-[#1356D9] transition-colors duration-300">
-                <AddIcon className="w-5 h-5" />
-                <span>Add new work</span>
-              </button>
+              <hr className="w-full border-t border-gray-200 mt-0" />
             </div>
           </div>
 
-          {/* Landing page design for Startup Business Card */}
-          <Link to="/dashboard/work-section-detail-page">
-          <div className="bg-white rounded-lg shadow-md overflow-hidden max-w-md">
-            <div className="p-4 bg-[#0D4C92]">
-              <img
-                src={WorkSectionImage}
-                alt="Landing page design for Startup Business"
-                className="w-full h-auto rounded"
-              />
-            </div>
-            <div className="p-4">
-              <h2 className="text-xl font-bold mb-2">
-                Landing page design for Startup Business
+          {/* Add new work card */}
+          <div className="p-6">
+            {/* Content */}
+            <div className="text-center py-12">
+              <Folder className="w-24 h-24 text-gray-300 text-6xl mb-4 mx-auto" />
+              <h2 className="text-xl font-semibold mb-2">
+                You haven't posted any jobs yet
               </h2>
-              <p className="text-gray-600 text-sm mb-4">
-                Est malesuada ac elit gravida vel aliquam nec. Arcu pelle
-                ntesque convallis quam feugiat non viverra massa fringilla.
+              <p className="text-gray-600 mb-2">
+                Any assets used in projects will live here.
               </p>
-              <div className="flex space-x-2">
-                <span className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-xs">
-                  Web design
-                </span>
-                <span className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-xs">
-                  UX/UI
-                </span>
-              </div>
+              <p className="text-gray-600 mb-6">
+                Start creating by uploading your files.
+              </p>
+              <Link to="/dashboard/work-section">
+              <button className="bg-[#155EEF] text-white px-4 py-2 rounded-md flex items-center justify-center mx-auto">
+                <Add className="mr-2" />
+                Add a new work
+              </button>
+              </Link>
             </div>
+
+            {/* FAQ Section */}
+            <FAQ />
           </div>
-          </Link>
         </div>
       </div>
     </div>
   );
 }
 
-export default WorksSection;
+export default AddNewWork;
