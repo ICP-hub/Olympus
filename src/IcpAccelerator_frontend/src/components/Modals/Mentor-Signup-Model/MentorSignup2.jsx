@@ -1,188 +1,266 @@
-import React, { useState, useEffect } from "react";
-import createprojectabc from "../../../../assets/Logo/createprojectabc.png";
-import ControlPointIcon from "@mui/icons-material/ControlPoint";
-import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import Dropdown from "../../../../assets/Logo/Dropdown.png";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import CheckIcon from "@mui/icons-material/Check";
-import Select from "react-select";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-const MentorSignup2 = ({ isOpen, onClose, onBack }) => {
-  const [formData, setFormData] = useState({
-    tagline: "",
-    about: "",
-    category: "Infrastructure",
-    stage: "MVP",
-    links: [""],
-    multiChain: "no",
-    chains: [],
-    liveOnICP: "no",
-    dAppLink: "",
-    weeklyActiveUsers: "",
-    revenue: "",
-  });
+import React from "react";
+import ReactSelect from "react-select";
+import toast, { Toaster } from "react-hot-toast";
+import { useFormContext } from 'react-hook-form';
+import { useCountries } from "react-countries";
 
-  const [modalOpen, setModalOpen] = useState(isOpen || true);
-  const selectStyles = {
-    control: (provided) => ({
-      ...provided,
-      borderColor: "#CDD5DF",
-      borderRadius: "0.375rem",
-    }),
-    controlIsFocused: (provided) => ({
-      ...provided,
-      borderColor: "black",
-      boxShadow: "none",
-    }),
-    multiValue: (provided) => ({
-      ...provided,
-      borderColor: "#CDD5DF",
-    }),
-    multiValueLabel: (provided) => ({
-      ...provided,
-      color: "#1f2937",
-    }),
-  };
-
-  useEffect(() => {
-    if (modalOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-
-    return () => {
-      document.body.style.overflow = "auto";
-    };
-  }, [modalOpen]);
-
-  const yesNoOptions = [
-    { value: "yes", label: "Yes" },
-    { value: "no", label: "No" },
-  ];
-
-  const chainOptions = [
-    { value: "Ethereum", label: "Ethereum" },
-    { value: "Binance Smart Chain", label: "Binance Smart Chain" },
-    { value: "Polygon", label: "Polygon" },
-    { value: "Avalanche", label: "Avalanche" },
-    // Add more options as needed
-  ];
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
-  const handleSelectChange = (selectedOption, name) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: selectedOption.value,
-    }));
-  };
-
-  const handleMultiSelectChange = (selectedOptions, name) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: selectedOptions.map((option) => option.value),
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Form Data:", formData);
-    onClose();
-  };
-
-  const handleBack = () => {
-    onBack();
-    setModalOpen(false);
-  };
+const MentorSignup2 = ({
+  interestedDomainsOptions,
+  interestedDomainsSelectedOptions,
+  setInterestedDomainsSelectedOptions,
+  clearErrors,
+  setValue,
+  setError,
+  typeOfProfileOptions,
+  reasonOfJoiningOptions,
+  reasonOfJoiningSelectedOptions,
+  setReasonOfJoiningSelectedOptions
+}) => {
+  const { register, formState: { errors }, watch } = useFormContext();
+  const { countries } = useCountries();
 
   return (
-<>
-      
-          <div className="mb-2">
-            <label className="block mb-1">Bio (50 words)</label>
-            <textarea
-              name="bio"
-              value={formData.bio}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded"
-            ></textarea>
-          </div>
+    <>
+      <div className="mb-2">
+        <label className="block mb-1">Bio (50 words)</label>
+        <textarea
+          {...register("bio")}
+          className={`bg-gray-50 border-2 ${
+            errors?.bio ? "border-red-500" : "border-[#737373]"
+          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+          placeholder="Enter your bio"
+          rows={3}
+        ></textarea>
+        {errors?.bio && (
+          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+            {errors?.bio?.message}
+          </span>
+        )}
+      </div>
 
-          <div className="mb-2">
-            <label className="block mb-1">Country *</label>
-            <select
-              name="country"
-              value={formData.country}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded"
-              required
+      <div className="mb-2">
+        <label className="block mb-1">Country *</label>
+        <select
+          {...register("country")}
+          className={`bg-gray-50 border-2 ${
+            errors.country ? "border-red-500" : "border-[#737373]"
+          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+        >
+          <option className="text-lg font-bold" value="">
+            Select your country
+          </option>
+          {countries?.map((country) => (
+            <option
+              key={country.name}
+              value={country.name}
+              className="text-lg font-bold"
             >
-              <option value="">Select a country</option>
-              <option value="Aruba">Aruba</option>
-              <option value="United States">United States</option>
-              <option value="India">India</option>
-            </select>
-          </div>
-          <div className="mb-2">
-            <label className="block mb-1">
-              Domains you are interested in *
-            </label>
-            <Select
-              options={chainOptions}
-              isMulti
-              value={chainOptions.filter((option) =>
-                formData.chains.includes(option.value)
-              )}
-              onChange={(selectedOptions) =>
-                handleMultiSelectChange(selectedOptions, "chains")
-              }
-              styles={selectStyles}
-              className="basic-multi-select"
-              classNamePrefix="select"
-            />
-          </div>
-          <div className="mb-2">
-            <label className="block mb-1">Type of profile *</label>
-            <select
-              name="profileType"
-              value={formData.profileType}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded"
-              required
-            >
-              <option value="Individual">Individual</option>
-              <option value="Individual">Dao</option>
-              <option value="Individual">Company</option>
-            </select>
-          </div>
-          <div className="mb-2">
-            <label className="block mb-1">
-              Why do you want to join this platform? *
-            </label>
-            <Select
-              options={chainOptions}
-              isMulti
-              value={chainOptions.filter((option) =>
-                formData.chains.includes(option.value)
-              )}
-              onChange={(selectedOptions) =>
-                handleMultiSelectChange(selectedOptions, "chains")
-              }
-              styles={selectStyles}
-              className="basic-multi-select"
-              classNamePrefix="select"
-            />
-          </div>
+              {country.name}
+            </option>
+          ))}
+        </select>
+        {errors?.country && (
+          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+            {errors?.country?.message}
+          </span>
+        )}
+      </div>
 
-         
-        </>
+      <div className="mb-2">
+        <label className="block mb-1">
+          Domains you are interested in *
+        </label>
+        <ReactSelect
+          isMulti
+          menuPortalTarget={document.body}
+          menuPosition={"fixed"}
+          styles={{
+            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+            control: (provided) => ({
+              ...provided,
+              borderRadius: "8px",
+              border: errors.domains_interested_in
+                ? "2px solid #ef4444"
+                : "2px solid #737373",
+              backgroundColor: "rgb(249 250 251)",
+              "&::placeholder": {
+                color: errors.domains_interested_in
+                  ? "#ef4444"
+                  : "currentColor",
+              },
+            }),
+            valueContainer: (provided) => ({
+              ...provided,
+              overflow: "scroll",
+              maxHeight: "40px",
+            }),
+            placeholder: (provided) => ({
+              ...provided,
+              color: errors.domains_interested_in
+                ? "#ef4444"
+                : "rgb(107 114 128)",
+            }),
+            multiValue: (provided) => ({
+              ...provided,
+              display: "inline-flex",
+              alignItems: "center",
+            }),
+            multiValueRemove: (provided) => ({
+              ...provided,
+              display: "inline-flex",
+              alignItems: "center",
+            }),
+          }}
+          value={interestedDomainsSelectedOptions}
+          options={interestedDomainsOptions}
+          classNamePrefix="select"
+          className="basic-multi-select w-full text-start"
+          placeholder="Select domains you are interested in"
+          name="domains_interested_in"
+          onChange={(selectedOptions) => {
+            if (selectedOptions && selectedOptions.length > 0) {
+              setInterestedDomainsSelectedOptions(selectedOptions);
+              clearErrors("domains_interested_in");
+              setValue(
+                "domains_interested_in",
+                selectedOptions
+                  .map((option) => option.value)
+                  .join(", "),
+                { shouldValidate: true }
+              );
+            } else {
+              setInterestedDomainsSelectedOptions([]);
+              setValue("domains_interested_in", "", {
+                shouldValidate: true,
+              });
+              setError("domains_interested_in", {
+                type: "required",
+                message: "Selecting an interest is required",
+              });
+            }
+          }}
+        />
+        {errors.domains_interested_in && (
+          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+            {errors.domains_interested_in.message}
+          </span>
+        )}
+      </div>
+
+      <div className="mb-2">
+        <label className="block mb-1">Type of profile *</label>
+        <select
+          {...register("type_of_profile")}
+          className={`bg-gray-50 border-2 ${
+            errors.type_of_profile
+              ? "border-red-500"
+              : "border-[#737373]"
+          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+        >
+          <option className="text-lg font-bold" value="">
+            Select profile type
+          </option>
+          {typeOfProfileOptions &&
+            typeOfProfileOptions.map((option, index) => (
+              <option
+                className="text-lg font-bold"
+                key={index}
+                value={option.value}
+              >
+                {option.label}
+              </option>
+            ))}
+        </select>
+        {errors.type_of_profile && (
+          <p className="mt-1 text-sm text-red-500 font-bold text-left">
+            {errors.type_of_profile.message}
+          </p>
+        )}
+      </div>
+
+      <div className="mb-2">
+        <label className="block mb-1">
+          Why do you want to join this platform? *
+        </label>
+        <ReactSelect
+          isMulti
+          menuPortalTarget={document.body}
+          menuPosition={"fixed"}
+          styles={{
+            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+            control: (provided) => ({
+              ...provided,
+              borderRadius: "8px",
+              border: errors.reasons_to_join_platform
+                ? "2px solid #ef4444"
+                : "2px solid #737373",
+              backgroundColor: "rgb(249 250 251)",
+              "&::placeholder": {
+                color: errors.reasons_to_join_platform
+                  ? "#ef4444"
+                  : "currentColor",
+              },
+            }),
+            valueContainer: (provided) => ({
+              ...provided,
+              overflow: "scroll",
+              maxHeight: "40px",
+            }),
+            placeholder: (provided) => ({
+              ...provided,
+              color: errors.reasons_to_join_platform
+                ? "#ef4444"
+                : "rgb(107 114 128)",
+            }),
+            multiValue: (provided) => ({
+              ...provided,
+              display: "inline-flex",
+              alignItems: "center",
+            }),
+            multiValueRemove: (provided) => ({
+              ...provided,
+              display: "inline-flex",
+              alignItems: "center",
+            }),
+          }}
+          value={reasonOfJoiningSelectedOptions}
+          options={reasonOfJoiningOptions}
+          classNamePrefix="select"
+          className="basic-multi-select w-full text-start"
+          placeholder="Select your reasons to join this platform"
+          name="reasons_to_join_platform"
+          onChange={(selectedOptions) => {
+            if (selectedOptions && selectedOptions.length > 0) {
+              setReasonOfJoiningSelectedOptions(selectedOptions);
+              clearErrors("reasons_to_join_platform");
+              setValue(
+                "reasons_to_join_platform",
+                selectedOptions
+                  .map((option) => option.value)
+                  .join(", "),
+                { shouldValidate: true }
+              );
+            } else {
+              setReasonOfJoiningSelectedOptions([]);
+              setValue("reasons_to_join_platform", "", {
+                shouldValidate: true,
+              });
+              setError("reasons_to_join_platform", {
+                type: "required",
+                message: "Selecting a reason is required",
+              });
+            }
+          }}
+        />
+        {errors.reasons_to_join_platform && (
+          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+            {errors.reasons_to_join_platform.message}
+          </span>
+        )}
+      </div>
+
+      <Toaster />
+    </>
   );
 };
 
