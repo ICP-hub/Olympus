@@ -5,44 +5,20 @@ import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import Select from 'react-select';
+import { useForm } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 
-const ProjectRegister1 = ({ isOpen, onClose, onBack }) => {
+const ProjectRegister1 = ({ isOpen, onClose, onBack, }) => {
     const [formData, setFormData] = useState({
         icpHub: '',
         projectName: '',
         projectDescription: '',
         pitchDeck: ''
     });
-    const [modalOpen, setModalOpen] = useState(isOpen || true);
+    const { register, formState: { errors }, setValue, getValues, getAllIcpHubs, trigger } = useFormContext();
 
-    const selectStyles = {
-        control: (provided) => ({
-            ...provided,
-            borderColor: '#CDD5DF',
-            borderRadius: '0.375rem',
-        }),
-        controlIsFocused: (provided) => ({
-            ...provided,
-            borderColor: 'black',
-            boxShadow: 'none',
-        }),
-    };
 
-    useEffect(() => {
-        if (modalOpen) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = 'auto';
-        }
-        return () => {
-            document.body.style.overflow = 'auto';
-        };
-    }, [modalOpen]);
 
-    const icpHubOptions = [
-        { value: 'hub1', label: 'ICP Hub 1' },
-        { value: 'hub2', label: 'ICP Hub 2' },
-    ];
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -50,17 +26,6 @@ const ProjectRegister1 = ({ isOpen, onClose, onBack }) => {
             ...prevData,
             [name]: value,
         }));
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log('Form Data:', formData);
-        onClose();
-    };
-
-    const handleBack = () => {
-        onBack();
-        setModalOpen(false);
     };
 
     return (
@@ -100,49 +65,90 @@ const ProjectRegister1 = ({ isOpen, onClose, onBack }) => {
             </div>
             <div className="mb-2 relative">
                 <label className="block text-sm font-medium mb-1">Preferred ICP Hub you would like to be associated with<span className='text-[#155EEF]'>*</span></label>
-                <Select
-                    options={icpHubOptions}
-                    styles={selectStyles}
-                    className="basic-select"
-                    classNamePrefix="select"
-                    placeholder="Select your ICP Hub"
-                    onChange={(selectedOption) => setFormData(prevData => ({ ...prevData, icpHub: selectedOption.value }))}
-                    required
-                />
+                <select
+                    {...register("preferred_icp_hub")}
+                    defaultValue={getValues("preferred_icp_hub")}
+                    className={`bg-gray-50 border-2 ${errors.preferred_icp_hub
+                        ? "border-red-500 "
+                        : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                >
+                    <option className="text-lg font-bold" value="">
+                        Select your ICP Hub
+                    </option>
+                    {getAllIcpHubs?.map((hub) => (
+                        <option
+                            key={hub.id}
+                            value={`${hub.name} ,${hub.region}`}
+                            className="text-lg font-bold"
+                        >
+                            {hub.name}, {hub.region}
+                        </option>
+                    ))}
+                </select>
+                {errors.preferred_icp_hub && (
+                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                        {errors.preferred_icp_hub.message}
+                    </p>
+                )}
+
             </div>
             <div className="mb-2">
                 <label className="block text-sm font-medium mb-1">Project Name<span className='text-[#155EEF]'>*</span></label>
+
                 <input
                     type="text"
-                    name="projectName"
-                    value={formData.projectName}
-                    onChange={handleChange}
-                    className="block w-full border border-gray-300 rounded-md p-2"
+                    {...register("project_name")}
+                    className={`bg-gray-50 border-2 
+                                             ${errors?.project_name
+                            ? "border-red-500 "
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     placeholder="Enter your Project name"
-                    required
                 />
+                {errors?.project_name && (
+                    <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                        {errors?.project_name?.message}
+                    </span>
+                )}
             </div>
             <div className="mb-2">
                 <label className="block text-sm font-medium mb-1">Project Description (50 words)</label>
-                <textarea
-                    name="projectDescription"
-                    value={formData.projectDescription}
-                    onChange={handleChange}
-                    maxLength={50}
-                    className="block w-full border border-gray-300 rounded-md p-2"
+
+                <input
+                    type="text"
+                    {...register("project_description")}
+                    className={`bg-gray-50 border-2 
+                                             ${errors?.project_description
+                            ? "border-red-500 "
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     placeholder="Max 50 words"
                 />
+                {errors?.project_description && (
+                    <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                        {errors?.project_description?.message}
+                    </span>
+                )}
             </div>
             <div className="mb-2">
                 <label className="block text-sm font-medium mb-1">Project pitch deck</label>
+
                 <input
-                    type="url"
-                    name="pitchDeck"
-                    value={formData.pitchDeck}
-                    onChange={handleChange}
-                    className="block w-full border border-gray-300 rounded-md p-2"
+                    type="text"
+                    {...register("project_elevator_pitch")}
+                    className={`bg-gray-50 border-2 
+                                             ${errors?.project_elevator_pitch
+                            ? "border-red-500 "
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     placeholder="https://"
                 />
+                {errors?.project_elevator_pitch && (
+                    <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                        {errors?.project_elevator_pitch?.message}
+                    </span>
+                )}
             </div>
 
 

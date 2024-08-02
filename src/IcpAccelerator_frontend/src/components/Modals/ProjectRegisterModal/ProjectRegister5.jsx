@@ -15,30 +15,12 @@ const ProjectRegister5 = ({ isOpen, onClose, onBack }) => {
 
     });
 
-    const [modalOpen, setModalOpen] = useState(isOpen || true);
 
-
-    useEffect(() => {
-        if (modalOpen) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = 'auto';
-        }
-
-        return () => {
-            document.body.style.overflow = 'auto';
-        };
-    }, [modalOpen]);
+    const { register, formState: { errors }, setValue, trigger } = useFormContext();
 
 
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    };
+
 
 
     const handleSubmit = (e) => {
@@ -47,10 +29,6 @@ const ProjectRegister5 = ({ isOpen, onClose, onBack }) => {
         onClose();
     };
 
-    const handleBack = () => {
-        onBack();
-        setModalOpen(false);
-    };
 
     return (
         <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${modalOpen ? 'block' : 'hidden'}`}>
@@ -71,92 +49,96 @@ const ProjectRegister5 = ({ isOpen, onClose, onBack }) => {
                     <div className="mb-2">
                         <label className="block text-sm font-medium mb-1">Promotion video link</label>
                         <input
-                            type="url"
-                            name="promotionvideolink"
-                            value={formData.promotionvideolink}
-                            onChange={handleChange}
-                            className="block w-full border border-gray-300 rounded-md p-2"
-                            required
-                            placeholder='https://'
+                            type="text"
+                            {...register("promotional_video")}
+                            className={`bg-gray-50 border-2 
+                                             ${errors?.promotional_video
+                                    ? "border-red-500 "
+                                    : "border-[#737373]"
+                                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                            placeholder="https://"
                         />
+                        {errors?.promotional_video && (
+                            <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                {errors?.promotional_video?.message}
+                            </span>
+                        )}
                     </div>
                     <div className="mb-2">
                         <label className="block text-sm font-medium mb-1">Project Discord</label>
                         <input
-                            type="url"
-                            name="projectdiscord"
-                            value={formData.projectdiscord}
-                            onChange={handleChange}
-                            className="block w-full border border-gray-300 rounded-md p-2"
-                            required
-                            placeholder='https://'
+                            type="text"
+                            {...register("project_discord")}
+                            className={`bg-gray-50 border-2 
+                                             ${errors?.project_discord
+                                    ? "border-red-500 "
+                                    : "border-[#737373]"
+                                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                            placeholder="https://"
                         />
+                        {errors?.project_discord && (
+                            <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                {errors?.project_discord?.message}
+                            </span>
+                        )}
                     </div>
                     <div className="mb-2">
                         <label className="block text-sm font-medium mb-1">Project LinkedIn</label>
                         <input
-                            type="url"
-                            name="projectlinkedin"
-                            value={formData.projectlinkedin}
-                            onChange={handleChange}
-                            className="block w-full border border-gray-300 rounded-md p-2"
-                            required
-                            placeholder='https://'
+                            type="text"
+                            {...register("project_linkedin")}
+                            className={`bg-gray-50 border-2 
+                                             ${errors?.project_linkedin
+                                    ? "border-red-500 "
+                                    : "border-[#737373]"
+                                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                            placeholder="https://"
                         />
+                        {errors?.project_linkedin && (
+                            <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                {errors?.project_linkedin?.message}
+                            </span>
+                        )}
                     </div>
                     <div className="mb-2">
                         <label className="block text-sm font-medium mb-1">Project GitHub</label>
                         <input
-                            type="url"
-                            name="projectgithub"
-                            value={formData.projectgithub}
-                            onChange={handleChange}
-                            className="block w-full border border-gray-300 rounded-md p-2"
-                            required
-                            placeholder='https://'
+                            type="text"
+                            {...register("github_link")}
+                            className={`bg-gray-50 border-2 
+                                             ${errors?.github_link
+                                    ? "border-red-500 "
+                                    : "border-[#737373]"
+                                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                            placeholder="https://"
                         />
+                        {errors?.github_link && (
+                            <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                {errors?.github_link?.message}
+                            </span>
+                        )}
                     </div>
                     <div className="mb-2">
                         <label className="block text-sm font-medium mb-1">Tokenomics</label>
                         <input
-                            type="url"
-                            name="tokenomics"
-                            value={formData.tokenomics}
-                            onChange={handleChange}
-                            className="block w-full border border-gray-300 rounded-md p-2"
-                            required
-                            placeholder='https://'
+                            type="text"
+                            {...register("token_economics")}
+                            className={`bg-gray-50 border-2 
+                                             ${errors?.token_economics
+                                    ? "border-red-500 "
+                                    : "border-[#737373]"
+                                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                            placeholder="https://"
                         />
-                    </div>
-                    <div className="mb-2">
-                        <label className="block text-sm font-medium mb-1">Whitepaper</label>
-                        <input
-                            type="url"
-                            name="whitepaper"
-                            value={formData.whitepaper}
-                            onChange={handleChange}
-                            className="block w-full border border-gray-300 rounded-md p-2"
-                            required
-                            placeholder='https://'
-                        />
+                        {errors?.token_economics && (
+                            <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                {errors?.token_economics?.message}
+                            </span>
+                        )}
                     </div>
 
-                    <div className="flex justify-between">
-                        <button
-                            type="button"
-                            onClick={handleBack}
-                            className="mr-2 bg-gray-200 text-gray-700 px-4 py-2 rounded-md"
-                        >
-                            <ArrowBackIcon fontSize="medium" className="ml-2" /> Back
-                        </button>
-                        <button
-                            onClick={onClose}
-                            type="submit"
-                            className="bg-blue-500 text-white px-4 py-2 rounded-md"
-                        >
-                            Complete <CheckIcon fontSize="medium" className="ml-2" />
-                        </button>
-                    </div>
+
+
                 </form>
             </div>
         </div>

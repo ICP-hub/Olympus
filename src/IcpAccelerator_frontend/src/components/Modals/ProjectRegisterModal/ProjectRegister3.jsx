@@ -5,102 +5,20 @@ import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import Select from 'react-select';
+import { useFormContext } from 'react-hook-form';
 
 const ProjectRegister3 = ({ isOpen, onClose, onBack }) => {
 
-    const [formData, setFormData] = useState({
-        tagline: '',
-        about: '',
-        category: 'Infrastructure',
-        stage: 'MVP',
-        links: [''],
-        multiChain: 'no',
-        chains: [],
-        liveOnICP: 'no',
-        dAppLink: '',
-        weeklyActiveUsers: '',
-        revenue: ''
-    });
 
-    const [modalOpen, setModalOpen] = useState(isOpen || true);
-    const selectStyles = {
-        control: (provided) => ({
-            ...provided,
-            borderColor: '#CDD5DF',
-            borderRadius: '0.375rem',
-        }),
-        controlIsFocused: (provided) => ({
-            ...provided,
-            borderColor: 'black',
-            boxShadow: 'none',
-        }),
-        multiValue: (provided) => ({
-            ...provided,
-            borderColor: '#CDD5DF',
-        }),
-        multiValueLabel: (provided) => ({
-            ...provided,
-            color: '#1f2937',
-        }),
-    };
+    const { register, formState: { errors }, setValue, watch, trigger } = useFormContext();
 
-    useEffect(() => {
-        if (modalOpen) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = 'auto';
-        }
 
-        return () => {
-            document.body.style.overflow = 'auto';
-        };
-    }, [modalOpen]);
 
-    const yesNoOptions = [
-        { value: 'yes', label: 'Yes' },
-        { value: 'no', label: 'No' },
-    ];
 
-    const chainOptions = [
-        { value: 'Ethereum', label: 'Ethereum' },
-        { value: 'Binance Smart Chain', label: 'Binance Smart Chain' },
-        { value: 'Polygon', label: 'Polygon' },
-        { value: 'Avalanche', label: 'Avalanche' },
-        // Add more options as needed
-    ];
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    };
 
-    const handleSelectChange = (selectedOption, name) => {
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: selectedOption.value,
-        }));
-    };
 
-    const handleMultiSelectChange = (selectedOptions, name) => {
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: selectedOptions.map(option => option.value),
-        }));
-    };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log('Form Data:', formData);
-        onClose();
-    };
-
-    const handleBack = () => {
-        onBack();
-        setModalOpen(false);
-    };
 
     return (
         <>
@@ -108,81 +26,204 @@ const ProjectRegister3 = ({ isOpen, onClose, onBack }) => {
 
             <div className="mb-2">
                 <label className="block text-sm font-medium mb-1">Are you also multi-chain<span className='text-[#155EEF]'>*</span></label>
-                <Select
-                    options={yesNoOptions}
-                    value={yesNoOptions.find(option => option.value === formData.multiChain)}
-                    onChange={(option) => handleSelectChange(option, 'multiChain')}
-                    styles={selectStyles}
-                    className="basic-single"
-                    classNamePrefix="select"
-                    placeholder="Select"
-                />
+                <select
+                    {...register("multi_chain")}
+                    className={`bg-gray-50 border-2 ${errors.multi_chain ? "border-red-500" : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                >
+                    <option className="text-lg font-bold" value="false">
+                        No
+                    </option>
+                    <option className="text-lg font-bold" value="true">
+                        Yes
+                    </option>
+                </select>
+                {errors.multi_chain && (
+                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                        {errors.multi_chain.message}
+                    </p>
+                )}
             </div>
-            {formData.multiChain === 'yes' && (
+            {watch("multi_chain") === "true" ? (
                 <div className="mb-2">
                     <label className="block text-sm font-medium mb-1">Please select the chains<span className='text-[#155EEF]'>*</span></label>
                     <Select
-                        options={chainOptions}
                         isMulti
-                        value={chainOptions.filter(option => formData.chains.includes(option.value))}
-                        onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'chains')}
-                        styles={selectStyles}
-                        className="basic-multi-select"
+                        menuPortalTarget={document.body}
+                        menuPosition={"fixed"}
+                        styles={{
+                            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                            control: (provided, state) => ({
+                                ...provided,
+                                paddingBlock: "2px",
+                                borderRadius: "8px",
+                                border: errors.multi_chain_names
+                                    ? "2px solid #ef4444"
+                                    : "2px solid #737373",
+                                backgroundColor: "rgb(249 250 251)",
+                                "&::placeholder": {
+                                    color: errors.multi_chain_names
+                                        ? "#ef4444"
+                                        : "currentColor",
+                                },
+                                display: "flex",
+                                overflowX: "auto",
+                                maxHeight: "43px",
+                                "&::-webkit-scrollbar": {
+                                    display: "none",
+                                },
+                            }),
+                            valueContainer: (provided, state) => ({
+                                ...provided,
+                                overflow: "scroll",
+                                maxHeight: "40px",
+                                scrollbarWidth: "none",
+                            }),
+                            placeholder: (provided, state) => ({
+                                ...provided,
+                                color: errors.multi_chain_names
+                                    ? "#ef4444"
+                                    : "rgb(107 114 128)",
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                            }),
+                            multiValue: (provided) => ({
+                                ...provided,
+                                display: "inline-flex",
+                                alignItems: "center",
+                            }),
+                            multiValueRemove: (provided) => ({
+                                ...provided,
+                                display: "inline-flex",
+                                alignItems: "center",
+                            }),
+                        }}
+                        value={multiChainSelectedOptions}
+                        options={multiChainOptions}
                         classNamePrefix="select"
+                        className="basic-multi-select w-full text-start"
+                        placeholder="Select a chain"
+                        name="multi_chain_names"
+                        onChange={(selectedOptions) => {
+                            if (selectedOptions && selectedOptions.length > 0) {
+                                setMultiChainSelectedOptions(selectedOptions);
+                                clearErrors("multi_chain_names");
+                                setValue(
+                                    "multi_chain_names",
+                                    selectedOptions
+                                        .map((option) => option.value)
+                                        .join(", "),
+                                    { shouldValidate: true }
+                                );
+                            } else {
+                                setMultiChainSelectedOptions([]);
+                                setValue("multi_chain_names", "", {
+                                    shouldValidate: true,
+                                });
+                                setError("multi_chain_names", {
+                                    type: "required",
+                                    message: "Atleast one chain name required",
+                                });
+                            }
+                        }}
                     />
+                    {errors.multi_chain_names && (
+                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                            {errors.multi_chain_names.message}
+                        </p>
+                    )}
                 </div>
+            ) : (
+                <></>
             )}
             <div className="mb-2">
                 <label className="block text-sm font-medium mb-1">Live on ICP<span className='text-[#155EEF]'>*</span></label>
-                <Select
-                    options={yesNoOptions}
-                    value={yesNoOptions.find(option => option.value === formData.liveOnICP)}
-                    onChange={(option) => handleSelectChange(option, 'liveOnICP')}
-                    styles={selectStyles}
-                    className="basic-single"
-                    classNamePrefix="select"
-                />
+                <select
+                    {...register("live_on_icp_mainnet")}
+                    className={`bg-gray-50 border-2 ${errors.live_on_icp_mainnet
+                        ? "border-red-500"
+                        : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                >
+                    <option className="text-lg font-bold" value="false">
+                        No
+                    </option>
+                    <option className="text-lg font-bold" value="true">
+                        Yes
+                    </option>
+                </select>
+                {errors.live_on_icp_mainnet && (
+                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                        {errors.live_on_icp_mainnet.message}
+                    </p>
+                )}
             </div>
-            {formData.liveOnICP === 'yes' && (
+            {watch("live_on_icp_mainnet") === "true" ? (
                 <>
                     <div className="mb-2">
                         <label className="block text-sm font-medium mb-1">dApp Link<span className='text-[#155EEF]'>*</span></label>
                         <input
-                            type="url"
-                            name="dAppLink"
-                            value={formData.dAppLink}
-                            onChange={handleChange}
-                            className="block w-full border border-gray-300 rounded-md p-2"
-                            required
-                            placeholder='https://'
+                            type="text"
+                            {...register("dapp_link")}
+                            className={`bg-gray-50 border-2 
+                                             ${errors?.dapp_link
+                                    ? "border-red-500 "
+                                    : "border-[#737373]"
+                                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                            placeholder="https://"
                         />
+                        {errors?.dapp_link && (
+                            <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                {errors?.dapp_link?.message}
+                            </span>
+                        )}
                     </div>
                     <div className="mb-2">
                         <label className="block text-sm font-medium mb-1">Weekly active user<span className='text-[#155EEF]'>*</span></label>
                         <input
                             type="number"
-                            name="weeklyActiveUsers"
-                            value={formData.weeklyActiveUsers}
-                            onChange={handleChange}
-                            className="block w-full border border-gray-300 rounded-md p-2"
-                            required
-                            placeholder='0'
+                            {...register("weekly_active_users")}
+                            className={`bg-gray-50 border-2 
+                                             ${errors?.weekly_active_users
+                                    ? "border-red-500 "
+                                    : "border-[#737373]"
+                                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                            placeholder="Enter Weekly active users"
+                            onWheel={(e) => e.target.blur()}
+                            min={0}
                         />
+                        {errors?.weekly_active_users && (
+                            <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                {errors?.weekly_active_users?.message}
+                            </span>
+                        )}
                     </div>
                     <div className="mb-2">
                         <label className="block text-sm font-medium mb-1">Revenue (in Million USD)<span className='text-[#155EEF]'>*</span></label>
                         <input
                             type="number"
-                            name="revenue"
-                            value={formData.revenue}
-                            onChange={handleChange}
-                            className="block w-full border border-gray-300 rounded-md p-2"
-                            required
-                            placeholder='0'
+                            {...register("revenue")}
+                            className={`bg-gray-50 border-2 
+                                             ${errors?.revenue
+                                    ? "border-red-500 "
+                                    : "border-[#737373]"
+                                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                            placeholder="Enter Revenue"
+                            onWheel={(e) => e.target.blur()}
+                            min={0}
                         />
+                        {errors?.revenue && (
+                            <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                {errors?.revenue?.message}
+                            </span>
+                        )}
                     </div>
                 </>
+            ) : (
+                <></>
             )}
+
 
         </>
 
