@@ -14,161 +14,185 @@ const ProjectRegister4 = ({ isOpen, onClose, onBack }) => {
         valuation: '',
         projectDiscord: ''
     });
-    const [modalOpen, setModalOpen] = useState(isOpen || true);
 
-    const selectStyles = {
-        control: (provided) => ({
-            ...provided,
-            borderColor: '#CDD5DF',
-            borderRadius: '0.375rem',
-        }),
-        controlIsFocused: (provided) => ({
-            ...provided,
-            borderColor: 'black',
-            boxShadow: 'none',
-        }),
-    };
-
-    useEffect(() => {
-        if (modalOpen) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = 'auto';
-        }
-        return () => {
-            document.body.style.overflow = 'auto';
-        };
-    }, [modalOpen]);
-
-    const yesNoOptions = [
-        { value: 'yes', label: 'Yes' },
-        { value: 'no', label: 'No' },
-    ];
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log('Form Data:', formData);
-        onClose();
-    };
-
-    const handleBack = () => {
-        onBack();
-        setModalOpen(false);
-    };
-
+    const { register, formState: { errors }, setValue, trigger } = useFormContext();
     return (
         <>
 
 
             <div className="mb-2">
                 <label className="block text-sm font-medium mb-1">Have you raised any funds in past<span className='text-[#155EEF]'>*</span></label>
-                <Select
-                    options={yesNoOptions}
-                    styles={selectStyles}
-                    className="basic-select"
-                    classNamePrefix="select"
-                    placeholder="Select Yes or No"
-                    onChange={(selectedOption) => setFormData(prevData => ({ ...prevData, raisedFundsInPast: selectedOption.value }))}
-                    required
-                />
+                <select
+                    {...register("money_raised_till_now")}
+                    className={`bg-gray-50 border-2 ${errors.money_raised_till_now
+                        ? "border-red-500"
+                        : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                >
+                    <option className="text-lg font-bold" value="false">
+                        No
+                    </option>
+                    <option className="text-lg font-bold" value="true">
+                        Yes
+                    </option>
+                </select>
+                {errors.money_raised_till_now && (
+                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                        {errors.money_raised_till_now.message}
+                    </p>
+                )}
             </div>
-            {formData.raisedFundsInPast === 'yes' && (
+            {watch("money_raised_till_now") === "true" ? (
                 <>
                     <div className="mb-2">
                         <label className="block text-sm font-medium mb-1">How much funding have you raised in grants (USD)?<span className='text-[#155EEF]'>*</span></label>
                         <input
                             type="number"
-                            name="grantFunding"
-                            value={formData.grantFunding}
-                            onChange={handleChange}
-                            className="block w-full border border-gray-300 rounded-md p-2"
-                            placeholder="0"
-                            required
+                            {...register("icp_grants")}
+                            className={`bg-gray-50 border-2 
+                                             ${errors?.icp_grants
+                                    ? "border-red-500 "
+                                    : "border-[#737373]"
+                                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                            placeholder="Enter your Grants"
+                            onWheel={(e) => e.target.blur()}
+                            min={0}
                         />
+                        {errors?.icp_grants && (
+                            <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                {errors?.icp_grants?.message}
+                            </span>
+                        )}
                     </div>
                     <div className="mb-2">
                         <label className="block text-sm font-medium mb-1">How much funding have you received from Investors (USD)?<span className='text-[#155EEF]'>*</span></label>
                         <input
                             type="number"
-                            name="investorFunding"
-                            value={formData.investorFunding}
-                            onChange={handleChange}
-                            className="block w-full border border-gray-300 rounded-md p-2"
-                            placeholder="0"
-                            required
+                            {...register("investors")}
+                            className={`bg-gray-50 border-2 
+                                             ${errors?.investors
+                                    ? "border-red-500 "
+                                    : "border-[#737373]"
+                                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                            placeholder="Enter Investors"
+                            onWheel={(e) => e.target.blur()}
+                            min={0}
                         />
+                        {errors?.investors && (
+                            <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                {errors?.investors?.message}
+                            </span>
+                        )}
                     </div>
                     <div className="mb-2">
                         <label className="block text-sm font-medium mb-1">How much funding has been provided through the launchpad program (USD)?<span className='text-[#155EEF]'>*</span></label>
                         <input
                             type="number"
-                            name="launchpadFunding"
-                            value={formData.launchpadFunding}
-                            onChange={handleChange}
-                            className="block w-full border border-gray-300 rounded-md p-2"
-                            placeholder="0"
-                            required
+                            {...register("raised_from_other_ecosystem")}
+                            className={`bg-gray-50 border-2 
+                                             ${errors?.raised_from_other_ecosystem
+                                    ? "border-red-500 "
+                                    : "border-[#737373]"
+                                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                            placeholder="Enter Launchpad"
+                            onWheel={(e) => e.target.blur()}
+                            min={0}
                         />
+                        {errors?.raised_from_other_ecosystem && (
+                            <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                {errors?.raised_from_other_ecosystem?.message}
+                            </span>
+                        )}
                     </div>
                 </>
+            ) : (
+                <></>
             )}
             <div className="mb-2">
                 <label className="block text-sm font-medium mb-1">Are you currently raising money<span className='text-[#155EEF]'>*</span></label>
-                <Select
-                    options={yesNoOptions}
-                    styles={selectStyles}
-                    className="basic-select"
-                    classNamePrefix="select"
-                    placeholder="Select Yes or No"
-                    onChange={(selectedOption) => setFormData(prevData => ({ ...prevData, currentlyRaisingMoney: selectedOption.value }))}
-                    required
-                />
+                <select
+                    {...register("money_raising")}
+                    className={`bg-gray-50 border-2 ${errors.money_raising
+                        ? "border-red-500"
+                        : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                >
+                    <option className="text-lg font-bold" value="false">
+                        No
+                    </option>
+                    <option className="text-lg font-bold" value="true">
+                        Yes
+                    </option>
+                </select>
+                {errors.money_raising && (
+                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                        {errors.money_raising.message}
+                    </p>
+                )}
             </div>
-            {formData.currentlyRaisingMoney === 'yes' && (
+            {watch("money_raising") === "true" ? (
                 <>
                     <div className="mb-2">
                         <label className="block text-sm font-medium mb-1">Target Amount (in Millions USD)<span className='text-[#155EEF]'>*</span></label>
                         <input
                             type="number"
-                            name="targetAmount"
-                            value={formData.targetAmount}
-                            onChange={handleChange}
-                            className="block w-full border border-gray-300 rounded-md p-2"
+                            {...register("target_amount")}
+                            className={`bg-gray-50 border-2 
+                                             ${errors?.target_amount
+                                    ? "border-red-500 "
+                                    : "border-[#737373]"
+                                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                             placeholder="Enter your Target Amount"
-                            required
+                            onWheel={(e) => e.target.blur()}
+                            min={0}
                         />
+                        {errors?.target_amount && (
+                            <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                {errors?.target_amount?.message}
+                            </span>
+                        )}
                     </div>
                     <div className="mb-2">
                         <label className="block text-sm font-medium mb-1">Valuation (USD)</label>
                         <input
                             type="number"
-                            name="valuation"
-                            value={formData.valuation}
-                            onChange={handleChange}
-                            className="block w-full border border-gray-300 rounded-md p-2"
-                            placeholder="Enter valuation (in million)"
+                            {...register("valuation")}
+                            className={`bg-gray-50 border-2 
+                                             ${errors?.valuation
+                                    ? "border-red-500 "
+                                    : "border-[#737373]"
+                                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                            placeholder="Enter valuation (In million)"
+                            onWheel={(e) => e.target.blur()}
+                            min={0}
                         />
+                        {errors?.valuation && (
+                            <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                {errors?.valuation?.message}
+                            </span>
+                        )}
                     </div>
                 </>
+            ) : (
+                <></>
             )}
             <div className="mb-2">
                 <label className="block text-sm font-medium mb-1">Project Discord</label>
                 <input
-                    type="url"
-                    name="projectDiscord"
-                    value={formData.projectDiscord}
-                    onChange={handleChange}
-                    className="block w-full border border-gray-300 rounded-md p-2"
+                    type="text"
+                    {...register("project_discord")}
+                    className={`bg-gray-50 border-2 
+                                             ${errors?.project_discord
+                            ? "border-red-500 "
+                            : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     placeholder="https://"
                 />
+                {errors?.project_discord && (
+                    <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                        {errors?.project_discord?.message}
+                    </span>
+                )}
             </div>
 
         </>
