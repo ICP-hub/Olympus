@@ -13,7 +13,12 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 // import AboutcardSkeleton from "../LatestSkeleton/AbourcardSkeleton";
 import { useNavigate } from "react-router-dom";
 
-import { useForm, Controller, FormProvider, useFieldArray } from "react-hook-form";
+import {
+    useForm,
+    Controller,
+    FormProvider,
+    useFieldArray,
+} from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
 import { useSelector, useDispatch } from "react-redux";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -22,14 +27,8 @@ import * as yup from "yup";
 import { ThreeDots } from "react-loader-spinner";
 import { useCountries } from "react-countries";
 
-
-
-
-
 import { Principal } from "@dfinity/principal";
 import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_IcpHubReducer";
-
-
 
 const ProjectRegisterMain = () => {
     const { countries } = useCountries();
@@ -1244,8 +1243,6 @@ const ProjectRegisterMain = () => {
         }
     }, [actor]);
 
-
-
     const [index, setIndex] = useState(0);
     const handleNext = async () => {
         const isValid = await trigger(formFields[index]);
@@ -1263,7 +1260,7 @@ const ProjectRegisterMain = () => {
         let component;
         switch (index) {
             case 0:
-                component = <ProjectRegister3 />;
+                component = <ProjectRegister1 />;
                 break;
             case 1:
                 component = <ProjectRegister2 />;
@@ -1282,21 +1279,49 @@ const ProjectRegisterMain = () => {
         }
 
         return component;
-    }
+    };
     const formFields = {
-        0: ["logo", "preferred_icp_hub", "project_name", "project_description", "project_elevator_pitch"],
-        1: ["cover", "project_website", "is_your_project_registered", "type_of_registration", "country_of_registration"],
-        2: ["supports_multichain", "multi_chain_names", "live_on_icp_mainnet", "dapp_link", "weekly_active_users", "revenue",],
-        3: ["money_raised_till_now", "icp_grants", "investors", "raised_from_other_ecosystem", "valuation", "target_amount", "project_discord"],
-        4: ["promotional_video", "project_linkedin", "github_link", "token_economics"],
+        0: [
+            "logo",
+            "preferred_icp_hub",
+            "project_name",
+            "project_description",
+            "project_elevator_pitch",
+        ],
+        1: [
+            "cover",
+            "project_website",
+            "is_your_project_registered",
+            "type_of_registration",
+            "country_of_registration",
+        ],
+        2: [
+            "supports_multichain",
+            "multi_chain_names",
+            "live_on_icp_mainnet",
+            "dapp_link",
+            "weekly_active_users",
+            "revenue",
+        ],
+        3: [
+            "money_raised_till_now",
+            "icp_grants",
+            "investors",
+            "raised_from_other_ecosystem",
+            "valuation",
+            "target_amount",
+        ],
+        4: [
+            "promotional_video",
+            "project_discord",
+            "project_linkedin",
+            "github_link",
+            "token_economics",
+        ],
     };
 
-
-
     return (
-        <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ">
-
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ">
             <div className="bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4 overflow-y-auto">
                 <div className="flex justify-end mr-4">
                     <button
@@ -1307,10 +1332,31 @@ const ProjectRegisterMain = () => {
                     </button>
                 </div>
                 <h2 className="text-xs text-[#364152] mb-3">Step {index + 1} of 5</h2>
-                <FormProvider {...{ ...{ register, handleSubmit, reset, clearErrors, setValue, getValues, setError, watch, control, getAllIcpHubs, trigger, countries, formState: { errors, isSubmitting } } }}>
+                <FormProvider
+                    {...{
+                        ...{
+                            register,
+                            handleSubmit,
+                            reset,
+                            clearErrors,
+                            setValue,
+                            getValues,
+                            setError,
+                            watch,
+                            control,
+                            getAllIcpHubs,
+                            trigger,
+                            countries,
+                            formState: { errors, isSubmitting },
+                        },
+                    }}
+                >
                     <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
                         {renderComponent()}
-                        <div className={`flex mt-4 ${index === 0 ? "justify-end" : "justify-between"}`}>
+                        <div
+                            className={`flex mt-4 ${index === 0 ? "justify-end" : "justify-between"
+                                }`}
+                        >
                             {index > 0 && (
                                 <button
                                     type="button"
@@ -1318,11 +1364,10 @@ const ProjectRegisterMain = () => {
                                     onClick={handleBack}
                                     disabled={index === 0}
                                 >
-
                                     Back
                                 </button>
                             )}
-                            {index === 5 ? (
+                            {index === 4 ? (
                                 <button
                                     type="submit"
                                     className="py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 border-2 border-[#B2CCFF]"
@@ -1358,6 +1403,5 @@ const ProjectRegisterMain = () => {
         </div>
     );
 };
-
 
 export default ProjectRegisterMain;

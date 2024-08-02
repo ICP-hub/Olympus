@@ -1,34 +1,49 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import createprojectabc from "../../../../assets/Logo/createprojectabc.png";
-import ControlPointIcon from '@mui/icons-material/ControlPoint';
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import Select from 'react-select';
-import { useFormContext } from 'react-hook-form';
+import ControlPointIcon from "@mui/icons-material/ControlPoint";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import Select from "react-select";
+import { useFormContext } from "react-hook-form";
+import { useSelector, useDispatch } from "react-redux";
 
 const ProjectRegister3 = ({ isOpen, onClose, onBack }) => {
-
-
-    const { register, formState: { errors }, setValue, watch, trigger } = useFormContext();
-
-
-
-
-
-
-
-
+    const {
+        register,
+        formState: { errors },
+        setValue,
+        setError,
+        watch,
+        clearErrors,
+    } = useFormContext();
+    const [multiChainOptions, setMultiChainOptions] = useState([]);
+    const [multiChainSelectedOptions, setMultiChainSelectedOptions] = useState(
+        []
+    );
+    const multiChainNames = useSelector((currState) => currState.chains.chains);
+    useEffect(() => {
+        if (multiChainNames) {
+            setMultiChainOptions(
+                multiChainNames.map((chain) => ({
+                    value: chain,
+                    label: chain,
+                }))
+            );
+        } else {
+            setMultiChainOptions([]);
+        }
+    }, [multiChainNames]);
 
     return (
         <>
-
-
             <div className="mb-2">
-                <label className="block text-sm font-medium mb-1">Are you also multi-chain<span className='text-[#155EEF]'>*</span></label>
+                <label className="block text-sm font-medium mb-1">
+                    Are you also multi-chain<span className="text-[#155EEF]">*</span>
+                </label>
                 <select
                     {...register("multi_chain")}
-                    className={`bg-gray-50 border-2 ${errors.multi_chain ? "border-red-500" : "border-[#737373]"
+                    className={`border border-[#CDD5DF] rounded-md shadow-sm ${errors.multi_chain ? "border-red-500" : "border-[#737373]"
                         } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                 >
                     <option className="text-lg font-bold" value="false">
@@ -46,7 +61,9 @@ const ProjectRegister3 = ({ isOpen, onClose, onBack }) => {
             </div>
             {watch("multi_chain") === "true" ? (
                 <div className="mb-2">
-                    <label className="block text-sm font-medium mb-1">Please select the chains<span className='text-[#155EEF]'>*</span></label>
+                    <label className="block text-sm font-medium mb-1">
+                        Please select the chains<span className="text-[#155EEF]">*</span>
+                    </label>
                     <Select
                         isMulti
                         menuPortalTarget={document.body}
@@ -62,9 +79,7 @@ const ProjectRegister3 = ({ isOpen, onClose, onBack }) => {
                                     : "2px solid #737373",
                                 backgroundColor: "rgb(249 250 251)",
                                 "&::placeholder": {
-                                    color: errors.multi_chain_names
-                                        ? "#ef4444"
-                                        : "currentColor",
+                                    color: errors.multi_chain_names ? "#ef4444" : "currentColor",
                                 },
                                 display: "flex",
                                 overflowX: "auto",
@@ -111,9 +126,7 @@ const ProjectRegister3 = ({ isOpen, onClose, onBack }) => {
                                 clearErrors("multi_chain_names");
                                 setValue(
                                     "multi_chain_names",
-                                    selectedOptions
-                                        .map((option) => option.value)
-                                        .join(", "),
+                                    selectedOptions.map((option) => option.value).join(", "),
                                     { shouldValidate: true }
                                 );
                             } else {
@@ -138,13 +151,13 @@ const ProjectRegister3 = ({ isOpen, onClose, onBack }) => {
                 <></>
             )}
             <div className="mb-2">
-                <label className="block text-sm font-medium mb-1">Live on ICP<span className='text-[#155EEF]'>*</span></label>
+                <label className="block text-sm font-medium mb-1">
+                    Live on ICP<span className="text-[#155EEF]">*</span>
+                </label>
                 <select
                     {...register("live_on_icp_mainnet")}
-                    className={`bg-gray-50 border-2 ${errors.live_on_icp_mainnet
-                        ? "border-red-500"
-                        : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    className={`border border-[#CDD5DF] rounded-md shadow-sm ${errors.live_on_icp_mainnet ? "border-red-500" : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                 >
                     <option className="text-lg font-bold" value="false">
                         No
@@ -162,15 +175,17 @@ const ProjectRegister3 = ({ isOpen, onClose, onBack }) => {
             {watch("live_on_icp_mainnet") === "true" ? (
                 <>
                     <div className="mb-2">
-                        <label className="block text-sm font-medium mb-1">dApp Link<span className='text-[#155EEF]'>*</span></label>
+                        <label className="block text-sm font-medium mb-1">
+                            dApp Link<span className="text-[#155EEF]">*</span>
+                        </label>
                         <input
                             type="text"
                             {...register("dapp_link")}
-                            className={`bg-gray-50 border-2 
+                            className={`border border-[#CDD5DF] rounded-md shadow-sm
                                              ${errors?.dapp_link
                                     ? "border-red-500 "
                                     : "border-[#737373]"
-                                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                             placeholder="https://"
                         />
                         {errors?.dapp_link && (
@@ -180,15 +195,17 @@ const ProjectRegister3 = ({ isOpen, onClose, onBack }) => {
                         )}
                     </div>
                     <div className="mb-2">
-                        <label className="block text-sm font-medium mb-1">Weekly active user<span className='text-[#155EEF]'>*</span></label>
+                        <label className="block text-sm font-medium mb-1">
+                            Weekly active user<span className="text-[#155EEF]">*</span>
+                        </label>
                         <input
                             type="number"
                             {...register("weekly_active_users")}
-                            className={`bg-gray-50 border-2 
+                            className={`border border-[#CDD5DF] rounded-md shadow-sm
                                              ${errors?.weekly_active_users
                                     ? "border-red-500 "
                                     : "border-[#737373]"
-                                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                             placeholder="Enter Weekly active users"
                             onWheel={(e) => e.target.blur()}
                             min={0}
@@ -200,15 +217,17 @@ const ProjectRegister3 = ({ isOpen, onClose, onBack }) => {
                         )}
                     </div>
                     <div className="mb-2">
-                        <label className="block text-sm font-medium mb-1">Revenue (in Million USD)<span className='text-[#155EEF]'>*</span></label>
+                        <label className="block text-sm font-medium mb-1">
+                            Revenue (in Million USD)<span className="text-[#155EEF]">*</span>
+                        </label>
                         <input
                             type="number"
                             {...register("revenue")}
-                            className={`bg-gray-50 border-2 
+                            className={`border border-[#CDD5DF] rounded-md shadow-sm
                                              ${errors?.revenue
                                     ? "border-red-500 "
                                     : "border-[#737373]"
-                                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                             placeholder="Enter Revenue"
                             onWheel={(e) => e.target.blur()}
                             min={0}
@@ -223,10 +242,7 @@ const ProjectRegister3 = ({ isOpen, onClose, onBack }) => {
             ) : (
                 <></>
             )}
-
-
         </>
-
     );
 };
 
