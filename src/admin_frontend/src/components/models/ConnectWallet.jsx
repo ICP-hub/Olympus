@@ -23,7 +23,7 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
 
   useEffect(async () => {
     if (isAuthenticated) {
-      await navigate("/dashboard");
+      await navigate("InvestorForm");
     }
     onClose()
   }, [isAuthenticated]);
@@ -43,7 +43,7 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
                   {closeModalSvg}
                 </button>
                 <h3 className="text-lg font-semibold text-gray-900 grow text-center">
-                Signup / Signin
+                  Signup / Signin
                 </h3>
               </div>
               <div className="p-4 md:p-5">
@@ -53,7 +53,7 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
                 </p> */}
                 <ul className="cursor-pointer">
                   {walletModalSvg.map((wallet, index) => (
-                    <div key={index} onClick={()=>loginHandler(wallet.id)}>
+                    <div key={index} onClick={() => loginHandler(wallet.id)}>
                       {wallet.content}
                     </div>
                   ))}
