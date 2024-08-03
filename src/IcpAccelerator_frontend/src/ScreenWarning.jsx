@@ -25,16 +25,16 @@ const WarningMessage = () => {
   if (!showWarning) return null;
 
   return (
-    <div className="fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-50 flex justify-center items-start z-[9999px]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-100">
       <div className="mt-10 bg-yellow-300 text-red-700 text-center p-4 rounded-lg shadow-lg">
         <h2 className="text-lg font-bold">Warning</h2>
         <p>This website is best viewed on a laptop screen.</p>
-        <button 
+        {/* <button 
           className="mt-2 px-4 py-2 bg-red-700 text-white rounded" 
           onClick={() => setShowWarning(false)}
         >
           Close
-        </button>
+        </button> */}
       </div>
     </div>
   );
