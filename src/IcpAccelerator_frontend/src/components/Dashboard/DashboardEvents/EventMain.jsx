@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import EventCard from './EventCard';
 import Filters from './EventFilter';
 import eventbg from "../../../../assets/images/bg.png"
-
+import {Link} from "react-router-dom"
 const events = [
   {
     date: '20 Jun – 22 Jun',
@@ -42,8 +42,9 @@ const EventMain = () => {
       <div className="flex">
         <div className="w-full md:w-[70%] pr-6">
           {events.map((event, index) => (
-            <EventCard key={index} event={event} />
-          ))}
+            <>
+          <Link to='/dashboard/single-event'> <EventCard key={index} event={event} /> </Link> 
+          </>))}
         </div>
         <div className="w-full md:w-[30%]">
           <Filters isOpen={isFiltersOpen} />
