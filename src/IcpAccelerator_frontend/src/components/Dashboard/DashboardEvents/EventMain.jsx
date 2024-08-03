@@ -31,6 +31,34 @@ const events = [
     attendees: ['https://via.placeholder.com/24', 'https://via.placeholder.com/24', 'https://via.placeholder.com/24', 'https://via.placeholder.com/24'],
     image: eventbg,
   },
+ 
+  {
+    date: '25 Jun',
+    time: 'Start at 15:00 GMT+4',
+    title: 'Aenean ultricies amet massa eu. Hendrerit a.',
+    description: 'Est malesuada ac elit gravida vel aliquam nec. Arcu pelle ntesque convallis quam feugiat non viverra massa fringilla.',
+    type: 'Masterclass',
+    label: 'Masterclass',
+    labelColor: 'bg-gray-800',
+    mode: 'Online',
+    price: 'Free',
+    attendees: ['https://via.placeholder.com/24', 'https://via.placeholder.com/24', 'https://via.placeholder.com/24', 'https://via.placeholder.com/24'],
+    image: eventbg,
+  },
+  
+  {
+    date: '25 Jun',
+    time: 'Start at 15:00 GMT+4',
+    title: 'Aenean ultricies amet massa eu. Hendrerit a.',
+    description: 'Est malesuada ac elit gravida vel aliquam nec. Arcu pelle ntesque convallis quam feugiat non viverra massa fringilla.',
+    type: 'Masterclass',
+    label: 'Masterclass',
+    labelColor: 'bg-gray-800',
+    mode: 'Online',
+    price: 'Free',
+    attendees: ['https://via.placeholder.com/24', 'https://via.placeholder.com/24', 'https://via.placeholder.com/24', 'https://via.placeholder.com/24'],
+    image: eventbg,
+  },
 ];
 
 const EventMain = () => {

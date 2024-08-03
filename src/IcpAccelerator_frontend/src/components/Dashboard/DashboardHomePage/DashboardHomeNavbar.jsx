@@ -72,11 +72,11 @@ function DashboardHomeNavbar() {
 
       {/* Icons */}
       <div className="flex items-center space-x-4">
-        <NotificationsNone className="text-gray-600 cursor-pointer hidden md:block" />
+        <img src={Bellicon} className="w-[14.57px] h-[16.67px] cursor-pointer hidden md:block" />
         <img
-          src={bigLogo}
+          src={NavbarSmallLogo}
           alt="User"
-          className="h-[20px] w-[30px] rounded-full"
+          className="h-[40px] w-[40px] rounded-full"
           onClick={toggleDropdown}
 
         />
@@ -97,7 +97,7 @@ function DashboardHomeNavbar() {
           </div>
         )}
 
-    
+
       </div>
 
       {/* Mobile Menu */}

@@ -5,16 +5,17 @@ import LeonProfileImage from "../../../../assets/Logo/LeonProfileImage.png";
 import BlancheProfileImage from "../../../../assets/Logo/BlancheProfileImage.png";
 import CypherpunkLabLogo from "../../../../assets/Logo/CypherpunkLabLogo.png";
 import { FavoriteBorder, LocationOn, Star } from '@mui/icons-material';
+import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
 import Tabs from '../../Tabs/Tabs';
 
 
 const UserCard = ({ name, username, tags, role, description, rating, skills, location, avatar }) => {
     const tagColors = {
-      OLYMPIAN: 'bg-[#F0F9FF] border-[#B9E6FE] border text-[#026AA2]',
-      FOUNDER: 'bg-[#EEF4FF] border-[#C7D7FE] border text-[#3538CD]',
-      PROJECT: 'bg-green-100 text-green-800',
-      INVESTER: 'bg-[#FFFAEB] border-[#FEDF89] border text-[#B54708]',
-      TALENT: 'bg-[#ECFDF3] border-[#ABEFC6] border text-[#067647]',
+      OLYMPIAN: 'bg-[#F0F9FF] border-[#B9E6FE] border text-[#026AA2] rounded-md',
+      FOUNDER: 'bg-[#EEF4FF] border-[#C7D7FE] border text-[#3538CD] rounded-md',
+      PROJECT: 'bg-[#F8FAFC] text-[#364152] border border-[#E3E8EF] rounded-md',
+      INVESTER: 'bg-[#FFFAEB] border-[#FEDF89] border text-[#B54708] rounded-md',
+      TALENT: 'bg-[#ECFDF3] border-[#ABEFC6] border text-[#067647] rounded-md',
     };
   
     return (
@@ -64,14 +65,13 @@ const UserCard = ({ name, username, tags, role, description, rating, skills, loc
             {skills.map((skill, index) => (
               <span
                 key={index}
-                className="mr-2 mb-2 bg-gray-200 px-3 py-1 rounded-full"
-              >
+                className="mr-2 mb-2 border boder-[#CDD5DF] bg-white text-[#364152] px-3 py-1 rounded-full">
                 {skill}
               </span>
             ))}
             {location && (
-              <span className="mr-2 mb-2 flex items-center">
-                <LocationOn className="text-gray-400 mr-1 w-4 h-4" /> {location}
+              <span className="mr-2 mb-2 flex text-[#121926] items-center">
+                <PlaceOutlinedIcon className="text-[#364152] mr-1 w-4 h-4" /> {location}
               </span>
             )}
           </div>
