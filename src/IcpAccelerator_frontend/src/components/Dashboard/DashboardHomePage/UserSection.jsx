@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ProfileImage from "../../../../assets/Logo/ProfileImage.png";
+import ProfileImage  from "../../../../assets/Logo/ProfileImage.png";
 import NeilProfileImages from "../../../../assets/Logo/NeilProfileImages.png";
 import LeonProfileImage from "../../../../assets/Logo/LeonProfileImage.png";
 import BlancheProfileImage from "../../../../assets/Logo/BlancheProfileImage.png";

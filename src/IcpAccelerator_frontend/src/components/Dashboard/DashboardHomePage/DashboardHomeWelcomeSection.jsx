@@ -1,4 +1,5 @@
 import React from 'react';
+import KYCfileIcon from "../../../../assets/Logo/KYCfileIcon.png";
 import DashboardHomeProfileCards from './DashboardHomeProfileCards';
 
 const styles = {
@@ -50,7 +51,7 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
       title: 'Verify identity', 
       description: 'Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit.', 
       action: 'Take KYC',
-      icon: 'KYC'
+      icon: KYCfileIcon
     },
     { 
       title: 'Create new role', 
@@ -68,11 +69,11 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
         {actionCards.map((card, index) => (
           <div
             key={index}
-            className="bg-gray-50 rounded-lg p-4 relative flex flex-col h-full">
+            className="bg-[#F8FAFC] rounded-lg p-4 relative flex flex-col h-full">
             <div className="flex justify-between items-start mb-4">
               <div className="flex-grow pr-4">
-                <h3 className="text-lg font-semibold mb-2">{card.title}</h3>
-                <p className="text-sm text-gray-600">{card.description}</p>
+                <h3 className="text-md text-[#121926] font-semibold mb-2">{card.title}</h3>
+                <p className="text-sm text-[#4B5565]">{card.description}</p>
               </div>
               <div className="flex-shrink-0">
                 {card.progress && (
@@ -91,18 +92,16 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
                   </div>
                 )}
                 {card.icon && (
-                  <div className="w-16 h-16 bg-blue-600 text-white rounded-lg flex items-center justify-center font-bold text-sm">
-                    {card.icon}
-                  </div>
+                  <img src={card.icon} alt="KYC Icon" className="w-14 h-14 object-contain" />
                 )}
               </div>
             </div>
             <div className="mt-auto pt-4 flex items-center space-x-2">
-              <button className="bg-white border-2 border-grey-50 text-black px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
+            <button className="bg-white border-2 border-[#CDD5DF] text-[#364152] px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
                 {card.action}
               </button>
               {card.dismissable && (
-                <button className="text-gray-400 hover:text-gray-600 text-sm">
+                <button className="text-[#4B5565] hover:text-gray-600 text-sm">
                   Dismiss
                 </button>
               )}
