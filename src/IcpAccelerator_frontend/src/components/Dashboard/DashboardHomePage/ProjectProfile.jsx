@@ -35,7 +35,7 @@ function ProjectProfile() {
             View public profile
           </button>
           <button className="flex items-center text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
-            <Share className="mr-1" fontSize="small" /> Share
+          Share
           </button>
         </div>
       </div>
