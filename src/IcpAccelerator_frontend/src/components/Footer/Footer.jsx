@@ -19,7 +19,7 @@ const Footer = () => {
             Get started
           </button>
         </div>
-        <div class="border-t border-[#bd10e0bf] pt-8">
+        <div className="border-t border-[#bd10e0bf] pt-8">
         <div className="flex flex-wrap justify-between">
             <div className="w-full md:w-1/4 mb-8 md:mb-0">
               <h3 className="text-xl font-semibold mb-4"> <img src={Layer1} alt="logo" className="text-white" /></h3>
