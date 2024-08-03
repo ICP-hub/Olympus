@@ -91,8 +91,6 @@
 
 // export default ProfileDetail
 
-
-
 import React from 'react'
 import ProfileImage from "../../../assets/Logo/ProfileImage.png";
 import VerifiedIcon from "@mui/icons-material/Verified";

@@ -11,10 +11,74 @@ import mentor from "../../../assets/Logo/mentor.png";
 import founder from "../../../assets/Logo/founder.png";
 import Avatar3 from "../../../assets/Logo/Avatar3.png";
 import ProfileImage from "../../../assets/Logo/ProfileImage.png";
+import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
+import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
 
 
 
 const Role = () => {
+
+  const FAQItem = ({ question, answer }) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    return (
+      <div className="border-b border-gray-200">
+        <button
+          className="flex justify-between items-center w-full text-left py-4"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          <span className="text-base  font-medium">{question}</span>
+          {isOpen ? (
+            <RemoveCircleOutlineOutlinedIcon className="text-[#9AA4B2]" />
+          ) : (
+            <AddCircleOutlineOutlinedIcon className="text-[#9AA4B2]" />
+          )}
+        </button>
+        {isOpen && (
+          <p className="mt-2 text-[#4B5565] font-normal text-sm pb-4">{answer}</p>
+        )}
+      </div>
+    );
+  };
+
+  const FAQ = () => {
+    const faqData = [
+      {
+        question:
+          "What is a role, actually?",
+        answer:
+          "Est malesuada ac elit gravida vel aliquam nec. Arcu pelle ntesque convallis quam feugiat non viverra massa fringilla. Est malesuada ue convallis quam feugiat non viverra massa fringilla uada ue convallis quam feugiat non viverra massa fEst malesuada ac elit gravida vel aliquam nec. Arcu pelle ntesque convallis quam feugiat non viverra massa fringilla. Est malesuada uequam feugiat non viverra massa. ",
+      },
+      {
+        question: "How do roles work?",
+        answer:
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      },
+      {
+        question: "Can I change roles?",
+        answer:
+          "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+      },
+    ];
+
+    return (
+      <div>
+        {/* <h2 className="text-2xl font-semibold mb-4">FAQ</h2> */}
+        <div className="mt-14 text-[#121926] text-[18px] font-medium border-gray-200 ">
+          {faqData.map((item, index) => (
+            <FAQItem
+              key={index}
+              question={item.question}
+              answer={item.answer}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+
+
     const [role, setRole] = useState(false)
     return (
       <div className="flex flex-col">
@@ -110,6 +174,7 @@ const Role = () => {
             {role === true && <Modal1 isOpen={role} onClose={setRole} />}
           </div>
         </div>
+        <FAQ />
       </div>
     );
 }
