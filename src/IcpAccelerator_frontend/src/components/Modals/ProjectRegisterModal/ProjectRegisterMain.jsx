@@ -1345,6 +1345,8 @@ const ProjectRegisterMain = () => {
                             watch,
                             control,
                             getAllIcpHubs,
+                            logoCreationFunc,
+                            clearLogoFunc,
                             trigger,
                             countries,
                             formState: { errors, isSubmitting },
