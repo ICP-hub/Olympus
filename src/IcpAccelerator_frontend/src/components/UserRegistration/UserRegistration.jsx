@@ -1,22 +1,18 @@
 import Layer1 from "../../../assets/Logo/Layer1.png";
-import Aboutcard from "../UserRegistration/Aboutcard";
+import AboutcardSkeleton from "../LatestSkeleton/AbourcardSkeleton";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import AboutcardSkeleton from "../LatestSkeleton/AbourcardSkeleton";
-import { useNavigate } from "react-router-dom";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useForm, Controller,FormProvider } from "react-hook-form";
-import toast, { Toaster } from "react-hot-toast";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useState } from "react";
+import { useForm, FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-// import DetailHeroSection from "../Common/DetailHeroSection";
 import { ThreeDots } from "react-loader-spinner";
-import { useCountries } from "react-countries";
-import ReactSelect from "react-select";
-// import CompressedImage from "../ImageCompressed/CompressedImage";
+import toast, { Toaster } from "react-hot-toast";
 import { Principal } from "@dfinity/principal";
+import { useSelector } from "react-redux";
 import RegisterForm1 from "./RegisterForm1";
+import RegisterForm2 from "./RegisterForm2";
+import RegisterForm3 from "./RegisterForm3";
 const validationSchema = yup
   .object()
   .shape({
@@ -136,10 +132,8 @@ const validationSchema = yup
   .required();
 
 const UserRegistration = () => {
-  const navigate = useNavigate();
-  const formFields = {
-    0: ["full_name", "openchat_user_name"],
-  };
+  const [index, setIndex] = useState(0);
+  const actor = useSelector((currState) => currState.actors.actor);
 
   const methods = useForm({
     resolver: yupResolver(validationSchema),
@@ -147,11 +141,23 @@ const UserRegistration = () => {
   });
   const {
     handleSubmit,
-    setValue,
     trigger,
     formState: { isSubmitting },
   } = methods;
-  const [index, setIndex] = useState(0);
+
+  const formFields = {
+    0: ["full_name", "openchat_user_name"],
+    1: ["email"],
+    2: [
+      "image",
+      "reasons_to_join_platform",
+      "bio",
+      "domains_interested_in",
+      "type_of_profile",
+      "country",
+    ],
+  };
+
   const handleNext = async () => {
     const isValid = await trigger(formFields[index]);
     if (isValid) {
@@ -164,6 +170,7 @@ const UserRegistration = () => {
       setIndex((prevIndex) => prevIndex - 1);
     }
   };
+
   const onSubmitHandler = async (data) => {
     if (actor) {
       const userData = {
@@ -222,69 +229,82 @@ const UserRegistration = () => {
       window.location.href = "/";
     }
   };
+
   const onErrorHandler = (val) => {
     console.log("error", val);
   };
   return (
-    <div className="bg-[#FFF4ED] min-h-screen flex items-center justify-center overflow-hidden">
-    <div className="container mx-auto">
-      <div className="py-12 flex items-center justify-center rounded-xl">
-        <div className="bg-white shadow-xl rounded-2xl flex w-full max-w-6xl">
-          <div className="w-1/2 p-12">
-            <img src={Layer1} alt="logo" className="flex justify-start" />
-            <h2 className="text-[#364152] text-lg font-semibold mb-2 mt-16 mx-12">
-              Step 1 of 3
-            </h2>
-            <FormProvider {...methods}>
-              <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
-                {index === 0 && <RegisterForm1 />}
-                <div className="flex justify-between mt-4">
-                  <button
-                    type="button"
-                    className="py-2 px-4 text-gray-600 rounded hover:text-black"
-                    onClick={handleBack}
-                    disabled={index === 0}
+    <>
+      <FormProvider {...methods}>
+      <div className="bg-[#FFF4ED] min-h-screen flex items-center justify-center overflow-hidden">
+      <div className="container mx-auto">
+        <div className="py-12 flex items-center justify-center rounded-xl">
+          <div className="bg-white shadow-xl rounded-2xl flex w-full max-w-6xl">
+            <div className="w-1/2 p-10">
+              <img src={Layer1} alt="logo" className="flex justify-start w-1/3" loading="lazy"/>
+              <h2 className="text-[#364152] text-lg font-normal mb-2 mt-16 mx-10">
+                Step {index + 1} of 3
+              </h2>
+                  <form
+                    onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}
                   >
-                    Back
-                  </button>
-                  {index === 3 ? (
-                    <button
-                      type="submit"
-                      className="py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 border-2 border-[#B2CCFF]"
-                    >
-                      {isSubmitting ? (
-                        <ThreeDots
-                          visible={true}
-                          height="35"
-                          width="35"
-                          color="#FFFEFF"
-                          radius="9"
-                          ariaLabel="three-dots-loading"
-                          wrapperStyle={{}}
-                        />
+                    {index === 0 && <RegisterForm1 />}
+                    {index === 1 && <RegisterForm2 />}
+                    {index === 2 && <RegisterForm3 />}
+
+                    {/* Other form steps */}
+                    <div className="flex justify-between mt-4">
+                      <button
+                        type="button"
+                        className="py-2 px-4 text-gray-600 rounded hover:text-black"
+                        onClick={handleBack}
+                        disabled={index === 0}
+                      >
+                        Back
+                      </button>
+                      {index === 3 ? (
+                        <button
+                          type="submit"
+                          className="py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 border-2 border-[#B2CCFF]"
+                        >
+                          {isSubmitting ? (
+                            <ThreeDots
+                              visible={true}
+                              height="35"
+                              width="35"
+                              color="#FFFEFF"
+                              radius="9"
+                              ariaLabel="three-dots-loading"
+                              wrapperStyle={{}}
+                            />
+                          ) : (
+                            "Submit"
+                          )}
+                        </button>
                       ) : (
-                        "Submit"
+                        <button
+                          type="button"
+                          className="py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 border-2 border-[#B2CCFF] flex items-center"
+                          onClick={handleNext}
+                        >
+                          Continue
+                          <ArrowForwardIcon
+                            fontSize="medium"
+                            className="ml-2"
+                          />
+                        </button>
                       )}
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      className="py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 border-2 border-[#B2CCFF] flex items-center"
-                      onClick={handleNext}
-                    >
-                      Continue
-                      <ArrowForwardIcon fontSize="medium" className="ml-2" />
-                    </button>
-                  )}
+                    </div>
+                  </form>
                 </div>
-              </form>
-            </FormProvider>
+                <AboutcardSkeleton />
+              </div>
+            </div>
           </div>
-            <AboutcardSkeleton />
         </div>
-      </div>
-    </div>
-  </div>
+      </FormProvider>
+      <Toaster />
+    </>
   );
 };
 

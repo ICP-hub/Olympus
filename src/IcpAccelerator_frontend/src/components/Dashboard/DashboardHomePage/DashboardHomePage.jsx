@@ -13,6 +13,7 @@ import ServiceDetailPage from './ServiceDetailPage'
 import AddNewWork from './AddNewWork'
 import WorksSection from './WorksSection'
 import WorkSectionDetailPage from './WorkSectionDetailPage'
+import EventDetails from '../DashboardEvents/EventDetail'
 
 function DashboardHomePage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -39,6 +40,7 @@ function DashboardHomePage() {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/user" element={<UserSection />} />
             <Route path="/event" element={<EventMain />} />
+            <Route path="/single-event" element={<EventDetails />} />
             <Route path="/project" element={<ProjectProfile />} />
             <Route path="/single-project" element={<ServiceDetailPage />} />
             <Route path="/single-add-new-work" element={<AddNewWork />} />
