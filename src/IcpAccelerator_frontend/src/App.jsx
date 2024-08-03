@@ -126,7 +126,7 @@ const App = () => {
         </div>
       )} */}
       <div className="bg-gray-100">
-        <div className="container-xl mx-auto">
+        <div className="container-lg mx-auto">
           <ConnectWallet
             isModalOpen={isModalOpen}
             onClose={() => setModalOpen(false)}

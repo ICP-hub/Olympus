@@ -29,11 +29,12 @@ function DashboardHomePage() {
             userName={"Matt"}
             profileCompletion={"20"}
           />
+
           <DashboardHomeProfileCards /> */}
           {/* <ProjectProfile /> */}
           {/* <UserSection /> */}
            <Routes>
-            <Route path="/" element={<DashboardHomeWelcomeSection userName={"Matt"} profileCompletion={"20"} />} />
+            <Route path="/" element={<DashboardHomeWelcomeSection userName={"Matt"} profileCompletion={"35"} />} />
             <Route path="/jobs" element={<Jobs />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/user" element={<UserSection />} />
@@ -50,4 +51,4 @@ function DashboardHomePage() {
   );
 }
 
-export default DashboardHomePage
+export default DashboardHomePage;
