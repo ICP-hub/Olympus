@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import bigLogo from "../../../../assets/Logo/bigLogo.png";
 import topLogo from "../../../../assets/Logo/topLogo.png";
+
 import {
   SearchOutlined,
   MailOutline,
@@ -76,23 +77,23 @@ function DashboardHomeNavbar() {
           alt="User"
           className="h-[20px] w-[30px] rounded-full"
           onClick={toggleDropdown}
-            />
-            {dropdownOpen && (
-              <div className="absolute right-[20px] top-[40px] mt-2  bg-white border rounded-md shadow-lg z-20">
-                <Link
-                  to="/dashboard/profile"
-                  className="block px-4 py-2 text-gray-800 hover:bg-gray-200"
-                >
-                  Profile
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-200"
-                >
-                  Logout
-                </button>
-              </div>
-            )}
+        />
+        {dropdownOpen && (
+          <div className="absolute right-[20px] top-[40px] mt-2  bg-white border rounded-md shadow-lg z-20">
+            <Link
+              to="/dashboard/profile"
+              className="block px-4 py-2 text-gray-800 hover:bg-gray-200"
+            >
+              Profile
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-200"
+            >
+              Logout
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Mobile Menu */}
