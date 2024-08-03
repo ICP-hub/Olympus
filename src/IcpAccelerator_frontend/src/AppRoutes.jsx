@@ -14,8 +14,11 @@ import DashboardHomePage from "./components/Dashboard/DashboardHomePage/Dashboar
 import Signupmain from "./components/Auth/Signup1";
 import Signupmain2 from "./components/UserRegistration/RegisterForm2";
 import Signupmain1 from "./components/UserRegistration/SignupMain";
-import ProfileForm from "./components/UserRegistration/Signup4";
-import MentorSignupMain from "./components/Modals/Mentor-Signup-Model/MentorsignUpmain";
+
+import ProfileForm from "./components/UserRegistration/RegisterForm3";
+import RegisterForm1 from "./components/UserRegistration/RegisterForm1";
+import UserRegistration from "./components/UserRegistration/UserRegistration";
+
 
 
 
@@ -37,7 +40,10 @@ const AppRoutes = () => {
         <Route index element={<Home />} />
         <Route path="*" element={<Error404 />} />
       </Route>
-      {/* <Route path="mentor-sign-up" element={<MentorSignupMain />} /> */}
+
+      <Route path="sign-up" element={<Signupmain1 />} />
+      <Route path="register-user" element={<UserRegistration />} />
+
       {/* <Route path="sign-up-step1" element={<Signupmain />} />
         <Route path="sign-up-step2" element={<Signupmain2 />} />
         <Route path="sign-up-step3-complete-profile" element={<ProfileForm />} />  */}
