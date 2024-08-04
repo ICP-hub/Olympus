@@ -159,7 +159,9 @@ const ProjectRegister2 = ({ isOpen, onClose, onBack }) => {
                                     {coverPreview || errors.cover ? (
                                         <button
                                             className="
-                                            className=font-medium px-4 py-1 cursor-pointer rounded border border-red-500 items-center text-md bg-transparent text-red-500  capitalize ml-1 sm0:ml-0"
+
+                                            font-medium px-4 py-1 cursor-pointer rounded border border-red-500 items-center text-md bg-transparent text-red-500  capitalize ml-1 sm0:ml-0"
+
                                             onClick={() => clearCoverFunc("cover")}
                                         >
                                             clear
