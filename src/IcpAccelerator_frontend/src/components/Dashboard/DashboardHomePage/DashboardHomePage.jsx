@@ -10,6 +10,10 @@ import Jobs from '../../jobs/Jobs'
 import ProfilePage from '../../profile/ProfilePage'
 import EventMain from '../DashboardEvents/EventMain'
 import ServiceDetailPage from './ServiceDetailPage'
+import AddNewWork from './AddNewWork'
+import WorksSection from './WorksSection'
+import WorkSectionDetailPage from './WorkSectionDetailPage'
+import EventDetails from '../DashboardEvents/EventDetail'
 
 function DashboardHomePage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -26,17 +30,22 @@ function DashboardHomePage() {
             userName={"Matt"}
             profileCompletion={"20"}
           />
+
           <DashboardHomeProfileCards /> */}
           {/* <ProjectProfile /> */}
           {/* <UserSection /> */}
            <Routes>
-            <Route path="/" element={<DashboardHomeWelcomeSection userName={"Matt"} profileCompletion={"20"} />} />
+            <Route path="/" element={<DashboardHomeWelcomeSection userName={"Matt"} profileCompletion={"35"} />} />
             <Route path="/jobs" element={<Jobs />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/user" element={<UserSection />} />
             <Route path="/event" element={<EventMain />} />
+            <Route path="/single-event" element={<EventDetails />} />
             <Route path="/project" element={<ProjectProfile />} />
             <Route path="/single-project" element={<ServiceDetailPage />} />
+            <Route path="/single-add-new-work" element={<AddNewWork />} />
+            <Route path="/work-section" element={<WorksSection />} />
+            <Route path="/work-section-detail-page" element={<WorkSectionDetailPage />} />
           </Routes>
         </main>
       </div>
@@ -44,4 +53,4 @@ function DashboardHomePage() {
   );
 }
 
-export default DashboardHomePage
+export default DashboardHomePage;

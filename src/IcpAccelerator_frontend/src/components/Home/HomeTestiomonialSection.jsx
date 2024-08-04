@@ -1,20 +1,20 @@
 // src/App.js
 import React, { useRef, useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, Scrollbar, A11y,Autoplay } from 'swiper/modules';
+import { Navigation, Pagination, Scrollbar, A11y, Autoplay } from 'swiper/modules';
 import "swiper/css";
 import "swiper/css/pagination";
 import TestimonialProfile from "../../../assets/ProfIleEdit/TestimonialProfile.png";
 import TestAvatar from "../../../assets/ProfIleEdit/TestAvatar.png";
 import { useState } from 'react';
 
-const ArrowButton = ({ direction, onClick,visible }) => {
+const ArrowButton = ({ direction, onClick, visible }) => {
   const isLeft = direction === 'left';
   return (
     <button
-    className={`w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center focus:outline-none hover:bg-gray-100 transition-opacity duration-300 ${visible ? 'opacity-100' : 'opacity-0'}`}
-    onClick={onClick}
-  >
+      className={`w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center focus:outline-none hover:bg-gray-100 transition-opacity duration-300 ${visible ? 'opacity-100' : 'opacity-0'}`}
+      onClick={onClick}
+    >
       <svg
         className="w-4 h-4 text-gray-500"
         fill="none"
@@ -48,7 +48,6 @@ const testimonials = [
     avatar: TestAvatar,
     profile: TestimonialProfile
   }
-  
 ];
 
 function TestimonialSection() {
@@ -64,11 +63,8 @@ function TestimonialSection() {
       } else {
         nextRef.current.click();
       }
-      // setTimeout(() => {
-      //   setButtonVisible(true);
-      // }, ); 
       setButtonVisible(true);
-    }, 300); 
+    }, 300);
   };
 
   useEffect(() => {
@@ -77,7 +73,6 @@ function TestimonialSection() {
       nextRef.current.classList.add('swiper-button-next');
     }
   }, []);
- 
 
   return (
     <div className="flex items-center justify-center bg-white py-10 px-4">
@@ -92,14 +87,15 @@ function TestimonialSection() {
           }}
           pagination={{ clickable: true }}
           scrollbar={{ draggable: true }}
-          // autoplay={{ delay: 3000, disableOnInteraction: false }}
           onSwiper={(swiper) => {
             setTimeout(() => {
-              swiper.params.navigation.prevEl = prevRef.current;
-              swiper.params.navigation.nextEl = nextRef.current;
-              swiper.navigation.destroy();
-              swiper.navigation.init();
-              swiper.navigation.update();
+              if (swiper.navigation) {
+                swiper.params.navigation.prevEl = prevRef.current;
+                swiper.params.navigation.nextEl = nextRef.current;
+                swiper.navigation.destroy();
+                swiper.navigation.init();
+                swiper.navigation.update();
+              }
             });
           }}
           onSlideChange={() => setButtonVisible(true)}
@@ -134,10 +130,10 @@ function TestimonialSection() {
           ))}
         </Swiper>
         <div className="absolute top-[70%] left-[500px] transform -translate-y-1/2 z-10" ref={prevRef}>
-        <ArrowButton direction="left" onClick={() => handleClick('left')} visible={buttonVisible} />
+          <ArrowButton direction="left" onClick={() => handleClick('left')} visible={buttonVisible} />
         </div>
         <div className="absolute top-[70%] right-[415px] transform -translate-y-1/2 z-10" ref={nextRef}>
-        <ArrowButton direction="right" onClick={() => handleClick('right')} visible={buttonVisible} />
+          <ArrowButton direction="right" onClick={() => handleClick('right')} visible={buttonVisible} />
         </div>
       </div>
     </div>

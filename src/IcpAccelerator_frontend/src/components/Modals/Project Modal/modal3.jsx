@@ -2,68 +2,71 @@ import React, { useState, useEffect } from 'react';
 import createprojectabc from "../../../../assets/Logo/createprojectabc.png";
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import Dropdown from "../../../../assets/Logo/Dropdown.png"
+import Dropdown from "../../../../assets/Logo/Dropdown.png";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CheckIcon from '@mui/icons-material/Check';
-import CreateProjectModal from "../../Home/modal2";
 import Select from 'react-select';
 
-
 const CreateProjectModal2 = ({ isOpen, onClose, onBack }) => {
-    const [categories, setCategories] = useState([]);
-    const [stage, setStage] = useState("");
+
     const [formData, setFormData] = useState({
         tagline: '',
         about: '',
         category: 'Infrastructure',
         stage: 'MVP',
-        links: ['']
+        links: [''],
+        multiChain: 'no',
+        chains: [],
+        liveOnICP: 'no',
+        dAppLink: '',
+        weeklyActiveUsers: '',
+        revenue: ''
     });
-    // Ensure the modal is open by default if `isOpen` is not provided
+
     const [modalOpen, setModalOpen] = useState(isOpen || true);
     const selectStyles = {
         control: (provided) => ({
             ...provided,
-            borderColor: '#CDD5DF', // Tailwind border-gray-300
-            borderRadius: '0.375rem', // Tailwind rounded-md
+            borderColor: '#CDD5DF',
+            borderRadius: '0.375rem',
         }),
         controlIsFocused: (provided) => ({
             ...provided,
-            borderColor: 'black', // Tailwind border-blue-500
+            borderColor: 'black',
             boxShadow: 'none',
         }),
         multiValue: (provided) => ({
             ...provided,
-            borderColor: '#CDD5DF', // Tailwind bg-gray-200
+            borderColor: '#CDD5DF',
         }),
         multiValueLabel: (provided) => ({
             ...provided,
-            color: '#1f2937', // Tailwind text-gray-700
+            color: '#1f2937',
         }),
-
     };
 
-    // Effect to manage body scroll
     useEffect(() => {
         if (modalOpen) {
-            document.body.style.overflow = 'hidden'; // Disable scrolling
+            document.body.style.overflow = 'hidden';
         } else {
-            document.body.style.overflow = 'auto'; // Enable scrolling
+            document.body.style.overflow = 'auto';
         }
 
-        // Cleanup function to ensure scrolling is restored
         return () => {
             document.body.style.overflow = 'auto';
         };
     }, [modalOpen]);
-    const categoryOptions = [
-        { value: 'Infrastructure', label: 'Infrastructure' },
 
-        // Add more options as needed
+    const yesNoOptions = [
+        { value: 'yes', label: 'Yes' },
+        { value: 'no', label: 'No' },
     ];
-    const stageOptions = [
-        { value: 'MVP', label: 'MVP' },
 
+    const chainOptions = [
+        { value: 'Ethereum', label: 'Ethereum' },
+        { value: 'Binance Smart Chain', label: 'Binance Smart Chain' },
+        { value: 'Polygon', label: 'Polygon' },
+        { value: 'Avalanche', label: 'Avalanche' },
         // Add more options as needed
     ];
 
@@ -75,19 +78,17 @@ const CreateProjectModal2 = ({ isOpen, onClose, onBack }) => {
         }));
     };
 
-    const handleLinkChange = (index, value) => {
-        const newLinks = [...formData.links];
-        newLinks[index] = value;
+    const handleSelectChange = (selectedOption, name) => {
         setFormData((prevData) => ({
             ...prevData,
-            links: newLinks,
+            [name]: selectedOption.value,
         }));
     };
 
-    const handleAddLink = () => {
+    const handleMultiSelectChange = (selectedOptions, name) => {
         setFormData((prevData) => ({
             ...prevData,
-            links: [...prevData.links, ''],
+            [name]: selectedOptions.map(option => option.value),
         }));
     };
 
@@ -108,11 +109,10 @@ const CreateProjectModal2 = ({ isOpen, onClose, onBack }) => {
                 <div className="flex justify-end mr-4">
                     <button className='text-2xl text-[#121926]' onClick={() => setModalOpen(false)}>&times;</button>
                 </div>
-                <h2 className="text-xs text-[#364152]">Step 2 of 2</h2>
-                <h1 className="text-3xl text-[#121926] font-bold mb-3">Create a project</h1>
+                <h2 className="text-xs text-[#364152] mb-3">Step 2 of 4</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-2">
-                        <label className="block text-sm font-medium mb-1">Upload a logo<span className='text-[#155EEF]'>*</span></label>
+                        <label className="block text-sm font-medium mb-2">Upload a Cover Photo<span className='text-[#155EEF]'>*</span></label>
                         <div className='flex gap-2'>
                             <img src={createprojectabc} alt="projectimg" />
                             <div className='flex gap-1 items-center justify-center'>
@@ -142,75 +142,82 @@ const CreateProjectModal2 = ({ isOpen, onClose, onBack }) => {
                         </div>
                     </div>
                     <div className="mb-2">
-                        <label className="block text-sm font-medium mb-1">Tagline<span className='text-[#155EEF]'>*</span></label>
-                        <input
-                            type="text"
-                            name="tagline"
-                            value={formData.tagline}
-                            onChange={handleChange}
-                            maxLength={50}
-                            className="block w-full border border-gray-300 rounded-md p-2"
-                            required
+                        <label className="block text-sm font-medium mb-1">Are you also multi-chain<span className='text-[#155EEF]'>*</span></label>
+                        <Select
+                            options={yesNoOptions}
+                            value={yesNoOptions.find(option => option.value === formData.multiChain)}
+                            onChange={(option) => handleSelectChange(option, 'multiChain')}
+                            styles={selectStyles}
+                            className="basic-single"
+                            classNamePrefix="select"
+                            placeholder="Select"
                         />
                     </div>
+                    {formData.multiChain === 'yes' && (
+                        <div className="mb-2">
+                            <label className="block text-sm font-medium mb-1">Please select the chains<span className='text-[#155EEF]'>*</span></label>
+                            <Select
+                                options={chainOptions}
+                                isMulti
+                                value={chainOptions.filter(option => formData.chains.includes(option.value))}
+                                onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, 'chains')}
+                                styles={selectStyles}
+                                className="basic-multi-select"
+                                classNamePrefix="select"
+                            />
+                        </div>
+                    )}
                     <div className="mb-2">
-                        <label className="block text-sm font-medium mb-1">About<span className='text-[#155EEF]'>*</span></label>
-                        <textarea
-                            name="about"
-                            value={formData.about}
-                            onChange={handleChange}
-                            maxLength={500}
-                            className="block w-full border border-gray-300 rounded-md p-2"
-                            required
+                        <label className="block text-sm font-medium mb-1">Live on ICP<span className='text-[#155EEF]'>*</span></label>
+                        <Select
+                            options={yesNoOptions}
+                            value={yesNoOptions.find(option => option.value === formData.liveOnICP)}
+                            onChange={(option) => handleSelectChange(option, 'liveOnICP')}
+                            styles={selectStyles}
+                            className="basic-single"
+                            classNamePrefix="select"
                         />
                     </div>
-                    <div className="mb-2 relative">
-                        <label className="block text-sm font-medium mb-1">Category<span className='text-[#155EEF]'>*</span></label>
-                        <Select
-
-                            options={categoryOptions}
-                            value={categories}
-                            onChange={setCategories}
-                            styles={selectStyles}
-                            className="basic-multi-select"
-                            classNamePrefix="select"
-                            placeholder="Add Relevant Categories"
-                        />  </div>
-                    <div className="mb-2 relative">
-                        <label className="block text-sm font-medium mb-1">Stage<span className='text-[#155EEF]'>*</span></label>
-                        <Select
-
-                            options={stageOptions}
-                            value={stage}
-                            onChange={setStage}
-                            styles={selectStyles}
-                            className="basic-multi-select"
-                            classNamePrefix="select"
-                            placeholder="Add Relevant Categories"
-                        />    </div>
-                    <div className="mb-2 relative">
-                        <label className="text-sm font-medium mb-1 flex items-center">Links</label>
-                        {formData.links.map((link, index) => (
-                            <div key={index} className="relative">
+                    {formData.liveOnICP === 'yes' && (
+                        <>
+                            <div className="mb-2">
+                                <label className="block text-sm font-medium mb-1">dApp Link<span className='text-[#155EEF]'>*</span></label>
                                 <input
                                     type="url"
-                                    value={link}
-                                    onChange={(e) => handleLinkChange(index, e.target.value)}
-                                    className="block w-full border border-gray-300 rounded-md p-2 pr-10"
+                                    name="dAppLink"
+                                    value={formData.dAppLink}
+                                    onChange={handleChange}
+                                    className="block w-full border border-gray-300 rounded-md p-2"
                                     required
+                                    placeholder='https://'
                                 />
-                                {/* <ArrowDropDownIcon className="absolute right-2 top-1/2 transform w-5 h-5 text-gray-400 pointer-events-none" /> */}
-                                <img src={Dropdown} alt="img" className="absolute  top-1/2 transform -translate-y-1/2  " />
                             </div>
-                        ))}
-                        <button
-                            type="button"
-                            onClick={handleAddLink}
-                            className="text-blue-500 text-sm"
-                        >
-                            Add another link
-                        </button>
-                    </div>
+                            <div className="mb-2">
+                                <label className="block text-sm font-medium mb-1">Weekly active user<span className='text-[#155EEF]'>*</span></label>
+                                <input
+                                    type="number"
+                                    name="weeklyActiveUsers"
+                                    value={formData.weeklyActiveUsers}
+                                    onChange={handleChange}
+                                    className="block w-full border border-gray-300 rounded-md p-2"
+                                    required
+                                    placeholder='0'
+                                />
+                            </div>
+                            <div className="mb-2">
+                                <label className="block text-sm font-medium mb-1">Revenue (in Million USD)<span className='text-[#155EEF]'>*</span></label>
+                                <input
+                                    type="number"
+                                    name="revenue"
+                                    value={formData.revenue}
+                                    onChange={handleChange}
+                                    className="block w-full border border-gray-300 rounded-md p-2"
+                                    required
+                                    placeholder='0'
+                                />
+                            </div>
+                        </>
+                    )}
                     <div className="flex justify-between">
                         <button
                             type="button"
@@ -234,3 +241,4 @@ const CreateProjectModal2 = ({ isOpen, onClose, onBack }) => {
 };
 
 export default CreateProjectModal2;
+

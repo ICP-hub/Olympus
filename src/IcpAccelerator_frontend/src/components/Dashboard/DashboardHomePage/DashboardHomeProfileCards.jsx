@@ -1,7 +1,11 @@
 import React from 'react';
 import { AccountCircle, Star, Group, InfoOutlined, StarBorderOutlined} from '@mui/icons-material';
+import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import nodata from "../../../../assets/images/nodata.png"
+import ProfileImage from "../../../../assets/Logo/ProfileImage.png";
+import VerifiedIcon from "@mui/icons-material/Verified";
+
 function DashboardHomeProfileCards() {
   return (
     <>
@@ -20,26 +24,21 @@ function DashboardHomeProfileCards() {
           <div className="flex flex-col items-center pt-2">
             <div className="w-20 h-20 bg-gray-300 rounded-full mb-3 overflow-hidden">
               {/* <AccountCircle className="w-full h-full text-gray-400" /> */}
+              <img
+                src={ProfileImage}
+                alt='Profle Image'
+                className="w-24 h-24 rounded-full object-cover"
+              />
             </div>
-            <span className="inline-block bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded-full mb-2">
+            <span className="inline-block bg-[#F0F9FF] border border-[#B9E6FE] text-[#026AA2] text-xs font-semibold px-2 py-1 rounded-md mb-2">
               OLYMPIAN
             </span>
             <h3 className="text-lg font-semibold flex items-center mb-1">
-              Matt Bowers
+              
               <span className="text-blue-500 ml-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  className="w-5 h-5"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M8.603 3.799A4.49 4.49 0 0112 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 013.498 1.307 4.491 4.491 0 011.307 3.497A4.49 4.49 0 0121.75 12a4.49 4.49 0 01-1.549 3.397 4.491 4.491 0 01-1.307 3.497 4.491 4.491 0 01-3.497 1.307A4.49 4.49 0 0112 21.75a4.49 4.49 0 01-3.397-1.549 4.49 4.49 0 01-3.498-1.306 4.491 4.491 0 01-1.307-3.498A4.49 4.49 0 012.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 011.307-3.497 4.49 4.49 0 013.497-1.307zm7.007 6.387a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+              <VerifiedIcon className="text-blue-500 mr-1" fontSize="small" />
               </span>
+              Matt Bowers
             </h3>
             <p className="text-gray-500">@mattbowers</p>
           </div>
@@ -51,7 +50,7 @@ function DashboardHomeProfileCards() {
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center">
             <h2 className="text-xl font-bold mr-2">Rating</h2>
-            <InfoOutlined className="text-gray-400 w-5 h-5" />
+            <HelpOutlineOutlinedIcon className="text-gray-400" fontSize="small" />
           </div>
           <button className="text-blue-500 font-normal">
             View details &gt;
@@ -84,7 +83,7 @@ function DashboardHomeProfileCards() {
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center">
             <h2 className="text-xl font-bold mr-2">Roles</h2>
-            <InfoOutlined className="text-gray-400 w-5 h-5" />
+            <HelpOutlineOutlinedIcon className="text-gray-400" fontSize="small" />
           </div>
           <button className="text-blue-500 font-normal">Manage &gt;</button>
         </div>

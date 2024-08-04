@@ -1,12 +1,17 @@
-import { setUncaughtExceptionCaptureCallback } from 'process';
+
 import React from 'react';
 import Layer1 from "../../../assets/Logo/Layer1.png";
-import Aboutcard from "../Auth/Aboutcard"
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import CreateProjectModal2 from '../Modals/Project Modal/modal3';
 
 import { Link } from "react-router-dom"
 import AboutcardSkeleton from '../LatestSkeleton/AbourcardSkeleton';
+
+
+
+
+import ProjectRegister1 from '../Modals/ProjectRegisterModal/ProjectRegister1';
 
 const Signupmain = () => {
     return (
@@ -53,9 +58,11 @@ const Signupmain = () => {
             </div>
 
 
+
+
+            <CreateProjectModal2 />
+
         </>
-
-
     )
 }
 export default Signupmain;

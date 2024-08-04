@@ -1,9 +1,12 @@
+
 import React, { useState, useEffect } from "react";
+
 import { useFormContext } from "react-hook-form";
 import { generateUsername } from 'unique-username-generator';
 
 
 const RegisterForm1 = () => {
+
   const { register, formState: { errors }, watch, setValue } = useFormContext();
   const [suggestions, setSuggestions] = useState([]);
   const username = watch('openchat_user_name', '');
@@ -31,7 +34,9 @@ const RegisterForm1 = () => {
     <>
       <div className="overflow-y-auto">
         <div className="mb-6">
+
           <h1 className="text-4xl font-bold  text-[#121926]">
+
             What is your name?
           </h1>
         </div>
@@ -46,8 +51,10 @@ const RegisterForm1 = () => {
             <input
               type="text"
               {...register("full_name")}
+
               className={`bg-gray-50 border-2 ${errors?.full_name ? "border-red-500" : "border-[#737373]"
                 } mt-1 p-2 border border-gray-300 rounded w-full `}
+
               placeholder="Enter your full name"
             />
             {errors?.full_name && (
@@ -58,6 +65,7 @@ const RegisterForm1 = () => {
           </div>
           <div>
             <label
+
               htmlFor="openchat_user_name"
               className="block font-semibold text-[#121926]">
               Username <span className="text-[#155EEF]">*</span>
@@ -80,6 +88,7 @@ const RegisterForm1 = () => {
                 {errors?.openchat_user_name?.message}
               </span>
             )}
+
           </div>
           {suggestions.map((suggestion, index) => (
             <div

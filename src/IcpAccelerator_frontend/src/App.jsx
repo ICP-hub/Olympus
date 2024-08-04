@@ -17,6 +17,7 @@ import ConnectWallet from "./models/ConnectWallet";
 import Loader from "./component/Loader/Loader";
 import Footer from "./components/Footer/Footer";
 import Navbar from "./components/Layout/Header/Navbar";
+import WarningMessage from "./ScreenWarning";
 
 const App = () => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -125,8 +126,9 @@ const App = () => {
           <Navbar />
         </div>
       )} */}
+      <WarningMessage />
       <div className="bg-gray-100">
-        <div className="container-xl mx-auto">
+        <div className="container-lg mx-auto">
           <ConnectWallet
             isModalOpen={isModalOpen}
             onClose={() => setModalOpen(false)}

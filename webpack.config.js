@@ -33,6 +33,8 @@ module.exports = (env) => {
         events: require.resolve("events/"),
         stream: require.resolve("stream-browserify/"),
         util: require.resolve("util/"),
+        crypto: require.resolve('crypto-browserify'),
+        vm: require.resolve('vm-browserify'),
       },
     },
     output: {

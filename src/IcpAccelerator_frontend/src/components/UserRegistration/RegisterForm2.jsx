@@ -11,8 +11,9 @@ const RegisterForm2 = () => {
     <>
       <div className="overflow-y-auto">
         <div className="mb-6">
+
           <h1 className="text-4xl font-bold  text-[#121926]">
-            What's your email?
+s your email?
           </h1>
         </div>
         <div className="space-y-4">
@@ -28,10 +29,12 @@ const RegisterForm2 = () => {
               type="email"
               {...register("email")}
               className={`bg-gray-50 border-2 
+
                                                 ${errors?.email
                   ? "border-red-500"
                   : "border-[#737373]"
                 } mt-1 p-2 border border-gray-300 rounded w-full`}
+
               placeholder="Enter your email"
             />
             {errors?.email && (

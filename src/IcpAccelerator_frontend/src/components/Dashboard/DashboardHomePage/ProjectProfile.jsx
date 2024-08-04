@@ -35,7 +35,7 @@ function ProjectProfile() {
             View public profile
           </button>
           <button className="flex items-center text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
-            <Share className="mr-1" fontSize="small" /> Share
+          Share
           </button>
         </div>
       </div>
@@ -181,26 +181,33 @@ function ProjectProfile() {
           </div>
         </div>
 
-        {/* Service Section */}
+        {/*---------------------Service Section------------------------------- */}
         <div className="md:w-2/3">
-          <div className="flex justify-between items-center mb-6">
-            <div className="flex space-x-4">
-              <button className="text-gray-500">Roles</button>
-              <button className="text-[#155EEF] border-b-2 border-[#155EEF] flex items-center">
-                Services
-                <span className="ml-1 bg-[#EFF4FF] border-[#B2CCFF] border text-[#004EEB] text-xs rounded-full w-6 h-4 flex items-center justify-center">
-                  1
-                </span>
-              </button>
-              <button className="text-gray-500">Works</button>
-              <button className="text-gray-500">Rating</button>
+          <div className="flex flex-col mb-6">
+            <div className="flex justify-between items-center">
+              <div className="flex space-x-4">
+                <button className="text-gray-500 py-2">Roles</button>
+                <button className="text-[#155EEF] py-2 flex items-center relative">
+                  Services
+                  <span className="ml-1 bg-[#EFF4FF] border-[#B2CCFF] border text-[#004EEB] text-xs rounded-full w-6 h-4 flex items-center justify-center">
+                    1
+                  </span>
+                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#155EEF]"></div>
+                </button>
+                <Link to="/dashboard/single-add-new-work">
+                  <button className="text-gray-500 py-2">Works</button>
+                </Link>
+                <button className="text-gray-500 py-2">Rating</button>
+              </div>
             </div>
-            <button className="bg-[#155EEF] text-white px-4 py-2 rounded-md flex items-center space-x-2 text-sm font-medium hover:bg-[#1356D9] transition-colors duration-300">
-              <AddIcon className="w-5 h-5" />
-              <span>Add new service</span>
-            </button>
+            <hr className="w-full border-t border-gray-200 mt-0" />
+            <div className="flex justify-end mt-4">
+              <button className="bg-[#155EEF] text-white px-4 py-2 rounded-md flex items-center space-x-2 text-sm font-medium hover:bg-[#1356D9] transition-colors duration-300">
+                <AddIcon className="w-5 h-5" />
+                <span>Add new service</span>
+              </button>
+            </div>
           </div>
-
           {/* Service Card */}
           <Link to="/dashboard/single-project">
             <div className="bg-white rounded-lg shadow-md p-4 flex flex-col md:flex-row">

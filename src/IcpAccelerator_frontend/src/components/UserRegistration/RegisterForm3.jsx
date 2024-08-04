@@ -24,6 +24,8 @@ import CompressedImage from "../../component/ImageCompressed/CompressedImage";
 
 
 
+
+
 const RegisterForm3 = () => {
   const { countries } = useCountries();
   const areaOfExpertise = useSelector(
@@ -157,11 +159,14 @@ const RegisterForm3 = () => {
   };
 
   return (
+
     <div className="">
+
       <h2 className="text-3xl font-bold mb-4">Tell about yourself</h2>
       <label className="block text-sm font-medium mb-2">
         Upload a photo<span className="text-[#155EEF]">*</span>
       </label>
+
 
       <div className="flex gap-2 mb-3">
         <div className="h-24 w-24 rounded-2xl border-2 border-dashed border-gray-300 items-center justify-center overflow-hidden flex">
@@ -238,6 +243,7 @@ const RegisterForm3 = () => {
 
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-2">
+
           Why do you want to join this platform ?{" "}
           <span className="text-[#155EEF]">*</span>
         </label>
@@ -286,8 +292,10 @@ const RegisterForm3 = () => {
               ...provided,
               display: "inline-flex",
               alignItems: "center",
+
               backgroundColor: "white",
               border: "2px solid #E3E3E3"
+
             }),
             multiValueRemove: (provided) => ({
               ...provided,
@@ -337,8 +345,10 @@ const RegisterForm3 = () => {
         </label>
         <textarea
           {...register("bio")}
+
           className={`bg-gray-50 border-2 ${errors?.bio ? "border-red-500 " : "border-[#737373]"
             } mt-2 p-2 border border-gray-300 rounded-md w-full h-24`}
+
           placeholder="Enter your bio"
           rows={1}
         ></textarea>
@@ -351,7 +361,9 @@ const RegisterForm3 = () => {
       <div className="mb-4">
         <label
           htmlFor="domains_interested_in"
+
           className="block text-sm font-medium text-gray-700 mb-2"
+
         >
           Interests <span className="text-[#155EEF]">*</span>
         </label>
@@ -400,8 +412,10 @@ const RegisterForm3 = () => {
               ...provided,
               display: "inline-flex",
               alignItems: "center",
+
               backgroundColor: "white",
               border: "2px solid #E3E3E3"
+
             }),
             multiValueRemove: (provided) => ({
               ...provided,
@@ -445,14 +459,18 @@ const RegisterForm3 = () => {
       <div className="mb-4">
         <label
           htmlFor="type_of_profile"
+
           className="block text-sm font-medium text-gray-700 mb-2"
+
         >
           Type of Profile<span className="text-[#155EEF]">*</span>
         </label>
         <select
           {...register("type_of_profile")}
+
           className={`bg-gray-50 border-2 ${errors.type_of_profile ? "border-red-500 " : "border-[#737373]"
             }mt-2 p-2 border border-gray-300 rounded-md w-full`}
+
         >
           <option className="text-lg font-bold" value="">
             Select profile type
@@ -479,14 +497,18 @@ const RegisterForm3 = () => {
       <div className="mb-4">
         <label
           htmlFor="country"
+
           className="block text-sm font-medium text-gray-700 mb-2"
+
         >
           Location <span className="text-[#155EEF]">*</span>
         </label>
         <select
           {...register("country")}
+
           className={`bg-gray-50 border-2 ${errors.country ? "border-red-500 " : "border-[#737373]"
             }  p-2 border border-gray-300 rounded-md w-full`}
+
         >
           <option className="text-lg font-bold" value="">
             Select your country
@@ -509,17 +531,21 @@ const RegisterForm3 = () => {
         )}
       </div>
       <div className="mb-4">
+
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Links{" "}
         </label>
         <div className=" relative ">
+
           <input
             type="text"
             name="linkedin"
             placeholder="Enter your URL"
             // value={formData.links.linkedin}
             onChange={handleLinkChange}
+
             className=" p-2 border border-gray-300 rounded-md w-full"
+
           />
           {/* <div className="absolute right-2 top-1/2 transform -translate-y-1/2  ">{getLogo(formData.links.linkedin)}</div> */}
         </div>

@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import bigLogo from "../../../../assets/Logo/bigLogo.png";
 import topLogo from "../../../../assets/Logo/topLogo.png";
 
+
+
 import {
   SearchOutlined,
   MailOutline,
@@ -58,8 +60,8 @@ function DashboardHomeNavbar() {
         <div className="relative">
           <input
             type="text"
-            placeholder="Search"
-            className="w-full py-2 pl-10 pr-4 rounded-md bg-white-100 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Search people, projects, jobs, events"
+            className="w-[480px] h-[44px] py-2 pl-10 pr-4 rounded-md bg-white-100 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <SearchOutlined
             className="absolute left-3 text-gray-400"
@@ -70,13 +72,13 @@ function DashboardHomeNavbar() {
 
       {/* Icons */}
       <div className="flex items-center space-x-4">
-        <MailOutline className="text-gray-600 cursor-pointer hidden md:block" />
         <NotificationsNone className="text-gray-600 cursor-pointer hidden md:block" />
         <img
           src={bigLogo}
           alt="User"
           className="h-[20px] w-[30px] rounded-full"
           onClick={toggleDropdown}
+
         />
         {dropdownOpen && (
           <div className="absolute right-[20px] top-[40px] mt-2  bg-white border rounded-md shadow-lg z-20">
@@ -94,6 +96,8 @@ function DashboardHomeNavbar() {
             </button>
           </div>
         )}
+
+    
       </div>
 
       {/* Mobile Menu */}

@@ -19,8 +19,8 @@ const Footer = () => {
             Get started
           </button>
         </div>
-        <div className="border-t border-gray-200 pt-8">
-          <div className="flex flex-wrap justify-between">
+        <div className="border-t border-[#bd10e0bf] pt-8">
+        <div className="flex flex-wrap justify-between">
             <div className="w-full md:w-1/4 mb-8 md:mb-0">
               <h3 className="text-xl font-semibold mb-4"> <img src={Layer1} alt="logo" className="text-white" /></h3>
               <p className="text-gray-600 text-sm">Risus feugiat sollicitudin ur lorem aliquam maecenas vitae vulputate. In tortor.</p>
@@ -66,7 +66,7 @@ const Footer = () => {
                       className="w-full pl-10 p-2 border border-gray-300 rounded-lg"
                     />
                   </div>
-                  <button type="submit" className=" text-gray-600 text-lg py-2 px-6 rounded-lg w-full border-2 border-gray-500 bg-white hover:border-black">
+                  <button type="submit" className=" text-gray-600 text-lg py-2 px-6 rounded-lg w-full border border-[#CDD5DF] bg-white hover:border-[#b7bec6]">
                     Subscribe
                   </button>
                 </form>

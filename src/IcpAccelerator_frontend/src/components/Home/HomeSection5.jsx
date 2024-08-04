@@ -1,5 +1,9 @@
 import React from 'react';
 import man1 from '../../../assets/images/man1.png';
+import AccelerateIcon from '../../../assets/images/AccelerateIcon.png';
+import CollaborateIcon from '../../../assets/images/CollaborateIcon.png';
+import CreateProfileIcon from '../../../assets/images/CreateProfileIcon.png';
+import DiscoverAndConnetIcon from '../../../assets/images/DiscoverAndConnetIcon.png';
 
 export default function HomeSection5() {
   return (
@@ -27,10 +31,10 @@ export default function HomeSection5() {
               <div className="md:w-1/2 min ml-2">
                 <ul className="space-y-8 relative">
                   {/* Vertical Line */}
-                  <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-300"></div>
+                  <div className="absolute left-4 top-0 bottom-0 h-64 w-0.5 bg-gray-300"></div>
                   <li className="flex items-start">
-                    <span className="bg-orange-500 text-white rounded-full h-8 w-8 flex items-center justify-center mr-4 relative z-10">
-                      1
+                    <span className="bg-[#F7B27A] text-white rounded-full h-8 w-8 flex items-center justify-center mr-4 relative z-10">
+                    <img src={CreateProfileIcon} alt="Accelerate Icon" className="h-4"/>
                     </span>
                     <div>
                       <h3 className="font-bold">Create Profile</h3>
@@ -38,8 +42,8 @@ export default function HomeSection5() {
                     </div>
                   </li>
                   <li className="flex items-start">
-                    <span className="bg-orange-500 text-white rounded-full h-8 w-8 flex items-center justify-center mr-4 relative z-10">
-                      2
+                    <span className="bg-[#F7B27A] text-white rounded-full h-8 w-8 flex items-center justify-center mr-4 relative z-10">
+                    <img src={DiscoverAndConnetIcon} alt="Accelerate Icon" className="h-4"/>
                     </span>
                     <div>
                       <h3 className="font-bold">Discover & Connect</h3>
@@ -47,8 +51,8 @@ export default function HomeSection5() {
                     </div>
                   </li>
                   <li className="flex items-start">
-                    <span className="bg-orange-500 text-white rounded-full h-8 w-8 flex items-center justify-center mr-4 relative z-10">
-                      3
+                    <span className="bg-[#F7B27A] text-white rounded-full h-8 w-8 flex items-center justify-center mr-4 relative z-10">
+                    <img src={CollaborateIcon} alt="Accelerate Icon" className="h-4"/>
                     </span>
                     <div>
                       <h3 className="font-bold">Collaborate</h3>
@@ -56,8 +60,8 @@ export default function HomeSection5() {
                     </div>
                   </li>
                   <li className="flex items-start ">
-                    <span className="bg-orange-500 text-white rounded-full h-8 w-8 flex items-center justify-center mr-4 relative z-10">
-                      4
+                    <span className="bg-[#F7B27A] text-white rounded-full h-8 w-8 flex items-center justify-center mr-4 relative z-10">
+                    <img src={AccelerateIcon} alt="Accelerate Icon" className="h-4"/>
                     </span>
                     <div>
                       <h3 className="font-bold">Accelerate</h3>
