@@ -9,10 +9,8 @@ import { useCountries } from "react-countries";
 import { useSelector, useDispatch } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
 import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_IcpHubReducer";
-import MentorSignup4 from "./MentorSignup4";
-import MentorSignup1 from "./MentoSignup1";
 import MentorSignup3 from "./MentorSignUp3";
-import MentorSignup2 from "./MentorSignup2";
+import MentorSignup4 from "./MentorSignup4";
 
 const MentorSignupMain = () => {
   const { countries } = useCountries();
@@ -20,17 +18,12 @@ const MentorSignupMain = () => {
   const actor = useSelector((state) => state.actors.actor);
   const areaOfExpertise = useSelector((state) => state.expertiseIn.expertise);
   const typeOfProfile = useSelector((state) => state.profileTypes.profiles);
-
   const userFullData = useSelector((state) => state.userData.data.Ok);
   const mentorFullData = useSelector((state) => state.mentorData.data[0]);
   const userCurrentRoleStatusActiveRole = useSelector(
     (state) => state.currentRoleStatus.activeRole
   );
 
-  // STATES
-  const [imagePreview, setImagePreview] = useState(null);
-  const [imageData, setImageData] = useState(null);
-  const [editMode, setEditMode] = useState(null);
   const [index, setIndex] = useState(0);
 
   const [interestedDomainsOptions, setInterestedDomainsOptions] = useState([]);
@@ -42,6 +35,7 @@ const MentorSignupMain = () => {
   const [categoryOfMentoringServiceSelectedOptions, setCategoryOfMentoringServiceSelectedOptions] = useState([]);
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
   const multiChainNames = useSelector((currState) => currState.chains.chains);
+
   const reasonOfJoiningOptions = [
     { value: "listing_and_promotion", label: "Project listing and promotion" },
     { value: "Funding", label: "Funding" },
@@ -59,7 +53,6 @@ const MentorSignupMain = () => {
     { value: "Raise", label: "Raise" },
   ];
 
-  // Validation Schema
   const validationSchema = yup.object().shape({
     full_name: yup.string().required("Full name is required"),
     email: yup.string().email("Invalid email").nullable(true).optional(),
@@ -101,19 +94,20 @@ const MentorSignupMain = () => {
     mode: "all",
   });
 
-  const { handleSubmit, trigger, setValue, clearErrors, setError, watch } = methods;
+  const { handleSubmit, trigger, setValue, clearErrors, setError, watch, formState: { isSubmitting } } = methods;
 
   const formFields = {
-    // 0: ["full_name", "email", "telegram_id", "twitter_id", "openchat_user_name"],
-    // 1: ["bio", "country", "domains_interested_in", "type_of_profile", "reasons_to_join_platform"],
     0: ["preferred_icp_hub", "category_of_mentoring_service", "multi_chain", "multi_chain_names"],
     1: ["icp_hub_or_spoke", "hub_owner", "mentor_website_url", "years_of_mentoring", "mentor_linkedin_url"],
   };
 
   const handleNext = async () => {
     const isValid = await trigger(formFields[index]);
+    console.log("Validation result for step", index, ":", isValid);
     if (isValid) {
       setIndex((prevIndex) => prevIndex + 1);
+    } else {
+      console.log("Validation errors:", methods.formState.errors);
     }
   };
 
@@ -128,38 +122,11 @@ const MentorSignupMain = () => {
       case 0:
         return <MentorSignup3 />;
       case 1:
-        return (
-          // <MentorSignup2
-          //   countries={countries}
-          //   typeOfProfileOptions={typeOfProfile.map(type => ({ value: type.role_type.toLowerCase(), label: type.role_type }))}
-          //   reasonOfJoiningOptions={reasonOfJoiningOptions}
-          //   interestedDomainsOptions={areaOfExpertise.map(expert => ({ value: expert.name, label: expert.name }))}
-          //   interestedDomainsSelectedOptions={interestedDomainsSelectedOptions}
-          //   setInterestedDomainsSelectedOptions={setInterestedDomainsSelectedOptions}
-          //   reasonOfJoiningSelectedOptions={reasonOfJoiningSelectedOptions}
-          //   setReasonOfJoiningSelectedOptions={setReasonOfJoiningSelectedOptions}
-          //   clearErrors={clearErrors}
-          //   setValue={setValue}
-          //   setError={setError}
-          // />
-          <MentorSignup4  />
-        );
-      // case 2:
-      //   return (
-      //     <MentorSignup3
-      //       clearErrors={clearErrors}
-      //       setValue={setValue}
-      //       setError={setError}
-      //     />
-      //   );
-      // case 3:
-      //   return <MentorSignup4  />;
+        return <MentorSignup4 />;
       default:
         return <MentorSignup3 />;
     }
   };
-
-  
 
   useEffect(() => {
     dispatch(allHubHandlerRequest());
@@ -193,14 +160,78 @@ const MentorSignupMain = () => {
     dispatch(allHubHandlerRequest());
   }, [dispatch]);
 
-  const onSubmitHandler = async (data) => {
-    // Process form data submission
-  };
+
 
   const onErrorHandler = (errors) => {
     toast.error("Empty fields or invalid values, please recheck the form");
   };
 
+
+    // form submit handler func
+    const onSubmitHandler = async (data) => {
+      if (actor) {
+        const mentorData = {
+          // mentor data
+          preferred_icp_hub: [data?.preferred_icp_hub || ""],
+          icp_hub_or_spoke: data?.icp_hub_or_spoke === "true" ? true : false,
+          hub_owner: [
+            data?.icp_hub_or_spoke === "true" && data?.hub_owner
+              ? data?.hub_owner
+              : "",
+          ],
+          hub_owner: [data?.hub_owner || ""],
+          category_of_mentoring_service: data?.category_of_mentoring_service,
+          years_of_mentoring: data.years_of_mentoring.toString(),
+          linkedin_link: data?.mentor_linkedin_url,
+          multichain: [
+            data?.multi_chain === "true" && data?.multi_chain_names
+              ? data?.multi_chain_names
+              : "",
+          ],
+          website: [data?.mentor_website_url || ""],
+          // mentor data not exiting on frontend or raw variables
+          existing_icp_mentor: false,
+          existing_icp_project_porfolio: [
+            data?.existing_icp_project_porfolio || "",
+          ],
+          area_of_expertise: "",
+          reason_for_joining: [""],
+        };
+        try {
+          if (userCurrentRoleStatusActiveRole === "mentor") {
+            await actor.update_mentor(mentorData).then((result) => {
+              if (result && result.includes("approval request is sent")) {
+                toast.success("Approval request is sent");
+                window.location.href = "/";
+              } else {
+                toast.error(result);
+              }
+            });
+          } else if (
+            userCurrentRoleStatusActiveRole === null ||
+            userCurrentRoleStatusActiveRole === "user" ||
+            userCurrentRoleStatusActiveRole === "project" ||
+            userCurrentRoleStatusActiveRole === "vc"
+          ) {
+            await actor.register_mentor_candid(mentorData).then((result) => {
+              if (result && result.includes("approval request is sent")) {
+                toast.success("Approval request is sent");
+                window.location.href = "/";
+              } else {
+                toast.error(result);
+              }
+            });
+          }
+        } catch (error) {
+          toast.error(error);
+          console.error("Error sending data to the backend:", error);
+        }
+      } else {
+        toast.error("Please signup with internet identity first");
+        window.location.href = "/";
+      }
+    };
+  
   return (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -213,16 +244,16 @@ const MentorSignupMain = () => {
                 {index > 0 && (
                   <button
                     type="button"
-                    className="py-2 px-4 text-gray-600 rounded hover:text-black"
+                    className="py-2 px-4 text-gray-600 rounded hover:text-black "
                     onClick={handleBack}
                   >
-                    Back
+                    <ArrowBackIcon fontSize="15px" className="mr-1"/>Back
                   </button>
                 )}
-                {index === 3 ? (
+                {index === 1 ? (
                   <button
                     type="submit"
-                    className="py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 border-2 border-[#B2CCFF]"
+                    className="py-2 px-4 bg-blue-600 text-white rounded  border-2 border-[#B2CCFF]"
                   >
                     {isSubmitting ? (
                       <ThreeDots
@@ -240,11 +271,11 @@ const MentorSignupMain = () => {
                 ) : (
                   <button
                     type="button"
-                    className="py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 border-2 border-[#B2CCFF] flex items-center"
+                    className="py-2 px-4 bg-blue-600 text-white rounded  border-2 border-[#B2CCFF] flex items-center"
                     onClick={handleNext}
                   >
                     Continue
-                    <ArrowForwardIcon fontSize="medium" className="ml-2" />
+                    <ArrowForwardIcon fontSize="15px" className="ml-1" />
                   </button>
                 )}
               </div>

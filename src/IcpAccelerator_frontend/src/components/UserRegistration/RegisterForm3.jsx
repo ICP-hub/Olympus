@@ -22,26 +22,9 @@ import {
 } from "react-icons/fa";
 import CompressedImage from "../../component/ImageCompressed/CompressedImage";
 
-const selectStyles = {
-  control: (provided) => ({
-    ...provided,
-    borderColor: "#CDD5DF", // Tailwind border-gray-300
-    borderRadius: "0.375rem", // Tailwind rounded-md
-  }),
-  controlIsFocused: (provided) => ({
-    ...provided,
-    borderColor: "black", // Tailwind border-blue-500
-    boxShadow: "none",
-  }),
-  multiValue: (provided) => ({
-    ...provided,
-    borderColor: "#CDD5DF", // Tailwind bg-gray-200
-  }),
-  multiValueLabel: (provided) => ({
-    ...provided,
-    color: "#1f2937", // Tailwind text-gray-700
-  }),
-};
+
+
+
 
 const RegisterForm3 = () => {
   const { countries } = useCountries();
@@ -176,100 +159,91 @@ const RegisterForm3 = () => {
   };
 
   return (
-    <div className="mx-12">
+
+    <div className="">
+
       <h2 className="text-3xl font-bold mb-4">Tell about yourself</h2>
       <label className="block text-sm font-medium mb-2">
         Upload a photo<span className="text-[#155EEF]">*</span>
       </label>
-      <div className=" flex gap-3">
-        <label
-          htmlFor="file-upload"
-          className="block font-medium text-gray-700 border border-gray-500 px-4 py-2 cursor-pointer rounded"
-        >
-          <ControlPointIcon fontSize="medium" className="-ml-2" /> Upload
-        </label>
 
-        <div className="flex flex-col mb-10 xxs:mb-0">
-          <div className="flex-row w-full xxs:flex xxs:left-text center-text justify-start gap-4 items-center">
-            <div className="xxs:mb-3 mb-5 xxs:ml-6 h-24 w-24 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
-              {imagePreview && !errors.image ? (
-                <img
-                  src={imagePreview}
-                  alt="Profile"
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <svg
-                  width="35"
-                  height="37"
-                  viewBox="0 0 35 37"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="bg-no-repeat"
-                >
-                  <path
-                    d="M8.53049 8.62583C8.5304 13.3783 12.3575 17.2449 17.0605 17.2438C21.7634 17.2428 25.5907 13.3744 25.5908 8.62196C25.5909 3.8695 21.7638 0.00287764 17.0608 0.00394405C12.3579 0.00501045 8.53058 3.87336 8.53049 8.62583ZM32.2249 36.3959L34.1204 36.3954L34.1205 34.4799C34.1206 27.0878 28.1667 21.0724 20.8516 21.0741L13.2692 21.0758C5.95224 21.0775 -3.41468e-05 27.0955 -0.000176714 34.4876L-0.000213659 36.4032L32.2249 36.3959Z"
-                    fill="#BBBBBB"
-                  />
-                </svg>
-              )}
-            </div>
 
-            <Controller
-              name="image"
-              control={control}
-              render={({ field }) => (
-                <>
-                  <input
-                    type="file"
-                    className="hidden"
-                    id="image"
-                    name="image"
-                    onChange={(e) => {
-                      field.onChange(e.target.files[0]);
-                      imageCreationFunc(e.target.files[0]);
-                    }}
-                    accept=".jpg, .jpeg, .png"
-                  />
-                  <label
-                    htmlFor="image"
-                    className="p-2 border-2 border-blue-800 items-center rounded-md text-md bg-transparent text-blue-800 cursor-pointer font-semibold"
-                  >
-                    {imagePreview && !errors.image
-                      ? "Change profile picture"
-                      : "Upload profile picture"}
-                  </label>
-                  {imagePreview || errors.image ? (
-                    <button
-                      className="p-2 border-2 border-red-500 items-center rounded-md text-md bg-transparent text-red-500 cursor-pointer font-semibold capitalize"
-                      onClick={() => clearImageFunc("image")}
-                    >
-                      clear
-                    </button>
-                  ) : (
-                    ""
-                  )}
-                </>
-              )}
+      <div className="flex gap-2 mb-3">
+        <div className="h-24 w-24 rounded-2xl border-2 border-dashed border-gray-300 items-center justify-center overflow-hidden flex">
+          {imagePreview && !errors.image ? (
+            <img
+              src={imagePreview}
+              alt="Profile"
+              className="h-full w-full object-cover"
             />
-          </div>
-          {errors.image && (
-            <span className="mt-1 text-sm text-red-500 font-bold text-start px-4">
-              {errors?.image?.message}
-            </span>
+          ) : (
+            <svg
+              width="35"
+              height="37"
+              viewBox="0 0 35 37"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="bg-no-repeat"
+            >
+              <path
+                d="M8.53049 8.62583C8.5304 13.3783 12.3575 17.2449 17.0605 17.2438C21.7634 17.2428 25.5907 13.3744 25.5908 8.62196C25.5909 3.8695 21.7638 0.00287764 17.0608 0.00394405C12.3579 0.00501045 8.53058 3.87336 8.53049 8.62583ZM32.2249 36.3959L34.1204 36.3954L34.1205 34.4799C34.1206 27.0878 28.1667 21.0724 20.8516 21.0741L13.2692 21.0758C5.95224 21.0775 -3.41468e-05 27.0955 -0.000176714 34.4876L-0.000213659 36.4032L32.2249 36.3959Z"
+                fill="#BBBBBB"
+              />
+            </svg>
           )}
         </div>
-        <label
-          htmlFor="file-upload"
-          className="block font-medium text-gray-700 border border-gray-500 px-4 py-2 cursor-pointer rounded"
-        >
-          <AutoAwesomeIcon fontSize="medium" className="mr-2" />
-          Generate Image
-        </label>
+        <div className="flex gap-1 items-center justify-center">
+          <Controller
+            name="image"
+            control={control}
+            render={({ field }) => (
+              <>
+                <input
+                  type="file"
+                  className="hidden"
+                  id="image"
+                  name="image"
+                  onChange={(e) => {
+                    field.onChange(e.target.files[0]);
+                    imageCreationFunc(e.target.files[0]);
+                  }}
+                  accept=".jpg, .jpeg, .png"
+                />
+                <label
+                  htmlFor="image"
+                  className="font-medium text-gray-700 border border-[#CDD5DF] px-4 py-1 cursor-pointer rounded"
+                ><ControlPointIcon
+                    fontSize="small"
+                    className="items-center -mt-1 mr-2"
+                  />
+                  {imagePreview && !errors.image
+                    ? "Change profile picture"
+                    : "Upload profile picture"}
+                </label>
+                {imagePreview || errors.image ? (
+                  <button
+                    className="font-medium px-4 py-1 cursor-pointer rounded border border-red-500 items-center text-md bg-transparent text-red-500  capitalize ml-1 sm0:ml-0"
+                    onClick={() => clearImageFunc("image")}
+                  >
+                    clear
+                  </button>
+                ) : (
+                  ""
+                )}
+              </>
+            )}
+          />
+        </div>
+        {errors.image && (
+          <span className="mt-1 text-sm text-red-500 font-bold text-start px-4">
+            {errors?.image?.message}
+          </span>
+        )}
       </div>
-      <p className="text-red-500 mb-4">Delete image *</p>
+
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+
           Why do you want to join this platform ?{" "}
           <span className="text-[#155EEF]">*</span>
         </label>
@@ -318,6 +292,10 @@ const RegisterForm3 = () => {
               ...provided,
               display: "inline-flex",
               alignItems: "center",
+
+              backgroundColor: "white",
+              border: "2px solid #E3E3E3"
+
             }),
             multiValueRemove: (provided) => ({
               ...provided,
@@ -367,9 +345,10 @@ const RegisterForm3 = () => {
         </label>
         <textarea
           {...register("bio")}
-          className={`bg-gray-50 border-2 ${
-            errors?.bio ? "border-red-500 " : "border-[#737373]"
-          } mt-2 p-2 border border-gray-300 rounded-md w-full h-24`}
+
+          className={`bg-gray-50 border-2 ${errors?.bio ? "border-red-500 " : "border-[#737373]"
+            } mt-2 p-2 border border-gray-300 rounded-md w-full h-24`}
+
           placeholder="Enter your bio"
           rows={1}
         ></textarea>
@@ -382,7 +361,9 @@ const RegisterForm3 = () => {
       <div className="mb-4">
         <label
           htmlFor="domains_interested_in"
-          className="block text-sm font-medium text-gray-700"
+
+          className="block text-sm font-medium text-gray-700 mb-2"
+
         >
           Interests <span className="text-[#155EEF]">*</span>
         </label>
@@ -431,6 +412,10 @@ const RegisterForm3 = () => {
               ...provided,
               display: "inline-flex",
               alignItems: "center",
+
+              backgroundColor: "white",
+              border: "2px solid #E3E3E3"
+
             }),
             multiValueRemove: (provided) => ({
               ...provided,
@@ -474,15 +459,18 @@ const RegisterForm3 = () => {
       <div className="mb-4">
         <label
           htmlFor="type_of_profile"
-          className="block text-sm font-medium text-gray-700"
+
+          className="block text-sm font-medium text-gray-700 mb-2"
+
         >
           Type of Profile<span className="text-[#155EEF]">*</span>
         </label>
         <select
           {...register("type_of_profile")}
-          className={`bg-gray-50 border-2 ${
-            errors.type_of_profile ? "border-red-500 " : "border-[#737373]"
-          }mt-2 p-2 border border-gray-300 rounded-md w-full`}
+
+          className={`bg-gray-50 border-2 ${errors.type_of_profile ? "border-red-500 " : "border-[#737373]"
+            }mt-2 p-2 border border-gray-300 rounded-md w-full`}
+
         >
           <option className="text-lg font-bold" value="">
             Select profile type
@@ -509,15 +497,18 @@ const RegisterForm3 = () => {
       <div className="mb-4">
         <label
           htmlFor="country"
-          className="block text-sm font-medium text-gray-700"
+
+          className="block text-sm font-medium text-gray-700 mb-2"
+
         >
           Location <span className="text-[#155EEF]">*</span>
         </label>
         <select
           {...register("country")}
-          className={`bg-gray-50 border-2 ${
-            errors.country ? "border-red-500 " : "border-[#737373]"
-          } mt-2 p-2 border border-gray-300 rounded-md w-full`}
+
+          className={`bg-gray-50 border-2 ${errors.country ? "border-red-500 " : "border-[#737373]"
+            }  p-2 border border-gray-300 rounded-md w-full`}
+
         >
           <option className="text-lg font-bold" value="">
             Select your country
@@ -540,17 +531,21 @@ const RegisterForm3 = () => {
         )}
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
+
+        <label className="block text-sm font-medium text-gray-700 mb-2">
           Links{" "}
         </label>
-        <div className=" relative mt-2">
+        <div className=" relative ">
+
           <input
             type="text"
             name="linkedin"
             placeholder="Enter your URL"
             // value={formData.links.linkedin}
             onChange={handleLinkChange}
-            className="mt-2 p-2 border border-gray-300 rounded-md w-full"
+
+            className=" p-2 border border-gray-300 rounded-md w-full"
+
           />
           {/* <div className="absolute right-2 top-1/2 transform -translate-y-1/2  ">{getLogo(formData.links.linkedin)}</div> */}
         </div>

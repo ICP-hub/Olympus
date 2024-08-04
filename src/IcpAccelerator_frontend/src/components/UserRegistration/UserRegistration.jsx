@@ -236,15 +236,17 @@ const UserRegistration = () => {
   return (
     <>
       <FormProvider {...methods}>
-      <div className="bg-[#FFF4ED] min-h-screen flex items-center justify-center overflow-hidden">
-      <div className="container mx-auto">
-        <div className="py-12 flex items-center justify-center rounded-xl">
-          <div className="bg-white shadow-xl rounded-2xl flex w-full max-w-6xl">
-            <div className="w-1/2 p-10">
-              <img src={Layer1} alt="logo" className="flex justify-start w-1/3" loading="lazy"/>
-              <h2 className="text-[#364152] text-lg font-normal mb-2 mt-16 mx-10">
-                Step {index + 1} of 3
-              </h2>
+
+        <div className="bg-[#FFF4ED] min-h-screen flex items-center justify-center overflow-hidden">
+          <div className="container mx-auto">
+            <div className="py-12 flex items-center justify-center rounded-xl">
+              <div className="bg-white shadow-xl rounded-2xl flex w-full max-w-6xl">
+                <div className="w-1/2 p-10">
+                  <img src={Layer1} alt="logo" className="flex justify-start w-1/3" loading="lazy" />
+                  <h2 className="text-[#364152] text-lg font-normal mb-2 mt-16 ">
+                    Step {index + 1} of 3
+                  </h2>
+
                   <form
                     onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}
                   >

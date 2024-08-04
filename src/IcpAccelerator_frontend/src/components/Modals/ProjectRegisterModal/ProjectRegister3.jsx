@@ -107,6 +107,9 @@ const ProjectRegister3 = ({ isOpen, onClose, onBack }) => {
                                 ...provided,
                                 display: "inline-flex",
                                 alignItems: "center",
+                                backgroundColor: "white",
+                                border: "2px solid #ef4444"
+
                             }),
                             multiValueRemove: (provided) => ({
                                 ...provided,
