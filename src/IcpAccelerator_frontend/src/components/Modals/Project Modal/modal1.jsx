@@ -4,46 +4,45 @@ import mentor from "../../../../assets/Logo/mentor.png";
 import talent from "../../../../assets/Logo/talent.png";
 import founder from "../../../../assets/Logo/founder.png";
 import CreateProjectModal2 from "../../Home/modal2"; // Import the correct modal component
-
+import { useNavigate } from 'react-router-dom';
 const Modal1 = ({ isOpen, onClose }) => {
     const [modalOpen, setModalOpen] = useState(isOpen || true);
     const [selectedRole, setSelectedRole] = useState(null);
-    const [showCreateProjectModal, setShowCreateProjectModal] = useState(false);
-
-    useEffect(() => {
-        if (modalOpen) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = 'auto';
-        }
-
-        // Cleanup function
-        return () => {
-            document.body.style.overflow = 'auto';
-        };
-    }, [modalOpen]);
+    const navigate = useNavigate();
 
     // Define the roles and their corresponding images
     const roles = [
         { name: 'Founder', image: founder, description: 'List your project, build connections, find investments' },
-        { name: 'Investor', image: founder, description: 'Find promising projects, build your portfolio' },
+        { name: 'Investor', image: talent, description: 'Find promising projects, build your portfolio' },
         { name: 'Mentor', image: mentor, description: 'Provide consultations, build professional network' },
-        { name: 'Talent', image: talent, description: 'Find gigs or full-time job, build reputation' },
+        // { name: 'Talent', image: talent, description: 'Find gigs or full-time job, build reputation' },
     ];
 
     const handleRoleSelect = (role) => {
         setSelectedRole(role);
     };
 
+   
     const handleContinue = () => {
-        setShowCreateProjectModal(true);
-        setModalOpen(false);
+        if (selectedRole) {
+            const currentLocation = window.location.pathname;
+            switch (selectedRole) {
+                case 'Founder':
+                    navigate('/dashboard/project-sign-up', { state: { background: currentLocation } });
+                    break;
+                case 'Investor':
+                    navigate('/dashboard/investor-sign-up', { state: { background: currentLocation } });
+                    break;
+                case 'Mentor':
+                    navigate('/dashboard/mentor-sign-up', { state: { background: currentLocation } });
+                    break;
+                default:
+                    break;
+            }
+            onClose(false);
+        }
     };
-
-    const handleCloseCreateProjectModal = () => {
-        setShowCreateProjectModal(false);
-    };
-
+    
     return (
         <>
             <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${modalOpen ? 'block' : 'hidden'}`}>
@@ -84,7 +83,7 @@ const Modal1 = ({ isOpen, onClose }) => {
                             ))}
                         </div>
                         <button
-                            onClick={handleContinue}
+                             onClick={handleContinue}
                             className="mt-6 w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
                         >
                             Continue
@@ -92,9 +91,9 @@ const Modal1 = ({ isOpen, onClose }) => {
                     </div>
                 </div>
             </div>
-            {showCreateProjectModal && (
+            {/* {showCreateProjectModal && (
                 <CreateProjectModal2 isOpen={showCreateProjectModal} onClose={handleCloseCreateProjectModal} />
-            )}
+            )} */}
         </>
     );
 };

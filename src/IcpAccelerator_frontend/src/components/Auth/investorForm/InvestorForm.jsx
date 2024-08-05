@@ -1051,7 +1051,7 @@ const InvestorForm = ({ isOpen, onClose }) => {
     };
 
     return (
-        <div className={`bg-[#FFF4ED] min-h-screen flex items-center justify-center overflow-hidden ${modalOpen ? 'block' : 'hidden'}`}>
+        <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${modalOpen ? 'block' : 'hidden'}`}>
             <div className="container mx-auto">
                 <div className="pb-12 flex items-center justify-center rounded-xl">
                     <div className="bg-white shadow-xl rounded-2xl flex w-full max-w-[30rem] relative">

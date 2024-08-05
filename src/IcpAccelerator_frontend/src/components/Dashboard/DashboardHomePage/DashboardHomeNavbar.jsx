@@ -22,7 +22,7 @@ import {
 } from '@mui/icons-material';
 import { briefcaseSvgIcon, calenderSvgIcon, homeSvgIcon, locationHubSvgIcon, staroutlineSvgIcon, userCircleSvgIcon, userSvgIcon } from '../../Utils/Data/SvgData';
 import { logoutStart } from '../../StateManagement/Redux/Reducers/InternetIdentityReducer';
-import { useDispatch } from 'react-redux';
+
 
 function DashboardHomeNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
