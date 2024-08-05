@@ -122,7 +122,7 @@ const InvestorModal1 = ({ isOpen, onClose, onBack }) => {
     return (
         <>
             <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Are you Registered ?<span className='text-[#155EEF]'>*</span></label>
+                <label className="block text-sm font-medium mb-1">Are you Registered ?<span className='text-[red] ml-1'>*</span></label>
                 <select
                     {...register("investor_registered")}
                     // value={getValues("investor_registered")}
@@ -143,7 +143,7 @@ const InvestorModal1 = ({ isOpen, onClose, onBack }) => {
             </div>
             {watch("investor_registered") === "true" && (
                 <div className="mb-4">
-                    <label className="block text-sm font-medium mb-1">Registered Country<span className='text-[#155EEF]'>*</span></label>
+                    <label className="block text-sm font-medium mb-1">Registered Country<span className='text-[red]'>*</span></label>
                     <select
                         {...register("registered_country")}
                         name="registered_country"
@@ -191,7 +191,7 @@ const InvestorModal1 = ({ isOpen, onClose, onBack }) => {
             </div>
             {watch("existing_icp_investor") === 'true' && (
                 <div className="mb-4">
-                    <label className="block text-sm font-medium mb-1">Type of investment<span className='text-[#155EEF]'>*</span></label>
+                    <label className="block text-sm font-medium mb-1">Type of investment<span className='text-[red] ml-1'>*</span></label>
                     <ReactSelect
                         isMulti
                         menuPortalTarget={document.body}
@@ -237,11 +237,16 @@ const InvestorModal1 = ({ isOpen, onClose, onBack }) => {
                                 ...provided,
                                 display: "inline-flex",
                                 alignItems: "center",
+                                backgroundColor: "white",
+                                border: "1px solid gray",
+                                borderRadius: "5px"
+
                             }),
                             multiValueRemove: (provided) => ({
                                 ...provided,
                                 display: "inline-flex",
                                 alignItems: "center",
+
                             }),
                         }}
                         value={typeOfInvestSelectedOptions}
@@ -282,7 +287,7 @@ const InvestorModal1 = ({ isOpen, onClose, onBack }) => {
             )}
 
             <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Do you invest in multiple ecosystems ?<span className='text-[#155EEF]'>*</span></label>
+                <label className="block text-sm font-medium mb-1">Do you invest in multiple ecosystems ?<span className='text-[red] ml-1'>*</span></label>
                 <select
                     {...register("invested_in_multi_chain")}
                     // value={getValues("invested_in_multi_chain")}
@@ -303,7 +308,7 @@ const InvestorModal1 = ({ isOpen, onClose, onBack }) => {
             </div>
             {watch("invested_in_multi_chain") === 'true' && (
                 <div className="mb-4">
-                    <label className="block text-sm font-medium mb-1">Please select the chains <span className='text-[#155EEF]'>*</span></label>
+                    <label className="block text-sm font-medium mb-1">Please select the chains <span className='text-[red] ml-1'>*</span></label>
                     <Select
                         isMulti
                         menuPortalTarget={document.body}
@@ -349,6 +354,9 @@ const InvestorModal1 = ({ isOpen, onClose, onBack }) => {
                                 ...provided,
                                 display: "inline-flex",
                                 alignItems: "center",
+                                backgroundColor: "white",
+                                border: "1px solid gray",
+                                borderRadius: "5px"
                             }),
                             multiValueRemove: (provided) => ({
                                 ...provided,

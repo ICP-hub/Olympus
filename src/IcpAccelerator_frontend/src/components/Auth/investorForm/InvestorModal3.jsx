@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import createprojectabc from "../../../../assets/Logo/createprojectabc.png";
-import ControlPointIcon from '@mui/icons-material/ControlPoint';
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import Dropdown from "../../../../assets/Logo/Dropdown.png"
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import CheckIcon from '@mui/icons-material/Check';
-import CreateProjectModal from "../../Home/modal2";
+
 import Select from 'react-select';
 import { useFormContext } from "react-hook-form";
 import { useNavigate } from "react-router-dom"
@@ -59,7 +53,7 @@ const InvestorModal3 = ({ isOpen, onClose, onBack }) => {
 
 
             <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Which ICP hub you will like to be associated <span className='text-[#155EEF]'>*</span></label>
+                <label className="block text-sm font-medium mb-1">Which ICP hub you will like to be associated <span className='text-[red] ml-1'>*</span></label>
                 <select
                     {...register("preferred_icp_hub")}
                     name="preferred_icp_hub"
@@ -84,7 +78,7 @@ const InvestorModal3 = ({ isOpen, onClose, onBack }) => {
                 )}
             </div>
             <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Portfolio link <span className='text-[#155EEF]'>*</span></label>
+                <label className="block text-sm font-medium mb-1">Portfolio link <span className='text-[red] ml-1'>*</span></label>
                 <input
                     {...register("investor_portfolio_link")}
                     type="url"
@@ -100,7 +94,7 @@ const InvestorModal3 = ({ isOpen, onClose, onBack }) => {
                 )}
             </div>
             <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Fund Name <span className='text-[#155EEF]'>*</span></label>
+                <label className="block text-sm font-medium mb-1">Fund Name <span className='text-[red] ml-1'>*</span></label>
                 <input
                     {...register("investor_fund_name")}
                     type="text"
@@ -116,7 +110,7 @@ const InvestorModal3 = ({ isOpen, onClose, onBack }) => {
                 )}
             </div>
             <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Fund size (in million USD) <span className='text-[#155EEF]'>*</span></label>
+                <label className="block text-sm font-medium mb-1">Fund size (in million USD) <span className='text-[red] ml-1'>*</span></label>
                 <input
                     {...register("investor_fund_size")}
                     type="number"
