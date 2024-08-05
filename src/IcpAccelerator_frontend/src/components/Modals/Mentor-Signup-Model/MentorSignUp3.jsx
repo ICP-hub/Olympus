@@ -209,6 +209,8 @@ const MentorSignup3 = () => {
                 ...provided,
                 display: "inline-flex",
                 alignItems: "center",
+                backgroundColor:"white",
+              border:"2px solid #CDD5DF"
               }),
               multiValueRemove: (provided) => ({
                 ...provided,
@@ -302,6 +304,8 @@ const MentorSignup3 = () => {
               ...provided,
               display: "inline-flex",
               alignItems: "center",
+              backgroundColor:"white",
+              border:"2px solid #CDD5DF"
             }),
             multiValueRemove: (provided) => ({
               ...provided,

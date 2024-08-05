@@ -62,7 +62,7 @@ const ProjectRegister2 = ({ isOpen, onClose, onBack }) => {
         <>
             <div className="mb-2">
                 <label className="block text-sm font-medium mb-1">
-                    Upload a Cover Photo<span className="text-[#155EEF]">*</span>
+                    Upload a Cover Photo<span className="text-red-500">*</span>
                 </label>
                 {/* <div className="flex gap-2">
                     <img src={createprojectabc} alt="projectimg" />
@@ -203,7 +203,7 @@ const ProjectRegister2 = ({ isOpen, onClose, onBack }) => {
             </div>
             <div className="mb-2">
                 <label className="block text-sm font-medium mb-1">
-                    Is your project registered<span className="text-[#155EEF]">*</span>
+                    Is your project registered<span className="text-red-500">*</span>
                 </label>
                 <select
                     {...register("is_your_project_registered")}

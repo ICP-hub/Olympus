@@ -39,7 +39,7 @@ const ProjectRegister3 = ({ isOpen, onClose, onBack }) => {
         <>
             <div className="mb-2">
                 <label className="block text-sm font-medium mb-1">
-                    Are you also multi-chain<span className="text-[#155EEF]">*</span>
+                    Are you also multi-chain<span className="text-red-500">*</span>
                 </label>
                 <select
                     {...register("multi_chain")}
@@ -62,7 +62,7 @@ const ProjectRegister3 = ({ isOpen, onClose, onBack }) => {
             {watch("multi_chain") === "true" ? (
                 <div className="mb-2">
                     <label className="block text-sm font-medium mb-1">
-                        Please select the chains<span className="text-[#155EEF]">*</span>
+                        Please select the chains<span className="text-red-500">*</span>
                     </label>
                     <Select
                         isMulti
@@ -108,7 +108,7 @@ const ProjectRegister3 = ({ isOpen, onClose, onBack }) => {
                                 display: "inline-flex",
                                 alignItems: "center",
                                 backgroundColor: "white",
-                                border: "2px solid #ef4444"
+                                border: "2px solid #CDD5DF"
 
                             }),
                             multiValueRemove: (provided) => ({
@@ -155,7 +155,7 @@ const ProjectRegister3 = ({ isOpen, onClose, onBack }) => {
             )}
             <div className="mb-2">
                 <label className="block text-sm font-medium mb-1">
-                    Live on ICP<span className="text-[#155EEF]">*</span>
+                    Live on ICP<span className="text-red-500">*</span>
                 </label>
                 <select
                     {...register("live_on_icp_mainnet")}
@@ -199,7 +199,7 @@ const ProjectRegister3 = ({ isOpen, onClose, onBack }) => {
                     </div>
                     <div className="mb-2">
                         <label className="block text-sm font-medium mb-1">
-                            Weekly active user<span className="text-[#155EEF]">*</span>
+                            Weekly active user<span className="text-red-500">*</span>
                         </label>
                         <input
                             type="number"
@@ -221,7 +221,7 @@ const ProjectRegister3 = ({ isOpen, onClose, onBack }) => {
                     </div>
                     <div className="mb-2">
                         <label className="block text-sm font-medium mb-1">
-                            Revenue (in Million USD)<span className="text-[#155EEF]">*</span>
+                            Revenue (in Million USD)<span className="text-red-500">*</span>
                         </label>
                         <input
                             type="number"

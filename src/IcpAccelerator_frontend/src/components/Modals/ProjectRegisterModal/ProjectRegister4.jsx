@@ -16,7 +16,7 @@ const ProjectRegister4 = ({ isOpen, onClose, onBack }) => {
             <div className="mb-2">
                 <label className="block text-sm font-medium mb-1">
                     Have you raised any funds in past
-                    <span className="text-[#155EEF]">*</span>
+                    <span className="text-red-500">*</span>
                 </label>
                 <select
                     {...register("money_raised_till_now")}
@@ -41,7 +41,7 @@ const ProjectRegister4 = ({ isOpen, onClose, onBack }) => {
                     <div className="mb-2">
                         <label className="block text-sm font-medium mb-1">
                             How much funding have you raised in grants (USD)?
-                            <span className="text-[#155EEF]">*</span>
+                            <span className="text-red-500">*</span>
                         </label>
                         <input
                             type="number"
@@ -64,7 +64,7 @@ const ProjectRegister4 = ({ isOpen, onClose, onBack }) => {
                     <div className="mb-2">
                         <label className="block text-sm font-medium mb-1">
                             How much funding have you received from Investors (USD)?
-                            <span className="text-[#155EEF]">*</span>
+                            <span className="text-red-500">*</span>
                         </label>
                         <input
                             type="number"
@@ -87,7 +87,7 @@ const ProjectRegister4 = ({ isOpen, onClose, onBack }) => {
                     <div className="mb-2">
                         <label className="block text-sm font-medium mb-1">
                             How much funding has been provided through the launchpad program
-                            (USD)?<span className="text-[#155EEF]">*</span>
+                            (USD)?<span className="text-red-500">*</span>
                         </label>
                         <input
                             type="number"
@@ -114,7 +114,7 @@ const ProjectRegister4 = ({ isOpen, onClose, onBack }) => {
             <div className="mb-2">
                 <label className="block text-sm font-medium mb-1">
                     Are you currently raising money
-                    <span className="text-[#155EEF]">*</span>
+                    <span className="text-red-500">*</span>
                 </label>
                 <select
                     {...register("money_raising")}
@@ -139,7 +139,7 @@ const ProjectRegister4 = ({ isOpen, onClose, onBack }) => {
                     <div className="mb-2">
                         <label className="block text-sm font-medium mb-1">
                             Target Amount (in Millions USD)
-                            <span className="text-[#155EEF]">*</span>
+                            <span className="text-red-500">*</span>
                         </label>
                         <input
                             type="number"

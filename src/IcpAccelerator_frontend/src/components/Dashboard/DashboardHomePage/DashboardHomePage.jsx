@@ -3,7 +3,7 @@ import DashboardHomeNavbar from './DashboardHomeNavbar'
 import DashboardHomeSidebar from './DashboardHomeSidebar'
 import DashboardHomeWelcomeSection from './DashboardHomeWelcomeSection'
 import DashboardHomeProfileCards from './DashboardHomeProfileCards'
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import ProjectProfile from './ProjectProfile'
 import UserSection from './UserSection'
 import Jobs from '../../jobs/Jobs'
@@ -14,10 +14,13 @@ import AddNewWork from './AddNewWork'
 import WorksSection from './WorksSection'
 import WorkSectionDetailPage from './WorkSectionDetailPage'
 import EventDetails from '../DashboardEvents/EventDetail'
+import MentorSignupMain from '../../Modals/Mentor-Signup-Model/MentorsignUpmain'
+import ProjectRegisterMain from '../../Modals/ProjectRegisterModal/ProjectRegisterMain'
+import InvestorForm from '../../Auth/investorForm/InvestorForm'
 
 function DashboardHomePage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
+  const location = useLocation();
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   return (
@@ -34,7 +37,7 @@ function DashboardHomePage() {
           <DashboardHomeProfileCards /> */}
           {/* <ProjectProfile /> */}
           {/* <UserSection /> */}
-           <Routes>
+           <Routes location={location.state?.background || location}>
             <Route path="/" element={<DashboardHomeWelcomeSection userName={"Matt"} profileCompletion={"35"} />} />
             <Route path="/jobs" element={<Jobs />} />
             <Route path="/profile" element={<ProfilePage />} />
@@ -46,8 +49,16 @@ function DashboardHomePage() {
             <Route path="/single-add-new-work" element={<AddNewWork />} />
             <Route path="/work-section" element={<WorksSection />} />
             <Route path="/work-section-detail-page" element={<WorkSectionDetailPage />} />
+           
           </Routes>
         </main>
+        {location.state?.background && (
+            <Routes>
+              <Route path="/mentor-sign-up" element={<MentorSignupMain />} />
+              <Route path="/project-sign-up" element={<ProjectRegisterMain />} />
+              <Route path="/investor-sign-up" element={<InvestorForm />} />
+            </Routes>
+          )}
       </div>
     </div>
   );

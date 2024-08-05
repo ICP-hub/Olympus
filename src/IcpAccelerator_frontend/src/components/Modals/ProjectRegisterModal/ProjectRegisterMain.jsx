@@ -31,6 +31,7 @@ import { Principal } from "@dfinity/principal";
 import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_IcpHubReducer";
 
 const ProjectRegisterMain = () => {
+
     const { countries } = useCountries();
     const dispatch = useDispatch();
     const actor = useSelector((currState) => currState.actors.actor);
@@ -1260,7 +1261,7 @@ const ProjectRegisterMain = () => {
         let component;
         switch (index) {
             case 0:
-                component = <ProjectRegister1 />;
+                component = <ProjectRegister1 modalOpen={modalOpen} />;
                 break;
             case 1:
                 component = <ProjectRegister2 />;
@@ -1319,14 +1320,15 @@ const ProjectRegisterMain = () => {
             "token_economics",
         ],
     };
+    const [modalOpen, setModalOpen] = useState(true);
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ">
+        <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${modalOpen ? 'block' : 'hidden'}`}>
             <div className="bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4 overflow-y-auto">
                 <div className="flex justify-end mr-4">
                     <button
                         className="text-2xl text-[#121926]"
-                    // onClick={() => setModalOpen(false)}
+                        onClick={() => setModalOpen(!modalOpen)}
                     >
                         &times;
                     </button>
@@ -1362,11 +1364,11 @@ const ProjectRegisterMain = () => {
                             {index > 0 && (
                                 <button
                                     type="button"
-                                    className="py-2 px-4 text-gray-600 rounded hover:text-black"
+                                    className="py-2 px-4 text-gray-600 rounded border border-[#CDD5DF] hover:text-black"
                                     onClick={handleBack}
                                     disabled={index === 0}
                                 >
-                                    Back
+                                    <ArrowBackIcon fontSize="medium" />   Back
                                 </button>
                             )}
                             {index === 4 ? (
