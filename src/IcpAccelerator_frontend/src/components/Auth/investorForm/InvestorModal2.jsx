@@ -1,11 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import createprojectabc from "../../../../assets/Logo/createprojectabc.png";
-import ControlPointIcon from '@mui/icons-material/ControlPoint';
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import Dropdown from "../../../../assets/Logo/Dropdown.png"
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import CheckIcon from '@mui/icons-material/Check';
-import CreateProjectModal from "../../Home/modal2";
 import Select from 'react-select';
 import { useNavigate } from "react-router-dom"
 import EastIcon from '@mui/icons-material/East';
@@ -108,7 +101,7 @@ const InvestorModal2 = ({ isOpen, onClose, onBack }) => {
         <>
 
             <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Category of investment <span className='text-[#155EEF]'>*</span></label>
+                <label className="block text-sm font-medium mb-1">Category of investment <span className='text-[red] ml-1'>*</span></label>
                 <Select
                     isMulti
                     menuPortalTarget={document.body}
@@ -154,6 +147,9 @@ const InvestorModal2 = ({ isOpen, onClose, onBack }) => {
                             ...provided,
                             display: "inline-flex",
                             alignItems: "center",
+                            backgroundColor: "white",
+                            border: "1px solid gray",
+                            borderRadius: "5px"
                         }),
                         multiValueRemove: (provided) => ({
                             ...provided,
@@ -198,7 +194,7 @@ const InvestorModal2 = ({ isOpen, onClose, onBack }) => {
                 )}
             </div>
             <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Which stage(s) do you invest at ?  <span className='text-[#155EEF]'>*</span></label>
+                <label className="block text-sm font-medium mb-1">Which stage(s) do you invest at ?  <span className='text-[red] ml-1'>*</span></label>
                 <Select
                     isMulti
                     menuPortalTarget={document.body}
@@ -244,6 +240,9 @@ const InvestorModal2 = ({ isOpen, onClose, onBack }) => {
                             ...provided,
                             display: "inline-flex",
                             alignItems: "center",
+                            backgroundColor: "white",
+                            border: "1px solid gray",
+                            borderRadius: "5px"
                         }),
                         multiValueRemove: (provided) => ({
                             ...provided,
@@ -287,7 +286,7 @@ const InvestorModal2 = ({ isOpen, onClose, onBack }) => {
                 )}
             </div>
             <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">What is the range of your check size ?  <span className='text-[#155EEF]'>*</span></label>
+                <label className="block text-sm font-medium mb-1">What is the range of your check size ?  <span className='text-[red] ml-1'>*</span></label>
                 <Select
                     isMulti
                     menuPortalTarget={document.body}
@@ -333,6 +332,9 @@ const InvestorModal2 = ({ isOpen, onClose, onBack }) => {
                             ...provided,
                             display: "inline-flex",
                             alignItems: "center",
+                            backgroundColor: "white",
+                            border: "1px solid gray",
+                            borderRadius: "5px"
                         }),
                         multiValueRemove: (provided) => ({
                             ...provided,
@@ -378,7 +380,7 @@ const InvestorModal2 = ({ isOpen, onClose, onBack }) => {
 
 
             <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Website link <span className='text-[#155EEF]'>*</span></label>
+                <label className="block text-sm font-medium mb-1">Website link <span className='text-[red] ml-1'>*</span></label>
                 <input
                     {...register("investor_website_url")}
                     type="url"
@@ -394,7 +396,7 @@ const InvestorModal2 = ({ isOpen, onClose, onBack }) => {
             </div>
 
             <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">LinkedIn link <span className='text-[#155EEF]'>*</span></label>
+                <label className="block text-sm font-medium mb-1">LinkedIn link <span className='text-[red] ml-1'>*</span></label>
                 <input
                     {...register("investor_linkedin_url")}
                     type="url"
