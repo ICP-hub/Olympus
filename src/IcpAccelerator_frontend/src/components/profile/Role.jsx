@@ -269,6 +269,7 @@ const Role = () => {
 
     const [role, setRole] = useState(false)
     return (
+      <>
       <div className="flex flex-col">
         <div className="flex justify-center items-center  w-full  mt-[2%] ">
           <div className="border-2 rounded-lg pb-5 text-center min-w-[280px] max-w-[350px] ">
@@ -364,6 +365,8 @@ const Role = () => {
         </div>
         <FAQ />
       </div>
+    {/* </div> */}
+    </>
     );
 }
 
