@@ -3,6 +3,7 @@
 // import Aboutcard from "../UserRegistration/Aboutcard";
 // import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 // import AboutcardSkeleton from "../LatestSkeleton/AbourcardSkeleton";
 import { useNavigate } from "react-router-dom";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
@@ -1054,7 +1055,9 @@ const InvestorForm = ({ isOpen, onClose }) => {
             <div className="container mx-auto">
                 <div className="pb-12 flex items-center justify-center rounded-xl">
                     <div className="bg-white shadow-xl rounded-2xl flex w-full max-w-[30rem] relative">
-                        <div onClick={() => onClose(false)} className="absolute top-5 right-5 text-lg cursor-pointer">X</div>
+                        <div className="absolute top-2 right-4">
+                            <button className='text-2xl text-gray-300' onClick={() => setModalOpen(false)}>&times;</button>
+                        </div>
                         <div className="w-full p-6">
                             <h2 className="text-[#364152] text-sm font-normal mb-2  text-start">
                                 Step {index + 1} of 3
@@ -1066,10 +1069,11 @@ const InvestorForm = ({ isOpen, onClose }) => {
                                         {index > 0 && (
                                             <button
                                                 type="button"
-                                                className="py-2 px-4 text-gray-600 rounded hover:text-black"
+                                                className="py-2 border-2 px-4 text-gray-600 rounded hover:text-black"
                                                 onClick={handleBack}
                                                 disabled={index === 0}
                                             >
+                                                <span className=""><ArrowBackIcon sx={{ marginTop: "-3px " }} /> </span>
                                                 Back
                                             </button>
                                         )}
@@ -1095,7 +1099,7 @@ const InvestorForm = ({ isOpen, onClose }) => {
                                         ) : (
                                             <button
                                                 type="button"
-                                                className="py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 border-2 border-[#B2CCFF] flex items-center"
+                                                className="py-2 px-4 text-white rounded bg-blue-600 border-2 border-[#B2CCFF] flex items-center"
                                                 onClick={handleNext}
                                             >
                                                 Continue
