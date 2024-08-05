@@ -184,7 +184,7 @@ const ProfileDetail = () => {
           </div>
 
           <div className="mb-4">
-            <h3 className="font-normal mb-2 text-sm text-gray-500">
+            <h3 className="font-normal mb-2 text-xs text-gray-500">
               INTERESTS
             </h3>
             <div className="flex space-x-2">
@@ -198,7 +198,7 @@ const ProfileDetail = () => {
           </div>
 
           <div className="mb-4">
-            <h3 className="font-normal mb-2 text-sm text-gray-500">LOCATION</h3>
+            <h3 className="mb-2 text-xs text-gray-500">LOCATION</h3>
             <div className="flex items-center">
               <PlaceOutlinedIcon
                 className="text-gray-400 mr-1"
@@ -209,7 +209,7 @@ const ProfileDetail = () => {
           </div>
 
           <div className="mb-4 max-w-sm">
-            <h3 className="font-normal mb-2 text-sm text-gray-500">TIMEZONE</h3>
+            <h3 className="mb-2 text-xs text-gray-500">TIMEZONE</h3>
             <button className="bg-gray-100 hover:bg-gray-200 text-sm w-full px-3 py-2 rounded border border-gray-200 text-left flex items-center">
               <Add fontSize="small" className="mr-2" />
               <span>Add timezone</span>
@@ -217,7 +217,7 @@ const ProfileDetail = () => {
           </div>
 
           <div className="mb-4 max-w-sm">
-            <h3 className="font-normal mb-2 text-sm text-gray-500">
+            <h3 className="mb-2 text-xs text-gray-500">
               LANGUAGES
             </h3>
             <button className="bg-gray-100 hover:bg-gray-200 text-sm w-full px-3 py-2 rounded border border-gray-200 text-left flex items-center">
@@ -227,7 +227,7 @@ const ProfileDetail = () => {
           </div>
 
           <div>
-            <h3 className="font-normal mb-2 text-sm text-gray-500">LINKS</h3>
+            <h3 className="mb-2 text-xs text-gray-500">LINKS</h3>
             <div className="flex space-x-2">
               <LinkedIn className="text-gray-400 hover:text-gray-600 cursor-pointer" />
               <GitHub className="text-gray-400 hover:text-gray-600 cursor-pointer" />

@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import bigLogo from "../../../../assets/Logo/bigLogo.png";
 import topLogo from "../../../../assets/Logo/topLogo.png";
 
-
+import NavbarSmallLogo from "../../../../assets/Logo/NavbarSmallLogo.png";
+import Bellicon from "../../../../assets/Logo/Bellicon.png";
 
 import {
   SearchOutlined,
@@ -17,6 +18,7 @@ import {
   Event as EventsIcon,
   LocationOn as RegionalHubsIcon,
   Work as JobsIcon,
+
   Star as PerksIcon,
 } from "@mui/icons-material";
 import {
@@ -35,6 +37,7 @@ import { beforeCopySvg } from "../../../component/Utils/Data/SvgData";
 import { changeHasSelectedRoleHandler } from "../../../component/StateManagement/Redux/Reducers/userRoleReducer";
 import { useAuth } from "../../../component/StateManagement/useContext/useAuth";
 import toast, { Toaster } from "react-hot-toast";
+
 function DashboardHomeNavbar() {
   const principal = useSelector((currState) => currState.internet.principal);
   const userCurrentRoleStatus = useSelector(
@@ -93,11 +96,13 @@ function DashboardHomeNavbar() {
 
       {/* Icons */}
       <div className="flex items-center space-x-4">
+
         <img src={Bellicon} className="w-[14.57px] h-[16.67px] cursor-pointer hidden md:block" />
         <img
           src={NavbarSmallLogo}
           alt="User"
           className="h-[40px] w-[40px] rounded-full z-30 py-1 px-1 "
+
           onClick={toggleDropdown}
         />
         {dropdownOpen && (
