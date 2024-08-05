@@ -23,7 +23,7 @@ const MentorSignupMain = () => {
   const userCurrentRoleStatusActiveRole = useSelector(
     (state) => state.currentRoleStatus.activeRole
   );
-
+  const [modalOpen, setModalOpen] = useState(true);
   const [index, setIndex] = useState(0);
 
   const [interestedDomainsOptions, setInterestedDomainsOptions] = useState([]);
@@ -167,75 +167,83 @@ const MentorSignupMain = () => {
   };
 
 
-    // form submit handler func
-    const onSubmitHandler = async (data) => {
-      if (actor) {
-        const mentorData = {
-          // mentor data
-          preferred_icp_hub: [data?.preferred_icp_hub || ""],
-          icp_hub_or_spoke: data?.icp_hub_or_spoke === "true" ? true : false,
-          hub_owner: [
-            data?.icp_hub_or_spoke === "true" && data?.hub_owner
-              ? data?.hub_owner
-              : "",
-          ],
-          hub_owner: [data?.hub_owner || ""],
-          category_of_mentoring_service: data?.category_of_mentoring_service,
-          years_of_mentoring: data.years_of_mentoring.toString(),
-          linkedin_link: data?.mentor_linkedin_url,
-          multichain: [
-            data?.multi_chain === "true" && data?.multi_chain_names
-              ? data?.multi_chain_names
-              : "",
-          ],
-          website: [data?.mentor_website_url || ""],
-          // mentor data not exiting on frontend or raw variables
-          existing_icp_mentor: false,
-          existing_icp_project_porfolio: [
-            data?.existing_icp_project_porfolio || "",
-          ],
-          area_of_expertise: "",
-          reason_for_joining: [""],
-        };
-        try {
-          if (userCurrentRoleStatusActiveRole === "mentor") {
-            await actor.update_mentor(mentorData).then((result) => {
-              if (result && result.includes("approval request is sent")) {
-                toast.success("Approval request is sent");
-                window.location.href = "/";
-              } else {
-                toast.error(result);
-              }
-            });
-          } else if (
-            userCurrentRoleStatusActiveRole === null ||
-            userCurrentRoleStatusActiveRole === "user" ||
-            userCurrentRoleStatusActiveRole === "project" ||
-            userCurrentRoleStatusActiveRole === "vc"
-          ) {
-            await actor.register_mentor_candid(mentorData).then((result) => {
-              if (result && result.includes("approval request is sent")) {
-                toast.success("Approval request is sent");
-                window.location.href = "/";
-              } else {
-                toast.error(result);
-              }
-            });
-          }
-        } catch (error) {
-          toast.error(error);
-          console.error("Error sending data to the backend:", error);
+  // form submit handler func
+  const onSubmitHandler = async (data) => {
+    if (actor) {
+      const mentorData = {
+        // mentor data
+        preferred_icp_hub: [data?.preferred_icp_hub || ""],
+        icp_hub_or_spoke: data?.icp_hub_or_spoke === "true" ? true : false,
+        hub_owner: [
+          data?.icp_hub_or_spoke === "true" && data?.hub_owner
+            ? data?.hub_owner
+            : "",
+        ],
+        hub_owner: [data?.hub_owner || ""],
+        category_of_mentoring_service: data?.category_of_mentoring_service,
+        years_of_mentoring: data.years_of_mentoring.toString(),
+        linkedin_link: data?.mentor_linkedin_url,
+        multichain: [
+          data?.multi_chain === "true" && data?.multi_chain_names
+            ? data?.multi_chain_names
+            : "",
+        ],
+        website: [data?.mentor_website_url || ""],
+        // mentor data not exiting on frontend or raw variables
+        existing_icp_mentor: false,
+        existing_icp_project_porfolio: [
+          data?.existing_icp_project_porfolio || "",
+        ],
+        area_of_expertise: "",
+        reason_for_joining: [""],
+      };
+      try {
+        if (userCurrentRoleStatusActiveRole === "mentor") {
+          await actor.update_mentor(mentorData).then((result) => {
+            if (result && result.includes("approval request is sent")) {
+              toast.success("Approval request is sent");
+              window.location.href = "/";
+            } else {
+              toast.error(result);
+            }
+          });
+        } else if (
+          userCurrentRoleStatusActiveRole === null ||
+          userCurrentRoleStatusActiveRole === "user" ||
+          userCurrentRoleStatusActiveRole === "project" ||
+          userCurrentRoleStatusActiveRole === "vc"
+        ) {
+          await actor.register_mentor_candid(mentorData).then((result) => {
+            if (result && result.includes("approval request is sent")) {
+              toast.success("Approval request is sent");
+              window.location.href = "/";
+            } else {
+              toast.error(result);
+            }
+          });
         }
-      } else {
-        toast.error("Please signup with internet identity first");
-        window.location.href = "/";
+      } catch (error) {
+        toast.error(error);
+        console.error("Error sending data to the backend:", error);
       }
-    };
-  
+    } else {
+      toast.error("Please signup with internet identity first");
+      window.location.href = "/";
+    }
+  };
+
   return (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${modalOpen ? 'block' : 'hidden'}`}>
         <div className="bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4 overflow-y-auto">
+          <div className="flex justify-end mr-4">
+            <button
+              className="text-2xl text-[#121926]"
+              onClick={() => setModalOpen(!modalOpen)}
+            >
+              &times;
+            </button>
+          </div>
           <h2 className="text-xs text-[#364152] mb-3">Step {index + 1} of 2</h2>
           <FormProvider {...methods}>
             <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
@@ -244,10 +252,11 @@ const MentorSignupMain = () => {
                 {index > 0 && (
                   <button
                     type="button"
-                    className="py-2 px-4 text-gray-600 rounded hover:text-black "
+                    className="py-2 px-4 text-gray-600 rounded border border-[#CDD5DF] hover:text-black"
                     onClick={handleBack}
+                    disabled={index === 0}
                   >
-                    <ArrowBackIcon fontSize="15px" className="mr-1"/>Back
+                    <ArrowBackIcon fontSize="medium" />   Back
                   </button>
                 )}
                 {index === 1 ? (

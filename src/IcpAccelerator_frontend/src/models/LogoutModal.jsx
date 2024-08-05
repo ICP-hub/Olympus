@@ -169,18 +169,18 @@ const LogoutModal = () => {
                   Associations
                 </li> */}
                 {userCurrentRoleStatus &&
-                userCurrentRoleStatusActiveRole &&
-                userCurrentRoleStatusActiveRole !== "user" ? (
+                  userCurrentRoleStatusActiveRole &&
+                  userCurrentRoleStatusActiveRole !== "user" ? (
                   <li
                     onClick={() => {
                       navigate(
                         userCurrentRoleStatusActiveRole === "project"
                           ? "/project-association-requests"
                           : userCurrentRoleStatusActiveRole === "mentor"
-                          ? "/mentor-association-requests"
-                          : userCurrentRoleStatusActiveRole === "vc"
-                          ? "/investor-association-requests"
-                          : ""
+                            ? "/mentor-association-requests"
+                            : userCurrentRoleStatusActiveRole === "vc"
+                              ? "/investor-association-requests"
+                              : ""
                       );
                       setDropdownOpen(false);
                     }}
@@ -192,10 +192,10 @@ const LogoutModal = () => {
                   ""
                 )}
                 {userCurrentRoleStatus &&
-                userCurrentRoleStatusActiveRole &&
-                userCurrentRoleStatusActiveRole !== "user" &&
-                userCurrentRoleStatusActiveRole !== "project" &&
-                userCurrentRoleStatusActiveRole !== "vc" ? (
+                  userCurrentRoleStatusActiveRole &&
+                  userCurrentRoleStatusActiveRole !== "user" &&
+                  userCurrentRoleStatusActiveRole !== "project" &&
+                  userCurrentRoleStatusActiveRole !== "vc" ? (
                   <li
                     onClick={() => {
                       navigate(

@@ -83,7 +83,7 @@ const ProjectRegister1 = ({ isOpen, onClose, onBack }) => {
             </h1>
             <div className="mb-2">
                 <label className="block text-sm font-medium mb-1">
-                    Upload a logo<span className="text-[#155EEF]">*</span>
+                    Upload a logo<span className="text-red-500">*</span>
                 </label>
                 <div className="flex gap-2 mb-3 ">
                     <div className=" h-24 w-24 rounded-2xl border-2 border-dashed border-gray-300 items-center justify-center overflow-hidden flex  ">
@@ -167,7 +167,8 @@ const ProjectRegister1 = ({ isOpen, onClose, onBack }) => {
             <div className="mb-2 ">
                 <label className="block text-sm font-medium mb-1">
                     Preferred ICP Hub you would like to be associated with
-                    <span className="text-[#155EEF]">*</span>
+                    <span className="text-red-500
+                    ">*</span>
                 </label>
                 <select
                     {...register("preferred_icp_hub")}
@@ -197,7 +198,7 @@ const ProjectRegister1 = ({ isOpen, onClose, onBack }) => {
             </div>
             <div className="mb-2">
                 <label className="block text-sm font-medium mb-1">
-                    Project Name<span className="text-[#155EEF]">*</span>
+                    Project Name<span className="text-red-500">*</span>
                 </label>
 
                 <input

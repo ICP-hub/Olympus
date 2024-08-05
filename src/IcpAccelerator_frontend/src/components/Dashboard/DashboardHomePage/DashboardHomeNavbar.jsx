@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import bigLogo from "../../../../assets/Logo/bigLogo.png";
 import topLogo from "../../../../assets/Logo/topLogo.png";
 
@@ -18,13 +18,34 @@ import {
   Event as EventsIcon,
   LocationOn as RegionalHubsIcon,
   Work as JobsIcon,
-  Star as PerksIcon
-} from '@mui/icons-material';
-import { briefcaseSvgIcon, calenderSvgIcon, homeSvgIcon, locationHubSvgIcon, staroutlineSvgIcon, userCircleSvgIcon, userSvgIcon } from '../../Utils/Data/SvgData';
-import { logoutStart } from '../../StateManagement/Redux/Reducers/InternetIdentityReducer';
 
+  Star as PerksIcon,
+} from "@mui/icons-material";
+import {
+  briefcaseSvgIcon,
+  calenderSvgIcon,
+  homeSvgIcon,
+  locationHubSvgIcon,
+  staroutlineSvgIcon,
+  userCircleSvgIcon,
+  userSvgIcon,
+} from "../../Utils/Data/SvgData";
+import { logoutStart } from "../../StateManagement/Redux/Reducers/InternetIdentityReducer";
+import { useDispatch } from "react-redux";
+import { afterCopySvg } from "../../../component/Utils/Data/SvgData";
+import { beforeCopySvg } from "../../../component/Utils/Data/SvgData";
+import { changeHasSelectedRoleHandler } from "../../../component/StateManagement/Redux/Reducers/userRoleReducer";
+import { useAuth } from "../../../component/StateManagement/useContext/useAuth";
+import toast, { Toaster } from "react-hot-toast";
 
 function DashboardHomeNavbar() {
+  const principal = useSelector((currState) => currState.internet.principal);
+  const userCurrentRoleStatus = useSelector(
+    (currState) => currState.currentRoleStatus.rolesStatusArray
+  );
+  const userCurrentRoleStatusActiveRole = useSelector(
+    (currState) => currState.currentRoleStatus.activeRole
+  );
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
@@ -32,16 +53,24 @@ function DashboardHomeNavbar() {
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
-
-  const handleLogout = async () => {
-    setIsLoading(true);
-    try {
-      await dispatch(logoutStart());
-      setIsLoading(false);
-      window.location.href = '/';
-    } catch (error) {
-      setIsLoading(false);
-    }
+  const copyToClipboard = useCallback(() => {
+    navigator.clipboard.writeText(principal).then(
+      () => {
+        setCustomSvg(afterCopySvg);
+        toast.success("Principal copied to clipboard!");
+      },
+      (err) => {
+        console.error("Could not copy text: ", err);
+      }
+    );
+  }, [principal]);
+  const { logout } = useAuth();
+  const [customSvg, setCustomSvg] = useState(beforeCopySvg);
+  const logoutHandler = async () => {
+    dispatch(changeHasSelectedRoleHandler(false));
+    await logout();
+    // navigate("/");
+    window.location.href = "/";
   };
 
   return (
@@ -51,12 +80,6 @@ function DashboardHomeNavbar() {
         <MenuIcon className="text-gray-600" />
       </button>
 
-      {/* Logo for larger screens */}
-      {/* <div className="hidden lg:block">
-        <img src={topLogo} alt="Olympus" className="h-8" />
-      </div> */}
-
-      {/* Search Bar */}
       <div className="flex-grow mr-4 hidden md:block">
         <div className="relative">
           <input
@@ -73,32 +96,89 @@ function DashboardHomeNavbar() {
 
       {/* Icons */}
       <div className="flex items-center space-x-4">
-        <img src={Bellicon} className="w-[14.57px] h-[16.67px] cursor-pointer hidden md:block"/> 
+
+        <img src={Bellicon} className="w-[14.57px] h-[16.67px] cursor-pointer hidden md:block" />
         <img
           src={NavbarSmallLogo}
           alt="User"
-          className="h-[40px] w-[40px] rounded-full"
-          onClick={toggleDropdown}
+          className="h-[40px] w-[40px] rounded-full z-30 py-1 px-1 "
 
+          onClick={toggleDropdown}
         />
         {dropdownOpen && (
-          <div className="absolute right-[20px] top-[40px] mt-2  bg-white border rounded-md shadow-lg z-20">
-            <Link
-              to="/dashboard/profile"
-              className="block px-4 py-2 text-gray-800 hover:bg-gray-200"
-            >
-              Profile
-            </Link>
-            <button
-              onClick={handleLogout}
-              className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-200"
-            >
-              Logout
-            </button>
+          <div
+            id="userDropdown"
+            className="absolute  divide-y divide-gray-100 rounded-lg shadow w-48 bg-gray-100 z-10 top-4 right-6"
+          >
+            <div className="px-4 py-3 text-sm text-gray-90 text-black">
+              <div className="flex flex-row justify-between w-full">
+                <button
+                  onClick={toggleDropdown}
+                  type="button"
+                  className=" bg-transparent hover:text-black rounded-lg text-2xl  text-black"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="26"
+                    height="8"
+                    viewBox="0 0 20 8"
+                    fill="none"
+                  >
+                    <path
+                      d="M19.2556 4.7793C19.5317 4.77946 19.7557 4.55574 19.7559 4.2796C19.756 4.00346 19.5323 3.77946 19.2562 3.7793L19.2556 4.7793ZM0.902522 3.91471C0.707143 4.10985 0.706953 4.42643 0.902096 4.62181L4.08216 7.80571C4.27731 8.00109 4.59389 8.00128 4.78927 7.80613C4.98465 7.61099 4.98484 7.2944 4.78969 7.09902L1.96297 4.2689L4.7931 1.44217C4.98848 1.24703 4.98867 0.930444 4.79352 0.735065C4.59838 0.539685 4.2818 0.539495 4.08642 0.734639L0.902522 3.91471ZM19.2562 3.7793L1.25616 3.76847L1.25556 4.76847L19.2556 4.7793L19.2562 3.7793Z"
+                      fill="#B3B3B3"
+                    />
+                  </svg>
+                </button>
+              </div>
+              <div className="group flex items-center mt-4">
+                <div className="truncate w-32 overflow-hidden text-ellipsis   group-hover:text-left ">
+                  Principal: {principal}
+                </div>
+                <button
+                  onClick={copyToClipboard}
+                  className="ml-2 text-sm text-blue-500 hover:text-blue-700"
+                >
+                  {customSvg}
+                </button>
+              </div>
+            </div>
+
+            <div className="text-sm text-black font-bold">
+              <Link
+                to="/dashboard/profile"
+                className="block px-4 py-2 text-gray-800 hover:bg-gray-200"
+              >
+                Profile
+              </Link>
+
+              {userCurrentRoleStatus &&
+                // userCurrentRoleStatusActiveRole !== "user" &&
+                userCurrentRoleStatusActiveRole !== null && (
+                  <p
+                    onClick={() =>
+                      profileHandler(
+                        userCurrentRoleStatus && userCurrentRoleStatusActiveRole
+                      )
+                    }
+                    className="py-2 px-4 cursor-pointer hover:bg-gray-200"
+                  >
+                    My Profile
+                  </p>
+                )}
+              <p
+                className="py-2 px-4 hover:bg-gray-200 cursor-pointer"
+                onClick={logoutHandler}
+              >
+                Sign out
+              </p>
+            </div>
           </div>
+          // )}
+          // </div>
         )}
 
-    
+
       </div>
 
       {/* Mobile Menu */}
@@ -125,49 +205,49 @@ function DashboardHomeNavbar() {
                 className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
               >
                 {homeSvgIcon}
-                <span className='ml-3'>Dashboard</span>
+                <span className="ml-3">Dashboard</span>
               </Link>
               <Link
                 to="/profile"
                 className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
               >
                 {userCircleSvgIcon}
-                <span className='ml-3'>Profile</span>
+                <span className="ml-3">Profile</span>
               </Link>
               <Link
                 to="/users"
                 className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
               >
                 {userSvgIcon}
-                <span className='ml-3'>Users</span>
+                <span className="ml-3">Users</span>
               </Link>
               <Link
                 to="/events"
                 className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
               >
                 {calenderSvgIcon}
-                <span className='ml-3'>Events</span>
+                <span className="ml-3">Events</span>
               </Link>
               <Link
                 to="/regional-hubs"
                 className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
               >
                 {locationHubSvgIcon}
-                <span className='ml-3'>Regional Hubs</span>
+                <span className="ml-3">Regional Hubs</span>
               </Link>
               <Link
                 to="/jobs"
                 className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
               >
                 {briefcaseSvgIcon}
-                <span className='ml-3'>Jobs</span>
+                <span className="ml-3">Jobs</span>
               </Link>
               <Link
                 to="/perks"
                 className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
               >
                 {staroutlineSvgIcon}
-                <span className='ml-3'>Perks</span>
+                <span className="ml-3">Perks</span>
               </Link>
             </nav>
           </div>

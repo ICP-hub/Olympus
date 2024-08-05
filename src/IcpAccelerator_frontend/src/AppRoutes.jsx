@@ -18,6 +18,8 @@ import Signupmain1 from "./components/UserRegistration/SignupMain";
 import ProfileForm from "./components/UserRegistration/RegisterForm3";
 import RegisterForm1 from "./components/UserRegistration/RegisterForm1";
 import UserRegistration from "./components/UserRegistration/UserRegistration";
+import MentorSignupMain from "./components/Modals/Mentor-Signup-Model/MentorsignUpmain";
+import ProjectRegisterMain from "./components/Modals/ProjectRegisterModal/ProjectRegisterMain";
 
 
 
@@ -52,6 +54,8 @@ const AppRoutes = () => {
   const authenticatedRoutes = [
     { path: "dashboard/*", element: <DashboardHomePage /> },
     // { path: "mentor-sign-up", element: <MentorSignupMain /> },
+
+
     // { path: "sign-up-step2", element: <Signupmain2 /> },
     // { path: "sign-up-step3-complete-profile", element: <ProfileForm /> },
   ];
