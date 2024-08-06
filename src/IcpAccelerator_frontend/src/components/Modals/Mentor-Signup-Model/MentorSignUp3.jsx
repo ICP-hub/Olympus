@@ -104,6 +104,9 @@ const MentorSignup3 = () => {
     }, [multiChainNames]);
   return (
     <>
+     <h1 className="text-3xl text-[#121926] font-bold mb-3">
+                Create a Mentor
+            </h1>
       <div className="mb-2">
         <label className="block mb-1">
           Preferred ICP Hub you would like to be associated with{" "}
