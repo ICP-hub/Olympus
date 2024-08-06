@@ -214,7 +214,7 @@ const MentorSignupMain = () => {
           userCurrentRoleStatusActiveRole === "vc"
         ) {
           await actor.register_mentor_candid(mentorData).then((result) => {
-            if (result && result.includes("approval request is sent")) {
+            if (result) {
               toast.success("Approval request is sent");
               window.location.href = "/";
             } else {
@@ -232,6 +232,8 @@ const MentorSignupMain = () => {
     }
   };
 
+
+  
   return (
     <>
       <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${modalOpen ? 'block' : 'hidden'}`}>

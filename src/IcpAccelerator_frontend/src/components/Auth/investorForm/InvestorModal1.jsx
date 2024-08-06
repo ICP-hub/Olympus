@@ -121,6 +121,9 @@ const InvestorModal1 = ({ isOpen, onClose, onBack }) => {
 
     return (
         <>
+         <h1 className="text-3xl text-[#121926] font-bold mb-3">
+                Create a Investor
+            </h1>
             <div className="mb-4">
                 <label className="block text-sm font-medium mb-1">Are you Registered ?<span className='text-[red] ml-1'>*</span></label>
                 <select

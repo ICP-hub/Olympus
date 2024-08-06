@@ -21,7 +21,6 @@ import { useSelector } from 'react-redux'
 
 function DashboardHomePage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const location = useLocation();
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   return (
@@ -30,15 +29,7 @@ function DashboardHomePage() {
       <div className="flex flex-col flex-1 overflow-hidden">
         <DashboardHomeNavbar onMenuClick={toggleSidebar} />
         <main className="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6 bg-white">
-          {/* <DashboardHomeWelcomeSection
-            userName={"Matt"}
-            profileCompletion={"20"}
-          />
-
-          <DashboardHomeProfileCards /> */}
-          {/* <ProjectProfile /> */}
-          {/* <UserSection /> */}
-          <Routes location={location.state?.background || location}>
+           <Routes >
             <Route path="/" element={<DashboardHomeWelcomeSection userName={"Matt"} profileCompletion={"35"} />} />
             <Route path="/jobs" element={<Jobs />} />
             <Route path="/profile" element={<ProfilePage />} />
@@ -53,13 +44,7 @@ function DashboardHomePage() {
 
           </Routes>
         </main>
-        {location.state?.background && (
-          <Routes>
-            <Route path="/mentor-sign-up" element={<MentorSignupMain />} />
-            <Route path="/project-sign-up" element={<ProjectRegisterMain />} />
-            <Route path="/investor-sign-up" element={<InvestorForm />} />
-          </Routes>
-        )}
+       
       </div>
     </div>
   );
