@@ -13,7 +13,7 @@ const RegisterForm2 = () => {
         <div className="mb-6">
 
           <h1 className="text-4xl font-bold  text-[#121926]">
-s your email?
+What's your email?
           </h1>
         </div>
         <div className="space-y-4">
