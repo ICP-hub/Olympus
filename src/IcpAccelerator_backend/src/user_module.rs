@@ -19,7 +19,7 @@ pub struct UserInformation {
     pub profile_picture: Option<Vec<u8>>,
     pub email: Option<String>,
     pub country: String,
-  pub social_links: Option<Vec<SocialLinks>>,
+    pub social_links: Option<Vec<SocialLinks>>,
     pub bio: Option<String>,
     pub area_of_interest: String,
     pub openchat_username: Option<String>,
