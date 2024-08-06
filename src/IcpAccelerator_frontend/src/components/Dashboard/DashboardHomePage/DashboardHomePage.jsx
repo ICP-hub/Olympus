@@ -37,7 +37,7 @@ function DashboardHomePage() {
           <DashboardHomeProfileCards /> */}
           {/* <ProjectProfile /> */}
           {/* <UserSection /> */}
-           <Routes location={location.state?.background || location}>
+          <Routes location={location.state?.background || location}>
             <Route path="/" element={<DashboardHomeWelcomeSection userName={"Matt"} profileCompletion={"35"} />} />
             <Route path="/jobs" element={<Jobs />} />
             <Route path="/profile" element={<ProfilePage />} />
@@ -49,16 +49,16 @@ function DashboardHomePage() {
             <Route path="/single-add-new-work" element={<AddNewWork />} />
             <Route path="/work-section" element={<WorksSection />} />
             <Route path="/work-section-detail-page" element={<WorkSectionDetailPage />} />
-           
+
           </Routes>
         </main>
         {location.state?.background && (
-            <Routes>
-              <Route path="/mentor-sign-up" element={<MentorSignupMain />} />
-              <Route path="/project-sign-up" element={<ProjectRegisterMain />} />
-              <Route path="/investor-sign-up" element={<InvestorForm />} />
-            </Routes>
-          )}
+          <Routes>
+            <Route path="/mentor-sign-up" element={<MentorSignupMain />} />
+            <Route path="/project-sign-up" element={<ProjectRegisterMain />} />
+            <Route path="/investor-sign-up" element={<InvestorForm />} />
+          </Routes>
+        )}
       </div>
     </div>
   );
