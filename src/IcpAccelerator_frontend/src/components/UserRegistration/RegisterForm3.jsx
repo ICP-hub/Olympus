@@ -60,6 +60,8 @@ const RegisterForm3 = () => {
     },
     { value: "Jobs", label: "Jobs" },
   ]);
+  const [formData, setFormData] = useState([]);
+
 
   const {
     register,
@@ -71,32 +73,7 @@ const RegisterForm3 = () => {
     control,
   } = useFormContext();
 
-  useEffect(() => {
-    if (areaOfExpertise) {
-      setInterestedDomainsOptions(
-        areaOfExpertise.map((expert) => ({
-          value: expert.name,
-          label: expert.name,
-        }))
-      );
-    } else {
-      setInterestedDomainsOptions([]);
-    }
-  }, [areaOfExpertise]);
-
-  useEffect(() => {
-    if (typeOfProfile) {
-      setTypeOfProfileOptions(
-        typeOfProfile.map((type) => ({
-          value: type.role_type.toLowerCase(),
-          label: type.role_type,
-        }))
-      );
-    } else {
-      setTypeOfProfileOptions([]);
-    }
-  }, [typeOfProfile]);
-
+ 
   const imageCreationFunc = async (file) => {
     const result = await trigger("image");
     if (result) {
@@ -157,7 +134,31 @@ const RegisterForm3 = () => {
       return null;
     }
   };
+  useEffect(() => {
+    if (areaOfExpertise) {
+      setInterestedDomainsOptions(
+        areaOfExpertise.map((expert) => ({
+          value: expert.name,
+          label: expert.name,
+        }))
+      );
+    } else {
+      setInterestedDomainsOptions([]);
+    }
+  }, [areaOfExpertise]);
 
+  useEffect(() => {
+    if (typeOfProfile) {
+      setTypeOfProfileOptions(
+        typeOfProfile.map((type) => ({
+          value: type.role_type.toLowerCase(),
+          label: type.role_type,
+        }))
+      );
+    } else {
+      setTypeOfProfileOptions([]);
+    }
+  }, [typeOfProfile]);
   return (
 
     <div className="">
@@ -537,16 +538,16 @@ const RegisterForm3 = () => {
         </label>
         <div className=" relative ">
 
-          <input
+          {/* <input
             type="text"
             name="linkedin"
             placeholder="Enter your URL"
-            // value={formData.links.linkedin}
+            value={formData.links.linkedin}
             onChange={handleLinkChange}
 
             className=" p-2 border border-gray-300 rounded-md w-full"
 
-          />
+          /> */}
           {/* <div className="absolute right-2 top-1/2 transform -translate-y-1/2  ">{getLogo(formData.links.linkedin)}</div> */}
         </div>
         {/* <div className="flex items-center">

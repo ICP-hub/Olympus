@@ -640,21 +640,40 @@ pub async fn create_project(info: ProjectInfo) -> String {
 
             mutate_state(|state| {
                 state
-                    .project_awaits_response
-                    .insert(StoredPrincipal(caller), Candid(new_project.clone()));
+                    .project_storage
+                    .insert(StoredPrincipal(caller), Candid(vec![new_project.clone()]));
+               
+                let role_status = &mut state.role_status;
+                if let Some(mut role_status_vec_candid) =
+                    role_status.get(&StoredPrincipal(caller))
+                {
+                    let mut role_status_vec = role_status_vec_candid.0;
+                    for role in role_status_vec.iter_mut() {
+                        if role.name == "project" {
+                            role.status = "approved".to_string();
+                            break;
+                        }
+                    }
+                    role_status.insert(StoredPrincipal(caller), Candid(role_status_vec));
+                }
             });
+            // mutate_state(|state| {
+            //     state
+            //         .project_awaits_response
+            //         .insert(StoredPrincipal(caller), Candid(new_project.clone()));
+            // });
 
-            let res = send_approval_request(
-                info.user_data.profile_picture.unwrap_or_else(|| Vec::new()),
-                info.user_data.full_name,
-                info.user_data.country,
-                info.project_area_of_focus,
-                "project".to_string(),
-                info.user_data.bio.unwrap_or("no bio".to_string()),
-            )
-            .await;
+            // let res = send_approval_request(
+            //     info.user_data.profile_picture.unwrap_or_else(|| Vec::new()),
+            //     info.user_data.full_name,
+            //     info.user_data.country,
+            //     info.project_area_of_focus,
+            //     "project".to_string(),
+            //     info.user_data.bio.unwrap_or("no bio".to_string()),
+            // )
+            // .await;
 
-            format!("{}", res)
+             format!("")
         }
         Err(e) => format!("Validation error: {}", e),
     }

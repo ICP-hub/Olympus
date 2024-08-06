@@ -19,13 +19,16 @@ pub struct UserInformation {
     pub profile_picture: Option<Vec<u8>>,
     pub email: Option<String>,
     pub country: String,
-    pub telegram_id: Option<String>,
+  pub social_links: Option<Vec<SocialLinks>>,
     pub bio: Option<String>,
     pub area_of_interest: String,
-    pub twitter_id: Option<String>,
     pub openchat_username: Option<String>,
     pub type_of_profile: Option<String>,
     pub reason_to_join: Option<Vec<String>>,
+}
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
+pub struct SocialLinks{
+    pub link: Option<String>,
 }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default, PartialEq)]

@@ -172,62 +172,64 @@ const UserRegistration = () => {
   };
 
   const onSubmitHandler = async (data) => {
-    if (actor) {
-      const userData = {
-        full_name: data?.full_name,
-        email: [data?.email],
-        telegram_id: [data?.telegram_id.toString()],
-        twitter_id: [data?.twitter_url.toString()],
-        openchat_username: [data?.openchat_user_name],
-        bio: [data?.bio],
-        country: data?.country,
-        area_of_interest: data?.domains_interested_in,
-        type_of_profile: [data?.type_of_profile || ""],
-        reason_to_join: [
-          data?.reasons_to_join_platform
-            .split(",")
-            .map((val) => val.trim()) || [""],
-        ],
-        profile_picture: imageData ? [imageData] : [],
-      };
-      try {
-        const covertedPrincipal = await Principal.fromText(principal);
-        if (userCurrentRoleStatusActiveRole === "user") {
-          await actor
-            .update_user_data(covertedPrincipal, userData)
-            .then((result) => {
-              if ("Ok" in result) {
-                toast.success("Approval request is sent");
-                setTimeout(() => {
-                  window.location.href = "/";
-                }, 500);
-              } else {
-                toast.error(result);
-              }
-            });
-        } else if (
-          userCurrentRoleStatusActiveRole === null ||
-          userCurrentRoleStatusActiveRole === "mentor" ||
-          userCurrentRoleStatusActiveRole === "project" ||
-          userCurrentRoleStatusActiveRole === "vc"
-        ) {
-          await actor.register_user(userData).then((result) => {
-            if (result && result.includes("User registered successfully")) {
-              toast.success("Registered as a User");
-              window.location.href = "/";
-            } else {
-              toast.error("Something got wrong");
-            }
-          });
-        }
-      } catch (error) {
-        toast.error(error);
-        console.error("Error sending data to the backend:", error);
-      }
-    } else {
-      toast.error("Please signup with internet identity first");
+    // if (actor) {
+    //   const userData = {
+    //     full_name: data?.full_name || "",
+    //     email: data?.email ? [data.email] : [],
+    //     // telegram_id: data?.telegram_id ? [data.telegram_id.toString()] : [],
+    //     // twitter_id: data?.twitter_url ? [data.twitter_url.toString()] : [],
+    //     social_links: [],
+    //     openchat_username: data?.openchat_user_name ? [data.openchat_user_name] : [],
+    //     bio: data?.bio ? [data.bio] : [],
+    //     country: data?.country || "",
+    //     area_of_interest: data?.domains_interested_in || "",
+    //     type_of_profile: data?.type_of_profile ? [data.type_of_profile] : [""],
+    //     reason_to_join: data?.reasons_to_join_platform
+    //       ? data.reasons_to_join_platform
+    //           .split(",")
+    //           .map((val) => val.trim())
+    //       : [""],
+    //     profile_picture: [],
+    //   };
+    
+    //   try {
+    //     const covertedPrincipal = await Principal.fromText(principal);
+    //     if (userCurrentRoleStatusActiveRole === "user") {
+    //       await actor
+    //         .update_user_data(covertedPrincipal, userData)
+    //         .then((result) => {
+    //           if ("Ok" in result) {
+    //             toast.success("Request is sent");
+    //             setTimeout(() => {
+    //               window.location.href = "/";
+    //             }, 500);
+    //           } else {
+    //             toast.error(result);
+    //           }
+    //         });
+    //     } else if (
+    //       userCurrentRoleStatusActiveRole === null ||
+    //       userCurrentRoleStatusActiveRole === "mentor" ||
+    //       userCurrentRoleStatusActiveRole === "project" ||
+    //       userCurrentRoleStatusActiveRole === "vc"
+    //     ) {
+    //       await actor.register_user(userData).then((result) => {
+    //         if (result && result.includes("User registered successfully")) {
+    //           toast.success("Registered as a User");
+    //           window.location.href = "/";
+    //         } else {
+    //           toast.error("Something got wrong");
+    //         }
+    //       });
+    //     }
+    //   } catch (error) {
+    //     toast.error(error);
+    //     console.error("Error sending data to the backend:", error);
+    //   }
+    // } else {
+      // toast.error("Please signup with internet identity first");
       window.location.href = "/";
-    }
+    // }
   };
 
   const onErrorHandler = (val) => {
