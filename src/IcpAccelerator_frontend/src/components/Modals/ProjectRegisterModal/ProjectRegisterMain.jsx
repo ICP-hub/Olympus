@@ -1162,7 +1162,7 @@ const ProjectRegisterMain = () => {
 
     useEffect(() => {
         if (projectFullData && projectFullData.params) {
-            console.log("Project full data ==>", projectFullData);
+            // console.log("Project full data ==>", projectFullData);
             setProjectValuesHandler(projectFullData.params);
             setEditMode(true);
         } else if (userFullData) {
@@ -1248,6 +1248,7 @@ const ProjectRegisterMain = () => {
     const handleNext = async () => {
         const isValid = await trigger(formFields[index]);
         if (isValid) {
+            console.log("Current Form Data:", getValues(formFields[index]));
             setIndex((prevIndex) => prevIndex + 1);
         }
     };
