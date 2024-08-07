@@ -5,7 +5,6 @@ import topLogo from "../../../../assets/Logo/topLogo.png";
 
 import NavbarSmallLogo from "../../../../assets/Logo/NavbarSmallLogo.png";
 import Bellicon from "../../../../assets/Logo/Bellicon.png";
-import { useSelector } from "react-redux";
 import {
   SearchOutlined,
   MailOutline,
@@ -31,7 +30,6 @@ import {
   userSvgIcon,
 } from "../../Utils/Data/SvgData";
 import { logoutStart } from "../../StateManagement/Redux/Reducers/InternetIdentityReducer";
-import { useDispatch, useSelector } from "react-redux";
 import { useDispatch, useSelector } from "react-redux";
 import { afterCopySvg } from "../../../component/Utils/Data/SvgData";
 import { beforeCopySvg } from "../../../component/Utils/Data/SvgData";
@@ -75,7 +73,7 @@ function DashboardHomeNavbar() {
   };
 
   return (
-    <nav className="bg-[#FFF4ED] py-3 px-4 md:px-6 flex items-center justify-between shadow-sm relative">
+    <nav className="bg-[#FFF4ED] py-3 px-4 md:px-6 md:pl-0 flex items-center justify-between  relative pb-8">
       {/* Hamburger Menu for Mobile */}
       <button onClick={toggleMenu} className="lg:hidden">
         <MenuIcon className="text-gray-600" />
