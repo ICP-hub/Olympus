@@ -151,54 +151,54 @@ pub async fn register_mentor(mut profile: MentorProfile) -> String {
         return "you are a mentor already".to_string();
     }
 
-    mutate_state(|state| {
-        let role_status = &mut state.role_status;
+    // mutate_state(|state| {
+    //     let role_status = &mut state.role_status;
 
-        if let Some(mut role_status_vec_candid) = role_status.get(&StoredPrincipal(caller)) {
-            let mut role_status_vec = role_status_vec_candid.0;
-            for role in role_status_vec.iter_mut() {
-                if role.name == "mentor" {
-                    role.status = "requested".to_string();
-                    role.requested_on = Some(time());
-                    break;
-                }
-            }
-            role_status.insert(StoredPrincipal(caller), Candid(role_status_vec));
-        } else {
-            // If the role_status doesn't exist for the caller, insert the initial roles
-            let initial_roles = vec![
-                Role {
-                    name: "user".to_string(),
-                    status: "active".to_string(),
-                    requested_on: None,
-                    approved_on: Some(time()),
-                    rejected_on: None,
-                },
-                Role {
-                    name: "project".to_string(),
-                    status: "default".to_string(),
-                    requested_on: None,
-                    approved_on: None,
-                    rejected_on: None,
-                },
-                Role {
-                    name: "mentor".to_string(),
-                    status: "default".to_string(),
-                    requested_on: None,
-                    approved_on: None,
-                    rejected_on: None,
-                },
-                Role {
-                    name: "vc".to_string(),
-                    status: "default".to_string(),
-                    requested_on: None,
-                    approved_on: None,
-                    rejected_on: None,
-                },
-            ];
-            role_status.insert(StoredPrincipal(caller), Candid(initial_roles));
-        }
-    });
+    //     if let Some(mut role_status_vec_candid) = role_status.get(&StoredPrincipal(caller)) {
+    //         let mut role_status_vec = role_status_vec_candid.0;
+    //         for role in role_status_vec.iter_mut() {
+    //             if role.name == "mentor" {
+    //                 role.status = "requested".to_string();
+    //                 role.requested_on = Some(time());
+    //                 break;
+    //             }
+    //         }
+    //         role_status.insert(StoredPrincipal(caller), Candid(role_status_vec));
+    //     } else {
+    //         // If the role_status doesn't exist for the caller, insert the initial roles
+    //         let initial_roles = vec![
+    //             Role {
+    //                 name: "user".to_string(),
+    //                 status: "active".to_string(),
+    //                 requested_on: None,
+    //                 approved_on: Some(time()),
+    //                 rejected_on: None,
+    //             },
+    //             Role {
+    //                 name: "project".to_string(),
+    //                 status: "default".to_string(),
+    //                 requested_on: None,
+    //                 approved_on: None,
+    //                 rejected_on: None,
+    //             },
+    //             Role {
+    //                 name: "mentor".to_string(),
+    //                 status: "default".to_string(),
+    //                 requested_on: None,
+    //                 approved_on: None,
+    //                 rejected_on: None,
+    //             },
+    //             Role {
+    //                 name: "vc".to_string(),
+    //                 status: "default".to_string(),
+    //                 requested_on: None,
+    //                 approved_on: None,
+    //                 rejected_on: None,
+    //             },
+    //         ];
+    //         role_status.insert(StoredPrincipal(caller), Candid(initial_roles));
+    //     }
+    // });
 
     let temp_image = profile.user_data.profile_picture.clone();
     let canister_id = crate::asset_manager::get_asset_canister();
@@ -253,25 +253,41 @@ pub async fn register_mentor(mut profile: MentorProfile) -> String {
             };
 
             mutate_state(|state| {
+                // Update various parts of the state
                 state
-                    .mentor_awaits_response
-                    .insert(StoredPrincipal(caller), Candid(mentor_internal));
+                    .mentor_storage
+                    .insert(StoredPrincipal(caller), Candid(mentor_internal.clone()));
+                let role_status = &mut state.role_status;
+
+                if let Some(mut role_status_vec_candid) =
+                    role_status.get(&StoredPrincipal(caller))
+                {
+                    let mut role_status_vec = role_status_vec_candid.0;
+                    for role in role_status_vec.iter_mut() {
+                        if role.name == "mentor" {
+                            role.status = "approved".to_string();
+                            role.approved_on = Some(time());
+                            break;
+                        }
+                    }
+                    role_status.insert(StoredPrincipal(caller), Candid(role_status_vec));
+                }
             });
 
-            let res = send_approval_request(
-                profile
-                    .user_data
-                    .profile_picture
-                    .unwrap_or_else(|| Vec::new()),
-                profile.user_data.full_name,
-                profile.user_data.country,
-                profile.area_of_expertise,
-                "mentor".to_string(),
-                profile.user_data.bio.unwrap_or("no bio".to_string()),
-            )
-            .await;
+            // let res = send_approval_request(
+            //     profile
+            //         .user_data
+            //         .profile_picture
+            //         .unwrap_or_else(|| Vec::new()),
+            //     profile.user_data.full_name,
+            //     profile.user_data.country,
+            //     profile.area_of_expertise,
+            //     "mentor".to_string(),
+            //     profile.user_data.bio.unwrap_or("no bio".to_string()),
+            // )
+            // .await;
 
-            format!("{}", res)
+            format!("Mentor Profile Created With UID {}", mentor_internal.uid)
         }
         Err(e) => {
             format!("Validation error: {}", e)

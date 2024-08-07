@@ -485,54 +485,54 @@ pub async fn create_project(info: ProjectInfo) -> String {
         return "You can't create more than one project".to_string();
     }
 
-    mutate_state(|state| {
-        let role_status = &mut state.role_status;
+    // mutate_state(|state| {
+    //     let role_status = &mut state.role_status;
 
-        if let Some(mut role_status_vec_candid) = role_status.get(&StoredPrincipal(caller)) {
-            let mut role_status_vec = role_status_vec_candid.0;
-            for role in role_status_vec.iter_mut() {
-                if role.name == "project" {
-                    role.status = "requested".to_string();
-                    role.requested_on = Some(time());
-                    break;
-                }
-            }
-            role_status.insert(StoredPrincipal(caller), Candid(role_status_vec));
-        } else {
-            // If the role_status doesn't exist for the caller, insert the initial roles
-            let initial_roles = vec![
-                Role {
-                    name: "user".to_string(),
-                    status: "active".to_string(),
-                    requested_on: None,
-                    approved_on: Some(time()),
-                    rejected_on: None,
-                },
-                Role {
-                    name: "project".to_string(),
-                    status: "default".to_string(),
-                    requested_on: None,
-                    approved_on: None,
-                    rejected_on: None,
-                },
-                Role {
-                    name: "mentor".to_string(),
-                    status: "default".to_string(),
-                    requested_on: None,
-                    approved_on: None,
-                    rejected_on: None,
-                },
-                Role {
-                    name: "vc".to_string(),
-                    status: "default".to_string(),
-                    requested_on: None,
-                    approved_on: None,
-                    rejected_on: None,
-                },
-            ];
-            role_status.insert(StoredPrincipal(caller), Candid(initial_roles));
-        }
-    });
+    //     if let Some(mut role_status_vec_candid) = role_status.get(&StoredPrincipal(caller)) {
+    //         let mut role_status_vec = role_status_vec_candid.0;
+    //         for role in role_status_vec.iter_mut() {
+    //             if role.name == "project" {
+    //                 role.status = "requested".to_string();
+    //                 role.requested_on = Some(time());
+    //                 break;
+    //             }
+    //         }
+    //         role_status.insert(StoredPrincipal(caller), Candid(role_status_vec));
+    //     } else {
+    //         // If the role_status doesn't exist for the caller, insert the initial roles
+    //         let initial_roles = vec![
+    //             Role {
+    //                 name: "user".to_string(),
+    //                 status: "active".to_string(),
+    //                 requested_on: None,
+    //                 approved_on: Some(time()),
+    //                 rejected_on: None,
+    //             },
+    //             Role {
+    //                 name: "project".to_string(),
+    //                 status: "default".to_string(),
+    //                 requested_on: None,
+    //                 approved_on: None,
+    //                 rejected_on: None,
+    //             },
+    //             Role {
+    //                 name: "mentor".to_string(),
+    //                 status: "default".to_string(),
+    //                 requested_on: None,
+    //                 approved_on: None,
+    //                 rejected_on: None,
+    //             },
+    //             Role {
+    //                 name: "vc".to_string(),
+    //                 status: "default".to_string(),
+    //                 requested_on: None,
+    //                 approved_on: None,
+    //                 rejected_on: None,
+    //             },
+    //         ];
+    //         role_status.insert(StoredPrincipal(caller), Candid(initial_roles));
+    //     }
+    // });
 
     // crate::latest_popular_projects::update_project_status_live_incubated(new_project).await;
 
@@ -657,11 +657,6 @@ pub async fn create_project(info: ProjectInfo) -> String {
                     role_status.insert(StoredPrincipal(caller), Candid(role_status_vec));
                 }
             });
-            // mutate_state(|state| {
-            //     state
-            //         .project_awaits_response
-            //         .insert(StoredPrincipal(caller), Candid(new_project.clone()));
-            // });
 
             // let res = send_approval_request(
             //     info.user_data.profile_picture.unwrap_or_else(|| Vec::new()),
@@ -673,7 +668,7 @@ pub async fn create_project(info: ProjectInfo) -> String {
             // )
             // .await;
 
-             format!("")
+            format!("Project created Succesfully with UID {}", new_project.uid)
         }
         Err(e) => format!("Validation error: {}", e),
     }

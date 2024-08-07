@@ -163,54 +163,54 @@ pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::
         return "This Principal is already registered.".to_string();
     }
 
-    mutate_state(|state| {
-        let role_status = &mut state.role_status;
+    // mutate_state(|state| {
+    //     let role_status = &mut state.role_status;
 
-        if let Some(mut role_status_vec_candid) = role_status.get(&StoredPrincipal(caller)) {
-            let mut role_status_vec = role_status_vec_candid.0;
-            for role in role_status_vec.iter_mut() {
-                if role.name == "vc" {
-                    role.status = "requested".to_string();
-                    role.requested_on = Some(time());
-                    break;
-                }
-            }
-            role_status.insert(StoredPrincipal(caller), Candid(role_status_vec));
-        } else {
-            // If the role_status doesn't exist for the caller, insert the initial roles
-            let initial_roles = vec![
-                Role {
-                    name: "user".to_string(),
-                    status: "active".to_string(),
-                    requested_on: None,
-                    approved_on: Some(time()),
-                    rejected_on: None,
-                },
-                Role {
-                    name: "project".to_string(),
-                    status: "default".to_string(),
-                    requested_on: None,
-                    approved_on: None,
-                    rejected_on: None,
-                },
-                Role {
-                    name: "mentor".to_string(),
-                    status: "default".to_string(),
-                    requested_on: None,
-                    approved_on: None,
-                    rejected_on: None,
-                },
-                Role {
-                    name: "vc".to_string(),
-                    status: "default".to_string(),
-                    requested_on: None,
-                    approved_on: None,
-                    rejected_on: None,
-                },
-            ];
-            role_status.insert(StoredPrincipal(caller), Candid(initial_roles));
-        }
-    });
+    //     if let Some(mut role_status_vec_candid) = role_status.get(&StoredPrincipal(caller)) {
+    //         let mut role_status_vec = role_status_vec_candid.0;
+    //         for role in role_status_vec.iter_mut() {
+    //             if role.name == "vc" {
+    //                 role.status = "requested".to_string();
+    //                 role.requested_on = Some(time());
+    //                 break;
+    //             }
+    //         }
+    //         role_status.insert(StoredPrincipal(caller), Candid(role_status_vec));
+    //     } else {
+    //         // If the role_status doesn't exist for the caller, insert the initial roles
+    //         let initial_roles = vec![
+    //             Role {
+    //                 name: "user".to_string(),
+    //                 status: "active".to_string(),
+    //                 requested_on: None,
+    //                 approved_on: Some(time()),
+    //                 rejected_on: None,
+    //             },
+    //             Role {
+    //                 name: "project".to_string(),
+    //                 status: "default".to_string(),
+    //                 requested_on: None,
+    //                 approved_on: None,
+    //                 rejected_on: None,
+    //             },
+    //             Role {
+    //                 name: "mentor".to_string(),
+    //                 status: "default".to_string(),
+    //                 requested_on: None,
+    //                 approved_on: None,
+    //                 rejected_on: None,
+    //             },
+    //             Role {
+    //                 name: "vc".to_string(),
+    //                 status: "default".to_string(),
+    //                 requested_on: None,
+    //                 approved_on: None,
+    //                 rejected_on: None,
+    //             },
+    //         ];
+    //         role_status.insert(StoredPrincipal(caller), Candid(initial_roles));
+    //     }
+    // });
 
     let temp_image = params.user_data.profile_picture.clone();
     let canister_id = crate::asset_manager::get_asset_canister();
@@ -261,25 +261,42 @@ pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::
 
             // Add the new VC to the awaiting response list
             mutate_state(|state| {
+                // Updating vc_storage to reflect approval status
                 state
-                    .vc_awaits_response
+                    .vc_storage
                     .insert(StoredPrincipal(caller), Candid(new_vc.clone()));
+
+                let role_status = &mut state.role_status;
+
+                if let Some(mut role_status_vec_candid) =
+                    role_status.get(&StoredPrincipal(caller))
+                {
+                    let mut role_status_vec = role_status_vec_candid.0;
+                    for role in role_status_vec.iter_mut() {
+                        if role.name == "vc" {
+                            role.status = "approved".to_string();
+                            role.approved_on = Some(time());
+                            break;
+                        }
+                    }
+                    role_status.insert(StoredPrincipal(caller), Candid(role_status_vec));
+                }
             });
 
-            let res = send_approval_request(
-                params
-                    .user_data
-                    .profile_picture
-                    .unwrap_or_else(|| Vec::new()),
-                params.user_data.full_name,
-                params.user_data.country,
-                params.category_of_investment,
-                "vc".to_string(),
-                params.user_data.bio.unwrap_or_else(|| "no bio".to_string()),
-            )
-            .await;
+            // let res = send_approval_request(
+            //     params
+            //         .user_data
+            //         .profile_picture
+            //         .unwrap_or_else(|| Vec::new()),
+            //     params.user_data.full_name,
+            //     params.user_data.country,
+            //     params.category_of_investment,
+            //     "vc".to_string(),
+            //     params.user_data.bio.unwrap_or_else(|| "no bio".to_string()),
+            // )
+            // .await;
 
-            format!("{}", res)
+            format!("Venture Capitalist Created With UID {}", new_vc.uid)
         }
         Err(e) => format!("Validation error: {}", e),
     }
