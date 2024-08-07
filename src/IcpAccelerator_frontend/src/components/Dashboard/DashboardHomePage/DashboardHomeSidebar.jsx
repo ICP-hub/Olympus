@@ -64,6 +64,10 @@ function DashboardSidebar({ isOpen, onClose }) {
                   <span className='ml-3'>Cyperhunk Labs</span>
                 </Link>
               </li>
+              <Link to="/dashboard/project" className="flex items-center px-6 py-2 text-gray-700 hover:bg-[#e4e3e2b1]">
+                {gridSvgIcon}
+                <span className='ml-3'>Create new Project</span>
+              </Link>
             </ul>
           </div>
 
