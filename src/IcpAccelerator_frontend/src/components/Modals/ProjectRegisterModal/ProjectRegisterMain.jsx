@@ -48,7 +48,7 @@ const ProjectRegisterMain = () => {
     const projectFullData = useSelector(
         (currState) => currState.projectData.data
     );
-    console.log("projectFullData in projectRejForm ===>", projectFullData);
+    // console.log("projectFullData in projectRejForm ===>", projectFullData);
     const userCurrentRoleStatusActiveRole = useSelector(
         (currState) => currState.currentRoleStatus.activeRole
     );
@@ -579,7 +579,7 @@ const ProjectRegisterMain = () => {
         watch("type_of_profile")
     );
 
-    console.log("defaultValues", defaultValues);
+    // console.log("defaultValues", defaultValues);
     // Add Private Docs
 
     const {
@@ -753,24 +753,7 @@ const ProjectRegisterMain = () => {
     const onSubmitHandler = async (data) => {
         if (actor) {
             const projectData = {
-                // user data
-                user_data: {
-                    full_name: data?.full_name,
-                    email: [data?.email],
-                    telegram_id: [data?.telegram_id.toString()],
-                    twitter_id: [data?.twitter_url.toString()],
-                    openchat_username: [data?.openchat_user_name],
-                    bio: [data?.bio],
-                    country: data?.country,
-                    area_of_interest: data?.domains_interested_in,
-                    type_of_profile: [data?.type_of_profile || ""],
-                    reason_to_join: [
-                        data?.reasons_to_join_platform
-                            .split(",")
-                            .map((val) => val.trim()) || [""],
-                    ],
-                    profile_picture: imageData ? [imageData] : [],
-                },
+           
                 // project data
                 project_cover: coverData ? [coverData] : [],
                 project_logo: logoData ? [logoData] : [],
@@ -877,37 +860,17 @@ const ProjectRegisterMain = () => {
 
             console.log("projectData ==>", projectData);
             console.log("projectData ==>", logoData);
-            try {
-                if (userCurrentRoleStatusActiveRole === "project") {
-                    let id = projectFullData?.uid;
-                    await actor.update_project(id, projectData).then((result) => {
-                        console.log("result in project to check update call==>", result);
-                        if (result && result.includes("approval request is sent")) {
-                            toast.success("Approval request is sent");
-                            window.location.href = "/";
-                        } else {
-                            toast.error(result);
-                        }
-                    });
-                } else if (
-                    userCurrentRoleStatusActiveRole === null ||
-                    userCurrentRoleStatusActiveRole === "user" ||
-                    userCurrentRoleStatusActiveRole === "mentor" ||
-                    userCurrentRoleStatusActiveRole === "vc"
-                ) {
+            
                     await actor.register_project(projectData).then((result) => {
-                        if (result && result.includes("approval request is sent")) {
-                            toast.success("Approval request is sent");
+                        if (result ) {
+                            toast.success("Project Create Successfully");
                             window.location.href = "/";
                         } else {
                             toast.error(result);
                         }
                     });
-                }
-            } catch (error) {
-                toast.error(error);
-                console.error("Error sending data to the backend:", error);
-            }
+               
+      
         } else {
             toast.error("Please signup with internet identity first");
             window.location.href = "/";
@@ -1129,9 +1092,9 @@ const ProjectRegisterMain = () => {
             setValue("publicDocs", val?.public_docs?.[0] ?? []);
         }
     };
-    console.log("imagePreview", imagePreview);
-    console.log("logoPreview", logoPreview);
-    console.log("coverPreview", coverPreview);
+    // console.log("imagePreview", imagePreview);
+    // console.log("logoPreview", logoPreview);
+    // console.log("coverPreview", coverPreview);
 
     // Get data from redux useEffect
     useEffect(() => {

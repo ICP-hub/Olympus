@@ -1,52 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
-import Select from 'react-select';
 import { useFormContext } from "react-hook-form";
-import { useNavigate } from "react-router-dom"
 import { useSelector } from 'react-redux';
 
-const InvestorModal3 = ({ isOpen, onClose, onBack }) => {
-
-    const { register, watch, clearErrors, formState: { errors }, setValue, trigger } = useFormContext();
-
-    const navigate = useNavigate()
-    const [modalOpen, setModalOpen] = useState(isOpen || true);
-    const selectStyles = {
-        control: (provided) => ({
-            ...provided,
-            borderColor: '#CDD5DF',
-            borderRadius: '0.375rem',
-        }),
-        controlIsFocused: (provided) => ({
-            ...provided,
-            borderColor: 'black',
-            boxShadow: 'none',
-        }),
-        multiValue: (provided) => ({
-            ...provided,
-            borderColor: '#CDD5DF',
-        }),
-        multiValueLabel: (provided) => ({
-            ...provided,
-            color: '#1f2937',
-        }),
-    };
-
-    useEffect(() => {
-        if (modalOpen) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = 'auto';
-        }
-
-        return () => {
-            document.body.style.overflow = 'auto';
-        };
-    }, [modalOpen]);
-
+const InvestorModal3 = () => {
+    const { register, formState: { errors }, watch } = useFormContext();
     const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
-
-
+    console.log('my hub data', getAllIcpHubs)
     return (
         <>
 
@@ -62,14 +22,10 @@ const InvestorModal3 = ({ isOpen, onClose, onBack }) => {
                 >
                     <option value="">Please choose an option</option>
                     {getAllIcpHubs?.map((hub) => (
-                        <option
-                            key={hub.id}
-                            value={`${hub.name} ,${hub.region}`}
-                            className="text-lg "
-                        >
-                            {hub.name}, {hub.region}
-                        </option>
-                    ))}
+            <option key={hub.id} value={`${hub.name} ,${hub.region}`} className="text-lg font-bold">
+              {hub.name}, {hub.region}
+            </option>
+          ))}
                 </select>
                 {errors.preferred_icp_hub && (
                     <p className="mt-1 text-sm text-red-500 font-bold text-left">

@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 
 const InvestorModal2 = ({ isOpen, onClose, onBack }) => {
-
+    const actor = useSelector((currState) => currState.actors.actor);
 
     const areaOfExpertise = useSelector(
         (currState) => currState.expertiseIn.expertise
@@ -94,7 +94,47 @@ const InvestorModal2 = ({ isOpen, onClose, onBack }) => {
     const [investStageRangeSelectedOptions, setInvestStageRangeSelectedOptions] =
         useState([]);
 
+        useEffect(() => {
+            if (actor) {
+              (async () => {
+                try {
+                  const result = await actor.get_investment_stage();
+                  if (result && result.length > 0) {
+                    let mapped_arr = result.map((val, index) => ({
+                      value: val.toLowerCase(),
+                      label: val,
+                    }));
+                    setInvestStageOptions(mapped_arr);
+                  } else {
+                    setInvestStageOptions([]);
+                  }
+                } catch (error) {
+                  setInvestStageOptions([]);
+                }
+              })();
+            }
+          }, [actor]);
 
+          useEffect(() => {
+            if (actor) {
+              (async () => {
+                try {
+                  const result = await actor.get_range_of_check_size();
+                  if (result && result.length > 0) {
+                    let mapped_arr = result.map((val, index) => ({
+                      value: val.toLowerCase(),
+                      label: val,
+                    }));
+                    setInvestStageRangeOptions(mapped_arr);
+                  } else {
+                    setInvestStageRangeOptions([]);
+                  }
+                } catch (error) {
+                  setInvestStageRangeOptions([]);
+                }
+              })();
+            }
+          }, [actor]);
     return (
 
 
