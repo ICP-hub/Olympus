@@ -12,6 +12,7 @@ import HomeSection6 from '../../Home/Homesection6';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
 
+import ProfileImage from "../../../../assets/Logo/ProfileImage.png"
 const EventDetails = () => {
   const [activeTab, setActiveTab] = useState('summary');
 

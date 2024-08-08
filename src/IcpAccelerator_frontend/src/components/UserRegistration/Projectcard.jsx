@@ -1,10 +1,4 @@
-// import React from 'react'
 
-
-// export default function Projectcard() {
-//     return (
-//         <div></div>
-//     )}
 import React from 'react';
 
 import box from "../../../assets/Logo/box.png";

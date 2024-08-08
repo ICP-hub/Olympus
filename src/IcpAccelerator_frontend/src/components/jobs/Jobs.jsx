@@ -338,7 +338,7 @@ const Jobs = () => {
                                     value={filter.maxSalary} 
                                     onChange={handleChange} 
                                     className="w-[40%] px-1 py-2 border border-gray-300 rounded-r-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
-                                    placeholder="$ To" 
+                                    placeholder="$ To user" 
                                 />
                             </div>
                         </div>

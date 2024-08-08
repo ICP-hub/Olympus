@@ -144,9 +144,9 @@ const ProfileDetail = () => {
               <button className="text-blue-600 border-b-2 border-blue-600 pb-2 mr-4 font-medium">
                 General
               </button>
-              <button className="text-gray-400 pb-2 font-medium">
+              {/* <button className="text-gray-400 pb-2 font-medium">
                 Expertise
-              </button>
+              </button> */}
             </div>
           </div>
 
