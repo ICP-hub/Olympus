@@ -2,7 +2,7 @@ import React from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 export const AboutcardSkeleton = (getAllData) => {
-  console.log("getvalues", getAllData);
+ console.log("getvalues", getAllData);
   return (
     <SkeletonTheme baseColor="#e3e3e3" highlightColor="#c8c8c873">
       <div className="w-1/2 bg-gradient-to-r from-[#ECE9FE] to-[#FFFFFF] items-center justify-center rounded-r-2xl">
@@ -61,16 +61,28 @@ export const AboutcardSkeleton = (getAllData) => {
               </div>
               <div>
                 <label className="block text-gray-700 pb-2">About</label>
-                {/* 
-                            <input type="text" className="mt-1 p-2 text-gray-700 border border-gray-300 rounded w-full bg-gray-100" placeholder="Write about yourself" /> */}
+                {getAllData?.getAllData?.bio ? (
+                <p className="text-xl font-normal">
+                  {getAllData?.getAllData?.bio}
+                </p>
+              ) : (
+                <>
                 <Skeleton height={20} width="full" className="rounded-3xl" />
                 <Skeleton height={20} width={150} className="rounded-3xl" />
+                </>)}
               </div>
-              <label className="block text-gray-700 -mb-2">Interests</label>
+              <label className="block text-gray-700 -mb-2">Reason to join Platform</label>
+              {getAllData?.getAllData?.reasons_to_join_platform ? (
+                <p className="text-xl font-normal">
+                  {getAllData?.getAllData?.reasons_to_join_platform
+                  }
+                </p>
+              ) : (
               <div className="flex space-x-2">
                 <Skeleton height={25} width={80} className="rounded-3xl" />
                 <Skeleton height={25} width={80} className="rounded-3xl" />
               </div>
+              )}
               <label className="block text-gray-700 -mb-2">Interests</label>
               <div className="flex space-x-2">
                 <Skeleton height={25} width={80} className="rounded-3xl" />
