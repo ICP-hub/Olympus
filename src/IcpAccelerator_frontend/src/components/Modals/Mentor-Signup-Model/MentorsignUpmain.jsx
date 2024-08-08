@@ -14,18 +14,9 @@ import MentorSignup4 from "./MentorSignup4";
 const MentorSignupMain = () => {
   const dispatch = useDispatch();
   const actor = useSelector((state) => state.actors.actor);
-  const areaOfExpertise = useSelector((state) => state.expertiseIn.expertise);
-  const typeOfProfile = useSelector((state) => state.profileTypes.profiles);
-  const userFullData = useSelector((state) => state.userData.data.Ok);
-  const mentorFullData = useSelector((state) => state.mentorData.data[0]);
 
   const [modalOpen, setModalOpen] = useState(true);
   const [index, setIndex] = useState(0);
-
-  const [interestedDomainsOptions, setInterestedDomainsOptions] = useState([]);
-  const [typeOfProfileOptions, setTypeOfProfileOptions] = useState([]);
-  const [multiChainOptions, setMultiChainOptions] = useState([]);
-  const multiChainNames = useSelector((currState) => currState.chains.chains);
 
   const validationSchema = yup.object().shape({
     full_name: yup.string().required("Full name is required"),
@@ -138,29 +129,7 @@ const MentorSignupMain = () => {
     dispatch(allHubHandlerRequest());
   }, [actor, dispatch]);
 
-  useEffect(() => {
-    if (areaOfExpertise) {
-      setInterestedDomainsOptions(areaOfExpertise.map((expert) => ({ value: expert.name, label: expert.name })));
-    } else {
-      setInterestedDomainsOptions([]);
-    }
-  }, [areaOfExpertise]);
-
-  useEffect(() => {
-    if (typeOfProfile) {
-      setTypeOfProfileOptions(typeOfProfile.map((type) => ({ value: type.role_type.toLowerCase(), label: type.role_type })));
-    } else {
-      setTypeOfProfileOptions([]);
-    }
-  }, [typeOfProfile]);
-
-  useEffect(() => {
-    if (multiChainNames) {
-      setMultiChainOptions(multiChainNames.map((chain) => ({ value: chain, label: chain })));
-    } else {
-      setMultiChainOptions([]);
-    }
-  }, [multiChainNames]);
+ 
 
   const onErrorHandler = (errors) => {
     toast.error("Empty fields or invalid values, please recheck the form",errors);
