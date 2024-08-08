@@ -4,9 +4,9 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Scrollbar, A11y, Autoplay } from 'swiper/modules';
 import "swiper/css";
 import "swiper/css/pagination";
-import TestimonialProfile from "../../../assets/ProfIleEdit/TestimonialProfile.png";
-import TestAvatar from "../../../assets/ProfIleEdit/TestAvatar.png";
 import { useState } from 'react';
+import {homepagedata} from "../../../src/components/jsondata/data/homepageData";
+
 
 const ArrowButton = ({ direction, onClick, visible }) => {
   const isLeft = direction === 'left';
@@ -33,22 +33,7 @@ const ArrowButton = ({ direction, onClick, visible }) => {
   );
 };
 
-const testimonials = [
-  {
-    text: "Using Olympus has been a game-changer for our team. The platform's simplicity and the quick customer support have truly exceeded our expectations.",
-    name: "Aaron King",
-    title: "Fund Manager, Infinity Capital",
-    avatar: TestAvatar,
-    profile: TestimonialProfile
-  },
-  {
-    text: "Olympus provided us with all the tools we needed to grow our business. Their customer service is fantastic, and the platform is very user-friendly.",
-    name: "Emma Watson",
-    title: "CEO, Tech Innovators",
-    avatar: TestAvatar,
-    profile: TestimonialProfile
-  }
-];
+
 
 function TestimonialSection() {
   const [buttonVisible, setButtonVisible] = useState(true);
@@ -73,6 +58,8 @@ function TestimonialSection() {
       nextRef.current.classList.add('swiper-button-next');
     }
   }, []);
+
+  // const { testimonials } = homepagedata;
 
   return (
     <div className="flex items-center justify-center bg-white py-10 px-4">
@@ -100,7 +87,7 @@ function TestimonialSection() {
           }}
           onSlideChange={() => setButtonVisible(true)}
         >
-          {testimonials.map((testimonial, index) => (
+          {homepagedata.testimonials.map((testimonial, index) => (
             <SwiperSlide key={index}>
               <div className="bg-white p-8 flex items-center mx-auto">
                 <div className="md:pr-8">
@@ -115,7 +102,7 @@ function TestimonialSection() {
                   </div>
                   <p className="text-gray-800 text-lg mb-6">{testimonial.text}</p>
                   <div className="flex items-center">
-                    <img className="w-10 h-10 rounded-full mr-4" src={testimonial.avatar} alt={testimonial.name} />
+                    <img className="w-10 h-10 rounded-full mr-4" src={testimonial.avatar.TestAvatar} alt={testimonial.name} />
                     <div className="text-sm">
                       <p className="text-gray-900 leading-none">{testimonial.name}</p>
                       <p className="text-gray-600">{testimonial.title}</p>
@@ -123,7 +110,7 @@ function TestimonialSection() {
                   </div>
                 </div>
                 <div className="mt-6 md:mt-0 md:pl-8">
-                  <img className="rounded-lg max-w-[300px]" src={testimonial.profile} alt={testimonial.name} />
+                  <img className="rounded-lg max-w-[300px]" src={testimonial.profile.TestimonialProfile} alt={testimonial.name} />
                 </div>
               </div>
             </SwiperSlide>
