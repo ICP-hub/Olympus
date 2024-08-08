@@ -24,12 +24,12 @@ function DashboardHomePage() {
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100 lg:flex-row">
+    <div className="flex flex-col h-screen bg-[#FFF4ED] lg:flex-row">
       <DashboardHomeSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="flex flex-col flex-1 overflow-hidden">
         <DashboardHomeNavbar onMenuClick={toggleSidebar} />
-        <main className="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6 bg-white">
-           <Routes >
+        <main className="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6 bg-white mr-[4%] rounded-3xl">
+          <Routes >
             <Route path="/" element={<DashboardHomeWelcomeSection userName={"Matt"} profileCompletion={"35"} />} />
             <Route path="/jobs" element={<Jobs />} />
             <Route path="/profile" element={<ProfilePage />} />
@@ -44,7 +44,7 @@ function DashboardHomePage() {
 
           </Routes>
         </main>
-       
+
       </div>
     </div>
   );

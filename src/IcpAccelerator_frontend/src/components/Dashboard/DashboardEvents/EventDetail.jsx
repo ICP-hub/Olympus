@@ -1,5 +1,6 @@
 import React from 'react';
 import eventbg from "../../../../assets/images/bg.png"
+import ProfileImage from "../../../../assets/Logo/ProfileImage.png"
 const EventDetails = () => {
   return (
     <div className="flex flex-col gap-10 md:flex-row h-screen">
@@ -7,7 +8,8 @@ const EventDetails = () => {
       {/* md:w-1/4 lg:w-1/4 */}
       <div className="w-[400px] bg-gray-100 p-4 sticky top-0 h-full rounded-2xl">
         <div className="text-center mb-4">
-          <img src="/path/to/organizer-image.jpg" alt="Organizer" className="w-24 h-24 rounded-full mx-auto" />
+
+          <img src={ProfileImage} alt="Organizer" className="w-24 h-24 rounded-full mx-auto" />
           <h2 className="text-lg font-semibold mt-2">Matt Bowers</h2>
           <span className="text-sm text-green-600">ORGANIZER</span>
         </div>

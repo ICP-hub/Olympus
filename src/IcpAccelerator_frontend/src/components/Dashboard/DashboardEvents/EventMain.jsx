@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import EventCard from './EventCard';
 import Filters from './EventFilter';
 import eventbg from "../../../../assets/images/bg.png"
-import {Link} from "react-router-dom"
+import { Link } from "react-router-dom"
 const events = [
   {
     date: '20 Jun – 22 Jun',
@@ -31,7 +31,7 @@ const events = [
     attendees: ['https://via.placeholder.com/24', 'https://via.placeholder.com/24', 'https://via.placeholder.com/24', 'https://via.placeholder.com/24'],
     image: eventbg,
   },
- 
+
   {
     date: '25 Jun',
     time: 'Start at 15:00 GMT+4',
@@ -45,7 +45,7 @@ const events = [
     attendees: ['https://via.placeholder.com/24', 'https://via.placeholder.com/24', 'https://via.placeholder.com/24', 'https://via.placeholder.com/24'],
     image: eventbg,
   },
-  
+
   {
     date: '25 Jun',
     time: 'Start at 15:00 GMT+4',
@@ -66,13 +66,13 @@ const EventMain = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-white">
-      <h1 className="text-3xl font-bold mb-6">Discover events</h1>
+      <h1 className="text-3xl font-bold mb-6 -top-6  sticky bg-white z-20">Discover events</h1>
       <div className="flex">
         <div className="w-full md:w-[70%] pr-6">
           {events.map((event, index) => (
             <>
-          <Link to='/dashboard/single-event'> <EventCard key={index} event={event} /> </Link> 
-          </>))}
+              <Link to='/dashboard/single-event'> <EventCard key={index} event={event} /> </Link>
+            </>))}
         </div>
         <div className="w-full md:w-[30%]">
           <Filters isOpen={isFiltersOpen} />

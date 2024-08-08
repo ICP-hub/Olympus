@@ -11,7 +11,7 @@ import {
   Star as PerksIcon,
   Close as CloseIcon
 } from '@mui/icons-material';
-import { briefcaseSvgIcon, calenderSvgIcon, homeSvgIcon, locationHubSvgIcon, star, staroutlineSvgIcon, userCircleSvgIcon, userSvgIcon } from '../../Utils/Data/SvgData';
+import { briefcaseSvgIcon, calenderSvgIcon, gridSvgIcon, homeSvgIcon, locationHubSvgIcon, star, staroutlineSvgIcon, userCircleSvgIcon, userSvgIcon } from '../../Utils/Data/SvgData';
 
 
 function DashboardSidebar({ isOpen, onClose }) {
@@ -55,9 +55,24 @@ function DashboardSidebar({ isOpen, onClose }) {
               </li>
             </ul>
           </div>
+          <div className="mb-6">
+            <h3 className="px-6 mb-2 text-xs font-semibold text-gray-500 uppercase">PROJECTS</h3>
+            <ul>
+              <li>
+                <Link to="/dashboard/project" className="flex items-center px-6 py-2 text-gray-700 hover:bg-[#e4e3e2b1]">
+                  {gridSvgIcon}
+                  <span className='ml-3'>Cyperhunk Labs</span>
+                </Link>
+              </li>
+              <Link to="/dashboard/project" className="flex items-center px-6 py-2 text-gray-700 hover:bg-[#e4e3e2b1]">
+                {gridSvgIcon}
+                <span className='ml-3'>Create new Project</span>
+              </Link>
+            </ul>
+          </div>
 
           <div>
-            <h3 className="px-6 mb-2 text-xs font-semibold text-gray-500 uppercase">DISCOVER</h3>
+            <h3 className="px-6 mb-2 text-xs font-semibold text-gray-500 uppercase ">DISCOVER</h3>
             <ul>
               <li>
                 <Link to="/dashboard/user" className="flex items-center px-6 py-2 text-gray-700 hover:bg-[#e4e3e2b1]">
