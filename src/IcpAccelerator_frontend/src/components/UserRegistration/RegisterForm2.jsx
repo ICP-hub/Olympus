@@ -1,6 +1,6 @@
 import React from "react";
 import { useFormContext } from "react-hook-form";
-
+// import{  FaEmail} from "react-icons/fa";
 const RegisterForm2 = () => {
   const {
     register,
@@ -11,9 +11,8 @@ const RegisterForm2 = () => {
     <>
       <div className="overflow-y-auto">
         <div className="mb-6">
-
           <h1 className="text-4xl font-bold  text-[#121926]">
-What's your email?
+            What's your email?
           </h1>
         </div>
         <div className="space-y-4">
@@ -24,19 +23,23 @@ What's your email?
             >
               Email <span className="text-[#155EEF]">*</span>
             </label>
+            <div className="relative">
+              <input
+                type="email"
+                {...register("email")}
+                className={`bg-gray-50 border-2 
 
-            <input
-              type="email"
-              {...register("email")}
-              className={`bg-gray-50 border-2 
-
-                                                ${errors?.email
-                  ? "border-red-500"
-                  : "border-[#737373]"
-                } mt-1 p-2 border border-gray-300 rounded w-full`}
-
-              placeholder="Enter your email"
-            />
+                                                ${
+                                                  errors?.email
+                                                    ? "border-red-500"
+                                                    : "border-[#737373]"
+                                                } mt-1 p-2 border border-gray-300 rounded w-full`}
+                placeholder="Enter your email"
+              />
+              <span className="absolute left-2 top-2 text-gray-500">
+                {/* <FaEmail/> */}
+              </span>
+            </div>
             {errors?.email && (
               <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
                 {errors?.email?.message}
