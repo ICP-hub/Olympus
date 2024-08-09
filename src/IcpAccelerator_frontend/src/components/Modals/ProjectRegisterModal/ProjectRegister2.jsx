@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import createprojectabc from "../../../../assets/Logo/createprojectabc.png";
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
-import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+
 import { useFormContext, Controller } from "react-hook-form";
 import CompressedImage from "../../../component/ImageCompressed/CompressedImage"
 const ProjectRegister2 = ({ isOpen, onClose, onBack }) => {
@@ -16,10 +15,10 @@ const ProjectRegister2 = ({ isOpen, onClose, onBack }) => {
         watch,
         countries,
     } = useFormContext();
-    const [logoPreview, setLogoPreview] = useState(null);
+
     const [coverPreview, setCoverPreview] = useState(null);
     const [coverData, setCoverData] = useState(null);
-    const [logoData, setLogoData] = useState(null);
+
     const coverCreationFunc = async (file) => {
         const result = await trigger("cover");
         if (result) {
@@ -64,44 +63,6 @@ const ProjectRegister2 = ({ isOpen, onClose, onBack }) => {
                 <label className="block text-sm font-medium mb-1">
                     Upload a Cover Photo<span className="text-red-500">*</span>
                 </label>
-                {/* <div className="flex gap-2">
-                    <img src={createprojectabc} alt="projectimg" />
-                    <div className="flex gap-1 items-center justify-center">
-                        <div className="flex gap-1">
-                            <label
-                                htmlFor="file-upload"
-                                className="block font-medium text-gray-700 border border-gray-500 px-1 cursor-pointer rounded"
-                            >
-                                <ControlPointIcon
-                                    fontSize="small"
-                                    className="items-center -mt-1"
-                                />{" "}
-                                Upload
-                            </label>
-                            <input
-                                id="file-upload"
-                                type="file"
-                                name="photo"
-                                className="mt-2 hidden"
-                                onChange={handleChange}
-                            />
-                            <label
-                                htmlFor="file-upload"
-                                className="block font-medium text-gray-700 border border-gray-500 px-1 cursor-pointer rounded"
-                            >
-                                <AutoAwesomeIcon fontSize="small" className="mr-2" />
-                                Generate Image
-                            </label>
-                            <input
-                                id="file-upload"
-                                type="file"
-                                name="photo"
-                                className="mt-2 hidden"
-                                onChange={handleChange}
-                            />
-                        </div>
-                    </div>
-                </div> */}
 
                 <div className="flex gap-2 mb-3">
                     <div className="h-24 w-24 rounded-2xl border-2 border-dashed border-gray-300 items-center justify-center overflow-hidden flex">

@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
-import createprojectabc from "../../../../assets/Logo/createprojectabc.png";
+
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
-import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import Select from "react-select";
+
 import { useForm } from "react-hook-form";
 import { useFormContext, Controller } from "react-hook-form";
 import CompressedImage from "../../../component/ImageCompressed/CompressedImage"
@@ -24,8 +21,6 @@ const ProjectRegister1 = ({ isOpen, onClose, onBack }) => {
     } = useFormContext();
 
     const [logoPreview, setLogoPreview] = useState(null);
-    const [coverPreview, setCoverPreview] = useState(null);
-    const [coverData, setCoverData] = useState(null);
     const [logoData, setLogoData] = useState(null);
 
 
@@ -67,13 +62,6 @@ const ProjectRegister1 = ({ isOpen, onClose, onBack }) => {
         clearErrors(fields_id);
         setLogoData(null);
         setLogoPreview(null);
-    };
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
     };
 
     return (

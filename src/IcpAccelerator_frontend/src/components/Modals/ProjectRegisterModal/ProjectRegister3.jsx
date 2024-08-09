@@ -179,7 +179,7 @@ const ProjectRegister3 = ({ isOpen, onClose, onBack }) => {
                 <>
                     <div className="mb-2">
                         <label className="block text-sm font-medium mb-1">
-                            dApp Link<span className="text-[#155EEF]">*</span>
+                            dApp Link<span className="text-red-500">*</span>
                         </label>
                         <input
                             type="text"

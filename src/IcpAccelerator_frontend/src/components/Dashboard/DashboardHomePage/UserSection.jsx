@@ -151,7 +151,7 @@ const UsersSection = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-white">
-      <h1 className="text-3xl font-bold mb-6  -top-6  sticky bg-white z-20">Discover</h1>
+      <h1 className="text-3xl font-bold p-6 px-0   -top-[0.6rem] bg-opacity-95 sticky bg-white z-20">Discover</h1>
       <Tabs tabs={tabs} currentTab={currentTab} onTabChange={handleTabChange} />
       {/* <div className="border-b border-gray-200 mb-6">
        <nav className="-mb-px flex space-x-8">

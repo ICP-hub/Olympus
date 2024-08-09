@@ -195,7 +195,7 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
   return (
     <>
       <div className="bg-white rounded-lg p-6 mb-6 pt-1">
-        <h1 className="text-3xl font-bold mb-6">Welcome, {userName}!</h1>
+        <h1 className="text-3xl font-bold mb-6 py-4 ">Welcome, {userName}!</h1>
         <div className="overflow-x-auto">
           <div className="flex gap-6 my-1">
             {actionCards.map((card, index) => (

@@ -6,11 +6,10 @@ import ProjectRegister2 from "./ProjectRegister2";
 import ProjectRegister3 from "./ProjectRegister3";
 import ProjectRegister4 from "./ProjectRegister4";
 import ProjectRegister5 from "./ProjectRegister5";
-// import Layer1 from "../../../assets/Logo/Layer1.png";
-// import Aboutcard from "../UserRegistration/Aboutcard";
+
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
-// import AboutcardSkeleton from "../LatestSkeleton/AbourcardSkeleton";
+
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -753,7 +752,7 @@ const ProjectRegisterMain = () => {
     const onSubmitHandler = async (data) => {
         if (actor) {
             const projectData = {
-           
+
                 // project data
                 project_cover: coverData ? [coverData] : [],
                 project_logo: logoData ? [logoData] : [],
@@ -860,17 +859,17 @@ const ProjectRegisterMain = () => {
 
             console.log("projectData ==>", projectData);
             console.log("projectData ==>", logoData);
-            
-                    await actor.register_project(projectData).then((result) => {
-                        if (result ) {
-                            toast.success("Project Create Successfully");
-                            window.location.href = "/";
-                        } else {
-                            toast.error(result);
-                        }
-                    });
-               
-      
+
+            await actor.register_project(projectData).then((result) => {
+                if (result) {
+                    toast.success("Project Create Successfully");
+                    window.location.href = "/";
+                } else {
+                    toast.error(result);
+                }
+            });
+
+
         } else {
             toast.error("Please signup with internet identity first");
             window.location.href = "/";
