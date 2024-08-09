@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import Select from "react-select";
+
 import { useFormContext } from "react-hook-form";
 
 const ProjectRegister4 = ({ isOpen, onClose, onBack }) => {

@@ -73,7 +73,7 @@ function DashboardHomeNavbar() {
   };
 
   return (
-    <nav className="bg-[#FFF4ED] py-3 px-4 md:px-6 md:pl-0 flex items-center justify-between  relative pb-8">
+    <nav className="bg-[#FFF4ED] py-3 px-4 md:px-12 md:pl-0 flex items-center justify-between  relative pb-8">
       {/* Hamburger Menu for Mobile */}
       <button onClick={toggleMenu} className="lg:hidden">
         <MenuIcon className="text-gray-600" />
@@ -107,7 +107,7 @@ function DashboardHomeNavbar() {
         {dropdownOpen && (
           <div
             id="userDropdown"
-            className="absolute  divide-y divide-gray-100 rounded-lg shadow w-48 bg-gray-100 z-10 top-4 right-6"
+            className="absolute  divide-y divide-gray-100 rounded-lg shadow w-48 bg-gray-100 z-10 top-4 right-[3.2rem]"
           >
             <div className="px-4 py-3 text-sm text-gray-90 text-black">
               <div className="flex flex-row justify-between w-full">

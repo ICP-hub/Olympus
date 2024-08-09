@@ -66,7 +66,7 @@ const EventMain = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-white">
-      <h1 className="text-3xl font-bold mb-6 -top-6  sticky bg-white z-20">Discover events</h1>
+      <h1 className="text-3xl font-bold  bg-opacity-95 -top-[0.6rem] sticky bg-white z-20 py-6">Discover events</h1>
       <div className="flex">
         <div className="w-full md:w-[70%] pr-6">
           {events.map((event, index) => (
