@@ -49,6 +49,9 @@ function DocumentSection() {
       </div>
 
       {/* Document Items */}
+      <div>
+        <div></div>
+      </div>
       <div className="p-6">
         <DocumentItem 
           title="Demo video"

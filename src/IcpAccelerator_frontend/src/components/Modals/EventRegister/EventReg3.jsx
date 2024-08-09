@@ -2,8 +2,13 @@ import React, { useState, useEffect } from "react";
 import ReactSelect from "react-select";
 import toast, { Toaster } from "react-hot-toast";
 import { useFormContext } from "react-hook-form";
+import { useSelector } from "react-redux";
 const EventReg3 = () => {
     const { register, formState: { errors },  setValue, clearErrors, setError } = useFormContext();
+    const areaOfExpertise = useSelector(
+      (currState) => currState.expertiseIn.expertise
+    );
+   
     const [rubricEligibilityOptions, setRubricEligibilityOptions] = useState([
         {
           value: "1",
@@ -79,13 +84,29 @@ const EventReg3 = () => {
         interestedDomainsSelectedOptions,
         setInterestedDomainsSelectedOptions,
       ] = useState([]);
+
+
+
+      const [inputType, setInputType] = useState("date");
+
+      const handleFocus = (field) => {
+          if (field.onFocus) {
+            setInputType(field.onFocus);
+          }
+        };
+      
+        const handleBlur = (field) => {
+          if (field.onBlur) {
+            setInputType(field.onBlur);
+          }
+        };  
   return (
     <>
      
       <div className="mb-2">
       <label
                     htmlFor="rubric_eligibility"
-                    className="flex gap-2 mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                    className="block text-sm font-medium mb-1"
                   >
                     Level on rubric required for eligibility{" "}
                     <span className="text-red-500">*</span>
@@ -101,8 +122,8 @@ const EventReg3 = () => {
                         paddingBlock: "2px",
                         borderRadius: "8px",
                         border: errors.rubric_eligibility
-                          ? "2px solid #ef4444"
-                          : "2px solid #737373",
+                        ? "1px solid #ef4444"
+                        : "1px solid #737373",
                         backgroundColor: "rgb(249 250 251)",
                         "&::placeholder": {
                           color: errors.rubric_eligibility
@@ -135,6 +156,8 @@ const EventReg3 = () => {
                         ...provided,
                         display: "inline-flex",
                         alignItems: "center",
+                        backgroundColor: "white",
+                        border: "2px solid #CDD5DF",
                       }),
                       multiValueRemove: (provided) => ({
                         ...provided,
@@ -180,7 +203,7 @@ const EventReg3 = () => {
       <div className="mb-2">
       <label
                     htmlFor="tags"
-                    className="flex gap-2 mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                    className="block text-sm font-medium mb-1"
                   >
                     Tags <span className="text-red-500">*</span>
                   </label>
@@ -195,8 +218,8 @@ const EventReg3 = () => {
                         paddingBlock: "2px",
                         borderRadius: "8px",
                         border: errors.tags
-                          ? "2px solid #ef4444"
-                          : "2px solid #737373",
+                          ? "1px solid #ef4444"
+                          : "1px solid #737373",
                         backgroundColor: "rgb(249 250 251)",
                         "&::placeholder": {
                           color: errors.tags ? "#ef4444" : "currentColor",
@@ -225,6 +248,8 @@ const EventReg3 = () => {
                         ...provided,
                         display: "inline-flex",
                         alignItems: "center",
+                        backgroundColor: "white",
+                        border: "2px solid #CDD5DF",
                       }),
                       multiValueRemove: (provided) => ({
                         ...provided,
@@ -268,7 +293,7 @@ const EventReg3 = () => {
       <div className="mb-2">
       <label
                     htmlFor="funding_type"
-                    className="flex gap-2 mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                    className="block text-sm font-medium mb-1"
                   >
                     Funding type <span className="text-red-500">*</span>
                   </label>
@@ -283,8 +308,8 @@ const EventReg3 = () => {
                         paddingBlock: "2px",
                         borderRadius: "8px",
                         border: errors.funding_type
-                          ? "2px solid #ef4444"
-                          : "2px solid #737373",
+                          ? "1px solid #ef4444"
+                          : "1px solid #737373",
                         backgroundColor: "rgb(249 250 251)",
                         "&::placeholder": {
                           color: errors.funding_type
@@ -317,6 +342,8 @@ const EventReg3 = () => {
                         ...provided,
                         display: "inline-flex",
                         alignItems: "center",
+                        backgroundColor: "white",
+                        border: "2px solid #CDD5DF",
                       }),
                       multiValueRemove: (provided) => ({
                         ...provided,
@@ -362,7 +389,7 @@ const EventReg3 = () => {
       <div className="mb-2">
       <label
                     htmlFor="funding_amount"
-                    className="flex gap-2 mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                    className="block text-sm font-medium mb-1"
                   >
                     Select funding amount{" "}
                     <span className="text-red-500">*</span>
@@ -371,7 +398,7 @@ const EventReg3 = () => {
                     name="funding_amount"
                     id="funding_amount"
                     {...register("funding_amount")}
-                    className={`bg-gray-50 border-2 ${
+                    className={`bg-gray-50 border ${
                       errors.funding_amount
                         ? "border-red-500"
                         : "border-[#737373]"
@@ -382,21 +409,21 @@ const EventReg3 = () => {
                     <option className="text-lg font-bold" value="">
                       Select Amount of Funding
                     </option>
-                    <option value="1k-5k" className="text-lg font-bold">
+                    <option value="1k-5k" className="text-lg font-normal">
                       1k-5k
                     </option>
-                    <option value="5k-25k" className="text-lg font-bold">
+                    <option value="5k-25k" className="text-lg font-normal">
                       5k-25k
                     </option>
-                    <option value="25k- 100k" className="text-lg font-bold">
+                    <option value="25k- 100k" className="text-lg font-normal">
                       25k-100k
                     </option>
-                    <option value="100k+" className="text-lg font-bold">
+                    <option value="100k+" className="text-lg font-normal">
                       100k+
                     </option>
                   </select>
       </div>
-      <div className="mb-2"></div>
+     
       <Toaster />
     </>
   );
