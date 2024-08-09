@@ -4,11 +4,13 @@ import toast, { Toaster } from "react-hot-toast";
 import { formFields } from "./EventFormData";
 import { useCountries } from "react-countries";
 import { useFormContext } from "react-hook-form";
+import { useSelector } from "react-redux";
 const EventReg2 = () => {
     const { register, formState: { errors }} = useFormContext();
     const [selectedArea, setSelectedArea] = useState("");
     const { countries } = useCountries();
     const [inputType, setInputType] = useState("date");
+    const [selectedCountry, setSelectedCountry] = useState("");
     const handleFocus = (field) => {
         if (field.onFocus) {
           setInputType(field.onFocus);
@@ -22,35 +24,17 @@ const EventReg2 = () => {
       };  
 
 
-    const areaOfExpertise = useSelector(
-        (currState) => currState.expertiseIn.expertise
-      );
-
-    useEffect(() => {
-        if (areaOfExpertise) {
-          setInterestedDomainsOptions(
-            areaOfExpertise.map((expert) => ({
-              value: expert.name,
-              label: expert.name,
-            }))
-          );
-        } else {
-          setInterestedDomainsOptions([]);
-        }
-      }, [areaOfExpertise]);
 
    
   return (
     <>
-      <h1 className="text-3xl text-[#121926] font-bold mb-3">
-        Create a Event
-      </h1>
+     
       <div className="mb-2">
         {formFields?.map((field) => (
-          <div key={field.id} className="relative z-0 group mb-6">
+          <div key={field.id} className="relative z-0 group mb-2">
             <label
               htmlFor={field.id}
-              className="flex gap-2 mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+              className="text-sm font-medium mb-1 flex"
             >
               {field.label}{" "}
               <span
@@ -66,11 +50,12 @@ const EventReg2 = () => {
                 name={field.name}
                 id={field.id}
                 {...register(field.name)}
-                className={`bg-gray-50 border-2 ${
-                  errors[field.name]
-                    ? "border-red-500 placeholder:text-red-500"
-                    : "border-[#737373]"
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                className={`border border-[#CDD5DF] rounded-md shadow-sm 
+                  ${
+                    errors[field.name]
+                      ? "border-red-500 placeholder:text-red-500"
+                      : "border-[#737373]"
+                  } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                 placeholder={field.placeholder}
                 onFocus={() => handleFocus(field)}
                 onBlur={() => handleBlur(field)}
@@ -81,11 +66,12 @@ const EventReg2 = () => {
                 name={field.name}
                 id={field.id}
                 {...register(field.name)}
-                className={`bg-gray-50 border-2 ${
-                  errors[field.name]
-                    ? "border-red-500 placeholder:text-red-500"
-                    : "border-[#737373]"
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                className={`border border-[#CDD5DF] rounded-md shadow-sm 
+                  ${
+                    errors[field.name]
+                      ? "border-red-500 placeholder:text-red-500"
+                      : "border-[#737373]"
+                  } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                 placeholder={field.placeholder}
                 onFocus={() => handleFocus(field)}
                 onBlur={() => handleBlur(field)}
@@ -102,7 +88,7 @@ const EventReg2 = () => {
       <div className="mb-2">
         <label
           htmlFor="area"
-          className="flex gap-2 mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+          className="block text-sm font-medium mb-1"
         >
           Select area <span className="text-red-500">*</span>
         </label>
@@ -110,9 +96,11 @@ const EventReg2 = () => {
           name="area"
           id="area"
           {...register("area")}
-          className={`bg-gray-50 border-2 ${
-            errors.area ? "border-red-500" : "border-[#737373]"
-          } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+          className={`border border-[#CDD5DF] rounded-md shadow-sm 
+            ${errors?.area
+? "border-red-500 "
+: "border-[#737373]"
+} text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
           onFocus={() => handleFocus({ name: "area" })}
           onBlur={() => handleBlur({ name: "area" })}
           onChange={(e) => setSelectedArea(e.target.value)}
@@ -126,7 +114,7 @@ const EventReg2 = () => {
                   <div className="relative z-0 group mb-6">
                     <label
                       htmlFor="country"
-                      className="flex gap-2 mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+                      className="block text-sm font-medium mb-1"
                     >
                       Select Country <span className="text-red-500">*</span>
                     </label>
@@ -134,9 +122,11 @@ const EventReg2 = () => {
                       name="country"
                       id="country"
                       {...register("country")}
-                      className={`bg-gray-50 border-2 ${
-                        errors.country ? "border-red-500" : "border-[#737373]"
-                      } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      className={`border border-[#CDD5DF] rounded-md shadow-sm 
+                        ${errors?.country
+            ? "border-red-500 "
+            : "border-[#737373]"
+            } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                       onFocus={() => handleFocus("country")}
                       onBlur={() => handleBlur("country")}
                       onChange={(e) => setSelectedCountry(e.target.value)}
@@ -148,7 +138,7 @@ const EventReg2 = () => {
                         <option
                           key={expert.name}
                           value={expert.name}
-                          className="text-lg font-bold"
+                          className="text-lg font-normal"
                         >
                           {expert.name}
                         </option>

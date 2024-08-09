@@ -18,6 +18,7 @@ import MentorSignupMain from '../../Modals/Mentor-Signup-Model/MentorsignUpmain'
 import ProjectRegisterMain from '../../Modals/ProjectRegisterModal/ProjectRegisterMain'
 import InvestorForm from '../../Auth/investorForm/InvestorForm'
 import { useSelector } from 'react-redux'
+import DocumentSection from './DocumentSection'
 
 function DashboardHomePage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -41,7 +42,7 @@ function DashboardHomePage() {
             <Route path="/single-add-new-work" element={<AddNewWork />} />
             <Route path="/work-section" element={<WorksSection />} />
             <Route path="/work-section-detail-page" element={<WorkSectionDetailPage />} />
-
+            <Route path="/document" element={<DocumentSection />} />
           </Routes>
         </main>
 
