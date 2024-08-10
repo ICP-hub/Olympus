@@ -6,7 +6,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 const ProjectCard = () => {
   return (
     <div className="flex flex-col items-center bg-white rounded-lg shadow-lg  mx-auto">
-      <Link to="/dashboard/document">
+      
         <div className="flex mt-4 max-w-4xl">
           <div className=" items-center justify-center">
             {/* Replace with your image */}
@@ -37,7 +37,7 @@ const ProjectCard = () => {
             </span>
           </div>
         </div>
-      </Link>
+     
 
       <div className="mt-8 flex flex-col items-center">
         <div className="  flex items-center justify-center">

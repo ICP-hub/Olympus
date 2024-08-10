@@ -5,7 +5,8 @@ import { profile } from '../jsondata/data/profileData';
 
 import Role from './Role';
 import { shareSvgIcon } from '../Utils/Data/SvgData';
-import ProjectCard from '../UserRegistration/Projectcard';
+import ProjectCard from '../Dashboard/Project/ProjectCard';
+
 
 
 const ProfilePage = () => {

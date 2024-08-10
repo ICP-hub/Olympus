@@ -13,9 +13,9 @@ import {
 
 function ProfileCard() {
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm">
+    <div className="container bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full max-w-[400px]">
       {/* Top navigation */}
-      <div className="flex justify-between items-center mb-6">
+      {/* <div className="flex justify-between items-center mb-6">
         <button className="flex items-center text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
           <ArrowBack className="mr-2" fontSize="small" />
           Back to profile
@@ -25,7 +25,7 @@ function ProfileCard() {
             Share This
           </button>
         </div>
-      </div>
+      </div> */}
 
       <div className="flex flex-col md:flex-row gap-8">
         {/* Profile Card */}
