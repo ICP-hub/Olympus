@@ -1288,7 +1288,7 @@ const ProjectRegisterMain = () => {
     return (
         <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${modalOpen ? 'block' : 'hidden'}`}>
             <div className="bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4 overflow-y-auto">
-                <div className="flex justify-end mr-4">
+                <div className="flex justify-endz mr-4">
                     <button
                         className="text-2xl text-[#121926]"
                         onClick={() => setModalOpen(!modalOpen)}
