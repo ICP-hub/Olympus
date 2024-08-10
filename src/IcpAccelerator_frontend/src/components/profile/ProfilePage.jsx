@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
-import RedoIcon from '@mui/icons-material/Redo';
-import ProfileDetail from './ProfileDetail';
+import ProfileDetail from './ProfileDetail'; 
+import { profile } from '../jsondata/data/profileData';
+
 
 import Role from './Role';
 import { shareSvgIcon } from '../Utils/Data/SvgData';
@@ -9,6 +10,7 @@ import ProjectCard from '../UserRegistration/Projectcard';
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState("roles");
+  const {profilepage}=profile
 
   const handleChange = (tab) => {
     setActiveTab(tab)
@@ -18,14 +20,14 @@ const ProfilePage = () => {
     <div className="container mx-auto mb-5 bg-white">
       <div className="flex justify-between items-center mx-[3%] h-11   bg-opacity-95 -top-[.60rem] p-10 px-0 sticky bg-white  z-20">
         <div className="">
-          <h2 className="text-2xl font-bold">Profile</h2>
+          <h2 className="text-2xl font-bold">{profilepage.profileText}</h2>
         </div>
         <div className="flex gap-4">
           <button className="mr-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
-            View public profile
+            {profilepage.viewPublicProfileText}
           </button>
           <button className="flex items-center text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
-            Share <span>{shareSvgIcon}</span>
+            {profilepage.shareText} <span>{shareSvgIcon}</span>
           </button>
         </div>
       </div>
@@ -42,7 +44,7 @@ const ProfilePage = () => {
                 }`}
               onClick={() => handleChange("roles")}
             >
-              Roles
+              {profilepage.roleText}
             </button>
             <button
               className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "project"
@@ -59,7 +61,7 @@ const ProfilePage = () => {
                 : "text-gray-400"
                 }`}
               onClick={() => handleChange("rating")}>
-              Rating
+              {profilepage.ratingText}
             </button>
           </div>
           <div className="w-full">

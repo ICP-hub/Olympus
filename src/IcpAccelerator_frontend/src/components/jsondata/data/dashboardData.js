@@ -1,9 +1,24 @@
-import { AccountCircle, Star, Group, InfoOutlined, StarBorderOutlined} from '@mui/icons-material';
+import { AccountCircle, Star, Menu , Close, Group,SearchOutlined, InfoOutlined, StarBorderOutlined} from '@mui/icons-material';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import nodata from "../../../../assets/images/nodata.png"
 import ProfileImage from "../../../../assets/Logo/ProfileImage.png";
 import VerifiedIcon from "@mui/icons-material/Verified";
+import df_small_logo from "../../../../assets/Logo/NavbarSmallLogo.png";
+import Bellicon from "../../../../assets/Logo/Bellicon.png";
+import olympuslogo from "../../../../assets/Logo/topLogo.png";
+import df_bigLogo from "../../../../assets/Logo/bigLogo.png";
+import { afterCopySvg } from "../../../component/Utils/Data/SvgData";
+import { beforeCopySvg } from "../../../component/Utils/Data/SvgData";
+import {
+  briefcaseSvgIcon,
+  calenderSvgIcon,
+  homeSvgIcon,
+  locationHubSvgIcon,
+  staroutlineSvgIcon,
+  userCircleSvgIcon,
+  userSvgIcon,
+} from "../../Utils/Data/SvgData";
 
 export const dashboard={
     "dashboardHomeProfileCards":{
@@ -59,6 +74,148 @@ export const dashboard={
         },
     },
     "noDataImage": {nodata}
+},
+    "dashboardhomenavbar" :  {
+  "logoImages": {
+    "bigLogo": {df_bigLogo},
+    "olympuslogo": {olympuslogo},
+    "df_small_logo": {df_small_logo},
+    "bellicon": {Bellicon}
+  },
+  "icons": {
+    "searchOutlined": {SearchOutlined},
+    "mailOutline": "MailOutline",
+    "notificationsNone": "NotificationsNone",
+    "menuIcon": {Menu},
+    "closeIcon": {Close},
+    "dashboardIcon": {homeSvgIcon},
+    "profileIcon": {userCircleSvgIcon},
+    "usersIcon": {userSvgIcon},
+    "eventsIcon": {calenderSvgIcon},
+    "regionalHubsIcon": {locationHubSvgIcon},
+    "jobsIcon": {briefcaseSvgIcon},
+    "perksIcon": {staroutlineSvgIcon}
+  },
+  "svgIcons": {
+    "briefcaseSvgIcon": "briefcaseSvgIcon",
+    "calenderSvgIcon": "calenderSvgIcon",
+    "homeSvgIcon": "homeSvgIcon",
+    "locationHubSvgIcon": "locationHubSvgIcon",
+    "staroutlineSvgIcon": "staroutlineSvgIcon",
+    "userCircleSvgIcon": "userCircleSvgIcon",
+    "userSvgIcon": "userSvgIcon",
+    "afterCopySvg": "afterCopySvg",
+    "beforeCopySvg": "beforeCopySvg"
+  },
+  "navbarTexts": {
+    "searchPlaceholder": "Search people, projects, jobs, events",
+    "principalLabel": "Principal:",
+    "principalCopiedSuccessMessage": "Principal copied to clipboard!",
+    "profileText": "Profile",
+    "myProfileText": "My Profile",
+    "signOutText": "Sign out"
+  },
+  "menuTexts": {
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "users": "Users",
+    "events": "Events",
+    "regionalHubs": "Regional Hubs",
+    "jobs": "Jobs",
+    "perks": "Perks",
+    "searchPlaceholder": "Search"
+  }
+},
+ "dashboardhomesidebar": {
+  "logoImages": {
+    "topLogo": "../../../../assets/Logo/topLogo.png"
+  },
+  
+  "svgIcons": {
+    "briefcaseSvgIcon": "briefcaseSvgIcon",
+    "calenderSvgIcon": "calenderSvgIcon",
+    "gridSvgIcon": "gridSvgIcon",
+    "homeSvgIcon": "homeSvgIcon",
+    "locationHubSvgIcon": "locationHubSvgIcon",
+    "starSvgIcon": "star",
+    "staroutlineSvgIcon": "staroutlineSvgIcon",
+    "userCircleSvgIcon": "userCircleSvgIcon",
+    "userSvgIcon": "userSvgIcon"
+  },
+  "sidebarSections": {
+    "dashboard": {
+      "label": "Dashboard",
+      "icon": "homeSvgIcon",
+      "link": "/dashboard"
+    },
+    "identity": {
+      "label": "IDENTITY",
+      "items": 
+        {
+          "label": "Profile",
+          "icon": "userCircleSvgIcon",
+          "link": "/dashboard/profile"
+        }
+      
+    },
+    "projects": {
+      "label": "PROJECTS",
+      "items": 
+        {
+          "label1": "Cyperhunk Labs",
+          "label2": "Create new Project",
+          "icon": "gridSvgIcon",
+         
+        },
+    },
+    "discover": {
+      "label": "DISCOVER",
+      "items": 
+        {
+          "user": "Users",
+          "events": "Events",
+          "hub": "Regional Hubs",
+          "jobs": "Jobs",
+          "perks": "Perks",
+          
+        },
+  
+    }
+  }
+},
+"dashboardwelcomesection" :{
+  "welcome":"Welcome",
+  "dismiss":"Dismiss",
+  "actionCards":[
+  {
+    title: 'Complete profile',
+    description: 'Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit.',
+    // progress: profileCompletion,
+    action: 'Complete profile',
+  },
+  {
+    title: 'Explore platform',
+    description: 'Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit.',
+    action: 'Discover',
+    dismissable: true,
+  },
+  {
+    title: 'Verify identity',
+    description: 'Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit.',
+    action: 'Take KYC',
+    // icon: KYCfileIcon,
+  },
+  {
+    title: 'Create new role',
+    description: 'Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit.',
+    action: 'Create role',
+    dismissable: true,
+    imageGroup: true, // Adding a flag to indicate that this card should have the image group
+  }]
+  
 }
+
+
+
   }
   

@@ -165,12 +165,12 @@ function DashboardSidebar({ isOpen, onClose }) {
               className={`flex items-center px-4 py-2 rounded-lg ${activeLink === '/dashboard' ? 'bg-[#e4e3e2b1] ' : 'hover:bg-[#e4e3e2b1]'}`}
             >
               {homeSvgIcon}
-              <span className='ml-3'>Dashboard</span>
+              <span className='ml-3'>{dashboardhomesidebar.sidebarSections.dashboard.label}</span>
             </Link>
           </div>
 
           <div className="mb-6">
-            <h3 className="px-6 mb-2 text-xs font-semibold text-gray-500 uppercase">IDENTITY</h3>
+            <h3 className="px-6 mb-2 text-xs font-semibold text-gray-500 uppercase">{dashboardhomesidebar.sidebarSections.identity.label}</h3>
             <ul>
               <li>
                 <Link
@@ -179,13 +179,13 @@ function DashboardSidebar({ isOpen, onClose }) {
                   className={`flex items-center px-6 py-2 ${activeLink === '/dashboard/profile' ? 'bg-[#e4e3e2b1] ' : 'hover:bg-[#e4e3e2b1]'}`}
                 >
                   {userCircleSvgIcon}
-                  <span className='ml-3'>Profile</span>
+                  <span className='ml-3'>{dashboardhomesidebar.sidebarSections.identity.items.label}</span>
                 </Link>
               </li>
             </ul>
           </div>
           <div className="mb-6">
-            <h3 className="px-6 mb-2 text-xs font-semibold text-gray-500 uppercase">PROJECTS</h3>
+            <h3 className="px-6 mb-2 text-xs font-semibold text-gray-500 uppercase">{dashboardhomesidebar.sidebarSections.projects.label}</h3>
             <ul>
               <li>
                 <Link
@@ -194,7 +194,7 @@ function DashboardSidebar({ isOpen, onClose }) {
                   className={`flex items-center px-6 py-2 ${activeLink === '/dashboard/project' ? 'bg-[#e4e3e2b1] ' : 'hover:bg-[#e4e3e2b1]'}`}
                 >
                   {gridSvgIcon}
-                  <span className='ml-3'>Cyperhunk Labs</span>
+                  <span className='ml-3'>{dashboardhomesidebar.sidebarSections.projects.items.label1} </span>
                 </Link>
               </li>
               <li>
@@ -220,7 +220,7 @@ function DashboardSidebar({ isOpen, onClose }) {
                   className={`flex items-center px-6 py-2 ${activeLink === '/dashboard/user' ? 'bg-[#e4e3e2b1] ' : 'hover:bg-[#e4e3e2b1]'}`}
                 >
                   {userSvgIcon}
-                  <span className='ml-3'>Users</span>
+                  <span className='ml-3'>{dashboardhomesidebar.sidebarSections.discover.items.user}</span>
                 </Link>
               </li>
               <li>
@@ -230,7 +230,7 @@ function DashboardSidebar({ isOpen, onClose }) {
                   className={`flex items-center px-6 py-2 ${activeLink === '/dashboard/event' ? 'bg-[#e4e3e2b1] ' : 'hover:bg-[#e4e3e2b1]'}`}
                 >
                   {calenderSvgIcon}
-                  <span className='ml-3'>Events</span>
+                  <span className='ml-3'>{dashboardhomesidebar.sidebarSections.discover.items.events}</span>
                 </Link>
               </li>
               <li>
@@ -240,7 +240,7 @@ function DashboardSidebar({ isOpen, onClose }) {
                   className={`flex items-center px-6 py-2 ${activeLink === '/regional-hubs' ? 'bg-[#e4e3e2b1] ' : 'hover:bg-[#e4e3e2b1]'}`}
                 >
                   {locationHubSvgIcon}
-                  <span className='ml-3'>Regional Hubs</span>
+                  <span className='ml-3'>{dashboardhomesidebar.sidebarSections.discover.items.hub} </span>
                 </Link>
               </li>
               <li>
@@ -250,7 +250,7 @@ function DashboardSidebar({ isOpen, onClose }) {
                   className={`flex items-center px-6 py-2 ${activeLink === '/dashboard/jobs' ? 'bg-[#e4e3e2b1] ' : 'hover:bg-[#e4e3e2b1]'}`}
                 >
                   {briefcaseSvgIcon}
-                  <span className='ml-3'>Jobs</span>
+                  <span className='ml-3'>{dashboardhomesidebar.sidebarSections.discover.items.jobs}</span>
                 </Link>
               </li>
               <li>
@@ -260,7 +260,7 @@ function DashboardSidebar({ isOpen, onClose }) {
                   className={`flex items-center px-6 py-2 ${activeLink === '/perks' ? 'bg-[#e4e3e2b1] ' : 'hover:bg-[#e4e3e2b1]'}`}
                 >
                   {staroutlineSvgIcon}
-                  <span className='ml-3'>Perks</span>
+                  <span className='ml-3'>{dashboardhomesidebar.sidebarSections.discover.items.perks}</span>
                 </Link>
               </li>
             </ul>

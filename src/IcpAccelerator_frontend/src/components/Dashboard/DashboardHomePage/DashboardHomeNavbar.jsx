@@ -1,34 +1,36 @@
 import React, { useCallback, useState } from "react";
 import { Link } from "react-router-dom";
-import bigLogo from "../../../../assets/Logo/bigLogo.png";
-import topLogo from "../../../../assets/Logo/topLogo.png";
+import { dashboard } from "../../jsondata/data/dashboardData";
 
-import NavbarSmallLogo from "../../../../assets/Logo/NavbarSmallLogo.png";
-import Bellicon from "../../../../assets/Logo/Bellicon.png";
-import {
-  SearchOutlined,
-  MailOutline,
-  NotificationsNone,
-  Menu as MenuIcon,
-  Close as CloseIcon,
-  Home as DashboardIcon,
-  Person as ProfileIcon,
-  Group as UsersIcon,
-  Event as EventsIcon,
-  LocationOn as RegionalHubsIcon,
-  Work as JobsIcon,
+// import bigLogo from "../../../../assets/Logo/bigLogo.png";
+// import topLogo from "../../../../assets/Logo/topLogo.png";
 
-  Star as PerksIcon,
-} from "@mui/icons-material";
-import {
-  briefcaseSvgIcon,
-  calenderSvgIcon,
-  homeSvgIcon,
-  locationHubSvgIcon,
-  staroutlineSvgIcon,
-  userCircleSvgIcon,
-  userSvgIcon,
-} from "../../Utils/Data/SvgData";
+// import NavbarSmallLogo from "../../../../assets/Logo/NavbarSmallLogo.png";
+// import Bellicon from "../../../../assets/Logo/Bellicon.png";
+// import {
+//   SearchOutlined,
+//   MailOutline,
+//   NotificationsNone,
+//   Menu as MenuIcon,
+//   Close as CloseIcon,
+//   Home as DashboardIcon,
+//   Person as ProfileIcon,
+//   Group as UsersIcon,
+//   Event as EventsIcon,
+//   LocationOn as RegionalHubsIcon,
+//   Work as JobsIcon,
+
+//   Star as PerksIcon,
+// } from "@mui/icons-material";
+// import {
+//   briefcaseSvgIcon,
+//   calenderSvgIcon,
+//   homeSvgIcon,
+//   locationHubSvgIcon,
+//   staroutlineSvgIcon,
+//   userCircleSvgIcon,
+//   userSvgIcon,
+// } from "../../Utils/Data/SvgData";
 import { logoutStart } from "../../StateManagement/Redux/Reducers/InternetIdentityReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { afterCopySvg } from "../../../component/Utils/Data/SvgData";
@@ -71,12 +73,12 @@ function DashboardHomeNavbar() {
     // navigate("/");
     window.location.href = "/";
   };
-
+  const {dashboardhomenavbar}=dashboard;
   return (
     <nav className="bg-[#FFF4ED] py-3 px-4 md:px-12 md:pl-0 flex items-center justify-between  relative pb-8">
       {/* Hamburger Menu for Mobile */}
       <button onClick={toggleMenu} className="lg:hidden">
-        <MenuIcon className="text-gray-600" />
+        <dashboardhomenavbar.icons.menuIcon.Menu className="text-gray-600" />
       </button>
 
       <div className="flex-grow mr-4 hidden md:block">
@@ -86,7 +88,7 @@ function DashboardHomeNavbar() {
             placeholder="Search people, projects, jobs, events"
             className="w-[480px] h-[44px] py-2 pl-10 pr-4 rounded-md bg-white-100 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <SearchOutlined
+          <dashboardhomenavbar.icons.searchOutlined.SearchOutlined
             className="absolute left-3 text-gray-400"
             style={{ top: "50%", transform: "translateY(-50%)" }}
           />
@@ -96,9 +98,9 @@ function DashboardHomeNavbar() {
       {/* Icons */}
       <div className="flex items-center space-x-4">
 
-        <img src={Bellicon} className="w-[14.57px] h-[16.67px] cursor-pointer hidden md:block" />
+        <img src={dashboardhomenavbar.logoImages.bellicon.Bellicon} className="w-[14.57px] h-[16.67px] cursor-pointer hidden md:block" />
         <img
-          src={NavbarSmallLogo}
+          src={dashboardhomenavbar.logoImages.df_small_logo.df_small_logo}
           alt="User"
           className="h-[40px] w-[40px] rounded-full z-30 py-1 px-1 "
 
@@ -132,7 +134,7 @@ function DashboardHomeNavbar() {
               </div>
               <div className="group flex items-center mt-4">
                 <div className="truncate w-32 overflow-hidden text-ellipsis   group-hover:text-left ">
-                  Principal: {principal}
+                  {dashboardhomenavbar.navbarTexts.principalLabel}: {principal}
                 </div>
                 <button
                   onClick={copyToClipboard}
@@ -148,7 +150,7 @@ function DashboardHomeNavbar() {
                 to="/dashboard/profile"
                 className="block px-4 py-2 text-gray-800 hover:bg-gray-200"
               >
-                Profile
+                {dashboardhomenavbar.navbarTexts.profileText}
               </Link>
 
               {userCurrentRoleStatus &&
@@ -162,14 +164,14 @@ function DashboardHomeNavbar() {
                     }
                     className="py-2 px-4 cursor-pointer hover:bg-gray-200"
                   >
-                    My Profile
+                    {dashboardhomenavbar.navbarTexts.myProfileText}
                   </p>
                 )}
               <p
                 className="py-2 px-4 hover:bg-gray-200 cursor-pointer"
                 onClick={logoutHandler}
               >
-                Sign out
+                {dashboardhomenavbar.navbarTexts.signOutText}
               </p>
             </div>
           </div>
@@ -185,9 +187,9 @@ function DashboardHomeNavbar() {
         <div className="fixed inset-0 bg-gray-800 bg-opacity-75 z-50 lg:hidden">
           <div className="bg-[#FFF4ED] h-full w-64 p-4 overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
-              <img src={topLogo} alt="Olympus" className="h-8" />
+              <img src={dashboardhomenavbar.logoImages.olympuslogo.olympuslogo} alt="Olympus" className="h-8" />
               <button onClick={toggleMenu}>
-                <CloseIcon className="text-gray-600" />
+                <dashboardhomenavbar.icons.closeIcon.Close className="text-gray-600" />
               </button>
             </div>
             <div className="mb-6 relative">
@@ -196,57 +198,57 @@ function DashboardHomeNavbar() {
                 placeholder="Search"
                 className="w-full py-2 pl-10 pr-4 rounded-md bg-white-100 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              <SearchOutlined className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+              <dashboardhomenavbar.icons.searchOutlined.SearchOutlined className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
             </div>
             <nav>
               <Link
                 to="/dashboard"
                 className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
               >
-                {homeSvgIcon}
-                <span className="ml-3">Dashboard</span>
+                {dashboardhomenavbar.icons.dashboardIcon.homeSvgIcon}
+                <span className="ml-3">{dashboardhomenavbar.menuTexts.dashboard}</span>
               </Link>
               <Link
                 to="/profile"
                 className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
               >
-                {userCircleSvgIcon}
-                <span className="ml-3">Profile</span>
+                {dashboardhomenavbar.icons.profileIcon.userCircleSvgIcon}
+                <span className="ml-3">{dashboardhomenavbar.menuTexts.profile}</span>
               </Link>
               <Link
                 to="/users"
                 className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
               >
-                {userSvgIcon}
-                <span className="ml-3">Users</span>
+                {dashboardhomenavbar.icons.usersIcon.userSvgIcon}
+                <span className="ml-3">{dashboardhomenavbar.menuTexts.users}</span>
               </Link>
               <Link
                 to="/events"
                 className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
               >
-                {calenderSvgIcon}
-                <span className="ml-3">Events</span>
+                {dashboardhomenavbar.icons.eventsIcon.calenderSvgIcon}
+                <span className="ml-3">{dashboardhomenavbar.menuTexts.events}</span>
               </Link>
               <Link
                 to="/regional-hubs"
                 className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
               >
-                {locationHubSvgIcon}
-                <span className="ml-3">Regional Hubs</span>
+                {dashboardhomenavbar.icons.regionalHubsIcon.locationHubSvgIcon}
+                <span className="ml-3">{dashboardhomenavbar.menuTexts.regionalHubs}</span>
               </Link>
               <Link
                 to="/jobs"
                 className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
               >
-                {briefcaseSvgIcon}
-                <span className="ml-3">Jobs</span>
+                {dashboardhomenavbar.icons.jobsIcon.briefcaseSvgIcon}
+                <span className="ml-3">{dashboardhomenavbar.menuTexts.jobs}</span>
               </Link>
               <Link
                 to="/perks"
                 className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
               >
-                {staroutlineSvgIcon}
-                <span className="ml-3">Perks</span>
+                {dashboardhomenavbar.icons.perksIcon.staroutlineSvgIcon}
+                <span className="ml-3">{dashboardhomenavbar.menuTexts.perks}</span>
               </Link>
             </nav>
           </div>
