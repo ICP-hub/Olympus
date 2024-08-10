@@ -91,7 +91,7 @@
 
 // export default ProfileDetail
 
-import React from 'react'
+import React, { useState } from 'react'
 import ProfileImage from "../../../assets/Logo/ProfileImage.png";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
@@ -103,8 +103,16 @@ import {
     Telegram,
     Add,
   } from "@mui/icons-material";
+  import { profile } from '../jsondata/data/profileData';
+import GeneralDetails from './GeneralDetails';
+import InvestorDetail from './InvestorDetail';
 
 const ProfileDetail = () => {
+  const [activeTab, setActiveTab] = useState("general");
+  const handleChange = (tab) => {
+    setActiveTab(tab)
+  }
+  const {profiledetails}=profile
     return (
       <div className="container bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full max-w-[400px]">
         <div className="relative h-1 bg-gray-200">
@@ -118,11 +126,11 @@ const ProfileDetail = () => {
           />
           <div className="flex items-center justify-center mb-1">
             <VerifiedIcon className="text-blue-500 mr-1" fontSize="small" />
-            <h2 className="text-xl font-semibold">Matt Bowers</h2>
+            <h2 className="text-xl font-semibold">{profiledetails.user.name} </h2>
           </div>
-          <p className="text-gray-600 text-center mb-4">@mattbowers</p>
+          <p className="text-gray-600 text-center mb-4">@{profiledetails.user.username}</p>
           <button className="w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center">
-            Get in touch
+            {profiledetails.user.contactButton.label}
             <ArrowOutwardOutlinedIcon className="ml-1" fontSize="small" />
           </button>
         </div>
@@ -130,110 +138,45 @@ const ProfileDetail = () => {
         <div className="p-6 bg-white">
           <div className="mb-4">
             <h3 className="font-normal mb-2 text-xs text-gray-500 uppercase">
-              Roles
+              {profiledetails.user.roles.role}
             </h3>
             <div className="flex space-x-2">
               <span className="bg-[#F0F9FF] border border-[#B9E6FE] text-[#026AA2] px-3 py-1 rounded-md text-xs font-medium">
-                OLYMPIAN
+              {profiledetails.user.roles.label}
               </span>
             </div>
           </div>
 
-          <div className="mb-4">
-            <div className="flex border-b">
+          {/* <div className="mb-4"> */}
+            {/* <div className="flex gap-3 border-b">
               <button className="text-blue-600 border-b-2 border-blue-600 pb-2 mr-4 font-medium">
-                General
+              {profiledetails.user.general.general}
               </button>
-              {/* <button className="text-gray-400 pb-2 font-medium">
-                Expertise
-              </button> */}
-            </div>
-          </div>
-
-          <div className="mb-4">
-            <h3 className="font-normal mb-2 text-xs text-gray-500 uppercase">
-              Email
-            </h3>
-            <div className="flex items-center">
-              <p className="mr-2 text-sm">mail@email.com</p>
-              <VerifiedIcon
-                className="text-blue-500 mr-2 w-2 h-2"
-                fontSize="small"
-              />
-              <span className="bg-[#F8FAFC] border border-[#E3E8EF] text-[#364152] px-2 py-0.5 rounded text-xs">
-                HIDDEN
-              </span>
-            </div>
-          </div>
-
-          <div className="mb-4">
-            <h3 className="font-normal mb-2 text-xs text-gray-500 uppercase">
-              Tagline
-            </h3>
-            <p className="text-sm">Founder & CEO at Cypherpunk Labs</p>
-          </div>
-
-          <div className="mb-4">
-            <h3 className="font-normal mb-2 text-xs text-gray-500 uppercase">
-              About
-            </h3>
-            <p className="text-sm">
-              Est malesuada ac elit gravida vel aliquam nec. Arcu pelle ntesque
-              convallis quam feugiat non viverra massa fringilla.
-            </p>
-          </div>
-
-          <div className="mb-4">
-            <h3 className="font-normal mb-2 text-xs text-gray-500">
-              INTERESTS
-            </h3>
-            <div className="flex space-x-2">
-              <span className="bg-white border borer-[#CDD5DF] text-[#364152] px-2 py-1 rounded-full text-sm">
-                Web3
-              </span>
-              <span className="bg-white border borer-[#CDD5DF] text-[#364152] px-2 py-1 rounded-full text-sm">
-                Cryptography
-              </span>
-            </div>
-          </div>
-
-          <div className="mb-4">
-            <h3 className="mb-2 text-xs text-gray-500">LOCATION</h3>
-            <div className="flex items-center">
-              <PlaceOutlinedIcon
-                className="text-gray-400 mr-1"
-                fontSize="small"
-              />
-              <p className='text-sm'>San Diego, CA</p>
-            </div>
-          </div>
-
-          <div className="mb-4 max-w-sm">
-            <h3 className="mb-2 text-xs text-gray-500">TIMEZONE</h3>
-            <button className="bg-gray-100 hover:bg-gray-200 text-sm w-full px-3 py-2 rounded border border-gray-200 text-left flex items-center">
-              <Add fontSize="small" className="mr-2" />
-              <span>Add timezone</span>
+              <button className="text-gray-400 pb-2 font-medium">
+                INVESTOR
+              </button>
+            </div> */}
+            <div className="flex justify-start border-b">
+            <button
+              className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "general"
+                ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                : "text-gray-400"
+                }`}
+              onClick={() => handleChange("general")}
+            >
+              General
             </button>
-          </div>
-
-          <div className="mb-4 max-w-sm">
-            <h3 className="mb-2 text-xs text-gray-500">
-              LANGUAGES
-            </h3>
-            <button className="bg-gray-100 hover:bg-gray-200 text-sm w-full px-3 py-2 rounded border border-gray-200 text-left flex items-center">
-              <Add fontSize="small" className="mr-1 inline-block" />
-              Add languages
+            <button
+              className={`px-4 py-2 focus:outline-none font-medium ${activeTab === "investor"
+                ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                : "text-gray-400"
+                }`}
+              onClick={() => handleChange("investor")}>
+              Investor
             </button>
-          </div>
-
-          <div>
-            <h3 className="mb-2 text-xs text-gray-500">LINKS</h3>
-            <div className="flex space-x-2">
-              <LinkedIn className="text-gray-400 hover:text-gray-600 cursor-pointer" />
-              <GitHub className="text-gray-400 hover:text-gray-600 cursor-pointer" />
-              <Telegram className="text-gray-400 hover:text-gray-600 cursor-pointer" />
             </div>
-          </div>
+          {/* </div> */}
+          {activeTab==="general"? <GeneralDetails /> : <InvestorDetail /> }
         </div>
       </div>
     );

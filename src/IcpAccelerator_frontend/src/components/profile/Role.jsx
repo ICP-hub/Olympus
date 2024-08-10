@@ -11,9 +11,11 @@ import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOu
 import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
 import Modal1 from '../Modals/Project Modal/modal1';
 import { animatedLeftSvgIcon, animatedRightSvgIcon, userPlusIcon } from '../Utils/Data/SvgData';
+import { profile } from '../jsondata/data/profileData';
 
 const FAQItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
+  
 
   return (
     <div className="border-b border-gray-200">
@@ -36,24 +38,25 @@ const FAQItem = ({ question, answer }) => {
 };
 
 const FAQ = () => {
-  const faqData = [
-    {
-      question: "What is a role, actually?",
-      answer: "Est malesuada ac elit gravida vel aliquam nec. Arcu pelle ntesque convallis quam feugiat non viverra massa fringilla.",
-    },
-    {
-      question: "How do roles work?",
-      answer: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    },
-    {
-      question: "Can I change roles?",
-      answer: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-    },
-  ];
+  const {roles}=profile
+  // const faqData = [
+  //   {
+  //     question: "What is a role, actually?",
+  //     answer: "Est malesuada ac elit gravida vel aliquam nec. Arcu pelle ntesque convallis quam feugiat non viverra massa fringilla.",
+  //   },
+  //   {
+  //     question: "How do roles work?",
+  //     answer: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+  //   },
+  //   {
+  //     question: "Can I change roles?",
+  //     answer: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+  //   },
+  // ];
 
   return (
     <div className="mt-14 text-[#121926] text-[18px] font-medium border-gray-200">
-      {faqData.map((item, index) => (
+      {roles.faq.questions.map((item, index) => (
         <FAQItem key={index} question={item.question} answer={item.answer} />
       ))}
     </div>
@@ -61,8 +64,10 @@ const FAQ = () => {
 };
 
 const Role = () => {
+  const {roles} =profile
   const [roleModalOpen, setRoleModalOpen] = useState(false);
 console.log("my model status ",roleModalOpen)
+
   return (
     <>
       <div className="flex flex-col">
@@ -84,7 +89,7 @@ console.log("my model status ",roleModalOpen)
             </div>
             <div className="mb-1 text-center">
               <button className="text-[#026AA2] border rounded-md text-xs p-1 font-semibold bg-[#F0F9FF]">
-                OLYMPIAN
+                {roles.profile.roles.label}
               </button>
             </div>
             <div className="flex flex-col justify-center items-center mb-3">
@@ -92,13 +97,13 @@ console.log("my model status ",roleModalOpen)
                 <span>
                   <VerifiedIcon sx={{ fontSize: "medium", color: "#155EEF" }} />
                 </span>
-                Matt Bowers
+                {roles.profile.name}
               </h2>
-              <p>@mattbowers</p>
+              <p>{roles.profile.username}</p>
             </div>
             <div className="flex justify-center items-center">
               <p className="font-normal">
-                Roles: <span className="font-medium text-sm">0/2</span>
+              {roles.profile.roles.role} <span className="font-medium text-sm">{roles.profile.roles.value}</span>
               </p>
             </div>
           </div>
@@ -119,7 +124,7 @@ console.log("my model status ",roleModalOpen)
             </div>
             <div className="mt-5 px-5">
               <p className="max-w-[250px]">
-                Extend your profile with roles to seize new opportunities
+                {roles.description1}
               </p>
             </div>
             <div className="my-5 px-5 flex items-center">
@@ -127,7 +132,7 @@ console.log("my model status ",roleModalOpen)
                 onClick={() => setRoleModalOpen(!roleModalOpen)}
                 className="border flex gap-2 justify-center rounded-md bg-[#155EEF] p-2 font-medium w-full text-white"
               >
-                <span>{userPlusIcon}</span>Add a role
+                <span>{userPlusIcon}</span>{roles.addrole}
               </button>
             </div>
           </div>
@@ -142,7 +147,7 @@ console.log("my model status ",roleModalOpen)
             </div>
             <div className="mt-5 px-5">
               <p className="max-w-[250px]">
-                Extend your profile with roles to seize new opportunities
+                {roles.description2}
               </p>
             </div>
             <div className="my-5 px-5 flex items-center">
@@ -150,7 +155,7 @@ console.log("my model status ",roleModalOpen)
                 onClick={() => setRoleModalOpen(true)}
                 className="border flex gap-2 justify-center rounded-md bg-[#155EEF] p-2 font-medium w-full text-white"
               >
-                <span>{userPlusIcon}</span>Add a role
+                <span>{userPlusIcon}</span>{roles.addrole}
               </button>
             </div>
           </div>
