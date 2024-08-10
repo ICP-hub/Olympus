@@ -29,7 +29,7 @@ import { useCountries } from "react-countries";
 import { Principal } from "@dfinity/principal";
 import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_IcpHubReducer";
 
-const ProjectRegisterMain = () => {
+const ProjectRegisterMain = ({isopen}) => {
 
     const { countries } = useCountries();
     const dispatch = useDispatch();
@@ -1283,7 +1283,7 @@ const ProjectRegisterMain = () => {
             "token_economics",
         ],
     };
-    const [modalOpen, setModalOpen] = useState(true);
+    const [modalOpen, setModalOpen] = useState(isopen || true);
 
     return (
         <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${modalOpen ? 'block' : 'hidden'}`}>

@@ -18,7 +18,7 @@ import MentorSignupMain from '../../Modals/Mentor-Signup-Model/MentorsignUpmain'
 import ProjectRegisterMain from '../../Modals/ProjectRegisterModal/ProjectRegisterMain'
 import InvestorForm from '../../Auth/investorForm/InvestorForm'
 import { useSelector } from 'react-redux'
-import DocumentSection from './DocumentSection'
+import DocumentSection from '../Project/DocumentSection'
 
 function DashboardHomePage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
