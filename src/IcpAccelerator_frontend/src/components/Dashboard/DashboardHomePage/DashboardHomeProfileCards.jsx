@@ -1,20 +1,16 @@
 import React from 'react';
-import { AccountCircle, Star, Group, InfoOutlined, StarBorderOutlined} from '@mui/icons-material';
-import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
-import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-import nodata from "../../../../assets/images/nodata.png"
-import ProfileImage from "../../../../assets/Logo/ProfileImage.png";
-import VerifiedIcon from "@mui/icons-material/Verified";
+import { dashboard } from "../../jsondata/data/dashboardData";
 
 function DashboardHomeProfileCards() {
+  const {dashboardHomeProfileCards}=dashboard
   return (
     <>
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
       {/* Main profile card */}
       <div className="bg-white rounded-lg shadow-sm p-6">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">Main profile</h2>
-          <button className="text-blue-500 font-normal ">Manage &gt;</button>
+          <h2 className="text-xl font-bold">{dashboardHomeProfileCards.mainProfileCard.title} </h2>
+          <button className="text-blue-500 font-normal ">{dashboardHomeProfileCards.mainProfileCard.buttonText} &gt;</button>
         </div>
         <div className="bg-gray-50 rounded-lg p-4 relative overflow-hidden">
           <div
@@ -25,22 +21,22 @@ function DashboardHomeProfileCards() {
             <div className="w-20 h-20 bg-gray-300 rounded-full mb-3 overflow-hidden">
               {/* <AccountCircle className="w-full h-full text-gray-400" /> */}
               <img
-                src={ProfileImage}
+                src={dashboardHomeProfileCards.mainProfileCard.profileImage.ProfileImage}
                 alt='Profle Image'
                 className="w-24 h-24 rounded-full object-cover"
               />
             </div>
             <span className="inline-block bg-[#F0F9FF] border border-[#B9E6FE] text-[#026AA2] text-xs font-semibold px-2 py-1 rounded-md mb-2">
-              OLYMPIAN
+              {dashboardHomeProfileCards.mainProfileCard.badge.text}
             </span>
             <h3 className="text-lg font-semibold flex items-center mb-1">
               
               <span className="text-blue-500 ml-1">
-              <VerifiedIcon className="text-blue-500 mr-1" fontSize="small" />
+              <dashboardHomeProfileCards.mainProfileCard.badge.verifiedIcon.VerifiedIcon className="text-blue-500 mr-1" fontSize="small" />
               </span>
-              Matt Bowers
+              {dashboardHomeProfileCards.mainProfileCard.name}
             </h3>
-            <p className="text-gray-500">@mattbowers</p>
+            <p className="text-gray-500">{dashboardHomeProfileCards.mainProfileCard.username}</p>
           </div>
         </div>
       </div>
@@ -49,11 +45,11 @@ function DashboardHomeProfileCards() {
       <div className="bg-white rounded-lg shadow-sm p-6">
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center">
-            <h2 className="text-xl font-bold mr-2">Rating</h2>
-            <HelpOutlineOutlinedIcon className="text-gray-400" fontSize="small" />
+            <h2 className="text-xl font-bold mr-2">{dashboardHomeProfileCards.ratingCard.title}</h2>
+            <dashboardHomeProfileCards.ratingCard.icon.HelpOutlineOutlinedIcon className="text-gray-400" fontSize="small" />
           </div>
           <button className="text-blue-500 font-normal">
-            View details &gt;
+            {dashboardHomeProfileCards.ratingCard.buttonText} &gt;
           </button>
         </div>
         <div className="border border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center">
@@ -70,10 +66,10 @@ function DashboardHomeProfileCards() {
               strokeLinejoin="round"
             />
           </svg>
-          <p className="text-gray-700 font-semibold mb-2">No ratings yet</p>
+          {/* {dashboardHomeProfileCards.ratingCard.svg} */}
+          <p className="text-gray-700 font-semibold mb-2">{dashboardHomeProfileCards.ratingCard.noRatingsText} </p>
           <p className="text-gray-500 text-sm text-center">
-            Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat
-            rhoncus tristique ullamcorper sit.
+            {dashboardHomeProfileCards.ratingCard.description}
           </p>
         </div>
       </div>
@@ -82,19 +78,19 @@ function DashboardHomeProfileCards() {
       <div className="bg-white rounded-lg shadow-sm p-6">
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center">
-            <h2 className="text-xl font-bold mr-2">Roles</h2>
-            <HelpOutlineOutlinedIcon className="text-gray-400" fontSize="small" />
+            <h2 className="text-xl font-bold mr-2">{dashboardHomeProfileCards.rolesCard.title}</h2>
+            <dashboardHomeProfileCards.rolesCard.icon.HelpOutlineOutlinedIcon className="text-gray-400" fontSize="small" />
           </div>
-          <button className="text-blue-500 font-normal">Manage &gt;</button>
+          <button className="text-blue-500 font-normal">{dashboardHomeProfileCards.rolesCard.buttonText} &gt;</button>
         </div>
         <div className="mt-2 h-35 flex justify-center items-center border border-dashed border-gray-300 rounded-lg p-6">
           <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-            <PersonOutlineOutlinedIcon className="text-gray-400 w-8 h-8" />
+            <dashboardHomeProfileCards.rolesCard.roleIcons.icon.PersonOutlineOutlinedIcon className="text-gray-400 w-8 h-8" />
           </div>
         </div>
         <div className="mt-8 h-35 flex justify-center items-center border border-dashed border-gray-300 rounded-lg p-6">
           <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-            <PersonOutlineOutlinedIcon className="text-gray-400 w-8 h-8" />
+            <dashboardHomeProfileCards.rolesCard.roleIcons.icon.PersonOutlineOutlinedIcon className="text-gray-400 w-8 h-8" />
           </div>
         </div>
       </div>
@@ -102,7 +98,7 @@ function DashboardHomeProfileCards() {
     <div className="bg-white rounded-lg shadow-sm p-6 mt-8">
       <div className='border border-dashed border-gray-300 p-6 '>
       <div className="flex  items-center justify-center h-full text-center">
-      <img src={nodata} alt="" className='h-full '/>
+      <img src={dashboardHomeProfileCards.noDataImage.nodata} alt="" className='h-full '/>
     </div>
       </div>
    

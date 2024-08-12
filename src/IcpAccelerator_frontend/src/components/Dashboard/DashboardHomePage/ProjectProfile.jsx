@@ -23,9 +23,9 @@ import { Link } from "react-router-dom";
 
 function ProjectProfile() {
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm">
+    <div className="bg-white p-6 rounded-lg shadow-sm pt-0">
       {/* Top navigation */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center bg-white sticky -top-[.60rem] p-6 px-0 z-20  bg-opacity-95">
         <button className="flex items-center text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
           <ArrowBack className="mr-2" fontSize="small" />
           Back to profile
@@ -35,7 +35,7 @@ function ProjectProfile() {
             View public profile
           </button>
           <button className="flex items-center text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
-          Share
+            Share
           </button>
         </div>
       </div>

@@ -5,8 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import CompressedImage from "../../ImageCompressed/CompressedImage";
 import { useDispatch, useSelector } from "react-redux";
-// import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_IcpHubReducer";
-// import { AuthClient } from "@dfinity/auth-client";
+
 import { ThreeDots } from "react-loader-spinner";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
@@ -433,11 +432,10 @@ const EventForm = () => {
                     >
                       {field.label}{" "}
                       <span
-                        className={`${
-                          field.label === "Eligibility Cirteria"
+                        className={`${field.label === "Eligibility Cirteria"
                             ? "hidden"
                             : "flex"
-                        } text-red-500`}
+                          } text-red-500`}
                       >
                         *
                       </span>
@@ -447,11 +445,10 @@ const EventForm = () => {
                         name={field.name}
                         id={field.id}
                         {...register(field.name)}
-                        className={`bg-gray-50 border-2 ${
-                          errors[field.name]
+                        className={`bg-gray-50 border-2 ${errors[field.name]
                             ? "border-red-500 placeholder:text-red-500"
                             : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                         placeholder={field.placeholder}
                         onFocus={() => handleFocus(field)}
                         onBlur={() => handleBlur(field)}
@@ -493,11 +490,10 @@ const EventForm = () => {
                         name={field.name}
                         id={field.id}
                         {...register(field.name)}
-                        className={`bg-gray-50 border-2 ${
-                          errors[field.name]
+                        className={`bg-gray-50 border-2 ${errors[field.name]
                             ? "border-red-500 placeholder:text-red-500"
                             : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                         placeholder={field.placeholder}
                         onFocus={() => handleFocus(field)}
                         onBlur={() => handleBlur(field)}
@@ -521,9 +517,8 @@ const EventForm = () => {
                     name="area"
                     id="area"
                     {...register("area")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.area ? "border-red-500" : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    className={`bg-gray-50 border-2 ${errors.area ? "border-red-500" : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     onFocus={() => handleFocus({ name: "area" })}
                     onBlur={() => handleBlur({ name: "area" })}
                     onChange={(e) => setSelectedArea(e.target.value)}
@@ -545,9 +540,8 @@ const EventForm = () => {
                       name="country"
                       id="country"
                       {...register("country")}
-                      className={`bg-gray-50 border-2 ${
-                        errors.country ? "border-red-500" : "border-[#737373]"
-                      } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      className={`bg-gray-50 border-2 ${errors.country ? "border-red-500" : "border-[#737373]"
+                        } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                       onFocus={() => handleFocus("country")}
                       onBlur={() => handleBlur("country")}
                       onChange={(e) => setSelectedCountry(e.target.value)}
@@ -858,11 +852,10 @@ const EventForm = () => {
                     name="funding_amount"
                     id="funding_amount"
                     {...register("funding_amount")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.funding_amount
+                    className={`bg-gray-50 border-2 ${errors.funding_amount
                         ? "border-red-500"
                         : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     onFocus={() => handleFocus("funding_amount")}
                     onBlur={() => handleBlur("funding_amount")}
                   >

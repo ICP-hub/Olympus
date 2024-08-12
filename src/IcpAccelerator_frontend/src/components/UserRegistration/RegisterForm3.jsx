@@ -1,17 +1,9 @@
 import React, { useState, useEffect } from "react";
-import Aboutcard from "./Aboutcard";
-import Layer1 from "../../../assets/Logo/Layer1.png";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
-import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import ReactSelect from "react-select";
 import { useSelector } from "react-redux";
 import { useCountries } from "react-countries";
-
-import DoneIcon from "@mui/icons-material/Done";
-import { Link, useNavigate } from "react-router-dom";
-import Select from "react-select";
-import { useFormContext, Controller } from "react-hook-form";
+import { useFormContext, Controller, useFieldArray } from "react-hook-form";
 import {
   FaLinkedin,
   FaTwitter,
@@ -19,26 +11,30 @@ import {
   FaTelegram,
   FaFacebook,
   FaInstagram,
+  FaYoutube,
+  FaReddit,
+  FaTiktok,
+  FaSnapchat,
+  FaWhatsapp,
+  FaMedium,
+  FaPlus,
+  FaTrash,
 } from "react-icons/fa";
 import CompressedImage from "../../component/ImageCompressed/CompressedImage";
 
-
-
-
-
-const RegisterForm3 = () => {
+const RegisterForm3 = ({setImageData}) => {
   const { countries } = useCountries();
   const areaOfExpertise = useSelector(
-    (currState) => currState.expertiseIn.expertise
+    (currState) => currState.expertiseIn.expertise || []
   );
   const typeOfProfile = useSelector(
-    (currState) => currState.profileTypes.profiles
+    (currState) => currState.profileTypes.profiles || []
   );
-  const userFullData = useSelector((currState) => currState.userData.data.Ok);
-  const userCurrentRoleStatusActiveRole = useSelector(
-    (currState) => currState.currentRoleStatus.activeRole
-  );
-  const principal = useSelector((currState) => currState.internet.principal);
+  // const userFullData = useSelector((currState) => currState.userData.data.Ok);
+  // const userCurrentRoleStatusActiveRole = useSelector(
+  //   (currState) => currState.currentRoleStatus.activeRole
+  // );
+  // const principal = useSelector((currState) => currState.internet.principal);
   const [
     interestedDomainsSelectedOptions,
     setInterestedDomainsSelectedOptions,
@@ -48,7 +44,6 @@ const RegisterForm3 = () => {
   const [interestedDomainsOptions, setInterestedDomainsOptions] = useState([]);
   const [typeOfProfileOptions, setTypeOfProfileOptions] = useState([]);
   const [imagePreview, setImagePreview] = useState(null);
-  const [imageData, setImageData] = useState(null);
   const [reasonOfJoiningOptions, setReasonOfJoiningOptions] = useState([
     { value: "listing_and_promotion", label: "Project listing and promotion" },
     { value: "Funding", label: "Funding" },
@@ -62,7 +57,6 @@ const RegisterForm3 = () => {
   ]);
   const [formData, setFormData] = useState([]);
 
-
   const {
     register,
     formState: { errors },
@@ -71,9 +65,9 @@ const RegisterForm3 = () => {
     clearErrors,
     setError,
     control,
+    watch,
   } = useFormContext();
 
- 
   const imageCreationFunc = async (file) => {
     const result = await trigger("image");
     if (result) {
@@ -106,31 +100,31 @@ const RegisterForm3 = () => {
     setImagePreview(null);
   };
 
-  const handleLinkChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      links: {
-        ...formData.links,
-        [name]: value,
-      },
-    });
-  };
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "links",
+  });
 
   const getLogo = (url) => {
-    if (url.includes("linkedin.com")) {
-      return <FaLinkedin className="text-blue-600" />;
-    } else if (url.includes("twitter.com")) {
-      return <FaTwitter className="text-blue-400" />;
-    } else if (url.includes("github.com")) {
-      return <FaGithub className="text-gray-700" />;
-    } else if (url.includes("telegram.com")) {
-      return <FaTelegram className="text-blue-400" />;
-    } else if (url.includes("facebook.com")) {
-      return <FaFacebook className="text-blue-400" />;
-    } else if (url.includes("instagram.com")) {
-      return <FaInstagram className="text-pink-950" />;
-    } else {
+    try {
+      const domain = new URL(url).hostname.split(".").slice(-2).join(".");
+      const size = "size-8";
+      const icons = {
+        "linkedin.com": <FaLinkedin className={`text-blue-600 ${size}`} />,
+        "twitter.com": <FaTwitter className={`text-blue-400 ${size}`} />,
+        "github.com": <FaGithub className={`text-gray-700 ${size}`} />,
+        "telegram.com": <FaTelegram className={`text-blue-400 ${size}`} />,
+        "facebook.com": <FaFacebook className={`text-blue-400 ${size}`} />,
+        "instagram.com": <FaInstagram className={`text-pink-950 ${size}`} />,
+        "youtube.com": <FaYoutube className={`text-red-600 ${size}`} />,
+        "reddit.com": <FaReddit className={`text-orange-500 ${size}`} />,
+        "tiktok.com": <FaTiktok className={`text-black ${size}`} />,
+        "snapchat.com": <FaSnapchat className={`text-yellow-400 ${size}`} />,
+        "whatsapp.com": <FaWhatsapp className={`text-green-600 ${size}`} />,
+        "medium.com": <FaMedium className={`text-black ${size}`} />,
+      };
+      return icons[domain] || null;
+    } catch (error) {
       return null;
     }
   };
@@ -160,14 +154,11 @@ const RegisterForm3 = () => {
     }
   }, [typeOfProfile]);
   return (
-
     <div className="">
-
       <h2 className="text-3xl font-bold mb-4">Tell about yourself</h2>
       <label className="block text-sm font-medium mb-2">
         Upload a photo<span className="text-[#155EEF]">*</span>
       </label>
-
 
       <div className="flex gap-2 mb-3">
         <div className="h-24 w-24 rounded-2xl border-2 border-dashed border-gray-300 items-center justify-center overflow-hidden flex">
@@ -213,7 +204,8 @@ const RegisterForm3 = () => {
                 <label
                   htmlFor="image"
                   className="font-medium text-gray-700 border border-[#CDD5DF] px-4 py-1 cursor-pointer rounded"
-                ><ControlPointIcon
+                >
+                  <ControlPointIcon
                     fontSize="small"
                     className="items-center -mt-1 mr-2"
                   />
@@ -244,7 +236,6 @@ const RegisterForm3 = () => {
 
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-2">
-
           Why do you want to join this platform ?{" "}
           <span className="text-[#155EEF]">*</span>
         </label>
@@ -259,7 +250,7 @@ const RegisterForm3 = () => {
               paddingBlock: "2px",
               borderRadius: "8px",
               border: errors.reasons_to_join_platform
-                ? "2px solid #ef4444"
+                ? "2px solid #737373"
                 : "2px solid #737373",
               backgroundColor: "rgb(249 250 251)",
               "&::placeholder": {
@@ -295,8 +286,7 @@ const RegisterForm3 = () => {
               alignItems: "center",
 
               backgroundColor: "white",
-              border: "2px solid #E3E3E3"
-
+              border: "2px solid #E3E3E3",
             }),
             multiValueRemove: (provided) => ({
               ...provided,
@@ -346,10 +336,9 @@ const RegisterForm3 = () => {
         </label>
         <textarea
           {...register("bio")}
-
-          className={`bg-gray-50 border-2 ${errors?.bio ? "border-red-500 " : "border-[#737373]"
-            } mt-2 p-2 border border-gray-300 rounded-md w-full h-24`}
-
+          className={`bg-gray-50 border-2 ${
+            errors?.bio ? "border-red-500 " : "border-[#737373]"
+          } mt-2 p-2 border border-gray-300 rounded-md w-full h-24`}
           placeholder="Enter your bio"
           rows={1}
         ></textarea>
@@ -362,9 +351,7 @@ const RegisterForm3 = () => {
       <div className="mb-4">
         <label
           htmlFor="domains_interested_in"
-
           className="block text-sm font-medium text-gray-700 mb-2"
-
         >
           Interests <span className="text-[#155EEF]">*</span>
         </label>
@@ -415,8 +402,7 @@ const RegisterForm3 = () => {
               alignItems: "center",
 
               backgroundColor: "white",
-              border: "2px solid #E3E3E3"
-
+              border: "2px solid #E3E3E3",
             }),
             multiValueRemove: (provided) => ({
               ...provided,
@@ -460,18 +446,15 @@ const RegisterForm3 = () => {
       <div className="mb-4">
         <label
           htmlFor="type_of_profile"
-
           className="block text-sm font-medium text-gray-700 mb-2"
-
         >
           Type of Profile<span className="text-[#155EEF]">*</span>
         </label>
         <select
           {...register("type_of_profile")}
-
-          className={`bg-gray-50 border-2 ${errors.type_of_profile ? "border-red-500 " : "border-[#737373]"
-            }mt-2 p-2 border border-gray-300 rounded-md w-full`}
-
+          className={`bg-gray-50 border-2 ${
+            errors.type_of_profile ? "border-red-500 " : "border-[#737373]"
+          }mt-2 p-2 border border-gray-300 rounded-md w-full`}
         >
           <option className="text-lg font-bold" value="">
             Select profile type
@@ -498,18 +481,15 @@ const RegisterForm3 = () => {
       <div className="mb-4">
         <label
           htmlFor="country"
-
           className="block text-sm font-medium text-gray-700 mb-2"
-
         >
           Location <span className="text-[#155EEF]">*</span>
         </label>
         <select
           {...register("country")}
-
-          className={`bg-gray-50 border-2 ${errors.country ? "border-red-500 " : "border-[#737373]"
-            }  p-2 border border-gray-300 rounded-md w-full`}
-
+          className={`bg-gray-50 border-2 ${
+            errors.country ? "border-red-500 " : "border-[#737373]"
+          }  p-2 border border-gray-300 rounded-md w-full`}
         >
           <option className="text-lg font-bold" value="">
             Select your country
@@ -532,46 +512,52 @@ const RegisterForm3 = () => {
         )}
       </div>
       <div className="mb-4">
-
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Links{" "}
+          Links
         </label>
-        <div className=" relative ">
-
-          {/* <input
-            type="text"
-            name="linkedin"
-            placeholder="Enter your URL"
-            value={formData.links.linkedin}
-            onChange={handleLinkChange}
-
-            className=" p-2 border border-gray-300 rounded-md w-full"
-
-          /> */}
-          {/* <div className="absolute right-2 top-1/2 transform -translate-y-1/2  ">{getLogo(formData.links.linkedin)}</div> */}
+        <div className="relative">
+          {fields.map((item, index) => (
+            <div key={item.id} className="flex items-center mb-4 border-b pb-2">
+              <Controller
+                name={`links[${index}].link`}
+                control={control}
+                render={({ field, fieldState }) => (
+                  <div className="flex items-center w-full">
+                    <div className="flex items-center space-x-2 w-full">
+                      <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
+                        {field.value && getLogo(field.value)}
+                      </div>
+                      <input
+                        type="text"
+                        placeholder="Enter your social media URL"
+                        className={`p-2 border ${
+                          fieldState.error
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        } rounded-md w-full`}
+                        {...field}
+                      />
+                    </div>
+                  </div>
+                )}
+              />
+              <button
+                type="button"
+                onClick={() => remove(index)}
+                className="ml-2 text-red-500 hover:text-red-700"
+              >
+                <FaTrash />
+              </button>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={() => append({ link: "" })}
+            className="flex items-center p-1 text-[#155EEF]"
+          >
+            <FaPlus className="mr-1" /> Add Another Link
+          </button>
         </div>
-        {/* <div className="flex items-center">
-                                <input
-                                    type="text"
-                                    name="twitter"
-                                    placeholder="Twitter URL"
-                                    value={formData.links.twitter}
-                                    onChange={handleLinkChange}
-                                    className="mt-2 p-2 border border-gray-300 rounded-md w-full"
-                                /> */}
-        {/* <div className="ml-2">{getLogo(formData.links.twitter)}</div> */}
-        {/* </div> */}
-        {/* <div className="flex items-center">
-                                <input
-                                    type="text"
-                                    name="github"
-                                    placeholder="GitHub URL"
-                                    value={formData.links.github}
-                                    onChange={handleLinkChange}
-                                    className="mt-2 p-2 border border-gray-300 rounded-md w-full"
-                                />
-                                <div className="ml-2">{getLogo(formData.links.github)}</div>
-                            </div> */}
       </div>
     </div>
   );

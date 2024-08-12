@@ -52,7 +52,7 @@ const RegisterForm1 = () => {
               type="text"
               {...register("full_name")}
 
-              className={`bg-gray-50 border-2 ${errors?.full_name ? "border-red-500" : "border-[#737373]"
+              className={`bg-white border-2 ${errors?.full_name ? "border-red-500" : "border-[#737373]"
                 } mt-1 p-2 border border-gray-300 rounded w-full `}
 
               placeholder="Enter your full name"
@@ -63,23 +63,22 @@ const RegisterForm1 = () => {
               </span>
             )}
           </div>
-          <div>
+          <div className="flex flex-col justify-between gap-3">
             <label
 
               htmlFor="openchat_user_name"
               className="block font-semibold text-[#121926]">
               Username <span className="text-[#155EEF]">*</span>
             </label>
-            <div className="flex items-center border border-gray-300 rounded">
-              <span className="p-2 bg-gray-100 text-gray-600">@</span>
+            <div className="flex items-center border-2 border-gray-300 mt-1 rounded-md">
+              <span className="p-2 bg-white text-gray-600 rounded-l-md border-r-2 border-gray-300">@</span>
               <input
                 type="text"
                 {...register("openchat_user_name")}
-                className={`bg-gray-50  
-                                                ${errors?.openchat_user_name
+                className={`bg-white  ${errors?.openchat_user_name
                     ? "border-red-500 "
                     : "border-[#737373]"
-                  } p-2 w-full`}
+                  } p-2 w-full rounded`}
                 placeholder="Enter your username"
               />
             </div>

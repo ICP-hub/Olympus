@@ -2,7 +2,7 @@ import Layer1 from "../../../assets/Logo/Layer1.png";
 import AboutcardSkeleton from "../LatestSkeleton/AbourcardSkeleton";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -37,29 +37,11 @@ const validationSchema = yup
           return true;
         }
       ),
-    telegram_id: yup
-      .string()
-      .nullable(true)
-      .optional()
-      // .test("is-valid-telegram", "Invalid Telegram link", (value) => {
-      //   if (!value) return true;
-      //   const hasValidChars = /^[a-zA-Z0-9_]{5,32}$/.test(value);
-      //   return hasValidChars;
-      // })
-      .url("Invalid url"),
-    twitter_url: yup
-      .string()
-      .nullable(true)
-      .optional()
-      // .test("is-valid-twitter", "Invalid Twitter ID", (value) => {
-      //   if (!value) return true;
-      //   const hasValidChars =
-      //   /^(https?:\/\/)?(www\.)?(twitter\.com|x\.com)\/[a-zA-Z0-9_]{1,15}$/.test(
-      //       value
-      //     );
-      //   return hasValidChars;
-      // })
-      .url("Invalid url"),
+      links: yup.array().of(
+        yup.object().shape({
+          url: yup.string().url("Invalid URL").nullable(true).optional(),
+        })
+      ),
     openchat_user_name: yup
       .string()
       .nullable(true)
@@ -133,16 +115,32 @@ const validationSchema = yup
 
 const UserRegistration = () => {
   const [index, setIndex] = useState(0);
+  const [imageData, setImageData] = useState(null);
+const [getAllData,setGetAllData]=useState([]);
   const actor = useSelector((currState) => currState.actors.actor);
 
   const methods = useForm({
     resolver: yupResolver(validationSchema),
     mode: "all",
+    defaultValues: {
+      full_name: "",
+      email: "",
+      links: [{ link: "" }],
+      openchat_user_name: "",
+      bio: "",
+      country: "",
+      domains_interested_in: "",
+      type_of_profile: "",
+      reasons_to_join_platform: "",
+      image: null,
+    },
   });
   const {
     handleSubmit,
     trigger,
+    getValues,
     formState: { isSubmitting },
+    watch
   } = methods;
 
   const formFields = {
@@ -155,11 +153,16 @@ const UserRegistration = () => {
       "domains_interested_in",
       "type_of_profile",
       "country",
+      "links"
     ],
   };
 
+ 
+
   const handleNext = async () => {
-    const isValid = await trigger(formFields[index]);
+    const fieldsToValidate = formFields[index];
+    const isValid = await trigger(fieldsToValidate);
+    console.log('isValid',isValid)
     if (isValid) {
       setIndex((prevIndex) => prevIndex + 1);
     }
@@ -171,66 +174,59 @@ const UserRegistration = () => {
     }
   };
 
+  // const getData=watch();
+
+  useEffect(() => {
+    const subscription = watch((value) => {
+      setGetAllData(value);
+    });
+    // Clean up the subscription when the component unmounts
+    return () => subscription.unsubscribe();
+  }, [watch, setGetAllData]);
+
+  console.log('imageData',imageData)
   const onSubmitHandler = async (data) => {
-    // if (actor) {
-    //   const userData = {
-    //     full_name: data?.full_name || "",
-    //     email: data?.email ? [data.email] : [],
-    //     // telegram_id: data?.telegram_id ? [data.telegram_id.toString()] : [],
-    //     // twitter_id: data?.twitter_url ? [data.twitter_url.toString()] : [],
-    //     social_links: [],
-    //     openchat_username: data?.openchat_user_name ? [data.openchat_user_name] : [],
-    //     bio: data?.bio ? [data.bio] : [],
-    //     country: data?.country || "",
-    //     area_of_interest: data?.domains_interested_in || "",
-    //     type_of_profile: data?.type_of_profile ? [data.type_of_profile] : [""],
-    //     reason_to_join: data?.reasons_to_join_platform
-    //       ? data.reasons_to_join_platform
-    //           .split(",")
-    //           .map((val) => val.trim())
-    //       : [""],
-    //     profile_picture: [],
-    //   };
-    
-    //   try {
-    //     const covertedPrincipal = await Principal.fromText(principal);
-    //     if (userCurrentRoleStatusActiveRole === "user") {
-    //       await actor
-    //         .update_user_data(covertedPrincipal, userData)
-    //         .then((result) => {
-    //           if ("Ok" in result) {
-    //             toast.success("Request is sent");
-    //             setTimeout(() => {
-    //               window.location.href = "/";
-    //             }, 500);
-    //           } else {
-    //             toast.error(result);
-    //           }
-    //         });
-    //     } else if (
-    //       userCurrentRoleStatusActiveRole === null ||
-    //       userCurrentRoleStatusActiveRole === "mentor" ||
-    //       userCurrentRoleStatusActiveRole === "project" ||
-    //       userCurrentRoleStatusActiveRole === "vc"
-    //     ) {
-    //       await actor.register_user(userData).then((result) => {
-    //         if (result && result.includes("User registered successfully")) {
-    //           toast.success("Registered as a User");
-    //           window.location.href = "/";
-    //         } else {
-    //           toast.error("Something got wrong");
-    //         }
-    //       });
-    //     }
-    //   } catch (error) {
-    //     toast.error(error);
-    //     console.error("Error sending data to the backend:", error);
-    //   }
-    // } else {
-      // toast.error("Please signup with internet identity first");
+    console.log(data);
+    if (actor) {
+      const userData = {
+        full_name: data?.full_name || "",
+        email: data?.email ? [data.email] : [],
+        social_links: data?.links ? [data.links.map(val => ({ link: val?.link ? [val.link] : [] }))] : [], 
+        openchat_username: data?.openchat_user_name ? [data.openchat_user_name] : [],
+        bio: data?.bio ? [data.bio] : [],
+        country: data?.country || "",
+        area_of_interest: data?.domains_interested_in || "",
+        type_of_profile: data?.type_of_profile ? [data.type_of_profile] : [],
+        reason_to_join: data?.reasons_to_join_platform
+          ? [data.reasons_to_join_platform.split(",").map((val) => val.trim())]
+          : [], 
+        profile_picture: imageData ? [imageData] : [],
+      };
+  
+      try {
+        await actor.register_user(userData).then((result) => {
+          console.log('result',result)
+          if (result && result.includes("User registered successfully")) {
+            toast.success("Registered as a User");
+            window.location.href = "dashboard";
+          } else {
+            toast.error("Something went wrong");
+            window.location.href = "/"; 
+          }
+        });
+      } catch (error) {
+        toast.error(error.message); 
+        console.error("Error sending data to the backend:", error);
+        window.location.href = "/";
+      }
+    } else {
+      toast.error("Please signup with internet identity first");
       window.location.href = "/";
-    // }
+    }
   };
+  
+  
+  
 
   const onErrorHandler = (val) => {
     console.log("error", val);
@@ -245,7 +241,7 @@ const UserRegistration = () => {
               <div className="bg-white shadow-xl rounded-2xl flex w-full max-w-6xl">
                 <div className="w-1/2 p-10">
                   <img src={Layer1} alt="logo" className="flex justify-start w-1/3" loading="lazy" />
-                  <h2 className="text-[#364152] text-lg font-normal mb-2 mt-16 ">
+                  <h2 className="text-[#364152] text-sm  font-semibold mb-2 mt-16 ">
                     Step {index + 1} of 3
                   </h2>
 
@@ -254,19 +250,23 @@ const UserRegistration = () => {
                   >
                     {index === 0 && <RegisterForm1 />}
                     {index === 1 && <RegisterForm2 />}
-                    {index === 2 && <RegisterForm3 />}
+                    {index === 2 && <RegisterForm3 setImageData={setImageData}/>}
 
                     {/* Other form steps */}
-                    <div className="flex justify-between mt-4">
+                    <div className="flex justify-between mt-8">
                       <button
                         type="button"
-                        className="py-2 px-4 text-gray-600 rounded hover:text-black"
+                        className="py-2 px-4 text-gray-600 rounded hover:text-black border-gray-300 border-2"
                         onClick={handleBack}
                         disabled={index === 0}
                       >
+                         <ArrowBackIcon
+                            fontSize="medium"
+                            className="mr-2"
+                          />
                         Back
                       </button>
-                      {index === 3 ? (
+                      {index === 2 ? (
                         <button
                           type="submit"
                           className="py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 border-2 border-[#B2CCFF]"
@@ -301,7 +301,7 @@ const UserRegistration = () => {
                     </div>
                   </form>
                 </div>
-                <AboutcardSkeleton />
+                <AboutcardSkeleton getAllData={getAllData}/>
               </div>
             </div>
           </div>

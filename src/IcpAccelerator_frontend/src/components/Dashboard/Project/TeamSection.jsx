@@ -38,15 +38,9 @@ const TeamMember = ({ name, username, role, status, avatar }) => (
 
 function TeamSection() {
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+    <div className="bg-white  overflow-hidden">
       {/* Tabs */}
-      <div className="flex border-b">
-        <button className="px-4 py-2 text-gray-600 hover:text-gray-800">General</button>
-        <button className="px-4 py-2 text-gray-600 hover:text-gray-800">Documents</button>
-        <button className="px-4 py-2 text-blue-600 border-b-2 border-blue-600">Team</button>
-        <button className="px-4 py-2 text-gray-600 hover:text-gray-800">Jobs</button>
-        <button className="px-4 py-2 text-gray-600 hover:text-gray-800">Rating</button>
-      </div>
+      
 
       <div className="p-6">
         <div className="flex justify-end mb-6">
@@ -103,32 +97,7 @@ function TeamSection() {
         </div>
       </div>
 
-      {/* FAQ Section */}
-      <div className="border-t border-gray-200 p-6">
-        <div className="mb-4">
-          <button className="flex justify-between items-center w-full text-left">
-            <span className="text-lg font-semibold">Est quis ornare proin quisque lacinia ac tincidunt massa?</span>
-            <RemoveCircleOutlineOutlinedIcon className="text-gray-500" />
-          </button>
-          <p className="mt-2 text-gray-600">
-            Est malesuada ac elit gravida vel aliquam nec. Arcu pelle ntesque convallis quam feugiat non viverra 
-            massa fringilla. Est malesuada ac elit gravida vel aliquam nec. Arcu pelle ntesque convallis quam 
-            feugiat non viverra massa fringilla.
-          </p>
-        </div>
-        <div className="mb-4">
-          <button className="flex justify-between items-center w-full text-left">
-            <span className="text-lg font-semibold">Gravida quis pellentesque mauris in fringilla?</span>
-            <AddCircleOutlineOutlinedIcon className="transform rotate-180 text-gray-500" />
-          </button>
-        </div>
-        <div>
-          <button className="flex justify-between items-center w-full text-left">
-            <span className="text-lg font-semibold">Lacus iaculis vitae pretium integer?</span>
-            <AddCircleOutlineOutlinedIcon className="transform rotate-180 text-gray-500" />
-          </button>
-        </div>
-      </div>
+   
     </div>
   );
 }

@@ -6,11 +6,10 @@ import ProjectRegister2 from "./ProjectRegister2";
 import ProjectRegister3 from "./ProjectRegister3";
 import ProjectRegister4 from "./ProjectRegister4";
 import ProjectRegister5 from "./ProjectRegister5";
-// import Layer1 from "../../../assets/Logo/Layer1.png";
-// import Aboutcard from "../UserRegistration/Aboutcard";
+
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
-// import AboutcardSkeleton from "../LatestSkeleton/AbourcardSkeleton";
+
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -30,7 +29,7 @@ import { useCountries } from "react-countries";
 import { Principal } from "@dfinity/principal";
 import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_IcpHubReducer";
 
-const ProjectRegisterMain = () => {
+const ProjectRegisterMain = ({isopen}) => {
 
     const { countries } = useCountries();
     const dispatch = useDispatch();
@@ -48,7 +47,7 @@ const ProjectRegisterMain = () => {
     const projectFullData = useSelector(
         (currState) => currState.projectData.data
     );
-    console.log("projectFullData in projectRejForm ===>", projectFullData);
+    // console.log("projectFullData in projectRejForm ===>", projectFullData);
     const userCurrentRoleStatusActiveRole = useSelector(
         (currState) => currState.currentRoleStatus.activeRole
     );
@@ -579,7 +578,7 @@ const ProjectRegisterMain = () => {
         watch("type_of_profile")
     );
 
-    console.log("defaultValues", defaultValues);
+    // console.log("defaultValues", defaultValues);
     // Add Private Docs
 
     const {
@@ -753,24 +752,7 @@ const ProjectRegisterMain = () => {
     const onSubmitHandler = async (data) => {
         if (actor) {
             const projectData = {
-                // user data
-                user_data: {
-                    full_name: data?.full_name,
-                    email: [data?.email],
-                    telegram_id: [data?.telegram_id.toString()],
-                    twitter_id: [data?.twitter_url.toString()],
-                    openchat_username: [data?.openchat_user_name],
-                    bio: [data?.bio],
-                    country: data?.country,
-                    area_of_interest: data?.domains_interested_in,
-                    type_of_profile: [data?.type_of_profile || ""],
-                    reason_to_join: [
-                        data?.reasons_to_join_platform
-                            .split(",")
-                            .map((val) => val.trim()) || [""],
-                    ],
-                    profile_picture: imageData ? [imageData] : [],
-                },
+
                 // project data
                 project_cover: coverData ? [coverData] : [],
                 project_logo: logoData ? [logoData] : [],
@@ -877,37 +859,17 @@ const ProjectRegisterMain = () => {
 
             console.log("projectData ==>", projectData);
             console.log("projectData ==>", logoData);
-            try {
-                if (userCurrentRoleStatusActiveRole === "project") {
-                    let id = projectFullData?.uid;
-                    await actor.update_project(id, projectData).then((result) => {
-                        console.log("result in project to check update call==>", result);
-                        if (result && result.includes("approval request is sent")) {
-                            toast.success("Approval request is sent");
-                            window.location.href = "/";
-                        } else {
-                            toast.error(result);
-                        }
-                    });
-                } else if (
-                    userCurrentRoleStatusActiveRole === null ||
-                    userCurrentRoleStatusActiveRole === "user" ||
-                    userCurrentRoleStatusActiveRole === "mentor" ||
-                    userCurrentRoleStatusActiveRole === "vc"
-                ) {
-                    await actor.register_project(projectData).then((result) => {
-                        if (result && result.includes("approval request is sent")) {
-                            toast.success("Approval request is sent");
-                            window.location.href = "/";
-                        } else {
-                            toast.error(result);
-                        }
-                    });
+
+            await actor.register_project(projectData).then((result) => {
+                if (result) {
+                    toast.success("Project Create Successfully");
+                    window.location.href = "/";
+                } else {
+                    toast.error(result);
                 }
-            } catch (error) {
-                toast.error(error);
-                console.error("Error sending data to the backend:", error);
-            }
+            });
+
+
         } else {
             toast.error("Please signup with internet identity first");
             window.location.href = "/";
@@ -1129,9 +1091,9 @@ const ProjectRegisterMain = () => {
             setValue("publicDocs", val?.public_docs?.[0] ?? []);
         }
     };
-    console.log("imagePreview", imagePreview);
-    console.log("logoPreview", logoPreview);
-    console.log("coverPreview", coverPreview);
+    // console.log("imagePreview", imagePreview);
+    // console.log("logoPreview", logoPreview);
+    // console.log("coverPreview", coverPreview);
 
     // Get data from redux useEffect
     useEffect(() => {
@@ -1321,12 +1283,12 @@ const ProjectRegisterMain = () => {
             "token_economics",
         ],
     };
-    const [modalOpen, setModalOpen] = useState(true);
+    const [modalOpen, setModalOpen] = useState(isopen || true);
 
     return (
         <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${modalOpen ? 'block' : 'hidden'}`}>
             <div className="bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4 overflow-y-auto">
-                <div className="flex justify-end mr-4">
+                <div className="flex justify-endz mr-4">
                     <button
                         className="text-2xl text-[#121926]"
                         onClick={() => setModalOpen(!modalOpen)}

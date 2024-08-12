@@ -75,8 +75,8 @@ const Jobs = () => {
     return (<>
 
         <div className='container mx-auto bg-white'>
-            <div className="flex mx-auto -top-10 mb-5 sticky ">
-                <h2 className='text-3xl font-bold p-5 bg-white w-full '>Jobs</h2>
+            <div className="flex mx-auto -top-10  sticky ">
+                <h2 className='text-3xl font-bold p-5 bg-white w-full  bg-opacity-95 '>Jobs</h2>
             </div>
             <div className="flex mx-auto justify-evenly">
                 <div className="mb-5 w-[65%] ">

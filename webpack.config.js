@@ -8,7 +8,7 @@ const CopyPlugin = require("copy-webpack-plugin");
 const isDevelopment = process.env.NODE_ENV !== "production";
 
 module.exports = (env) => {
-  const frontendDirectory = env.frontend ?? "IcpAccelerator_frontend" ?? 'admin_frontend';  // Add a default value or handle the case where env.frontend is undefined
+  const frontendDirectory = env.frontend || "IcpAccelerator_frontend";  // Default to 'IcpAccelerator_frontend' if env.frontend is not set
   const frontendEntry = path.join("src", frontendDirectory, "src", "index.html");
 
   console.log("Entry Path:", frontendEntry);
@@ -33,8 +33,8 @@ module.exports = (env) => {
         events: require.resolve("events/"),
         stream: require.resolve("stream-browserify/"),
         util: require.resolve("util/"),
-        crypto: require.resolve('crypto-browserify'),
-        vm: require.resolve('vm-browserify'),
+        crypto: require.resolve("crypto-browserify"),
+        vm: require.resolve("vm-browserify"),
       },
     },
     output: {
@@ -54,16 +54,12 @@ module.exports = (env) => {
     },
     plugins: [
       new HtmlWebpackPlugin({
-        template: path.resolve(__dirname, frontendEntry.replace('.jsx', '.html')),
+        template: path.resolve(__dirname, frontendEntry),
         cache: false,
       }),
-      new webpack.EnvironmentPlugin([
-        ...Object.keys(process.env).filter((key) => {
-          if (key.includes("CANISTER")) return true;
-          if (key.includes("DFX")) return true;
-          return false;
-        }),
-      ]),
+      new webpack.EnvironmentPlugin(
+        Object.keys(process.env).filter((key) => key.includes("CANISTER") || key.includes("DFX"))
+      ),
       new webpack.ProvidePlugin({
         Buffer: [require.resolve("buffer/"), "Buffer"],
         process: require.resolve("process/browser"),
@@ -71,7 +67,7 @@ module.exports = (env) => {
       new CopyPlugin({
         patterns: [
           {
-            from: `src/${frontendDirectory}/src/.ic-assets.json*`,
+            from: path.resolve(__dirname, `src/${frontendDirectory}/src/.ic-assets.json*`),
             to: ".ic-assets.json5",
             noErrorOnMissing: true,
           },

@@ -18,27 +18,19 @@ import MentorSignupMain from '../../Modals/Mentor-Signup-Model/MentorsignUpmain'
 import ProjectRegisterMain from '../../Modals/ProjectRegisterModal/ProjectRegisterMain'
 import InvestorForm from '../../Auth/investorForm/InvestorForm'
 import { useSelector } from 'react-redux'
+import DocumentSection from '../Project/DocumentSection'
 
 function DashboardHomePage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const location = useLocation();
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100 lg:flex-row">
+    <div className="flex flex-col h-screen bg-[#FFF4ED] lg:flex-row">
       <DashboardHomeSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="flex flex-col flex-1 overflow-hidden">
         <DashboardHomeNavbar onMenuClick={toggleSidebar} />
-        <main className="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6 bg-white">
-          {/* <DashboardHomeWelcomeSection
-            userName={"Matt"}
-            profileCompletion={"20"}
-          />
-
-          <DashboardHomeProfileCards /> */}
-          {/* <ProjectProfile /> */}
-          {/* <UserSection /> */}
-          <Routes location={location.state?.background || location}>
+        <main className="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6 md:pt-0 bg-white mr-[4%] rounded-3xl">
+          <Routes >
             <Route path="/" element={<DashboardHomeWelcomeSection userName={"Matt"} profileCompletion={"35"} />} />
             <Route path="/jobs" element={<Jobs />} />
             <Route path="/profile" element={<ProfilePage />} />
@@ -50,16 +42,10 @@ function DashboardHomePage() {
             <Route path="/single-add-new-work" element={<AddNewWork />} />
             <Route path="/work-section" element={<WorksSection />} />
             <Route path="/work-section-detail-page" element={<WorkSectionDetailPage />} />
-
+            <Route path="/document" element={<DocumentSection />} />
           </Routes>
         </main>
-        {location.state?.background && (
-          <Routes>
-            <Route path="/mentor-sign-up" element={<MentorSignupMain />} />
-            <Route path="/project-sign-up" element={<ProjectRegisterMain />} />
-            <Route path="/investor-sign-up" element={<InvestorForm />} />
-          </Routes>
-        )}
+
       </div>
     </div>
   );
