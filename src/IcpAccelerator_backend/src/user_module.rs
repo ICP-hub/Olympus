@@ -316,22 +316,22 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
 //  )
 // }
 
-pub async fn update_data_for_roles(
-    principal_id: Principal,
-    user_data: UserInformation,
-) -> Result<(), String> {
-    let roles = get_roles_for_principal(principal_id);
-    for role in roles {
-        match role.name.as_str() {
-            "user" => update_user_data(principal_id, user_data.clone()).await?,
-            "project" => update_project_data(principal_id, user_data.clone()).await?,
-            "mentor" => update_mentor_data(principal_id, user_data.clone()).await?,
-            "vc" => update_vc_data(principal_id, user_data.clone()).await?,
-            _ => (),
-        }
-    }
-    Ok(())
-}
+// pub async fn update_data_for_roles(
+//     principal_id: Principal,
+//     user_data: UserInformation,
+// ) -> Result<(), String> {
+//     let roles = get_roles_for_principal(principal_id);
+//     for role in roles {
+//         match role.name.as_str() {
+//             "user" => update_user_data(principal_id, user_data.clone()).await?,
+//             "project" => update_project_data(principal_id, user_data.clone()).await?,
+//             "mentor" => update_mentor_data(principal_id, user_data.clone()).await?,
+//             "vc" => update_vc_data(principal_id, user_data.clone()).await?,
+//             _ => (),
+//         }
+//     }
+//     Ok(())
+// }
 #[update]
 async fn update_user_data(user_id: Principal, mut user_data: UserInformation) -> Result<(), String> {
     let temp_image = user_data.profile_picture.clone();
@@ -380,38 +380,38 @@ async fn update_user_data(user_id: Principal, mut user_data: UserInformation) ->
     })
 }
 
-async fn update_project_data(principal: Principal, user_data: UserInformation) -> Result<(), String> {
-    mutate_state(|state| {
-        if let Some(mut projects) = state.project_storage.get(&StoredPrincipal(principal)) {
-            for project in projects.0.iter_mut() {
-                project.params.user_data = user_data.clone(); 
-            }
-            Ok(()) 
-        } else {
-            Err("No project found for the specified project ID.".to_string()) 
-        }
-    })
-}
+// async fn update_project_data(principal: Principal, user_data: UserInformation) -> Result<(), String> {
+//     mutate_state(|state| {
+//         if let Some(mut projects) = state.project_storage.get(&StoredPrincipal(principal)) {
+//             for project in projects.0.iter_mut() {
+//                 project.params.user_data = user_data.clone(); 
+//             }
+//             Ok(()) 
+//         } else {
+//             Err("No project found for the specified project ID.".to_string()) 
+//         }
+//     })
+// }
 
-async fn update_mentor_data(user_id: Principal, user_data: UserInformation) -> Result<(), String> {
-    mutate_state(|state| {
-        if let Some(mut mentor) = state.mentor_storage.get(&&StoredPrincipal(user_id)) {
-            mentor.0.profile.user_data = user_data;
-            return Ok(());
-        }
-        Err("No mentor found for the specified ID.".to_string())
-    })
-}
+// async fn update_mentor_data(user_id: Principal, user_data: UserInformation) -> Result<(), String> {
+//     mutate_state(|state| {
+//         if let Some(mut mentor) = state.mentor_storage.get(&&StoredPrincipal(user_id)) {
+//             mentor.0.profile.user_data = user_data;
+//             return Ok(());
+//         }
+//         Err("No mentor found for the specified ID.".to_string())
+//     })
+// }
 
-async fn update_vc_data(user_id: Principal, user_data: UserInformation) -> Result<(), String> {
-    mutate_state(|state| {
-        if let Some(mut vc) = state.vc_storage.get(&&StoredPrincipal(user_id)) {
-            vc.0.params.user_data = user_data;
-            return Ok(());
-        }
-        Err("No venture capitalist found for the specified ID.".to_string())
-    })
-}
+// async fn update_vc_data(user_id: Principal, user_data: UserInformation) -> Result<(), String> {
+//     mutate_state(|state| {
+//         if let Some(mut vc) = state.vc_storage.get(&&StoredPrincipal(user_id)) {
+//             vc.0.params.user_data = user_data;
+//             return Ok(());
+//         }
+//         Err("No venture capitalist found for the specified ID.".to_string())
+//     })
+// }
 
 #[query(guard = "is_user_anonymous")]
 pub fn get_roles_for_principal(principal_id: Principal) -> Vec<Role> {
@@ -636,6 +636,18 @@ pub fn get_users_with_all_info() -> UserInfoInternal {
             .get(&caller)
             .map(|candid_user_info| candid_user_info.0.clone())
             .expect("couldn't find user information")
+    })
+}
+
+pub fn get_user_information_internal(caller: Principal) -> UserInformation {
+    read_state(|state| {
+        state
+            .user_storage
+            .get(&StoredPrincipal(caller))
+            .expect("User not found")
+            .0
+            .params
+            .clone()
     })
 }
 

@@ -728,7 +728,6 @@ pub fn approve_vc_profile_update(requester: Principal, approve: bool) -> String 
                         existing_vc_internal.0.params.name_of_fund = update.name_of_fund.clone();
                         existing_vc_internal.0.params.preferred_icp_hub = update.preferred_icp_hub.clone();
                         existing_vc_internal.0.params.type_of_investment = update.type_of_investment.clone();
-                        existing_vc_internal.0.params.user_data = update.user_data.clone();
                         existing_vc_internal.0.params.linkedin_link = update.linkedin_link.clone();
                         existing_vc_internal.0.params.website_link = update.website_link.clone();
                         existing_vc_internal.0.params.registered = update.registered.clone();
@@ -846,7 +845,6 @@ pub fn approve_mentor_profile_update(requester: Principal, approve: bool) -> Str
                     mentor_internal.0.profile.website = updated_info.website.clone();
                     mentor_internal.0.profile.years_of_mentoring = updated_info.years_of_mentoring.clone();
                     mentor_internal.0.profile.reason_for_joining = updated_info.reason_for_joining.clone();
-                    mentor_internal.0.profile.user_data = updated_info.user_data.clone();
                     mentor_internal.0.profile.hub_owner = updated_info.hub_owner.clone()
                         .or_else(|| mentor_internal.0.profile.hub_owner.clone());
                 }
@@ -1425,11 +1423,13 @@ pub fn get_top_5_mentors() -> Vec<(Principal, TopData, usize)> {
                 let project_count = get_projects_associated_with_mentor(principal).len(); 
                 let joined_on = get_joined_on_(&principal, "mentor".to_string()).unwrap_or(0);
 
+                let user_data = get_user_information_internal(principal);
+
                 let top_data = TopData {
-                    full_name: mentor_internal.0.profile.user_data.full_name.clone(),
-                    profile_picture: mentor_internal.0.profile.user_data.profile_picture.clone(),
+                    full_name: user_data.full_name.clone(),
+                    profile_picture: user_data.profile_picture.clone(),
                     area_of_interest: mentor_internal.0.profile.area_of_expertise.clone(),
-                    country: mentor_internal.0.profile.user_data.country.clone(),
+                    country: user_data.country.clone(),
                     joined_on,
                 };
 
@@ -1462,11 +1462,13 @@ fn get_top_5_vcs() -> Vec<(Principal, TopData, usize)> {
             let project_count = get_projects_associated_with_investor(*principal).len();  
             let joined_on = get_joined_on_(&principal, "vc".to_string()).unwrap_or(0);  
 
+            let user_data = get_user_information_internal(*principal);
+
             let top_data = TopData {
-                full_name: vc_data.params.user_data.full_name.clone(),
-                profile_picture: vc_data.params.user_data.profile_picture.clone(),
+                full_name: user_data.full_name.clone(),
+                profile_picture: user_data.profile_picture.clone(),
                 area_of_interest: vc_data.params.category_of_investment.clone(),
-                country: vc_data.params.user_data.country.clone(),
+                country: user_data.country.clone(),
                 joined_on,
             };
 
@@ -1774,192 +1776,192 @@ fn count_live_projects() -> usize {
     })
 }
 
-#[update(guard = "is_admin")]
-pub async fn update_vc_profile(requester: Principal, mut vc_internal: VentureCapitalist) -> String {
-    let temp_image = vc_internal.user_data.profile_picture.clone();
-    let canister_id = crate::asset_manager::get_asset_canister();
+// #[update(guard = "is_admin")]
+// pub async fn update_vc_profile(requester: Principal, mut vc_internal: VentureCapitalist) -> String {
+//     let temp_image = vc_internal.user_data.profile_picture.clone();
+//     let canister_id = crate::asset_manager::get_asset_canister();
 
-    if temp_image.is_none() {
-        let full_url = canister_id.to_string() + "/uploads/default_user.jpeg";
-        vc_internal.user_data.profile_picture = Some((full_url).as_bytes().to_vec());
-    } else if temp_image.clone().unwrap().len() < 300 {
-        ic_cdk::println!("Profile image is already uploaded");
-    } else {
-        let key = "/uploads/".to_owned() + &requester.to_string() + "_user.jpeg";
+//     if temp_image.is_none() {
+//         let full_url = canister_id.to_string() + "/uploads/default_user.jpeg";
+//         vc_internal.user_data.profile_picture = Some((full_url).as_bytes().to_vec());
+//     } else if temp_image.clone().unwrap().len() < 300 {
+//         ic_cdk::println!("Profile image is already uploaded");
+//     } else {
+//         let key = "/uploads/".to_owned() + &requester.to_string() + "_user.jpeg";
 
-        let arg = StoreArg {
-            key: key.clone(),
-            content_type: "image/*".to_string(),
-            content_encoding: "identity".to_string(),
-            content: ByteBuf::from(temp_image.unwrap()),
-            sha256: None,
-        };
+//         let arg = StoreArg {
+//             key: key.clone(),
+//             content_type: "image/*".to_string(),
+//             content_encoding: "identity".to_string(),
+//             content: ByteBuf::from(temp_image.unwrap()),
+//             sha256: None,
+//         };
 
-        let delete_asset = DeleteAsset { key: key.clone() };
+//         let delete_asset = DeleteAsset { key: key.clone() };
 
-        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
-            .await
-            .unwrap();
+//         let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
+//             .await
+//             .unwrap();
 
-        let (result,): ((),) = call(canister_id, "store", (arg,)).await.unwrap();
+//         let (result,): ((),) = call(canister_id, "store", (arg,)).await.unwrap();
 
-        vc_internal.user_data.profile_picture =
-            Some((canister_id.to_string() + &key).as_bytes().to_vec());
-    }
-    mutate_state(|state| {
-        if let Some(mut existing_vc_internal) = state.vc_storage.get(&StoredPrincipal(requester)) {
-            existing_vc_internal.0.params.registered_under_any_hub = vc_internal
-                .registered_under_any_hub
-                .clone()
-                .or(existing_vc_internal
-                    .0
-                    .params
-                    .registered_under_any_hub
-                    .clone());
+//         vc_internal.user_data.profile_picture =
+//             Some((canister_id.to_string() + &key).as_bytes().to_vec());
+//     }
+//     mutate_state(|state| {
+//         if let Some(mut existing_vc_internal) = state.vc_storage.get(&StoredPrincipal(requester)) {
+//             existing_vc_internal.0.params.registered_under_any_hub = vc_internal
+//                 .registered_under_any_hub
+//                 .clone()
+//                 .or(existing_vc_internal
+//                     .0
+//                     .params
+//                     .registered_under_any_hub
+//                     .clone());
 
-            existing_vc_internal.0.params.project_on_multichain = vc_internal
-                .project_on_multichain
-                .clone()
-                .or(existing_vc_internal.0.params.project_on_multichain.clone());
+//             existing_vc_internal.0.params.project_on_multichain = vc_internal
+//                 .project_on_multichain
+//                 .clone()
+//                 .or(existing_vc_internal.0.params.project_on_multichain.clone());
 
-            existing_vc_internal.0.params.money_invested = vc_internal
-                .money_invested
-                .clone()
-                .or(existing_vc_internal.0.params.money_invested.clone());
+//             existing_vc_internal.0.params.money_invested = vc_internal
+//                 .money_invested
+//                 .clone()
+//                 .or(existing_vc_internal.0.params.money_invested.clone());
 
-            existing_vc_internal.0.params.existing_icp_portfolio = vc_internal
-                .existing_icp_portfolio
-                .clone()
-                .or(existing_vc_internal.0.params.existing_icp_portfolio.clone());
-            existing_vc_internal.0.params.announcement_details = vc_internal
-                .announcement_details
-                .clone()
-                .or(existing_vc_internal.0.params.announcement_details.clone());
+//             existing_vc_internal.0.params.existing_icp_portfolio = vc_internal
+//                 .existing_icp_portfolio
+//                 .clone()
+//                 .or(existing_vc_internal.0.params.existing_icp_portfolio.clone());
+//             existing_vc_internal.0.params.announcement_details = vc_internal
+//                 .announcement_details
+//                 .clone()
+//                 .or(existing_vc_internal.0.params.announcement_details.clone());
 
-            existing_vc_internal.0.params.registered_country = vc_internal
-                .registered_country
-                .clone()
-                .or(existing_vc_internal.0.params.registered_country.clone());
+//             existing_vc_internal.0.params.registered_country = vc_internal
+//                 .registered_country
+//                 .clone()
+//                 .or(existing_vc_internal.0.params.registered_country.clone());
 
-            existing_vc_internal.0.params.fund_size = Some(
-                vc_internal
-                    .fund_size
-                    .map(|size| (size * 100.0).round() / 100.0)
-                    .unwrap_or(0.0),
-            );
-            existing_vc_internal.0.params.assets_under_management =
-                vc_internal.assets_under_management.clone();
+//             existing_vc_internal.0.params.fund_size = Some(
+//                 vc_internal
+//                     .fund_size
+//                     .map(|size| (size * 100.0).round() / 100.0)
+//                     .unwrap_or(0.0),
+//             );
+//             existing_vc_internal.0.params.assets_under_management =
+//                 vc_internal.assets_under_management.clone();
 
-            existing_vc_internal.0.params.category_of_investment =
-                vc_internal.category_of_investment.clone();
+//             existing_vc_internal.0.params.category_of_investment =
+//                 vc_internal.category_of_investment.clone();
 
-            existing_vc_internal.0.params.logo = vc_internal.logo.clone();
-            existing_vc_internal.0.params.average_check_size =
-                (vc_internal.average_check_size * 100.0).round() / 100.0;
-            existing_vc_internal.0.params.existing_icp_investor = vc_internal.existing_icp_investor;
-            existing_vc_internal.0.params.investor_type = vc_internal.investor_type.clone();
-            existing_vc_internal.0.params.number_of_portfolio_companies =
-                vc_internal.number_of_portfolio_companies;
-            existing_vc_internal.0.params.portfolio_link = vc_internal.portfolio_link.clone();
-            existing_vc_internal.0.params.reason_for_joining =
-                vc_internal.reason_for_joining.clone();
-            existing_vc_internal.0.params.name_of_fund = vc_internal.name_of_fund.clone();
+//             existing_vc_internal.0.params.logo = vc_internal.logo.clone();
+//             existing_vc_internal.0.params.average_check_size =
+//                 (vc_internal.average_check_size * 100.0).round() / 100.0;
+//             existing_vc_internal.0.params.existing_icp_investor = vc_internal.existing_icp_investor;
+//             existing_vc_internal.0.params.investor_type = vc_internal.investor_type.clone();
+//             existing_vc_internal.0.params.number_of_portfolio_companies =
+//                 vc_internal.number_of_portfolio_companies;
+//             existing_vc_internal.0.params.portfolio_link = vc_internal.portfolio_link.clone();
+//             existing_vc_internal.0.params.reason_for_joining =
+//                 vc_internal.reason_for_joining.clone();
+//             existing_vc_internal.0.params.name_of_fund = vc_internal.name_of_fund.clone();
 
-            existing_vc_internal.0.params.preferred_icp_hub = vc_internal.preferred_icp_hub.clone();
-            existing_vc_internal.0.params.type_of_investment =
-                vc_internal.type_of_investment.clone();
-            existing_vc_internal.0.params.user_data = vc_internal.user_data.clone();
-            existing_vc_internal.0.params.linkedin_link = vc_internal.linkedin_link.clone();
-            existing_vc_internal.0.params.website_link = vc_internal.website_link.clone();
-            existing_vc_internal.0.params.registered = vc_internal.registered.clone();
+//             existing_vc_internal.0.params.preferred_icp_hub = vc_internal.preferred_icp_hub.clone();
+//             existing_vc_internal.0.params.type_of_investment =
+//                 vc_internal.type_of_investment.clone();
+//             existing_vc_internal.0.params.user_data = vc_internal.user_data.clone();
+//             existing_vc_internal.0.params.linkedin_link = vc_internal.linkedin_link.clone();
+//             existing_vc_internal.0.params.website_link = vc_internal.website_link.clone();
+//             existing_vc_internal.0.params.registered = vc_internal.registered.clone();
 
-            "Venture Capitalist profile updated successfully.".to_string()
-        } else {
-            // This else block handles the case where the `requester` does not exist in `VENTURECAPITALIST_STORAGE`
-            "Venture Capitalist profile not found.".to_string()
-        }
-    })
-}
+//             "Venture Capitalist profile updated successfully.".to_string()
+//         } else {
+//             // This else block handles the case where the `requester` does not exist in `VENTURECAPITALIST_STORAGE`
+//             "Venture Capitalist profile not found.".to_string()
+//         }
+//     })
+// }
 
-#[update(guard = "is_admin")]
-pub async fn update_mentor_profile(
-    requester: Principal,
-    mut updated_profile: MentorProfile,
-) -> String {
-    let temp_image = updated_profile.user_data.profile_picture.clone();
-    let canister_id = crate::asset_manager::get_asset_canister();
+// #[update(guard = "is_admin")]
+// pub async fn update_mentor_profile(
+//     requester: Principal,
+//     mut updated_profile: MentorProfile,
+// ) -> String {
+//     let temp_image = updated_profile.user_data.profile_picture.clone();
+//     let canister_id = crate::asset_manager::get_asset_canister();
 
-    if temp_image.is_none() {
-        let full_url = canister_id.to_string() + "/uploads/default_user.jpeg";
-        updated_profile.user_data.profile_picture = Some((full_url).as_bytes().to_vec());
-    } else if temp_image.clone().unwrap().len() < 300 {
-        ic_cdk::println!("Profile image is already uploaded");
-    } else {
-        let key = "/uploads/".to_owned() + &requester.to_string() + "_user.jpeg";
+//     if temp_image.is_none() {
+//         let full_url = canister_id.to_string() + "/uploads/default_user.jpeg";
+//         updated_profile.user_data.profile_picture = Some((full_url).as_bytes().to_vec());
+//     } else if temp_image.clone().unwrap().len() < 300 {
+//         ic_cdk::println!("Profile image is already uploaded");
+//     } else {
+//         let key = "/uploads/".to_owned() + &requester.to_string() + "_user.jpeg";
 
-        let arg = StoreArg {
-            key: key.clone(),
-            content_type: "image/*".to_string(),
-            content_encoding: "identity".to_string(),
-            content: ByteBuf::from(temp_image.unwrap()),
-            sha256: None,
-        };
+//         let arg = StoreArg {
+//             key: key.clone(),
+//             content_type: "image/*".to_string(),
+//             content_encoding: "identity".to_string(),
+//             content: ByteBuf::from(temp_image.unwrap()),
+//             sha256: None,
+//         };
 
-        let delete_asset = DeleteAsset { key: key.clone() };
+//         let delete_asset = DeleteAsset { key: key.clone() };
 
-        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
-            .await
-            .unwrap();
+//         let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
+//             .await
+//             .unwrap();
 
-        let (result,): ((),) = call(canister_id, "store", (arg,)).await.unwrap();
+//         let (result,): ((),) = call(canister_id, "store", (arg,)).await.unwrap();
 
-        updated_profile.user_data.profile_picture =
-            Some((canister_id.to_string() + &key).as_bytes().to_vec());
-    }
-    mutate_state(|state| {
-        if let Some(mut mentor_internal) = state.mentor_storage.get(&StoredPrincipal(requester)) {
-            mentor_internal.0.profile.preferred_icp_hub = updated_profile
-                .preferred_icp_hub
-                .clone()
-                .or(mentor_internal.0.profile.preferred_icp_hub.clone());
+//         updated_profile.user_data.profile_picture =
+//             Some((canister_id.to_string() + &key).as_bytes().to_vec());
+//     }
+//     mutate_state(|state| {
+//         if let Some(mut mentor_internal) = state.mentor_storage.get(&StoredPrincipal(requester)) {
+//             mentor_internal.0.profile.preferred_icp_hub = updated_profile
+//                 .preferred_icp_hub
+//                 .clone()
+//                 .or(mentor_internal.0.profile.preferred_icp_hub.clone());
 
-            mentor_internal.0.profile.multichain = updated_profile
-                .multichain
-                .clone()
-                .or(mentor_internal.0.profile.multichain.clone());
-            mentor_internal.0.profile.existing_icp_project_porfolio = updated_profile
-                .existing_icp_project_porfolio
-                .clone()
-                .or(mentor_internal
-                    .0
-                    .profile
-                    .existing_icp_project_porfolio
-                    .clone());
+//             mentor_internal.0.profile.multichain = updated_profile
+//                 .multichain
+//                 .clone()
+//                 .or(mentor_internal.0.profile.multichain.clone());
+//             mentor_internal.0.profile.existing_icp_project_porfolio = updated_profile
+//                 .existing_icp_project_porfolio
+//                 .clone()
+//                 .or(mentor_internal
+//                     .0
+//                     .profile
+//                     .existing_icp_project_porfolio
+//                     .clone());
 
-            mentor_internal.0.profile.area_of_expertise = updated_profile.area_of_expertise.clone();
-            mentor_internal.0.profile.category_of_mentoring_service =
-                updated_profile.category_of_mentoring_service.clone();
+//             mentor_internal.0.profile.area_of_expertise = updated_profile.area_of_expertise.clone();
+//             mentor_internal.0.profile.category_of_mentoring_service =
+//                 updated_profile.category_of_mentoring_service.clone();
 
-            mentor_internal.0.profile.existing_icp_mentor =
-                updated_profile.existing_icp_mentor.clone();
-            mentor_internal.0.profile.icp_hub_or_spoke = updated_profile.icp_hub_or_spoke.clone();
-            mentor_internal.0.profile.linkedin_link = updated_profile.linkedin_link.clone();
-            mentor_internal.0.profile.website = updated_profile.website.clone();
-            mentor_internal.0.profile.years_of_mentoring =
-                updated_profile.years_of_mentoring.clone();
-            mentor_internal.0.profile.reason_for_joining =
-                updated_profile.reason_for_joining.clone();
-            mentor_internal.0.profile.user_data = updated_profile.user_data.clone();
-            mentor_internal.0.profile.hub_owner = updated_profile
-                .hub_owner
-                .clone()
-                .or(mentor_internal.0.profile.hub_owner.clone());
-            "Mentor profile updated successfully.".to_string()
-        } else {
-            "Mentor profile not found.".to_string()
-        }
-    })
-}
+//             mentor_internal.0.profile.existing_icp_mentor =
+//                 updated_profile.existing_icp_mentor.clone();
+//             mentor_internal.0.profile.icp_hub_or_spoke = updated_profile.icp_hub_or_spoke.clone();
+//             mentor_internal.0.profile.linkedin_link = updated_profile.linkedin_link.clone();
+//             mentor_internal.0.profile.website = updated_profile.website.clone();
+//             mentor_internal.0.profile.years_of_mentoring =
+//                 updated_profile.years_of_mentoring.clone();
+//             mentor_internal.0.profile.reason_for_joining =
+//                 updated_profile.reason_for_joining.clone();
+//             mentor_internal.0.profile.user_data = updated_profile.user_data.clone();
+//             mentor_internal.0.profile.hub_owner = updated_profile
+//                 .hub_owner
+//                 .clone()
+//                 .or(mentor_internal.0.profile.hub_owner.clone());
+//             "Mentor profile updated successfully.".to_string()
+//         } else {
+//             "Mentor profile not found.".to_string()
+//         }
+//     })
+// }
 
 //cohort admin operations
 
@@ -2603,25 +2605,25 @@ pub struct NameDetails {
     pub mentor_name: Vec<String>,
 }
 
-#[query(guard = "is_admin")]
-pub fn get_vc_and_mentor_name() -> NameDetails {
-    let vc_names = read_state(|state| {
-        state.vc_storage.iter()
-            .map(|(_, vc_data)| vc_data.0.params.user_data.full_name.clone())  
-            .collect::<Vec<String>>()
-    });
+// #[query(guard = "is_admin")]
+// pub fn get_vc_and_mentor_name() -> NameDetails {
+//     let vc_names = read_state(|state| {
+//         state.vc_storage.iter()
+//             .map(|(_, vc_data)| vc_data.0.params.user_data.full_name.clone())  
+//             .collect::<Vec<String>>()
+//     });
 
-    let mentor_names = read_state(|state| {
-        state.mentor_storage.iter()
-            .map(|(_, mentor_data)| mentor_data.0.profile.user_data.full_name.clone())  
-            .collect::<Vec<String>>()
-    });
+//     let mentor_names = read_state(|state| {
+//         state.mentor_storage.iter()
+//             .map(|(_, mentor_data)| mentor_data.0.profile.user_data.full_name.clone())  
+//             .collect::<Vec<String>>()
+//     });
 
-    NameDetails {
-        vc_name: vc_names,
-        mentor_name: mentor_names,
-    }
-}
+//     NameDetails {
+//         vc_name: vc_names,
+//         mentor_name: mentor_names,
+//     }
+// }
 
 
 //b5pqo-yef5a-lut3t-kmrpc-h7dnp-v3d2t-ls6di-y33wa-clrtb-xdhl4-dae

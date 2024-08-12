@@ -41,7 +41,6 @@ pub struct VentureCapitalist {
     pub number_of_portfolio_companies: u16,
     pub portfolio_link: String,
     pub announcement_details: Option<String>,
-    pub user_data: UserInformation,
     pub website_link: Option<String>,
     pub linkedin_link: String,
     pub registered: bool,
@@ -212,12 +211,14 @@ pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::
     //     }
     // });
 
-    let temp_image = params.user_data.profile_picture.clone();
+    let mut user_data = get_user_information_internal(caller);
+
+    let temp_image = user_data.profile_picture.clone();
     let canister_id = crate::asset_manager::get_asset_canister();
 
     if temp_image.is_none() {
         let full_url = canister_id.to_string() + "/uploads/default_user.jpeg";
-        params.user_data.profile_picture = Some((full_url).as_bytes().to_vec());
+        user_data.profile_picture = Some((full_url).as_bytes().to_vec());
     } else if temp_image.clone().unwrap().len() < 300 {
         ic_cdk::println!("Profile image is already uploaded");
     } else {
@@ -239,12 +240,12 @@ pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::
 
         let (result,): ((),) = call(canister_id, "store", (arg,)).await.unwrap();
 
-        params.user_data.profile_picture =
+        user_data.profile_picture =
             Some((canister_id.to_string() + &key).as_bytes().to_vec());
     }
 
     let user_data_for_updation = params.clone();
-    crate::user_module::update_data_for_roles(caller, user_data_for_updation.user_data);
+    //crate::user_module::update_data_for_roles(caller, user_data_for_updation.user_data);
 
     match params.validate() {
         Ok(_) => {
@@ -517,12 +518,14 @@ pub async fn update_venture_capitalist(mut params: VentureCapitalist) -> String 
     let mut approved_timestamp = 0;
     let mut rejected_timestamp = 0;
 
-    let temp_image = params.user_data.profile_picture.clone();
+    let mut user_data = get_user_information_internal(caller);
+
+    let temp_image = user_data.profile_picture.clone();
     let canister_id = crate::asset_manager::get_asset_canister();
 
     if temp_image.is_none() {
         let full_url = canister_id.to_string() + "/uploads/default_user.jpeg";
-        params.user_data.profile_picture = Some((full_url).as_bytes().to_vec());
+        user_data.profile_picture = Some((full_url).as_bytes().to_vec());
     } else if temp_image.clone().unwrap().len() < 300 {
         ic_cdk::println!("Profile image is already uploaded");
     } else {
@@ -544,7 +547,7 @@ pub async fn update_venture_capitalist(mut params: VentureCapitalist) -> String 
 
         let (result,): ((),) = call(canister_id, "store", (arg,)).await.unwrap();
 
-        params.user_data.profile_picture =
+        user_data.profile_picture =
             Some((canister_id.to_string() + &key).as_bytes().to_vec());
     }
 
@@ -575,20 +578,20 @@ pub async fn update_venture_capitalist(mut params: VentureCapitalist) -> String 
         );
     });
 
-    let res = send_approval_request(
-        params
-            .user_data
-            .profile_picture
-            .unwrap_or_else(|| Vec::new()),
-        params.user_data.full_name,
-        params.user_data.country,
-        params.category_of_investment,
-        "vc".to_string(),
-        params.user_data.bio.unwrap_or("no bio".to_string()),
-    )
-    .await;
+    // let res = send_approval_request(
+    //     params
+    //         .user_data
+    //         .profile_picture
+    //         .unwrap_or_else(|| Vec::new()),
+    //     params.user_data.full_name,
+    //     params.user_data.country,
+    //     params.category_of_investment,
+    //     "vc".to_string(),
+    //     params.user_data.bio.unwrap_or("no bio".to_string()),
+    // )
+    // .await;
 
-    format!("{}", res)
+    format!("Updation Done")
 }
 
 #[query(guard = "is_user_anonymous")]
@@ -745,10 +748,10 @@ pub fn filter_venture_capitalists(criteria: VcFilterCriteria) -> Vec<VentureCapi
             .vc_storage
             .iter()
             .filter(|(_, vc_internal)| {
-                let country_match = match &criteria.country {
-                    Some(c) => &vc_internal.0.params.user_data.country == c,
-                    None => true,
-                };
+                // let country_match = match &criteria.country {
+                //     Some(c) => &vc_internal.0.params.user_data.country == c,
+                //     None => true,
+                // };
 
                 let category_match = criteria
                     .category_of_investment
@@ -788,7 +791,6 @@ pub fn filter_venture_capitalists(criteria: VcFilterCriteria) -> Vec<VentureCapi
                 vc_internal.0.is_active
                     && vc_internal.0.approve
                     && !vc_internal.0.decline
-                    && country_match
                     && category_match
                     && money_invested_match
             })

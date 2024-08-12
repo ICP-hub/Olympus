@@ -229,7 +229,7 @@ pub struct ProjectInfoForUser {
     pub project_discord: Option<String>,
     pub promotional_video: Option<String>,
     pub github_link: Option<String>,
-    pub user_data: UserInformation,
+    //pub user_data: UserInformation,
     pub project_team: Option<Vec<TeamMember>>,
     pub dapp_link: Option<String>,
     pub weekly_active_users: Option<u64>,
@@ -1661,17 +1661,17 @@ pub fn filter_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
                     &project_internal.params.project_area_of_focus == focus
                 });
 
-                let mentor_match = criteria.mentor_name.as_ref().map_or(true, |mentor_name| {
-                    project_internal
-                        .params
-                        .mentors_assigned
-                        .as_ref()
-                        .map_or(false, |mentors| {
-                            mentors
-                                .iter()
-                                .any(|mentor| mentor.user_data.full_name.contains(mentor_name))
-                        })
-                });
+                // let mentor_match = criteria.mentor_name.as_ref().map_or(true, |mentor_name| {
+                //     project_internal
+                //         .params
+                //         .mentors_assigned
+                //         .as_ref()
+                //         .map_or(false, |mentors| {
+                //             mentors
+                //                 .iter()
+                //                 .any(|mentor| mentor.user_data.full_name.contains(mentor_name))
+                //         })
+                // });
 
                 let vc_match = criteria.vc_name.as_ref().map_or(true, |vc_name| {
                     project_internal
@@ -1683,7 +1683,7 @@ pub fn filter_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
                         })
                 });
 
-                country_match && rating_match && focus_match && mentor_match && vc_match
+                country_match && rating_match && focus_match && vc_match
             })
             .map(|project_internal| project_internal.params.clone())
             .collect()
@@ -1716,7 +1716,7 @@ pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUse
                     project_discord: project_internal.params.project_discord.clone(),
                     promotional_video: project_internal.params.promotional_video.clone(),
                     github_link: project_internal.params.github_link.clone(),
-                    user_data: project_internal.params.user_data.clone(),
+                    //user_data: project_internal.params.user_data.clone(),
                     project_team: project_internal.params.project_team.clone(),
                     dapp_link: project_internal.params.dapp_link.clone(),
                     weekly_active_users: project_internal.params.weekly_active_users.clone(),

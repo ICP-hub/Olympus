@@ -1,4 +1,4 @@
-use crate::state_handler::*;
+use crate::{get_user_information_internal, state_handler::*};
 use crate::{
     find_project_by_id, get_mentor_by_principal
 };
@@ -111,11 +111,13 @@ pub async fn send_offer_to_mentor(mentor_id: Principal, msg: String, project_id:
     let uid = format!("{:x}", Sha256::digest(&uids));
     let offer_id = uid.clone().to_string();
 
+    let user_data = get_user_information_internal(mentor_id);
+
     let offer_to_mentor = OfferToMentor {
         offer_id: offer_id.clone(),
         mentor_id: mentor_id,
-        mentor_image: mentor.user_data.profile_picture,
-        mentor_name: mentor.user_data.full_name,
+        mentor_image: user_data.profile_picture,
+        mentor_name: user_data.full_name,
         offer_i_have_written: msg.clone(),
         time_of_request: time(),
         accepted_at: 0,
@@ -337,7 +339,7 @@ pub fn decline_offer_of_project(offer_id: String, response_message: String) -> S
 
 
 #[query]
-pub fn get_pending_request_for_mentor(mentor_id: Principal) -> Vec<OfferToSendToMentor> {
+pub fn get_pending_request_from_project_to_mentor_via_project(mentor_id: Principal) -> Vec<OfferToSendToMentor> {
     read_state(|pending_alerts| {
         pending_alerts
             .mentor_alerts
@@ -354,7 +356,7 @@ pub fn get_pending_request_for_mentor(mentor_id: Principal) -> Vec<OfferToSendTo
 }
 
 #[query]
-pub fn get_project_pending_offers() -> Vec<OfferToMentor> {
+pub fn get_pending_request_from_mentor_to_project_via_project() -> Vec<OfferToMentor> {
     read_state(|pending_alerts| {
         pending_alerts
             .my_sent_notifications
@@ -371,7 +373,7 @@ pub fn get_project_pending_offers() -> Vec<OfferToMentor> {
 }
 
 #[query]
-pub fn get_accepted_request_for_mentor(mentor_id: Principal) -> Vec<OfferToSendToMentor> {
+pub fn get_approved_request_from_mentor_to_project_via_project(mentor_id: Principal) -> Vec<OfferToSendToMentor> {
     read_state(|pending_alerts| {
         pending_alerts
             .mentor_alerts
@@ -388,7 +390,7 @@ pub fn get_accepted_request_for_mentor(mentor_id: Principal) -> Vec<OfferToSendT
 }
 
 #[query]
-pub fn get_accepted_request_for_project() -> Vec<OfferToMentor> {
+pub fn get_approved_request_from_project_to_mentor_via_project() -> Vec<OfferToMentor> {
     read_state(|pending_alerts| {
         pending_alerts
             .my_sent_notifications
@@ -405,7 +407,7 @@ pub fn get_accepted_request_for_project() -> Vec<OfferToMentor> {
 }
 
 #[query]
-pub fn get_declined_request_for_mentor(mentor_id: Principal) -> Vec<OfferToSendToMentor> {
+pub fn get_declined_request_from_mentor_to_project_via_project(mentor_id: Principal) -> Vec<OfferToSendToMentor> {
     read_state(|pending_alerts| {
         pending_alerts
             .mentor_alerts
@@ -422,7 +424,7 @@ pub fn get_declined_request_for_mentor(mentor_id: Principal) -> Vec<OfferToSendT
 }
 
 #[query]
-pub fn get_declined_request_for_project() -> Vec<OfferToMentor> {
+pub fn get_declined_request_from_project_to_mentor_via_project() -> Vec<OfferToMentor> {
     read_state(|pending_alerts| {
         pending_alerts
             .my_sent_notifications

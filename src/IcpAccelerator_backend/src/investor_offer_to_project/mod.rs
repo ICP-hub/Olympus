@@ -1,4 +1,4 @@
-use crate::state_handler::*;
+use crate::{get_user_information_internal, state_handler::*};
 use candid::{CandidType, Principal};
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::{api::time, caller};
@@ -137,18 +137,17 @@ pub async fn send_offer_to_project_by_investor(project_id: String, msg: String) 
 
     store_request_sent_by_capitalist(offer_to_project);
 
+    let user_data = get_user_information_internal(investor_id);
+
     let investor_info = InvestorInfo {
         investor_id,
-        investor_name: investor_profile.profile.params.user_data.full_name.clone(),
+        investor_name: user_data.full_name.clone(),
         investor_description: investor_profile
             .profile
             .params
             .category_of_investment
             .clone(),
-        investor_image: investor_profile
-            .profile
-            .params
-            .user_data
+        investor_image: user_data
             .profile_picture
             .clone()
             .unwrap_or_else(Vec::new),

@@ -21,7 +21,7 @@ use std::io::Read;
 
 pub struct MentorProfile {
     pub preferred_icp_hub: Option<String>,
-    pub user_data: UserInformation,
+    //pub user_data: UserInformation,
     pub existing_icp_mentor: bool,
     pub existing_icp_project_porfolio: Option<String>,
     pub icp_hub_or_spoke: bool,
@@ -200,12 +200,14 @@ pub async fn register_mentor(mut profile: MentorProfile) -> String {
     //     }
     // });
 
-    let temp_image = profile.user_data.profile_picture.clone();
+    let mut user_data = get_user_information_internal(caller);
+
+    let temp_image = user_data.profile_picture.clone();
     let canister_id = crate::asset_manager::get_asset_canister();
     
     if temp_image.is_none() {
         let full_url = canister_id.to_string() + "/uploads/default_user.jpeg";
-        profile.user_data.profile_picture = Some((full_url).as_bytes().to_vec());
+        user_data.profile_picture = Some((full_url).as_bytes().to_vec());
     }
     else if temp_image.clone().unwrap().len() < 300 {
         ic_cdk::println!("Profile image is already uploaded");
@@ -229,11 +231,11 @@ pub async fn register_mentor(mut profile: MentorProfile) -> String {
 
         let (result,): ((),) = call(canister_id, "store", (arg, )).await.unwrap();
 
-        profile.user_data.profile_picture = Some((canister_id.to_string()+&key).as_bytes().to_vec());
+        user_data.profile_picture = Some((canister_id.to_string()+&key).as_bytes().to_vec());
     }
 
     let user_data_for_updation = profile.clone();
-    crate::user_module::update_data_for_roles(caller, user_data_for_updation.user_data);
+    //crate::user_module::update_data_for_roles(caller, user_data_for_updation.user_data);
 
     match profile.validate() {
         Ok(_) => {
@@ -374,12 +376,14 @@ pub async fn update_mentor(mut updated_profile: MentorProfile) -> String {
         }
     });
 
-    let temp_image = updated_profile.user_data.profile_picture.clone();
+    let mut user_data = get_user_information_internal(caller);
+
+    let temp_image = user_data.profile_picture.clone();
     let canister_id = crate::asset_manager::get_asset_canister();
     
     if temp_image.is_none() {
         let full_url = canister_id.to_string() + "/uploads/default_user.jpeg";
-        updated_profile.user_data.profile_picture = Some((full_url).as_bytes().to_vec());
+        user_data.profile_picture = Some((full_url).as_bytes().to_vec());
     }
     else if temp_image.clone().unwrap().len() < 300 {
         ic_cdk::println!("Profile image is already uploaded");
@@ -403,7 +407,7 @@ pub async fn update_mentor(mut updated_profile: MentorProfile) -> String {
 
         let (result,): ((),) = call(canister_id, "store", (arg, )).await.unwrap();
 
-        updated_profile.user_data.profile_picture = Some((canister_id.to_string()+&key).as_bytes().to_vec());
+        user_data.profile_picture = Some((canister_id.to_string()+&key).as_bytes().to_vec());
     }
 
     mutate_state(|state| {
@@ -419,23 +423,23 @@ pub async fn update_mentor(mut updated_profile: MentorProfile) -> String {
             .insert(StoredPrincipal(caller), Candid(update_data_tp_store));
     });
 
-    let res = send_approval_request(
-        updated_profile
-            .user_data
-            .profile_picture
-            .unwrap_or_else(|| Vec::new()),
-        updated_profile.user_data.full_name,
-        updated_profile.user_data.country,
-        updated_profile.area_of_expertise,
-        "mentor".to_string(),
-        updated_profile
-            .user_data
-            .bio
-            .unwrap_or("no bio".to_string()),
-    )
-    .await;
+    // let res = send_approval_request(
+    //     updated_profile
+    //         .user_data
+    //         .profile_picture
+    //         .unwrap_or_else(|| Vec::new()),
+    //     updated_profile.user_data.full_name,
+    //     updated_profile.user_data.country,
+    //     updated_profile.area_of_expertise,
+    //     "mentor".to_string(),
+    //     updated_profile
+    //         .user_data
+    //         .bio
+    //         .unwrap_or("no bio".to_string()),
+    // )
+    // .await;
 
-    format!("{}", res)
+    format!("Updation Done")
 }
 
 pub fn delete_mentor() -> String {
@@ -635,10 +639,10 @@ pub fn filter_mentors(criteria: MentorFilterCriteria) -> Vec<MentorProfile> {
             .mentor_storage
             .iter()
             .filter(|(_, mentor_internal)| {
-                let country_match = match &criteria.country {
-                    Some(c) => &mentor_internal.0.profile.user_data.country == c,
-                    None => true,
-                };
+                // let country_match = match &criteria.country {
+                //     Some(c) => &mentor_internal.0.profile.user_data.country == c,
+                //     None => true,
+                // };
 
                 let expertise_match = criteria.area_of_expertise.as_ref().map_or(true, |exp| {
                     &mentor_internal.0.profile.area_of_expertise == exp
@@ -647,7 +651,6 @@ pub fn filter_mentors(criteria: MentorFilterCriteria) -> Vec<MentorProfile> {
                 mentor_internal.0.active
                     && mentor_internal.0.approve
                     && !mentor_internal.0.decline
-                    && country_match
                     && expertise_match
             })
             .map(|(_, mentor_internal)| mentor_internal.0.profile.clone())
