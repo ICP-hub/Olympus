@@ -1,23 +1,24 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ProfileImage from "../../../assets/Logo/ProfileImage.png";
+import edit from "../../../assets/Logo/edit.png";
+
 import VerifiedIcon from "@mui/icons-material/Verified";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import ArrowOutwardOutlinedIcon from '@mui/icons-material/ArrowOutwardOutlined';
-import EditIcon from '@mui/icons-material/Edit';
 import Select from "react-select";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { useCountries } from "react-countries";
 import { useSelector } from 'react-redux';
 import {
-  ArrowForward,
   LinkedIn,
   GitHub,
   Telegram,
-  Add,
 } from "@mui/icons-material";
 
 const ProfileDetail = () => {
+  const { countries } = useCountries();
   const [interestedDomainsOptions, setInterestedDomainsOptions] = useState([]);
   const [interestedDomainsSelectedOptions, setInterestedDomainsSelectedOptions] = useState([]);
   const [reasonOfJoiningOptions, setReasonOfJoiningOptions] = useState([
@@ -42,18 +43,58 @@ const ProfileDetail = () => {
       "Bio must not exceed 500 characters",
       (value) => !value || value.length <= 500
     ),
-    country: yup.string().required("Country is required"),
+    location: yup.string().required("Location is required"), // Changed to location instead of country
     domains_interested_in: yup.string().required("Selecting an interest is required"),
     type_of_profile: yup.string().required("Type of profile is required"),
     reasons_to_join_platform: yup.string().required("Selecting a reason is required"),
   }).required();
+
+  const [socialLinks, setSocialLinks] = useState({
+    LinkedIn: "https://www.linkedin.com/in/mattbowers",
+    GitHub: "https://github.com/mattbowers",
+    Telegram: "https://t.me/mattbowers",
+  });
+
+  const [isEditingLink, setIsEditingLink] = useState({
+    LinkedIn: false,
+    GitHub: false,
+    Telegram: false,
+  });
+
+  const handleLinkEditToggle = (link) => {
+    setIsEditingLink((prev) => {
+      const newState = {
+        LinkedIn: false,
+        GitHub: false,
+        Telegram: false
+      };
+      newState[link] = !prev[link];
+      return newState;
+    });
+  };
+
+  const handleLinkChange = (e, link) => {
+    setSocialLinks((prev) => ({
+      ...prev,
+      [link]: e.target.value
+    }));
+  };
+
+  const handleSaveLinks = () => {
+    console.log('Links saved:', socialLinks);
+    setIsEditingLink({
+      LinkedIn: false,
+      GitHub: false,
+      Telegram: false
+    });
+  };
 
   const defaultValues = {
     email: 'mail@email.com',
     tagline: 'Founder & CEO at Cypherpunk Labs',
     about: 'Est malesuada ac elit gravida vel aliquam nec. Arcu pelle ntesque convallis quam feugiat non viverra massa fringilla.',
     interests: ['Web3', 'Cryptography'],
-    location: 'San Diego, CA',
+    location: 'Austria',
     domains_interested_in: ['Web3', 'Blockchain'], // Default interests
     reasons_to_join_platform: ['Funding', 'Mentoring'], // Default reasons
   };
@@ -104,15 +145,21 @@ const ProfileDetail = () => {
   };
 
   const handleSave = () => {
-    setProfileData(tempData);
-    setIsEditing({
-      email: false,
-      tagline: false,
-      about: false,
-      interests: false,
-      location: false,
-      reasons_to_join_platform: false,
-    });
+    const isFormValid = Object.keys(errors).length === 0;
+
+    if (isFormValid) {
+      setProfileData(tempData);
+      setIsEditing({
+        email: false,
+        tagline: false,
+        about: false,
+        interests: false,
+        location: false,
+        reasons_to_join_platform: false,
+      });
+    } else {
+      console.log('Validation failed:', errors);
+    }
   };
 
   const handleCancel = () => {
@@ -129,14 +176,18 @@ const ProfileDetail = () => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (containerRef.current && !containerRef.current.contains(event.target)) {
-        handleCancel();
+      const isAnyFieldEditing = Object.values(isEditing).some((value) => value);
+
+      if (isAnyFieldEditing && containerRef.current && !containerRef.current.contains(event.target)) {
+        handleSave();
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isEditing]);
 
   return (
     <div ref={containerRef} className="container bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full max-w-[400px]">
@@ -156,10 +207,9 @@ const ProfileDetail = () => {
         </button>
       </div>
 
-
       <div className="p-6 bg-white">
         <div className="mb-4">
-          <h3 className="font-normal mb-2 text-xs text-gray-500 uppercase">
+          <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
             Roles
           </h3>
           <div className="flex space-x-2">
@@ -174,23 +224,30 @@ const ProfileDetail = () => {
             <button className="text-blue-600 border-b-2 border-blue-600 pb-2 mr-4 font-medium">
               General
             </button>
-            {/* <button className="text-gray-400 pb-2 font-medium">
-                Expertise
-              </button> */}
           </div>
         </div>
 
         {/* Email Section */}
         <div className=' px-1'>
-          <div className="mb-4 group relative hover:bg-[#E3E8EF] rounded-lg p-1">
-            <h3 className="font-normal mb-2 text-xs text-gray-500 uppercase">Email</h3>
+          <div className="mb-4  group relative hover:bg-[#E3E8EF] rounded-lg p-2 px-3">
+            <div className='flex justify-between'>
+              <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">Email</h3>
+              <div>
+                <button
+                  className=" invisible group-hover:visible text-gray-500  hover:underline text-xs h-4 w-4"
+                  onClick={() => handleEditToggle('email')}
+                >
+                  {isEditing.email ? '' : < img src={edit} />}
+                </button>
+              </div>
+            </div>
             {isEditing.email ? (
               <>
                 <input
                   type="email"
                   {...register("email")}
                   onChange={(e) => handleInputChange(e, 'email')}
-                  className={`bg-gray-50 border-2 ${errors?.email ? "border-red-500" : "border-[#737373]"} text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  className={`bg-gray-50 border-1 ${errors?.email ? "border-red-500" : "border-gray-500"} text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-2 py-1`}
                   placeholder="Enter your email"
                 />
                 {errors?.email && (
@@ -208,38 +265,49 @@ const ProfileDetail = () => {
                 </span>
               </div>
             )}
-            <button
-              className="absolute right-0 top-0 invisible group-hover:visible text-black p-1 hover:underline text-xs"
-              onClick={() => handleEditToggle('email')}
-            >
-              {isEditing.email ? '' : <EditIcon />}
-            </button>
+
           </div>
 
           {/* Tagline Section */}
-          <div className="mb-4 group relative hover:bg-[#E3E8EF] rounded-lg p-1">
-            <h3 className="font-normal mb-2 text-xs text-gray-500 uppercase">Tagline</h3>
+          <div className="mb-4 group relative hover:bg-[#E3E8EF] rounded-lg p-1 px-3">
+            {/* <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">Tagline</h3> */}
+            <div className='flex justify-between'>
+              <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">Tagline</h3>
+              <div>
+                <button
+                  className=" invisible group-hover:visible text-gray-500  hover:underline text-xs h-4 w-4"
+                  onClick={() => handleEditToggle('tagline')}
+                >
+                  {isEditing.email ? '' : < img src={edit} />}
+                </button>
+              </div>
+            </div>
             {isEditing.tagline ? (
               <input
                 type="text"
                 value={tempData.tagline}
                 onChange={(e) => handleInputChange(e, 'tagline')}
-                className="border p-1 w-full rounded"
+                className=" px-2 py-1 w-full bg-[#F8FAFC] border border-[#E3E8EF] text-[#364152] rounded text-sm"
               />
             ) : (
               <p className="text-sm">{profileData.tagline}</p>
             )}
-            <button
-              className="absolute right-0 top-0 invisible group-hover:visible p-1 text-black hover:underline text-xs"
-              onClick={() => handleEditToggle('tagline')}
-            >
-              {isEditing.tagline ? '' : <EditIcon />}
-            </button>
+
           </div>
 
           {/* About Section */}
-          <div className="mb-4 group relative hover:bg-[#E3E8EF] rounded-lg p-1">
-            <h3 className="font-normal mb-2 text-xs text-gray-500 uppercase">About</h3>
+          <div className="mb-4 group relative hover:bg-[#E3E8EF] rounded-lg p-1 px-3">
+            <div className='flex justify-between'>
+              <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">About</h3>
+              <div>
+                <button
+                  className=" invisible group-hover:visible text-gray-500  hover:underline text-xs h-4 w-4"
+                  onClick={() => handleEditToggle('about')}
+                >
+                  {isEditing.email ? '' : < img src={edit} />}
+                </button>
+              </div>
+            </div>
             {isEditing.about ? (
               <textarea
                 {...register("about")}
@@ -251,41 +319,61 @@ const ProfileDetail = () => {
             ) : (
               <p className="text-sm">{profileData.about}</p>
             )}
-            <button
-              className="absolute right-0 top-0 invisible group-hover:visible text-black p-1 hover:underline text-xs"
-              onClick={() => handleEditToggle('about')}
-            >
-              {isEditing.about ? '' : <EditIcon />}
-            </button>
+
           </div>
 
           {/* Location Section */}
-          <div className="mb-4 group relative hover:bg-[#E3E8EF] rounded-lg p-1">
-            <h3 className="font-normal mb-2 text-xs text-gray-500 uppercase">Location</h3>
+          <div className="mb-4 group relative hover:bg-[#E3E8EF] rounded-lg p-1 px-3">
+            <div className='flex justify-between'>
+              <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">Location</h3>
+              <div>
+                <button
+                  className=" invisible group-hover:visible text-gray-500  hover:underline text-xs h-4 w-4"
+                  onClick={() => handleEditToggle('location')}
+                >
+                  {isEditing.location ? '' : < img src={edit} />}
+                </button>
+              </div>
+            </div>
+
             {isEditing.location ? (
-              <input
-                type="text"
+              <select
+                {...register("location")}
                 value={tempData.location}
-                onChange={(e) => handleInputChange(e, 'location')}
-                className="border p-1 w-full rounded"
-              />
+                onChange={(e) => {
+                  handleInputChange(e, 'location');
+                }}
+                className={`bg-gray-50 border-2 ${errors.location ? "border-red-500" : "border-[#737373]"} text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-2 py-1`}
+              >
+                <option value="" className="text-sm font-bold">Select your country</option>
+                {countries.map((country) => (
+                  <option key={country.name} value={country.name} className="text-sm font-bold">
+                    {country.name}
+                  </option>
+                ))}
+              </select>
             ) : (
               <div className="flex items-center">
                 <PlaceOutlinedIcon className="text-gray-500 mr-1" fontSize="small" />
                 <p className="text-sm">{profileData.location}</p>
               </div>
             )}
-            <button
-              className="absolute right-0 top-0 invisible group-hover:visible p-1 text-black hover:underline text-xs"
-              onClick={() => handleEditToggle('location')}
-            >
-              {isEditing.location ? '' : <EditIcon />}
-            </button>
+
           </div>
 
           {/* Reasons to Join Platform Section */}
-          <div className="mb-4 group relative hover:bg-[#E3E8EF] rounded-lg p-1">
-            <h3 className="font-normal mb-2 text-xs text-gray-500 uppercase">Reasons to Join Platform</h3>
+          <div className="mb-4 group relative hover:bg-[#E3E8EF] rounded-lg p-1 px-3">
+            <div className='flex justify-between'>
+              <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">Reasons to Join Platform</h3>
+              <div>
+                <button
+                  className=" invisible group-hover:visible text-gray-500  hover:underline text-xs h-4 w-4"
+                  onClick={() => handleEditToggle('reasons_to_join_platform')}
+                >
+                  {isEditing.reasons_to_join_platform ? '' : < img src={edit} />}
+                </button>
+              </div>
+            </div>
             {isEditing.reasons_to_join_platform ? (
               <Select
                 isMulti
@@ -310,17 +398,22 @@ const ProfileDetail = () => {
                 ))}
               </div>
             )}
-            <button
-              className="absolute right-0 top-0 invisible group-hover:visible p-1 text-black hover:underline text-xs"
-              onClick={() => handleEditToggle('reasons_to_join_platform')}
-            >
-              {isEditing.reasons_to_join_platform ? '' : <EditIcon />}
-            </button>
+
           </div>
 
           {/* Interests Section */}
-          <div className="mb-4 group relative hover:bg-[#E3E8EF] rounded-lg p-1">
-            <h3 className="font-normal mb-2 text-xs text-gray-500 uppercase">Interests</h3>
+          <div className="mb-4 group relative hover:bg-[#E3E8EF] rounded-lg p-1 px-3">
+            <div className='flex justify-between'>
+              <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">Interests</h3>
+              <div>
+                <button
+                  className=" invisible group-hover:visible text-gray-500  hover:underline text-xs h-4 w-4"
+                  onClick={() => handleEditToggle('interests')}
+                >
+                  {isEditing.interests ? '' : < img src={edit} />}
+                </button>
+              </div>
+            </div>
             {isEditing.interests ? (
               <Select
                 isMulti
@@ -345,20 +438,103 @@ const ProfileDetail = () => {
                 ))}
               </div>
             )}
-            <button
-              className="absolute right-0 top-0 invisible group-hover:visible p-1 text-black hover:underline text-xs"
-              onClick={() => handleEditToggle('interests')}
-            >
-              {isEditing.interests ? '' : <EditIcon />}
-            </button>
+
           </div>
+
           <div>
-            <h3 className="mb-2 text-xs text-gray-500">LINKS</h3>
-            <div className="flex space-x-2">
-              <LinkedIn className="text-gray-400 hover:text-gray-600 cursor-pointer" />
-              <GitHub className="text-gray-400 hover:text-gray-600 cursor-pointer" />
-              <Telegram className="text-gray-400 hover:text-gray-600 cursor-pointer" />
+            <h3 className="mb-2 text-xs text-gray-500 px-3">LINKS</h3>
+            <div className="flex items-center px-3">
+              {/* LinkedIn */}
+              <div className="group relative flex items-center">
+                <a
+                  href={socialLinks.LinkedIn}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center"
+                >
+                  <LinkedIn className="text-gray-400 hover:text-gray-600 cursor-pointer transform transition-all duration-300 hover:scale-110" />
+                </a>
+                <button
+                  className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-8  h-10 w-7"
+                  onClick={() => handleLinkEditToggle("LinkedIn")}
+                >
+                  <img src={edit} />
+                </button>
+                {isEditingLink.LinkedIn && (
+                  <input
+                    type="text"
+                    value={socialLinks.LinkedIn}
+                    onChange={(e) => handleLinkChange(e, "LinkedIn")}
+                    className="border p-1 rounded w-full ml-2 transition-all duration-300 ease-in-out transform"
+                  />
+                )}
+              </div>
+
+              {/* GitHub */}
+              <div className="group relative flex items-center ml-8 group-hover:ml-8">
+                <a
+                  href={socialLinks.GitHub}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center"
+                >
+                  <GitHub className="text-gray-400 hover:text-gray-600 cursor-pointer transform transition-all duration-300 hover:scale-110" />
+                </a>
+                <button
+                  className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-8  h-10 w-7"
+                  onClick={() => handleLinkEditToggle("GitHub")}
+                >
+                  <img src={edit} />
+                </button>
+                {isEditingLink.GitHub && (
+                  <input
+                    type="text"
+                    value={socialLinks.GitHub}
+                    onChange={(e) => handleLinkChange(e, "GitHub")}
+                    className="border p-1 rounded w-full ml-2 transition-all duration-300 ease-in-out transform"
+                  />
+                )}
+              </div>
+
+              {/* Telegram */}
+              <div className="group relative flex items-center ml-8 group-hover:ml-8">
+                <a
+                  href={socialLinks.Telegram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center"
+                >
+                  <Telegram className="text-gray-400 hover:text-gray-600 cursor-pointer transform transition-all duration-300 hover:scale-110" />
+                </a>
+                <button
+                  className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-8  h-10 w-7"
+                  onClick={() => handleLinkEditToggle("Telegram")}
+                >
+                  <img src={edit} />
+                </button>
+                {isEditingLink.Telegram && (
+                  <input
+                    type="text"
+                    value={socialLinks.Telegram}
+                    onChange={(e) => handleLinkChange(e, "Telegram")}
+                    className="border p-1 rounded w-full ml-2 transition-all duration-300 ease-in-out transform"
+                  />
+                )}
+              </div>
             </div>
+
+            {/* Save Section */}
+            {Object.values(isEditingLink).some((value) => value) && (
+              <div className="flex justify-end gap-4 mt-4">
+                <button
+                  type="button"
+                  onClick={handleSaveLinks}
+                  className="bg-blue-600 text-white py-2 px-4 rounded transition-all duration-300 ease-in-out transform hover:bg-blue-700 hover:scale-105"
+                >
+                  Save
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Save/Cancel Section */}
