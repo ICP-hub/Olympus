@@ -20,6 +20,7 @@ import RegisterForm1 from "./components/UserRegistration/RegisterForm1";
 import UserRegistration from "./components/UserRegistration/UserRegistration";
 import MentorSignupMain from "./components/Modals/Mentor-Signup-Model/MentorsignUpmain";
 import ProjectRegisterMain from "./components/Modals/ProjectRegisterModal/ProjectRegisterMain";
+import JobRegister1 from "./components/Modals/JobModal/JobRegister1";
 
 
 
@@ -53,6 +54,7 @@ const AppRoutes = () => {
   );
   const authenticatedRoutes = [
     { path: "dashboard/*", element: <DashboardHomePage /> },
+    // { path: "jobs", element: <JobRegister1 /> }
     // { path: "mentor-sign-up", element: <MentorSignupMain /> },
 
 
