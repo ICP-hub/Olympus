@@ -165,7 +165,7 @@ const styles = {
 };
 
 function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
-  const {dashboardwelcomesection}=dashboard
+  const { dashboardwelcomesection } = dashboard
   const actionCards = [
     {
       title: 'Complete profile',
@@ -197,7 +197,7 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
   return (
     <>
       <div className="bg-white rounded-lg p-6 mb-6 pt-1">
-        <h1 className="text-3xl font-bold mb-6">{dashboardwelcomesection.welcome}, {userName}!</h1>
+        <h1 className="text-3xl font-bold mb-6 mt-6">{dashboardwelcomesection.welcome}, {userName}!</h1>
         <div className="overflow-x-auto">
           <div className="flex gap-6 my-1">
             {actionCards.map((card, index) => (
