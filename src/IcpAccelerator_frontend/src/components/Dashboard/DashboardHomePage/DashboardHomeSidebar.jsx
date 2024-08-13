@@ -127,8 +127,9 @@ import {
 } from '@mui/icons-material';
 import topLogo from "../../../../assets/Logo/topLogo.png";
 import { briefcaseSvgIcon, calenderSvgIcon, gridSvgIcon, homeSvgIcon, locationHubSvgIcon, staroutlineSvgIcon, userCircleSvgIcon, userSvgIcon } from '../../Utils/Data/SvgData';
-
+import { dashboard } from '../../jsondata/data/dashboardData';
 function DashboardSidebar({ isOpen, onClose }) {
+  const {dashboardhomesidebar} =dashboard
   const location = useLocation();
   const [activeLink, setActiveLink] = useState(location.pathname);
 
