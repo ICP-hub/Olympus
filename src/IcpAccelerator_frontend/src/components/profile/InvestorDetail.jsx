@@ -845,7 +845,7 @@ const InvestorDetail = () => {
 
   return (
     <div className=" bg-white">
-      <div className="my-4 relative group hover:bg-slate-50 rounded p-2">
+      <div className="my-1 relative group hover:bg-slate-50 rounded p-2">
         <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           <EditIcon
             sx={{ fontSize: 'medium', cursor: 'pointer' }}
@@ -875,7 +875,7 @@ const InvestorDetail = () => {
         )}
       </div>
       {watch("investor_registered") === "true" && (
-      <div className="mb-4 relative group hover:bg-slate-50 rounded p-2">
+      <div className="mb-1 relative group hover:bg-slate-50 rounded p-2">
         <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           <EditIcon
             sx={{ fontSize: 'medium', cursor: 'pointer' }}
@@ -916,7 +916,7 @@ const InvestorDetail = () => {
         )}
       </div>
       )}
-      <div className="mb-4 relative group hover:bg-slate-50 rounded p-2">
+      <div className="mb-1 relative group hover:bg-slate-50 rounded p-2">
         <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           <EditIcon
             sx={{ fontSize: 'medium', cursor: 'pointer' }}
@@ -952,7 +952,7 @@ const InvestorDetail = () => {
           </div>
         )}
       </div>
-      <div className="mb-4 relative group hover:bg-slate-50 rounded p-2">
+      <div className="mb-1 relative group hover:bg-slate-50 rounded p-2">
         <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           <EditIcon
             sx={{ fontSize: 'medium', cursor: 'pointer' }}
@@ -987,7 +987,7 @@ const InvestorDetail = () => {
         )}
       </div>
       {watch("existing_icp_investor") === 'true' && (
-                <div className="mb-4">
+                <div className="mb-1">
                     <label className="block text-sm font-medium mb-1">Type of investment<span className='text-[red] ml-1'>*</span></label>
                     <ReactSelect
                         isMulti
