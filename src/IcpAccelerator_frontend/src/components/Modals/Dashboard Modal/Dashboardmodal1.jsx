@@ -7,7 +7,7 @@ const DashboardModal1 = ({ isOpen, onClose }) => {
         {
             title: "Welcome to your dashboard",
             description: "We're glad to have you onboard. Here are some quick tips to get you up and running.",
-            image: "path/to/your/image.png", // Replace with the path to your image
+            image: { allfounder }, // Replace with the path to your image
         },
         // Add more steps if needed
     ];
