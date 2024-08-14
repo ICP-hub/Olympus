@@ -168,6 +168,7 @@ const styles = {
 function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
   const [roleModalOpen, setRoleModalOpen] = useState(false);
   const {dashboardwelcomesection}=dashboard
+
   const actionCards = [
     {
       title: 'Complete profile',
