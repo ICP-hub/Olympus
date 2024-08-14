@@ -16,6 +16,7 @@ import {
   GitHub,
   Telegram,
 } from "@mui/icons-material";
+import InvestorDetail from './InvestorDetail';
 
 const ProfileDetail = () => {
   const { countries } = useCountries();
@@ -189,6 +190,12 @@ const ProfileDetail = () => {
     };
   }, [isEditing]);
 
+  const handleChange = (tab) => {
+    setActiveTab(tab)
+  }
+  const [activeTab, setActiveTab] = useState("general");
+
+
   return (
     <div ref={containerRef} className="container bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full max-w-[400px]">
       <div className="relative h-1 bg-gray-200">
@@ -218,16 +225,39 @@ const ProfileDetail = () => {
             </span>
           </div>
         </div>
+        <div className="flex justify-start border-b">
+            <button
+              className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "general"
+                ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                : "text-gray-400"
+                }`}
+              onClick={() => handleChange("general")}
+            >
+              General
+            </button>
+            <button
+              className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "investor"
+                ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                : "text-gray-400"
+                }`}
+              onClick={() => handleChange("investor")}
+            >
+              Investor
+            </button>
+            
+          </div>
 
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <div className="flex border-b">
             <button className="text-blue-600 border-b-2 border-blue-600 pb-2 mr-4 font-medium">
               General
             </button>
+            
           </div>
-        </div>
+        </div> */}
 
         {/* Email Section */}
+        {activeTab=== "general" ? 
         <div className=' px-1'>
           <div className="mb-4  group relative hover:bg-[#E3E8EF] rounded-lg p-2 px-3">
             <div className='flex justify-between'>
@@ -556,7 +586,7 @@ const ProfileDetail = () => {
               </button>
             </div>
           )}
-        </div>
+        </div> : <InvestorDetail /> }
       </div>
     </div>
   );
