@@ -259,7 +259,7 @@ const ProfileDetail = () => {
         {/* Email Section */}
         {activeTab=== "general" ? 
         <div className=' px-1'>
-          <div className="mb-4  group relative hover:bg-[#E3E8EF] rounded-lg p-2 px-3">
+          <div className="mb-4  group relative hover:bg-gray-100 rounded-lg p-2 px-3">
             <div className='flex justify-between'>
               <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">Email</h3>
               <div>
@@ -299,7 +299,7 @@ const ProfileDetail = () => {
           </div>
 
           {/* Tagline Section */}
-          <div className="mb-4 group relative hover:bg-[#E3E8EF] rounded-lg p-1 px-3">
+          <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 px-3">
             {/* <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">Tagline</h3> */}
             <div className='flex justify-between'>
               <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">Tagline</h3>
@@ -326,7 +326,7 @@ const ProfileDetail = () => {
           </div>
 
           {/* About Section */}
-          <div className="mb-4 group relative hover:bg-[#E3E8EF] rounded-lg p-1 px-3">
+          <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 px-3">
             <div className='flex justify-between'>
               <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">About</h3>
               <div>
@@ -353,7 +353,7 @@ const ProfileDetail = () => {
           </div>
 
           {/* Location Section */}
-          <div className="mb-4 group relative hover:bg-[#E3E8EF] rounded-lg p-1 px-3">
+          <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 px-3">
             <div className='flex justify-between'>
               <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">Location</h3>
               <div>
@@ -392,7 +392,7 @@ const ProfileDetail = () => {
           </div>
 
           {/* Reasons to Join Platform Section */}
-          <div className="mb-4 group relative hover:bg-[#E3E8EF] rounded-lg p-1 px-3">
+          <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 px-3">
             <div className='flex justify-between'>
               <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">Reasons to Join Platform</h3>
               <div>
@@ -432,7 +432,7 @@ const ProfileDetail = () => {
           </div>
 
           {/* Interests Section */}
-          <div className="mb-4 group relative hover:bg-[#E3E8EF] rounded-lg p-1 px-3">
+          <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 px-3">
             <div className='flex justify-between'>
               <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">Interests</h3>
               <div>

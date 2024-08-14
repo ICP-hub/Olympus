@@ -7,7 +7,7 @@ import InvestorForm from '../../Auth/investorForm/InvestorForm';
 import MentorSignupMain from '../Mentor-Signup-Model/MentorsignUpmain';
 
 const Modal1 = ({ isOpen, onClose }) => {
-    const [modalOpen, setModalOpen] = useState(isOpen );
+    const [modalOpen, setModalOpen] = useState(isOpen);
     const [selectedRole, setSelectedRole] = useState(null);
     const [showRoleModal, setShowRoleModal] = useState(false);
 
@@ -63,9 +63,9 @@ const Modal1 = ({ isOpen, onClose }) => {
                             <div className="flex flex-col space-y-2">
                                 {roles.map((role, index) => (
                                     <label key={index} className="flex items-center justify-between px-2 border rounded-lg cursor-pointer hover:bg-gray-100" onClick={() => handleRoleSelect(role.name)}>
-                                        <div className="flex items-center">
-                                            <img src={role.image} alt={role.name} className="rounded-full mr-4" />
-                                            <div>
+                                        <div className="flex items-center py-2">
+                                            <img src={role.image} alt={role.name} className="rounded-full " />
+                                            <div className='flex '>
                                                 <span className="ml-4">
                                                     <span className="font-semibold -mt-2 justify-start flex">{role.name}</span>
                                                     <span className="block text-gray-600 text-sm">{role.description}</span>
