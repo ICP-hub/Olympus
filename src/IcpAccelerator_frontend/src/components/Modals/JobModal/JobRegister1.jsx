@@ -113,9 +113,9 @@ const JobRegister1 = ({
 
   const fetchLocations = async () => {
     return [
-      { id: "new-york", name: "New York" },
-      { id: "san-francisco", name: "San Francisco" },
-      { id: "los-angeles", name: "Los Angeles" },
+      { id: "on", name: "On-site" },
+      { id: "hyb", name: "Hybrid" },
+      { id: "rem", name: "Remote" },
     ];
   };
   

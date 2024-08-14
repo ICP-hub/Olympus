@@ -121,7 +121,7 @@
 
 // export default DashboardHomeWelcomeSection;
 
-import React from 'react';
+import React, { useState } from 'react';
 import KYCfileIcon from "../../../../assets/Logo/KYCfileIcon.png";
 import DashboardHomeProfileCards from './DashboardHomeProfileCards';
 import mentor from "../../../../assets/Logo/mentor.png";
@@ -129,6 +129,7 @@ import talent from "../../../../assets/Logo/talent.png";
 import founder from "../../../../assets/Logo/founder.png";
 import Avatar3 from "../../../../assets/Logo/Avatar3.png";
 import { dashboard } from "../../jsondata/data/dashboardData";
+import Modal1 from '../../Modals/Project Modal/modal1';
 const styles = {
   circularChart: {
     display: 'block',
@@ -165,7 +166,8 @@ const styles = {
 };
 
 function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
-  const { dashboardwelcomesection } = dashboard
+  const [roleModalOpen, setRoleModalOpen] = useState(false);
+  const {dashboardwelcomesection}=dashboard
   const actionCards = [
     {
       title: 'Complete profile',
@@ -193,7 +195,11 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
       imageGroup: true, // Adding a flag to indicate that this card should have the image group
     },
   ];
-
+  const handleButtonClick = (action) => {
+    if (action === 'Create role') {
+      setRoleModalOpen(!roleModalOpen);
+    }
+  };
   return (
     <>
       <div className="bg-white rounded-lg p-6 mb-6 pt-1">
@@ -250,7 +256,7 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
                   </div>
                 </div>
                 <div className="mt-auto pt-4 flex items-center space-x-2">
-                  <button className="bg-white border-2 border-[#CDD5DF] text-[#364152] px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
+                  <button className="bg-white border-2 border-[#CDD5DF] text-[#364152] px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors" onClick={() => handleButtonClick(card.action)}>
                     {card.action}
                   </button>
                   {card.dismissable && (
@@ -265,6 +271,7 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
         </div>
       </div>
       <DashboardHomeProfileCards />
+      {roleModalOpen && <Modal1 isOpen={roleModalOpen} onClose={() => setRoleModalOpen(false)} />}
     </>
   );
 }
