@@ -60,6 +60,7 @@ pub struct Role {
     pub requested_on: Option<u64>,
     pub approved_on: Option<u64>,
     pub rejected_on: Option<u64>,
+    pub approval_status: String,
 }
 
 #[derive(CandidType, Clone, Serialize, Deserialize)]
@@ -137,6 +138,7 @@ pub fn initialize_roles() {
             requested_on: None,
             approved_on: Some(time()),
             rejected_on: None,
+            approval_status: "default".to_string(),
         },
         Role {
             name: "project".to_string(),
@@ -144,6 +146,7 @@ pub fn initialize_roles() {
             requested_on: None,
             approved_on: None,
             rejected_on: None,
+            approval_status: "default".to_string(),
         },
         Role {
             name: "mentor".to_string(),
@@ -151,6 +154,7 @@ pub fn initialize_roles() {
             requested_on: None,
             approved_on: None,
             rejected_on: None,
+            approval_status: "default".to_string(),
         },
         Role {
             name: "vc".to_string(),
@@ -158,6 +162,7 @@ pub fn initialize_roles() {
             requested_on: None,
             approved_on: None,
             rejected_on: None,
+            approval_status: "default".to_string(),
         },
     ];
 
@@ -253,6 +258,7 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
             for role in role_status_vec.iter_mut() {
                 if role.name == "user" {
                     role.status = "active".to_string();
+                    role.approval_status = "approved".to_string();
                     role.requested_on = Some(time());
                     break;
                 }
@@ -267,6 +273,7 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
                     requested_on: None,
                     approved_on: Some(time()),
                     rejected_on: None,
+                    approval_status: "default".to_string(),
                 },
                 Role {
                     name: "project".to_string(),
@@ -274,6 +281,7 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
                     requested_on: None,
                     approved_on: None,
                     rejected_on: None,
+                    approval_status: "default".to_string(),
                 },
                 Role {
                     name: "mentor".to_string(),
@@ -281,6 +289,7 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
                     requested_on: None,
                     approved_on: None,
                     rejected_on: None,
+                    approval_status: "default".to_string(),
                 },
                 Role {
                     name: "vc".to_string(),
@@ -288,6 +297,7 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
                     requested_on: None,
                     approved_on: None,
                     rejected_on: None,
+                    approval_status: "default".to_string(),
                 },
             ];
             role_status.insert(StoredPrincipal(caller), Candid(initial_roles));
@@ -427,6 +437,7 @@ pub fn get_roles_for_principal(principal_id: Principal) -> Vec<Role> {
                     requested_on: None,
                     approved_on: None,
                     rejected_on: None,
+                    approval_status: "default".to_string(),
                 },
                 Role {
                     name: "project".to_string(),
@@ -434,6 +445,7 @@ pub fn get_roles_for_principal(principal_id: Principal) -> Vec<Role> {
                     requested_on: None,
                     approved_on: None,
                     rejected_on: None,
+                    approval_status: "default".to_string(),
                 },
                 Role {
                     name: "mentor".to_string(),
@@ -441,6 +453,7 @@ pub fn get_roles_for_principal(principal_id: Principal) -> Vec<Role> {
                     requested_on: None,
                     approved_on: None,
                     rejected_on: None,
+                    approval_status: "default".to_string(),
                 },
                 Role {
                     name: "vc".to_string(),
@@ -448,6 +461,7 @@ pub fn get_roles_for_principal(principal_id: Principal) -> Vec<Role> {
                     requested_on: None,
                     approved_on: None,
                     rejected_on: None,
+                    approval_status: "default".to_string(),
                 },
             ]
         }
@@ -467,6 +481,7 @@ pub fn get_role_status() -> Vec<Role> {
                     requested_on: None,
                     approved_on: None,
                     rejected_on: None,
+                    approval_status: "default".to_string(),
                 },
                 Role {
                     name: "project".to_string(),
@@ -474,6 +489,7 @@ pub fn get_role_status() -> Vec<Role> {
                     requested_on: None,
                     approved_on: None,
                     rejected_on: None,
+                    approval_status: "default".to_string(),
                 },
                 Role {
                     name: "mentor".to_string(),
@@ -481,6 +497,7 @@ pub fn get_role_status() -> Vec<Role> {
                     requested_on: None,
                     approved_on: None,
                     rejected_on: None,
+                    approval_status: "default".to_string(),
                 },
                 Role {
                     name: "vc".to_string(),
@@ -488,6 +505,7 @@ pub fn get_role_status() -> Vec<Role> {
                     requested_on: None,
                     approved_on: None,
                     rejected_on: None,
+                    approval_status: "default".to_string(),
                 },
             ]
         }
@@ -498,7 +516,7 @@ pub fn get_role_status() -> Vec<Role> {
 pub fn get_approved_role_count_for_principal(principal_id: Principal) -> usize {
     get_roles_for_principal(principal_id)
         .into_iter()
-        .filter(|role| role.status == "approved")
+        .filter(|role| role.approval_status == "approved")
         .count()
 }
 
