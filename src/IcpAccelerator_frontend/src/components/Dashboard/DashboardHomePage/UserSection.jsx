@@ -7,6 +7,7 @@ import CypherpunkLabLogo from "../../../../assets/Logo/CypherpunkLabLogo.png";
 import { FavoriteBorder, LocationOn, Star } from '@mui/icons-material';
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
 import Tabs from '../../Tabs/Tabs';
+import UserDetailPage from './UserDetailPage';
 
 
 const UserCard = ({ name, username, tags, role, description, rating, skills, location, avatar }) => {
@@ -17,11 +18,12 @@ const UserCard = ({ name, username, tags, role, description, rating, skills, loc
     INVESTER: 'bg-[#FFFAEB] border-[#FEDF89] border text-[#B54708] rounded-md',
     TALENT: 'bg-[#ECFDF3] border-[#ABEFC6] border text-[#067647] rounded-md',
   };
+  const [openDetail,setOpenDetail]=useState(false)
 
   return (
     <div className=" p-6 w-[750px] rounded-lg shadow-sm mb-4 flex">
       <div className="w-[272px]  ">
-        <div className="max-w-[250px] w-[250px] bg-gray-100 rounded-lg flex flex-col justify-between h-full relative overflow-hidden">
+        <div onClick={()=>setOpenDetail(true)} className="max-w-[250px] w-[250px] bg-gray-100 rounded-lg flex flex-col justify-between h-full relative overflow-hidden">
           <div className="absolute inset-0 flex items-center justify-center">
             <img
               src={avatar}
@@ -37,6 +39,7 @@ const UserCard = ({ name, username, tags, role, description, rating, skills, loc
           )}
         </div>
       </div>
+      {openDetail && <UserDetailPage openDetail={openDetail} setOpenDetail={setOpenDetail} />}
       <div className="flex-grow ml-[25px] w-[544px]">
         <div className="flex justify-between items-start mb-2">
           <div>
