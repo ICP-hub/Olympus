@@ -494,6 +494,14 @@ pub fn get_role_status() -> Vec<Role> {
     })
 }
 
+#[query]
+pub fn get_approved_role_count_for_principal(principal_id: Principal) -> usize {
+    get_roles_for_principal(principal_id)
+        .into_iter()
+        .filter(|role| role.status == "approved")
+        .count()
+}
+
 // #[update(guard = "is_user_anonymous")]
 // pub fn switch_role(role : String, status: String){
 //     ROLE_STATUS_ARRAY.with(|status_arr|{

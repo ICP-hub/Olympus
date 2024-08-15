@@ -90,7 +90,6 @@ pub struct ProjectInfo {
     pub long_term_goals: Option<String>,
     pub target_market: Option<String>, //
     pub self_rating_of_project: f64,
-    pub user_data: UserInformation,
     pub mentors_assigned: Option<Vec<MentorProfile>>,
     pub vc_assigned: Option<Vec<VentureCapitalist>>,
     pub project_twitter: Option<String>,
@@ -155,7 +154,6 @@ pub struct ProjectPublicInfo {
     pub long_term_goals: Option<String>,
     pub target_market: Option<String>,
     pub self_rating_of_project: f64,
-    pub user_data: UserInformation,
     pub mentors_assigned: Option<Vec<MentorProfile>>,
     pub vc_assigned: Option<Vec<VentureCapitalist>>,
     pub project_twitter: Option<String>,
@@ -229,7 +227,6 @@ pub struct ProjectInfoForUser {
     pub project_discord: Option<String>,
     pub promotional_video: Option<String>,
     pub github_link: Option<String>,
-    //pub user_data: UserInformation,
     pub project_team: Option<Vec<TeamMember>>,
     pub dapp_link: Option<String>,
     pub weekly_active_users: Option<u64>,
@@ -658,16 +655,6 @@ pub async fn create_project(info: ProjectInfo) -> String {
                 }
             });
 
-            // let res = send_approval_request(
-            //     info.user_data.profile_picture.unwrap_or_else(|| Vec::new()),
-            //     info.user_data.full_name,
-            //     info.user_data.country,
-            //     info.project_area_of_focus,
-            //     "project".to_string(),
-            //     info.user_data.bio.unwrap_or("no bio".to_string()),
-            // )
-            // .await;
-
             format!("Project created Succesfully with UID {}", new_project.uid)
         }
         Err(e) => format!("Validation error: {}", e),
@@ -799,7 +786,6 @@ pub fn get_project_details_for_mentor_and_investor(
         long_term_goals: project_details.params.long_term_goals,
         target_market: project_details.params.target_market,
         self_rating_of_project: project_details.params.self_rating_of_project,
-        user_data: project_details.params.user_data,
         mentors_assigned: project_details.params.mentors_assigned,
         vc_assigned: project_details.params.vc_assigned,
         project_twitter: project_details.params.project_twitter,
@@ -848,7 +834,6 @@ pub fn get_project_public_information_using_id(project_id: String) -> ProjectPub
         long_term_goals: project_details.params.long_term_goals,
         target_market: project_details.params.target_market,
         self_rating_of_project: project_details.params.self_rating_of_project,
-        user_data: project_details.params.user_data,
         mentors_assigned: project_details.params.mentors_assigned,
         vc_assigned: project_details.params.vc_assigned,
         project_twitter: project_details.params.project_twitter,
@@ -1060,14 +1045,15 @@ pub async fn change_project_images(
     caller: Principal,
     mut updated_project: ProjectInfo,
 ) -> ProjectInfo {
-    let temp_image = updated_project.user_data.profile_picture.clone();
+    let mut user_data = get_user_information_internal(caller);
+    let temp_image = user_data.profile_picture.clone();
     let canister_id = crate::asset_manager::get_asset_canister();
     let project_logo = updated_project.project_logo.clone();
     let project_cover = updated_project.project_cover.clone();
 
     if temp_image.is_none() {
         let full_url = canister_id.to_string() + "/uploads/default_user.jpeg";
-        updated_project.user_data.profile_picture = Some((full_url).as_bytes().to_vec());
+        user_data.profile_picture = Some((full_url).as_bytes().to_vec());
     } else if temp_image.clone().unwrap().len() < 300 {
         ic_cdk::println!("Profile image is already uploaded");
     } else {
@@ -1089,7 +1075,7 @@ pub async fn change_project_images(
 
         let (result,): ((),) = call(canister_id, "store", (arg,)).await.unwrap();
 
-        updated_project.user_data.profile_picture =
+        user_data.profile_picture =
             Some((canister_id.to_string() + &key).as_bytes().to_vec());
     }
 
@@ -1241,20 +1227,7 @@ pub async fn update_project(project_id: String, mut updated_project: ProjectInfo
         None => return "No original project info found.".to_string(),
     }
 
-    let res = send_approval_request(
-        updated_project
-            .user_data
-            .profile_picture
-            .unwrap_or_else(Vec::new),
-        updated_project.user_data.full_name,
-        updated_project.user_data.country,
-        updated_project.project_area_of_focus,
-        "project".to_string(),
-        updated_project.user_data.bio.unwrap_or_default(),
-    )
-    .await;
-
-    format!("{}", res)
+    format!("Updation Done")
 }
 
 pub fn delete_project(id: String) -> std::string::String {
@@ -1647,10 +1620,10 @@ pub fn filter_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
             .iter()
             .flat_map(|(_, project_list)| project_list.0.clone().into_iter())
             .filter(|project_internal| {
-                let country_match = criteria
-                    .country
-                    .as_ref()
-                    .map_or(true, |c| &project_internal.params.user_data.country == c);
+                // let country_match = criteria
+                //     .country
+                //     .as_ref()
+                //     .map_or(true, |c| &project_internal.params.user_data.country == c);
 
                 let rating_match = criteria.rating_range.map_or(true, |(min, max)| {
                     project_internal.params.self_rating_of_project >= min
@@ -1683,7 +1656,7 @@ pub fn filter_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
                         })
                 });
 
-                country_match && rating_match && focus_match && vc_match
+                rating_match && focus_match && vc_match
             })
             .map(|project_internal| project_internal.params.clone())
             .collect()
@@ -1716,7 +1689,6 @@ pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUse
                     project_discord: project_internal.params.project_discord.clone(),
                     promotional_video: project_internal.params.promotional_video.clone(),
                     github_link: project_internal.params.github_link.clone(),
-                    //user_data: project_internal.params.user_data.clone(),
                     project_team: project_internal.params.project_team.clone(),
                     dapp_link: project_internal.params.dapp_link.clone(),
                     weekly_active_users: project_internal.params.weekly_active_users.clone(),

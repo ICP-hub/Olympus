@@ -1046,7 +1046,6 @@ pub fn approve_project_update(requester: Principal, project_id: String, approve:
                         project.params.long_term_goals = project_update_request.0.updated_info.long_term_goals;
                         project.params.target_market = project_update_request.0.updated_info.target_market;
                         project.params.self_rating_of_project = project_update_request.0.updated_info.self_rating_of_project;
-                        project.params.user_data = project_update_request.0.updated_info.user_data;
                         project.params.mentors_assigned = project_update_request.0.updated_info.mentors_assigned;
                         project.params.vc_assigned = project_update_request.0.updated_info.vc_assigned;
                         project.params.project_website = project_update_request.0.updated_info.project_website;
@@ -1547,12 +1546,12 @@ fn get_top_5_projects() -> Vec<(String, TopDataProject, usize)> {
                     let mentor_count = project_internal.params.mentors_assigned.as_ref().map_or(0, |v| v.len());
                     let vc_count = project_internal.params.vc_assigned.as_ref().map_or(0, |v| v.len());
                     let total_count = mentor_count + vc_count;
-
+                    let user_data = get_user_information_internal(principal.0);
                     let top_data = TopDataProject {
-                        full_name: project_internal.params.user_data.full_name.clone(),
+                        full_name: user_data.full_name.clone(),
                         profile_picture: project_internal.params.project_logo.clone(),
                         area_of_interest: project_internal.params.project_area_of_focus.clone(),
-                        country: project_internal.params.user_data.country.clone(),
+                        country: user_data.country.clone(),
                         joined_on: project_internal.creation_date,
                         principal: principal.0,
                     };
