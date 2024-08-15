@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, } from "react";
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
-
 import { useFormContext, Controller } from "react-hook-form";
 import CompressedImage from "../../../component/ImageCompressed/CompressedImage"
 const ProjectRegister2 = ({ isOpen, onClose, onBack }) => {
@@ -18,7 +17,6 @@ const ProjectRegister2 = ({ isOpen, onClose, onBack }) => {
 
     const [coverPreview, setCoverPreview] = useState(null);
     const [coverData, setCoverData] = useState(null);
-
     const coverCreationFunc = async (file) => {
         const result = await trigger("cover");
         if (result) {
@@ -56,6 +54,8 @@ const ProjectRegister2 = ({ isOpen, onClose, onBack }) => {
         setCoverData(null);
         setCoverPreview(null);
     };
+
+
 
     return (
         <>
@@ -245,10 +245,12 @@ const ProjectRegister2 = ({ isOpen, onClose, onBack }) => {
                             </span>
                         )}
                     </div>
+               
                 </>
             ) : (
                 <></>
             )}
+               
         </>
     );
 };

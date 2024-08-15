@@ -19,6 +19,7 @@ import ProjectRegisterMain from '../../Modals/ProjectRegisterModal/ProjectRegist
 import InvestorForm from '../../Auth/investorForm/InvestorForm'
 import { useSelector } from 'react-redux'
 import DocumentSection from '../Project/DocumentSection'
+import DiscoverRegionalHubs from '../RegionalHubs/RegionalHubs'
 
 function DashboardHomePage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -43,6 +44,7 @@ function DashboardHomePage() {
             <Route path="/work-section" element={<WorksSection />} />
             <Route path="/work-section-detail-page" element={<WorkSectionDetailPage />} />
             <Route path="/document" element={<DocumentSection />} />
+            <Route path="/regional-hubs" element={<DiscoverRegionalHubs />} />
           </Routes>
         </main>
 

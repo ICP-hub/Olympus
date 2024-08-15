@@ -236,7 +236,7 @@ function DashboardSidebar({ isOpen, onClose }) {
               </li>
               <li>
                 <Link
-                  to="/regional-hubs"
+                  to="/dashboard/regional-hubs"
                   onClick={() => handleLinkClick('/regional-hubs')}
                   className={`flex items-center px-6 py-2 ${activeLink === '/regional-hubs' ? 'bg-[#e4e3e2b1] ' : 'hover:bg-[#e4e3e2b1]'}`}
                 >

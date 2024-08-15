@@ -5,12 +5,12 @@ import { formFields } from "./EventFormData";
 import { useCountries } from "react-countries";
 import { useFormContext } from "react-hook-form";
 import { useSelector } from "react-redux";
-const EventReg2 = () => {
+const EventReg2 = ({setSelectedCountry}) => {
     const { register, formState: { errors }} = useFormContext();
     const [selectedArea, setSelectedArea] = useState("");
     const { countries } = useCountries();
     const [inputType, setInputType] = useState("date");
-    const [selectedCountry, setSelectedCountry] = useState("");
+  
     const handleFocus = (field) => {
         if (field.onFocus) {
           setInputType(field.onFocus);

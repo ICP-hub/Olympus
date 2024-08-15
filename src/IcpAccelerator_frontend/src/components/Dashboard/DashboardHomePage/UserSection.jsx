@@ -153,16 +153,7 @@ const UsersSection = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-white">
       <h1 className="text-3xl font-bold p-6 px-0   -top-[0.6rem] bg-opacity-95 sticky bg-white z-20">Discover</h1>
       <Tabs tabs={tabs} currentTab={currentTab} onTabChange={handleTabChange} />
-      {/* <div className="border-b border-gray-200 mb-6">
-       <nav className="-mb-px flex space-x-8">
-         <a href="#" className="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">All</a>
-         <a href="#" className="border-blue-500 text-blue-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Users</a>
-         <a href="#" className="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Projects</a>
-         <a href="#" className="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Mentors</a>
-         <a href="#" className="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Talent</a>
-         <a href="#" className="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Investors</a>
-       </nav>
-     </div> */}
+   
       <div className="flex">
         <div className=" pr-6">
           {/* {users.map((user, index) => (
