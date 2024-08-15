@@ -135,6 +135,11 @@ pub fn get_mentor_declined_info_using_principal(caller: Principal) -> Option<Men
 pub async fn register_mentor(mut profile: MentorProfile) -> String {
     let caller = caller();
 
+    let role_count = get_approved_role_count_for_principal(caller);
+    if role_count >= 2 {
+        return "You are not eligible for this role because you have 2 or more roles".to_string();
+    }
+
     let request_declined = read_state(|state| {
         state
             .mentor_declined_request

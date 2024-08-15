@@ -458,6 +458,11 @@ pub async fn create_project(info: ProjectInfo) -> String {
 
     let caller = caller();
 
+    let role_count = get_approved_role_count_for_principal(caller);
+    if role_count >= 2 {
+        return "You are not eligible for this role because you have 2 or more roles".to_string();
+    }
+
     // // Check if the caller has any declined project requests
     // let has_declined_requests = read_state(|state| {
     //     state

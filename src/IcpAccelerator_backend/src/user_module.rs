@@ -512,13 +512,15 @@ pub fn get_role_status() -> Vec<Role> {
     })
 }
 
-// #[query]
-// pub fn get_approved_role_count_for_principal(principal_id: Principal) -> usize {
-//     get_roles_for_principal(principal_id)
-//         .into_iter()
-//         .filter(|role| role.approval_status == "approved")
-//         .count()
-// }
+#[query]
+pub fn get_approved_role_count_for_principal(principal_id: Principal) -> usize {
+    get_roles_for_principal(principal_id)
+        .into_iter()
+        .filter(|role| {
+            role.approval_status.as_deref() == Some("approved") && role.name != "user"
+        })
+        .count()
+}
 
 // #[update(guard = "is_user_anonymous")]
 // pub fn switch_role(role : String, status: String){

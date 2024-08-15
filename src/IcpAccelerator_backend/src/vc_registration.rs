@@ -140,6 +140,12 @@ pub struct UpdateInfoStruct {
 #[update(guard = "is_user_anonymous")]
 pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::string::String {
     let caller = caller();
+
+    let role_count = get_approved_role_count_for_principal(caller);
+    if role_count >= 2 {
+        return "You are not eligible for this role because you have 2 or more roles".to_string();
+    }
+
     let uuids = raw_rand().await.unwrap().0;
     let uid = format!("{:x}", Sha256::digest(&uuids));
     let new_id = uid.clone().to_string();
