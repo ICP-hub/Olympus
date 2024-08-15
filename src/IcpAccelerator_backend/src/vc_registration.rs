@@ -276,7 +276,7 @@ pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::
                     for role in role_status_vec.iter_mut() {
                         if role.name == "vc" {
                             role.status = "approved".to_string();
-                            role.approval_status = "approved".to_string();
+                            role.approval_status = Some("approved".to_string());
                             role.approved_on = Some(time());
                             break;
                         }
