@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import Avatar from '@mui/material/Avatar';
 import AvatarGroup from '@mui/material/AvatarGroup';
@@ -12,6 +12,8 @@ import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOut
 import Modal1 from '../Modals/Project Modal/modal1';
 import { animatedLeftSvgIcon, animatedRightSvgIcon, userPlusIcon } from '../Utils/Data/SvgData';
 import { profile } from '../jsondata/data/profileData';
+import ProfileCard from './RoleProfileCard';
+import { useSelector } from 'react-redux';
 
 const FAQItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -67,7 +69,14 @@ const Role = () => {
   const {roles} =profile
   const [roleModalOpen, setRoleModalOpen] = useState(false);
 console.log("my model status ",roleModalOpen)
-
+const userFullData = useSelector((currState) => currState.userData.data.Ok);
+console.log("User aa raha hai", userFullData)
+// useEffect(() => {
+//   if (userFullData) {
+//     setValuesHandler(userFullData);
+//     setEditMode(true);
+//   }
+// }, [userFullData]);
   return (
     <>
       <div className="flex flex-col">
@@ -81,7 +90,7 @@ console.log("my model status ",roleModalOpen)
             <div className="flex justify-center">
               <div className="bg-gray-200 rounded-full mb-4">
                 <img
-                  src={ProfileImage}
+                  src={userFullData.profile_picture[0]}
                   alt="Matt Bowers"
                   className="w-20 h-20 mx-auto rounded-full"
                 />
@@ -97,9 +106,9 @@ console.log("my model status ",roleModalOpen)
                 <span>
                   <VerifiedIcon sx={{ fontSize: "medium", color: "#155EEF" }} />
                 </span>
-                {roles.profile.name}
+                {userFullData.full_name}
               </h2>
-              <p>{roles.profile.username}</p>
+              <p> {userFullData.openchat_username[0]}</p>
             </div>
             <div className="flex justify-center items-center">
               <p className="font-normal">
@@ -136,6 +145,7 @@ console.log("my model status ",roleModalOpen)
               </button>
             </div>
           </div>
+         
           <div className="border-2 rounded-lg text-center min-w-[220px] max-w-[350px]">
             <div className="p-3 flex justify-center mt-5">
               <AvatarGroup max={4}>
