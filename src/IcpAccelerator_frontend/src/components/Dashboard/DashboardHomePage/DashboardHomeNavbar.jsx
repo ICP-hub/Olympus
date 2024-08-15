@@ -35,8 +35,8 @@ import { logoutStart } from "../../StateManagement/Redux/Reducers/InternetIdenti
 import { useDispatch, useSelector } from "react-redux";
 import { afterCopySvg } from "../../../component/Utils/Data/SvgData";
 import { beforeCopySvg } from "../../../component/Utils/Data/SvgData";
-import { changeHasSelectedRoleHandler } from "../../../component/StateManagement/Redux/Reducers/userRoleReducer";
-import { useAuth } from "../../../component/StateManagement/useContext/useAuth";
+import { changeHasSelectedRoleHandler } from "../../../components/StateManagement/Redux/Reducers/userRoleReducer";
+import { useAuth } from "../../../components/StateManagement/useContext/useAuth";
 import toast, { Toaster } from "react-hot-toast";
 
 function DashboardHomeNavbar() {

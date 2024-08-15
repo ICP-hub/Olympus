@@ -49,7 +49,7 @@ const InvestorModal1 = ({ isOpen, onClose, onBack }) => {
         useState([]);
     // const { countries } = useCountries();
     const { getValues, register, clearErrors, watch, countries, formState: { errors }, setValue, setError, invested_in_multi_chain_names, trigger } = useFormContext();
-    console.log(getValues)
+    // console.log(getValues)
     const navigate = useNavigate()
     const [modalOpen, setModalOpen] = useState(isOpen || true);
     const selectStyles = {

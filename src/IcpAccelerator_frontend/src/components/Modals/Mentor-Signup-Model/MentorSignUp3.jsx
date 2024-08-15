@@ -4,7 +4,7 @@ import { useFormContext } from "react-hook-form";
 import { useSelector } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
 
-const MentorSignup3 = () => {
+const MentorSignup3 = ({formData}) => {
   const { register, formState: { errors }, watch, setValue, clearErrors, setError, getValues } = useFormContext();
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
   const multiChainNames = useSelector((currState) => currState.chains.chains);
@@ -42,24 +42,25 @@ const MentorSignup3 = () => {
 
   const mentorFullData = useSelector((currState) => currState.mentorData.data[0]);
   useEffect(() => {
-    if (mentorFullData) {
-      setMentorValuesHandler(mentorFullData);
+    if (formData) {
+      setMentorValuesHandler(formData);
     }
-  }, [mentorFullData]);
+  }, [formData]);
 
   const setMentorValuesHandler = (val) => {
+    console.log('val',val)
     if (val) {
       setValue("category_of_mentoring_service", val.category_of_mentoring_service ?? "");
       setCategoryOfMentoringServiceSelectedOptionsHandler(val.category_of_mentoring_service ?? null);
-      setValue("multi_chain", val.multichain?.[0] ? "true" : "false");
-      setValue("multi_chain_names", val.multichain?.[0] ? val.multichain[0] : "");
-      setMultiChainSelectedOptionsHandler(val.multichain ?? null);
+      setValue("multi_chain", val.multi_chain === true || val.multi_chain === 'true' ? 'true' : 'false');
+      setValue("multi_chain_names", val.multi_chain_names ? val.multi_chain_names : "");
+      setMultiChainSelectedOptionsHandler(val.multi_chain_names ?? null);
     }
   };
 
-  useEffect(() => {
-    console.log("Form values:", getValues());
-  }, [watch()]);
+  // useEffect(() => {
+  //   console.log("Form values:", getValues());
+  // }, [watch()]);
 
   return (
     <>
@@ -93,6 +94,10 @@ const MentorSignup3 = () => {
         </label>
         <select
           {...register("multi_chain")}
+          onChange={(e) => {
+            const value = e.target.value === "true" ? "true" : "false";
+            setValue("multi_chain", value);
+          }}
           className={`bg-gray-50 border rounded-md shadow-sm ${
             errors.multi_chain ? "border-red-500" : "border-[#CDD5DF]"
           } text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}

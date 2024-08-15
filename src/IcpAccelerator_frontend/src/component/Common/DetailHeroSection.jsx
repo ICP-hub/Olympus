@@ -6,9 +6,9 @@ import Event from "../../../assets/images/Event.png";
 import Investor from "../../../assets/images/investorRegistration.png";
 import { useNavigate } from "react-router-dom";
 import { closeSwitchBlackModalSvg } from "../Utils/Data/SvgData";
-import { useAuth } from "../StateManagement/useContext/useAuth";
+import { useAuth } from "../../components/StateManagement/useContext/useAuth";
 import { useDispatch } from "react-redux";
-import { removeActor } from "../StateManagement/Redux/Reducers/actorBindReducer";
+import { removeActor } from "../../components/StateManagement/Redux/Reducers/actorBindReducer";
 
 const DetailHeroSection = () => {
   const { logout } = useAuth();

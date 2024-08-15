@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import guide from "../../../../assets/getStarted/guide.png";
 import upvote from "../../../../assets/getStarted/upvote.png";
 import SubmitSection from "../../Footer/SubmitSection";
-import { getCurrentRoleStatusRequestHandler } from "../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
+import { getCurrentRoleStatusRequestHandler } from "../../../components/StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 import SpotLight from "../SpotLight";
 import LiveProjects from "../LiveProjects";
 import CurrentlyRaising from "../CurrentlyRaising";

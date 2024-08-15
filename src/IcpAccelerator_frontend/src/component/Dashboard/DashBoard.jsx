@@ -5,7 +5,7 @@ import {
   getCurrentRoleStatusFailureHandler,
   setCurrentActiveRole,
   setCurrentRoleStatus,
-} from "../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
+} from "../../components/StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 import SpotLight from "./SpotLight";
 import ImpactTool from "./ImpactTool";
 import ProjectJobCard from "../Project/ProjectDetails/ProjectJobCard";

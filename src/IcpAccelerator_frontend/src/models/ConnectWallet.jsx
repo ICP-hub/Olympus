@@ -5,7 +5,7 @@ import {
 } from "../component/Utils/Data/SvgData";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../component/StateManagement/useContext/useAuth";
+import { useAuth } from "../components/StateManagement/useContext/useAuth";
 
 const ConnectWallet = ({ isModalOpen, onClose }) => {
   const isAuthenticated = useSelector(

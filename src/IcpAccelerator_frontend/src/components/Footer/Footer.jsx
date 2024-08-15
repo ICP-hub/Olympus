@@ -33,9 +33,9 @@ const Footer = () => {
               <div className="w-1/2 md:w-1/4 mb-8 md:mb-0">
                 <h4 className="text-base font-normal mb-4 text-gray-600">{homepagedata.footer.explore.title}</h4>
                 <ul className="text-[#4B5565] font-bold">
-                  {homepagedata.footer.explore.items.map(item=>{
+                  {homepagedata.footer.explore.items.map((item,index)=>{
                     return(
-                      <li className="mb-2"><a href="/">{item}</a></li>
+                      <li className="mb-2" key={index}><a href="/">{item}</a></li>
                     )
                   })}
                   {/* <li className="mb-2"><a href="/">Projects</a></li>
@@ -49,9 +49,9 @@ const Footer = () => {
                 <h4 className="text-base font-normal mb-4 text-gray-600">{homepagedata.footer.company.title}</h4>
                 <ul className="text-[#4B5565] font-bold">
                   {
-                    homepagedata.footer.company.items.map(item=>{
+                    homepagedata.footer.company.items.map((item,index)=>{
                       return(
-                        <li className="mb-2"><a href="/">{item}</a></li>
+                        <li className="mb-2" key={index}><a href="/">{item}</a></li>
                       )
                     })
                   }
@@ -65,9 +65,9 @@ const Footer = () => {
                 <h4 className="text-base font-normal mb-4 text-gray-600">{homepagedata.footer.resources.title}</h4>
                 <ul className="text-[#4B5565] font-bold">
                   {
-                    homepagedata.footer.resources.items.map(item=>{
+                    homepagedata.footer.resources.items.map((item,index)=>{
                       return(
-                        <li className="mb-2"><a href="/">{item}</a></li>
+                        <li className="mb-2" key={index}><a href="/">{item}</a></li>
                       )
                     })
                   }

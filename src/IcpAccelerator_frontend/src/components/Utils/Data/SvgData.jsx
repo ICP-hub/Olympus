@@ -48,10 +48,51 @@ export const userPlusIcon = (
   </svg>
 )
 export const animatedLeftSvgIcon = (
-  <svg width="199" height="100" viewBox="0 0 199 122" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M198 0V46.6316C198 59.8864 187.255 70.6316 174 70.6316H25C11.7452 70.6316 1 81.3768 1 94.6316V122" stroke="#E3E8EF" stroke-width="2" />
+  <svg
+    width="199"
+    height="100"
+    viewBox="0 0 199 122"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <defs>
+      {/* Define the gradient for the stroke */}
+      <linearGradient id="neon-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#FF0A3C" />
+        <stop offset="50%" stopColor="#E60032" />
+        <stop offset="100%" stopColor="#CC0028" />
+      </linearGradient>
+
+      {/* Define the blur filter for the glow effect */}
+      <filter id="neon-glow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="3.5" result="coloredBlur" />
+        <feMerge>
+          <feMergeNode in="coloredBlur" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+
+      {/* Define the wave animation */}
+    </defs>
+
+    {/* Duplicate the path for the glow effect */}
+    <path
+      d="M198 0V46.6316C198 59.8864 187.255 70.6316 174 70.6316H25C11.7452 70.6316 1 81.3768 1 94.6316V122"
+      stroke="url(#neon-gradient)"
+      strokeWidth="2"
+      filter="url(#neon-glow)"
+      className="wave-animation"
+    />
+    {/* Original path with gradient stroke */}
+    <path
+      d="M198 0V46.6316C198 59.8864 187.255 70.6316 174 70.6316H25C11.7452 70.6316 1 81.3768 1 94.6316V122"
+      stroke="url(#neon-gradient)"
+      strokeWidth="2"
+      className="wave-animation"
+    />
   </svg>
-)
+);
+
 export const animatedRightSvgIcon = (
   <svg width="214" height="100" viewBox="0 0 214 122" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M1 0V46.6316C1 59.8864 11.7452 70.6316 25 70.6316H189C202.255 70.6316 213 81.3768 213 94.6316V122" stroke="#E3E8EF" stroke-width="2" />
@@ -69,7 +110,7 @@ export const lenseSvgIcon = (
 )
 export const clockSvgIcon = (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <g clip-path="url(#clip0_414_2330)">
+    <g clipPath="url(#clip0_414_2330)">
       <path d="M10.0001 5.00033V10.0003L13.3334 11.667M18.3334 10.0003C18.3334 14.6027 14.6025 18.3337 10.0001 18.3337C5.39771 18.3337 1.66675 14.6027 1.66675 10.0003C1.66675 5.39795 5.39771 1.66699 10.0001 1.66699C14.6025 1.66699 18.3334 5.39795 18.3334 10.0003Z" stroke="#364152" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round" />
     </g>
     <defs>
@@ -86,7 +127,7 @@ export const homeSvgIcon = (
 )
 export const userCircleSvgIcon = (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <g clip-path="url(#clip0_414_5579)">
+    <g clipPath="url(#clip0_414_5579)">
       <path d="M4.43033 16.199C4.93727 15.0047 6.12085 14.167 7.50008 14.167H12.5001C13.8793 14.167 15.0629 15.0047 15.5698 16.199M13.3334 7.91699C13.3334 9.75794 11.841 11.2503 10.0001 11.2503C8.15913 11.2503 6.66675 9.75794 6.66675 7.91699C6.66675 6.07604 8.15913 4.58366 10.0001 4.58366C11.841 4.58366 13.3334 6.07604 13.3334 7.91699ZM18.3334 10.0003C18.3334 14.6027 14.6025 18.3337 10.0001 18.3337C5.39771 18.3337 1.66675 14.6027 1.66675 10.0003C1.66675 5.39795 5.39771 1.66699 10.0001 1.66699C14.6025 1.66699 18.3334 5.39795 18.3334 10.0003Z" stroke="#121926" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
     </g>
     <defs>
@@ -116,7 +157,7 @@ export const calenderSvgIcon = (
 )
 export const locationHubSvgIcon = (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <g clip-path="url(#clip0_414_5627)">
+    <g clipPath="url(#clip0_414_5627)">
       <path d="M4.16675 11.9056C2.62395 12.5862 1.66675 13.5346 1.66675 14.5837C1.66675 16.6547 5.39771 18.3337 10.0001 18.3337C14.6025 18.3337 18.3334 16.6547 18.3334 14.5837C18.3334 13.5346 17.3762 12.5862 15.8334 11.9056M15.0001 6.66699C15.0001 10.0534 11.2501 11.667 10.0001 14.167C8.75008 11.667 5.00008 10.0534 5.00008 6.66699C5.00008 3.90557 7.23866 1.66699 10.0001 1.66699C12.7615 1.66699 15.0001 3.90557 15.0001 6.66699ZM10.8334 6.66699C10.8334 7.12723 10.4603 7.50033 10.0001 7.50033C9.53984 7.50033 9.16675 7.12723 9.16675 6.66699C9.16675 6.20676 9.53984 5.83366 10.0001 5.83366C10.4603 5.83366 10.8334 6.20676 10.8334 6.66699Z" stroke="#121926" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
     </g>
     <defs>

@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { mentorRegisteredHandlerRequest } from "../component/StateManagement/Redux/Reducers/mentorRegisteredData";
 import { founderRegisteredHandlerRequest } from "../component/StateManagement/Redux/Reducers/founderRegisteredData";
 import { investorRegisteredHandlerRequest } from "../component/StateManagement/Redux/Reducers/investorRegisteredData";
-import { useAuth } from "../component/StateManagement/useContext/useAuth";
+import { useAuth } from "../components/StateManagement/useContext/useAuth";
 import { useCallback } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { beforeCopySvg } from "../component/Utils/Data/SvgData";
