@@ -97,29 +97,6 @@ pub struct DeleteAsset {
     pub key: Key
 }
 
-// pub type MentorsAppliedForCohort = HashMap<String, Vec<MentorInternal>>;
-// pub type CohortInfo = HashMap<String, CohortDetails>;
-// pub type ProjectsAppliedForCohort = HashMap<String, Vec<ProjectInfoInternal>>;
-// pub type ApplierCount = HashMap<String, u64>;
-// pub type CapitalistAppliedForCohort = HashMap<String, Vec<VentureCapitalistInternal>>;
-// pub type CohortsAssociated = HashMap<String, Vec<String>>;
-// pub type CohortEnrollmentRequests = HashMap<Principal, Vec<CohortEnrollmentRequest>>;
-// pub type MentorsRemovedFromCohort = HashMap<String, Vec<(Principal, MentorInternal)>>;
-// pub type MentorsInviteRequest = HashMap<String, InviteRequest>;
-
-// thread_local! {
-//     pub static COHORT : RefCell<CohortInfo> = RefCell::new(CohortInfo::new());
-//     pub static PROJECTS_APPLIED_FOR_COHORT : RefCell<ProjectsAppliedForCohort> = RefCell::new(ProjectsAppliedForCohort::new());
-//     pub static MENTORS_APPLIED_FOR_COHORT : RefCell<MentorsAppliedForCohort> = RefCell::new(MentorsAppliedForCohort::new());
-//     pub static CAPITALIST_APPLIED_FOR_COHORT : RefCell<CapitalistAppliedForCohort> = RefCell::new(CapitalistAppliedForCohort::new());
-//     pub static APPLIER_COUNT : RefCell<ApplierCount> = RefCell::new(ApplierCount::new());
-//     pub static ASSOCIATED_COHORTS_WITH_PROJECT : RefCell<CohortsAssociated> = RefCell::new(CohortsAssociated::new());
-//     pub static MY_SENT_COHORT_REQUEST : RefCell<HashMap<Principal, Vec<CohortRequest>>> = RefCell::new(HashMap::new());
-//     pub static COHORT_ENROLLMENT_REQUESTS: RefCell<CohortEnrollmentRequests> = RefCell::new(HashMap::new());
-//     pub static MENTOR_REMOVED_FROM_COHORT: RefCell<MentorsRemovedFromCohort> = RefCell::new(MentorsRemovedFromCohort::new());
-//     pub static PENDING_MENTOR_CONFIRMATION_TO_REJOIN: RefCell<MentorsInviteRequest> = RefCell::new(MentorsInviteRequest::new());
-// }
-
 //a. create_cohort
 #[update(guard = "is_user_anonymous")]
 pub async fn create_cohort(mut params: Cohort) -> Result<String, String> {
@@ -191,33 +168,12 @@ pub async fn create_cohort(mut params: Cohort) -> Result<String, String> {
         cohort_creator_principal: caller_principal,
     };
 
-    let cohort_request = CohortRequest {
-        cohort_details: cohort_details.clone(),
-        accepted_at: 0,
-        rejected_at: 0,
-        sent_at: ic_cdk::api::time(),
-        request_status: "pending".to_string(),
-    };
-
-    send_cohort_request_to_admin(cohort_request.clone()).await;
-
+    let mut response_message = String::new();
     mutate_state(|state| {
-        // Check if there are already requests for this principal
-        if let Some(mut requests) = state
-            .my_sent_cohort_request
-            .get(&StoredPrincipal(caller_principal))
-        {
-            requests.0.push(cohort_request);
-        } else {
-            state.my_sent_cohort_request.insert(
-                StoredPrincipal(caller_principal),
-                Candid(vec![cohort_request]),
-            );
-        }
+        let mut request_found_and_updated = false;
+        state.cohort_info.insert(cohort_id.clone(), Candid(cohort_details.clone()));
     });
-
-    ic_cdk::println!("Cohort ID is {}", cohort_id);
-    Ok("Cohort request sent to admin for approval.".to_string())
+    Ok("Cohort Has Been Created Succesfully".to_string())
 }
 
 #[query(guard = "is_user_anonymous")]
