@@ -6,13 +6,13 @@ export const formFields1 = [
       required: true,
       label: "Cohort name",
     },
-    {
-      id: "description",
-      type: "description",
-      name: "description",
-      required: true,
-      label: "Description",
-    },
+    // {
+    //   id: "description",
+    //   type: "description",
+    //   name: "description",
+    //   required: true,
+    //   label: "Description",
+    // },
   
     {
       id: "cohort_launch_date",

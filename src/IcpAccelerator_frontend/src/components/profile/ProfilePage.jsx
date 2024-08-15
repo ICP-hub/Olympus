@@ -6,6 +6,7 @@ import { profile } from '../jsondata/data/profileData';
 import Role from './Role';
 import { shareSvgIcon } from '../Utils/Data/SvgData';
 import ProjectCard from '../Dashboard/Project/ProjectCard';
+import EventSection from '../Dashboard/Project/EventSection';
 
 
 
@@ -57,6 +58,15 @@ const ProfilePage = () => {
               Project
             </button>
             <button
+              className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "event"
+                ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                : "text-gray-400"
+                }`}
+              onClick={() => handleChange("event")}
+            >
+              Event
+            </button>
+            <button
               className={`px-4 py-2 focus:outline-none font-medium ${activeTab === "rating"
                 ? "border-b-2 border-blue-500 text-blue-500 font-medium"
                 : "text-gray-400"
@@ -70,6 +80,9 @@ const ProfilePage = () => {
           </div>
           <div className="w-full">
             {activeTab === "project" ? <ProjectCard /> : ""}
+          </div>
+          <div className="w-full">
+            {activeTab === "event" ? <EventSection /> : ""}
           </div>
           <div className="w-full">
             {activeTab === "rating" ? <>

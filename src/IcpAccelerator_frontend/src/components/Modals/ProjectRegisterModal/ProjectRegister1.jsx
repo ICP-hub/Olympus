@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
 
@@ -22,7 +22,6 @@ const ProjectRegister1 = ({ isOpen, onClose, onBack }) => {
 
     const [logoPreview, setLogoPreview] = useState(null);
     const [logoData, setLogoData] = useState(null);
-
 
     // logo creation function compression and uintarray creator
     const logoCreationFunc = async (file) => {
@@ -63,6 +62,8 @@ const ProjectRegister1 = ({ isOpen, onClose, onBack }) => {
         setLogoData(null);
         setLogoPreview(null);
     };
+
+
 
     return (
         <>
@@ -171,7 +172,7 @@ const ProjectRegister1 = ({ isOpen, onClose, onBack }) => {
                         <option
                             key={hub.id}
                             value={`${hub.name} ,${hub.region}`}
-                            className="text-lg font-bold "
+                            className="text-lg font-normal "
 
                         >
                             {hub.name}, {hub.region}
@@ -205,27 +206,7 @@ const ProjectRegister1 = ({ isOpen, onClose, onBack }) => {
                     </span>
                 )}
             </div>
-            <div className="mb-2">
-                <label className="block text-sm font-medium mb-1">
-                    Project Description (50 words)
-                </label>
-
-                <input
-                    type="text"
-                    {...register("project_description")}
-                    className={`border border-[#CDD5DF] rounded-md shadow-sm 
-                                             ${errors?.project_description
-                            ? "border-red-500 "
-                            : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                    placeholder="Max 50 words"
-                />
-                {errors?.project_description && (
-                    <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                        {errors?.project_description?.message}
-                    </span>
-                )}
-            </div>
+          
             <div className="mb-2">
                 <label className="block text-sm font-medium mb-1">
                     Project pitch deck
