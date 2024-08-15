@@ -1,6 +1,6 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState,useEffect, useRef } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller,FormProvider } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
 import { useSelector, useDispatch } from "react-redux";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -8,6 +8,7 @@ import * as yup from "yup";
 // import DetailHeroSection from "../Common/DetailHeroSection";
 import { ThreeDots } from "react-loader-spinner";
 import { useCountries } from "react-countries";
+import Select from 'react-select';
 import ReactSelect from "react-select";
 import CompressedImage from "../ImageCompressed/CompressedImage";
 import { allHubHandlerRequest } from "../StateManagement/Redux/Reducers/All_IcpHubReducer";
@@ -244,7 +245,7 @@ const InvestorDetail = () => {
           .string()
           .test("is-non-empty", "Portfolio url is required", (value) =>
             /\S/.test(value)
-          )
+          ).nullable(true)
           .url("Invalid url")
           .required("Portfolio url is required"),
         investor_fund_name: yup
@@ -319,6 +320,25 @@ const InvestorDetail = () => {
           ),
       })
       .required();
+     const defaultValues ={
+      investor_registered:"No",
+      registered_country: "India",
+      preferred_icp_hub: "Icp Hub India",
+      existing_icp_investor: "No",
+      investment_type: ["SNS"],
+      investor_portfolio_link: "https://portfolio.com",
+      investor_fund_name: "fund name",
+      investor_fund_size : "",
+      invested_in_multi_chain : "No",
+      invested_in_multi_chain_names : ["Etherium,Base"],
+      investment_categories : ["Tooling","Social"],
+      investor_website_url : "https://website.com",
+      investor_linkedin_url : "https://linkedIn.com",
+      investment_stage : ["Pre-Mvp"],
+      investment_stage_range : ["$2-5M"],
+
+
+     }
   
     const {
       register,
@@ -335,6 +355,7 @@ const InvestorDetail = () => {
     } = useForm({
       resolver: yupResolver(validationSchema),
       mode: "all",
+      defaultValues,
     });
   
     // image creation function compression and uintarray creator
@@ -830,12 +851,21 @@ const InvestorDetail = () => {
     }, [actor]);
   
    
-  const [edit, setEdit] = useState({
+   const [edit, setEdit] = useState({
     investorRegistered: false,
     registeredCountry : false,
     preferredIcpHub: false,
     existingIcpInvestor: false,
     invested_in_multiChain: false,
+    portfolioLink : false,
+    fundName:false,
+    fundSize:false,
+    investedCategory:false,
+    websiteLink:false,
+    linkedInLink:false,
+    investmentStag:false,
+    investmentRange:false,
+
 
   });
 
@@ -843,9 +873,44 @@ const InvestorDetail = () => {
     setEdit({ ...edit, [field]: true });
   };
 
+  const editableRef = useRef(null);
+
+  const handleClickOutside = (event) => {
+    if (editableRef.current && !editableRef.current.contains(event.target)) {
+      // setInvestDetail(...investDetail)
+      setEdit({
+        investorRegistered: false,
+    registeredCountry : false,
+    preferredIcpHub: false,
+    existingIcpInvestor: false,
+    invested_in_multiChain: false,
+    portfolioLink : false,
+    fundName:false,
+    fundSize:false,
+    investedCategory:false,
+    websiteLink:false,
+    linkedInLink:false,
+    investmentStag:false,
+    investmentRange:false,
+      });
+      
+    }
+  };
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+  
+   const [investDetail,setInvestDetail]=useState(defaultValues)
+   console.log("investDetail =>" , register)
   return (
-    <div className=" bg-white">
-      <div className="my-4 relative group hover:bg-slate-50 rounded p-2">
+    <div ref={editableRef} className=" bg-white">
+      <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}
+      >
+      <div className="my-1 relative group hover:bg-slate-50 rounded p-1 mb-1">
         <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           <EditIcon
             sx={{ fontSize: 'medium', cursor: 'pointer' }}
@@ -853,12 +918,12 @@ const InvestorDetail = () => {
           />
         </div>
 
-        <label className="block text-gray-700">Are you registered?</label>
+        <label className="block text-gray-500">Are you registered?</label>
         {edit.investorRegistered ? (
           <div>
             <select
             {...register("investor_registered")}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="shadow appearance-none border rounded w-full py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           >
             <option className="text-lg" value="false">
               No
@@ -869,13 +934,13 @@ const InvestorDetail = () => {
           </select>
           </div>
         ) : (
-          <div className="flex justify-between items-center cursor-pointer p-2">
-            <span>No</span>
+          <div className="flex justify-between items-center cursor-pointer p-1">
+            <span>{investDetail.investor_registered}</span>
           </div>
         )}
       </div>
       {watch("investor_registered") === "true" && (
-      <div className="mb-4 relative group hover:bg-slate-50 rounded p-2">
+      <div className="mb-2 relative group hover:bg-slate-50 rounded p-1">
         <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           <EditIcon
             sx={{ fontSize: 'medium', cursor: 'pointer' }}
@@ -883,14 +948,14 @@ const InvestorDetail = () => {
           />
         </div>
 
-        <label className="block text-gray-700">Registered Country </label>
+        <label className="block text-gray-500">Registered Country </label>
         {edit.registeredCountry ? (
           <div>
             <select
                         {...register("registered_country")}
                         name="registered_country"
                         // value={getValues("registered_country")}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border rounded w-full py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     >
                         <option value="">Please choose an option </option>/
                         {countries?.map((country) => (
@@ -910,13 +975,14 @@ const InvestorDetail = () => {
                     )}
           </div>
         ) : (
-          <div className="flex justify-between items-center cursor-pointer p-2">
-            <span>India</span>
+          <div className="flex justify-between items-center cursor-pointer p-1">
+            <span>{investDetail.registered_country} </span>
           </div>
         )}
       </div>
       )}
-      <div className="mb-4 relative group hover:bg-slate-50 rounded p-2">
+      
+      <div className="relative group hover:bg-slate-50 rounded p-1 mb-2">
         <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           <EditIcon
             sx={{ fontSize: 'medium', cursor: 'pointer' }}
@@ -924,14 +990,14 @@ const InvestorDetail = () => {
           />
         </div>
 
-        <label className="block text-gray-700">ICP hub you will like to be associated </label>
+        <label className="block text-gray-500">ICP hub you will like to be associated </label>
         {edit.preferredIcpHub ? (
           <div>
             <select
                     {...register("preferred_icp_hub")}
                     name="preferred_icp_hub"
 
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    className="shadow appearance-none border rounded w-full py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 >
                     <option value="">Please choose an option</option>
                     {getAllIcpHubs?.map((hub) => (
@@ -947,12 +1013,12 @@ const InvestorDetail = () => {
                 )}
           </div>
         ) : (
-          <div className="flex justify-between items-center cursor-pointer p-2">
-            <span>Icp Hub India</span>
+          <div className="flex justify-between items-center cursor-pointer p-1">
+            <span>{investDetail.preferred_icp_hub}</span>
           </div>
         )}
       </div>
-      <div className="mb-4 relative group hover:bg-slate-50 rounded p-2">
+      <div className="mb-2 relative group hover:bg-slate-50 rounded p-1 ">
         <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           <EditIcon
             sx={{ fontSize: 'medium', cursor: 'pointer' }}
@@ -960,12 +1026,12 @@ const InvestorDetail = () => {
           />
         </div>
 
-        <label className="block text-gray-700">Are you an existing ICP investor </label>
+        <label className="block text-gray-500">Are you an existing ICP investor </label>
         {edit.existingIcpInvestor ? (
           <div>
           <select
                     {...register("existing_icp_investor")}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    className="shadow appearance-none border rounded w-full py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 >
                     <option className="text-lg" value="false">
                         No
@@ -981,14 +1047,14 @@ const InvestorDetail = () => {
                 )}
         </div>
         ) : (
-          <div className="flex justify-between items-center cursor-pointer p-2">
-            <span>No</span>
+          <div className="flex justify-between items-center cursor-pointer p-1">
+            <span>{investDetail.existing_icp_investor}</span>
           </div>
         )}
       </div>
       {watch("existing_icp_investor") === 'true' && (
-                <div className="mb-4">
-                    <label className="block text-sm font-medium mb-1">Type of investment<span className='text-[red] ml-1'>*</span></label>
+                <div className="mb-2">
+                    <label className="block text-sm text-gray-500 font-medium mb-1">Type of investment<span className='text-[red] ml-1'>*</span></label>
                     <ReactSelect
                         isMulti
                         menuPortalTarget={document.body}
@@ -1010,7 +1076,7 @@ const InvestorDetail = () => {
                                 },
                                 display: "flex",
                                 overflowX: "auto",
-                                maxHeight: "43px",
+                                maxHeight: "28px",
                                 "&::-webkit-scrollbar": {
                                     display: "none",
                                 },
@@ -1018,7 +1084,7 @@ const InvestorDetail = () => {
                             valueContainer: (provided, state) => ({
                                 ...provided,
                                 overflow: "scroll",
-                                maxHeight: "40px",
+                                // maxHeight: "40px",
                                 scrollbarWidth: "none",
                             }),
                             placeholder: (provided, state) => ({
@@ -1082,7 +1148,639 @@ const InvestorDetail = () => {
                     )}
                 </div>
             )}
+             <div className="my-1 relative group hover:bg-slate-50 rounded p-1 mb-2">
+        <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <EditIcon
+            sx={{ fontSize: 'medium', cursor: 'pointer' }}
+            onClick={() => handleEditClick('portfolioLink')}
+          />
+        </div>
+
+        <label className="block text-gray-500">Portfolio Link</label>
+        {edit.portfolioLink ? (
+          <div>
+            <input
+                    {...register("investor_portfolio_link")}
+                    type="url"
+                    placeholder="Enter your portfolio url"
+                    name=" investor_portfolio_link"
+                    className="block w-full border border-gray-300 rounded-md p-[2px]"
+
+                />
+                {errors?.investor_portfolio_link && (
+                    <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                        {errors?.investor_portfolio_link?.message}
+                    </span>
+                )}
+          </div>
+        ) : (
+          <div className="flex justify-between items-center cursor-pointer p-1">
+            <span>{investDetail.investor_portfolio_link}</span>
+          </div>
+        )}
+      </div>
+
+      <div className="my-1 relative group hover:bg-slate-50 rounded p-1 mb-2">
+        <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <EditIcon
+            sx={{ fontSize: 'medium', cursor: 'pointer' }}
+            onClick={() => handleEditClick('fundName')}
+          />
+        </div>
+
+        <label className="block text-gray-500">Fund Name </label>
+        {edit.fundName ? (
+          <div>
+             <input
+                    {...register("investor_fund_name")}
+                    type="text"
+                    placeholder="Enter your fund name"
+                    name="investor_fund_name"
+                    className="block w-full border border-gray-300 rounded-md p-[2px]"
+
+                />
+                {errors?.investor_fund_name && (
+                    <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                        {errors?.investor_fund_name?.message}
+                    </span>
+                )}
+          </div>
+        ) : (
+          <div className="flex justify-between items-center cursor-pointer p-1">
+            <span>{investDetail.investor_fund_name}</span>
+          </div>
+        )}
+      </div>
+
+      <div className="my-1 relative group hover:bg-slate-50 rounded p-1 mb-2">
+        <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <EditIcon
+            sx={{ fontSize: 'medium', cursor: 'pointer' }}
+            onClick={() => handleEditClick('fundSize')}
+          />
+        </div>
+
+        <label className="block text-gray-500">Fund size (in million USD) </label>
+        {edit.fundSize ? (
+          <div>
+             <input
+                    {...register("investor_fund_size")}
+                    type="number"
+                    placeholder="Enter fund size in Millions"
+                    name="investor_fund_size"
+                    className="block w-full border border-gray-300 rounded-md p-[2px]"
+                    onWheel={(e) => e.target.blur()}
+                
+                />
+                {errors?.investor_fund_size && (
+                    <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                        {errors?.investor_fund_size?.message}
+                    </span>
+                )}
+          </div>
+        ) : (
+          <div className="flex justify-between items-center cursor-pointer p-1">
+            <span>{investDetail.investor_fund_size}</span>
+          </div>
+        )}
+      </div>
+
+      <div className="mb-2 relative group hover:bg-slate-50 rounded p-1">
+        <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <EditIcon
+            sx={{ fontSize: 'medium', cursor: 'pointer' }}
+            onClick={() => handleEditClick('invested_in_multiChain')}
+          />
+        </div>
+
+        <label className="block text-gray-500">Do you invest in multiple ecosystems ? </label>
+        {edit.invested_in_multiChain ? (
+          <div>
+          <select
+                    {...register("invested_in_multi_chain")}
+                    // value={getValues("invested_in_multi_chain")}
+                    className="shadow appearance-none border rounded w-full py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                >
+                    <option className="text-lg" value="false">
+                        No
+                    </option>
+                    <option className="text-lg" value="true">
+                        Yes
+                    </option>
+                </select>
+                {errors.invested_in_multi_chain && (
+                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                        {errors.invested_in_multi_chain.message}
+                    </p>
+                )}
+        </div>
+        ) : (
+          <div className="flex justify-between items-center cursor-pointer p-1">
+            <span>{investDetail.invested_in_multi_chain}</span>
+          </div>
+        )}
+      </div>
+      {watch("invested_in_multi_chain") === 'true' && (
+                <div className="mb-4">
+                    <label className="block text-sm text-gray-500 font-medium mb-1">Please select the chains <span className='text-[red] ml-1'>*</span></label>
+                    <Select
+                        isMulti
+                        menuPortalTarget={document.body}
+                        menuPosition={"fixed"}
+                        styles={{
+                            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                            control: (provided, state) => ({
+                                ...provided,
+                                paddingBlock: "2px",
+                                borderRadius: "8px",
+                                border: errors.invested_in_multi_chain_names
+                                    ? "2px solid #ef4444"
+                                    : "2px solid #737373",
+                                backgroundColor: "rgb(249 250 251)",
+                                "&::placeholder": {
+                                    color: errors.invested_in_multi_chain_names
+                                        ? "#ef4444"
+                                        : "currentColor",
+                                },
+                                display: "flex",
+                                overflowX: "hidden",
+                                maxHeight: "28px",
+                                "&::-webkit-scrollbar": {
+                                    display: "none",
+                                },
+                            }),
+                            valueContainer: (provided, state) => ({
+                                ...provided,
+                                overflow: "hidden",
+                                maxHeight: "40px",
+                                scrollbarWidth: "none",
+                            }),
+                            placeholder: (provided, state) => ({
+                                ...provided,
+                                color: errors.invested_in_multi_chain_names
+                                    ? "#ef4444"
+                                    : "rgb(107 114 128)",
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                            }),
+                            multiValue: (provided) => ({
+                                ...provided,
+                                display: "inline-flex",
+                                alignItems: "center",
+                                backgroundColor: "white",
+                                border: "1px solid gray",
+                                borderRadius: "5px"
+                            }),
+                            multiValueRemove: (provided) => ({
+                                ...provided,
+                                display: "inline-flex",
+                                alignItems: "center",
+                            }),
+                        }}
+                        value={investedInMultiChainSelectedOptions}
+                        options={investedInmultiChainOptions}
+                        classNamePrefix="select"
+                        className="basic-multi-select w-full text-start"
+                        placeholder="Select a chain"
+                        name="invested_in_multi_chain_names"
+                        onChange={(selectedOptions) => {
+                            if (selectedOptions && selectedOptions.length > 0) {
+                                setInvestedInMultiChainSelectedOptions(
+                                    selectedOptions
+                                );
+                                clearErrors("invested_in_multi_chain_names");
+                                setValue(
+                                    "invested_in_multi_chain_names",
+                                    selectedOptions
+                                        .map((option) => option.value)
+                                        .join(", "),
+                                    { shouldValidate: true }
+                                );
+                            } else {
+                                setInvestedInMultiChainSelectedOptions([]);
+                                setValue("invested_in_multi_chain_names", "", {
+                                    shouldValidate: true,
+                                });
+                                setError("invested_in_multi_chain_names", {
+                                    type: "required",
+                                    message: "Atleast one chain name required",
+                                });
+                            }
+                        }}
+                    />
+                    {errors.invested_in_multi_chain_names && (
+                        <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                            {errors.invested_in_multi_chain_names.message}
+                        </p>
+                    )}
+                </div>
+            )}
+
+            <div className="mb-2 relative group hover:bg-slate-50 rounded p-1">
+        <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <EditIcon
+            sx={{ fontSize: 'medium', cursor: 'pointer' }}
+            onClick={() => handleEditClick('investedCategory')}
+          />
+        </div>
+
+        <label className="block text-gray-500">Category of investment </label>
+        {edit.investedCategory ? (
+          <div>
+          <Select
+                    isMulti
+                    menuPortalTarget={document.body}
+                    menuPosition={"fixed"}
+                    styles={{
+                        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                        control: (provided, state) => ({
+                           padding:"0px",
+                            ...provided,
+                            // paddingBlock: "2px",
+                            borderRadius: "8px",
+                            border: errors.investment_categories
+                                ? "2px solid #ef4444"
+                                : "2px solid #737373",
+                            backgroundColor: "rgb(249 250 251)",
+                            "&::placeholder": {
+                                color: errors.investment_categories
+                                    ? "#ef4444"
+                                    : "currentColor",
+                            },
+                            display: "flex",
+                            overflowX: "auto",
+                            
+                            maxHeight: "28px",
+                            "&::-webkit-scrollbar": {
+                                display: "none",
+                            },
+                        }),
+                        valueContainer: (provided, state) => ({
+                            ...provided,
+                            overflow: "scroll",
+                            maxHeight: "30px",
+                            scrollbarWidth: "none",
+                           
+                        }),
+                        placeholder: (provided, state) => ({
+                            ...provided,
+                            color: errors.investment_categories
+                                ? "#ef4444"
+                                : "rgb(107 114 128)",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                        }),
+                        multiValue: (provided) => ({
+                            ...provided,
+                            display: "inline-flex",
+                            alignItems: "center",
+                            backgroundColor: "white",
+                            border: "1px solid gray",
+                            borderRadius: "5px",
+                            
+                        }),
+                        multiValueRemove: (provided) => ({
+                            ...provided,
+                            display: "inline-flex",
+                            alignItems: "center",
+                        }),
+                    }}
+                    value={investmentCategoriesSelectedOptions}
+                    options={investmentCategoriesOptions}
+                    classNamePrefix="select"
+                    className="basic-multi-select w-full text-start"
+                    placeholder="Select categories of investment"
+                    name="investment_categories"
+                    onChange={(selectedOptions) => {
+                        if (selectedOptions && selectedOptions.length > 0) {
+                            setInvestmentCategoriesSelectedOptions(selectedOptions);
+                            clearErrors("investment_categories");
+                            setValue(
+                                "investment_categories",
+                                selectedOptions
+                                    .map((option) => option.value)
+                                    .join(", "),
+                                { shouldValidate: true }
+                            );
+                        } else {
+                            setInvestmentCategoriesSelectedOptions([]);
+                            setValue("investment_categories", "", {
+                                shouldValidate: true,
+                            });
+                            setError("investment_categories", {
+                                type: "required",
+                                message: "Selecting a category is required",
+                            });
+                        }
+                    }}
+
+                />
+                {errors.investment_categories && (
+                    <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                        {errors.investment_categories.message}
+                    </span>
+                )}
+        </div>
+        ) : (
+          <div className="flex justify-between items-center cursor-pointer p-1">
+            <span>{investDetail.investment_categories}</span>
+          </div>
+        )}
+      </div>
+
+      <div className="my-1 relative group hover:bg-slate-50 rounded p-1 mb-2">
+        <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <EditIcon
+            sx={{ fontSize: 'medium', cursor: 'pointer' }}
+            onClick={() => handleEditClick('websiteLink')}
+          />
+        </div>
+
+        <label className="block text-gray-500">Website Link</label>
+        {edit.websiteLink ? (
+          <div>
+            <input
+                    {...register("investor_website_url")}
+                    type="url"
+                    name="investor_website_url"
+                    placeholder="Enter your website url"
+                    className="block w-full border border-gray-300 rounded-md p-[2px]"
+                />
+                {errors?.investor_website_url && (
+                    <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                        {errors?.investor_website_url?.message}
+                    </span>
+                )}
+          </div>
+        ) : (
+          <div className="flex justify-between items-center cursor-pointer p-1">
+            <span>{investDetail.investor_website_url}</span>
+          </div>
+        )}
+      </div>
+
+      <div className="my-1 relative group hover:bg-slate-50 rounded p-1 mb-2">
+        <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <EditIcon
+            sx={{ fontSize: 'medium', cursor: 'pointer' }}
+            onClick={() => handleEditClick('linkedInLink')}
+          />
+        </div>
+
+        <label className="block text-gray-500">LinkedIn Link</label>
+        {edit.linkedInLink ? (
+          <div>
+            <input
+                    {...register("investor_linkedin_url")}
+                    type="url"
+                    name="investor_linkedin_url"
+                    placeholder="Enter your linkedin url"
+                    className="block w-full border border-gray-300 rounded-md p-[2px]"
+                    required
+                />
+                {errors?.investor_linkedin_url && (
+                    <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                        {errors?.investor_linkedin_url?.message}
+                    </span>
+                )}
+          </div>
+        ) : (
+          <div className="flex justify-between items-center cursor-pointer p-1">
+            <span>{investDetail.investor_linkedin_url}</span>
+          </div>
+        )}
+      </div>
+
+
+      <div className="mb-2 relative group hover:bg-slate-50 rounded p-1">
+        <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <EditIcon
+            sx={{ fontSize: 'medium', cursor: 'pointer' }}
+            onClick={() => handleEditClick('investmentStag')}
+          />
+        </div>
+
+        <label className="block text-gray-500">Which stage(s) do you invest at ?   </label>
+        {edit.investmentStag ? (
+          <div>
+            <Select
+                    isMulti
+                    menuPortalTarget={document.body}
+                    menuPosition={"fixed"}
+                    styles={{
+                        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                        control: (provided, state) => ({
+                            ...provided,
+                            paddingBlock: "2px",
+                            borderRadius: "8px",
+                            border: errors.investment_stage
+                                ? "2px solid #ef4444"
+                                : "2px solid #737373",
+                            backgroundColor: "rgb(249 250 251)",
+                            "&::placeholder": {
+                                color: errors.investment_stage
+                                    ? "#ef4444"
+                                    : "currentColor",
+                            },
+                            display: "flex",
+                            overflowX: "auto",
+                            maxHeight: "28px",
+                            "&::-webkit-scrollbar": {
+                                display: "none",
+                            },
+                        }),
+                        valueContainer: (provided, state) => ({
+                            ...provided,
+                            overflow: "scroll",
+                            // maxHeight: "40px",
+                            scrollbarWidth: "none",
+                        }),
+                        placeholder: (provided, state) => ({
+                            ...provided,
+                            color: errors.investment_stage
+                                ? "#ef4444"
+                                : "rgb(107 114 128)",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                        }),
+                        multiValue: (provided) => ({
+                            ...provided,
+                            display: "inline-flex",
+                            alignItems: "center",
+                            backgroundColor: "white",
+                            border: "1px solid gray",
+                            borderRadius: "5px"
+                        }),
+                        multiValueRemove: (provided) => ({
+                            ...provided,
+                            display: "inline-flex",
+                            alignItems: "center",
+                        }),
+                    }}
+                    value={investStageSelectedOptions}
+                    options={investStageOptions}
+                    classNamePrefix="select"
+                    className="basic-multi-select w-full text-start"
+                    placeholder="Select a stage"
+                    name="investment_stage"
+                    onChange={(selectedOptions) => {
+                        if (selectedOptions && selectedOptions.length > 0) {
+                            setInvestStageSelectedOptions(selectedOptions);
+                            clearErrors("investment_stage");
+                            setValue(
+                                "investment_stage",
+                                selectedOptions
+                                    .map((option) => option.value)
+                                    .join(", "),
+                                { shouldValidate: true }
+                            );
+                        } else {
+                            setInvestStageSelectedOptions([]);
+                            setValue("investment_stage", "", {
+                                shouldValidate: true,
+                            });
+                            setError("investment_stage", {
+                                type: "required",
+                                message: "Atleast one stage required",
+                            });
+                        }
+                    }}
+                />
+                {errors.investment_stage && (
+                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                        {errors.investment_stage.message}
+                    </p>
+                )}
+        </div>
+        ) : (
+          <div className="flex justify-between items-center cursor-pointer p-1">
+            <span>{investDetail.investment_stage}</span>
+          </div>
+        )}
+      </div>
+
+
+      <div className="mb-2 relative group hover:bg-slate-50 rounded p-1">
+        <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <EditIcon
+            sx={{ fontSize: 'medium', cursor: 'pointer' }}
+            onClick={() => handleEditClick('investmentRange')}
+          />
+        </div>
+
+        <label className="block text-gray-500">What is the range of your check size ?    </label>
+        {edit.investmentRange ? (
+          <div>
+                <Select
+                    isMulti
+                    menuPortalTarget={document.body}
+                    menuPosition={"fixed"}
+                    styles={{
+                        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                        control: (provided, state) => ({
+                            ...provided,
+                            paddingBlock: "2px",
+                            borderRadius: "8px",
+                            border: errors.investment_stage_range
+                                ? "2px solid #ef4444"
+                                : "2px solid #737373",
+                            backgroundColor: "rgb(249 250 251)",
+                            "&::placeholder": {
+                                color: errors.investment_stage_range
+                                    ? "#ef4444"
+                                    : "currentColor",
+                            },
+                            display: "flex",
+                            overflowX: "auto",
+                            maxHeight: "28px",
+                            "&::-webkit-scrollbar": {
+                                display: "none",
+                            },
+                        }),
+                        valueContainer: (provided, state) => ({
+                            ...provided,
+                            overflow: "scroll",
+                            // maxHeight: "40px",
+                            scrollbarWidth: "none",
+                        }),
+                        placeholder: (provided, state) => ({
+                            ...provided,
+                            color: errors.investment_stage_range
+                                ? "#ef4444"
+                                : "rgb(107 114 128)",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                        }),
+                        multiValue: (provided) => ({
+                            ...provided,
+                            display: "inline-flex",
+                            alignItems: "center",
+                            backgroundColor: "white",
+                            border: "1px solid gray",
+                            borderRadius: "5px"
+                        }),
+                        multiValueRemove: (provided) => ({
+                            ...provided,
+                            display: "inline-flex",
+                            alignItems: "center",
+                        }),
+                    }}
+                    value={investStageRangeSelectedOptions}
+                    options={investStageRangeOptions}
+                    classNamePrefix="select"
+                    className="basic-multi-select w-full text-start"
+                    placeholder="Select a range"
+                    name="investment_stage_range"
+                    onChange={(selectedOptions) => {
+                        if (selectedOptions && selectedOptions.length > 0) {
+                            setInvestStageRangeSelectedOptions(selectedOptions);
+                            clearErrors("investment_stage_range");
+                            setValue(
+                                "investment_stage_range",
+                                selectedOptions
+                                    .map((option) => option.value)
+                                    .join(", "),
+                                { shouldValidate: true }
+                            );
+                        } else {
+                            setInvestStageRangeSelectedOptions([]);
+                            setValue("investment_stage_range", "", {
+                                shouldValidate: true,
+                            });
+                            setError("investment_stage_range", {
+                                type: "required",
+                                message: "Atleast one stage required",
+                            });
+                        }
+                    }}
+                />
+                {errors.investment_stage_range && (
+                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                        {errors.investment_stage_range.message}
+                    </p>
+                )}
+        </div>
+        ) : (
+          <div className="flex justify-between items-center cursor-pointer p-1">
+            <span>{investDetail.investment_stage_range} </span>
+          </div>
+        )}
+      </div>
+      
+
+            <div className="flex ">
+            <button type='submit' className=" h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-2 flex items-center justify-center">
+               Save
+            </button>
+            
+            </div>
+            </form>
     </div>
+
   );
 };
 

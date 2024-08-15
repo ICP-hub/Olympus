@@ -296,12 +296,12 @@ function ProjectRegForm() {
         .when("is_your_project_registered", (val, schema) =>
           val && val[0] === "true"
             ? schema
-                .test(
-                  "is-non-empty",
-                  "Type of registration is required",
-                  (value) => /\S/.test(value)
-                )
-                .required("Type of registration is required")
+              .test(
+                "is-non-empty",
+                "Type of registration is required",
+                (value) => /\S/.test(value)
+              )
+              .required("Type of registration is required")
             : schema
         ),
       country_of_registration: yup
@@ -309,12 +309,12 @@ function ProjectRegForm() {
         .when("is_your_project_registered", (val, schema) =>
           val && val[0] === "true"
             ? schema
-                .test(
-                  "is-non-empty",
-                  "Country of registration is required",
-                  (value) => /\S/.test(value)
-                )
-                .required("Country of registration is required")
+              .test(
+                "is-non-empty",
+                "Country of registration is required",
+                (value) => /\S/.test(value)
+              )
+              .required("Country of registration is required")
             : schema
         ),
       live_on_icp_mainnet: yup
@@ -324,11 +324,11 @@ function ProjectRegForm() {
       dapp_link: yup.string().when("live_on_icp_mainnet", (val, schema) =>
         val && val[0] === "true"
           ? schema
-              .test("is-non-empty", "dApp Link is required", (value) =>
-                /\S/.test(value)
-              )
-              .url("Invalid url")
-              .required("dApp Link is required")
+            .test("is-non-empty", "dApp Link is required", (value) =>
+              /\S/.test(value)
+            )
+            .url("Invalid url")
+            .required("dApp Link is required")
           : schema
       ),
       weekly_active_users: yup.number().nullable(true).optional(),
@@ -397,9 +397,9 @@ function ProjectRegForm() {
         .when("money_raising", (val, schema) =>
           val && val[0] === "true"
             ? schema
-                .typeError("You must enter a number")
-                .min(0, "Must be a non-negative number")
-                .required("Target Amount is required")
+              .typeError("You must enter a number")
+              .min(0, "Must be a non-negative number")
+              .required("Target Amount is required")
             : schema
         ),
       valuation: yup
@@ -412,10 +412,10 @@ function ProjectRegForm() {
         .when("money_raising", (val, schema) =>
           val && val[0] === "true"
             ? schema.test(
-                "is-zero-or-greater",
-                "Must be a positive number",
-                (value) => (!isNaN(value) ? value >= 0 : true)
-              )
+              "is-zero-or-greater",
+              "Must be a positive number",
+              (value) => (!isNaN(value) ? value >= 0 : true)
+            )
             : schema
         ),
       multi_chain: yup
@@ -427,12 +427,12 @@ function ProjectRegForm() {
         .when("multi_chain", (val, schema) =>
           val && val[0] === "true"
             ? schema
-                .test(
-                  "is-non-empty",
-                  "Atleast one chain name required",
-                  (value) => /\S/.test(value)
-                )
-                .required("Atleast one chain name required")
+              .test(
+                "is-non-empty",
+                "Atleast one chain name required",
+                (value) => /\S/.test(value)
+              )
+              .required("Atleast one chain name required")
             : schema
         ),
       promotional_video: yup
@@ -766,13 +766,13 @@ function ProjectRegForm() {
         ],
         type_of_registration: [
           data?.is_your_project_registered === "true" &&
-          data?.type_of_registration
+            data?.type_of_registration
             ? data?.type_of_registration
             : "",
         ],
         country_of_registration: [
           data?.is_your_project_registered === "true" &&
-          data?.country_of_registration
+            data?.country_of_registration
             ? data?.country_of_registration
             : "",
         ],
@@ -817,7 +817,7 @@ function ProjectRegForm() {
             ],
             raised_from_other_ecosystem: [
               data?.money_raised_till_now === "true" &&
-              data?.raised_from_other_ecosystem
+                data?.raised_from_other_ecosystem
                 ? data?.raised_from_other_ecosystem.toString()
                 : "",
             ],
@@ -907,8 +907,8 @@ function ProjectRegForm() {
     setInterestedDomainsSelectedOptions(
       val
         ? val
-            .split(", ")
-            .map((interest) => ({ value: interest, label: interest }))
+          .split(", ")
+          .map((interest) => ({ value: interest, label: interest }))
         : []
     );
   };
@@ -1324,11 +1324,10 @@ function ProjectRegForm() {
                     type="text"
                     {...register("full_name")}
                     className={`bg-gray-50 border-2 
-                                              ${
-                                                errors?.full_name
-                                                  ? "border-red-500"
-                                                  : "border-[#737373]"
-                                              } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                              ${errors?.full_name
+                        ? "border-red-500"
+                        : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     placeholder="Enter your full name"
                   />
                   {errors?.full_name && (
@@ -1348,11 +1347,10 @@ function ProjectRegForm() {
                     type="email"
                     {...register("email")}
                     className={`bg-gray-50 border-2 
-                                              ${
-                                                errors?.email
-                                                  ? "border-red-500"
-                                                  : "border-[#737373]"
-                                              } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                              ${errors?.email
+                        ? "border-red-500"
+                        : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     placeholder="Enter your email"
                   />
                   {errors?.email && (
@@ -1372,11 +1370,10 @@ function ProjectRegForm() {
                     type="text"
                     {...register("telegram_id")}
                     className={`bg-gray-50 border-2 
-                                              ${
-                                                errors?.telegram_id
-                                                  ? "border-red-500 "
-                                                  : "border-[#737373]"
-                                              } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                              ${errors?.telegram_id
+                        ? "border-red-500 "
+                        : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     placeholder="Enter your telegram url"
                   />
                   {errors?.telegram_id && (
@@ -1396,11 +1393,10 @@ function ProjectRegForm() {
                     type="text"
                     {...register("twitter_url")}
                     className={`bg-gray-50 border-2 
-                                              ${
-                                                errors?.twitter_url
-                                                  ? "border-red-500 "
-                                                  : "border-[#737373]"
-                                              } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                              ${errors?.twitter_url
+                        ? "border-red-500 "
+                        : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     placeholder="Enter your twitter url"
                   />
                   {errors?.twitter_url && (
@@ -1420,11 +1416,10 @@ function ProjectRegForm() {
                     type="text"
                     {...register("openchat_user_name")}
                     className={`bg-gray-50 border-2 
-                                              ${
-                                                errors?.openchat_user_name
-                                                  ? "border-red-500 "
-                                                  : "border-[#737373]"
-                                              } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                              ${errors?.openchat_user_name
+                        ? "border-red-500 "
+                        : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     placeholder="Enter your openchat username"
                   />
                   {errors?.openchat_user_name && (
@@ -1442,9 +1437,8 @@ function ProjectRegForm() {
                   </label>
                   <textarea
                     {...register("bio")}
-                    className={`bg-gray-50 border-2 ${
-                      errors?.bio ? "border-red-500 " : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    className={`bg-gray-50 border-2 ${errors?.bio ? "border-red-500 " : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     placeholder="Enter your bio"
                     rows={1}
                   ></textarea>
@@ -1463,9 +1457,8 @@ function ProjectRegForm() {
                   </label>
                   <select
                     {...register("country")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.country ? "border-red-500 " : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    className={`bg-gray-50 border-2 ${errors.country ? "border-red-500 " : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="">
                       Select your country
@@ -1591,11 +1584,10 @@ function ProjectRegForm() {
                   </label>
                   <select
                     {...register("type_of_profile")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.type_of_profile
+                    className={`bg-gray-50 border-2 ${errors.type_of_profile
                         ? "border-red-500 "
                         : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="">
                       Select profile type
@@ -1875,11 +1867,10 @@ function ProjectRegForm() {
                   <select
                     {...register("preferred_icp_hub")}
                     defaultValue={getValues("preferred_icp_hub")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.preferred_icp_hub
+                    className={`bg-gray-50 border-2 ${errors.preferred_icp_hub
                         ? "border-red-500 "
                         : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="">
                       Select your ICP Hub
@@ -1911,11 +1902,10 @@ function ProjectRegForm() {
                     type="text"
                     {...register("project_name")}
                     className={`bg-gray-50 border-2 
-                                             ${
-                                               errors?.project_name
-                                                 ? "border-red-500 "
-                                                 : "border-[#737373]"
-                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                             ${errors?.project_name
+                        ? "border-red-500 "
+                        : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     placeholder="Enter your Project name"
                   />
                   {errors?.project_name && (
@@ -1936,11 +1926,10 @@ function ProjectRegForm() {
                     type="text"
                     {...register("project_description")}
                     className={`bg-gray-50 border-2 
-                                             ${
-                                               errors?.project_description
-                                                 ? "border-red-500 "
-                                                 : "border-[#737373]"
-                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                             ${errors?.project_description
+                        ? "border-red-500 "
+                        : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     placeholder="Max 50 words"
                   />
                   {errors?.project_description && (
@@ -1961,11 +1950,10 @@ function ProjectRegForm() {
                     type="text"
                     {...register("project_elevator_pitch")}
                     className={`bg-gray-50 border-2 
-                                             ${
-                                               errors?.project_elevator_pitch
-                                                 ? "border-red-500 "
-                                                 : "border-[#737373]"
-                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                             ${errors?.project_elevator_pitch
+                        ? "border-red-500 "
+                        : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     placeholder="https://"
                   />
                   {errors?.project_elevator_pitch && (
@@ -1985,11 +1973,10 @@ function ProjectRegForm() {
                     type="text"
                     {...register("project_website")}
                     className={`bg-gray-50 border-2 
-                                             ${
-                                               errors?.project_website
-                                                 ? "border-red-500 "
-                                                 : "border-[#737373]"
-                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                             ${errors?.project_website
+                        ? "border-red-500 "
+                        : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     placeholder="https://"
                   />
                   {errors?.project_website && (
@@ -2009,11 +1996,10 @@ function ProjectRegForm() {
                   </label>
                   <select
                     {...register("is_your_project_registered")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.is_your_project_registered
+                    className={`bg-gray-50 border-2 ${errors.is_your_project_registered
                         ? "border-red-500"
                         : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="false">
                       No
@@ -2040,11 +2026,10 @@ function ProjectRegForm() {
                       </label>
                       <select
                         {...register("type_of_registration")}
-                        className={`bg-gray-50 border-2 ${
-                          errors.type_of_registration
+                        className={`bg-gray-50 border-2 ${errors.type_of_registration
                             ? "border-red-500"
                             : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                       >
                         <option className="text-lg font-bold" value="">
                           Select registration type
@@ -2072,11 +2057,10 @@ function ProjectRegForm() {
                       </label>
                       <select
                         {...register("country_of_registration")}
-                        className={`bg-gray-50 border-2 ${
-                          errors.country_of_registration
+                        className={`bg-gray-50 border-2 ${errors.country_of_registration
                             ? "border-red-500 "
                             : "border-[#737373]"
-                        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                       >
                         <option className="text-lg font-bold" value="">
                           Select your country
@@ -2113,9 +2097,8 @@ function ProjectRegForm() {
                   </label>
                   <select
                     {...register("multi_chain")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.multi_chain ? "border-red-500" : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    className={`bg-gray-50 border-2 ${errors.multi_chain ? "border-red-500" : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="false">
                       No
@@ -2240,11 +2223,10 @@ function ProjectRegForm() {
                   </label>
                   <select
                     {...register("live_on_icp_mainnet")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.live_on_icp_mainnet
+                    className={`bg-gray-50 border-2 ${errors.live_on_icp_mainnet
                         ? "border-red-500"
                         : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="false">
                       No
@@ -2272,11 +2254,10 @@ function ProjectRegForm() {
                         type="text"
                         {...register("dapp_link")}
                         className={`bg-gray-50 border-2 
-                                             ${
-                                               errors?.dapp_link
-                                                 ? "border-red-500 "
-                                                 : "border-[#737373]"
-                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                             ${errors?.dapp_link
+                            ? "border-red-500 "
+                            : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                         placeholder="https://"
                       />
                       {errors?.dapp_link && (
@@ -2297,11 +2278,10 @@ function ProjectRegForm() {
                         type="number"
                         {...register("weekly_active_users")}
                         className={`bg-gray-50 border-2 
-                                             ${
-                                               errors?.weekly_active_users
-                                                 ? "border-red-500 "
-                                                 : "border-[#737373]"
-                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                             ${errors?.weekly_active_users
+                            ? "border-red-500 "
+                            : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                         placeholder="Enter Weekly active users"
                         onWheel={(e) => e.target.blur()}
                         min={0}
@@ -2324,11 +2304,10 @@ function ProjectRegForm() {
                         type="number"
                         {...register("revenue")}
                         className={`bg-gray-50 border-2 
-                                             ${
-                                               errors?.revenue
-                                                 ? "border-red-500 "
-                                                 : "border-[#737373]"
-                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                             ${errors?.revenue
+                            ? "border-red-500 "
+                            : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                         placeholder="Enter Revenue"
                         onWheel={(e) => e.target.blur()}
                         min={0}
@@ -2355,11 +2334,10 @@ function ProjectRegForm() {
                   </label>
                   <select
                     {...register("money_raised_till_now")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.money_raised_till_now
+                    className={`bg-gray-50 border-2 ${errors.money_raised_till_now
                         ? "border-red-500"
                         : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="false">
                       No
@@ -2388,11 +2366,10 @@ function ProjectRegForm() {
                         type="number"
                         {...register("icp_grants")}
                         className={`bg-gray-50 border-2 
-                                             ${
-                                               errors?.icp_grants
-                                                 ? "border-red-500 "
-                                                 : "border-[#737373]"
-                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                             ${errors?.icp_grants
+                            ? "border-red-500 "
+                            : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                         placeholder="Enter your Grants"
                         onWheel={(e) => e.target.blur()}
                         min={0}
@@ -2415,11 +2392,10 @@ function ProjectRegForm() {
                         type="number"
                         {...register("investors")}
                         className={`bg-gray-50 border-2 
-                                             ${
-                                               errors?.investors
-                                                 ? "border-red-500 "
-                                                 : "border-[#737373]"
-                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                             ${errors?.investors
+                            ? "border-red-500 "
+                            : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                         placeholder="Enter Investors"
                         onWheel={(e) => e.target.blur()}
                         min={0}
@@ -2442,11 +2418,10 @@ function ProjectRegForm() {
                         type="number"
                         {...register("raised_from_other_ecosystem")}
                         className={`bg-gray-50 border-2 
-                                             ${
-                                               errors?.raised_from_other_ecosystem
-                                                 ? "border-red-500 "
-                                                 : "border-[#737373]"
-                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                             ${errors?.raised_from_other_ecosystem
+                            ? "border-red-500 "
+                            : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                         placeholder="Enter Launchpad"
                         onWheel={(e) => e.target.blur()}
                         min={0}
@@ -2473,11 +2448,10 @@ function ProjectRegForm() {
                   </label>
                   <select
                     {...register("money_raising")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.money_raising
+                    className={`bg-gray-50 border-2 ${errors.money_raising
                         ? "border-red-500"
                         : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
                     <option className="text-lg font-bold" value="false">
                       No
@@ -2506,11 +2480,10 @@ function ProjectRegForm() {
                         type="number"
                         {...register("target_amount")}
                         className={`bg-gray-50 border-2 
-                                             ${
-                                               errors?.target_amount
-                                                 ? "border-red-500 "
-                                                 : "border-[#737373]"
-                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                             ${errors?.target_amount
+                            ? "border-red-500 "
+                            : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                         placeholder="Enter your Target Amount"
                         onWheel={(e) => e.target.blur()}
                         min={0}
@@ -2532,11 +2505,10 @@ function ProjectRegForm() {
                         type="number"
                         {...register("valuation")}
                         className={`bg-gray-50 border-2 
-                                             ${
-                                               errors?.valuation
-                                                 ? "border-red-500 "
-                                                 : "border-[#737373]"
-                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                             ${errors?.valuation
+                            ? "border-red-500 "
+                            : "border-[#737373]"
+                          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                         placeholder="Enter valuation (In million)"
                         onWheel={(e) => e.target.blur()}
                         min={0}
@@ -2563,11 +2535,10 @@ function ProjectRegForm() {
                     type="text"
                     {...register("promotional_video")}
                     className={`bg-gray-50 border-2 
-                                             ${
-                                               errors?.promotional_video
-                                                 ? "border-red-500 "
-                                                 : "border-[#737373]"
-                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                             ${errors?.promotional_video
+                        ? "border-red-500 "
+                        : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     placeholder="https://"
                   />
                   {errors?.promotional_video && (
@@ -2587,11 +2558,10 @@ function ProjectRegForm() {
                     type="text"
                     {...register("project_discord")}
                     className={`bg-gray-50 border-2 
-                                             ${
-                                               errors?.project_discord
-                                                 ? "border-red-500 "
-                                                 : "border-[#737373]"
-                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                             ${errors?.project_discord
+                        ? "border-red-500 "
+                        : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     placeholder="https://"
                   />
                   {errors?.project_discord && (
@@ -2611,11 +2581,10 @@ function ProjectRegForm() {
                     type="text"
                     {...register("project_linkedin")}
                     className={`bg-gray-50 border-2 
-                                             ${
-                                               errors?.project_linkedin
-                                                 ? "border-red-500 "
-                                                 : "border-[#737373]"
-                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                             ${errors?.project_linkedin
+                        ? "border-red-500 "
+                        : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     placeholder="https://"
                   />
                   {errors?.project_linkedin && (
@@ -2635,11 +2604,10 @@ function ProjectRegForm() {
                     type="text"
                     {...register("github_link")}
                     className={`bg-gray-50 border-2 
-                                             ${
-                                               errors?.github_link
-                                                 ? "border-red-500 "
-                                                 : "border-[#737373]"
-                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                             ${errors?.github_link
+                        ? "border-red-500 "
+                        : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     placeholder="https://"
                   />
                   {errors?.github_link && (
@@ -2659,11 +2627,10 @@ function ProjectRegForm() {
                     type="text"
                     {...register("token_economics")}
                     className={`bg-gray-50 border-2 
-                                             ${
-                                               errors?.token_economics
-                                                 ? "border-red-500 "
-                                                 : "border-[#737373]"
-                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                             ${errors?.token_economics
+                        ? "border-red-500 "
+                        : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     placeholder="https://"
                   />
                   {errors?.token_economics && (
@@ -2683,11 +2650,10 @@ function ProjectRegForm() {
                     type="text"
                     {...register("white_paper")}
                     className={`bg-gray-50 border-2 
-                                             ${
-                                               errors?.white_paper
-                                                 ? "border-red-500 "
-                                                 : "border-[#737373]"
-                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                             ${errors?.white_paper
+                        ? "border-red-500 "
+                        : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     placeholder="https://"
                   />
                   {errors?.white_paper && (
@@ -2764,16 +2730,14 @@ function ProjectRegForm() {
                               type="button"
                               onClick={() => handleremovePrivate(index)}
                               className={` bg-red-600 hover:bg-red-700 text-white rounded-lg px-4 py-3 sm0:ml-2
-                              ${
-                                errors.privateDocs?.[index]?.title
+                              ${errors.privateDocs?.[index]?.title
                                   ? "self-center mt-1 sm0:mt-3"
                                   : "self-end"
-                              }
-                              ${
-                                errors.privateDocs?.[index]?.link
+                                }
+                              ${errors.privateDocs?.[index]?.link
                                   ? "self-center mt-1 sm0:mt-3"
                                   : "self-end"
-                              }`}
+                                }`}
                             >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -2872,15 +2836,13 @@ function ProjectRegForm() {
                             type="button"
                             onClick={() => removePublic(index)}
                             className={` bg-red-600 hover:bg-red-700 text-white rounded-lg px-4 py-3 sm0:ml-2
-                              ${
-                                errors.publicDocs?.[index]?.title
-                                  ? "self-center mt-1 sm0:mt-3"
-                                  : "self-end"
+                              ${errors.publicDocs?.[index]?.title
+                                ? "self-center mt-1 sm0:mt-3"
+                                : "self-end"
                               }
-                              ${
-                                errors.publicDocs?.[index]?.link
-                                  ? "self-center mt-1 sm0:mt-3"
-                                  : "self-end"
+                              ${errors.publicDocs?.[index]?.link
+                                ? "self-center mt-1 sm0:mt-3"
+                                : "self-end"
                               }`}
                           >
                             <svg

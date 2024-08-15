@@ -119,14 +119,14 @@ const EventDetails = () => {
 
   return (
     <div className="flex flex-col">
-      <div className="flex justify-start p-4">
+      {/* <div className="flex justify-start p-4">
         <button className="text-gray-500 hover:text-gray-700">
           <Close />
         </button>
-      </div>
+      </div> */}
 
       <div className="flex flex-col gap-10 md:flex-row">
-        <div className="w-[400px] bg-white rounded-lg shadow-md">
+        <div className="w-[400px] bg-white rounded-lg shadow-md pt-4">
           <div className="bg-gray-100 p-4">
             <div className="flex items-start mb-4">
               <img
