@@ -13,7 +13,10 @@ import ProfileImage from "../../../../assets/Logo/ProfileImage.png";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import Nodatafound from "../../../../assets/Logo/Nodatafound.png";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 function DashboardHomeProfileCards() {
+  const userFullData = useSelector((currState) => currState.userData.data.Ok);
+
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 p-6">
@@ -37,7 +40,7 @@ function DashboardHomeProfileCards() {
               <div className="w-20 h-20 bg-gray-300 rounded-full mb-3 overflow-hidden">
                 {/* <AccountCircle className="w-full h-full text-gray-400" /> */}
                 <img
-                  src={ProfileImage}
+                  src={userFullData.profile_picture[0]}
                   alt="Profle Image"
                   className="w-24 h-24 rounded-full object-cover"
                 />
@@ -52,9 +55,9 @@ function DashboardHomeProfileCards() {
                     fontSize="small"
                   />
                 </span>
-                Matt Bowers
+                {userFullData.full_name}
               </h3>
-              <p className="text-gray-500">@mattbowers</p>
+              <p className="text-gray-500">@{userFullData.openchat_username[0]}</p>
             </div>
           </div>
         </div>

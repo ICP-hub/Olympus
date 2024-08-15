@@ -130,6 +130,7 @@ import founder from "../../../../assets/Logo/founder.png";
 import Avatar3 from "../../../../assets/Logo/Avatar3.png";
 import { dashboard } from "../../jsondata/data/dashboardData";
 import Modal1 from '../../Modals/Project Modal/modal1';
+import { useSelector } from 'react-redux';
 const styles = {
   circularChart: {
     display: 'block',
@@ -168,6 +169,7 @@ const styles = {
 function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
   const [roleModalOpen, setRoleModalOpen] = useState(false);
   const {dashboardwelcomesection}=dashboard
+  const userFullData = useSelector((currState) => currState.userData.data.Ok);
 
   const actionCards = [
     {
@@ -204,7 +206,7 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
   return (
     <>
       <div className="bg-white rounded-lg p-6 mb-6 pt-1">
-        <h1 className="text-3xl font-bold mb-6 mt-6">{dashboardwelcomesection.welcome}, {userName}!</h1>
+        <h1 className="text-3xl font-bold mb-6 mt-6">{dashboardwelcomesection.welcome}, {userFullData.full_name}!</h1>
         <div className="overflow-x-auto">
           <div className="flex gap-6 my-1">
             {actionCards.map((card, index) => (
