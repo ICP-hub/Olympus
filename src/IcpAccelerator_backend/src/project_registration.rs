@@ -406,49 +406,6 @@ impl ProjectReview {
     }
 }
 
-// pub type ProjectAnnouncements = HashMap<Principal, Vec<AnnouncementsInternal>>;
-// pub type Notifications = HashMap<Principal, Vec<NotificationProject>>;
-// pub type BlogPost = HashMap<Principal, Vec<Blog>>;
-
-// pub type ApplicationDetails = HashMap<Principal, Vec<ProjectInfoInternal>>;
-// pub type PendingDetails = HashMap<String, ProjectUpdateRequest>;
-// pub type DeclinedDetails = HashMap<String, ProjectUpdateRequest>;
-
-// pub type ProjectDetails = HashMap<Principal, ProjectInfoInternal>;
-// pub type JobDetails = HashMap<Principal, Vec<JobsInternal>>;
-// pub type SpotlightProjects = Vec<SpotlightDetails>;
-// pub type MoneyAccess = HashMap<Principal, Vec<AccessRequest>>;
-// pub type PrivateDocsAccess = HashMap<Principal, Vec<AccessRequest>>;
-
-// thread_local! {
-//     pub static PROJECT_ACCESS_NOTIFICATIONS : RefCell<HashMap<String, Vec<ProjectNotification>>> = RefCell::new(HashMap::new());
-//     pub static  APPLICATION_FORM: RefCell<ApplicationDetails> = RefCell::new(ApplicationDetails::new());
-//     //pub static PROJECT_DETAILS: RefCell<ProjectDetails> = RefCell::new(ProjectDetails::new());
-//     pub static NOTIFICATIONS: RefCell<Notifications> = RefCell::new(Notifications::new());
-//     pub static OWNER_NOTIFICATIONS: RefCell<HashMap<Principal, Vec<NotificationForOwner>>> = RefCell::new(HashMap::new());
-//     pub static PROJECT_ANNOUNCEMENTS:RefCell<ProjectAnnouncements> = RefCell::new(ProjectAnnouncements::new());
-//     pub static BLOG_POST:RefCell<BlogPost> = RefCell::new(BlogPost::new());
-
-//     pub static PROJECT_AWAITS_RESPONSE: RefCell<ProjectDetails> = RefCell::new(ProjectDetails::new());
-//     pub static DECLINED_PROJECT_REQUESTS: RefCell<ProjectDetails> = RefCell::new(ProjectDetails::new());
-
-//     pub static PENDING_PROJECT_UPDATES: RefCell<PendingDetails> = RefCell::new(PendingDetails::new());
-//     pub static DECLINED_PROJECT_UPDATES: RefCell<DeclinedDetails> = RefCell::new(DeclinedDetails::new());
-//     pub static POST_JOB: RefCell<JobDetails> = RefCell::new(JobDetails::new());
-//     pub static JOB_TYPE: RefCell<Vec<String>> = RefCell::new(vec!["BOUNTY".to_string(),"JOBS".to_string(),"RFP".to_string()]);
-//     pub static SPOTLIGHT_PROJECTS: RefCell<SpotlightProjects> = RefCell::new(SpotlightProjects::new());
-//     pub static MONEY_ACCESS: RefCell<HashMap<String, Vec<Principal>>> = RefCell::new(HashMap::new());
-//     pub static PRIVATE_DOCS_ACCESS: RefCell<HashMap<String, Vec<Principal>>> = RefCell::new(HashMap::new());
-
-//     pub static PROJECT_RATING : RefCell<HashMap<String, Vec<(Principal,ProjectReview)>>> = RefCell::new(HashMap::new());
-
-//     pub static  MONEY_ACCESS_REQUESTS :RefCell<MoneyAccess> = RefCell::new(MoneyAccess::new());
-
-//     pub static PRIVATE_DOCS_ACCESS_REQUESTS :RefCell<PrivateDocsAccess> = RefCell::new(PrivateDocsAccess::new());
-
-// }
-
-
 
 pub async fn create_project(info: ProjectInfo) -> String {
     if info.private_docs.is_some() && info.upload_private_documents != Some(true) {
@@ -463,17 +420,6 @@ pub async fn create_project(info: ProjectInfo) -> String {
         return "You are not eligible for this role because you have 2 or more roles".to_string();
     }
 
-    // // Check if the caller has any declined project requests
-    // let has_declined_requests = read_state(|state| {
-    //     state
-    //         .declined_project_details
-    //         .contains_key(&StoredPrincipal(caller))
-    // });
-
-    // if has_declined_requests {
-    //     panic!("You had got your request declined earlier");
-    // }
-
     // Check if the caller has already registered a project or has one awaiting response
     let already_registered = read_state(|state| {
         state.project_storage.contains_key(&StoredPrincipal(caller))
@@ -487,62 +433,6 @@ pub async fn create_project(info: ProjectInfo) -> String {
         return "You can't create more than one project".to_string();
     }
 
-    // mutate_state(|state| {
-    //     let role_status = &mut state.role_status;
-
-    //     if let Some(mut role_status_vec_candid) = role_status.get(&StoredPrincipal(caller)) {
-    //         let mut role_status_vec = role_status_vec_candid.0;
-    //         for role in role_status_vec.iter_mut() {
-    //             if role.name == "project" {
-    //                 role.status = "requested".to_string();
-    //                 role.requested_on = Some(time());
-    //                 break;
-    //             }
-    //         }
-    //         role_status.insert(StoredPrincipal(caller), Candid(role_status_vec));
-    //     } else {
-    //         // If the role_status doesn't exist for the caller, insert the initial roles
-    //         let initial_roles = vec![
-    //             Role {
-    //                 name: "user".to_string(),
-    //                 status: "active".to_string(),
-    //                 requested_on: None,
-    //                 approved_on: Some(time()),
-    //                 rejected_on: None,
-    //             },
-    //             Role {
-    //                 name: "project".to_string(),
-    //                 status: "default".to_string(),
-    //                 requested_on: None,
-    //                 approved_on: None,
-    //                 rejected_on: None,
-    //             },
-    //             Role {
-    //                 name: "mentor".to_string(),
-    //                 status: "default".to_string(),
-    //                 requested_on: None,
-    //                 approved_on: None,
-    //                 rejected_on: None,
-    //             },
-    //             Role {
-    //                 name: "vc".to_string(),
-    //                 status: "default".to_string(),
-    //                 requested_on: None,
-    //                 approved_on: None,
-    //                 rejected_on: None,
-    //             },
-    //         ];
-    //         role_status.insert(StoredPrincipal(caller), Candid(initial_roles));
-    //     }
-    // });
-
-    // crate::latest_popular_projects::update_project_status_live_incubated(new_project).await;
-
-    // let user_data_for_updation = info.clone();
-    // crate::user_module::update_data_for_roles(caller, user_data_for_updation.user_data).await;
-
-    //let info_clone = info.clone();
-    //let user_uid = crate::user_module::update_user(info_clone.user_data).await;
     match info.validate() {
         Ok(_) => {
             let uuids = raw_rand().await.unwrap().0;
@@ -551,86 +441,6 @@ pub async fn create_project(info: ProjectInfo) -> String {
 
             let canister_id = crate::asset_manager::get_asset_canister();
             let mut info_with_default = change_project_images(caller, info.clone()).await;
-            // change ids
-            // let full_url = canister_id.to_string() + "/uploads/default_user.jpeg";
-            // let key = "/uploads/".to_owned() + &caller.to_string() + "_user.jpeg";
-
-            // let full_url_logo = canister_id.to_string() + "/uploads/default_project_logo.jpeg";
-            // let key_logo = "/uploads/".to_owned() + &caller.to_string() + "_project_logo.jpeg";
-
-            // let full_url_cover = canister_id.to_string() + "/uploads/default_project_cover.jpeg";
-            // let key_cover = "/uploads/".to_owned() + &caller.to_string() + "_project_cover.jpeg";
-
-            // fn default_profile_picture(full_url: &str) -> Vec<u8> {
-            //     // base64::decode(DEFAULT_USER_AVATAR_BASE64).expect("Failed to decode base64 image")
-            //     full_url.as_bytes().to_vec()
-            // }
-
-            // let mut info_with_default = info.clone();
-
-            // if info_with_default.user_data.profile_picture.is_none() {
-            //     info_with_default.user_data.profile_picture =
-            //         Some(default_profile_picture(&full_url));
-            // } else {
-            //     let arg_logo = StoreArg {
-            //         key: key.clone(),
-            //         content_type: "image/*".to_string(),
-            //         content_encoding: "identity".to_string(),
-            //         content: ByteBuf::from(
-            //             info_with_default.user_data.profile_picture.clone().unwrap(),
-            //         ),
-            //         sha256: None,
-            //     };
-            //     let delete_asset = DeleteAsset { key: key.clone() };
-            //     let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
-            //         .await
-            //         .unwrap();
-            //     let (result,): ((),) = call(canister_id, "store", (arg_logo,)).await.unwrap();
-            //     info_with_default.user_data.profile_picture =
-            //         Some((canister_id.to_string() + &key).as_bytes().to_vec());
-            // }
-
-            // if info_with_default.project_logo.is_none() {
-            //     info_with_default.project_logo = Some(default_profile_picture(&full_url_logo));
-            // } else {
-            //     let arg_logo = StoreArg {
-            //         key: key_logo.clone(),
-            //         content_type: "image/*".to_string(),
-            //         content_encoding: "identity".to_string(),
-            //         content: ByteBuf::from(info_with_default.project_logo.clone().unwrap()),
-            //         sha256: None,
-            //     };
-            //     let delete_asset = DeleteAsset {
-            //         key: key_logo.clone(),
-            //     };
-            //     let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
-            //         .await
-            //         .unwrap();
-            //     let (result,): ((),) = call(canister_id, "store", (arg_logo,)).await.unwrap();
-            //     info_with_default.project_logo =
-            //         Some((canister_id.to_string() + &key_logo).as_bytes().to_vec());
-            // }
-
-            // if info_with_default.project_cover.is_none() {
-            //     info_with_default.project_cover = Some(default_profile_picture(&full_url_cover));
-            // } else {
-            //     let arg_cover = StoreArg {
-            //         key: key_cover.clone(),
-            //         content_type: "image/*".to_string(),
-            //         content_encoding: "identity".to_string(),
-            //         content: ByteBuf::from(info_with_default.project_cover.clone().unwrap()),
-            //         sha256: None,
-            //     };
-            //     let delete_asset = DeleteAsset {
-            //         key: key_cover.clone(),
-            //     };
-            //     let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
-            //         .await
-            //         .unwrap();
-            //     let (result,): ((),) = call(canister_id, "store", (arg_cover,)).await.unwrap();
-            //     info_with_default.project_cover =
-            //         Some((canister_id.to_string() + &key_cover).as_bytes().to_vec());
-            // }
 
             let new_project = ProjectInfoInternal {
                 params: info_with_default,
@@ -911,29 +721,7 @@ pub struct ListAllProjects {
     overall_average: Option<f64>,
 }
 
-// #[query(guard = "is_user_anonymous")]
-// pub fn list_all_projects() -> Vec<ListAllProjects> {
-//     APPLICATION_FORM.with(|projects: &RefCell<ApplicationDetails>| {
-//         let projects = projects.borrow();
 
-//         let mut list_all_projects: Vec<ListAllProjects> = vec![];
-
-//         for (principal, projects) in projects.iter() {
-//             for project in projects {
-//                 let get_rating = calculate_average_api(&project.uid);
-
-//                 let project_info = ListAllProjects {
-//                     principal: principal.clone(),
-//                     params: project.clone(),
-//                     overall_average: get_rating.overall_average,
-//                 };
-
-//                 list_all_projects.push(project_info)
-//             }
-//         }
-//         list_all_projects
-//     })
-// }
 #[query(guard = "is_user_anonymous")]
 pub fn list_all_projects() -> Vec<ListAllProjects> {
     let projects_snapshot = read_state(|state| {
@@ -1175,65 +963,47 @@ pub async fn update_project(project_id: String, mut updated_project: ProjectInfo
         return "Error: Only the project owner can request updates.".to_string();
     }
 
-    let exists = read_state(|state| {
-        state
-            .project_declined_request
-            .contains_key(&StoredPrincipal(caller))
-    });
-
-    if exists {
-        panic!("Your update request was previously declined.");
-    }
-
-    if !is_owner {
-        return "Error: Only the project owner can request updates.".to_string();
-    }
-
-    let original_info = read_state(|state| state.project_storage.get(&StoredPrincipal(caller)));
-
-    let mut approved_timestamp = 0;
-    let mut rejected_timestamp = 0;
-
-    mutate_state(|state| {
-        if let Some(mut role_status) = state.role_status.get(&StoredPrincipal(caller)) {
-            if let Some(role) = role_status.0.iter_mut().find(|r| r.name == "project") {
-                if role.status == "approved" {
-                    approved_timestamp = time();
-                    role.approved_on = Some(approved_timestamp);
-                } else if role.status == "rejected" {
-                    rejected_timestamp = time();
-                    role.rejected_on = Some(rejected_timestamp);
-                }
-            }
-        }
-    });
-
     updated_project = change_project_images(caller, updated_project.clone()).await;
 
-    match original_info {
-        Some(orig_infos) => {
-            if let Some(orig_info) = orig_infos.0.iter().find(|p| p.uid == project_id) {
-                mutate_state(|state| {
-                    state.pending_project_details.insert(
-                        orig_info.uid.clone(),
-                        Candid(ProjectUpdateRequest {
-                            project_id: project_id.clone(),
-                            original_info: orig_info.params.clone(),
-                            updated_info: updated_project.clone(),
-                            principal: caller,
-                            accepted_at: approved_timestamp,
-                            rejected_at: rejected_timestamp,
+    let update_result = mutate_state(|state| {
+                if let Some( mut project_list) = state.project_storage.get(&StoredPrincipal(caller)) {
+                    if let Some(project) = project_list.0.iter_mut().find(|p| p.uid == project_id) {
+                        project.params.project_name = updated_project.project_name;
+                        project.params.project_logo = updated_project.project_logo;
+                        project.params.preferred_icp_hub = updated_project.preferred_icp_hub;
+                        project.params.live_on_icp_mainnet = updated_project.live_on_icp_mainnet;
+                        project.params.money_raised_till_now = updated_project.money_raised_till_now;
+                        project.params.supports_multichain = updated_project.supports_multichain;
+                        project.params.project_elevator_pitch = updated_project.project_elevator_pitch;
+                        project.params.project_area_of_focus = updated_project.project_area_of_focus;
+                        project.params.promotional_video = updated_project.promotional_video;
+                        project.params.github_link = updated_project.github_link;
+                        project.params.reason_to_join_incubator = updated_project.reason_to_join_incubator;
+                        project.params.project_description = updated_project.project_description;
+                        project.params.project_cover = updated_project.project_cover;
+                        project.params.project_team = updated_project.project_team;
+                        project.params.token_economics = updated_project.token_economics;
+                        project.params.technical_docs = updated_project.technical_docs;
+                        project.params.long_term_goals = updated_project.long_term_goals;
+                        project.params.target_market = updated_project.target_market;
+                        project.params.self_rating_of_project = updated_project.self_rating_of_project;
+                        project.params.mentors_assigned = updated_project.mentors_assigned;
+                        project.params.vc_assigned = updated_project.vc_assigned;
+                        project.params.project_website = updated_project.project_website;
 
-                            sent_at: time(),
-                        }),
-                    );
-                });
-            }
-        }
-        None => return "No original project info found.".to_string(),
+                        state.project_storage.insert(StoredPrincipal(caller), project_list.clone());
+                        return Ok("Profile updated successfully");
+                    }
+                }
+                return Err("No existing Project profile found to update.");
+    });
+
+    match update_result {
+        Ok(message) => {
+            format!("{}", message)
+        },
+        Err(error) => format!("Error processing request: {}", error),
     }
-
-    format!("Updation Done")
 }
 
 pub fn delete_project(id: String) -> std::string::String {

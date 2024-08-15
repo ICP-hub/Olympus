@@ -900,6 +900,7 @@ service : {
   get_approved_request_from_project_to_mentor_via_project : () -> (
       vec OfferToMentor,
     ) query;
+  get_approved_role_count_for_principal : (principal) -> (nat64) query;
   get_area_focus_expertise : () -> (vec Role_1) query;
   get_asset_canister : () -> (principal) query;
   get_blog_post : () -> (vec record { principal; vec Blog }) query;

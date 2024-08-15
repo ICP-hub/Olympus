@@ -489,41 +489,12 @@ pub fn delete_venture_capitalist() -> std::string::String {
 pub async fn update_venture_capitalist(mut params: VentureCapitalist) -> String {
     let caller = ic_cdk::caller();
 
-    let declined_request_exists = read_state(|state| {
-        state
-            .vc_profile_edit_declined
-            .contains_key(&StoredPrincipal(caller))
-    });
-    if declined_request_exists {
-        panic!("You had got your request declined earlier");
-    }
-
     let already_registered =
         read_state(|state| state.vc_storage.contains_key(&StoredPrincipal(caller)));
     if !already_registered {
         ic_cdk::println!("This Principal is not registered");
         return "This Principal is not registered.".to_string();
     }
-
-    let profile_edit_request_already_sent = read_state(|state| {
-        state
-            .vc_profile_edit_awaits
-            .contains_key(&StoredPrincipal(caller))
-    });
-    if profile_edit_request_already_sent {
-        ic_cdk::println!("Wait for your previous request to get approved");
-        return "Wait for your previous request to get approved.".to_string();
-    }
-
-    let previous_profile = read_state(|state| {
-        state
-            .vc_storage
-            .get(&StoredPrincipal(caller))
-            .map(|vc_internal| vc_internal.0.params.clone())
-    });
-
-    let mut approved_timestamp = 0;
-    let mut rejected_timestamp = 0;
 
     let mut user_data = get_user_information_internal(caller);
 
@@ -558,47 +529,49 @@ pub async fn update_venture_capitalist(mut params: VentureCapitalist) -> String 
             Some((canister_id.to_string() + &key).as_bytes().to_vec());
     }
 
-    mutate_state(|state| {
-        if let Some(mut roles) = state.role_status.get(&StoredPrincipal(caller)) {
-            if let Some(role) = roles.0.iter_mut().find(|r| r.name == "mentor") {
-                if role.status == "approved" {
-                    approved_timestamp = ic_cdk::api::time();
-                    role.approved_on = Some(approved_timestamp);
-                } else if role.status == "rejected" {
-                    rejected_timestamp = ic_cdk::api::time();
-                    role.rejected_on = Some(rejected_timestamp);
+    let update_result = mutate_state(|state| {
+                if let Some(mut existing_vc_internal) = state.vc_storage.get(&StoredPrincipal(caller)) {
+                        existing_vc_internal.0.params.registered_under_any_hub = params.registered_under_any_hub.clone()
+                            .or(existing_vc_internal.0.params.registered_under_any_hub.clone());
+                        existing_vc_internal.0.params.project_on_multichain = params.project_on_multichain.clone()
+                            .or(existing_vc_internal.0.params.project_on_multichain.clone());
+                        existing_vc_internal.0.params.money_invested = params.money_invested.clone()
+                            .or(existing_vc_internal.0.params.money_invested.clone());
+                        existing_vc_internal.0.params.existing_icp_portfolio = params.existing_icp_portfolio.clone()
+                            .or(existing_vc_internal.0.params.existing_icp_portfolio.clone());
+                        existing_vc_internal.0.params.announcement_details = params.announcement_details.clone()
+                            .or(existing_vc_internal.0.params.announcement_details.clone());
+                        existing_vc_internal.0.params.registered_country = params.registered_country.clone()
+                            .or(existing_vc_internal.0.params.registered_country.clone());
+                        existing_vc_internal.0.params.fund_size = Some(params.fund_size.unwrap_or(0.0));
+                        existing_vc_internal.0.params.assets_under_management = params.assets_under_management.clone();
+                        existing_vc_internal.0.params.category_of_investment = params.category_of_investment.clone();
+                        existing_vc_internal.0.params.logo = params.logo.clone();
+                        existing_vc_internal.0.params.average_check_size = params.average_check_size;
+                        existing_vc_internal.0.params.existing_icp_investor = params.existing_icp_investor;
+                        existing_vc_internal.0.params.investor_type = params.investor_type.clone();
+                        existing_vc_internal.0.params.number_of_portfolio_companies =params.number_of_portfolio_companies;
+                        existing_vc_internal.0.params.portfolio_link = params.portfolio_link.clone();
+                        existing_vc_internal.0.params.reason_for_joining = params.reason_for_joining.clone();
+                        existing_vc_internal.0.params.name_of_fund = params.name_of_fund.clone();
+                        existing_vc_internal.0.params.preferred_icp_hub = params.preferred_icp_hub.clone();
+                        existing_vc_internal.0.params.type_of_investment = params.type_of_investment.clone();
+                        existing_vc_internal.0.params.linkedin_link = params.linkedin_link.clone();
+                        existing_vc_internal.0.params.website_link = params.website_link.clone();
+                        existing_vc_internal.0.params.registered = params.registered.clone();
+
+                        state.vc_storage.insert(StoredPrincipal(caller), existing_vc_internal);
+                        return Ok("Profile updated successfully");
                 }
-            }
-        }
-
-        let update_data_to_store = UpdateInfoStruct {
-            original_info: previous_profile,
-            updated_info: Some(params.clone()),
-            approved_at: approved_timestamp,
-            rejected_at: rejected_timestamp,
-            sent_at: ic_cdk::api::time(),
-        };
-
-        state.vc_profile_edit_awaits.insert(
-            StoredPrincipal(caller),
-            Candid(update_data_to_store.clone()),
-        );
+                return Err("No existing VC profile found to update.");
     });
 
-    // let res = send_approval_request(
-    //     params
-    //         .user_data
-    //         .profile_picture
-    //         .unwrap_or_else(|| Vec::new()),
-    //     params.user_data.full_name,
-    //     params.user_data.country,
-    //     params.category_of_investment,
-    //     "vc".to_string(),
-    //     params.user_data.bio.unwrap_or("no bio".to_string()),
-    // )
-    // .await;
-
-    format!("Updation Done")
+    match update_result {
+        Ok(message) => {
+            format!("{}", message)
+        },
+        Err(error) => format!("Error processing request: {}", error),
+    }
 }
 
 #[query(guard = "is_user_anonymous")]
