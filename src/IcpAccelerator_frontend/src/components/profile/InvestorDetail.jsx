@@ -1,6 +1,6 @@
 import React, { useState,useEffect, useRef } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller,FormProvider } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
 import { useSelector, useDispatch } from "react-redux";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -357,7 +357,6 @@ const InvestorDetail = () => {
       mode: "all",
       defaultValues,
     });
-     console.log("getvalues =>",getValues)
   
     // image creation function compression and uintarray creator
     const imageCreationFunc = async (file) => {
@@ -878,6 +877,7 @@ const InvestorDetail = () => {
 
   const handleClickOutside = (event) => {
     if (editableRef.current && !editableRef.current.contains(event.target)) {
+      // setInvestDetail(...investDetail)
       setEdit({
         investorRegistered: false,
     registeredCountry : false,
@@ -893,7 +893,7 @@ const InvestorDetail = () => {
     investmentStag:false,
     investmentRange:false,
       });
-      setInvestorValuesHandler(getValues)
+      
     }
   };
   useEffect(() => {
@@ -903,12 +903,14 @@ const InvestorDetail = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-
+  
+   const [investDetail,setInvestDetail]=useState(defaultValues)
+   console.log("investDetail =>" , register)
   return (
     <div ref={editableRef} className=" bg-white">
       <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}
       >
-      <div className="my-1 relative group hover:bg-slate-50 rounded p-1">
+      <div className="my-1 relative group hover:bg-slate-50 rounded p-1 mb-1">
         <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           <EditIcon
             sx={{ fontSize: 'medium', cursor: 'pointer' }}
@@ -916,12 +918,12 @@ const InvestorDetail = () => {
           />
         </div>
 
-        <label className="block text-gray-700">Are you registered?</label>
+        <label className="block text-gray-500">Are you registered?</label>
         {edit.investorRegistered ? (
           <div>
             <select
             {...register("investor_registered")}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="shadow appearance-none border rounded w-full py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           >
             <option className="text-lg" value="false">
               No
@@ -933,12 +935,12 @@ const InvestorDetail = () => {
           </div>
         ) : (
           <div className="flex justify-between items-center cursor-pointer p-1">
-            <span>{getValues.investor_registered}</span>
+            <span>{investDetail.investor_registered}</span>
           </div>
         )}
       </div>
       {watch("investor_registered") === "true" && (
-      <div className="mb-1 relative group hover:bg-slate-50 rounded p-1">
+      <div className="mb-2 relative group hover:bg-slate-50 rounded p-1">
         <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           <EditIcon
             sx={{ fontSize: 'medium', cursor: 'pointer' }}
@@ -946,14 +948,14 @@ const InvestorDetail = () => {
           />
         </div>
 
-        <label className="block text-gray-700">Registered Country </label>
+        <label className="block text-gray-500">Registered Country </label>
         {edit.registeredCountry ? (
           <div>
             <select
                         {...register("registered_country")}
                         name="registered_country"
                         // value={getValues("registered_country")}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border rounded w-full py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     >
                         <option value="">Please choose an option </option>/
                         {countries?.map((country) => (
@@ -974,13 +976,13 @@ const InvestorDetail = () => {
           </div>
         ) : (
           <div className="flex justify-between items-center cursor-pointer p-1">
-            <span>{getValues.registered_country} </span>
+            <span>{investDetail.registered_country} </span>
           </div>
         )}
       </div>
       )}
       
-      <div className="mb-1 relative group hover:bg-slate-50 rounded p-1">
+      <div className="relative group hover:bg-slate-50 rounded p-1 mb-2">
         <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           <EditIcon
             sx={{ fontSize: 'medium', cursor: 'pointer' }}
@@ -988,14 +990,14 @@ const InvestorDetail = () => {
           />
         </div>
 
-        <label className="block text-gray-700">ICP hub you will like to be associated </label>
+        <label className="block text-gray-500">ICP hub you will like to be associated </label>
         {edit.preferredIcpHub ? (
           <div>
             <select
                     {...register("preferred_icp_hub")}
                     name="preferred_icp_hub"
 
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    className="shadow appearance-none border rounded w-full py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 >
                     <option value="">Please choose an option</option>
                     {getAllIcpHubs?.map((hub) => (
@@ -1012,11 +1014,11 @@ const InvestorDetail = () => {
           </div>
         ) : (
           <div className="flex justify-between items-center cursor-pointer p-1">
-            <span>{getValues.preferred_icp_hub}</span>
+            <span>{investDetail.preferred_icp_hub}</span>
           </div>
         )}
       </div>
-      <div className="mb-1 relative group hover:bg-slate-50 rounded p-1">
+      <div className="mb-2 relative group hover:bg-slate-50 rounded p-1 ">
         <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           <EditIcon
             sx={{ fontSize: 'medium', cursor: 'pointer' }}
@@ -1024,12 +1026,12 @@ const InvestorDetail = () => {
           />
         </div>
 
-        <label className="block text-gray-700">Are you an existing ICP investor </label>
+        <label className="block text-gray-500">Are you an existing ICP investor </label>
         {edit.existingIcpInvestor ? (
           <div>
           <select
                     {...register("existing_icp_investor")}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    className="shadow appearance-none border rounded w-full py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 >
                     <option className="text-lg" value="false">
                         No
@@ -1046,13 +1048,13 @@ const InvestorDetail = () => {
         </div>
         ) : (
           <div className="flex justify-between items-center cursor-pointer p-1">
-            <span>{getValues.existing_icp_investor}</span>
+            <span>{investDetail.existing_icp_investor}</span>
           </div>
         )}
       </div>
       {watch("existing_icp_investor") === 'true' && (
-                <div className="mb-1">
-                    <label className="block text-sm font-medium mb-1">Type of investment<span className='text-[red] ml-1'>*</span></label>
+                <div className="mb-2">
+                    <label className="block text-sm text-gray-500 font-medium mb-1">Type of investment<span className='text-[red] ml-1'>*</span></label>
                     <ReactSelect
                         isMulti
                         menuPortalTarget={document.body}
@@ -1074,7 +1076,7 @@ const InvestorDetail = () => {
                                 },
                                 display: "flex",
                                 overflowX: "auto",
-                                maxHeight: "43px",
+                                maxHeight: "28px",
                                 "&::-webkit-scrollbar": {
                                     display: "none",
                                 },
@@ -1082,7 +1084,7 @@ const InvestorDetail = () => {
                             valueContainer: (provided, state) => ({
                                 ...provided,
                                 overflow: "scroll",
-                                maxHeight: "40px",
+                                // maxHeight: "40px",
                                 scrollbarWidth: "none",
                             }),
                             placeholder: (provided, state) => ({
@@ -1146,7 +1148,7 @@ const InvestorDetail = () => {
                     )}
                 </div>
             )}
-             <div className="my-1 relative group hover:bg-slate-50 rounded p-1">
+             <div className="my-1 relative group hover:bg-slate-50 rounded p-1 mb-2">
         <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           <EditIcon
             sx={{ fontSize: 'medium', cursor: 'pointer' }}
@@ -1154,7 +1156,7 @@ const InvestorDetail = () => {
           />
         </div>
 
-        <label className="block text-gray-700">Portfolio Link</label>
+        <label className="block text-gray-500">Portfolio Link</label>
         {edit.portfolioLink ? (
           <div>
             <input
@@ -1162,7 +1164,7 @@ const InvestorDetail = () => {
                     type="url"
                     placeholder="Enter your portfolio url"
                     name=" investor_portfolio_link"
-                    className="block w-full border border-gray-300 rounded-md p-1"
+                    className="block w-full border border-gray-300 rounded-md p-[2px]"
 
                 />
                 {errors?.investor_portfolio_link && (
@@ -1173,12 +1175,12 @@ const InvestorDetail = () => {
           </div>
         ) : (
           <div className="flex justify-between items-center cursor-pointer p-1">
-            <span>{getValues.investor_portfolio_link}</span>
+            <span>{investDetail.investor_portfolio_link}</span>
           </div>
         )}
       </div>
 
-      <div className="my-1 relative group hover:bg-slate-50 rounded p-1">
+      <div className="my-1 relative group hover:bg-slate-50 rounded p-1 mb-2">
         <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           <EditIcon
             sx={{ fontSize: 'medium', cursor: 'pointer' }}
@@ -1186,7 +1188,7 @@ const InvestorDetail = () => {
           />
         </div>
 
-        <label className="block text-gray-700">Fund Name </label>
+        <label className="block text-gray-500">Fund Name </label>
         {edit.fundName ? (
           <div>
              <input
@@ -1194,7 +1196,7 @@ const InvestorDetail = () => {
                     type="text"
                     placeholder="Enter your fund name"
                     name="investor_fund_name"
-                    className="block w-full border border-gray-300 rounded-md p-1"
+                    className="block w-full border border-gray-300 rounded-md p-[2px]"
 
                 />
                 {errors?.investor_fund_name && (
@@ -1205,12 +1207,12 @@ const InvestorDetail = () => {
           </div>
         ) : (
           <div className="flex justify-between items-center cursor-pointer p-1">
-            <span>{getValues.investor_fund_name}</span>
+            <span>{investDetail.investor_fund_name}</span>
           </div>
         )}
       </div>
 
-      <div className="my-1 relative group hover:bg-slate-50 rounded p-1">
+      <div className="my-1 relative group hover:bg-slate-50 rounded p-1 mb-2">
         <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           <EditIcon
             sx={{ fontSize: 'medium', cursor: 'pointer' }}
@@ -1218,7 +1220,7 @@ const InvestorDetail = () => {
           />
         </div>
 
-        <label className="block text-gray-700">Fund size (in million USD) </label>
+        <label className="block text-gray-500">Fund size (in million USD) </label>
         {edit.fundSize ? (
           <div>
              <input
@@ -1226,7 +1228,7 @@ const InvestorDetail = () => {
                     type="number"
                     placeholder="Enter fund size in Millions"
                     name="investor_fund_size"
-                    className="block w-full border border-gray-300 rounded-md p-1"
+                    className="block w-full border border-gray-300 rounded-md p-[2px]"
                     onWheel={(e) => e.target.blur()}
                 
                 />
@@ -1238,12 +1240,12 @@ const InvestorDetail = () => {
           </div>
         ) : (
           <div className="flex justify-between items-center cursor-pointer p-1">
-            <span>{getValues.investor_fund_size}</span>
+            <span>{investDetail.investor_fund_size}</span>
           </div>
         )}
       </div>
 
-      <div className="mb-1 relative group hover:bg-slate-50 rounded p-1">
+      <div className="mb-2 relative group hover:bg-slate-50 rounded p-1">
         <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           <EditIcon
             sx={{ fontSize: 'medium', cursor: 'pointer' }}
@@ -1251,13 +1253,13 @@ const InvestorDetail = () => {
           />
         </div>
 
-        <label className="block text-gray-700">Do you invest in multiple ecosystems ? </label>
+        <label className="block text-gray-500">Do you invest in multiple ecosystems ? </label>
         {edit.invested_in_multiChain ? (
           <div>
           <select
                     {...register("invested_in_multi_chain")}
                     // value={getValues("invested_in_multi_chain")}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    className="shadow appearance-none border rounded w-full py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 >
                     <option className="text-lg" value="false">
                         No
@@ -1274,13 +1276,13 @@ const InvestorDetail = () => {
         </div>
         ) : (
           <div className="flex justify-between items-center cursor-pointer p-1">
-            <span>{getValues.invested_in_multi_chain}</span>
+            <span>{investDetail.invested_in_multi_chain}</span>
           </div>
         )}
       </div>
       {watch("invested_in_multi_chain") === 'true' && (
                 <div className="mb-4">
-                    <label className="block text-sm font-medium mb-1">Please select the chains <span className='text-[red] ml-1'>*</span></label>
+                    <label className="block text-sm text-gray-500 font-medium mb-1">Please select the chains <span className='text-[red] ml-1'>*</span></label>
                     <Select
                         isMulti
                         menuPortalTarget={document.body}
@@ -1289,7 +1291,7 @@ const InvestorDetail = () => {
                             menuPortal: (base) => ({ ...base, zIndex: 9999 }),
                             control: (provided, state) => ({
                                 ...provided,
-                                paddingBlock: "0px",
+                                paddingBlock: "2px",
                                 borderRadius: "8px",
                                 border: errors.invested_in_multi_chain_names
                                     ? "2px solid #ef4444"
@@ -1302,8 +1304,7 @@ const InvestorDetail = () => {
                                 },
                                 display: "flex",
                                 overflowX: "hidden",
-                                height:"24px",
-                                maxHeight: "33px",
+                                maxHeight: "28px",
                                 "&::-webkit-scrollbar": {
                                     display: "none",
                                 },
@@ -1311,8 +1312,7 @@ const InvestorDetail = () => {
                             valueContainer: (provided, state) => ({
                                 ...provided,
                                 overflow: "hidden",
-                                height:"24px",
-                                maxHeight: "30px",
+                                maxHeight: "40px",
                                 scrollbarWidth: "none",
                             }),
                             placeholder: (provided, state) => ({
@@ -1377,7 +1377,7 @@ const InvestorDetail = () => {
                 </div>
             )}
 
-            <div className="mb-1 relative group hover:bg-slate-50 rounded p-1">
+            <div className="mb-2 relative group hover:bg-slate-50 rounded p-1">
         <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           <EditIcon
             sx={{ fontSize: 'medium', cursor: 'pointer' }}
@@ -1385,7 +1385,7 @@ const InvestorDetail = () => {
           />
         </div>
 
-        <label className="block text-gray-700">Category of investment </label>
+        <label className="block text-gray-500">Category of investment </label>
         {edit.investedCategory ? (
           <div>
           <Select
@@ -1395,8 +1395,9 @@ const InvestorDetail = () => {
                     styles={{
                         menuPortal: (base) => ({ ...base, zIndex: 9999 }),
                         control: (provided, state) => ({
+                           padding:"0px",
                             ...provided,
-                            paddingBlock: "2px",
+                            // paddingBlock: "2px",
                             borderRadius: "8px",
                             border: errors.investment_categories
                                 ? "2px solid #ef4444"
@@ -1409,7 +1410,8 @@ const InvestorDetail = () => {
                             },
                             display: "flex",
                             overflowX: "auto",
-                            maxHeight: "43px",
+                            
+                            maxHeight: "28px",
                             "&::-webkit-scrollbar": {
                                 display: "none",
                             },
@@ -1417,8 +1419,9 @@ const InvestorDetail = () => {
                         valueContainer: (provided, state) => ({
                             ...provided,
                             overflow: "scroll",
-                            maxHeight: "40px",
+                            maxHeight: "30px",
                             scrollbarWidth: "none",
+                           
                         }),
                         placeholder: (provided, state) => ({
                             ...provided,
@@ -1435,7 +1438,8 @@ const InvestorDetail = () => {
                             alignItems: "center",
                             backgroundColor: "white",
                             border: "1px solid gray",
-                            borderRadius: "5px"
+                            borderRadius: "5px",
+                            
                         }),
                         multiValueRemove: (provided) => ({
                             ...provided,
@@ -1481,12 +1485,12 @@ const InvestorDetail = () => {
         </div>
         ) : (
           <div className="flex justify-between items-center cursor-pointer p-1">
-            <span>{getValues.investment_categories}</span>
+            <span>{investDetail.investment_categories}</span>
           </div>
         )}
       </div>
 
-      <div className="my-1 relative group hover:bg-slate-50 rounded p-1">
+      <div className="my-1 relative group hover:bg-slate-50 rounded p-1 mb-2">
         <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           <EditIcon
             sx={{ fontSize: 'medium', cursor: 'pointer' }}
@@ -1494,7 +1498,7 @@ const InvestorDetail = () => {
           />
         </div>
 
-        <label className="block text-gray-700">Website Link</label>
+        <label className="block text-gray-500">Website Link</label>
         {edit.websiteLink ? (
           <div>
             <input
@@ -1502,7 +1506,7 @@ const InvestorDetail = () => {
                     type="url"
                     name="investor_website_url"
                     placeholder="Enter your website url"
-                    className="block w-full border border-gray-300 rounded-md p-1"
+                    className="block w-full border border-gray-300 rounded-md p-[2px]"
                 />
                 {errors?.investor_website_url && (
                     <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
@@ -1512,12 +1516,12 @@ const InvestorDetail = () => {
           </div>
         ) : (
           <div className="flex justify-between items-center cursor-pointer p-1">
-            <span>{getValues.investor_website_url}</span>
+            <span>{investDetail.investor_website_url}</span>
           </div>
         )}
       </div>
 
-      <div className="my-1 relative group hover:bg-slate-50 rounded p-1">
+      <div className="my-1 relative group hover:bg-slate-50 rounded p-1 mb-2">
         <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           <EditIcon
             sx={{ fontSize: 'medium', cursor: 'pointer' }}
@@ -1525,7 +1529,7 @@ const InvestorDetail = () => {
           />
         </div>
 
-        <label className="block text-gray-700">LinkedIn Link</label>
+        <label className="block text-gray-500">LinkedIn Link</label>
         {edit.linkedInLink ? (
           <div>
             <input
@@ -1533,7 +1537,7 @@ const InvestorDetail = () => {
                     type="url"
                     name="investor_linkedin_url"
                     placeholder="Enter your linkedin url"
-                    className="block w-full border border-gray-300 rounded-md p-1"
+                    className="block w-full border border-gray-300 rounded-md p-[2px]"
                     required
                 />
                 {errors?.investor_linkedin_url && (
@@ -1544,13 +1548,13 @@ const InvestorDetail = () => {
           </div>
         ) : (
           <div className="flex justify-between items-center cursor-pointer p-1">
-            <span>{getValues.investor_linkedin_url}</span>
+            <span>{investDetail.investor_linkedin_url}</span>
           </div>
         )}
       </div>
 
 
-      <div className="mb-1 relative group hover:bg-slate-50 rounded p-1">
+      <div className="mb-2 relative group hover:bg-slate-50 rounded p-1">
         <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           <EditIcon
             sx={{ fontSize: 'medium', cursor: 'pointer' }}
@@ -1558,7 +1562,7 @@ const InvestorDetail = () => {
           />
         </div>
 
-        <label className="block text-gray-700">Which stage(s) do you invest at ?   </label>
+        <label className="block text-gray-500">Which stage(s) do you invest at ?   </label>
         {edit.investmentStag ? (
           <div>
             <Select
@@ -1582,7 +1586,7 @@ const InvestorDetail = () => {
                             },
                             display: "flex",
                             overflowX: "auto",
-                            maxHeight: "43px",
+                            maxHeight: "28px",
                             "&::-webkit-scrollbar": {
                                 display: "none",
                             },
@@ -1590,7 +1594,7 @@ const InvestorDetail = () => {
                         valueContainer: (provided, state) => ({
                             ...provided,
                             overflow: "scroll",
-                            maxHeight: "40px",
+                            // maxHeight: "40px",
                             scrollbarWidth: "none",
                         }),
                         placeholder: (provided, state) => ({
@@ -1653,13 +1657,13 @@ const InvestorDetail = () => {
         </div>
         ) : (
           <div className="flex justify-between items-center cursor-pointer p-1">
-            <span>{getValues.investment_stage}</span>
+            <span>{investDetail.investment_stage}</span>
           </div>
         )}
       </div>
 
 
-      <div className="mb-1 relative group hover:bg-slate-50 rounded p-1">
+      <div className="mb-2 relative group hover:bg-slate-50 rounded p-1">
         <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           <EditIcon
             sx={{ fontSize: 'medium', cursor: 'pointer' }}
@@ -1667,7 +1671,7 @@ const InvestorDetail = () => {
           />
         </div>
 
-        <label className="block text-gray-700">What is the range of your check size ?    </label>
+        <label className="block text-gray-500">What is the range of your check size ?    </label>
         {edit.investmentRange ? (
           <div>
                 <Select
@@ -1691,7 +1695,7 @@ const InvestorDetail = () => {
                             },
                             display: "flex",
                             overflowX: "auto",
-                            maxHeight: "43px",
+                            maxHeight: "28px",
                             "&::-webkit-scrollbar": {
                                 display: "none",
                             },
@@ -1699,7 +1703,7 @@ const InvestorDetail = () => {
                         valueContainer: (provided, state) => ({
                             ...provided,
                             overflow: "scroll",
-                            maxHeight: "40px",
+                            // maxHeight: "40px",
                             scrollbarWidth: "none",
                         }),
                         placeholder: (provided, state) => ({
@@ -1762,7 +1766,7 @@ const InvestorDetail = () => {
         </div>
         ) : (
           <div className="flex justify-between items-center cursor-pointer p-1">
-            <span>{getValues.investment_stage_range} </span>
+            <span>{investDetail.investment_stage_range} </span>
           </div>
         )}
       </div>
