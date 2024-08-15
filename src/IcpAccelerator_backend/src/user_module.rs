@@ -7,8 +7,6 @@ use ic_cdk::api::time;
 use ic_cdk_macros::*;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
-use std::collections::HashMap;
-// use ic_cdk::storage;
 use crate::is_user_anonymous;
 use ic_certified_assets::types::Key;
 use serde_bytes::ByteBuf;
@@ -60,6 +58,7 @@ pub struct Role {
     pub requested_on: Option<u64>,
     pub approved_on: Option<u64>,
     pub rejected_on: Option<u64>,
+    pub approval_status: Option<String>,
 }
 
 #[derive(CandidType, Clone, Serialize, Deserialize)]
@@ -120,11 +119,6 @@ pub struct RegisterResponse {
     roles_array_status: Vec<Role>,
 }
 
-// pub type UserInfoStorage = HashMap<Principal, UserInfoInternal>;
-
-// pub type UserTestimonial = HashMap<Principal, Vec<Testimonial>>;
-// pub type UserRating = HashMap<Principal, Vec<Review>>;
-
 pub fn initialize_roles() {
     let caller = caller();
 
@@ -137,6 +131,7 @@ pub fn initialize_roles() {
             requested_on: None,
             approved_on: Some(time()),
             rejected_on: None,
+            approval_status: Some("default".to_string()),
         },
         Role {
             name: "project".to_string(),
@@ -144,6 +139,7 @@ pub fn initialize_roles() {
             requested_on: None,
             approved_on: None,
             rejected_on: None,
+            approval_status: Some("default".to_string()),
         },
         Role {
             name: "mentor".to_string(),
@@ -151,6 +147,7 @@ pub fn initialize_roles() {
             requested_on: None,
             approved_on: None,
             rejected_on: None,
+            approval_status: Some("default".to_string()),
         },
         Role {
             name: "vc".to_string(),
@@ -158,6 +155,7 @@ pub fn initialize_roles() {
             requested_on: None,
             approved_on: None,
             rejected_on: None,
+            approval_status: Some("default".to_string()),
         },
     ];
 
@@ -177,15 +175,6 @@ pub fn initialize_roles() {
 
 pub async fn register_user_role(info: UserInformation) -> std::string::String {
     initialize_roles();
-
-    // if info.full_name.trim().is_empty()
-    //     || info
-    //         .email
-    //         .as_ref()
-    //         .map_or(true, |email| email.trim().is_empty())
-    // {
-    //     return "Please provide input for required fields: full_name and email.".to_string();
-    // }
 
     let caller = caller();
     let uuids = raw_rand().await.unwrap().0;
@@ -253,6 +242,7 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
             for role in role_status_vec.iter_mut() {
                 if role.name == "user" {
                     role.status = "active".to_string();
+                    role.approval_status = Some("approved".to_string());
                     role.requested_on = Some(time());
                     break;
                 }
@@ -267,6 +257,7 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
                     requested_on: None,
                     approved_on: Some(time()),
                     rejected_on: None,
+                    approval_status: Some("default".to_string()),
                 },
                 Role {
                     name: "project".to_string(),
@@ -274,6 +265,7 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
                     requested_on: None,
                     approved_on: None,
                     rejected_on: None,
+                    approval_status: Some("default".to_string()),
                 },
                 Role {
                     name: "mentor".to_string(),
@@ -281,6 +273,7 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
                     requested_on: None,
                     approved_on: None,
                     rejected_on: None,
+                    approval_status: Some("default".to_string()),
                 },
                 Role {
                     name: "vc".to_string(),
@@ -288,6 +281,7 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
                     requested_on: None,
                     approved_on: None,
                     rejected_on: None,
+                    approval_status: Some("default".to_string()),
                 },
             ];
             role_status.insert(StoredPrincipal(caller), Candid(initial_roles));
@@ -296,42 +290,7 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
     format!("User registered successfully with ID: {}", new_id)
 }
 
-// #[query(guard = "is_user_anonymous")]
-// pub fn get_role_status() -> Vec<Role> {
-//     ROLE_STATUS_ARRAY.with(|r| r.borrow().get(&caller()).expect("couldn't get role status array").clone())
-// }
 
-// #[query(guard = "is_user_anonymous")]
-// pub fn get_role_status() -> Vec<Role> {
-//     ROLE_STATUS_ARRAY.with(|r|{
-
-//         if !r.contains_key(&caller()){
-//             return vec![Role]
-//         }else{
-//             r.borrow().get(&caller()).expect("couldn't get role status array").clone();
-//         }
-
-//     }
-
-//  )
-// }
-
-pub async fn update_data_for_roles(
-    principal_id: Principal,
-    user_data: UserInformation,
-) -> Result<(), String> {
-    let roles = get_roles_for_principal(principal_id);
-    for role in roles {
-        match role.name.as_str() {
-            "user" => update_user_data(principal_id, user_data.clone()).await?,
-            "project" => update_project_data(principal_id, user_data.clone()).await?,
-            "mentor" => update_mentor_data(principal_id, user_data.clone()).await?,
-            "vc" => update_vc_data(principal_id, user_data.clone()).await?,
-            _ => (),
-        }
-    }
-    Ok(())
-}
 #[update]
 async fn update_user_data(user_id: Principal, mut user_data: UserInformation) -> Result<(), String> {
     let temp_image = user_data.profile_picture.clone();
@@ -380,38 +339,6 @@ async fn update_user_data(user_id: Principal, mut user_data: UserInformation) ->
     })
 }
 
-async fn update_project_data(principal: Principal, user_data: UserInformation) -> Result<(), String> {
-    mutate_state(|state| {
-        if let Some(mut projects) = state.project_storage.get(&StoredPrincipal(principal)) {
-            for project in projects.0.iter_mut() {
-                project.params.user_data = user_data.clone(); 
-            }
-            Ok(()) 
-        } else {
-            Err("No project found for the specified project ID.".to_string()) 
-        }
-    })
-}
-
-async fn update_mentor_data(user_id: Principal, user_data: UserInformation) -> Result<(), String> {
-    mutate_state(|state| {
-        if let Some(mut mentor) = state.mentor_storage.get(&&StoredPrincipal(user_id)) {
-            mentor.0.profile.user_data = user_data;
-            return Ok(());
-        }
-        Err("No mentor found for the specified ID.".to_string())
-    })
-}
-
-async fn update_vc_data(user_id: Principal, user_data: UserInformation) -> Result<(), String> {
-    mutate_state(|state| {
-        if let Some(mut vc) = state.vc_storage.get(&&StoredPrincipal(user_id)) {
-            vc.0.params.user_data = user_data;
-            return Ok(());
-        }
-        Err("No venture capitalist found for the specified ID.".to_string())
-    })
-}
 
 #[query(guard = "is_user_anonymous")]
 pub fn get_roles_for_principal(principal_id: Principal) -> Vec<Role> {
@@ -427,6 +354,7 @@ pub fn get_roles_for_principal(principal_id: Principal) -> Vec<Role> {
                     requested_on: None,
                     approved_on: None,
                     rejected_on: None,
+                    approval_status: Some("default".to_string()),
                 },
                 Role {
                     name: "project".to_string(),
@@ -434,6 +362,7 @@ pub fn get_roles_for_principal(principal_id: Principal) -> Vec<Role> {
                     requested_on: None,
                     approved_on: None,
                     rejected_on: None,
+                    approval_status: Some("default".to_string()),
                 },
                 Role {
                     name: "mentor".to_string(),
@@ -441,6 +370,7 @@ pub fn get_roles_for_principal(principal_id: Principal) -> Vec<Role> {
                     requested_on: None,
                     approved_on: None,
                     rejected_on: None,
+                    approval_status: Some("default".to_string()),
                 },
                 Role {
                     name: "vc".to_string(),
@@ -448,6 +378,7 @@ pub fn get_roles_for_principal(principal_id: Principal) -> Vec<Role> {
                     requested_on: None,
                     approved_on: None,
                     rejected_on: None,
+                    approval_status: Some("default".to_string()),
                 },
             ]
         }
@@ -467,6 +398,7 @@ pub fn get_role_status() -> Vec<Role> {
                     requested_on: None,
                     approved_on: None,
                     rejected_on: None,
+                    approval_status: Some("default".to_string()),
                 },
                 Role {
                     name: "project".to_string(),
@@ -474,6 +406,7 @@ pub fn get_role_status() -> Vec<Role> {
                     requested_on: None,
                     approved_on: None,
                     rejected_on: None,
+                    approval_status: Some("default".to_string()),
                 },
                 Role {
                     name: "mentor".to_string(),
@@ -481,6 +414,7 @@ pub fn get_role_status() -> Vec<Role> {
                     requested_on: None,
                     approved_on: None,
                     rejected_on: None,
+                    approval_status: Some("default".to_string()),
                 },
                 Role {
                     name: "vc".to_string(),
@@ -488,24 +422,22 @@ pub fn get_role_status() -> Vec<Role> {
                     requested_on: None,
                     approved_on: None,
                     rejected_on: None,
+                    approval_status: Some("default".to_string()),
                 },
             ]
         }
     })
 }
 
-// #[update(guard = "is_user_anonymous")]
-// pub fn switch_role(role : String, status: String){
-//     ROLE_STATUS_ARRAY.with(|status_arr|{
-//         let mut status_arr = status_arr.borrow_mut();
-//         let status_vec = status_arr.get(&caller()).expect("unable to get a role status for this principal");
-
-//         if status == "active" {
-//             for
-//         }
-
-//     });
-// }
+#[query]
+pub fn get_approved_role_count_for_principal(principal_id: Principal) -> usize {
+    get_roles_for_principal(principal_id)
+        .into_iter()
+        .filter(|role| {
+            role.approval_status.as_deref() == Some("approved") && role.name != "user"
+        })
+        .count()
+}
 
 #[update(guard = "is_user_anonymous")]
 pub fn switch_role(role_to_switch: String, new_status: String){
@@ -542,41 +474,6 @@ pub fn switch_role(role_to_switch: String, new_status: String){
     });
 }
 
-
-
-// pub fn switch_role(role: String, new_status: String) {
-//     ROLE_STATUS_ARRAY.with(|status_arr| {
-//         let mut status_arr = status_arr.borrow_mut();
-//         let status_vec = status_arr.get_mut(&caller()).expect("unable to get a role status for this principal");
-
-//         // Only proceed if the new status is "active"
-//         if new_status == "active" {
-//             // Check if the specified role is currently "approved"
-//             if let Some(role_to_update) = status_vec.iter_mut().find(|r| r.name == role && r.status == "approved") {
-//                 // First, set any currently "active" roles to "approved"
-//                 for role_status in status_vec.iter_mut() {
-//                     if role_status.status == "active" {
-//                         role_status.status = "approved".to_string();
-//                     }
-//                 }
-
-//                 // Then, set the specified "approved" role to "active"
-//                 // This is done in a separate loop to avoid borrowing issues
-//                 for role_status in status_vec.iter_mut() {
-//                     if role_status.name == role_to_update.name {
-//                         role_status.status = "active".to_string();
-//                         break; // Break after updating the status to avoid unnecessary iterations
-//                     }
-//                 }
-//             }
-//         } else {
-//             // For statuses other than "active", directly update the role's status without the "approved" precondition
-//             // if let Some(role_to_update) = status_vec.iter_mut().find(|r| r.name == role) {
-//             //     role_to_update.status = new_status;
-//             // }
-//         }
-//     });
-// }
 
 pub fn get_user_info() -> Result<UserInformation, &'static str> {
     let caller = StoredPrincipal(caller());
@@ -636,6 +533,18 @@ pub fn get_users_with_all_info() -> UserInfoInternal {
             .get(&caller)
             .map(|candid_user_info| candid_user_info.0.clone())
             .expect("couldn't find user information")
+    })
+}
+
+pub fn get_user_information_internal(caller: Principal) -> UserInformation {
+    read_state(|state| {
+        state
+            .user_storage
+            .get(&StoredPrincipal(caller))
+            .expect("User not found")
+            .0
+            .params
+            .clone()
     })
 }
 
@@ -726,67 +635,6 @@ pub async fn update_user(info: UserInformation) -> std::string::String {
     result
 }
 
-// pub fn pre_upgrade_user_modules() {
-//     USER_STORAGE.with(|user_storage| {
-//         ROLE_STATUS_ARRAY.with(|role_status_array| {
-//             storage::stable_save((user_storage.borrow().clone(), role_status_array.borrow().clone()))
-//                 .expect("Failed to save to stable storage");
-//         });
-//     });
-// }
-
-// pub fn pre_upgrade_user_modules() {
-//     USER_STORAGE.with(|user_storage| {
-//         ROLE_STATUS_ARRAY.with(|role_status_array| {
-//             match stable_save((
-//                 user_storage.borrow().clone(),
-//                 role_status_array.borrow().clone(),
-//             )) {
-//                 Ok(_) => ic_cdk::println!("User modules saved successfully."),
-//                 Err(e) => ic_cdk::println!("{}", format!("Failed to save user modules: {:?}", e)),
-//             }
-//         });
-//     });
-// }
-
-// pub fn post_upgrade_user_modules() {
-//     match stable_restore() {
-//         Ok((restored_user_storage, restored_role_status_array)) => {
-//             USER_STORAGE.with(|user_storage_ref| {
-//                 *user_storage_ref.borrow_mut() = restored_user_storage;
-//             });
-//             ROLE_STATUS_ARRAY.with(|role_status_array_ref| {
-//                 *role_status_array_ref.borrow_mut() = restored_role_status_array;
-//             });
-//             ic_cdk::println!("User modules restored successfully.");
-//         }
-//         Err(e) => ic_cdk::println!("{}", format!("Failed to restore user modules: {:?}", e)),
-//     }
-// }
-
-// pub fn post_upgrade_user_modules() {
-//     let (restored_user_storage, restored_role_status_array):
-//         (HashMap<Principal, UserInfoInternal>, HashMap<Principal, Vec<Role>>) =
-//         storage::stable_restore().expect("Failed to restore from stable storage");
-
-//     USER_STORAGE.with(|user_storage_ref| {
-//         *user_storage_ref.borrow_mut() = restored_user_storage;
-//     });
-//     ROLE_STATUS_ARRAY.with(|role_status_array_ref| {
-//         *role_status_array_ref.borrow_mut() = restored_role_status_array;
-//     });
-// }
-
-pub fn get_user_info_by_principal(caller: Principal) -> Result<UserInformation, &'static str> {
-    read_state(|state| {
-        state
-            .user_storage
-            .get(&StoredPrincipal(caller))
-            .map(|user_internal| user_internal.0.params.clone())
-            .ok_or("User not Found")
-    })
-}
-
 #[query(guard = "is_user_anonymous")]
 pub fn get_user_info_using_principal(caller: Principal) -> Option<UserInfoInternal> {
     read_state(|state| {
@@ -842,19 +690,6 @@ fn get_testimonials(principal_id: Principal) -> Result<Vec<Testimonial>, &'stati
     })
 }
 
-// #[query(guard = "is_user_anonymous")]
-// fn get_latest_testimonials(principal_id: Principal) -> Result<Vec<Testimonial>, &'static str>{
-//     USER_TESTIMONIAL.with(|registry| {
-//         let registry = registry.borrow();
-//         if let Some(testimonials) = registry.get(&principal_id) {
-//             let mut sorted_testimonials = testimonials.clone();
-//             sorted_testimonials.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
-//             Ok(sorted_testimonials)
-//         } else {
-//             Err("No testimonials found for the given user.")
-//         }
-//     })
-// }
 
 #[query(guard = "is_user_anonymous")]
 fn get_latest_testimonials() -> Vec<Testimonial> {

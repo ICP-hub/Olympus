@@ -1,3 +1,4 @@
+use crate::get_user_information_internal;
 use crate::state_handler::*;
 use crate::
     find_project_by_id
@@ -117,11 +118,13 @@ pub async fn send_offer_to_investor(
     let uid = format!("{:x}", Sha256::digest(&uids));
     let offer_id = uid.clone().to_string();
 
+    let user_data = get_user_information_internal(investor_id);
+
     let offer_to_investor = OfferToInvestor {
         offer_id: offer_id.clone(),
         investor_id,
-        investor_image: venture_capitalist.profile.params.user_data.profile_picture,
-        investor_name: venture_capitalist.profile.params.user_data.full_name,
+        investor_image: user_data.profile_picture,
+        investor_name: user_data.full_name,
         offer_i_have_written: msg.clone(),
         time_of_request: time(),
         accepted_at: 0,
@@ -264,7 +267,7 @@ pub fn decline_offer_of_project_by_investor(offer_id: String, response_message: 
 
 
 #[query]
-pub fn get_pending_request_sent_by_investor() -> Vec<OfferToSendToInvestor> {
+pub fn get_pending_request_for_investor_sent_by_investor() -> Vec<OfferToSendToInvestor> {
     let investor_id = caller();
     read_state(|pending_alerts| {
         pending_alerts

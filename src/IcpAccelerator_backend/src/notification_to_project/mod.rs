@@ -1,4 +1,4 @@
-use crate::get_mentor_by_principal;
+use crate::{get_mentor_by_principal, get_user_information_internal};
 use candid::{CandidType, Principal};
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::{api::time, caller};
@@ -136,11 +136,13 @@ pub async fn send_offer_to_project(
 
     //let project_info = find_project_by_id(&project_id).expect("project does not exist");
 
+    let user_data = get_user_information_internal(mentor_id);
+
     let mentor_info = MentorInfo {
         mentor_id: mentor_id,
-        mentor_name: mentor.user_data.full_name,
+        mentor_name: user_data.full_name,
         mentor_description: mentor.area_of_expertise,
-        mentor_image: mentor.user_data.profile_picture.unwrap_or_else(Vec::new),
+        mentor_image: user_data.profile_picture.unwrap_or_else(Vec::new),
     };
 
     let offer_to_send_to_project = OfferToSendToProject {
@@ -348,7 +350,7 @@ pub fn decline_offer_of_mentor(
 
 
 #[query]
-pub fn get_all_offers_which_are_pending_for_project(
+pub fn get_all_offers_which_are_pending_for_project_from_mentor(
     project_id: String,
 ) -> Vec<OfferToSendToProject> {
     read_state(|pending_alerts| {
@@ -368,7 +370,7 @@ pub fn get_all_offers_which_are_pending_for_project(
 
 //mentor will call
 #[query]
-pub fn get_all_offers_which_are_pending_for_mentor() -> Vec<OfferToProject> {
+pub fn get_all_offers_which_are_pending_for_mentor_via_mentor() -> Vec<OfferToProject> {
     read_state(|pending_alerts| {
         pending_alerts
             .my_sent_notifications_project
@@ -385,7 +387,7 @@ pub fn get_all_offers_which_are_pending_for_mentor() -> Vec<OfferToProject> {
 }
 
 #[query]
-pub fn get_all_requests_which_got_accepted_for_project(
+pub fn get_all_requests_which_got_accepted_for_project_from_mentor(
     project_id: String,
 ) -> Vec<OfferToSendToProject> {
     read_state(|pending_alerts| {
@@ -404,7 +406,7 @@ pub fn get_all_requests_which_got_accepted_for_project(
 }
 
 #[query]
-pub fn get_all_requests_which_got_accepted_for_mentor() -> Vec<OfferToProject> {
+pub fn get_all_requests_which_got_accepted_for_mentor_via_mentor() -> Vec<OfferToProject> {
     read_state(|pending_alerts| {
         pending_alerts
             .my_sent_notifications_project
@@ -421,7 +423,7 @@ pub fn get_all_requests_which_got_accepted_for_mentor() -> Vec<OfferToProject> {
 }
 
 #[query]
-pub fn get_all_requests_which_got_declined_for_project(
+pub fn get_all_requests_which_got_declined_for_project_from_mentor(
     project_id: String,
 ) -> Vec<OfferToSendToProject> {
     read_state(|pending_alerts| {
@@ -440,7 +442,7 @@ pub fn get_all_requests_which_got_declined_for_project(
 }
 
 #[query]
-pub fn get_all_requests_which_got_declined_for_mentor() -> Vec<OfferToProject> {
+pub fn get_all_requests_which_got_declined_for_mentor_via_mentor() -> Vec<OfferToProject> {
     read_state(|pending_alerts| {
         pending_alerts
             .my_sent_notifications_project
@@ -461,7 +463,7 @@ pub fn get_all_requests_which_got_declined_for_mentor() -> Vec<OfferToProject> {
 //for project
 
 #[update]
-pub fn self_decline_request_for_mentor(offer_id: String) -> String {
+pub fn self_decline_request_for_mentor_via_mentor(offer_id: String) -> String {
     let mut response = String::new();
 
     mutate_state(|sent_ones| {
@@ -499,7 +501,7 @@ pub fn self_decline_request_for_mentor(offer_id: String) -> String {
 }
 
 #[query]
-pub fn get_all_requests_which_got_self_declined_for_mentor() -> Vec<OfferToProject> {
+pub fn get_all_requests_which_got_self_declined_for_mentor_via_mentor() -> Vec<OfferToProject> {
     read_state(|offers| {
         let offers = &offers.my_sent_notifications_project;
         let offers = offers.get(&StoredPrincipal(caller()));

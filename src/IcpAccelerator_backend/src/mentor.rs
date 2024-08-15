@@ -21,7 +21,7 @@ use std::io::Read;
 
 pub struct MentorProfile {
     pub preferred_icp_hub: Option<String>,
-    pub user_data: UserInformation,
+    //pub user_data: UserInformation,
     pub existing_icp_mentor: bool,
     pub existing_icp_project_porfolio: Option<String>,
     pub icp_hub_or_spoke: bool,
@@ -135,6 +135,11 @@ pub fn get_mentor_declined_info_using_principal(caller: Principal) -> Option<Men
 pub async fn register_mentor(mut profile: MentorProfile) -> String {
     let caller = caller();
 
+    let role_count = get_approved_role_count_for_principal(caller);
+    if role_count >= 2 {
+        return "You are not eligible for this role because you have 2 or more roles".to_string();
+    }
+
     let request_declined = read_state(|state| {
         state
             .mentor_declined_request
@@ -151,61 +156,14 @@ pub async fn register_mentor(mut profile: MentorProfile) -> String {
         return "you are a mentor already".to_string();
     }
 
-    // mutate_state(|state| {
-    //     let role_status = &mut state.role_status;
+    let mut user_data = get_user_information_internal(caller);
 
-    //     if let Some(mut role_status_vec_candid) = role_status.get(&StoredPrincipal(caller)) {
-    //         let mut role_status_vec = role_status_vec_candid.0;
-    //         for role in role_status_vec.iter_mut() {
-    //             if role.name == "mentor" {
-    //                 role.status = "requested".to_string();
-    //                 role.requested_on = Some(time());
-    //                 break;
-    //             }
-    //         }
-    //         role_status.insert(StoredPrincipal(caller), Candid(role_status_vec));
-    //     } else {
-    //         // If the role_status doesn't exist for the caller, insert the initial roles
-    //         let initial_roles = vec![
-    //             Role {
-    //                 name: "user".to_string(),
-    //                 status: "active".to_string(),
-    //                 requested_on: None,
-    //                 approved_on: Some(time()),
-    //                 rejected_on: None,
-    //             },
-    //             Role {
-    //                 name: "project".to_string(),
-    //                 status: "default".to_string(),
-    //                 requested_on: None,
-    //                 approved_on: None,
-    //                 rejected_on: None,
-    //             },
-    //             Role {
-    //                 name: "mentor".to_string(),
-    //                 status: "default".to_string(),
-    //                 requested_on: None,
-    //                 approved_on: None,
-    //                 rejected_on: None,
-    //             },
-    //             Role {
-    //                 name: "vc".to_string(),
-    //                 status: "default".to_string(),
-    //                 requested_on: None,
-    //                 approved_on: None,
-    //                 rejected_on: None,
-    //             },
-    //         ];
-    //         role_status.insert(StoredPrincipal(caller), Candid(initial_roles));
-    //     }
-    // });
-
-    let temp_image = profile.user_data.profile_picture.clone();
+    let temp_image = user_data.profile_picture.clone();
     let canister_id = crate::asset_manager::get_asset_canister();
     
     if temp_image.is_none() {
         let full_url = canister_id.to_string() + "/uploads/default_user.jpeg";
-        profile.user_data.profile_picture = Some((full_url).as_bytes().to_vec());
+        user_data.profile_picture = Some((full_url).as_bytes().to_vec());
     }
     else if temp_image.clone().unwrap().len() < 300 {
         ic_cdk::println!("Profile image is already uploaded");
@@ -229,11 +187,11 @@ pub async fn register_mentor(mut profile: MentorProfile) -> String {
 
         let (result,): ((),) = call(canister_id, "store", (arg, )).await.unwrap();
 
-        profile.user_data.profile_picture = Some((canister_id.to_string()+&key).as_bytes().to_vec());
+        user_data.profile_picture = Some((canister_id.to_string()+&key).as_bytes().to_vec());
     }
 
     let user_data_for_updation = profile.clone();
-    crate::user_module::update_data_for_roles(caller, user_data_for_updation.user_data);
+    //crate::user_module::update_data_for_roles(caller, user_data_for_updation.user_data);
 
     match profile.validate() {
         Ok(_) => {
@@ -266,6 +224,7 @@ pub async fn register_mentor(mut profile: MentorProfile) -> String {
                     for role in role_status_vec.iter_mut() {
                         if role.name == "mentor" {
                             role.status = "approved".to_string();
+                            role.approval_status = Some("approved".to_string());
                             role.approved_on = Some(time());
                             break;
                         }
@@ -273,19 +232,6 @@ pub async fn register_mentor(mut profile: MentorProfile) -> String {
                     role_status.insert(StoredPrincipal(caller), Candid(role_status_vec));
                 }
             });
-
-            // let res = send_approval_request(
-            //     profile
-            //         .user_data
-            //         .profile_picture
-            //         .unwrap_or_else(|| Vec::new()),
-            //     profile.user_data.full_name,
-            //     profile.user_data.country,
-            //     profile.area_of_expertise,
-            //     "mentor".to_string(),
-            //     profile.user_data.bio.unwrap_or("no bio".to_string()),
-            // )
-            // .await;
 
             format!("Mentor Profile Created With UID {}", mentor_internal.uid)
         }
@@ -320,15 +266,6 @@ pub fn get_mentor_by_principal(id: Principal) -> Option<MentorProfile> {
 pub async fn update_mentor(mut updated_profile: MentorProfile) -> String {
     let caller = ic_cdk::caller();
 
-    read_state(|state| {
-        if state
-            .mentor_profile_edit_declined
-            .contains_key(&StoredPrincipal(caller))
-        {
-            panic!("You had got your request declined earlier");
-        }
-    });
-
     let already_registered =
         read_state(|state| state.mentor_storage.contains_key(&StoredPrincipal(caller)));
 
@@ -337,49 +274,14 @@ pub async fn update_mentor(mut updated_profile: MentorProfile) -> String {
         return "This Principal is not registered.".to_string();
     }
 
-    let profile_edit_request_already_sent = read_state(|state| {
-        state
-            .mentor_profile_edit_awaits
-            .contains_key(&StoredPrincipal(caller))
-    });
+    let mut user_data = get_user_information_internal(caller);
 
-    if profile_edit_request_already_sent {
-        ic_cdk::println!("Wait for your previous request to get approved");
-        return "Wait for your previous request to get approved.".to_string();
-    }
-
-    let previous_profile = read_state(|state| {
-        state
-            .mentor_storage
-            .get(&StoredPrincipal(caller))
-            .map(|mentor_internal| mentor_internal.0.profile.clone())
-    });
-
-    let mut approved_timestamp = 0;
-    let mut rejected_timestamp = 0;
-
-    mutate_state(|state| {
-        if let Some(mut roles) = state.role_status.get(&StoredPrincipal(caller)) {
-            for role in roles.0.iter_mut() {
-                if role.name == "mentor" {
-                    if role.status == "approved" {
-                        approved_timestamp = ic_cdk::api::time();
-                        role.approved_on = Some(approved_timestamp);
-                    } else if role.status == "rejected" {
-                        rejected_timestamp = ic_cdk::api::time();
-                        role.rejected_on = Some(rejected_timestamp);
-                    }
-                }
-            }
-        }
-    });
-
-    let temp_image = updated_profile.user_data.profile_picture.clone();
+    let temp_image = user_data.profile_picture.clone();
     let canister_id = crate::asset_manager::get_asset_canister();
     
     if temp_image.is_none() {
         let full_url = canister_id.to_string() + "/uploads/default_user.jpeg";
-        updated_profile.user_data.profile_picture = Some((full_url).as_bytes().to_vec());
+        user_data.profile_picture = Some((full_url).as_bytes().to_vec());
     }
     else if temp_image.clone().unwrap().len() < 300 {
         ic_cdk::println!("Profile image is already uploaded");
@@ -403,39 +305,41 @@ pub async fn update_mentor(mut updated_profile: MentorProfile) -> String {
 
         let (result,): ((),) = call(canister_id, "store", (arg, )).await.unwrap();
 
-        updated_profile.user_data.profile_picture = Some((canister_id.to_string()+&key).as_bytes().to_vec());
+        user_data.profile_picture = Some((canister_id.to_string()+&key).as_bytes().to_vec());
     }
 
-    mutate_state(|state| {
-        let update_data_tp_store = MentorUpdateRequest {
-            original_info: previous_profile,
-            updated_info: Some(updated_profile.clone()),
-            approved_at: approved_timestamp,
-            rejected_at: rejected_timestamp,
-            sent_at: ic_cdk::api::time(),
-        };
-        state
-            .mentor_profile_edit_awaits
-            .insert(StoredPrincipal(caller), Candid(update_data_tp_store));
+    let update_result = mutate_state(|state| {
+        if let Some(mut mentor_internal) = state.mentor_storage.get(&StoredPrincipal(caller)) {
+                mentor_internal.0.profile.preferred_icp_hub = updated_profile.preferred_icp_hub.clone()
+                    .or(mentor_internal.0.profile.preferred_icp_hub.clone());
+                mentor_internal.0.profile.multichain = updated_profile.multichain.clone()
+                    .or(mentor_internal.0.profile.multichain.clone());
+                mentor_internal.0.profile.existing_icp_project_porfolio = updated_profile.existing_icp_project_porfolio.clone()
+                    .or(mentor_internal.0.profile.existing_icp_project_porfolio.clone());
+                mentor_internal.0.profile.area_of_expertise = updated_profile.area_of_expertise.clone();
+                mentor_internal.0.profile.category_of_mentoring_service = updated_profile.category_of_mentoring_service.clone();
+                mentor_internal.0.profile.existing_icp_mentor = updated_profile.existing_icp_mentor;
+                mentor_internal.0.profile.icp_hub_or_spoke = updated_profile.icp_hub_or_spoke;
+                mentor_internal.0.profile.linkedin_link = updated_profile.linkedin_link.clone();
+                mentor_internal.0.profile.website = updated_profile.website.clone();
+                mentor_internal.0.profile.years_of_mentoring = updated_profile.years_of_mentoring.clone();
+                mentor_internal.0.profile.reason_for_joining = updated_profile.reason_for_joining.clone();
+                mentor_internal.0.profile.hub_owner = updated_profile.hub_owner.clone()
+                    .or(mentor_internal.0.profile.hub_owner.clone());
+
+            state.mentor_storage.insert(StoredPrincipal(caller), mentor_internal);
+            Ok("Mentor profile for has been approved and updated.")
+        } else {
+            Err("Mentor profile not found in storage.")
+        }
     });
 
-    let res = send_approval_request(
-        updated_profile
-            .user_data
-            .profile_picture
-            .unwrap_or_else(|| Vec::new()),
-        updated_profile.user_data.full_name,
-        updated_profile.user_data.country,
-        updated_profile.area_of_expertise,
-        "mentor".to_string(),
-        updated_profile
-            .user_data
-            .bio
-            .unwrap_or("no bio".to_string()),
-    )
-    .await;
-
-    format!("{}", res)
+    match update_result {
+        Ok(message) => {
+            format!("{}", message)
+        },
+        Err(error) => format!("Error processing request: {}", error),
+    }
 }
 
 pub fn delete_mentor() -> String {
@@ -635,10 +539,10 @@ pub fn filter_mentors(criteria: MentorFilterCriteria) -> Vec<MentorProfile> {
             .mentor_storage
             .iter()
             .filter(|(_, mentor_internal)| {
-                let country_match = match &criteria.country {
-                    Some(c) => &mentor_internal.0.profile.user_data.country == c,
-                    None => true,
-                };
+                // let country_match = match &criteria.country {
+                //     Some(c) => &mentor_internal.0.profile.user_data.country == c,
+                //     None => true,
+                // };
 
                 let expertise_match = criteria.area_of_expertise.as_ref().map_or(true, |exp| {
                     &mentor_internal.0.profile.area_of_expertise == exp
@@ -647,7 +551,6 @@ pub fn filter_mentors(criteria: MentorFilterCriteria) -> Vec<MentorProfile> {
                 mentor_internal.0.active
                     && mentor_internal.0.approve
                     && !mentor_internal.0.decline
-                    && country_match
                     && expertise_match
             })
             .map(|(_, mentor_internal)| mentor_internal.0.profile.clone())

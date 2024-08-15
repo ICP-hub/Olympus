@@ -41,7 +41,6 @@ pub struct VentureCapitalist {
     pub number_of_portfolio_companies: u16,
     pub portfolio_link: String,
     pub announcement_details: Option<String>,
-    pub user_data: UserInformation,
     pub website_link: Option<String>,
     pub linkedin_link: String,
     pub registered: bool,
@@ -141,6 +140,12 @@ pub struct UpdateInfoStruct {
 #[update(guard = "is_user_anonymous")]
 pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::string::String {
     let caller = caller();
+
+    let role_count = get_approved_role_count_for_principal(caller);
+    if role_count >= 2 {
+        return "You are not eligible for this role because you have 2 or more roles".to_string();
+    }
+
     let uuids = raw_rand().await.unwrap().0;
     let uid = format!("{:x}", Sha256::digest(&uuids));
     let new_id = uid.clone().to_string();
@@ -212,12 +217,14 @@ pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::
     //     }
     // });
 
-    let temp_image = params.user_data.profile_picture.clone();
+    let mut user_data = get_user_information_internal(caller);
+
+    let temp_image = user_data.profile_picture.clone();
     let canister_id = crate::asset_manager::get_asset_canister();
 
     if temp_image.is_none() {
         let full_url = canister_id.to_string() + "/uploads/default_user.jpeg";
-        params.user_data.profile_picture = Some((full_url).as_bytes().to_vec());
+        user_data.profile_picture = Some((full_url).as_bytes().to_vec());
     } else if temp_image.clone().unwrap().len() < 300 {
         ic_cdk::println!("Profile image is already uploaded");
     } else {
@@ -239,12 +246,12 @@ pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::
 
         let (result,): ((),) = call(canister_id, "store", (arg,)).await.unwrap();
 
-        params.user_data.profile_picture =
+        user_data.profile_picture =
             Some((canister_id.to_string() + &key).as_bytes().to_vec());
     }
 
     let user_data_for_updation = params.clone();
-    crate::user_module::update_data_for_roles(caller, user_data_for_updation.user_data);
+    //crate::user_module::update_data_for_roles(caller, user_data_for_updation.user_data);
 
     match params.validate() {
         Ok(_) => {
@@ -275,6 +282,7 @@ pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::
                     for role in role_status_vec.iter_mut() {
                         if role.name == "vc" {
                             role.status = "approved".to_string();
+                            role.approval_status = Some("approved".to_string());
                             role.approved_on = Some(time());
                             break;
                         }
@@ -481,15 +489,6 @@ pub fn delete_venture_capitalist() -> std::string::String {
 pub async fn update_venture_capitalist(mut params: VentureCapitalist) -> String {
     let caller = ic_cdk::caller();
 
-    let declined_request_exists = read_state(|state| {
-        state
-            .vc_profile_edit_declined
-            .contains_key(&StoredPrincipal(caller))
-    });
-    if declined_request_exists {
-        panic!("You had got your request declined earlier");
-    }
-
     let already_registered =
         read_state(|state| state.vc_storage.contains_key(&StoredPrincipal(caller)));
     if !already_registered {
@@ -497,32 +496,14 @@ pub async fn update_venture_capitalist(mut params: VentureCapitalist) -> String 
         return "This Principal is not registered.".to_string();
     }
 
-    let profile_edit_request_already_sent = read_state(|state| {
-        state
-            .vc_profile_edit_awaits
-            .contains_key(&StoredPrincipal(caller))
-    });
-    if profile_edit_request_already_sent {
-        ic_cdk::println!("Wait for your previous request to get approved");
-        return "Wait for your previous request to get approved.".to_string();
-    }
+    let mut user_data = get_user_information_internal(caller);
 
-    let previous_profile = read_state(|state| {
-        state
-            .vc_storage
-            .get(&StoredPrincipal(caller))
-            .map(|vc_internal| vc_internal.0.params.clone())
-    });
-
-    let mut approved_timestamp = 0;
-    let mut rejected_timestamp = 0;
-
-    let temp_image = params.user_data.profile_picture.clone();
+    let temp_image = user_data.profile_picture.clone();
     let canister_id = crate::asset_manager::get_asset_canister();
 
     if temp_image.is_none() {
         let full_url = canister_id.to_string() + "/uploads/default_user.jpeg";
-        params.user_data.profile_picture = Some((full_url).as_bytes().to_vec());
+        user_data.profile_picture = Some((full_url).as_bytes().to_vec());
     } else if temp_image.clone().unwrap().len() < 300 {
         ic_cdk::println!("Profile image is already uploaded");
     } else {
@@ -544,51 +525,53 @@ pub async fn update_venture_capitalist(mut params: VentureCapitalist) -> String 
 
         let (result,): ((),) = call(canister_id, "store", (arg,)).await.unwrap();
 
-        params.user_data.profile_picture =
+        user_data.profile_picture =
             Some((canister_id.to_string() + &key).as_bytes().to_vec());
     }
 
-    mutate_state(|state| {
-        if let Some(mut roles) = state.role_status.get(&StoredPrincipal(caller)) {
-            if let Some(role) = roles.0.iter_mut().find(|r| r.name == "mentor") {
-                if role.status == "approved" {
-                    approved_timestamp = ic_cdk::api::time();
-                    role.approved_on = Some(approved_timestamp);
-                } else if role.status == "rejected" {
-                    rejected_timestamp = ic_cdk::api::time();
-                    role.rejected_on = Some(rejected_timestamp);
+    let update_result = mutate_state(|state| {
+                if let Some(mut existing_vc_internal) = state.vc_storage.get(&StoredPrincipal(caller)) {
+                        existing_vc_internal.0.params.registered_under_any_hub = params.registered_under_any_hub.clone()
+                            .or(existing_vc_internal.0.params.registered_under_any_hub.clone());
+                        existing_vc_internal.0.params.project_on_multichain = params.project_on_multichain.clone()
+                            .or(existing_vc_internal.0.params.project_on_multichain.clone());
+                        existing_vc_internal.0.params.money_invested = params.money_invested.clone()
+                            .or(existing_vc_internal.0.params.money_invested.clone());
+                        existing_vc_internal.0.params.existing_icp_portfolio = params.existing_icp_portfolio.clone()
+                            .or(existing_vc_internal.0.params.existing_icp_portfolio.clone());
+                        existing_vc_internal.0.params.announcement_details = params.announcement_details.clone()
+                            .or(existing_vc_internal.0.params.announcement_details.clone());
+                        existing_vc_internal.0.params.registered_country = params.registered_country.clone()
+                            .or(existing_vc_internal.0.params.registered_country.clone());
+                        existing_vc_internal.0.params.fund_size = Some(params.fund_size.unwrap_or(0.0));
+                        existing_vc_internal.0.params.assets_under_management = params.assets_under_management.clone();
+                        existing_vc_internal.0.params.category_of_investment = params.category_of_investment.clone();
+                        existing_vc_internal.0.params.logo = params.logo.clone();
+                        existing_vc_internal.0.params.average_check_size = params.average_check_size;
+                        existing_vc_internal.0.params.existing_icp_investor = params.existing_icp_investor;
+                        existing_vc_internal.0.params.investor_type = params.investor_type.clone();
+                        existing_vc_internal.0.params.number_of_portfolio_companies =params.number_of_portfolio_companies;
+                        existing_vc_internal.0.params.portfolio_link = params.portfolio_link.clone();
+                        existing_vc_internal.0.params.reason_for_joining = params.reason_for_joining.clone();
+                        existing_vc_internal.0.params.name_of_fund = params.name_of_fund.clone();
+                        existing_vc_internal.0.params.preferred_icp_hub = params.preferred_icp_hub.clone();
+                        existing_vc_internal.0.params.type_of_investment = params.type_of_investment.clone();
+                        existing_vc_internal.0.params.linkedin_link = params.linkedin_link.clone();
+                        existing_vc_internal.0.params.website_link = params.website_link.clone();
+                        existing_vc_internal.0.params.registered = params.registered.clone();
+
+                        state.vc_storage.insert(StoredPrincipal(caller), existing_vc_internal);
+                        return Ok("Profile updated successfully");
                 }
-            }
-        }
-
-        let update_data_to_store = UpdateInfoStruct {
-            original_info: previous_profile,
-            updated_info: Some(params.clone()),
-            approved_at: approved_timestamp,
-            rejected_at: rejected_timestamp,
-            sent_at: ic_cdk::api::time(),
-        };
-
-        state.vc_profile_edit_awaits.insert(
-            StoredPrincipal(caller),
-            Candid(update_data_to_store.clone()),
-        );
+                return Err("No existing VC profile found to update.");
     });
 
-    let res = send_approval_request(
-        params
-            .user_data
-            .profile_picture
-            .unwrap_or_else(|| Vec::new()),
-        params.user_data.full_name,
-        params.user_data.country,
-        params.category_of_investment,
-        "vc".to_string(),
-        params.user_data.bio.unwrap_or("no bio".to_string()),
-    )
-    .await;
-
-    format!("{}", res)
+    match update_result {
+        Ok(message) => {
+            format!("{}", message)
+        },
+        Err(error) => format!("Error processing request: {}", error),
+    }
 }
 
 #[query(guard = "is_user_anonymous")]
@@ -745,10 +728,10 @@ pub fn filter_venture_capitalists(criteria: VcFilterCriteria) -> Vec<VentureCapi
             .vc_storage
             .iter()
             .filter(|(_, vc_internal)| {
-                let country_match = match &criteria.country {
-                    Some(c) => &vc_internal.0.params.user_data.country == c,
-                    None => true,
-                };
+                // let country_match = match &criteria.country {
+                //     Some(c) => &vc_internal.0.params.user_data.country == c,
+                //     None => true,
+                // };
 
                 let category_match = criteria
                     .category_of_investment
@@ -788,7 +771,6 @@ pub fn filter_venture_capitalists(criteria: VcFilterCriteria) -> Vec<VentureCapi
                 vc_internal.0.is_active
                     && vc_internal.0.approve
                     && !vc_internal.0.decline
-                    && country_match
                     && category_match
                     && money_invested_match
             })

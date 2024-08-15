@@ -1,0 +1,23 @@
+PREVIOUS NAME                                       NEW NAME
+get_pending_request_for_mentor                      get_pending_request_from_project_to_mentor_via_project
+get_project_pending_offers                          get_pending_request_from_mentor_to_project_via_project
+get_accepted_request_for_mentor                     get_approved_request_from_mentor_to_project_via_project
+get_accepted_request_for_project                    get_approved_request_from_project_to_mentor_via_project
+get_declined_request_for_mentor                     get_declined_request_from_mentor_to_project_via_project
+get_declined_request_for_project                    get_declined_request_from_project_to_mentor_via_project
+get_self_declined_requests_for_project              get_self_declined_requests_for_project
+get_self_declined_requests_for_mentor               get_self_declined_requests_for_mentor
+
+
+get_all_offers_which_are_pending_for_project        get_all_offers_which_are_pending_for_project_from_mentor
+get_all_offers_which_are_pending_for_mentor         get_all_offers_which_are_pending_for_mentor_via_mentor
+get_all_requests_which_got_accepted_for_project     get_all_requests_which_got_accepted_for_project_from_mentor
+get_all_requests_which_got_accepted_for_mentor      get_all_requests_which_got_accepted_for_mentor_via_mentor
+get_all_requests_which_got_declined_for_project     get_all_requests_which_got_declined_for_project_from_mentor
+get_all_requests_which_got_declined_for_mentor      get_all_requests_which_got_declined_for_mentor_via_mentor
+self_decline_request_for_mentor                     self_decline_request_for_mentor_via_mentor
+get_all_requests_which_got_self_declined_for_mentor -> get_all_requests_which_got_self_declined_for_mentor_via_mentor
+
+
+
+get_pending_request_sent_by_investor                get_pending_request_for_investor_sent_by_investor
