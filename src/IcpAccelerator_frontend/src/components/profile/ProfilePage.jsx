@@ -17,7 +17,7 @@ const ProfilePage = () => {
   const handleChange = (tab) => {
     setActiveTab(tab)
   }
-
+  const userRole = "founder";
   return (
     <div className="container mx-auto mb-5 bg-white">
       <div className="flex justify-between items-center mx-[3%] h-11   bg-opacity-95 -top-[.60rem] p-10 px-0 sticky bg-white  z-20">
@@ -48,6 +48,7 @@ const ProfilePage = () => {
             >
               {profilepage.roleText}
             </button>
+            {(userRole === "project" || userRole === "mentor" || userRole === "founder") && (
             <button
               className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "project"
                 ? "border-b-2 border-blue-500 text-blue-500 font-medium"
@@ -57,6 +58,8 @@ const ProfilePage = () => {
             >
               Project
             </button>
+            )}
+            {(userRole === "mentor" || userRole === "founder") && (
             <button
               className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "event"
                 ? "border-b-2 border-blue-500 text-blue-500 font-medium"
@@ -66,6 +69,7 @@ const ProfilePage = () => {
             >
               Event
             </button>
+            )}
             <button
               className={`px-4 py-2 focus:outline-none font-medium ${activeTab === "rating"
                 ? "border-b-2 border-blue-500 text-blue-500 font-medium"

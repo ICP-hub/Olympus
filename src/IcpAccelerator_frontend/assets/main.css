@@ -188,3 +188,30 @@ input[type="number"] {
   background-repeat: no-repeat;
 
 }
+
+
+
+
+
+
+/* Neon color variations */
+.neon-red {
+  filter: drop-shadow(0 0 5px red) drop-shadow(0 0 10px red);
+}
+
+.neon-blue {
+  filter: drop-shadow(0 0 5px blue) drop-shadow(0 0 10px blue);
+}
+
+.neon-green {
+  filter: drop-shadow(0 0 5px green) drop-shadow(0 0 10px green);
+}
+
+.neon-yellow {
+  filter: drop-shadow(0 0 5px yellow) drop-shadow(0 0 10px yellow);
+}
+
+.neon-gray {
+  filter: drop-shadow(0 0 5px #cdd8e7) drop-shadow(0 0 10px #c2ccda);
+}
+

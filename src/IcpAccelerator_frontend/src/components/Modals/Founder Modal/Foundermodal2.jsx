@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import CreateProjectModal from '../Project Modal/modal2'
+import CreateProjectModal from '../ProjectModal/modal2'
 
 import { useNavigate } from 'react-router-dom';
 

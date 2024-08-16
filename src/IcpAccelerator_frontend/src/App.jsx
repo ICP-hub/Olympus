@@ -54,10 +54,10 @@ const App = () => {
             const date = formatFullDateFromBigInt(obj[key][0]);
             modifiedObj[key] = date; // Convert bigint to string date
           } else {
-            modifiedObj[key] = obj[key][0]; // Keep the first element of other arrays unchanged
+            modifiedObj[key] = obj[key][0]; 
           }
         } else {
-          modifiedObj[key] = obj[key]; // Keep other keys unchanged
+          modifiedObj[key] = obj[key]; 
         }
       });
 
@@ -119,13 +119,7 @@ const App = () => {
   }
   return (
     <>
-      {/* {actor ? (
-        <Navbar />
-      ) : (
-        <div>
-          <Navbar />
-        </div>
-      )} */}
+    
       <WarningMessage />
       <div className="bg-gray-100">
         <div className="container-lg mx-auto">
@@ -136,7 +130,6 @@ const App = () => {
           <AppRoutes />
         </div>
       </div>
-      {/* <Footer /> */}
     </>
   );
 };

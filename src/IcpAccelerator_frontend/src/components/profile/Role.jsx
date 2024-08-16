@@ -12,8 +12,8 @@ import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOut
 
 import { animatedLeftSvgIcon, animatedRightSvgIcon, userPlusIcon } from '../Utils/Data/SvgData';
 import { profile } from '../jsondata/data/profileData';
-import ProfileCard from './RoleProfileCard';
 import { useSelector } from 'react-redux';
+import Modal1 from '../Modals/ProjectModal/Modal1';
 
 const FAQItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -41,20 +41,6 @@ const FAQItem = ({ question, answer }) => {
 
 const FAQ = () => {
   const { roles } = profile
-  // const faqData = [
-  //   {
-  //     question: "What is a role, actually?",
-  //     answer: "Est malesuada ac elit gravida vel aliquam nec. Arcu pelle ntesque convallis quam feugiat non viverra massa fringilla.",
-  //   },
-  //   {
-  //     question: "How do roles work?",
-  //     answer: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-  //   },
-  //   {
-  //     question: "Can I change roles?",
-  //     answer: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-  //   },
-  // ];
 
   return (
     <div className="mt-14 text-[#121926] text-[18px] font-medium border-gray-200">
@@ -68,15 +54,170 @@ const FAQ = () => {
 const Role = () => {
   const { roles } = profile
   const [roleModalOpen, setRoleModalOpen] = useState(false);
-  console.log("my model status ", roleModalOpen)
   const userFullData = useSelector((currState) => currState.userData.data.Ok);
-  console.log("User aa raha hai", userFullData)
-  // useEffect(() => {
-  //   if (userFullData) {
-  //     setValuesHandler(userFullData);
-  //     setEditMode(true);
-  //   }
-  // }, [userFullData]);
+
+  const userleftRole = "mentor"; 
+  const userrightRole = ""; 
+
+  const getLeftRoleSvg = () => {
+    switch (userleftRole) {
+      case 'mentor':
+        return (
+          <svg
+            width="214"
+            height="100"
+            viewBox="0 0 199 122"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="neon-effect neon-red text-red-500"
+          >
+            <path
+              d="M198 0V46.6316C198 59.8864 187.255 70.6316 174 70.6316H25C11.7452 70.6316 1 81.3768 1 94.6316V122"
+              className="stroke-current"
+              strokeWidth="2"
+            />
+          </svg>
+        );
+      case 'founder':
+        return (
+          <svg
+            width="214"
+            height="100"
+            viewBox="0 0 199 122"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="neon-effect neon-blue text-blue-500"
+          >
+            <path
+              d="M198 0V46.6316C198 59.8864 187.255 70.6316 174 70.6316H25C11.7452 70.6316 1 81.3768 1 94.6316V122"
+              className="stroke-current"
+              strokeWidth="2"
+            />
+          </svg>
+        );
+      case 'investor':
+        return (
+          <svg
+            width="214"
+            height="100"
+            viewBox="0 0 199 122"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="neon-effect neon-green text-green-500"
+          >
+            <path
+              d="M198 0V46.6316C198 59.8864 187.255 70.6316 174 70.6316H25C11.7452 70.6316 1 81.3768 1 94.6316V122"
+              className="stroke-current"
+              strokeWidth="2"
+            />
+          </svg>
+        );
+      case 'talent':
+        return (
+          <svg
+            width="214"
+            height="100"
+            viewBox="0 0 199 122"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="neon-effect neon-yellow text-yellow-500"
+          >
+            <path
+              d="M198 0V46.6316C198 59.8864 187.255 70.6316 174 70.6316H25C11.7452 70.6316 1 81.3768 1 94.6316V122"
+              className="stroke-current"
+              strokeWidth="2"
+            />
+          </svg>
+        );
+      case 'user':
+      default:
+        return (
+          <svg width="214" height="100" viewBox="0 0 199 122" fill="none" xmlns="http://www.w3.org/2000/svg"  className="neon-effect neon-gray text-[E3E8EF]">
+            <path d="M198 0V46.6316C198 59.8864 187.255 70.6316 174 70.6316H25C11.7452 70.6316 1 81.3768 1 94.6316V122" stroke="#E3E8EF" strokeWidth="2"/>
+          </svg>
+        );
+    }
+  };
+
+  const getRightRoleSvg = () => {
+    switch (userrightRole) {
+      case 'mentor':
+        return (
+          <svg
+            width="214"
+            height="100"
+            viewBox="0 0 214 122"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="neon-effect neon-red text-red-500"
+          >
+            <path
+              d="M1 0V46.6316C1 59.8864 11.7452 70.6316 25 70.6316H189C202.255 70.6316 213 81.3768 213 94.6316V122"
+              className="stroke-current"
+              strokeWidth="2"
+            />
+          </svg>
+        );
+      case 'founder':
+        return (
+          <svg
+            width="214"
+            height="100"
+            viewBox="0 0 214 122"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="neon-effect neon-blue text-blue-500"
+          >
+            <path
+              d="M1 0V46.6316C1 59.8864 11.7452 70.6316 25 70.6316H189C202.255 70.6316 213 81.3768 213 94.6316V122"
+              className="stroke-current"
+              strokeWidth="2"
+            />
+          </svg>
+        );
+      case 'investor':
+        return (
+          <svg
+            width="214"
+            height="100"
+            viewBox="0 0 214 122"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="neon-effect neon-green text-green-500"
+          >
+            <path
+              d="M1 0V46.6316C1 59.8864 11.7452 70.6316 25 70.6316H189C202.255 70.6316 213 81.3768 213 94.6316V122"
+              className="stroke-current"
+              strokeWidth="2"
+            />
+          </svg>
+        );
+      case 'talent':
+        return (
+          <svg
+            width="214"
+            height="100"
+            viewBox="0 0 214 122"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="neon-effect neon-yellow text-yellow-500"
+          >
+            <path
+              d="M1 0V46.6316C1 59.8864 11.7452 70.6316 25 70.6316H189C202.255 70.6316 213 81.3768 213 94.6316V122"
+              className="stroke-current"
+              strokeWidth="2"
+            />
+          </svg>
+        );
+      case 'user':
+      default:
+        return (
+          <svg width="214" height="100" viewBox="0 0 214 122" fill="none" xmlns="http://www.w3.org/2000/svg"   className="neon-effect neon-gray text-[E3E8EF]">
+            <path d="M1 0V46.6316C1 59.8864 11.7452 70.6316 25 70.6316H189C202.255 70.6316 213 81.3768 213 94.6316V122" stroke="#E3E8EF" strokeWidth="2"/>
+          </svg>
+        );
+    }
+  };
   return (
     <>
       <div className="flex flex-col">
@@ -90,7 +231,7 @@ const Role = () => {
             <div className="flex justify-center">
               <div className="bg-gray-200 rounded-full mb-4">
                 <img
-                  src={userFullData.profile_picture[0]}
+                  src={userFullData?.profile_picture[0]}
                   alt="Matt Bowers"
                   className="w-20 h-20 mx-auto rounded-full"
                 />
@@ -108,7 +249,7 @@ const Role = () => {
                 </span>
                 {userFullData.full_name}
               </h2>
-              <p> {userFullData.openchat_username[0]}</p>
+              <p> {userFullData?.openchat_username[0]}</p>
             </div>
             <div className="flex justify-center items-center">
               <p className="font-normal">
@@ -118,8 +259,13 @@ const Role = () => {
           </div>
         </div>
         <div className="flex justify-center gap-4">
-          <div>{animatedLeftSvgIcon}</div>
-          <div>{animatedRightSvgIcon}</div>
+          {/* <div>{animatedLeftSvgIcon}</div> */}
+          {/* Render the Left SVG */}
+              <div>{getLeftRoleSvg()}</div>
+
+              {/* Render the Right SVG */}
+              <div>{getRightRoleSvg()}</div>
+       
         </div>
         <div className="flex justify-around items-center gap-[12%]">
           <div className="border-2 rounded-lg text-center min-w-[220px] max-w-[350px]">
