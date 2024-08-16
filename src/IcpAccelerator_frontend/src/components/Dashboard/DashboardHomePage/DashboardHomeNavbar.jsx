@@ -73,9 +73,9 @@ function DashboardHomeNavbar() {
     // navigate("/");
     window.location.href = "/";
   };
-  const {dashboardhomenavbar}=dashboard;
+  const { dashboardhomenavbar } = dashboard;
   return (
-    <nav className="bg-[#FFF4ED] py-3 px-4 md:px-12 md:pl-0 flex items-center justify-between  relative pb-8">
+    <nav className="bg-[#FFF4ED] py-3 px-4 md:px-12 md:pl-1 flex items-center justify-between  relative pb-8">
       {/* Hamburger Menu for Mobile */}
       <button onClick={toggleMenu} className="lg:hidden">
         <dashboardhomenavbar.icons.menuIcon.Menu className="text-gray-600" />
