@@ -9,7 +9,8 @@ import Avatar3 from "../../../../assets/Logo/Avatar3.png";
 import { dashboard } from "../../jsondata/data/dashboardData";
 
 import { useSelector } from 'react-redux';
-import Modal1 from '../../Modals/Project Modal/Modal1';
+import Modal1 from '../../Modals/ProjectModal/Modal1';
+
 const styles = {
   circularChart: {
     display: 'block',

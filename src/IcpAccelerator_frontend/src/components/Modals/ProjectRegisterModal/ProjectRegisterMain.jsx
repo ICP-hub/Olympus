@@ -1333,7 +1333,7 @@ const ProjectRegisterMain = ({ isopen }) => {
                   <ArrowBackIcon fontSize="medium" /> Back
                 </button>
               )}
-              {index === 6 ? (
+              {index === 5 ? (
                 <button
                   type="submit"
                   className="py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 border-2 border-[#B2CCFF]"
