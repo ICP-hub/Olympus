@@ -126,26 +126,6 @@ const ProfileDetail = () => {
     defaultValues,
   });
 
-  // useEffect(() => {
-  //   if (userFullData) {
-  //     setDefaultValues({
-  //       email: userFullData.email[0] || "",
-  //       tagline: userFullData.tagline || "",
-  //       about: userFullData.bio[0] || "",
-  //       interests: userFullData.interests || [],
-  //       location: userFullData.country || "",
-  //       domains_interested_in: userFullData.type_of_profile || [],
-  //       reasons_to_join_platform: userFullData.reason_to_join || [],
-  //     });
-
-  //     setValue("email", userFullData.email[0] || "");
-  //     setValue("tagline", userFullData.tagline || "");
-  //     setValue("about", userFullData.bio[0] || "");
-  //     setValue("location", userFullData.country || "");
-  //     setValue("domains_interested_in", userFullData.type_of_profile || []);
-  //     setValue("reasons_to_join_platform", userFullData.reason_to_join || []);
-  //   }
-  // }, [userFullData, setValue]);
   useEffect(() => {
     if (userFullData) {
       const defaultValues = {
@@ -258,449 +238,411 @@ const ProfileDetail = () => {
     };
   }, [isEditing, isEditingLink]);
 
+  const [activeTab, setActiveTab] = useState("general");
+
   const handleChange = (tab) => {
     setActiveTab(tab);
   };
-  setActiveTab(tab);
-};
-const [activeTab, setActiveTab] = useState("general");
 
-return (
-  <div
-    ref={containerRef}
-    className="container bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full max-w-[400px]"
-  >
-    <div className="relative h-1 bg-gray-200">
-      <div className="absolute left-0 top-0 h-full bg-green-500 w-1/3"></div>
-    </div>
-    <div className="p-6 bg-gray-50">
-      <img
-        src={userFullData.profile_picture[0]}
-        alt="Matt Bowers"
-        className="w-24 h-24 mx-auto rounded-full mb-4"
-      />
-      <div className="flex items-center justify-center mb-1">
-        <VerifiedIcon className="text-blue-500 mr-1" fontSize="small" />
-        <h2 className="text-xl font-semibold">{userFullData.full_name}</h2>
+  return (
+    <div
+      ref={containerRef}
+      className="container bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full max-w-[400px]"
+    >
+      <div className="relative h-1 bg-gray-200">
+        <div className="absolute left-0 top-0 h-full bg-green-500 w-1/3"></div>
       </div>
-      <p className="text-gray-600 text-center mb-4">
-        {userFullData.openchat_username[0]}
-      </p>
-      <button className="w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center">
-        Get in touch
-        <ArrowOutwardOutlinedIcon className="ml-1" fontSize="small" />
-      </button>
-    </div>
-
-    <div className="p-6 bg-white">
-      <div className="mb-4">
-        <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
-          Roles
-        </h3>
-        <div className="flex space-x-2">
-          <span className="bg-[#F0F9FF] border border-[#B9E6FE] text-[#026AA2] px-3 py-1 rounded-md text-xs font-medium">
-            OLYMPIAN
-          </span>
+      <div className="p-6 bg-gray-50">
+        <img
+          src={userFullData?.profile_picture[0]}
+          alt="Matt Bowers"
+          className="w-24 h-24 mx-auto rounded-full mb-4"
+        />
+        <div className="flex items-center justify-center mb-1">
+          <VerifiedIcon className="text-blue-500 mr-1" fontSize="small" />
+          <h2 className="text-xl font-semibold">{userFullData?.full_name}</h2>
         </div>
-      </div>
-      <div className="flex justify-start border-b">
-        <button
-          className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "general"
-            ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-            : "text-gray-400"
-            }`}
-          onClick={() => handleChange("general")}
-        >
-          General
-        </button>
-        <button
-          className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "investor"
-            ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-            : "text-gray-400"
-            }`}
-          onClick={() => handleChange("investor")}
-        >
-          Investor
+        <p className="text-gray-600 text-center mb-4">
+          {userFullData?.openchat_username[0]}
+        </p>
+        <button className="w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center">
+          Get in touch
+          <ArrowOutwardOutlinedIcon className="ml-1" fontSize="small" />
         </button>
       </div>
 
-      {/* <div className="mb-4">
-          <div className="flex border-b">
-            <button className="text-blue-600 border-b-2 border-blue-600 pb-2 mr-4 font-medium">
-              General
-            </button>
-            
+      <div className="p-6 bg-white">
+        <div className="mb-4">
+          <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+            Roles
+          </h3>
+          <div className="flex space-x-2">
+            <span className="bg-[#F0F9FF] border border-[#B9E6FE] text-[#026AA2] px-3 py-1 rounded-md text-xs font-medium">
+              OLYMPIAN
+            </span>
           </div>
-        </div> */}
+        </div>
+        <div className="flex justify-start border-b">
+          <button
+            className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "general"
+              ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+              : "text-gray-400"
+              }`}
+            onClick={() => handleChange("general")}
+          >
+            General
+          </button>
+          <button
+            className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "investor"
+              ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+              : "text-gray-400"
+              }`}
+            onClick={() => handleChange("investor")}
+          >
+            Investor
+          </button>
+        </div>
 
-      {/* Email Section */}
-      {activeTab === "general" ? (
-        <div className=" px-1">
-          <div className="mb-4  group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-            <div className="flex justify-between">
-              <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
-                Email
-              </h3>
-              <div>
-                <button
-                  className=" invisible group-hover:visible text-gray-500  hover:underline text-xs h-4 w-4"
-                  onClick={() => handleEditToggle("email")}
-                >
-                  {isEditing.email ? "" : <img src={edit} />}
-                </button>
-              </div>
-            </div>
-            {isEditing.email ? (
-              <>
-                <input
-                  type="email"
-                  {...register("email")}
-                  onChange={(e) => handleInputChange(e, "email")}
-                  className={`bg-gray-50 border-1 ${errors?.email ? "border-red-500" : "border-gray-500"
-                    } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-2 py-1`}
-                  placeholder="Enter your email"
-                />
-                {errors?.email && (
-                  <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                    {errors?.email?.message}
-                  </span>
-                )}
-              </>
-            ) : (
-              <div className="flex items-center">
-                <p className="mr-2 text-sm">{userFullData.email[0]}</p>
-                <VerifiedIcon
-                  className="text-blue-500 mr-2 w-2 h-2"
-                  fontSize="small"
-                />
-                <span className="bg-[#F8FAFC] border border-[#E3E8EF] text-[#364152] px-2 py-0.5 rounded text-xs">
-                  HIDDEN
-                </span>
-              </div>
-            )}
-          </div>
-
-          {/* Tagline Section */}
-          {/* <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 px-3">
+        {/* General Tab Content */}
+        {activeTab === "general" ? (
+          <div className=" px-1">
+            {/* Email Section */}
+            <div className="mb-4  group relative hover:bg-gray-100 rounded-lg p-2 px-3">
               <div className="flex justify-between">
                 <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
-                  Tagline
+                  Email
                 </h3>
                 <div>
                   <button
                     className=" invisible group-hover:visible text-gray-500  hover:underline text-xs h-4 w-4"
-                    onClick={() => handleEditToggle("tagline")}
+                    onClick={() => handleEditToggle("email")}
                   >
                     {isEditing.email ? "" : <img src={edit} />}
                   </button>
                 </div>
               </div>
-              {isEditing.tagline ? (
-                <input
-                  type="text"
-                  value={tempData.tagline}
-                  onChange={(e) => handleInputChange(e, "tagline")}
-                  className=" px-2 py-1 w-full bg-[#F8FAFC] border border-[#E3E8EF] text-[#364152] rounded text-sm"
+              {isEditing.email ? (
+                <>
+                  <input
+                    type="email"
+                    {...register("email")}
+                    onChange={(e) => handleInputChange(e, "email")}
+                    className={`bg-gray-50 border-1 ${errors?.email ? "border-red-500" : "border-gray-500"
+                      } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-2 py-1`}
+                    placeholder="Enter your email"
+                  />
+                  {errors?.email && (
+                    <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                      {errors?.email?.message}
+                    </span>
+                  )}
+                </>
+              ) : (
+                <div className="flex items-center">
+                  <p className="mr-2 text-sm">{userFullData?.email[0]}</p>
+                  <VerifiedIcon
+                    className="text-blue-500 mr-2 w-2 h-2"
+                    fontSize="small"
+                  />
+                  <span className="bg-[#F8FAFC] border border-[#E3E8EF] text-[#364152] px-2 py-0.5 rounded text-xs">
+                    HIDDEN
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* About Section */}
+            <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 px-3">
+              <div className="flex justify-between">
+                <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                  About
+                </h3>
+                <div>
+                  <button
+                    className=" invisible group-hover:visible text-gray-500  hover:underline text-xs h-4 w-4"
+                    onClick={() => handleEditToggle("about")}
+                  >
+                    {isEditing.email ? "" : <img src={edit} />}
+                  </button>
+                </div>
+              </div>
+              {isEditing.about ? (
+                <textarea
+                  {...register("about")}
+                  value={tempData.about}
+                  onChange={(e) => handleInputChange(e, "about")}
+                  className={`bg-gray-50 border-2 ${errors?.about ? "border-red-500" : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  placeholder="Tell us about yourself"
                 />
               ) : (
-                <p className="text-sm">{profileData.tagline}</p>
+                <p className="text-sm">{userFullData?.bio[0]}</p>
               )}
-            </div> */}
-
-          {/* About Section */}
-          <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 px-3">
-            <div className="flex justify-between">
-              <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
-                About
-              </h3>
-              <div>
-                <button
-                  className=" invisible group-hover:visible text-gray-500  hover:underline text-xs h-4 w-4"
-                  onClick={() => handleEditToggle("about")}
-                >
-                  {isEditing.email ? "" : <img src={edit} />}
-                </button>
-              </div>
-            </div>
-            {isEditing.about ? (
-              <textarea
-                {...register("about")}
-                value={tempData.about}
-                onChange={(e) => handleInputChange(e, "about")}
-                className={`bg-gray-50 border-2 ${errors?.about ? "border-red-500" : "border-[#737373]"
-                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                placeholder="Tell us about yourself"
-              />
-            ) : (
-              <p className="text-sm">{userFullData.bio[0]}</p>
-            )}
-          </div>
-
-          {/* Location Section */}
-          <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 px-3">
-            <div className="flex justify-between">
-              <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
-                Location
-              </h3>
-              <div>
-                <button
-                  className=" invisible group-hover:visible text-gray-500  hover:underline text-xs h-4 w-4"
-                  onClick={() => handleEditToggle("location")}
-                >
-                  {isEditing.location ? "" : <img src={edit} />}
-                </button>
-              </div>
             </div>
 
-            {isEditing.location ? (
-              <select
-                {...register("location")}
-                value={tempData.location}
-                onChange={(e) => {
-                  handleInputChange(e, "location");
-                }}
-                className={`bg-gray-50 border-2 ${errors.location ? "border-red-500" : "border-[#737373]"
-                  } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-2 py-1`}
-              >
-                <option value="" className="text-sm font-bold">
-                  Select your country
-                </option>
-                {countries.map((country) => (
-                  <option
-                    key={country.name}
-                    value={country.name}
-                    className="text-sm font-bold"
+            {/* Location Section */}
+            <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 px-3">
+              <div className="flex justify-between">
+                <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                  Location
+                </h3>
+                <div>
+                  <button
+                    className=" invisible group-hover:visible text-gray-500  hover:underline text-xs h-4 w-4"
+                    onClick={() => handleEditToggle("location")}
                   >
-                    {country.name}
+                    {isEditing.location ? "" : <img src={edit} />}
+                  </button>
+                </div>
+              </div>
+
+              {isEditing.location ? (
+                <select
+                  {...register("location")}
+                  value={tempData.location}
+                  onChange={(e) => {
+                    handleInputChange(e, "location");
+                  }}
+                  className={`bg-gray-50 border-2 ${errors.location ? "border-red-500" : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-2 py-1`}
+                >
+                  <option value="" className="text-sm font-bold">
+                    Select your country
                   </option>
-                ))}
-              </select>
-            ) : (
-              <div className="flex items-center">
-                <PlaceOutlinedIcon
-                  className="text-gray-500 mr-1"
-                  fontSize="small"
+                  {countries.map((country) => (
+                    <option
+                      key={country.name}
+                      value={country.name}
+                      className="text-sm font-bold"
+                    >
+                      {country.name}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <div className="flex items-center">
+                  <PlaceOutlinedIcon
+                    className="text-gray-500 mr-1"
+                    fontSize="small"
+                  />
+                  <p className="text-sm">{userFullData?.country}</p>
+                </div>
+              )}
+            </div>
+
+            {/* Reasons to Join Platform Section */}
+            <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 px-3">
+              <div className="flex justify-between">
+                <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                  Reasons to Join Platform
+                </h3>
+                <div>
+                  <button
+                    className=" invisible group-hover:visible text-gray-500  hover:underline text-xs h-4 w-4"
+                    onClick={() => handleEditToggle("reasons_to_join_platform")}
+                  >
+                    {isEditing.reasons_to_join_platform ? (
+                      ""
+                    ) : (
+                      <img src={edit} />
+                    )}
+                  </button>
+                </div>
+              </div>
+              {isEditing.reasons_to_join_platform ? (
+                <Select
+                  isMulti
+                  options={reasonOfJoiningOptions}
+                  value={reasonOfJoiningSelectedOptions}
+                  onChange={(selectedOptions) => {
+                    setReasonOfJoiningSelectedOptions(selectedOptions);
+                    setTempData((prev) => ({
+                      ...prev,
+                      reasons_to_join_platform: selectedOptions.map(
+                        (option) => option.value
+                      ),
+                    }));
+                  }}
+                  className="basic-single"
+                  classNamePrefix="select"
                 />
-                <p className="text-sm">{userFullData.country}</p>
-              </div>
-            )}
-          </div>
-
-          {/* Reasons to Join Platform Section */}
-          <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 px-3">
-            <div className="flex justify-between">
-              <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
-                Reasons to Join Platform
-              </h3>
-              <div>
-                <button
-                  className=" invisible group-hover:visible text-gray-500  hover:underline text-xs h-4 w-4"
-                  onClick={() => handleEditToggle("reasons_to_join_platform")}
-                >
-                  {isEditing.reasons_to_join_platform ? (
-                    ""
-                  ) : (
-                    <img src={edit} />
-                  )}
-                </button>
-              </div>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {(userFullData?.reason_to_join || []).flat().map((reason, index) => (
+                    <span key={`${reason}-${index}`} className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1">
+                      {reason}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
-            {isEditing.reasons_to_join_platform ? (
-              <Select
-                isMulti
-                options={reasonOfJoiningOptions}
-                value={reasonOfJoiningSelectedOptions}
-                onChange={(selectedOptions) => {
-                  setReasonOfJoiningSelectedOptions(selectedOptions);
-                  setTempData((prev) => ({
-                    ...prev,
-                    reasons_to_join_platform: selectedOptions.map(
-                      (option) => option.value
-                    ),
-                  }));
-                }}
-                className="basic-single"
-                classNamePrefix="select"
-              />
-            ) : (
-              <div className="flex flex-wrap gap-2">
-                {(userFullData.reason_to_join || []).flat().map((reason, index) => (
-                  <span key={`${reason}-${index}`} className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1">
-                    {reason}
+
+            {/* Interests Section */}
+            <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 px-3">
+              <div className="flex justify-between">
+                <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                  Interests
+                </h3>
+                <div>
+                  <button
+                    className=" invisible group-hover:visible text-gray-500  hover:underline text-xs h-4 w-4"
+                    onClick={() => handleEditToggle("interests")}
+                  >
+                    {isEditing.interests ? "" : <img src={edit} />}
+                  </button>
+                </div>
+              </div>
+              {isEditing.interests ? (
+                <Select
+                  isMulti
+                  options={interestedDomainsOptions}
+                  value={interestedDomainsSelectedOptions}
+                  onChange={(selectedOptions) => {
+                    setInterestedDomainsSelectedOptions(selectedOptions);
+                    setTempData((prev) => ({
+                      ...prev,
+                      domains_interested_in: selectedOptions.map(
+                        (option) => option.value
+                      ),
+                    }));
+                  }}
+                  className="basic-single"
+                  classNamePrefix="select"
+                />
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  <span
+                    className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 "
+                  >
+                    {userFullData?.area_of_interest}
                   </span>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Interests Section */}
-          <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 px-3">
-            <div className="flex justify-between">
-              <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
-                Interests
-              </h3>
-              <div>
-                <button
-                  className=" invisible group-hover:visible text-gray-500  hover:underline text-xs h-4 w-4"
-                  onClick={() => handleEditToggle("interests")}
-                >
-                  {isEditing.interests ? "" : <img src={edit} />}
-                </button>
-              </div>
-            </div>
-            {isEditing.interests ? (
-              <Select
-                isMulti
-                options={interestedDomainsOptions}
-                value={interestedDomainsSelectedOptions}
-                onChange={(selectedOptions) => {
-                  setInterestedDomainsSelectedOptions(selectedOptions);
-                  setTempData((prev) => ({
-                    ...prev,
-                    domains_interested_in: selectedOptions.map(
-                      (option) => option.value
-                    ),
-                  }));
-                }}
-                className="basic-single"
-                classNamePrefix="select"
-              />
-            ) : (
-              <div className="flex flex-wrap gap-2">
-                {/* {profileData.domains_interested_in.map((interest) => ( */}
-                <span
-                  // key={interest}
-                  className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 "
-                >
-                  {userFullData.area_of_interest}
-                </span>
-                {/* ))} */}
-              </div>
-            )}
-          </div>
-
-          <div>
-            <h3 className="mb-2 text-xs text-gray-500 px-3">LINKS</h3>
-            <div className="flex items-center px-3">
-              {/* LinkedIn */}
-              <div className="group relative flex items-center">
-                <a
-                  href={socialLinks.LinkedIn}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center"
-                >
-                  <LinkedIn className="text-gray-400 hover:text-gray-600 cursor-pointer transform transition-all duration-300 hover:scale-110" />
-                </a>
-                <button
-                  className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-8  h-10 w-7"
-                  onClick={() => handleLinkEditToggle("LinkedIn")}
-                >
-                  <img src={edit} />
-                </button>
-                {isEditingLink.LinkedIn && (
-                  <input
-                    type="text"
-                    value={socialLinks.LinkedIn}
-                    onChange={(e) => handleLinkChange(e, "LinkedIn")}
-                    className="border p-1 rounded w-full ml-2 transition-all duration-300 ease-in-out transform"
-                  />
-                )}
-              </div>
-
-              {/* GitHub */}
-              <div className="group relative flex items-center ml-8 group-hover:ml-8">
-                <a
-                  href={socialLinks.GitHub}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center"
-                >
-                  <GitHub className="text-gray-400 hover:text-gray-600 cursor-pointer transform transition-all duration-300 hover:scale-110" />
-                </a>
-                <button
-                  className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-8  h-10 w-7"
-                  onClick={() => handleLinkEditToggle("GitHub")}
-                >
-                  <img src={edit} />
-                </button>
-                {isEditingLink.GitHub && (
-                  <input
-                    type="text"
-                    value={socialLinks.GitHub}
-                    onChange={(e) => handleLinkChange(e, "GitHub")}
-                    className="border p-1 rounded w-full ml-2 transition-all duration-300 ease-in-out transform"
-                  />
-                )}
-              </div>
-
-              {/* Telegram */}
-              <div className="group relative flex items-center ml-8 group-hover:ml-8">
-                <a
-                  href={socialLinks.Telegram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center"
-                >
-                  <Telegram className="text-gray-400 hover:text-gray-600 cursor-pointer transform transition-all duration-300 hover:scale-110" />
-                </a>
-                <button
-                  className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-8  h-10 w-7"
-                  onClick={() => handleLinkEditToggle("Telegram")}
-                >
-                  <img src={edit} />
-                </button>
-                {isEditingLink.Telegram && (
-                  <input
-                    type="text"
-                    value={socialLinks.Telegram}
-                    onChange={(e) => handleLinkChange(e, "Telegram")}
-                    className="border p-1 rounded w-full ml-2 transition-all duration-300 ease-in-out transform"
-                  />
-                )}
-              </div>
+                </div>
+              )}
             </div>
 
-            {/* Save Section */}
-            {Object.values(isEditingLink).some((value) => value) && (
+            {/* Links Section */}
+            <div>
+              <h3 className="mb-2 text-xs text-gray-500 px-3">LINKS</h3>
+              <div className="flex items-center px-3">
+                {/* LinkedIn */}
+                <div className="group relative flex items-center">
+                  <a
+                    href={socialLinks.LinkedIn}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center"
+                  >
+                    <LinkedIn className="text-gray-400 hover:text-gray-600 cursor-pointer transform transition-all duration-300 hover:scale-110" />
+                  </a>
+                  <button
+                    className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-8  h-10 w-7"
+                    onClick={() => handleLinkEditToggle("LinkedIn")}
+                  >
+                    <img src={edit} />
+                  </button>
+                  {isEditingLink.LinkedIn && (
+                    <input
+                      type="text"
+                      value={socialLinks.LinkedIn}
+                      onChange={(e) => handleLinkChange(e, "LinkedIn")}
+                      className="border p-1 rounded w-full ml-2 transition-all duration-300 ease-in-out transform"
+                    />
+                  )}
+                </div>
+
+                {/* GitHub */}
+                <div className="group relative flex items-center ml-8 group-hover:ml-8">
+                  <a
+                    href={socialLinks.GitHub}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center"
+                  >
+                    <GitHub className="text-gray-400 hover:text-gray-600 cursor-pointer transform transition-all duration-300 hover:scale-110" />
+                  </a>
+                  <button
+                    className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-8  h-10 w-7"
+                    onClick={() => handleLinkEditToggle("GitHub")}
+                  >
+                    <img src={edit} />
+                  </button>
+                  {isEditingLink.GitHub && (
+                    <input
+                      type="text"
+                      value={socialLinks.GitHub}
+                      onChange={(e) => handleLinkChange(e, "GitHub")}
+                      className="border p-1 rounded w-full ml-2 transition-all duration-300 ease-in-out transform"
+                    />
+                  )}
+                </div>
+
+                {/* Telegram */}
+                <div className="group relative flex items-center ml-8 group-hover:ml-8">
+                  <a
+                    href={socialLinks.Telegram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center"
+                  >
+                    <Telegram className="text-gray-400 hover:text-gray-600 cursor-pointer transform transition-all duration-300 hover:scale-110" />
+                  </a>
+                  <button
+                    className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-8  h-10 w-7"
+                    onClick={() => handleLinkEditToggle("Telegram")}
+                  >
+                    <img src={edit} />
+                  </button>
+                  {isEditingLink.Telegram && (
+                    <input
+                      type="text"
+                      value={socialLinks.Telegram}
+                      onChange={(e) => handleLinkChange(e, "Telegram")}
+                      className="border p-1 rounded w-full ml-2 transition-all duration-300 ease-in-out transform"
+                    />
+                  )}
+                </div>
+              </div>
+
+              {/* Save Links Section */}
+              {Object.values(isEditingLink).some((value) => value) && (
+                <div className="flex justify-end gap-4 mt-4">
+                  <button
+                    type="button"
+                    onClick={handleSaveLinks}
+                    className="bg-blue-600 text-white py-2 px-4 rounded transition-all duration-300 ease-in-out transform hover:bg-blue-700 hover:scale-105"
+                  >
+                    Save
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Save/Cancel Section */}
+            {Object.values(isEditing).some((value) => value) && (
               <div className="flex justify-end gap-4 mt-4">
                 <button
                   type="button"
-                  onClick={handleSaveLinks}
-                  className="bg-blue-600 text-white py-2 px-4 rounded transition-all duration-300 ease-in-out transform hover:bg-blue-700 hover:scale-105"
+                  onClick={handleCancel}
+                  className="bg-gray-300 text-gray-700 py-2 px-4 rounded"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSave}
+                  className="bg-blue-600 text-white py-2 px-4 rounded"
                 >
                   Save
                 </button>
               </div>
             )}
           </div>
-
-          {/* Save/Cancel Section */}
-          {Object.values(isEditing).some((value) => value) && (
-            <div className="flex justify-end gap-4 mt-4">
-              <button
-                type="button"
-                onClick={handleCancel}
-                className="bg-gray-300 text-gray-700 py-2 px-4 rounded"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleSave}
-                className="bg-blue-600 text-white py-2 px-4 rounded"
-              >
-                Save
-              </button>
-            </div>
-          )}
-        </div>
-      ) : (
-        <InvestorDetail />
-      )}
+        ) : (
+          <InvestorDetail />
+        )}
+      </div>
     </div>
-  </div>
-);
-
+  );
+};
 
 export default ProfileDetail;
