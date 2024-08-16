@@ -1036,7 +1036,6 @@ pub fn approve_project_update(requester: Principal, project_id: String, approve:
                         project.params.project_elevator_pitch = project_update_request.0.updated_info.project_elevator_pitch;
                         project.params.project_area_of_focus = project_update_request.0.updated_info.project_area_of_focus;
                         project.params.promotional_video = project_update_request.0.updated_info.promotional_video;
-                        project.params.github_link = project_update_request.0.updated_info.github_link;
                         project.params.reason_to_join_incubator = project_update_request.0.updated_info.reason_to_join_incubator;
                         project.params.project_description = project_update_request.0.updated_info.project_description;
                         project.params.project_cover = project_update_request.0.updated_info.project_cover;

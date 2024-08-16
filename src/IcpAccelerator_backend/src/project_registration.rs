@@ -69,6 +69,11 @@ pub struct AnnouncementsInternal {
     project_logo: Option<Vec<u8>>,
 }
 
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
+pub struct SocialLinksProject{
+    pub link: Option<String>,
+}
+
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct ProjectInfo {
     pub project_name: String,
@@ -80,7 +85,6 @@ pub struct ProjectInfo {
     pub project_elevator_pitch: Option<String>,
     pub project_area_of_focus: String,
     pub promotional_video: Option<String>,
-    pub github_link: Option<String>,
     pub reason_to_join_incubator: String,
     pub project_description: Option<String>, //
     pub project_cover: Option<Vec<u8>>,
@@ -92,10 +96,8 @@ pub struct ProjectInfo {
     pub self_rating_of_project: f64,
     pub mentors_assigned: Option<Vec<MentorProfile>>,
     pub vc_assigned: Option<Vec<VentureCapitalist>>,
-    pub project_twitter: Option<String>,
-    pub project_linkedin: Option<String>,
     pub project_website: Option<String>,
-    pub project_discord: Option<String>,
+    pub links: Option<Vec<SocialLinksProject>>,
     pub money_raised: Option<MoneyRaised>,
     upload_private_documents: Option<bool>,
     private_docs: Option<Vec<Docs>>,
@@ -144,7 +146,6 @@ pub struct ProjectPublicInfo {
     pub project_elevator_pitch: Option<String>,
     pub project_area_of_focus: String,
     pub promotional_video: Option<String>,
-    pub github_link: Option<String>,
     pub reason_to_join_incubator: String,
     pub project_description: Option<String>,
     pub project_cover: Option<Vec<u8>>,
@@ -156,10 +157,8 @@ pub struct ProjectPublicInfo {
     pub self_rating_of_project: f64,
     pub mentors_assigned: Option<Vec<MentorProfile>>,
     pub vc_assigned: Option<Vec<VentureCapitalist>>,
-    pub project_twitter: Option<String>,
-    pub project_linkedin: Option<String>,
     pub project_website: Option<String>,
-    pub project_discord: Option<String>,
+    pub links: Option<Vec<SocialLinksProject>>,
     upload_private_documents: Option<bool>,
     public_docs: Option<Vec<Docs>>,
     pub dapp_link: Option<String>,
@@ -221,12 +220,9 @@ pub struct ProjectInfoForUser {
     pub project_description: Option<String>,
     pub community_rating: Option<RatingAverages>,
     pub project_cover: Option<Vec<u8>>,
-    pub project_twitter: Option<String>,
-    pub project_linkedin: Option<String>,
     pub project_website: Option<String>,
-    pub project_discord: Option<String>,
     pub promotional_video: Option<String>,
-    pub github_link: Option<String>,
+    pub links: Option<Vec<SocialLinksProject>>,
     pub project_team: Option<Vec<TeamMember>>,
     pub dapp_link: Option<String>,
     pub weekly_active_users: Option<u64>,
@@ -235,7 +231,6 @@ pub struct ProjectInfoForUser {
     pub vc_associated: Option<Vec<VentureCapitalist>>,
     pub team_member_info: Option<Vec<TeamMember>>,
     pub announcements: HashMap<Principal, Vec<AnnouncementsInternal>>,
-    pub website_social_group: Option<String>,
     pub live_link_of_project: Option<String>,
     pub jobs_opportunity: Option<Vec<JobsInternal>>,
     pub area_of_focus: Option<String>,
@@ -592,7 +587,6 @@ pub fn get_project_details_for_mentor_and_investor(
         project_elevator_pitch: project_details.params.project_elevator_pitch,
         project_area_of_focus: project_details.params.project_area_of_focus,
         promotional_video: project_details.params.promotional_video,
-        github_link: project_details.params.github_link,
         reason_to_join_incubator: project_details.params.reason_to_join_incubator,
         project_description: project_details.params.project_description,
         project_cover: project_details.params.project_cover,
@@ -604,10 +598,8 @@ pub fn get_project_details_for_mentor_and_investor(
         self_rating_of_project: project_details.params.self_rating_of_project,
         mentors_assigned: project_details.params.mentors_assigned,
         vc_assigned: project_details.params.vc_assigned,
-        project_twitter: project_details.params.project_twitter,
-        project_linkedin: project_details.params.project_linkedin,
         project_website: project_details.params.project_website,
-        project_discord: project_details.params.project_discord,
+        links: project_details.params.links,
         upload_private_documents: project_details.params.upload_private_documents,
         public_docs: project_details.params.public_docs,
         dapp_link: project_details.params.dapp_link,
@@ -640,7 +632,6 @@ pub fn get_project_public_information_using_id(project_id: String) -> ProjectPub
         project_elevator_pitch: project_details.params.project_elevator_pitch,
         project_area_of_focus: project_details.params.project_area_of_focus,
         promotional_video: project_details.params.promotional_video,
-        github_link: project_details.params.github_link,
         reason_to_join_incubator: project_details.params.reason_to_join_incubator,
         project_description: project_details.params.project_description,
         project_cover: project_details.params.project_cover,
@@ -652,10 +643,8 @@ pub fn get_project_public_information_using_id(project_id: String) -> ProjectPub
         self_rating_of_project: project_details.params.self_rating_of_project,
         mentors_assigned: project_details.params.mentors_assigned,
         vc_assigned: project_details.params.vc_assigned,
-        project_twitter: project_details.params.project_twitter,
-        project_linkedin: project_details.params.project_linkedin,
         project_website: project_details.params.project_website,
-        project_discord: project_details.params.project_discord,
+        links: project_details.params.links,
         upload_private_documents: project_details.params.upload_private_documents,
         public_docs: project_details.params.public_docs,
         dapp_link: project_details.params.dapp_link,
@@ -977,7 +966,6 @@ pub async fn update_project(project_id: String, mut updated_project: ProjectInfo
                         project.params.project_elevator_pitch = updated_project.project_elevator_pitch;
                         project.params.project_area_of_focus = updated_project.project_area_of_focus;
                         project.params.promotional_video = updated_project.promotional_video;
-                        project.params.github_link = updated_project.github_link;
                         project.params.reason_to_join_incubator = updated_project.reason_to_join_incubator;
                         project.params.project_description = updated_project.project_description;
                         project.params.project_cover = updated_project.project_cover;
@@ -990,6 +978,7 @@ pub async fn update_project(project_id: String, mut updated_project: ProjectInfo
                         project.params.mentors_assigned = updated_project.mentors_assigned;
                         project.params.vc_assigned = updated_project.vc_assigned;
                         project.params.project_website = updated_project.project_website;
+                        project.params.links = updated_project.links;
 
                         state.project_storage.insert(StoredPrincipal(caller), project_list.clone());
                         return Ok("Profile updated successfully");
@@ -1459,12 +1448,8 @@ pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUse
                     project_description: project_internal.params.project_description.clone(),
                     community_rating: Some(community_ratings),
                     project_cover: project_internal.params.project_cover.clone(),
-                    project_twitter: project_internal.params.project_twitter.clone(),
-                    project_linkedin: project_internal.params.project_linkedin.clone(),
                     project_website: project_internal.params.project_website.clone(),
-                    project_discord: project_internal.params.project_discord.clone(),
                     promotional_video: project_internal.params.promotional_video.clone(),
-                    github_link: project_internal.params.github_link.clone(),
                     project_team: project_internal.params.project_team.clone(),
                     dapp_link: project_internal.params.dapp_link.clone(),
                     weekly_active_users: project_internal.params.weekly_active_users.clone(),
@@ -1473,7 +1458,7 @@ pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUse
                     vc_associated: project_internal.params.vc_assigned.clone(),
                     team_member_info: project_internal.params.project_team.clone(),
                     announcements: announcements_project,
-                    website_social_group: project_internal.params.project_discord.clone(),
+                    links: project_internal.params.links.clone(),
                     live_link_of_project: project_internal.params.dapp_link.clone(),
                     jobs_opportunity: Some(jobs_opportunity_posted),
                     area_of_focus: Some(project_internal.params.project_area_of_focus.clone()),
