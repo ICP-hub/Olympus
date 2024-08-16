@@ -173,7 +173,12 @@ pub fn initialize_roles() {
     });
 }
 
+fn record_measurement(start:u64, end:u64)->u64{
+    start-end
+}
+
 pub async fn register_user_role(info: UserInformation) -> std::string::String {
+    let start = ic_cdk::api::instruction_counter();
     initialize_roles();
 
     let caller = caller();
@@ -287,6 +292,8 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
             role_status.insert(StoredPrincipal(caller), Candid(initial_roles));
         }
     });
+    let end = ic_cdk::api::instruction_counter();
+    let result = record_measurement(start,end);
     format!("User registered successfully with ID: {}", new_id)
 }
 
