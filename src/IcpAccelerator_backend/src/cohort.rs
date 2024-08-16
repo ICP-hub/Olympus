@@ -931,3 +931,46 @@ pub fn filter_cohorts(criteria: CohortFilterCriteria) -> Vec<CohortDetails> {
             .collect()
     })
 }
+
+#[update(guard="is_user_anonymous")]
+pub async fn update_cohort(cohort_id: String, updated_params: Cohort) -> Result<String, String> {
+    let caller_principal = caller();
+
+    // Check if the caller is the creator of the cohort or has the required privileges
+    let mut cohort_details = read_state(|state| state.cohort_info.get(&cohort_id).unwrap().0.clone());
+
+    let mut params = updated_params.clone();
+
+    let canister_id = crate::asset_manager::get_asset_canister();
+    if params.cohort_banner.is_some() && params.cohort_banner.clone().unwrap().len() > 300 {
+        let cohort_logo_key = "/uploads/".to_owned() + &caller_principal.to_string() + "_project_logo.jpeg";
+
+        let cohort_logo_arg = StoreArg {
+            key: cohort_logo_key.clone(),
+            content_type: "image/*".to_string(),
+            content_encoding: "identity".to_string(),
+            content: ByteBuf::from(params.cohort_banner.clone().unwrap()),
+            sha256: None,
+        };
+
+        let result = call(canister_id, "store", (cohort_logo_arg,)).await.map_err(|e| format!("Error storing asset: {:?}", e))?;
+
+        params.cohort_banner = Some(
+            (canister_id.to_string() + &cohort_logo_key)
+                .as_bytes()
+                .to_vec(),
+        );
+    } else {
+        ic_cdk::println!("No change in cohort banner or invalid banner data.");
+    }
+
+    cohort_details.cohort = updated_params;
+
+    mutate_state(|state| {
+        if let Some(mut existing_cohort) = state.cohort_info.get(&cohort_id) {
+            state.cohort_info.insert(cohort_id.clone(), Candid(cohort_details.clone()));
+        }
+    });
+
+    Ok("Cohort details have been updated successfully.".to_string())
+}

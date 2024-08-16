@@ -1136,6 +1136,7 @@ service : {
   set_asset_canister : (principal) -> ();
   switch_role : (text, text) -> ();
   type_of_user_profile : () -> (vec UserType) query;
+  update_cohort : (text, Cohort) -> (Result_5);
   update_dapp_link : (text, text) -> (text);
   update_job_post_by_id : (nat64, Jobs) -> (text);
   update_mentor : (MentorProfile) -> (text);
