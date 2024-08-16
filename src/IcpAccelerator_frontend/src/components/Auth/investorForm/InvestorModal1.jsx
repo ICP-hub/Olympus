@@ -5,7 +5,7 @@ import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import Dropdown from "../../../../assets/Logo/Dropdown.png"
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CheckIcon from '@mui/icons-material/Check';
-import CreateProjectModal from "../../Home/modal2";
+
 import ReactSelect from 'react-select';
 import Select from 'react-select';
 import { useNavigate } from "react-router-dom"
@@ -121,7 +121,7 @@ const InvestorModal1 = ({ isOpen, onClose, onBack }) => {
 
     return (
         <>
-         <h1 className="text-3xl text-[#121926] font-bold mb-3">
+            <h1 className="text-3xl text-[#121926] font-bold mb-3">
                 Create a Investor
             </h1>
             <div className="mb-4">
