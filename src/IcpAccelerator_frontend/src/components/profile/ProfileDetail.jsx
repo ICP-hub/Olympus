@@ -149,13 +149,13 @@ const ProfileDetail = () => {
   useEffect(() => {
     if (userFullData) {
       const defaultValues = {
-        email: userFullData.email?.[0] || 'mail@email.com',
-        tagline: userFullData.tagline || 'Founder & CEO at Cypherpunk Labs',
-        about: userFullData.bio?.[0] || 'Est malesuada ac elit gravida vel aliquam nec. Arcu pelle ntesque convallis quam feugiat non viverra massa fringilla.',
-        interests: userFullData.interests || ['Web3', 'Cryptography'],
-        location: userFullData.country || 'Austria',
-        domains_interested_in: userFullData.type_of_profile || ['Web3', 'Blockchain'],
-        reasons_to_join_platform: userFullData.reason_to_join?.flat() || ['Funding', 'Mentoring'],
+        email: userFullData.email?.[0] ?? 'mail@email.com',
+        tagline: userFullData.tagline ?? 'Founder & CEO at Cypherpunk Labs',
+        about: userFullData.bio?.[0] ?? 'Est malesuada ac elit gravida vel aliquam nec. Arcu pelle ntesque convallis quam feugiat non viverra massa fringilla.',
+        interests: userFullData.interests ?? ['Web3', 'Cryptography'],
+        location: userFullData.country ?? 'Austria',
+        domains_interested_in: userFullData.type_of_profile ?? ['Web3', 'Blockchain'],
+        reasons_to_join_platform: userFullData.reason_to_join?.flat() ?? ['Funding', 'Mentoring'],
       };
 
       Object.entries(defaultValues).forEach(([key, value]) => {

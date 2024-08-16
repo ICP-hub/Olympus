@@ -148,8 +148,6 @@ const EventReg2 = ({setSelectedCountry}) => {
                 ) : (
                   ""
                 )}
-     
-     
       <Toaster />
     </>
   );

@@ -64,7 +64,12 @@ const validationSchema = yup.object({
     .typeError("You must enter eligibility")
     .required(),
   rubric_eligibility: yup.string().required("Required"),
-  no_of_seats: yup.number().typeError("You must enter a number").required(),
+  no_of_seats: yup
+  .number()
+  .typeError("You must enter a number")
+  .required("Number of seats is required")
+  .min(0, "The number of seats cannot be negative"),
+
   funding_type: yup
     .string()
     .typeError("You must enter a funding type")
@@ -91,9 +96,9 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
   } = methods;
 
   const formFields = {
-    0: ["title", "cohort_launch_date", "cohort_end_date"],
-    1: ["cohort_end_date", "eligibility", "no_of_seats"],
-    2: ["funding_type", "funding_amount", "deadline"],
+    0: ["cohort_banner","title", "cohort_launch_date", "cohort_end_date"],
+    1: ["deadline","start_date", "eligibility", "no_of_seats"],
+    2: ["funding_type", "funding_amount","tags","country", "host_name"],
     3: ["description"],
   };
 
@@ -209,7 +214,7 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
                     <ArrowBackIcon fontSize="medium" /> Back
                   </button>
                 )}
-                {index === 3 ? (
+                {index === 4 ? (
                   <button
                     type="submit"
                     className="py-2 px-4 bg-blue-600 text-white rounded  border-2 border-[#B2CCFF]"
