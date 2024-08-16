@@ -1,6 +1,7 @@
 use crate::admin::*;
 use crate::cohort::*;
 use crate::cohort_rating::*;
+use crate::manage_hubs::*;
 use crate::vc_registration::Announcements;
 use crate::{admin::*, mentor::*, project_registration::*, user_module::*, vc_registration::*};
 use candid::{CandidType, Principal};
@@ -259,6 +260,9 @@ const MY_SENT_COHORT_REQUEST_MEMORY_ID: MemoryId = MemoryId::new(68);
 pub type AssetManager = StableCell<StoredPrincipal, VMem>;
 const ASSET_CANISTER_STORAGE_MEMORY_ID: MemoryId = MemoryId::new(69);
 
+pub type HubsData = StableBTreeMap<StoredPrincipal, Candid<IcpHubDetails>, VMem>;
+const HUBS_DATA_STORAGE_MEMORY_ID: MemoryId = MemoryId::new(70);
+
 pub struct State {
     pub admin_notifications: AdminNotification,
     pub cohort_request_admin: CohortRequestNotification,
@@ -332,6 +336,7 @@ pub struct State {
     pub mentor_invite_request: MentorsInviteRequest,
     pub my_sent_cohort_request: MySentCohortRequest,
     pub asset_canister_storage: AssetManager,
+    pub hubs_data: HubsData,
 }
 
 thread_local! {
@@ -421,6 +426,7 @@ thread_local! {
             mentor_removed_from_cohort: MentorsRemovedFromCohort::init(mm.borrow().get(MENTOR_REMOVED_FROM_COHORT_MEMORY_ID)),
             mentor_invite_request: MentorsInviteRequest::init(mm.borrow().get(PENDING_MENTOR_CONFIRMATION_TO_REJOIN_MEMORY_ID)),
             my_sent_cohort_request: MySentCohortRequest::init(mm.borrow().get(MY_SENT_COHORT_REQUEST_MEMORY_ID)),
+            hubs_data: HubsData::init(mm.borrow().get(HUBS_DATA_STORAGE_MEMORY_ID)),
         })
     );
 }

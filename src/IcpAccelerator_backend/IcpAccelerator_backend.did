@@ -121,6 +121,15 @@ type FilterCriteria = record {
   rating_range : opt record { float64; float64 };
 };
 type IcpHub = record { id : int32; region : text; name : text };
+type IcpHubDetails = record {
+  twitter : opt text;
+  flag : opt blob;
+  name : opt text;
+  description : opt text;
+  website : opt text;
+  discord : opt text;
+  telegram : opt text;
+};
 type InvestorInfo = record {
   investor_name : text;
   investor_description : text;
@@ -156,6 +165,10 @@ type LeaderboardEntryForCohorts = record {
 type LeaderboardEntryForRatings = record {
   average_rating : opt float64;
   project_id : opt text;
+};
+type ListAllIcpHubs = record {
+  "principal" : principal;
+  params : IcpHubDetails;
 };
 type ListAllMentors = record {
   "principal" : principal;
@@ -394,11 +407,9 @@ type ProjectInf = record {
   project_name : text;
 };
 type ProjectInfo = record {
-  project_linkedin : opt text;
   project_elevator_pitch : opt text;
   dapp_link : opt text;
   reason_to_join_incubator : text;
-  project_discord : opt text;
   upload_private_documents : opt bool;
   weekly_active_users : opt nat64;
   project_description : opt text;
@@ -408,15 +419,14 @@ type ProjectInfo = record {
   token_economics : opt text;
   self_rating_of_project : float64;
   preferred_icp_hub : opt text;
+  links : opt vec SocialLinks;
   mentors_assigned : opt vec MentorProfile;
   country_of_registration : opt text;
-  project_twitter : opt text;
   target_market : opt text;
   long_term_goals : opt text;
   project_area_of_focus : text;
   live_on_icp_mainnet : opt bool;
   technical_docs : opt text;
-  github_link : opt text;
   type_of_registration : opt text;
   public_docs : opt vec Docs;
   project_cover : opt blob;
@@ -431,20 +441,16 @@ type ProjectInfo = record {
   project_team : opt vec TeamMember;
 };
 type ProjectInfoForUser = record {
-  project_linkedin : opt text;
   dapp_link : opt text;
   vc_associated : opt vec VentureCapitalist;
-  project_discord : opt text;
   area_of_focus : opt text;
   weekly_active_users : opt nat64;
   project_description : opt text;
   community_rating : opt RatingAverages;
   team_member_info : opt vec TeamMember;
   date_of_joining : opt nat64;
-  website_social_group : opt text;
-  project_twitter : opt text;
+  links : opt vec SocialLinks;
   mentor_associated : opt vec MentorProfile;
-  github_link : opt text;
   country_of_project : opt text;
   project_cover : opt blob;
   project_website : opt text;
@@ -476,25 +482,22 @@ type ProjectNotification = record {
 };
 type ProjectNotificationType = variant { AccessRequest : AccessRequest };
 type ProjectPublicInfo = record {
-  project_linkedin : opt text;
   project_elevator_pitch : opt text;
   dapp_link : opt text;
   reason_to_join_incubator : text;
-  project_discord : opt text;
   upload_private_documents : opt bool;
   project_description : opt text;
   vc_assigned : opt vec VentureCapitalist;
   token_economics : opt text;
   self_rating_of_project : float64;
   preferred_icp_hub : opt text;
+  links : opt vec SocialLinks;
   mentors_assigned : opt vec MentorProfile;
-  project_twitter : opt text;
   target_market : opt text;
   long_term_goals : opt text;
   project_area_of_focus : text;
   live_on_icp_mainnet : opt bool;
   technical_docs : opt text;
-  github_link : opt text;
   public_docs : opt vec Docs;
   project_cover : opt blob;
   project_id : text;
@@ -738,6 +741,8 @@ service : {
   add_BlogPost : (text) -> (text);
   add_announcement : (Announcements) -> (text);
   add_data_checking : () -> (text);
+  add_hubs_images : (principal, IcpHubDetails) -> (IcpHubDetails);
+  add_icp_hub_details : (IcpHubDetails) -> (text);
   add_job_type : (text) -> (text);
   add_mentor_announcement : (text, text) -> (text);
   add_project_rating : (ProjectRatingStruct) -> (Result);
@@ -922,6 +927,7 @@ service : {
       vec OfferToInvestor,
     ) query;
   get_frequent_reviewers : () -> (vec UserInfoInternal) query;
+  get_icp_hub_details : () -> (vec ListAllIcpHubs) query;
   get_icp_hubs_candid : () -> (vec IcpHub) query;
   get_investment_stage : () -> (vec text) query;
   get_job_category : () -> (vec Role_1) query;

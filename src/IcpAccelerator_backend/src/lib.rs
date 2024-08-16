@@ -5,15 +5,12 @@ mod leaderboard;
 mod manage_focus_expertise;
 mod manage_hubs;
 mod mentor;
-
 mod investor_offer_to_project;
 mod notification_to_mentor;
 mod notification_to_project;
 mod project_offer_to_investor;
 mod state_handler;
-
 mod associations;
-
 mod cohort;
 mod cohort_rating;
 mod default_images;
@@ -26,50 +23,34 @@ use crate::cohort_rating::LeaderboardEntryForCohorts;
 use crate::cohort_rating::PeerRatingUpdate;
 use crate::mentor_investor_ratings::RatingMentorInvestor;
 use crate::project_registration::*;
+use crate::manage_hubs::*;
 use cohort::*;
 use ic_cdk::api::management_canister::main::CanisterStatusResponse;
-
-use associations::*;
 use investor_offer_to_project::*;
 use notification_to_mentor::*;
 use notification_to_project::*;
 use project_offer_to_investor::*;
-
 use ic_cdk::api::caller;
-use ic_cdk_macros::post_upgrade;
-use ic_cdk_macros::pre_upgrade;
-
-use leaderboard::{
-    LeaderboardEntryForLikes, LeaderboardEntryForRatings, LeaderboardEntryForUpvote,
-};
-// use notification::pre_upgrade_notifications;
+use leaderboard::LeaderboardEntryForRatings;
 use crate::ratings::*;
 use project_registration::FilterCriteria;
-// use ratings::post_upgrade_rating_system;
-// use ratings::pre_upgrade_rating_system;
-
 use roles::{get_roles, RolesResponse};
 use std::collections::HashMap;
-
 use user_module::*;
-
 use ic_cdk::export_candid;
 use manage_focus_expertise::{get_areas, Areas};
 use manage_hubs::{get_icp_hubs, IcpHub};
 use mentor::MentorProfile;
-
 mod project_registration;
 mod ratings;
-// use crate::notification::Notification;
 use crate::project_registration::Announcements;
 use crate::project_registration::Blog;
 use admin::*;
 use candid::Principal;
-
-use ic_cdk_macros::{init, query, update};
+use ic_cdk_macros::*;
 use mentor::*;
 use project_registration::{
-    NotificationForOwner, NotificationProject, ProjectInfo, ProjectInfoInternal, TeamMember,
+    NotificationForOwner, NotificationProject, ProjectInfo, ProjectInfoInternal,
 };
 
 use crate::ratings::RatingView;
