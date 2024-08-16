@@ -1,31 +1,20 @@
 import React from "react";
 import CypherpunkLabLogo from "../../../../assets/Logo/CypherpunkLabLogo.png";
 import ProfileImage from "../../../../assets/Logo/ProfileImage.png";
-import { 
-  ArrowBack, 
-  ArrowOutwardOutlined as ArrowOutwardOutlinedIcon, 
-  MoreVert, 
-  LinkedIn, 
-  GitHub, 
-  Telegram, 
-  Add 
+import {
+  ArrowBack,
+  ArrowOutwardOutlined as ArrowOutwardOutlinedIcon,
+  MoreVert,
+  LinkedIn,
+  GitHub,
+  Telegram,
+  Add
 } from "@mui/icons-material";
 
 function ProfileCard() {
   return (
     <div className="container bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full max-w-[400px]">
-      {/* Top navigation */}
-      {/* <div className="flex justify-between items-center mb-6">
-        <button className="flex items-center text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
-          <ArrowBack className="mr-2" fontSize="small" />
-          Back to profile
-        </button>
-        <div className="flex items-center">
-          <button className="flex items-center text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
-            Share This
-          </button>
-        </div>
-      </div> */}
+
 
       <div className="flex flex-col md:flex-row gap-8">
         {/* Profile Card */}
@@ -38,7 +27,7 @@ function ProfileCard() {
             <button className="absolute top-2 right-2 text-gray-400 hover:text-gray-600">
               <MoreVert fontSize="small" />
             </button>
-            
+
             <div className="relative w-28 mx-auto mb-6">
               <img
                 src={CypherpunkLabLogo}

@@ -9,7 +9,7 @@ import Avatar3 from "../../../assets/Logo/Avatar3.png";
 import ProfileImage from "../../../assets/Logo/ProfileImage.png";
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
-import Modal1 from '../Modals/Project Modal/modal1';
+
 import { animatedLeftSvgIcon, animatedRightSvgIcon, userPlusIcon } from '../Utils/Data/SvgData';
 import { profile } from '../jsondata/data/profileData';
 import ProfileCard from './RoleProfileCard';
@@ -17,7 +17,7 @@ import { useSelector } from 'react-redux';
 
 const FAQItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
-  
+
 
   return (
     <div className="border-b border-gray-200">
@@ -40,7 +40,7 @@ const FAQItem = ({ question, answer }) => {
 };
 
 const FAQ = () => {
-  const {roles}=profile
+  const { roles } = profile
   // const faqData = [
   //   {
   //     question: "What is a role, actually?",
@@ -66,17 +66,17 @@ const FAQ = () => {
 };
 
 const Role = () => {
-  const {roles} =profile
+  const { roles } = profile
   const [roleModalOpen, setRoleModalOpen] = useState(false);
-console.log("my model status ",roleModalOpen)
-const userFullData = useSelector((currState) => currState.userData.data.Ok);
-console.log("User aa raha hai", userFullData)
-// useEffect(() => {
-//   if (userFullData) {
-//     setValuesHandler(userFullData);
-//     setEditMode(true);
-//   }
-// }, [userFullData]);
+  console.log("my model status ", roleModalOpen)
+  const userFullData = useSelector((currState) => currState.userData.data.Ok);
+  console.log("User aa raha hai", userFullData)
+  // useEffect(() => {
+  //   if (userFullData) {
+  //     setValuesHandler(userFullData);
+  //     setEditMode(true);
+  //   }
+  // }, [userFullData]);
   return (
     <>
       <div className="flex flex-col">
@@ -112,7 +112,7 @@ console.log("User aa raha hai", userFullData)
             </div>
             <div className="flex justify-center items-center">
               <p className="font-normal">
-              {roles.profile.roles.role} <span className="font-medium text-sm">{roles.profile.roles.value}</span>
+                {roles.profile.roles.role} <span className="font-medium text-sm">{roles.profile.roles.value}</span>
               </p>
             </div>
           </div>
@@ -145,7 +145,7 @@ console.log("User aa raha hai", userFullData)
               </button>
             </div>
           </div>
-         
+
           <div className="border-2 rounded-lg text-center min-w-[220px] max-w-[350px]">
             <div className="p-3 flex justify-center mt-5">
               <AvatarGroup max={4}>
