@@ -11,84 +11,41 @@ import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_I
 import MentorSignup3 from "./MentorSignUp3";
 import MentorSignup4 from "./MentorSignup4";
 
+
+const validationSchema = yup.object().shape({
+  preferred_icp_hub: yup.string().required("ICP Hub selection is required"),
+  multi_chain: yup.string().required("Required").oneOf(["true", "false"], "Invalid value"),
+  multi_chain_names: yup.string().when("multi_chain", (val, schema) =>
+    val && val[0] === "true" ? schema.required("At least one chain name required") : schema
+  ),
+  category_of_mentoring_service: yup.string().required("Selecting a service is required"),
+  icp_hub_or_spoke: yup.string().required("Required").oneOf(["true", "false"], "Invalid value"),
+  hub_owner: yup.string().when("icp_hub_or_spoke", (val, schema) =>
+    val && val[0] === "true" ? schema.required("ICP Hub selection is required") : schema
+  ),
+  mentor_website_url: yup.string().nullable(true).optional().url("Invalid url"),
+  years_of_mentoring: yup
+    .number()
+    .typeError("You must enter a number")
+    .positive("Must be a positive number")
+    .required("Years of experience mentoring startups is required"),
+  mentor_linkedin_url: yup.string().url("Invalid url").required("LinkedIn url is required"),
+});
 const MentorSignupMain = () => {
   const dispatch = useDispatch();
   const actor = useSelector((state) => state.actors.actor);
 
   const [modalOpen, setModalOpen] = useState(true);
   const [index, setIndex] = useState(0);
+const [formData, setFormData] = useState({});
+ 
 
-  const validationSchema = yup.object().shape({
-    full_name: yup.string().required("Full name is required"),
-    email: yup.string().email("Invalid email").nullable(true).optional(),
-    telegram_id: yup.string().nullable(true).optional().url("Invalid url"),
-    twitter_url: yup.string().nullable(true).optional().url("Invalid url"),
-    openchat_user_name: yup
-      .string()
-      .nullable(true)
-      .test(
-        "is-valid-username",
-        "Username must be between 5 and 20 characters, and cannot start or contain spaces",
-        (value) => {
-          if (!value) return true;
-          const isValidLength = value.length >= 5 && value.length <= 20;
-          const hasNoSpaces = !/\s/.test(value) && !value.startsWith(" ");
-          return isValidLength && hasNoSpaces;
-        }
-      ),
-    bio: yup
-      .string()
-      .optional()
-      .test(
-        "maxWords",
-        "Bio must not exceed 50 words",
-        (value) =>
-          !value ? true : value.trim().split(/\s+/).filter(Boolean).length <= 50
-      )
-      .test(
-        "no-leading-spaces",
-        "Bio should not have leading spaces",
-        (value) => !value || value.trimStart() === value
-      )
-      .test("maxChars", "Bio must not exceed 500 characters", (value) =>
-        !value ? true : value.length <= 500
-      ),
-    country: yup.string().required("Country is required"),
-    domains_interested_in: yup.string().required("Selecting an interest is required"),
-    type_of_profile: yup.string().required("Type of profile is required"),
-    reasons_to_join_platform: yup.string().required("Selecting a reason is required"),
-    image: yup
-      .mixed()
-      .nullable(true)
-      .test("fileSize", "File size max 10MB allowed", (value) =>
-        !value || (value && value.size <= 10 * 1024 * 1024)
-      )
-      .test("fileType", "Only jpeg, jpg & png file format allowed", (value) =>
-        !value || (value && ["image/jpeg", "image/jpg", "image/png"].includes(value.type))
-      ),
-    preferred_icp_hub: yup.string().required("ICP Hub selection is required"),
-    multi_chain: yup.string().required("Required").oneOf(["true", "false"], "Invalid value"),
-    multi_chain_names: yup.string().when("multi_chain", (val, schema) =>
-      val && val[0] === "true" ? schema.required("At least one chain name required") : schema
-    ),
-    category_of_mentoring_service: yup.string().required("Selecting a service is required"),
-    icp_hub_or_spoke: yup.string().required("Required").oneOf(["true", "false"], "Invalid value"),
-    hub_owner: yup.string().when("icp_hub_or_spoke", (val, schema) =>
-      val && val[0] === "true" ? schema.required("ICP Hub selection is required") : schema
-    ),
-    mentor_website_url: yup.string().nullable(true).optional().url("Invalid url"),
-    years_of_mentoring: yup
-      .number()
-      .typeError("You must enter a number")
-      .positive("Must be a positive number")
-      .required("Years of experience mentoring startups is required"),
-    mentor_linkedin_url: yup.string().url("Invalid url").required("LinkedIn url is required"),
-  });
+const methods = useForm({
+  resolver: yupResolver(validationSchema),
+  mode: "onTouched", // Ensure it's "onTouched" or "onChange"
+  reValidateMode: "onChange", // Re-validate only on change
+});
 
-  const methods = useForm({
-    resolver: yupResolver(validationSchema),
-    mode: "all",
-  });
 
   const { handleSubmit, trigger, formState: { isSubmitting }, getValues } = methods;
 
@@ -99,14 +56,17 @@ const MentorSignupMain = () => {
 
   const handleNext = async () => {
     const isValid = await trigger(formFields[index]);
-    console.log("Validation result for step", index, ":", isValid);
-    console.log("Current form values:", getValues());
+  
     if (isValid) {
+      setFormData((prevData) => ({
+        ...prevData,
+        ...getValues(), // Merge new data with previous data
+      }));
       setIndex((prevIndex) => prevIndex + 1);
-    } else {
-      console.log("Validation errors:", methods.formState.errors);
     }
   };
+  
+  
 
   const handleBack = () => {
     if (index > 0) {
@@ -117,9 +77,9 @@ const MentorSignupMain = () => {
   const renderComponent = () => {
     switch (index) {
       case 0:
-        return <MentorSignup3 />;
+        return <MentorSignup3 formData={formData} setFormData={setFormData}/>;
       case 1:
-        return <MentorSignup4 />;
+        return <MentorSignup4  formData={formData} setFormData={setFormData}/>;
       default:
         return <MentorSignup3 />;
     }
@@ -136,7 +96,7 @@ const MentorSignupMain = () => {
     console.log("Empty fields or invalid values, please recheck the form",errors)
   };
 
-  const onSubmitHandler = async () => {
+  const onSubmitHandler = async (data) => {
     console.log("Form data on submit:", data);
     if (actor) {
       // Define user_data object separately
@@ -168,14 +128,15 @@ const MentorSignupMain = () => {
         existing_icp_project_porfolio: [data.existing_icp_project_porfolio || ""],
         area_of_expertise: "",
         reason_for_joining: [""],
-        user_data, // Include the user_data object within mentorData
+        
       };
   
       try {
         await actor.register_mentor_candid(mentorData).then((result) => {
+          console.log('result',result)
           if (result) {
             toast.success("Created successfully");
-            window.location.href = "/";
+            // window.location.href = "/";
           } else {
             toast.error(result);
           }

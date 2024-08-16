@@ -80,16 +80,18 @@ const validationSchema = yup
       .required("Country is required"),
     domains_interested_in: yup
       .string()
-      .test("is-non-empty", "Selecting an interest is required", (value) =>
-        /\S/.test(value)
-      )
-      .required("Selecting an interest is required"),
+      // .test("is-non-empty", "Selecting an interest is required", (value) =>
+      //   /\S/.test(value)
+      // )
+      // .required("Selecting an interest is required")
+      ,
     type_of_profile: yup
       .string()
-      .test("is-non-empty", "Type of profile is required", (value) =>
-        /\S/.test(value)
-      )
-      .required("Type of profile is required"),
+      // .test("is-non-empty", "Type of profile is required", (value) =>
+      //   /\S/.test(value)
+      // )
+      // .required("Type of profile is required")
+      ,
     reasons_to_join_platform: yup
       .string()
       .test("is-non-empty", "Selecting a reason is required", (value) =>
@@ -206,22 +208,22 @@ const [getAllData,setGetAllData]=useState([]);
       try {
         await actor.register_user(userData).then((result) => {
           console.log('result',result)
-          if (result && result.includes("User registered successfully")) {
+          if (result && result.includes("User registered successfully with ID")) {
             toast.success("Registered as a User");
-            window.location.href = "dashboard";
+            // window.location.href = "dashboard";
           } else {
             toast.error("Something went wrong");
-            window.location.href = "/"; 
+            // window.location.href = "/"; 
           }
         });
       } catch (error) {
         toast.error(error.message); 
         console.error("Error sending data to the backend:", error);
-        window.location.href = "/";
+        // window.location.href = "/";
       }
     } else {
       toast.error("Please signup with internet identity first");
-      window.location.href = "/";
+      // window.location.href = "/";
     }
   };
   

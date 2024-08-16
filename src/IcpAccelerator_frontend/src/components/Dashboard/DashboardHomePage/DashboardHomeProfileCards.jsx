@@ -40,7 +40,7 @@ function DashboardHomeProfileCards() {
               <div className="w-20 h-20 bg-gray-300 rounded-full mb-3 overflow-hidden">
                 {/* <AccountCircle className="w-full h-full text-gray-400" /> */}
                 <img
-                  src={userFullData.profile_picture[0]}
+                  src={userFullData?.profile_picture[0]}
                   alt="Profle Image"
                   className="w-24 h-24 rounded-full object-cover"
                 />
@@ -55,9 +55,9 @@ function DashboardHomeProfileCards() {
                     fontSize="small"
                   />
                 </span>
-                {userFullData.full_name}
+                {userFullData?.full_name}
               </h3>
-              <p className="text-gray-500">@{userFullData.openchat_username[0]}</p>
+              <p className="text-gray-500">@{userFullData?.openchat_username[0]}</p>
             </div>
           </div>
         </div>

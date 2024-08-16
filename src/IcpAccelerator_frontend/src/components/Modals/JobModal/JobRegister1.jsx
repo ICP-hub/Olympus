@@ -4,7 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useSelector, useDispatch } from "react-redux";
 import { ThreeDots } from "react-loader-spinner";
-import { jobCategoryHandlerRequest } from "../../../component/StateManagement/Redux/Reducers/getJobCategory";
+import { jobCategoryHandlerRequest } from "../../../components/StateManagement/Redux/Reducers/getJobCategory";
 import Select from "react-select";
 import JoditEditor from 'jodit-react';
 const schema = yup

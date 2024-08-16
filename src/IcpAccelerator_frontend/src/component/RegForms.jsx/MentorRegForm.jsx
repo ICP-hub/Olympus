@@ -9,7 +9,7 @@ import { ThreeDots } from "react-loader-spinner";
 import { useCountries } from "react-countries";
 import ReactSelect from "react-select";
 import CompressedImage from "../ImageCompressed/CompressedImage";
-import { allHubHandlerRequest } from "../StateManagement/Redux/Reducers/All_IcpHubReducer";
+import { allHubHandlerRequest } from "../../components/StateManagement/Redux/Reducers/All_IcpHubReducer";
 import { uint8ArrayToBase64 } from "../../../../admin_frontend/src/components/Utils/AdminData/saga_function/blobImageToUrl";
 
 const MentorRegForm = () => {

@@ -6,7 +6,11 @@ import { useSelector } from 'react-redux';
 const InvestorModal3 = () => {
     const { register, formState: { errors }, watch } = useFormContext();
     const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
-    console.log('my hub data', getAllIcpHubs)
+    // console.log('my hub data', getAllIcpHubs)
+
+    const watchedPortfolioLink = watch("investor_portfolio_link");
+console.log(watchedPortfolioLink);
+
     return (
         <>
 
@@ -36,8 +40,8 @@ const InvestorModal3 = () => {
             <div className="mb-4">
                 <label className="block text-sm font-medium mb-1">Portfolio link <span className='text-[red] ml-1'>*</span></label>
                 <input
-                    {...register("investor_portfolio_link")}
-                    type="url"
+                      {...register("investor_portfolio_link")}
+    type="url"
                     placeholder="Enter your portfolio url"
                     name=" investor_portfolio_link"
                     className="block w-full border border-gray-300 rounded-md p-2"

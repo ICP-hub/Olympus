@@ -4,9 +4,9 @@ import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 import "../assets/main.css";
 import { Provider } from "react-redux";
-import store, { persistor } from "./component/StateManagement/Redux/Store";
+import store, { persistor } from "./components/StateManagement/Redux/Store";
 import { PersistGate } from "redux-persist/integration/react";
-import { AuthProvider } from "./component/StateManagement/useContext/useAuth";
+import { AuthProvider } from "./components/StateManagement/useContext/useAuth";
 
 const container = document.getElementById("root");
 const root = createRoot(container);
