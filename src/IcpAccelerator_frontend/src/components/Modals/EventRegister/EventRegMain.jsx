@@ -65,10 +65,10 @@ const validationSchema = yup.object({
     .required(),
   rubric_eligibility: yup.string().required("Required"),
   no_of_seats: yup
-  .number()
-  .typeError("You must enter a number")
-  .required("Number of seats is required")
-  .min(0, "The number of seats cannot be negative"),
+    .number()
+    .typeError("You must enter a number")
+    .required("Number of seats is required")
+    .min(0, "The number of seats cannot be negative"),
 
   funding_type: yup
     .string()
@@ -96,9 +96,9 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
   } = methods;
 
   const formFields = {
-    0: ["cohort_banner","title", "cohort_launch_date", "cohort_end_date"],
-    1: ["deadline","start_date", "eligibility", "no_of_seats"],
-    2: ["funding_type", "funding_amount","tags","country", "host_name"],
+    0: ["cohort_banner", "title", "cohort_launch_date", "cohort_end_date"],
+    1: ["deadline", "start_date", "eligibility", "no_of_seats"],
+    2: ["funding_type", "funding_amount", "tags", "country", "host_name"],
     3: ["description"],
   };
 
@@ -181,11 +181,8 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
 
   return (
     <>
-      <div
-        className={`fixed inset-0 z-50 flex items-center  justify-center bg-black bg-opacity-50 ${
-          modalOpen ? "block" : "hidden"
-        }`}
-      >
+      <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${modalOpen ? "block" : "hidden"}`}>
+
         <div className="bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4 max-h-[90vh] overflow-y-auto"
         >
           <div className="flex justify-end mr-4">
@@ -201,9 +198,8 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
             <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
               {renderComponent()}
               <div
-                className={`flex mt-4 ${
-                  index === 0 ? "justify-end" : "justify-between"
-                }`}
+                className={`flex mt-4 ${index === 0 ? "justify-end" : "justify-between"
+                  }`}
               >
                 {index > 0 && (
                   <button
