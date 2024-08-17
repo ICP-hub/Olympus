@@ -248,6 +248,25 @@ pub fn get_cohort(cohort_id: String) -> CohortDetails {
     })
 }
 
+#[query(guard = "is_user_anonymous")]
+pub fn get_cohorts_by_principal() -> Vec<CohortDetails> {
+    let principal_id = caller();
+    read_state(|state| {
+        state
+            .cohort_info
+            .iter()
+            .filter_map(|(cohort_id, cohort_data)| {
+                if cohort_data.0.cohort_creator == principal_id {
+                    Some(cohort_data.0.clone())
+                } else {
+                    None
+                }
+            })
+            .collect()
+    })
+}
+
+
 // pub fn get_cohort_inner_func(cohort_id: String) -> Option<CohortDetails> {
 //     read_state(|state| {
 //         state.cohort_info.get(&cohort_id)
