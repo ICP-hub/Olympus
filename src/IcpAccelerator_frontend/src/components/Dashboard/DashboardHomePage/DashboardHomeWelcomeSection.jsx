@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState ,useEffect} from 'react';
 import KYCfileIcon from "../../../../assets/Logo/KYCfileIcon.png";
 import DashboardHomeProfileCards from './DashboardHomeProfileCards';
 import mentor from "../../../../assets/Logo/mentor.png";
@@ -7,8 +6,7 @@ import talent from "../../../../assets/Logo/talent.png";
 import founder from "../../../../assets/Logo/founder.png";
 import Avatar3 from "../../../../assets/Logo/Avatar3.png";
 import { dashboard } from "../../jsondata/data/dashboardData";
-
-import { useSelector } from 'react-redux';
+import { useSelector,useDispatch } from 'react-redux';
 import Modal1 from '../../Modals/ProjectModal/Modal1';
 
 const styles = {
@@ -50,7 +48,17 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
   const [roleModalOpen, setRoleModalOpen] = useState(false);
   const { dashboardwelcomesection } = dashboard
   const userFullData = useSelector((currState) => currState.userData.data.Ok);
+  const actor = useSelector((currState) => currState.actors.actor);
+  const principal = useSelector((currState) => currState.internet.principal);
+  const userCurrentRoleStatus = useSelector(
+    (currState) => currState.currentRoleStatus.rolesStatusArray
+  );
+  const userCurrentRoleStatusActiveRole = useSelector(
+    (currState) => currState.currentRoleStatus.activeRole
+  );
+  const dispatch = useDispatch();
 
+  const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
   const actionCards = [
     {
       title: 'Complete profile',
@@ -83,6 +91,78 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
       setRoleModalOpen(!roleModalOpen);
     }
   };
+  function formatFullDateFromBigInt(bigIntDate) {
+    const date = new Date(Number(bigIntDate / 1000000n));
+    const dateString = date.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+    return `${dateString}`;
+  }
+
+  function cloneArrayWithModifiedValues(arr) {
+    return arr.map((obj) => {
+      const modifiedObj = {};
+
+      Object.keys(obj).forEach((key) => {
+        if (Array.isArray(obj[key]) && obj[key].length > 0) {
+          if (
+            key === "approved_on" ||
+            key === "rejected_on" ||
+            key === "requested_on"
+          ) {
+            // const date = new Date(Number(obj[key][0])).toLocaleDateString('en-US');
+            const date = formatFullDateFromBigInt(obj[key][0]);
+            modifiedObj[key] = date; // Convert bigint to string date
+          } else {
+            modifiedObj[key] = obj[key][0]; // Keep the first element of other arrays unchanged
+          }
+        } else {
+          modifiedObj[key] = obj[key]; // Keep other keys unchanged
+        }
+      });
+
+      return modifiedObj;
+    });
+  }
+
+  const initialApi = async () => {
+    try {
+      const currentRoleArray = await actor.get_role_status();
+      if (currentRoleArray && currentRoleArray.length !== 0) {
+        const currentActiveRole = getNameOfCurrentStatus(currentRoleArray);
+        dispatch(
+          setCurrentRoleStatus(cloneArrayWithModifiedValues(currentRoleArray))
+        );
+        dispatch(setCurrentActiveRole(currentActiveRole));
+      } else {
+        dispatch(
+          getCurrentRoleStatusFailureHandler(
+            "error-in-fetching-role-at-dashboard"
+          )
+        );
+        dispatch(setCurrentActiveRole(null));
+      }
+    } catch (error) {
+      dispatch(getCurrentRoleStatusFailureHandler(error.toString()));
+      dispatch(setCurrentActiveRole(null));
+    }
+  };
+
+  useEffect(() => {
+    if (actor) {
+      if (!userCurrentRoleStatus.length) {
+        initialApi();
+      } else if (
+        userCurrentRoleStatus.length === 4 &&
+        userCurrentRoleStatus[0]?.status === "default"
+      ) {
+        navigate("/register-user");
+      } else {
+      }
+    }
+  }, [actor, dispatch, userCurrentRoleStatus, userCurrentRoleStatusActiveRole]);
   return (
     <>
       <div className="bg-white rounded-lg p-6 mb-6 pt-1">

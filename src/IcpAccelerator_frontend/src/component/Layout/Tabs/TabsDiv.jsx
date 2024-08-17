@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { switchRoleRequestHandler } from "../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
+import { switchRoleRequestHandler } from "../../../components/StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 
 export default function TabsDiv({ role, onClose }) {
   const dispatch = useDispatch();

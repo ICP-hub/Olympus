@@ -129,7 +129,7 @@ export const useAuthClient = (options = defaultOptions) => {
     // console.log("principal-use-Auth", principal)
 
     setAuthClient(client);
-    const agent = new HttpAgent({ identity, verifyQuerySignatures: false });
+    const agent = new HttpAgent({ identity });
     const actor = createActor(process.env.CANISTER_ID_ICPACCELERATOR_BACKEND, {
       agent,
     });

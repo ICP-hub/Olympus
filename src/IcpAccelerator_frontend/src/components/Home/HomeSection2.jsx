@@ -35,9 +35,9 @@ export default function Section2() {
                       {homepagesection2.card1.description}
                     </p>
                     <ul className="list-disc list-inside text-sm font-normal text-[#4B5565] leading-loose">
-                      {homepagesection2.card1.list.map(list => {
+                      {homepagesection2.card1.list.map((list,index) => {
                         return (
-                          <li>{list}</li>
+                          <li key={index}>{list}</li>
                         )
                       })}
                       {/* <li>Platea sit lacus pellentesque feugiat neque</li>
@@ -61,8 +61,10 @@ export default function Section2() {
                       {homepagesection2.card2.description}
                     </p>
                     <ul className="list-disc list-inside text-sm font-normal text-[#4B5565] leading-loose">
-                      {homepagesection2.card2.list.map(list => {
-                        return (<li>{list}</li>)
+                      {homepagesection2.card2.list.map((list,index) => {
+                        return (
+                          <li key={index}>{list}</li>
+                        )
                       })}
                       {/* <li>Platea sit lacus pellentesque feugiat neque</li>
                       <li>Blandit a mi dictumst placerat</li>
@@ -85,8 +87,10 @@ export default function Section2() {
                       {homepagesection2.card3.description}
                     </p>
                     <ul className="list-disc list-inside text-sm font-normal text-[#4B5565] leading-loose">
-                      {homepagesection2.card3.list.map(list => {
-                        return (<li>{list}</li>)
+                      {homepagesection2.card3.list.map((list,index) => {
+                       return (
+                        <li key={index}>{list}</li>
+                      )
                       })}
                       {/* <li>Platea sit lacus pellentesque feugiat neque</li>
                       <li>Blandit a mi dictumst placerat</li>
@@ -109,9 +113,9 @@ export default function Section2() {
                       {homepagesection2.card4.description}
                     </p>
                     <ul className="list-disc list-inside text-sm font-normal text-[#4B5565] leading-loose">
-                      {homepagesection2.card4.list.map(list => {
+                      {homepagesection2.card4.list.map((list,index) => {
                         return (
-                          <li>{list}</li>
+                          <li key={index}>{list}</li>
                         )
                       })}
                       {/* <li>Platea sit lacus pellentesque feugiat neque</li>

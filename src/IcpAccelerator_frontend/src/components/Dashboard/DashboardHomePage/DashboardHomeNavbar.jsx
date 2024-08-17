@@ -40,7 +40,7 @@ import { useAuth } from "../../../components/StateManagement/useContext/useAuth"
 import toast, { Toaster } from "react-hot-toast";
 import profile1 from "../../../../assets/images/astro1.png";
 import profile2 from "../../../../assets/images/AstroLeft.png";
-import ToggleButton from "react-toggle-button";
+
 
 function DashboardHomeNavbar() {
   const principal = useSelector((currState) => currState.internet.principal);
@@ -102,16 +102,7 @@ function DashboardHomeNavbar() {
 
       {/* Icons */}
       <div className="flex items-center space-x-4">
-        <ToggleButton
-          inactiveLabel={<img src={profile2} />}
-          activeLabel={<img src={profile1} />}
-          value={toggle}
-          trackStyle={{ height: "40px", width: "150px" }} // Increase the track height here
-          thumbStyle={{ height: "36px", width: "20px" }} // Adjust the thumb size accordingly
-          onToggle={(value) => {
-            setToggle(!value);
-          }}
-        />
+
 
         <img
           src={dashboardhomenavbar.logoImages.bellicon.Bellicon}
