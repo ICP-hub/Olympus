@@ -211,13 +211,13 @@ type MentorProfile = record {
   existing_icp_mentor : bool;
   preferred_icp_hub : opt text;
   website : opt text;
+  links : opt vec SocialLinks;
   multichain : opt text;
   area_of_expertise : text;
   category_of_mentoring_service : text;
   years_of_mentoring : text;
   existing_icp_project_porfolio : opt text;
   icp_hub_or_spoke : bool;
-  linkedin_link : text;
   hub_owner : opt text;
 };
 type MentorUpdateRequest = record {
@@ -623,6 +623,7 @@ type Role = record {
   requested_on : opt nat64;
 };
 type SocialLinks = record { link : opt text };
+type SocialLinksMentor = record { link : opt text };
 type SpotlightDetails = record {
   project_details : ProjectInfoInternal;
   added_by : principal;
@@ -708,11 +709,11 @@ type VentureCapitalist = record {
   investor_type : opt text;
   website_link : opt text;
   announcement_details : opt text;
+  links : opt vec SocialLinks;
   stage : opt text;
   number_of_portfolio_companies : nat16;
   assets_under_management : opt text;
   portfolio_link : text;
-  linkedin_link : text;
   category_of_investment : text;
   registered : bool;
   type_of_investment : text;

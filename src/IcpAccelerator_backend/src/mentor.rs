@@ -13,16 +13,20 @@ use crate::state_handler::{mutate_state, read_state, Candid, StoredPrincipal};
 use crate::user_module::*;
 use ic_cdk::api::time;
 
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
+pub struct SocialLinksMentor{
+    pub link: Option<String>,
+}
+
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, Default, PartialEq)]
 
 pub struct MentorProfile {
     pub preferred_icp_hub: Option<String>,
-    //pub user_data: UserInformation,
     pub existing_icp_mentor: bool,
     pub existing_icp_project_porfolio: Option<String>,
     pub icp_hub_or_spoke: bool,
     pub category_of_mentoring_service: String,
-    pub linkedin_link: String,
+    pub links: Option<Vec<SocialLinksMentor>>,
     pub multichain: Option<String>,
     pub years_of_mentoring: String,
     pub website: Option<String>,
@@ -297,7 +301,7 @@ pub async fn update_mentor(updated_profile: MentorProfile) -> String {
                 mentor_internal.0.profile.category_of_mentoring_service = updated_profile.category_of_mentoring_service.clone();
                 mentor_internal.0.profile.existing_icp_mentor = updated_profile.existing_icp_mentor;
                 mentor_internal.0.profile.icp_hub_or_spoke = updated_profile.icp_hub_or_spoke;
-                mentor_internal.0.profile.linkedin_link = updated_profile.linkedin_link.clone();
+                mentor_internal.0.profile.links = updated_profile.links.clone();
                 mentor_internal.0.profile.website = updated_profile.website.clone();
                 mentor_internal.0.profile.years_of_mentoring = updated_profile.years_of_mentoring.clone();
                 mentor_internal.0.profile.reason_for_joining = updated_profile.reason_for_joining.clone();

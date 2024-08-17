@@ -13,6 +13,12 @@ use serde::{Deserialize, Serialize};
 use serde_bytes::ByteBuf;
 use sha2::{Digest, Sha256};
 use std::collections::HashMap;
+
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
+pub struct SocialLinks{
+    pub link: Option<String>,
+}
+
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct VentureCapitalist {
     pub name_of_fund: String,
@@ -34,7 +40,7 @@ pub struct VentureCapitalist {
     pub portfolio_link: String,
     pub announcement_details: Option<String>,
     pub website_link: Option<String>,
-    pub linkedin_link: String,
+    pub links: Option<Vec<SocialLinks>>,
     pub registered: bool,
     pub registered_country: Option<String>,
     pub stage: Option<String>,
@@ -517,7 +523,7 @@ pub async fn update_venture_capitalist(params: VentureCapitalist) -> String {
                         existing_vc_internal.0.params.name_of_fund = params.name_of_fund.clone();
                         existing_vc_internal.0.params.preferred_icp_hub = params.preferred_icp_hub.clone();
                         existing_vc_internal.0.params.type_of_investment = params.type_of_investment.clone();
-                        existing_vc_internal.0.params.linkedin_link = params.linkedin_link.clone();
+                        existing_vc_internal.0.params.links = params.links.clone();
                         existing_vc_internal.0.params.website_link = params.website_link.clone();
                         existing_vc_internal.0.params.registered = params.registered.clone();
 

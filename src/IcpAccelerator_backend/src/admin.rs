@@ -715,7 +715,7 @@ pub fn approve_vc_profile_update(requester: Principal, approve: bool) -> String 
                         existing_vc_internal.0.params.name_of_fund = update.name_of_fund.clone();
                         existing_vc_internal.0.params.preferred_icp_hub = update.preferred_icp_hub.clone();
                         existing_vc_internal.0.params.type_of_investment = update.type_of_investment.clone();
-                        existing_vc_internal.0.params.linkedin_link = update.linkedin_link.clone();
+                        existing_vc_internal.0.params.links = update.links.clone();
                         existing_vc_internal.0.params.website_link = update.website_link.clone();
                         existing_vc_internal.0.params.registered = update.registered.clone();
 
@@ -828,7 +828,7 @@ pub fn approve_mentor_profile_update(requester: Principal, _approve: bool) -> St
                     mentor_internal.0.profile.category_of_mentoring_service = updated_info.category_of_mentoring_service.clone();
                     mentor_internal.0.profile.existing_icp_mentor = updated_info.existing_icp_mentor;
                     mentor_internal.0.profile.icp_hub_or_spoke = updated_info.icp_hub_or_spoke;
-                    mentor_internal.0.profile.linkedin_link = updated_info.linkedin_link.clone();
+                    mentor_internal.0.profile.links = updated_info.links.clone();
                     mentor_internal.0.profile.website = updated_info.website.clone();
                     mentor_internal.0.profile.years_of_mentoring = updated_info.years_of_mentoring.clone();
                     mentor_internal.0.profile.reason_for_joining = updated_info.reason_for_joining.clone();
