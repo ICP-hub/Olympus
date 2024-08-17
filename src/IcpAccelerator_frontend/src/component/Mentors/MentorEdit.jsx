@@ -213,12 +213,14 @@ const MentorEdit = () => {
         .when("multi_chain", (val, schema) =>
           val && val[0] === "true"
             ? schema
-              .test(
-                "is-non-empty",
-                "Atleast one chain name required",
-                (value) => /\S/.test(value)
-              )
-              .required("Atleast one chain name required")
+
+                .test(
+                  "is-non-empty",
+                  "Atleast one chain name required",
+                  (value) => /\S/.test(value)
+                )
+                .required("Atleast one chain name required")
+
             : schema
         ),
       category_of_mentoring_service: yup
@@ -236,12 +238,14 @@ const MentorEdit = () => {
         .when("icp_hub_or_spoke", (val, schema) =>
           val && val[0] === "true"
             ? schema
+
               .test(
                 "is-non-empty",
                 "ICP Hub selection is required",
                 (value) => /\S/.test(value)
               )
               .required("ICP Hub selection is required")
+
             : schema
         ),
       mentor_website_url: yup
@@ -276,7 +280,9 @@ const MentorEdit = () => {
     icp_hub_or_spoke: "No",
     hub_owner: "ICP Hub, India",
     mentor_website_url: "https://website.com",
+
     years_of_mentoring: "5",
+
     mentor_linkedin_url: "https://website.com",
   };
 
@@ -428,8 +434,10 @@ const MentorEdit = () => {
     setInterestedDomainsSelectedOptions(
       val
         ? val
+
           .split(", ")
           .map((interest) => ({ value: interest, label: interest }))
+
         : []
     );
   };
@@ -670,7 +678,9 @@ const MentorEdit = () => {
   }, [actor]);
 
   console.log("Mentor full data ==>", mentorFullData);
+
   console.log("userFullData", userFullData)
+
 
   const [mentorData, setMentorData] = useState(defaultValues);
   const [tempData, setTempData] = useState(mentorData);
@@ -932,7 +942,9 @@ const MentorEdit = () => {
             ) : (
               <div className="flex flex-wrap gap-2 cursor-pointer py-1">
                 {getValues("multi_chain_names") &&
+
                   typeof getValues("multi_chain_names") === "string" ? (
+
                   getValues("multi_chain_names")
                     .split(", ")
                     .map((category, index) => (
@@ -1059,7 +1071,9 @@ const MentorEdit = () => {
           ) : (
             <div className="flex flex-wrap gap-2 cursor-pointer py-1">
               {getValues("category_of_mentoring_service") &&
+
                 typeof getValues("category_of_mentoring_service") === "string" ? (
+
                 getValues("category_of_mentoring_service")
                   .split(", ")
                   .map((category, index) => (
@@ -1132,10 +1146,12 @@ const MentorEdit = () => {
                   {...register("hub_owner")}
                   value={tempData.hub_owner}
                   onChange={(e) => handleInputChange(e, "hub_owner")}
+
                   className={`bg-gray-50 border ${errors.hub_owner
                       ? "border-red-500 placeholder:text-red-500"
                       : "border-[#737373]"
                     } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1.5`}
+
                 >
                   <option className="text-lg font-medium" value="">
                     Select your ICP Hub
