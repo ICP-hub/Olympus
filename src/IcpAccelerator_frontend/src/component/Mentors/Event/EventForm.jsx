@@ -194,6 +194,7 @@ const EventForm = () => {
     watch,
     control,
     trigger,
+
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: yupResolver(schema),
@@ -433,8 +434,8 @@ const EventForm = () => {
                       {field.label}{" "}
                       <span
                         className={`${field.label === "Eligibility Cirteria"
-                            ? "hidden"
-                            : "flex"
+                          ? "hidden"
+                          : "flex"
                           } text-red-500`}
                       >
                         *
@@ -446,8 +447,8 @@ const EventForm = () => {
                         id={field.id}
                         {...register(field.name)}
                         className={`bg-gray-50 border-2 ${errors[field.name]
-                            ? "border-red-500 placeholder:text-red-500"
-                            : "border-[#737373]"
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
                           } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                         placeholder={field.placeholder}
                         onFocus={() => handleFocus(field)}
@@ -491,8 +492,8 @@ const EventForm = () => {
                         id={field.id}
                         {...register(field.name)}
                         className={`bg-gray-50 border-2 ${errors[field.name]
-                            ? "border-red-500 placeholder:text-red-500"
-                            : "border-[#737373]"
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
                           } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                         placeholder={field.placeholder}
                         onFocus={() => handleFocus(field)}
@@ -853,8 +854,8 @@ const EventForm = () => {
                     id="funding_amount"
                     {...register("funding_amount")}
                     className={`bg-gray-50 border-2 ${errors.funding_amount
-                        ? "border-red-500"
-                        : "border-[#737373]"
+                      ? "border-red-500"
+                      : "border-[#737373]"
                       } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                     onFocus={() => handleFocus("funding_amount")}
                     onBlur={() => handleBlur("funding_amount")}

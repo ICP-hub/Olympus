@@ -28,7 +28,7 @@ const AppRoutes = () => {
   const authenticatedRoutes = [
     // { path: "register-user", element: <UserRegistration /> },
     { path: "dashboard/*", element: <DashboardHomePage /> },
-   
+
   ];
   return (
     <>
