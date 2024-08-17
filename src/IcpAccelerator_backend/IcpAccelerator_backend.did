@@ -33,6 +33,7 @@ type ApprovedList = record {
   user_data : UserInformation;
   approved_type : vec text;
 };
+type Areas = record { id : int32; name : text };
 type Blog = record { blog_url : text; timestamp : nat64 };
 type CanisterStatusResponse = record {
   status : CanisterStatusType;
@@ -621,8 +622,6 @@ type Role = record {
   approval_status : opt text;
   requested_on : opt nat64;
 };
-type Role_1 = record { id : int32; name : text };
-type RolesResponse = record { roles : vec Role_1 };
 type SocialLinks = record { link : opt text };
 type SpotlightDetails = record {
   project_details : ProjectInfoInternal;
@@ -738,10 +737,9 @@ service : {
   accept_rejoin_invitation : (text) -> (Result);
   access_money_details : (text) -> (Result_1) query;
   access_private_docs : (text) -> (Result_2) query;
-  add_BlogPost : (text) -> (text);
   add_announcement : (Announcements) -> (text);
+  add_blog_post : (text) -> (text);
   add_data_checking : () -> (text);
-  add_hubs_images : (principal, IcpHubDetails) -> (IcpHubDetails);
   add_icp_hub_details : (IcpHubDetails) -> (text);
   add_job_type : (text) -> (text);
   add_mentor_announcement : (text, text) -> (text);
@@ -794,6 +792,7 @@ service : {
   delete_project_announcement_by_id : (nat64) -> (text) query;
   delete_project_announcement_by_index : (principal, nat64) -> (text);
   delete_project_using_principal : (principal) -> (text);
+  delete_team_member : (text, principal) -> (text);
   delete_user_using_principal : (principal) -> (text);
   delete_vc_announcement_by_index : (principal, nat64) -> (text);
   delete_vc_using_principal : (principal) -> (text);
@@ -888,7 +887,6 @@ service : {
   get_all_requests_which_got_self_declined_for_project : (text) -> (
       vec OfferToSendToProject,
     ) query;
-  get_all_roles : () -> (RolesResponse) query;
   get_all_sent_request : () -> (vec OfferToMentor) query;
   get_all_sent_request_for_mentor : () -> (vec OfferToProject) query;
   get_all_sent_request_from_investor_to_project : () -> (
@@ -906,7 +904,7 @@ service : {
       vec OfferToMentor,
     ) query;
   get_approved_role_count_for_principal : (principal) -> (nat64) query;
-  get_area_focus_expertise : () -> (vec Role_1) query;
+  get_area_focus_expertise : () -> (vec Areas) query;
   get_asset_canister : () -> (principal) query;
   get_blog_post : () -> (vec record { principal; vec Blog }) query;
   get_canister_status : () -> (Result_6);
@@ -930,7 +928,7 @@ service : {
   get_icp_hub_details : () -> (vec ListAllIcpHubs) query;
   get_icp_hubs_candid : () -> (vec IcpHub) query;
   get_investment_stage : () -> (vec text) query;
-  get_job_category : () -> (vec Role_1) query;
+  get_job_category : () -> (vec Areas) query;
   get_jobs_posted_by_project : (text) -> (vec JobsInternal) query;
   get_latest_announcements : () -> (
       vec record { principal; vec AnnouncementsInternal },
@@ -1023,7 +1021,6 @@ service : {
       vec CohortEnrollmentRequest,
     ) query;
   get_review : (principal) -> (Result_13) query;
-  get_role : () -> (RolesResponse) query;
   get_role_status : () -> (vec Role) query;
   get_roles_for_principal : (principal) -> (vec Role) query;
   get_self_declined_requests_for_investor : () -> (

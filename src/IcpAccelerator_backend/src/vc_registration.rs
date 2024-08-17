@@ -265,20 +265,6 @@ pub async fn register_venture_capitalist(params: VentureCapitalist) -> std::stri
                     role_status.insert(StoredPrincipal(caller), Candid(role_status_vec));
                 }
             });
-
-            // let res = send_approval_request(
-            //     params
-            //         .user_data
-            //         .profile_picture
-            //         .unwrap_or_else(|| Vec::new()),
-            //     params.user_data.full_name,
-            //     params.user_data.country,
-            //     params.category_of_investment,
-            //     "vc".to_string(),
-            //     params.user_data.bio.unwrap_or_else(|| "no bio".to_string()),
-            // )
-            // .await;
-
             format!("Venture Capitalist Created With UID {}", new_vc.uid)
         }
         Err(e) => format!("Validation error: {}", e),
@@ -424,7 +410,7 @@ pub struct ListAllVC {
 pub fn get_top_three_vc() -> Vec<ListAllVC> {
     let vcs_snapshot = read_state(|state| {
         state.vc_storage.iter().map(|(principal, vc_info)| {
-            (principal.clone(), vc_info.0.clone())
+            (principal, vc_info.0.clone())
         }).collect::<Vec<_>>()
     });
 
@@ -543,7 +529,7 @@ pub async fn update_venture_capitalist(params: VentureCapitalist) -> String {
 
     match update_result {
         Ok(message) => {
-            format!("{}", message)
+            message.to_string()
         },
         Err(error) => format!("Error processing request: {}", error),
     }

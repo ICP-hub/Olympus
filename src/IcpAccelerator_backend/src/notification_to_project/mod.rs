@@ -328,7 +328,7 @@ pub fn decline_offer_of_mentor(
 
         // Decline the offer in sent notifications
         let sender_principal = if let Some(offers) = state.project_alerts.get(&project_id) {
-            offers.0.iter().find(|o| o.offer_id == offer_id).map(|o| o.sender_principal.clone())
+            offers.0.iter().find(|o| o.offer_id == offer_id).map(|o| o.sender_principal)
         } else {
             None
         };

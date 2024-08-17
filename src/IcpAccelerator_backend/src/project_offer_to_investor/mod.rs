@@ -190,7 +190,7 @@ pub fn accept_offer_of_project_by_investor(offer_id: String, response_message: S
                 offer.accepted_at = ic_cdk::api::time();
 
                 // Additional logic for updating project storage and notifications
-                let sender_principal = offer.sender_principal.clone();
+                let sender_principal = offer.sender_principal;
                 let project_id = offer.project_info.project_id.clone();
 
                 if let Some(mut projects) = state.project_storage.get(&StoredPrincipal(sender_principal)) {

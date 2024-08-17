@@ -181,7 +181,7 @@ pub fn get_my_pending_cohort_creation_requests() -> Vec<CohortRequest> {
             .my_sent_cohort_request
             .get(&StoredPrincipal(caller_principal))
             .map_or_else(
-                || Vec::new(),
+                Vec::new,
                 |requests| {
                     requests
                         .0
@@ -202,7 +202,7 @@ pub fn get_my_accepted_cohort_creation_request() -> Vec<CohortRequest> {
             .my_sent_cohort_request
             .get(&StoredPrincipal(caller_principal))
             .map_or_else(
-                || Vec::new(),
+                Vec::new,
                 |requests| {
                     requests
                         .0
@@ -223,7 +223,7 @@ pub fn get_my_declined_cohort_creation_requests() -> Vec<CohortRequest> {
             .my_sent_cohort_request
             .get(&StoredPrincipal(caller_principal))
             .map_or_else(
-                || Vec::new(),
+                Vec::new,
                 |requests| {
                     requests
                         .0
@@ -338,12 +338,12 @@ pub fn send_enrollment_request_as_mentor(cohort_id: String, user_info: MentorInt
             .cohort_enrollment_request
             .get(&stored_principal)
             .map_or_else(
-                || Vec::new(),
+                Vec::new,
                 |reqs| reqs.0.clone(),
             );
 
         updated_requests.push(enrollment_request.clone());
-        state.cohort_enrollment_request.insert(stored_principal.clone(), Candid(updated_requests.clone()));
+        state.cohort_enrollment_request.insert(stored_principal, Candid(updated_requests.clone()));
 
         ic_cdk::println!("State after mutation:");
         for (key, value) in state.cohort_enrollment_request.iter() {
@@ -423,12 +423,12 @@ pub fn send_enrollment_request_as_investor(
             .cohort_enrollment_request
             .get(&stored_principal)
             .map_or_else(
-                || Vec::new(),
+                Vec::new,
                 |reqs| reqs.0.clone(),
             );
 
         updated_requests.push(enrollment_request.clone());
-        state.cohort_enrollment_request.insert(stored_principal.clone(), Candid(updated_requests.clone()));
+        state.cohort_enrollment_request.insert(stored_principal, Candid(updated_requests.clone()));
 
         ic_cdk::println!("State after mutation:");
         for (key, value) in state.cohort_enrollment_request.iter() {
@@ -503,12 +503,12 @@ pub fn send_enrollment_request_as_project(
         let mut updated_requests = state
             .cohort_enrollment_request
             .get(&stored_principal)
-            .map_or_else(|| Vec::new(), |reqs| reqs.0.clone());
+            .map_or_else(Vec::new, |reqs| reqs.0.clone());
 
         updated_requests.push(enrollment_request.clone());
         state
             .cohort_enrollment_request
-            .insert(stored_principal.clone(), Candid(updated_requests.clone()));
+            .insert(stored_principal, Candid(updated_requests.clone()));
 
         ic_cdk::println!("State after mutation:");
         for (key, value) in state.cohort_enrollment_request.iter() {
@@ -567,7 +567,7 @@ pub fn get_accepted_cohort_enrollment_requests(
             .cohort_enrollment_request
             .get(&StoredPrincipal(mentor_principal))
             .map_or_else(
-                || Vec::new(),
+                Vec::new,
                 |request_list| {
                     request_list
                         .0
@@ -589,7 +589,7 @@ pub fn get_rejected_cohort_enrollment_requests(
             .cohort_enrollment_request
             .get(&StoredPrincipal(mentor_principal))
             .map_or_else(
-                || Vec::new(),
+                Vec::new,
                 |request_list| {
                     request_list
                         .0

@@ -1094,7 +1094,7 @@ pub async fn add_project_to_spotlight(project_id: String) -> Result<(), String> 
             .find_map(|(creator_principal, projects)| {
                 projects.0.iter()
                     .find(|project| project.uid == project_id)
-                    .map(|project_info| (creator_principal.clone(), project_info.clone()))
+                    .map(|project_info| (creator_principal, project_info.clone()))
             })
     });
 
@@ -2321,7 +2321,7 @@ pub fn remove_project_from_cohort(
                     count = count.saturating_sub(1);
                 }
 
-                return Ok("Project successfully removed from the cohort.".to_string());
+                Ok("Project successfully removed from the cohort.".to_string())
             } else {
                 return Err("Project not found in this cohort.".to_string());
             }
