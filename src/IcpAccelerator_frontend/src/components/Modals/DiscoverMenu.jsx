@@ -23,7 +23,7 @@ const DiscoverMenu = ({ setDiscoverMenu, discoverMenu }) => {
     //     };
     // }, [discoverMenu]);
     return (
-        <div ref={discoverRef} className='absolute top-11 border rounded-xl w-[280px] z-40'>
+        <div  className='absolute top-11 border rounded-xl w-[280px] z-40'>
             <div className=' bg-white border rounded-t-xl p-3'>
                 <div className='flex gap-3 p-2 hover:bg-slate-100  rounded-md '>
                     <div className=''><RocketLaunchOutlinedIcon sx={{ color: "gray" }} /></div>

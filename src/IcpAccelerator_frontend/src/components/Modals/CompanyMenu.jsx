@@ -21,7 +21,7 @@ const CompanyMenu = ({ setCompanyMenu, companyMenu }) => {
     //     };
     // }, [companyMenu]);
     return (
-        <div ref={companyRef} className='absolute top-11 border rounded-xl w-[280px] z-40'>
+        <div  className='absolute top-11 border rounded-xl w-[280px] z-40'>
             <div className=' bg-white border rounded-t-xl p-3'>
                 <div className='flex gap-3 p-2 hover:bg-slate-100  rounded-md '>
                     <div> <PhoneIphoneOutlinedIcon sx={{ color: "gray" }} /></div>
