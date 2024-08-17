@@ -22,11 +22,7 @@ const events = [
 ];
 
 const NewEvent = () => {
-    // const [isopen, setModalOpen] = useState(false);
-    // console.log("my model status.....", isopen)
-    // const handleModalOpen = () => {
-    //     setModalOpen(!isopen);
-    // };
+
     const [modalOpen, setModalOpen] = useState(false);
 
     const handleModalOpen = () => {
@@ -35,7 +31,7 @@ const NewEvent = () => {
 
     return (
         <>
-            <div className="flex flex-col items-end mb-8">
+            <div className="flex flex-col items-end mb-8 max-w-7xl pt-4">
                 <button
                     className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
                     onClick={handleModalOpen}
@@ -43,8 +39,8 @@ const NewEvent = () => {
                     + Add new Event
                 </button>
             </div>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-white">
-                <div className="w-full pr-6">
+            <div className="max-w-7xl mx-auto  bg-white">
+                <div className="w-full ">
                     {events.map((event, index) => (
                         <Link to='/dashboard/single-event' key={index}>
                             <EventCard event={event} />
@@ -53,12 +49,7 @@ const NewEvent = () => {
                 </div>
             </div>
 
-            {/* {isopen && (
-                <EventRegMain
-                    isopen={isopen}
-                    setModalOpen={setModalOpen}
-                />
-            )} */}
+
             {modalOpen && (
                 <EventRegMain modalOpen={modalOpen} setModalOpen={setModalOpen} />
             )}

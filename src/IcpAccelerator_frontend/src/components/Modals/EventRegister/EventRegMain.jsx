@@ -88,7 +88,8 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
     resolver: yupResolver(validationSchema),
     mode: "all",
   });
-
+  const [imagePreview, setImagePreview] = useState(null);
+  const [imageData, setImageData] = useState(null);
   const {
     handleSubmit,
     trigger,
@@ -97,7 +98,7 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
 
   const formFields = {
     0: ["cohort_banner", "title", "cohort_launch_date", "cohort_end_date"],
-    1: ["deadline", "start_date", "eligibility", "no_of_seats"],
+    1: ["deadline", "eligibility", "no_of_seats", "start_date"],
     2: ["funding_type", "funding_amount", "tags", "country", "host_name"],
     3: ["description"],
   };
@@ -128,12 +129,36 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
       },
       no_of_seats: parseInt(data.no_of_seats),
       // Ensure imageData and userFullData are correctly defined and used.
-      cohort_banner: [], // Example placeholder
-      host_name: [], // Example placeholder
+      cohort_banner: imageData ? [imageData] : [], // Example placeholder
+      host_name: ['Mridul'], // Example placeholder
     };
-
+    // image creation function compression and uintarray creator
+    const imageCreationFunc = async (file) => {
+      const result = await trigger("image");
+      if (result) {
+        try {
+          const compressedFile = await CompressedImage(file);
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setImagePreview(reader.result);
+          };
+          reader.readAsDataURL(compressedFile);
+          const byteArray = await compressedFile.arrayBuffer();
+          setImageData(Array.from(new Uint8Array(byteArray)));
+        } catch (error) {
+          setError("image", {
+            type: "manual",
+            message: "Could not process image, please try another.",
+          });
+        }
+      } else {
+        console.log("ERROR--imageCreationFunc-file", file);
+      }
+    };
     try {
+      console.log("Cohort Data Before Submit", eventData)
       const result = await actor.create_cohort(eventData);
+      console.log("eventdata", eventData);
       if (result && result.Ok) {
         toast.success("Cohort creation request has been sent to admin");
         setModalOpen(false);
@@ -162,7 +187,7 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
   const renderComponent = () => {
     switch (index) {
       case 0:
-        return <EventReg1 />;
+        return <EventReg1 setImageData={setImageData} setImagePreview={setImagePreview} imagePreview={imagePreview} />;
       case 1:
         return <EventReg2 setSelectedCountry={setSelectedCountry} />;
       case 2:
