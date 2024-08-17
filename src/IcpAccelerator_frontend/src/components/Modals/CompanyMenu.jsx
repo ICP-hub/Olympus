@@ -7,19 +7,19 @@ import NoteAddOutlinedIcon from '@mui/icons-material/NoteAddOutlined';
 import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined';
 
 const CompanyMenu = ({ setCompanyMenu, companyMenu }) => {
-    const companyRef = useRef();
-    useEffect(() => {
-        function checkOutSideClick(e) {
-            if (companyRef.current && !companyRef.current.contains(e.target)) {
-                setCompanyMenu(false);
-            }
-        }
-        document.addEventListener("click", checkOutSideClick);
+    // const companyRef = useRef(null);
+    // useEffect(() => {
+    //     function checkOutSideClick(e) {
+    //         if (companyRef.current && !companyRef.current.contains(e.target)) {
+    //             setCompanyMenu(false);
+    //         }
+    //     }
+    //     document.addEventListener("click", checkOutSideClick);
 
-        return () => {
-            document.removeEventListener("click", checkOutSideClick);
-        };
-    }, [companyMenu]);
+    //     return () => {
+    //         document.removeEventListener("click", checkOutSideClick);
+    //     };
+    // }, [companyMenu]);
     return (
         <div ref={companyRef} className='absolute top-11 border rounded-xl w-[280px] z-40'>
             <div className=' bg-white border rounded-t-xl p-3'>
