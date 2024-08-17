@@ -247,7 +247,7 @@ const Role = () => {
                 <span>
                   <VerifiedIcon sx={{ fontSize: "medium", color: "#155EEF" }} />
                 </span>
-                {userFullData.full_name}
+                {userFullData?.full_name}
               </h2>
               <p> {userFullData?.openchat_username[0]}</p>
             </div>
