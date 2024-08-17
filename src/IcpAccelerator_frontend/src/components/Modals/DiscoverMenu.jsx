@@ -9,19 +9,19 @@ import { briefcaseSvgIcon, userSvgIcon } from '../Utils/Data/SvgData';
 
 
 const DiscoverMenu = ({ setDiscoverMenu, discoverMenu }) => {
-    const discoverRef = useRef();
-    useEffect(() => {
-        function checkOutSideClick(e) {
-            if (discoverRef.current && !discoverRef.current.contains(e.target)) {
-                setDiscoverMenu(false);
-            }
-        }
-        document.addEventListener("click", checkOutSideClick);
+    // const discoverRef = useRef(null);
+    // useEffect(() => {
+    //     function checkOutSideClick(e) {
+    //         if (discoverRef.current && !discoverRef.current.contains(e.target)) {
+    //             setDiscoverMenu(false);
+    //         }
+    //     }
+    //     document.addEventListener("click", checkOutSideClick);
 
-        return () => {
-            document.removeEventListener("click", checkOutSideClick);
-        };
-    }, [discoverMenu]);
+    //     return () => {
+    //         document.removeEventListener("click", checkOutSideClick);
+    //     };
+    // }, [discoverMenu]);
     return (
         <div ref={discoverRef} className='absolute top-11 border rounded-xl w-[280px] z-40'>
             <div className=' bg-white border rounded-t-xl p-3'>
