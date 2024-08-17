@@ -137,6 +137,18 @@ function DashboardSidebar({ isOpen, onClose }) {
     setActiveLink(path);
   };
 
+  const userRole = 'mentor'; 
+  const isProfileApproved = true; 
+
+ 
+  const shouldShow = () => {
+    if (userRole === 'user') {
+      return false; 
+    } else if (userRole === 'mentor') {
+      return isProfileApproved; 
+    }
+    return false; 
+  };
   return (
     <>
       {/* Overlay for mobile */}
@@ -185,6 +197,7 @@ function DashboardSidebar({ isOpen, onClose }) {
               </li>
             </ul>
           </div>
+          {shouldShow() && (
           <div className="mb-6">
             <h3 className="px-6 mb-2 text-xs font-semibold text-gray-500 uppercase">{dashboardhomesidebar.sidebarSections.projects.label}</h3>
             <ul>
@@ -210,7 +223,7 @@ function DashboardSidebar({ isOpen, onClose }) {
               </li>
             </ul>
           </div>
-
+  )}
           <div>
             <h3 className="px-6 mb-2 text-xs font-semibold text-gray-500 uppercase">DISCOVER</h3>
             <ul>

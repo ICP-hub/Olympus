@@ -5,6 +5,7 @@ import ControlPointIcon from "@mui/icons-material/ControlPoint";
 import { useForm } from "react-hook-form";
 import { useFormContext, Controller } from "react-hook-form";
 import CompressedImage from "../../../component/ImageCompressed/CompressedImage"
+import { useSelector } from "react-redux";
 
 const ProjectRegister1 = ({ isOpen, onClose, onBack }) => {
 
@@ -17,9 +18,8 @@ const ProjectRegister1 = ({ isOpen, onClose, onBack }) => {
         setValue,
         getValues,
         control,
-        getAllIcpHubs,
     } = useFormContext();
-
+    const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
     const [logoPreview, setLogoPreview] = useState(null);
     const [logoData, setLogoData] = useState(null);
 
