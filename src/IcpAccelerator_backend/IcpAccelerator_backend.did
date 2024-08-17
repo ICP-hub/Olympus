@@ -909,6 +909,7 @@ service : {
   get_blog_post : () -> (vec record { principal; vec Blog }) query;
   get_canister_status : () -> (Result_6);
   get_cohort : (text) -> (CohortDetails) query;
+  get_cohorts_by_principal : () -> (vec CohortDetails) query;
   get_dapp_link : (text) -> (text) query;
   get_data_checking : () -> (text) query;
   get_declined_cohort_creation_request_for_admin : () -> (

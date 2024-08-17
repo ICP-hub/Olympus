@@ -1,7 +1,7 @@
 set -e
 
 # use your identities here
-dfx identity use chiragQb
+dfx identity use default
 
 dfx deploy
 
