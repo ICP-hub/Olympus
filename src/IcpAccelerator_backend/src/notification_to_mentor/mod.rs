@@ -91,7 +91,7 @@ pub fn get_all_mentor_notification(id: Principal) -> Vec<OfferToSendToMentor> {
 
 #[update]
 pub async fn send_offer_to_mentor(mentor_id: Principal, msg: String, project_id: String) -> String {
-    let mentor = get_mentor_by_principal(mentor_id).expect("mentor doesn't exist");
+    let _mentor = get_mentor_by_principal(mentor_id).expect("mentor doesn't exist");
 
     let mut offer_exists = false;  // Flag to check if an offer exists
 
@@ -469,7 +469,7 @@ pub fn self_decline_request(offer_id: String) -> String {
 
     if response == "Request got self declined." {
         mutate_state(|mentors| {
-            let mut mentor_offers = &mut mentors.mentor_alerts;
+            let mentor_offers = &mut mentors.mentor_alerts;
             for (_, mut offers) in mentor_offers.iter() {
                 if let Some(offer) = offers.0.iter_mut().find(|off| off.offer_id == offer_id) {
                     offer.request_status = "self_declined".to_string();

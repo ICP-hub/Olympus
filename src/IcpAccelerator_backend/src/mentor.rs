@@ -1,6 +1,5 @@
 use candid::{CandidType, Principal};
-use ic_cdk::api::{caller, management_canister::main::raw_rand};
-use ic_cdk::storage::{self, stable_restore};
+use ic_cdk::api::caller;
 use ic_cdk_macros::{query, update};
 use serde::{Deserialize, Serialize};
 use ic_cdk::api::call::call;
@@ -12,10 +11,7 @@ use crate::admin::*;
 use crate::is_user_anonymous;
 use crate::state_handler::{mutate_state, read_state, Candid, StoredPrincipal};
 use crate::user_module::*;
-use ic_cdk::api::stable::{StableReader, StableWriter};
 use ic_cdk::api::time;
-use std::cell::RefCell;
-use std::io::Read;
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, Default, PartialEq)]
 
@@ -67,10 +63,6 @@ pub struct MentorUpdateRequest {
     pub sent_at: u64,
 }
 
-pub type MentorRegistry = HashMap<Principal, MentorInternal>;
-pub type MentorParams = HashMap<Principal, MentorProfile>;
-pub type MentorUpdateParams = HashMap<Principal, MentorUpdateRequest>;
-
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, Default, PartialEq)]
 pub struct MentorInternal {
     pub profile: MentorProfile,
@@ -86,18 +78,6 @@ pub struct MAnnouncements {
     announcement_message: String,
     timestamp: u64,
 }
-
-pub type MentorAnnouncements = HashMap<Principal, Vec<MAnnouncements>>;
-
-// thread_local! {
-//     pub static MENTOR_REGISTRY: RefCell<MentorRegistry> = RefCell::new(MentorRegistry::new());
-//     pub static MENTOR_AWAITS_RESPONSE: RefCell<MentorRegistry> = RefCell::new(MentorRegistry::new());
-//     pub static DECLINED_MENTOR_REQUESTS: RefCell<MentorRegistry> = RefCell::new(MentorRegistry::new());
-//     pub static MENTOR_PROFILE_EDIT_AWAITS :RefCell<MentorUpdateParams> = RefCell::new(MentorUpdateParams::new());
-//     pub static DECLINED_MENTOR_PROFILE_EDIT_REQUEST :RefCell<MentorUpdateParams> = RefCell::new(MentorUpdateParams::new());
-//     pub static MENTOR_ANNOUNCEMENTS:RefCell<MentorAnnouncements> = RefCell::new(MentorAnnouncements::new());
-
-// }
 
 #[query(guard = "is_user_anonymous")]
 pub fn get_mentor_info_using_principal(caller: Principal) -> Option<MentorInternal> {
@@ -132,7 +112,7 @@ pub fn get_mentor_declined_info_using_principal(caller: Principal) -> Option<Men
     })
 }
 
-pub async fn register_mentor(mut profile: MentorProfile) -> String {
+pub async fn register_mentor(profile: MentorProfile) -> String {
     let caller = caller();
 
     let role_count = get_approved_role_count_for_principal(caller);
@@ -183,15 +163,12 @@ pub async fn register_mentor(mut profile: MentorProfile) -> String {
             key: key.clone()
         };
 
-        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset, )).await.unwrap();
+        let (_deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset, )).await.unwrap();
 
-        let (result,): ((),) = call(canister_id, "store", (arg, )).await.unwrap();
+        let (_result,): ((),) = call(canister_id, "store", (arg, )).await.unwrap();
 
         user_data.profile_picture = Some((canister_id.to_string()+&key).as_bytes().to_vec());
     }
-
-    let user_data_for_updation = profile.clone();
-    //crate::user_module::update_data_for_roles(caller, user_data_for_updation.user_data);
 
     match profile.validate() {
         Ok(_) => {
@@ -217,7 +194,7 @@ pub async fn register_mentor(mut profile: MentorProfile) -> String {
                     .insert(StoredPrincipal(caller), Candid(mentor_internal.clone()));
                 let role_status = &mut state.role_status;
 
-                if let Some(mut role_status_vec_candid) =
+                if let Some(role_status_vec_candid) =
                     role_status.get(&StoredPrincipal(caller))
                 {
                     let mut role_status_vec = role_status_vec_candid.0;
@@ -263,7 +240,7 @@ pub fn get_mentor_by_principal(id: Principal) -> Option<MentorProfile> {
 }
 
 #[update(guard = "is_user_anonymous")]
-pub async fn update_mentor(mut updated_profile: MentorProfile) -> String {
+pub async fn update_mentor(updated_profile: MentorProfile) -> String {
     let caller = ic_cdk::caller();
 
     let already_registered =
@@ -301,9 +278,9 @@ pub async fn update_mentor(mut updated_profile: MentorProfile) -> String {
             key: key.clone()
         };
 
-        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset, )).await.unwrap();
+        let (_deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset, )).await.unwrap();
 
-        let (result,): ((),) = call(canister_id, "store", (arg, )).await.unwrap();
+        let (_result,): ((),) = call(canister_id, "store", (arg, )).await.unwrap();
 
         user_data.profile_picture = Some((canister_id.to_string()+&key).as_bytes().to_vec());
     }

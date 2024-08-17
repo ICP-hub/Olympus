@@ -95,7 +95,7 @@ pub async fn send_offer_to_investor(
     project_id: String,
 ) -> String {
     //let mentor = get_mentor_by_principal(mentor_id).expect("mentor doesn't exist");
-    let venture_capitalist = get_vc_info_by_principal(investor_id)
+    let _venture_capitalist = get_vc_info_by_principal(investor_id)
         .get(&investor_id)
         .expect("investor doesn't exist")
         .clone();
@@ -378,7 +378,7 @@ pub fn self_decline_request_for_project(offer_id: String, project_id: String) ->
     let mut response: String = String::new();
 
     mutate_state(|sent_ones| {
-        let mut my_offers = &mut sent_ones.offers_offered_by_me;
+        let my_offers = &mut sent_ones.offers_offered_by_me;
         let caller_offers = my_offers.get(&project_id);
 
         if let Some(mut offers) = caller_offers {
@@ -398,8 +398,8 @@ pub fn self_decline_request_for_project(offer_id: String, project_id: String) ->
 
     if response == "Request got self declined." {
         mutate_state(|mentors| {
-            let mut mentor_offers = &mut mentors.investor_alerts;
-            for (key, mut offers) in mentor_offers.iter() {
+            let mentor_offers = &mut mentors.investor_alerts;
+            for (_key, mut offers) in mentor_offers.iter() {
                 if let Some(offer) = offers.0.iter_mut().find(|off| off.offer_id == offer_id) {
                     offer.request_status = "self_declined".to_string();
                     offer.self_declined_at = time();

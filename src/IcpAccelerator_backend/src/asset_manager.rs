@@ -1,10 +1,7 @@
-
 use crate::is_admin;
 use crate::state_handler::*;
-pub(crate) use candid::{CandidType, Principal};
+pub(crate) use candid::Principal;
 use ic_cdk_macros::{query, update};
-use serde::{Deserialize, Serialize};
-use std::cell::RefCell;
 
 #[update(guard = "is_admin")]
 fn set_asset_canister(new_canister_id: Principal) {

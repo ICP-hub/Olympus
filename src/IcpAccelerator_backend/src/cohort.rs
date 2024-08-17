@@ -1,7 +1,6 @@
 use crate::is_user_anonymous;
 use crate::mentor::get_mentor_info_using_principal;
 use crate::project_registration::{get_project_info_using_principal, ProjectInfoInternal};
-use crate::send_cohort_request_to_admin;
 use crate::state_handler::{mutate_state, read_state, Candid, StoredPrincipal};
 use crate::vc_registration::get_vc_info_using_principal;
 use crate::{get_roles_for_principal, MentorInternal, VentureCapitalistInternal};
@@ -142,7 +141,7 @@ pub async fn create_cohort(mut params: Cohort) -> Result<String, String> {
             sha256: None,
         };
 
-        let delete_asset = DeleteAsset {
+        let _delete_asset = DeleteAsset {
             key: cohort_logo_key.clone(),
         };
 
@@ -150,7 +149,7 @@ pub async fn create_cohort(mut params: Cohort) -> Result<String, String> {
         //     .await
         //     .unwrap();
 
-        let result = call(canister_id, "store", (cohort_logo_arg,)).await.map_err(|e| format!("Error storing asset: {:?}", e))?;
+        let _result = call(canister_id, "store", (cohort_logo_arg,)).await.map_err(|e| format!("Error storing asset: {:?}", e))?;
 
         params.cohort_banner = Some(
             (canister_id.to_string() + &cohort_logo_key)
@@ -168,9 +167,7 @@ pub async fn create_cohort(mut params: Cohort) -> Result<String, String> {
         cohort_creator_principal: caller_principal,
     };
 
-    let mut response_message = String::new();
     mutate_state(|state| {
-        let mut request_found_and_updated = false;
         state.cohort_info.insert(cohort_id.clone(), Candid(cohort_details.clone()));
     });
     Ok("Cohort Has Been Created Succesfully".to_string())
@@ -805,21 +802,6 @@ pub fn apply_for_a_cohort_as_a_project(cohort_id: String) -> String {
 pub fn get_projects_applied_for_cohort(
     cohort_id: String,
 ) -> Result<Vec<ProjectInfoInternal>, String> {
-    let caller = ic_cdk::api::caller();
-
-    let cohort: Option<Candid<CohortDetails>> =
-        read_state(|state| state.cohort_info.get(&cohort_id).map(|c| c.clone()));
-
-    let concerned_cohort: CohortDetails = match cohort {
-        Some(candid_cohort) => candid_cohort.0,
-        None => return Err("Cohort doesn't exist".to_string()),
-    };
-
-    // Uncomment if you want to enforce that only the cohort creator can view project details
-    // if concerned_cohort.cohort_creator != caller {
-    //     return Err("You must be the cohort creator to see project details of individuals".to_string());
-    // }
-
     // Retrieve projects applied for the given cohort using read_state
     let projects_in_cohort: Vec<ProjectInfoInternal> = read_state(|state| {
         state
@@ -834,20 +816,6 @@ pub fn get_projects_applied_for_cohort(
 
 #[query(guard = "is_user_anonymous")]
 pub fn get_mentors_applied_for_cohort(cohort_id: String) -> Result<Vec<MentorInternal>, String> {
-    let caller = caller();
-
-    let cohort: Option<Candid<CohortDetails>> =
-        read_state(|state| state.cohort_info.get(&cohort_id).map(|c| c.clone()));
-
-    let concerned_cohort: CohortDetails = match cohort {
-        Some(candid_cohort) => candid_cohort.0,
-        None => return Err("Cohort doesn't exist".to_string()),
-    };
-
-    // if concerned_cohort.cohort_creator != caller {
-    //     return Err("You must be the cohort creator to see mentor details of individuals".to_string());
-    // }
-
     let mentors_in_cohort: Vec<MentorInternal> = read_state(|state| {
         state
             .mentor_applied_for_cohort
@@ -862,20 +830,6 @@ pub fn get_mentors_applied_for_cohort(cohort_id: String) -> Result<Vec<MentorInt
 pub fn get_vcs_applied_for_cohort(
     cohort_id: String,
 ) -> Result<Vec<VentureCapitalistInternal>, String> {
-    let caller = caller();
-
-    let cohort: Option<Candid<CohortDetails>> =
-        read_state(|state| state.cohort_info.get(&cohort_id).map(|c| c.clone()));
-
-    let concerned_cohort: CohortDetails = match cohort {
-        Some(candid_cohort) => candid_cohort.0,
-        None => return Err("Cohort doesn't exist".to_string()),
-    };
-
-    // if concerned_cohort.cohort_creator != caller {
-    //     return Err("You must be the cohort creator to see venture capitalist details of individuals".to_string());
-    // }
-
     let vcs_in_cohort: Vec<VentureCapitalistInternal> = read_state(|state| {
         state
             .vc_applied_for_cohort
@@ -953,7 +907,7 @@ pub async fn update_cohort(cohort_id: String, updated_params: Cohort) -> Result<
             sha256: None,
         };
 
-        let result = call(canister_id, "store", (cohort_logo_arg,)).await.map_err(|e| format!("Error storing asset: {:?}", e))?;
+        let _result = call(canister_id, "store", (cohort_logo_arg,)).await.map_err(|e| format!("Error storing asset: {:?}", e))?;
 
         params.cohort_banner = Some(
             (canister_id.to_string() + &cohort_logo_key)
@@ -967,7 +921,7 @@ pub async fn update_cohort(cohort_id: String, updated_params: Cohort) -> Result<
     cohort_details.cohort = updated_params;
 
     mutate_state(|state| {
-        if let Some(mut existing_cohort) = state.cohort_info.get(&cohort_id) {
+        if let Some(_existing_cohort) = state.cohort_info.get(&cohort_id) {
             state.cohort_info.insert(cohort_id.clone(), Candid(cohort_details.clone()));
         }
     });
