@@ -38,6 +38,9 @@ import { beforeCopySvg } from "../../../component/Utils/Data/SvgData";
 import { changeHasSelectedRoleHandler } from "../../../components/StateManagement/Redux/Reducers/userRoleReducer";
 import { useAuth } from "../../../components/StateManagement/useContext/useAuth";
 import toast, { Toaster } from "react-hot-toast";
+import profile1 from "../../../../assets/images/astro1.png";
+import profile2 from "../../../../assets/images/AstroLeft.png";
+import ToggleButton from "react-toggle-button";
 
 function DashboardHomeNavbar() {
   const principal = useSelector((currState) => currState.internet.principal);
@@ -74,6 +77,8 @@ function DashboardHomeNavbar() {
     window.location.href = "/";
   };
   const { dashboardhomenavbar } = dashboard;
+  const [toggle, setToggle] = useState(false);
+
   return (
     <nav className="bg-[#FFF4ED] py-3 px-4 md:px-12 md:pl-1 flex items-center justify-between  relative pb-8">
       {/* Hamburger Menu for Mobile */}
@@ -97,13 +102,25 @@ function DashboardHomeNavbar() {
 
       {/* Icons */}
       <div className="flex items-center space-x-4">
+        <ToggleButton
+          inactiveLabel={<img src={profile2} />}
+          activeLabel={<img src={profile1} />}
+          value={toggle}
+          trackStyle={{ height: "40px", width: "150px" }} // Increase the track height here
+          thumbStyle={{ height: "36px", width: "20px" }} // Adjust the thumb size accordingly
+          onToggle={(value) => {
+            setToggle(!value);
+          }}
+        />
 
-        <img src={dashboardhomenavbar.logoImages.bellicon.Bellicon} className="w-[14.57px] h-[16.67px] cursor-pointer hidden md:block" />
+        <img
+          src={dashboardhomenavbar.logoImages.bellicon.Bellicon}
+          className="w-[14.57px] h-[16.67px] cursor-pointer hidden md:block"
+        />
         <img
           src={dashboardhomenavbar.logoImages.df_small_logo.df_small_logo}
           alt="User"
           className="h-[40px] w-[40px] rounded-full z-30 py-1 px-1 "
-
           onClick={toggleDropdown}
         />
         {dropdownOpen && (
@@ -178,8 +195,6 @@ function DashboardHomeNavbar() {
           // )}
           // </div>
         )}
-
-
       </div>
 
       {/* Mobile Menu */}
@@ -187,7 +202,11 @@ function DashboardHomeNavbar() {
         <div className="fixed inset-0 bg-gray-800 bg-opacity-75 z-50 lg:hidden">
           <div className="bg-[#FFF4ED] h-full w-64 p-4 overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
-              <img src={dashboardhomenavbar.logoImages.olympuslogo.olympuslogo} alt="Olympus" className="h-8" />
+              <img
+                src={dashboardhomenavbar.logoImages.olympuslogo.olympuslogo}
+                alt="Olympus"
+                className="h-8"
+              />
               <button onClick={toggleMenu}>
                 <dashboardhomenavbar.icons.closeIcon.Close className="text-gray-600" />
               </button>
@@ -206,49 +225,63 @@ function DashboardHomeNavbar() {
                 className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
               >
                 {dashboardhomenavbar.icons.dashboardIcon.homeSvgIcon}
-                <span className="ml-3">{dashboardhomenavbar.menuTexts.dashboard}</span>
+                <span className="ml-3">
+                  {dashboardhomenavbar.menuTexts.dashboard}
+                </span>
               </Link>
               <Link
                 to="/profile"
                 className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
               >
                 {dashboardhomenavbar.icons.profileIcon.userCircleSvgIcon}
-                <span className="ml-3">{dashboardhomenavbar.menuTexts.profile}</span>
+                <span className="ml-3">
+                  {dashboardhomenavbar.menuTexts.profile}
+                </span>
               </Link>
               <Link
                 to="/users"
                 className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
               >
                 {dashboardhomenavbar.icons.usersIcon.userSvgIcon}
-                <span className="ml-3">{dashboardhomenavbar.menuTexts.users}</span>
+                <span className="ml-3">
+                  {dashboardhomenavbar.menuTexts.users}
+                </span>
               </Link>
               <Link
                 to="/events"
                 className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
               >
                 {dashboardhomenavbar.icons.eventsIcon.calenderSvgIcon}
-                <span className="ml-3">{dashboardhomenavbar.menuTexts.events}</span>
+                <span className="ml-3">
+                  {dashboardhomenavbar.menuTexts.events}
+                </span>
               </Link>
               <Link
                 to="/regional-hubs"
                 className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
               >
                 {dashboardhomenavbar.icons.regionalHubsIcon.locationHubSvgIcon}
-                <span className="ml-3">{dashboardhomenavbar.menuTexts.regionalHubs}</span>
+                <span className="ml-3">
+                  {dashboardhomenavbar.menuTexts.regionalHubs}
+                </span>
               </Link>
               <Link
                 to="/jobs"
                 className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
               >
                 {dashboardhomenavbar.icons.jobsIcon.briefcaseSvgIcon}
-                <span className="ml-3">{dashboardhomenavbar.menuTexts.jobs}</span>
+                <span className="ml-3">
+                  {dashboardhomenavbar.menuTexts.jobs}
+                </span>
               </Link>
               <Link
                 to="/perks"
                 className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
               >
                 {dashboardhomenavbar.icons.perksIcon.staroutlineSvgIcon}
-                <span className="ml-3">{dashboardhomenavbar.menuTexts.perks}</span>
+                <span className="ml-3">
+                  {dashboardhomenavbar.menuTexts.perks}
+                </span>
               </Link>
             </nav>
           </div>
