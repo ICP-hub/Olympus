@@ -313,7 +313,7 @@ pub async fn update_mentor(updated_profile: MentorProfile) -> String {
 
     match update_result {
         Ok(message) => {
-            format!("{}", message)
+            message.to_string()
         },
         Err(error) => format!("Error processing request: {}", error),
     }
@@ -371,7 +371,7 @@ pub struct ListAllMentors {
 pub fn get_top_three_mentors() -> Vec<ListAllMentors> {
     let mentor_snapshot = read_state(|state| {
         state.mentor_storage.iter().map(|(principal, vc_info)| {
-            (principal.clone(), vc_info.0.clone())
+            (principal, vc_info.0.clone())
         }).collect::<Vec<_>>()
     });
 

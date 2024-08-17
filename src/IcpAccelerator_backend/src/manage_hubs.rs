@@ -94,7 +94,7 @@ pub fn get_icp_hub_details() -> Vec<ListAllIcpHubs> {
     // Retrieve and process the state
     let hubs_snapshot = read_state(|state| {
         state.hubs_data.iter().map(|(principal, details)| {
-            (principal.clone(), details.clone())  // Clone the data to use outside the state borrow
+            (principal, details.clone())  // Clone the data to use outside the state borrow
         }).collect::<Vec<_>>()
     });
 

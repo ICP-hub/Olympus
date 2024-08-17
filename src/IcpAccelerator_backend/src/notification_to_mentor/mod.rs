@@ -242,7 +242,7 @@ pub fn accept_offer_of_project(offer_id: String, response_message: String) -> St
             let offer_index = offers.0.iter().position(|o| o.offer_id == offer_id);
             if let Some(index) = offer_index {
 
-                let sender_principal = offers.0[index].sender_principal.clone();
+                let sender_principal = offers.0[index].sender_principal;
                 let project_id = offers.0[index].project_info.project_id.clone();
 
                 if offers.0[index].request_status != "accepted" {

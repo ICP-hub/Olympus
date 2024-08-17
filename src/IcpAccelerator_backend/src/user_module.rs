@@ -86,7 +86,7 @@ impl Review {
         message: String,
         rating: f32,
     ) -> Result<Review, &'static str> {
-        if rating < 0.0 || rating > 5.0 {
+        if !(0.0..=5.0).contains(&rating) {
             return Err("Rating must be between 0.0 and 5.0");
         }
 

@@ -199,7 +199,7 @@ pub fn accept_offer_of_investor(
                     offer.response = response_message.clone();
                     offer.accepted_at = ic_cdk::api::time();
 
-                    let sender_principal = offer.sender_principal.clone();
+                    let sender_principal = offer.sender_principal;
 
                     // Immediate commit to state after modification
                     state.project_alerts_of_investor.insert(project_id.clone(), offers.clone());
@@ -213,7 +213,7 @@ pub fn accept_offer_of_investor(
                             project_offer.accepted_at = ic_cdk::api::time();
 
                             // Immediate commit to state
-                            state.offers_sent_by_investor.insert(StoredPrincipal(sender_principal.clone()), sent_status_vector.clone());
+                            state.offers_sent_by_investor.insert(StoredPrincipal(sender_principal), sent_status_vector.clone());
                         }
                     }
 

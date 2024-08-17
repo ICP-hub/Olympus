@@ -704,7 +704,7 @@ pub struct ListAllProjects {
 pub fn list_all_projects() -> Vec<ListAllProjects> {
     let projects_snapshot = read_state(|state| {
         state.project_storage.iter().map(|(principal, project_infos)| {
-            (principal.clone(), project_infos.0.clone())  // Clone the data to use outside the state borrow
+            (principal, project_infos.0.clone())  // Clone the data to use outside the state borrow
         }).collect::<Vec<_>>()
     });
 
@@ -755,7 +755,7 @@ pub fn list_all_projects_with_pagination(
         state.project_storage.iter()
             .skip(start)
             .take(end - start)
-            .map(|(principal, project_infos)| (principal.clone(), project_infos.0.clone()))
+            .map(|(principal, project_infos)| (principal, project_infos.0.clone()))
             .collect::<Vec<_>>()
     });
 
@@ -786,7 +786,7 @@ pub fn get_top_three_projects() -> Vec<ListAllProjects> {
     let projects_snapshot = read_state(|state| {
         // Clone the necessary parts of the state to reduce the duration of the borrow.
         state.project_storage.iter().map(|(principal, project_infos)| {
-            (principal.clone(), project_infos.0.clone())
+            (principal, project_infos.0.clone())
         }).collect::<Vec<_>>()
     });
 
@@ -978,7 +978,7 @@ pub async fn update_project(project_id: String, mut updated_project: ProjectInfo
 
     match update_result {
         Ok(message) => {
-            format!("{}", message)
+            message.to_string()
         },
         Err(error) => format!("Error processing request: {}", error),
     }
@@ -1108,28 +1108,20 @@ pub async fn update_team_member(project_id: &str, member_principal_id: Principal
         let mut project_found = false;
         let mut member_added_or_updated = false;
         let mut updated_project_info_list = None;
-
-        // Iterate over the storage map to find the project
         for (project_owner, project_info_list) in storage.project_storage.iter() {
             for project_internal in project_info_list.0.iter() {
                 if project_internal.uid == project_id {
                     project_found = true;
 
-                    // Clone the project_info_list to modify it
                     let mut project_info_list_clone = project_info_list.clone();
 
-                    // Find the project within the cloned list
                     for project_internal in project_info_list_clone.0.iter_mut() {
                         if project_internal.uid == project_id {
-                            // Check if the project already has a team member list
                             if let Some(team) = &mut project_internal.params.project_team {
-                                // Look for an existing team member with the same UID
                                 if let Some(member) = team.iter_mut().find(|m| m.member_uid == member_uid) {
-                                    // If the member exists, update their info
                                     member.member_data = user_info.clone();
                                     member_added_or_updated = true;
                                 } else {
-                                    // If the member doesn't exist, add them to the list
                                     let new_team_member = TeamMember {
                                         member_uid: member_uid.clone(),
                                         member_data: user_info.clone(),
@@ -1138,7 +1130,6 @@ pub async fn update_team_member(project_id: &str, member_principal_id: Principal
                                     member_added_or_updated = true;
                                 }
                             } else {
-                                // If the project does not have any team members yet, create a new list
                                 let new_team_member = TeamMember {
                                     member_uid: member_uid.clone(),
                                     member_data: user_info.clone(),
@@ -1148,15 +1139,12 @@ pub async fn update_team_member(project_id: &str, member_principal_id: Principal
                             }
                         }
                     }
-
-                    // Store the modified project_info_list to update the storage after the loop
                     updated_project_info_list = Some((project_owner.clone(), project_info_list_clone));
                     break;
                 }
             }
         }
 
-        // Update the storage outside the loop
         if let Some((project_owner, project_info_list_clone)) = updated_project_info_list {
             storage.project_storage.insert(project_owner, project_info_list_clone);
         }
@@ -1170,6 +1158,75 @@ pub async fn update_team_member(project_id: &str, member_principal_id: Principal
         _ => "Project not found.".to_string(),
     }
 }
+
+#[update(guard="is_user_anonymous")]
+pub async fn delete_team_member(project_id: String, member_principal_id: Principal) -> String {
+    let member_uid = read_state(|state| {
+        match state
+            .user_storage
+            .get(&StoredPrincipal(member_principal_id))
+        {
+            Some(user_internal) => user_internal.0.uid.clone(),
+            None => {
+                ic_cdk::println!("User not found in user_storage");
+                return String::new();
+            }
+        }
+    });
+
+    if member_uid.is_empty() {
+        return "User not found.".to_string();
+    }
+
+    let (project_found, member_deleted) = mutate_state(|storage| {
+        let mut project_found = false;
+        let mut member_deleted = false;
+        let mut updated_project_info_list = None;
+
+        for (project_owner, project_info_list) in storage.project_storage.iter() {
+            for project_internal in project_info_list.0.iter() {
+                if project_internal.uid == project_id {
+                    project_found = true;
+
+                    let mut project_info_list_clone = project_info_list.clone();
+
+                    for project_internal in project_info_list_clone.0.iter_mut() {
+                        if project_internal.uid == project_id {
+                            if let Some(team) = &mut project_internal.params.project_team {
+                                if let Some(pos) = team.iter().position(|m| m.member_uid == member_uid) {
+                                    ic_cdk::println!("Removing team member with UID: {}", member_uid);
+                                    team.remove(pos);
+                                    member_deleted = true;
+                                } else {
+                                    ic_cdk::println!("Team member with UID: {} not found", member_uid);
+                                }
+                            } else {
+                                ic_cdk::println!("No team members found for this project.");
+                            }
+                        }
+                    }
+
+                    updated_project_info_list = Some((project_owner.clone(), project_info_list_clone));
+                    break;
+                }
+            }
+        }
+
+        if let Some((project_owner, project_info_list_clone)) = updated_project_info_list {
+            storage.project_storage.insert(project_owner, project_info_list_clone);
+        }
+
+        (project_found, member_deleted)
+    });
+
+    match (project_found, member_deleted) {
+        (true, true) => "Team member deleted successfully.".to_string(),
+        (true, false) => "Failed to delete the team member from the specified project.".to_string(),
+        _ => "Project not found.".to_string(),
+    }
+}
+
+
 
 #[update(guard = "is_user_anonymous")]
 pub fn add_announcement(announcement_details: Announcements) -> String {
@@ -2436,7 +2493,7 @@ pub fn get_frequent_reviewers() -> Vec<UserInfoInternal> {
     read_state(|state| {
         for (_project_id, ratings) in state.project_rating.iter() {
             for (principal, _) in ratings.0.iter() {
-                *review_count.entry(principal.clone()).or_insert(0) += 1;
+                *review_count.entry(*principal).or_insert(0) += 1;
             }
         }
     });
