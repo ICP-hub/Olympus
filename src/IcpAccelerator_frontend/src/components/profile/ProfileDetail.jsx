@@ -542,7 +542,7 @@ const userRole = "mentor";
                 />
               ) : (
                 <div className="flex flex-wrap gap-2">
-                  {(userFullData.reason_to_join || [])
+                  {(userFullData?.reason_to_join || [])
                     .flat()
                     .map((reason, index) => (
                       <span
