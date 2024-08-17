@@ -1,14 +1,11 @@
 use crate::is_user_anonymous;
 use crate::state_handler::*;
-use candid::types::principal;
 use candid::{CandidType, Principal};
 use ic_cdk::api::caller;
 use ic_cdk::api::time;
-use ic_cdk::storage::{self, stable_restore, stable_save};
 use ic_cdk_macros::query;
 use ic_stable_structures::StableBTreeMap;
 use serde::{Deserialize, Serialize};
-use std::cell::RefCell;
 use std::collections::HashMap;
 use std::fmt;
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
@@ -52,7 +49,7 @@ pub struct RatingAverages {
 }
 
 impl RatingAverages {
-    pub fn new() -> Self {
+    pub fn _new() -> Self {
         RatingAverages {
             mentor_average: Vec::new(),
             vc_average: Vec::new(),
@@ -71,7 +68,7 @@ pub type RatingSystem =
 pub type LastRatingTimestamps = StableBTreeMap<String, Candid<HashMap<Principal, u64>>, VMem>;
 
 impl RatingTypes {
-    fn new() -> Self {
+    fn _new() -> Self {
         RatingTypes {
             peer: Vec::new(),
             own: Vec::new(),
@@ -109,7 +106,7 @@ impl fmt::Display for ParseMainLevelError {
 // }
 
 fn can_rate_again(
-    system: &RatingSystem,
+    _system: &RatingSystem,
     project_id: &String,
     user_id: &Principal,
     current_timestamp: u64,
@@ -150,7 +147,7 @@ fn can_rate_again(
 
 fn update_last_rating_time(project_id: &String, user_id: &Principal, timestamp: u64) {
     mutate_state(|timestamps| {
-        let mut timestampsi = &mut timestamps.last_rating_timestamps;
+        let timestampsi = &mut timestamps.last_rating_timestamps;
         if timestampsi.contains_key(project_id) {
             ic_cdk::println!(
                 "Debug: Found existing project map for project_id: {}",
@@ -232,7 +229,7 @@ pub fn update_rating_api(rating_data: RatingUpdate) -> String {
 
     // Extract project_ratings and role_ratings
     let (mut project_ratings, current_role) = mutate_state(|system| {
-        let mut system = &mut system.rating_system;
+        let system = &mut system.rating_system;
         let project_ratings = system
             .get(&rating_data.project_id.clone())
             .map_or_else(HashMap::new, |candid_res| candid_res.0);
@@ -387,7 +384,7 @@ pub fn get_ratings_by_principal(project_id: String) -> Result<Vec<RatingView>, S
         let system = &system.rating_system;
         if let Some(project_ratings) = system.get(&project_id) {
             if let Some(role_ratings) = project_ratings.0.get(&caller_id) {
-                for (role, timestamped_rating) in role_ratings {
+                for (_role, timestamped_rating) in role_ratings {
                     let view = RatingView {
                         level_name: timestamped_rating.rating.level_name.clone(),
                         sub_level_name: timestamped_rating.rating.sub_level.clone(),
@@ -422,7 +419,7 @@ pub struct MainLevels {
     name: String,
 }
 
-pub fn get_main_levels() -> Vec<MainLevels> {
+pub fn _get_main_levels() -> Vec<MainLevels> {
     vec![
         MainLevels {
             id: 1,
@@ -465,7 +462,7 @@ pub struct SubLevels {
     name: String,
 }
 
-pub fn get_sub_levels() -> Vec<SubLevels> {
+pub fn _get_sub_levels() -> Vec<SubLevels> {
     vec![
         SubLevels {
             id: 1,

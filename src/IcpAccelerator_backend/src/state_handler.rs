@@ -3,32 +3,26 @@ use crate::cohort::*;
 use crate::cohort_rating::*;
 use crate::manage_hubs::*;
 use crate::vc_registration::Announcements;
-use crate::{admin::*, mentor::*, project_registration::*, user_module::*, vc_registration::*};
+use crate::{mentor::*, project_registration::*, user_module::*, vc_registration::*};
 use candid::{CandidType, Principal};
 use ic_cdk::api::management_canister::main::{
-    canister_status, CanisterIdRecord, CanisterStatusResponse, CanisterStatusType,
-    DefiniteCanisterSettings,
+    canister_status, CanisterIdRecord, CanisterStatusResponse,
 };
-use ic_stable_structures::StableVec;
-
 use ic_stable_structures::{
     memory_manager::{MemoryId, MemoryManager, VirtualMemory},
     storable::{Blob, Bound, Storable},
-    DefaultMemoryImpl, Memory, StableBTreeMap, StableCell,
+    DefaultMemoryImpl, StableBTreeMap, StableCell,
 };
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use std::borrow::Cow;
 use std::cell::RefCell;
 use std::collections::HashMap;
-
-use crate::cohort::*;
 use crate::investor_offer_to_project::*;
 use crate::mentor_investor_ratings::*;
 use crate::notification_to_mentor::*;
 use crate::project_offer_to_investor::*;
 use crate::ratings::*;
 
-use crate::admin::*;
 use crate::notification_to_project::*;
 
 pub type VMem = VirtualMemory<DefaultMemoryImpl>;
@@ -240,28 +234,25 @@ pub type CapitalistAppliedForCohort =
     StableBTreeMap<String, Candid<Vec<VentureCapitalistInternal>>, VMem>;
 const CAPITALIST_APPLIED_FOR_COHORT_MEMORY_ID: MemoryId = MemoryId::new(63);
 
-pub type CohortsAssociated = StableBTreeMap<String, Candid<Vec<String>>, VMem>;
-const ASSOCIATED_COHORTS_WITH_PROJECT_MEMORY_ID: MemoryId = MemoryId::new(64);
-
 pub type CohortEnrollmentRequests =
     StableBTreeMap<StoredPrincipal, Candid<Vec<CohortEnrollmentRequest>>, VMem>;
-const COHORT_ENROLLMENT_REQUESTS_MEMORY_ID: MemoryId = MemoryId::new(65);
+const COHORT_ENROLLMENT_REQUESTS_MEMORY_ID: MemoryId = MemoryId::new(64);
 
 pub type MentorsRemovedFromCohort =
     StableBTreeMap<String, Candid<Vec<(Principal, MentorInternal)>>, VMem>;
-const MENTOR_REMOVED_FROM_COHORT_MEMORY_ID: MemoryId = MemoryId::new(66);
+const MENTOR_REMOVED_FROM_COHORT_MEMORY_ID: MemoryId = MemoryId::new(65);
 
 pub type MentorsInviteRequest = StableBTreeMap<String, Candid<InviteRequest>, VMem>;
-const PENDING_MENTOR_CONFIRMATION_TO_REJOIN_MEMORY_ID: MemoryId = MemoryId::new(67);
+const PENDING_MENTOR_CONFIRMATION_TO_REJOIN_MEMORY_ID: MemoryId = MemoryId::new(66);
 
 pub type MySentCohortRequest = StableBTreeMap<StoredPrincipal, Candid<Vec<CohortRequest>>, VMem>;
-const MY_SENT_COHORT_REQUEST_MEMORY_ID: MemoryId = MemoryId::new(68);
+const MY_SENT_COHORT_REQUEST_MEMORY_ID: MemoryId = MemoryId::new(67);
 
 pub type AssetManager = StableCell<StoredPrincipal, VMem>;
-const ASSET_CANISTER_STORAGE_MEMORY_ID: MemoryId = MemoryId::new(69);
+const ASSET_CANISTER_STORAGE_MEMORY_ID: MemoryId = MemoryId::new(68);
 
 pub type HubsData = StableBTreeMap<StoredPrincipal, Candid<IcpHubDetails>, VMem>;
-const HUBS_DATA_STORAGE_MEMORY_ID: MemoryId = MemoryId::new(70);
+const HUBS_DATA_STORAGE_MEMORY_ID: MemoryId = MemoryId::new(69);
 
 pub struct State {
     pub admin_notifications: AdminNotification,
@@ -330,7 +321,6 @@ pub struct State {
     pub applier_count: ApplierCount,
     pub vc_applied_for_cohort: CapitalistAppliedForCohort,
     pub mentor_applied_for_cohort: MentorsAppliedForCohort,
-    pub cohorts_associated: CohortsAssociated,
     pub cohort_enrollment_request: CohortEnrollmentRequests,
     pub mentor_removed_from_cohort: MentorsRemovedFromCohort,
     pub mentor_invite_request: MentorsInviteRequest,
@@ -421,7 +411,6 @@ thread_local! {
             applier_count: ApplierCount::init(mm.borrow().get(APPLIER_COUNT_MEMORY_ID)),
             vc_applied_for_cohort:CapitalistAppliedForCohort::init(mm.borrow().get(CAPITALIST_APPLIED_FOR_COHORT_MEMORY_ID)),
             mentor_applied_for_cohort: MentorsAppliedForCohort::init(mm.borrow().get(MENTORS_APPLIED_FOR_COHORT_MEMORY_ID)),
-            cohorts_associated: CohortsAssociated::init(mm.borrow().get(ASSOCIATED_COHORTS_WITH_PROJECT_MEMORY_ID)),
             cohort_enrollment_request: CohortEnrollmentRequests::init(mm.borrow().get(COHORT_ENROLLMENT_REQUESTS_MEMORY_ID)),
             mentor_removed_from_cohort: MentorsRemovedFromCohort::init(mm.borrow().get(MENTOR_REMOVED_FROM_COHORT_MEMORY_ID)),
             mentor_invite_request: MentorsInviteRequest::init(mm.borrow().get(PENDING_MENTOR_CONFIRMATION_TO_REJOIN_MEMORY_ID)),
@@ -492,16 +481,6 @@ impl Storable for StoredPrincipal {
             Blob::<29>::from_bytes(bytes).as_slice(),
         ))
     }
-}
-
-pub fn get_notifications_check() -> Vec<Notification> {
-    read_state(|state| {
-        state
-            .admin_notifications
-            .iter()
-            .flat_map(|(_, notifications)| notifications.0.clone())
-            .collect()
-    })
 }
 
 #[ic_cdk::update]

@@ -1,6 +1,5 @@
 use crate::is_user_anonymous;
 use crate::state_handler::*;
-use candid::types::principal;
 use candid::{CandidType, Deserialize, Principal};
 use ic_cdk::api::time;
 use ic_cdk_macros::{query, update};
