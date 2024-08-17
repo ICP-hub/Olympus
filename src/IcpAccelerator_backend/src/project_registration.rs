@@ -1,33 +1,22 @@
 use crate::mentor::MentorProfile;
-
-use crate::admin::send_approval_request;
 use crate::is_admin;
 use crate::is_user_anonymous;
 use crate::ratings::calculate_average_api;
-use crate::ratings::{RatingAverages, RatingSystem};
+use crate::ratings::RatingAverages;
 use crate::state_handler::{mutate_state, read_state, Candid, StoredPrincipal};
 use crate::user_module::*;
 use crate::user_module::{UserInfoInternal, UserInformation};
 use crate::vc_registration::VentureCapitalist;
-use bincode::{self, DefaultOptions, Options};
 use candid::{CandidType, Principal};
 use ic_cdk::api::call::call;
 use ic_cdk::api::caller;
 use ic_cdk::api::management_canister::main::raw_rand;
-use ic_cdk::api::stable::{StableReader, StableWriter};
 use ic_cdk::api::time;
-use ic_cdk::storage;
 use ic_cdk_macros::*;
-use ic_certified_assets::types::Key;
-use ic_stable_structures::vec;
 use serde::{Deserialize, Serialize};
 use serde_bytes::ByteBuf;
-use serde_cbor::Value::Null;
 use sha2::{Digest, Sha256};
-use std::cell::RefCell;
-use std::cmp;
 use std::collections::HashMap;
-use std::io::Read;
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct TeamMember {
     pub member_uid: String,
@@ -193,7 +182,7 @@ pub struct MoneyRaised {
 impl MoneyRaised {
     // Calculates the total amount raised from various sources.
     // Assumes all Option<String> fields represent valid f64 values or None.
-    pub fn total_amount(&self) -> f64 {
+    pub fn _total_amount(&self) -> f64 {
         let mut total: f64 = 0.0;
 
         if let Some(icp_grants) = &self.icp_grants {
@@ -434,8 +423,8 @@ pub async fn create_project(info: ProjectInfo) -> String {
             let uid = format!("{:x}", Sha256::digest(&uuids));
             let new_id = uid.clone().to_string();
 
-            let canister_id = crate::asset_manager::get_asset_canister();
-            let mut info_with_default = change_project_images(caller, info.clone()).await;
+            let _canister_id = crate::asset_manager::get_asset_canister();
+            let info_with_default = change_project_images(caller, info.clone()).await;
 
             let new_project = ProjectInfoInternal {
                 params: info_with_default,
@@ -451,7 +440,7 @@ pub async fn create_project(info: ProjectInfo) -> String {
                     .insert(StoredPrincipal(caller), Candid(vec![new_project.clone()]));
                
                 let role_status = &mut state.role_status;
-                if let Some(mut role_status_vec_candid) =
+                if let Some(role_status_vec_candid) =
                     role_status.get(&StoredPrincipal(caller))
                 {
                     let mut role_status_vec = role_status_vec_candid.0;
@@ -503,7 +492,7 @@ pub fn get_project_declined_info_using_principal(caller: Principal) -> Option<Pr
 }
 
 // all created projects but without ProjectInternal
-pub fn get_projects_for_caller() -> Vec<ProjectInfo> {
+pub fn _get_projects_for_caller() -> Vec<ProjectInfo> {
     let caller = ic_cdk::caller();
     read_state(|state| {
         if let Some(founder_projects) = state.project_storage.get(&StoredPrincipal(caller)) {
@@ -852,11 +841,11 @@ pub async fn change_project_images(
 
         let delete_asset = DeleteAsset { key: key.clone() };
 
-        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
+        let (_deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
             .await
             .unwrap();
 
-        let (result,): ((),) = call(canister_id, "store", (arg,)).await.unwrap();
+        let (_result,): ((),) = call(canister_id, "store", (arg,)).await.unwrap();
 
         user_data.profile_picture =
             Some((canister_id.to_string() + &key).as_bytes().to_vec());
@@ -882,11 +871,11 @@ pub async fn change_project_images(
             key: project_logo_key.clone(),
         };
 
-        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
+        let (_deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
             .await
             .unwrap();
 
-        let (result,): ((),) = call(canister_id, "store", (project_logo_arg,))
+        let (_result,): ((),) = call(canister_id, "store", (project_logo_arg,))
             .await
             .unwrap();
 
@@ -918,11 +907,11 @@ pub async fn change_project_images(
             key: project_cover_key.clone(),
         };
 
-        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
+        let (_deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
             .await
             .unwrap();
 
-        let (result,): ((),) = call(canister_id, "store", (project_cover_arg,))
+        let (_result,): ((),) = call(canister_id, "store", (project_cover_arg,))
             .await
             .unwrap();
 
@@ -1074,7 +1063,8 @@ pub fn get_notifications_for_caller() -> Vec<NotificationProject> {
     })
 }
 
-fn find_project_owner_principal(project_id: &str) -> Option<Principal> {
+
+fn _find_project_owner_principal(project_id: &str) -> Option<Principal> {
     read_state(|state| {
         for (stored_principal, projects) in state.project_storage.iter() {
             if projects.0.iter().any(|p| p.uid == project_id) {
@@ -1285,7 +1275,7 @@ pub async fn update_project_announcement_by_id(
 ) -> String {
     mutate_state(|state| {
         let announcement_storage = &mut state.project_announcement;
-        if let Some(mut caller_announcements) = announcement_storage.get(&StoredPrincipal(caller()))
+        if let Some(caller_announcements) = announcement_storage.get(&StoredPrincipal(caller()))
         {
             let mut caller_announcements = caller_announcements.clone();
             ic_cdk::println!("state before update {:?}", caller_announcements.0);
@@ -1338,7 +1328,7 @@ pub async fn delete_project_announcement_by_id(timestamp: u64) -> String {
 }
 
 #[update(guard = "is_user_anonymous")]
-pub fn add_BlogPost(url: String) -> String {
+pub fn add_blog_post(url: String) -> String {
     let caller_id = caller();
     let current_time = time();
 
@@ -1498,113 +1488,6 @@ pub fn make_project_active_inactive(p_id: Principal, project_id: String) -> Stri
     }
 }
 
-// pub fn get_dummy_team_member() -> TeamMember {
-//     TeamMember {
-//         member_uid: "TM123456".to_string(),
-//         member_data: get_dummy_user_information(),
-//     }
-// }
-
-// fn get_dummy_user_information() -> UserInformation {
-//     UserInformation {
-//         full_name: "Jane Doe".to_string(),
-//         profile_picture: Some(vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9]), // Example binary data for an image
-//         email: Some("janedoe@example.com".to_string()),
-//         country: "Nowhereland".to_string(),
-//         telegram_id: Some("janedoe_telegram".to_string()),
-//         bio: Some("An enthusiastic explorer of new technologies.".to_string()),
-//         area_of_interest: "Artificial Intelligence".to_string(),
-//         twitter_id: Some("@janedoeAI".to_string()),
-//         openchat_username: Some("janedoeChat".to_string()),
-//         // joining_date: 0,
-//     }
-// }
-
-// pub fn get_dummy_mentor_profile() -> MentorProfile {
-//     MentorProfile {
-//         preferred_icp_hub: Some("Example Hub".to_string()),
-//         user_data: get_dummy_user_information(), // This function should be defined as previously shown
-//         existing_icp_mentor: true,
-//         existing_icp_project_porfolio: Some("Example Portfolio".to_string()),
-//         icop_hub_or_spoke: false,
-//         category_of_mentoring_service: "Technology and Innovation".to_string(),
-//         linkedin_link: "https://example-social-link.com".to_string(),
-//         multichain: Some("Example Multichain".to_string()),
-//         years_of_mentoring: "5 years".to_string(),
-//         website: "https://example-mentor-website.com".to_string(),
-//         area_of_expertise: "Blockchain Technology".to_string(),
-//         reason_for_joining: "To share knowledge and experiences with budding entrepreneurs"
-//             .to_string(),
-//         hub_owner: Some("icp india".to_string()),
-//     }
-// }
-
-// pub fn get_dummy_venture_capitalist() -> VentureCapitalist {
-//     VentureCapitalist {
-//         name_of_fund: "Example VC Fund".to_string(),
-//         fund_size: 100_000_000.0, // Example fund size in USD
-//         assets_under_management: "500_000_000 USD".to_string(),
-//         logo: Some(vec![0, 1, 2, 3, 4, 5]), // Simulated binary data for a logo
-//         registered_under_any_hub: Some(true),
-//         average_check_size: 1_000_000.0, // Example check size in USD
-//         existing_icp_investor: true,
-//         money_invested: Some(50_000_000.0), // Example money invested in USD
-//         existing_icp_portfolio: Some("Example Portfolio".to_string()),
-//         type_of_investment: "Equity".to_string(),
-//         project_on_multichain: Some("Yes".to_string()),
-//         category_of_investment: "Technology".to_string(),
-//         reason_for_joining: "To find promising startups".to_string(),
-//         preferred_icp_hub: "Example Hub".to_string(),
-//         investor_type: "Angel Investor".to_string(),
-//         number_of_portfolio_companies: 10,
-//         portfolio_link: "https://example-portfolio-link.com".to_string(),
-//         announcement_details: Some("New funding round opened".to_string()),
-//         user_data: get_dummy_user_information(),
-//         website_link: "hfdfdfdf".to_string(),
-//         linkedin_link: "dfdfdfdf".to_string(),
-//         registered_country: Some("india".to_string()),
-//         registered: true, // Generate dummy user information
-//     }
-// }
-
-// pub fn get_dummy_announcements() -> Announcements {
-//     Announcements {
-//         project_name: "Project X".to_string(),
-//         announcement_message: "We are thrilled to announce the launch of Project X, set to revolutionize the industry!".to_string(),
-//         timestamp: 1672522562, // Example timestamp in Unix time format
-//     }
-// }
-
-// pub fn get_dummy_jon_opportunity() -> Jobs {
-//     Jobs {
-//         title: ("Example Job Title".to_string()),
-//         description: ("This Job Is For Testing Purpose".to_string()),
-//         category: ("Software Developer".to_string()),
-//         link: ("test link".to_string()),
-//         project_id: ("Testing Project Id".to_string()),
-//         timestamp: (time()),
-//         location: ("Test Location".to_string()),
-//         project_data: todo!(),
-//     }
-// }
-
-// #[query(guard = "is_user_anonymous")]
-// pub fn get_dummy_data_for_project_details_for_users() -> ProjectInfoForUser {
-//     ProjectInfoForUser {
-//         date_of_joining: Some("2024-01-01".to_string()),
-//         mentor_associated: Some(vec![get_dummy_mentor_profile()]),
-//         vc_associated: Some(vec![get_dummy_venture_capitalist()]),
-//         team_member_info: Some(vec![get_dummy_team_member()]),
-//         //announcements: Some(vec![get_dummy_announcements()]),
-//         //reviews: Some(get_dummy_suggestion()),
-//         website_social_group: Some("https://example.com".to_string()),
-//         live_link_of_project: Some("https://projectlink.com".to_string()),
-//         jobs_opportunity: Some(vec![get_dummy_jon_opportunity()]),
-//         area_of_focus: Some("Technology".to_string()),
-//         country_of_project: Some("USA".to_string()),
-//     }
-// }
-
 #[update(guard = "is_user_anonymous")]
 pub fn post_job(params: Jobs) -> String {
     let principal_id = ic_cdk::api::caller();
@@ -1677,7 +1560,7 @@ pub fn post_job(params: Jobs) -> String {
     result
 }
 
-pub fn get_jobs_for_project(project_id: String) -> Vec<JobsInternal> {
+pub fn _get_jobs_for_project(project_id: String) -> Vec<JobsInternal> {
     read_state(|state| {
         let mut jobs_for_project = Vec::new();
 
@@ -1830,15 +1713,15 @@ pub async fn send_money_access_request(project_id: String) -> String {
         return "You already have a pending request for this project.".to_string();
     }
 
-    let userData: Result<UserInformation, &str> = get_user_info();
+    let user_data: Result<UserInformation, &str> = get_user_info();
 
     // Assuming the existence of get_user_info() which might fail hence the unwrap_or_else pattern
-    let userData = userData.unwrap_or_else(|_| panic!("Failed to get user data"));
+    let user_data = user_data.unwrap_or_else(|_| panic!("Failed to get user data"));
 
     let access_request = AccessRequest {
         sender: caller.clone(), // Assuming caller() gives us Principal
-        name: userData.full_name,
-        image: userData.profile_picture.expect("Profile picture not found"),
+        name: user_data.full_name,
+        image: user_data.profile_picture.expect("Profile picture not found"),
         project_id: project_id.clone(),
         request_type: "money_details_access".to_string(),
         status: "pending".to_string(),
@@ -1903,15 +1786,15 @@ pub async fn send_private_docs_access_request(project_id: String) -> String {
         return "You already have a pending request for this project.".to_string();
     }
 
-    let userData: Result<UserInformation, &str> = get_user_info();
+    let user_data: Result<UserInformation, &str> = get_user_info();
 
     // Assuming the existence of get_user_info() which might fail hence the unwrap_or_else pattern
-    let userData = userData.unwrap_or_else(|_| panic!("Failed to get user data"));
+    let user_data = user_data.unwrap_or_else(|_| panic!("Failed to get user data"));
 
     let access_request = AccessRequest {
         sender: caller.clone(), // Assuming caller() gives us Principal
-        name: userData.full_name,
-        image: userData.profile_picture.expect("Profile picture not found"),
+        name: user_data.full_name,
+        image: user_data.profile_picture.expect("Profile picture not found"),
         project_id: project_id.clone(),
         request_type: "private_docs_access".to_string(),
         status: "pending".to_string(),
@@ -2551,7 +2434,7 @@ pub fn get_frequent_reviewers() -> Vec<UserInfoInternal> {
     let mut review_count: HashMap<Principal, usize> = HashMap::new();
 
     read_state(|state| {
-        for (project_id, ratings) in state.project_rating.iter() {
+        for (_project_id, ratings) in state.project_rating.iter() {
             for (principal, _) in ratings.0.iter() {
                 *review_count.entry(principal.clone()).or_insert(0) += 1;
             }
@@ -2571,9 +2454,3 @@ pub fn get_frequent_reviewers() -> Vec<UserInfoInternal> {
 
     frequent_reviewers
 }
-
-pub fn get_type_of_registration() -> Vec<String> {
-    vec!["Company".to_string(), "DAO".to_string()]
-}
-
-

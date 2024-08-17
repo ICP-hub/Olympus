@@ -13,9 +13,7 @@ mod state_handler;
 mod associations;
 mod cohort;
 mod cohort_rating;
-mod default_images;
 mod mentor_investor_ratings;
-mod roles;
 mod user_module;
 mod vc_registration;
 
@@ -34,7 +32,6 @@ use ic_cdk::api::caller;
 use leaderboard::LeaderboardEntryForRatings;
 use crate::ratings::*;
 use project_registration::FilterCriteria;
-use roles::{get_roles, RolesResponse};
 use std::collections::HashMap;
 use user_module::*;
 use ic_cdk::export_candid;
@@ -76,12 +73,6 @@ pub fn is_user_anonymous() -> Result<(), String> {
     //     Err("login with your identity to use functions".to_string())
     // }
 }
-
-// #[init]
-// fn init() {
-//     user_module::initialize_roles();
-//     //ic_cdk::println!("initialization done");
-// }
 
 #[update(guard = "is_admin")]
 fn approve_mentor_creation_request_candid(requester: Principal, approve: bool) -> String {
@@ -129,11 +120,6 @@ pub fn make_user_inactive() -> String {
     user_module::delete_user()
 }
 
-// #[query]
-// fn get_founder_info_caller() -> Option<FounderInfo> {
-//     register_user::get_founder_info()
-// }
-
 #[update(guard = "is_user_anonymous")]
 
 async fn register_project(params: ProjectInfo) -> String {
@@ -145,20 +131,10 @@ fn filter_out_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
     project_registration::filter_projects(criteria)
 }
 
-// #[query]
-// fn get_projects_for_caller() -> Vec<ProjectInfo> {
-//     project_registration::get_projects_for_caller()
-// }
-
 #[query(guard = "is_user_anonymous")]
 fn get_project_using_id(project_id: String) -> Option<ProjectInfoInternal> {
     project_registration::find_project_by_id(&project_id)
 }
-
-// #[query]
-// fn list_all_projects() -> HashMap<Principal, ProjectVecWithRoles> {
-//     project_registration::list_all_projects()
-// }
 
 #[update(guard = "is_user_anonymous")]
 async fn update_project(project_id: String, updated_project: ProjectInfo) -> String {
@@ -175,11 +151,6 @@ fn delete_project(id: String) -> std::string::String {
     project_registration::delete_project(id)
 }
 
-// #[update(guard = "is_admin")]
-// fn verify_project_under_your_hub(project_id: String) -> String {
-//     project_registration::verify_project(&project_id)
-// }
-
 #[query(guard = "is_user_anonymous")]
 fn get_your_project_notifications() -> Vec<NotificationForOwner> {
     project_registration::get_notifications_for_owner()
@@ -190,30 +161,11 @@ fn get_notifications_for_hubs() -> Vec<NotificationProject> {
     project_registration::get_notifications_for_caller()
 }
 
-// #[update(guard = "is_admin")]
-// fn add_suggestion_caller(
-//     content: String,
-//     project_id: String,
-// ) -> Result<(u64, String), &'static str> {
-//     roadmap_suggestion::add_suggestion(content, project_id)
-// }
-
-#[query(guard = "is_user_anonymous")]
-fn get_all_roles() -> RolesResponse {
-    get_roles() // Call the get_roles function from the roles module
-}
-
 #[update(guard = "is_user_anonymous")]
 async fn register_mentor_candid(profile: MentorProfile) -> String {
     mentor::register_mentor(profile).await
     //"request has been made to admin".to_string()
 }
-
-// #[query]
-
-// fn get_mentor_candid() -> Option<MentorProfile> {
-//     mentor::get_mentor()
-// }
 
 #[update(guard = "is_admin")]
 fn delete_mentor_candid() -> String {
@@ -283,24 +235,6 @@ fn calculate_average(project_id: String) -> RatingAverages {
     ratings::calculate_average_api(&project_id)
 }
 
-// #[query]
-
-// fn get_main_level_ratings(project_id: String) -> HashMap<String, MainLevelRatings> {
-//     ratings::get_ratings_by_project_id(&project_id)
-// }
-
-//made for admin side.....
-// #[query]
-//  fn get_role() -> RolesResponse {
-//     roles::get_roles()
-// }
-// made for admin side.....
-
-#[query(guard = "is_user_anonymous")]
-fn get_role() -> RolesResponse {
-    roles::get_roles()
-}
-
 #[query(guard = "is_user_anonymous")]
 
 fn get_my_id() -> Principal {
@@ -311,58 +245,5 @@ fn get_my_id() -> Principal {
 fn get_admin_notifications() -> Vec<admin::Notification> {
     admin::get_admin_notifications()
 }
-
-// #[update(guard = "is_admin")]
-//  fn add_roles(name: String) -> Role {
-//     roles::add_role(name)
-// }
-
-// #[query(name = "__get_candid_interface_tmp_hack")]
-// fn export_candid() -> String {
-//     export_service!();
-//     __export_service()
-// }
-
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
-
-//     #[test]
-//     fn save_candid() {
-//         use std::env;
-//         use std::fs::write;
-//         use std::path::PathBuf;
-
-//         let dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
-
-//         // Directly use dir for the current directory
-//         let file_path = dir.join("IcpAccelerator_backend.did");
-//         write(file_path, export_candid()).expect("Write failed.");
-//     }
-// }
-
 //2vxsx-fae
-
-// #[pre_upgrade]
-// fn pre_upgrade() {
-//     pre_upgrade_venture_capitalist();
-//     //pre_upgrade_user_modules();
-//     pre_upgrade_project_registration();
-//     // pre_upgrade_upvotes();
-//     //pre_upgrade_mentor();
-//     //pre_upgrade_admin();
-//     //pre_upgrade_rating_system();
-// }
-
-// #[post_upgrade]
-// fn post_upgrade() {
-//     post_upgrade_venture_capitalist();
-//     //post_upgrade_user_modules();
-//     post_upgrade_project_registration();
-//     //post_upgrade_upvotes();
-//     //post_upgrade_mentor();
-//     //post_upgrade_admin();
-//     //post_upgrade_rating_system();
-// }
-
 export_candid!();

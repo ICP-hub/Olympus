@@ -13,18 +13,12 @@ use crate::user_module::*;
 use crate::vc_registration::*;
 use crate::CohortRequest;
 use candid::{CandidType, Principal};
-use ic_cdk::api::call::call;
 use ic_cdk::api::management_canister::main::{canister_info, CanisterInfoRequest};
 use ic_cdk::api::{caller, id};
 use ic_cdk::api::{canister_balance128, time};
-use ic_cdk::storage;
-use ic_cdk::storage::stable_restore;
 use ic_cdk_macros::*;
 use serde::{Deserialize, Serialize};
-use serde_bytes::ByteBuf;
 use std::borrow::Cow;
-use std::cell::RefCell;
-use std::cmp;
 use std::collections::{HashMap, HashSet};
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
@@ -63,16 +57,9 @@ pub struct UpdateCounts {
     vc_update: Option<u32>,
 }
 
-// thread_local! {
-//     static ADMIN_NOTIFICATIONS : RefCell<HashMap<Principal, Vec<Notification>>> = RefCell::new(HashMap::new());
-//     static COHORT_REQUEST : RefCell<HashMap<String, Vec<CohortRequest>>> = RefCell::new(HashMap::new());
-//     static ACCEPTED_COHORTS : RefCell<HashMap<String, Vec<CohortRequest>>> = RefCell::new(HashMap::new());
-//     static DECLINED_COHORTS: RefCell<HashMap<String, Vec<CohortRequest>>> = RefCell::new(HashMap::new());
-// }
-
 fn change_notification_status(requester: Principal, requested_for: String, changed_status: String) {
     mutate_state(|admin_notifications| {
-        let mut notifications = &mut admin_notifications.admin_notifications;
+        let notifications = &mut admin_notifications.admin_notifications;
         for (_, mut admin_notif_list) in notifications.iter() {
             for notification in admin_notif_list.0.iter_mut() {
                 match &mut notification.notification_type {
@@ -90,7 +77,7 @@ fn change_notification_status(requester: Principal, requested_for: String, chang
     });
 }
 
-pub async fn send_approval_request(
+pub async fn _send_approval_request(
     photo: Vec<u8>,
     name: String,
     country: String,
@@ -182,7 +169,7 @@ pub fn approve_mentor_creation_request(requester: Principal, approve: bool) -> S
                     .remove(&StoredPrincipal(requester));
                 let role_status = &mut state.role_status;
 
-                if let Some(mut role_status_vec_candid) =
+                if let Some(role_status_vec_candid) =
                     role_status.get(&StoredPrincipal(requester))
                 {
                     let mut role_status_vec = role_status_vec_candid.0;
@@ -662,7 +649,7 @@ pub fn approve_vc_creation_request(requester: Principal, approve: bool) -> Strin
 
                 let role_status = &mut state.role_status;
 
-                if let Some(mut role_status_vec_candid) =
+                if let Some(role_status_vec_candid) =
                     role_status.get(&StoredPrincipal(requester))
                 {
                     let mut role_status_vec = role_status_vec_candid.0;
@@ -756,7 +743,7 @@ pub fn approve_vc_profile_update(requester: Principal, approve: bool) -> String 
 
 
 #[update(guard = "is_admin")]
-pub fn decline_vc_profile_update_request(requester: Principal, decline: bool) -> String {
+pub fn decline_vc_profile_update_request(requester: Principal, _decline: bool) -> String {
     let mut declined_data: Option<UpdateInfoStruct> = None;
 
 
@@ -824,7 +811,7 @@ pub fn decline_project_profile_update_request(requester: String, decline: bool) 
 
 #[update(guard = "is_admin")]
 
-pub fn approve_mentor_profile_update(requester: Principal, approve: bool) -> String {
+pub fn approve_mentor_profile_update(requester: Principal, _approve: bool) -> String {
     let mut updated_profile_data: Option<MentorProfile> = None;
 
     let update_result = mutate_state(|state| {
@@ -877,7 +864,7 @@ pub fn approve_mentor_profile_update(requester: Principal, approve: bool) -> Str
 
 
 #[update(guard = "is_admin")]
-pub fn decline_mentor_profile_update_request(requester: Principal, decline: bool) -> String {
+pub fn decline_mentor_profile_update_request(requester: Principal, _decline: bool) -> String {
     let result = mutate_state(|state| {
         if let Some(updated_profile) = state.mentor_profile_edit_awaits.remove(&StoredPrincipal(requester)) {
             let previous_profile = state
@@ -936,7 +923,7 @@ pub fn approve_project_creation_request(requester: Principal) -> String {
                     .project_awaits_response
                     .remove(&StoredPrincipal(requester));
                 let role_status = &mut state.role_status;
-                if let Some(mut role_status_vec_candid) =
+                if let Some(role_status_vec_candid) =
                     role_status.get(&StoredPrincipal(requester))
                 {
                     let mut role_status_vec = role_status_vec_candid.0;
@@ -1102,18 +1089,6 @@ pub fn add_job_type(job_type: String) -> String {
 
 #[update(guard = "is_admin")]
 pub async fn add_project_to_spotlight(project_id: String) -> Result<(), String> {
-    let caller: Principal = caller();
-
-    // Uncomment and use the following block if admin validation is needed
-    // let admin_principals = match get_info().await {
-    //     Ok(principals) => principals,
-    //     Err(_) => return Err("Failed to retrieve admin principals".to_string()),
-    // };
-
-    // if !admin_principals.contains(&caller) {
-    //     return Err("Unauthorized: Caller is not an admin.".to_string());
-    // }
-
     let project_creator_and_info = read_state(|state| {
         state.project_storage.iter()
             .find_map(|(creator_principal, projects)| {
@@ -1963,7 +1938,7 @@ fn count_live_projects() -> usize {
 
 //cohort admin operations
 
-pub async fn send_cohort_request_to_admin(cohort_request: CohortRequest) -> String {
+pub async fn _send_cohort_request_to_admin(cohort_request: CohortRequest) -> String {
     let cohort_id = cohort_request.cohort_details.cohort_id.clone(); // Clone the cohort ID for use in the message.
     let message = format!(
         "Cohort creation request with ID {} has been sent to admin.",
