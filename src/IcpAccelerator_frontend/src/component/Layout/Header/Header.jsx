@@ -54,6 +54,7 @@ const Header = ({ setModalOpen, gradient }) => {
   }
 
   function cloneArrayWithModifiedValues(arr) {
+    console.log('arr',arr)
     return arr.map((obj) => {
       const modifiedObj = {};
 
@@ -74,7 +75,7 @@ const Header = ({ setModalOpen, gradient }) => {
           modifiedObj[key] = obj[key]; // Keep other keys unchanged
         }
       });
-
+console.log('modifiedObj',modifiedObj)
       return modifiedObj;
     });
   }

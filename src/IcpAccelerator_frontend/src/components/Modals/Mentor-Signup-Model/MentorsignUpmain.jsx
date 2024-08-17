@@ -31,11 +31,11 @@ const validationSchema = yup.object().shape({
     .required("Years of experience mentoring startups is required"),
   mentor_linkedin_url: yup.string().url("Invalid url").required("LinkedIn url is required"),
 });
-const MentorSignupMain = () => {
+const MentorSignupMain = ({setModalOpen,modalOpen}) => {
   const dispatch = useDispatch();
   const actor = useSelector((state) => state.actors.actor);
 
-  const [modalOpen, setModalOpen] = useState(true);
+  // const [modalOpen, setModalOpen] = useState(true);
   const [index, setIndex] = useState(0);
 const [formData, setFormData] = useState({});
  
