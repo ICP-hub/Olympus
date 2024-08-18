@@ -250,7 +250,7 @@ pub fn get_cohort(cohort_id: String) -> CohortDetails {
 
 #[query(guard = "is_user_anonymous")]
 pub fn get_cohorts_by_principal() -> Vec<CohortDetails> {
-    let principal_id = Principal::from_text("2vxsx-fae").unwrap();
+    let principal_id = caller();
     read_state(|state| {
         state
             .cohort_info
