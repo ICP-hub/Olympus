@@ -8,9 +8,7 @@ import Select from "react-select";
 import { useFormContext } from "react-hook-form";
 import { useSelector, useDispatch } from "react-redux";
 
-// COMPONENT TO HANDLE THE THIRD STEP OF PROJECT REGISTRATION FORM
 const ProjectRegister3 = ({ formData }) => {
-    // DESTRUCTURING METHODS AND VALUES FROM useFormContext TO HANDLE FORM STATE AND VALIDATION
     const {
         register,
         formState: { errors },
@@ -41,25 +39,21 @@ const ProjectRegister3 = ({ formData }) => {
             setMultiChainOptions([]);
         }
     }, [multiChainNames]);
-
-    // EFFECT TO SET INITIAL FORM VALUES IF formData EXISTS
     useEffect(() => {
         if (formData) {
             setProjectValuesHandler(formData);
         }
     }, [formData]);
 
-    // FUNCTION TO SET INITIAL FORM VALUES BASED ON PROVIDED formData
     const setProjectValuesHandler = (val) => {
-        console.log('val', val);
+        console.log('val', val)
         if (val) {
             setValue("multi_chain", val?.multi_chain === true || val?.multi_chain === 'true' ? 'true' : 'false');
             setValue("multi_chain_names", val?.multi_chain_names ? val?.multi_chain_names : "");
             setMultiChainSelectedOptionsHandler(val.multi_chain_names ?? null);
+
         }
     };
-
-    // FUNCTION TO SET SELECTED MULTI-CHAIN OPTIONS BASED ON PROVIDED VALUE
     const setMultiChainSelectedOptionsHandler = (val) => {
         setMultiChainSelectedOptions(
             val ? val.split(", ").map((chain) => ({ value: chain, label: chain })) : []

@@ -3,9 +3,7 @@ import ControlPointIcon from "@mui/icons-material/ControlPoint";
 import { useFormContext, Controller } from "react-hook-form";
 import CompressedImage from "../../../component/ImageCompressed/CompressedImage";
 import { useCountries } from "react-countries";
-
 const ProjectRegister2 = ({ formData }) => {
-    // INITIALIZING REACT HOOK FORM FUNCTIONS AND VARIABLES
     const {
         register,
         formState: { errors },
@@ -24,17 +22,16 @@ const ProjectRegister2 = ({ formData }) => {
     const [coverPreview, setCoverPreview] = useState(null);
     const [coverData, setCoverData] = useState(null);
 
-    // USEEFFECT TO SET FORM FIELDS WITH PREVIOUSLY SAVED FORM DATA ON COMPONENT MOUNT
     useEffect(() => {
-        if (formData) {    
-          if (formData?.cover) {
-            setCoverPreview(URL.createObjectURL(formData?.cover));
-            setCoverData(formData?.cover);
-          }
+        // Set form fields with formData values on mount
+        if (formData) {
+            if (formData?.cover) {
+                setCoverPreview(URL.createObjectURL(formData?.cover));
+                setCoverData(formData?.cover);
+            }
         }
-      }, [formData]);
+    }, [formData]);
 
-    // FUNCTION TO COMPRESS, PREVIEW, AND STORE COVER IMAGE
     const coverCreationFunc = async (file) => {
         const result = await trigger("cover");
         if (result) {
@@ -270,7 +267,7 @@ const ProjectRegister2 = ({ formData }) => {
                             </span>
                         )}
                     </div>
-               
+
                 </>
             ) : (
                 <></>
