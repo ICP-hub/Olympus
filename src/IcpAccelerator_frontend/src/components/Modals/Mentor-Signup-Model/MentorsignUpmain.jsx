@@ -42,8 +42,7 @@ const [formData, setFormData] = useState({});
 
 const methods = useForm({
   resolver: yupResolver(validationSchema),
-  mode: "onTouched", // Ensure it's "onTouched" or "onChange"
-  reValidateMode: "onChange", // Re-validate only on change
+  mode: "all", 
 });
 
 
@@ -99,20 +98,6 @@ const methods = useForm({
   const onSubmitHandler = async (data) => {
     console.log("Form data on submit:", data);
     if (actor) {
-      // Define user_data object separately
-      const user_data = {
-        full_name: "Chandan",
-        email: "chandu@gmail.com",
-        telegram_id:"https://abc.com",
-        twitter_id: "https://abc.com",
-        openchat_username:"Chandu_123",
-        bio: "dfghjkl",
-        country: "india",
-        area_of_interest: "sports",
-        type_of_profile: "Developer",
-        reason_to_join: "just i want to waste my time ",
-        profile_picture: [],
-      };
   
       // Define mentorData object separately
       const mentorData = {

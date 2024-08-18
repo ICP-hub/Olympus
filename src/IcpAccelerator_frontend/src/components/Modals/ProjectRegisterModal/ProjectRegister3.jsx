@@ -8,7 +8,7 @@ import Select from "react-select";
 import { useFormContext } from "react-hook-form";
 import { useSelector, useDispatch } from "react-redux";
 
-const ProjectRegister3 = ({ isOpen, onClose, onBack }) => {
+const ProjectRegister3 = ({ formData }) => {
     const {
         register,
         formState: { errors },
@@ -34,6 +34,26 @@ const ProjectRegister3 = ({ isOpen, onClose, onBack }) => {
             setMultiChainOptions([]);
         }
     }, [multiChainNames]);
+    useEffect(() => {
+        if (formData) {
+            setProjectValuesHandler(formData);
+        }
+      }, [formData]);
+    
+      const setProjectValuesHandler = (val) => {
+        console.log('val',val)
+        if (val) {
+          setValue("multi_chain", val?.multi_chain === true || val?.multi_chain === 'true' ? 'true' : 'false');
+          setValue("multi_chain_names", val?.multi_chain_names ? val?.multi_chain_names : "");
+      setMultiChainSelectedOptionsHandler(val.multi_chain_names ?? null);
+
+        }
+      };
+      const setMultiChainSelectedOptionsHandler = (val) => {
+        setMultiChainSelectedOptions(
+          val ? val.split(", ").map((chain) => ({ value: chain, label: chain })) : []
+        );
+      };
 
     return (
         <>
