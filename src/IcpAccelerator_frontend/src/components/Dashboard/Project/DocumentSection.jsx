@@ -7,6 +7,7 @@ import FAQ from "./Faq";
 import ProjectCard from './ProjectCard'; // Ensure this is correctly imported
 import { shareSvgIcon, backSvg } from '../../Utils/Data/SvgData'; // Ensure this is correctly imported
 import NotificationBanner from './Notification';
+import { useLocation } from 'react-router-dom';
 const DocumentItem = ({ title, description, buttonText, visibility, selectedOption, setSelectedOption }) => (
   <div className="flex items-stretch space-x-4 mb-6 pb-6">
   {/* Left Side */}
@@ -113,7 +114,7 @@ const DocumentItem = ({ title, description, buttonText, visibility, selectedOpti
 
     <button className="bg-[#155EEF] hover:bg-blue-700 text-white px-4 py-2 mt-3 rounded-[4px] border-2 text-sm flex items-center">
       <CloudUploadOutlinedIcon className="mr-2" fontSize="small" />
-      {buttonText}
+      Upload a file
     </button>
   </div>
 </div>
@@ -123,10 +124,12 @@ const DocumentItem = ({ title, description, buttonText, visibility, selectedOpti
 function DocumentSection() {
   const [activeTab, setActiveTab] = useState("document");
   const [selectedOption, setSelectedOption] = useState("file");
-
   const handleChange = (tab) => {
     setActiveTab(tab);
   };
+  const location = useLocation();
+
+  const { projectId, cardData } = location.state || {};
 
   return (
     <div className="container mx-auto mb-5 bg-white">
@@ -203,7 +206,7 @@ function DocumentSection() {
                     selectedOption={selectedOption}
                     setSelectedOption={setSelectedOption}
                   />
-                  <DocumentItem 
+                  {/* <DocumentItem 
                     title="Whitepaper"
                     description="Est malesuada ac elit gravida vel aliquam nec. Arcu pelle ntesque convallis quam feugiat non viverra massa fringilla."
                     buttonText="Upload a file"
@@ -242,7 +245,7 @@ function DocumentSection() {
                     visibility="Visible to investors only"
                     selectedOption={selectedOption}
                     setSelectedOption={setSelectedOption}
-                  />
+                  /> */}
                 </div>
                 <FAQ />
               </>
@@ -250,7 +253,10 @@ function DocumentSection() {
 
             {activeTab === "team" && (
               <>
-                <TeamSection />
+                <TeamSection 
+                 data={projectId}
+                 cardData={cardData}
+                />
                 <FAQ />
               </>
             )}
