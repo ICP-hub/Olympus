@@ -81,22 +81,22 @@ const ProjectDetailsForOwnerProject = () => {
       id: "investors-associated",
       label: "investors",
     },
-    {
-      id: "community-ratings",
-      label: "community rating",
-    },
-    {
-      id: "project-ratings",
-      label: "Rubric Rating",
-    },
+    // {
+    //   id: "community-ratings",
+    //   label: "community rating",
+    // },
+    // {
+    //   id: "project-ratings",
+    //   label: "Rubric Rating",
+    // },
     {
       id: "project-documents",
       label: "Documents",
     },
-    {
-      id: "project-money-raising",
-      label: "Money Raised",
-    },
+    // {
+    //   id: "project-money-raising",
+    //   label: "Money Raised",
+    // },
   ];
 
   const [activeTab, setActiveTab] = useState(headerData[0].id);
@@ -289,7 +289,7 @@ const ProjectDetailsForOwnerProject = () => {
     <section className="text-black bg-gray-100 pb-4 font-fontUse">
       <div className="w-full px-[4%] lg1:px-[5%]">
         <div className="flex-col">
-          <div className="pt-4 mb-4">
+          <div className=" mb-4">
             <ProjectDetailsCard
               data={projectData}
               image={true}
@@ -325,7 +325,7 @@ const ProjectDetailsForOwnerProject = () => {
           <div className="mb-4">
             {/* <ProjectRank dayRank={true} weekRank={true} /> */}
             <div className="text-sm font-bold text-center text-[#737373] mt-5 pt-4">
-              <div className="flex dxl:hidden justify-between">
+              <div className="flex justify-between">
                 <h1 className="capitalize bg-gradient-to-r from-indigo-900 to-sky-400 text-transparent bg-clip-text mr-2 text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold">
                   {tabLabel}
                 </h1>
@@ -344,7 +344,7 @@ const ProjectDetailsForOwnerProject = () => {
                             handleTabClick(header?.id), setShowList(!showList);
                           }}
                         >
-                          <div className="capitalize text-base">
+                          <div className="capitalize  focus:outline-none font-medium  text-gray-400">
                             {header.label}
                           </div>
                         </button>
@@ -352,14 +352,14 @@ const ProjectDetailsForOwnerProject = () => {
                     ))}
                 </ul>
               )}
-              <ul className="dxl:flex hidden flex-wrap -mb-px text-[10px] ss2:text-[10.5px] ss3:text-[11px]  cursor-pointer">
+              <ul className="dxl:flex  flex-wrap -mb-px   cursor-pointer">
                 {headerData.map((header) => (
                   <li key={header.id} className="me-6 relative group">
                     <button
                       className={getTabClassName(header?.id)}
                       onClick={() => handleTabClick(header?.id)}
                     >
-                      <div className="capitalize text-base">{header.label}</div>
+                      <div className="capitalize  focus:outline-none font-medium  text-gray-400">{header.label}</div>
                     </button>
                   </li>
                 ))}

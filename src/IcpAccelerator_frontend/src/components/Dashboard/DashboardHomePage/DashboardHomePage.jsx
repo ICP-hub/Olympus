@@ -4,7 +4,7 @@ import DashboardHomeSidebar from './DashboardHomeSidebar'
 import DashboardHomeWelcomeSection from './DashboardHomeWelcomeSection'
 import { Routes, Route } from 'react-router-dom';
 import ProjectProfile from './ProjectProfile'
-import UserSection from './UserSection'
+import UserSection from '../../Discover/UserSection'
 import Jobs from '../../jobs/Jobs'
 import ProfilePage from '../../profile/ProfilePage'
 import EventMain from '../DashboardEvents/EventMain'
