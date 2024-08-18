@@ -26,7 +26,7 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
   useEffect(() => {
     if (isAuthenticated) {
       if (userFullData) {
-        navigate("/dashboard"); 
+        navigate("dashboard"); 
       } else {
         navigate("register-user");
       }
