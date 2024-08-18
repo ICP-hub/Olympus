@@ -170,7 +170,7 @@ const ProjectDetail = () => {
         control,
         name: "links",
     });
-    const getLogo = (url) => {
+    admin = (url) => {
         try {
             const domain = new URL(url).hostname.split(".").slice(-2).join(".");
             const size = "size-8";
