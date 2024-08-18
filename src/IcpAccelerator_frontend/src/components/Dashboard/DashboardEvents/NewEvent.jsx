@@ -25,7 +25,7 @@ const events = [
     },
 ];
 
-const NewEvent = ({event}) => {
+const NewEvent = ({ event }) => {
 
     const [modalOpen, setModalOpen] = useState(false);
     const [cohortEvents, setCohortEvents] = useState([]);
@@ -56,9 +56,9 @@ const NewEvent = ({event}) => {
                 }));
 
                 setCohortEvents(formattedEvents);
-                console.log("formattedevents",formattedEvents)
+                console.log("formattedevents", formattedEvents)
             }
-            
+
             catch (error) {
                 console.log("Catch K ANDR AAGYA")
                 console.error('Error fetching cohort data:', error);
@@ -81,8 +81,8 @@ const NewEvent = ({event}) => {
             </div>
             <div className="max-w-7xl mx-auto bg-white">
                 {cohortEvents.map((event, index) => {
-                    console.log('map k andr data',event)
-               return     <div key={index} className="bg-white rounded-lg shadow p-4 mb-6">
+                    console.log('map k andr data', event)
+                    return <div key={index} className="bg-white rounded-lg shadow p-4 mb-6">
                         <div className="flex justify-between items-center">
                             <div className="flex items-center gap-1 relative">
                                 <div className="max-w-[160px] absolute top-1 left-1 bg-white p-2 rounded-[8px]">
@@ -115,7 +115,7 @@ const NewEvent = ({event}) => {
                             </div>
                         </div>
                     </div>
-})}
+                })}
             </div>
 
             {modalOpen && (
