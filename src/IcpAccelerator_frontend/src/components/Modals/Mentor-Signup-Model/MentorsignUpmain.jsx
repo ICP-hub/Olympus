@@ -29,33 +29,39 @@ const validationSchema = yup.object().shape({
     .typeError("You must enter a number")
     .positive("Must be a positive number")
     .required("Years of experience mentoring startups is required"),
-  mentor_linkedin_url: yup.string().url("Invalid url").required("LinkedIn url is required"),
+  // mentor_linkedin_url: yup.string().url("Invalid url").required("LinkedIn url is required"),
+  links: yup.array().of(
+    yup.object().shape({
+      url: yup.string().url("Invalid URL").nullable(true).optional(),
+    })
+  ),
 });
-const MentorSignupMain = ({}) => {
+const MentorSignupMain = ({ }) => {
   const dispatch = useDispatch();
   const actor = useSelector((state) => state.actors.actor);
 
   const [modalOpen, setModalOpen] = useState(true);
   const [index, setIndex] = useState(0);
-const [formData, setFormData] = useState({});
- 
+  const [formData, setFormData] = useState({});
+
 
 const methods = useForm({
   resolver: yupResolver(validationSchema),
   mode: "all", 
 });
+  
 
 
   const { handleSubmit, trigger, formState: { isSubmitting }, getValues } = methods;
 
   const formFields = {
     0: ["preferred_icp_hub", "category_of_mentoring_service", "multi_chain", "multi_chain_names"],
-    1: ["icp_hub_or_spoke", "hub_owner", "mentor_website_url", "years_of_mentoring", "mentor_linkedin_url"],
+    1: ["icp_hub_or_spoke", "hub_owner", "mentor_website_url", "years_of_mentoring", "links"],
   };
 
   const handleNext = async () => {
     const isValid = await trigger(formFields[index]);
-  
+
     if (isValid) {
       setFormData((prevData) => ({
         ...prevData,
@@ -64,8 +70,8 @@ const methods = useForm({
       setIndex((prevIndex) => prevIndex + 1);
     }
   };
-  
-  
+
+
 
   const handleBack = () => {
     if (index > 0) {
@@ -76,9 +82,9 @@ const methods = useForm({
   const renderComponent = () => {
     switch (index) {
       case 0:
-        return <MentorSignup3 formData={formData} setFormData={setFormData}/>;
+        return <MentorSignup3 formData={formData} setFormData={setFormData} />;
       case 1:
-        return <MentorSignup4  formData={formData} setFormData={setFormData}/>;
+        return <MentorSignup4 formData={formData} setFormData={setFormData} />;
       default:
         return <MentorSignup3 />;
     }
@@ -88,16 +94,31 @@ const methods = useForm({
     dispatch(allHubHandlerRequest());
   }, [actor, dispatch]);
 
- 
+
 
   const onErrorHandler = (errors) => {
-    toast.error("Empty fields or invalid values, please recheck the form",errors);
-    console.log("Empty fields or invalid values, please recheck the form",errors)
+    toast.error("Empty fields or invalid values, please recheck the form", errors);
+    console.log("Empty fields or invalid values, please recheck the form", errors)
   };
 
   const onSubmitHandler = async (data) => {
     console.log("Form data on submit:", data);
     if (actor) {
+      // Define user_data object separately
+      const user_data = {
+        full_name: "Chandan",
+        email: "chandu@gmail.com",
+        telegram_id: "https://abc.com",
+        twitter_id: "https://abc.com",
+        openchat_username: "Chandu_123",
+        bio: "dfghjkl",
+        country: "india",
+        area_of_interest: "sports",
+        type_of_profile: "Developer",
+        reason_to_join: "just i want to waste my time ",
+        profile_picture: [],
+      };
+
   
       // Define mentorData object separately
       const mentorData = {
@@ -106,19 +127,22 @@ const methods = useForm({
         hub_owner: [data.icp_hub_or_spoke === "true" && data.hub_owner ? data.hub_owner : ""],
         category_of_mentoring_service: data.category_of_mentoring_service,
         years_of_mentoring: data.years_of_mentoring.toString(),
-        linkedin_link: data.mentor_linkedin_url,
+        // linkedin_link: data.mentor_linkedin_url,
+        links: data?.links
+          ? [data.links.map((val) => ({ link: val?.link ? [val.link] : [] }))]
+          : [],
         multichain: [data.multi_chain === "true" && data.multi_chain_names ? data.multi_chain_names : ""],
         website: [data.mentor_website_url || ""],
         existing_icp_mentor: false,
         existing_icp_project_porfolio: [data.existing_icp_project_porfolio || ""],
         area_of_expertise: "",
         reason_for_joining: [""],
-        
+
       };
-  
+
       try {
         await actor.register_mentor_candid(mentorData).then((result) => {
-          console.log('result',result)
+          console.log('result', result)
           if (result) {
             toast.success("Created successfully");
             // window.location.href = "/";
@@ -135,7 +159,7 @@ const methods = useForm({
       window.location.href = "/";
     }
   };
-  
+
 
   return (
     <>

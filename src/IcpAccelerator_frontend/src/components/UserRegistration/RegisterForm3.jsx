@@ -20,9 +20,29 @@ import {
   FaPlus,
   FaTrash,
 } from "react-icons/fa";
-import CompressedImage from "../../component/ImageCompressed/CompressedImage";
+import { LanguageIcon } from "./DefaultLink";
+// const LanguageIcon = () => (
+//   <svg
+//     xmlns="http://www.w3.org/2000/svg"
+//     width="24"
+//     height="24"
+//     viewBox="0 0 24 24"
+//     fill="none"
+//     stroke="currentColor"
+//     strokeWidth="2"
+//     strokeLinecap="round"
+//     strokeLinejoin="round"
+//     className="feather feather-globe"
+//   >
+//     <circle cx="12" cy="12" r="10"></circle>
+//     <line x1="2" y1="12" x2="22" y2="12"></line>
+//     <path d="M12 2a15.3 15.3 0 0 1 4 10.9c0 4.8-1.7 8.7-4 10.9"></path>
+//     <path d="M12 2C9.7 2 7 5.9 7 10.9c0 4.8 1.7 8.7 4 10.9"></path>
+//   </svg>
+// );
+// import CompressedImage from "../../component/ImageCompressed/CompressedImage";
 
-const RegisterForm3 = ({setImageData}) => {
+const RegisterForm3 = ({ setImageData }) => {
   const { countries } = useCountries();
   const areaOfExpertise = useSelector(
     (currState) => currState.expertiseIn.expertise || []
@@ -105,6 +125,29 @@ const RegisterForm3 = ({setImageData}) => {
     name: "links",
   });
 
+  // const getLogo = (url) => {
+  //   try {
+  //     const domain = new URL(url).hostname.split(".").slice(-2).join(".");
+  //     const size = "size-8";
+  //     const icons = {
+  //       "linkedin.com": <FaLinkedin className={`text-blue-600 ${size}`} />,
+  //       "twitter.com": <FaTwitter className={`text-blue-400 ${size}`} />,
+  //       "github.com": <FaGithub className={`text-gray-700 ${size}`} />,
+  //       "telegram.com": <FaTelegram className={`text-blue-400 ${size}`} />,
+  //       "facebook.com": <FaFacebook className={`text-blue-400 ${size}`} />,
+  //       "instagram.com": <FaInstagram className={`text-pink-950 ${size}`} />,
+  //       "youtube.com": <FaYoutube className={`text-red-600 ${size}`} />,
+  //       "reddit.com": <FaReddit className={`text-orange-500 ${size}`} />,
+  //       "tiktok.com": <FaTiktok className={`text-black ${size}`} />,
+  //       "snapchat.com": <FaSnapchat className={`text-yellow-400 ${size}`} />,
+  //       "whatsapp.com": <FaWhatsapp className={`text-green-600 ${size}`} />,
+  //       "medium.com": <FaMedium className={`text-black ${size}`} />,
+  //     };
+  //     return icons[domain] || null;
+  //   } catch (error) {
+  //     return null;
+  //   }
+  // };
   const getLogo = (url) => {
     try {
       const domain = new URL(url).hostname.split(".").slice(-2).join(".");
@@ -123,11 +166,12 @@ const RegisterForm3 = ({setImageData}) => {
         "whatsapp.com": <FaWhatsapp className={`text-green-600 ${size}`} />,
         "medium.com": <FaMedium className={`text-black ${size}`} />,
       };
-      return icons[domain] || null;
+      return icons[domain] || <LanguageIcon />;
     } catch (error) {
-      return null;
+      return <LanguageIcon />;
     }
   };
+
   useEffect(() => {
     if (areaOfExpertise) {
       setInterestedDomainsOptions(
@@ -336,9 +380,8 @@ const RegisterForm3 = ({setImageData}) => {
         </label>
         <textarea
           {...register("bio")}
-          className={`bg-gray-50 border-2 ${
-            errors?.bio ? "border-red-500 " : "border-[#737373]"
-          } mt-2 p-2 border border-gray-300 rounded-md w-full h-24`}
+          className={`bg-gray-50 border-2 ${errors?.bio ? "border-red-500 " : "border-[#737373]"
+            } mt-2 p-2 border border-gray-300 rounded-md w-full h-24`}
           placeholder="Enter your bio"
           rows={1}
         ></textarea>
@@ -437,11 +480,11 @@ const RegisterForm3 = ({setImageData}) => {
             }
           }}
         />
-        {errors.domains_interested_in && (
+        {/* {errors.domains_interested_in && (
           <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
             {errors.domains_interested_in.message}
           </span>
-        )}
+        )} */}
       </div>
       <div className="mb-4">
         <label
@@ -452,9 +495,8 @@ const RegisterForm3 = ({setImageData}) => {
         </label>
         <select
           {...register("type_of_profile")}
-          className={`bg-gray-50 border-2 ${
-            errors.type_of_profile ? "border-red-500 " : "border-[#737373]"
-          }mt-2 p-2 border border-gray-300 rounded-md w-full`}
+          className={`bg-gray-50 border-2 ${errors.type_of_profile ? "border-red-500 " : "border-[#737373]"
+            }mt-2 p-2 border border-gray-300 rounded-md w-full`}
         >
           <option className="text-lg font-bold" value="">
             Select profile type
@@ -472,11 +514,11 @@ const RegisterForm3 = ({setImageData}) => {
               );
             })}
         </select>
-        {errors.type_of_profile && (
+        {/* {errors.type_of_profile && (
           <p className="mt-1 text-sm text-red-500 font-bold text-left">
             {errors.type_of_profile.message}
           </p>
-        )}
+        )} */}
       </div>
       <div className="mb-4">
         <label
@@ -487,9 +529,8 @@ const RegisterForm3 = ({setImageData}) => {
         </label>
         <select
           {...register("country")}
-          className={`bg-gray-50 border-2 ${
-            errors.country ? "border-red-500 " : "border-[#737373]"
-          }  p-2 border border-gray-300 rounded-md w-full`}
+          className={`bg-gray-50 border-2 ${errors.country ? "border-red-500 " : "border-[#737373]"
+            }  p-2 border border-gray-300 rounded-md w-full`}
         >
           <option className="text-lg font-bold" value="">
             Select your country
@@ -530,11 +571,10 @@ const RegisterForm3 = ({setImageData}) => {
                       <input
                         type="text"
                         placeholder="Enter your social media URL"
-                        className={`p-2 border ${
-                          fieldState.error
-                            ? "border-red-500"
-                            : "border-gray-300"
-                        } rounded-md w-full`}
+                        className={`p-2 border ${fieldState.error
+                          ? "border-red-500"
+                          : "border-gray-300"
+                          } rounded-md w-full`}
                         {...field}
                       />
                     </div>
