@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useFormContext, Controller, useFieldArray } from "react-hook-form";
-
+import { LanguageIcon } from "../../UserRegistration/DefaultLink"
 import {
     FaLinkedin,
     FaTwitter,
@@ -53,9 +53,9 @@ const ProjectRegister5 = ({ isOpen, onClose, onBack }) => {
                 "whatsapp.com": <FaWhatsapp className={`text-green-600 ${size}`} />,
                 "medium.com": <FaMedium className={`text-black ${size}`} />,
             };
-            return icons[domain] || null;
+            return icons[domain] || <LanguageIcon />;
         } catch (error) {
-            return null;
+            return <LanguageIcon />;
         }
     };
 
@@ -148,7 +148,7 @@ const ProjectRegister5 = ({ isOpen, onClose, onBack }) => {
                     </button>
                 </div>
             </div>
-           
+
         </>
     );
 };

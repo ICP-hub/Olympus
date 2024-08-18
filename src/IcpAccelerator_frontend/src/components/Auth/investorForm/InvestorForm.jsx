@@ -21,7 +21,7 @@ import InvestorModal3 from "./InvestorModal3";
 import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_IcpHubReducer";
 // import { allHubHandlerRequest } from "../StateManagement/Redux/Reducers/All_IcpHubReducer";
 
-const InvestorForm = ({ isOpen}) => {
+const InvestorForm = ({ isOpen }) => {
   const [modalOpen, setModalOpen] = useState(isOpen || true);
   const { countries } = useCountries();
   const dispatch = useDispatch();
@@ -43,12 +43,12 @@ const InvestorForm = ({ isOpen}) => {
         .when("investor_registered", (val, schema) =>
           val && val[0] === "true"
             ? schema
-                .test(
-                  "is-non-empty",
-                  "Registered country name required",
-                  (value) => /\S/.test(value)
-                )
-                .required("Registered country name required")
+              .test(
+                "is-non-empty",
+                "Registered country name required",
+                (value) => /\S/.test(value)
+              )
+              .required("Registered country name required")
             : schema
         ),
 
@@ -66,18 +66,18 @@ const InvestorForm = ({ isOpen}) => {
         .when("existing_icp_investor", (val, schema) =>
           val && val[0] === "true"
             ? schema
-                .test(
-                  "is-non-empty",
-                  "Atleast one investment type required",
-                  (value) => /\S/.test(value)
-                )
-                .required("Atleast one investment type required")
+              .test(
+                "is-non-empty",
+                "Atleast one investment type required",
+                (value) => /\S/.test(value)
+              )
+              .required("Atleast one investment type required")
             : schema
         ),
       investor_portfolio_link: yup
         .string()
         .url("Invalid URL"),
-        // .required("Portfolio URL is required"),
+      // .required("Portfolio URL is required"),
 
 
       investor_fund_name: yup
@@ -102,12 +102,12 @@ const InvestorForm = ({ isOpen}) => {
         .when("invested_in_multi_chain", (val, schema) =>
           val && val[0] === "true"
             ? schema
-                .test(
-                  "is-non-empty",
-                  "Atleast one chain name required",
-                  (value) => /\S/.test(value)
-                )
-                .required("Atleast one chain name required")
+              .test(
+                "is-non-empty",
+                "Atleast one chain name required",
+                (value) => /\S/.test(value)
+              )
+              .required("Atleast one chain name required")
             : schema
         ),
       investment_categories: yup
@@ -143,10 +143,10 @@ const InvestorForm = ({ isOpen}) => {
         .when("investment_stage", (val, schema) =>
           val && val !== "we do not currently invest"
             ? schema
-                .test("is-non-empty", "Atleast one range required", (value) =>
-                  /\S/.test(value)
-                )
-                .required("Atleast one range required")
+              .test("is-non-empty", "Atleast one range required", (value) =>
+                /\S/.test(value)
+              )
+              .required("Atleast one range required")
             : schema
         ),
     })
@@ -196,62 +196,62 @@ const InvestorForm = ({ isOpen}) => {
   // data submit handler
   const onSubmitHandler = async (data) => {
     if (actor) {
-        const investorData = {
-            name_of_fund: data?.investor_fund_name,
-            fund_size: [
-              data?.investor_fund_size &&
-              typeof data?.investor_fund_size === "number"
-                ? data?.investor_fund_size
-                : 0,
-            ],
-            existing_icp_investor:
-              data?.existing_icp_investor === "true" ? true : false,
-            investor_type: [
-              data?.existing_icp_investor === "true" && data?.investment_type
-                ? data?.investment_type
-                : "",
-            ],
-            project_on_multichain: [
-              data?.invested_in_multi_chain === "true" &&
-              data?.invested_in_multi_chain_names
-                ? data?.invested_in_multi_chain_names
-                : "",
-            ],
-            category_of_investment: data?.investment_categories,
-            preferred_icp_hub: data?.preferred_icp_hub,
-            portfolio_link: data?.investor_portfolio_link,
-            website_link: [data?.investor_website_url || ""],
-            registered: data?.investor_registered === "true" ? true : false,
-            registered_country: [
-              data?.investor_registered === "true" && data?.registered_country
-                ? data?.registered_country
-                : "",
-            ],
-            linkedin_link: data?.investor_linkedin_url,
-            stage: [data?.investment_stage || ""],
-            range_of_check_size: [
-              data?.investment_stage !== "" &&
-              data?.investment_stage !== "we do not currently invest" &&
-              data?.investment_stage_range
-                ? data?.investment_stage_range
-                : "",
-            ],
-            // investor data not exiting on frontend or raw variables
-            average_check_size: 0,
-            assets_under_management: [""],
-            registered_under_any_hub: [false],
-            logo: [[]],
-            money_invested: [0],
-            existing_icp_portfolio: [""],
-            reason_for_joining: [""],
-            type_of_investment: "",
-            number_of_portfolio_companies: 0,
-            announcement_details: [""],
-          }
+      const investorData = {
+        name_of_fund: data?.investor_fund_name,
+        fund_size: [
+          data?.investor_fund_size &&
+            typeof data?.investor_fund_size === "number"
+            ? data?.investor_fund_size
+            : 0,
+        ],
+        existing_icp_investor:
+          data?.existing_icp_investor === "true" ? true : false,
+        investor_type: [
+          data?.existing_icp_investor === "true" && data?.investment_type
+            ? data?.investment_type
+            : "",
+        ],
+        project_on_multichain: [
+          data?.invested_in_multi_chain === "true" &&
+            data?.invested_in_multi_chain_names
+            ? data?.invested_in_multi_chain_names
+            : "",
+        ],
+        category_of_investment: data?.investment_categories,
+        preferred_icp_hub: data?.preferred_icp_hub,
+        portfolio_link: data?.investor_portfolio_link,
+        website_link: [data?.investor_website_url || ""],
+        registered: data?.investor_registered === "true" ? true : false,
+        registered_country: [
+          data?.investor_registered === "true" && data?.registered_country
+            ? data?.registered_country
+            : "",
+        ],
+        linkedin_link: data?.investor_linkedin_url,
+        stage: [data?.investment_stage || ""],
+        range_of_check_size: [
+          data?.investment_stage !== "" &&
+            data?.investment_stage !== "we do not currently invest" &&
+            data?.investment_stage_range
+            ? data?.investment_stage_range
+            : "",
+        ],
+        // investor data not exiting on frontend or raw variables
+        average_check_size: 0,
+        assets_under_management: [""],
+        registered_under_any_hub: [false],
+        logo: [[]],
+        money_invested: [0],
+        existing_icp_portfolio: [""],
+        reason_for_joining: [""],
+        type_of_investment: "",
+        number_of_portfolio_companies: 0,
+        announcement_details: [""],
+      }
       console.log(investorData);
       try {
         await actor.register_venture_capitalist(investorData).then((result) => {
-            console.log('result',result)
+          console.log('result', result)
           if (result && result.includes("User registered successfully")) {
             toast.success("Registered as a User");
             // window.location.href = "/";
@@ -265,7 +265,7 @@ const InvestorForm = ({ isOpen}) => {
       }
     } else {
       toast.error("Please signup with internet identity first");
-    //   window.location.href = "/";
+      //   window.location.href = "/";
     }
   };
 
@@ -317,9 +317,8 @@ const InvestorForm = ({ isOpen}) => {
   }, [actor, dispatch]);
   return (
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${
-        modalOpen ? "block" : "hidden"
-      }`}
+      className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${modalOpen ? "block" : "hidden"
+        }`}
     >
       <div className="container mx-auto">
         <div className="pb-12 flex items-center justify-center rounded-xl">
@@ -334,7 +333,7 @@ const InvestorForm = ({ isOpen}) => {
             </div>
             <div className="w-full p-6">
               <h2 className="text-[#364152] text-sm font-normal mb-2  text-start">
-                Step {index + 1} of 3
+                Step {index + 1} of 4
               </h2>
               <FormProvider
                 {...{
@@ -357,9 +356,8 @@ const InvestorForm = ({ isOpen}) => {
                 <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
                   {renderComponent()}
                   <div
-                    className={`flex mt-4 ${
-                      index === 0 ? "justify-end" : "justify-between"
-                    }`}
+                    className={`flex mt-4 ${index === 0 ? "justify-end" : "justify-between"
+                      }`}
                   >
                     {index > 0 && (
                       <button
@@ -374,7 +372,7 @@ const InvestorForm = ({ isOpen}) => {
                         Back
                       </button>
                     )}
-                    {index === 3 ? (
+                    {index === 4 ? (
                       <button
                         type="submit"
                         className="py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 border-2 border-[#B2CCFF]"

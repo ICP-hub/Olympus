@@ -123,7 +123,7 @@ const ProfilePage = () => {
           <div className="w-full">
             {activeTab === "event" && (
               <>
-                {/* <EventSection />  First component, rendered above */}
+                <EventSection />  First component, rendered above
                 <NewEvent />  {/* Second component, rendered below */}
               </>
             )}
