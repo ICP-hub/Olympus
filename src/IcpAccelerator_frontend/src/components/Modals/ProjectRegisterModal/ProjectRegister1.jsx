@@ -1,14 +1,11 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect } from "react"; // IMPORTING REACT HOOKS
+import ControlPointIcon from "@mui/icons-material/ControlPoint"; // IMPORTING ICON COMPONENT FROM MUI
+import { useFormContext, Controller } from "react-hook-form"; // IMPORTING FUNCTIONS AND CONTROLLER FROM REACT-HOOK-FORM
+import CompressedImage from "../../../component/ImageCompressed/CompressedImage"; // IMPORTING IMAGE COMPRESSION COMPONENT
+import { useSelector, useDispatch } from "react-redux"; // IMPORTING REDUX HOOKS FOR STATE MANAGEMENT
+import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_IcpHubReducer"; // IMPORTING REDUX ACTION FOR FETCHING ICP HUB DATA
 
-import ControlPointIcon from "@mui/icons-material/ControlPoint";
-
-import { useForm } from "react-hook-form";
-import { useFormContext, Controller } from "react-hook-form";
-import CompressedImage from "../../../component/ImageCompressed/CompressedImage";
-import { useSelector, useDispatch } from "react-redux";
-import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_IcpHubReducer";
-
-const ProjectRegister1 = ({ formData }) => {
+const ProjectRegister1 = ({ formData }) => { // MAIN COMPONENT FUNCTION
   console.log("formData", formData);
   const {
     register,
@@ -19,75 +16,80 @@ const ProjectRegister1 = ({ formData }) => {
     setValue,
     getValues,
     control,
-  } = useFormContext();
-  const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
-  const dispatch = useDispatch();
-  const [logoPreview, setLogoPreview] = useState(null);
-  const [logoData, setLogoData] = useState(null);
+  } = useFormContext(); // DESTRUCTURING REACT-HOOK-FORM METHODS FOR FORM HANDLING
 
+  const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs); // SELECTING ICP HUBS DATA FROM REDUX STORE
+  const dispatch = useDispatch(); // INITIALIZING DISPATCH FUNCTION FOR REDUX ACTIONS
+  const [logoPreview, setLogoPreview] = useState(null); // STATE TO HOLD LOGO PREVIEW IMAGE URL
+  const [logoData, setLogoData] = useState(null); // STATE TO HOLD COMPRESSED LOGO DATA
 
   useEffect(() => {
-    // Set form fields with formData values on mount
+    // USE EFFECT HOOK TO SET FORM FIELDS WITH EXISTING FORM DATA ON COMPONENT MOUNT
     if (formData) {
       if (formData?.logo) {
+        // IF LOGO IS AVAILABLE IN FORM DATA, SET LOGO PREVIEW AND LOGO DATA
         setLogoPreview(URL.createObjectURL(formData?.logo));
         setLogoData(formData?.logo);
       }
     }
-  }, [formData]);
-  // logo creation function compression and uintarray creator
+  }, [formData]); // DEPENDENCY ARRAY LISTENING FOR CHANGES IN formData
+
   const logoCreationFunc = async (file) => {
-    const result = await trigger("logo");
+    // FUNCTION TO HANDLE LOGO CREATION, INCLUDING COMPRESSION AND CONVERSION TO UINT8ARRAY
+    const result = await trigger("logo"); // TRIGGERING VALIDATION FOR LOGO FIELD
     if (result) {
       try {
-        const compressedFile = await CompressedImage(file);
-        const reader = new FileReader();
+        const compressedFile = await CompressedImage(file); // COMPRESSING IMAGE
+        const reader = new FileReader(); // INITIALIZING FILE READER TO PREVIEW IMAGE
         reader.onloadend = () => {
-          setLogoPreview(reader.result);
+          setLogoPreview(reader.result); // SETTING LOGO PREVIEW
         };
         reader.onerror = (error) => {
-          console.error("FileReader error: ", error);
+          console.error("FileReader error: ", error); // HANDLING FILE READER ERROR
           setError("logo", {
             type: "manual",
-            message: "Failed to load the compressed logo.",
+            message: "Failed to load the compressed logo.", // SETTING ERROR MESSAGE FOR LOGO
           });
         };
-        reader.readAsDataURL(compressedFile);
+        reader.readAsDataURL(compressedFile); // READING COMPRESSED IMAGE AS DATA URL
 
-        const byteArray = new Uint8Array(await compressedFile.arrayBuffer());
-        setLogoData(byteArray);
+        const byteArray = new Uint8Array(await compressedFile.arrayBuffer()); // CONVERTING COMPRESSED IMAGE TO UINT8ARRAY
+        setLogoData(byteArray); // SETTING LOGO DATA
       } catch (error) {
         setError("logo", {
           type: "manual",
-          message: "Could not process logo, please try another.",
+          message: "Could not process logo, please try another.", // HANDLING IMAGE COMPRESSION ERROR
         });
       }
     } else {
-      console.log("ERROR--logoCreationFunc-file", file);
+      console.log("ERROR--logoCreationFunc-file", file); // LOGGING ERROR IF VALIDATION FAILS
     }
   };
 
   const clearLogoFunc = (value) => {
+    // FUNCTION TO CLEAR LOGO DATA AND PREVIEW
     let fields_id = value;
-    setValue(fields_id, null);
-    clearErrors(fields_id);
-    setLogoData(null);
-    setLogoPreview(null);
+    setValue(fields_id, null); // RESETTING FORM VALUE FOR LOGO FIELD
+    clearErrors(fields_id); // CLEARING ERRORS FOR LOGO FIELD
+    setLogoData(null); // RESETTING LOGO DATA
+    setLogoPreview(null); // RESETTING LOGO PREVIEW
   };
 
   useEffect(() => {
-    dispatch(allHubHandlerRequest());
-  }, [dispatch]);
+    dispatch(allHubHandlerRequest()); // DISPATCHING ACTION TO FETCH ALL ICP HUBS
+  }, [dispatch]); // DEPENDENCY ARRAY LISTENING FOR CHANGES IN DISPATCH
 
   return (
     <>
       <h1 className="text-3xl text-[#121926] font-bold mb-3">
         Create a project
       </h1>
+      {/* HEADING FOR THE PROJECT REGISTRATION FORM */}
       <div className="mb-2">
         <label className="block text-sm font-medium mb-1">
           Upload a logo<span className="text-red-500">*</span>
         </label>
+        {/* LABEL FOR LOGO UPLOAD FIELD */}
         <div className="flex gap-2 mb-3 ">
           <div className=" h-24 w-24 rounded-2xl border-2 border-dashed border-gray-300 items-center justify-center overflow-hidden flex  ">
             {logoPreview && !errors.logo ? (
@@ -96,6 +98,7 @@ const ProjectRegister1 = ({ formData }) => {
                 alt="Logo"
                 className="h-full w-full object-cover"
               />
+              // DISPLAYING LOGO PREVIEW IF LOGO DATA EXISTS
             ) : (
               <svg
                 width="35"
@@ -110,6 +113,7 @@ const ProjectRegister1 = ({ formData }) => {
                   fill="#BBBBBB"
                 />
               </svg>
+              // DISPLAYING DEFAULT SVG IF NO LOGO DATA EXISTS
             )}
           </div>
           <div className="flex gap-1 items-center justify-center">
@@ -129,7 +133,7 @@ const ProjectRegister1 = ({ formData }) => {
                     }}
                     accept=".jpg, .jpeg, .png"
                   />
-
+                  {/* INPUT FOR LOGO FILE UPLOAD */}
                   <label
                     htmlFor="logo"
                     className=" font-medium text-gray-700 border border-[#CDD5DF] px-4 py-1 cursor-pointer rounded  "
@@ -139,6 +143,7 @@ const ProjectRegister1 = ({ formData }) => {
                       className="items-center -mt-1 mr-2"
                     />
                     {logoPreview && !errors.logo ? "Change logo" : "Upload"}
+                    {/* BUTTON TO UPLOAD OR CHANGE LOGO */}
                   </label>
                   {logoPreview || errors.logo ? (
                     <button
@@ -146,12 +151,11 @@ const ProjectRegister1 = ({ formData }) => {
                       onClick={() => clearLogoFunc("logo")}
                     >
                       clear
+                      {/* BUTTON TO CLEAR LOGO DATA */}
                     </button>
                   ) : (
                     ""
                   )}
-                  {/* </div> */}
-                  {/* </div> */}
                 </>
               )}
             />
@@ -162,18 +166,15 @@ const ProjectRegister1 = ({ formData }) => {
         <span className="mt-1 text-sm text-red-500 font-bold text-start px-4">
           {errors?.logo?.message}
         </span>
+        // DISPLAYING LOGO FIELD ERROR MESSAGE IF ANY
       )}
 
       <div className="mb-2 ">
         <label className="block text-sm font-medium mb-1">
           Preferred ICP Hub you would like to be associated with
-          <span
-            className="text-red-500
-                    "
-          >
-            *
-          </span>
+          <span className="text-red-500">*</span>
         </label>
+        {/* LABEL FOR PREFERRED ICP HUB DROPDOWN */}
         <select
           {...register("preferred_icp_hub")}
           defaultValue={getValues("preferred_icp_hub")}
@@ -183,6 +184,7 @@ const ProjectRegister1 = ({ formData }) => {
           <option className="text-lg font-bold" value="">
             Select your ICP Hub
           </option>
+          {/* DEFAULT OPTION FOR ICP HUB SELECTION */}
           {getAllIcpHubs?.map((hub) => (
             <option
               key={hub.id}
@@ -190,6 +192,7 @@ const ProjectRegister1 = ({ formData }) => {
               className="text-lg font-normal "
             >
               {hub.name}, {hub.region}
+              {/* POPULATING ICP HUB OPTIONS DYNAMICALLY */}
             </option>
           ))}
         </select>
@@ -197,12 +200,14 @@ const ProjectRegister1 = ({ formData }) => {
           <p className="mt-1 text-sm text-red-500 font-bold text-left">
             {errors.preferred_icp_hub.message}
           </p>
+          // DISPLAYING ERROR MESSAGE FOR PREFERRED ICP HUB FIELD IF ANY
         )}
       </div>
       <div className="mb-2">
         <label className="block text-sm font-medium mb-1">
           Project Name<span className="text-red-500">*</span>
         </label>
+        {/* LABEL FOR PROJECT NAME INPUT FIELD */}
 
         <input
           type="text"
@@ -218,6 +223,7 @@ const ProjectRegister1 = ({ formData }) => {
           <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
             {errors?.project_name?.message}
           </span>
+          // DISPLAYING ERROR MESSAGE FOR PROJECT NAME FIELD IF ANY
         )}
       </div>
 
@@ -225,6 +231,7 @@ const ProjectRegister1 = ({ formData }) => {
         <label className="block text-sm font-medium mb-1">
           Project pitch deck
         </label>
+        {/* LABEL FOR PROJECT PITCH DECK INPUT FIELD */}
 
         <input
           type="text"
@@ -240,6 +247,7 @@ const ProjectRegister1 = ({ formData }) => {
           <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
             {errors?.project_elevator_pitch?.message}
           </span>
+          // DISPLAYING ERROR MESSAGE FOR PROJECT PITCH DECK FIELD IF ANY
         )}
       </div>
     </>
