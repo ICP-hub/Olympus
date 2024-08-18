@@ -137,6 +137,7 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
       console.log("Cohort Data Before Submit", eventData)
       const result = await actor.create_cohort(eventData);
       console.log("eventdata", eventData);
+      console.log('result',result)
       if (result && result.Ok) {
         toast.success("Cohort creation request has been sent to admin");
         setModalOpen(false);

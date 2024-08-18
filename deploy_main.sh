@@ -3,7 +3,7 @@ set -e
 # use your identities here
 dfx identity use Mohit
 
-# dfx deploy --network ic
+dfx deploy --network ic
 
 BACKEND_CANISTER=$(dfx canister id IcpAccelerator_backend --network ic)
 ASSET_CANISTER=$(dfx canister id asset_canister_backend --network ic)
