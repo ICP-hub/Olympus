@@ -1,6 +1,5 @@
 use candid::{CandidType, Principal};
-use ic_cdk::api::{caller, management_canister::main::raw_rand};
-use ic_cdk::storage::{self, stable_restore};
+use ic_cdk::api::caller;
 use ic_cdk_macros::{query, update};
 use serde::{Deserialize, Serialize};
 use ic_cdk::api::call::call;
@@ -12,21 +11,22 @@ use crate::admin::*;
 use crate::is_user_anonymous;
 use crate::state_handler::{mutate_state, read_state, Candid, StoredPrincipal};
 use crate::user_module::*;
-use ic_cdk::api::stable::{StableReader, StableWriter};
 use ic_cdk::api::time;
-use std::cell::RefCell;
-use std::io::Read;
+
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
+pub struct SocialLinksMentor{
+    pub link: Option<String>,
+}
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, Default, PartialEq)]
 
 pub struct MentorProfile {
     pub preferred_icp_hub: Option<String>,
-    //pub user_data: UserInformation,
     pub existing_icp_mentor: bool,
     pub existing_icp_project_porfolio: Option<String>,
     pub icp_hub_or_spoke: bool,
     pub category_of_mentoring_service: String,
-    pub linkedin_link: String,
+    pub links: Option<Vec<SocialLinksMentor>>,
     pub multichain: Option<String>,
     pub years_of_mentoring: String,
     pub website: Option<String>,
@@ -67,10 +67,6 @@ pub struct MentorUpdateRequest {
     pub sent_at: u64,
 }
 
-pub type MentorRegistry = HashMap<Principal, MentorInternal>;
-pub type MentorParams = HashMap<Principal, MentorProfile>;
-pub type MentorUpdateParams = HashMap<Principal, MentorUpdateRequest>;
-
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, Default, PartialEq)]
 pub struct MentorInternal {
     pub profile: MentorProfile,
@@ -86,18 +82,6 @@ pub struct MAnnouncements {
     announcement_message: String,
     timestamp: u64,
 }
-
-pub type MentorAnnouncements = HashMap<Principal, Vec<MAnnouncements>>;
-
-// thread_local! {
-//     pub static MENTOR_REGISTRY: RefCell<MentorRegistry> = RefCell::new(MentorRegistry::new());
-//     pub static MENTOR_AWAITS_RESPONSE: RefCell<MentorRegistry> = RefCell::new(MentorRegistry::new());
-//     pub static DECLINED_MENTOR_REQUESTS: RefCell<MentorRegistry> = RefCell::new(MentorRegistry::new());
-//     pub static MENTOR_PROFILE_EDIT_AWAITS :RefCell<MentorUpdateParams> = RefCell::new(MentorUpdateParams::new());
-//     pub static DECLINED_MENTOR_PROFILE_EDIT_REQUEST :RefCell<MentorUpdateParams> = RefCell::new(MentorUpdateParams::new());
-//     pub static MENTOR_ANNOUNCEMENTS:RefCell<MentorAnnouncements> = RefCell::new(MentorAnnouncements::new());
-
-// }
 
 #[query(guard = "is_user_anonymous")]
 pub fn get_mentor_info_using_principal(caller: Principal) -> Option<MentorInternal> {
@@ -132,7 +116,7 @@ pub fn get_mentor_declined_info_using_principal(caller: Principal) -> Option<Men
     })
 }
 
-pub async fn register_mentor(mut profile: MentorProfile) -> String {
+pub async fn register_mentor(profile: MentorProfile) -> String {
     let caller = caller();
 
     let role_count = get_approved_role_count_for_principal(caller);
@@ -183,15 +167,12 @@ pub async fn register_mentor(mut profile: MentorProfile) -> String {
             key: key.clone()
         };
 
-        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset, )).await.unwrap();
+        let (_deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset, )).await.unwrap();
 
-        let (result,): ((),) = call(canister_id, "store", (arg, )).await.unwrap();
+        let (_result,): ((),) = call(canister_id, "store", (arg, )).await.unwrap();
 
         user_data.profile_picture = Some((canister_id.to_string()+&key).as_bytes().to_vec());
     }
-
-    let user_data_for_updation = profile.clone();
-    //crate::user_module::update_data_for_roles(caller, user_data_for_updation.user_data);
 
     match profile.validate() {
         Ok(_) => {
@@ -217,7 +198,7 @@ pub async fn register_mentor(mut profile: MentorProfile) -> String {
                     .insert(StoredPrincipal(caller), Candid(mentor_internal.clone()));
                 let role_status = &mut state.role_status;
 
-                if let Some(mut role_status_vec_candid) =
+                if let Some(role_status_vec_candid) =
                     role_status.get(&StoredPrincipal(caller))
                 {
                     let mut role_status_vec = role_status_vec_candid.0;
@@ -263,7 +244,7 @@ pub fn get_mentor_by_principal(id: Principal) -> Option<MentorProfile> {
 }
 
 #[update(guard = "is_user_anonymous")]
-pub async fn update_mentor(mut updated_profile: MentorProfile) -> String {
+pub async fn update_mentor(updated_profile: MentorProfile) -> String {
     let caller = ic_cdk::caller();
 
     let already_registered =
@@ -301,9 +282,9 @@ pub async fn update_mentor(mut updated_profile: MentorProfile) -> String {
             key: key.clone()
         };
 
-        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset, )).await.unwrap();
+        let (_deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset, )).await.unwrap();
 
-        let (result,): ((),) = call(canister_id, "store", (arg, )).await.unwrap();
+        let (_result,): ((),) = call(canister_id, "store", (arg, )).await.unwrap();
 
         user_data.profile_picture = Some((canister_id.to_string()+&key).as_bytes().to_vec());
     }
@@ -320,7 +301,7 @@ pub async fn update_mentor(mut updated_profile: MentorProfile) -> String {
                 mentor_internal.0.profile.category_of_mentoring_service = updated_profile.category_of_mentoring_service.clone();
                 mentor_internal.0.profile.existing_icp_mentor = updated_profile.existing_icp_mentor;
                 mentor_internal.0.profile.icp_hub_or_spoke = updated_profile.icp_hub_or_spoke;
-                mentor_internal.0.profile.linkedin_link = updated_profile.linkedin_link.clone();
+                mentor_internal.0.profile.links = updated_profile.links.clone();
                 mentor_internal.0.profile.website = updated_profile.website.clone();
                 mentor_internal.0.profile.years_of_mentoring = updated_profile.years_of_mentoring.clone();
                 mentor_internal.0.profile.reason_for_joining = updated_profile.reason_for_joining.clone();
@@ -336,7 +317,7 @@ pub async fn update_mentor(mut updated_profile: MentorProfile) -> String {
 
     match update_result {
         Ok(message) => {
-            format!("{}", message)
+            message.to_string()
         },
         Err(error) => format!("Error processing request: {}", error),
     }
@@ -394,7 +375,7 @@ pub struct ListAllMentors {
 pub fn get_top_three_mentors() -> Vec<ListAllMentors> {
     let mentor_snapshot = read_state(|state| {
         state.mentor_storage.iter().map(|(principal, vc_info)| {
-            (principal.clone(), vc_info.0.clone())
+            (principal, vc_info.0.clone())
         }).collect::<Vec<_>>()
     });
 

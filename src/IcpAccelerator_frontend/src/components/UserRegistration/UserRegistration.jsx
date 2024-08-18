@@ -210,20 +210,20 @@ const [getAllData,setGetAllData]=useState([]);
           console.log('result',result)
           if (result && result.includes("User registered successfully with ID")) {
             toast.success("Registered as a User");
-            // window.location.href = "dashboard";
+            window.location.href = "/dashboard";
           } else {
             toast.error("Something went wrong");
-            // window.location.href = "/"; 
+            window.location.href = "/"; 
           }
         });
       } catch (error) {
         toast.error(error.message); 
         console.error("Error sending data to the backend:", error);
-        // window.location.href = "/";
+        window.location.href = "/";
       }
     } else {
       toast.error("Please signup with internet identity first");
-      // window.location.href = "/";
+      window.location.href = "/";
     }
   };
   

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CypherpunkLabLogo from "../../../../assets/Logo/CypherpunkLabLogo.png";
 import { 
     ArrowBack, 
@@ -19,6 +19,8 @@ const ProjectCard = () => {
   const handleOpenModal = () => {
     setModalOpen(!isopen); 
   };
+
+const [projectcardData, setProjectCardData]=useState([])
 
 
   return (

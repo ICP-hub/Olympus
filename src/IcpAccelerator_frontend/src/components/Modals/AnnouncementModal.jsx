@@ -1,37 +1,181 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { ThreeDots } from "react-loader-spinner";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 
-const AnnouncementModal = ({modalOpen,setModalOpen}) => {
-    const handleCreate =()=>{
-        
+const schema = yup
+  .object({
+    announcementTitle: yup
+      .string()
+      .required("Announcement title is required")
+      .min(5, "Title must be at least 5 characters")
+      .test(
+        "no-leading-spaces",
+        "Announcement title should not have leading spaces",
+        (value) => !value || value.trimStart() === value
+      ),
+    announcementDescription: yup
+      .string()
+      .required("Description is required")
+      .test(
+        "maxWords",
+        "Announcement description must not exceed 50 words",
+        (value) =>
+          !value || value.trim().split(/\s+/).filter(Boolean).length <= 50
+      )
+      .test(
+        "maxChars",
+        "Announcement description must not exceed 500 characters",
+        (value) => !value || value.length <= 500
+      )
+      .test(
+        "no-leading-spaces",
+        "Announcement description should not have leading spaces",
+        (value) => !value || value.trimStart() === value
+      ),
+  })
+  .required();
+
+const AnnouncementModal = ({
+    isOpen,  onClose, onSubmitHandler, isSubmitting ,isUpdate ,data
+}) => {
+  const [formData, setFormData] = useState(null);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+  } = useForm({
+    resolver: yupResolver(schema),
+    mode: "all",
+  });
+
+  //   const onSubmit = (data) => {
+  //     setFormData(data);
+  //     console.log(data);
+  //     setModalOpen(false);
+  //   };
+  useEffect(() => {
+    if (isUpdate && data) {
+      setValue(
+        "announcementTitle",
+        data?.announcement_data?.announcement_title ?? ""
+      );
+      setValue(
+        "announcementDescription",
+        data?.announcement_data?.announcement_description ?? ""
+      );
     }
+  }, [isUpdate, data, setValue]);
+
+  const onSubmit = (data) => {
+    console.log(data);
+    onSubmitHandler(data);
+  };
+
   return (
     <div>
-        {modalOpen && (
-                <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50`}>
-                    <div className="bg-white rounded-lg overflow-hidden shadow-lg w-[500px]">
-                        <div className="flex justify-end mr-4">
-                            <button className='text-3xl text-[#121926]' onClick={() => {  setModalOpen(false); }}>&times;</button>
-                        </div>
-                        <div className="p-6">
-                            <h2 className="text-2xl font-bold mb-4">Create Announcement</h2>
-                            
-                            
-                            <button
-                                onClick={handleCreate}
-                                className="mt-6 w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-                            >
-                                Create
-                            </button>
-                        </div>
-                    </div>
+      {isOpen && (
+        <div
+          className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${
+            isOpen ? "block" : "hidden"
+          }`}
+        >
+          <div className="bg-white rounded-lg shadow-lg w-[550px] p-6">
+            <div className="flex justify-between items-center mb-3">
+              <button
+                className="text-[#364152] text-2xl"
+                onClick={onClose}
+              >
+                &times;
+              </button>
+            </div>
+            <div className="p-6">
+              <h2 className="text-2xl font-bold mb-4">
+                {isUpdate === true ? "Update Announcement" : "Add Announcement"}
+              </h2>
+
+              <form onSubmit={handleSubmit(onSubmit)} className="p-4 md:p-5">
+                <div className="grid gap-4 mb-4 grid-cols-2">
+                  <div className="col-span-2">
+                    <label
+                      htmlFor="announcementTitle"
+                      className="block text-base font-medium mb-2"
+                    >
+                      Announcement Title
+                    </label>
+                    <input
+                      type="text"
+                      {...register("announcementTitle")}
+                      className={`bg-gray-50 border ${
+                        errors.announcementTitle
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                      } text-gray-700 placeholder-gray-500 placeholder:font-semibold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1.5`}
+                      placeholder="Announcement Title"
+                    />
+                    {errors.announcementTitle && (
+                      <span className="mt-1 text-sm text-red-500 font-semibold">
+                        {errors.announcementTitle.message}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="col-span-2">
+                    <label
+                      htmlFor="announcementDescription"
+                      className="block text-base font-medium mb-2"
+                    >
+                      Announcement Description
+                    </label>
+                    <textarea
+                      {...register("announcementDescription")}
+                      rows="4"
+                      className={`bg-gray-50 border ${
+                        errors.announcementDescription
+                          ? "border-red-500 placeholder:text-red-500"
+                          : "border-[#737373]"
+                      } text-gray-700 placeholder-gray-500 placeholder:font-semibold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1.5`}
+                      placeholder="Announcement Description here"
+                    ></textarea>
+                    {errors.announcementDescription && (
+                      <span className="mt-1 text-sm text-red-500 font-semibold">
+                        {errors.announcementDescription.message}
+                      </span>
+                    )}
+                  </div>
                 </div>
-            )}
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="py-2 px-4 text-white rounded-xl bg-blue-600 border border-[#B2CCFF] w-full justify-center flex items-center"
+                >
+                  {isSubmitting ? (
+                    <ThreeDots
+                      visible={true}
+                      height="35"
+                      width="35"
+                      color="#FFFEFF"
+                      radius="9"
+                      ariaLabel="three-dots-loading"
+                      wrapperStyle={{}}
+                      wrapperclassName=""
+                    />
+                  ) : isUpdate ? (
+                    "Update Announcement"
+                  ) : (
+                    "Add new Announcement"
+                  )}
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default AnnouncementModal
-
-
-
-
+export default AnnouncementModal;

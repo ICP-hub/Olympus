@@ -1,9 +1,6 @@
-use crate::ratings::{calculate_average_api, Rating};
+use crate::ratings::calculate_average_api;
 use crate::state_handler::*;
-
-use candid::{CandidType, Nat, Principal};
-use std::cmp::Ordering;
-use std::fmt::Display;
+use candid::{CandidType, Nat};
 
 #[derive(Debug, Clone, PartialEq, CandidType)]
 pub struct LeaderboardEntryForUpvote {
@@ -21,10 +18,6 @@ pub struct LeaderboardEntryForLikes {
 pub struct LeaderboardEntryForRatings {
     pub project_id: Option<String>,
     pub average_rating: Option<f64>,
-}
-
-fn compare_nat(a: &Option<Nat>, b: &Option<Nat>) -> Ordering {
-    a.cmp(b)
 }
 
 pub fn get_leaderboard_by_ratings() -> Vec<LeaderboardEntryForRatings> {

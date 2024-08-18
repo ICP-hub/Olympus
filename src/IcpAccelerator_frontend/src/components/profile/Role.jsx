@@ -9,11 +9,15 @@ import Avatar3 from "../../../assets/Logo/Avatar3.png";
 import ProfileImage from "../../../assets/Logo/ProfileImage.png";
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
+import { useNavigate } from "react-router-dom";
 
 import { animatedLeftSvgIcon, animatedRightSvgIcon, userPlusIcon } from '../Utils/Data/SvgData';
 import { profile } from '../jsondata/data/profileData';
-import { useSelector } from 'react-redux';
+import ProfileCard from './RoleProfileCard';
+import { useDispatch, useSelector } from 'react-redux';
 import Modal1 from '../Modals/ProjectModal/Modal1';
+import { setCurrentActiveRole, setCurrentRoleStatus } from '../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer';
+
 
 const FAQItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -41,6 +45,20 @@ const FAQItem = ({ question, answer }) => {
 
 const FAQ = () => {
   const { roles } = profile
+  // const faqData = [
+  //   {
+  //     question: "What is a role, actually?",
+  //     answer: "Est malesuada ac elit gravida vel aliquam nec. Arcu pelle ntesque convallis quam feugiat non viverra massa fringilla.",
+  //   },
+  //   {
+  //     question: "How do roles work?",
+  //     answer: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+  //   },
+  //   {
+  //     question: "Can I change roles?",
+  //     answer: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+  //   },
+  // ];
 
   return (
     <div className="mt-14 text-[#121926] text-[18px] font-medium border-gray-200">
@@ -54,8 +72,137 @@ const FAQ = () => {
 const Role = () => {
   const { roles } = profile
   const [roleModalOpen, setRoleModalOpen] = useState(false);
+  // console.log("my model status ", roleModalOpen)
   const userFullData = useSelector((currState) => currState.userData.data.Ok);
+  // console.log("User aa raha hai", userFullData)
+  const navigate = useNavigate();
 
+
+  const actor = useSelector((currState) => currState.actors.actor);
+
+  const isAuthenticated = useSelector(
+    (currState) => currState.internet.isAuthenticated
+  );
+  const principal = useSelector((currState) => currState.internet.principal);
+  const userCurrentRoleStatus = useSelector(
+    (currState) => currState.currentRoleStatus.rolesStatusArray
+  );
+  console.log('userCurrentRoleStatus',userCurrentRoleStatus)
+  const userCurrentRoleStatusActiveRole = useSelector(
+    (currState) => currState.currentRoleStatus.activeRole
+  );
+  console.log('userCurrentRoleStatusActiveRole',userCurrentRoleStatusActiveRole)
+  const dispatch = useDispatch();
+
+
+
+  const [showSwitchRole, setShowSwitchRole] = useState(false);
+
+  const manageHandler = () => {
+    !principal ? setModalOpen(true) : setModalOpen(false);
+  };
+
+  const underline =
+    "relative focus:after:content-[''] focus:after:block focus:after:w-full focus:after:h-[2px] focus:after:bg-blue-800 focus:after:absolute focus:after:left-0 focus:after:bottom-[-4px]";
+
+  function getNameOfCurrentStatus(rolesStatusArray) {
+    console.log('rolesStatusArray',rolesStatusArray)
+    const currentStatus = rolesStatusArray.find(
+      (role) => role.status === "active"
+    );
+    return currentStatus ? currentStatus.name : null;
+  }
+
+  function formatFullDateFromBigInt(bigIntDate) {
+    const date = new Date(Number(bigIntDate / 1000000n));
+    const dateString = date.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+    return `${dateString}`;
+  }
+
+  function cloneArrayWithModifiedValues(arr) {
+    // console.log('arr',arr)
+    return arr.map((obj) => {
+      const modifiedObj = {};
+
+      Object.keys(obj).forEach((key) => {
+        
+        if (Array.isArray(obj[key]) && obj[key].length > 0) {
+          if (
+            key === "approved_on" ||
+            key === "rejected_on" ||
+            key === "requested_on"
+          ) {
+            // const date = new Date(Number(obj[key][0])).toLocaleDateString('en-US');
+            const date = formatFullDateFromBigInt(obj[key][0]);
+            modifiedObj[key] = date; // Convert bigint to string date
+          } else {
+            modifiedObj[key] = obj[key][0]; // Keep the first element of other arrays unchanged
+          }
+        } else {
+          modifiedObj[key] = obj[key]; // Keep other keys unchanged
+        }
+      });
+// console.log('modifiedObj',modifiedObj)
+      return modifiedObj;
+    });
+  }
+
+ 
+  const initialApi = async (isMounted) => {
+    try {
+      const currentRoleArray = await actor.get_role_status();
+      // cloneArrayWithModifiedValues(currentRoleArray)
+
+      // console.log('currentRoleArray',currentRoleArray)
+      if (isMounted) {
+        if (currentRoleArray && currentRoleArray.length !== 0) {
+          const currentActiveRole = getNameOfCurrentStatus(currentRoleArray);
+          dispatch(
+            setCurrentRoleStatus(cloneArrayWithModifiedValues(currentRoleArray))
+          );
+          dispatch(setCurrentActiveRole(currentActiveRole));
+        } else {
+          dispatch(
+            getCurrentRoleStatusFailureHandler("error-in-fetching-role-at-header")
+          );
+          dispatch(setCurrentActiveRole(null));
+        }
+      }
+    } catch (error) {
+      if (isMounted) {
+        dispatch(getCurrentRoleStatusFailureHandler(error.toString()));
+        dispatch(setCurrentActiveRole(null));
+      }
+    }
+  };
+  useEffect(() => {
+    initialApi()
+  },[])
+
+  useEffect(() => {
+    let isMounted = true;
+
+    if (actor && principal && isAuthenticated) {
+      if (!userCurrentRoleStatus.length) {
+        initialApi(isMounted);
+      }
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [
+    actor,
+    principal,
+    isAuthenticated,
+    dispatch,
+    userCurrentRoleStatus,
+    userCurrentRoleStatusActiveRole,
+  ]);
   const userleftRole = "mentor"; 
   const userrightRole = ""; 
 
@@ -218,6 +365,7 @@ const Role = () => {
         );
     }
   };
+
   return (
     <>
       <div className="flex flex-col">
@@ -247,7 +395,7 @@ const Role = () => {
                 <span>
                   <VerifiedIcon sx={{ fontSize: "medium", color: "#155EEF" }} />
                 </span>
-                {userFullData.full_name}
+                {userFullData?.full_name}
               </h2>
               <p> {userFullData?.openchat_username[0]}</p>
             </div>

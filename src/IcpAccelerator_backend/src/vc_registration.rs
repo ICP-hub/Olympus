@@ -1,26 +1,24 @@
 use crate::admin::*;
 use crate::state_handler::{mutate_state, read_state, Candid, StoredPrincipal};
 use crate::user_module::*;
-
 use crate::is_user_anonymous;
 use crate::PaginationParams;
-use bincode;
 use candid::{CandidType, Principal};
 use ic_cdk::api::call::call;
 use ic_cdk::api::caller;
 use ic_cdk::api::management_canister::main::raw_rand;
-use ic_cdk::api::stable::{StableReader, StableWriter};
 use ic_cdk::api::time;
-use ic_cdk::storage;
-use ic_cdk::storage::stable_restore;
 use ic_cdk_macros::*;
 use serde::{Deserialize, Serialize};
 use serde_bytes::ByteBuf;
 use sha2::{Digest, Sha256};
-use std::borrow::BorrowMut;
-use std::cell::RefCell;
-use std::io::Read;
-use std::{collections::HashMap, io::Write};
+use std::collections::HashMap;
+
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
+pub struct SocialLinks{
+    pub link: Option<String>,
+}
+
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct VentureCapitalist {
     pub name_of_fund: String,
@@ -42,7 +40,7 @@ pub struct VentureCapitalist {
     pub portfolio_link: String,
     pub announcement_details: Option<String>,
     pub website_link: Option<String>,
-    pub linkedin_link: String,
+    pub links: Option<Vec<SocialLinks>>,
     pub registered: bool,
     pub registered_country: Option<String>,
     pub stage: Option<String>,
@@ -122,23 +120,9 @@ pub struct UpdateInfoStruct {
     pub sent_at: u64,
 }
 
-// pub type VcAnnouncements = HashMap<Principal, Vec<Announcements>>;
-
-// // pub type VentureCapitalistStorage = HashMap<Principal, VentureCapitalistInternal>;
-// pub type VentureCapitalistParams = HashMap<Principal, VentureCapitalist>;
-// pub type VentureCapitalistEditParams = HashMap<Principal, UpdateInfoStruct>;
-
-// thread_local! {
-//     pub static VENTURECAPITALIST_STORAGE: RefCell<VentureCapitalistStorage> = RefCell::new(VentureCapitalistStorage::new());
-//     pub static VC_AWAITS_RESPONSE: RefCell<VentureCapitalistStorage> = RefCell::new(VentureCapitalistStorage::new());
-//     pub static DECLINED_VC_REQUESTS: RefCell<VentureCapitalistStorage> = RefCell::new(VentureCapitalistStorage::new());
-//     pub static VC_PROFILE_EDIT_AWAITS :RefCell<VentureCapitalistEditParams> = RefCell::new(VentureCapitalistEditParams::new());
-//     pub static DECLINED_VC_PROFILE_EDIT_REQUEST :RefCell<VentureCapitalistEditParams> = RefCell::new(VentureCapitalistEditParams::new());
-//     pub static VC_ANNOUNCEMENTS:RefCell<VcAnnouncements> = RefCell::new(VcAnnouncements::new());
-// }
 
 #[update(guard = "is_user_anonymous")]
-pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::string::String {
+pub async fn register_venture_capitalist(params: VentureCapitalist) -> std::string::String {
     let caller = caller();
 
     let role_count = get_approved_role_count_for_principal(caller);
@@ -240,18 +224,15 @@ pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::
 
         let delete_asset = DeleteAsset { key: key.clone() };
 
-        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
+        let (_deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
             .await
             .unwrap();
 
-        let (result,): ((),) = call(canister_id, "store", (arg,)).await.unwrap();
+        let (_result,): ((),) = call(canister_id, "store", (arg,)).await.unwrap();
 
         user_data.profile_picture =
             Some((canister_id.to_string() + &key).as_bytes().to_vec());
     }
-
-    let user_data_for_updation = params.clone();
-    //crate::user_module::update_data_for_roles(caller, user_data_for_updation.user_data);
 
     match params.validate() {
         Ok(_) => {
@@ -275,7 +256,7 @@ pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::
 
                 let role_status = &mut state.role_status;
 
-                if let Some(mut role_status_vec_candid) =
+                if let Some(role_status_vec_candid) =
                     role_status.get(&StoredPrincipal(caller))
                 {
                     let mut role_status_vec = role_status_vec_candid.0;
@@ -290,20 +271,6 @@ pub async fn register_venture_capitalist(mut params: VentureCapitalist) -> std::
                     role_status.insert(StoredPrincipal(caller), Candid(role_status_vec));
                 }
             });
-
-            // let res = send_approval_request(
-            //     params
-            //         .user_data
-            //         .profile_picture
-            //         .unwrap_or_else(|| Vec::new()),
-            //     params.user_data.full_name,
-            //     params.user_data.country,
-            //     params.category_of_investment,
-            //     "vc".to_string(),
-            //     params.user_data.bio.unwrap_or_else(|| "no bio".to_string()),
-            // )
-            // .await;
-
             format!("Venture Capitalist Created With UID {}", new_vc.uid)
         }
         Err(e) => format!("Validation error: {}", e),
@@ -449,7 +416,7 @@ pub struct ListAllVC {
 pub fn get_top_three_vc() -> Vec<ListAllVC> {
     let vcs_snapshot = read_state(|state| {
         state.vc_storage.iter().map(|(principal, vc_info)| {
-            (principal.clone(), vc_info.0.clone())
+            (principal, vc_info.0.clone())
         }).collect::<Vec<_>>()
     });
 
@@ -486,7 +453,7 @@ pub fn delete_venture_capitalist() -> std::string::String {
 }
 
 #[update]
-pub async fn update_venture_capitalist(mut params: VentureCapitalist) -> String {
+pub async fn update_venture_capitalist(params: VentureCapitalist) -> String {
     let caller = ic_cdk::caller();
 
     let already_registered =
@@ -519,11 +486,11 @@ pub async fn update_venture_capitalist(mut params: VentureCapitalist) -> String 
 
         let delete_asset = DeleteAsset { key: key.clone() };
 
-        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
+        let (_deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
             .await
             .unwrap();
 
-        let (result,): ((),) = call(canister_id, "store", (arg,)).await.unwrap();
+        let (_result,): ((),) = call(canister_id, "store", (arg,)).await.unwrap();
 
         user_data.profile_picture =
             Some((canister_id.to_string() + &key).as_bytes().to_vec());
@@ -556,7 +523,7 @@ pub async fn update_venture_capitalist(mut params: VentureCapitalist) -> String 
                         existing_vc_internal.0.params.name_of_fund = params.name_of_fund.clone();
                         existing_vc_internal.0.params.preferred_icp_hub = params.preferred_icp_hub.clone();
                         existing_vc_internal.0.params.type_of_investment = params.type_of_investment.clone();
-                        existing_vc_internal.0.params.linkedin_link = params.linkedin_link.clone();
+                        existing_vc_internal.0.params.links = params.links.clone();
                         existing_vc_internal.0.params.website_link = params.website_link.clone();
                         existing_vc_internal.0.params.registered = params.registered.clone();
 
@@ -568,7 +535,7 @@ pub async fn update_venture_capitalist(mut params: VentureCapitalist) -> String 
 
     match update_result {
         Ok(message) => {
-            format!("{}", message)
+            message.to_string()
         },
         Err(error) => format!("Error processing request: {}", error),
     }
@@ -668,7 +635,7 @@ pub fn make_vc_active_inactive(p_id: Principal) -> String {
     let principal_id = caller();
     if p_id == principal_id || ic_cdk::api::is_controller(&principal_id) {
         mutate_state(|m_container| {
-            let mut tutor_hashmap = &m_container.vc_storage;
+            let tutor_hashmap = &m_container.vc_storage;
             if let Some(mut vc_internal) = tutor_hashmap.get(&StoredPrincipal(p_id)) {
                 if vc_internal.0.is_active {
                     let active = false;

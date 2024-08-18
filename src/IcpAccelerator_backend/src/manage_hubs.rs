@@ -25,7 +25,6 @@ pub struct IcpHubDetails{
     website: Option<String>,
 }
 
-#[update(guard="is_user_anonymous")]
 pub async fn add_hubs_images(caller: Principal, mut data: IcpHubDetails)->IcpHubDetails{
     let hub_flag = data.flag.clone();
     let canister_id = crate::asset_manager::get_asset_canister();
@@ -50,11 +49,11 @@ pub async fn add_hubs_images(caller: Principal, mut data: IcpHubDetails)->IcpHub
             key: hub_logo_key.clone(),
         };
 
-        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
+        let (_deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
             .await
             .unwrap();
 
-        let (result,): ((),) = call(canister_id, "store", (project_logo_arg,))
+        let (_result,): ((),) = call(canister_id, "store", (project_logo_arg,))
             .await
             .unwrap();
 
@@ -70,12 +69,14 @@ pub async fn add_hubs_images(caller: Principal, mut data: IcpHubDetails)->IcpHub
 }
 
 #[update(guard="is_user_anonymous")]
-pub fn add_icp_hub_details(data: IcpHubDetails)->String{
+pub async fn add_icp_hub_details(data: IcpHubDetails)->String{
     let caller = caller();
+
+    let mut data_to_store = add_hubs_images(caller, data.clone()).await;
 
     // Insert or update the hub details in the state
     mutate_state(|state| {
-        state.hubs_data.insert(StoredPrincipal(caller), state_handler::Candid(data));
+        state.hubs_data.insert(StoredPrincipal(caller), state_handler::Candid(data_to_store));
     });
 
     // Return success message
@@ -93,7 +94,7 @@ pub fn get_icp_hub_details() -> Vec<ListAllIcpHubs> {
     // Retrieve and process the state
     let hubs_snapshot = read_state(|state| {
         state.hubs_data.iter().map(|(principal, details)| {
-            (principal.clone(), details.clone())  // Clone the data to use outside the state borrow
+            (principal, details.clone())  // Clone the data to use outside the state borrow
         }).collect::<Vec<_>>()
     });
 

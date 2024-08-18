@@ -12,6 +12,7 @@ import { useCountries } from "react-countries";
 import { useSelector } from "react-redux";
 import { LinkedIn, GitHub, Telegram } from "@mui/icons-material";
 import InvestorDetail from "./InvestorDetail";
+import MentorEdit from "../../component/Mentors/MentorEdit";
 
 const ProfileDetail = () => {
   const { countries } = useCountries();
@@ -244,16 +245,16 @@ const ProfileDetail = () => {
     setActiveTab(tab);
   };
 
-// user Role
-const userRole = "mentor";
+  // user Role
+  const userRole = "mentor";
   // User data map 
-  const ProfileImage =userFullData?.profile_picture[0];
-  const Fullname=userFullData?.full_name;
-  const openchat_username=userFullData?.openchat_username[0];
-  const email=userFullData?.email[0];
-  const bio=userFullData?.bio[0];
-  const country =userFullData?.country;
-  const area_of_interest= userFullData?.area_of_interest;
+  const ProfileImage = userFullData?.profile_picture[0];
+  const Fullname = userFullData?.full_name;
+  const openchat_username = userFullData?.openchat_username[0];
+  const email = userFullData?.email[0];
+  const bio = userFullData?.bio[0];
+  const country = userFullData?.country;
+  const area_of_interest = userFullData?.area_of_interest;
   return (
     <div
       ref={containerRef}
@@ -292,22 +293,20 @@ const userRole = "mentor";
         </div>
         <div className="flex justify-start border-b">
           <button
-            className={`px-4 py-2 focus:outline-none font-medium ${
-              activeTab === "general"
+            className={`px-4 py-2 focus:outline-none font-medium ${activeTab === "general"
                 ? "border-b-2 border-blue-500 text-blue-500 font-medium"
                 : "text-gray-400"
-            }`}
+              }`}
             onClick={() => handleChange("general")}
           >
             General
           </button>
           {userRole === "investor" && (
             <button
-              className={`px-4 py-2 focus:outline-none font-medium ${
-                activeTab === "investor"
+              className={`px-4 py-2 focus:outline-none font-medium ${activeTab === "investor"
                   ? "border-b-2 border-blue-500 text-blue-500 font-medium"
                   : "text-gray-400"
-              }`}
+                }`}
               onClick={() => handleChange("investor")}
             >
               Investor
@@ -315,11 +314,10 @@ const userRole = "mentor";
           )}
           {userRole === "mentor" && (
             <button
-              className={`px-4 py-2 focus:outline-none font-medium ${
-                activeTab === "mentor"
+              className={`px-4 py-2 focus:outline-none font-medium ${activeTab === "mentor"
                   ? "border-b-2 border-blue-500 text-blue-500 font-medium"
                   : "text-gray-400"
-              }`}
+                }`}
               onClick={() => handleChange("mentor")}
             >
               Mentor
@@ -327,11 +325,10 @@ const userRole = "mentor";
           )}
           {userRole === "founder" && (
             <button
-              className={`px-4 py-2 focus:outline-none font-medium ${
-                activeTab === "founder"
+              className={`px-4 py-2 focus:outline-none font-medium ${activeTab === "founder"
                   ? "border-b-2 border-blue-500 text-blue-500 font-medium"
                   : "text-gray-400"
-              }`}
+                }`}
               onClick={() => handleChange("founder")}
             >
               Founder
@@ -362,11 +359,10 @@ const userRole = "mentor";
                     type="email"
                     {...register("email")}
                     onChange={(e) => handleInputChange(e, "email")}
-                    className={`bg-gray-50 border-1 ${
-                      errors?.email
+                    className={`bg-gray-50 border-1 ${errors?.email
                         ? "border-red-500"
                         : "border-gray-500"
-                    } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-2 py-1`}
+                      } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-2 py-1`}
                     placeholder="Enter your email"
                   />
                   {errors?.email && (
@@ -410,11 +406,10 @@ const userRole = "mentor";
                     type="text"
                     value={tempData.tagline}
                     onChange={(e) => handleInputChange(e, "tagline")}
-                    className={`bg-gray-50 border-1 ${
-                      errors?.tagline
+                    className={`bg-gray-50 border-1 ${errors?.tagline
                         ? "border-red-500"
                         : "border-gray-500"
-                    } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-2 py-1`}
+                      } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-2 py-1`}
                     placeholder="Enter your tagline"
                   />
                   {errors?.tagline && (
@@ -448,9 +443,8 @@ const userRole = "mentor";
                   {...register("about")}
                   value={tempData.about}
                   onChange={(e) => handleInputChange(e, "about")}
-                  className={`bg-gray-50 border-2 ${
-                    errors?.about ? "border-red-500" : "border-[#737373]"
-                  } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  className={`bg-gray-50 border-2 ${errors?.about ? "border-red-500" : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   placeholder="Tell us about yourself"
                 />
               ) : (
@@ -480,9 +474,8 @@ const userRole = "mentor";
                   onChange={(e) => {
                     handleInputChange(e, "location");
                   }}
-                  className={`bg-gray-50 border-2 ${
-                    errors.location ? "border-red-500" : "border-[#737373]"
-                  } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-2 py-1`}
+                  className={`bg-gray-50 border-2 ${errors.location ? "border-red-500" : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-2 py-1`}
                 >
                   <option value="" className="text-sm font-bold">
                     Select your country
@@ -542,7 +535,7 @@ const userRole = "mentor";
                 />
               ) : (
                 <div className="flex flex-wrap gap-2">
-                  {(userFullData.reason_to_join || [])
+                  {(userFullData?.reason_to_join || [])
                     .flat()
                     .map((reason, index) => (
                       <span
@@ -590,14 +583,14 @@ const userRole = "mentor";
                 />
               ) : (
                 <div className="flex flex-wrap gap-2">
-                 
-                    <span
-                     
-                      className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
-                    >
-                      {area_of_interest}
-                    </span>
-                 
+
+                  <span
+
+                    className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
+                  >
+                    {area_of_interest}
+                  </span>
+
                 </div>
               )}
             </div>
@@ -682,26 +675,26 @@ const userRole = "mentor";
                   )}
                 </div>
               </div>
-            {/* Save/Cancel Section */}
-            {Object.values(isEditing).some((value) => value) && (
-              <div className="flex justify-end gap-4 mt-4">
-                <button
-                  type="button"
-                  onClick={handleCancel}
-                  className="bg-gray-300 text-gray-700 py-2 px-4 rounded"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={handleSave}
-                  className="bg-blue-600 text-white py-2 px-4 rounded"
-                >
-                  Save
-                </button>
-              </div>
-            )}
-          </div>
+              {/* Save/Cancel Section */}
+              {Object.values(isEditing).some((value) => value) && (
+                <div className="flex justify-end gap-4 mt-4">
+                  <button
+                    type="button"
+                    onClick={handleCancel}
+                    className="bg-gray-300 text-gray-700 py-2 px-4 rounded"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSave}
+                    className="bg-blue-600 text-white py-2 px-4 rounded"
+                  >
+                    Save
+                  </button>
+                </div>
+              )}
+            </div>
             {/* Save/Cancel Section */}
             {Object.values(isEditing).some((value) => value) && (
               <div className="flex justify-end gap-4 mt-4">
@@ -731,7 +724,7 @@ const userRole = "mentor";
 
         {/* Mentor Tab Content */}
         {userRole === "mentor" && activeTab === "mentor" && (
-          <InvestorDetail />
+          <MentorEdit />
         )}
 
         {/* Founder Tab Content */}

@@ -28,9 +28,10 @@ function formatFullDateFromBigInt(bigIntDate) {
   }
 
 function cloneArrayWithModifiedValues(arr) {
+    console.log('arr',arr)
     return arr.map((obj) => {
         const modifiedObj = {};
-
+        
         Object.keys(obj).forEach((key) => {
             if (Array.isArray(obj[key]) && obj[key].length > 0) {
                 if (
@@ -48,8 +49,8 @@ function cloneArrayWithModifiedValues(arr) {
                 modifiedObj[key] = obj[key]; // Keep other keys unchanged
             }
         });
-
         return modifiedObj;
+
     });
 }
 

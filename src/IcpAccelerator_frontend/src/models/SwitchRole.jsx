@@ -16,6 +16,7 @@ const SwitchRole = ({ isModalOpen, onClose }) => {
   const userCurrentRoleStatus = useSelector(
     (currState) => currState.currentRoleStatus.rolesStatusArray
   );
+  console.log('userCurrentRoleStatus',userCurrentRoleStatus)
   const handleClickOutside = (event) => {
     if (modalRef.current && !modalRef.current.contains(event.target)) {
       onClose();
@@ -50,6 +51,7 @@ const SwitchRole = ({ isModalOpen, onClose }) => {
                   <ul className="rounded-[25px] border border-[#B8B8B8] overflow-hidden cursor-pointer">
                     {userCurrentRoleStatus &&
                       userCurrentRoleStatus.map((val, index) => {
+                        console.log('val',val)
                         return (
                           <TabsDiv key={index} role={val} onClose={onClose} />
                         );

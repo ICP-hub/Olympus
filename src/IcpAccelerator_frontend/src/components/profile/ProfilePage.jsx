@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import ProfileDetail from './ProfileDetail'; 
+import ProfileDetail from './ProfileDetail';
 import { profile } from '../jsondata/data/profileData';
 
 
@@ -7,17 +7,19 @@ import Role from './Role';
 import { shareSvgIcon } from '../Utils/Data/SvgData';
 import ProjectCard from '../Dashboard/Project/ProjectCard';
 import EventSection from '../Dashboard/Project/EventSection';
+import EventMain from '../Dashboard/DashboardEvents/EventMain';
+import NewEvent from '../Dashboard/DashboardEvents/NewEvent';
 
 
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState("roles");
-  const {profilepage}=profile
+  const { profilepage } = profile
 
   const handleChange = (tab) => {
     setActiveTab(tab)
   }
-  const userRole = "founder";
+  const userRole = "mentor";
   return (
     <div className="container mx-auto mb-5 bg-white">
       <div className="flex justify-between items-center mx-[3%] h-11   bg-opacity-95 -top-[.60rem] p-10 px-0 sticky bg-white  z-20">
@@ -48,27 +50,60 @@ const ProfilePage = () => {
             >
               {profilepage.roleText}
             </button>
-            {(userRole === "project" || userRole === "mentor" || userRole === "founder") && (
-            <button
-              className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "project"
-                ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                : "text-gray-400"
-                }`}
-              onClick={() => handleChange("project")}
-            >
-              Project
-            </button>
+            {(userRole === "project" || userRole === "founder") && (
+              <button
+                className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "project"
+                  ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                  : "text-gray-400"
+                  }`}
+                onClick={() => handleChange("project")}
+              >
+                Project
+              </button>
             )}
             {(userRole === "mentor" || userRole === "founder") && (
-            <button
-              className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "event"
-                ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                : "text-gray-400"
-                }`}
-              onClick={() => handleChange("event")}
-            >
-              Event
-            </button>
+              <button
+                className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "event"
+                  ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                  : "text-gray-400"
+                  }`}
+                onClick={() => handleChange("event")}
+              >
+                Event
+              </button>
+            )}
+            {(userRole === "mentor" || userRole === "founder") && (
+              <button
+                className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "job"
+                  ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                  : "text-gray-400"
+                  }`}
+                onClick={() => handleChange("job")}
+              >
+                Job
+              </button>
+            )}
+            {(userRole === "mentor" || userRole === "founder") && (
+              <button
+                className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "announcement"
+                  ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                  : "text-gray-400"
+                  }`}
+                onClick={() => handleChange("announcement")}
+              >
+                Announcement
+              </button>
+            )}
+            {(userRole === "mentor" || userRole === "founder") && (
+              <button
+                className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "project"
+                  ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                  : "text-gray-400"
+                  }`}
+                onClick={() => handleChange("project")}
+              >
+                Project
+              </button>
             )}
             <button
               className={`px-4 py-2 focus:outline-none font-medium ${activeTab === "rating"
@@ -86,14 +121,26 @@ const ProfilePage = () => {
             {activeTab === "project" ? <ProjectCard /> : ""}
           </div>
           <div className="w-full">
-            {activeTab === "event" ? <EventSection /> : ""}
+            {activeTab === "event" && (
+              <>
+                {/* <EventSection />  First component, rendered above */}
+                <NewEvent />  {/* Second component, rendered below */}
+              </>
+            )}
+          </div>
+          <div className="w-full">
+            {activeTab === "job" ? <h1></h1> : ""}
+          </div>
+          <div className="w-full">
+            {activeTab === "announcement" ? <h1>a
+              Announcement</h1> : ""}
           </div>
           <div className="w-full">
             {activeTab === "rating" ? <>
-            <h1>Rating</h1>
-            </>: ""}
+              <h1>Rating</h1>
+            </> : ""}
           </div>
-          
+
         </div>
       </div>
     </div>

@@ -65,10 +65,10 @@ const validationSchema = yup.object({
     .required(),
   rubric_eligibility: yup.string().required("Required"),
   no_of_seats: yup
-  .number()
-  .typeError("You must enter a number")
-  .required("Number of seats is required")
-  .min(0, "The number of seats cannot be negative"),
+    .number()
+    .typeError("You must enter a number")
+    .required("Number of seats is required")
+    .min(0, "The number of seats cannot be negative"),
 
   funding_type: yup
     .string()
@@ -88,7 +88,8 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
     resolver: yupResolver(validationSchema),
     mode: "all",
   });
-
+  const [imagePreview, setImagePreview] = useState(null);
+  const [imageData, setImageData] = useState(null);
   const {
     handleSubmit,
     trigger,
@@ -96,9 +97,9 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
   } = methods;
 
   const formFields = {
-    0: ["cohort_banner","title", "cohort_launch_date", "cohort_end_date"],
-    1: ["deadline","start_date", "eligibility", "no_of_seats"],
-    2: ["funding_type", "funding_amount","tags","country", "host_name"],
+    0: ["cohort_banner", "title", "cohort_launch_date", "cohort_end_date"],
+    1: ["deadline", "eligibility", "no_of_seats", "start_date"],
+    2: ["funding_type", "funding_amount", "tags", "country", "host_name"],
     3: ["description"],
   };
 
@@ -128,12 +129,36 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
       },
       no_of_seats: parseInt(data.no_of_seats),
       // Ensure imageData and userFullData are correctly defined and used.
-      cohort_banner: [], // Example placeholder
-      host_name: [], // Example placeholder
+      cohort_banner: imageData ? [imageData] : [], // Example placeholder
+      host_name: ['Mridul'], // Example placeholder
     };
-
+    // image creation function compression and uintarray creator
+    const imageCreationFunc = async (file) => {
+      const result = await trigger("image");
+      if (result) {
+        try {
+          const compressedFile = await CompressedImage(file);
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setImagePreview(reader.result);
+          };
+          reader.readAsDataURL(compressedFile);
+          const byteArray = await compressedFile.arrayBuffer();
+          setImageData(Array.from(new Uint8Array(byteArray)));
+        } catch (error) {
+          setError("image", {
+            type: "manual",
+            message: "Could not process image, please try another.",
+          });
+        }
+      } else {
+        console.log("ERROR--imageCreationFunc-file", file);
+      }
+    };
     try {
+      console.log("Cohort Data Before Submit", eventData)
       const result = await actor.create_cohort(eventData);
+      console.log("eventdata", eventData);
       if (result && result.Ok) {
         toast.success("Cohort creation request has been sent to admin");
         setModalOpen(false);
@@ -162,7 +187,7 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
   const renderComponent = () => {
     switch (index) {
       case 0:
-        return <EventReg1 />;
+        return <EventReg1 setImageData={setImageData} setImagePreview={setImagePreview} imagePreview={imagePreview} />;
       case 1:
         return <EventReg2 setSelectedCountry={setSelectedCountry} />;
       case 2:
@@ -181,11 +206,8 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
 
   return (
     <>
-      <div
-        className={`fixed inset-0 z-50 flex items-center  justify-center bg-black bg-opacity-50 ${
-          modalOpen ? "block" : "hidden"
-        }`}
-      >
+      <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${modalOpen ? "block" : "hidden"}`}>
+
         <div className="bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4 max-h-[90vh] overflow-y-auto"
         >
           <div className="flex justify-end mr-4">
@@ -201,9 +223,8 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
             <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
               {renderComponent()}
               <div
-                className={`flex mt-4 ${
-                  index === 0 ? "justify-end" : "justify-between"
-                }`}
+                className={`flex mt-4 ${index === 0 ? "justify-end" : "justify-between"
+                  }`}
               >
                 {index > 0 && (
                   <button

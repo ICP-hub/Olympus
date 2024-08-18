@@ -5,11 +5,18 @@ import founder from "../../../../assets/Logo/founder.png";
 import ProjectRegisterMain from '../ProjectRegisterModal/ProjectRegisterMain';
 import InvestorForm from '../../Auth/investorForm/InvestorForm';
 import MentorSignupMain from '../Mentor-Signup-Model/MentorsignUpmain';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from "react-router-dom";
 
 const Modal1 = ({ isOpen, onClose }) => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const [modalOpen, setModalOpen] = useState(isOpen);
     const [selectedRole, setSelectedRole] = useState(null);
     const [showRoleModal, setShowRoleModal] = useState(false);
+    const userCurrentRoleStatus = useSelector(
+        (currState) => currState.currentRoleStatus.rolesStatusArray
+    );
 
     useEffect(() => {
         if (isOpen) {
@@ -20,10 +27,20 @@ const Modal1 = ({ isOpen, onClose }) => {
     }, [isOpen]);
 
     const roles = [
-        { name: 'Founder', image: founder, description: 'List your project, build connections, find investments' },
-        { name: 'Investor', image: talent, description: 'Find promising projects, build your portfolio' },
-        { name: 'Mentor', image: mentor, description: 'Provide consultations, build professional network' },
+        { name: 'user', image: founder, description: 'List your project, build connections, find investments' },
+        { name: 'project', image: founder, description: 'List your project, build connections, find investments' },
+        { name: 'vc', image: talent, description: 'Find promising projects, build your portfolio' },
+        { name: 'mentor', image: mentor, description: 'Provide consultations, build professional network' },
     ];
+
+    function mergeData(backendData, additionalData) {
+        return backendData.map(item => {
+            const additionalInfo = additionalData.find(data => data.name.toLowerCase() === item.name.toLowerCase());
+            return additionalInfo ? { ...item, ...additionalInfo } : item;
+        });
+    }
+
+    const mergedData = mergeData(userCurrentRoleStatus, roles);
 
     const handleRoleSelect = (role) => {
         setSelectedRole(role);
@@ -36,14 +53,34 @@ const Modal1 = ({ isOpen, onClose }) => {
 
     const renderSelectedModal = () => {
         switch (selectedRole) {
-            case 'Founder':
-                return <ProjectRegisterMain />;
-            case 'Investor':
-                return <InvestorForm />;
-            case 'Mentor':
-                return <MentorSignupMain />;
+            case 'project':
+                return <ProjectRegisterMain setModalOpen={setModalOpen} modalOpen={modalOpen}/>;
+            case 'vc':
+                return <InvestorForm setModalOpen={setModalOpen} modalOpen={modalOpen}/>;
+            case 'mentor':
+                return <MentorSignupMain setModalOpen={setModalOpen} modalOpen={modalOpen}/>;
             default:
                 return null;
+        }
+    };
+
+    
+   
+
+    const clickEventHandler = async (roleName, status) => {
+        if (status === "request") {
+            navigate(redirectPath(roleName));
+            onClose();
+        } else if (status === "switch") {
+            setIsChecked(false)
+            await dispatch(
+                switchRoleRequestHandler({
+                    roleName,
+                    newStatus: "active",
+                })
+            );
+            onClose();
+        } else {
         }
     };
 
@@ -61,13 +98,23 @@ const Modal1 = ({ isOpen, onClose }) => {
                                 Est malesuada ac elit gravida vel aliquam nec. Arcu pellentesque convallis quam feugiat non viverra.
                             </p>
                             <div className="flex flex-col space-y-2">
-                                {roles.map((role, index) => (
-                                    <label key={index} className="flex items-center justify-between px-2 border rounded-lg cursor-pointer hover:bg-gray-100" onClick={() => handleRoleSelect(role.name)}>
+                                {mergedData.map((role, index) => (
+                                    <label
+                                        key={index}
+                                        className={`flex items-center justify-between px-2 border rounded-lg cursor-pointer hover:bg-gray-100 
+                 ${role.approval_status === 'approved' ? 'opacity-50 cursor-not-allowed' : ''} 
+                 ${role.approval_status === 'default' ? 'opacity-100' : ''}`}
+                                        onClick={() => {
+                                            if (role.approval_status !== 'approved') {
+                                                handleRoleSelect(role.name);
+                                            }
+                                        }}
+                                    >
                                         <div className="flex items-center py-2">
-                                            <img src={role.image} alt={role.name} className="rounded-full " />
-                                            <div className='flex '>
+                                            <img src={role.image} alt={role.name} className="rounded-full" />
+                                            <div className="flex">
                                                 <span className="ml-4">
-                                                    <span className="font-semibold -mt-2 justify-start flex">{role.name}</span>
+                                                    <span className="font-semibold -mt-2 justify-start flex capitalize">{role.name ==='vc'?'investor':role.name}</span>
                                                     <span className="block text-gray-600 text-sm">{role.description}</span>
                                                 </span>
                                             </div>
@@ -76,20 +123,26 @@ const Modal1 = ({ isOpen, onClose }) => {
                                             <input
                                                 type="radio"
                                                 name="role"
-                                                className={`h-4 w-4 text-blue-600 border border-black rounded-full cursor-pointer ${selectedRole === role.name ? 'bg-blue-600' : ''}`}
+                                                className={`h-4 w-4 text-blue-600 border border-black rounded-full cursor-pointer 
+                     ${role.approval_status === 'approved' ? 'text-blue-600 bg-blue-600' : ''} 
+                     ${selectedRole === role.name ? 'bg-blue-600' : ''}`}
                                                 checked={selectedRole === role.name}
-                                                readOnly
+                                                onChange={() => handleRoleSelect(role.name)}
+                                                disabled={role.approval_status === 'approved'}
                                             />
                                             {selectedRole === role.name && (
-                                                <div className="rounded-s-full"></div>
+                                                <div className="rounded-full"></div>
                                             )}
                                         </div>
                                     </label>
+
                                 ))}
                             </div>
                             <button
                                 onClick={handleContinue}
-                                className="mt-6 w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                                disabled={!selectedRole}
+                                className={`mt-6 w-full text-white py-2 px-4 rounded-lg hover:bg-blue-700 
+                                ${!selectedRole ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600'}`}
                             >
                                 Continue
                             </button>
@@ -104,3 +157,9 @@ const Modal1 = ({ isOpen, onClose }) => {
 };
 
 export default Modal1;
+
+
+
+
+
+

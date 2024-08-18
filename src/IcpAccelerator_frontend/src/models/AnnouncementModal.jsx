@@ -60,7 +60,7 @@ const AnnouncementModal = ({ onClose, onSubmitHandler, isSubmitting ,isUpdate ,d
 
   return (
     <>
-      <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-50"></div>
+      <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-50">
       <div className=" overflow-y-auto overflow-x-hidden  top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full fixed flex">
         <div className="relative p-4 w-full max-w-md max-h-full">
           <div className="relative bg-white rounded-lg shadow">
@@ -163,6 +163,7 @@ const AnnouncementModal = ({ onClose, onSubmitHandler, isSubmitting ,isUpdate ,d
             </form>
           </div>
         </div>
+      </div>
       </div>
     </>
   );

@@ -1,6 +1,5 @@
 use crate::is_user_anonymous;
 use crate::state_handler::*;
-use candid::types::principal;
 use candid::{CandidType, Deserialize, Principal};
 use ic_cdk::api::time;
 use ic_cdk_macros::{query, update};
@@ -24,7 +23,7 @@ pub fn find_mentor_by_uid(uid: String) -> StoredPrincipal {
     read_state(|state| {
         for (stored_principal, candid_value) in state.mentor_storage.iter() {
             if candid_value.0.uid == uid {
-                return stored_principal.clone();
+                return stored_principal;
             }
         }
         panic!("Mentor with uid: {} not found.", uid);
@@ -35,7 +34,7 @@ pub fn find_vc_by_uid(uid: String) -> StoredPrincipal {
     read_state(|state| {
         for (stored_principal, candid_value) in state.vc_storage.iter() {
             if candid_value.0.uid == uid {
-                return stored_principal.clone();
+                return stored_principal;
             }
         }
         panic!("VC with uid: {} not found.", uid);

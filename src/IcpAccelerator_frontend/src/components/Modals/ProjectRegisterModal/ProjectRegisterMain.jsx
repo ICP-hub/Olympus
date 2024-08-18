@@ -30,7 +30,7 @@ import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_I
 import ProjectRegister6 from "./ProjectRegister6";
 
 const ProjectRegisterMain = ({ isopen }) => {
- 
+
   const dispatch = useDispatch();
   const actor = useSelector((currState) => currState.actors.actor);
   const areaOfExpertise = useSelector(
@@ -126,7 +126,7 @@ const ProjectRegisterMain = ({ isopen }) => {
   const methods = useForm({
     resolver: yupResolver(validationSchema),
     mode: "all",
-     defaultValues : {
+    defaultValues: {
       upload_public_documents: "false",
       publicDocs: [],
       upload_private_documents: "false",
@@ -151,7 +151,7 @@ const ProjectRegisterMain = ({ isopen }) => {
     formState: { errors, isSubmitting },
     watch
   } = methods;
- 
+
 
 
   // console.log("defaultValues", defaultValues);
@@ -214,10 +214,11 @@ const ProjectRegisterMain = ({ isopen }) => {
 
 
 
- 
+
 
   // form submit handler func
   const onSubmitHandler = async (data) => {
+    console.log('data', data)
     if (actor) {
       const projectData = {
         // project data
@@ -233,13 +234,13 @@ const ProjectRegisterMain = ({ isopen }) => {
         ],
         type_of_registration: [
           data?.is_your_project_registered === "true" &&
-          data?.type_of_registration
+            data?.type_of_registration
             ? data?.type_of_registration
             : "",
         ],
         country_of_registration: [
           data?.is_your_project_registered === "true" &&
-          data?.country_of_registration
+            data?.country_of_registration
             ? data?.country_of_registration
             : "",
         ],
@@ -284,7 +285,7 @@ const ProjectRegisterMain = ({ isopen }) => {
             ],
             raised_from_other_ecosystem: [
               data?.money_raised_till_now === "true" &&
-              data?.raised_from_other_ecosystem
+                data?.raised_from_other_ecosystem
                 ? data?.raised_from_other_ecosystem.toString()
                 : "",
             ],
@@ -300,9 +301,10 @@ const ProjectRegisterMain = ({ isopen }) => {
           },
         ],
         promotional_video: [data?.promotional_video || ""],
-        project_discord: [data?.project_discord || ""],
-        project_linkedin: [data?.project_linkedin || ""],
-        github_link: [data?.github_link || ""],
+        // project_discord: [data?.project_discord || ""],
+        // project_linkedin: [data?.project_linkedin || ""],
+        // github_link: [data?.github_link || ""],
+        social_link: [data?.social_link || []],
         token_economics: [data?.token_economics || ""],
         long_term_goals: [data?.white_paper || ""],
         private_docs:
@@ -352,8 +354,8 @@ const ProjectRegisterMain = ({ isopen }) => {
     setInterestedDomainsSelectedOptions(
       val
         ? val
-            .split(", ")
-            .map((interest) => ({ value: interest, label: interest }))
+          .split(", ")
+          .map((interest) => ({ value: interest, label: interest }))
         : []
     );
   };
@@ -531,9 +533,10 @@ const ProjectRegisterMain = ({ isopen }) => {
       );
 
       setValue("promotional_video", val?.promotional_video?.[0] ?? "");
-      setValue("project_discord", val?.project_discord?.[0] ?? "");
-      setValue("project_linkedin", val?.project_linkedin?.[0] ?? "");
-      setValue("github_link", val?.github_link?.[0] ?? "");
+      // setValue("project_discord", val?.project_discord?.[0] ?? "");
+      // setValue("project_linkedin", val?.project_linkedin?.[0] ?? "");
+      setValue("social_link", val?.social_link?.[0] ?? [])
+      // setValue("github_link", val?.github_link?.[0] ?? "");
       setValue("token_economics", val?.token_economics?.[0] ?? "");
       setValue("white_paper", val?.long_term_goals?.[0] ?? "");
       setValue(
@@ -557,7 +560,6 @@ const ProjectRegisterMain = ({ isopen }) => {
   // console.log("imagePreview", imagePreview);
   // console.log("logoPreview", logoPreview);
   // console.log("coverPreview", coverPreview);
-
   // Get data from redux useEffect
   useEffect(() => {
     if (areaOfExpertise) {
@@ -737,10 +739,13 @@ const ProjectRegisterMain = ({ isopen }) => {
     ],
     4: [
       "promotional_video",
-      "project_discord",
-      "project_linkedin",
-      "github_link",
+      // "project_discord",
+      // "project_linkedin",
+      // "github_link",
+
+      "social_link",
       "token_economics",
+
     ],
     5: ["project_description"],
   };
@@ -748,9 +753,8 @@ const ProjectRegisterMain = ({ isopen }) => {
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${
-        modalOpen ? "block" : "hidden"
-      }`}
+      className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${modalOpen ? "block" : "hidden"
+        }`}
     >
       <div className="bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4 overflow-y-auto">
         <div className="flex justify-endz mr-4">
@@ -768,9 +772,8 @@ const ProjectRegisterMain = ({ isopen }) => {
           <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
             {renderComponent()}
             <div
-              className={`flex mt-4 ${
-                index === 0 ? "justify-end" : "justify-between"
-              }`}
+              className={`flex mt-4 ${index === 0 ? "justify-end" : "justify-between"
+                }`}
             >
               {index > 0 && (
                 <button

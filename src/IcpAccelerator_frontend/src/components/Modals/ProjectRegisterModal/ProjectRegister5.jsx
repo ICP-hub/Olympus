@@ -1,11 +1,63 @@
 import React, { useState, useEffect } from "react";
-import { useFormContext } from "react-hook-form";
+import { useFormContext, Controller, useFieldArray } from "react-hook-form";
+
+import {
+    FaLinkedin,
+    FaTwitter,
+    FaGithub,
+    FaTelegram,
+    FaFacebook,
+    FaInstagram,
+    FaYoutube,
+    FaReddit,
+    FaTiktok,
+    FaSnapchat,
+    FaWhatsapp,
+    FaMedium,
+    FaPlus,
+    FaTrash,
+} from "react-icons/fa";
+
 
 const ProjectRegister5 = ({ isOpen, onClose, onBack }) => {
     const {
         register,
         formState: { errors },
+        trigger,
+        setValue,
+        clearErrors,
+        setError,
+        control,
+        watch,
     } = useFormContext();
+
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: "social_link",
+    });
+    const getLogo = (url) => {
+        try {
+            const domain = new URL(url).hostname.split(".").slice(-2).join(".");
+            const size = "size-8";
+            const icons = {
+                "linkedin.com": <FaLinkedin className={`text-blue-600 ${size}`} />,
+                "twitter.com": <FaTwitter className={`text-blue-400 ${size}`} />,
+                "github.com": <FaGithub className={`text-gray-700 ${size}`} />,
+                "telegram.com": <FaTelegram className={`text-blue-400 ${size}`} />,
+                "facebook.com": <FaFacebook className={`text-blue-400 ${size}`} />,
+                "instagram.com": <FaInstagram className={`text-pink-950 ${size}`} />,
+                "youtube.com": <FaYoutube className={`text-red-600 ${size}`} />,
+                "reddit.com": <FaReddit className={`text-orange-500 ${size}`} />,
+                "tiktok.com": <FaTiktok className={`text-black ${size}`} />,
+                "snapchat.com": <FaSnapchat className={`text-yellow-400 ${size}`} />,
+                "whatsapp.com": <FaWhatsapp className={`text-green-600 ${size}`} />,
+                "medium.com": <FaMedium className={`text-black ${size}`} />,
+            };
+            return icons[domain] || null;
+        } catch (error) {
+            return null;
+        }
+    };
 
     return (
         <>
@@ -29,7 +81,7 @@ const ProjectRegister5 = ({ isOpen, onClose, onBack }) => {
                     </span>
                 )}
             </div>
-            <div className="mb-2">
+            {/* <div className="mb-2">
                 <label className="block text-sm font-medium mb-1">
                     Project Discord
                 </label>
@@ -86,6 +138,55 @@ const ProjectRegister5 = ({ isOpen, onClose, onBack }) => {
                         {errors?.github_link?.message}
                     </span>
                 )}
+            </div> */}
+            <div className="mb-2">
+                <label className="block text-sm font-medium mb-1">
+                    Links
+                </label>
+                <div className="relative">
+                    {fields.map((item, index) => (
+                        <div key={item.id} className="flex items-center mb-4 border-b pb-2">
+                            <Controller
+                                name={`links[${index}].link`}
+                                control={control}
+                                render={({ field, fieldState }) => (
+                                    <div className="flex items-center w-full">
+                                        <div className="flex items-center space-x-2 w-full">
+                                            <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
+                                                {field.value && getLogo(field.value)}
+                                            </div>
+                                            <input
+                                                {...register("social_link")}
+                                                type="text"
+                                                placeholder="Enter your social media URL"
+
+                                                className={`p-2 border ${fieldState.error
+                                                    ? "border-red-500"
+                                                    : "border-gray-300"
+                                                    } rounded-md w-full`}
+                                                {...field}
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => remove(index)}
+                                className="ml-2 text-red-500 hover:text-red-700"
+                            >
+                                <FaTrash />
+                            </button>
+                        </div>
+                    ))}
+                    <button
+                        type="button"
+                        onClick={() => append({ social_link: "" })}
+                        className="flex items-center p-1 text-[#155EEF]"
+                    >
+                        <FaPlus className="mr-1" /> Add Another Link
+                    </button>
+                </div>
             </div>
             <div className="mb-2">
                 <label className="block text-sm font-medium mb-1">Tokenomics</label>

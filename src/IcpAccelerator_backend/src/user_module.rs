@@ -86,7 +86,7 @@ impl Review {
         message: String,
         rating: f32,
     ) -> Result<Review, &'static str> {
-        if rating < 0.0 || rating > 5.0 {
+        if !(0.0..=5.0).contains(&rating) {
             return Err("Rating must be between 0.0 and 5.0");
         }
 
@@ -210,8 +210,8 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
         let delete_asset = DeleteAsset {
             key: key.clone()
         };
-        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset, )).await.unwrap();
-        let (result,): ((),) = call(canister_id, "store", (arg, )).await.unwrap();
+        let (_deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset, )).await.unwrap();
+        let (_result,): ((),) = call(canister_id, "store", (arg, )).await.unwrap();
         info_with_default.profile_picture = Some((canister_id.to_string()+&key).as_bytes().to_vec());
     }
 
@@ -242,7 +242,7 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
     mutate_state(|state| {
         let role_status = &mut state.role_status;
 
-        if let Some(mut role_status_vec_candid) = role_status.get(&StoredPrincipal(caller)) {
+        if let Some(role_status_vec_candid) = role_status.get(&StoredPrincipal(caller)) {
             let mut role_status_vec = role_status_vec_candid.0;
             for role in role_status_vec.iter_mut() {
                 if role.name == "user" {
@@ -293,7 +293,7 @@ pub async fn register_user_role(info: UserInformation) -> std::string::String {
         }
     });
     let end = ic_cdk::api::instruction_counter();
-    let result = record_measurement(start,end);
+    let _result = record_measurement(start,end);
     format!("User registered successfully with ID: {}", new_id)
 }
 
@@ -325,9 +325,9 @@ async fn update_user_data(user_id: Principal, mut user_data: UserInformation) ->
             key: key.clone()
         };
 
-        let (deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset, )).await.unwrap();
+        let (_deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset, )).await.unwrap();
 
-        let (result,): ((),) = call(canister_id, "store", (arg, )).await.unwrap();
+        let (_result,): ((),) = call(canister_id, "store", (arg, )).await.unwrap();
 
         user_data.profile_picture = Some((canister_id.to_string()+&key).as_bytes().to_vec());
     }
@@ -616,30 +616,6 @@ pub async fn get_user_info_by_id(uid: String) -> Result<UserInformation, &'stati
         Some(info) => Ok(info),
         None => Err("No user found with the given ID."),
     }
-}
-
-pub async fn update_user(info: UserInformation) -> std::string::String {
-    let caller = caller();
-
-    if info.full_name.trim().is_empty()
-        || info
-            .email
-            .as_ref()
-            .map_or(true, |email| email.trim().is_empty())
-    {
-        return "Please provide input for required fields: full_name and email.".to_string();
-    }
-
-    let mut result = "User not found. Please register before updating.".to_string();
-
-    mutate_state(|state| {
-        if let Some(mut user_info_internal) = state.user_storage.get(&StoredPrincipal(caller)) {
-            user_info_internal.0.params = info;
-            result = "User information updated successfully.".to_string();
-        }
-    });
-
-    result
 }
 
 #[query(guard = "is_user_anonymous")]
