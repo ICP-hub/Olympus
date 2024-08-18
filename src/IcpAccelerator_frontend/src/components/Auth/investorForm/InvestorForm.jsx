@@ -21,8 +21,8 @@ import InvestorModal3 from "./InvestorModal3";
 import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_IcpHubReducer";
 // import { allHubHandlerRequest } from "../StateManagement/Redux/Reducers/All_IcpHubReducer";
 
-const InvestorForm = ({ setModalOpen,modalOpen}) => {
-  // const [modalOpen, setModalOpen] = useState(isOpen || true);
+const InvestorForm = ({ isOpen}) => {
+  const [modalOpen, setModalOpen] = useState(isOpen || true);
   const { countries } = useCountries();
   const dispatch = useDispatch();
   const actor = useSelector((state) => state.actors.actor);

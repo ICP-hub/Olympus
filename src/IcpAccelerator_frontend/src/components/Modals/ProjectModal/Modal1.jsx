@@ -54,11 +54,11 @@ const Modal1 = ({ isOpen, onClose }) => {
     const renderSelectedModal = () => {
         switch (selectedRole) {
             case 'project':
-                return <ProjectRegisterMain setModalOpen={setModalOpen} modalOpen={modalOpen}/>;
+                return <ProjectRegisterMain />;
             case 'vc':
-                return <InvestorForm setModalOpen={setModalOpen} modalOpen={modalOpen}/>;
+                return <InvestorForm />;
             case 'mentor':
-                return <MentorSignupMain setModalOpen={setModalOpen} modalOpen={modalOpen}/>;
+                return <MentorSignupMain />;
             default:
                 return null;
         }
