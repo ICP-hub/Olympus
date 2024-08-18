@@ -6,7 +6,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { ThreeDots } from "react-loader-spinner";
 import { jobCategoryHandlerRequest } from "../../../components/StateManagement/Redux/Reducers/getJobCategory";
 import Select from "react-select";
-import JoditEditor from 'jodit-react';
+import JoditEditor from "jodit-react";
+import toast, { Toaster } from "react-hot-toast";
+import { useLocation } from "react-router-dom";
+import { Controller } from "react-hook-form";
+
 const schema = yup
   .object({
     jobTitle: yup
@@ -58,18 +62,14 @@ const schema = yup
       ),
   })
   .required();
-const JobRegister1 = ({
-  onJobsClose,
-  onSubmitHandler,
-  isSubmitting,
-  jobtitle = "Create a Job",
-  jobbutton = "Create Job",
-  data,
-  modalOpen,
-  setModalOpen,
-}) => {
+const JobRegister1 = ({ modalOpen, setModalOpen }) => {
   const dispatch = useDispatch();
+  const location = useLocation();
+  // const { control } = useForm();
+  const { cardData } = location.state || {};
   const actor = useSelector((currState) => currState.actors.actor);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [jobDescription, setJobDescription] = useState("");
   const jobCategoryData = useSelector(
     (currState) => currState.jobsCategory.jobCategory
   );
@@ -77,30 +77,52 @@ const JobRegister1 = ({
   useEffect(() => {
     dispatch(jobCategoryHandlerRequest());
   }, [actor, dispatch]);
-
+  console.log(cardData.uid);
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
     setValue,
   } = useForm({
     resolver: yupResolver(schema),
     mode: "all",
   });
+  // const projectId = cardData.uid;
+  const onSubmit = async (data) => {
+    console.log("DATA ARGUMENTS",data)
+    const projectId = cardData[0]?.uid;
 
-  useEffect(() => {
-    if (data) {
-      setValue("jobTitle", data?.job_data?.title ?? "");
-      setValue("jobLocation", data?.job_data?.location ?? "");
-      setValue("jobLink", data?.job_data?.link ?? "");
-      setValue("jobCategory", data?.job_data?.category ?? "");
-      setValue("jobDescription", data?.job_data?.description ?? "");
+  if (!projectId) {
+    toast.error("Project ID is missing!");
+    return;
+  }
+    setIsSubmitting(true);
+    try {
+      const argument = {
+        title: data.jobTitle,
+        description: data.jobDescription,
+        category: data.jobCategory,
+        location: data.jobLocation.value,
+        link: data.jobLink,
+        project_id: projectId,
+      };
+
+      const result = await actor.post_job(argument);
+
+      if (result) {
+        toast.success("Job created successfully!");
+        setModalOpen(false);
+      } else {
+        toast.error("Something went wrong.");
+        console.log("JOB CREATION WRONG  ")
+      }
+    } catch (error) {
+      console.error("Error creating job:", error);
+      toast.error("An error occurred while creating the job.");
+    } finally {
+      setIsSubmitting(false);
     }
-  }, [data, setValue]);
-
-  const onSubmit = (data) => {
-    console.log(data);
-    // onSubmitHandler(data);
   };
 
   const [locations, setLocations] = useState([]);
@@ -118,31 +140,47 @@ const JobRegister1 = ({
       { id: "rem", name: "Remote" },
     ];
   };
-  
 
-
-  const options = [ 'bold', 'italic', '|', 'ul', 'ol', '|', 'font', 'fontsize', '|', 'outdent', 'indent', 'align', '|', 'hr', '|', 'fullsize',  'link', ];
+  const options = [
+    "bold",
+    "italic",
+    "|",
+    "ul",
+    "ol",
+    "|",
+    "font",
+    "fontsize",
+    "|",
+    "outdent",
+    "indent",
+    "align",
+    "|",
+    "hr",
+    "|",
+    "fullsize",
+    "link",
+  ];
 
   const config = useMemo(
     () => ({
-    readonly: false,
-    placeholder: '',
-    defaultActionOnPaste: 'insert_as_html',
-    defaultLineHeight: 1.5,
-    enter: 'div',
-   // options that we defined in above step.
-    buttons: options,
-    buttonsMD: options,
-    buttonsSM: options,
-    buttonsXS: options,
-    statusbar: false,
-    sizeLG: 900,
-    sizeMD: 700,
-    sizeSM: 400,
-    toolbarAdaptive: false,
+      readonly: false,
+      placeholder: "",
+      defaultActionOnPaste: "insert_as_html",
+      defaultLineHeight: 1.5,
+      enter: "div",
+      // options that we defined in above step.
+      buttons: options,
+      buttonsMD: options,
+      buttonsSM: options,
+      buttonsXS: options,
+      statusbar: false,
+      sizeLG: 900,
+      sizeMD: 700,
+      sizeSM: 400,
+      toolbarAdaptive: false,
     }),
-    [],
-   );
+    []
+  );
   return (
     <>
       <div
@@ -213,50 +251,58 @@ const JobRegister1 = ({
                     *
                   </span>
                 </label>
-                <Select
-                  options={locations}
-                  onChange={(selectedOption) =>
-                    setValue("jobLocation", selectedOption)
-                  }
-                  placeholder="Select Job Location"
-                  styles={{
-                    menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                    control: (provided) => ({
-                      ...provided,
-                      paddingBlock: "2px",
-                      borderRadius: "8px",
-                      border: errors.jobLocation
-                        ? "1px solid #ef4444"
-                        : "1px solid #CDD5DF",
-                      backgroundColor: "white",
-                      display: "flex",
-                      overflowX: "auto",
-                      maxHeight: "43px",
-                      "&::-webkit-scrollbar": { display: "none" },
-                    }),
-                    valueContainer: (provided) => ({
-                      ...provided,
-                      overflow: "scroll",
-                      maxHeight: "40px",
-                      scrollbarWidth: "none",
-                    }),
-                    placeholder: (provided) => ({
-                      ...provided,
-                      color: errors.jobLocation
-                        ? "#ef4444"
-                        : "rgb(107 114 128)",
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                    }),
-                    multiValue: (provided) => ({
-                      ...provided,
-                      display: "inline-flex",
-                      alignItems: "center",
-                      backgroundColor: "white",
-                      border: "2px solid #CDD5DF",
-                    }),
-                  }}
+                <Controller
+                  name="jobLocation"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      options={locations}
+                      onChange={(selectedOption) =>
+                        field.onChange(selectedOption)
+                      }
+                      value={field.value}
+                      placeholder="Select Job Location"
+                      styles={{
+                        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                        control: (provided) => ({
+                          ...provided,
+                          paddingBlock: "2px",
+                          borderRadius: "8px",
+                          border: errors.jobLocation
+                            ? "1px solid #ef4444"
+                            : "1px solid #CDD5DF",
+                          backgroundColor: "white",
+                          display: "flex",
+                          overflowX: "auto",
+                          maxHeight: "43px",
+                          "&::-webkit-scrollbar": { display: "none" },
+                        }),
+                        valueContainer: (provided) => ({
+                          ...provided,
+                          overflow: "scroll",
+                          maxHeight: "40px",
+                          scrollbarWidth: "none",
+                        }),
+                        placeholder: (provided) => ({
+                          ...provided,
+                          color: errors.jobLocation
+                            ? "#ef4444"
+                            : "rgb(107 114 128)",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }),
+                        multiValue: (provided) => ({
+                          ...provided,
+                          display: "inline-flex",
+                          alignItems: "center",
+                          backgroundColor: "white",
+                          border: "2px solid #CDD5DF",
+                        }),
+                      }}
+                    />
+                  )}
                 />
                 {errors.jobLocation && (
                   <span className="mt-1 text-sm text-red-500 font-bold">
@@ -359,13 +405,15 @@ const JobRegister1 = ({
                   placeholder="Job Description here"
                 ></textarea> */}
                 <JoditEditor
-                  value={data?.job_data?.description ?? ""}
+                  value={jobDescription}
+                  ref={editor}
                   config={config}
                   tabIndex={1}
-                  onBlur={(newContent) =>
-                    setValue("jobDescription", newContent)
-                  }
-                  onChange={(newContent) => {}}
+                  onBlur={(newContent) => {
+                    setJobDescription(newContent);
+                    setValue("jobDescription", newContent);
+                  }}
+                  onChange={() => {}}
                 />
                 {errors.jobDescription && (
                   <span className="mt-1 text-sm text-red-500 font-bold">
@@ -389,12 +437,13 @@ const JobRegister1 = ({
                   visible={true}
                 />
               ) : (
-                <span>{jobbutton || "Create Job"}</span>
+                <span>{"Submit" || "Create Job"}</span>
               )}
             </button>
           </form>
         </div>
       </div>
+      <Toaster />
       {/* </div> */}
     </>
   );
