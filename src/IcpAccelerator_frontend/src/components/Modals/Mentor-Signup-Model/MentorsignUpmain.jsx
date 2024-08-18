@@ -45,11 +45,11 @@ const MentorSignupMain = ({ }) => {
   const [formData, setFormData] = useState({});
 
 
-  const methods = useForm({
-    resolver: yupResolver(validationSchema),
-    mode: "onTouched", // Ensure it's "onTouched" or "onChange"
-    reValidateMode: "onChange", // Re-validate only on change
-  });
+const methods = useForm({
+  resolver: yupResolver(validationSchema),
+  mode: "all", 
+});
+  
 
 
   const { handleSubmit, trigger, formState: { isSubmitting }, getValues } = methods;
@@ -119,6 +119,7 @@ const MentorSignupMain = ({ }) => {
         profile_picture: [],
       };
 
+  
       // Define mentorData object separately
       const mentorData = {
         preferred_icp_hub: [data.preferred_icp_hub || ""],
