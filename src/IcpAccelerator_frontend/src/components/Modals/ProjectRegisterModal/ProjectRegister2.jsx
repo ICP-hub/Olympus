@@ -1,9 +1,11 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
 import { useFormContext, Controller } from "react-hook-form";
-import CompressedImage from "../../../component/ImageCompressed/CompressedImage"
+import CompressedImage from "../../../component/ImageCompressed/CompressedImage";
 import { useCountries } from "react-countries";
+
 const ProjectRegister2 = ({ formData }) => {
+    // INITIALIZING REACT HOOK FORM FUNCTIONS AND VARIABLES
     const {
         register,
         formState: { errors },
@@ -14,12 +16,16 @@ const ProjectRegister2 = ({ formData }) => {
         control,
         watch,
     } = useFormContext();
+
+    // GETTING LIST OF COUNTRIES USING CUSTOM HOOK
     const { countries } = useCountries();
+
+    // STATES FOR MANAGING COVER IMAGE PREVIEW AND DATA
     const [coverPreview, setCoverPreview] = useState(null);
     const [coverData, setCoverData] = useState(null);
 
+    // USEEFFECT TO SET FORM FIELDS WITH PREVIOUSLY SAVED FORM DATA ON COMPONENT MOUNT
     useEffect(() => {
-        // Set form fields with formData values on mount
         if (formData) {    
           if (formData?.cover) {
             setCoverPreview(URL.createObjectURL(formData?.cover));
@@ -28,6 +34,7 @@ const ProjectRegister2 = ({ formData }) => {
         }
       }, [formData]);
 
+    // FUNCTION TO COMPRESS, PREVIEW, AND STORE COVER IMAGE
     const coverCreationFunc = async (file) => {
         const result = await trigger("cover");
         if (result) {
@@ -58,6 +65,8 @@ const ProjectRegister2 = ({ formData }) => {
             console.log("ERROR--coverCreationFunc-file", file);
         }
     };
+
+    // FUNCTION TO CLEAR COVER IMAGE DATA AND PREVIEW
     const clearCoverFunc = (val) => {
         let field_ids = val;
         setValue(field_ids, null);
@@ -66,10 +75,9 @@ const ProjectRegister2 = ({ formData }) => {
         setCoverPreview(null);
     };
 
-
-
     return (
         <>
+            {/* COVER IMAGE UPLOAD SECTION */}
             <div className="mb-2">
                 <label className="block text-sm font-medium mb-1">
                     Upload a Cover Photo<span className="text-red-500">*</span>
@@ -131,9 +139,7 @@ const ProjectRegister2 = ({ formData }) => {
                                     {coverPreview || errors.cover ? (
                                         <button
                                             className="
-
                                             font-medium px-4 py-1 cursor-pointer rounded border border-red-500 items-center text-md bg-transparent text-red-500  capitalize ml-1 sm0:ml-0"
-
                                             onClick={() => clearCoverFunc("cover")}
                                         >
                                             clear
@@ -153,6 +159,7 @@ const ProjectRegister2 = ({ formData }) => {
                 )}
             </div>
 
+            {/* PROJECT WEBSITE INPUT SECTION */}
             <div className="mb-2">
                 <label className="block text-sm font-medium mb-1">
                     Project Website
@@ -173,6 +180,8 @@ const ProjectRegister2 = ({ formData }) => {
                     </span>
                 )}
             </div>
+
+            {/* PROJECT REGISTRATION STATUS SELECTION */}
             <div className="mb-2">
                 <label className="block text-sm font-medium mb-1">
                     Is your project registered<span className="text-red-500">*</span>
@@ -197,8 +206,11 @@ const ProjectRegister2 = ({ formData }) => {
                     </p>
                 )}
             </div>
+
+            {/* CONDITIONAL FIELDS IF PROJECT IS REGISTERED */}
             {watch("is_your_project_registered") === "true" ? (
                 <>
+                    {/* TYPE OF REGISTRATION SELECTION */}
                     <div className="mb-2">
                         <label className="block text-sm font-medium mb-1">
                             Type of registration<span className="text-[#155EEF]">*</span>
@@ -226,6 +238,8 @@ const ProjectRegister2 = ({ formData }) => {
                             </p>
                         )}
                     </div>
+
+                    {/* COUNTRY OF REGISTRATION SELECTION */}
                     <div className="mb-2">
                         <label className="block text-sm font-medium mb-1">
                             Country of registration<span className="text-[#155EEF]">*</span>
@@ -261,7 +275,6 @@ const ProjectRegister2 = ({ formData }) => {
             ) : (
                 <></>
             )}
-               
         </>
     );
 };

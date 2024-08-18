@@ -8,7 +8,9 @@ import Select from "react-select";
 import { useFormContext } from "react-hook-form";
 import { useSelector, useDispatch } from "react-redux";
 
+// COMPONENT TO HANDLE THE THIRD STEP OF PROJECT REGISTRATION FORM
 const ProjectRegister3 = ({ formData }) => {
+    // DESTRUCTURING METHODS AND VALUES FROM useFormContext TO HANDLE FORM STATE AND VALIDATION
     const {
         register,
         formState: { errors },
@@ -17,11 +19,16 @@ const ProjectRegister3 = ({ formData }) => {
         watch,
         clearErrors,
     } = useFormContext();
+
+    // STATE TO STORE OPTIONS FOR MULTI-CHAIN SELECTION
     const [multiChainOptions, setMultiChainOptions] = useState([]);
-    const [multiChainSelectedOptions, setMultiChainSelectedOptions] = useState(
-        []
-    );
+    // STATE TO STORE SELECTED OPTIONS FOR MULTI-CHAIN SELECTION
+    const [multiChainSelectedOptions, setMultiChainSelectedOptions] = useState([]);
+
+    // SELECTING MULTI-CHAIN NAMES FROM REDUX STORE
     const multiChainNames = useSelector((currState) => currState.chains.chains);
+
+    // EFFECT TO UPDATE MULTI-CHAIN OPTIONS WHEN multiChainNames CHANGES
     useEffect(() => {
         if (multiChainNames) {
             setMultiChainOptions(
@@ -34,29 +41,34 @@ const ProjectRegister3 = ({ formData }) => {
             setMultiChainOptions([]);
         }
     }, [multiChainNames]);
+
+    // EFFECT TO SET INITIAL FORM VALUES IF formData EXISTS
     useEffect(() => {
         if (formData) {
             setProjectValuesHandler(formData);
         }
-      }, [formData]);
-    
-      const setProjectValuesHandler = (val) => {
-        console.log('val',val)
-        if (val) {
-          setValue("multi_chain", val?.multi_chain === true || val?.multi_chain === 'true' ? 'true' : 'false');
-          setValue("multi_chain_names", val?.multi_chain_names ? val?.multi_chain_names : "");
-      setMultiChainSelectedOptionsHandler(val.multi_chain_names ?? null);
+    }, [formData]);
 
+    // FUNCTION TO SET INITIAL FORM VALUES BASED ON PROVIDED formData
+    const setProjectValuesHandler = (val) => {
+        console.log('val', val);
+        if (val) {
+            setValue("multi_chain", val?.multi_chain === true || val?.multi_chain === 'true' ? 'true' : 'false');
+            setValue("multi_chain_names", val?.multi_chain_names ? val?.multi_chain_names : "");
+            setMultiChainSelectedOptionsHandler(val.multi_chain_names ?? null);
         }
-      };
-      const setMultiChainSelectedOptionsHandler = (val) => {
+    };
+
+    // FUNCTION TO SET SELECTED MULTI-CHAIN OPTIONS BASED ON PROVIDED VALUE
+    const setMultiChainSelectedOptionsHandler = (val) => {
         setMultiChainSelectedOptions(
-          val ? val.split(", ").map((chain) => ({ value: chain, label: chain })) : []
+            val ? val.split(", ").map((chain) => ({ value: chain, label: chain })) : []
         );
-      };
+    };
 
     return (
         <>
+            {/* MULTI-CHAIN TOGGLE DROPDOWN */}
             <div className="mb-2">
                 <label className="block text-sm font-medium mb-1">
                     Are you also multi-chain<span className="text-red-500">*</span>
@@ -73,12 +85,15 @@ const ProjectRegister3 = ({ formData }) => {
                         Yes
                     </option>
                 </select>
+                {/* DISPLAY ERROR MESSAGE FOR MULTI-CHAIN FIELD */}
                 {errors.multi_chain && (
                     <p className="mt-1 text-sm text-red-500 font-bold text-left">
                         {errors.multi_chain.message}
                     </p>
                 )}
             </div>
+
+            {/* CONDITIONAL RENDERING OF MULTI-CHAIN SELECTION IF MULTI-CHAIN IS ENABLED */}
             {watch("multi_chain") === "true" ? (
                 <div className="mb-2">
                     <label className="block text-sm font-medium mb-1">
@@ -164,6 +179,7 @@ const ProjectRegister3 = ({ formData }) => {
                             }
                         }}
                     />
+                    {/* DISPLAY ERROR MESSAGE FOR MULTI-CHAIN NAMES FIELD */}
                     {errors.multi_chain_names && (
                         <p className="mt-1 text-sm text-red-500 font-bold text-left">
                             {errors.multi_chain_names.message}
@@ -173,6 +189,8 @@ const ProjectRegister3 = ({ formData }) => {
             ) : (
                 <></>
             )}
+
+            {/* ICP MAINNET TOGGLE DROPDOWN */}
             <div className="mb-2">
                 <label className="block text-sm font-medium mb-1">
                     Live on ICP<span className="text-red-500">*</span>
@@ -189,14 +207,18 @@ const ProjectRegister3 = ({ formData }) => {
                         Yes
                     </option>
                 </select>
+                {/* DISPLAY ERROR MESSAGE FOR ICP MAINNET FIELD */}
                 {errors.live_on_icp_mainnet && (
                     <p className="mt-1 text-sm text-red-500 font-bold text-left">
                         {errors.live_on_icp_mainnet.message}
                     </p>
                 )}
             </div>
+
+            {/* CONDITIONAL RENDERING OF ADDITIONAL FIELDS IF LIVE ON ICP MAINNET IS ENABLED */}
             {watch("live_on_icp_mainnet") === "true" ? (
                 <>
+                    {/* DAPP LINK INPUT FIELD */}
                     <div className="mb-2">
                         <label className="block text-sm font-medium mb-1">
                             dApp Link<span className="text-red-500">*</span>
@@ -211,12 +233,15 @@ const ProjectRegister3 = ({ formData }) => {
                                 } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                             placeholder="https://"
                         />
+                        {/* DISPLAY ERROR MESSAGE FOR DAPP LINK FIELD */}
                         {errors?.dapp_link && (
                             <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
                                 {errors?.dapp_link?.message}
                             </span>
                         )}
                     </div>
+
+                    {/* WEEKLY ACTIVE USERS INPUT FIELD */}
                     <div className="mb-2">
                         <label className="block text-sm font-medium mb-1">
                             Weekly active user<span className="text-red-500">*</span>
@@ -233,12 +258,15 @@ const ProjectRegister3 = ({ formData }) => {
                             onWheel={(e) => e.target.blur()}
                             min={0}
                         />
+                        {/* DISPLAY ERROR MESSAGE FOR WEEKLY ACTIVE USERS FIELD */}
                         {errors?.weekly_active_users && (
                             <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
                                 {errors?.weekly_active_users?.message}
                             </span>
                         )}
                     </div>
+
+                    {/* REVENUE INPUT FIELD */}
                     <div className="mb-2">
                         <label className="block text-sm font-medium mb-1">
                             Revenue (in Million USD)<span className="text-red-500">*</span>
@@ -255,6 +283,7 @@ const ProjectRegister3 = ({ formData }) => {
                             onWheel={(e) => e.target.blur()}
                             min={0}
                         />
+                        {/* DISPLAY ERROR MESSAGE FOR REVENUE FIELD */}
                         {errors?.revenue && (
                             <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
                                 {errors?.revenue?.message}
