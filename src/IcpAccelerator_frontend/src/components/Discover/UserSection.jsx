@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
-import ProfileImage from "../../../../assets/Logo/ProfileImage.png";
-import NeilProfileImages from "../../../../assets/Logo/NeilProfileImages.png";
-import LeonProfileImage from "../../../../assets/Logo/LeonProfileImage.png";
-import BlancheProfileImage from "../../../../assets/Logo/BlancheProfileImage.png";
-import CypherpunkLabLogo from "../../../../assets/Logo/CypherpunkLabLogo.png";
+import ProfileImage from "../../../assets/Logo/ProfileImage.png";
+import NeilProfileImages from "../../../assets/Logo/NeilProfileImages.png";
+import LeonProfileImage from "../../../assets/Logo/LeonProfileImage.png";
+import BlancheProfileImage from "../../../assets/Logo/BlancheProfileImage.png";
+import CypherpunkLabLogo from "../../../assets/Logo/CypherpunkLabLogo.png";
 import { FavoriteBorder, LocationOn, Star } from '@mui/icons-material';
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
-import Tabs from '../../Tabs/Tabs';
-import UserDetailPage from './UserDetailPage';
+import Tabs from '../Tabs/Tabs';
+import UserDetailPage from '../Dashboard/DashboardHomePage/UserDetailPage';
+import DiscoverProject from './ProjectAlldata';
+import DiscoverUser from './DiscoverUser';
+
 
 
 const UserCard = ({ name, username, tags, role, description, rating, skills, location, avatar }) => {
@@ -162,12 +165,11 @@ const UsersSection = () => {
           {/* {users.map((user, index) => (
            <UserCard key={index} {...user} />
          ))} */}
-          {currentTab === 'Users' && users.map((user, index) => (
-            <UserCard key={index} {...user} />
-          ))}
-          {currentTab === 'Projects' && users.map((user, index) => (
-            <UserCard key={index} {...user} />
-          ))}
+          {currentTab === 'Users' && 
+            <DiscoverUser />
+         }
+          {currentTab === 'Projects' && <DiscoverProject />}
+
            {currentTab === 'Mentors' && users.map((user, index) => (
             <UserCard key={index} {...user} />
           ))}
