@@ -164,7 +164,11 @@ const Role = () => {
           dispatch(
             setCurrentRoleStatus(cloneArrayWithModifiedValues(currentRoleArray))
           );
-          dispatch(setCurrentActiveRole(currentActiveRole));
+          dispatch(setCurrentActiveRole
+            
+            
+            
+            (currentActiveRole));
         } else {
           dispatch(
             getCurrentRoleStatusFailureHandler("error-in-fetching-role-at-header")
