@@ -415,6 +415,7 @@ pub struct PaginationParamMentor {
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct PaginationReturnMentor {
     pub data: HashMap<Principal, MentorWithRoles>,
+    pub user_data: HashMap<Principal, UserInformation>,
     pub count: u64,
 }
 
@@ -422,34 +423,43 @@ pub struct PaginationReturnMentor {
 pub fn get_all_mentors_with_pagination(
     pagination_params: PaginationParamMentor,
 ) -> PaginationReturnMentor {
-    let start = (pagination_params.page - 1) * pagination_params.page_size;
+    let (mentor_keys, paginated_mentor_map, total_count) = read_state(|state| {
+        let start = (pagination_params.page - 1) * pagination_params.page_size;
 
-    let mentors_snapshot = read_state(|state| {
-        state.mentor_storage.iter()
+        let mentors_snapshot: Vec<Principal> = state.mentor_storage.iter()
+            .filter(|(_, mentor_info)| mentor_info.0.active)
             .skip(start)
             .take(pagination_params.page_size)
-            .filter_map(|(stored_principal, mentor_info)| {
-                if mentor_info.0.active {
-                    let roles = get_roles_for_principal(stored_principal.0);
-                    Some((stored_principal.0.clone(), MentorWithRoles {
-                        mentor_profile: mentor_info.0.clone(),
-                        roles,
-                    }))
-                } else {
-                    None
-                }
+            .map(|(stored_principal, _)| stored_principal.0.clone())
+            .collect();
+
+        let paginated_mentor_map: HashMap<Principal, MentorWithRoles> = mentors_snapshot.iter()
+            .map(|principal| {
+                let roles = get_roles_for_principal(*principal);
+                let mentor_info = state.mentor_storage.get(&StoredPrincipal(*principal)).unwrap().0.clone();
+                (*principal, MentorWithRoles {
+                    mentor_profile: mentor_info,
+                    roles,
+                })
             })
-            .collect::<Vec<_>>()
+            .collect();
+
+        let total_count = state.mentor_storage.len() as u64;
+
+        (mentors_snapshot, paginated_mentor_map, total_count)
     });
 
-    let total_count = read_state(|state| state.mentor_storage.len());
-
-    let paginated_mentor_map: HashMap<Principal, MentorWithRoles> = 
-        mentors_snapshot.into_iter().map(|(principal, mentor_roles)| (principal, mentor_roles)).collect();
+    let user_data: HashMap<Principal, UserInformation> = mentor_keys.iter()
+        .map(|principal| {
+            let user_info = get_user_information_internal(*principal);
+            (*principal, user_info)
+        })
+        .collect();
 
     PaginationReturnMentor {
         data: paginated_mentor_map,
-        count: total_count, 
+        user_data,
+        count: total_count,
     }
 }
 

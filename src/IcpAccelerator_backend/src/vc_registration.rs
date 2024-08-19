@@ -331,39 +331,52 @@ pub fn list_all_vcs() -> HashMap<Principal, VcWithRoles> {
 #[derive(CandidType, Clone)]
 pub struct PaginationReturnVcData {
     pub data: HashMap<Principal, VcWithRoles>,
-    pub count: usize,
+    pub user_data: HashMap<Principal, UserInformation>,
+    pub count: u64,
 }
 
 #[query(guard = "is_user_anonymous")]
 pub fn list_all_vcs_with_pagination(pagination_params: PaginationParams) -> PaginationReturnVcData {
-    read_state(|state| {
-        let total_active_vcs = state.vc_storage.iter().filter(|(_, vc)| vc.0.is_active).count();
-
+    let (vc_keys, paginated_vc_map, total_count) = read_state(|state| {
         let start = (pagination_params.page - 1) * pagination_params.page_size;
-        let end = std::cmp::min(start + pagination_params.page_size, total_active_vcs);
 
-        let vc_list: Vec<(Principal, VcWithRoles)> = state.vc_storage.iter()
+        let mut vc_keys: Vec<Principal> = Vec::new();
+        let mut paginated_vc_map: HashMap<Principal, VcWithRoles> = HashMap::new();
+
+        let _vcs_snapshot = state.vc_storage.iter()
             .filter(|(_, vc)| vc.0.is_active)
+            .skip(start)
+            .take(pagination_params.page_size)
             .map(|(stored_principal, candid_vc_internal)| {
                 let principal = stored_principal.0;
+                vc_keys.push(principal);
+
                 let roles = get_roles_for_principal(principal);
                 let vc_with_roles = VcWithRoles {
                     vc_profile: candid_vc_internal.0.clone(),
                     roles,
                 };
-                (principal, vc_with_roles)
+                paginated_vc_map.insert(principal, vc_with_roles);
             })
-            .skip(start)  
-            .take(end - start)  
-            .collect();
+            .count(); 
 
-        let paginated_vc_map: HashMap<Principal, VcWithRoles> = vc_list.into_iter().collect();
+        let total_count = state.vc_storage.iter().filter(|(_, vc)| vc.0.is_active).count() as u64;
 
-        PaginationReturnVcData {
-            data: paginated_vc_map,
-            count: total_active_vcs,  
-        }
-    })
+        (vc_keys, paginated_vc_map, total_count)
+    });
+
+    let user_data: HashMap<Principal, UserInformation> = vc_keys.iter()
+        .map(|principal| {
+            let user_info = get_user_information_internal(*principal);
+            (*principal, user_info)
+        })
+        .collect();
+
+    PaginationReturnVcData {
+        data: paginated_vc_map,
+        user_data,
+        count: total_count,
+    }
 }
 
 
