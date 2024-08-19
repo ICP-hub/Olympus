@@ -37,6 +37,7 @@ const ProjectJobCard = ({ image, website, tags, country }) => {
       window.removeEventListener("resize", updateNumSkeletons);
     };
   }, []);
+  
   useEffect(() => {
     let isMounted = true; // Flag to check if the component is still mounted
 
