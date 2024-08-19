@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import AnnouncementModal from "../Modals/AnnouncementModal";
 import { useSelector } from "react-redux";
@@ -15,6 +15,7 @@ const Announcement = () => {
   const handleOpenModal = () => setAnnouncementModalOpen(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [projectData, setProjectData] = useState(null);
+  const [isProjectLive ,setIsProjectLive] = useState(false);
 
   const fetchProjectData = async (isMounted) => {
     try {
@@ -37,12 +38,12 @@ const Announcement = () => {
     } catch (error) {
       if (isMounted) {
         console.log("error-in-get_my_project", error);
-        setError(error);
         setProjectData(null);
         setIsProjectLive(null);
       }
     }
   };
+  console.log('setted data is', projectData);
   useEffect(() => {
     let isMounted = true;
     if (actor) {
@@ -60,7 +61,7 @@ const Announcement = () => {
     announcementTitle,
     announcementDescription,
   }) => {
-    // console.log("add announcement");
+    console.log("add announcement");
     setIsSubmitting(true);
     if (actor) {
       let argument = {
@@ -79,7 +80,8 @@ const Announcement = () => {
             fetchProjectData();
             setIsSubmitting(false);
             toast.success("announcement added successfully");
-            window.location.reload();
+            console.log('announcement added');
+            //window.location.reload();
           } else {
             handleCloseModal();
             // setModalOpen(false)

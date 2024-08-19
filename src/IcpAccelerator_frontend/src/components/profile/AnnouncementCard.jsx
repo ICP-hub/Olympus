@@ -16,6 +16,8 @@ import DeleteModel from "../../models/DeleteModel";
 import editp from "../../../assets/Logo/edit.png";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import ok from "../../../assets/images/ok.jpg";
+import { Principal } from '@dfinity/principal';
+
 
 const AnnouncementCard = ({data}) => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -26,6 +28,7 @@ const AnnouncementCard = ({data}) => {
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentAnnouncementData, setcurrentAnnouncementData] = useState(null);
+  console.log('DATA IN 31 LINe', data);
 
   // if (!data) {
   //   return null;
@@ -50,24 +53,28 @@ const AnnouncementCard = ({data}) => {
     setcurrentAnnouncementData(null);
   };
 
-  // const fetchLatestAnnouncement = async (caller) => {
-  //   await caller
-  //     .get_announcements_by_project_id(data?.uid)
-  //     .then((result) => {
-  //       if (!result || result.length === 0) {
-  //         setNoData(true);
-  //         setLatestAnnouncementData([]);
-  //       } else {
-  //         setLatestAnnouncementData(result);
-  //         setNoData(false);
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       setNoData(true);
-  //       setLatestAnnouncementData([]);
-  //       console.log("error-in-get_announcements_by_project_id", error);
-  //     });
-  // };
+  let convertedPrincipal = Principal.fromText(principal);
+
+  const fetchLatestAnnouncement = async (caller) => {
+    console.log("API KA PARAMATER KA DATA", data);
+    await actor
+      .get_announcements_by_project_id(data?.uid)
+      .then((result) => {
+        console.log('API SE DATA AA CHUKA HAI');
+        if (!result || result.length === 0) {
+          setNoData(true);
+          setLatestAnnouncementData([]);
+        } else {
+          setLatestAnnouncementData(result);
+          setNoData(false);
+        }
+      })
+      .catch((error) => {
+        setNoData(true);
+        setLatestAnnouncementData([]);
+        console.log("error-in-get_announcements_by_project_id", error);
+      });
+  };
 
   // <<<<<<----- Updating the announcement_data -------->>>>>>
 
@@ -148,6 +155,12 @@ const AnnouncementCard = ({data}) => {
         setIsSubmitting(false);
       });
   };
+
+  useEffect(() => {
+    if (actor && data) {
+      fetchLatestAnnouncement(actor);
+    }
+  }, [actor, data]);
 
   if (!data || noData) {
     return <NoCardData message="No active announcements found" />;

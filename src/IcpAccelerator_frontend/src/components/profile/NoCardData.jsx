@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import AnnouncementModal from "../Modals/AnnouncementModal";
 import toast, { Toaster } from "react-hot-toast";
@@ -11,34 +11,47 @@ const NoCardData = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const actor = useSelector((currState) => currState.actors.actor);
     const [projectData, setProjectData] = useState(null);
+    const [isProjectLive ,setIsProjectLive] = useState(false);
 
     const fetchProjectData = async (isMounted) => {
-        try {
-          const result = await actor.get_my_project();
-          // console.log("result-in-get_my_project", result);
-          if (isMounted) {
-            if (result && Object.keys(result).length > 0) {
-              setProjectData(result);
-              setIsProjectLive(
-                result?.params?.dapp_link[0] &&
-                  result?.params?.dapp_link[0].trim() !== ""
-                  ? result?.params?.dapp_link[0]
-                  : null
-              );
-            } else {
-              setProjectData(null);
-              setIsProjectLive(null);
-            }
-          }
-        } catch (error) {
-          if (isMounted) {
-            console.log("error-in-get_my_project", error);
-            setError(error);
-            setProjectData(null);
-            setIsProjectLive(null);
-          }
+    try {
+      const result = await actor.get_my_project();
+      console.log("result-in-get_my_project", result);
+      if (isMounted) {
+        if (result && Object.keys(result).length > 0) {
+          setProjectData(result);
+          setIsProjectLive(
+            result?.params?.dapp_link[0] &&
+              result?.params?.dapp_link[0].trim() !== ""
+              ? result?.params?.dapp_link[0]
+              : null
+          );
+        } else {
+          setProjectData(null);
+          setIsProjectLive(null);
         }
-      };
+      }
+    } catch (error) {
+      if (isMounted) {
+        console.log("error-in-get_my_project", error);
+        setProjectData(null);
+        setIsProjectLive(null);
+      }
+    }
+  };
+  console.log('setted data is', projectData);
+  useEffect(() => {
+    let isMounted = true;
+    if (actor) {
+      fetchProjectData(isMounted);
+    } else {
+      navigate("/");
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [actor]);
     const handleAddAnnouncement = async ({
         announcementTitle,
         announcementDescription,
@@ -63,7 +76,8 @@ const NoCardData = () => {
                 fetchProjectData();
                 setIsSubmitting(false);
                 toast.success("announcement added successfully");
-                window.location.reload();
+                console.log('annpuncement created');
+                //window.location.reload();
               } else {
                 handleCloseModal();
                 // setModalOpen(false)
