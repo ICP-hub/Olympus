@@ -31,15 +31,15 @@ pub struct Jobs {
     link: String,
     project_id: String,
     location: String,
+    job_type: String,
 }
+
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct JobsInternal {
     job_data: Jobs,
     timestamp: u64,
-    project_name: String,
-    project_desc: Option<String>,
-    project_logo: Option<Vec<u8>>,
+    job_poster : Option<UserInformation>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
@@ -221,7 +221,6 @@ pub struct ProjectInfoForUser {
     pub team_member_info: Option<Vec<TeamMember>>,
     pub announcements: HashMap<Principal, Vec<AnnouncementsInternal>>,
     pub live_link_of_project: Option<String>,
-    pub jobs_opportunity: Option<Vec<JobsInternal>>,
     pub area_of_focus: Option<String>,
     pub country_of_project: Option<String>,
 }
@@ -398,26 +397,6 @@ pub async fn create_project(info: ProjectInfo) -> String {
     }
 
     let caller = caller();
-
-    let has_mentor_role = read_state(|state| {
-        state.role_status.get(&StoredPrincipal(caller)).map_or(false, |roles| {
-            roles.0.iter().any(|role| role.name == "mentor" && (role.status == "approved" || role.status == "active"))
-        })
-    });
-
-    if has_mentor_role {
-        return "You are not allowed to get this role because you already have the Mentor role.".to_string();
-    }
-
-    let has_vc_role = read_state(|state| {
-        state.role_status.get(&StoredPrincipal(caller)).map_or(false, |roles| {
-            roles.0.iter().any(|role| role.name == "vc" && (role.status == "approved" || role.status == "active"))
-        })
-    });
-
-    if has_vc_role {
-        return "You are not allowed to get this role because you already have the Venture Capitalist role.".to_string();
-    }
 
     let role_count = get_approved_role_count_for_principal(caller);
     if role_count >= 2 {
@@ -759,7 +738,6 @@ pub struct PaginationParams {
 #[derive(CandidType, Clone)]
 pub struct PaginationReturnProjectData {
     pub data: Vec<ListAllProjects>,
-    pub user_data: HashMap<Principal, UserInformation>,
     pub count: u64,
 }
 
@@ -767,31 +745,27 @@ pub struct PaginationReturnProjectData {
 pub fn list_all_projects_with_pagination(
     pagination_params: PaginationParams,
 ) -> PaginationReturnProjectData {
-    let (projects_snapshot, project_count) = read_state(|state| {
-        let project_count = state.project_storage.len();
-        let start = (pagination_params.page - 1) * pagination_params.page_size;
+    let project_count = read_state(|state| state.project_storage.len());
 
-        let projects_snapshot = state.project_storage.iter()
+    let start = (pagination_params.page - 1) * pagination_params.page_size;
+    let end = std::cmp::min(start + pagination_params.page_size, project_count.try_into().unwrap());
+
+    let projects_snapshot = read_state(|state| {
+        state.project_storage.iter()
             .skip(start)
-            .take(pagination_params.page_size)
-            .map(|(principal, project_infos)| {
-                (principal.clone(), project_infos.0.clone())
-            })
-            .collect::<Vec<_>>();
-
-        (projects_snapshot, project_count)
+            .take(end - start)
+            .map(|(principal, project_infos)| (principal, project_infos.0.clone()))
+            .collect::<Vec<_>>()
     });
 
     let mut list_all_projects: Vec<ListAllProjects> = Vec::new();
-    let mut user_principals: Vec<Principal> = Vec::new();
 
     for (stored_principal, project_infos) in projects_snapshot {
-        user_principals.push(stored_principal.0.clone());
         for project_info in project_infos {
             if project_info.is_active {
-                let get_rating = calculate_average_api(&project_info.uid);
+                let get_rating = calculate_average_api(&project_info.uid); 
                 let project_info_struct = ListAllProjects {
-                    principal: stored_principal.clone(),
+                    principal: stored_principal,
                     params: project_info,
                     overall_average: get_rating.overall_average.get(0).cloned(),
                 };
@@ -800,19 +774,10 @@ pub fn list_all_projects_with_pagination(
         }
     }
 
-    let user_data: HashMap<Principal, UserInformation> = user_principals.iter()
-        .map(|principal| {
-            let user_info = get_user_information_internal(*principal);
-            (*principal, user_info)
-        })
-        .collect();
-
     PaginationReturnProjectData {
         data: list_all_projects,
-        user_data,
-        count: project_count as u64,
+        count: project_count,
     }
-
 }
 
 #[query]
@@ -1512,7 +1477,7 @@ pub fn filter_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
 #[query(guard = "is_user_anonymous")]
 pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUserInternal> {
     let announcements_project = get_announcements();
-    let jobs_opportunity_posted = get_jobs_posted_by_project(project_id.clone());
+
 
     let community_ratings = crate::ratings::calculate_average_api(&project_id);
 
@@ -1541,7 +1506,6 @@ pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUse
                     announcements: announcements_project,
                     links: project_internal.params.links.clone(),
                     live_link_of_project: project_internal.params.dapp_link.clone(),
-                    jobs_opportunity: Some(jobs_opportunity_posted),
                     area_of_focus: Some(project_internal.params.project_area_of_focus.clone()),
                     country_of_project: project_internal.params.preferred_icp_hub.clone(),
                 },
@@ -1583,47 +1547,14 @@ pub fn make_project_active_inactive(p_id: Principal, project_id: String) -> Stri
 pub fn post_job(params: Jobs) -> String {
     let principal_id = ic_cdk::api::caller();
 
-    ic_cdk::println!("Principal ID: {:?}", principal_id);
-
-    let is_owner = read_state(|state| {
-        state
-            .project_storage
-            .iter()
-            .any(|(owner_principal, projects)| {
-                owner_principal == StoredPrincipal(principal_id)
-                    && projects.0.iter().any(|p| p.uid == params.project_id)
-            })
-    });
-
-    if !is_owner {
-        let error_message = format!(
-            "Error: Principal {:?} is not the owner of project ID: {}",
-            principal_id, params.project_id
-        );
-        ic_cdk::println!("{}", error_message);
-        return error_message;
-    }
-
-    let project_info_internal = match find_project_by_id(&params.project_id) {
-        Some(info) => info,
-        None => {
-            let error_message = format!("Error: Project ID: {} not found.", params.project_id);
-            ic_cdk::println!("{}", error_message);
-            return error_message;
-        }
-    };
+    let user_data = get_user_information_internal(principal_id);
 
     let current_time = ic_cdk::api::time();
-    let project_data_for_job = project_info_internal.params;
-
-    ic_cdk::println!("Project data for job posting: {:?}", project_data_for_job);
 
     let new_job = JobsInternal {
         job_data: params.clone(),
         timestamp: current_time,
-        project_name: project_data_for_job.project_name.clone(),
-        project_desc: project_data_for_job.project_description.clone(),
-        project_logo: project_data_for_job.project_logo.clone(),
+        job_poster: Some(user_data),
     };
 
     ic_cdk::println!("New Job Details: {:?}", new_job);
@@ -1651,33 +1582,32 @@ pub fn post_job(params: Jobs) -> String {
     result
 }
 
-pub fn _get_jobs_for_project(project_id: String) -> Vec<JobsInternal> {
-    read_state(|state| {
-        let mut jobs_for_project = Vec::new();
-
-        for (_, job_list) in state.post_job.iter() {
-            for job in job_list.0.iter() {
-                if job.job_data.project_id == project_id {
-                    jobs_for_project.push(job.clone());
-                }
-            }
-        }
-
-        jobs_for_project
-    })
-}
-
 // #[query(guard = "is_user_anonymous")]
 // pub fn get_latest_jobs() -> Vec<Jobs> {
 
 #[query(guard = "is_user_anonymous")]
-pub fn get_all_jobs() -> Vec<JobsInternal> {
+pub fn get_all_jobs(page_number: usize, page_size: usize) -> Vec<JobsInternal> {
     read_state(|state| {
-        let mut all_jobs = Vec::new();
+        let mut all_jobs: Vec<JobsInternal> = Vec::new();
+
+        let start_index = page_number * page_size;
+        let mut current_index = 0;
 
         for (_, job_list) in state.post_job.iter() {
             for job_internal in job_list.0.iter() {
-                all_jobs.push(job_internal.clone());
+                if current_index >= start_index && all_jobs.len() < page_size {
+                    all_jobs.push(job_internal.clone());
+                }
+
+                current_index += 1;
+
+                if all_jobs.len() == page_size {
+                    break;
+                }
+            }
+
+            if all_jobs.len() == page_size {
+                break;
             }
         }
 
@@ -1687,18 +1617,19 @@ pub fn get_all_jobs() -> Vec<JobsInternal> {
     })
 }
 
+
 #[query(guard = "is_user_anonymous")]
-pub fn get_jobs_posted_by_project(project_id: String) -> Vec<JobsInternal> {
+pub fn get_jobs_posted_by_principal(caller: Principal) -> Vec<JobsInternal> {
     read_state(|state| {
-        let mut jobs_for_project = Vec::new();
-        for (_, job_list) in state.post_job.iter() {
-            jobs_for_project.extend(
+        let mut jobs_for_principal = Vec::new();
+        for (poster_principal, job_list) in state.post_job.iter() {
+            jobs_for_principal.extend(
                 job_list.0.iter()
-                         .filter(|job_internal| job_internal.job_data.project_id == project_id)
+                         .filter(|job_internal| poster_principal.0 == caller)
                          .cloned()
             );
         }
-        jobs_for_project
+        jobs_for_principal
     })
 }
 
@@ -2544,4 +2475,32 @@ pub fn get_frequent_reviewers() -> Vec<UserInfoInternal> {
         .collect::<Vec<_>>();
 
     frequent_reviewers
+}
+
+#[derive(CandidType)]
+pub struct JobType {
+    pub id: i32,
+    pub job_type: String,
+}
+
+#[query(guard = "is_user_anonymous")]
+pub fn type_of_job() -> Vec<JobType> {
+    vec![
+        JobType {
+            id: 1,
+            job_type: "Full-Time".to_string(),
+        },
+        JobType {
+            id: 2,
+            job_type: "Part-Time".to_string(),
+        },
+        JobType {
+            id: 3,
+            job_type: "Internship".to_string(),
+        },
+        JobType {
+            id: 4,
+            job_type: "Contract".to_string(),
+        },
+    ]
 }
