@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
 import { useFormContext, Controller } from "react-hook-form";
+import CompressedImage from "../../../component/ImageCompressed/CompressedImage";
 import CompressedImage from "../../../component/ImageCompressed/CompressedImage";
 import { useCountries } from "react-countries";
 
@@ -18,7 +20,11 @@ const ProjectRegister2 = ({ formData }) => {
     } = useFormContext();
 
     // GETTING LIST OF COUNTRIES USING CUSTOM HOOK
+
+    // GETTING LIST OF COUNTRIES USING CUSTOM HOOK
     const { countries } = useCountries();
+
+    // STATES FOR MANAGING COVER IMAGE PREVIEW AND DATA
 
     // STATES FOR MANAGING COVER IMAGE PREVIEW AND DATA
     const [coverPreview, setCoverPreview] = useState(null);
@@ -26,13 +32,13 @@ const ProjectRegister2 = ({ formData }) => {
 
     // USEEFFECT TO SET FORM FIELDS WITH PREVIOUSLY SAVED FORM DATA ON COMPONENT MOUNT
     useEffect(() => {
-        if (formData) {    
-          if (formData?.cover) {
-            setCoverPreview(URL.createObjectURL(formData?.cover));
-            setCoverData(formData?.cover);
-          }
+        if (formData) {
+            if (formData?.cover) {
+                setCoverPreview(URL.createObjectURL(formData?.cover));
+                setCoverData(formData?.cover);
+            }
         }
-      }, [formData]);
+    }, [formData]);
 
     // FUNCTION TO COMPRESS, PREVIEW, AND STORE COVER IMAGE
     const coverCreationFunc = async (file) => {
@@ -67,6 +73,8 @@ const ProjectRegister2 = ({ formData }) => {
     };
 
     // FUNCTION TO CLEAR COVER IMAGE DATA AND PREVIEW
+
+    // FUNCTION TO CLEAR COVER IMAGE DATA AND PREVIEW
     const clearCoverFunc = (val) => {
         let field_ids = val;
         setValue(field_ids, null);
@@ -77,6 +85,7 @@ const ProjectRegister2 = ({ formData }) => {
 
     return (
         <>
+            {/* COVER IMAGE UPLOAD SECTION */}
             {/* COVER IMAGE UPLOAD SECTION */}
             <div className="mb-2">
                 <label className="block text-sm font-medium mb-1">
@@ -160,6 +169,7 @@ const ProjectRegister2 = ({ formData }) => {
             </div>
 
             {/* PROJECT WEBSITE INPUT SECTION */}
+            {/* PROJECT WEBSITE INPUT SECTION */}
             <div className="mb-2">
                 <label className="block text-sm font-medium mb-1">
                     Project Website
@@ -180,6 +190,8 @@ const ProjectRegister2 = ({ formData }) => {
                     </span>
                 )}
             </div>
+
+            {/* PROJECT REGISTRATION STATUS SELECTION */}
 
             {/* PROJECT REGISTRATION STATUS SELECTION */}
             <div className="mb-2">
@@ -208,8 +220,11 @@ const ProjectRegister2 = ({ formData }) => {
             </div>
 
             {/* CONDITIONAL FIELDS IF PROJECT IS REGISTERED */}
+
+            {/* CONDITIONAL FIELDS IF PROJECT IS REGISTERED */}
             {watch("is_your_project_registered") === "true" ? (
                 <>
+                    {/* TYPE OF REGISTRATION SELECTION */}
                     {/* TYPE OF REGISTRATION SELECTION */}
                     <div className="mb-2">
                         <label className="block text-sm font-medium mb-1">
@@ -238,6 +253,8 @@ const ProjectRegister2 = ({ formData }) => {
                             </p>
                         )}
                     </div>
+
+                    {/* COUNTRY OF REGISTRATION SELECTION */}
 
                     {/* COUNTRY OF REGISTRATION SELECTION */}
                     <div className="mb-2">
@@ -270,7 +287,7 @@ const ProjectRegister2 = ({ formData }) => {
                             </span>
                         )}
                     </div>
-               
+
                 </>
             ) : (
                 <></>

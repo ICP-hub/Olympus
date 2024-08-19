@@ -17,16 +17,16 @@ const ProjectRegister1 = ({ formData }) => { // MAIN COMPONENT FUNCTION
     getValues,
     control,
   } = useFormContext(); // DESTRUCTURING REACT-HOOK-FORM METHODS FOR FORM HANDLING
-  
+
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs); // SELECTING ICP HUBS DATA FROM REDUX STORE
   const dispatch = useDispatch(); // INITIALIZING DISPATCH FUNCTION FOR REDUX ACTIONS
   const [logoPreview, setLogoPreview] = useState(null); // STATE TO HOLD LOGO PREVIEW IMAGE URL
   const [logoData, setLogoData] = useState(null); // STATE TO HOLD COMPRESSED LOGO DATA
 
-  useEffect(() => { 
+  useEffect(() => {
     // USE EFFECT HOOK TO SET FORM FIELDS WITH EXISTING FORM DATA ON COMPONENT MOUNT
-    if (formData) {    
-      if (formData?.logo) { 
+    if (formData) {
+      if (formData?.logo) {
         // IF LOGO IS AVAILABLE IN FORM DATA, SET LOGO PREVIEW AND LOGO DATA
         setLogoPreview(URL.createObjectURL(formData?.logo));
         setLogoData(formData?.logo);
@@ -34,7 +34,7 @@ const ProjectRegister1 = ({ formData }) => { // MAIN COMPONENT FUNCTION
     }
   }, [formData]); // DEPENDENCY ARRAY LISTENING FOR CHANGES IN formData
 
-  const logoCreationFunc = async (file) => { 
+  const logoCreationFunc = async (file) => {
     // FUNCTION TO HANDLE LOGO CREATION, INCLUDING COMPRESSION AND CONVERSION TO UINT8ARRAY
     const result = await trigger("logo"); // TRIGGERING VALIDATION FOR LOGO FIELD
     if (result) {
@@ -66,7 +66,7 @@ const ProjectRegister1 = ({ formData }) => { // MAIN COMPONENT FUNCTION
     }
   };
 
-  const clearLogoFunc = (value) => { 
+  const clearLogoFunc = (value) => {
     // FUNCTION TO CLEAR LOGO DATA AND PREVIEW
     let fields_id = value;
     setValue(fields_id, null); // RESETTING FORM VALUE FOR LOGO FIELD
@@ -83,7 +83,7 @@ const ProjectRegister1 = ({ formData }) => { // MAIN COMPONENT FUNCTION
     <>
       <h1 className="text-3xl text-[#121926] font-bold mb-3">
         Create a project
-      </h1> 
+      </h1>
       {/* HEADING FOR THE PROJECT REGISTRATION FORM */}
       <div className="mb-2">
         <label className="block text-sm font-medium mb-1">
@@ -178,9 +178,8 @@ const ProjectRegister1 = ({ formData }) => { // MAIN COMPONENT FUNCTION
         <select
           {...register("preferred_icp_hub")}
           defaultValue={getValues("preferred_icp_hub")}
-          className={`border border-[#CDD5DF] rounded-md shadow-sm ${
-            errors.preferred_icp_hub ? "border-red-500 " : "border-[#737373]"
-          } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+          className={`border border-[#CDD5DF] rounded-md shadow-sm ${errors.preferred_icp_hub ? "border-red-500 " : "border-[#737373]"
+            } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
         >
           <option className="text-lg font-bold" value="">
             Select your ICP Hub
@@ -214,11 +213,10 @@ const ProjectRegister1 = ({ formData }) => { // MAIN COMPONENT FUNCTION
           type="text"
           {...register("project_name")}
           className={`border border-[#CDD5DF] rounded-md shadow-sm 
-                                             ${
-                                               errors?.project_name
-                                                 ? "border-red-500 "
-                                                 : "border-[#737373]"
-                                             } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                             ${errors?.project_name
+              ? "border-red-500 "
+              : "border-[#737373]"
+            } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
           placeholder="Enter your Project name"
         />
         {errors?.project_name && (
@@ -239,11 +237,10 @@ const ProjectRegister1 = ({ formData }) => { // MAIN COMPONENT FUNCTION
           type="text"
           {...register("project_elevator_pitch")}
           className={`border border-[#CDD5DF] rounded-md shadow-sm 
-                                             ${
-                                               errors?.project_elevator_pitch
-                                                 ? "border-red-500 "
-                                                 : "border-[#737373]"
-                                             } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                             ${errors?.project_elevator_pitch
+              ? "border-red-500 "
+              : "border-[#737373]"
+            } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
           placeholder="https://"
         />
         {errors?.project_elevator_pitch && (

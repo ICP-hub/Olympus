@@ -76,7 +76,7 @@ const ProjectRegister6 = ({ isOpen, onClose, onBack }) => {
               onBlur={(newContent) => {
                 onChange(newContent); // UPDATE FIELD VALUE ON BLUR EVENT
               }}
-              onChange={() => {}}     // NO OPERATION ON CHANGE EVENT
+              onChange={() => { }}     // NO OPERATION ON CHANGE EVENT
             />
           )}
         />
@@ -91,4 +91,5 @@ const ProjectRegister6 = ({ isOpen, onClose, onBack }) => {
   );
 };
 
+export default ProjectRegister6; // EXPORT COMPONENT AS DEFAULT
 export default ProjectRegister6; // EXPORT COMPONENT AS DEFAULT
