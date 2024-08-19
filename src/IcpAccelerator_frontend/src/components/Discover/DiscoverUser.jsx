@@ -107,7 +107,7 @@ const DiscoverUser = () => {
             return (
               <>
                 {/* Render more fields as needed */}
-                <div className=" p-6 w-[750px] rounded-lg shadow-sm mb-4 flex">
+                <div className=" p-6 w-[750px] rounded-lg shadow-sm mb-4 flex" key={index}>
                   <div className="w-[272px]  ">
                     <div className="max-w-[250px] w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between  relative overflow-hidden">
                       <div className="absolute inset-0 flex items-center justify-center">
