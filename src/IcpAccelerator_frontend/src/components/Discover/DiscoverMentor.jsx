@@ -6,16 +6,16 @@ import { FavoriteBorder, LocationOn, Star } from "@mui/icons-material";
 import CypherpunkLabLogo from "../../../assets/Logo/CypherpunkLabLogo.png";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
-const DiscoverUser = () => {
+const DiscoverMentor = () => {
   const actor = useSelector((currState) => currState.actors.actor);
-  const [allUserData, setAllUserData] = useState([]);
+  const [allMentorData, setMentorData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
-  console.log(".............USERS", allUserData);
-  const getAllUser = async (caller, isMounted) => {
+  console.log(".............USERS", allMentorData);
+  const getAllMentor = async (caller, isMounted) => {
     await caller
-      .list_all_users({
+      .get_all_mentors_with_pagination({
         page_size: itemsPerPage,
         page: currentPage,
       })
@@ -25,16 +25,16 @@ const DiscoverUser = () => {
           if (result ) {
             // Log the exact structure of result.data to verify it
             console.log("Data received:", result.data);
-            setAllUserData(result);
+            setMentorData(result);
         } else {
-          setAllUserData([]); // Set to an empty array if no data
+          setMentorData([]); // Set to an empty array if no data
         }
           setIsLoading(false);
         }
       })
       .catch((error) => {
         if (isMounted) {
-            setAllUserData([]);
+          setMentorData([]);
           setIsLoading(false);
           console.log("error-in-get-all-user", error);
         }
@@ -45,9 +45,9 @@ const DiscoverUser = () => {
     let isMounted = true;
 
     if (actor) {
-        getAllUser(actor, isMounted);
+      getAllMentor(actor, isMounted);
     } else {
-      getAllUser(IcpAccelerator_backend);
+      getAllMentor(IcpAccelerator_backend);
     }
 
     return () => {
@@ -87,9 +87,9 @@ const DiscoverUser = () => {
     <div>
       {isLoading ? (
         <div>Loading...</div>
-      ) : allUserData.length > 0 ? (
+      ) : allMentorData.length > 0 ? (
         <div>
-          {allUserData.map((user, index) => {
+          {allMentorData.map((user, index) => {
             //   project card data
             const randomTags = getRandomTags();
             const randomSkills = getRandomskills();
@@ -185,4 +185,4 @@ const DiscoverUser = () => {
   );
 };
 
-export default DiscoverUser;
+export default DiscoverMentor;

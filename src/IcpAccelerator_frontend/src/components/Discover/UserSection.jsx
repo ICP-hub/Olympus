@@ -87,7 +87,7 @@ const UserCard = ({ name, username, tags, role, description, rating, skills, loc
 
 const UsersSection = () => {
   const [currentTab, setCurrentTab] = useState('Users');
-  const tabs = [ 'Users', 'Projects', 'Mentors', 'Talent', 'Investors'];
+  const tabs = [ 'Users', 'Projects', 'Mentors', 'Investors'];
   const handleTabChange = (tab) => {
     setCurrentTab(tab);
   };
@@ -173,9 +173,9 @@ const UsersSection = () => {
            {currentTab === 'Mentors' && users.map((user, index) => (
             <UserCard key={index} {...user} />
           ))}
-           {currentTab === 'Talent' && users.map((user, index) => (
+           {/* {currentTab === 'Talent' && users.map((user, index) => (
             <UserCard key={index} {...user} />
-          ))}
+          ))} */}
            {currentTab === 'Investors' && users.map((user, index) => (
             <UserCard key={index} {...user} />
           ))}
