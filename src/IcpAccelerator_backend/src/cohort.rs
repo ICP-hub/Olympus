@@ -13,6 +13,7 @@ use ic_certified_assets::types::Key;
 use serde::{Deserialize, Serialize};
 use serde_bytes::ByteBuf;
 use sha2::{Digest, Sha256};
+use crate::user_module::SocialLinks;
 
 #[derive(Clone, CandidType, Deserialize, Debug, Serialize)]
 pub struct Eligibility {
@@ -36,6 +37,7 @@ pub struct Cohort {
     cohort_end_date: String,
     cohort_banner: Option<Vec<u8>>,
     host_name: Option<String>,
+    contact_links: Option<Vec<SocialLinks>>,
 }
 
 #[derive(Clone, CandidType, Deserialize, Debug, Serialize)]
@@ -46,6 +48,9 @@ pub struct CohortDetails {
     pub cohort_creator: Principal,
     pub cohort_creator_role: Vec<String>,
     pub cohort_creator_principal: Principal,
+    pub projects_applied: Option<Vec<ProjectInfoInternal>>,
+    pub mentors_applied: Option<Vec<MentorInternal>>,
+    pub vcs_applied: Option<Vec<VentureCapitalistInternal>>,
 }
 
 #[derive(Clone, CandidType, Deserialize, Debug, Serialize)]
@@ -157,6 +162,29 @@ pub async fn create_cohort(mut params: Cohort) -> Result<String, String> {
                 .to_vec(),
         );
     }
+    
+    let vcs_in_cohort: Vec<VentureCapitalistInternal> = read_state(|state| {
+        state
+            .vc_applied_for_cohort
+            .get(&cohort_id)
+            .map_or_else(Vec::new, |candid_mentors| candid_mentors.0.clone())
+    });
+
+    let mentors_in_cohort: Vec<MentorInternal> = read_state(|state| {
+        state
+            .mentor_applied_for_cohort
+            .get(&cohort_id)
+            .map_or_else(Vec::new, |candid_mentors| candid_mentors.0.clone())
+    });
+
+    let projects_in_cohort: Vec<ProjectInfoInternal> = read_state(|state| {
+        state
+            .project_applied_for_cohort
+            .get(&cohort_id)
+            .map(|candid_projects| candid_projects.0.clone())
+            .unwrap_or_default()
+    });
+
 
     let cohort_details = CohortDetails {
         cohort_id: cohort_id.clone(),
@@ -165,6 +193,9 @@ pub async fn create_cohort(mut params: Cohort) -> Result<String, String> {
         cohort_creator: caller_principal,
         cohort_creator_role: roles_assigned,
         cohort_creator_principal: caller_principal,
+        projects_applied: Some(projects_in_cohort),
+        mentors_applied: Some(mentors_in_cohort),
+        vcs_applied: Some(vcs_in_cohort)
     };
 
     mutate_state(|state| {
@@ -624,6 +655,7 @@ pub fn get_rejected_cohort_enrollment_requests(
 #[update(guard = "is_user_anonymous")]
 pub fn approve_enrollment_request(cohort_id: String, enroller_principal: Principal) -> String {
     let caller = ic_cdk::api::caller();
+    let mut enroller_data_to_update = None;
 
     // Check if there's a pending request and current applier count
     let (is_request_pending, mut current_count, max_seats) = read_state(|state| {
@@ -662,6 +694,7 @@ pub fn approve_enrollment_request(cohort_id: String, enroller_principal: Princip
                 if request.enroller_principal == enroller_principal && request.request_status == "pending" {
                     request.request_status = "accepted".to_string();
                     request.accepted_at = ic_cdk::api::time();
+                    enroller_data_to_update = Some(request.enroller_data.clone());
                     found = true;
                     break;
                 }
@@ -705,8 +738,17 @@ pub fn approve_enrollment_request(cohort_id: String, enroller_principal: Princip
 
         // Increase applier count and update the state
         current_count += 1;
-        state.applier_count.insert(cohort_id, current_count);
+        state.applier_count.insert(cohort_id.clone(), current_count);
     });
+
+    if let Some(enroller_data) = enroller_data_to_update {
+        let _ = update_cohort_with_applicant(
+            cohort_id.clone(),
+            enroller_data.project_data,
+            enroller_data.mentor_data,
+            enroller_data.vc_data,
+        );
+    }
 
     "Request approved successfully".to_string()
 }
@@ -946,4 +988,57 @@ pub async fn update_cohort(cohort_id: String, updated_params: Cohort) -> Result<
     });
 
     Ok("Cohort details have been updated successfully.".to_string())
+}
+
+#[update(guard = "is_user_anonymous")]
+pub fn update_cohort_with_applicant(
+    cohort_id: String,
+    project_data: Option<ProjectInfoInternal>,
+    mentor_data: Option<MentorInternal>,
+    vc_data: Option<VentureCapitalistInternal>,
+) -> Result<String, String> {
+    let caller_principal = caller();
+
+    // Retrieve the cohort details from the state
+    let mut cohort_details = read_state(|state| {
+        state
+            .cohort_info
+            .get(&cohort_id)
+            .map(|candid_cohort_details| candid_cohort_details.0.clone())
+            .ok_or("Cohort not found")
+    })?;
+
+    // Update the cohort details with the new applicant data
+    if let Some(project) = project_data {
+        if let Some(ref mut projects) = cohort_details.projects_applied {
+            projects.push(project);
+        } else {
+            cohort_details.projects_applied = Some(vec![project]);
+        }
+    }
+
+    if let Some(mentor) = mentor_data {
+        if let Some(ref mut mentors) = cohort_details.mentors_applied {
+            mentors.push(mentor);
+        } else {
+            cohort_details.mentors_applied = Some(vec![mentor]);
+        }
+    }
+
+    if let Some(vc) = vc_data {
+        if let Some(ref mut vcs) = cohort_details.vcs_applied {
+            vcs.push(vc);
+        } else {
+            cohort_details.vcs_applied = Some(vec![vc]);
+        }
+    }
+
+    // Mutate the state to save the updated cohort details
+    mutate_state(|state| {
+        state
+            .cohort_info
+            .insert(cohort_id.clone(), Candid(cohort_details.clone()));
+    });
+
+    Ok("Cohort details have been updated with the new applicant.".to_string())
 }
