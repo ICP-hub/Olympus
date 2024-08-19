@@ -759,6 +759,7 @@ pub struct PaginationParams {
 #[derive(CandidType, Clone)]
 pub struct PaginationReturnProjectData {
     pub data: Vec<ListAllProjects>,
+    pub user_data: HashMap<Principal, UserInformation>,
     pub count: u64,
 }
 
@@ -766,27 +767,31 @@ pub struct PaginationReturnProjectData {
 pub fn list_all_projects_with_pagination(
     pagination_params: PaginationParams,
 ) -> PaginationReturnProjectData {
-    let project_count = read_state(|state| state.project_storage.len());
+    let (projects_snapshot, project_count) = read_state(|state| {
+        let project_count = state.project_storage.len();
+        let start = (pagination_params.page - 1) * pagination_params.page_size;
 
-    let start = (pagination_params.page - 1) * pagination_params.page_size;
-    let end = std::cmp::min(start + pagination_params.page_size, project_count.try_into().unwrap());
-
-    let projects_snapshot = read_state(|state| {
-        state.project_storage.iter()
+        let projects_snapshot = state.project_storage.iter()
             .skip(start)
-            .take(end - start)
-            .map(|(principal, project_infos)| (principal, project_infos.0.clone()))
-            .collect::<Vec<_>>()
+            .take(pagination_params.page_size)
+            .map(|(principal, project_infos)| {
+                (principal.clone(), project_infos.0.clone())
+            })
+            .collect::<Vec<_>>();
+
+        (projects_snapshot, project_count)
     });
 
     let mut list_all_projects: Vec<ListAllProjects> = Vec::new();
+    let mut user_principals: Vec<Principal> = Vec::new();
 
     for (stored_principal, project_infos) in projects_snapshot {
+        user_principals.push(stored_principal.0.clone());
         for project_info in project_infos {
             if project_info.is_active {
-                let get_rating = calculate_average_api(&project_info.uid); 
+                let get_rating = calculate_average_api(&project_info.uid);
                 let project_info_struct = ListAllProjects {
-                    principal: stored_principal,
+                    principal: stored_principal.clone(),
                     params: project_info,
                     overall_average: get_rating.overall_average.get(0).cloned(),
                 };
@@ -795,10 +800,19 @@ pub fn list_all_projects_with_pagination(
         }
     }
 
+    let user_data: HashMap<Principal, UserInformation> = user_principals.iter()
+        .map(|principal| {
+            let user_info = get_user_information_internal(*principal);
+            (*principal, user_info)
+        })
+        .collect();
+
     PaginationReturnProjectData {
         data: list_all_projects,
-        count: project_count,
+        user_data,
+        count: project_count as u64,
     }
+
 }
 
 #[query]

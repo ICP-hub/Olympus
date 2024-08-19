@@ -365,10 +365,16 @@ type PaginationReturnCohort = record {
   total_count : nat64;
 };
 type PaginationReturnMentor = record {
+  user_data : vec record { principal; UserInformation };
+  data : vec record { principal; MentorWithRoles };
+  count : nat64;
+};
+type PaginationReturnMentorDataRequest = record {
   data : vec record { principal; MentorWithRoles };
   count : nat64;
 };
 type PaginationReturnProjectData = record {
+  user_data : vec record { principal; UserInformation };
   data : vec ListAllProjects;
   count : nat64;
 };
@@ -389,6 +395,7 @@ type PaginationReturnUserData = record {
   count : nat64;
 };
 type PaginationReturnVcData = record {
+  user_data : vec record { principal; UserInformation };
   data : vec record { principal; VcWithRoles };
   count : nat64;
 };
@@ -1099,11 +1106,13 @@ service : {
   make_project_active_inactive : (principal, text) -> (text);
   make_user_inactive : () -> (text);
   make_vc_active_inactive : (principal) -> (text);
-  mentor_declined : (Pagination) -> (PaginationReturnMentor) query;
+  mentor_declined : (Pagination) -> (PaginationReturnMentorDataRequest) query;
   mentor_profile_edit_awaiting_approval : () -> (
       vec record { principal; MentorUpdateRequest },
     ) query;
-  mentors_awaiting_approval : (Pagination) -> (PaginationReturnMentor) query;
+  mentors_awaiting_approval : (Pagination) -> (
+      PaginationReturnMentorDataRequest,
+    ) query;
   post_job : (Jobs) -> (text);
   project_awaiting_approval : (Pagination) -> (
       PaginationReturnProjectDataRequest,
