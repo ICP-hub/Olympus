@@ -9,6 +9,7 @@ import ProjectCard from '../Dashboard/Project/ProjectCard';
 import EventSection from '../Dashboard/Project/EventSection';
 import EventMain from '../Dashboard/DashboardEvents/EventMain';
 import NewEvent from '../Dashboard/DashboardEvents/NewEvent';
+import Announcement from './Announcement';
 import ProjectDetailsForOwnerProject from '../../component/Project/ProjectDetailsPages/ProjectDetailsForInvestorProject';
 
 
@@ -137,8 +138,7 @@ const ProfilePage = () => {
             {activeTab === "job" ? <ProjectDetailsForOwnerProject/> : ""}
           </div>
           <div className="w-full">
-            {activeTab === "announcement" ? <h1>a
-              Announcement</h1> : ""}
+            {activeTab === "announcement" ? <Announcement /> : ""}
           </div>
           <div className="w-full">
             {activeTab === "rating" ? <>
