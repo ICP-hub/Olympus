@@ -43,7 +43,7 @@ const NewEvent = ({ event }) => {
                 console.log("TRY K ANDR AAGYA")
                 const data = await actor.get_cohorts_by_principal();
 
-                console.log("DATA FROM API", data)
+                console.log("DATA FROM API changed", data)
                 // Map the cohort data to the structure needed for the EventCard component
                 const formattedEvents = data.map(cohort => ({
                     title: cohort.cohort.title,
