@@ -15,6 +15,7 @@ import ProjectDetailsForOwnerProject from '../../component/Project/ProjectDetail
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState("roles");
+  const [eventCreated, setEventCreated] = useState(false);
   const { profilepage } = profile
 
   const handleChange = (tab) => {
@@ -124,8 +125,11 @@ const ProfilePage = () => {
           <div className="w-full">
             {activeTab === "event" && (
               <>
-                <EventSection />  First component, rendered above
-                <NewEvent />  {/* Second component, rendered below */}
+                {!eventCreated ? (
+                  <EventSection />  // Render EventSection when no event is created
+                ) : (
+                  <NewEvent />  // Render NewEvent when an event is created
+                )}
               </>
             )}
           </div>
