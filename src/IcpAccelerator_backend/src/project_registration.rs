@@ -399,6 +399,26 @@ pub async fn create_project(info: ProjectInfo) -> String {
 
     let caller = caller();
 
+    let has_mentor_role = read_state(|state| {
+        state.role_status.get(&StoredPrincipal(caller)).map_or(false, |roles| {
+            roles.0.iter().any(|role| role.name == "mentor" && (role.status == "approved" || role.status == "active"))
+        })
+    });
+
+    if has_mentor_role {
+        return "You are not allowed to get this role because you already have the Mentor role.".to_string();
+    }
+
+    let has_vc_role = read_state(|state| {
+        state.role_status.get(&StoredPrincipal(caller)).map_or(false, |roles| {
+            roles.0.iter().any(|role| role.name == "vc" && (role.status == "approved" || role.status == "active"))
+        })
+    });
+
+    if has_vc_role {
+        return "You are not allowed to get this role because you already have the Venture Capitalist role.".to_string();
+    }
+
     let role_count = get_approved_role_count_for_principal(caller);
     if role_count >= 2 {
         return "You are not eligible for this role because you have 2 or more roles".to_string();
