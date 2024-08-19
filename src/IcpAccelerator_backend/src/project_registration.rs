@@ -37,6 +37,7 @@ pub struct Jobs {
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct JobsInternal {
+    job_id: String,
     job_data: Jobs,
     timestamp: u64,
     job_poster : Option<UserInformation>,
@@ -1544,14 +1545,22 @@ pub fn make_project_active_inactive(p_id: Principal, project_id: String) -> Stri
 }
 
 #[update(guard = "is_user_anonymous")]
-pub fn post_job(params: Jobs) -> String {
+pub async fn post_job(params: Jobs) -> String {
     let principal_id = ic_cdk::api::caller();
 
     let user_data = get_user_information_internal(principal_id);
 
     let current_time = ic_cdk::api::time();
 
+    let random_bytes = ic_cdk::api::management_canister::main::raw_rand()
+                .await
+                .expect("Failed to generate random bytes")
+                .0;
+
+    let uid = format!("{:x}", Sha256::digest(&random_bytes));
+
     let new_job = JobsInternal {
+        job_id: uid,
         job_data: params.clone(),
         timestamp: current_time,
         job_poster: Some(user_data),
@@ -1630,6 +1639,20 @@ pub fn get_jobs_posted_by_principal(caller: Principal) -> Vec<JobsInternal> {
             );
         }
         jobs_for_principal
+    })
+}
+
+#[query(guard = "is_user_anonymous")]
+pub fn get_job_details_using_uid(params: String) -> Option<JobsInternal> {
+    read_state(|state| {
+        for (_poster_principal, job_list) in state.post_job.iter() {
+            for job_internal in job_list.0.iter() {
+                if job_internal.job_id == params {
+                    return Some(job_internal.clone());
+                }
+            }
+        }
+        None
     })
 }
 
