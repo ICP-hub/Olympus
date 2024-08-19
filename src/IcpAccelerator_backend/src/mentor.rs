@@ -119,6 +119,16 @@ pub fn get_mentor_declined_info_using_principal(caller: Principal) -> Option<Men
 pub async fn register_mentor(profile: MentorProfile) -> String {
     let caller = caller();
 
+    let has_project_role = read_state(|state| {
+        state.role_status.get(&StoredPrincipal(caller)).map_or(false, |roles| {
+            roles.0.iter().any(|role| role.name == "project" && (role.status == "approved" || role.status == "active"))
+        })
+    });
+
+    if has_project_role {
+        return "You are not allowed to get this role because you already have the Project role.".to_string();
+    }
+
     let role_count = get_approved_role_count_for_principal(caller);
     if role_count >= 2 {
         return "You are not eligible for this role because you have 2 or more roles".to_string();

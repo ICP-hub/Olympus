@@ -125,6 +125,16 @@ pub struct UpdateInfoStruct {
 pub async fn register_venture_capitalist(params: VentureCapitalist) -> std::string::String {
     let caller = caller();
 
+    let has_project_role = read_state(|state| {
+        state.role_status.get(&StoredPrincipal(caller)).map_or(false, |roles| {
+            roles.0.iter().any(|role| role.name == "project" && (role.status == "approved" || role.status == "active"))
+        })
+    });
+
+    if has_project_role {
+        return "You are not allowed to get this role because you already have the Project role.".to_string();
+    }
+
     let role_count = get_approved_role_count_for_principal(caller);
     if role_count >= 2 {
         return "You are not eligible for this role because you have 2 or more roles".to_string();
@@ -151,55 +161,6 @@ pub async fn register_venture_capitalist(params: VentureCapitalist) -> std::stri
         ic_cdk::println!("This Principal is already registered");
         return "This Principal is already registered.".to_string();
     }
-
-    // mutate_state(|state| {
-    //     let role_status = &mut state.role_status;
-
-    //     if let Some(mut role_status_vec_candid) = role_status.get(&StoredPrincipal(caller)) {
-    //         let mut role_status_vec = role_status_vec_candid.0;
-    //         for role in role_status_vec.iter_mut() {
-    //             if role.name == "vc" {
-    //                 role.status = "requested".to_string();
-    //                 role.requested_on = Some(time());
-    //                 break;
-    //             }
-    //         }
-    //         role_status.insert(StoredPrincipal(caller), Candid(role_status_vec));
-    //     } else {
-    //         // If the role_status doesn't exist for the caller, insert the initial roles
-    //         let initial_roles = vec![
-    //             Role {
-    //                 name: "user".to_string(),
-    //                 status: "active".to_string(),
-    //                 requested_on: None,
-    //                 approved_on: Some(time()),
-    //                 rejected_on: None,
-    //             },
-    //             Role {
-    //                 name: "project".to_string(),
-    //                 status: "default".to_string(),
-    //                 requested_on: None,
-    //                 approved_on: None,
-    //                 rejected_on: None,
-    //             },
-    //             Role {
-    //                 name: "mentor".to_string(),
-    //                 status: "default".to_string(),
-    //                 requested_on: None,
-    //                 approved_on: None,
-    //                 rejected_on: None,
-    //             },
-    //             Role {
-    //                 name: "vc".to_string(),
-    //                 status: "default".to_string(),
-    //                 requested_on: None,
-    //                 approved_on: None,
-    //                 rejected_on: None,
-    //             },
-    //         ];
-    //         role_status.insert(StoredPrincipal(caller), Candid(initial_roles));
-    //     }
-    // });
 
     let mut user_data = get_user_information_internal(caller);
 
