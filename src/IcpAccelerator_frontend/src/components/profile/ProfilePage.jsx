@@ -9,11 +9,13 @@ import ProjectCard from '../Dashboard/Project/ProjectCard';
 import EventSection from '../Dashboard/Project/EventSection';
 import EventMain from '../Dashboard/DashboardEvents/EventMain';
 import NewEvent from '../Dashboard/DashboardEvents/NewEvent';
+import ProjectDetailsForOwnerProject from '../../component/Project/ProjectDetailsPages/ProjectDetailsForInvestorProject';
 
 
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState("roles");
+  const [eventCreated, setEventCreated] = useState(false);
   const { profilepage } = profile
 
   const handleChange = (tab) => {
@@ -123,13 +125,16 @@ const ProfilePage = () => {
           <div className="w-full">
             {activeTab === "event" && (
               <>
-                {/* <EventSection />  First component, rendered above */}
-                <NewEvent />  {/* Second component, rendered below */}
+                {!eventCreated ? (
+                  <EventSection />  // Render EventSection when no event is created
+                ) : (
+                  <NewEvent />  // Render NewEvent when an event is created
+                )}
               </>
             )}
           </div>
           <div className="w-full">
-            {activeTab === "job" ? <h1></h1> : ""}
+            {activeTab === "job" ? <ProjectDetailsForOwnerProject/> : ""}
           </div>
           <div className="w-full">
             {activeTab === "announcement" ? <h1>a

@@ -132,33 +132,12 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
       cohort_banner: imageData ? [imageData] : [], // Example placeholder
       host_name: ['Mridul'], // Example placeholder
     };
-    // image creation function compression and uintarray creator
-    const imageCreationFunc = async (file) => {
-      const result = await trigger("image");
-      if (result) {
-        try {
-          const compressedFile = await CompressedImage(file);
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            setImagePreview(reader.result);
-          };
-          reader.readAsDataURL(compressedFile);
-          const byteArray = await compressedFile.arrayBuffer();
-          setImageData(Array.from(new Uint8Array(byteArray)));
-        } catch (error) {
-          setError("image", {
-            type: "manual",
-            message: "Could not process image, please try another.",
-          });
-        }
-      } else {
-        console.log("ERROR--imageCreationFunc-file", file);
-      }
-    };
+
     try {
       console.log("Cohort Data Before Submit", eventData)
       const result = await actor.create_cohort(eventData);
       console.log("eventdata", eventData);
+      console.log('result',result)
       if (result && result.Ok) {
         toast.success("Cohort creation request has been sent to admin");
         setModalOpen(false);

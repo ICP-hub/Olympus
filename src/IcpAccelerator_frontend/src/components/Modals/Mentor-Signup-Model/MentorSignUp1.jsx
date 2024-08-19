@@ -4,13 +4,20 @@ import { useFormContext } from "react-hook-form";
 import { useSelector } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
 
-const MentorSignup3 = ({formData}) => {
+// MENTOR SIGNUP FORM COMPONENT
+const MentorSignup1 = ({ formData }) => {
+  // USE FORM CONTEXT HOOK FOR FORM MANAGEMENT AND VALIDATION
   const { register, formState: { errors }, watch, setValue, clearErrors, setError, getValues } = useFormContext();
+
+  // RETRIEVE ICP HUBS AND CHAIN NAMES FROM REDUX STORE
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
   const multiChainNames = useSelector((currState) => currState.chains.chains);
 
+  // STATE MANAGEMENT FOR MULTICHAIN OPTIONS AND SELECTED VALUES
   const [multiChainOptions, setMultiChainOptions] = useState([]);
   const [multiChainSelectedOptions, setMultiChainSelectedOptions] = useState([]);
+
+  // STATIC CATEGORY OPTIONS FOR MENTORING SERVICES
   const [categoryOfMentoringServiceOptions] = useState([
     { value: "Incubation", label: "Incubation" },
     { value: "Tokenomics", label: "Tokenomics" },
@@ -20,18 +27,21 @@ const MentorSignup3 = ({formData}) => {
   ]);
   const [categoryOfMentoringServiceSelectedOptions, setCategoryOfMentoringServiceSelectedOptions] = useState([]);
 
+  // HANDLER TO SET SELECTED CATEGORIES OF MENTORING SERVICES
   const setCategoryOfMentoringServiceSelectedOptionsHandler = (val) => {
     setCategoryOfMentoringServiceSelectedOptions(
       val ? val.split(", ").map((reason) => ({ value: reason, label: reason })) : []
     );
   };
 
+  // HANDLER TO SET SELECTED MULTICHAIN OPTIONS
   const setMultiChainSelectedOptionsHandler = (val) => {
     setMultiChainSelectedOptions(
       val ? val.split(", ").map((chain) => ({ value: chain, label: chain })) : []
     );
   };
 
+  // EFFECT TO POPULATE MULTICHAIN OPTIONS FROM REDUX STORE
   useEffect(() => {
     if (multiChainNames) {
       setMultiChainOptions(multiChainNames.map((chain) => ({ value: chain, label: chain })));
@@ -40,13 +50,17 @@ const MentorSignup3 = ({formData}) => {
     }
   }, [multiChainNames]);
 
+  // RETRIEVE MENTOR DATA FROM REDUX STORE
   const mentorFullData = useSelector((currState) => currState.mentorData.data[0]);
+
+  // EFFECT TO SET FORM VALUES BASED ON PASSED FORM DATA
   useEffect(() => {
     if (formData) {
       setMentorValuesHandler(formData);
     }
   }, [formData]);
 
+  // HANDLER TO SET FORM VALUES FOR MENTOR SIGNUP FORM
   const setMentorValuesHandler = (val) => {
     console.log('val',val)
     if (val) {
@@ -58,13 +72,12 @@ const MentorSignup3 = ({formData}) => {
     }
   };
 
-  // useEffect(() => {
-  //   console.log("Form values:", getValues());
-  // }, [watch()]);
-
+  // FORM RENDERING LOGIC
   return (
     <>
       <h1 className="text-3xl text-[#121926] font-bold mb-3">Create a Mentor</h1>
+
+      {/* ICP HUB SELECTION */}
       <div className="mb-2">
         <label className="block mb-1">
           Preferred ICP Hub you would like to be associated with <span className="text-red-500">*</span>
@@ -88,6 +101,8 @@ const MentorSignup3 = ({formData}) => {
           <p className="mt-1 text-sm text-red-500 font-bold text-left">{errors.preferred_icp_hub.message}</p>
         )}
       </div>
+
+      {/* MULTICHAIN MENTORING SELECTION */}
       <div className="mb-2">
         <label className="block mb-1">
           Do you mentor multiple ecosystems <span className="text-red-500">*</span>
@@ -113,6 +128,8 @@ const MentorSignup3 = ({formData}) => {
           <p className="mt-1 text-sm text-red-500 font-bold text-left">{errors.multi_chain.message}</p>
         )}
       </div>
+
+      {/* CHAIN SELECTION FOR MULTICHAIN MENTORING */}
       {watch("multi_chain") === "true" && (
         <div className="relative z-0 group mb-6">
           <label
@@ -192,6 +209,8 @@ const MentorSignup3 = ({formData}) => {
           )}
         </div>
       )}
+
+      {/* CATEGORY OF MENTORING SERVICES SELECTION */}
       <div className="mb-2">
         <label className="block mb-1">
           Categories of mentoring services <span className="text-red-500">*</span>
@@ -268,9 +287,11 @@ const MentorSignup3 = ({formData}) => {
           <p className="mt-1 text-sm text-red-500 font-bold text-left">{errors.category_of_mentoring_service.message}</p>
         )}
       </div>
+
+      {/* TOASTER FOR NOTIFICATIONS */}
       <Toaster />
     </>
   );
 };
 
-export default MentorSignup3;
+export default MentorSignup1;

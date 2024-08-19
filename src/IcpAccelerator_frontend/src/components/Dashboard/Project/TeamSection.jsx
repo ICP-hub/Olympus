@@ -28,7 +28,7 @@ console.log("TEAM 0TH DATA", cardData[0]?.params?.project_team[0].member_data)
 
         const name = result?.full_name ?? "Unnamed Member";
         const avatar = result?.profile_picture?.[0]
-          ? `data:image/jpeg;base64,${uint8ArrayToBase64(result.profile_picture[0])}`
+          ? uint8ArrayToBase64(result.profile_picture[0])
           : "../../../../assets/Logo/ProfileImage.png"; 
 
         return (

@@ -24,6 +24,7 @@ import {
     FaPlus,
     FaTrash,
 } from "react-icons/fa";
+import { LanguageIcon } from "../UserRegistration/DefaultLink"
 
 const ProjectDetail = () => {
     const { countries } = useCountries();
@@ -187,9 +188,9 @@ const ProjectDetail = () => {
                 "whatsapp.com": <FaWhatsapp className={`text-green-600 ${size}`} />,
                 "medium.com": <FaMedium className={`text-black ${size}`} />,
             };
-            return icons[domain] || null;
+            return icons[domain] || <LanguageIcon />;
         } catch (error) {
-            return null;
+            return <LanguageIcon />;
         }
     };
     useEffect(() => {
