@@ -4,7 +4,9 @@
       "candid": "src/IcpAccelerator_backend/IcpAccelerator_backend.did",
       "package": "IcpAccelerator_backend",
       "type": "rust",
-      "optimize": "cycles"
+      "optimize": "cycles",
+      "wasm": "target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm",
+      "build": "cargo build --release --target wasm32-unknown-unknown --features cdylib"
     },
     
     "internet_identity" : {

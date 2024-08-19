@@ -44,6 +44,7 @@
     "file-loader": "^6.2.0",
     "gsap": "^3.12.5",
     "ic": "^0.0.1",
+    "jodit-react": "^4.1.2",
     "rc-progress": "^3.5.1",
     "react": "^18.3.1",
     "react-apexcharts": "^1.4.1",
