@@ -16,7 +16,7 @@ import { profile } from '../jsondata/data/profileData';
 import ProfileCard from './RoleProfileCard';
 import { useDispatch, useSelector } from 'react-redux';
 import Modal1 from '../Modals/ProjectModal/Modal1';
-import { setCurrentActiveRole, setCurrentRoleStatus } from '../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer';
+import { getCurrentRoleStatusFailureHandler, setCurrentActiveRole, setCurrentRoleStatus } from '../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer';
 
 
 const FAQItem = ({ question, answer }) => {

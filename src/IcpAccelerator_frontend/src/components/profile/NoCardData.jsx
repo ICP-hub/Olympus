@@ -73,7 +73,7 @@ const NoCardData = () => {
             })
             .catch((error) => {
               console.log("error-in-add_announcement", error);
-              toast.error("something got wrong");
+              toast.error("something went wrong");
               setIsSubmitting(false);
               handleCloseModal();
               // setModalOpen(false)
