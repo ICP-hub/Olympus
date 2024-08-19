@@ -75,7 +75,7 @@ const ProjectRegisterMain = ({ isopen }) => {
       "valuation",
       "target_amount",
     ],
-    4: ["promotional_video", "token_economics","links"],
+    4: ["promotional_video", "token_economics", "links"],
     5: ["project_description"],
   };
 
@@ -88,7 +88,7 @@ const ProjectRegisterMain = ({ isopen }) => {
   // HANDLE NEXT BUTTON CLICK
   const handleNext = async () => {
     const isValid = await trigger(formFields[index]); // VALIDATE CURRENT STEP
-    console.log('isValid',isValid)
+    console.log('isValid', isValid)
     if (isValid) {
       setFormData((prevData) => ({
         ...prevData,
@@ -162,13 +162,13 @@ const ProjectRegisterMain = ({ isopen }) => {
         ],
         type_of_registration: [
           data?.is_your_project_registered === "true" &&
-          data?.type_of_registration
+            data?.type_of_registration
             ? data?.type_of_registration
             : "",
         ],
         country_of_registration: [
           data?.is_your_project_registered === "true" &&
-          data?.country_of_registration
+            data?.country_of_registration
             ? data?.country_of_registration
             : "",
         ],
@@ -213,7 +213,7 @@ const ProjectRegisterMain = ({ isopen }) => {
             ],
             raised_from_other_ecosystem: [
               data?.money_raised_till_now === "true" &&
-              data?.raised_from_other_ecosystem
+                data?.raised_from_other_ecosystem
                 ? data?.raised_from_other_ecosystem.toString()
                 : "",
             ],
@@ -245,7 +245,7 @@ const ProjectRegisterMain = ({ isopen }) => {
         project_area_of_focus: "",
         reason_to_join_incubator:
           data?.reasons_to_join_platform &&
-          data?.reasons_to_join_platform.length > 0
+            data?.reasons_to_join_platform.length > 0
             ? data?.reasons_to_join_platform.join(", ")
             : "",
         vc_assigned: [],
@@ -264,8 +264,8 @@ const ProjectRegisterMain = ({ isopen }) => {
         if (
           result.startsWith(
             "You can't create more than one project" ||
-              "You are not eligible for this role because you have 2 or more roles" ||
-              "Cannot set private documents unless upload private docs has been set to true"
+            "You are not eligible for this role because you have 2 or more roles" ||
+            "Cannot set private documents unless upload private docs has been set to true"
           )
         ) {
           toast.success(result); // Show success toast with the returned message
@@ -285,9 +285,8 @@ const ProjectRegisterMain = ({ isopen }) => {
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${
-        modalOpen ? "block" : "hidden"
-      }`}
+      className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${modalOpen ? "block" : "hidden"
+        }`}
     >
       <div className="bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4 overflow-y-auto">
         <div className="flex justify-endz mr-4">
@@ -303,9 +302,8 @@ const ProjectRegisterMain = ({ isopen }) => {
           <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
             {renderComponent()}
             <div
-              className={`flex mt-4 ${
-                index === 0 ? "justify-end" : "justify-between"
-              }`}
+              className={`flex mt-4 ${index === 0 ? "justify-end" : "justify-between"
+                }`}
             >
               {index > 0 && (
                 <button
