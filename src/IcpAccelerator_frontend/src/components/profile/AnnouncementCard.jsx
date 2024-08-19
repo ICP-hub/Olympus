@@ -177,7 +177,7 @@ const AnnouncementCard = ({data}) => {
             <div className="container mx-auto my-6 p-4 bg-white">
               <div className="flex justify-between items-center pb-1 mb-2">
                 <div className="text-gray-500 font-medium text-sm">
-                  18/08/2024
+                  {ann_time}
                 </div>
                 <div className="flex items-center space-x-3">
                   <div
@@ -199,25 +199,22 @@ const AnnouncementCard = ({data}) => {
                 </div>
               </div>
               <h2 className="text-gray-900 text-xl font-bold mb-3">
-                Announcement1
+                {ann_name}
               </h2>
               <div className="flex items-center mb-4 space-x-4">
                 <img
-                  src={ok}
+                  src={ann_project_logo}
                   alt="pic"
                   className="h-12 w-12 rounded-full border border-gray-300"
                 />
                 <div>
-                  <h2 className="text-lg font-semibold">Vijay</h2>
-                  <h3 className="text-gray-600 font-normal">hello vijay</h3>
+                  <h2 className="text-lg font-semibold">{ann_project_name}</h2>
+                  <h3 className="text-gray-600 font-normal">{ann_project_desc} </h3>
                 </div>
               </div>
               <div className="text-gray-500 leading-relaxed">
                 <p>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Molestias dicta voluptates dignissimos ex nobis vel nesciunt
-                  quas a ducimus dolor, magni culpa necessitatibus facere sed!
-                  Officiis iusto facere debitis ipsam id optio, 
+                  {ann_desc}
                 </p>
               </div>
               <hr className="mt-4" />

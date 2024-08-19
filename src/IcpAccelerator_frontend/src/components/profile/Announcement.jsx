@@ -43,7 +43,19 @@ const Announcement = () => {
       }
     }
   };
-  fetchProjectData();
+  useEffect(() => {
+    let isMounted = true;
+    if (actor) {
+      fetchProjectData(isMounted);
+    } else {
+      navigate("/");
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [actor]);
+
   const handleAddAnnouncement = async ({
     announcementTitle,
     announcementDescription,
@@ -64,7 +76,7 @@ const Announcement = () => {
           // console.log("result-in-add_announcement", result);
           if (result && Object.keys(result).length > 0) {
             handleCloseModal();
-            // setModalOpen(false)
+            fetchProjectData();
             setIsSubmitting(false);
             toast.success("announcement added successfully");
             window.location.reload();
@@ -91,15 +103,14 @@ const Announcement = () => {
         <h1 className="text-xl font-bold p-3">Announcements </h1>
         <button
           className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
-          onClick={()=>setAnnouncementModalOpen(true)} 
+          onClick={() => setAnnouncementModalOpen(true)}
         >
           + Add new Announcement
         </button>
       </div>
-  
+
       <>
-   
-      {/* <div className="text-center py-12">
+        {/* <div className="text-center py-12">
         <div className="flex justify-center items-center">
           <svg
             width="154"
@@ -190,21 +201,18 @@ const Announcement = () => {
           Create a new Announcement
         </button>
       </div> */}
-      {isAnnouncementModalOpen && (
-        <AnnouncementModal
-          isOpen={handleOpenModal}
-          onClose={handleCloseModal}
-          onSubmitHandler={handleAddAnnouncement}
-          isSubmitting={isSubmitting}
-          isUpdate={false}
-        />
-      )}
-      </> 
-      
+        {isAnnouncementModalOpen && (
+          <AnnouncementModal
+            isOpen={handleOpenModal}
+            onClose={handleCloseModal}
+            onSubmitHandler={handleAddAnnouncement}
+            isSubmitting={isSubmitting}
+            isUpdate={false}
+          />
+        )}
+      </>
 
       <AnnouncementCard data={projectData} />
-
-      
     </div>
   );
 };
