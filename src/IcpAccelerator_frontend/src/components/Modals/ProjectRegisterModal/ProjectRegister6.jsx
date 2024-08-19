@@ -92,4 +92,4 @@ const ProjectRegister6 = ({ isOpen, onClose, onBack }) => {
 };
 
 export default ProjectRegister6; // EXPORT COMPONENT AS DEFAULT
-export default ProjectRegister6; // EXPORT COMPONENT AS DEFAULT
+
