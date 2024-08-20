@@ -10,7 +10,8 @@ import awtar from "../../../assets/images/icons/_Avatar.png"
 import { clockSvgIcon, coinStackedSvgIcon, lenseSvgIcon, locationSvgIcon } from '../Utils/Data/SvgData';
 import useFormatDateFromBigInt from "../../component/hooks/useFormatDateFromBigInt";
 import NoDataCard from "../../component/Mentors/Event/MentorAssociatedNoDataCard";
-
+import { formatFullDateFromBigInt } from "../Utils/formatter/formatDateFromBigInt";
+import LinkIcon from '@mui/icons-material/Link';
 const Jobs = () => {
    
     const actor = useSelector((currState) => currState.actors.actor);
@@ -21,52 +22,49 @@ const Jobs = () => {
     const [isLoading, setIsLoading] = useState(true);
     const itemsPerPage = 1;
     const [currentPage, setCurrentPage] = useState(1);
+    const [openJobUid, setOpenJobUid] = useState(null);
     useEffect(() => {
-        let isMounted = true; // Flag to check if the component is still mounted
-    
+        let isMounted = true;
+
         const fetchLatestJobs = async (caller) => {
-            console.log('Inside Fetch Job Function', isMounted)
-          setIsLoading(true);
-          await caller
-            .get_all_jobs({
-                page_size: itemsPerPage,
-                page: currentPage,
-              })
-            .then((result) => {
-                console.log("job result.......", result)
-              if (isMounted) {
-                // Only update state if the component is still mounted
-                if (!result || result.length === 0) {
-                  setNoData(true);
-                  setIsLoading(false);
-                  setLatestJobs([]);
-                } else {
-                  setLatestJobs(result);
-                  setIsLoading(false);
-                  setNoData(false);
+            console.log('Inside Fetch Job Function');
+            setIsLoading(true);
+
+            try {
+                const result = await caller.get_all_jobs(currentPage , itemsPerPage);
+
+                if (isMounted) {
+                    if (result.length === 0) {
+                        setNoData(true);
+                        setLatestJobs([]);
+                    } else {
+                        setLatestJobs(result);
+                        setOpenJobUid(result?.uid)
+                        setNoData(false);
+                    }
                 }
-              }
-            })
-            .catch((error) => {
-              if (isMounted) {
-                setIsLoading(false);
-                setNoData(true);
-                setLatestJobs([]);
-              }
-            });
+            } catch (error) {
+                if (isMounted) {
+                    setNoData(true);
+                    setLatestJobs([]);
+                }
+            } finally {
+                if (isMounted) {
+                    setIsLoading(false);
+                }
+            }
         };
-    
+
         if (actor) {
-          fetchLatestJobs(actor);
+            fetchLatestJobs(actor);
         } else {
-          fetchLatestJobs(IcpAccelerator_backend);
+            fetchLatestJobs(IcpAccelerator_backend);
         }
-    
+
         return () => {
-          isMounted = false; // Set the flag to false when the component unmounts
+            isMounted = false;
         };
-      }, [actor]);
-      console.log("latestJobs....................",latestJobs)
+    }, [actor, IcpAccelerator_backend, itemsPerPage, currentPage]);
     const [filter, setFilter] = useState({
         role: "",
         fullTime: false,
@@ -88,6 +86,13 @@ const Jobs = () => {
         setFilter({ ...filter, [name]: checked })
     }
 
+    const openJobDetails = (uid) => {
+        setOpenJobUid(uid); // Set the uid of the job to open its details
+    };
+
+    const closeJobDetails = () => {
+        setOpenJobUid(null); // Close the job details
+    };
     return (<>
 
         <div className='container mx-auto bg-white'>
@@ -100,6 +105,7 @@ const Jobs = () => {
              <h1>No Data Found</h1>
             ) : (
               latestJobs.map((card, index) => {
+                console.log(card)
                 let job_name = card?.job_data?.title ?? "";
                 let job_category = card?.job_data?.category ?? "";
                 let job_description = card?.job_data?.description ?? "";
@@ -107,7 +113,7 @@ const Jobs = () => {
                 let job_link = card?.job_data?.link ?? "";
                 let job_project_logo = card?.project_logo
                   ? uint8ArrayToBase64(card?.project_logo[0])
-                  : ment;
+                  : awtar;
                   let job_type=card?.job_data?.job_type??"";
                 let job_project_name = card?.project_name ?? "";
                 let job_project_desc = card?.project_desc ?? "";
@@ -118,27 +124,27 @@ const Jobs = () => {
                             <>
                                 <div className='flex flex-col gap-3 my-8'>
                                     <div className='flex justify-between'>
-                                        <div onClick={() => setOpen(true)} className="flex flex-col gap-3  ">
+                                        <div onClick={() => openJobDetails(card.uid)} className="flex flex-col gap-3  ">
                                             <p className='text-gray-400'>{job_post_time} </p>
                                             <h3 className='text-xl font-bold'>{job_name} </h3>
-                                            <p className='flex items-center'><span className='mr-3'><img src={job_project_logo} alt='icon' /></span>{job_project_name} </p>
+                                            <p className='flex items-center'><span className='mr-3'><img src={job_project_logo} alt='icon' /></span><span>{job_name} </span></p>
                                         </div>
                                         <div className="flex flex-col gap-4 items-center">
-                                            <button onClick={() => setOpen(true)} className='border rounded-md bg-[#155EEF] py-2 px-4 text-white text-center'>Apply <span className='pl-1 text-white'></span><ArrowOutwardIcon sx={{ marginTop: "-2px", fontSize: "medium" }} /></button>
-                                            <button onClick={() => setOpen(true)} className='hover:bg-slate-300 py-2 px-3 text-[#155EEF] font-medium '>view details</button>
+                                            <button onClick={() => openJobDetails(card.uid)} className='border rounded-md bg-[#155EEF] py-2 px-4 text-white text-center'>Apply <span className='pl-1 text-white'></span><ArrowOutwardIcon sx={{ marginTop: "-2px", fontSize: "medium" }} /></button>
+                                            <button onClick={() => openJobDetails(card.uid)} className='hover:bg-slate-300 py-2 px-3 text-[#155EEF] font-medium '>view details</button>
                                         </div>
                                     </div>
-                                    <div onClick={() => setOpen(true)} className="flex flex-col gap-3">
+                                    <div onClick={() => openJobDetails(card.uid)} className="flex flex-col gap-3">
                                         <p className=''>{job_description} </p>
                                         <div className='flex gap-5 items-center'>
                                             <div className='flex items-center gap-2'> {lenseSvgIcon} <span className=''>{job_category}</span> </div>
                                             <div className='flex items-center gap-2'>{locationSvgIcon} <span className=''>{job_location}</span> </div>
                                             <div className='flex items-center gap-2'>{clockSvgIcon} <span className='ml-2'>{job_type}</span> </div>
-                                            <div className='flex items-center gap-2'><span className=''><a href={job_link} target="_blank">{coinStackedSvgIcon} </a></span>80k-100k  </div>
+                                            <div className='flex items-center gap-2'><a href={job_link} target="_blank"><span className='flex'><LinkIcon/> {job_link}</span> </a></div>
                                         </div>
                                     </div>
                                 </div>
-                                {/* {open && job.id === "1" ? <JobDetails setOpen={setOpen} /> : ""} */}
+              
                                 <hr />
                             </>
                        );
@@ -202,6 +208,9 @@ const Jobs = () => {
                 </div>
             </div>
         </div>
+        {openJobUid && (
+                <JobDetails setOpen={closeJobDetails} uid={openJobUid} />
+            )}
     </>
     )
 }
