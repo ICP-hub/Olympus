@@ -215,3 +215,12 @@ input[type="number"] {
   filter: drop-shadow(0 0 5px #cdd8e7) drop-shadow(0 0 10px #c2ccda);
 }
 
+/* ////////line ellips  */
+/* In your global CSS file */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

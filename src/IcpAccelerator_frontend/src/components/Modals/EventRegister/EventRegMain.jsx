@@ -99,7 +99,7 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
   const formFields = {
     0: ["cohort_banner", "title", "cohort_launch_date", "cohort_end_date"],
     1: ["deadline", "eligibility", "no_of_seats", "start_date"],
-    2: ["funding_type", "funding_amount", "tags", "country", "host_name"],
+    2: ["funding_type", "funding_amount", "tags", "country", "host_name", "contact_links"],
     3: ["description"],
   };
 
@@ -127,6 +127,9 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
         eligibility: [data.eligibility],
         level_on_rubric: parseFloat(data.rubric_eligibility),
       },
+      contact_links: data?.contact_links
+        ? [data.contact_links.map((val) => ({ link: val?.link ? [val.link] : [] }))] // PREPARE LINKS DATA
+        : [],
       no_of_seats: parseInt(data.no_of_seats),
       // Ensure imageData and userFullData are correctly defined and used.
       cohort_banner: imageData ? [imageData] : [], // Example placeholder
@@ -137,7 +140,7 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
       console.log("Cohort Data Before Submit", eventData)
       const result = await actor.create_cohort(eventData);
       console.log("eventdata", eventData);
-      console.log('result',result)
+      console.log('result', result)
       if (result && result.Ok) {
         toast.success("Cohort creation request has been sent to admin");
         setModalOpen(false);

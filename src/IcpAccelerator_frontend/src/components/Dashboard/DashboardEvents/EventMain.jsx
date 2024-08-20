@@ -69,10 +69,12 @@ const EventMain = () => {
       <h1 className="text-3xl font-bold  bg-opacity-95 -top-[0.6rem] sticky bg-white z-20 py-6">Discover events</h1>
       <div className="flex">
         <div className="w-full md:w-[70%] pr-6">
-          {events.map((event, index) => (
-            <>
-              <Link to='/dashboard/single-event'> <EventCard key={index} event={event} /> </Link>
-            </>))}
+          {/* {events.map((event, index) => ( */}
+          <>
+            <Link to='/dashboard/single-event'> <EventCard />
+            </Link>
+          </>
+          {/* ))} */}
         </div>
         <div className="w-full md:w-[30%]">
           <Filters isOpen={isFiltersOpen} />

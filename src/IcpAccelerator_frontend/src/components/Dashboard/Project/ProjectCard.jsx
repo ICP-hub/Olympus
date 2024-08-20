@@ -26,7 +26,7 @@ console.log("my card data principle.........",principal)
     useEffect(() => {
         const fetchProjectData = async () => {
             try {
-                const convertedPrincipal = await Principal.fromText('2vxsx-fae');
+                const convertedPrincipal = await Principal.fromText(principal);
                 const data = await actor.get_project_info_using_principal(convertedPrincipal);
                 console.log("Received data from actor:", data);
                 setCardData(data);

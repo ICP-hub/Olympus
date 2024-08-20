@@ -40,7 +40,7 @@ import { LanguageIcon } from "./DefaultLink";
 //     <path d="M12 2C9.7 2 7 5.9 7 10.9c0 4.8 1.7 8.7 4 10.9"></path>
 //   </svg>
 // );
-// import CompressedImage from "../../component/ImageCompressed/CompressedImage";
+import CompressedImage from "../../component/ImageCompressed/CompressedImage";
 
 const RegisterForm3 = ({ setImageData }) => {
   const { countries } = useCountries();

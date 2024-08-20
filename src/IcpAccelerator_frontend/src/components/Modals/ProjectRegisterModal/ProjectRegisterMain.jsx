@@ -1,16 +1,12 @@
-import React, { useState, useEffect } from "react";
-
+import React, { useState } from "react";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ProjectRegister1 from "./ProjectRegister1";
 import ProjectRegister2 from "./ProjectRegister2";
 import ProjectRegister3 from "./ProjectRegister3";
 import ProjectRegister4 from "./ProjectRegister4";
 import ProjectRegister5 from "./ProjectRegister5";
-
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-
 import { useNavigate } from "react-router-dom";
-
 import {
   useForm,
   Controller,
@@ -18,76 +14,22 @@ import {
   useFieldArray,
 } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { yupResolver } from "@hookform/resolvers/yup";
-
-// import DetailHeroSection from "../Common/DetailHeroSection";
 import { ThreeDots } from "react-loader-spinner";
 import { validationSchema } from "./projectValidation";
-
-import { Principal } from "@dfinity/principal";
-import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_IcpHubReducer";
 import ProjectRegister6 from "./ProjectRegister6";
 
-const ProjectRegisterMain = ({isopen }) => {
-  const dispatch = useDispatch();
+const ProjectRegisterMain = ({ isopen }) => {
   const actor = useSelector((currState) => currState.actors.actor);
-  const areaOfExpertise = useSelector(
-    (currState) => currState.expertiseIn.expertise
-  );
-  const typeOfProfile = useSelector(
-    (currState) => currState.profileTypes.profiles
-  );
+  const [index, setIndex] = useState(0); // TRACKS THE CURRENT FORM PAGE
+  const [logoData, setLogoData] = useState(null); // STORES LOGO FILE DATA
+  const [coverData, setCoverData] = useState(null); // STORES COVER IMAGE FILE DATA
+  const [isSubmitting, setSubmitting] = useState(false); // TRACKS SUBMISSION STATE
+  const [modalOpen, setModalOpen] = useState(isopen || true); // TRACKS MODAL OPEN/CLOSE STATE
+  const [formData, setFormData] = useState({}); // STORES ACCUMULATED FORM DATA
 
-  const multiChainNames = useSelector((currState) => currState.chains.chains);
-
-  const userFullData = useSelector((currState) => currState.userData.data.Ok);
-  const projectFullData = useSelector(
-    (currState) => currState.projectData.data
-  );
-  // console.log("projectFullData in projectRejForm ===>", projectFullData);
-  const userCurrentRoleStatusActiveRole = useSelector(
-    (currState) => currState.currentRoleStatus.activeRole
-  );
-  // STATES
-
-  // user image states
-  const [imagePreview, setImagePreview] = useState(null);
-  const [imageData, setImageData] = useState(null);
-  const [logoPreview, setLogoPreview] = useState(null);
-  const [logoData, setLogoData] = useState(null);
-  const [coverPreview, setCoverPreview] = useState(null);
-  const [coverData, setCoverData] = useState(null);
-  const [editMode, setEditMode] = useState(null);
-
-  // default & static options states
-  const [interestedDomainsOptions, setInterestedDomainsOptions] = useState([]);
-  const [
-    interestedDomainsSelectedOptions,
-    setInterestedDomainsSelectedOptions,
-  ] = useState([]);
-  const [typeOfProfileOptions, setTypeOfProfileOptions] = useState([]);
-
-  const [reasonOfJoiningOptions, setReasonOfJoiningOptions] = useState([
-    { value: "listing_and_promotion", label: "Project listing and promotion" },
-    { value: "Funding", label: "Funding" },
-    { value: "Mentoring", label: "Mentoring" },
-    { value: "Incubation", label: "Incubation" },
-    {
-      value: "Engaging_and_building_community",
-      label: "Engaging and building community",
-    },
-    { value: "Jobs", label: "Jobs" },
-  ]);
-  const [reasonOfJoiningSelectedOptions, setReasonOfJoiningSelectedOptions] =
-    useState([]);
-  // Mentor from states
-  const [multiChainOptions, setMultiChainOptions] = useState([]);
-  const [multiChainSelectedOptions, setMultiChainSelectedOptions] = useState(
-    []
-  );
-  
-
+  // INITIALIZE REACT HOOK FORM WITH VALIDATION SCHEMA
   const methods = useForm({
     resolver: yupResolver(validationSchema),
     mode: "all",
@@ -104,21 +46,110 @@ const ProjectRegisterMain = ({isopen }) => {
       raised_from_other_ecosystem: 0,
     },
   });
-  const {
-    handleSubmit,
-    getValues,
-    trigger,
-    formState: { isSubmitting },
-  } = methods;
 
- 
-  
-  // form submit handler func
+  const { handleSubmit, trigger, getValues } = methods;
+
+  // MAP FORM FIELDS TO DIFFERENT STEPS
+  const formFields = {
+    0: ["logo", "preferred_icp_hub", "project_name", "project_elevator_pitch"],
+    1: [
+      "cover",
+      "project_website",
+      "is_your_project_registered",
+      "type_of_registration",
+      "country_of_registration",
+    ],
+    2: [
+      "supports_multichain",
+      "multi_chain_names",
+      "live_on_icp_mainnet",
+      "dapp_link",
+      "weekly_active_users",
+      "revenue",
+    ],
+    3: [
+      "money_raised_till_now",
+      "icp_grants",
+      "investors",
+      "raised_from_other_ecosystem",
+      "valuation",
+      "target_amount",
+    ],
+    4: ["promotional_video", "token_economics", "links"],
+    5: ["project_description"],
+  };
+
+  // HANDLE FORM VALIDATION ERROR
+  const onErrorHandler = (val) => {
+    console.log("error", val);
+    toast.error("Empty fields or invalid values, please recheck the form");
+  };
+
+  // HANDLE NEXT BUTTON CLICK
+  const handleNext = async () => {
+    const isValid = await trigger(formFields[index]); // VALIDATE CURRENT STEP
+    console.log('isValid', isValid)
+    if (isValid) {
+      setFormData((prevData) => ({
+        ...prevData,
+        ...getValues(), // MERGE CURRENT STEP DATA WITH PREVIOUS DATA
+      }));
+      setIndex((prevIndex) => prevIndex + 1); // GO TO NEXT STEP
+    }
+  };
+
+  // HANDLE BACK BUTTON CLICK
+  const handleBack = () => {
+    if (index > 0) {
+      setIndex((prevIndex) => prevIndex - 1); // GO TO PREVIOUS STEP
+    }
+  };
+
+  // RENDER COMPONENT BASED ON CURRENT STEP
+  const renderComponent = () => {
+    let component;
+    switch (index) {
+      case 0:
+        component = (
+          <ProjectRegister1 formData={formData} setFormData={setFormData} />
+        );
+        break;
+      case 1:
+        component = (
+          <ProjectRegister2 formData={formData} setFormData={setFormData} />
+        );
+        break;
+      case 2:
+        component = (
+          <ProjectRegister3 formData={formData} setFormData={setFormData} />
+        );
+        break;
+      case 3:
+        component = (
+          <ProjectRegister4 formData={formData} setFormData={setFormData} />
+        );
+        break;
+      case 4:
+        component = (
+          <ProjectRegister5 formData={formData} setFormData={setFormData} />
+        );
+        break;
+      case 5:
+        component = (
+          <ProjectRegister6 formData={formData} setFormData={setFormData} />
+        );
+        break;
+      default:
+        component = <ProjectRegister1 />;
+    }
+
+    return component;
+  };
+
+  // HANDLE FORM SUBMISSION
   const onSubmitHandler = async (data) => {
-    console.log("data", data);
     if (actor) {
       const projectData = {
-        // project data
         project_cover: coverData ? [coverData] : [],
         project_logo: logoData ? [logoData] : [],
         preferred_icp_hub: [data?.preferred_icp_hub ?? ""],
@@ -131,13 +162,13 @@ const ProjectRegisterMain = ({isopen }) => {
         ],
         type_of_registration: [
           data?.is_your_project_registered === "true" &&
-          data?.type_of_registration
+            data?.type_of_registration
             ? data?.type_of_registration
             : "",
         ],
         country_of_registration: [
           data?.is_your_project_registered === "true" &&
-          data?.country_of_registration
+            data?.country_of_registration
             ? data?.country_of_registration
             : "",
         ],
@@ -182,7 +213,7 @@ const ProjectRegisterMain = ({isopen }) => {
             ],
             raised_from_other_ecosystem: [
               data?.money_raised_till_now === "true" &&
-              data?.raised_from_other_ecosystem
+                data?.raised_from_other_ecosystem
                 ? data?.raised_from_other_ecosystem.toString()
                 : "",
             ],
@@ -214,7 +245,7 @@ const ProjectRegisterMain = ({isopen }) => {
         project_area_of_focus: "",
         reason_to_join_incubator:
           data?.reasons_to_join_platform &&
-          data?.reasons_to_join_platform.length > 0
+            data?.reasons_to_join_platform.length > 0
             ? data?.reasons_to_join_platform.join(", ")
             : "",
         vc_assigned: [],
@@ -225,182 +256,37 @@ const ProjectRegisterMain = ({isopen }) => {
         technical_docs: [""],
         self_rating_of_project: 0,
       };
-
-      console.log("projectData ==>", projectData);
-      console.log("projectData ==>", logoData);
-
-      await actor
-        .register_project(projectData)
-        .then((result) => {
-          if (result) {
-            toast.success("Project Created Successfully");
-          } else {
-            toast.error(result);
-          }
-        })
-        .catch((error) => {
-          toast.error(`Error: ${error.message}`);
-        });
+      console.log("projectData", projectData);
+      try {
+        setSubmitting(true); // START SUBMISSION
+        const result = await actor.register_project(projectData); // SUBMIT FORM DATA
+        console.log("result", result);
+        if (
+          result.startsWith(
+            "You can't create more than one project" ||
+            "You are not eligible for this role because you have 2 or more roles" ||
+            "Cannot set private documents unless upload private docs has been set to true"
+          )
+        ) {
+          toast.success(result); // Show success toast with the returned message
+        } else {
+          toast.error(result); // Show error toast with the returned message
+        }
+      } catch (error) {
+        toast.error(`Error: ${error.message}`);
+      } finally {
+        setSubmitting(false); // END SUBMISSION
+      }
     } else {
       toast.error("Please signup with internet identity first");
       window.location.href = "/";
     }
   };
 
-  // form error handler func
-  const onErrorHandler = (val) => {
-    console.log("error", val);
-    toast.error("Empty fields or invalid values, please recheck the form");
-  };
-
-  // default interests set function
-  const setInterestedDomainsSelectedOptionsHandler = (val) => {
-    setInterestedDomainsSelectedOptions(
-      val
-        ? val
-          .split(", ")
-          .map((interest) => ({ value: interest, label: interest }))
-        : []
-    );
-  };
-
-  // default reasons set function
-  const setReasonOfJoiningSelectedOptionsHandler = (val) => {
-    setReasonOfJoiningSelectedOptions(
-      val && val.length > 0 && val[0].length > 0
-        ? val[0].map((reason) => ({ value: reason, label: reason }))
-        : []
-    );
-  };
-  const setMultiChainSelectedOptionsHandler = (val) => {
-    setMultiChainSelectedOptions(
-      val
-        ? val?.[0].split(", ").map((chain) => ({ value: chain, label: chain }))
-        : []
-    );
-  };
-
-  
-  useEffect(() => {
-    if (areaOfExpertise) {
-      setInterestedDomainsOptions(
-        areaOfExpertise.map((expert) => ({
-          value: expert.name,
-          label: expert.name,
-        }))
-      );
-    } else {
-      setInterestedDomainsOptions([]);
-    }
-  }, [areaOfExpertise]);
-
-  useEffect(() => {
-    if (typeOfProfile) {
-      setTypeOfProfileOptions(
-        typeOfProfile.map((type) => ({
-          value: type.role_type.toLowerCase(),
-          label: type.role_type,
-        }))
-      );
-    } else {
-      setTypeOfProfileOptions([]);
-    }
-  }, [typeOfProfile]);
-
-  // Mentor form states
-  useEffect(() => {
-    if (multiChainNames) {
-      setMultiChainOptions(
-        multiChainNames.map((chain) => ({
-          value: chain,
-          label: chain,
-        }))
-      );
-    } else {
-      setMultiChainOptions([]);
-    }
-  }, [multiChainNames]);
-
-  useEffect(() => {
-    dispatch(allHubHandlerRequest());
-  }, [actor, dispatch]);
-
-  const [index, setIndex] = useState(0);
-  const handleNext = async () => {
-    const isValid = await trigger(formFields[index]);
-    if (isValid) {
-      console.log("Current Form Data:", getValues(formFields[index]));
-      setIndex((prevIndex) => prevIndex + 1);
-    }
-  };
-
-  const handleBack = () => {
-    if (index > 0) {
-      setIndex((prevIndex) => prevIndex - 1);
-    }
-  };
-  const renderComponent = () => {
-    let component;
-    switch (index) {
-      case 0:
-        component = <ProjectRegister1 modalOpen={modalOpen} />;
-        break;
-      case 1:
-        component = <ProjectRegister2 />;
-        break;
-      case 2:
-        component = <ProjectRegister3 />;
-        break;
-      case 3:
-        component = <ProjectRegister4 />;
-        break;
-      case 4:
-        component = <ProjectRegister5 />;
-        break;
-      case 5:
-        component = <ProjectRegister6 />;
-        break;
-      default:
-        component = <ProjectRegister1 />;
-    }
-
-    return component;
-  };
-  const formFields = {
-    0: ["logo", "preferred_icp_hub", "project_name", "project_elevator_pitch"],
-    1: [
-      "cover",
-      "project_website",
-      "is_your_project_registered",
-      "type_of_registration",
-      "country_of_registration",
-    ],
-    2: [
-      "supports_multichain",
-      "multi_chain_names",
-      "live_on_icp_mainnet",
-      "dapp_link",
-      "weekly_active_users",
-      "revenue",
-    ],
-    3: [
-      "money_raised_till_now",
-      "icp_grants",
-      "investors",
-      "raised_from_other_ecosystem",
-      "valuation",
-      "target_amount",
-    ],
-    4: ["promotional_video", "links", "token_economics"],
-    5: ["project_description"],
-  };
-  const [modalOpen, setModalOpen] = useState(isopen || true);
-
   return (
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${
-        modalOpen ? "block" : "hidden"
-      }`}
+      className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${modalOpen ? "block" : "hidden"
+        }`}
     >
       <div className="bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4 overflow-y-auto">
         <div className="flex justify-endz mr-4">
@@ -416,9 +302,8 @@ const ProjectRegisterMain = ({isopen }) => {
           <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
             {renderComponent()}
             <div
-              className={`flex mt-4 ${
-                index === 0 ? "justify-end" : "justify-between"
-              }`}
+              className={`flex mt-4 ${index === 0 ? "justify-end" : "justify-between"
+                }`}
             >
               {index > 0 && (
                 <button
@@ -434,6 +319,7 @@ const ProjectRegisterMain = ({isopen }) => {
                 <button
                   type="submit"
                   className="py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 border-2 border-[#B2CCFF]"
+                  disabled={isSubmitting} // DISABLE BUTTON WHILE SUBMITTING
                 >
                   {isSubmitting ? (
                     <ThreeDots

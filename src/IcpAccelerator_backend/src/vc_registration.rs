@@ -125,6 +125,16 @@ pub struct UpdateInfoStruct {
 pub async fn register_venture_capitalist(params: VentureCapitalist) -> std::string::String {
     let caller = caller();
 
+    let has_project_role = read_state(|state| {
+        state.role_status.get(&StoredPrincipal(caller)).map_or(false, |roles| {
+            roles.0.iter().any(|role| role.name == "project" && (role.status == "approved" || role.status == "active"))
+        })
+    });
+
+    if has_project_role {
+        return "You are not allowed to get this role because you already have the Project role.".to_string();
+    }
+
     let role_count = get_approved_role_count_for_principal(caller);
     if role_count >= 2 {
         return "You are not eligible for this role because you have 2 or more roles".to_string();
@@ -151,55 +161,6 @@ pub async fn register_venture_capitalist(params: VentureCapitalist) -> std::stri
         ic_cdk::println!("This Principal is already registered");
         return "This Principal is already registered.".to_string();
     }
-
-    // mutate_state(|state| {
-    //     let role_status = &mut state.role_status;
-
-    //     if let Some(mut role_status_vec_candid) = role_status.get(&StoredPrincipal(caller)) {
-    //         let mut role_status_vec = role_status_vec_candid.0;
-    //         for role in role_status_vec.iter_mut() {
-    //             if role.name == "vc" {
-    //                 role.status = "requested".to_string();
-    //                 role.requested_on = Some(time());
-    //                 break;
-    //             }
-    //         }
-    //         role_status.insert(StoredPrincipal(caller), Candid(role_status_vec));
-    //     } else {
-    //         // If the role_status doesn't exist for the caller, insert the initial roles
-    //         let initial_roles = vec![
-    //             Role {
-    //                 name: "user".to_string(),
-    //                 status: "active".to_string(),
-    //                 requested_on: None,
-    //                 approved_on: Some(time()),
-    //                 rejected_on: None,
-    //             },
-    //             Role {
-    //                 name: "project".to_string(),
-    //                 status: "default".to_string(),
-    //                 requested_on: None,
-    //                 approved_on: None,
-    //                 rejected_on: None,
-    //             },
-    //             Role {
-    //                 name: "mentor".to_string(),
-    //                 status: "default".to_string(),
-    //                 requested_on: None,
-    //                 approved_on: None,
-    //                 rejected_on: None,
-    //             },
-    //             Role {
-    //                 name: "vc".to_string(),
-    //                 status: "default".to_string(),
-    //                 requested_on: None,
-    //                 approved_on: None,
-    //                 rejected_on: None,
-    //             },
-    //         ];
-    //         role_status.insert(StoredPrincipal(caller), Candid(initial_roles));
-    //     }
-    // });
 
     let mut user_data = get_user_information_internal(caller);
 
@@ -370,39 +331,52 @@ pub fn list_all_vcs() -> HashMap<Principal, VcWithRoles> {
 #[derive(CandidType, Clone)]
 pub struct PaginationReturnVcData {
     pub data: HashMap<Principal, VcWithRoles>,
-    pub count: usize,
+    pub user_data: HashMap<Principal, UserInformation>,
+    pub count: u64,
 }
 
 #[query(guard = "is_user_anonymous")]
 pub fn list_all_vcs_with_pagination(pagination_params: PaginationParams) -> PaginationReturnVcData {
-    read_state(|state| {
-        let total_active_vcs = state.vc_storage.iter().filter(|(_, vc)| vc.0.is_active).count();
-
+    let (vc_keys, paginated_vc_map, total_count) = read_state(|state| {
         let start = (pagination_params.page - 1) * pagination_params.page_size;
-        let end = std::cmp::min(start + pagination_params.page_size, total_active_vcs);
 
-        let vc_list: Vec<(Principal, VcWithRoles)> = state.vc_storage.iter()
+        let mut vc_keys: Vec<Principal> = Vec::new();
+        let mut paginated_vc_map: HashMap<Principal, VcWithRoles> = HashMap::new();
+
+        let _vcs_snapshot = state.vc_storage.iter()
             .filter(|(_, vc)| vc.0.is_active)
+            .skip(start)
+            .take(pagination_params.page_size)
             .map(|(stored_principal, candid_vc_internal)| {
                 let principal = stored_principal.0;
+                vc_keys.push(principal);
+
                 let roles = get_roles_for_principal(principal);
                 let vc_with_roles = VcWithRoles {
                     vc_profile: candid_vc_internal.0.clone(),
                     roles,
                 };
-                (principal, vc_with_roles)
+                paginated_vc_map.insert(principal, vc_with_roles);
             })
-            .skip(start)  
-            .take(end - start)  
-            .collect();
+            .count(); 
 
-        let paginated_vc_map: HashMap<Principal, VcWithRoles> = vc_list.into_iter().collect();
+        let total_count = state.vc_storage.iter().filter(|(_, vc)| vc.0.is_active).count() as u64;
 
-        PaginationReturnVcData {
-            data: paginated_vc_map,
-            count: total_active_vcs,  
-        }
-    })
+        (vc_keys, paginated_vc_map, total_count)
+    });
+
+    let user_data: HashMap<Principal, UserInformation> = vc_keys.iter()
+        .map(|principal| {
+            let user_info = get_user_information_internal(*principal);
+            (*principal, user_info)
+        })
+        .collect();
+
+    PaginationReturnVcData {
+        data: paginated_vc_map,
+        user_data,
+        count: total_count,
+    }
 }
 
 

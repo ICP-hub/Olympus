@@ -10,7 +10,7 @@ import JoditEditor from "jodit-react";
 import toast, { Toaster } from "react-hot-toast";
 import { useLocation } from "react-router-dom";
 import { Controller } from "react-hook-form";
-
+import parse from 'html-react-parser';
 const schema = yup
   .object({
     jobTitle: yup
@@ -30,6 +30,14 @@ const schema = yup
       })
       .nullable()
       .required("Job Location is required"),
+    job_type: yup
+      .object()
+      .shape({
+        value: yup.string().required("Job Type is required"),
+        label: yup.string().required("Job Type is required"),
+      })
+      .nullable()
+      .required("Job Type is required"),
     jobLink: yup
       .string()
       .url("Invalid website URL")
@@ -70,10 +78,12 @@ const JobRegister1 = ({ modalOpen, setModalOpen }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [jobDescription, setJobDescription] = useState("");
+  const [jobTypes, setJobTypes] = useState([]);
   const jobCategoryData = useSelector(
     (currState) => currState.jobsCategory.jobCategory
   );
   const editor = useRef(null);
+  console.log("job type...............", jobTypes);
   useEffect(() => {
     dispatch(jobCategoryHandlerRequest());
   }, [actor, dispatch]);
@@ -89,42 +99,83 @@ const JobRegister1 = ({ modalOpen, setModalOpen }) => {
     mode: "all",
   });
   // const projectId = cardData.uid;
-  const onSubmit = async (data) => {
-    console.log("DATA ARGUMENTS",data)
-    const projectId = cardData[0]?.uid;
+
+
+//   const onSubmit = async (data) => {
+//     console.log("DATA ARGUMENTS", data);
+//     const projectId = cardData[0]?.uid;
+
+//     if (!projectId) {
+//       toast.error("Project ID is missing!");
+//       return;
+//     }
+//     setIsSubmitting(true);
+//     try {
+//       const parsedDescription = parse(jobDescription); 
+//       const argument = {
+//         title: data.jobTitle,
+//         description: data.parsedDescription,
+//         category: data.jobCategory,
+//         location: data.jobLocation.value,
+//         link: data.jobLink,
+//         job_type: data.job_type.value,
+//         project_id: projectId,
+//       };
+
+//       const result = await actor.post_job(argument);
+// console.log("desc..............",result)
+//       if (result) {
+//         toast.success("Job created successfully!");
+//         setModalOpen(false);
+//       } else {
+//         toast.error("Something went wrong.");
+//         console.log("JOB CREATION WRONG  ");
+//       }
+//     } catch (error) {
+//       console.error("Error creating job:", error);
+//       toast.error("An error occurred while creating the job.");
+//     } finally {
+//       setIsSubmitting(false);
+//     }
+//   };
+const onSubmit = async (data) => {
+  console.log("DATA ARGUMENTS", data);
+  const projectId = cardData[0]?.uid;
 
   if (!projectId) {
     toast.error("Project ID is missing!");
     return;
   }
-    setIsSubmitting(true);
-    try {
-      const argument = {
-        title: data.jobTitle,
-        description: data.jobDescription,
-        category: data.jobCategory,
-        location: data.jobLocation.value,
-        link: data.jobLink,
-        project_id: projectId,
-      };
 
-      const result = await actor.post_job(argument);
+  setIsSubmitting(true);
+  try {
+    const parsedDescription = parse(jobDescription); 
+    const argument = {
+      title: data.jobTitle,
+      description: data.jobDescription,
+      category: data.jobCategory,
+      location: data.jobLocation.value,
+      link: data.jobLink,
+      job_type: data.job_type.value,
+      project_id: projectId,
+    };
 
-      if (result) {
-        toast.success("Job created successfully!");
-        setModalOpen(false);
-      } else {
-        toast.error("Something went wrong.");
-        console.log("JOB CREATION WRONG  ")
-      }
-    } catch (error) {
-      console.error("Error creating job:", error);
-      toast.error("An error occurred while creating the job.");
-    } finally {
-      setIsSubmitting(false);
+    const result = await actor.post_job(argument);
+    console.log("Job creation result:", result);
+
+    if (result) {
+      toast.success("Job created successfully!");
+      setModalOpen(false);
+    } else {
+      toast.error("Something went wrong.");
     }
-  };
-
+  } catch (error) {
+    console.error("Error creating job:", error);
+    toast.error("An error occurred while creating the job.");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
   const [locations, setLocations] = useState([]);
 
   useEffect(() => {
@@ -141,6 +192,27 @@ const JobRegister1 = ({ modalOpen, setModalOpen }) => {
     ];
   };
 
+  //fet type of job
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchJobTypes = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const result = await actor.type_of_job();
+        setJobTypes(result.map((type) => ({ value: type, label: type })));
+      } catch (err) {
+        setError(err.message);
+      }
+      setLoading(false);
+    };
+
+    fetchJobTypes();
+  }, []);
+
+  // custom jodit Editor func
   const options = [
     "bold",
     "italic",
@@ -164,7 +236,7 @@ const JobRegister1 = ({ modalOpen, setModalOpen }) => {
   const config = useMemo(
     () => ({
       readonly: false,
-      placeholder: "",
+      placeholder: "Enter job description...",
       defaultActionOnPaste: "insert_as_html",
       defaultLineHeight: 1.5,
       enter: "div",
@@ -238,6 +310,7 @@ const JobRegister1 = ({ modalOpen, setModalOpen }) => {
                   </span>
                 )}
               </div>
+              {/* job location  */}
               <div className="">
                 <label
                   htmlFor="jobLocation"
@@ -310,6 +383,39 @@ const JobRegister1 = ({ modalOpen, setModalOpen }) => {
                   </span>
                 )}
               </div>
+              {/* //job type  */}
+              <div className="">
+                <label
+                  htmlFor="job_type"
+                  className="block text-sm font-medium mb-1 mt-2"
+                >
+                  Job Type
+                  <span className="text-red-500">*</span>
+                </label>
+                <Controller
+                  name="job_type"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      options={jobTypes.map((type) => ({
+                        label: type.label.job_type, // Extract the job type string
+                        value: type.value.job_type, // Extract the job type string
+                      }))}
+                      {...field}
+                      className={`${
+                        errors.job_type ? "border-red-500" : "border-gray-300"
+                      }`}
+                    />
+                  )}
+                />
+
+                {errors.job_type && (
+                  <span className="mt-1 text-sm text-red-500 font-bold">
+                    {errors.job_type.message}
+                  </span>
+                )}
+              </div>
+              {/* job link  */}
               <div className="">
                 <label
                   htmlFor="jobLink"
