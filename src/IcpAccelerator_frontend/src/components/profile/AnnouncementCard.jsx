@@ -3,10 +3,6 @@ import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { Pagination, Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-// import { Swiper, SwiperSlide } from "swiper/react";
-// import "swiper/css";
-// import "swiper/css/pagination";
-// import "swiper/css/autoplay";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import { formatFullDateFromBigInt } from "../Utils/formatter/formatDateFromBigInt";
 import ment from "../../../assets/images/ment.jpg";
@@ -16,8 +12,6 @@ import DeleteModel from "../../models/DeleteModel";
 import editp from "../../../assets/Logo/edit.png";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import ok from "../../../assets/images/ok.jpg";
-import { Principal } from '@dfinity/principal';
-
 
 const AnnouncementCard = ({data}) => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -28,11 +22,8 @@ const AnnouncementCard = ({data}) => {
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentAnnouncementData, setcurrentAnnouncementData] = useState(null);
-  console.log('DATA IN 31 LINe', data);
 
-  // if (!data) {
-  //   return null;
-  // }
+  
   const handleOpenModal = (card) => {
     setcurrentAnnouncementData(card);
     setAnnouncementModalOpen(true);
@@ -53,14 +44,11 @@ const AnnouncementCard = ({data}) => {
     setcurrentAnnouncementData(null);
   };
 
-  let convertedPrincipal = Principal.fromText(principal);
 
   const fetchLatestAnnouncement = async (caller) => {
-    console.log("API KA PARAMATER KA DATA", data);
     await actor
       .get_announcements_by_project_id(data?.uid)
       .then((result) => {
-        console.log('API SE DATA AA CHUKA HAI');
         if (!result || result.length === 0) {
           setNoData(true);
           setLatestAnnouncementData([]);
@@ -98,7 +86,6 @@ const AnnouncementCard = ({data}) => {
           new_details
         )
         .then((result) => {
-          console.log("result-in-update_announcement", result);
           if (
             result &&
             result.includes(
@@ -169,7 +156,6 @@ const AnnouncementCard = ({data}) => {
   return (
     <div className=" bg-white">
       
-
       {latestAnnouncementData.length === 0 ? (
         <NoCardData message="No active announcements found" />
       ) : (
@@ -238,17 +224,23 @@ const AnnouncementCard = ({data}) => {
 
       {isAnnouncementModalOpen && (
         <AnnouncementModal
-          isModalOpen={isAnnouncementModalOpen}
-          closeModal={handleCloseModal}
-          data={currentAnnouncementData}
+        onClose={handleCloseModal}
+        onSubmitHandler={handleUpdateAnnouncement}
+        isSubmitting={isSubmitting}
+        isUpdate={true}
+        data={currentAnnouncementData}
         />
       )}
       {isDeleteModalOpen && (
         <DeleteModel
+
+          data={currentAnnouncementData}
+          onClose={handleClose}
+          title={"Delete announcement"}
+          heading={"Are you sure to delete this announcement"}
+          onSubmitHandler={handleDelete}
           isSubmitting={isSubmitting}
-          isDeleteModalOpen={isDeleteModalOpen}
-          closeDeleteModal={handleClose}
-          deleteFunction={() => {}}
+         
         />
       )}
     </div>
