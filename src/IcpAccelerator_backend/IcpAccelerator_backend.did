@@ -159,7 +159,9 @@ type Jobs = record {
 };
 type JobsInternal = record {
   job_poster : opt UserInformation;
+
   job_id : text;
+
   timestamp : nat64;
   job_data : Jobs;
 };
@@ -940,7 +942,9 @@ service : {
   get_icp_hubs_candid : () -> (vec IcpHub) query;
   get_investment_stage : () -> (vec text) query;
   get_job_category : () -> (vec Areas) query;
+
   get_job_details_using_uid : (text) -> (opt JobsInternal) query;
+
   get_jobs_posted_by_principal : (principal) -> (vec JobsInternal) query;
   get_latest_announcements : () -> (
       vec record { principal; vec AnnouncementsInternal },
