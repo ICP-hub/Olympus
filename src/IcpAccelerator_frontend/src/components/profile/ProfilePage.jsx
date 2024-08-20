@@ -124,18 +124,16 @@ const ProfilePage = () => {
             {activeTab === "project" ? <ProjectCard /> : ""}
           </div>
           <div className="w-full">
-            {activeTab === "event" && (
+            {activeTab === "event" ?
               <>
-                {!eventCreated ? (
-                  <EventSection />  // Render EventSection when no event is created
-                ) : (
-                  <NewEvent />  // Render NewEvent when an event is created
-                )}
+                <NewEvent />
+
+                {/* // Render EventSection when no event is created */}
               </>
-            )}
+              : ""}
           </div>
           <div className="w-full">
-            {activeTab === "job" ? <ProjectDetailsForOwnerProject/> : ""}
+            {activeTab === "job" ? <ProjectDetailsForOwnerProject /> : ""}
           </div>
           <div className="w-full">
             {activeTab === "announcement" ? <Announcement /> : ""}

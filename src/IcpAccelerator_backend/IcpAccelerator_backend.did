@@ -51,6 +51,7 @@ type Cohort = record {
   title : text;
   country : text;
   tags : text;
+  contact_links : opt vec SocialLinks;
   description : text;
   deadline : text;
   start_date : text;
@@ -65,10 +66,13 @@ type Cohort = record {
 type CohortDetails = record {
   cohort_creator_principal : principal;
   cohort_created_at : nat64;
+  vcs_applied : opt vec VentureCapitalistInternal;
   cohort_creator_role : vec text;
   cohort_id : text;
   cohort_creator : principal;
   cohort : Cohort;
+  mentors_applied : opt vec MentorInternal;
+  projects_applied : opt vec ProjectInfoInternal;
 };
 type CohortEnrollmentRequest = record {
   rejected_at : nat64;
@@ -143,6 +147,7 @@ type InviteRequest = record {
   mentor_data : MentorInternal;
   sender_principal : principal;
 };
+type JobType = record { id : int32; job_type : text };
 type Jobs = record {
   title : text;
   link : text;
@@ -150,13 +155,12 @@ type Jobs = record {
   category : text;
   project_id : text;
   location : text;
+  job_type : text;
 };
 type JobsInternal = record {
+  job_poster : opt UserInformation;
   timestamp : nat64;
   job_data : Jobs;
-  project_desc : opt text;
-  project_logo : opt blob;
-  project_name : text;
 };
 type LeaderboardEntryForCohorts = record {
   cohort_id : text;
@@ -374,7 +378,6 @@ type PaginationReturnMentorDataRequest = record {
   count : nat64;
 };
 type PaginationReturnProjectData = record {
-  user_data : vec record { principal; UserInformation };
   data : vec ListAllProjects;
   count : nat64;
 };
@@ -468,7 +471,6 @@ type ProjectInfoForUser = record {
   project_team : opt vec TeamMember;
   announcements : vec record { principal; vec AnnouncementsInternal };
   live_link_of_project : opt text;
-  jobs_opportunity : opt vec JobsInternal;
 };
 type ProjectInfoForUserInternal = record { params : ProjectInfoForUser };
 type ProjectInfoInternal = record {
@@ -630,7 +632,6 @@ type Role = record {
   requested_on : opt nat64;
 };
 type SocialLinks = record { link : opt text };
-type SocialLinksMentor = record { link : opt text };
 type SpotlightDetails = record {
   project_details : ProjectInfoInternal;
   added_by : principal;
@@ -831,7 +832,7 @@ service : {
   get_all_declined_docs_access_requests : () -> (vec ProjectNotification) query;
   get_all_declined_requests : () -> (vec ProjectNotification) query;
   get_all_incubated_projects : () -> (vec ProjectInfoInternal) query;
-  get_all_jobs : () -> (vec JobsInternal) query;
+  get_all_jobs : (nat64, nat64) -> (vec JobsInternal) query;
   get_all_live_projects : () -> (vec ProjectInfoInternal) query;
   get_all_mentor_notification : (principal) -> (vec OfferToSendToMentor) query;
   get_all_mentors : () -> (vec record { principal; MentorWithRoles }) query;
@@ -938,7 +939,7 @@ service : {
   get_icp_hubs_candid : () -> (vec IcpHub) query;
   get_investment_stage : () -> (vec text) query;
   get_job_category : () -> (vec Areas) query;
-  get_jobs_posted_by_project : (text) -> (vec JobsInternal) query;
+  get_jobs_posted_by_principal : (principal) -> (vec JobsInternal) query;
   get_latest_announcements : () -> (
       vec record { principal; vec AnnouncementsInternal },
     ) query;
@@ -1149,8 +1150,15 @@ service : {
   send_rejoin_invitation_to_mentor : (text, principal, text) -> (Result_5);
   set_asset_canister : (principal) -> ();
   switch_role : (text, text) -> ();
+  type_of_job : () -> (vec JobType) query;
   type_of_user_profile : () -> (vec UserType) query;
   update_cohort : (text, Cohort) -> (Result_5);
+  update_cohort_with_applicant : (
+      text,
+      opt ProjectInfoInternal,
+      opt MentorInternal,
+      opt VentureCapitalistInternal,
+    ) -> (Result_5);
   update_dapp_link : (text, text) -> (text);
   update_job_post_by_id : (nat64, Jobs) -> (text);
   update_mentor : (MentorProfile) -> (text);
