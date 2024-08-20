@@ -40,7 +40,7 @@ const MentorEdit = () => {
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
-  console.log(userFullData)
+  console.log("mentorFullData =>" , mentorFullData)
   // STATES
 
   // user image states
@@ -271,20 +271,19 @@ const MentorEdit = () => {
         .required("LinkedIn url is required"),
     })
     .required();
+  
+    const defaultValues = {
+      preferred_icp_hub: mentorFullData?.preferred_icp_hub ?? 'ICP Hub, India',
+      multi_chain: mentorFullData?.multi_chain ?? 'No',
+      multi_chain_names: mentorFullData?.multi_chain_names?.[0] ?? ["Base", "Solana"],
+      category_of_mentoring_service: mentorFullData?.category_of_mentoring_service?.[0] ?? ["Branding ", " Listing"],
+      icp_hub_or_spoke: mentorFullData?.icp_hub_or_spoke ?? 'No',
+      hub_owner: mentorFullData?.hub_owner ?? "ICP Hub, India",
+      years_of_mentoring: mentorFullData?.years_of_mentoring ?? 3,
+      mentor_linkedin_url:mentorFullData?.mentor_linkedin_url ?? " ",
+      mentor_website_url:mentorFullData?.mentor_website_url ?? "",
 
-  const defaultValues = {
-    preferred_icp_hub: "ICP Hub, India",
-    multi_chain: "No",
-    multi_chain_names: ["Base", "Solana"],
-    category_of_mentoring_service: ["Branding ", " Listing"],
-    icp_hub_or_spoke: "No",
-    hub_owner: "ICP Hub, India",
-    mentor_website_url: "https://website.com",
-
-    years_of_mentoring: "5",
-
-    mentor_linkedin_url: "https://website.com",
-  };
+    };
 
   const {
     register,
@@ -593,6 +592,7 @@ const MentorEdit = () => {
       setTypeOfProfileOptions([]);
     }
   }, [typeOfProfile]);
+
 
   useEffect(() => {
     if (mentorFullData) {

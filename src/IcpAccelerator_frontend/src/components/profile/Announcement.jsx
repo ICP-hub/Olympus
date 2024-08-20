@@ -15,7 +15,7 @@ const Announcement = () => {
   const handleOpenModal = () => setAnnouncementModalOpen(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [projectData, setProjectData] = useState(null);
-  const [isProjectLive ,setIsProjectLive] = useState(false);
+  const [isProjectLive, setIsProjectLive] = useState(false);
 
   const fetchProjectData = async (isMounted) => {
     try {
@@ -43,7 +43,7 @@ const Announcement = () => {
       }
     }
   };
-  console.log('setted data is', projectData);
+  console.log("setted data is", projectData);
   useEffect(() => {
     let isMounted = true;
     if (actor) {
@@ -80,7 +80,7 @@ const Announcement = () => {
             fetchProjectData();
             setIsSubmitting(false);
             toast.success("announcement added successfully");
-            console.log('announcement added');
+            console.log("announcement added");
             //window.location.reload();
           } else {
             handleCloseModal();
