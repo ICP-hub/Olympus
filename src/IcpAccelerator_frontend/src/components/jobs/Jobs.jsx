@@ -39,7 +39,7 @@ const Jobs = () => {
                         setLatestJobs([]);
                     } else {
                         setLatestJobs(result);
-                        setOpenJobUid(result?.uid)
+                        setOpenJobUid(result[0]?.uid)
                         setNoData(false);
                     }
                 }

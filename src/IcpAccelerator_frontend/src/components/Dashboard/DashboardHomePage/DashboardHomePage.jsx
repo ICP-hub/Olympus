@@ -14,7 +14,7 @@ import WorksSection from './WorksSection'
 import WorkSectionDetailPage from './WorkSectionDetailPage'
 import EventDetails from '../DashboardEvents/EventDetail'
 import DocumentSection from '../Project/DocumentSection'
-import DiscoverRegionalHubs from '../RegionalHubs/RegionalHubs'
+import DiscoverRegionalHubs from '../../RegionalHubs/RegionalHubs'
 
 function DashboardHomePage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
