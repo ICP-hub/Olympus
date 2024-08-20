@@ -5,15 +5,15 @@ import toast, { Toaster } from "react-hot-toast";
 
 import { useSelector } from "react-redux";
 const NoCardData = () => {
-    const handleOpenModal = () => setAnnouncementModalOpen(true);
-    const [isAnnouncementModalOpen, setAnnouncementModalOpen] = useState(false);
-    const handleCloseModal = () => setAnnouncementModalOpen(false);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const actor = useSelector((currState) => currState.actors.actor);
-    const [projectData, setProjectData] = useState(null);
-    const [isProjectLive ,setIsProjectLive] = useState(false);
+  const handleOpenModal = () => setAnnouncementModalOpen(true);
+  const [isAnnouncementModalOpen, setAnnouncementModalOpen] = useState(false);
+  const handleCloseModal = () => setAnnouncementModalOpen(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const actor = useSelector((currState) => currState.actors.actor);
+  const [projectData, setProjectData] = useState(null);
+  const [isProjectLive, setIsProjectLive] = useState(false);
 
-    const fetchProjectData = async (isMounted) => {
+  const fetchProjectData = async (isMounted) => {
     try {
       const result = await actor.get_my_project();
       console.log("result-in-get_my_project", result);
@@ -39,7 +39,6 @@ const NoCardData = () => {
       }
     }
   };
-  console.log('setted data is', projectData);
   useEffect(() => {
     let isMounted = true;
     if (actor) {
@@ -52,48 +51,48 @@ const NoCardData = () => {
       isMounted = false;
     };
   }, [actor]);
-    const handleAddAnnouncement = async ({
-        announcementTitle,
-        announcementDescription,
-      }) => {
-        // console.log("add announcement");
-        setIsSubmitting(true);
-        if (actor) {
-          let argument = {
-            project_id: projectData?.uid,
-            announcement_title: announcementTitle,
-            announcement_description: announcementDescription,
-            timestamp: Date.now(),
-          };
-          // console.log("argument", argument);
-          await actor
-            .add_announcement(argument)
-            .then((result) => {
-              // console.log("result-in-add_announcement", result);
-              if (result && Object.keys(result).length > 0) {
-                handleCloseModal();
-                // setModalOpen(false)
-                fetchProjectData();
-                setIsSubmitting(false);
-                toast.success("announcement added successfully");
-                console.log('annpuncement created');
-                //window.location.reload();
-              } else {
-                handleCloseModal();
-                // setModalOpen(false)
-                setIsSubmitting(false);
-                toast.error("something got wrong");
-              }
-            })
-            .catch((error) => {
-              console.log("error-in-add_announcement", error);
-              toast.error("something went wrong");
-              setIsSubmitting(false);
-              handleCloseModal();
-              // setModalOpen(false)
-            });
-        }
+  const handleAddAnnouncement = async ({
+    announcementTitle,
+    announcementDescription,
+  }) => {
+    // console.log("add announcement");
+    setIsSubmitting(true);
+    if (actor) {
+      let argument = {
+        project_id: projectData?.uid,
+        announcement_title: announcementTitle,
+        announcement_description: announcementDescription,
+        timestamp: Date.now(),
       };
+      // console.log("argument", argument);
+      await actor
+        .add_announcement(argument)
+        .then((result) => {
+          // console.log("result-in-add_announcement", result);
+          if (result && Object.keys(result).length > 0) {
+            handleCloseModal();
+            // setModalOpen(false)
+            fetchProjectData();
+            setIsSubmitting(false);
+            toast.success("announcement added successfully");
+            console.log("annpuncement created");
+            //window.location.reload();
+          } else {
+            handleCloseModal();
+            // setModalOpen(false)
+            setIsSubmitting(false);
+            toast.error("something got wrong");
+          }
+        })
+        .catch((error) => {
+          console.log("error-in-add_announcement", error);
+          toast.error("something went wrong");
+          setIsSubmitting(false);
+          handleCloseModal();
+          // setModalOpen(false)
+        });
+    }
+  };
   return (
     <div className="p-6">
       {/* Content */}
