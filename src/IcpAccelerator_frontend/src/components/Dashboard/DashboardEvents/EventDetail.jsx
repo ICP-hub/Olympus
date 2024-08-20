@@ -10,6 +10,7 @@ import { Close } from '@mui/icons-material';
 import ArrowOutwardOutlinedIcon from '@mui/icons-material/ArrowOutwardOutlined';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
+import EventRequestCard from './EventRequestCard';
 
 const FAQItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -112,6 +113,8 @@ const EventDetails = () => {
         return <div>Attendees content will be added here.</div>;
       case 'reviews':
         return <div>Reviews content will be added here.</div>;
+        case 'request':
+        return <><EventRequestCard/></>;
       default:
         return null;
     }
@@ -320,6 +323,7 @@ const EventDetails = () => {
                 <TabButton name="announcements" label="Announcements" />
                 <TabButton name="attendees" label="Attendees" />
                 <TabButton name="reviews" label="Reviews" />
+                <TabButton name="request" label="REquest" />
               </div>
               <TabContent />
             </div>
