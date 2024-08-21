@@ -271,20 +271,21 @@ const NewEvent = ({ event }) => {
                     <div className="max-w-7xl mx-auto bg-white">
                         {cohortEvents.map((event, index) => {
                             console.log('map k andr data', event)
-                            return <div key={index} className="bg-white rounded-lg shadow p-4 pb-0 mb-6">
+                            return <div key={index} className="bg-white rounded-lg shadow p-4  mb-6">
                                 <div className="flex justify-between items-center">
-                                    <div className="flex items-center gap-1 relative">
+                                    <div className="flex items-center gap-2 w-full relative">
                                         <div className="max-w-[160px] absolute top-1 left-1 bg-white p-2 rounded-[8px]">
                                             {/* <p className="text-base font-bold">{event.no_of_seats}</p> */}
                                             <p className="text-sm font-normal">{event.start_date}</p>
                                         </div>
-                                        <div className="w-[240px] h-[172px]">
+                                        {/* <div className="w-[240px] h-[172px]"> */}
                                         <img
                                             src={event.cohort_banner}
                                             alt="Event Background"
                                             className="w-[240px] h-[172px] rounded-lg mr-4 object-cover object-center"
                                         />
-                                        </div>
+                                        {/* </div> */}
+                                        <div className='w-3/4'>
                                         <div>
                                             <p className="bg-white font-medium border-2 border-[#CDD5DF] text-[#364152] w-[86px] px-2 py-1 rounded-full text-sm">
                                                 Workshop
@@ -302,6 +303,7 @@ const NewEvent = ({ event }) => {
                                                 </span>
                                                 <span className="text-sm text-gray-500">${event.funding_amount}</span>
                                             </div>
+                                        </div>
                                         </div>
                                     </div>
                                 </div>

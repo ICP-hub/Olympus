@@ -133,7 +133,7 @@ const cohortId=allLiveEventsData[0]?.cohort_id
             return (
               <div key={index} className="bg-white rounded-lg shadow p-4 mb-6" onClick={() => handleClick(data.cohort_id)} >
                 <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-1 relative">
+                  <div className="flex items-center gap-3 relative w-full">
                     <div className="max-w-[160px] absolute top-1 left-1 bg-white p-2 rounded-[8px]">
                       <p className="text-base font-bold">
                         {launch_date} – {end_date}
@@ -148,7 +148,7 @@ const cohortId=allLiveEventsData[0]?.cohort_id
                      
                     />
                     {/* </div> */}
-                    <div>
+                    <div className='w-3/4'>
                       <div>
                         <p className="bg-white font-medium border-2 borer-[#CDD5DF] text-[#364152] w-[86px] px-2 py-1 rounded-full text-sm">
                           Workshop
