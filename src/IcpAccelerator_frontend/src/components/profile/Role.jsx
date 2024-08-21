@@ -1,27 +1,33 @@
-import React, { useEffect, useState } from 'react';
-import VerifiedIcon from '@mui/icons-material/Verified';
-import Avatar from '@mui/material/Avatar';
-import AvatarGroup from '@mui/material/AvatarGroup';
+import React, { useEffect, useState } from "react";
+import VerifiedIcon from "@mui/icons-material/Verified";
+import Avatar from "@mui/material/Avatar";
+import AvatarGroup from "@mui/material/AvatarGroup";
 import mentor from "../../../assets/Logo/mentor.png";
 import talent from "../../../assets/Logo/talent.png";
 import founder from "../../../assets/Logo/founder.png";
 import Avatar3 from "../../../assets/Logo/Avatar3.png";
 import ProfileImage from "../../../assets/Logo/ProfileImage.png";
-import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
-import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
+import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
+import RemoveCircleOutlineOutlinedIcon from "@mui/icons-material/RemoveCircleOutlineOutlined";
 import { useNavigate } from "react-router-dom";
 
-import { animatedLeftSvgIcon, animatedRightSvgIcon, userPlusIcon } from '../Utils/Data/SvgData';
-import { profile } from '../jsondata/data/profileData';
-import ProfileCard from './RoleProfileCard';
-import { useDispatch, useSelector } from 'react-redux';
-import Modal1 from '../Modals/ProjectModal/Modal1';
-import { getCurrentRoleStatusFailureHandler, setCurrentActiveRole, setCurrentRoleStatus } from '../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer';
-
+import {
+  animatedLeftSvgIcon,
+  animatedRightSvgIcon,
+  userPlusIcon,
+} from "../Utils/Data/SvgData";
+import { profile } from "../jsondata/data/profileData";
+import ProfileCard from "./RoleProfileCard";
+import { useDispatch, useSelector } from "react-redux";
+import Modal1 from "../Modals/ProjectModal/Modal1";
+import {
+  getCurrentRoleStatusFailureHandler,
+  setCurrentActiveRole,
+  setCurrentRoleStatus,
+} from "../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 
 const FAQItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
-
 
   return (
     <div className="border-b border-gray-200">
@@ -44,7 +50,7 @@ const FAQItem = ({ question, answer }) => {
 };
 
 const FAQ = () => {
-  const { roles } = profile
+  const { roles } = profile;
   // const faqData = [
   //   {
   //     question: "What is a role, actually?",
@@ -70,13 +76,12 @@ const FAQ = () => {
 };
 
 const Role = () => {
-  const { roles } = profile
+  const { roles } = profile;
   const [roleModalOpen, setRoleModalOpen] = useState(false);
   // console.log("my model status ", roleModalOpen)
   const userFullData = useSelector((currState) => currState.userData.data.Ok);
   // console.log("User aa raha hai", userFullData)
   const navigate = useNavigate();
-
 
   const actor = useSelector((currState) => currState.actors.actor);
 
@@ -87,14 +92,15 @@ const Role = () => {
   const userCurrentRoleStatus = useSelector(
     (currState) => currState.currentRoleStatus.rolesStatusArray
   );
-  console.log('userCurrentRoleStatus',userCurrentRoleStatus)
+  console.log("userCurrentRoleStatus", userCurrentRoleStatus);
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
-  console.log('userCurrentRoleStatusActiveRole',userCurrentRoleStatusActiveRole)
+  console.log(
+    "userCurrentRoleStatusActiveRole",
+    userCurrentRoleStatusActiveRole
+  );
   const dispatch = useDispatch();
-
-
 
   const [showSwitchRole, setShowSwitchRole] = useState(false);
 
@@ -106,7 +112,7 @@ const Role = () => {
     "relative focus:after:content-[''] focus:after:block focus:after:w-full focus:after:h-[2px] focus:after:bg-blue-800 focus:after:absolute focus:after:left-0 focus:after:bottom-[-4px]";
 
   function getNameOfCurrentStatus(rolesStatusArray) {
-    console.log('rolesStatusArray',rolesStatusArray)
+    console.log("rolesStatusArray", rolesStatusArray);
     const currentStatus = rolesStatusArray.find(
       (role) => role.status === "active"
     );
@@ -129,7 +135,6 @@ const Role = () => {
       const modifiedObj = {};
 
       Object.keys(obj).forEach((key) => {
-        
         if (Array.isArray(obj[key]) && obj[key].length > 0) {
           if (
             key === "approved_on" ||
@@ -146,12 +151,11 @@ const Role = () => {
           modifiedObj[key] = obj[key]; // Keep other keys unchanged
         }
       });
-// console.log('modifiedObj',modifiedObj)
+      // console.log('modifiedObj',modifiedObj)
       return modifiedObj;
     });
   }
 
- 
   const initialApi = async (isMounted) => {
     try {
       const currentRoleArray = await actor.get_role_status();
@@ -164,14 +168,12 @@ const Role = () => {
           dispatch(
             setCurrentRoleStatus(cloneArrayWithModifiedValues(currentRoleArray))
           );
-          dispatch(setCurrentActiveRole
-            
-            
-            
-            (currentActiveRole));
+          dispatch(setCurrentActiveRole(currentActiveRole));
         } else {
           dispatch(
-            getCurrentRoleStatusFailureHandler("error-in-fetching-role-at-header")
+            getCurrentRoleStatusFailureHandler(
+              "error-in-fetching-role-at-header"
+            )
           );
           dispatch(setCurrentActiveRole(null));
         }
@@ -184,8 +186,8 @@ const Role = () => {
     }
   };
   useEffect(() => {
-    initialApi()
-  },[])
+    initialApi();
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -207,168 +209,76 @@ const Role = () => {
     userCurrentRoleStatus,
     userCurrentRoleStatusActiveRole,
   ]);
-  const userleftRole = "mentor"; 
-  const userrightRole = ""; 
+  const userleftRole = "mentor";
+  const userrightRole = "";
 
-  const getLeftRoleSvg = () => {
-    switch (userleftRole) {
-      case 'mentor':
-        return (
-          <svg
-            width="214"
-            height="100"
-            viewBox="0 0 199 122"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="neon-effect neon-red text-red-500"
-          >
-            <path
-              d="M198 0V46.6316C198 59.8864 187.255 70.6316 174 70.6316H25C11.7452 70.6316 1 81.3768 1 94.6316V122"
-              className="stroke-current"
-              strokeWidth="2"
-            />
-          </svg>
-        );
-      case 'founder':
-        return (
-          <svg
-            width="214"
-            height="100"
-            viewBox="0 0 199 122"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="neon-effect neon-blue text-blue-500"
-          >
-            <path
-              d="M198 0V46.6316C198 59.8864 187.255 70.6316 174 70.6316H25C11.7452 70.6316 1 81.3768 1 94.6316V122"
-              className="stroke-current"
-              strokeWidth="2"
-            />
-          </svg>
-        );
-      case 'investor':
-        return (
-          <svg
-            width="214"
-            height="100"
-            viewBox="0 0 199 122"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="neon-effect neon-green text-green-500"
-          >
-            <path
-              d="M198 0V46.6316C198 59.8864 187.255 70.6316 174 70.6316H25C11.7452 70.6316 1 81.3768 1 94.6316V122"
-              className="stroke-current"
-              strokeWidth="2"
-            />
-          </svg>
-        );
-      case 'talent':
-        return (
-          <svg
-            width="214"
-            height="100"
-            viewBox="0 0 199 122"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="neon-effect neon-yellow text-yellow-500"
-          >
-            <path
-              d="M198 0V46.6316C198 59.8864 187.255 70.6316 174 70.6316H25C11.7452 70.6316 1 81.3768 1 94.6316V122"
-              className="stroke-current"
-              strokeWidth="2"
-            />
-          </svg>
-        );
-      case 'user':
-      default:
-        return (
-          <svg width="214" height="100" viewBox="0 0 199 122" fill="none" xmlns="http://www.w3.org/2000/svg"  className="neon-effect neon-gray text-[E3E8EF]">
-            <path d="M198 0V46.6316C198 59.8864 187.255 70.6316 174 70.6316H25C11.7452 70.6316 1 81.3768 1 94.6316V122" stroke="#E3E8EF" strokeWidth="2"/>
-          </svg>
-        );
-    }
+  const getRoleSvg = (status, side) => {
+    const colors = {
+      mentor: { neon: "neon-red", text: "text-red-500" },
+      project: { neon: "neon-blue", text: "text-blue-500" },
+      investor: { neon: "neon-green", text: "text-green-500" },
+      talent: { neon: "neon-yellow", text: "text-yellow-500" },
+      user: { neon: "neon-gray", text: "text-[#E3E8EF]" }
+    };
+  
+    const color = colors[status] || colors.user;
+  
+    const pathD = side === "left"
+      ? "M198 0V46.6316C198 59.8864 187.255 70.6316 174 70.6316H25C11.7452 70.6316 1 81.3768 1 94.6316V122"
+      : "M1 0V46.6316C1 59.8864 11.7452 70.6316 25 70.6316H189C202.255 70.6316 213 81.3768 213 94.6316V122";
+  
+    const svgClass = side === "left" && status !== "investor" && status !== "user"
+      ? `neon-effect ${color.neon} ${color.text}`
+      : side === "right" && status === "investor"
+      ? `neon-effect ${color.neon} ${color.text}`
+      : "neon-effect neon-gray text-[#E3E8EF]";
+  
+    return (
+      <svg
+        width="214"
+        height="100"
+        viewBox="0 0 214 122"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className={svgClass}
+      >
+        <path
+          d={pathD}
+          className="stroke-current"
+          stroke={side === "left" ? (status === "user" ? "#E3E8EF" : "currentColor") : "#E3E8EF"}
+          strokeWidth="2"
+        />
+      </svg>
+    );
   };
-
-  const getRightRoleSvg = () => {
-    switch (userrightRole) {
-      case 'mentor':
-        return (
-          <svg
-            width="214"
-            height="100"
-            viewBox="0 0 214 122"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="neon-effect neon-red text-red-500"
-          >
-            <path
-              d="M1 0V46.6316C1 59.8864 11.7452 70.6316 25 70.6316H189C202.255 70.6316 213 81.3768 213 94.6316V122"
-              className="stroke-current"
-              strokeWidth="2"
-            />
-          </svg>
-        );
-      case 'founder':
-        return (
-          <svg
-            width="214"
-            height="100"
-            viewBox="0 0 214 122"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="neon-effect neon-blue text-blue-500"
-          >
-            <path
-              d="M1 0V46.6316C1 59.8864 11.7452 70.6316 25 70.6316H189C202.255 70.6316 213 81.3768 213 94.6316V122"
-              className="stroke-current"
-              strokeWidth="2"
-            />
-          </svg>
-        );
-      case 'investor':
-        return (
-          <svg
-            width="214"
-            height="100"
-            viewBox="0 0 214 122"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="neon-effect neon-green text-green-500"
-          >
-            <path
-              d="M1 0V46.6316C1 59.8864 11.7452 70.6316 25 70.6316H189C202.255 70.6316 213 81.3768 213 94.6316V122"
-              className="stroke-current"
-              strokeWidth="2"
-            />
-          </svg>
-        );
-      case 'talent':
-        return (
-          <svg
-            width="214"
-            height="100"
-            viewBox="0 0 214 122"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="neon-effect neon-yellow text-yellow-500"
-          >
-            <path
-              d="M1 0V46.6316C1 59.8864 11.7452 70.6316 25 70.6316H189C202.255 70.6316 213 81.3768 213 94.6316V122"
-              className="stroke-current"
-              strokeWidth="2"
-            />
-          </svg>
-        );
-      case 'user':
-      default:
-        return (
-          <svg width="214" height="100" viewBox="0 0 214 122" fill="none" xmlns="http://www.w3.org/2000/svg"   className="neon-effect neon-gray text-[E3E8EF]">
-            <path d="M1 0V46.6316C1 59.8864 11.7452 70.6316 25 70.6316H189C202.255 70.6316 213 81.3768 213 94.6316V122" stroke="#E3E8EF" strokeWidth="2"/>
-          </svg>
-        );
-    }
+  
+  const renderRoleSvgsOnce = (roles) => {
+    let leftSideRendered = false;
+    let rightSideRendered = false;
+  
+    return (
+      <div className="flex justify-center gap-4">
+        {roles.some(role => role.name === "mentor" || role.name === "project") && !leftSideRendered && (
+          <>
+            <div>{getRoleSvg(roles.find(role => role.name === "mentor" || role.name === "project").name, 'left')}</div>
+            <div>{getRoleSvg("user", 'right')}</div>
+            {leftSideRendered = true}
+          </>
+        )}
+  
+        {roles.some(role => role.name === "investor") && !rightSideRendered && (
+          <>
+            <div>{getRoleSvg("user", 'left')}</div>
+            <div>{getRoleSvg(roles.find(role => role.name === "investor").name, 'right')}</div>
+            {rightSideRendered = true}
+          </>
+        )}
+      </div>
+    );
   };
+ 
+  
+  
 
   return (
     <>
@@ -384,7 +294,7 @@ const Role = () => {
               <div className="bg-gray-200 rounded-full mb-4">
                 <img
                   src={userFullData?.profile_picture[0]}
-                  alt="Matt Bowers"
+                  alt="Profile"
                   className="w-20 h-20 mx-auto rounded-full"
                 />
               </div>
@@ -401,45 +311,51 @@ const Role = () => {
                 </span>
                 {userFullData?.full_name}
               </h2>
-              <p> {userFullData?.openchat_username[0]}</p>
+              <p>{userFullData?.openchat_username[0]}</p>
             </div>
             <div className="flex justify-center items-center">
               <p className="font-normal">
-                {roles.profile.roles.role} <span className="font-medium text-sm">{roles.profile.roles.value}</span>
+                {roles.profile.roles.role}{" "}
+                <span className="font-medium text-sm">
+                  {userCurrentRoleStatus &&
+                    userCurrentRoleStatus.map((role) =>
+                      role?.approval_status === "approved" ? (
+                        <button className="text-[#026AA2] border rounded-md text-xs p-1 mx-1 font-semibold bg-[#F0F9FF] capitalize"key={role.name}>
+                          {role?.name}
+                        </button>
+                      ) : (
+                        ""
+                      )
+                    )}
+                </span>
               </p>
             </div>
           </div>
         </div>
-        <div className="flex justify-center gap-4">
-          {/* <div>{animatedLeftSvgIcon}</div> */}
-          {/* Render the Left SVG */}
-              <div>{getLeftRoleSvg()}</div>
-
-              {/* Render the Right SVG */}
-              <div>{getRightRoleSvg()}</div>
-       
-        </div>
+        {userCurrentRoleStatus && userCurrentRoleStatus.length > 0 && (
+    <div>{renderRoleSvgsOnce
+      (userCurrentRoleStatus)}</div>
+  )}
         <div className="flex justify-around items-center gap-[12%]">
           <div className="border-2 rounded-lg text-center min-w-[220px] max-w-[350px]">
             <div className="p-3 flex justify-center mt-5">
               <AvatarGroup max={4}>
-                <Avatar alt="Remy Sharp" src={mentor} />
-                <Avatar alt="Travis Howard" src={talent} />
-                <Avatar alt="Cindy Baker" src={Avatar3} />
-                <Avatar alt="Agnes Walker" src={founder} />
+                <Avatar alt="Mentor" src={mentor} />
+                <Avatar alt="Talent" src={talent} />
+                <Avatar alt="Avatar3" src={Avatar3} />
+                <Avatar alt="Founder" src={founder} />
               </AvatarGroup>
             </div>
             <div className="mt-5 px-5">
-              <p className="max-w-[250px]">
-                {roles.description1}
-              </p>
+              <p className="max-w-[250px]">{roles.description1}</p>
             </div>
             <div className="my-5 px-5 flex items-center">
               <button
                 onClick={() => setRoleModalOpen(!roleModalOpen)}
                 className="border flex gap-2 justify-center rounded-md bg-[#155EEF] p-2 font-medium w-full text-white"
               >
-                <span>{userPlusIcon}</span>{roles.addrole}
+                <span>{userPlusIcon}</span>
+                {roles.addrole}
               </button>
             </div>
           </div>
@@ -447,31 +363,34 @@ const Role = () => {
           <div className="border-2 rounded-lg text-center min-w-[220px] max-w-[350px]">
             <div className="p-3 flex justify-center mt-5">
               <AvatarGroup max={4}>
-                <Avatar alt="Remy Sharp" src={mentor} />
-                <Avatar alt="Travis Howard" src={talent} />
-                <Avatar alt="Cindy Baker" src={Avatar3} />
-                <Avatar alt="Agnes Walker" src={founder} />
+                <Avatar alt="Mentor" src={mentor} />
+                <Avatar alt="Talent" src={talent} />
+                <Avatar alt="Avatar3" src={Avatar3} />
+                <Avatar alt="Founder" src={founder} />
               </AvatarGroup>
             </div>
             <div className="mt-5 px-5">
-              <p className="max-w-[250px]">
-                {roles.description2}
-              </p>
+              <p className="max-w-[250px]">{roles.description2}</p>
             </div>
             <div className="my-5 px-5 flex items-center">
               <button
                 onClick={() => setRoleModalOpen(true)}
                 className="border flex gap-2 justify-center rounded-md bg-[#155EEF] p-2 font-medium w-full text-white"
               >
-                <span>{userPlusIcon}</span>{roles.addrole}
+                <span>{userPlusIcon}</span>
+                {roles.addrole}
               </button>
             </div>
           </div>
         </div>
         <FAQ />
       </div>
-
-      {roleModalOpen && <Modal1 isOpen={roleModalOpen} onClose={() => setRoleModalOpen(false)} />}
+      {roleModalOpen && (
+        <Modal1
+          isOpen={roleModalOpen}
+          onClose={() => setRoleModalOpen(false)}
+        />
+      )}
     </>
   );
 };
