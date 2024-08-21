@@ -154,11 +154,12 @@ const ProfilePage = () => {
           <div className="w-full">
             {activeTab === "event" && (
               <>
-                {!eventCreated ? (
+                {/* {!eventCreated ? (
                   <EventSection />  // Render EventSection when no event is created
                 ) : (
                   <NewEvent />  // Render NewEvent when an event is created
-                )}
+                )} */}
+                <NewEvent/>
               </>
             )}
           </div>
