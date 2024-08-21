@@ -6,6 +6,8 @@ import { Link } from "react-router-dom"
 import EventRegMain from '../../Modals/EventRegister/EventRegMain';
 import { useSelector } from 'react-redux';
 import { title } from 'process';
+import parse from 'html-react-parser';
+
 
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import EventSection from '../Project/EventSection';
@@ -66,7 +68,7 @@ const NewEvent = ({ event }) => {
                         title: cohort.cohort.title,
                         cohort_banner: cohort.cohort.cohort_banner[0]
                             ? uint8ArrayToBase64(cohort.cohort.cohort_banner[0])
-                            : "default-profile.png",
+                            : [],
                         cohort_launch_date: cohort.cohort.cohort_launch_date,
                         cohort_end_date: cohort.cohort.cohort_end_date,
                         start_date: cohort.cohort.start_date,
@@ -116,18 +118,20 @@ const NewEvent = ({ event }) => {
                                             {/* <p className="text-base font-bold">{event.no_of_seats}</p> */}
                                             <p className="text-sm font-normal">{event.start_date}</p>
                                         </div>
+                                        <div className="w-[240px] h-[172px]">
                                         <img
                                             src={event.cohort_banner}
                                             alt="Event Background"
-                                            className="w-[240px] h-[172px] rounded-lg mr-4 object-cover"
+                                            className="w-[240px] h-[172px] rounded-lg mr-4 object-cover object-center"
                                         />
+                                        </div>
                                         <div>
                                             <p className="bg-white font-medium border-2 border-[#CDD5DF] text-[#364152] w-[86px] px-2 py-1 rounded-full text-sm">
                                                 Workshop
                                             </p>
                                             <h3 className="text-lg font-semibold">{event.title}</h3>
                                             <h3 className="text-lg font-semibold">{event.no_of_seats}</h3>
-                                            <p style={descriptionStyle} className="text-sm text-gray-500">{event.description}</p>
+                                            <p style={descriptionStyle} className="text-sm text-gray-500">{parse (event.description)}</p>
                                             <div className="flex gap-3 items-center mt-4">
                                                 <span className="text-sm text-[#121926]">
                                                     <PlaceOutlinedIcon
