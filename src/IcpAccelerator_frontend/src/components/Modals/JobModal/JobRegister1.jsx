@@ -83,11 +83,10 @@ const JobRegister1 = ({ modalOpen, setModalOpen }) => {
     (currState) => currState.jobsCategory.jobCategory
   );
   const editor = useRef(null);
-  console.log("job type...............", jobTypes);
+
   useEffect(() => {
     dispatch(jobCategoryHandlerRequest());
   }, [actor, dispatch]);
-  console.log(cardData.uid);
   const {
     register,
     handleSubmit,
@@ -139,13 +138,6 @@ const JobRegister1 = ({ modalOpen, setModalOpen }) => {
 //     }
 //   };
 const onSubmit = async (data) => {
-  console.log("DATA ARGUMENTS", data);
-  const projectId = cardData[0]?.uid;
-
-  if (!projectId) {
-    toast.error("Project ID is missing!");
-    return;
-  }
 
   setIsSubmitting(true);
   try {
@@ -157,7 +149,6 @@ const onSubmit = async (data) => {
       location: data.jobLocation.value,
       link: data.jobLink,
       job_type: data.job_type.value,
-      project_id: projectId,
     };
 
     const result = await actor.post_job(argument);

@@ -11,6 +11,9 @@ import EventMain from '../Dashboard/DashboardEvents/EventMain';
 import NewEvent from '../Dashboard/DashboardEvents/NewEvent';
 import Announcement from './Announcement';
 import ProjectDetailsForOwnerProject from '../../component/Project/ProjectDetailsPages/ProjectDetailsForInvestorProject';
+import JobSection from '../Dashboard/Project/JobSection';
+import FAQ from '../Dashboard/Project/Faq';
+import AssociationRequestCard from '../Dashboard/Associations/AssociationRequestCard';
 
 
 
@@ -43,7 +46,7 @@ const ProfilePage = () => {
           <ProfileDetail />
         </div>
         <div className="w-[60%] ">
-          <div className="flex justify-start border-b">
+          <div className="overflow-x-auto text-nowrap  flex justify-start border-b">
             <button
               className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "roles"
                 ? "border-b-2 border-blue-500 text-blue-500 font-medium"
@@ -97,6 +100,28 @@ const ProfilePage = () => {
                 Announcement
               </button>
             )}
+             {(userRole === "mentor" || userRole === "founder") && (
+              <button
+                className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "association-req"
+                  ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                  : "text-gray-400"
+                  }`}
+                onClick={() => handleChange("association-req")}
+              >
+                Association Request
+              </button>
+            )}
+             {(userRole === "mentor" || userRole === "founder") && (
+              <button
+                className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "event-req"
+                  ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                  : "text-gray-400"
+                  }`}
+                onClick={() => handleChange("event-req")}
+              >
+                Event Request
+              </button>
+            )}
             {(userRole === "mentor" || userRole === "founder") && (
               <button
                 className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "project"
@@ -124,16 +149,25 @@ const ProfilePage = () => {
             {activeTab === "project" ? <ProjectCard /> : ""}
           </div>
           <div className="w-full">
-            {activeTab === "event" ?
-              <>
-                <NewEvent />
-
-                {/* // Render EventSection when no event is created */}
-              </>
-              : ""}
+            {activeTab === "association-req" ? <AssociationRequestCard /> : ""}
           </div>
           <div className="w-full">
-            {activeTab === "job" ? <ProjectDetailsForOwnerProject /> : ""}
+            {activeTab === "event" && (
+              <>
+                {!eventCreated ? (
+                  <EventSection />  // Render EventSection when no event is created
+                ) : (
+                  <NewEvent />  // Render NewEvent when an event is created
+                )}
+              </>
+            )}
+          </div>
+          <div className="w-full">
+            {activeTab === "job" ? <>
+                <JobSection />
+                <FAQ />
+                {/* <ProjectDetailsForOwnerProject/> */}
+              </> : ""}
           </div>
           <div className="w-full">
             {activeTab === "announcement" ? <Announcement /> : ""}

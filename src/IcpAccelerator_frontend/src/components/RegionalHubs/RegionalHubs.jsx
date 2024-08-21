@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {  Share, Info } from "@mui/icons-material";
 import XIcon from '@mui/icons-material/X';
-import flag from "../../../../assets/Logo/IT.png"
+import flag from "../../../assets/Logo/IT.png"
+import { useSelector } from "react-redux";
 const hubs = [
   {
     id: 1,
@@ -55,6 +56,47 @@ const hubs = [
 ];
 
 const DiscoverRegionalHubs = () => {
+  const actor = useSelector((currState) => currState.actors.actor);
+  const [allHubsData, setAllHubsData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const getAllUser = async (caller, isMounted) => {
+    await caller
+      .list_all_users()
+      .then((result) => {
+        if (isMounted) {
+          console.log("HUBS RESULT", result);
+          if (result ) {
+            console.log("Data received:", result.data);
+            setAllHubsData(result);
+        } else {
+          setAllHubsData([]); 
+        }
+          setIsLoading(false);
+        }
+      })
+      .catch((error) => {
+        if (isMounted) {
+          setAllHubsData([]);
+          setIsLoading(false);
+          console.log("error-in-get-all-user", error);
+        }
+      });
+  };
+
+  console.log("HUBS DATA",allHubsData)
+  useEffect(() => {
+    let isMounted = true;
+
+    if (actor) {
+        getAllUser(actor, isMounted);
+    } else {
+      getAllUser(IcpAccelerator_backend);
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [actor]);
   return (
     <div className="container mx-auto mb-5 bg-white">
        <div className="flex justify-start items-center  h-11   bg-opacity-95 -top-[.60rem] p-10 px-0 sticky bg-white  z-20">

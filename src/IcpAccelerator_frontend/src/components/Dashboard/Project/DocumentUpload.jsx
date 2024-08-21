@@ -1,80 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { Folder } from '@mui/icons-material';
-import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
-import JobRegister1 from '../../Modals/JobModal/JobRegister1';
-import { useSelector } from 'react-redux';
-import { IcpAccelerator_backend } from '../../../../../declarations/IcpAccelerator_backend/index';
-import useFormatDateFromBigInt from "../../../component/hooks/useFormatDateFromBigInt";
-import { formatFullDateFromBigInt } from "../../Utils/formatter/formatDateFromBigInt";
-import NewEvent from '../DashboardEvents/NewEvent';
-import NewJob from './LatestJob';
-const JobSection = () => {
-  const [modalOpen, setModalOpen] = useState(false); 
 
-  const handleModalOpen = () => {
-    setModalOpen(true); 
-  };
 
-  const actor = useSelector((currState) => currState.actors.actor);
+import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
+import LinkIcon from '@mui/icons-material/Link';
+import React, { useState } from 'react';
 
-  const [noData, setNoData] = useState(null);
-  const [latestJobs, setLatestJobs] = useState([]);
-  const [timeAgo] = useFormatDateFromBigInt();
-  const [isLoading, setIsLoading] = useState(true);
-  const itemsPerPage = 1;
-  const [currentPage, setCurrentPage] = useState(1);
-  const [openJobUid, setOpenJobUid] = useState(null);
-  useEffect(() => {
-      let isMounted = true;
-
-      const fetchLatestJobs = async (caller) => {
-          console.log('Inside Fetch Job Function');
-          setIsLoading(true);
-
-          try {
-              const result = await caller.get_all_jobs(currentPage , itemsPerPage);
-
-              if (isMounted) {
-                  if (result.length === 0) {
-                      setNoData(true);
-                      setLatestJobs([]);
-                  } else {
-                      setLatestJobs(result);
-                      setOpenJobUid(result[0]?.uid)
-                      setNoData(false);
-                  }
-              }
-          } catch (error) {
-              if (isMounted) {
-                  setNoData(true);
-                  setLatestJobs([]);
-              }
-          } finally {
-              if (isMounted) {
-                  setIsLoading(false);
-              }
-          }
-      };
-
-      if (actor) {
-          fetchLatestJobs(actor);
-      } else {
-          fetchLatestJobs(IcpAccelerator_backend);
-      }
-
-      return () => {
-          isMounted = false;
-      };
-  }, [actor, IcpAccelerator_backend, itemsPerPage, currentPage]);
-  console.log("job latestJobs...............", latestJobs);
+export function DocumentItem({ title, description, buttonText, visibility, selectedOption, setSelectedOption }) {
   return (
-  <>
- {latestJobs.length > 0 ? (<NewJob latestJobs={latestJobs}/>
- ) : (
-    <div className="p-6">
-      {/* Content */}
-      <div className="text-center py-12">
-     <div className='flex justify-center items-center'>  
+    <div className="flex items-stretch space-x-4 mb-6 pb-6">
+      {/* Left Side */}
+      <div className="w-[200px] flex-shrink-0 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center">
       <svg width="154" height="64" viewBox="0 0 154 64" fill="none" xmlns="http://www.w3.org/2000/svg">
   <mask id="path-1-inside-1_1002_24444" fill="white">
   <path fill-rule="evenodd" clip-rule="evenodd" d="M49 4C44.5817 4 41 7.58172 41 12V22.134V27.6206V47.2006C41 51.6811 41 53.9213 41.8719 55.6326C42.6389 57.1379 43.8628 58.3617 45.3681 59.1287C47.0794 60.0007 49.3196 60.0007 53.8 60.0007H90.6C95.6405 60.0007 98.1607 60.0007 100.086 59.0197C101.779 58.1569 103.156 56.78 104.019 55.0866C105 53.1614 105 50.6411 105 45.6006V22.134C105 17.6536 105 15.4134 104.128 13.7021C103.361 12.1968 102.137 10.9729 100.632 10.2059C98.9206 9.33398 96.6804 9.33398 92.2 9.33398H68.4316C68.0091 9.33398 67.6667 8.9915 67.6667 8.56903C67.6667 6.04563 65.621 4 63.0976 4H49Z"/>
@@ -97,22 +31,99 @@ const JobSection = () => {
   <stop offset="1" stop-color="white" stop-opacity="0"/>
   </linearGradient>
   </defs>
-  </svg></div>
-        <h2 className="text-xl font-semibold mb-2">You haven't posted any jobs yet</h2>
-        <p className="text-gray-600 mb-2">Any assets used in projects will live here.</p>
-        <p className="text-gray-600 mb-6">Start creating by uploading your files.</p>
-        <button className="bg-[#155EEF] text-white px-4 py-2 rounded-md flex items-center justify-center mx-auto" onClick={handleModalOpen}>
-          <WorkOutlineOutlinedIcon className="mr-2" />
-          Post a job
-        </button>
+  </svg>
       </div>
-      {modalOpen && (
-        <JobRegister1 modalOpen={modalOpen} setModalOpen={setModalOpen} />
-      )}
-    </div>
-    )}
-    </>
-  );
-};
 
-export default JobSection;
+      {/* Right Side */}
+      <div className="flex-grow">
+        <div className="flex justify-between items-start mb-1">
+          <h3 className="text-lg font-semibold">{title}</h3>
+          <span
+            className={`text-xs px-2 py-1 rounded-md ${
+              visibility.includes("public")
+                ? "text-gray-600 border-gray-200 bg-gray-100"
+                : "text-blue-600 bg-blue-100"
+            }`}
+          >
+            {visibility}
+          </span>
+        </div>
+
+        <div className="flex">
+          <div className="flex items-center space-x-4">
+            <label
+              className={`flex items-center cursor-pointer ${
+                selectedOption === "file" ? "text-blue-600" : "text-gray-600"
+              }`}
+            >
+              <input
+                type="radio"
+                name="upload"
+                value="file"
+                checked={selectedOption === "file"}
+                onChange={() => setSelectedOption("file")}
+                className="hidden"
+              />
+              <span
+                className={`w-4 h-4 border-2 rounded-full mr-2 flex items-center justify-center ${
+                  selectedOption === "file" ? "border-blue-600" : "border-gray-400"
+                }`}
+              >
+                {selectedOption === "file" && (
+                  <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
+                )}
+              </span>
+              Upload a file
+            </label>
+
+            <label
+              className={`flex items-center cursor-pointer ${
+                selectedOption === "link" ? "text-blue-600" : "text-gray-600"
+              }`}
+            >
+              <input
+                type="radio"
+                name="upload"
+                value="link"
+                checked={selectedOption === "link"}
+                onChange={() => setSelectedOption("link")}
+                className="hidden"
+              />
+              <span
+                className={`w-4 h-4 border-2 rounded-full mr-2 flex items-center justify-center ${
+                  selectedOption === "link" ? "border-blue-600" : "border-gray-400"
+                }`}
+              >
+                {selectedOption === "link" && (
+                  <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
+                )}
+              </span>
+              Upload a link
+            </label>
+          </div>
+        </div>
+
+        <ul className="list-disc px-5">
+          <li>Visible to investors only</li>
+          <li>Visible to investors only</li>
+          <li>Visible to investors only</li>
+        </ul>
+
+        {/* Conditional rendering of buttons based on the selected option */}
+        {selectedOption === 'file' && (
+          <button className="bg-[#155EEF] hover:bg-blue-700 text-white px-4 py-2 mt-3 rounded-[4px] border-2 text-sm flex items-center">
+            <CloudUploadOutlinedIcon className="mr-2" fontSize="small" />
+            Upload a file
+          </button>
+        )}
+
+        {selectedOption === 'link' && (
+          <button className="bg-[#155EEF] hover:bg-blue-700 text-white px-4 py-2 mt-3 rounded-[4px] border-2 text-sm flex items-center">
+            <LinkIcon className="mr-2" fontSize="small" />
+            Upload a link
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
