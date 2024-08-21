@@ -7,12 +7,7 @@ import ProjectRegister4 from "./ProjectRegister4";
 import ProjectRegister5 from "./ProjectRegister5";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
-import {
-  useForm,
-  Controller,
-  FormProvider,
-  useFieldArray,
-} from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -25,7 +20,6 @@ const ProjectRegisterMain = ({ isopen }) => {
   const [index, setIndex] = useState(0); // TRACKS THE CURRENT FORM PAGE
   const [logoData, setLogoData] = useState(null); // STORES LOGO FILE DATA
   const [coverData, setCoverData] = useState(null); // STORES COVER IMAGE FILE DATA
-  const [isSubmitting, setSubmitting] = useState(false); // TRACKS SUBMISSION STATE
   const [modalOpen, setModalOpen] = useState(isopen || true); // TRACKS MODAL OPEN/CLOSE STATE
   const [formData, setFormData] = useState({}); // STORES ACCUMULATED FORM DATA
 
@@ -34,20 +28,25 @@ const ProjectRegisterMain = ({ isopen }) => {
     resolver: yupResolver(validationSchema),
     mode: "all",
     defaultValues: {
-      upload_public_documents: "false",
+      upload_public_documents: false,
       publicDocs: [],
-      upload_private_documents: "false",
+      upload_private_documents: false,
       privateDocs: [],
-      weekly_active_users: 0,
-      revenue: 0,
-      money_raised_till_now: "false",
-      icp_grants: 0,
-      investors: 0,
-      raised_from_other_ecosystem: 0,
+      weekly_active_users: 0,  // Keep as a number
+      revenue: 0,  // Keep as a number
+      money_raised_till_now: false,
+      icp_grants: 0,  // Keep as a number
+      investors: 0,  // Keep as a number
+      raised_from_other_ecosystem: 0
     },
   });
 
-  const { handleSubmit, trigger, getValues } = methods;
+  const {
+    handleSubmit,
+    trigger,
+    getValues,
+    formState: { isSubmitting },
+  } = methods;
 
   // MAP FORM FIELDS TO DIFFERENT STEPS
   const formFields = {
@@ -88,7 +87,6 @@ const ProjectRegisterMain = ({ isopen }) => {
   // HANDLE NEXT BUTTON CLICK
   const handleNext = async () => {
     const isValid = await trigger(formFields[index]); // VALIDATE CURRENT STEP
-    console.log('isValid', isValid)
     if (isValid) {
       setFormData((prevData) => ({
         ...prevData,
@@ -105,49 +103,10 @@ const ProjectRegisterMain = ({ isopen }) => {
     }
   };
 
-  // RENDER COMPONENT BASED ON CURRENT STEP
-  const renderComponent = () => {
-    let component;
-    switch (index) {
-      case 0:
-        component = (
-          <ProjectRegister1 formData={formData} setFormData={setFormData} />
-        );
-        break;
-      case 1:
-        component = (
-          <ProjectRegister2 formData={formData} setFormData={setFormData} />
-        );
-        break;
-      case 2:
-        component = (
-          <ProjectRegister3 formData={formData} setFormData={setFormData} />
-        );
-        break;
-      case 3:
-        component = (
-          <ProjectRegister4 formData={formData} setFormData={setFormData} />
-        );
-        break;
-      case 4:
-        component = (
-          <ProjectRegister5 formData={formData} setFormData={setFormData} />
-        );
-        break;
-      case 5:
-        component = (
-          <ProjectRegister6 formData={formData} setFormData={setFormData} />
-        );
-        break;
-      default:
-        component = <ProjectRegister1 />;
-    }
-
-    return component;
-  };
-
   // HANDLE FORM SUBMISSION
-  const onSubmitHandler = async (data) => {
+  const onSubmitHandler = async () => {
+    const data = { ...formData, ...getValues() };
+    console.log("data", data);
     if (actor) {
       const projectData = {
         project_cover: coverData ? [coverData] : [],
@@ -161,14 +120,12 @@ const ProjectRegisterMain = ({ isopen }) => {
           data?.is_your_project_registered === "true" ? true : false,
         ],
         type_of_registration: [
-          data?.is_your_project_registered === "true" &&
-            data?.type_of_registration
+          data?.is_your_project_registered === "true" && data?.type_of_registration
             ? data?.type_of_registration
             : "",
         ],
         country_of_registration: [
-          data?.is_your_project_registered === "true" &&
-            data?.country_of_registration
+          data?.is_your_project_registered === "true" && data?.country_of_registration
             ? data?.country_of_registration
             : "",
         ],
@@ -182,12 +139,12 @@ const ProjectRegisterMain = ({ isopen }) => {
         ],
         weekly_active_users: [
           data?.live_on_icp_mainnet === "true" && data?.weekly_active_users
-            ? data?.weekly_active_users
+            ? Number(data.weekly_active_users)
             : 0,
         ],
         revenue: [
           data?.live_on_icp_mainnet === "true" && data?.revenue
-            ? data?.revenue
+            ? Number(data.revenue)
             : 0,
         ],
         supports_multichain: [
@@ -212,8 +169,7 @@ const ProjectRegisterMain = ({ isopen }) => {
                 : "",
             ],
             raised_from_other_ecosystem: [
-              data?.money_raised_till_now === "true" &&
-                data?.raised_from_other_ecosystem
+              data?.money_raised_till_now === "true" && data?.raised_from_other_ecosystem
                 ? data?.raised_from_other_ecosystem.toString()
                 : "",
             ],
@@ -224,7 +180,7 @@ const ProjectRegisterMain = ({ isopen }) => {
             ],
             target_amount:
               data?.money_raising === "true" && data?.target_amount
-                ? [data?.target_amount]
+                ? [Number(data.target_amount)]
                 : [],
           },
         ],
@@ -241,11 +197,11 @@ const ProjectRegisterMain = ({ isopen }) => {
         upload_private_documents: [
           data?.upload_private_documents === "true" ? true : false,
         ],
-
+  
         project_area_of_focus: "",
         reason_to_join_incubator:
           data?.reasons_to_join_platform &&
-            data?.reasons_to_join_platform.length > 0
+          data?.reasons_to_join_platform.length > 0
             ? data?.reasons_to_join_platform.join(", ")
             : "",
         vc_assigned: [],
@@ -256,26 +212,24 @@ const ProjectRegisterMain = ({ isopen }) => {
         technical_docs: [""],
         self_rating_of_project: 0,
       };
+
       console.log("projectData", projectData);
       try {
-        setSubmitting(true); // START SUBMISSION
         const result = await actor.register_project(projectData); // SUBMIT FORM DATA
         console.log("result", result);
         if (
-          result.startsWith(
-            "You can't create more than one project" ||
-            "You are not eligible for this role because you have 2 or more roles" ||
-            "Cannot set private documents unless upload private docs has been set to true"
-          )
+          result.startsWith("You can't create more than one project") ||
+          result.startsWith("You are not eligible for this role because you have 2 or more roles") ||
+          result.startsWith("Cannot set private documents unless upload private docs has been set to true")
         ) {
-          toast.success(result); // Show success toast with the returned message
-        } else {
           toast.error(result); // Show error toast with the returned message
+        } else {
+          toast.success("Project registered successfully!"); // Show success message
         }
       } catch (error) {
+        console.log(error.message);
         toast.error(`Error: ${error.message}`);
       } finally {
-        setSubmitting(false); // END SUBMISSION
       }
     } else {
       toast.error("Please signup with internet identity first");
@@ -284,72 +238,113 @@ const ProjectRegisterMain = ({ isopen }) => {
   };
 
   return (
-    <div
-      className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${modalOpen ? "block" : "hidden"
+    <>
+      <div
+        className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${
+          modalOpen ? "block" : "hidden"
         }`}
-    >
-      <div className="bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4 overflow-y-auto">
-        <div className="flex justify-endz mr-4">
-          <button
-            className="text-2xl text-[#121926]"
-            onClick={() => setModalOpen(!modalOpen)}
-          >
-            &times;
-          </button>
-        </div>
-        <h2 className="text-xs text-[#364152] mb-3">Step {index + 1} of 6</h2>
-        <FormProvider {...methods}>
-          <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
-            {renderComponent()}
-            <div
-              className={`flex mt-4 ${index === 0 ? "justify-end" : "justify-between"
-                }`}
+      >
+        <div className="bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4 overflow-y-auto">
+          <div className="flex justify-endz mr-4">
+            <button
+              className="text-2xl text-[#121926]"
+              onClick={() => setModalOpen(!modalOpen)}
             >
-              {index > 0 && (
-                <button
-                  type="button"
-                  className="py-2 px-4 text-gray-600 rounded border border-[#CDD5DF] hover:text-black"
-                  onClick={handleBack}
-                  disabled={index === 0}
-                >
-                  <ArrowBackIcon fontSize="medium" /> Back
-                </button>
+              &times;
+            </button>
+          </div>
+          <h2 className="text-xs text-[#364152] mb-3">Step {index + 1} of 6</h2>
+          <FormProvider {...methods}>
+            <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
+              {index === 0 && (
+                <ProjectRegister1
+                  formData={formData}
+                  setFormData={setFormData}
+                />
               )}
-              {index === 5 ? (
-                <button
-                  type="submit"
-                  className="py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 border-2 border-[#B2CCFF]"
-                  disabled={isSubmitting} // DISABLE BUTTON WHILE SUBMITTING
-                >
-                  {isSubmitting ? (
-                    <ThreeDots
-                      visible={true}
-                      height="35"
-                      width="35"
-                      color="#FFFEFF"
-                      radius="9"
-                      ariaLabel="three-dots-loading"
-                      wrapperStyle={{}}
-                    />
-                  ) : (
-                    "Submit"
-                  )}
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  className="py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 border-2 border-[#B2CCFF] flex items-center"
-                  onClick={handleNext}
-                >
-                  Continue
-                  <ArrowForwardIcon fontSize="medium" className="ml-2" />
-                </button>
+              {index === 1 && (
+                <ProjectRegister2
+                  formData={formData}
+                  setFormData={setFormData}
+                />
               )}
-            </div>
-          </form>
-        </FormProvider>
+              {index === 2 && (
+                <ProjectRegister3
+                  formData={formData}
+                  setFormData={setFormData}
+                />
+              )}
+              {index === 3 && (
+                <ProjectRegister4
+                  formData={formData}
+                  setFormData={setFormData}
+                />
+              )}{" "}
+              {index === 4 && (
+                <ProjectRegister5
+                  formData={formData}
+                  setFormData={setFormData}
+                />
+              )}
+              {index === 5 && (
+                <ProjectRegister6
+                  formData={formData}
+                  setFormData={setFormData}
+                />
+              )}
+              <div
+                className={`flex mt-4 ${
+                  index === 0 ? "justify-end" : "justify-between"
+                }`}
+              >
+                {index > 0 && (
+                  <button
+                    type="button"
+                    className="py-2 px-4 text-gray-600 rounded border border-[#CDD5DF] hover:text-black"
+                    onClick={handleBack}
+                    disabled={index === 0}
+                  >
+                    <ArrowBackIcon fontSize="medium" /> Back
+                  </button>
+                )}
+                {index === 5 ? (
+                  <button
+                    type="button"
+                    className="py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 border-2 border-[#B2CCFF]"
+                    onClick={onSubmitHandler}
+                    disabled={isSubmitting} // DISABLE BUTTON WHILE SUBMITTING
+                  >
+                    {isSubmitting ? (
+                      <ThreeDots
+                        visible={true}
+                        height="35"
+                        width="35"
+                        color="#FFFEFF"
+                        radius="9"
+                        ariaLabel="three-dots-loading"
+                        wrapperStyle={{}}
+                      />
+                    ) : (
+                      "Submit"
+                    )}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 border-2 border-[#B2CCFF] flex items-center"
+                    onClick={handleNext}
+                  >
+                    Continue
+                    <ArrowForwardIcon fontSize="medium" className="ml-2" />
+                  </button>
+                )}
+              </div>
+            </form>
+          </FormProvider>
+        </div>
       </div>
-    </div>
+      <Toaster />
+    </>
   );
 };
 

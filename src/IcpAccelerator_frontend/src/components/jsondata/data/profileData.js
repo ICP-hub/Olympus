@@ -100,7 +100,7 @@ export const profile={
               },
               "roles": {
                 "label": "OLYMPIAN",
-                "role":"Roles :",
+                "role":"Role :",
                 "value": "0/2"
               },
              

@@ -1,9 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import React, { useState, useEffect } from 'react';
+import mentor from "../../../../assets/Logo/mentor.png";
+import talent from "../../../../assets/Logo/talent.png";
+import founder from "../../../../assets/Logo/founder.png";
+import ProjectRegisterMain from '../ProjectRegisterModal/ProjectRegisterMain';
+import InvestorForm from '../investorForm/InvestorForm';
+import MentorSignupMain from '../Mentor-Signup-Model/MentorsignUpmain';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from "react-router-dom";
 
-const FilterModal = ({ isOpen, onClose }) => {
-    const [selectedCategory, setSelectedCategory] = useState('');
-    const [selectedType, setSelectedType] = useState('');
+const Modal1 = ({ isOpen, onClose }) => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const [modalOpen, setModalOpen] = useState(isOpen);
+    const [selectedRole, setSelectedRole] = useState(null);
+    const [showRoleModal, setShowRoleModal] = useState(false);
+    const userCurrentRoleStatus = useSelector(
+        (currState) => currState.currentRoleStatus.rolesStatusArray
+    );
 
     useEffect(() => {
         if (isOpen) {

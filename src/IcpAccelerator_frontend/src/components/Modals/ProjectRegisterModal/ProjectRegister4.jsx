@@ -59,6 +59,7 @@ const ProjectRegister4 = ({ isOpen, onClose, onBack }) => {
                             placeholder="Enter your Grants"
                             onWheel={(e) => e.target.blur()} // DISABLE MOUSE WHEEL FOR NUMBER INPUTS
                             min={0} // SET MINIMUM VALUE TO 0
+                            defaultValue=''
                         />
                         {/* DISPLAY ERROR MESSAGE FOR 'icp_grants' FIELD */}
                         {errors?.icp_grants && (
@@ -85,6 +86,7 @@ const ProjectRegister4 = ({ isOpen, onClose, onBack }) => {
                             placeholder="Enter Investors"
                             onWheel={(e) => e.target.blur()} // DISABLE MOUSE WHEEL FOR NUMBER INPUTS
                             min={0} // SET MINIMUM VALUE TO 0
+                            defaultValue=''
                         />
                         {/* DISPLAY ERROR MESSAGE FOR 'investors' FIELD */}
                         {errors?.investors && (
@@ -111,6 +113,7 @@ const ProjectRegister4 = ({ isOpen, onClose, onBack }) => {
                             placeholder="Enter Launchpad"
                             onWheel={(e) => e.target.blur()} // DISABLE MOUSE WHEEL FOR NUMBER INPUTS
                             min={0} // SET MINIMUM VALUE TO 0
+                            defaultValue=''
                         />
                         {/* DISPLAY ERROR MESSAGE FOR 'raised_from_other_ecosystem' FIELD */}
                         {errors?.raised_from_other_ecosystem && (
@@ -168,6 +171,7 @@ const ProjectRegister4 = ({ isOpen, onClose, onBack }) => {
                                     : "border-[#737373]"
                                 } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                             placeholder="Enter your Target Amount"
+                            defaultValue=''
                             onWheel={(e) => e.target.blur()} // DISABLE MOUSE WHEEL FOR NUMBER INPUTS
                             min={0} // SET MINIMUM VALUE TO 0
                         />
@@ -193,6 +197,7 @@ const ProjectRegister4 = ({ isOpen, onClose, onBack }) => {
                                     : "border-[#737373]"
                                 } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                             placeholder="Enter valuation (In million)"
+                            defaultValue=''
                             onWheel={(e) => e.target.blur()} // DISABLE MOUSE WHEEL FOR NUMBER INPUTS
                             min={0} // SET MINIMUM VALUE TO 0
                         />

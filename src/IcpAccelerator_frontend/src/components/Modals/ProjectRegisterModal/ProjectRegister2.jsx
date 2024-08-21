@@ -120,6 +120,7 @@ const ProjectRegister2 = ({ formData }) => {
                         <Controller
                             name="cover"
                             control={control}
+                            defaultValue=''
                             render={({ field }) => (
                                 <>
                                     <input
@@ -177,6 +178,7 @@ const ProjectRegister2 = ({ formData }) => {
                 <input
                     type="text"
                     {...register("project_website")}
+                    defaultValue=''
                     className={`border border-[#CDD5DF] rounded-md shadow-sm
                                              ${errors?.project_website
                             ? "border-red-500 "
@@ -200,6 +202,7 @@ const ProjectRegister2 = ({ formData }) => {
                 </label>
                 <select
                     {...register("is_your_project_registered")}
+                    defaultValue=''
                     className={`border border-[#CDD5DF] rounded-md shadow-sm ${errors.is_your_project_registered
                         ? "border-red-500"
                         : "border-[#737373]"
@@ -232,6 +235,7 @@ const ProjectRegister2 = ({ formData }) => {
                         </label>
                         <select
                             {...register("type_of_registration")}
+                            defaultValue=''
                             className={`border border-[#CDD5DF] rounded-md shadow-sm ${errors.type_of_registration
                                 ? "border-red-500"
                                 : "border-[#737373]"
@@ -263,6 +267,7 @@ const ProjectRegister2 = ({ formData }) => {
                         </label>
                         <select
                             {...register("country_of_registration")}
+                            defaultValue=''
                             className={`border border-[#CDD5DF] rounded-md shadow-sm ${errors.country_of_registration
                                 ? "border-red-500 "
                                 : "border-[#737373]"

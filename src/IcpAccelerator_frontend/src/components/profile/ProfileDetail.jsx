@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import ProfileImage from "../../../assets/Logo/ProfileImage.png";
+import ProfileImages from "../../../assets/Logo/ProfileImage.png";
 import edit from "../../../assets/Logo/edit.png";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
@@ -13,6 +13,7 @@ import { useSelector } from "react-redux";
 import { LinkedIn, GitHub, Telegram } from "@mui/icons-material";
 import InvestorDetail from "./InvestorDetail";
 import MentorEdit from "../../component/Mentors/MentorEdit";
+import {FaEdit, FaPlus } from 'react-icons/fa';
 
 const ProfileDetail = () => {
   const { countries } = useCountries();
@@ -244,9 +245,23 @@ const ProfileDetail = () => {
   const handleChange = (tab) => {
     setActiveTab(tab);
   };
+  const tabs = [
+    { role: "general", label: "General" },
+    { role: "investor", label: "Investor" },
+    { role: "mentor", label: "Mentor" },
+    { role: "founder", label: "Founder" },
+  ];
 
+
+  const fileInputRef = useRef(null);
+
+  const handleEditClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
   // user Role
-  const userRole = "mentor";
+  const userRole = "investor";
   // User data map 
   const ProfileImage = userFullData?.profile_picture[0];
   const Fullname = userFullData?.full_name;
@@ -263,12 +278,26 @@ const ProfileDetail = () => {
       <div className="relative h-1 bg-gray-200">
         <div className="absolute left-0 top-0 h-full bg-green-500 w-1/3"></div>
       </div>
+      {activeTab === "general" && (
       <div className="p-6 bg-gray-50">
-        <img
-          src={ProfileImage}
-          alt={Fullname}
-          className="w-24 h-24 mx-auto rounded-full mb-4"
+     
+      <div className="relative w-24 h-24 mx-auto rounded-full mb-4 group">
+      <img
+        src={ProfileImage}
+        alt={Fullname}
+        className="w-full h-full rounded-full object-cover"
+      />
+      <div className="absolute inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <FaPlus className="text-white text-xl" />
+        <input
+          id="file-upload"
+          type="file"
+          className="absolute inset-0 opacity-0 cursor-pointer"
+          accept="image/*"
         />
+      </div>
+    </div>
+  
         <div className="flex items-center justify-center mb-1">
           <VerifiedIcon className="text-blue-500 mr-1" fontSize="small" />
           <h2 className="text-xl font-semibold">{Fullname}</h2>
@@ -279,7 +308,54 @@ const ProfileDetail = () => {
           <ArrowOutwardOutlinedIcon className="ml-1" fontSize="small" />
         </button>
       </div>
-
+    )}
+    {userRole === "investor" && activeTab === "investor" && (
+      <div className="p-6 bg-gray-50 relative cursor-pointer"  style={{
+        backgroundImage: `url(${ProfileImages})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        // Remove inline filter style
+      }}>
+      {/* Edit icon */}
+      <div
+            className="absolute top-0 right-0 p-2  cursor-pointer"
+          >
+            <FaEdit className="text-white text-xl cursor-pointer" />
+            <input
+          id="file-upload"
+          type="file"
+          className="absolute inset-0 opacity-0 cursor-pointer"
+          accept="image/*"
+        />
+          </div>
+      <div className="relative w-24 h-24 mx-auto rounded-full mb-4 group">
+      <img
+        src={ProfileImages}
+        alt={Fullname}
+        className="w-full h-full rounded-full object-cover"
+      />
+      <div className="absolute inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <FaPlus className="text-white text-xl" />
+        <input
+          id="file-upload"
+          type="file"
+          className="absolute inset-0 opacity-0 cursor-pointer"
+          accept="image/*"
+        />
+      </div>
+    </div>
+  
+        <div className="flex items-center justify-center mb-1">
+          <VerifiedIcon className="text-blue-500 mr-1" fontSize="small" />
+          <h2 className="text-xl font-semibold">{Fullname}</h2>
+        </div>
+        <p className="text-gray-600 text-center mb-4">{openchat_username}</p>
+        <button className="w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center">
+          Get in touch
+          <ArrowOutwardOutlinedIcon className="ml-1" fontSize="small" />
+        </button>
+      </div>
+    )}
       <div className="p-6 bg-white">
         <div className="mb-4">
           <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
@@ -292,49 +368,23 @@ const ProfileDetail = () => {
           </div>
         </div>
         <div className="flex justify-start border-b">
+    {tabs.map(
+      (tab) =>
+        (tab.role === "general" || userRole === tab.role) && (
           <button
-            className={`px-4 py-2 focus:outline-none font-medium ${activeTab === "general"
+            key={tab.role}
+            className={`px-4 py-2 focus:outline-none font-medium ${
+              activeTab === tab.role
                 ? "border-b-2 border-blue-500 text-blue-500 font-medium"
                 : "text-gray-400"
-              }`}
-            onClick={() => handleChange("general")}
+            }`}
+            onClick={() => handleChange(tab.role)}
           >
-            General
+            {tab.label}
           </button>
-          {userRole === "investor" && (
-            <button
-              className={`px-4 py-2 focus:outline-none font-medium ${activeTab === "investor"
-                  ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                  : "text-gray-400"
-                }`}
-              onClick={() => handleChange("investor")}
-            >
-              Investor
-            </button>
-          )}
-          {userRole === "mentor" && (
-            <button
-              className={`px-4 py-2 focus:outline-none font-medium ${activeTab === "mentor"
-                  ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                  : "text-gray-400"
-                }`}
-              onClick={() => handleChange("mentor")}
-            >
-              Mentor
-            </button>
-          )}
-          {userRole === "founder" && (
-            <button
-              className={`px-4 py-2 focus:outline-none font-medium ${activeTab === "founder"
-                  ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                  : "text-gray-400"
-                }`}
-              onClick={() => handleChange("founder")}
-            >
-              Founder
-            </button>
-          )}
-        </div>
+        )
+    )}
+  </div>
 
         {/* General Tab Content */}
         {activeTab === "general" && (
