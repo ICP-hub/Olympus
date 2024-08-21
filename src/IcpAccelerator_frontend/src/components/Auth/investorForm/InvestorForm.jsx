@@ -121,17 +121,7 @@ const InvestorForm = ({ isOpen }) => {
         .nullable(true)
         .optional()
         .url("Invalid url"),
-      investor_linkedin_url: yup
-        .string()
-        .required("LinkedIn URL is required")
-        // .test("is-non-empty", "LinkedIn URL is required", (value) =>
-        //   /\S/.test(value)
-        // )
-        // .matches(
-        //   /^(https?:\/\/)?(www\.)?linkedin\.com\/in\/[a-zA-Z0-9_-]+\/?$/,
-        //   "Invalid LinkedIn URL"
-        // )
-        .url("Invalid url"),
+    
       investment_stage: yup
         .string()
         .test("is-non-empty", "Investment stage is required", (value) =>
@@ -166,7 +156,7 @@ const InvestorForm = ({ isOpen }) => {
       "investment_stage",
       "investment_stage_range",
       "investor_website_url",
-      "investor_linkedin_url",
+      "links",
     ],
     2: [
       "preferred_icp_hub",
@@ -227,7 +217,9 @@ const InvestorForm = ({ isOpen }) => {
             ? data?.registered_country
             : "",
         ],
-        linkedin_link: data?.investor_linkedin_url,
+        links: data?.links
+          ? [data.links.map((val) => ({ link: val?.link ? [val.link] : [] }))] // PREPARE LINKS DATA
+          : [],
         stage: [data?.investment_stage || ""],
         range_of_check_size: [
           data?.investment_stage !== "" &&
@@ -372,7 +364,7 @@ const InvestorForm = ({ isOpen }) => {
                         Back
                       </button>
                     )}
-                    {index === 4 ? (
+                    {index === 3 ? (
                       <button
                         type="submit"
                         className="py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 border-2 border-[#B2CCFF]"
