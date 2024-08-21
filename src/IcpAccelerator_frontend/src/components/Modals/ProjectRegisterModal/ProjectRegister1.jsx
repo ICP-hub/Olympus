@@ -120,6 +120,7 @@ const ProjectRegister1 = ({ formData }) => { // MAIN COMPONENT FUNCTION
             <Controller
               name="logo"
               control={control}
+              defaultValue=''
               render={({ field }) => (
                 <>
                   <input
@@ -190,6 +191,7 @@ const ProjectRegister1 = ({ formData }) => { // MAIN COMPONENT FUNCTION
               key={hub.id}
               value={`${hub.name} ,${hub.region}`}
               className="text-lg font-normal "
+              defaultValue=''
             >
               {hub.name}, {hub.region}
               {/* POPULATING ICP HUB OPTIONS DYNAMICALLY */}
@@ -212,6 +214,7 @@ const ProjectRegister1 = ({ formData }) => { // MAIN COMPONENT FUNCTION
         <input
           type="text"
           {...register("project_name")}
+          defaultValue=''
           className={`border border-[#CDD5DF] rounded-md shadow-sm 
                                              ${errors?.project_name
               ? "border-red-500 "
@@ -236,6 +239,7 @@ const ProjectRegister1 = ({ formData }) => { // MAIN COMPONENT FUNCTION
         <input
           type="text"
           {...register("project_elevator_pitch")}
+          defaultValue=''
           className={`border border-[#CDD5DF] rounded-md shadow-sm 
                                              ${errors?.project_elevator_pitch
               ? "border-red-500 "

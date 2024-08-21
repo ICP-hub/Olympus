@@ -3,7 +3,7 @@ import mentor from "../../../../assets/Logo/mentor.png";
 import talent from "../../../../assets/Logo/talent.png";
 import founder from "../../../../assets/Logo/founder.png";
 import ProjectRegisterMain from '../ProjectRegisterModal/ProjectRegisterMain';
-import InvestorForm from '../../Auth/investorForm/InvestorForm';
+import InvestorForm from '../investorForm/InvestorForm';
 import MentorSignupMain from '../Mentor-Signup-Model/MentorsignUpmain';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
