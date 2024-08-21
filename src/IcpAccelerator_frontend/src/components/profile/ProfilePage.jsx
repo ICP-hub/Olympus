@@ -14,6 +14,8 @@ import ProjectDetailsForOwnerProject from '../../component/Project/ProjectDetail
 import JobSection from '../Dashboard/Project/JobSection';
 import FAQ from '../Dashboard/Project/Faq';
 import AssociationRequestCard from '../Dashboard/Associations/AssociationRequestCard';
+import RequestEventCard from '../Dashboard/DashboardEvents/RequestEventCard';
+import EventRequestCard from '../Dashboard/DashboardEvents/EventRequestCard';
 
 
 
@@ -154,11 +156,12 @@ const ProfilePage = () => {
           <div className="w-full">
             {activeTab === "event" && (
               <>
-                {!eventCreated ? (
+                {/* {!eventCreated ? (
                   <EventSection />  // Render EventSection when no event is created
                 ) : (
                   <NewEvent />  // Render NewEvent when an event is created
-                )}
+                )} */}
+                <NewEvent/>
               </>
             )}
           </div>
@@ -175,6 +178,11 @@ const ProfilePage = () => {
           <div className="w-full">
             {activeTab === "rating" ? <>
               <h1>Rating</h1>
+            </> : ""}
+          </div>
+          <div className="w-full">
+            {activeTab === "event-req" ? <>
+              <EventRequestCard/>
             </> : ""}
           </div>
 

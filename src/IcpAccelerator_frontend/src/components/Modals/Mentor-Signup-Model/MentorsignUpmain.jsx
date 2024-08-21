@@ -103,7 +103,7 @@ const MentorSignupMain = ({ }) => {
 
       // TRY TO SUBMIT MENTOR DATA TO BACKEND
       try {
-        await actor.register_mentor_candid(mentorData).then((result) => {
+        await actor.register_mentor(mentorData).then((result) => {
           console.log('result', result) // LOG BACKEND RESPONSE
           if (result) {
             toast.success("Created successfully"); // SHOW SUCCESS TOAST
