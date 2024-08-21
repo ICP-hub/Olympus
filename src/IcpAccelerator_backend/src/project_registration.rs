@@ -481,13 +481,28 @@ pub async fn register_project(info: ProjectInfo) -> String {
 }
 
 #[query(guard = "is_user_anonymous")]
-pub fn get_project_info_using_principal(caller: Principal) -> Option<ProjectInfoInternal> {
+pub fn get_project_info_using_principal(
+    caller: Principal,
+) -> Option<(ProjectInfoInternal, UserInfoInternal)> {
     read_state(|state| {
-        state
+        // Retrieve the project information
+        let project_info = state
             .project_storage
             .get(&StoredPrincipal(caller))
-            .and_then(|projects| projects.0.first().cloned())
-    })
+            .and_then(|projects| projects.0.first().cloned());
+
+        // Retrieve the user information based on the principal
+        let user_info = state
+            .user_storage
+            .get(&StoredPrincipal(caller))
+            .map(|candid_user_info| candid_user_info.0.clone());
+
+    // Return both as a tuple if both are found
+    match (project_info, user_info) {
+        (Some(project), Some(user)) => Some((project, user)),
+        _ => None, // Return None if either is not found
+    }
+})
 }
 
 // all created projects but without ProjectInternal
@@ -508,14 +523,22 @@ pub fn _get_projects_for_caller() -> Vec<ProjectInfo> {
 
 //get_my_project; firstly created project || all_pub_plus_private_info
 #[query(guard = "is_user_anonymous")]
-pub fn get_my_project() -> ProjectInfoInternal {
+pub fn get_my_project() -> (ProjectInfoInternal, UserInfoInternal) {
     let caller = ic_cdk::caller();
     read_state(|state| {
-        state
+        let project_info = state
             .project_storage
             .get(&StoredPrincipal(caller))
             .and_then(|projects| projects.0.first().cloned())
-            .expect("Couldn't get a project")
+            .expect("Couldn't get a project");
+
+        let user_info = state
+            .user_storage
+            .get(&StoredPrincipal(caller))
+            .map(|candid_user_info| candid_user_info.0.clone())
+            .expect("Couldn't get user information");
+
+        (project_info, user_info)
     })
 }
 
@@ -637,56 +660,47 @@ pub fn get_project_public_information_using_id(project_id: String) -> ProjectPub
     project_internal
 }
 
-#[derive(CandidType, Clone)]
-pub struct PaginationReturnProjectDataList {
-    pub data: HashMap<Principal, ProjectVecWithRoles>,
-    pub count: u64,
-}
-
-#[derive(CandidType, Clone)]
-pub struct ListAllProjects {
-    principal: StoredPrincipal,
-    params: ProjectInfoInternal,
-    overall_average: Option<f64>,
-}
-
 
 #[query(guard = "is_user_anonymous")]
-pub fn list_all_projects() -> Vec<ListAllProjects> {
+pub fn list_all_projects() -> Vec<(ProjectInfoInternal, UserInfoInternal)> {
     let projects_snapshot = read_state(|state| {
         state.project_storage.iter().map(|(principal, project_infos)| {
-            (principal, project_infos.0.clone())  // Clone the data to use outside the state borrow
+            (principal.clone(), project_infos.0.clone())  // Clone the data to use outside the state borrow
         }).collect::<Vec<_>>()
     });
-
-    let mut list_all_projects: Vec<ListAllProjects> = Vec::new();
-
-    // Process the projects outside of the state borrow
+    
+    let mut projects_with_users: Vec<(ProjectInfoInternal, UserInfoInternal)> = Vec::new();
+    
     for (stored_principal, project_infos) in projects_snapshot {
         for project_info in project_infos {
             if project_info.is_active {
-                // Here, replace calculate_average_api with the actual function or logic you use to fetch the average
-                let get_rating = calculate_average(project_info.uid.clone());  // Assume this function doesn't mutate the global state.
-
-                let project_struct = ListAllProjects {
-                    principal: stored_principal,
-                    params: project_info,
-                    overall_average: get_rating.overall_average.get(0).cloned(),
-                };
-                list_all_projects.push(project_struct);
+                let user_info = read_state(|state| {
+                    state.user_storage.get(&stored_principal)
+                    .map(|candid_user_info| candid_user_info.0.clone())
+                });
+                
+                if let Some(user_info) = user_info {
+                    projects_with_users.push((project_info, user_info));
+                }
             }
         }
     }
-
-    list_all_projects
+    
+    projects_with_users
 }
+
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct PaginationParams {
     pub page: usize,
     pub page_size: usize,
 }
-
+#[derive(CandidType, Clone)]
+pub struct ListAllProjects {
+    principal: StoredPrincipal,
+    params: ProjectInfoInternal,
+    overall_average: Option<f64>,
+}
 
 #[derive(CandidType, Clone)]
 pub struct PaginationReturnProjectData {
