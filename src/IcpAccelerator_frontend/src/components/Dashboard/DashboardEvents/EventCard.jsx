@@ -125,7 +125,9 @@ const cohortId=allLiveEventsData[0]?.cohort_id
             const tags = data?.cohort?.tags ?? [];
             const seats = data?.cohort?.no_of_seats ?? 0;
             const start_date = data?.cohort?.start_date ?? "";
-
+            const funding = data?.cohort?.funding_amount ?? "";
+            const country = data?.cohort?.country ?? "";
+ 
             console.log("cohort Id...........///////////", cohortids);
 
             return (
@@ -138,14 +140,14 @@ const cohortId=allLiveEventsData[0]?.cohort_id
                       </p>
                       <p className="text-sm font-normal">Start at: {start_date}</p>
                     </div>
-                    <div className="w-[240px] h-[172px]">
+                    {/* <div className="w-[240px] h-[172px]"> */}
                     <img
                       src={image}
                       alt={name}
                       className="w-[240px] h-[172px] rounded-lg mr-4 object-cover object-center"
                      
                     />
-                    </div>
+                    {/* </div> */}
                     <div>
                       <div>
                         <p className="bg-white font-medium border-2 borer-[#CDD5DF] text-[#364152] w-[86px] px-2 py-1 rounded-full text-sm">
@@ -160,10 +162,11 @@ const cohortId=allLiveEventsData[0]?.cohort_id
                             className="text-[#364152]"
                             fontSize="small"
                           />
-                          {data?.cohort?.location ?? "Online"}
+                          {country}
                         </span>
-                        <span className="text-sm text-gray-500">
-                          ${data?.cohort?.price ? ` ${data?.cohort?.price}` : "Free"}
+                        <span className="text-sm text-[#121926]">
+                          ${funding}
+
                         </span>
                         <div className="flex -space-x-1">
                           {data?.cohort?.attendees?.map((attendee, index) => (
