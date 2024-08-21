@@ -1,7 +1,6 @@
 use crate::mentor::MentorProfile;
-use crate::is_admin;
 use crate::is_user_anonymous;
-use crate::ratings::calculate_average_api;
+use crate::ratings::*;
 use crate::ratings::RatingAverages;
 use crate::state_handler::{mutate_state, read_state, Candid, StoredPrincipal};
 use crate::user_module::*;
@@ -390,14 +389,34 @@ impl ProjectReview {
     }
 }
 
-
-pub async fn create_project(info: ProjectInfo) -> String {
+#[update(guard = "is_user_anonymous")]
+pub async fn register_project(info: ProjectInfo) -> String {
     if info.private_docs.is_some() && info.upload_private_documents != Some(true) {
         return "Cannot set private documents unless upload private docs has been set to true"
             .to_string();
     }
 
     let caller = caller();
+
+    let has_mentor_role = read_state(|state| {
+        state.role_status.get(&StoredPrincipal(caller)).map_or(false, |roles| {
+            roles.0.iter().any(|role| role.name == "mentor" && (role.status == "approved" || role.status == "active"))
+        })
+    });
+
+    if has_mentor_role {
+        return "You are not allowed to get this role because you already have the Mentor role.".to_string();
+    }
+
+    let has_vc_role = read_state(|state| {
+        state.role_status.get(&StoredPrincipal(caller)).map_or(false, |roles| {
+            roles.0.iter().any(|role| role.name == "vc" && (role.status == "approved" || role.status == "active"))
+        })
+    });
+
+    if has_vc_role {
+        return "You are not allowed to get this role because you already have the Venture Capitalist role.".to_string();
+    }
 
     let role_count = get_approved_role_count_for_principal(caller);
     if role_count >= 2 {
@@ -471,26 +490,6 @@ pub fn get_project_info_using_principal(caller: Principal) -> Option<ProjectInfo
     })
 }
 
-#[query(guard = "is_user_anonymous")]
-pub fn get_project_awaiting_info_using_principal(caller: Principal) -> Option<ProjectInfoInternal> {
-    read_state(|state| {
-        state
-            .project_awaits_response
-            .get(&StoredPrincipal(caller))
-            .map(|project| project.0.clone())
-    })
-}
-
-#[query(guard = "is_user_anonymous")]
-pub fn get_project_declined_info_using_principal(caller: Principal) -> Option<ProjectInfoInternal> {
-    read_state(|state| {
-        state
-            .project_declined_request
-            .get(&StoredPrincipal(caller))
-            .map(|project| project.0.clone())
-    })
-}
-
 // all created projects but without ProjectInternal
 pub fn _get_projects_for_caller() -> Vec<ProjectInfo> {
     let caller = ic_cdk::caller();
@@ -520,19 +519,6 @@ pub fn get_my_project() -> ProjectInfoInternal {
     })
 }
 
-// all created projects
-#[query(guard = "is_user_anonymous")]
-pub fn get_projects_with_all_info() -> Vec<ProjectInfoInternal> {
-    let caller = ic_cdk::caller();
-    read_state(|state| {
-        state
-            .project_storage
-            .get(&StoredPrincipal(caller))
-            .map(|projects| projects.0.clone())
-            .unwrap_or_default()
-    })
-}
-
 #[query(guard = "is_user_anonymous")]
 pub fn get_project_id() -> String {
     let caller = ic_cdk::caller();
@@ -546,7 +532,8 @@ pub fn get_project_id() -> String {
 }
 
 //this should only be for admin
-pub fn find_project_by_id(project_id: &str) -> Option<ProjectInfoInternal> {
+#[query(guard = "is_user_anonymous")]
+pub fn get_project_using_id(project_id: String) -> Option<ProjectInfoInternal> {
     read_state(|state| {
         for (_, projects) in state.project_storage.iter() {
             if let Some(project) = projects.0.iter().find(|p| p.uid == project_id) {
@@ -562,7 +549,7 @@ pub fn find_project_by_id(project_id: &str) -> Option<ProjectInfoInternal> {
 pub fn get_project_details_for_mentor_and_investor(
     project_id: String,
 ) -> ProjectPublicInfoInternal {
-    let project_details = find_project_by_id(project_id.as_str()).expect("project not found");
+    let project_details = get_project_using_id(project_id.clone()).expect("project not found");
     let project_id = project_id.to_string().clone();
 
     let project = ProjectPublicInfo {
@@ -607,7 +594,7 @@ pub fn get_project_details_for_mentor_and_investor(
 
 #[query(guard = "is_user_anonymous")]
 pub fn get_project_public_information_using_id(project_id: String) -> ProjectPublicInfoInternal {
-    let project_details = find_project_by_id(project_id.as_str()).expect("project not found");
+    let project_details = get_project_using_id(project_id.clone()).expect("project not found");
     let project_id = project_id.to_string().clone();
 
     let project = ProjectPublicInfo {
@@ -656,42 +643,6 @@ pub struct PaginationReturnProjectDataList {
     pub count: u64,
 }
 
-#[query(guard = "is_admin")]
-pub fn list_all_projects_for_admin(
-    pagination_params: PaginationParams,
-) -> PaginationReturnProjectDataList {
-    let project_count = read_state(|state| state.project_storage.len());
-
-    let start = (pagination_params.page - 1) * pagination_params.page_size;
-    let end = std::cmp::min(start + pagination_params.page_size, project_count.try_into().unwrap());
-
-    let projects_snapshot = read_state(|state| {
-        state.project_storage.iter()
-            .skip(start)
-            .take(end - start)
-            .map(|(stored_principal, project_info)| {
-                let principal = stored_principal.0; 
-                let roles = get_roles_for_principal(principal); 
-                let project_with_roles = ProjectVecWithRoles {
-                    project_profile: project_info.0.clone(),
-                    roles,
-                };
-                (principal, project_with_roles)
-            })
-            .collect::<Vec<_>>()
-    });
-
-    let paginated_map: HashMap<Principal, ProjectVecWithRoles> = projects_snapshot
-        .into_iter()
-        .collect();
-
-    PaginationReturnProjectDataList {
-        data: paginated_map,
-        count: project_count,
-    }
-}
-
-
 #[derive(CandidType, Clone)]
 pub struct ListAllProjects {
     principal: StoredPrincipal,
@@ -715,7 +666,7 @@ pub fn list_all_projects() -> Vec<ListAllProjects> {
         for project_info in project_infos {
             if project_info.is_active {
                 // Here, replace calculate_average_api with the actual function or logic you use to fetch the average
-                let get_rating = calculate_average_api(&project_info.uid);  // Assume this function doesn't mutate the global state.
+                let get_rating = calculate_average(project_info.uid.clone());  // Assume this function doesn't mutate the global state.
 
                 let project_struct = ListAllProjects {
                     principal: stored_principal,
@@ -736,9 +687,11 @@ pub struct PaginationParams {
     pub page_size: usize,
 }
 
+
 #[derive(CandidType, Clone)]
 pub struct PaginationReturnProjectData {
     pub data: Vec<ListAllProjects>,
+    pub user_data: HashMap<Principal, UserInformation>,
     pub count: u64,
 }
 
@@ -746,27 +699,31 @@ pub struct PaginationReturnProjectData {
 pub fn list_all_projects_with_pagination(
     pagination_params: PaginationParams,
 ) -> PaginationReturnProjectData {
-    let project_count = read_state(|state| state.project_storage.len());
+    let (projects_snapshot, project_count) = read_state(|state| {
+        let project_count = state.project_storage.len();
+        let start = (pagination_params.page - 1) * pagination_params.page_size;
 
-    let start = (pagination_params.page - 1) * pagination_params.page_size;
-    let end = std::cmp::min(start + pagination_params.page_size, project_count.try_into().unwrap());
-
-    let projects_snapshot = read_state(|state| {
-        state.project_storage.iter()
+        let projects_snapshot = state.project_storage.iter()
             .skip(start)
-            .take(end - start)
-            .map(|(principal, project_infos)| (principal, project_infos.0.clone()))
-            .collect::<Vec<_>>()
+            .take(pagination_params.page_size)
+            .map(|(principal, project_infos)| {
+                (principal.clone(), project_infos.0.clone())
+            })
+            .collect::<Vec<_>>();
+
+        (projects_snapshot, project_count)
     });
 
     let mut list_all_projects: Vec<ListAllProjects> = Vec::new();
+    let mut user_principals: Vec<Principal> = Vec::new();
 
     for (stored_principal, project_infos) in projects_snapshot {
+        user_principals.push(stored_principal.0.clone());
         for project_info in project_infos {
             if project_info.is_active {
-                let get_rating = calculate_average_api(&project_info.uid); 
+                let get_rating = calculate_average(project_info.uid.clone());
                 let project_info_struct = ListAllProjects {
-                    principal: stored_principal,
+                    principal: stored_principal.clone(),
                     params: project_info,
                     overall_average: get_rating.overall_average.get(0).cloned(),
                 };
@@ -774,44 +731,22 @@ pub fn list_all_projects_with_pagination(
             }
         }
     }
+
+    let user_data: HashMap<Principal, UserInformation> = user_principals.iter()
+        .map(|principal| {
+            let user_info = get_user_information_internal(*principal);
+            (*principal, user_info)
+        })
+        .collect();
 
     PaginationReturnProjectData {
         data: list_all_projects,
-        count: project_count,
-    }
-}
-
-#[query]
-pub fn get_top_three_projects() -> Vec<ListAllProjects> {
-    let projects_snapshot = read_state(|state| {
-        // Clone the necessary parts of the state to reduce the duration of the borrow.
-        state.project_storage.iter().map(|(principal, project_infos)| {
-            (principal, project_infos.0.clone())
-        }).collect::<Vec<_>>()
-    });
-
-    let mut list_all_projects: Vec<ListAllProjects> = Vec::new();
-
-    for (stored_principal, project_infos) in projects_snapshot {
-        for project_info in project_infos {
-            if project_info.is_active {
-                let get_rating = calculate_average_api(&project_info.uid);  // Assumes this function might mutate global state.
-                let project_info_struct = ListAllProjects {
-                    principal: stored_principal,
-                    params: project_info,
-                    overall_average: get_rating.overall_average.get(0).cloned(),
-                };
-                list_all_projects.push(project_info_struct);
-            }
-        }
+        user_data,
+        count: project_count as u64,
     }
 
-    // Sort the projects by the overall average rating in descending order
-    list_all_projects.sort_by(|a, b| b.overall_average.partial_cmp(&a.overall_average).unwrap_or(std::cmp::Ordering::Equal));
-
-    // Return only the top 3 projects
-    list_all_projects.into_iter().take(3).collect()
 }
+
 
 pub async fn change_project_images(
     caller: Principal,
@@ -925,6 +860,7 @@ pub async fn change_project_images(
     updated_project
 }
 
+#[update(guard = "is_user_anonymous")]
 pub async fn update_project(project_id: String, mut updated_project: ProjectInfo) -> String {
     let caller = ic_cdk::caller();
 
@@ -984,6 +920,7 @@ pub async fn update_project(project_id: String, mut updated_project: ProjectInfo
     }
 }
 
+#[update(guard = "is_user_anonymous")]
 pub fn delete_project(id: String) -> std::string::String {
     let caller = ic_cdk::caller();
 
@@ -1008,61 +945,6 @@ pub fn delete_project(id: String) -> std::string::String {
     }
 }
 
-// pub fn verify_project(project_id: &str) -> String {
-//     let verifier_info = hub_organizer::get_hub_organizer();
-
-//     match verifier_info {
-//         Some(info) => {
-//             let mut project_found = false;
-
-//             APPLICATION_FORM.with(|projects| {
-//                 let mut projects = projects.borrow_mut();
-//                 for project_internal in projects.values_mut().flat_map(|v| v.iter_mut()) {
-//                     if project_internal.uid == project_id {
-//                         project_internal.is_verified = true;
-//                         project_found = true;
-//                         break;
-//                     }
-//                 }
-//             });
-
-//             if project_found {
-//                 NOTIFICATIONS.with(|notifications| {
-//                     let mut notifications = notifications.borrow_mut();
-//                     if let Some(notification) = notifications
-//                         .values_mut()
-//                         .flat_map(|n| n.iter_mut())
-//                         .find(|n| n.project_id == project_id)
-//                     {
-//                         notification.notification_verifier = NotificationVerifier {
-//                             name: info
-//                                 .hubs
-//                                 .full_name
-//                                 .clone()
-//                                 .unwrap_or_else(|| "Default Name".to_string()),
-//                             image: info.hubs.profile_picture.clone().unwrap_or_else(|| vec![]),
-//                         };
-//                     }
-//                 });
-//             }
-
-//             "Project verified successfully.".to_string()
-//         }
-//         None => "Verifier information could not be retrieved.".to_string(),
-//     }
-// }
-
-pub fn get_notifications_for_caller() -> Vec<NotificationProject> {
-    let caller_principal = ic_cdk::caller();
-
-    read_state(|state| {
-        state
-            .notifications
-            .get(&StoredPrincipal(caller_principal))
-            .map_or_else(Vec::new, |notifications| notifications.0.clone())
-    })
-}
-
 
 fn _find_project_owner_principal(project_id: &str) -> Option<Principal> {
     read_state(|state| {
@@ -1075,18 +957,8 @@ fn _find_project_owner_principal(project_id: &str) -> Option<Principal> {
     })
 }
 
-pub fn get_notifications_for_owner() -> Vec<NotificationForOwner> {
-    let owner_principal = ic_cdk::caller();
-
-    read_state(|state| {
-        state
-            .owner_notification
-            .get(&StoredPrincipal(owner_principal))
-            .map_or_else(Vec::new, |notifications| notifications.0.clone())
-    })
-}
-
-pub async fn update_team_member(project_id: &str, member_principal_id: Principal) -> String {
+#[update(guard = "is_user_anonymous")]
+pub async fn update_team_member(project_id: String, member_principal_id: Principal) -> String {
     let member_uid = read_state(|state| {
         match state
             .user_storage
@@ -1097,7 +969,7 @@ pub async fn update_team_member(project_id: &str, member_principal_id: Principal
         }
     });
 
-    let user_info_result = crate::user_module::get_user_info_by_id(member_uid.clone()).await;
+    let user_info_result = crate::user_module::get_user_information_using_uid(member_uid.clone()).await;
 
     let user_info = match user_info_result {
         Ok(info) => info,
@@ -1236,22 +1108,18 @@ pub fn add_announcement(announcement_details: Announcements) -> String {
     ic_cdk::println!("Caller ID: {:?}", caller_id);
     ic_cdk::println!("Current Time: {}", current_time);
 
-    let project_info_internal = match find_project_by_id(&announcement_details.project_id) {
+    let project_info_internal = match get_project_using_id(announcement_details.project_id.clone()){
         Some(info) => {
             ic_cdk::println!("Project info fetched successfully: {:?}", info);
             info
         }
         None => {
-            ic_cdk::println!(
-                "Failed to fetch project info for project ID: {}",
-                &announcement_details.project_id
-            );
             return "Project ID does not exist in application forms.".to_string();
         }
     };
 
     let new_announcement = AnnouncementsInternal {
-        announcement_data: announcement_details,
+        announcement_data: announcement_details.clone(),
         timestamp: current_time,
         project_name: project_info_internal.params.project_name.clone(),
         project_desc: project_info_internal.params.project_description.clone(),
@@ -1384,46 +1252,6 @@ pub async fn delete_project_announcement_by_id(timestamp: u64) -> String {
     })
 }
 
-#[update(guard = "is_user_anonymous")]
-pub fn add_blog_post(url: String) -> String {
-    let caller_id = caller();
-    let current_time = time();
-
-    mutate_state(|state| {
-        // Ensure the caller's blog post vector exists
-        let mut blog_posts = state
-            .blog_post
-            .get(&StoredPrincipal(caller_id))
-            .unwrap_or_else(|| {
-                state
-                    .blog_post
-                    .insert(StoredPrincipal(caller_id.clone()), Candid(Vec::new()));
-                state.blog_post.get(&StoredPrincipal(caller_id)).unwrap()
-            });
-
-        // Add the new blog post
-        let new_blog = Blog {
-            blog_url: url,
-            timestamp: current_time,
-        };
-        blog_posts.0.push(new_blog);
-
-        format!("Blog Post added successfully at {}", current_time)
-    })
-}
-
-//for testing purpose
-#[query(guard = "is_user_anonymous")]
-pub fn get_blog_post() -> HashMap<Principal, Vec<Blog>> {
-    read_state(|state| {
-        state
-            .blog_post
-            .iter()
-            .map(|(principal, candid_vec)| (principal.0, candid_vec.0.clone()))
-            .collect()
-    })
-}
-
 #[query(guard = "is_user_anonymous")]
 pub fn filter_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
     read_state(|projects| {
@@ -1480,7 +1308,7 @@ pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUse
     let announcements_project = get_announcements();
 
 
-    let community_ratings = crate::ratings::calculate_average_api(&project_id);
+    let community_ratings = crate::ratings::calculate_average(project_id.clone());
 
     read_state(|storage| {
         let projects = storage.project_storage.iter();
@@ -1758,7 +1586,7 @@ pub async fn send_money_access_request(project_id: String) -> String {
         return "You already have a pending request for this project.".to_string();
     }
 
-    let user_data: Result<UserInformation, &str> = get_user_info();
+    let user_data: Result<UserInformation, &str> = get_user_information();
 
     // Assuming the existence of get_user_info() which might fail hence the unwrap_or_else pattern
     let user_data = user_data.unwrap_or_else(|_| panic!("Failed to get user data"));
@@ -1831,7 +1659,7 @@ pub async fn send_private_docs_access_request(project_id: String) -> String {
         return "You already have a pending request for this project.".to_string();
     }
 
-    let user_data: Result<UserInformation, &str> = get_user_info();
+    let user_data: Result<UserInformation, &str> = get_user_information();
 
     // Assuming the existence of get_user_info() which might fail hence the unwrap_or_else pattern
     let user_data = user_data.unwrap_or_else(|_| panic!("Failed to get user data"));
@@ -2049,7 +1877,7 @@ pub fn get_pending_money_requests(project_id: String) -> Vec<ProjectNotification
 
 #[query(guard = "is_user_anonymous")]
 pub fn get_dapp_link(project_id: String) -> String {
-    match find_project_by_id(&project_id) {
+    match get_project_using_id(project_id) {
         Some(project_data_internal) => match project_data_internal.params.dapp_link {
             Some(link) => link,
             None => "DApp link not available.".to_string(),
@@ -2381,7 +2209,7 @@ pub fn decline_private_docs_access_request(project_id: String, sender_id: Princi
 }
 
 pub fn check_project_exists(project_id: String) -> bool {
-    find_project_by_id(&project_id).is_some()
+    get_project_using_id(project_id).is_some()
 }
 
 #[update(guard = "is_user_anonymous")]
@@ -2389,7 +2217,7 @@ pub fn add_project_rating(ratings: ProjectRatingStruct) -> Result<String, String
     let principal = caller(); // Assuming `caller()` correctly retrieves the principal of the caller
 
     // Attempt to retrieve user data or return an error message if unavailable
-    let user_data = get_user_info().clone().map_err(|e| e.to_string())?;
+    let user_data = get_user_information().clone().map_err(|e| e.to_string())?;
     ic_cdk::println!("User data retrieved: {:?}", user_data);
 
     // Check if the project ID exists

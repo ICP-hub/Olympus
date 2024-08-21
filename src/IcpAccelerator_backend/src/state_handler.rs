@@ -27,9 +27,6 @@ use crate::notification_to_project::*;
 
 pub type VMem = VirtualMemory<DefaultMemoryImpl>;
 
-type AdminNotification = StableBTreeMap<StoredPrincipal, Candid<Vec<Notification>>, VMem>;
-const ADMIN_NOTIFICATION_MEMORY_ID: MemoryId = MemoryId::new(0);
-
 type CheckingData = StableBTreeMap<StoredPrincipal, String, VMem>;
 const CHECKING_DATA_MEMORY_ID: MemoryId = MemoryId::new(1);
 
@@ -255,7 +252,6 @@ pub type HubsData = StableBTreeMap<StoredPrincipal, Candid<IcpHubDetails>, VMem>
 const HUBS_DATA_STORAGE_MEMORY_ID: MemoryId = MemoryId::new(69);
 
 pub struct State {
-    pub admin_notifications: AdminNotification,
     pub cohort_request_admin: CohortRequestNotification,
     pub checking_data: CheckingData,
     pub projects_associated_with_mentor: ProjectAssociatedWithMentor,
@@ -336,7 +332,6 @@ thread_local! {
 
     static STATE: RefCell<State> = RefCell::new(
         MEMORY_MANAGER.with(|mm| State {
-            admin_notifications: AdminNotification::init(mm.borrow().get(ADMIN_NOTIFICATION_MEMORY_ID)),
             checking_data: CheckingData::init(mm.borrow().get(CHECKING_DATA_MEMORY_ID)),
             projects_associated_with_mentor:ProjectAssociatedWithMentor::init(mm.borrow().get(PROJECTS_ASSOCIATED_WITH_MENTOR_MEMORY_ID)),
             projects_associated_with_vc:ProjectAssociatedWithVc::init(mm.borrow().get(PROJECTS_ASSOCIATED_WITH_VC_MEMORY_ID)),

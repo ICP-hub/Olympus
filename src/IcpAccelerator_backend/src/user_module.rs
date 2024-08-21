@@ -177,7 +177,8 @@ fn record_measurement(start:u64, end:u64)->u64{
     start-end
 }
 
-pub async fn register_user_role(info: UserInformation) -> std::string::String {
+#[update(guard = "is_user_anonymous")]
+pub async fn register_user(info: UserInformation) -> std::string::String {
     let start = ic_cdk::api::instruction_counter();
     initialize_roles();
 
@@ -481,8 +482,8 @@ pub fn switch_role(role_to_switch: String, new_status: String){
     });
 }
 
-
-pub fn get_user_info() -> Result<UserInformation, &'static str> {
+#[query(guard = "is_user_anonymous")]
+pub fn get_user_information() -> Result<UserInformation, &'static str> {
     let caller = StoredPrincipal(caller());
 
     read_state(|state| {
@@ -582,8 +583,8 @@ pub fn list_all_users(pagination: PaginationUser) -> Vec<UserInformation> {
     })
 }
 
-
-pub fn delete_user() -> std::string::String {
+#[update(guard = "is_user_anonymous")]
+pub fn make_user_inactive() -> std::string::String {
     let caller = caller();
 
     mutate_state(|state| {
@@ -600,7 +601,8 @@ pub fn delete_user() -> std::string::String {
     })
 }
 
-pub async fn get_user_info_by_id(uid: String) -> Result<UserInformation, &'static str> {
+#[query(guard = "is_user_anonymous")]
+pub async fn get_user_information_using_uid(uid: String) -> Result<UserInformation, &'static str> {
     let mut user_info = None;
 
     read_state(|state| {

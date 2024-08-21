@@ -113,7 +113,8 @@ pub fn get_icp_hub_details() -> Vec<ListAllIcpHubs> {
     list_all_hubs
 }
 
-pub fn get_icp_hubs() -> Vec<IcpHub> {
+#[query(guard = "is_user_anonymous")]
+pub fn get_icp_hubs_candid() -> Vec<IcpHub> {
     vec![
         IcpHub {
             id: 1,

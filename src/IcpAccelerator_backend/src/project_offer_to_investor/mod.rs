@@ -1,8 +1,6 @@
 use crate::get_user_information_internal;
 use crate::state_handler::*;
-use crate::
-    find_project_by_id
-;
+use crate::get_project_using_id;
 use crate::
     get_vc_info_by_principal
 ;
@@ -136,7 +134,7 @@ pub async fn send_offer_to_investor(
 
     store_request_sent_by_project_to_investor(project_id.clone(), offer_to_investor);
 
-    let project_info = find_project_by_id(&project_id)
+    let project_info = get_project_using_id(project_id.clone())
         .expect("project does not exist")
         .clone();
 
