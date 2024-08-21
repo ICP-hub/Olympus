@@ -239,71 +239,105 @@ pub async fn register_venture_capitalist(params: VentureCapitalist) -> std::stri
 }
 
 #[query(guard = "is_user_anonymous")]
-pub fn get_vc_info() -> Option<VentureCapitalist> {
+pub fn get_vc_info() -> Option<(VentureCapitalist, UserInfoInternal)> {
     let caller = ic_cdk::caller();
     println!("Fetching venture capitalist info for caller: {:?}", caller);
 
     read_state(|state| {
-        state
+        let vc_info = state
             .vc_storage
             .get(&StoredPrincipal(caller))
-            .map(|vc_internal| vc_internal.0.params.clone())
+            .map(|vc_internal| vc_internal.0.params.clone());
+
+        let user_info = state
+            .user_storage
+            .get(&StoredPrincipal(caller))
+            .map(|candid_user_info| candid_user_info.0.clone());
+
+        match (vc_info, user_info) {
+            (Some(vc), Some(user)) => Some((vc, user)),
+            _ => None,
+        }
     })
 }
 
+
 #[query(guard = "is_user_anonymous")]
-pub fn get_vc_info_by_principal(caller: Principal) -> HashMap<Principal, VentureCapitalistAll> {
+pub fn get_vc_info_by_principal(caller: Principal) -> Option<(VentureCapitalistAll, UserInfoInternal)> {
     read_state(|state| {
         let profile = state
             .vc_storage
             .get(&StoredPrincipal(caller))
-            .expect("couldn't get venture capitalist")
-            .0
-            .clone();
+            .map(|vc_internal| vc_internal.0.clone());
 
-        let mut vc_all_info: HashMap<Principal, VentureCapitalistAll> = HashMap::new();
+        let user_info = state
+            .user_storage
+            .get(&StoredPrincipal(caller))
+            .map(|candid_user_info| candid_user_info.0.clone());
 
-        let all_capitalist_info = VentureCapitalistAll {
-            principal: caller,
-            profile,
-        };
-
-        vc_all_info.insert(caller, all_capitalist_info);
-        vc_all_info
+        match (profile, user_info) {
+            (Some(profile), Some(user)) => {
+                let all_capitalist_info = VentureCapitalistAll {
+                    principal: caller,
+                    profile,
+                };
+                Some((all_capitalist_info, user))
+            }
+            _ => None,
+        }
     })
 }
 
+
 #[query(guard = "is_user_anonymous")]
-pub fn get_vc_info_using_principal(caller: Principal) -> Option<VentureCapitalistInternal> {
+pub fn get_vc_info_using_principal(caller: Principal) -> Option<(VentureCapitalistInternal, UserInfoInternal)> {
     read_state(|state| {
-        state
+        let vc_info = state
             .vc_storage
             .get(&StoredPrincipal(caller))
-            .map(|vc| vc.0.clone())
+            .map(|vc| vc.0.clone());
+
+        let user_info = state
+            .user_storage
+            .get(&StoredPrincipal(caller))
+            .map(|candid_user_info| candid_user_info.0.clone());
+
+        match (vc_info, user_info) {
+            (Some(vc), Some(user)) => Some((vc, user)),
+            _ => None,
+        }
     })
 }
+
 
 
 #[query(guard = "is_user_anonymous")]
-pub fn list_all_vcs() -> HashMap<Principal, VcWithRoles> {
-    read_state(|state| {
-        let mut vc_with_roles_map: HashMap<Principal, VcWithRoles> = HashMap::new();
+pub fn list_all_vcs() -> HashMap<Principal, (VentureCapitalistInternal, UserInfoInternal, Vec<Role>)> {
+    let projects_snapshot = read_state(|state| {
+        state
+            .vc_storage
+            .iter()
+            .map(|(principal, vc_internal)| (principal.0, vc_internal.0.clone()))
+            .collect::<Vec<_>>()
+    });
 
-        for (principal, vc_internal) in state.vc_storage.iter() {
-            let roles = get_roles_for_principal(principal.0);
-            let vc_with_roles = VcWithRoles {
-                vc_profile: vc_internal.0.clone(),
-                roles,
-            };
+    let mut vc_with_info_map: HashMap<Principal, (VentureCapitalistInternal, UserInfoInternal, Vec<Role>)> = HashMap::new();
 
-            if vc_internal.0.is_active {
-                vc_with_roles_map.insert(principal.0, vc_with_roles);
+    for (principal, vc_internal) in projects_snapshot {
+        if vc_internal.is_active {
+            let roles = get_roles_for_principal(principal);
+
+            if let Some(user_info) = read_state(|state| {
+                state.user_storage.get(&StoredPrincipal(principal)).map(|candid_user_info| candid_user_info.0.clone())
+            }) {
+                vc_with_info_map.insert(principal, (vc_internal, user_info, roles));
             }
         }
+    }
 
-        vc_with_roles_map
-    })
+    vc_with_info_map
 }
+
 
 #[derive(CandidType, Clone)]
 pub struct PaginationReturnVcData {

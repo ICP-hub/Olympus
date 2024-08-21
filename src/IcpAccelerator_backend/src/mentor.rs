@@ -212,25 +212,52 @@ pub async fn register_mentor(profile: MentorProfile) -> String {
 }
 
 #[query(guard = "is_user_anonymous")]
-pub fn get_mentor() -> Option<MentorProfile> {
+pub fn get_mentor() -> Option<(MentorProfile, UserInfoInternal)> {
     let caller = ic_cdk::caller();
-    read_state(|state| {
+
+    let mentor_profile = read_state(|state| {
         state
             .mentor_storage
             .get(&StoredPrincipal(caller))
             .map(|mentor_internal| mentor_internal.0.profile.clone())
-    })
+    });
+
+    let user_info = read_state(|state| {
+        state
+            .user_storage
+            .get(&StoredPrincipal(caller))
+            .map(|candid_user_info| candid_user_info.0.clone())
+    });
+
+    match (mentor_profile, user_info) {
+        (Some(mentor), Some(user)) => Some((mentor, user)),
+        _ => None,
+    }
 }
 
+
 #[query(guard = "is_user_anonymous")]
-pub fn get_mentor_by_principal(id: Principal) -> Option<MentorProfile> {
-    read_state(|state| {
+pub fn get_mentor_by_principal(id: Principal) -> Option<(MentorProfile, UserInfoInternal)> {
+    let mentor_profile = read_state(|state| {
         state
             .mentor_storage
             .get(&StoredPrincipal(id))
             .map(|mentor_internal| mentor_internal.0.profile.clone())
-    })
+    });
+
+    let user_info = read_state(|state| {
+        state
+            .user_storage
+            .get(&StoredPrincipal(id))
+            .map(|candid_user_info| candid_user_info.0.clone())
+    });
+
+    match (mentor_profile, user_info) {
+        (Some(mentor), Some(user)) => Some((mentor, user)),
+        _ => None,
+    }
 }
+
 
 #[update(guard = "is_user_anonymous")]
 pub async fn update_mentor(updated_profile: MentorProfile) -> String {
@@ -331,59 +358,30 @@ pub fn delete_mentor() -> String {
 }
 
 #[query(guard = "is_user_anonymous")]
-pub fn get_all_mentors() -> HashMap<Principal, MentorWithRoles> {
-    read_state(|state| {
-        let mentor_registry = state.mentor_storage.iter().collect::<Vec<_>>();
-
-        let mut mentor_with_roles_map: HashMap<Principal, MentorWithRoles> = HashMap::new();
-
-        for (stored_principal, candid_mentor_internal) in mentor_registry.iter() {
-            let mentor_internal = candid_mentor_internal.0.clone(); // Get the inner MentorInternal
-            let principal = stored_principal.0; // Get the inner Principal
-            let roles = get_roles_for_principal(principal);
-            let mentor_with_roles = MentorWithRoles {
-                mentor_profile: mentor_internal.clone(),
-                roles,
-            };
-
-            if mentor_internal.active {
-                mentor_with_roles_map.insert(principal, mentor_with_roles);
-            }
-        }
-
-        mentor_with_roles_map
-    })
-}
-
-#[derive(CandidType, Clone)]
-pub struct ListAllMentors {
-    principal: StoredPrincipal,
-    params: MentorInternal,
-}
-
-#[query]
-pub fn get_top_three_mentors() -> Vec<ListAllMentors> {
-    let mentor_snapshot = read_state(|state| {
-        state.mentor_storage.iter().map(|(principal, vc_info)| {
-            (principal, vc_info.0.clone())
-        }).collect::<Vec<_>>()
+pub fn get_all_mentors() -> HashMap<Principal, (MentorInternal, UserInfoInternal, Vec<Role>)> {
+    let mentor_registry = read_state(|state| {
+        state.mentor_storage.iter().collect::<Vec<_>>()
     });
 
-    let mut list_all_mentor: Vec<ListAllMentors> = Vec::new();
+    let mut mentor_with_info_map: HashMap<Principal, (MentorInternal, UserInfoInternal, Vec<Role>)> = HashMap::new();
 
-    for (stored_principal, mentor_info) in mentor_snapshot {
-        if mentor_info.active {
-            let vc_info_struct = ListAllMentors {
-                principal: stored_principal,
-                params: mentor_info, 
-            };
-            list_all_mentor.push(vc_info_struct);
+    for (stored_principal, candid_mentor_internal) in mentor_registry.iter() {
+        let mentor_internal = candid_mentor_internal.0.clone();
+        let principal = stored_principal.0; 
+
+        if mentor_internal.active {
+            let roles = get_roles_for_principal(principal);
+
+            if let Some(user_info) = read_state(|state| {
+                state.user_storage.get(&StoredPrincipal(principal)).map(|candid_user_info| candid_user_info.0.clone())
+            }) {
+                mentor_with_info_map.insert(principal, (mentor_internal, user_info, roles));
+            }
         }
     }
-    // Return only the top 3 venture capitalists
-    list_all_mentor.into_iter().take(3).collect()
-}
 
+    mentor_with_info_map
+}
 
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
@@ -538,63 +536,3 @@ pub fn filter_mentors(criteria: MentorFilterCriteria) -> Vec<MentorProfile> {
             .collect()
     })
 }
-
-// pub fn pre_upgrade_mentor() {
-//     MENTOR_REGISTRY.with(|data| {
-//         match storage::stable_save((data.borrow().clone(),)) {
-//             Ok(_) => ic_cdk::println!("MENTOR_REGISTRY saved successfully."),
-//             Err(e) => ic_cdk::println!("Failed to save MENTOR_REGISTRY: {:?}", e),
-//         }
-//     });
-
-//     MENTOR_AWAITS_RESPONSE.with(|data| {
-//         match storage::stable_save((data.borrow().clone(),)) {
-//             Ok(_) => ic_cdk::println!("MENTOR_AWAITS_RESPONSE saved successfully."),
-//             Err(e) => ic_cdk::println!("Failed to save MENTOR_AWAITS_RESPONSE: {:?}", e),
-//         }
-//     });
-
-//     DECLINED_MENTOR_REQUESTS.with(|data| {
-//         match storage::stable_save((data.borrow().clone(),)) {
-//             Ok(_) => ic_cdk::println!("DECLINED_MENTOR_REQUESTS saved successfully."),
-//             Err(e) => ic_cdk::println!("Failed to save DECLINED_MENTOR_REQUESTS: {:?}", e),
-//         }
-//     });
-
-//     MENTOR_PROFILE_EDIT_AWAITS.with(|data| {
-//         match storage::stable_save((data.borrow().clone(),)) {
-//             Ok(_) => ic_cdk::println!("MENTOR_PROFILE_EDIT_AWAITS saved successfully."),
-//             Err(e) => ic_cdk::println!("Failed to save MENTOR_PROFILE_EDIT_AWAITS: {:?}", e),
-//         }
-//     });
-
-//     DECLINED_MENTOR_PROFILE_EDIT_REQUEST.with(|data| {
-//         match storage::stable_save((data.borrow().clone(),)) {
-//             Ok(_) => ic_cdk::println!("DECLINED_MENTOR_PROFILE_EDIT_REQUEST saved successfully."),
-//             Err(e) => ic_cdk::println!("Failed to save DECLINED_MENTOR_PROFILE_EDIT_REQUEST: {:?}", e),
-//         }
-//     });
-
-//     MENTOR_ANNOUNCEMENTS.with(|data| {
-//         match storage::stable_save((data.borrow().clone(),)) {
-//             Ok(_) => ic_cdk::println!("MENTOR_ANNOUNCEMENTS saved successfully."),
-//             Err(e) => ic_cdk::println!("Failed to save MENTOR_ANNOUNCEMENTS: {:?}", e),
-//         }
-//     });
-// }
-
-// pub fn post_upgrade_mentor() {
-//     match stable_restore::<(MentorRegistry, MentorRegistry, MentorRegistry, MentorUpdateParams, MentorUpdateParams, MentorAnnouncements)>() {
-//         Ok((restored_mentor_registry, restored_mentor_awaits_response, restored_declined_mentor_requests, restored_mentor_profile_edit_awaits, restored_declined_mentor_profile_edit_request, restored_mentor_announcements)) => {
-//             MENTOR_REGISTRY.with(|data| *data.borrow_mut() = restored_mentor_registry);
-//             MENTOR_AWAITS_RESPONSE.with(|data| *data.borrow_mut() = restored_mentor_awaits_response);
-//             DECLINED_MENTOR_REQUESTS.with(|data| *data.borrow_mut() = restored_declined_mentor_requests);
-//             MENTOR_PROFILE_EDIT_AWAITS.with(|data| *data.borrow_mut() = restored_mentor_profile_edit_awaits);
-//             DECLINED_MENTOR_PROFILE_EDIT_REQUEST.with(|data| *data.borrow_mut() = restored_declined_mentor_profile_edit_request);
-//             MENTOR_ANNOUNCEMENTS.with(|data| *data.borrow_mut() = restored_mentor_announcements);
-
-//             ic_cdk::println!("Mentor modules restored successfully.");
-//         },
-//         Err(e) => ic_cdk::println!("Failed to restore mentor modules: {:?}", e),
-//     }
-// }

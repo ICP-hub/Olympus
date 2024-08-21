@@ -141,7 +141,7 @@ pub async fn send_offer_to_project(
     let mentor_info = MentorInfo {
         mentor_id: mentor_id,
         mentor_name: user_data.full_name,
-        mentor_description: mentor.area_of_expertise,
+        mentor_description: mentor.0.area_of_expertise,
         mentor_image: user_data.profile_picture.unwrap_or_else(Vec::new),
     };
 

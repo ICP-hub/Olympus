@@ -147,10 +147,6 @@ type ListAllIcpHubs = record {
   "principal" : principal;
   params : IcpHubDetails;
 };
-type ListAllMentors = record {
-  "principal" : principal;
-  params : MentorInternal;
-};
 type ListAllProjects = record {
   "principal" : principal;
   overall_average : opt float64;
@@ -664,7 +660,12 @@ service : {
   get_all_jobs : (nat64, nat64) -> (vec JobsInternal) query;
   get_all_live_projects : () -> (vec ProjectInfoInternal) query;
   get_all_mentor_notification : (principal) -> (vec OfferToSendToMentor) query;
-  get_all_mentors : () -> (vec record { principal; MentorWithRoles }) query;
+  get_all_mentors : () -> (
+      vec record {
+        principal;
+        record { MentorInternal; UserInfoInternal; vec Role };
+      },
+    ) query;
   get_all_mentors_with_pagination : (Pagination) -> (
       PaginationReturnMentor,
     ) query;
@@ -768,11 +769,13 @@ service : {
   get_latest_testimonials : () -> (vec Testimonial) query;
   get_leaderboard_using_ratings : () -> (vec LeaderboardEntryForRatings) query;
   get_member_id : () -> (text) query;
-  get_mentor : () -> (opt MentorProfile) query;
+  get_mentor : () -> (opt record { MentorProfile; UserInfoInternal }) query;
   get_mentor_announcements : () -> (
       vec record { principal; vec MAnnouncements },
     ) query;
-  get_mentor_by_principal : (principal) -> (opt MentorProfile) query;
+  get_mentor_by_principal : (principal) -> (
+      opt record { MentorProfile; UserInfoInternal },
+    ) query;
   get_mentor_info_using_principal : (principal) -> (opt MentorInternal) query;
   get_mentors_applied_for_cohort : (text) -> (Result_5) query;
   get_multichain_list : () -> (vec text) query;
@@ -780,7 +783,7 @@ service : {
   get_my_declined_cohort_creation_requests : () -> (vec CohortRequest) query;
   get_my_id : () -> (principal) query;
   get_my_pending_cohort_creation_requests : () -> (vec CohortRequest) query;
-  get_my_project : () -> (ProjectInfoInternal) query;
+  get_my_project : () -> (ProjectInfoInternal, UserInfoInternal) query;
   get_no_of_individuals_applied_for_cohort_using_id : (text) -> (
       Result_6,
     ) query;
@@ -806,7 +809,7 @@ service : {
   get_project_id : () -> (text) query;
   get_project_info_for_user : (text) -> (opt ProjectInfoForUserInternal) query;
   get_project_info_using_principal : (principal) -> (
-      opt ProjectInfoInternal,
+      opt record { ProjectInfoInternal; UserInfoInternal },
     ) query;
   get_project_public_information_using_id : (text) -> (
       ProjectPublicInfoInternal,
@@ -836,7 +839,6 @@ service : {
   get_self_declined_requests_of_project : (text) -> (vec OfferToInvestor) query;
   get_stored_average_rating : (text, text) -> (Result_3) query;
   get_testimonials : (principal) -> (Result_11) query;
-  get_top_three_mentors : () -> (vec ListAllMentors) query;
   get_user_info_struct : () -> (opt UserInformation) query;
   get_user_info_using_principal : (principal) -> (opt UserInfoInternal) query;
   get_user_information : () -> (Result_12) query;
@@ -845,21 +847,30 @@ service : {
   get_vc_announcements : () -> (
       vec record { principal; vec Announcements },
     ) query;
-  get_vc_info : () -> (opt VentureCapitalist) query;
+  get_vc_info : () -> (
+      opt record { VentureCapitalist; UserInfoInternal },
+    ) query;
   get_vc_info_by_principal : (principal) -> (
-      vec record { principal; VentureCapitalistAll },
+      opt record { VentureCapitalistAll; UserInfoInternal },
     ) query;
   get_vc_info_using_principal : (principal) -> (
-      opt VentureCapitalistInternal,
+      opt record { VentureCapitalistInternal; UserInfoInternal },
     ) query;
   get_vcs_applied_for_cohort : (text) -> (Result_13) query;
   greet : (text) -> (text) query;
-  list_all_projects : () -> (vec ListAllProjects) query;
+  list_all_projects : () -> (
+      vec record { ProjectInfoInternal; UserInfoInternal },
+    ) query;
   list_all_projects_with_pagination : (Pagination) -> (
       PaginationReturnProjectData,
     ) query;
   list_all_users : (Pagination) -> (vec UserInformation) query;
-  list_all_vcs : () -> (vec record { principal; VcWithRoles }) query;
+  list_all_vcs : () -> (
+      vec record {
+        principal;
+        record { VentureCapitalistInternal; UserInfoInternal; vec Role };
+      },
+    ) query;
   list_all_vcs_with_pagination : (Pagination) -> (PaginationReturnVcData) query;
   make_active_inactive_mentor : (principal) -> (text);
   make_project_active_inactive : (principal, text) -> (text);
