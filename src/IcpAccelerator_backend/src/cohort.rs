@@ -812,7 +812,7 @@ pub fn apply_for_a_cohort_as_a_investor(cohort_id: String) -> String {
             Some(data) => data,
             None => return "Investor data is required but not found.".to_string(),
         };
-        send_enrollment_request_as_investor(cohort_id, vc_data)
+        send_enrollment_request_as_investor(cohort_id, vc_data.0)
     } else {
         "You should either be an investor to register yourself in a cohort".to_string()
     }
@@ -852,7 +852,7 @@ pub fn apply_for_a_cohort_as_a_project(cohort_id: String) -> String {
             None => return "Project data is required but not found.".to_string(),
         };
         ic_cdk::println!(" project data  {:?}", project_data);
-        send_enrollment_request_as_project(cohort_id, project_data);
+        send_enrollment_request_as_project(cohort_id, project_data.0);
         "Request Has Been Sent To Cohort Creator".to_string()
     } else {
         "You should either be a project to register yourself in a cohort".to_string()

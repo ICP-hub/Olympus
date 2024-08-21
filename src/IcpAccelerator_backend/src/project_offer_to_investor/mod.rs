@@ -92,11 +92,11 @@ pub async fn send_offer_to_investor(
     msg: String,
     project_id: String,
 ) -> String {
-    //let mentor = get_mentor_by_principal(mentor_id).expect("mentor doesn't exist");
-    let _venture_capitalist = get_vc_info_by_principal(investor_id)
-        .get(&investor_id)
-        .expect("investor doesn't exist")
-        .clone();
+    // //let mentor = get_mentor_by_principal(mentor_id).expect("mentor doesn't exist");
+    // let (investor_profile, user_info) = crate::get_vc_info_by_principal(investor_id)
+    // .expect("Investor does not exist")
+    // .clone();
+
 
     let mut offer_exists = false;  // Flag to check if an offer exists
 

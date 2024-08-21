@@ -96,10 +96,9 @@ pub fn get_all_project_notification_sent_by_investor(
 pub async fn send_offer_to_project_by_investor(project_id: String, msg: String) -> String {
     let investor_id = caller();
 
-    let investor_profile = crate::get_vc_info_by_principal(investor_id)
-        .get(&investor_id)
-        .expect("investor does not exist")
-        .clone();
+    let (investor_profile, _user_info) = crate::get_vc_info_by_principal(investor_id)
+    .expect("Investor does not exist")
+    .clone();
 
     let project = crate::get_project_using_id(project_id.clone()).expect("project not found");
 
