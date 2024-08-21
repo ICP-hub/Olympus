@@ -1,5 +1,7 @@
+use ic_cdk_macros::*;
 use serde::{Deserialize, Serialize};
 use candid::CandidType;
+use crate::is_user_anonymous;
 
 
 #[derive(Serialize, Deserialize, Debug, CandidType)]
@@ -8,7 +10,8 @@ pub struct Areas {
     name: String,
 }
 
-pub fn get_areas() -> Vec<Areas> {
+#[query(guard = "is_user_anonymous")]
+pub fn get_area_focus_expertise() -> Vec<Areas> {
     vec![
         Areas {
             id: 1,

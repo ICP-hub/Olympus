@@ -3,7 +3,7 @@ use crate::state_handler::*;
 use candid::{CandidType, Principal};
 use ic_cdk::api::caller;
 use ic_cdk::api::time;
-use ic_cdk_macros::query;
+use ic_cdk_macros::*;
 use ic_stable_structures::StableBTreeMap;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -194,7 +194,8 @@ pub struct RatingUpdate {
     ratings: Vec<Rating>,
 }
 
-pub fn update_rating_api(rating_data: RatingUpdate) -> String {
+#[update(guard = "is_user_anonymous")]
+pub fn update_rating(rating_data: RatingUpdate) -> String {
     if rating_data.ratings.is_empty() {
         ic_cdk::println!("Debug: No ratings provided.");
         return "No ratings provided, nothing updated.".to_string();
@@ -358,8 +359,10 @@ pub fn calculate_average_api_storage(project_id: &str) {
     });
 }
 
-pub fn calculate_average_api(project_id: &str) -> RatingAverages {
-    calculate_average_api_storage(project_id);
+
+#[query(guard = "is_user_anonymous")]
+pub fn calculate_average(project_id: String) -> RatingAverages {
+    calculate_average_api_storage(&project_id);
     read_state(|storage| {
         let storage = &storage.average_storage;
         storage

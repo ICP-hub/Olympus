@@ -94,28 +94,7 @@ pub fn get_mentor_info_using_principal(caller: Principal) -> Option<MentorIntern
     })
 }
 
-#[query(guard = "is_user_anonymous")]
-pub fn get_mentor_awaiting_info_using_principal(caller: Principal) -> Option<MentorInternal> {
-    let stored_principal = StoredPrincipal(caller);
-    read_state(|state| {
-        state
-            .mentor_awaits_response
-            .get(&stored_principal)
-            .map(|candid| candid.0.clone())
-    })
-}
-
-#[query(guard = "is_user_anonymous")]
-pub fn get_mentor_declined_info_using_principal(caller: Principal) -> Option<MentorInternal> {
-    let stored_principal = StoredPrincipal(caller);
-    read_state(|state| {
-        state
-            .mentor_declined_request
-            .get(&stored_principal)
-            .map(|candid| candid.0.clone())
-    })
-}
-
+#[update(guard = "is_user_anonymous")]
 pub async fn register_mentor(profile: MentorProfile) -> String {
     let caller = caller();
 
@@ -333,6 +312,7 @@ pub async fn update_mentor(updated_profile: MentorProfile) -> String {
     }
 }
 
+#[update(guard = "is_user_anonymous")]
 pub fn delete_mentor() -> String {
     let caller = ic_cdk::caller();
 
@@ -463,8 +443,8 @@ pub fn get_all_mentors_with_pagination(
     }
 }
 
-
-pub fn make_active_inactive(p_id: Principal) -> String {
+#[update(guard = "is_user_anonymous")]
+pub fn make_active_inactive_mentor(p_id: Principal) -> String {
     let principal_id = ic_cdk::caller();
     if p_id == principal_id || ic_cdk::api::is_controller(&principal_id) {
         mutate_state(|state| {

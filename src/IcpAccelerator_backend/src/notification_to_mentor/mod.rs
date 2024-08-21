@@ -1,6 +1,6 @@
 use crate::{get_user_information_internal, state_handler::*};
 use crate::{
-    find_project_by_id, get_mentor_by_principal
+    get_project_using_id, get_mentor_by_principal
 };
 use candid::{CandidType, Principal};
 use ic_cdk::api::management_canister::main::raw_rand;
@@ -129,7 +129,7 @@ pub async fn send_offer_to_mentor(mentor_id: Principal, msg: String, project_id:
 
     store_request_sent_by_project(offer_to_mentor);
 
-    let project_info = find_project_by_id(&project_id).expect("project does not exist");
+    let project_info = get_project_using_id(project_id.clone()).expect("project does not exist");
 
     let project_info = ProjectInfoo {
         project_id: project_id,

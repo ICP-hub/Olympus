@@ -283,29 +283,6 @@ pub fn get_vc_info_using_principal(caller: Principal) -> Option<VentureCapitalis
     })
 }
 
-#[query(guard = "is_user_anonymous")]
-pub fn get_vc_awaiting_info_using_principal(
-    caller: Principal,
-) -> Option<VentureCapitalistInternal> {
-    read_state(|state| {
-        state
-            .vc_awaits_response
-            .get(&StoredPrincipal(caller))
-            .map(|vc| vc.0.clone())
-    })
-}
-
-#[query(guard = "is_user_anonymous")]
-pub fn get_vc_declined_info_using_principal(
-    caller: Principal,
-) -> Option<VentureCapitalistInternal> {
-    read_state(|state| {
-        state
-            .vc_declined_request
-            .get(&StoredPrincipal(caller))
-            .map(|vc| vc.0.clone())
-    })
-}
 
 #[query(guard = "is_user_anonymous")]
 pub fn list_all_vcs() -> HashMap<Principal, VcWithRoles> {
@@ -380,35 +357,6 @@ pub fn list_all_vcs_with_pagination(pagination_params: PaginationParams) -> Pagi
 }
 
 
-#[derive(CandidType, Clone)]
-pub struct ListAllVC {
-    principal: StoredPrincipal,
-    params: VentureCapitalistInternal,
-}
-
-#[query]
-pub fn get_top_three_vc() -> Vec<ListAllVC> {
-    let vcs_snapshot = read_state(|state| {
-        state.vc_storage.iter().map(|(principal, vc_info)| {
-            (principal, vc_info.0.clone())
-        }).collect::<Vec<_>>()
-    });
-
-    let mut list_all_vc: Vec<ListAllVC> = Vec::new();
-
-    for (stored_principal, vc_info) in vcs_snapshot {
-        if vc_info.is_active {
-            let vc_info_struct = ListAllVC {
-                principal: stored_principal,
-                params: vc_info, 
-            };
-            list_all_vc.push(vc_info_struct);
-        }
-    }
-    // Return only the top 3 venture capitalists
-    list_all_vc.into_iter().take(3).collect()
-}
-
 #[update(guard = "is_user_anonymous")]
 pub fn delete_venture_capitalist() -> std::string::String {
     let caller = ic_cdk::caller();
@@ -426,7 +374,7 @@ pub fn delete_venture_capitalist() -> std::string::String {
     format!("Venture Capitalist Account Has Been DeActivated")
 }
 
-#[update]
+#[update(guard="is_user_anonymous")]
 pub async fn update_venture_capitalist(params: VentureCapitalist) -> String {
     let caller = ic_cdk::caller();
 
