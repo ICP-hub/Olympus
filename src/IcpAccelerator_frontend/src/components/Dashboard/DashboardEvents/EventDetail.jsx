@@ -19,6 +19,7 @@ import { formatFullDateFromSimpleDate } from '../../Utils/formatter/formatDateFr
 import { ThreeDots } from "react-loader-spinner";
 import toast, { Toaster } from "react-hot-toast";
 import NoDataFound from './NoDataFound';
+import EventRequestCard from './EventRequestCard';
 
 
 const FAQItem = ({ question, answer }) => {
@@ -231,6 +232,8 @@ console.log("Cohort ID:", cohort_id);
         return <NoDataFound message="No active attendes found" />;
       case 'reviews':
         return <NoDataFound message="No active reviews found" />;
+        case 'request':
+          return <EventRequestCard/>;
       default:
         return null;
     }
@@ -581,7 +584,7 @@ console.log("Cohort ID:", cohort_id);
                 <TabButton name="announcements" label="Announcements" />
                 <TabButton name="attendees" label="Attendees" />
                 <TabButton name="reviews" label="Reviews" />
-                <TabButton name="request" label="REquest" />
+                <TabButton name="request" label="Request" />
               </div>
               <TabContent />
               {/* <div className="mt-4">
