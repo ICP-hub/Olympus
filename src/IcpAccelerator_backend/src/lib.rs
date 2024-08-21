@@ -14,7 +14,7 @@ mod associations;
 mod cohort;
 mod cohort_rating;
 mod mentor_investor_ratings;
-mod user_module;
+pub mod user_module;
 mod vc_registration;
 
 use crate::cohort_rating::LeaderboardEntryForCohorts;

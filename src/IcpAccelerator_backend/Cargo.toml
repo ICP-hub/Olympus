@@ -5,8 +5,13 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[features]
+default = ["as_cdylib"]
+as_cdylib = []
+
 [lib]
-crate-type = ["cdylib"]
+crate-type = ["rlib", "cdylib"]
+path = "src/lib.rs"
 
 [dependencies]
 
@@ -29,3 +34,10 @@ ic-stable-structures = "0.6.3"
 base64 = "0.13.0"
 ic-certified-assets = "0.2.5"
 serde_bytes = "0.11.5"
+
+[dev-dependencies]
+pocket-ic = "4.0.0"
+reqwest = { version = "0.11", features = ["json"] }
+ic-agent = "0.37.1"
+tokio = { version = "1", features = ["full"] } 
+async-std = "1.12.0"

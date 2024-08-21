@@ -178,6 +178,11 @@ fn record_measurement(start:u64, end:u64)->u64{
 }
 
 pub async fn register_user_role(info: UserInformation) -> std::string::String {
+
+    if info.full_name.is_empty() || info.country.is_empty() || info.area_of_interest.is_empty() {
+        return "Missing mandatory fields".to_string();
+    }
+
     let start = ic_cdk::api::instruction_counter();
     initialize_roles();
 
