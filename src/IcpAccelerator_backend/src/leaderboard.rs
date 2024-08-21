@@ -1,4 +1,3 @@
-use crate::ratings::calculate_average;
 use crate::state_handler::*;
 use ic_cdk_macros::*;
 use candid::{CandidType, Nat};
@@ -30,7 +29,7 @@ pub fn get_leaderboard_using_ratings() -> Vec<LeaderboardEntryForRatings> {
         let system = &system.rating_system;
 
         for (project_id, _) in system.iter() {
-            let averages = calculate_average(project_id.clone());
+            let averages = crate::ratings_module::rubric_ratings::calculate_average(project_id.clone());
             if let Some(overall_average) = averages.overall_average.get(0) {
                 // Assuming you want the first (or most recent) overall average rating
                 leaderboard.push(LeaderboardEntryForRatings {
