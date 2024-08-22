@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from "react";
-import ReactSelect from "react-select";
 import toast, { Toaster } from "react-hot-toast";
-import { formFields } from "./EventFormData";
+import { formFields2 } from "./EventFormData";
 import { useCountries } from "react-countries";
 import { useFormContext } from "react-hook-form";
-import { useSelector } from "react-redux";
-const EventReg2 = ({ setSelectedCountry }) => {
-  const { register, formState: { errors } } = useFormContext();
-  const [selectedArea, setSelectedArea] = useState("");
+
+const EventReg2 = ({ formData }) => {
+  const { register, formState: { errors }, setValue, watch } = useFormContext();
   const { countries } = useCountries();
   const [inputType, setInputType] = useState("date");
+
+  // Watch the value of the 'area' field
+  const selectedArea = watch("area");
+
+  useEffect(() => {
+    // Set the default value for the 'area' field when the component mounts
+    setValue("area", formData.area || "");
+  }, [formData.area, setValue]);
 
   const handleFocus = (field) => {
     if (field.onFocus) {
@@ -23,14 +29,10 @@ const EventReg2 = ({ setSelectedCountry }) => {
     }
   };
 
-
-
-
   return (
     <>
-
       <div className="mb-2">
-        {formFields?.map((field) => (
+        {formFields2?.map((field) => (
           <div key={field.id} className="relative z-0 group mb-2">
             <label
               htmlFor={field.id}
@@ -100,8 +102,6 @@ const EventReg2 = ({ setSelectedCountry }) => {
             } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
           onFocus={() => handleFocus({ name: "area" })}
           onBlur={() => handleBlur({ name: "area" })}
-          onChange={(e) => setSelectedArea(e.target.value)}
-
         >
           <option value="">Select Area</option>
           <option value="global">Global</option>
@@ -124,7 +124,6 @@ const EventReg2 = ({ setSelectedCountry }) => {
               } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
             onFocus={() => handleFocus("country")}
             onBlur={() => handleBlur("country")}
-            onChange={(e) => setSelectedCountry(e.target.value)}
           >
             <option className="text-lg font-bold" value="">
               Select your country

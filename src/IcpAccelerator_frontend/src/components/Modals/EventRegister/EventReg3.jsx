@@ -21,7 +21,9 @@ import {
   FaPlus,
   FaTrash,
 } from "react-icons/fa";
-const EventReg3 = () => {
+const EventReg3 = ({formData}) => {
+  console.log('formData',formData)
+
   const { register, formState: { errors }, setValue, clearErrors, setError, control } = useFormContext();
   const areaOfExpertise = useSelector(
     (currState) => currState.expertiseIn.expertise
@@ -133,7 +135,40 @@ const EventReg3 = () => {
     setInterestedDomainsSelectedOptions,
   ] = useState([]);
 
+  useEffect(() => {
+    if (formData) {
+        setCohorttValuesHandler(formData);
+    }
+}, [formData]);
 
+// FUNCTION TO SET INITIAL FORM VALUES BASED ON PROVIDED formData
+const setCohorttValuesHandler = (val) => {
+    console.log('val', val);
+    if (val) {
+        setValue("rubric_eligibility", val?.rubric_eligibility ? val?.rubric_eligibility : "");
+        setValue("tags", val?.tags ? val?.tags : "");
+        setValue("funding_type", val?.funding_type ? val?.funding_type : "");
+        setInterestedDomainSelectedOptionsHandler(val.tags ?? null);
+        setInterestedFundingTypeSelectedOptionsHandler(val.funding_type ?? null);
+        setRubricEligibilitySelectedOptionsHandler(val.rubric_eligibility ?? null);
+        
+    }
+};
+const setInterestedDomainSelectedOptionsHandler = (val) => {
+  setInterestedDomainsSelectedOptions(
+      val ? val.split(", ").map((chain) => ({ value: chain, label: chain })) : []
+  );
+};
+const setInterestedFundingTypeSelectedOptionsHandler = (val) => {
+  setInterestedFundingTypeSelectedOptions(
+      val ? val.split(", ").map((chain) => ({ value: chain, label: chain })) : []
+  );
+};
+const setRubricEligibilitySelectedOptionsHandler = (val) => {
+  setRubricEligibilitySelectedOptions(
+      val ? val.split(", ").map((chain) => ({ value: chain, label: chain })) : []
+  );
+};
 
   const [inputType, setInputType] = useState("date");
 
