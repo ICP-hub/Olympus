@@ -9,11 +9,19 @@ import ProjectCard from '../Dashboard/Project/ProjectCard';
 import EventSection from '../Dashboard/Project/EventSection';
 import EventMain from '../Dashboard/DashboardEvents/EventMain';
 import NewEvent from '../Dashboard/DashboardEvents/NewEvent';
+import Announcement from './Announcement';
+import ProjectDetailsForOwnerProject from '../../component/Project/ProjectDetailsPages/ProjectDetailsForInvestorProject';
+import JobSection from '../Dashboard/Project/JobSection';
+import FAQ from '../Dashboard/Project/Faq';
+import AssociationRequestCard from '../Dashboard/Associations/AssociationRequestCard';
+import RequestEventCard from '../Dashboard/DashboardEvents/RequestEventCard';
+import EventRequestCard from '../Dashboard/DashboardEvents/EventRequestCard';
 
 
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState("roles");
+  const [eventCreated, setEventCreated] = useState(false);
   const { profilepage } = profile
 
   const handleChange = (tab) => {
@@ -40,7 +48,7 @@ const ProfilePage = () => {
           <ProfileDetail />
         </div>
         <div className="w-[60%] ">
-          <div className="flex justify-start border-b">
+          <div className="overflow-x-auto text-nowrap  flex justify-start border-b">
             <button
               className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "roles"
                 ? "border-b-2 border-blue-500 text-blue-500 font-medium"
@@ -94,6 +102,28 @@ const ProfilePage = () => {
                 Announcement
               </button>
             )}
+             {(userRole === "mentor" || userRole === "founder") && (
+              <button
+                className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "association-req"
+                  ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                  : "text-gray-400"
+                  }`}
+                onClick={() => handleChange("association-req")}
+              >
+                Association Request
+              </button>
+            )}
+             {(userRole === "mentor" || userRole === "founder") && (
+              <button
+                className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "event-req"
+                  ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                  : "text-gray-400"
+                  }`}
+                onClick={() => handleChange("event-req")}
+              >
+                Event Request
+              </button>
+            )}
             {(userRole === "mentor" || userRole === "founder") && (
               <button
                 className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "project"
@@ -121,23 +151,38 @@ const ProfilePage = () => {
             {activeTab === "project" ? <ProjectCard /> : ""}
           </div>
           <div className="w-full">
+            {activeTab === "association-req" ? <AssociationRequestCard /> : ""}
+          </div>
+          <div className="w-full">
             {activeTab === "event" && (
               <>
-                {/* <EventSection />  First component, rendered above */}
-                <NewEvent />  {/* Second component, rendered below */}
+                {/* {!eventCreated ? (
+                  <EventSection />  // Render EventSection when no event is created
+                ) : (
+                  <NewEvent />  // Render NewEvent when an event is created
+                )} */}
+                <NewEvent/>
               </>
             )}
           </div>
           <div className="w-full">
-            {activeTab === "job" ? <h1></h1> : ""}
+            {activeTab === "job" ? <>
+                <JobSection />
+                <FAQ />
+                {/* <ProjectDetailsForOwnerProject/> */}
+              </> : ""}
           </div>
           <div className="w-full">
-            {activeTab === "announcement" ? <h1>a
-              Announcement</h1> : ""}
+            {activeTab === "announcement" ? <Announcement /> : ""}
           </div>
           <div className="w-full">
             {activeTab === "rating" ? <>
               <h1>Rating</h1>
+            </> : ""}
+          </div>
+          <div className="w-full">
+            {activeTab === "event-req" ? <>
+              <EventRequestCard/>
             </> : ""}
           </div>
 

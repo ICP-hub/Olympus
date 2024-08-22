@@ -182,7 +182,8 @@ const AnnouncementDetailsCard = ({ data }) => {
           },
         }}
       >
-        {latestAnnouncementData.length == 0 ? (
+        {
+        latestAnnouncementData.length == 0 ? (
           <NoDataCard image={NoData} desc={"No active announcement found"} />
         ) : (
           latestAnnouncementData &&

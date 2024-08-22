@@ -280,21 +280,21 @@ const InvestorDetail = () => {
     .required();
 
   const defaultValues = {
-    investor_registered: "No",
-    registered_country: "India",
-    preferred_icp_hub: "Icp Hub India",
-    existing_icp_investor: "No",
-    investment_type: ["SNS"],
-    investor_portfolio_link: "https://portfolio.com",
-    investor_fund_name: "Lakshmi Chit Fund",
-    investor_fund_size: "1000",
-    invested_in_multi_chain: "No",
-    invested_in_multi_chain_names: ['Etherium', 'Base'],
-    investment_categories: ['Tooling'],
-    investor_website_url: "https://website.com",
-    investor_linkedin_url: "https://linkedIn.com",
-    investment_stage: ["Pre-Mvp"],
-    investment_stage_range: ["$2-5M"],
+    investor_registered:investorFullData?.investor_registered ?? "No",
+    registered_country:investorFullData?.registered_country ?? "India",
+    preferred_icp_hub:investorFullData?.preferred_icp_hub ?? "Icp Hub India",
+    existing_icp_investor:investorFullData?.existing_icp_investor ?? "No",
+    investment_type:investorFullData?.investment_type ?? ["SNS"],
+    investor_portfolio_link:investorFullData?.investor_portfolio_link ?? "https://portfolio.com",
+    investor_fund_name:investorFullData?.investor_fund_name ?? "Lakshmi Chit Fund",
+    investor_fund_size:investorFullData?.investor_fund_size ?? "1000",
+    invested_in_multi_chain:investorFullData?.invested_in_multi_chain ?? "No",
+    invested_in_multi_chain_names:investorFullData?.invested_in_multi_chain_names ?? ['Etherium', 'Base'],
+    investment_categories:investorFullData?.investment_categories ['Tooling'],
+    investor_website_url:investorFullData?.investor_website_url ?? "https://website.com",
+    investor_linkedin_url:investorFullData?.investor_linkedin_url ?? "https://linkedIn.com",
+    investment_stage:investorFullData?.investment_stage ?? ["Pre-Mvp"],
+    investment_stage_range:investorFullData?.investment_stage_range ?? ["$2-5M"],
   }
 
   const {

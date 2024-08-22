@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import { ThreeDots } from "react-loader-spinner";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -10,108 +9,53 @@ import EventReg1 from "./EventReg1";
 import EventReg2 from "./EventReg2";
 import EventReg3 from "./EventReg3";
 import EventReg4 from "./EventReg4";
-import { format, startOfToday } from "date-fns";
+import { format } from "date-fns";
 import { useSelector } from "react-redux";
-
-const validationSchema = yup.object({
-  title: yup
-    .string()
-    .required("Required")
-    .test(
-      "is-non-empty",
-      "Title cannot be empty",
-      (value) => value && value.trim().length > 0
-    ),
-  description: yup
-    .string()
-    .trim()
-    .required("Description is required")
-    .matches(/^[^\s].*$/, "Cannot start with a space")
-    .test(
-      "no-leading-spaces",
-      "Description should not have leading spaces",
-      (value) => !value || value.trimStart() === value
-    ),
-  cohort_launch_date: yup
-    .date()
-    .required()
-    .typeError("Must be a date")
-    .min(startOfToday(), "Cohort Launch date cannot be before today"),
-  cohort_end_date: yup
-    .date()
-    .required()
-    .typeError("Must be a date")
-    .min(
-      yup.ref("cohort_launch_date"),
-      "Cohort End date cannot be before Cohort launch date"
-    ),
-  tags: yup
-    .string()
-    .test("is-non-empty", "Selecting an interest is required", (value) =>
-      /\S/.test(value)
-    )
-    .required("Selecting an interest is required"),
-  deadline: yup
-    .date()
-    .required("Must be a date")
-    .typeError("Must be a valid date")
-    .max(
-      yup.ref("cohort_launch_date"),
-      "Application Deadline must be before the Cohort Launch date"
-    ),
-  eligibility: yup
-    .string()
-    .typeError("You must enter eligibility")
-    .required(),
-  rubric_eligibility: yup.string().required("Required"),
-  no_of_seats: yup
-    .number()
-    .typeError("You must enter a number")
-    .required("Number of seats is required")
-    .min(0, "The number of seats cannot be negative"),
-
-  funding_type: yup
-    .string()
-    .typeError("You must enter a funding type")
-    .required("Required"),
-  funding_amount: yup
-    .string()
-    .typeError("You must enter a funding amount")
-    .required("Required"),
-});
+import { validationSchema } from "./cohortValidation";
 
 const EventRegMain = ({ modalOpen, setModalOpen }) => {
+  // GETTING ACTOR FROM REDUX STORE
   const actor = useSelector((currState) => currState.actors.actor);
-  const [selectedArea, setSelectedArea] = useState("");
+
+  // INDEX STATE TO TRACK THE CURRENT STEP OF THE FORM
   const [index, setIndex] = useState(0);
+
+  // INITIALIZING THE FORM WITH VALIDATION SCHEMA
   const methods = useForm({
     resolver: yupResolver(validationSchema),
     mode: "all",
   });
-  const [imagePreview, setImagePreview] = useState(null);
+
+  // STATE TO STORE THE IMAGE DATA
   const [imageData, setImageData] = useState(null);
+
+  // DESTRUCTURING METHODS FROM useForm HOOK
   const {
     handleSubmit,
     trigger,
     formState: { isSubmitting },
+    getValues
   } = methods;
 
+  // FORM FIELD NAMES FOR EACH STEP OF THE FORM
   const formFields = {
     0: ["cohort_banner", "title", "cohort_launch_date", "cohort_end_date"],
     1: ["deadline", "eligibility", "no_of_seats", "start_date"],
-    2: ["funding_type", "funding_amount", "tags", "country", "host_name"],
+    2: ["funding_type", "funding_amount", "tags", "country", "host_name", "contact_links"],
     3: ["description"],
   };
 
-  const [selectedCountry, setSelectedCountry] = useState("");
+  // STATE TO STORE THE FORM DATA ACROSS STEPS
+  const [formData, setFormData] = useState({});
 
+  // FUNCTION TO HANDLE FORM SUBMISSION
   const onSubmitHandler = async (data) => {
-    const areaValue = selectedArea === "global" ? "global" : selectedCountry;
     console.log("Form data:", data);
 
+    // FORMATTING THE SUBMITTED DATA
     const eventData = {
       title: data.title,
-      country: areaValue,
+      country: data.country, // COUNTRY VALUE FROM FORM DATA
       funding_amount: data.funding_amount,
       funding_type: data.funding_type,
       description: data.description,
@@ -127,78 +71,56 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
         eligibility: [data.eligibility],
         level_on_rubric: parseFloat(data.rubric_eligibility),
       },
+      contact_links: data?.contact_links
+        ? [data.contact_links.map((val) => ({ link: val?.link ? [val.link] : [] }))] // PREPARE LINKS DATA
+        : [],
       no_of_seats: parseInt(data.no_of_seats),
-      // Ensure imageData and userFullData are correctly defined and used.
-      cohort_banner: imageData ? [imageData] : [], // Example placeholder
-      host_name: ['Mridul'], // Example placeholder
+      cohort_banner: imageData ? [imageData] : [], // SETTING COHORT BANNER IMAGE
+      host_name: ['Mridul'], // EXAMPLE PLACEHOLDER FOR HOST NAME
     };
-    // image creation function compression and uintarray creator
-    const imageCreationFunc = async (file) => {
-      const result = await trigger("image");
-      if (result) {
-        try {
-          const compressedFile = await CompressedImage(file);
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            setImagePreview(reader.result);
-          };
-          reader.readAsDataURL(compressedFile);
-          const byteArray = await compressedFile.arrayBuffer();
-          setImageData(Array.from(new Uint8Array(byteArray)));
-        } catch (error) {
-          setError("image", {
-            type: "manual",
-            message: "Could not process image, please try another.",
-          });
-        }
-      } else {
-        console.log("ERROR--imageCreationFunc-file", file);
-      }
-    };
+
     try {
-      console.log("Cohort Data Before Submit", eventData)
+      // SENDING DATA TO BACKEND
+      console.log("Cohort Data Before Submit", eventData);
       const result = await actor.create_cohort(eventData);
       console.log("eventdata", eventData);
+      console.log('result', result);
+      
+      // HANDLE SUCCESS OR ERROR RESPONSE
       if (result && result.Ok) {
         toast.success("Cohort creation request has been sent to admin");
-        setModalOpen(false);
+        setModalOpen(false); // CLOSE MODAL AFTER SUCCESSFUL SUBMISSION
       } else {
         toast.error("Something went wrong");
       }
     } catch (error) {
+      // HANDLE EXCEPTION
       toast.error("Error creating cohort");
       console.error("Error sending data to the backend:", error);
     }
   };
 
+  // FUNCTION TO HANDLE NAVIGATING TO NEXT STEP
   const handleNext = async () => {
-    const isValid = await trigger(formFields[index]);
+    const isValid = await trigger(formFields[index]); // TRIGGER VALIDATION FOR CURRENT STEP
+
     if (isValid) {
-      setIndex((prevIndex) => prevIndex + 1);
+      setFormData((prevData) => ({
+        ...prevData,
+        ...getValues(), // MERGE CURRENT FORM DATA WITH PREVIOUS DATA
+      }));
+      setIndex((prevIndex) => prevIndex + 1); // MOVE TO NEXT STEP
     }
   };
 
+  // FUNCTION TO HANDLE NAVIGATING TO PREVIOUS STEP
   const handleBack = () => {
     if (index > 0) {
       setIndex((prevIndex) => prevIndex - 1);
     }
   };
 
-  const renderComponent = () => {
-    switch (index) {
-      case 0:
-        return <EventReg1 setImageData={setImageData} setImagePreview={setImagePreview} imagePreview={imagePreview} />;
-      case 1:
-        return <EventReg2 setSelectedCountry={setSelectedCountry} />;
-      case 2:
-        return <EventReg3 />;
-      case 3:
-        return <EventReg4 />;
-      default:
-        return <EventReg1 />;
-    }
-  };
-
+  // FUNCTION TO HANDLE FORM ERRORS
   const onErrorHandler = (errors) => {
     toast.error("Please check the form for errors.");
     console.log("Form errors:", errors);
@@ -206,10 +128,10 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
 
   return (
     <>
+      {/* MODAL OVERLAY */}
       <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${modalOpen ? "block" : "hidden"}`}>
-
-        <div className="bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4 max-h-[90vh] overflow-y-auto"
-        >
+        <div className="bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4 max-h-[90vh] overflow-y-auto">
+          {/* CLOSE BUTTON */}
           <div className="flex justify-end mr-4">
             <button
               className="text-2xl text-[#121926]"
@@ -219,13 +141,18 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
             </button>
           </div>
           <h2 className="text-xs text-[#364152] mb-3">Step {index + 1} of 4</h2>
+
+          {/* FORM PROVIDER TO PASS DOWN FORM METHODS */}
           <FormProvider {...methods}>
             <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
-              {renderComponent()}
-              <div
-                className={`flex mt-4 ${index === 0 ? "justify-end" : "justify-between"
-                  }`}
-              >
+              {/* CONDITIONAL RENDERING OF FORMS BASED ON CURRENT STEP */}
+              {index === 0 && <EventReg1 formData={formData} setFormData={setFormData} />}
+              {index === 1 && <EventReg2 formData={formData} setFormData={setFormData}  />}
+              {index === 2 && <EventReg3 formData={formData} setFormData={setFormData}  />}
+              {index === 3 && <EventReg4 formData={formData} setFormData={setFormData} />}
+              
+              {/* NAVIGATION BUTTONS */}
+              <div className={`flex mt-4 ${index === 0 ? "justify-end" : "justify-between"}`}>
                 {index > 0 && (
                   <button
                     type="button"
@@ -268,6 +195,7 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
           </FormProvider>
         </div>
       </div>
+      {/* TOAST NOTIFICATIONS */}
       <Toaster />
     </>
   );

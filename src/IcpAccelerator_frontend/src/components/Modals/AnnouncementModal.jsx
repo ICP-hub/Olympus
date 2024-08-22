@@ -83,21 +83,21 @@ const AnnouncementModal = ({
             isOpen ? "block" : "hidden"
           }`}
         >
-          <div className="bg-white rounded-lg shadow-lg w-[550px] p-6">
-            <div className="flex justify-between items-center mb-3">
+          <div className="bg-white rounded-lg shadow-lg w-[500px] p-2">
+            <div className="flex justify-between items-center ml-6 mb-2">
               <button
-                className="text-[#364152] text-2xl"
+                className="text-[#364152] text-3xl"
                 onClick={onClose}
               >
                 &times;
               </button>
             </div>
-            <div className="p-6">
-              <h2 className="text-2xl font-bold mb-4">
+            <div className="p-3">
+              <h2 className="text-xl font-bold ml-4 mb-2">
                 {isUpdate === true ? "Update Announcement" : "Add Announcement"}
               </h2>
 
-              <form onSubmit={handleSubmit(onSubmit)} className="p-4 md:p-5">
+              <form onSubmit={handleSubmit(onSubmit)} className="p-3 md:p-5">
                 <div className="grid gap-4 mb-4 grid-cols-2">
                   <div className="col-span-2">
                     <label

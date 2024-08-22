@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import AnnouncementModal from "../Modals/AnnouncementModal";
 import { useSelector } from "react-redux";
@@ -15,11 +15,12 @@ const Announcement = () => {
   const handleOpenModal = () => setAnnouncementModalOpen(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [projectData, setProjectData] = useState(null);
+  const [isProjectLive, setIsProjectLive] = useState(false);
 
   const fetchProjectData = async (isMounted) => {
     try {
       const result = await actor.get_my_project();
-      // console.log("result-in-get_my_project", result);
+      console.log("result-in-get_my_project", result);
       if (isMounted) {
         if (result && Object.keys(result).length > 0) {
           setProjectData(result);
@@ -37,17 +38,30 @@ const Announcement = () => {
     } catch (error) {
       if (isMounted) {
         console.log("error-in-get_my_project", error);
-        setError(error);
         setProjectData(null);
         setIsProjectLive(null);
       }
     }
   };
+  console.log("setted data is", projectData);
+  useEffect(() => {
+    let isMounted = true;
+    if (actor) {
+      fetchProjectData(isMounted);
+    } else {
+      navigate("/");
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [actor]);
+
   const handleAddAnnouncement = async ({
     announcementTitle,
     announcementDescription,
   }) => {
-    // console.log("add announcement");
+    console.log("add announcement");
     setIsSubmitting(true);
     if (actor) {
       let argument = {
@@ -56,18 +70,18 @@ const Announcement = () => {
         announcement_description: announcementDescription,
         timestamp: Date.now(),
       };
-      // console.log("argument", argument);
+      console.log("argument", argument);
       await actor
         .add_announcement(argument)
         .then((result) => {
           // console.log("result-in-add_announcement", result);
           if (result && Object.keys(result).length > 0) {
             handleCloseModal();
-            // setModalOpen(false)
             fetchProjectData();
             setIsSubmitting(false);
             toast.success("announcement added successfully");
-            window.location.reload();
+            console.log("announcement added");
+            //window.location.reload();
           } else {
             handleCloseModal();
             // setModalOpen(false)
@@ -77,7 +91,7 @@ const Announcement = () => {
         })
         .catch((error) => {
           console.log("error-in-add_announcement", error);
-          toast.error("something got wrong");
+          toast.error("something went wrong");
           setIsSubmitting(false);
           handleCloseModal();
           // setModalOpen(false)
@@ -87,12 +101,18 @@ const Announcement = () => {
 
   return (
     <div className="p-6">
-      
-      {/* <NoCardData /> */}
+      <div className="flex justify-between items-center sticky top-16 bg-white ">
+        <h1 className="text-xl font-bold p-3">Announcements </h1>
+        <button
+          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+          onClick={() => setAnnouncementModalOpen(true)}
+        >
+          + Add new Announcement
+        </button>
+      </div>
 
-      {projectData === null ?
       <>
-      <div className="text-center py-12">
+        {/* <div className="text-center py-12">
         <div className="flex justify-center items-center">
           <svg
             width="154"
@@ -182,20 +202,19 @@ const Announcement = () => {
           <CampaignIcon className="mr-2" />
           Create a new Announcement
         </button>
-      </div>
-      {isAnnouncementModalOpen && (
-        <AnnouncementModal
-          isOpen={handleOpenModal}
-          onClose={handleCloseModal}
-          onSubmitHandler={handleAddAnnouncement}
-          isSubmitting={isSubmitting}
-          isUpdate={false}
-        />
-      )}
-      </> : <AnnouncementCard data={projectData} />
-      }
+      </div> */}
+        {isAnnouncementModalOpen && (
+          <AnnouncementModal
+            isOpen={handleOpenModal}
+            onClose={handleCloseModal}
+            onSubmitHandler={handleAddAnnouncement}
+            isSubmitting={isSubmitting}
+            isUpdate={false}
+          />
+        )}
+      </>
 
-      
+      <AnnouncementCard data={projectData} />
     </div>
   );
 };

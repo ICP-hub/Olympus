@@ -1,11 +1,36 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import CloseIcon from '@mui/icons-material/Close';
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 import awtar from "../../../assets/images/icons/_Avatar.png"
+import { useSelector } from 'react-redux';
 
 
-const JobDetails = ({ setOpen }) => {
+const JobDetails = ({ setOpen,uid }) => {
+    const actor = useSelector((currState) => currState.actors.actor);
+    const [jobDetails, setJobDetails] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+console.log("uid of job.............",uid)
+    useEffect(() => {
+        const fetchJobDetails = async () => {
+            setIsLoading(true);
+            try {
+                const result = await actor.get_single_job(uid);
+                console.log("Fetched job details:", result);
+                setJobDetails(result);
+            } catch (error) {
+                console.error("Failed to fetch job details:", error);
+                setError("Failed to load job details.");
+            } finally {
+                setIsLoading(false);
+            }
+        };
 
+        if (actor && uid) {
+            fetchJobDetails();
+        }
+    }, [actor, uid]);
+console.log("jobDetails..............",jobDetails)
     return (
         <div className='w-full bg-fixed h-screen fixed inset-0 bg-black bg-opacity-30 backdrop-blur-xs z-50'>
             <div className=' mx-auto w-[83%] absolute right-0 top-0 z-10 bg-white h-screen'>

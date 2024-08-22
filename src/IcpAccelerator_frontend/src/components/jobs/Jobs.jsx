@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
 import CenterFocusStrongOutlinedIcon from '@mui/icons-material/CenterFocusStrongOutlined';
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 import FmdGoodOutlinedIcon from '@mui/icons-material/FmdGoodOutlined';
@@ -6,51 +8,63 @@ import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
 import JobDetails from './JobDetails';
 import awtar from "../../../assets/images/icons/_Avatar.png"
 import { clockSvgIcon, coinStackedSvgIcon, lenseSvgIcon, locationSvgIcon } from '../Utils/Data/SvgData';
-
+import useFormatDateFromBigInt from "../../component/hooks/useFormatDateFromBigInt";
+import NoDataCard from "../../component/Mentors/Event/MentorAssociatedNoDataCard";
+import { formatFullDateFromBigInt } from "../Utils/formatter/formatDateFromBigInt";
+import LinkIcon from '@mui/icons-material/Link';
 const Jobs = () => {
-    const jobData = [
-        {
-            id: "1",
-            day: "1 day ago",
-            role: "Senior/Lead Product Designer",
-            icon: awtar,
-            company: "Cypherpunk Labs",
-            text: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Consectetur, blanditiis."
-        },
-        {
-            id: "2",
-            day: "1 day ago",
-            role: "Senior/Lead Product Designer",
-            icon: "icon",
-            company: "Cypherpunk Labs",
-            text: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Consectetur, blanditiis."
-        },
-        {
-            id: "3",
-            day: "1 day ago",
-            role: "Senior/Lead Product Designer",
-            icon: "icon",
-            company: "Cypherpunk Labs",
-            text: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Consectetur, blanditiis."
-        }
-        , {
-            id: "4",
-            day: "1 day ago",
-            role: "Senior/Lead Product Designer",
-            icon: "icon",
-            company: "Cypherpunk Labs",
-            text: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Consectetur, blanditiis."
-        },
-        {
-            id: "5",
-            day: "1 day ago",
-            role: "Senior/Lead Product Designer",
-            icon: "icon",
-            company: "Cypherpunk Labs",
-            text: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Consectetur, blanditiis."
-        }
-    ]
+   
+    const actor = useSelector((currState) => currState.actors.actor);
 
+    const [noData, setNoData] = useState(null);
+    const [latestJobs, setLatestJobs] = useState([]);
+    const [timeAgo] = useFormatDateFromBigInt();
+    const [isLoading, setIsLoading] = useState(true);
+    const itemsPerPage = 1;
+    const [currentPage, setCurrentPage] = useState(1);
+    const [openJobUid, setOpenJobUid] = useState(null);
+    useEffect(() => {
+        let isMounted = true;
+
+        const fetchLatestJobs = async (caller) => {
+            console.log('Inside Fetch Job Function');
+            setIsLoading(true);
+
+            try {
+                const result = await caller.get_all_jobs(currentPage , itemsPerPage);
+
+                if (isMounted) {
+                    if (result.length === 0) {
+                        setNoData(true);
+                        setLatestJobs([]);
+                    } else {
+                        setLatestJobs(result);
+                        setOpenJobUid(result[0]?.uid)
+                        setNoData(false);
+                    }
+                }
+            } catch (error) {
+                if (isMounted) {
+                    setNoData(true);
+                    setLatestJobs([]);
+                }
+            } finally {
+                if (isMounted) {
+                    setIsLoading(false);
+                }
+            }
+        };
+
+        if (actor) {
+            fetchLatestJobs(actor);
+        } else {
+            fetchLatestJobs(IcpAccelerator_backend);
+        }
+
+        return () => {
+            isMounted = false;
+        };
+    }, [actor, IcpAccelerator_backend, itemsPerPage, currentPage]);
     const [filter, setFilter] = useState({
         role: "",
         fullTime: false,
@@ -71,7 +85,14 @@ const Jobs = () => {
         const { name, checked } = e.target;
         setFilter({ ...filter, [name]: checked })
     }
-    console.log(filter)
+
+    const openJobDetails = (uid) => {
+        setOpenJobUid(uid); // Set the uid of the job to open its details
+    };
+
+    const closeJobDetails = () => {
+        setOpenJobUid(null); // Close the job details
+    };
     return (<>
 
         <div className='container mx-auto bg-white'>
@@ -80,36 +101,55 @@ const Jobs = () => {
             </div>
             <div className="flex mx-auto justify-evenly">
                 <div className="mb-5 w-[65%] ">
-                    {jobData.map(job => {
+                {latestJobs.length == 0 ? (
+             <h1>No Data Found</h1>
+            ) : (
+              latestJobs.map((card, index) => {
+                console.log(card)
+                let job_name = card?.job_data?.title ?? "";
+                let job_category = card?.job_data?.category ?? "";
+                let job_description = card?.job_data?.description ?? "";
+                let job_location = card?.job_data?.location ?? "";
+                let job_link = card?.job_data?.link ?? "";
+                let job_project_logo = card?.project_logo
+                  ? uint8ArrayToBase64(card?.project_logo[0])
+                  : awtar;
+                  let job_type=card?.job_data?.job_type??"";
+                let job_project_name = card?.project_name ?? "";
+                let job_project_desc = card?.project_desc ?? "";
+                let job_post_time = card?.timestamp
+                  ? formatFullDateFromBigInt(card?.timestamp)
+                  : "";
                         return (
                             <>
                                 <div className='flex flex-col gap-3 my-8'>
                                     <div className='flex justify-between'>
-                                        <div onClick={() => setOpen(true)} className="flex flex-col gap-3  ">
-                                            <p className='text-gray-400'>{job.day} </p>
-                                            <h3 className='text-xl font-bold'>{job.role} </h3>
-                                            <p className='flex items-center'><span className='mr-3'><img src={job.icon} alt='icon' /></span>{job.company} </p>
+                                        <div onClick={() => openJobDetails(card.uid)} className="flex flex-col gap-3  ">
+                                            <p className='text-gray-400'>{job_post_time} </p>
+                                            <h3 className='text-xl font-bold'>{job_name} </h3>
+                                            <p className='flex items-center'><span className='mr-3'><img src={job_project_logo} alt='icon' /></span><span>{job_name} </span></p>
                                         </div>
                                         <div className="flex flex-col gap-4 items-center">
-                                            <button onClick={() => setOpen(true)} className='border rounded-md bg-[#155EEF] py-2 px-4 text-white text-center'>Apply <span className='pl-1 text-white'></span><ArrowOutwardIcon sx={{ marginTop: "-2px", fontSize: "medium" }} /></button>
-                                            <button onClick={() => setOpen(true)} className='hover:bg-slate-300 py-2 px-3 text-[#155EEF] font-medium '>view details</button>
+                                            <button onClick={() => openJobDetails(card.uid)} className='border rounded-md bg-[#155EEF] py-2 px-4 text-white text-center'>Apply <span className='pl-1 text-white'></span><ArrowOutwardIcon sx={{ marginTop: "-2px", fontSize: "medium" }} /></button>
+                                            <button onClick={() => openJobDetails(card.uid)} className='hover:bg-slate-300 py-2 px-3 text-[#155EEF] font-medium '>view details</button>
                                         </div>
                                     </div>
-                                    <div onClick={() => setOpen(true)} className="flex flex-col gap-3">
-                                        <p className=''>{job.text} </p>
+                                    <div onClick={() => openJobDetails(card.uid)} className="flex flex-col gap-3">
+                                        <p className=''>{job_description} </p>
                                         <div className='flex gap-5 items-center'>
-                                            <div className='flex items-center gap-2'> {lenseSvgIcon} <span className=''>Product</span> </div>
-                                            <div className='flex items-center gap-2'>{locationSvgIcon} <span className=''>Remote</span> </div>
-                                            <div className='flex items-center gap-2'>{clockSvgIcon} <span className='ml-2'>Full Time</span> </div>
-                                            <div className='flex items-center gap-2'><span className=''>{coinStackedSvgIcon} </span>80k-100k </div>
+                                            <div className='flex items-center gap-2'> {lenseSvgIcon} <span className=''>{job_category}</span> </div>
+                                            <div className='flex items-center gap-2'>{locationSvgIcon} <span className=''>{job_location}</span> </div>
+                                            <div className='flex items-center gap-2'>{clockSvgIcon} <span className='ml-2'>{job_type}</span> </div>
+                                            <div className='flex items-center gap-2'><a href={job_link} target="_blank"><span className='flex'><LinkIcon/> {job_link}</span> </a></div>
                                         </div>
                                     </div>
                                 </div>
-                                {open && job.id === "1" ? <JobDetails setOpen={setOpen} /> : ""}
+              
                                 <hr />
                             </>
-                        )
-                    })}
+                       );
+                    })
+                  )}
 
                 </div>
 
@@ -168,6 +208,9 @@ const Jobs = () => {
                 </div>
             </div>
         </div>
+        {openJobUid && (
+                <JobDetails setOpen={closeJobDetails} uid={openJobUid} />
+            )}
     </>
     )
 }

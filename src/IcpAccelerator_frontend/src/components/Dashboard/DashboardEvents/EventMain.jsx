@@ -4,62 +4,7 @@ import EventCard from './EventCard';
 import Filters from './EventFilter';
 import eventbg from "../../../../assets/images/bg.png"
 import { Link } from "react-router-dom"
-const events = [
-  {
-    date: '20 Jun – 22 Jun',
-    time: 'Start at 15:00 GMT+4',
-    title: 'Masterclass: How to build a robust community',
-    description: 'Est malesuada ac elit gravida vel aliquam nec. Arcu pelle ntesque convallis quam feugiat non viverra massa fringilla.',
-    type: 'Workshop',
-    label: 'Workshop',
-    labelColor: 'bg-blue-600',
-    mode: 'Online',
-    price: '$100',
-    attendees: ['https://via.placeholder.com/24', 'https://via.placeholder.com/24', 'https://via.placeholder.com/24', 'https://via.placeholder.com/24'],
-    image: eventbg,
-  },
-  {
-    date: '25 Jun',
-    time: 'Start at 15:00 GMT+4',
-    title: 'Aenean ultricies amet massa eu. Hendrerit a.',
-    description: 'Est malesuada ac elit gravida vel aliquam nec. Arcu pelle ntesque convallis quam feugiat non viverra massa fringilla.',
-    type: 'Masterclass',
-    label: 'Masterclass',
-    labelColor: 'bg-gray-800',
-    mode: 'Online',
-    price: 'Free',
-    attendees: ['https://via.placeholder.com/24', 'https://via.placeholder.com/24', 'https://via.placeholder.com/24', 'https://via.placeholder.com/24'],
-    image: eventbg,
-  },
 
-  {
-    date: '25 Jun',
-    time: 'Start at 15:00 GMT+4',
-    title: 'Aenean ultricies amet massa eu. Hendrerit a.',
-    description: 'Est malesuada ac elit gravida vel aliquam nec. Arcu pelle ntesque convallis quam feugiat non viverra massa fringilla.',
-    type: 'Masterclass',
-    label: 'Masterclass',
-    labelColor: 'bg-gray-800',
-    mode: 'Online',
-    price: 'Free',
-    attendees: ['https://via.placeholder.com/24', 'https://via.placeholder.com/24', 'https://via.placeholder.com/24', 'https://via.placeholder.com/24'],
-    image: eventbg,
-  },
-
-  {
-    date: '25 Jun',
-    time: 'Start at 15:00 GMT+4',
-    title: 'Aenean ultricies amet massa eu. Hendrerit a.',
-    description: 'Est malesuada ac elit gravida vel aliquam nec. Arcu pelle ntesque convallis quam feugiat non viverra massa fringilla.',
-    type: 'Masterclass',
-    label: 'Masterclass',
-    labelColor: 'bg-gray-800',
-    mode: 'Online',
-    price: 'Free',
-    attendees: ['https://via.placeholder.com/24', 'https://via.placeholder.com/24', 'https://via.placeholder.com/24', 'https://via.placeholder.com/24'],
-    image: eventbg,
-  },
-];
 
 const EventMain = () => {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
@@ -69,10 +14,13 @@ const EventMain = () => {
       <h1 className="text-3xl font-bold  bg-opacity-95 -top-[0.6rem] sticky bg-white z-20 py-6">Discover events</h1>
       <div className="flex">
         <div className="w-full md:w-[70%] pr-6">
-          {events.map((event, index) => (
-            <>
-              <Link to='/dashboard/single-event'> <EventCard key={index} event={event} /> </Link>
-            </>))}
+          {/* {events.map((event, index) => ( */}
+          <>
+            {/* <Link to='/dashboard/single-event'> */}
+             <EventCard />
+            {/* </Link> */}
+          </>
+          {/* ))} */}
         </div>
         <div className="w-full md:w-[30%]">
           <Filters isOpen={isFiltersOpen} />

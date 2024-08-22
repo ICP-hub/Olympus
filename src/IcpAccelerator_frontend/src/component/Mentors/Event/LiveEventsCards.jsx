@@ -6,7 +6,7 @@ import SecondEventCard from "./SecondEventCard";
 import NoData from "../../../../assets/images/file_not_found.png";
 import OngoingAcceleratorSkeleton from "../../Dashboard/Skeleton/OngoingAcceleratorskeleton";
 
-const LiveEventsCards = ({ wrap, register,onNoDataChange }) => {
+const LiveEventsCards = ({ wrap, register, onNoDataChange }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [noData, setNoData] = useState(null);
   const [allLiveEventsData, setAllLiveEventsData] = useState([]);
@@ -33,6 +33,7 @@ const LiveEventsCards = ({ wrap, register,onNoDataChange }) => {
       window.removeEventListener("resize", updateNumSkeletons);
     };
   }, []);
+
   useEffect(() => {
     let isMounted = true;
 
@@ -114,11 +115,10 @@ const LiveEventsCards = ({ wrap, register,onNoDataChange }) => {
     <>
       {isLoading ? (
         <div
-          className={`${
-            wrap === true
+          className={`${wrap === true
               ? "flex flex-row w-full gap-4"
               : "flex flex-row flex-wrap w-full px-8"
-          }`}
+            }`}
         >
           {Array.from({ length: numSkeletons }).map((_, index) => (
             <div
@@ -133,11 +133,10 @@ const LiveEventsCards = ({ wrap, register,onNoDataChange }) => {
         <NoDataCard image={NoData} desc={"There is no ongoing accelerator"} />
       ) : (
         <div
-          className={`${
-            wrap === true
+          className={`${wrap === true
               ? "flex flex-row w-full gap-4"
               : "flex flex-row flex-wrap w-full px-8"
-          }`}
+            }`}
         >
           {filteredLiveEventsData &&
             filteredLiveEventsData?.slice(0, numSkeletons).map((val, index) => {
