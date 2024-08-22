@@ -6,7 +6,7 @@ import XIcon from '@mui/icons-material/X';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
-import {homepagedata} from "../../../src/components/jsondata/data/homepageData";
+import {homepagedata} from "../Utils/jsondata/data/homepageData";
 
 
 const Footer = () => {

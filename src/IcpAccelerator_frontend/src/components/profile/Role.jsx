@@ -16,8 +16,7 @@ import {
   animatedRightSvgIcon,
   userPlusIcon,
 } from "../Utils/Data/SvgData";
-import { profile } from "../jsondata/data/profileData";
-import ProfileCard from "./RoleProfileCard";
+import { profile } from "../Utils/jsondata/data/profileData";
 import { useDispatch, useSelector } from "react-redux";
 import Modal1 from "../Modals/ProjectModal/Modal1";
 import {
