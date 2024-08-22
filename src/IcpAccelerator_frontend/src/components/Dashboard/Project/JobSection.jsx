@@ -85,16 +85,16 @@ const JobSection = () => {
   <path opacity="0.2" d="M54.4581 25.5741C55.5912 22.6022 56.1577 21.1162 57.1298 20.0217C57.9886 19.0547 59.069 18.3103 60.2784 17.8524C61.6475 17.334 63.2378 17.334 66.4184 17.334H104.088C110.325 17.334 113.444 17.334 115.442 18.6445C117.19 19.7909 118.42 21.5758 118.868 23.6173C119.381 25.9511 118.27 28.8654 116.048 34.6938L109.541 51.7605C108.408 54.7324 107.842 56.2184 106.87 57.313C106.011 58.2799 104.93 59.0243 103.721 59.4823C102.352 60.0006 100.762 60.0006 97.581 60.0006H59.9117C53.674 60.0006 50.5552 60.0006 48.5571 58.6901C46.8093 57.5437 45.5796 55.7589 45.1311 53.7174C44.6183 51.3835 45.7293 48.4693 47.9515 42.6408L54.4581 25.5741Z" fill="url(#paint2_linear_1002_24444)"/>
   <defs>
   <linearGradient id="paint0_linear_1002_24444" x1="73" y1="4" x2="73" y2="60.0007" gradientUnits="userSpaceOnUse">
-  <stop stop-color="white" stop-opacity="0.12"/>
-  <stop offset="1" stop-color="white" stop-opacity="0"/>
+  <stop stopColor="white" stopOpacity="0.12"/>
+  <stop offset="1" stopColor="white" stopOpacity="0"/>
   </linearGradient>
   <linearGradient id="paint1_linear_1002_24444" x1="77.9997" y1="17.334" x2="77.9997" y2="60.0006" gradientUnits="userSpaceOnUse">
-  <stop stop-color="white" stop-opacity="0.12"/>
-  <stop offset="1" stop-color="white" stop-opacity="0"/>
+  <stop stopColor="white" stopOpacity="0.12"/>
+  <stop offset="1" stopColor="white" stopOpacity="0"/>
   </linearGradient>
   <linearGradient id="paint2_linear_1002_24444" x1="41.333" y1="17.334" x2="85.387" y2="59.2906" gradientUnits="userSpaceOnUse">
-  <stop stop-color="white"/>
-  <stop offset="1" stop-color="white" stop-opacity="0"/>
+  <stop stopColor="white"/>
+  <stop offset="1" stopColor="white" stopOpacity="0"/>
   </linearGradient>
   </defs>
   </svg></div>

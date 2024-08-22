@@ -75,7 +75,7 @@ const ProfilePage = () => {
                   }`}
                 onClick={() => handleChange("event")}
               >
-                Event
+                Cohort
               </button>
             )}
             {(userRole === "mentor" || userRole === "founder") && (
@@ -119,7 +119,7 @@ const ProfilePage = () => {
                   }`}
                 onClick={() => handleChange("event-req")}
               >
-                Event Request
+                Cohort Request
               </button>
             )}
             {(userRole === "mentor" || userRole === "founder") && (
