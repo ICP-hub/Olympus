@@ -200,7 +200,16 @@ const HUBS_DATA_STORAGE_MEMORY_ID: MemoryId = MemoryId::new(49);
 
 pub type MentorsAppliedForCohort = StableBTreeMap<String, Candid<Vec<MentorInternal>>, VMem>;
 const MENTORS_APPLIED_FOR_COHORT_MEMORY_ID: MemoryId = MemoryId::new(50);
+
+type RateLimitMap = StableBTreeMap<StoredPrincipal, (u64, u64), VMem>; // (last_request_time, request_count)
+const RATE_LIMIT_MEMORY_ID: MemoryId = MemoryId::new(51);
+
+type CaptchaStorage = StableBTreeMap<String, Candid<String>, VMem>; // Stores CAPTCHA ID and Text
+const CAPTCHA_STORAGE_MEMORY_ID: MemoryId = MemoryId::new(52);
+
 pub struct State {
+    pub rate_limiting: RateLimitMap,
+    pub captcha_storage: CaptchaStorage,
     pub checking_data: CheckingData,
     pub projects_associated_with_mentor: ProjectAssociatedWithMentor,
     pub projects_associated_with_vc: ProjectAssociatedWithVc,
@@ -261,6 +270,8 @@ thread_local! {
 
     static STATE: RefCell<State> = RefCell::new(
         MEMORY_MANAGER.with(|mm| State {
+            captcha_storage: CaptchaStorage::init(mm.borrow().get(CAPTCHA_STORAGE_MEMORY_ID)),
+            rate_limiting: RateLimitMap::init(mm.borrow().get(RATE_LIMIT_MEMORY_ID)),
             checking_data: CheckingData::init(mm.borrow().get(CHECKING_DATA_MEMORY_ID)),
             projects_associated_with_mentor:ProjectAssociatedWithMentor::init(mm.borrow().get(PROJECTS_ASSOCIATED_WITH_MENTOR_MEMORY_ID)),
             projects_associated_with_vc:ProjectAssociatedWithVc::init(mm.borrow().get(PROJECTS_ASSOCIATED_WITH_VC_MEMORY_ID)),
