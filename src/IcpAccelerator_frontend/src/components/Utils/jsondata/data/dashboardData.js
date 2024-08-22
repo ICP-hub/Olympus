@@ -168,6 +168,26 @@ export const dashboard={
          
         },
     },
+    "mentors": {
+      "label": "MENTOR",
+      "items": 
+        {
+          "label1": "Cyperhunk Labs",
+          "label2": "Create new Mentor",
+          "icon": "gridSvgIcon",
+         
+        },
+    },
+    "investors": {
+      "label": "INVESTOR",
+      "items": 
+        {
+          "label1": "Cyperhunk Labs",
+          "label2": "Create new Investor",
+          "icon": "gridSvgIcon",
+         
+        },
+    },
     "discover": {
       "label": "DISCOVER",
       "items": 

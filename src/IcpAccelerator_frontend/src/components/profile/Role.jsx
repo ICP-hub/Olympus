@@ -3,9 +3,9 @@ import VerifiedIcon from "@mui/icons-material/Verified";
 import Avatar from "@mui/material/Avatar";
 import AvatarGroup from "@mui/material/AvatarGroup";
 import mentor from "../../../assets/Logo/mentor.png";
-import talent from "../../../assets/Logo/talent.png";
-import founder from "../../../assets/Logo/founder.png";
-import Avatar3 from "../../../assets/Logo/Avatar3.png";
+import user from "../../../assets/Logo/talent.png";
+import project from "../../../assets/Logo/founder.png";
+import vc from "../../../assets/Logo/Avatar3.png";
 import ProfileImage from "../../../assets/Logo/ProfileImage.png";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
 import RemoveCircleOutlineOutlinedIcon from "@mui/icons-material/RemoveCircleOutlineOutlined";
@@ -51,20 +51,6 @@ const FAQItem = ({ question, answer }) => {
 
 const FAQ = () => {
   const { roles } = profile;
-  // const faqData = [
-  //   {
-  //     question: "What is a role, actually?",
-  //     answer: "Est malesuada ac elit gravida vel aliquam nec. Arcu pelle ntesque convallis quam feugiat non viverra massa fringilla.",
-  //   },
-  //   {
-  //     question: "How do roles work?",
-  //     answer: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-  //   },
-  //   {
-  //     question: "Can I change roles?",
-  //     answer: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-  //   },
-  // ];
 
   return (
     <div className="mt-14 text-[#121926] text-[18px] font-medium border-gray-200">
@@ -78,56 +64,42 @@ const FAQ = () => {
 const Role = () => {
   const { roles } = profile;
   const [roleModalOpen, setRoleModalOpen] = useState(false);
-  // console.log("my model status ", roleModalOpen)
   const userFullData = useSelector((currState) => currState.userData.data.Ok);
-  // console.log("User aa raha hai", userFullData)
-  const navigate = useNavigate();
-
-  const actor = useSelector((currState) => currState.actors.actor);
-
-  const isAuthenticated = useSelector(
-    (currState) => currState.internet.isAuthenticated
-  );
-  const principal = useSelector((currState) => currState.internet.principal);
   const userCurrentRoleStatus = useSelector(
     (currState) => currState.currentRoleStatus.rolesStatusArray
   );
-  console.log("userCurrentRoleStatus", userCurrentRoleStatus);
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
-  console.log(
-    "userCurrentRoleStatusActiveRole",
-    userCurrentRoleStatusActiveRole
-  );
-  const dispatch = useDispatch();
-
-
+ 
   const roledata = [
     {
       name: 'mentor',
       Mentor: true,
       Investor: true,
       Project: false,
-      // image:÷
+       image:mentor
     },
     {
       name: 'vc',
       Mentor: true,
       Investor: true,
-      Project: false
+      Project: false,
+      image:vc
     },
     {
       name: 'project',
       Mentor: false,
       Investor: false,
-      Project: true
+      Project: true,
+      image:project
     },
     {
       name: 'user',
       Mentor:true,
       Investor:true,
-      Project: true
+      Project: true,
+      image:user
     }
   ];
   
@@ -141,14 +113,14 @@ function mergeData(backendData, additionalData) {
 }
 
 const mergedData = mergeData(userCurrentRoleStatus, roledata);
-console.log('mergedData',mergedData)
+// console.log('mergedData',mergedData)
 
   const getRoleSvg = (status, side) => {
     const colors = {
       mentor: { neon: "neon-red", text: "text-red-500" },
       project: { neon: "neon-blue", text: "text-blue-500" },
       investor: { neon: "neon-green", text: "text-green-500" },
-      talent: { neon: "neon-yellow", text: "text-yellow-500" },
+      user: { neon: "neon-yellow", text: "text-yellow-500" },
       user: { neon: "neon-gray", text: "text-[#E3E8EF]" }
     };
   
@@ -293,9 +265,9 @@ console.log('mergedData',mergedData)
               <div className="p-3 flex justify-center mt-5">
                 <AvatarGroup max={4}>
                   <Avatar alt="Mentor" src={mentor} />
-                  <Avatar alt="Talent" src={talent} />
-                  <Avatar alt="Avatar3" src={Avatar3} />
-                  <Avatar alt="Founder" src={founder} />
+                  <Avatar alt="user" src={user} />
+                  <Avatar alt="vc" src={vc} />
+                  <Avatar alt="project" src={project} />
                 </AvatarGroup>
               </div>
               <div className="mt-5 px-5">
@@ -323,7 +295,7 @@ console.log('mergedData',mergedData)
         vcRole?.approval_status === "default"
       ) {
         elements.push(
-          <RoleProfileCard key={projectRole.name} role={projectRole.name} />
+          <RoleProfileCard key={projectRole.name} role={projectRole.name} image={projectRole.image}/>
         );
         cardsShown++;
         elements.push(
@@ -331,9 +303,9 @@ console.log('mergedData',mergedData)
             <div className="p-3 flex justify-center mt-5">
               <AvatarGroup max={4}>
                 <Avatar alt="Mentor" src={mentor} />
-                <Avatar alt="Talent" src={talent} />
-                <Avatar alt="Avatar3" src={Avatar3} />
-                <Avatar alt="Founder" src={founder} />
+                <Avatar alt="user" src={user} />
+                <Avatar alt="vc" src={vc} />
+                <Avatar alt="project" src={project} />
               </AvatarGroup>
             </div>
             <div className="mt-5 px-5">
@@ -353,7 +325,7 @@ console.log('mergedData',mergedData)
         vcRole?.approval_status === "default"
       ) {
         elements.push(
-          <RoleProfileCard key={mentorRole.name} role={mentorRole.name} />
+          <RoleProfileCard key={mentorRole.name} role={mentorRole.name} image={mentorRole.image}/>
         );
         cardsShown++;
         elements.push(
@@ -361,9 +333,9 @@ console.log('mergedData',mergedData)
             <div className="p-3 flex justify-center mt-5">
               <AvatarGroup max={4}>
                 <Avatar alt="Mentor" src={mentor} />
-                <Avatar alt="Talent" src={talent} />
-                <Avatar alt="Avatar3" src={Avatar3} />
-                <Avatar alt="Founder" src={founder} />
+                <Avatar alt="user" src={user} />
+                <Avatar alt="vc" src={vc} />
+                <Avatar alt="project" src={project} />
               </AvatarGroup>
             </div>
             <div className="mt-5 px-5">
@@ -385,10 +357,11 @@ console.log('mergedData',mergedData)
 
       // Condition 4: When vc is approved, show vc RoleProfileCard and the custom card
       if (
-        vcRole?.approval_status === "approved"
+        vcRole?.approval_status === "approved" &&
+        mentorRole?.approval_status === "default"
       ) {
         elements.push(
-          <RoleProfileCard key={vcRole.name} role={vcRole.name} />
+          <RoleProfileCard key={vcRole.name} role={vcRole.name} image={vcRole.image}/>
         );
         cardsShown++;
         elements.push(
@@ -396,9 +369,9 @@ console.log('mergedData',mergedData)
             <div className="p-3 flex justify-center mt-5">
               <AvatarGroup max={4}>
                 <Avatar alt="Mentor" src={mentor} />
-                <Avatar alt="Talent" src={talent} />
-                <Avatar alt="Avatar3" src={Avatar3} />
-                <Avatar alt="Founder" src={founder} />
+                <Avatar alt="user" src={user} />
+                <Avatar alt="vc" src={vc} />
+                <Avatar alt="project" src={project} />
               </AvatarGroup>
             </div>
             <div className="mt-5 px-5">
@@ -424,13 +397,14 @@ console.log('mergedData',mergedData)
         vcRole?.approval_status === "approved"
       ) {
         elements.push(
-          <RoleProfileCard key={mentorRole.name} role={mentorRole.name} />
+          <RoleProfileCard key={mentorRole.name} role={mentorRole.name} image={mentorRole.image}/>
         );
         elements.push(
-          <RoleProfileCard key={vcRole.name} role={vcRole.name} />
+          <RoleProfileCard key={vcRole.name} role={vcRole.name} image={vcRole.image}/>
         );
-        cardsShown += 2;
+        cardsShown ++;
       }
+      
 
       return elements; // Return the array of elements to be rendered
     })()}

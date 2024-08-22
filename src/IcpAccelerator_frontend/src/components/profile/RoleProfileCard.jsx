@@ -1,11 +1,11 @@
 import React from "react";
 import { MoreVert } from "@mui/icons-material"; 
 import founder from "../../../assets/Logo/founder.png";
-const ProfileCard = ({role}) => {
+const ProfileCard = ({role,image}) => {
   return (
     <div className="bg-[#EEF2F6] shadow-md rounded-lg p-6 min-w-[220px] max-w-[350px] flex flex-col items-center text-center relative">
       <img
-        src={founder} 
+        src={image} 
         alt="Profile"
         className="w-20 h-20 rounded-full mb-4"
       />
