@@ -3,9 +3,11 @@ import eventbg from "../../../../assets/images/bg.png"
 import { Link } from "react-router-dom"
 import { useSelector } from 'react-redux';
 import { title } from 'process';
-
+import parse from 'html-react-parser';
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import JobRegister1 from '../../Modals/JobModal/JobRegister1';
+import { formatFullDateFromBigInt } from '../../Utils/formatter/formatDateFromBigInt';
+import uint8ArrayToBase64 from '../../Utils/uint8ArrayToBase64';
 
 const NewJob = ({ latestJobs }) => {
 
@@ -32,15 +34,15 @@ const NewJob = ({ latestJobs }) => {
              <h1>No Data Found</h1>
             ) : (
               latestJobs.map((card, index) => {
-                console.log(card)
+                console.log( " card?.job_poster.profile_picture",card?.job_poster[0]?.profile_picture[0])
                 let job_name = card?.job_data?.title ?? "";
                 let job_category = card?.job_data?.category ?? "";
                 let job_description = card?.job_data?.description ?? "";
                 let job_location = card?.job_data?.location ?? "";
                 let job_link = card?.job_data?.link ?? "";
-                let job_project_logo = card?.project_logo
-                  ? uint8ArrayToBase64(card?.project_logo[0])
-                  : awtar;
+                let job_project_logo = card?.job_poster[0]?.profile_picture[0]
+                  ? uint8ArrayToBase64(card?.job_poster[0]?.profile_picture[0])
+                  : null;
                   let job_type=card?.job_data?.job_type??"";
                 let job_project_name = card?.project_name ?? "";
                 let job_project_desc = card?.project_desc ?? "";
@@ -67,7 +69,7 @@ const NewJob = ({ latestJobs }) => {
                                     </p>
                                     <h3 className="text-lg font-semibold">{job_name}</h3>
                                     <h3 className="text-lg font-semibold">{job_type}</h3>
-                                    <p className="text-sm text-gray-500">{job_description}</p>
+                                    <p className="text-sm text-gray-500">{parse(job_description)}</p>
                                     <div className="flex gap-3 items-center mt-4">
                                         <span className="text-sm text-[#121926]">
                                             <PlaceOutlinedIcon
