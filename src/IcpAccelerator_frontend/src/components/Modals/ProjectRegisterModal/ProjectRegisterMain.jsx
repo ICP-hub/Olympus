@@ -225,8 +225,10 @@ const ProjectRegisterMain = ({ isopen }) => {
           result.startsWith("You are not allowed to get this role because you already have the Mentor role.")
         ) {
           toast.error(result); // Show error toast with the returned message
+          setModalOpen(false);
         } else {
           toast.success("Project registered successfully!"); // Show success message
+          setModalOpen(false)
         }
       } catch (error) {
         console.log(error.message);
