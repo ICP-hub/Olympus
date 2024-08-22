@@ -212,6 +212,45 @@ const Role = () => {
   const userleftRole = "mentor";
   const userrightRole = "";
 
+  const roledata = [
+    {
+      name: 'mentor',
+      Mentor: true,
+      Investor: true,
+      Project: false
+    },
+    {
+      name: 'vc',
+      Mentor: true,
+      Investor: true,
+      Project: false
+    },
+    {
+      name: 'project',
+      Mentor: false,
+      Investor: false,
+      Project: true
+    },
+    {
+      name: 'user',
+      Mentor:true,
+      Investor:true,
+      Project: true
+    }
+  ];
+  
+  
+
+function mergeData(backendData, additionalData) {
+    return backendData?.map(item => {
+        const additionalInfo = additionalData?.find(data => data?.name?.toLowerCase() === item?.name?.toLowerCase());
+        return additionalInfo ? { ...item, ...additionalInfo } : item;
+    });
+}
+
+const mergedData = mergeData(userCurrentRoleStatus, roledata);
+console.log('mergedData',mergedData)
+
   const getRoleSvg = (status, side) => {
     const colors = {
       mentor: { neon: "neon-red", text: "text-red-500" },
@@ -337,55 +376,59 @@ const Role = () => {
       (userCurrentRoleStatus)}</div>
   )}
         <div className="flex justify-around items-center gap-[12%]">
-        {userCurrentRoleStatus &&
-                    userCurrentRoleStatus.map((role) =>
-                      role?.approval_status === "approved" ?
-                    <RoleProfileCard role={role.name}/>:
-          <div className="border-2 rounded-lg text-center min-w-[220px] max-w-[350px]">
-            <div className="p-3 flex justify-center mt-5">
-              <AvatarGroup max={4}>
-                <Avatar alt="Mentor" src={mentor} />
-                <Avatar alt="Talent" src={talent} />
-                <Avatar alt="Avatar3" src={Avatar3} />
-                <Avatar alt="Founder" src={founder} />
-              </AvatarGroup>
-            </div>
-            <div className="mt-5 px-5">
-              <p className="max-w-[250px]">{roles.description1}</p>
-            </div>
-            <div className="my-5 px-5 flex items-center">
-              <button
-                onClick={() => setRoleModalOpen(!roleModalOpen)}
-                className="border flex gap-2 justify-center rounded-md bg-[#155EEF] p-2 font-medium w-full text-white"
-              >
-                <span>{userPlusIcon}</span>
-                {roles.addrole}
-              </button>
-            </div>
-          </div>)}
+        <div className="flex justify-around items-center gap-[12%]">
+  {mergedData &&
+    mergedData
+      .filter((role) => role.name !== "user")
+      .filter((role) => {
+        const projectRole = mergedData.find(r => r.name === "project");
 
-          {/* <div className="border-2 rounded-lg text-center min-w-[220px] max-w-[350px]">
-            <div className="p-3 flex justify-center mt-5">
-              <AvatarGroup max={4}>
-                <Avatar alt="Mentor" src={mentor} />
-                <Avatar alt="Talent" src={talent} />
-                <Avatar alt="Avatar3" src={Avatar3} />
-                <Avatar alt="Founder" src={founder} />
-              </AvatarGroup>
-            </div>
-            <div className="mt-5 px-5">
-              <p className="max-w-[250px]">{roles.description2}</p>
-            </div>
-            <div className="my-5 px-5 flex items-center">
-              <button
-                onClick={() => setRoleModalOpen(true)}
-                className="border flex gap-2 justify-center rounded-md bg-[#155EEF] p-2 font-medium w-full text-white"
-              >
-                <span>{userPlusIcon}</span>
-                {roles.addrole}
-              </button>
-            </div>
-          </div> */}
+        if (projectRole && projectRole.approval_status === "approved") {
+          // Only render the project card if the project role is approved
+          return role.name === "project";
+        } else if (projectRole && projectRole.approval_status === "default") {
+          // Render investor and mentor if project role is default, but not the project itself
+          return role.name !== "project";
+        }
+
+        // Fallback case if project role is not present
+        return true;
+      })
+      .map((role) => (
+        <RoleProfileCard key={role.name} role={role.name} />
+      ))}
+
+  {/* The "No Data" card */}
+  {mergedData &&
+    mergedData.every((role) => 
+      (role.name === "project" && role.approval_status === "approved") ||
+      (role.name !== "project" && role.approval_status === "default")
+    ) && (
+      <div className="border-2 rounded-lg text-center min-w-[220px] max-w-[350px]">
+        <div className="p-3 flex justify-center mt-5">
+          <AvatarGroup max={4}>
+            <Avatar alt="Mentor" src={mentor} />
+            <Avatar alt="Talent" src={talent} />
+            <Avatar alt="Avatar3" src={Avatar3} />
+            <Avatar alt="Founder" src={founder} />
+          </AvatarGroup>
+        </div>
+        <div className="mt-5 px-5">
+          <p className="max-w-[250px]">{roles.description1}</p>
+        </div>
+        <div className="my-5 px-5 flex items-center">
+          <button
+            onClick={() => setRoleModalOpen(!roleModalOpen)}
+            className="border flex gap-2 justify-center rounded-md bg-[#155EEF] p-2 font-medium w-full text-white"
+          >
+            <span>{userPlusIcon}</span>
+            {roles.addrole}
+          </button>
+        </div>
+      </div>
+    )}
+</div>
+
         </div>
         <FAQ />
       </div>
