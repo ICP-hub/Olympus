@@ -220,7 +220,9 @@ const ProjectRegisterMain = ({ isopen }) => {
         if (
           result.startsWith("You can't create more than one project") ||
           result.startsWith("You are not eligible for this role because you have 2 or more roles") ||
-          result.startsWith("Cannot set private documents unless upload private docs has been set to true")
+          result.startsWith("Cannot set private documents unless upload private docs has been set to true")||
+          result.startsWith("You are not allowed to get this role because you already have the Venture Capitalist role") ||
+          result.startsWith("You are not allowed to get this role because you already have the Mentor role.")
         ) {
           toast.error(result); // Show error toast with the returned message
         } else {

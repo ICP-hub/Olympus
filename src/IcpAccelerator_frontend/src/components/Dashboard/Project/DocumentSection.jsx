@@ -4,7 +4,7 @@ import ProfileCard from './ProfileCard';
 import TeamSection from './TeamSection';
 import JobSection from './JobSection';
 import FAQ from "./Faq";
-import ProjectCard from './ProjectCard'; // Ensure this is correctly imported
+import ProjectCard from './ProfileCard'; // Ensure this is correctly imported
 import { shareSvgIcon, backSvg } from '../../Utils/Data/SvgData'; // Ensure this is correctly imported
 import NotificationBanner from './Notification';
 import { useLocation } from 'react-router-dom';

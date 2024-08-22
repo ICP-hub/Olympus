@@ -88,10 +88,14 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
       
       // HANDLE SUCCESS OR ERROR RESPONSE
       if (result && result.Ok) {
-        toast.success("Cohort creation request has been sent to admin");
-        setModalOpen(false); // CLOSE MODAL AFTER SUCCESSFUL SUBMISSION
-      } else {
-        toast.error("Something went wrong");
+        if (
+          result.startsWith("You are not privileged to create a cohort ,Please Register as Mentor ...") ||
+          result.startsWith("Cohort Banner is already uploaded")
+        ) {
+          toast.error(result); // SHOW ERROR TOAST WITH RETURNED MESSAGE
+        } else {
+          toast.success("Investor registered successfully!"); // SHOW SUCCESS MESSAGE
+        }
       }
     } catch (error) {
       // HANDLE EXCEPTION

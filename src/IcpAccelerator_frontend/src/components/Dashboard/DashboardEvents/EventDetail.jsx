@@ -21,7 +21,7 @@ import toast, { Toaster } from "react-hot-toast";
 import NoDataFound from './NoDataFound';
 import EventRequestCard from './EventRequestCard';
 import EventRequestStatus from './EventRequestStatus';
-import Tabs from '../../Tabs/Tabs';
+import Tabs from '../../Common/Tabs/Tabs';
 
 
 const FAQItem = ({ question, answer }) => {
