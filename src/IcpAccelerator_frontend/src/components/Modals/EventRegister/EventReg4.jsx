@@ -4,7 +4,7 @@ import { useFormContext, Controller } from "react-hook-form"; // IMPORT REACT HO
 import "react-quill/dist/quill.snow.css"; // IMPORT QUILL STYLESHEET
 
 // COMPONENT FOR PROJECT REGISTRATION FORM STEP 6
-const ProjectRegister6 = ({ }) => {
+const EventReg4 = ({ }) => {
   // DESTRUCTURE FORM STATE AND CONTROL FROM USEFORMCONTEXT HOOK
   const {
     formState: { errors },
@@ -32,7 +32,7 @@ const ProjectRegister6 = ({ }) => {
       <div className="mb-2">
         {/* LABEL FOR PROJECT DESCRIPTION */}
         <label className="block text-sm font-medium mb-1">
-          Project Description (50 words)
+           Description 
         </label>
 
         {/* CONTROLLER TO INTEGRATE REACT QUILL WITH REACT HOOK FORM */}
@@ -46,7 +46,7 @@ const ProjectRegister6 = ({ }) => {
               onChange={onChange}     // UPDATE FIELD VALUE ON CHANGE EVENT
               modules={modules}       // EDITOR MODULES CONFIGURATION
               formats={formats}       // EDITOR FORMATS CONFIGURATION
-              placeholder="Enter your project description here..." // PLACEHOLDER TEXT
+              placeholder="Enter your description here..." // PLACEHOLDER TEXT
             />
           )}
         />
@@ -61,4 +61,4 @@ const ProjectRegister6 = ({ }) => {
   );
 };
 
-export default ProjectRegister6; // EXPORT COMPONENT AS DEFAULT
+export default EventReg4; // EXPORT COMPONENT AS DEFAULT
