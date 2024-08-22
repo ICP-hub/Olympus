@@ -66,8 +66,11 @@ pub fn initialize_roles() {
     });
 }
 
-#[update(guard = "is_user_anonymous")]
-pub async fn register_user(info: UserInformation) -> std::string::String {
+#[update(guard = "rate_limiter_guard")]
+pub async fn register_user(info: UserInformation) -> Result<std::string::String, std::string::String> {
+    // if !verify_captcha(captcha_id, captcha_input) {
+    //     return Err::<std::string::String, std::string::String>("CAPTCHA verification failed.".to_string());
+    // }
     initialize_roles();
 
     let caller = caller();
@@ -125,7 +128,7 @@ pub async fn register_user(info: UserInformation) -> std::string::String {
     });
 
     if !user_added {
-        return "User with this Principal ID already exists".to_string();
+        return Err("User with this Principal ID already exists".to_string());
     }
 
     mutate_state(|state| {
@@ -181,7 +184,7 @@ pub async fn register_user(info: UserInformation) -> std::string::String {
             role_status.insert(StoredPrincipal(caller), Candid(initial_roles));
         }
     });
-    format!("User registered successfully with ID: {}", new_id)
+    Ok(format!("User registered successfully with ID: {}", new_id))
 }
 
 #[update(guard = "is_user_anonymous")]
