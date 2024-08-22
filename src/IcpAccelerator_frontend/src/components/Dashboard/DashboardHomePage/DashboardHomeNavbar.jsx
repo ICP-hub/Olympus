@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { Link } from "react-router-dom";
-import { dashboard } from "../../jsondata/data/dashboardData";
+import { dashboard } from "../../Utils/jsondata/data/dashboardData";
 
 // import bigLogo from "../../../../assets/Logo/bigLogo.png";
 // import topLogo from "../../../../assets/Logo/topLogo.png";

@@ -6,7 +6,7 @@ import BlancheProfileImage from "../../../assets/Logo/BlancheProfileImage.png";
 import CypherpunkLabLogo from "../../../assets/Logo/CypherpunkLabLogo.png";
 import { FavoriteBorder, LocationOn, Star } from '@mui/icons-material';
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
-import Tabs from '../Tabs/Tabs';
+import Tabs from '../Common/Tabs/Tabs';
 import UserDetailPage from '../Dashboard/DashboardHomePage/UserDetailPage';
 import DiscoverProject from './ProjectAlldata';
 import DiscoverUser from './DiscoverUser';

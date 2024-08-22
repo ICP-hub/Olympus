@@ -5,7 +5,7 @@ import mentor from "../../../../assets/Logo/mentor.png";
 import talent from "../../../../assets/Logo/talent.png";
 import founder from "../../../../assets/Logo/founder.png";
 import Avatar3 from "../../../../assets/Logo/Avatar3.png";
-import { dashboard } from "../../jsondata/data/dashboardData";
+import { dashboard } from "../../Utils/jsondata/data/dashboardData";
 import { useSelector,useDispatch } from 'react-redux';
 import Modal1 from '../../Modals/ProjectModal/Modal1';
 import { getCurrentRoleStatusFailureHandler, setCurrentActiveRole } from '../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer';

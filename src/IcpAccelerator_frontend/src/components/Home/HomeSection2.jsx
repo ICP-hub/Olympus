@@ -1,6 +1,7 @@
 
 import React from 'react'
-import { homepagedata } from "../jsondata/data/homepageData";
+import { homepagedata } from "../Utils/jsondata/data/homepageData";
+
 
 
 export default function Section2() {

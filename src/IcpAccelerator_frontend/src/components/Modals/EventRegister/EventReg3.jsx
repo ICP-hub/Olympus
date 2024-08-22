@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ReactSelect from "react-select";
-import toast, { Toaster } from "react-hot-toast";
 import { useFormContext, useFieldArray, Controller } from "react-hook-form";
-
 import { useSelector } from "react-redux";
 import { LanguageIcon } from "../../UserRegistration/DefaultLink";
 import {
@@ -550,8 +548,6 @@ const setRubricEligibilitySelectedOptionsHandler = (val) => {
           </button>
         </div>
       </div>
-
-      <Toaster />
     </>
   );
 };
