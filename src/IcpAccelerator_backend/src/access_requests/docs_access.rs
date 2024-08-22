@@ -10,6 +10,41 @@ use ic_cdk_macros::*;
 use ic_cdk::api::caller;
 
 #[update(guard = "is_user_anonymous")]
+pub async fn update_project_private_docs(project_id: String, new_docs: Vec<Docs>) -> Result<String, String> {
+    let caller = ic_cdk::caller();
+
+    // Check if the caller is the owner of the project
+    let is_owner = read_state(|state| {
+        state
+            .project_storage
+            .iter()
+            .any(|(stored_principal, project_infos)| {
+                stored_principal.0 == caller && project_infos.0.iter().any(|p| p.uid == project_id)
+            })
+    });
+
+    if !is_owner {
+        return Err("Error: Only the project owner can request updates.".to_string());
+    }
+
+    let update_result = mutate_state(|state| {
+        if let Some(mut project_list) = state.project_storage.get(&StoredPrincipal(caller)) {
+            if let Some(project) = project_list.0.iter_mut().find(|p| p.uid == project_id) {
+                project.params.upload_private_documents = Some(true);
+                project.params.private_docs = Some(new_docs.clone());
+
+                state.project_storage.insert(StoredPrincipal(caller), project_list.clone());
+                return Ok("Project docs updated successfully".to_string());
+            }
+        }
+        Err("No existing Project profile found to update.".to_string())
+    });
+
+    update_result
+}
+
+
+#[update(guard = "is_user_anonymous")]
 pub async fn send_private_docs_access_request(project_id: String) -> String {
     //sender
     let caller = caller();

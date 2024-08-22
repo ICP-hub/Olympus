@@ -641,6 +641,7 @@ service : {
   filter_venture_capitalists : (VcFilterCriteria) -> (
       vec VentureCapitalist,
     ) query;
+  generate_captcha_with_id : () -> (text, text);
   generate_cohort_leaderboard : () -> (vec LeaderboardEntryForCohorts) query;
   get_accepted_cohort_enrollment_requests : (principal) -> (
       vec CohortEnrollmentRequest,
@@ -867,7 +868,7 @@ service : {
   post_job : (Jobs) -> (text);
   register_mentor : (MentorProfile) -> (text);
   register_project : (ProjectInfo) -> (text);
-  register_user : (UserInformation) -> (text);
+  register_user : (UserInformation) -> (Result);
   register_venture_capitalist : (VentureCapitalist) -> (text);
   reject_enrollment_request : (principal, principal) -> (text);
   remove_mentor_from_cohort : (text, text, text) -> (Result);
@@ -892,9 +893,11 @@ service : {
   update_job_post_by_id : (nat64, Jobs) -> (text);
   update_mentor : (MentorProfile) -> (text);
   update_mentor_ratings : (text, RatingMentorInvestor) -> ();
+  update_money_raised_data : (text, MoneyRaised) -> (Result);
   update_peer_rating_api : (PeerRatingUpdate) -> (text);
   update_project : (text, ProjectInfo) -> (text);
   update_project_announcement_by_id : (nat64, Announcements) -> (text);
+  update_project_private_docs : (text, vec Docs) -> (Result);
   update_rating : (RatingUpdate) -> (text);
   update_team_member : (text, principal) -> (text);
   update_user_data : (principal, UserInformation) -> (Result_15);
