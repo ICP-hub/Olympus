@@ -6,6 +6,8 @@ import { FavoriteBorder, LocationOn, Star } from "@mui/icons-material";
 import CypherpunkLabLogo from "../../../assets/Logo/CypherpunkLabLogo.png";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
+import { BsFillSendPlusFill } from "react-icons/bs";
+import { IoSendSharp } from "react-icons/io5";
 const DiscoverProject = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [allProjectData, setAllProjectData] = useState([]);
@@ -100,7 +102,9 @@ const DiscoverProject = () => {
 
             const project_name = project.params.params.project_name;
             // const project_rating = project.params.params.self_rating_of_project;
-            const project_rating = `${Math.floor(project.params.params.self_rating_of_project)}.0`;
+            const project_rating = `${Math.floor(
+              project.params.params.self_rating_of_project
+            )}.0`;
             const dapp_link = project.params.params.dapp_link[0] ?? "N/A";
             const project_area_of_focus =
               project.params.params.project_area_of_focus;
@@ -112,7 +116,10 @@ const DiscoverProject = () => {
             return (
               <>
                 {/* Render more fields as needed */}
-                <div className=" p-6 w-[750px] rounded-lg shadow-sm mb-4 flex" key={index}>
+                <div
+                  className=" p-6 w-[750px] rounded-lg shadow-sm mb-4 flex"
+                  key={index}
+                >
                   <div className="w-[272px]  ">
                     <div className="max-w-[250px] w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between  relative overflow-hidden">
                       <div className="absolute inset-0 flex items-center justify-center">
@@ -138,7 +145,10 @@ const DiscoverProject = () => {
                         <h3 className="text-xl font-bold">{project_name}</h3>
                         <p className="text-gray-500">@{dapp_link}</p>
                       </div>
-                      <FavoriteBorder className="text-gray-400 cursor-pointer" />
+
+                      <button className="flex items-center bg-blue-500 text-white py-2 px-4 rounded cursor-pointer hover:bg-blue-600">
+                        Request <BsFillSendPlusFill className="ml-2"/>
+                      </button>
                     </div>
                     <div className="mb-2">
                       {randomTags.map((tag, index) => (

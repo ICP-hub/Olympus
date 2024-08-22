@@ -436,7 +436,7 @@ const ProfileDetail = () => {
             </div>
 
             {/* Tagline Section */}
-            <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+            {/* <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3">
               <div className="flex justify-between">
                 <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
                   Tagline
@@ -471,7 +471,7 @@ const ProfileDetail = () => {
               ) : (
                 <p className="text-sm">{profileData.tagline}</p>
               )}
-            </div>
+            </div> */}
 
             {/* About Section */}
             <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3">

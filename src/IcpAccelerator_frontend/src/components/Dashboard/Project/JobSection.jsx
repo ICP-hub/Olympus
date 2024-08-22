@@ -33,19 +33,22 @@ const JobSection = () => {
 
           try {
               const result = await caller.get_all_jobs(currentPage , itemsPerPage);
-
+              console.log(" fetching when jobs",result)
               if (isMounted) {
                   if (result.length === 0) {
                       setNoData(true);
                       setLatestJobs([]);
                   } else {
+                    console.log("else error fetching when jobs")
                       setLatestJobs(result);
                       setOpenJobUid(result[0]?.uid)
                       setNoData(false);
                   }
               }
           } catch (error) {
+            console.log("catch error fetching when jobs",error)
               if (isMounted) {
+
                   setNoData(true);
                   setLatestJobs([]);
               }

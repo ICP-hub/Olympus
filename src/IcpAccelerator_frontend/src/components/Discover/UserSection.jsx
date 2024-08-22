@@ -10,6 +10,7 @@ import Tabs from '../Common/Tabs/Tabs';
 import UserDetailPage from '../Dashboard/DashboardHomePage/UserDetailPage';
 import DiscoverProject from './ProjectAlldata';
 import DiscoverUser from './DiscoverUser';
+import DiscoverMentor from './DiscoverMentor';
 
 
 
@@ -170,9 +171,8 @@ const UsersSection = () => {
          }
           {currentTab === 'Projects' && <DiscoverProject />}
 
-           {currentTab === 'Mentors' && users.map((user, index) => (
-            <UserCard key={index} {...user} />
-          ))}
+           {currentTab === 'Mentors' && 
+            <DiscoverMentor />}
            {/* {currentTab === 'Talent' && users.map((user, index) => (
             <UserCard key={index} {...user} />
           ))} */}
