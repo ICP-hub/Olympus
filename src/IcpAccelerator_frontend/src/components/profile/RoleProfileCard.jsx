@@ -18,9 +18,9 @@ const ProfileCard = ({role}) => {
       <p className="text-gray-700 font-semibold mb-4">
         Maximize the expansion of your projects and find investments
       </p>
-      <div className="text-sm text-gray-500">
+      {/* <div className="text-sm text-gray-500">
         <span className="font-semibold">Projects:</span> 1
-      </div>
+      </div> */}
     </div>
   );
 };

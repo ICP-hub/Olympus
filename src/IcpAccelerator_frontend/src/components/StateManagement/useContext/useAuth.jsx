@@ -129,7 +129,17 @@ export const useAuthClient = (options = defaultOptions) => {
     // console.log("principal-use-Auth", principal)
 
     setAuthClient(client);
-    const agent = new HttpAgent({ identity });
+    const agent = new HttpAgent({
+      identity,
+      verifyQuerySignatures: process.env.DFX_NETWORK === "ic", // Enable signature verification only in production
+    });
+
+    if (process.env.DFX_NETWORK !== "ic") {
+      await agent.fetchRootKey().catch((err) => {
+        console.warn("Unable to fetch root key:", err);
+      });
+    }
+
     const actor = createActor(process.env.CANISTER_ID_ICPACCELERATOR_BACKEND, {
       agent,
     });

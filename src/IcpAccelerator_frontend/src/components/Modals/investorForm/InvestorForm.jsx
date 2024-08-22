@@ -161,8 +161,10 @@ const InvestorForm = ({ isOpen }) => {
             result.startsWith("Profile image is already uploaded")
           ) {
             toast.error(result); // SHOW ERROR TOAST WITH RETURNED MESSAGE
+            setModalOpen(false);
           } else {
             toast.success("Investor registered successfully!"); // SHOW SUCCESS MESSAGE
+            setModalOpen(false);
           }
         });
       } catch (error) {
