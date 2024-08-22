@@ -27,7 +27,7 @@ pub async fn create_cohort(mut params: Cohort) -> Result<String, String> {
     });
 
     if !is_mentor_or_investor {
-        return Err("You are not privileged to create a cohort.".to_string());
+        return Err("You are not privileged to create a cohort ,Please Register as Mentor ...".to_string());
     }
 
     let u_ids = raw_rand().await.unwrap().0;
@@ -45,7 +45,7 @@ pub async fn create_cohort(mut params: Cohort) -> Result<String, String> {
         let full_url = canister_id.to_string() + "/uploads/default_cohort_logo.jpeg";
         params.cohort_banner = Some((full_url).as_bytes().to_vec());
     } else if params.cohort_banner.clone().unwrap().len() < 300 {
-        ic_cdk::println!("Project logo is already uploaded");
+        ic_cdk::println!("Cohort Banner is already uploaded");
     } else {
         let cohort_logo_key = "/uploads/".to_owned() + &caller_principal.to_string() + "_project_logo.jpeg";
 

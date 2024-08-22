@@ -25,6 +25,7 @@ import {
   setCurrentRoleStatus,
 } from "../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 
+import RoleProfileCard from "./RoleProfileCard"
 const FAQItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -336,6 +337,10 @@ const Role = () => {
       (userCurrentRoleStatus)}</div>
   )}
         <div className="flex justify-around items-center gap-[12%]">
+        {userCurrentRoleStatus &&
+                    userCurrentRoleStatus.map((role) =>
+                      role?.approval_status === "approved" ?
+                    <RoleProfileCard role={role.name}/>:
           <div className="border-2 rounded-lg text-center min-w-[220px] max-w-[350px]">
             <div className="p-3 flex justify-center mt-5">
               <AvatarGroup max={4}>
@@ -357,9 +362,9 @@ const Role = () => {
                 {roles.addrole}
               </button>
             </div>
-          </div>
+          </div>)}
 
-          <div className="border-2 rounded-lg text-center min-w-[220px] max-w-[350px]">
+          {/* <div className="border-2 rounded-lg text-center min-w-[220px] max-w-[350px]">
             <div className="p-3 flex justify-center mt-5">
               <AvatarGroup max={4}>
                 <Avatar alt="Mentor" src={mentor} />
@@ -380,7 +385,7 @@ const Role = () => {
                 {roles.addrole}
               </button>
             </div>
-          </div>
+          </div> */}
         </div>
         <FAQ />
       </div>

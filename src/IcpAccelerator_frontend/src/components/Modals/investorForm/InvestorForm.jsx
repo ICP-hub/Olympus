@@ -154,10 +154,11 @@ const InvestorForm = ({ isOpen }) => {
         await actor.register_venture_capitalist(investorData).then((result) => {
           console.log("result", result);
           if (
-            result.startsWith("You are not allowed to get this role because you already have the Project role") ||
+            result.startsWith("You are not allowed to get this role because you already have the Project role.") ||
             result.startsWith("You are not eligible for this role because you have 2 or more roles") ||
             result.startsWith("You had got your request declined earlier")||
-            result.startsWith("This Principal is already registered")
+            result.startsWith("This Principal is already registered")||
+            result.startsWith("Profile image is already uploaded")
           ) {
             toast.error(result); // SHOW ERROR TOAST WITH RETURNED MESSAGE
           } else {

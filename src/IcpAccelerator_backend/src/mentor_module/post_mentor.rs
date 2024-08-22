@@ -43,7 +43,7 @@ pub async fn register_mentor(profile: MentorProfile) -> String {
         read_state(|state| state.mentor_storage.contains_key(&StoredPrincipal(caller)));
     if already_registered {
         ic_cdk::println!("This Principal is already registered");
-        return "you are a mentor already".to_string();
+        return "You are a Mentor Already".to_string();
     }
 
     let mut user_data = get_user_information_internal(caller);
