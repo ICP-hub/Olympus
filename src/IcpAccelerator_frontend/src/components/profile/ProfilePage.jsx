@@ -1,21 +1,19 @@
 import React, { useState } from 'react'
-import ProfileDetail from './ProfileDetail';
-import { profile } from '../jsondata/data/profileData';
-
-
-import Role from './Role';
+import { profile } from '../Utils/jsondata/data/profileData';
 import { shareSvgIcon } from '../Utils/Data/SvgData';
 import ProjectCard from '../Dashboard/Project/ProjectCard';
 import EventSection from '../Dashboard/Project/EventSection';
 import EventMain from '../Dashboard/DashboardEvents/EventMain';
 import NewEvent from '../Dashboard/DashboardEvents/NewEvent';
-import Announcement from './Announcement';
 import ProjectDetailsForOwnerProject from '../../component/Project/ProjectDetailsPages/ProjectDetailsForInvestorProject';
 import JobSection from '../Dashboard/Project/JobSection';
 import FAQ from '../Dashboard/Project/Faq';
 import AssociationRequestCard from '../Dashboard/Associations/AssociationRequestCard';
 import RequestEventCard from '../Dashboard/DashboardEvents/RequestEventCard';
 import EventRequestCard from '../Dashboard/DashboardEvents/EventRequestCard';
+import ProfileDetail from './ProfileDetail';
+import Role from './Role';
+import Announcement from './Announcement';
 
 
 
@@ -77,7 +75,7 @@ const ProfilePage = () => {
                   }`}
                 onClick={() => handleChange("event")}
               >
-                Event
+                Cohort
               </button>
             )}
             {(userRole === "mentor" || userRole === "founder") && (
@@ -121,7 +119,7 @@ const ProfilePage = () => {
                   }`}
                 onClick={() => handleChange("event-req")}
               >
-                Event Request
+                Cohort Request
               </button>
             )}
             {(userRole === "mentor" || userRole === "founder") && (

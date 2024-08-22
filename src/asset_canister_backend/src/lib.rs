@@ -1,4 +1,4 @@
-use candid::{candid_method, CandidType, Deserialize};
+use candid::candid_method;
 use ic_cdk_macros::{init, post_upgrade, pre_upgrade};
 // use ic_cdk::{init, post_upgrade, pre_upgrade};
 // use ic_certified_assets::{state_machine::StableState};

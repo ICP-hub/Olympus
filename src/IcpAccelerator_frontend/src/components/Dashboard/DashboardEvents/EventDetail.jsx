@@ -20,6 +20,8 @@ import { ThreeDots } from "react-loader-spinner";
 import toast, { Toaster } from "react-hot-toast";
 import NoDataFound from './NoDataFound';
 import EventRequestCard from './EventRequestCard';
+import EventRequestStatus from './EventRequestStatus';
+import Tabs from '../../Common/Tabs/Tabs';
 
 
 const FAQItem = ({ question, answer }) => {
@@ -71,7 +73,12 @@ const FAQ = () => {
 };
 
 const EventDetails = () => {
-  const [activeTab, setActiveTab] = useState('summary');
+  
+  const [currentTab, setCurrentTab] = useState('Summary');
+  const tabs = [ 'Summary', 'Request', 'Announcements', 'Attendees','Reviews'];
+  const handleTabChange = (tab) => {
+    setCurrentTab(tab);
+  };
   const location = useLocation();
   const { cohort_id } = location.state || {};
   const [cohortData, setCohortData] = useState(null);
@@ -84,7 +91,7 @@ const EventDetails = () => {
   // const userCurrentRoleStatusActiveRole = useSelector(
   //   (currState) => currState.currentRoleStatus.activeRole
   // );
-  const userCurrentRoleStatusActiveRole = "vc"
+  const userCurrentRoleStatusActiveRole = "mentor"
   useEffect(() => {
     const fetchCohortData = async () => {
       console.log("Actor:", actor);
@@ -178,66 +185,66 @@ console.log("Cohort ID:", cohort_id);
     </button>
   );
 
-  const TabContent = () => {
-    switch (activeTab) {
-      case 'summary':
-        return (
-          <div>
-            {/* <h2 className="text-2xl font-semibold mb-2">About</h2>
-            <ul className="list-disc pl-5 text-gray-700">
-              <li>
-                A tortor laoreet at magna nibh. Bibendum augue neque
-                malesuada aliquam venenatis.
-              </li>
-              <li>Feugiat nulla pellentesque eu augue dignissim.</li>
-              <li>
-                Diam gravida turpis fermentum ut est. Vulputate platea non
-                ac elit massa.
-              </li>
-            </ul>
-            <div className="mt-6">
-              <h2 className="text-2xl font-semibold mb-2">Topics covered</h2>
-              <p className="text-gray-700">
-                Est quis ornare proin quisque lacinia ac tincidunt massa
-              </p>
-              <p className="text-gray-700 mt-2">
-                Est malesuada ac elit gravida vel aliquam nec. Arcu velit
-                netusque convallis quam feugiat non viverra massa fringilla.
-              </p>
-            </div>
-            <hr className="border-gray-300 mt-4 mb-4" /> */}
+//   const TabContent = () => {
+//     switch (activeTab) {
+//       case 'summary':
+//         return (
+//           <div>
+//             {/* <h2 className="text-2xl font-semibold mb-2">About</h2>
+//             <ul className="list-disc pl-5 text-gray-700">
+//               <li>
+//                 A tortor laoreet at magna nibh. Bibendum augue neque
+//                 malesuada aliquam venenatis.
+//               </li>
+//               <li>Feugiat nulla pellentesque eu augue dignissim.</li>
+//               <li>
+//                 Diam gravida turpis fermentum ut est. Vulputate platea non
+//                 ac elit massa.
+//               </li>
+//             </ul>
+//             <div className="mt-6">
+//               <h2 className="text-2xl font-semibold mb-2">Topics covered</h2>
+//               <p className="text-gray-700">
+//                 Est quis ornare proin quisque lacinia ac tincidunt massa
+//               </p>
+//               <p className="text-gray-700 mt-2">
+//                 Est malesuada ac elit gravida vel aliquam nec. Arcu velit
+//                 netusque convallis quam feugiat non viverra massa fringilla.
+//               </p>
+//             </div>
+//             <hr className="border-gray-300 mt-4 mb-4" /> */}
            
-            <div className="mt-4">
-      <h2 className="text-2xl font-semibold mb-2">Description</h2>
-      {/* <div className="text-gray-700">{parse(description)}</div> */}
-      <div className="relative text-gray-700 overflow-hidden max-h-[10rem] hover:max-h-none transition-all duration-300 ease-in-out group">
-  <div 
-    className="overflow-hidden text-ellipsis line-clamp-10"
-  >
-    { parse(description) }
+//             <div className="mt-4">
+//       <h2 className="text-2xl font-semibold mb-2">Description</h2>
+//       {/* <div className="text-gray-700">{parse(description)}</div> */}
+//       <div className="relative text-gray-700 overflow-hidden max-h-[10rem] hover:max-h-none transition-all duration-300 ease-in-out group">
+//   <div 
+//     className="overflow-hidden text-ellipsis line-clamp-10"
+//   >
+//     { parse(description) }
     
-  </div>
-  <div 
-    className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none"
-  ></div>
-</div>
-      <h2 className="text-2xl font-semibold mt-2">FAQ</h2>
-      <FAQ />
-    </div>
-          </div>
-        );
-      case 'announcements':
-        return <NoDataFound message="No active announcements found" />;
-      case 'attendees':
-        return <NoDataFound message="No active attendes found" />;
-      case 'reviews':
-        return <NoDataFound message="No active reviews found" />;
-        case 'request':
-          return <EventRequestCard/>;
-      default:
-        return null;
-    }
-  };
+//   </div>
+//   <div 
+//     className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none"
+//   ></div>
+// </div>
+//       <h2 className="text-2xl font-semibold mt-2">FAQ</h2>
+//       <FAQ />
+//     </div>
+//           </div>
+//         );
+//       case 'announcements':
+//         return <NoDataFound message="No active announcements found" />;
+//       case 'attendees':
+//         return <NoDataFound message="No active attendes found" />;
+//       case 'reviews':
+//         return <NoDataFound message="No active reviews found" />;
+//         case 'request':
+//           return <EventRequestStatus/>;
+//       default:
+//         return null;
+//     }
+//   };
   //Register Modal
   const registerHandler = async () => {
     setIsSubmitting(true);
@@ -578,7 +585,7 @@ console.log("Cohort ID:", cohort_id);
               <span>{funding_amount}</span>
             </div>
             
-            <div className="mt-4">
+            {/* <div className="mt-4">
               <div className="border-b border-gray-300 mb-4">
                 <TabButton name="summary" label="Summary" />
                 <TabButton name="announcements" label="Announcements" />
@@ -587,11 +594,43 @@ console.log("Cohort ID:", cohort_id);
                 <TabButton name="request" label="Request" />
               </div>
               <TabContent />
-              {/* <div className="mt-4">
-                <h2 className="text-2xl font-semibold mb-2">Description</h2>
-                <div dangerouslySetInnerHTML={{ __html: description }} className="text-gray-700" />
-              </div> */}
-            </div>
+              
+            </div> */}
+            <Tabs tabs={tabs} currentTab={currentTab} onTabChange={handleTabChange} />
+            <div className=" pr-6">
+        
+          {currentTab === 'Summary' && 
+            <>
+            <div>
+           
+           
+            <div className="mt-4">
+      <h2 className="text-2xl font-semibold mb-2">Description</h2>
+      {/* <div className="text-gray-700">{parse(description)}</div> */}
+      <div className="relative text-gray-700 overflow-hidden max-h-[10rem] hover:max-h-none transition-all duration-300 ease-in-out group">
+  <div 
+    className="overflow-hidden text-ellipsis line-clamp-10"
+  >
+    { parse(description) }
+    
+  </div>
+  <div 
+    className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none"
+  ></div>
+</div>
+      <h2 className="text-2xl font-semibold mt-2">FAQ</h2>
+      <FAQ />
+    </div>
+          </div>
+            </>
+         }
+          {currentTab === 'Announcements' && <NoDataFound message="No active announcements found" />}
+
+           {currentTab === 'Attendees' && <NoDataFound message="No active attendees found" />}
+           {currentTab === 'Request' && <EventRequestStatus/>
+          }
+           {currentTab === 'Reviews' && <NoDataFound message="No active reviews found" />}
+        </div>
           </div>
         </div>
       </div><Toaster/>

@@ -158,8 +158,8 @@ const Announcement = () => {
                 y2="60.0007"
                 gradientUnits="userSpaceOnUse"
               >
-                <stop stop-color="white" stop-opacity="0.12" />
-                <stop offset="1" stop-color="white" stop-opacity="0" />
+                <stop stopColor="white" stopOpacity="0.12" />
+                <stop offset="1" stopColor="white" stopOpacity="0" />
               </linearGradient>
               <linearGradient
                 id="paint1_linear_1002_24444"
@@ -169,8 +169,8 @@ const Announcement = () => {
                 y2="60.0006"
                 gradientUnits="userSpaceOnUse"
               >
-                <stop stop-color="white" stop-opacity="0.12" />
-                <stop offset="1" stop-color="white" stop-opacity="0" />
+                <stop stopColor="white" stopOpacity="0.12" />
+                <stop offset="1" stopColor="white" stopOpacity="0" />
               </linearGradient>
               <linearGradient
                 id="paint2_linear_1002_24444"
@@ -180,8 +180,8 @@ const Announcement = () => {
                 y2="59.2906"
                 gradientUnits="userSpaceOnUse"
               >
-                <stop stop-color="white" />
-                <stop offset="1" stop-color="white" stop-opacity="0" />
+                <stop stopColor="white" />
+                <stop offset="1" stopColor="white" stopOpacity="0" />
               </linearGradient>
             </defs>
           </svg>

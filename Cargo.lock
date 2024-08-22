@@ -34,16 +34,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "admin_backend"
-version = "0.1.0"
-dependencies = [
- "candid 0.8.4",
- "ic-cdk 0.7.4",
- "ic-cdk-macros 0.8.4",
- "ic-kit",
-]
-
-[[package]]
 name = "ahash"
 version = "0.8.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"

@@ -140,7 +140,9 @@ const JobRegister1 = ({ modalOpen, setModalOpen }) => {
 const onSubmit = async (data) => {
 
   setIsSubmitting(true);
+  console.log("On Submit k andr aagya")
   try {
+    console.log('TRY A ANDR AAGYA')
     const parsedDescription = parse(jobDescription); 
     const argument = {
       title: data.jobTitle,
@@ -150,11 +152,13 @@ const onSubmit = async (data) => {
       link: data.jobLink,
       job_type: data.job_type.value,
     };
+    console.log('YE ARGUMENT FUNCTION KO DE RHA HU', argument)
 
     const result = await actor.post_job(argument);
     console.log("Job creation result:", result);
 
     if (result) {
+      console.log("Job creation result",result)
       toast.success("Job created successfully!");
       setModalOpen(false);
     } else {
@@ -171,15 +175,15 @@ const onSubmit = async (data) => {
 
   useEffect(() => {
     fetchLocations().then((data) => {
-      setLocations(data.map((loc) => ({ value: loc.id, label: loc.name })));
+      setLocations(data.map((loc) => ({ label: loc.name , value: loc.id })));
     });
   }, []);
 
   const fetchLocations = async () => {
     return [
-      { id: "on", name: "On-site" },
-      { id: "hyb", name: "Hybrid" },
-      { id: "rem", name: "Remote" },
+      { id: "On-site", name: "On-site" },
+      { id: "Hybrid", name: "Hybrid" },
+      { id: "Remote", name: "Remote" },
     ];
   };
 

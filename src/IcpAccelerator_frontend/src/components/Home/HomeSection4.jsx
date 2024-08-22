@@ -10,7 +10,9 @@ import sec48 from '../../../assets/images/sec48.png'
 import sec49 from '../../../assets/images/sec49.png'
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import "./home.css"
-import {homepagedata} from "../../../src/components/jsondata/data/homepageData";
+import { homepagedata } from "../Utils/jsondata/data/homepageData";
+
+
 
 function HomeSection4() {
   const { homepagesection4 } = homepagedata;

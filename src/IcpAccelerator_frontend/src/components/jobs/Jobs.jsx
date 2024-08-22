@@ -12,6 +12,8 @@ import useFormatDateFromBigInt from "../../component/hooks/useFormatDateFromBigI
 import NoDataCard from "../../component/Mentors/Event/MentorAssociatedNoDataCard";
 import { formatFullDateFromBigInt } from "../Utils/formatter/formatDateFromBigInt";
 import LinkIcon from '@mui/icons-material/Link';
+import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
+import parse from 'html-react-parser';
 const Jobs = () => {
    
     const actor = useSelector((currState) => currState.actors.actor);
@@ -27,7 +29,6 @@ const Jobs = () => {
         let isMounted = true;
 
         const fetchLatestJobs = async (caller) => {
-            console.log('Inside Fetch Job Function');
             setIsLoading(true);
 
             try {
@@ -105,15 +106,15 @@ const Jobs = () => {
              <h1>No Data Found</h1>
             ) : (
               latestJobs.map((card, index) => {
-                console.log(card)
+                // console.log( " card?.job_poster.profile_picture",card?.job_poster?.profile_picture)
                 let job_name = card?.job_data?.title ?? "";
                 let job_category = card?.job_data?.category ?? "";
                 let job_description = card?.job_data?.description ?? "";
                 let job_location = card?.job_data?.location ?? "";
                 let job_link = card?.job_data?.link ?? "";
-                let job_project_logo = card?.project_logo
-                  ? uint8ArrayToBase64(card?.project_logo[0])
-                  : awtar;
+                let job_project_logo = card?.job_poster[0]?.profile_picture[0]
+                ? uint8ArrayToBase64(card?.job_poster[0]?.profile_picture[0])
+                : null;
                   let job_type=card?.job_data?.job_type??"";
                 let job_project_name = card?.project_name ?? "";
                 let job_project_desc = card?.project_desc ?? "";
@@ -127,7 +128,7 @@ const Jobs = () => {
                                         <div onClick={() => openJobDetails(card.uid)} className="flex flex-col gap-3  ">
                                             <p className='text-gray-400'>{job_post_time} </p>
                                             <h3 className='text-xl font-bold'>{job_name} </h3>
-                                            <p className='flex items-center'><span className='mr-3'><img src={job_project_logo} alt='icon' /></span><span>{job_name} </span></p>
+                                            <p className='flex items-center'><span className='mr-3'><img src={job_project_logo} className="w-8 h-8 rounded-full" alt='icon' /></span><span>{job_name} </span></p>
                                         </div>
                                         <div className="flex flex-col gap-4 items-center">
                                             <button onClick={() => openJobDetails(card.uid)} className='border rounded-md bg-[#155EEF] py-2 px-4 text-white text-center'>Apply <span className='pl-1 text-white'></span><ArrowOutwardIcon sx={{ marginTop: "-2px", fontSize: "medium" }} /></button>
@@ -135,7 +136,7 @@ const Jobs = () => {
                                         </div>
                                     </div>
                                     <div onClick={() => openJobDetails(card.uid)} className="flex flex-col gap-3">
-                                        <p className=''>{job_description} </p>
+                                        <p className=''>{parse(job_description)} </p>
                                         <div className='flex gap-5 items-center'>
                                             <div className='flex items-center gap-2'> {lenseSvgIcon} <span className=''>{job_category}</span> </div>
                                             <div className='flex items-center gap-2'>{locationSvgIcon} <span className=''>{job_location}</span> </div>

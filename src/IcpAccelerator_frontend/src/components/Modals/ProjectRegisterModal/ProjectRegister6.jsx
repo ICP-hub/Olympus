@@ -4,7 +4,7 @@ import { useFormContext, Controller } from "react-hook-form"; // IMPORT REACT HO
 import "react-quill/dist/quill.snow.css"; // IMPORT QUILL STYLESHEET
 
 // COMPONENT FOR PROJECT REGISTRATION FORM STEP 6
-const ProjectRegister6 = ({ isOpen, onClose, onBack }) => {
+const ProjectRegister6 = ({ }) => {
   // DESTRUCTURE FORM STATE AND CONTROL FROM USEFORMCONTEXT HOOK
   const {
     formState: { errors },
