@@ -5,9 +5,9 @@ import { useFormContext, Controller } from "react-hook-form";
 import CompressedImage from "../../../component/ImageCompressed/CompressedImage";
 
 // MAIN COMPONENT FUNCTION
-const EventReg1 = ({ formData }) => {
+const EventReg1 = ({ formData,setFormData,imageData, setImageData}) => {
   // STATE FOR HANDLING IMAGE DATA AND PREVIEW
-  const [imageData, setImageData] = useState(null);
+
   const [imagePreview, setImagePreview] = useState(null);
   
   // DESTRUCTURING REACT HOOK FORM METHODS

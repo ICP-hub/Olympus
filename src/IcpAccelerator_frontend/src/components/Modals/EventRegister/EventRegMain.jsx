@@ -28,6 +28,7 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
 
   // STATE TO STORE THE IMAGE DATA
   const [imageData, setImageData] = useState(null);
+  console.log('imageData',imageData)
 
   // DESTRUCTURING METHODS FROM useForm HOOK
   const {
@@ -55,7 +56,7 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
     // FORMATTING THE SUBMITTED DATA
     const eventData = {
       title: data.title,
-      country: data.country, // COUNTRY VALUE FROM FORM DATA
+      country: data.area, // COUNTRY VALUE FROM FORM DATA
       funding_amount: data.funding_amount,
       funding_type: data.funding_type,
       description: data.description,
@@ -150,7 +151,7 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
           <FormProvider {...methods}>
             <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
               {/* CONDITIONAL RENDERING OF FORMS BASED ON CURRENT STEP */}
-              {index === 0 && <EventReg1 formData={formData} setFormData={setFormData} />}
+              {index === 0 && <EventReg1 formData={formData} setFormData={setFormData} imageData={imageData} setImageData={setImageData}/>}
               {index === 1 && <EventReg2 formData={formData} setFormData={setFormData}  />}
               {index === 2 && <EventReg3 formData={formData} setFormData={setFormData}  />}
               {index === 3 && <EventReg4 formData={formData} setFormData={setFormData} />}
@@ -166,7 +167,7 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
                     <ArrowBackIcon fontSize="medium" /> Back
                   </button>
                 )}
-                {index === 4 ? (
+                {index === 3 ? (
                   <button
                     type="submit"
                     className="py-2 px-4 bg-blue-600 text-white rounded  border-2 border-[#B2CCFF]"
