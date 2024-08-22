@@ -113,8 +113,10 @@ const MentorSignupMain = ({ }) => {
             result.startsWith("Profile image is already uploaded")
           ) {
             toast.error(result); // Show error toast with the returned message
+            setModalOpen(false);
           } else {
             toast.success("Project registered successfully!"); // Show success message
+            setModalOpen(false)
           }
         });
       } catch (error) {

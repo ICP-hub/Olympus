@@ -102,122 +102,14 @@ const Role = () => {
   );
   const dispatch = useDispatch();
 
-  const [showSwitchRole, setShowSwitchRole] = useState(false);
-
-  const manageHandler = () => {
-    !principal ? setModalOpen(true) : setModalOpen(false);
-  };
-
-  const underline =
-    "relative focus:after:content-[''] focus:after:block focus:after:w-full focus:after:h-[2px] focus:after:bg-blue-800 focus:after:absolute focus:after:left-0 focus:after:bottom-[-4px]";
-
-  function getNameOfCurrentStatus(rolesStatusArray) {
-    console.log("rolesStatusArray", rolesStatusArray);
-    const currentStatus = rolesStatusArray.find(
-      (role) => role.status === "active"
-    );
-    return currentStatus ? currentStatus.name : null;
-  }
-
-  function formatFullDateFromBigInt(bigIntDate) {
-    const date = new Date(Number(bigIntDate / 1000000n));
-    const dateString = date.toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    });
-    return `${dateString}`;
-  }
-
-  function cloneArrayWithModifiedValues(arr) {
-    // console.log('arr',arr)
-    return arr.map((obj) => {
-      const modifiedObj = {};
-
-      Object.keys(obj).forEach((key) => {
-        if (Array.isArray(obj[key]) && obj[key].length > 0) {
-          if (
-            key === "approved_on" ||
-            key === "rejected_on" ||
-            key === "requested_on"
-          ) {
-            // const date = new Date(Number(obj[key][0])).toLocaleDateString('en-US');
-            const date = formatFullDateFromBigInt(obj[key][0]);
-            modifiedObj[key] = date; // Convert bigint to string date
-          } else {
-            modifiedObj[key] = obj[key][0]; // Keep the first element of other arrays unchanged
-          }
-        } else {
-          modifiedObj[key] = obj[key]; // Keep other keys unchanged
-        }
-      });
-      // console.log('modifiedObj',modifiedObj)
-      return modifiedObj;
-    });
-  }
-
-  const initialApi = async (isMounted) => {
-    try {
-      const currentRoleArray = await actor.get_role_status();
-      // cloneArrayWithModifiedValues(currentRoleArray)
-
-      // console.log('currentRoleArray',currentRoleArray)
-      if (isMounted) {
-        if (currentRoleArray && currentRoleArray.length !== 0) {
-          const currentActiveRole = getNameOfCurrentStatus(currentRoleArray);
-          dispatch(
-            setCurrentRoleStatus(cloneArrayWithModifiedValues(currentRoleArray))
-          );
-          dispatch(setCurrentActiveRole(currentActiveRole));
-        } else {
-          dispatch(
-            getCurrentRoleStatusFailureHandler(
-              "error-in-fetching-role-at-header"
-            )
-          );
-          dispatch(setCurrentActiveRole(null));
-        }
-      }
-    } catch (error) {
-      if (isMounted) {
-        dispatch(getCurrentRoleStatusFailureHandler(error.toString()));
-        dispatch(setCurrentActiveRole(null));
-      }
-    }
-  };
-  useEffect(() => {
-    initialApi();
-  }, []);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    if (actor && principal && isAuthenticated) {
-      if (!userCurrentRoleStatus.length) {
-        initialApi(isMounted);
-      }
-    }
-
-    return () => {
-      isMounted = false;
-    };
-  }, [
-    actor,
-    principal,
-    isAuthenticated,
-    dispatch,
-    userCurrentRoleStatus,
-    userCurrentRoleStatusActiveRole,
-  ]);
-  const userleftRole = "mentor";
-  const userrightRole = "";
 
   const roledata = [
     {
       name: 'mentor',
       Mentor: true,
       Investor: true,
-      Project: false
+      Project: false,
+      // image:÷
     },
     {
       name: 'vc',
@@ -375,61 +267,181 @@ console.log('mergedData',mergedData)
     <div>{renderRoleSvgsOnce
       (userCurrentRoleStatus)}</div>
   )}
-        <div className="flex justify-around items-center gap-[12%]">
-        <div className="flex justify-around items-center gap-[12%]">
+ <div className="flex justify-around items-center gap-[12%]">
   {mergedData &&
-    mergedData
-      .filter((role) => role.name !== "user")
-      .filter((role) => {
-        const projectRole = mergedData.find(r => r.name === "project");
+    (() => {
+      let cardsShown = 0; // Counter to keep track of the number of cards shown
+      const projectRole = mergedData.find((r) => r.name === "project");
+      const mentorRole = mergedData.find((r) => r.name === "mentor");
+      const vcRole = mergedData.find((r) => r.name === "vc");
 
-        if (projectRole && projectRole.approval_status === "approved") {
-          // Only render the project card if the project role is approved
-          return role.name === "project";
-        } else if (projectRole && projectRole.approval_status === "default") {
-          // Render investor and mentor if project role is default, but not the project itself
-          return role.name !== "project";
+      // Create an array to store the elements to be rendered
+      const elements = [];
+
+      // Condition 1: When all roles have 'default' status
+      if (
+        projectRole?.approval_status === "default" &&
+        mentorRole?.approval_status === "default" &&
+        vcRole?.approval_status === "default"
+      ) {
+        for (let i = 0; i < 2 && cardsShown < 2; i++) {
+          elements.push(
+            <div
+              className="border-2 rounded-lg text-center min-w-[220px] max-w-[350px]"
+              key={`default-custom-card-${i}`}
+            >
+              <div className="p-3 flex justify-center mt-5">
+                <AvatarGroup max={4}>
+                  <Avatar alt="Mentor" src={mentor} />
+                  <Avatar alt="Talent" src={talent} />
+                  <Avatar alt="Avatar3" src={Avatar3} />
+                  <Avatar alt="Founder" src={founder} />
+                </AvatarGroup>
+              </div>
+              <div className="mt-5 px-5">
+                <p className="max-w-[250px]">{roles.description1}</p>
+              </div>
+              <div className="my-5 px-5 flex items-center">
+                <button
+                  onClick={() => setRoleModalOpen(!roleModalOpen)}
+                  className="border flex gap-2 justify-center rounded-md bg-[#155EEF] p-2 font-medium w-full text-white"
+                >
+                  <span>{userPlusIcon}</span>
+                  {roles.addrole}
+                </button>
+              </div>
+            </div>
+          );
+          cardsShown++;
         }
+      }
 
-        // Fallback case if project role is not present
-        return true;
-      })
-      .map((role) => (
-        <RoleProfileCard key={role.name} role={role.name} />
-      ))}
+      // Condition 2: When project is approved and mentor and vc are default, show 'No Data' card
+      if (
+        projectRole?.approval_status === "approved" &&
+        mentorRole?.approval_status === "default" &&
+        vcRole?.approval_status === "default"
+      ) {
+        elements.push(
+          <RoleProfileCard key={projectRole.name} role={projectRole.name} />
+        );
+        cardsShown++;
+        elements.push(
+          <div className="border-2 rounded-lg text-center min-w-[220px] max-w-[350px]" key="no-data-card">
+            <div className="p-3 flex justify-center mt-5">
+              <AvatarGroup max={4}>
+                <Avatar alt="Mentor" src={mentor} />
+                <Avatar alt="Talent" src={talent} />
+                <Avatar alt="Avatar3" src={Avatar3} />
+                <Avatar alt="Founder" src={founder} />
+              </AvatarGroup>
+            </div>
+            <div className="mt-5 px-5">
+              <p className="max-w-[250px]">{roles.description1}</p>
+            </div>
+            <div className="my-5 px-5 flex items-center">
+              No Data
+            </div>
+          </div>
+        );
+        cardsShown++;
+      }
 
-  {/* The "No Data" card */}
-  {mergedData &&
-    mergedData.every((role) => 
-      (role.name === "project" && role.approval_status === "approved") ||
-      (role.name !== "project" && role.approval_status === "default")
-    ) && (
-      <div className="border-2 rounded-lg text-center min-w-[220px] max-w-[350px]">
-        <div className="p-3 flex justify-center mt-5">
-          <AvatarGroup max={4}>
-            <Avatar alt="Mentor" src={mentor} />
-            <Avatar alt="Talent" src={talent} />
-            <Avatar alt="Avatar3" src={Avatar3} />
-            <Avatar alt="Founder" src={founder} />
-          </AvatarGroup>
-        </div>
-        <div className="mt-5 px-5">
-          <p className="max-w-[250px]">{roles.description1}</p>
-        </div>
-        <div className="my-5 px-5 flex items-center">
-          <button
-            onClick={() => setRoleModalOpen(!roleModalOpen)}
-            className="border flex gap-2 justify-center rounded-md bg-[#155EEF] p-2 font-medium w-full text-white"
-          >
-            <span>{userPlusIcon}</span>
-            {roles.addrole}
-          </button>
-        </div>
-      </div>
-    )}
+      // Condition 3: When mentor is approved and vc is default
+      if (
+        mentorRole?.approval_status === "approved" &&
+        vcRole?.approval_status === "default"
+      ) {
+        elements.push(
+          <RoleProfileCard key={mentorRole.name} role={mentorRole.name} />
+        );
+        cardsShown++;
+        elements.push(
+          <div className="border-2 rounded-lg text-center min-w-[220px] max-w-[350px]" key="mentor-vc-default-card">
+            <div className="p-3 flex justify-center mt-5">
+              <AvatarGroup max={4}>
+                <Avatar alt="Mentor" src={mentor} />
+                <Avatar alt="Talent" src={talent} />
+                <Avatar alt="Avatar3" src={Avatar3} />
+                <Avatar alt="Founder" src={founder} />
+              </AvatarGroup>
+            </div>
+            <div className="mt-5 px-5">
+              <p className="max-w-[250px]">{roles.description1}</p>
+            </div>
+            <div className="my-5 px-5 flex items-center">
+              <button
+                onClick={() => setRoleModalOpen(!roleModalOpen)}
+                className="border flex gap-2 justify-center rounded-md bg-[#155EEF] p-2 font-medium w-full text-white"
+              >
+                <span>{userPlusIcon}</span>
+                {roles.addrole}
+              </button>
+            </div>
+          </div>
+        );
+        cardsShown++;
+      }
+
+      // Condition 4: When vc is approved, show vc RoleProfileCard and the custom card
+      if (
+        vcRole?.approval_status === "approved"
+      ) {
+        elements.push(
+          <RoleProfileCard key={vcRole.name} role={vcRole.name} />
+        );
+        cardsShown++;
+        elements.push(
+          <div className="border-2 rounded-lg text-center min-w-[220px] max-w-[350px]" key="vc-approved-card">
+            <div className="p-3 flex justify-center mt-5">
+              <AvatarGroup max={4}>
+                <Avatar alt="Mentor" src={mentor} />
+                <Avatar alt="Talent" src={talent} />
+                <Avatar alt="Avatar3" src={Avatar3} />
+                <Avatar alt="Founder" src={founder} />
+              </AvatarGroup>
+            </div>
+            <div className="mt-5 px-5">
+              <p className="max-w-[250px]">{roles.description1}</p>
+            </div>
+            <div className="my-5 px-5 flex items-center">
+              <button
+                onClick={() => setRoleModalOpen(!roleModalOpen)}
+                className="border flex gap-2 justify-center rounded-md bg-[#155EEF] p-2 font-medium w-full text-white"
+              >
+                <span>{userPlusIcon}</span>
+                {roles.addrole}
+              </button>
+            </div>
+          </div>
+        );
+        cardsShown++;
+      }
+
+      // Condition 5: When both mentor and vc are approved, show both RoleProfileCards
+      if (
+        mentorRole?.approval_status === "approved" &&
+        vcRole?.approval_status === "approved"
+      ) {
+        elements.push(
+          <RoleProfileCard key={mentorRole.name} role={mentorRole.name} />
+        );
+        elements.push(
+          <RoleProfileCard key={vcRole.name} role={vcRole.name} />
+        );
+        cardsShown += 2;
+      }
+
+      return elements; // Return the array of elements to be rendered
+    })()}
 </div>
 
-        </div>
+
+
+
+
+
+
         <FAQ />
       </div>
       {roleModalOpen && (
