@@ -6,7 +6,7 @@ import { FavoriteBorder, LocationOn, Star } from "@mui/icons-material";
 import CypherpunkLabLogo from "../../../assets/Logo/CypherpunkLabLogo.png";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
-const DiscoverMentor = () => {
+const DiscoverInvestor = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [allInvestorData, setAllInvestorData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -185,4 +185,4 @@ const DiscoverMentor = () => {
   );
 };
 
-export default DiscoverMentor;
+export default DiscoverInvestor;
