@@ -7,7 +7,7 @@ const initialFounderState = {
 };
 
 const founderSlice = createSlice({
-  name: "foundereData",
+  name: "founderData",  // Corrected the name
   initialState: initialFounderState,
   reducers: {
     founderRegisteredHandlerRequest: (state) => {

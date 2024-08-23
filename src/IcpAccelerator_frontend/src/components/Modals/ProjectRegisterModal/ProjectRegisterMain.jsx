@@ -264,12 +264,16 @@ const ProjectRegisterMain = ({ isopen }) => {
                 <ProjectRegister1
                   formData={formData}
                   setFormData={setFormData}
+                  logoData={logoData}
+                  setLogoData={setLogoData}
                 />
               )}
               {index === 1 && (
                 <ProjectRegister2
                   formData={formData}
                   setFormData={setFormData}
+                  coverData={coverData}
+                  setCoverData={setCoverData}
                 />
               )}
               {index === 2 && (
