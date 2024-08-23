@@ -85,7 +85,7 @@ export const AboutcardSkeleton = (getAllData) => {
               )}
             </div>
             <div className="mt-6">
-              <div my-2>
+              <div className="my-2">
                 <label className="block font-medium text-gray-600 pb-2">
                   Roles
                 </label>
