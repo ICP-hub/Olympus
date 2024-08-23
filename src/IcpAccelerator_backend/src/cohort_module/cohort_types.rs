@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use crate::mentor_module::mentor_types::*; 
 use crate::project_module::project_types::*; 
 use crate::vc_module::vc_types::*;
-use crate::UserInfoInternal;
+use crate::{UserInfoInternal, UserInformation};
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
 pub struct SocialLinks {
@@ -44,6 +44,7 @@ pub struct CohortDetails {
     pub cohort_creator: Principal,
     pub cohort_creator_role: Vec<String>,
     pub cohort_creator_principal: Principal,
+    pub cohort_creator_data: UserInformation,
 }
 
 #[derive(Clone, CandidType, Deserialize, Debug, Serialize)]

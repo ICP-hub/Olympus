@@ -729,3 +729,53 @@ pub fn remove_mentor_from_cohort(
 }
 
 
+#[query(guard = "is_user_anonymous")]
+pub fn get_my_pending_enrollment_requests() -> Vec<CohortEnrollmentRequest> {
+    let caller = ic_cdk::api::caller();
+
+    read_state(|state| {
+        let mut pending_requests = Vec::new();
+        for (_key, reqs) in state.cohort_enrollment_request.iter() {
+            for req in reqs.0.iter() {
+                if req.enroller_principal == caller && req.request_status == "pending" {
+                    pending_requests.push(req.clone());
+                }
+            }
+        }
+        pending_requests
+    })
+}
+
+#[query(guard = "is_user_anonymous")]
+pub fn get_my_approved_enrollment_requests() -> Vec<CohortEnrollmentRequest> {
+    let caller = ic_cdk::api::caller();
+
+    read_state(|state| {
+        let mut pending_requests = Vec::new();
+        for (_key, reqs) in state.cohort_enrollment_request.iter() {
+            for req in reqs.0.iter() {
+                if req.enroller_principal == caller && req.request_status == "accepted" {
+                    pending_requests.push(req.clone());
+                }
+            }
+        }
+        pending_requests
+    })
+}
+
+#[query(guard = "is_user_anonymous")]
+pub fn get_my_rejected_enrollment_requests() -> Vec<CohortEnrollmentRequest> {
+    let caller = ic_cdk::api::caller();
+
+    read_state(|state| {
+        let mut pending_requests = Vec::new();
+        for (_key, reqs) in state.cohort_enrollment_request.iter() {
+            for req in reqs.0.iter() {
+                if req.enroller_principal == caller && req.request_status == "rejected" {
+                    pending_requests.push(req.clone());
+                }
+            }
+        }
+        pending_requests
+    })
+}
