@@ -21,7 +21,7 @@ import CloseIcon from '@mui/icons-material/Close';
 
 
 
-const DiscoverUserModal = ({ openDetail, setOpenDetail }) => {
+const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
     console.log("openDetail",openDetail,setOpenDetail)
 
     useEffect(() => {

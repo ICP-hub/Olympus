@@ -22,15 +22,15 @@ export function DocumentItem({
   };
 
   return (
-    <div className="flex items-stretch space-x-4 mb-6 pb-6">
-      {/* Left Side */}
-      <div className="w-[200px] flex-shrink-0 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center">
+    <div className="flex justify-center flex-col items-stretch space-x-4 mb-6 pb-6">
+     
+      {/* <div className="w-[200px] flex-shrink-0 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center">
         <svg width="154" height="64" viewBox="0 0 154 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-          {/* SVG content here */}
+         
         </svg>
-      </div>
+      </div> */}
 
-      {/* Right Side */}
+      
       <div className="flex-grow">
         <div className="flex justify-between items-start mb-1">
           <h3 className="text-lg font-semibold">{title}</h3>
@@ -105,7 +105,7 @@ export function DocumentItem({
           <li>Visible to investors only</li>
         </ul>
 
-        {/* Conditional rendering of buttons based on the selected option */}
+        
         {selectedOption === 'file' && (
           <button className="bg-[#155EEF] hover:bg-blue-700 text-white px-4 py-2 mt-3 rounded-[4px] border-2 text-sm flex items-center">
             <CloudUploadOutlinedIcon className="mr-2" fontSize="small" />
@@ -121,7 +121,7 @@ export function DocumentItem({
         )}
       </div>
 
-      <div className="">
+      <div className="flex justify-center items-center">
         {documentdata.length > 0 && (
           <div className="flex justify-end">
             <button
