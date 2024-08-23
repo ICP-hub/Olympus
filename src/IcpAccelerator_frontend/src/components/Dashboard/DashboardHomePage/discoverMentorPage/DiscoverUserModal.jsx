@@ -212,8 +212,8 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail }) => {
                 <CloseIcon sx={{ cursor: "pointer" }} onClick={() => setOpenDetail(false)} />
             </div>
             <div className='container  h-[calc(100%-50px)] ml-2 pb-8 overflow-y-auto'>
-                <div className="flex justify-center p-4">
-                <div ref={containerRef} className="container  bg-white rounded-lg shadow-sm p-4 overflow-hidden w-full max-w-[400px]">
+                <div className="flex justify-center p-6">
+                <div ref={containerRef} className="container  bg-white rounded-lg shadow-sm y overflow-hidden w-full max-w-[400px]">
                    
                    <div className="p-6 bg-gray-100">
                        <img src={ProfileImage} alt="Matt Bowers" className="w-24 h-24 mx-auto rounded-full mb-4" />
@@ -222,16 +222,14 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail }) => {
                            <h2 className="text-xl font-semibold">Matt Bowers</h2>
                        </div>
                        <p className="text-gray-600 text-center mb-4">@mattbowers</p>
-                      <div className="flex justify-center items-center">
-                      <button className="w-[80%] text-center h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center">
+                       <button className="w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center">
                            Get in touch
                            <ArrowOutwardOutlinedIcon className="ml-1" fontSize="small" />
                        </button>
-                      </div>
                    </div>
 
-                   <div className="p-0 bg-white">
-                       <div className="my-3">
+                   <div className="p-6 bg-white">
+                       <div className="mb-4">
                            <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
                                Roles
                            </h3>
