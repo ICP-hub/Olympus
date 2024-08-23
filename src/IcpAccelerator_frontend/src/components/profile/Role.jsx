@@ -10,6 +10,7 @@ import ProfileImage from "../../../assets/Logo/ProfileImage.png";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
 import RemoveCircleOutlineOutlinedIcon from "@mui/icons-material/RemoveCircleOutlineOutlined";
 import { useNavigate } from "react-router-dom";
+// import RoleProfileCard from "./RoleProfileCard";
 
 import {
   animatedLeftSvgIcon,
@@ -24,8 +25,9 @@ import {
   setCurrentActiveRole,
   setCurrentRoleStatus,
 } from "../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
+import RoleProfileCard from "./RoleProfileCard";
 
-import RoleProfileCard from "./RoleProfileCard"
+
 const FAQItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
 

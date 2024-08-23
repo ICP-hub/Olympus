@@ -1,38 +1,29 @@
 import { takeLatest, call, put, select } from "redux-saga/effects";
 import { mentorRegisteredHandlerFailure,mentorRegisteredHandlerRequest, mentorRegisteredHandlerSuccess } from "../Reducers/mentorRegisteredData";
+import { Principal } from "@dfinity/principal";
 
 
 const selectActor = (currState) => currState.actors.actor;
+const selectPrincipal = (currState) => currState.internet.principal;
 
-
-
-function uint8ArrayToBase64(uint8Arr) {
-
-  // console.log('image in mentor >>>>>',uint8Arr);
-  let buffer = Buffer.from(uint8Arr[0]);
-  // console.log("buffer ==========>",buffer)
-  const decryptedBlob = new Blob([buffer]);
-  const url = URL.createObjectURL(decryptedBlob)
-  return url
-}
 
 
 function* fetchMentorHandler() {
   try {
 
     const actor = yield select(selectActor);
-    // console.log('mentorFullData actor => => => ', actor)
+    const principal = yield select(selectPrincipal);
+    const covertedPrincipal = Principal.fromText(principal);
+    const mentorData = yield call([actor, actor.get_mentor_info_using_principal],covertedPrincipal);
 
-    const mentorData = yield call([actor, actor.get_mentor]);
+    // Convert any BigInt values to strings
+    const serializedMentorData = JSON.parse(JSON.stringify(mentorData, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    ));
 
-    console.log('mentorData functn run hua => ', mentorData)
+    console.log('mentorData functn run hua => ', serializedMentorData)
 
-    // const updatedMentorData = mentorData.map((mentor) => ({
-    //   ...mentor,
-    //   mentor_image: uint8ArrayToBase64(mentor.mentor_image),
-    // }));
-
-    yield put(mentorRegisteredHandlerSuccess(mentorData));
+    yield put(mentorRegisteredHandlerSuccess(serializedMentorData));
   } catch (error) {
     yield put(mentorRegisteredHandlerFailure(error.toString()));
   }

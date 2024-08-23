@@ -1,64 +1,65 @@
-import React, { useMemo } from "react"; // IMPORT REACT AND MEMO HOOK
-import ReactQuill from "react-quill"; // IMPORT REACT QUILL FOR RICH TEXT EDITING
-import { useFormContext, Controller } from "react-hook-form"; // IMPORT REACT HOOK FORM FOR FORM MANAGEMENT
-import "react-quill/dist/quill.snow.css"; // IMPORT QUILL STYLESHEET
+import React, { useMemo } from "react";
+import ReactQuill from "react-quill"; // Import ReactQuill for rich text editing
+import { useFormContext, Controller } from "react-hook-form"; // Import necessary hooks from react-hook-form
+import "react-quill/dist/quill.snow.css"; // Import the Quill stylesheet
 
-// COMPONENT FOR PROJECT REGISTRATION FORM STEP 6
-const ProjectRegister6 = ({ }) => {
-  // DESTRUCTURE FORM STATE AND CONTROL FROM USEFORMCONTEXT HOOK
+// Component for Project Registration Form Step 6
+const ProjectRegister6 = () => {
+  // Destructure form state and control from useFormContext hook
   const {
-    formState: { errors },
-    control,
+    formState: { errors }, // Extract form errors
+    control,               // Extract control for managing form state
   } = useFormContext();
 
-  // CUSTOM EDITOR OPTIONS
+  // Define the toolbar and formats for the ReactQuill editor
   const modules = useMemo(() => ({
     toolbar: [
-      [{ 'header': '1'}, { 'header': '2'}, { 'font': [] }],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-      ['bold', 'italic', 'underline'],
-      [{ 'align': [] }],
-      ['link'],
-      ['clean']
+      [{ header: "1" }, { header: "2" }, { font: [] }], // Heading and font options
+      [{ list: "ordered" }, { list: "bullet" }],       // List options
+      ["bold", "italic", "underline"],                 // Text formatting options
+      [{ align: [] }],                                 // Text alignment options
+      ["link"],                                        // Link option
+      ["clean"],                                       // Clear formatting option
     ],
   }), []);
 
+  // Define the formats that the editor will support
   const formats = [
-    'header', 'font', 'list', 'bullet', 'bold', 'italic', 'underline', 'align', 'link'
+    "header", "font", "list", "bullet", "bold", "italic", "underline", "align", "link"
   ];
 
   return (
-    <>
-      <div className="mb-2">
-        {/* LABEL FOR PROJECT DESCRIPTION */}
-        <label className="block text-sm font-medium mb-1">
-          Project Description (50 words)
-        </label>
+    <div className="mb-2">
+      {/* Label for the project description */}
+      <label className="block text-sm font-medium mb-1">
+        Project Description (50 words)
+      </label>
 
-        {/* CONTROLLER TO INTEGRATE REACT QUILL WITH REACT HOOK FORM */}
-        <Controller
-          name="project_description" // FORM FIELD NAME
-          control={control}           // CONTROL PROP PASSED FROM REACT HOOK FORM
-          defaultValue=""             // DEFAULT VALUE FOR THE FIELD
-          render={({ field: { onChange, value } }) => (
-            <ReactQuill
-              value={value}           // CURRENT VALUE FOR THE EDITOR
-              onChange={onChange}     // UPDATE FIELD VALUE ON CHANGE EVENT
-              modules={modules}       // EDITOR MODULES CONFIGURATION
-              formats={formats}       // EDITOR FORMATS CONFIGURATION
-              placeholder="Enter your project description here..." // PLACEHOLDER TEXT
-            />
-          )}
-        />
-        {/* ERROR MESSAGE FOR PROJECT DESCRIPTION FIELD */}
-        {errors?.project_description && (
-          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-            {errors?.project_description?.message}
-          </span>
+      {/* Use Controller to integrate ReactQuill with React Hook Form */}
+      <Controller
+        name="project_description"  // Name of the form field
+        control={control}           // Control prop passed from useFormContext
+        defaultValue=""             // Default value for the field
+        render={({ field: { onChange, value } }) => (
+          <ReactQuill
+            value={value}           // Set the current value of the editor
+            onChange={onChange}     // Update form state when the content changes
+            modules={modules}       // Editor modules configuration
+            formats={formats}       // Editor formats configuration
+            placeholder="Enter your project description here..." // Placeholder text
+            className="relative"
+          />
         )}
-      </div>
-    </>
+      />
+
+      {/* Display an error message if the project description field has an error */}
+      {errors?.project_description && (
+        <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+          {errors?.project_description?.message}  // Show the error message
+        </span>
+      )}
+    </div>
   );
 };
 
-export default ProjectRegister6; // EXPORT COMPONENT AS DEFAULT
+export default ProjectRegister6; // Export the component as default

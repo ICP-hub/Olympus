@@ -5,7 +5,7 @@ import CompressedImage from "../../../component/ImageCompressed/CompressedImage"
 import { useSelector, useDispatch } from "react-redux"; // IMPORTING REDUX HOOKS FOR STATE MANAGEMENT
 import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_IcpHubReducer"; // IMPORTING REDUX ACTION FOR FETCHING ICP HUB DATA
 
-const ProjectRegister1 = ({ formData }) => { // MAIN COMPONENT FUNCTION
+const ProjectRegister1 = ({ formData,setFormData,logoData,setLogoData }) => { // MAIN COMPONENT FUNCTION
   console.log("formData", formData);
   const {
     register,
@@ -21,7 +21,6 @@ const ProjectRegister1 = ({ formData }) => { // MAIN COMPONENT FUNCTION
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs); // SELECTING ICP HUBS DATA FROM REDUX STORE
   const dispatch = useDispatch(); // INITIALIZING DISPATCH FUNCTION FOR REDUX ACTIONS
   const [logoPreview, setLogoPreview] = useState(null); // STATE TO HOLD LOGO PREVIEW IMAGE URL
-  const [logoData, setLogoData] = useState(null); // STATE TO HOLD COMPRESSED LOGO DATA
 
   useEffect(() => {
     // USE EFFECT HOOK TO SET FORM FIELDS WITH EXISTING FORM DATA ON COMPONENT MOUNT
