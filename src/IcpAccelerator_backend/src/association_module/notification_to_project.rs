@@ -4,7 +4,7 @@ use ic_cdk::{api::time, caller};
 use ic_cdk::{query, update};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
-use crate::state_handler::*;
+use crate::{state_handler::*, UserInformation};
 #[derive(Clone, CandidType, Deserialize, Serialize)]
 pub struct OfferToProject {
     offer_id: String, // Added field
@@ -26,6 +26,7 @@ pub struct MentorInfo {
     mentor_name: String,
     mentor_description: String,
     mentor_image: Vec<u8>,
+    user_data: UserInformation,
 }
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
@@ -132,14 +133,20 @@ pub async fn send_offer_to_project_by_mentor(
     store_request_sent_by_mentor(offer_to_project);
 
     //let project_info = find_project_by_id(&project_id).expect("project does not exist");
+    let mut cached_user_data = None;
+    let user_data = crate::user_modules::get_user::get_user_info_with_cache(mentor_id, &mut cached_user_data);
 
-    let user_data = crate::user_modules::get_user::get_user_information_internal(mentor_id);
+    let mentor_image = user_data
+        .profile_picture
+        .clone()
+        .unwrap_or_else(|| Vec::new());
 
     let mentor_info = MentorInfo {
         mentor_id: mentor_id,
-        mentor_name: user_data.full_name,
+        mentor_name: user_data.full_name.clone(),
         mentor_description: mentor.0.profile.area_of_expertise,
-        mentor_image: user_data.profile_picture.unwrap_or_else(Vec::new),
+        mentor_image,
+        user_data,
     };
 
     let offer_to_send_to_project = OfferToSendToProject {

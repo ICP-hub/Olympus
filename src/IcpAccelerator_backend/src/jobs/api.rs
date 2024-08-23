@@ -11,7 +11,8 @@ use crate::user_modules::get_user::*;
 pub async fn post_job(params: Jobs) -> String {
     let principal_id = ic_cdk::api::caller();
 
-    let user_data = get_user_information_internal(principal_id);
+    let mut cached_user_data = None;
+    let user_data = get_user_info_with_cache(principal_id, &mut cached_user_data);
 
     let current_time = ic_cdk::api::time();
 
@@ -29,22 +30,15 @@ pub async fn post_job(params: Jobs) -> String {
         job_poster: Some(user_data),
     };
 
-    ic_cdk::println!("New Job Details: {:?}", new_job);
-
     let result = mutate_state(|state| {
         let announcement_storage = &mut state.post_job;
         if let Some(caller_announcements) = announcement_storage.get(&StoredPrincipal(principal_id))
         {
-            ic_cdk::println!("Existing job entry found.");
-            ic_cdk::println!("State before addition: {:?}", caller_announcements.0);
             let mut caller_announcements = caller_announcements.clone(); // Clone to mutate
             caller_announcements.0.push(new_job);
-            ic_cdk::println!("State after addition: {:?}", caller_announcements.0);
             announcement_storage.insert(StoredPrincipal(principal_id), caller_announcements);
             format!("Job post added successfully at {}", current_time)
         } else {
-            ic_cdk::println!("No job entry found for this caller.");
-            ic_cdk::println!("State before addition: None");
             announcement_storage.insert(StoredPrincipal(principal_id), Candid(vec![new_job]));
 
             format!("Job Post added successfully at {}", current_time)
