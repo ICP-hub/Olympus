@@ -14,6 +14,7 @@ import { LinkedIn, GitHub, Telegram } from "@mui/icons-material";
 import InvestorDetail from "./InvestorDetail";
 import MentorEdit from "../../component/Mentors/MentorEdit";
 import {FaEdit, FaPlus } from 'react-icons/fa';
+import ProjectDetail from "./ProjectDetail";
 
 const ProfileDetail = () => {
   const { countries } = useCountries();
@@ -881,7 +882,7 @@ const ProfileDetail = () => {
 
         {/* Founder Tab Content */}
         {userRole === "project" && activeTab === "project" && (
-          <ProfileDetail />
+          < ProjectDetail/>
         )}
       </div>
     </div>
