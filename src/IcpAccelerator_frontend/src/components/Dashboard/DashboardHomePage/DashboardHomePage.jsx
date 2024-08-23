@@ -6,7 +6,6 @@ import { Routes, Route } from 'react-router-dom';
 import ProjectProfile from './ProjectProfile'
 import UserSection from '../../Discover/UserSection'
 import Jobs from '../../jobs/Jobs'
-import ProfilePage from '../../Profile/ProfilePage'
 import EventMain from '../DashboardEvents/EventMain'
 import ServiceDetailPage from './ServiceDetailPage'
 import AddNewWork from './AddNewWork'
@@ -15,6 +14,7 @@ import WorkSectionDetailPage from './WorkSectionDetailPage'
 import EventDetails from '../DashboardEvents/EventDetail'
 import DocumentSection from '../Project/DocumentSection'
 import DiscoverRegionalHubs from '../../RegionalHubs/RegionalHubs'
+import ProfilePage from '../../profile/ProfilePage';
 
 function DashboardHomePage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
