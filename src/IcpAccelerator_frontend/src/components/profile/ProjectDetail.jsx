@@ -30,6 +30,7 @@ const ProjectDetail = () => {
     const { countries } = useCountries();
     const dispatch = useDispatch();
 
+      console.log("projectFullData in projectRejForm ===>", projectFullData);
     const actor = useSelector((currState) => currState.actors.actor);
     const areaOfExpertise = useSelector((currState) => currState.expertiseIn.expertise);
     const typeOfProfile = useSelector((currState) => currState.profileTypes.profiles);

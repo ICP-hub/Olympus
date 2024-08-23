@@ -258,7 +258,6 @@ const ProfileDetail = () => {
     { role: "general", label: "General" },
     userRole === "vc" && { role: "vc", label: "Investor" },
     userRole === "mentor" && { role: "mentor", label: "Mentor" },
-    userRole === "founder" && { role: "founder", label: "Founder" },
     userRole === "project" && { role: "project", label: "Project" },
   ].filter(Boolean);
 
@@ -319,6 +318,100 @@ const ProfileDetail = () => {
       </div>
     )}
     {userRole === "investor" && activeTab === "investor" && (
+      <div className="p-6 bg-gray-50 relative cursor-pointer"  style={{
+        backgroundImage: `url(${ProfileImages})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        // Remove inline filter style
+      }}>
+      {/* Edit icon */}
+      <div
+            className="absolute top-0 right-0 p-2  cursor-pointer"
+          >
+            <FaEdit className="text-white text-xl cursor-pointer" />
+            <input
+          id="file-upload"
+          type="file"
+          className="absolute inset-0 opacity-0 cursor-pointer"
+          accept="image/*"
+        />
+          </div>
+      <div className="relative w-24 h-24 mx-auto rounded-full mb-4 group">
+      <img
+        src={ProfileImages}
+        alt={Fullname}
+        className="w-full h-full rounded-full object-cover"
+      />
+      <div className="absolute inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <FaPlus className="text-white text-xl" />
+        <input
+          id="file-upload"
+          type="file"
+          className="absolute inset-0 opacity-0 cursor-pointer"
+          accept="image/*"
+        />
+      </div>
+    </div>
+  
+        <div className="flex items-center justify-center mb-1">
+          <VerifiedIcon className="text-blue-500 mr-1" fontSize="small" />
+          <h2 className="text-xl font-semibold">{Fullname}</h2>
+        </div>
+        <p className="text-gray-600 text-center mb-4">{openchat_username}</p>
+        <button className="w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center">
+          Get in touch
+          <ArrowOutwardOutlinedIcon className="ml-1" fontSize="small" />
+        </button>
+      </div>
+    )}
+       {userRole === "mentor" && activeTab === "mentor" && (
+      <div className="p-6 bg-gray-50 relative cursor-pointer"  style={{
+        backgroundImage: `url(${ProfileImages})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        // Remove inline filter style
+      }}>
+      {/* Edit icon */}
+      <div
+            className="absolute top-0 right-0 p-2  cursor-pointer"
+          >
+            <FaEdit className="text-white text-xl cursor-pointer" />
+            <input
+          id="file-upload"
+          type="file"
+          className="absolute inset-0 opacity-0 cursor-pointer"
+          accept="image/*"
+        />
+          </div>
+      <div className="relative w-24 h-24 mx-auto rounded-full mb-4 group">
+      <img
+        src={ProfileImages}
+        alt={Fullname}
+        className="w-full h-full rounded-full object-cover"
+      />
+      <div className="absolute inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <FaPlus className="text-white text-xl" />
+        <input
+          id="file-upload"
+          type="file"
+          className="absolute inset-0 opacity-0 cursor-pointer"
+          accept="image/*"
+        />
+      </div>
+    </div>
+  
+        <div className="flex items-center justify-center mb-1">
+          <VerifiedIcon className="text-blue-500 mr-1" fontSize="small" />
+          <h2 className="text-xl font-semibold">{Fullname}</h2>
+        </div>
+        <p className="text-gray-600 text-center mb-4">{openchat_username}</p>
+        <button className="w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center">
+          Get in touch
+          <ArrowOutwardOutlinedIcon className="ml-1" fontSize="small" />
+        </button>
+      </div>
+    )}
+       {userRole === "project" && activeTab === "project" && (
       <div className="p-6 bg-gray-50 relative cursor-pointer"  style={{
         backgroundImage: `url(${ProfileImages})`,
         backgroundSize: 'cover',
@@ -787,8 +880,8 @@ const ProfileDetail = () => {
         )}
 
         {/* Founder Tab Content */}
-        {userRole === "founder" && activeTab === "founder" && (
-          <InvestorDetail />
+        {userRole === "project" && activeTab === "project" && (
+          <ProfileDetail />
         )}
       </div>
     </div>
