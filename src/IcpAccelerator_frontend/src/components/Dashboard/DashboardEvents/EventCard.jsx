@@ -140,23 +140,23 @@ const cohortId=allLiveEventsData[0]?.cohort_id
                       </p>
                       <p className="text-sm font-normal">Start at: {start_date}</p>
                     </div>
-                    <div className="w-[240px] h-[172px]">
+                    {/* <div className="w-[240px] h-[172px]"> */}
                     <img
                       src={image}
                       alt={name}
                       className="w-[240px] h-[172px] rounded-lg mr-4 object-cover object-center"
                      
                     />
-                    </div>
+                    {/* </div> */}
                     <div className='w-3/4'>
                       <div>
                         <p className="bg-white font-medium border-2 borer-[#CDD5DF] text-[#364152] w-[86px] px-2 py-1 rounded-full text-sm">
                           Workshop
                         </p>
-                        <h3 className="text-lg font-semibold">{name}</h3>
-                        <p className="text-sm text-gray-500 mb-4 overflow-hidden text-ellipsis max-h-12 line-clamp-2 ">{parse(desc)}</p>
+                        <h3 className="text-lg font-bold mt-2">{name}</h3>
+                        <p className="text-sm text-gray-500 mb-4 overflow-hidden text-ellipsis max-h-12 line-clamp-2 mt-2">{parse(desc)}</p>
                       </div>
-                      <div className="flex gap-3 items-center mt-4">
+                      <div className="flex gap-3 items-center -bottom-4 relative">
                         <span className="text-sm text-[#121926]">
                           <PlaceOutlinedIcon
                             className="text-[#364152]"
