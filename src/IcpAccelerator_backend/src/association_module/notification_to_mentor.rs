@@ -1,4 +1,5 @@
-use crate::state_handler::*;
+use crate::project_module::post_project::find_project_owner_principal;
+use crate::{state_handler::*, UserInformation};
 use candid::{CandidType, Principal};
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::{api::time, caller};
@@ -27,6 +28,7 @@ pub struct ProjectInfoo {
     project_name: String,
     project_description: Option<String>,
     project_logo: Option<Vec<u8>>,
+    user_data: UserInformation
 }
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
@@ -108,7 +110,9 @@ pub async fn send_offer_to_mentor_from_project(mentor_id: Principal, msg: String
     let uid = format!("{:x}", Sha256::digest(&uids));
     let offer_id = uid.clone().to_string();
 
-    let user_data = crate::user_modules::get_user::get_user_information_internal(mentor_id);
+    let mut cached_user_data = None;
+
+    let user_data = crate::user_modules::get_user::get_user_info_with_cache(mentor_id, &mut cached_user_data);
 
     let offer_to_mentor = OfferToMentor {
         offer_id: offer_id.clone(),
@@ -128,11 +132,18 @@ pub async fn send_offer_to_mentor_from_project(mentor_id: Principal, msg: String
 
     let project_info = crate::project_module::get_project::get_project_using_id(project_id.clone()).expect("project does not exist");
 
+    let project_principal = find_project_owner_principal(&project_id.clone())
+    .expect("Project principal not found");
+
+    let mut cached_user_data = None;
+    let user_data_project = crate::user_modules::get_user::get_user_info_with_cache(project_principal, &mut cached_user_data);
+
     let project_info = ProjectInfoo {
-        project_id: project_id,
+        project_id,
         project_name: project_info.params.project_name,
         project_description: project_info.params.project_description,
         project_logo: project_info.params.project_logo,
+        user_data: user_data_project
     };
 
     let offer_to_send_to_mentor = OfferToSendToMentor {
@@ -261,6 +272,7 @@ pub fn accept_offer_from_project_to_mentor(offer_id: String, response_message: S
                                 if !mentors_assigned.contains(&mentor_profile.0.profile) {
                                     mentors_assigned.push(mentor_profile.0.profile.clone());
                                 }
+                                ic_cdk::println!("Menrtor Assigned now is {:?}", mentors_assigned);
                             }
 
                             // Associated projects update

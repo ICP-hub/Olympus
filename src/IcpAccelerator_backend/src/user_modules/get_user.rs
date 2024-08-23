@@ -251,3 +251,14 @@ fn get_review(principal_id: Principal) -> Result<Vec<Review>, &'static str> {
         }
     })
 }
+
+pub(crate) fn get_user_info_with_cache(caller: Principal, cache: &mut Option<UserInformation>) -> UserInformation {
+    if let Some(cached_data) = cache {
+        ic_cdk::println!("RETRUNING DATA FROM CACHE");
+        return cached_data.clone();
+    }
+    ic_cdk::println!("RETRUNING DATA FROM STATE");
+    let user_info = get_user_information_internal(caller);
+    *cache = Some(user_info.clone());
+    user_info
+}
