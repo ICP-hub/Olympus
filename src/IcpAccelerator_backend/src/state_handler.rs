@@ -170,14 +170,14 @@ const PROJECTS_ASSOCIATED_WITH_MENTOR_MEMORY_ID: MemoryId = MemoryId::new(40);
 pub type CohortInfo = StableBTreeMap<String, Candid<CohortDetails>, VMem>;
 const COHORT_MEMORY_ID: MemoryId = MemoryId::new(41);
 
-pub type ProjectsAppliedForCohort = StableBTreeMap<String, Candid<Vec<ProjectInfoInternal>>, VMem>;
+pub type ProjectsAppliedForCohort = StableBTreeMap<String, Candid<Vec<(ProjectInfoInternal, UserInformation)>>, VMem>;
 const PROJECTS_APPLIED_FOR_COHORT_MEMORY_ID: MemoryId = MemoryId::new(42);
 
 pub type ApplierCount = StableBTreeMap<String, u64, VMem>;
 const APPLIER_COUNT_MEMORY_ID: MemoryId = MemoryId::new(43);
 
 pub type CapitalistAppliedForCohort =
-StableBTreeMap<String, Candid<Vec<VentureCapitalistInternal>>, VMem>;
+StableBTreeMap<String, Candid<Vec<(VentureCapitalistInternal, UserInformation)>>, VMem>;
 const CAPITALIST_APPLIED_FOR_COHORT_MEMORY_ID: MemoryId = MemoryId::new(44);
 
 pub type CohortEnrollmentRequests =
@@ -185,7 +185,7 @@ StableBTreeMap<StoredPrincipal, Candid<Vec<CohortEnrollmentRequest>>, VMem>;
 const COHORT_ENROLLMENT_REQUESTS_MEMORY_ID: MemoryId = MemoryId::new(45);
 
 pub type MentorsRemovedFromCohort =
-StableBTreeMap<String, Candid<Vec<(Principal, MentorInternal)>>, VMem>;
+    StableBTreeMap<String, Candid<Vec<(Principal, MentorInternal, UserInformation)>>, VMem>;
 const MENTOR_REMOVED_FROM_COHORT_MEMORY_ID: MemoryId = MemoryId::new(46);
 
 pub type MentorsInviteRequest = StableBTreeMap<String, Candid<InviteRequest>, VMem>;
@@ -198,7 +198,7 @@ const ASSET_CANISTER_STORAGE_MEMORY_ID: MemoryId = MemoryId::new(48);
 pub type HubsData = StableBTreeMap<StoredPrincipal, Candid<IcpHubDetails>, VMem>;
 const HUBS_DATA_STORAGE_MEMORY_ID: MemoryId = MemoryId::new(49);
 
-pub type MentorsAppliedForCohort = StableBTreeMap<String, Candid<Vec<MentorInternal>>, VMem>;
+pub type MentorsAppliedForCohort = StableBTreeMap<String, Candid<Vec<(MentorInternal, UserInformation)>>, VMem>;
 const MENTORS_APPLIED_FOR_COHORT_MEMORY_ID: MemoryId = MemoryId::new(50);
 
 type RateLimitMap = StableBTreeMap<StoredPrincipal, (u64, u64), VMem>; // (last_request_time, request_count)

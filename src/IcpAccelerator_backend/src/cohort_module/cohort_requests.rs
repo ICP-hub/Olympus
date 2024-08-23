@@ -8,6 +8,7 @@ use crate::mentor_module::get_mentor::*;
 use crate::cohort_module::get_cohort::*;
 use crate::project_module::get_project::*;
 use crate::guard::*;
+use crate::UserInformation;
 use candid::Principal;
 use ic_cdk_macros::*;
 
@@ -58,6 +59,16 @@ pub fn send_enrollment_request_as_mentor(cohort_id: String, user_info: MentorInt
         return "There is already a pending enrollment request for this cohort.".to_string();
     }
 
+    let user_information = read_state(|state| {
+        state
+            .user_storage
+            .get(&StoredPrincipal(caller))
+            .map(|candid_user_info| candid_user_info.0.clone())
+            .expect("User information not found")
+    });
+
+
+
     // Create and send enrollment request
     let enrollment_request = CohortEnrollmentRequest {
         cohort_details: get_cohort(cohort_id),
@@ -69,6 +80,7 @@ pub fn send_enrollment_request_as_mentor(cohort_id: String, user_info: MentorInt
             project_data: None,
             mentor_data: Some(user_info),
             vc_data: None,
+            user_data: Some(user_information)
         },
         enroller_principal: caller,
     };
@@ -160,6 +172,14 @@ pub fn send_enrollment_request_as_investor(
         return "There is already a pending enrollment request for this cohort.".to_string();
     }
 
+    let user_information = read_state(|state| {
+        state
+            .user_storage
+            .get(&StoredPrincipal(caller))
+            .map(|candid_user_info| candid_user_info.0.clone())
+            .expect("User information not found")
+    });
+
     let enrollment_request = CohortEnrollmentRequest {
         cohort_details: get_cohort(cohort_id.clone()),
         sent_at: now,
@@ -170,6 +190,7 @@ pub fn send_enrollment_request_as_investor(
             project_data: None,
             mentor_data: None,
             vc_data: Some(user_info),
+            user_data: Some(user_information)
         },
         enroller_principal: caller,
     };
@@ -263,6 +284,14 @@ pub fn send_enrollment_request_as_project(
         return "There is already a pending enrollment request for this cohort.".to_string();
     }
 
+    let user_information = read_state(|state| {
+        state
+            .user_storage
+            .get(&StoredPrincipal(caller))
+            .map(|candid_user_info| candid_user_info.0.clone())
+            .expect("User information not found")
+    });
+
     let enrollment_request = CohortEnrollmentRequest {
         cohort_details: get_cohort(cohort_id),
         sent_at: now,
@@ -273,6 +302,7 @@ pub fn send_enrollment_request_as_project(
             project_data: Some(user_info),
             mentor_data: None,
             vc_data: None,
+            user_data: Some(user_information)
         },
         enroller_principal: caller,
     };
@@ -309,6 +339,9 @@ pub fn send_enrollment_request_as_project(
 pub fn approve_enrollment_request(cohort_id: String, enroller_principal: Principal) -> String {
     let caller = ic_cdk::api::caller();
     let mut enroller_data_to_update = None;
+    let user_data = read_state(|state| {
+        state.user_storage.get(&StoredPrincipal(enroller_principal)).map(|data| data.0.clone())
+    });
 
     // Check if there's a pending request and current applier count
     let (is_request_pending, mut current_count, max_seats) = read_state(|state| {
@@ -363,23 +396,32 @@ pub fn approve_enrollment_request(cohort_id: String, enroller_principal: Princip
                     match &request.enroller_data {
                         EnrollerDataInternal { project_data: Some(project_data), .. } => {
                             if let Some(mut projects) = state.project_applied_for_cohort.get(&cohort_id) {
-                                projects.0.push(project_data.clone());
+                                projects.0.push((project_data.clone(), user_data.unwrap().params.clone())); 
                             } else {
-                                state.project_applied_for_cohort.insert(cohort_id.clone(), Candid(vec![project_data.clone()]));
+                                state.project_applied_for_cohort.insert(
+                                    cohort_id.clone(),
+                                    Candid(vec![(project_data.clone(), user_data.unwrap().params.clone())])
+                                );
                             }
                         },
                         EnrollerDataInternal { mentor_data: Some(mentor_data), .. } => {
                             if let Some(mut mentors) = state.mentor_applied_for_cohort.get(&cohort_id) {
-                                mentors.0.push(mentor_data.clone());
+                                mentors.0.push((mentor_data.clone(), user_data.unwrap().params.clone())); 
                             } else {
-                                state.mentor_applied_for_cohort.insert(cohort_id.clone(), Candid(vec![mentor_data.clone()]));
+                                state.mentor_applied_for_cohort.insert(
+                                    cohort_id.clone(),
+                                    Candid(vec![(mentor_data.clone(), user_data.unwrap().params.clone())])
+                                );
                             }
                         },
                         EnrollerDataInternal { vc_data: Some(vc_data), .. } => {
                             if let Some(mut vcs) = state.vc_applied_for_cohort.get(&cohort_id) {
-                                vcs.0.push(vc_data.clone());
+                                vcs.0.push((vc_data.clone(), user_data.unwrap().params.clone())); 
                             } else {
-                                state.vc_applied_for_cohort.insert(cohort_id.clone(), Candid(vec![vc_data.clone()]));
+                                state.vc_applied_for_cohort.insert(
+                                    cohort_id.clone(),
+                                    Candid(vec![(vc_data.clone(), user_data.unwrap().params.clone())])
+                                );
                             }
                         },
                         _ => {}
@@ -394,68 +436,9 @@ pub fn approve_enrollment_request(cohort_id: String, enroller_principal: Princip
         state.applier_count.insert(cohort_id.clone(), current_count);
     });
 
-    if let Some(enroller_data) = enroller_data_to_update {
-        let _ = update_cohort_with_applicant(
-            cohort_id.clone(),
-            enroller_data.project_data,
-            enroller_data.mentor_data,
-            enroller_data.vc_data,
-        );
-    }
-
     "Request approved successfully".to_string()
 }
 
-pub fn update_cohort_with_applicant(
-    cohort_id: String,
-    project_data: Option<ProjectInfoInternal>,
-    mentor_data: Option<MentorInternal>,
-    vc_data: Option<VentureCapitalistInternal>,
-) -> Result<String, String> {
-
-    // Retrieve the cohort details from the state
-    let mut cohort_details: CohortDetails = read_state(|state| {
-    state
-        .cohort_info
-        .get(&cohort_id)
-        .map(|candid_cohort_details| candid_cohort_details.0.clone())
-        .ok_or("Cohort not found".to_string())  // Convert the error message to String
-    })?;
-
-    // Update the cohort details with the new applicant data
-    if let Some(project) = project_data {
-        if let Some(ref mut projects) = cohort_details.projects_applied {
-            projects.push(project);
-        } else {
-            cohort_details.projects_applied = Some(vec![project]);
-        }
-    }
-
-    if let Some(mentor) = mentor_data {
-        if let Some(ref mut mentors) = cohort_details.mentors_applied {
-            mentors.push(mentor);
-        } else {
-            cohort_details.mentors_applied = Some(vec![mentor]);
-        }
-    }
-
-    if let Some(vc) = vc_data {
-        if let Some(ref mut vcs) = cohort_details.vcs_applied {
-            vcs.push(vc);
-        } else {
-            cohort_details.vcs_applied = Some(vec![vc]);
-        }
-    }
-
-    // Mutate the state to save the updated cohort details
-    mutate_state(|state| {
-        state
-            .cohort_info
-            .insert(cohort_id.clone(), Candid(cohort_details.clone()));
-    });
-
-    Ok("Cohort details have been updated with the new applicant.".to_string())
-}
 
 
 #[update(guard = "is_user_anonymous")]
@@ -494,25 +477,21 @@ pub fn send_rejoin_invitation_to_mentor(
                 .0
                 .iter()
                 .enumerate()
-                .find(|(_, (pr, _))| *pr == mentor_principal)
+                .find(|(_, (pr, _, _))| *pr == mentor_principal)
             {
-                let (principal, mentor_data) = mentors.0.remove(index);
+                // Unpack the full tuple, including user data
+                let (principal, mentor_data, _user_data) = mentors.0.remove(index);
                 let invite_request = InviteRequest {
                     cohort_id: cohort_id.clone(),
                     sender_principal: principal,
-                    mentor_data,
+                    mentor_data, // Include the user data in the invite request if needed
                     invite_message: invite_message.clone(),
                 };
 
-                if let Some(_) = state.mentor_invite_request.get(&cohort_id) {
-                    state
-                        .mentor_invite_request
-                        .insert(cohort_id.clone(), Candid(invite_request));
-                } else {
-                    state
-                        .mentor_invite_request
-                        .insert(cohort_id.clone(), Candid(invite_request));
-                }
+                // Insert the invite request into the state
+                state
+                    .mentor_invite_request
+                    .insert(cohort_id.clone(), Candid(invite_request));
 
                 return Ok("Invitation sent to rejoin the cohort.".to_string());
             }
@@ -523,32 +502,41 @@ pub fn send_rejoin_invitation_to_mentor(
     result
 }
 
+
 #[update(guard = "is_admin")]
 pub fn accept_rejoin_invitation(cohort_id: String) -> Result<String, String> {
-    let result = mutate_state(|state| {
+    mutate_state(|state| {
         if let Some(invite_request) = state.mentor_invite_request.remove(&cohort_id) {
-            let mentors = state.mentor_applied_for_cohort.get(&cohort_id);
-            match mentors {
-                Some(mut candid_mentors) => {
-                    candid_mentors.0.push(invite_request.0.mentor_data);
-                }
-                None => {
-                    state.mentor_applied_for_cohort.insert(
-                        cohort_id.clone(),
-                        Candid(vec![invite_request.0.mentor_data]),
-                    );
-                }
+            let mentor_data = invite_request.0.mentor_data;
+
+            // Retrieve user information using the mentor's principal or some other identifier
+            let user_information = state
+                .user_storage
+                .get(&StoredPrincipal(invite_request.0.sender_principal))
+                .ok_or("User information not found")?
+                .clone();
+
+            let mentor_tuple = (mentor_data, user_information.0.params);
+
+            if let Some(mut candid_mentors) = state.mentor_applied_for_cohort.get(&cohort_id) {
+                candid_mentors.0.push(mentor_tuple);
+            } else {
+                state.mentor_applied_for_cohort.insert(
+                    cohort_id.clone(),
+                    Candid(vec![mentor_tuple]),
+                );
             }
-            return Ok(format!(
+            Ok(format!(
                 "Mentor has successfully rejoined the cohort {}",
                 cohort_id
-            ));
+            ))
+        } else {
+            Err("No pending invitation found for this cohort.".to_string())
         }
-        Err("No pending invitation found for this cohort.".to_string())
-    });
-
-    result
+    })
 }
+
+
 
 pub fn decline_rejoin_invitation(cohort_id: String) -> Result<String, String> {
     let result = mutate_state(|state| {
@@ -581,18 +569,19 @@ pub fn get_my_invitation_request(cohort_id: String) -> Result<InviteRequest, Str
 }
 
 #[query(guard = "is_admin")]
-pub fn get_left_mentors_of_cohort(cohort_id: String) -> Vec<MentorInternal> {
+pub fn get_left_mentors_of_cohort(cohort_id: String) -> Vec<(MentorInternal, UserInformation)> {
     read_state(|state| {
         if let Some(mentors) = state.mentor_removed_from_cohort.get(&cohort_id) {
             return mentors
                 .0
                 .iter()
-                .map(|(_, mentor_data)| mentor_data.clone())
+                .map(|(_, mentor_data, user_data)| (mentor_data.clone(), user_data.clone()))
                 .collect();
         }
         Vec::new()
     })
 }
+
 
 #[update(guard = "is_admin")]
 pub fn remove_vc_from_cohort(
@@ -611,10 +600,19 @@ pub fn remove_vc_from_cohort(
 
     mutate_state(|state| {
         if let Some(vc_up_for_cohort) = state.vc_storage.get(&StoredPrincipal(vc_principal)) {
-            let vc_clone = vc_up_for_cohort.0.clone();
+            let vc_data = vc_up_for_cohort.0.clone();
+
+            // Retrieve the associated user information
+            let user_information = state
+                .user_storage
+                .get(&StoredPrincipal(vc_principal))
+                .ok_or("User information not found")?
+                .clone();
+
+            let vc_tuple = (vc_data, user_information.0.params);
 
             if let Some(mut vcs) = state.vc_applied_for_cohort.get(&cohort_id) {
-                if let Some(index) = vcs.0.iter().position(|x| *x == vc_clone) {
+                if let Some(index) = vcs.0.iter().position(|x| *x == vc_tuple) {
                     vcs.0.remove(index);
 
                     if let Some(count) = state.applier_count.get(&cohort_id) {
@@ -637,6 +635,7 @@ pub fn remove_vc_from_cohort(
     })
 }
 
+
 #[update(guard = "is_admin")]
 pub fn remove_project_from_cohort(
     cohort_id: String,
@@ -650,7 +649,7 @@ pub fn remove_project_from_cohort(
     }
     mutate_state(|state| {
         if let Some(mut projects) = state.project_applied_for_cohort.get(&cohort_id) {
-            if let Some(index) = projects.0.iter().position(|p| p.uid == project_uid) {
+            if let Some(index) = projects.0.iter().position(|p| p.0.uid == project_uid) {
                 projects.0.remove(index);
 
                 if let Some(count) = state.applier_count.get(&cohort_id) {
@@ -678,26 +677,34 @@ pub fn remove_mentor_from_cohort(
     if passphrase_key != required_key {
         return Err("Unauthorized attempt: Incorrect passphrase key.".to_string());
     }
+
     let stored_mentor_principal = crate::ratings_module::mentor_investor_rating::find_vc_by_uid(uid.clone());
     let mentor_principal = stored_mentor_principal.0;
+
     mutate_state(|state| {
-        if let Some(mentor_up_for_cohort) =
-            state.mentor_storage.get(&StoredPrincipal(mentor_principal))
-        {
-            let mentor_clone = mentor_up_for_cohort.0.clone();
+        if let Some(mentor_up_for_cohort) = state.mentor_storage.get(&StoredPrincipal(mentor_principal)) {
+            let mentor_data = mentor_up_for_cohort.0.clone();
+
+            // Retrieve the associated user information and unwrap it from Candid
+            let user_information = state
+                .user_storage
+                .get(&StoredPrincipal(mentor_principal))
+                .ok_or("User information not found")?
+                .0
+                .clone();
+
+            let mentor_tuple = (mentor_principal, mentor_data, user_information.params);
 
             if let Some(mut mentors) = state.mentor_applied_for_cohort.get(&cohort_id) {
-                if let Some(index) = mentors.0.iter().position(|x| *x == mentor_clone) {
-                    let mentor_data = mentors.0.remove(index);
+                if let Some(index) = mentors.0.iter().position(|x| x.0 == mentor_tuple.1 && x.1 == mentor_tuple.2) {
+                    mentors.0.remove(index);
 
-                    if let Some(mut removed_mentors) =
-                        state.mentor_removed_from_cohort.get(&cohort_id)
-                    {
-                        removed_mentors.0.push((mentor_principal, mentor_data));
+                    if let Some(mut removed_mentors) = state.mentor_removed_from_cohort.get(&cohort_id) {
+                        removed_mentors.0.push(mentor_tuple);
                     } else {
                         state.mentor_removed_from_cohort.insert(
                             cohort_id.clone(),
-                            Candid(vec![(mentor_principal, mentor_data)]),
+                            Candid(vec![mentor_tuple]),
                         );
                     }
 
@@ -720,3 +727,5 @@ pub fn remove_mentor_from_cohort(
         }
     })
 }
+
+
