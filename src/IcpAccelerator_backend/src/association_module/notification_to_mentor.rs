@@ -87,7 +87,7 @@ pub fn get_all_mentor_notification(id: Principal) -> Vec<OfferToSendToMentor> {
 }
 
 #[update]
-pub async fn send_offer_to_mentor(mentor_id: Principal, msg: String, project_id: String) -> String {
+pub async fn send_offer_to_mentor_from_project(mentor_id: Principal, msg: String, project_id: String) -> String {
     //let _mentor = get_mentor_using_principal(mentor_id).expect("mentor doesn't exist");
 
     let mut offer_exists = false;  // Flag to check if an offer exists
@@ -212,7 +212,7 @@ pub async fn send_offer_to_mentor(mentor_id: Principal, msg: String, project_id:
 // }
 
 #[update]
-pub fn accept_offer_of_project(offer_id: String, response_message: String) -> String {
+pub fn accept_offer_from_project_to_mentor(offer_id: String, response_message: String) -> String {
     let mentor_id = ic_cdk::api::caller();
 
     let mut already_accepted = false;
@@ -299,7 +299,7 @@ pub fn accept_offer_of_project(offer_id: String, response_message: String) -> St
 
 
 #[update]
-pub fn decline_offer_of_project(offer_id: String, response_message: String) -> String {
+pub fn decline_offer_from_project_to_mentor(offer_id: String, response_message: String) -> String {
     let mentor_id = caller();
 
     mutate_state(|state| {
@@ -442,7 +442,7 @@ pub fn get_declined_request_from_project_to_mentor_via_project() -> Vec<OfferToM
 //for project
 
 #[update]
-pub fn self_decline_request(offer_id: String) -> String {
+pub fn self_decline_request_from_project_to_mentor(offer_id: String) -> String {
     let mut response: String = String::new();
 
     mutate_state(|sent_ones| {

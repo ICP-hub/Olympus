@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 use crate::mentor_module::mentor_types::*; 
 use crate::project_module::project_types::*; 
 use crate::vc_module::vc_types::*;
+use crate::UserInfoInternal;
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
 pub struct SocialLinks {
@@ -43,9 +44,6 @@ pub struct CohortDetails {
     pub cohort_creator: Principal,
     pub cohort_creator_role: Vec<String>,
     pub cohort_creator_principal: Principal,
-    pub projects_applied: Option<Vec<ProjectInfoInternal>>,
-    pub mentors_applied: Option<Vec<MentorInternal>>,
-    pub vcs_applied: Option<Vec<VentureCapitalistInternal>>,
 }
 
 #[derive(Clone, CandidType, Deserialize, Debug, Serialize)]
@@ -62,6 +60,7 @@ pub struct EnrollerDataInternal {
     pub project_data: Option<ProjectInfoInternal>,
     pub mentor_data: Option<MentorInternal>,
     pub vc_data: Option<VentureCapitalistInternal>,
+    pub user_data: Option<UserInfoInternal>,
 }
 
 #[derive(Clone, CandidType, Deserialize, Debug)]

@@ -87,7 +87,7 @@ pub fn get_all_project_notification(id: String) -> Vec<OfferToSendToProject> {
 }
 
 #[update]
-pub async fn send_offer_to_project(
+pub async fn send_offer_to_project_by_mentor(
     project_id: String,
     msg: String,
     mentor_id: Principal,
@@ -224,7 +224,7 @@ pub async fn send_offer_to_project(
 // }
 
 #[update]
-pub fn accept_offer_of_mentor(offer_id: String, response_message: String, project_id: String) -> String {
+pub fn accept_offer_from_mentor_to_project(offer_id: String, response_message: String, project_id: String) -> String {
     let caller_principal = ic_cdk::api::caller();
     ic_cdk::println!("Caller Principal: {:?}", caller_principal);
 
@@ -305,7 +305,7 @@ pub fn accept_offer_of_mentor(offer_id: String, response_message: String, projec
 
 
 #[update]
-pub fn decline_offer_of_mentor(
+pub fn decline_offer_from_mentor_to_project(
     offer_id: String,
     response_message: String,
     project_id: String,
@@ -460,7 +460,7 @@ pub fn get_all_requests_which_got_declined_for_mentor_via_mentor() -> Vec<OfferT
 //for project
 
 #[update]
-pub fn self_decline_request_for_mentor_via_mentor(offer_id: String) -> String {
+pub fn self_decline_request_from_mentor_project(offer_id: String) -> String {
     let mut response = String::new();
 
     mutate_state(|sent_ones| {
