@@ -1,4 +1,4 @@
-;import React, { useEffect, useState } from 'react';
+; import React, { useEffect, useState } from 'react';
 import EventCard from './EventCard';
 import Filters from './EventFilter';
 import eventbg from "../../../../assets/images/bg.png"
@@ -60,7 +60,7 @@ const NewEvent = ({ event }) => {
                         cohort_end_date: cohort.cohort.cohort_end_date,
                         start_date: cohort.cohort.start_date,
                         no_of_seats: cohort.cohort.no_of_seats,
-                        tags:cohort.cohort.tags,
+                        tags: cohort.cohort.tags,
                         country: cohort.cohort.country,
                         description: cohort.cohort.description,
                         funding_amount: cohort.cohort.funding_amount,
@@ -107,40 +107,41 @@ const NewEvent = ({ event }) => {
                             >
                                 <div className="flex justify-between items-center">
                                     <div className="flex items-center gap-2 w-full relative">
+
                                         <div className="max-w-[160px] absolute top-1 left-1 bg-white p-2 rounded-[8px]">
                                             <p className="text-sm font-normal">{event.start_date}</p>
                                         </div>
-                                        {/* <div className="w-[240px] h-[172px]"> */}
-                                        <img
-                                            src={event.cohort_banner}
-                                            alt="Event Background"
-                                            className="w-[240px] h-[172px] rounded-lg mr-4 object-cover object-center"
-                                        />
-                                       {/* </div>  */}
-                                        <div className='w-3/4'>
-                                            <div>
-                                                <p className="bg-white font-medium border-2 border-[#CDD5DF] text-[#364152] w-[86px] px-2 py-1 rounded-full text-sm">
-                                                    Workshop
-                                                </p>
-                                                <h3 className="text-lg font-bold mt-1">{event.title}</h3>
-                                                {/* <h3 className="text-lg font-semibold">{event.no_of_seats}</h3> */}
-                                                <p 
-  className="text-sm text-gray-500 overflow-hidden text-ellipsis line-clamp-3 mt-2"
-  style={{ maxHeight: '3em', lineHeight: '1em' }}
->
-  {parse(event.description)}
-</p>
-                                                <div className="flex gap-3 items-center mt-4">
-                                                    <span className="text-sm text-[#121926]">
-                                                        <PlaceOutlinedIcon
-                                                            className="text-[#364152]"
-                                                            fontSize="small"
-                                                        />
-                                                        {event.country}
-                                                    </span>
-                                                    <span className="text-sm text-gray-500">${event.funding_amount}</span>
-                                                </div>
+                                        <div className="w-[240px] h-[172px]">
+                                            <img
+                                                src={event.cohort_banner}
+                                                alt="Event Background"
+                                                className="w-[240px] h-[172px] rounded-lg mr-4 object-cover object-center"
+                                            />
+                                        </div>
+                                        <div className='w-2/3'>
+
+                                            <p className="bg-white font-medium border-2 border-[#CDD5DF] text-[#364152] w-[86px] px-2 py-1 rounded-full text-sm">
+                                                Workshop
+                                            </p>
+                                            <h3 className="text-lg font-bold mt-1">{event.title}</h3>
+                                            {/* <h3 className="text-lg font-semibold">{event.no_of_seats}</h3> */}
+                                            <p
+                                                className="text-sm text-gray-500 overflow-hidden text-ellipsis line-clamp-3 mt-2"
+                                                style={{ maxHeight: '3em', lineHeight: '1em' }}
+                                            >
+                                                {parse(event.description)}
+                                            </p>
+                                            <div className="flex gap-3 items-center mt-4">
+                                                <span className="text-sm text-[#121926]">
+                                                    <PlaceOutlinedIcon
+                                                        className="text-[#364152]"
+                                                        fontSize="small"
+                                                    />
+                                                    {event.country}
+                                                </span>
+                                                <span className="text-sm text-gray-500">${event.funding_amount}</span>
                                             </div>
+
                                         </div>
                                     </div>
                                 </div>

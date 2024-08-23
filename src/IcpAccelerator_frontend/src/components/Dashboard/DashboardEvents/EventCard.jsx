@@ -18,9 +18,9 @@ const EventCard = () => {
   const itemsPerPage = 10;
   const [cohortids, setCohortIds] = useState([]);
 
-console.log("cohort Id...........", allLiveEventsData)
+  console.log("cohort Id...........", allLiveEventsData)
 
-const cohortId=allLiveEventsData[0]?.cohort_id
+  const cohortId = allLiveEventsData[0]?.cohort_id
 
   useEffect(() => {
     let isMounted = true;
@@ -72,19 +72,19 @@ const cohortId=allLiveEventsData[0]?.cohort_id
 
   useEffect(() => {
     if (allLiveEventsData && allLiveEventsData.length > 0) {
-        const cohortIdsArray = allLiveEventsData.map(eventData => eventData.cohort_id);
-        setCohortIds(cohortIdsArray);
+      const cohortIdsArray = allLiveEventsData.map(eventData => eventData.cohort_id);
+      setCohortIds(cohortIdsArray);
     }
-}, [allLiveEventsData]);
+  }, [allLiveEventsData]);
 
 
   const navigate = useNavigate();
 
-    const handleClick = (cohort_id) => {
-        navigate('/dashboard/single-event', { state: { cohort_id } });
-    };
-    //registerHandler
-   
+  const handleClick = (cohort_id) => {
+    navigate('/dashboard/single-event', { state: { cohort_id } });
+  };
+  //registerHandler
+
   return (
     <div>
       {isLoading ? (
@@ -92,12 +92,12 @@ const cohortId=allLiveEventsData[0]?.cohort_id
       ) : allLiveEventsData.length > 0 ? (
         <div>
           {allLiveEventsData.map((data, index) => {
-            console.log("banner before" ,data.cohort.cohort_banner[0])
+            console.log("banner before", data.cohort.cohort_banner[0])
             const image = data?.cohort?.cohort_banner[0]
               ? uint8ArrayToBase64(data?.cohort?.cohort_banner[0])
               : [];
             const name = data?.cohort?.title ?? "No Title...";
-            console.log("banner after" ,image)
+            console.log("banner after", image)
 
             // const launch_date = data?.cohort?.cohort_launch_date
             //   ? new Date(data?.cohort?.cohort_launch_date).toLocaleDateString()
@@ -127,7 +127,7 @@ const cohortId=allLiveEventsData[0]?.cohort_id
             const start_date = data?.cohort?.start_date ?? "";
             const funding = data?.cohort?.funding_amount ?? "";
             const country = data?.cohort?.country ?? "";
- 
+
             console.log("cohort Id...........///////////", cohortids);
 
             return (
@@ -140,14 +140,14 @@ const cohortId=allLiveEventsData[0]?.cohort_id
                       </p>
                       <p className="text-sm font-normal">Start at: {start_date}</p>
                     </div>
-                    {/* <div className="w-[240px] h-[172px]"> */}
-                    <img
-                      src={image}
-                      alt={name}
-                      className="w-[240px] h-[172px] rounded-lg mr-4 object-cover object-center"
-                     
-                    />
-                    {/* </div> */}
+                    <div className="w-[240px] h-[172px]">
+                      <img
+                        src={image}
+                        alt={name}
+                        className="w-[240px] h-[172px] rounded-lg mr-4 object-cover object-center"
+
+                      />
+                    </div>
                     <div className='w-3/4'>
                       <div>
                         <p className="bg-white font-medium border-2 borer-[#CDD5DF] text-[#364152] w-[86px] px-2 py-1 rounded-full text-sm">
