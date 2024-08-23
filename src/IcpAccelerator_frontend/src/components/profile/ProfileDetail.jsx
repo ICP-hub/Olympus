@@ -245,13 +245,22 @@ const ProfileDetail = () => {
   const handleChange = (tab) => {
     setActiveTab(tab);
   };
+  // const tabs = [
+  //   { role: "general", label: "General" },
+  //   { role: "investor", label: "Investor" },
+  //   { role: "mentor", label: "Mentor" },
+  //   { role: "founder", label: "Founder" },
+  // ];
+  const userRole = useSelector(
+    (currState) => currState.currentRoleStatus.activeRole
+  );
   const tabs = [
     { role: "general", label: "General" },
-    { role: "investor", label: "Investor" },
-    { role: "mentor", label: "Mentor" },
-    { role: "founder", label: "Founder" },
-  ];
-
+    userRole === "vc" && { role: "vc", label: "Investor" },
+    userRole === "mentor" && { role: "mentor", label: "Mentor" },
+    userRole === "founder" && { role: "founder", label: "Founder" },
+    userRole === "project" && { role: "project", label: "Project" },
+  ].filter(Boolean);
 
   const fileInputRef = useRef(null);
 
@@ -260,8 +269,8 @@ const ProfileDetail = () => {
       fileInputRef.current.click();
     }
   };
-  // user Role
-  const userRole = "investor";
+
+
   // User data map 
   const ProfileImage = userFullData?.profile_picture[0];
   const Fullname = userFullData?.full_name;
