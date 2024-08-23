@@ -70,6 +70,8 @@ pub async fn create_cohort(mut params: Cohort) -> Result<String, String> {
                 .to_vec(),
         );
     }
+
+    let user_data = crate::user_modules::get_user::get_user_information_internal(caller_principal);
     
     let cohort_details = CohortDetails {
         cohort_id: cohort_id.clone(),
@@ -78,6 +80,7 @@ pub async fn create_cohort(mut params: Cohort) -> Result<String, String> {
         cohort_creator: caller_principal,
         cohort_creator_role: roles_assigned,
         cohort_creator_principal: caller_principal,
+        cohort_creator_data: user_data
     };
 
     mutate_state(|state| {
