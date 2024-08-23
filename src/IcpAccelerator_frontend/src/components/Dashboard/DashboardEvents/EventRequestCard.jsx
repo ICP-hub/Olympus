@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import { FaFilter } from "react-icons/fa";
+import parse from 'html-react-parser';
 
 import eventbg from "../../../../assets/images/bg.png";
 import ProfileImage from "../../../../assets/Logo/ProfileImage.png";
@@ -266,6 +267,7 @@ const EventRequestCard = () => {
             console.log("Event Title:", title); // Log the title to the console
             console.log("description",description);
             console.log("cohort_banner",banner);
+            console.log("tag",tags)
           const attendees = event.attendees || [];  // Ensure attendees is an array
           return (
             <div key={index} className="bg-white rounded-lg shadow p-4 mb-6">
@@ -297,12 +299,24 @@ const EventRequestCard = () => {
                       <p className="bg-white font-medium border-2 border-[#CDD5DF] text-[#364152] w-[86px] px-2 py-1 rounded-full text-sm">
                         Workshop
                       </p>
-                      <h3 className="text-lg font-semibold">{title}</h3>
-                      <p className="text-sm text-gray-500 overflow-hidden text-ellipsis max-h-12 line-clamp-2">
-                        {description}
-                      </p>
+                    
+                      <h3 className="text-lg font-bold mt-2 ">{title}</h3>
+                      <p 
+  className="text-sm text-gray-500 overflow-hidden text-ellipsis line-clamp-3 mt-2"
+  style={{ maxHeight: '3em', lineHeight: '1em' }}
+>
+  {parse(description)}
+</p>
                     </div>
-                    <div className="flex gap-3 items-center mt-4">
+                    {/* <div className="flex gap-3 items-center mt-2">{tags}</div> */}
+                    <div className="flex flex-wrap gap-3 items-center mt-2">
+ 
+    <span key={index} className=" text-gray-700 px-2 border-2 rounded-xl">
+      {tags}
+    </span>
+ 
+</div>
+                    <div className="flex gap-3 items-center mt-2">
                       <span className="text-sm text-[#121926]">
                         <PlaceOutlinedIcon
                           className="text-[#364152]"
@@ -350,13 +364,18 @@ const EventRequestCard = () => {
                         </>
                       )}
                       {selectedType === "approved" && (
-                        <span className="text-green-500">Approved</span>
-                      )}
+                    
+                    <button className="bg-[#ECFDF3] border-2 border-[#ABEFC6] text-[#067647] rounded-lg px-2 py-1" >Approved</button>
+                  )}
                       {event.status === "approved" && selectedType !== "approved" && (
-                        <span className="text-green-500">Approved</span>
+                       
+                        <button className="bg-[#ECFDF3] border-2 border-[#ABEFC6] text-[#067647] rounded-lg px-2 py-1 " >Approved</button>
+
                       )}
                       {event.status === "rejected" && (
-                        <span className="text-red-500">Rejected</span>
+                        // <span className="text-red-500">Rejected</span>
+                        <button className="bg-[#FDF2FA]  border-2 text-[#C11574]  border-[#FCCEEE] rounded-lg px-2 py-1" >Approved</button>
+
                       )}
                     </div>
                   </div>

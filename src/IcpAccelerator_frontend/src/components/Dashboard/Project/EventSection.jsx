@@ -48,7 +48,7 @@ const EventSection = () => {
           onClick={handleModalOpen}
         >
           <WorkOutlineOutlinedIcon className="mr-2" />
-          Create a event
+          Create a Cohort
         </button>
       </div>
 
