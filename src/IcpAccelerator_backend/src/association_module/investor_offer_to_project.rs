@@ -1,4 +1,4 @@
-use crate::state_handler::*;
+use crate::{state_handler::*, UserInformation};
 use candid::{CandidType, Principal};
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::{api::time, caller};
@@ -28,6 +28,7 @@ pub struct InvestorInfo {
     investor_name: String,
     investor_description: String,
     investor_image: Vec<u8>,
+    user_data: UserInformation
 }
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
@@ -135,8 +136,9 @@ pub async fn send_offer_to_project_by_investor(project_id: String, msg: String) 
     };
 
     store_request_sent_by_capitalist(offer_to_project);
+    let mut cached_user_data = None;
 
-    let user_data = crate::user_modules::get_user::get_user_information_internal(investor_id);
+    let user_data = crate::user_modules::get_user::get_user_info_with_cache(investor_id, &mut cached_user_data);
 
     let investor_info = InvestorInfo {
         investor_id,
@@ -149,7 +151,8 @@ pub async fn send_offer_to_project_by_investor(project_id: String, msg: String) 
         investor_image: user_data
             .profile_picture
             .clone()
-            .unwrap_or_else(Vec::new),
+            .unwrap_or_else(|| Vec::new()),
+        user_data,  
     };
 
     let offer_to_send_to_project = OfferToSendToProjectByInvestor {

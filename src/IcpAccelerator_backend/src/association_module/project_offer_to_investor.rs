@@ -1,4 +1,5 @@
-use crate::state_handler::*;
+use crate::project_module::post_project::find_project_owner_principal;
+use crate::{state_handler::*, UserInformation};
 use candid::{CandidType, Principal};
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::{api::time, caller};
@@ -27,6 +28,7 @@ pub struct ProjectInf {
     project_name: String,
     project_description: Option<String>,
     project_logo: Option<Vec<u8>>,
+    user_data: UserInformation
 }
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
@@ -111,7 +113,8 @@ pub async fn send_offer_to_investor_by_project(
     let uid = format!("{:x}", Sha256::digest(&uids));
     let offer_id = uid.clone().to_string();
 
-    let user_data = crate::user_modules::get_user::get_user_information_internal(investor_id);
+    let mut cached_user_data = None;
+    let user_data = crate::user_modules::get_user::get_user_info_with_cache(investor_id, &mut cached_user_data);
 
     let offer_to_investor = OfferToInvestor {
         offer_id: offer_id.clone(),
@@ -133,11 +136,18 @@ pub async fn send_offer_to_investor_by_project(
         .expect("project does not exist")
         .clone();
 
+    let project_principal = find_project_owner_principal(&project_id.clone())
+    .expect("Project principal not found");
+    let mut cached_user_data = None;
+    let user_data_project = crate::user_modules::get_user::get_user_info_with_cache(project_principal, &mut cached_user_data);
+
+
     let project_info = ProjectInf {
         project_id,
         project_name: project_info.params.project_name,
         project_description: project_info.params.project_description,
         project_logo: project_info.params.project_logo,
+        user_data: user_data_project
     };
 
     let offer_to_send_to_investor = OfferToSendToInvestor {
@@ -260,8 +270,7 @@ pub fn decline_offer_from_project_to_investor(offer_id: String, response_message
 
 
 #[query]
-pub fn get_pending_request_for_investor_sent_by_investor() -> Vec<OfferToSendToInvestor> {
-    let investor_id = caller();
+pub fn get_pending_request_for_investor_sent_by_project(investor_id: Principal) -> Vec<OfferToSendToInvestor> {
     read_state(|pending_alerts| {
         pending_alerts
             .investor_alerts

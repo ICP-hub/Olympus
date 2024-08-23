@@ -301,7 +301,7 @@ pub fn delete_project(id: String) -> std::string::String {
     }
 }
 
-fn _find_project_owner_principal(project_id: &str) -> Option<Principal> {
+pub fn find_project_owner_principal(project_id: &str) -> Option<Principal> {
     read_state(|state| {
         for (stored_principal, projects) in state.project_storage.iter() {
             if projects.0.iter().any(|p| p.uid == project_id) {

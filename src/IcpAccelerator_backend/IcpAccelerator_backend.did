@@ -104,6 +104,7 @@ type IcpHubDetails = record {
   telegram : opt text;
 };
 type InvestorInfo = record {
+  user_data : UserInformation;
   investor_name : text;
   investor_description : text;
   investor_id : principal;
@@ -159,6 +160,7 @@ type MentorFilterCriteria = record {
   area_of_expertise : opt text;
 };
 type MentorInfo = record {
+  user_data : UserInformation;
   mentor_image : blob;
   mentor_description : text;
   mentor_id : principal;
@@ -322,6 +324,7 @@ type PeerRatingUpdate = record {
   project_id : text;
 };
 type ProjectInf = record {
+  user_data : UserInformation;
   project_description : opt text;
   project_id : text;
   project_logo : opt blob;
@@ -390,6 +393,7 @@ type ProjectInfoInternal = record {
   creation_date : nat64;
 };
 type ProjectInfoo = record {
+  user_data : UserInformation;
   project_description : opt text;
   project_id : text;
   project_logo : opt blob;
@@ -793,7 +797,7 @@ service : {
   get_pending_offers_for_project_received_from_investor : (text) -> (
       vec OfferToInvestor,
     ) query;
-  get_pending_request_for_investor_sent_by_investor : () -> (
+  get_pending_request_for_investor_sent_by_project : (principal) -> (
       vec OfferToSendToMentor,
     ) query;
   get_pending_request_from_mentor_to_project_via_project : () -> (
