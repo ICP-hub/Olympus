@@ -37,7 +37,7 @@ const ProfilePage = () => {
   const tabs = {
     user: ["roles", "rating"],
     project: ["roles", "project", "rating", "association-req", "job", "announcement"],
-    mentor: ["roles", "rating", "event-req", "association-req"],
+    mentor: ["roles", "rating", "cohort", "event-req", "association-req"],
     vc: ["roles", "rating", "job", "announcement", "association-req"],
   };
 
@@ -107,6 +107,17 @@ const ProfilePage = () => {
                 Cohort Request
               </button>
             )}
+            {uniqueActiveTabs.includes("cohort") && (
+              <button
+                className={`px-4 py-2 focus:outline-none font-medium ${activeTab === "cohort"
+                    ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                    : "text-gray-400"
+                  }`}
+                onClick={() => handleChange("cohort")}
+              >
+                Cohort
+              </button>
+            )}
             {uniqueActiveTabs.includes("job") && (
               <button
                 className={`px-4 py-2 focus:outline-none font-medium ${activeTab === "job"
@@ -163,7 +174,16 @@ const ProfilePage = () => {
             {activeTab === "association-req" && <AssociationRequestCard />}
           </div>
           <div className="w-full">
-            {activeTab === "event" && <NewEvent />}
+          {activeTab === "cohort" && (
+              <>
+                {/* {!eventCreated ? (
+                  <EventSection />  // Render EventSection when no event is created
+                ) : (
+                  <NewEvent />  // Render NewEvent when an event is created
+                )} */}
+                <NewEvent/>
+              </>
+            )}
           </div>
           <div className="w-full">
             {activeTab === "job" && (
