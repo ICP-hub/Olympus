@@ -102,7 +102,7 @@ const MentorSignupMain = ({ }) => {
         area_of_expertise: data?.area_of_expertise ?? "",
         // area_of_expertise: [data.area_of_expertise], 
         reason_for_joining: data.reason_for_joining ? [data.reason_for_joining] : [], /// PLACEHOLDER FOR REASON FOR JOINING
-      };
+      };//commit for main
 
       // TRY TO SUBMIT MENTOR DATA TO BACKEND
       try {
