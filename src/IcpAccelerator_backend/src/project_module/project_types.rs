@@ -63,14 +63,8 @@ impl ProjectInfo {
         if self.reason_to_join_incubator.is_empty() {
             return Err("Reason to join incubator is a required field.".to_string());
         }
-        if self.self_rating_of_project <= 0.0 {
-            return Err("Self-rating of project must be greater than zero.".to_string());
-        }
         if self.project_description.as_ref().map_or(true, |desc| desc.is_empty()) {
             return Err("Project description is a required field.".to_string());
-        }
-        if self.target_market.as_ref().map_or(true, |market| market.is_empty()) {
-            return Err("Target market is a required field.".to_string());
         }
 
         Ok(())
